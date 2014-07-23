@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="1.8150000000000035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="IMAGEM" class="java.io.InputStream"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="key" class="java.lang.String"/>
+	<field name="value" class="java.lang.Object"/>
+	<title>
+		<band height="77">
+			<subreport isUsingCache="false">
+				<reportElement uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<subreportParameter name="IMAGEM">
+					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_header.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="85" splitType="Immediate">
+			<elementGroup>
+				<rectangle>
+					<reportElement uuid="b09d7e29-f67d-46eb-97f1-6fc25bc65835" mode="Opaque" x="175" y="1" width="380" height="26" backcolor="#D3D3D3"/>
+				</rectangle>
+				<rectangle>
+					<reportElement uuid="f3f15cb4-d877-4935-b63b-18f666907f77" mode="Opaque" x="0" y="1" width="175" height="26" backcolor="#D3D3D3"/>
+				</rectangle>
+				<subreport>
+					<reportElement uuid="30d6a793-d7f5-4150-b401-f33f2559fb77" stretchType="RelativeToTallestObject" x="0" y="27" width="555" height="58" isPrintWhenDetailOverflows="true"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+    ((java.util.LinkedHashMap)$F{value}).values()
+)]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota.jasper"]]></subreportExpression>
+				</subreport>
+				<textField>
+					<reportElement uuid="8b4279a4-581f-40c4-ac49-0e71410f9be7" style="rel_stext" x="180" y="3" width="375" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="dd24b1d1-7e80-49f5-b8da-afa91ad39836" style="rel_stext" x="7" y="14" width="100" height="13" backcolor="#CCCCCC"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código de Barras]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="6661714a-d3b0-430a-abaf-1a718d83b9cc" style="rel_stext" x="100" y="14" width="76" height="13" backcolor="#CCCCCC"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Preço Capa]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="410df182-c31b-41c3-b52f-2cbb642d877d" style="rel_stext" x="7" y="1" width="80" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Publicações]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="41484ed9-099c-4c83-adca-e8ceec2dc5fe" style="rel_stext" x="100" y="1" width="52" height="13" backcolor="#CCCCCC"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Edição]]></text>
+				</staticText>
+			</elementGroup>
+			<break>
+				<reportElement uuid="b9708c8b-41f0-4452-af43-97b401746b5d" x="0" y="0" width="100" height="1"/>
+			</break>
+		</band>
+	</detail>
+</jasperReport>

@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -70,11 +72,10 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 * @param idCota
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -97,8 +98,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		    hql.append(" and fnc.id = :idFornecedor ");
 		}
 		
-		hql.append(" and pcc.valorMininoCobranca <= :valor ");
-		
 		hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
 			
 	    hql.append("       or ( ( :diaMes IN ELEMENTS(f.diasDoMes) ) ");
@@ -118,8 +117,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
             query.setParameter("idFornecedor", idFornecedor);
         }
         
-        query.setParameter("valor", valor);
-        
         query.setParameter("diaMes", diaDoMes);
         
         query.setParameter("diaSemana", diaDaSemana);
@@ -137,12 +134,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 * Obtem FormaCobranca do Distribuidor
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @param principal
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor, boolean principal) {
+	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, boolean principal) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -163,8 +159,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 			hql.append(" and fnc.id = :idFornecedor ");
 		}
 		
-        hql.append(" and f.valorMinimoEmissao <= :valor ");
-		
         hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
 		
         hql.append("       or ( :diaMes IN ELEMENTS(f.diasDoMes) ");
@@ -183,8 +177,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         	
             query.setParameter("idFornecedor", idFornecedor);
         }
-        
-        query.setParameter("valor", valor);
         
         query.setParameter("diaMes", diaDoMes);
         
@@ -273,6 +265,62 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		return (FormaCobranca) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault() {
+
+		StringBuilder hql = new StringBuilder();
+
+        hql.append(" select banco.id as idBanco, banco.nome as nomeBanco, f.tipoCobranca as tipoCobranca ");
+        hql.append(" from FormaCobranca f ");	
+		hql.append(" join f.politicaCobranca p ");
+		hql.append(" left join f.banco banco ");		
+		hql.append(" where p.ativo = :indAtivo ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+        query.setParameter("indAtivo", true);
+
+        query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaDefaultVO.class));        
+
+        return query.list();
+	}
+	
+	/**
+     * Obtem FormaCobranca principal do Distribuidor com dados de fornecedor e concentração
+     * @return FormaCobranca
+     */
+    @Override
+    public FormaCobranca obterFormaCobrancaCompleto() {
+        
+        
+        StringBuilder hql = new StringBuilder();
+        
+        
+        hql.append(" select f from FormaCobranca f ");      
+        
+        hql.append(" join f.politicaCobranca p ");    
+        
+        hql.append(" left join fetch f.concentracaoCobrancaCota ccc ");    
+        
+        hql.append(" join fetch f.fornecedores forn ");    
+        
+        hql.append(" where p.ativo = :indAtivo ");
+        
+        hql.append(" and p.principal = :principal ");
+
+        Query query = super.getSession().createQuery(hql.toString());
+        
+        
+        query.setParameter("indAtivo", true);
+        
+        query.setParameter("principal", true);
+        
+        
+        query.setMaxResults(1);
+        
+        
+        return (FormaCobranca) query.uniqueResult();
+    }
+	
 	/**
 	 * Obtém lista de forma de cobranca da Cota
 	 * @param Cota
@@ -288,6 +336,34 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pCota", cota);
         return query.list();
+	}
+	
+	/**
+	 * Obtém lista de forma de cobranca da Cota
+	 * @param Cota
+	 * @return {@link List<FormaCobranca>}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select banco.id as idBanco, banco.nome as nomeBanco, formaCobranca.tipoCobranca as tipoCobranca ");
+		sql.append(" from FormaCobranca formaCobranca ");
+		sql.append(" inner join formaCobranca.parametroCobrancaCota parametroCobrancaCota ");
+		sql.append(" inner join parametroCobrancaCota.fornecedorPadrao fornecedorPadrao ");
+		sql.append(" inner join formaCobranca.fornecedores fornecedor ");
+		sql.append(" inner join formaCobranca.banco banco ");
+		sql.append(" where parametroCobrancaCota.cota.numeroCota = :numeroCota ");
+		sql.append(" and fornecedor.id = fornecedorPadrao.id ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaDefaultVO.class));
+		
+		return query.list();
 	}
 	
 	

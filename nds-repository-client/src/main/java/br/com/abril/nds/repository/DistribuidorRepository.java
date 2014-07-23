@@ -60,7 +60,9 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 
 	String obterInformacoesComplementaresTermoAdesao();
 
-	DiaSemana buscarInicioSemana();
+	DiaSemana buscarInicioSemanaRecolhimento();
+	
+	DiaSemana buscarInicioSemanaLancamento();
 	
 	Date obterDataOperacaoDistribuidor();
 

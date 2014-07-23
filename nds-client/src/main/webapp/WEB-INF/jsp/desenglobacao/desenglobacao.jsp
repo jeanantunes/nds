@@ -60,7 +60,7 @@
 	<br clear="all" />
 	<br />
 	<div class="container">
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend>Pesquisar Cota</legend>
 			<form id="filtroPrincipal">
 				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -138,8 +138,9 @@
 				</table>
 			</div>
 		</fieldset>
+		
 		<div>
-			<button id="btnInserirCotaEnglobada">Inserir</button>
+			<button id="btnInserirCotaEnglobada" type="button">Inserir</button>
 		</div>
 
 		<fieldset style="float: left; width: 600px !important; margin-top: 10px;">

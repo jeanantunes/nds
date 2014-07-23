@@ -45,8 +45,7 @@ public class CotaBloqueadaController extends BaseController {
 	public void index() {
 		
 	}
-
-
+	
 	private Map<Integer, String> obterCotasEmConferenciaEncalhe(){
 		
 		synchronized (this.session.getServletContext()) {
@@ -71,16 +70,17 @@ public class CotaBloqueadaController extends BaseController {
 		result.use(Results.json()).from(existeConferenciaEmAndamento , "result").recursive().serialize();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private String obterNomeUsuarioLockandoCota(String donoDoLockCotaConferida) {
 		
-		final Map<String, String> mapaSessionIDNomeUsuario = (LinkedHashMap<String, String>) this.session.getServletContext()
-				.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) this.session.getServletContext()
+				.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 
 		String nomeUsuario = "Não identificado";
 
-		if (mapaSessionIDNomeUsuario != null
-				&& mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida) != null) {
-			nomeUsuario = mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida);
+		if (mapaLoginNomeUsuario != null
+				&& mapaLoginNomeUsuario.get(donoDoLockCotaConferida) != null) {
+			nomeUsuario = mapaLoginNomeUsuario.get(donoDoLockCotaConferida);
 		}
 		
 		return nomeUsuario;

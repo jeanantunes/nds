@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
@@ -292,8 +293,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         final boolean isAprovacaoMovimentoDiferencaAutomatico = distribuidorService.utilizaControleAprovacaoFaltaSobra();
         
-        final Origem origem = (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) ? Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA
-                : null;
+        final Origem origem = (mapaRateioCotas != null && !mapaRateioCotas.isEmpty()) ? Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA : null;
         
         this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null, !isAprovacaoMovimentoDiferencaAutomatico, origem);
     }
@@ -306,6 +306,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         
         salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario,isDiferencaNova, StatusConfirmacao.PENDENTE);
+    }
+    
+    @Override
+    @Transactional
+    public Diferenca atualizar(Diferenca diferenca) {
+    	return this.diferencaEstoqueRepository.merge(diferenca);
     }
     
     private Set<Diferenca> salvarDiferenca(final Set<Diferenca> listaNovasDiferencas,
@@ -505,6 +511,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 }
                 
                 if (diferenca.getTipoDiferenca().isSobra()  
+                		|| diferenca.getTipoDiferenca().isFaltaParaCota()
                         || diferenca.getTipoDiferenca().isAlteracaoReparte()) {
                     
                     movimentoEstoque = this.gerarMovimentoEstoque(
@@ -512,13 +519,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                             validarTransfEstoqueDiferenca,
                             ultimoLancamento.getDataLancamentoDistribuidor(), origem);
                 
-                } else if (diferenca.getTipoDiferenca().isFalta() && 
-                		TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())) {
-                	
-                	this.tratarDiferencasDirecionadasParaCota(
-                            diferenca, diferenca.getTipoDiferenca(), diferenca.getResponsavel().getId(), 
-                            diferenca.isAutomatica(), validarTransfEstoqueDiferenca,
-                            ultimoLancamento.getDataLancamentoDistribuidor(), origem);
                 }
 
                 //Verifica se ha direcionamento de produtos para o estoque do distribuidor
@@ -538,9 +538,72 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                                 ultimoLancamento.getDataLancamentoDistribuidor(), origem);
             }
             
-            if (statusAprovacao == null) {
-                
-                statusAprovacao = obterStatusLancamento(diferenca);
+            if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+	            if (statusAprovacao == null) {
+	                
+	                statusAprovacao = obterStatusLancamento(diferenca);
+	            }
+            } else {
+            	
+            	
+            	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+                    
+                    statusAprovacao = StatusAprovacao.APROVADO;
+                    
+            	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
+            	
+            		statusAprovacao = StatusAprovacao.PERDA;
+            				
+            	} else {
+                    
+                    statusAprovacao = StatusAprovacao.GANHO;
+                }
+            	
+            }
+            
+            if(listaMovimentosEstoqueCota != null && !listaMovimentosEstoqueCota.isEmpty()) {
+	            for(MovimentoEstoqueCota mec : listaMovimentosEstoqueCota) {
+	            	
+	            	if(!mec.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+	            	
+		        		if (!diferenca.getTipoDiferenca().isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
+		                    
+		        			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+		        				mec.setStatusIntegracao(StatusIntegracao.ENCALHE);
+		                    } else {
+		                    	mec.setStatusIntegracao(StatusIntegracao.FORA_DO_PRAZO);
+		                    }
+		                    
+		                }
+	            	} else {
+	            		
+	            		mec.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+	            		
+	            		final boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
+	            		
+	            		if(utilizaControleAprovacao) {
+	            			
+	            			statusAprovacao = StatusAprovacao.PENDENTE;
+	            			
+	                    } else {
+	                    	
+	                    	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+	                            
+	                            statusAprovacao = StatusAprovacao.APROVADO;
+	                            
+	                    	} else if (diferenca.getTipoDiferenca().isFalta() || diferenca.getTipoDiferenca().isFaltaParaCota()) {
+	                    	
+	                    		statusAprovacao = StatusAprovacao.PERDA;
+	                    				
+	                    	} else {
+	                            
+	                            statusAprovacao = StatusAprovacao.GANHO;
+	                        }
+	                    	
+	                    }
+	            		
+	            	}
+	            }
             }
             
             final LancamentoDiferenca lancamentoDiferenca = this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, listaMovimentosEstoqueCota);
@@ -578,9 +641,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         if (cota != null) {
             
-            ultimoLancamento =
-                    lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(
-                            diferenca.getProdutoEdicao().getId(), cota.getId());
+            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(diferenca.getProdutoEdicao().getId(), cota.getId());
+            
+            if(ultimoLancamento == null) {
+            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId());
+            }
             
         } else {
             
@@ -701,16 +766,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                             obterTipoMovimentoEstoqueTransferencia(
                                     TipoEstoque.LANCAMENTO, OperacaoEstoque.ENTRADA));
             
-            tratarTipoMovimentoEstoque(
-tipoMovimentoEstoqueLancamento, "Tipo de movimento de entrada não encontrado!");
+            tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento, "Tipo de movimento de entrada não encontrado!");
             
             tipoMovimentoEstoqueAlvo =
                     tipoMovimentoRepository.buscarTipoMovimentoEstoque(
                             obterTipoMovimentoEstoqueTransferencia(
                                     diferenca.getTipoEstoque(), OperacaoEstoque.SAIDA));
             
-            tratarTipoMovimentoEstoque(
-tipoMovimentoEstoqueAlvo, "Tipo de movimento de saída não encontrado!");
+            tratarTipoMovimentoEstoque(tipoMovimentoEstoqueAlvo, "Tipo de movimento de saída não encontrado!");
             
         } else
             if (OperacaoEstoque.ENTRADA.equals(
@@ -721,16 +784,14 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de saída não encontrado!");
                                 obterTipoMovimentoEstoqueTransferencia(
                                         TipoEstoque.LANCAMENTO, OperacaoEstoque.SAIDA));
                 
-                tratarTipoMovimentoEstoque(
-tipoMovimentoEstoqueLancamento, "Tipo de movimento de saída não encontrado!");
+                tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento, "Tipo de movimento de saída não encontrado!");
                 
                 tipoMovimentoEstoqueAlvo =
                         tipoMovimentoRepository.buscarTipoMovimentoEstoque(
                                 obterTipoMovimentoEstoqueTransferencia(
                                         diferenca.getTipoEstoque(), OperacaoEstoque.ENTRADA));
                 
-                tratarTipoMovimentoEstoque(
-tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
+                tratarTipoMovimentoEstoque(tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             }
         
         movimentoEstoqueService.gerarMovimentoEstoque(
@@ -1039,6 +1100,14 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
                     TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM);
             
             break;
+        
+        case FALTA_EM_DIRECIONADA_COTA:
+            
+            parametroNumeroDiasLancamento =
+            parametroSistemaRepository.buscarParametroPorTipoParametro(
+                    TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM);
+            
+            break;
             
         case SOBRA_DE:
             
@@ -1155,26 +1224,36 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
 
         StatusIntegracao statusIntegracao = null;
         
-        if (tipoDiferenca.isAlteracaoReparte()) {
-            
-            statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
-        }
-        
-        if (!tipoDiferenca.isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
-            
-            if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
-                statusIntegracao = StatusIntegracao.ENCALHE;
-            } else {
-                statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+        if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+        	
+        	if (tipoDiferenca.isAlteracaoReparte()) {
+                
+                statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
             }
             
-            grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
+            if (!tipoDiferenca.isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
+                
+                if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+                    statusIntegracao = StatusIntegracao.ENCALHE;
+                } else {
+                    statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+                }
+                
+                grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
+                
+            } else {
+                
+                grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+                
+            }
             
-        } else {
-            
-            grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
-            
-        }
+    	} else {
+    		
+    		statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+    		
+    		grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+    		
+    	}
         
         final TipoMovimentoEstoque tipoMovimentoEstoque = tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
         
@@ -1198,12 +1277,11 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
 
         final TipoDiferenca novoTipoDiferenca = 
         		tipoDiferenca.isSobra() ? TipoDiferenca.SOBRA_ENVIO_PARA_COTA :
-        			tipoDiferenca.isFalta() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA : 
-        				tipoDiferenca.isAjusteReparteFaltaCota() ? TipoDiferenca.FALTA_PARA_COTA :
+        			tipoDiferenca.isFalta() ? TipoDiferenca.FALTA_EM_DIRECIONADA_COTA : 
+        				tipoDiferenca.isFaltaParaCota() ? TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA :
         					null;
 
-        if (novoTipoDiferenca != null && 
-        		!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+        if (novoTipoDiferenca != null && !TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
 
             try {
 
@@ -1221,6 +1299,7 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
                 throw new IllegalArgumentException(e);
             }
         }
+
     }
     
     private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(final TipoDiferenca tipoDiferenca) {
@@ -1661,4 +1740,28 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
        return diferenca;
     }
     
+    @Override
+    public List<ContasAPagarConsignadoVO> pesquisarDiferncas(
+            final String codigoProduto, final Long numeroEdicao, final Date data) {
+        
+        final List<String> msgs = new ArrayList<String>();
+        
+        if (codigoProduto == null || codigoProduto.isEmpty()){
+            msgs.add("Código de Produto inválido");
+        }
+        
+        if (numeroEdicao == null){
+            msgs.add("Número edição inválido");
+        }
+        
+        if (data == null){
+            msgs.add("Data inválida");
+        }
+        
+        if (!msgs.isEmpty()){
+            throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+        }
+        
+        return this.diferencaEstoqueRepository.pesquisarDiferncas(codigoProduto, numeroEdicao, data);
+    }
 }

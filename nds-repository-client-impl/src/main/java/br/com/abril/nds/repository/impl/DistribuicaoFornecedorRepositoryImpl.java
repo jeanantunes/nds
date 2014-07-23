@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -80,29 +81,48 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryMode
 		return verificarDiaSemana(codigoProduto, idProdutoEdicao, diaSemana, OperacaoDistribuidor.RECOLHIMENTO);
 	}
 	
-	private boolean verificarDiaSemana (String codigoProduto,Long idProdutoEdicao, 
-										DiaSemana diaSemana,OperacaoDistribuidor operacaoDistribuidor) {
-		
+	private boolean verificarDiaSemana(String codigoProduto,
+                                       Long idProdutoEdicao, 
+			                           DiaSemana diaSemana,
+			                           OperacaoDistribuidor operacaoDistribuidor) {
+
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(d.codigoDiaSemana) from DistribuicaoFornecedor d, Produto p, ProdutoEdicao e ")
-		   .append("  join p.fornecedores fornecedor  ")
-		   .append("  where d.fornecedor.id        = fornecedor.id ")
+		
+		sql.append("select count(d.codigoDiaSemana) ")
+		
+		   .append("  from DistribuicaoFornecedor d, Produto p, ProdutoEdicao e  ")
+		 
+		   .append("  join p.fornecedores f ")
+		
+		   .append("  where d.fornecedor.id        = f.id ")
+		
 		   .append("  and   e.produto.id           = p.id ")
+		
 		   .append("  and   e.id                   = :idProdutoEdicao ")
+		
 		   .append("  and   p.codigo               = :codigoProduto ")
+		
 		   .append("  and   d.codigoDiaSemana      = :diaSemana ")
+		
 		   .append("  and   d.operacaoDistribuidor = :opeDis");
 		
 		Query query = this.getSession().createQuery(sql.toString());
+		
 		query.setParameter("codigoProduto", codigoProduto);
+		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
 		query.setParameter("diaSemana", diaSemana.getCodigoDiaSemana());
+		
 		query.setParameter("opeDis", operacaoDistribuidor);
+		
 		query.setMaxResults(1);
 		
 		try {
+			
 			return ((Long)query.uniqueResult()) > 0;
 		} catch (NoResultException e) {
+			
 			return false;
 		}
 	}
@@ -172,8 +192,9 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryMode
 		Criteria criteria = getSession().createCriteria(DistribuicaoFornecedor.class);
 		
 		criteria.setProjection(Projections.property("codigoDiaSemana"));
+		criteria.setProjection(Projections.distinct(Projections.property("codigoDiaSemana")));
 		
-		if (idFornecedor != null && idFornecedor.length > 0) {
+		if (idFornecedor != null && idFornecedor.length > 0 && idFornecedor[0] != null) {
 		
 			criteria.add(Restrictions.in("fornecedor.id", idFornecedor));
 		}

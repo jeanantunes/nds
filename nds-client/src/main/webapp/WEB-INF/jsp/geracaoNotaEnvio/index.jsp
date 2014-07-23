@@ -26,7 +26,7 @@
 				</span>
 		
         		<span class="bt_arq" >
-        			<a id="geracaoNotaEnvio-btnImprimirNE" isEdicao="true" href="#" title="Imprimir NE/NECA" >
+        			<a id="geracaoNotaEnvio-btnImprimirNE" isEdicao="true" href="javascript:void(0)" title="Imprimir NE/NECA" >
         				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir NE/NECA" hspace="5" border="0" />
         			</a>
         		</span>
@@ -41,7 +41,7 @@
     </div>
     <div class="linha_separa_fields">&nbsp;</div>
     
-	<fieldset class="classFieldset">
+	<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    		
    		<legend> Geração de Nota de Envio</legend>
     	<form>

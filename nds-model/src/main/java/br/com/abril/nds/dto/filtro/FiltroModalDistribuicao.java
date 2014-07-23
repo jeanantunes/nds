@@ -3,21 +3,37 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FiltroModalDistribuicao implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5105701443356674581L;
 	
 	private String nmAssitPromoComercial;
+	
 	private String nmGerenteComercial;
+	
 	private String observacao;
 
-	private boolean isRepartePontoVenda; 
-	private boolean isSolicitacaoNumAtrasoInternet;
-	private boolean isRecebeRecolheProdutosParciais;
+	private boolean repartePontoVenda; 
+	
+	private boolean solicitacaoNumAtrasoInternet;
+	
+	private boolean recebeRecolheProdutosParciais;
+	
+	private boolean recebeComplementar;
 
 	private DescricaoTipoEntrega descricaoTipoEntrega; 
 	
@@ -27,26 +43,31 @@ public class FiltroModalDistribuicao implements Serializable{
 	
 	private boolean termoAdesaoRecebido;
 	
-	private BigDecimal percentualFaturamentoEntregaBanca;
+	private BigDecimal percentualFaturamento;
 	
-	private BigDecimal taxaFixaEntregaBanca;
+	private BigDecimal taxaFixa;
 	
-	private Date carenciaInicioEntregaBanca;
+	private Date carenciaInicio;
 	
-	private Date  carenciaFimEntregaBanca;
-	
-	
+	private Date  carenciaFim;
 	
 	private boolean procuracao;
 	
 	private boolean procuracaoRecebida;
 	
-	private BigDecimal percentualFaturamentoEntregador;
+	private BaseCalculo baseCalculo;
 	
-	private Date carenciaInicioEntregador;
+	private ModalidadeCobranca modalidadeCobranca;
 	
-	private Date carenciaFimEntregador;
+	private boolean porEntrega;
 	
+	private PeriodicidadeCobranca periodicidadeCobranca;
+	
+	private Integer diaCobranca;
+	
+	private DiaSemana diaSemanaCobranca;
+	
+	private List<ItemDTO<BaseCalculo,String>> basesCalculo;
 
 	public String getNmAssitPromoComercial() {
 		return nmAssitPromoComercial;
@@ -72,32 +93,37 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.observacao = observacao;
 	}
 
-	public boolean getIsRepartePontoVenda() {
-		return isRepartePontoVenda;
+	public boolean isRepartePontoVenda() {
+		return repartePontoVenda;
 	}
 
-	public void setIsRepartePontoVenda(boolean isRepartePontoVenda) {
-		this.isRepartePontoVenda = isRepartePontoVenda;
+	public void setRepartePontoVenda(boolean isRepartePontoVenda) {
+		this.repartePontoVenda = isRepartePontoVenda;
 	}
 
-	public boolean getIsSolicitacaoNumAtrasoInternet() {
-		return isSolicitacaoNumAtrasoInternet;
+	public boolean isSolicitacaoNumAtrasoInternet() {
+		return solicitacaoNumAtrasoInternet;
 	}
 
-	public void setIsSolicitacaoNumAtrasoInternet(
-			boolean isSolicitacaoNumAtrasoInternet) {
-		this.isSolicitacaoNumAtrasoInternet = isSolicitacaoNumAtrasoInternet;
+	public void setSolicitacaoNumAtrasoInternet(boolean solicitacaoNumAtrasoInternet) {
+		this.solicitacaoNumAtrasoInternet = solicitacaoNumAtrasoInternet;
 	}
 
-	public boolean getIsRecebeRecolheProdutosParciais() {
-		return isRecebeRecolheProdutosParciais;
+	public boolean isRecebeRecolheProdutosParciais() {
+		return recebeRecolheProdutosParciais;
 	}
 
-	public void setIsRecebeRecolheProdutosParciais(
-			boolean isRecebeRecolheProdutosParciais) {
-		this.isRecebeRecolheProdutosParciais = isRecebeRecolheProdutosParciais;
+	public void setRecebeRecolheProdutosParciais(boolean isRecebeRecolheProdutosParciais) {
+		this.recebeRecolheProdutosParciais = isRecebeRecolheProdutosParciais;
 	}
 
+	public boolean isRecebeComplementar() {
+		return recebeComplementar;
+	}
+
+	public void setRecebeComplementar(boolean recebeComplementar) {
+		this.recebeComplementar = recebeComplementar;
+	}
 
 	public FiltroCheckDistribEmisDoc getFiltroCheckDistribEmisDoc() {
 		return filtroCheckDistribEmisDoc;
@@ -132,11 +158,6 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.termoAdesaoRecebido = termoAdesaoRecebido;
 	}
 
-
-
-
-
-
 	public boolean isProcuracao() {
 		return procuracao;
 	}
@@ -153,64 +174,94 @@ public class FiltroModalDistribuicao implements Serializable{
 		this.procuracaoRecebida = procuracaoRecebida;
 	}
 
-	public BigDecimal getPercentualFaturamentoEntregador() {
-		return percentualFaturamentoEntregador;
+	public BaseCalculo getBaseCalculo() {
+		return baseCalculo;
 	}
 
-	public void setPercentualFaturamentoEntregador(
-			BigDecimal percentualFaturamentoEntregador) {
-		this.percentualFaturamentoEntregador = percentualFaturamentoEntregador;
+	public void setBaseCalculo(BaseCalculo baseCalculo) {
+		this.baseCalculo = baseCalculo;
 	}
 
-	public Date getCarenciaInicioEntregador() {
-		return carenciaInicioEntregador;
+	public List<ItemDTO<BaseCalculo,String>> getBasesCalculo() {
+		return basesCalculo;
 	}
 
-	public void setCarenciaInicioEntregador(Date carenciaInicioEntregador) {
-		this.carenciaInicioEntregador = carenciaInicioEntregador;
+	public void setBasesCalculo(List<ItemDTO<BaseCalculo,String>> basesCalculo) {
+		this.basesCalculo = basesCalculo;
 	}
 
-	public Date getCarenciaFimEntregador() {
-		return carenciaFimEntregador;
+	public BigDecimal getPercentualFaturamento() {
+		return percentualFaturamento;
 	}
 
-	public void setCarenciaFimEntregador(Date carenciaFimEntregador) {
-		this.carenciaFimEntregador = carenciaFimEntregador;
+	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
+		this.percentualFaturamento = percentualFaturamento;
 	}
 
-	public BigDecimal getPercentualFaturamentoEntregaBanca() {
-		return percentualFaturamentoEntregaBanca;
+	public BigDecimal getTaxaFixa() {
+		return taxaFixa;
 	}
 
-	public void setPercentualFaturamentoEntregaBanca(
-			BigDecimal percentualFaturamentoEntregaBanca) {
-		this.percentualFaturamentoEntregaBanca = percentualFaturamentoEntregaBanca;
+	public void setTaxaFixa(BigDecimal taxaFixa) {
+		this.taxaFixa = taxaFixa;
 	}
 
-	public BigDecimal getTaxaFixaEntregaBanca() {
-		return taxaFixaEntregaBanca;
+	public Date getCarenciaInicio() {
+		return carenciaInicio;
 	}
 
-	public void setTaxaFixaEntregaBanca(BigDecimal taxaFixaEntregaBanca) {
-		this.taxaFixaEntregaBanca = taxaFixaEntregaBanca;
+	public void setCarenciaInicio(Date carenciaInicio) {
+		this.carenciaInicio = carenciaInicio;
 	}
 
-	public Date getCarenciaInicioEntregaBanca() {
-		return carenciaInicioEntregaBanca;
+	public Date getCarenciaFim() {
+		return carenciaFim;
 	}
 
-	public void setCarenciaInicioEntregaBanca(Date carenciaInicioEntregaBanca) {
-		this.carenciaInicioEntregaBanca = carenciaInicioEntregaBanca;
+	public void setCarenciaFim(Date carenciaFim) {
+		this.carenciaFim = carenciaFim;
 	}
 
-	public Date getCarenciaFimEntregaBanca() {
-		return carenciaFimEntregaBanca;
+	public ModalidadeCobranca getModalidadeCobranca() {
+		return modalidadeCobranca;
 	}
 
-	public void setCarenciaFimEntregaBanca(Date carenciaFimEntregaBanca) {
-		this.carenciaFimEntregaBanca = carenciaFimEntregaBanca;
+	public void setModalidadeCobranca(ModalidadeCobranca modalidadeCobranca) {
+		this.modalidadeCobranca = modalidadeCobranca;
 	}
 
+	public boolean isPorEntrega() {
+		return porEntrega;
+	}
 
+	public void setPorEntrega(boolean porEntrega) {
+		this.porEntrega = porEntrega;
+	}
+
+	public PeriodicidadeCobranca getPeriodicidadeCobranca() {
+		return periodicidadeCobranca;
+	}
+
+	public void setPeriodicidadeCobranca(PeriodicidadeCobranca periodicidadeCobranca) {
+		this.periodicidadeCobranca = periodicidadeCobranca;
+	}
+
+	public Integer getDiaCobranca() {
+		return diaCobranca;
+	}
+
+	public void setDiaCobranca(Integer diaCobranca) {
+		this.diaCobranca = diaCobranca;
+	}
+
+	public DiaSemana getDiaSemanaCobranca() {
+		return diaSemanaCobranca;
+	}
+
+	public void setDiaSemanaCobranca(DiaSemana diaSemanaCobranca) {
+		this.diaSemanaCobranca = diaSemanaCobranca;
+	}
 	
+	
+
 }

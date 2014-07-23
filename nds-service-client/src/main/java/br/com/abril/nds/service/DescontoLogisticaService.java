@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
@@ -7,22 +9,32 @@ import br.com.abril.nds.model.cadastro.DescontoLogistica;
 public interface DescontoLogisticaService {
 
 	/**
-	 * Obtem Desconto Logistica por tipoDesconto
+	 * Obtem Desconto Logistica 
+	 * 
 	 * @param tipoDesconto
+	 * @param idFornecedor
+	 * @param dataVigencia
+	 * @param percentualDesconto
+	 * 
 	 * @return DescontoLogistica
 	 */
-	DescontoLogistica obterPorTipoDesconto(Integer tipoDesconto);
+	DescontoLogistica obterDescontoLogistica(Integer tipoDesconto, Long idFornecedor, Date dataVigencia, BigDecimal percentualDesconto);
 
+	/**
+     * Obtem Desconto Logistica vigente 
+     * 
+     * @param tipoDesconto
+     * @param idFornecedor
+     * @param dataVigencia
+     * 
+     * @return DescontoLogistica
+     */
+	DescontoLogistica obterDescontoLogisticaVigente(Integer tipoDesconto, Long idFornecedor, Date dataVigencia);
+	
 	/**
 	 * Obtém uma lista de todos os Desconto Logísticas
 	 * @return List<DescontoLogistica>
 	 */
 	List<DescontoLogistica> obterTodos();
-	
-	/**
-	 * Realiza a alteração do desconto logistica em função do historico gerado pela importação da interface EMS0113
-	 * 
-	 */
-	void alterarDescontoLogistica();
 	
 }

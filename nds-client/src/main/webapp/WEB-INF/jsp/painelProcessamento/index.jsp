@@ -3,6 +3,10 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/painelProcessamento.js"></script>
 <script type="text/javascript">
 	$(function() {
+		$("#toggleFornecedores").buttonset();
+		$("input[name='radioToggle']").click(function() {
+			painelProcessamentoController.alterarProcessamento();
+		});
 		painelProcessamentoController.init("${pageContext.request.contextPath}");
 	});
 </script>
@@ -64,14 +68,40 @@
 	  	</div>
 	  </div>
 	  <div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldFiltro">
+
+      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
        	  <legend>Painel de Processamentos</legend>
+		<div id="toggleFornecedores">
+
+		  <input type="radio" id="visao-dinap" name="radioToggle" value="${codigoDistribuidor.dinap}" checked="checked">
+		  <label for="visao-dinap" style="width:100px">DINAP</label>
+		
+		  <input type="radio" id="visao-fc" name="radioToggle" value="${codigoDistribuidor.fc}">
+		  <label for="visao-fc" style="width:100px">FC</label>
+		  
+		  <input type="radio" id="visao-processos" name="radioToggle" value="">
+		  <label for="visao-processos" style="width:100px">Processos</label>
+		
+		</div>
+		
+		<div class="linha_separa_fields">&nbsp;</div>
+		
+		<div id="divProcessamento" style="display: none;">
+			
+			<span class="bt_confirmar_novo" title="Gerar Ranking Segmento">
+           			<a onclick="painelProcessamentoController.gerarRankingSegmento();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar Ranking Segmento</a>
+           	</span>
+			
+			<span class="bt_confirmar_novo" title="Gerar Ranking Faturamento">
+           			<a onclick="painelProcessamentoController.gerarRankingFaturamento();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar Ranking Faturamento</a>
+           	</span>
+			
+		</div>
+		
           <div class="grids" style="display:block;">
         	<div id="tabPainel">
-                <ul>
-                    <li><a href="#tabPainel-Interfaces" onclick="painelProcessamentoController.pesquisarInterfaces()">Interfaces</a></li>
-                    <li><a href="#tabPainel-Processos" onclick="painelProcessamentoController.pesquisarProcessos()">Processos</a></li>
-                </ul>
                 <div id="tabPainel-Interfaces">
                     <table width="600" border="0" align="right" cellpadding="2" cellspacing="1" >
                       <tr>
@@ -87,20 +117,7 @@
                       </table>
                       <br clear="all"/>
                   <table class="painelInterfaceGrid"></table>
-              	</div>
-                <div id="tabPainel-Processos">
-                	<table width="500" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
-                      <tr>
-                      	<td width="167">&nbsp;</td>
-                        <td width="17"><img src="${pageContext.request.contextPath}/images/ico_operando.png" alt="Operando" /></td>
-                        <td width="146">Realizado com Sucesso</td>
-                        <td width="19"><img src="${pageContext.request.contextPath}/images/ico_encerrado.png" alt="Off-line" /></td>
-                        <td width="125">Não Processado</td>
-                      </tr>
-                      </table>
-                      <br clear="all"/>
-                	<table class="painelProcessamentoGrid"></table>
-                </div>                
+              	</div>  
             </div>
         </div>
         

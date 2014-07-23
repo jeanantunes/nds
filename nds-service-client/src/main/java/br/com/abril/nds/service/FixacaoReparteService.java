@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 
@@ -48,5 +49,7 @@ public interface FixacaoReparteService {
 	public void atualizaFixacao(List<BigInteger> lancamentosDiarios);
 	
 	public void verificarFixacao (Date dataOperacaoAserFechada);
+
+	public FixacaoReparte buscarPorProdutoCotaClassificacao(Cota cota, String codigoICD, TipoClassificacaoProduto tipoClassificacaoProduto);
 	
 }

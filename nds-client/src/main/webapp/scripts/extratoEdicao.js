@@ -9,7 +9,7 @@ var jsExtratoEdicao = $.extend(true, {
 		$("#edicao", jsExtratoEdicao.workspace).numeric();
 		
 		$("#idProdutoExtratoEdicao", jsExtratoEdicao.workspace).autocomplete({
-			source: ''
+			source: []
 		});
 		
 		jsExtratoEdicao.carregarExtratoEdicaoGrid();

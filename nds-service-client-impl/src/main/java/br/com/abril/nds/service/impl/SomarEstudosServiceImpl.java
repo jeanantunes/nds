@@ -1,9 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,9 @@ import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.SomarEstudosService;
+import br.com.abril.nds.util.BigIntegerUtil;
 
 @Service
 public class SomarEstudosServiceImpl implements SomarEstudosService {
@@ -35,6 +36,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 
 	@Autowired
 	private DistribuicaoRepository distribuicaoRepository;
+	
+	@Autowired
+	private EstudoService estudoService;
 
 
 	@Override
@@ -49,73 +53,67 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		Long idEstudo = distribuicaoVO.getIdEstudo().longValue();
 		EstudoGerado estudoBase = estudoGeradoRepository.buscarPorId(idEstudoBase);
 		
-		Map<Long,EstudoCotaGerado> mapEstudoCota = new HashMap<Long,EstudoCotaGerado>();
+		Map<Long,EstudoCotaGerado> mapEstudoCotaBase = new HashMap<Long,EstudoCotaGerado>();
 		
 		if (estudoBase.getEstudoCotas() != null && !estudoBase.getEstudoCotas().isEmpty()) {
 			
-			Iterator<EstudoCotaGerado> it =  estudoBase.getEstudoCotas().iterator(); 
-			
-			while (it.hasNext()) {
+			for (EstudoCotaGerado estudoCotaBase : estudoBase.getEstudoCotas()) {
 				
-				EstudoCotaGerado estudoCota = it.next();
-				Cota cota = estudoCota.getCota();
+				final Cota cota = estudoCotaBase.getCota();
 				
-				if(cota != null) {
+				if((cota != null) && (BigIntegerUtil.isMaiorQueZero(estudoCotaBase.getReparte()))) {
 					
-					mapEstudoCota.put(cota.getId(), estudoCota);
+					mapEstudoCotaBase.put(cota.getId(), estudoCotaBase);
 				}
 			}
 		}
 		
-		if (mapEstudoCota.isEmpty()) {
+		if (mapEstudoCotaBase.isEmpty()) {
 			
 			return; 
 		}
-		
-		
 		
 		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
 		
 		if (estudo.getEstudoCotas() != null && !estudo.getEstudoCotas().isEmpty()) {
 			
-			Iterator<EstudoCotaGerado> it =  estudo.getEstudoCotas().iterator(); 
-			
-			while (it.hasNext()) {
-				
-				EstudoCotaGerado estudoCota = it.next();
+			for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 				
 				if (estudoCota.getCota() != null) {
 					
 					Long idCota = estudoCota.getCota().getId();
 					
-					if (mapEstudoCota.containsKey(idCota)) {
+					if (mapEstudoCotaBase.containsKey(idCota)) {
 					  	
-						EstudoCotaGerado estudoCotaBase = mapEstudoCota.remove(idCota);
+						EstudoCotaGerado estudoCotaBase = mapEstudoCotaBase.get(idCota);
 						
 						if (estudoCotaBase.getReparte() != null && estudoCota.getReparte() != null) {
-							
 							estudoCota.setReparte(estudoCota.getReparte().add(estudoCotaBase.getReparte()));
+							mapEstudoCotaBase.remove(idCota);
 						}
 					}
 				}
 			}
 		
-			Iterator<Entry<Long,EstudoCotaGerado>> itMap = mapEstudoCota.entrySet().iterator();
-			
-			while (itMap.hasNext()) {
+			for (EstudoCotaGerado estudoCota : mapEstudoCotaBase.values()) {
 				
-				EstudoCotaGerado estudoCota = itMap.next().getValue();
 				estudoCota.setEstudo(estudo);
 				estudoCota.setQtdeEfetiva(estudoCota.getReparte());
 				estudoCota.setQtdePrevista(estudoCota.getReparte());
 				estudoCotaGeradoRepository.alterar(estudoCota);
+				
+				estudoBase.getEstudoCotas().remove(estudoCota);
 			}
 			
-			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){
-				estudo.setQtdeReparte(estudo.getQtdeReparte().add(estudoBase.getQtdeReparte()));				
-			}
+			estudo.setQtdeReparte((estudo.getQtdeReparte()!=null ? estudo.getQtdeReparte() : BigInteger.ZERO).add(estudoBase.getQtdeReparte()!=null ? estudoBase.getQtdeReparte() : BigInteger.ZERO));
+			
+			estudo.setSobra((estudo.getSobra()!=null ? estudo.getSobra() : BigInteger.ZERO).add(estudoBase.getSobra()!=null ? estudoBase.getSobra() : BigInteger.ZERO));
+			
 			estudoGeradoRepository.alterar(estudo);
 			estudoGeradoRepository.remover(estudoBase);
+			
+			estudoService.criarRepartePorPDV(estudo.getId());
+			
 		}
 		
 	}

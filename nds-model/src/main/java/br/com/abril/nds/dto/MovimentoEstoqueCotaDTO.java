@@ -24,6 +24,8 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private List<RateioDTO> rateios;
 	
+	private Long idFornecedor;
+	
 	
 	/***/
 	private boolean aprovadoAutomaticamente;
@@ -53,8 +55,6 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	private Date dataLancamentoOriginal;
 	
 	private Long estoqueProdutoEdicaoCotaId;
-	
-	private Long estoqueProdutoCotaJuramentadoId;
 	
 	private Long estudoCotaId;
 	
@@ -249,15 +249,6 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 		this.estoqueProdutoEdicaoCotaId = estoqueProdutoEdicaoCotaId;
 	}
 
-	public Long getEstoqueProdutoCotaJuramentadoId() {
-		return estoqueProdutoCotaJuramentadoId;
-	}
-
-	public void setEstoqueProdutoCotaJuramentadoId(
-			Long estoqueProdutoCotaJuramentadoId) {
-		this.estoqueProdutoCotaJuramentadoId = estoqueProdutoCotaJuramentadoId;
-	}
-
 	public Long getEstudoCotaId() {
 		return estudoCotaId;
 	}
@@ -337,5 +328,15 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public void setValorDesconto(BigDecimal valorDesconto) {
 		this.valorDesconto = valorDesconto;
 	}
+
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+	
+	
 	
 }

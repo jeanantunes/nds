@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,9 +22,13 @@ import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
+import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -30,7 +36,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/dividirEstudo")
@@ -52,6 +57,12 @@ public class DividirEstudoController extends BaseController {
 
     @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private AnaliseParcialService analiseParcialService;
+    
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
     
     @Autowired
     private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService;
@@ -139,11 +150,6 @@ public class DividirEstudoController extends BaseController {
 
 //		    divisaoEstudo.setDataLancamentoPrimeiroEstudo(DateUtil.formatarDataPTBR(estudoOriginal.getDataLancamento()));
 
-		    Long maxId = estudoService.obterUltimoAutoIncrement();
-		    
-		    divisaoEstudo.setNumeroPrimeiroEstudo(maxId++);
-		    divisaoEstudo.setNumeroSegundoEstudo(maxId);
-
 		    result.use(json()).from(divisaoEstudo).recursive().serialize();
 		} else {
 		    mensagensValidacao.add("- Estudo Original não encontrado!");
@@ -172,6 +178,8 @@ public class DividirEstudoController extends BaseController {
 	
 	List<EstudoGerado> listEstudo = null; 
 	
+	List<Long> listIdEstudoAdiconado = null;
+	
 	if (dataLancamentoSegundoEstudo != null && !dataLancamentoSegundoEstudo.equalsIgnoreCase("")) {
 
 	    if (!dataLancamentoSegundoEstudo.equalsIgnoreCase(dataLancamentoPrimeiroEstudo)) {
@@ -179,24 +187,35 @@ public class DividirEstudoController extends BaseController {
 	    EstudoGerado estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
 
 	    EstudoGerado primeiroEstudo = (EstudoGerado)SerializationUtils.clone(estudoOriginal);
-		primeiroEstudo.setId(divisaoEstudo.getNumeroPrimeiroEstudo());
+		primeiroEstudo.setId(null);
 //		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setQtdeReparte(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
+		primeiroEstudo.setDataAlteracao(null);
+		primeiroEstudo.setDataCadastro(new Date());
+		primeiroEstudo.setUsuario(getUsuarioLogado());
+		primeiroEstudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
  
 		EstudoGerado segundoEstudo = (EstudoGerado) SerializationUtils.clone(estudoOriginal);
-		segundoEstudo.setId(divisaoEstudo.getNumeroSegundoEstudo());
+		segundoEstudo.setId(null);
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setQtdeReparte(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
-
+		segundoEstudo.setDataAlteracao(null);
+		segundoEstudo.setDataCadastro(new Date());
+		segundoEstudo.setUsuario(getUsuarioLogado());
+		segundoEstudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
+		
 		listEstudo = new ArrayList<EstudoGerado>();
 		listEstudo.add(primeiroEstudo);
 		listEstudo.add(segundoEstudo);
 
-		List<Long> listIdEstudoAdiconado = this.estudoService.salvarDivisao(estudoOriginal, listEstudo,divisaoEstudo);
+		listIdEstudoAdiconado = this.estudoService.salvarDivisao(estudoOriginal, listEstudo,divisaoEstudo);
 
+		this.matrizDistribuicaoService.atualizarPercentualAbrangencia(listIdEstudoAdiconado.get(0));
+		this.matrizDistribuicaoService.atualizarPercentualAbrangencia(listIdEstudoAdiconado.get(1));
+		
 		for (Long estudoDividido : listIdEstudoAdiconado) {
 			this.estudoProdutoEdicaoBaseService.copiarEdicoesBase(estudoOriginal.getId(),estudoDividido);
 		}
@@ -218,11 +237,13 @@ public class DividirEstudoController extends BaseController {
 	if (!mensagensValidacao.isEmpty()) {
 	    if (TipoMensagem.SUCCESS.equals(tipoMensagem)){
 	    	
-	    	List<Object> l  = new ArrayList<>();
-	    	l.add(mensagensValidacao.get(0));
-	    	l.add(new Long[]{listEstudo.get(0).getQtdeReparte().longValue(),listEstudo.get(1).getQtdeReparte().longValue()});
-	    	
-	    	result.use(Results.json()).from(l,"result").recursive().serialize();
+	        final Map<String, Object> mapa = new TreeMap<String, Object>();
+	        
+	        mapa.put("msg", mensagensValidacao.get(0));
+	        mapa.put("reparte", new Long[]{listEstudo.get(0).getQtdeReparte().longValue(),listEstudo.get(1).getQtdeReparte().longValue()});
+	        mapa.put("estudo", listIdEstudoAdiconado);
+	        
+	    	result.use(CustomJson.class).from(mapa).serialize();
 	    	
 	    }
 	    else if (TipoMensagem.WARNING.equals(tipoMensagem))

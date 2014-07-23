@@ -2,6 +2,7 @@ package br.com.abril.nds.model.planejamento;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,31 +13,38 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.hibernate.annotations.*;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @SuppressWarnings("serial")
 @Table(name = "ESTUDO_GERADO")
+@SequenceGenerator(name="ESTUDO_GERADO_SEQ", initialValue = 1, allocationSize = 1)
 public class EstudoGerado implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EstudoGerado.class);
 
     @Id
+    @GeneratedValue(generator = "ESTUDO_GERADO_SEQ")
 	@Column(name = "ID")
 	protected Long id;
 	
@@ -69,12 +77,12 @@ public class EstudoGerado implements Serializable {
 	
 	/** Data de cadastro do Estudo no sistema. */
 	@Column(name = "DATA_CADASTRO", nullable = false)
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	protected Date dataCadastro;
 	
 	/** Data de alteração do Estudo no sistema. */
 	@Column(name = "DATA_ALTERACAO")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	protected Date dataAlteracao;
 
 	@Column(name = "REPARTE_DISTRIBUIR")
@@ -102,6 +110,16 @@ public class EstudoGerado implements Serializable {
     @Column(name = "DADOS_VENDA_MEDIA")
     @Type(type = "text")
     private String dadosVendaMedia;
+    
+    @Column(name = "REPARTE_MINIMO")
+    private BigInteger reparteMinimo;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TIPO_GERACAO_ESTUDO", nullable = false)
+    private TipoGeracaoEstudo tipoGeracaoEstudo;
+    
+    @Column(name = "ABRANGENCIA")
+    private BigDecimal abrangencia;
 
     public BigInteger getQtdeReparte() {
 		return qtdeReparte;
@@ -201,11 +219,11 @@ public class EstudoGerado implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public Usuario getUsuarioId() {
+	public Usuario getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuarioId(Usuario usuarioId) {
+	public void setUsuario(Usuario usuarioId) {
 		this.usuario = usuarioId;
 	}
 
@@ -269,4 +287,29 @@ public class EstudoGerado implements Serializable {
     public String getDadosVendaMedia() {
         return dadosVendaMedia;
     }
+
+	public BigInteger getReparteMinimo() {
+		return reparteMinimo;
+	}
+
+	public void setReparteMinimo(BigInteger reparteMinimo) {
+		this.reparteMinimo = reparteMinimo;
+	}
+
+    public TipoGeracaoEstudo getTipoGeracaoEstudo() {
+        return tipoGeracaoEstudo;
+    }
+
+    public void setTipoGeracaoEstudo(TipoGeracaoEstudo tipoGeracaoEstudo) {
+        this.tipoGeracaoEstudo = tipoGeracaoEstudo;
+    }
+    
+    public BigDecimal getAbrangencia() {
+        return abrangencia;
+    }
+    
+    public void setAbrangencia(BigDecimal abrangencia) {
+        this.abrangencia = abrangencia;
+    }
+	
 }

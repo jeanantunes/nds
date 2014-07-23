@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroContasAPagarDTO implements Serializable {
 
 	private static final long serialVersionUID = 5604665210912108694L;
@@ -24,6 +27,17 @@ public class FiltroContasAPagarDTO implements Serializable {
 	private PaginacaoVO paginacaoVO;
 	private Date dataDetalhe;
 	
+	@Export(label="Código", exhibitionOrder=1)
+	private String codigoProduto;
+	
+	@Export(label="Produto", exhibitionOrder=2)
+	private String nomeProduto;
+	
+	@Export(label="Edição", exhibitionOrder=3)
+	private String edicaoProduto;
+	
+	@Export(label="Fornecedor", exhibitionOrder=4)
+	private String nomeFornecedor;
 	
 	public boolean isPrimeiraCarga() {
 		return primeiraCarga;
@@ -97,4 +111,36 @@ public class FiltroContasAPagarDTO implements Serializable {
 	public void setEdicaoConsignado(Long edicaoConsignado) {
 		this.edicaoConsignado = edicaoConsignado;
 	}
+    
+    public String getCodigoProduto() {
+        return codigoProduto;
+    }
+    
+    public void setCodigoProduto(String codigoProduto) {
+        this.codigoProduto = codigoProduto;
+    }
+    
+    public String getNomeProduto() {
+        return nomeProduto;
+    }
+    
+    public void setNomeProduto(String nomeProduto) {
+        this.nomeProduto = nomeProduto;
+    }
+    
+    public String getEdicaoProduto() {
+        return edicaoProduto;
+    }
+    
+    public void setEdicaoProduto(String edicaoProduto) {
+        this.edicaoProduto = edicaoProduto;
+    }
+    
+    public String getNomeFornecedor() {
+        return nomeFornecedor;
+    }
+    
+    public void setNomeFornecedor(String nomeFornecedor) {
+        this.nomeFornecedor = nomeFornecedor;
+    }
 }

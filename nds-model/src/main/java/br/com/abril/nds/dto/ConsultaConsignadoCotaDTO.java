@@ -43,11 +43,14 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	@Export(label = "Dt. Lancto" , alignment= Alignment.CENTER, exhibitionOrder = 5)
 	private String dataLancamento;
 	
+	@Export(label = "Dt. Recolhimento" , alignment= Alignment.CENTER, exhibitionOrder = 6)
+	private String dataRecolhimento;
+	
 	private BigDecimal precoCapa;
 	private BigDecimal precoDesconto;
 	private BigDecimal desconto;
 	
-	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 8, columnType = ColumType.INTEGER)
+	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 9, columnType = ColumType.INTEGER)
 	private BigInteger reparte;
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
@@ -148,7 +151,15 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		this.dataLancamento = DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);		
 	}
 
-	@Export(label = "Preço Capa R$", alignment= Alignment.RIGHT, exhibitionOrder = 6, columnType = ColumType.MOEDA)
+	public String getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = DateUtil.formatarDataPTBR(dataRecolhimento);
+	}
+
+	@Export(label = "Preço Capa R$", alignment= Alignment.RIGHT, exhibitionOrder = 7, columnType = ColumType.MOEDA)
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}
@@ -165,7 +176,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return precoCapaFormatado;
 	}
 
-	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 7, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 8, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	public BigDecimal getPrecoDesconto() {
 		return precoDesconto;
 	}
@@ -182,8 +193,8 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return precoDescontoFormatado;
 	}
 
-	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 9, columnType = ColumType.MOEDA, widthPercent = 12.5f)
-	@Footer(label = "Totais", type = FooterType.SUM, columnType = ColumType.MOEDA)
+	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA, widthPercent = 12.5f)
+	@Footer(label = "Total", type = FooterType.SUM, columnType = ColumType.MOEDA)
 	public BigDecimal getTotal() {
 		return total;
 	}
@@ -200,7 +211,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return totalFormatado;
 	}
 
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA_QUATRO_CASAS, widthPercent = 12.5f)
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 11, columnType = ColumType.MOEDA_QUATRO_CASAS, widthPercent = 12.5f)
 	@Footer(type = FooterType.SUM, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	public BigDecimal getTotalDesconto() {
 		return totalDesconto;

@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -133,8 +131,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
                 forma = itemPolitica.getFormaCobranca();
                 if (forma!=null) {
                     parametroCobranca.setForma(forma.getTipoCobranca() != null ? forma.getTipoCobranca().getDescTipoCobranca() : "");
-                    parametroCobranca.setBanco(forma.getBanco() != null ? forma.getBanco().getNome() : "");
-                    parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao() != null ? forma.getValorMinimoEmissao().toString() : "");
+                    parametroCobranca.setBanco(forma.getBanco() != null ? forma.getBanco().getNome() : "");                   
                     parametroCobranca.setEnvioEmail(forma.isRecebeCobrancaEmail() ? "Sim" : "Não");
                     final StringBuilder fornecedores = new StringBuilder();
                     int i = 0;
@@ -249,7 +246,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
             
             parametroCobrancaDTO.setIdPolitica(politica.getId());
             parametroCobrancaDTO.setPrincipal(politica.isPrincipal()?true:false);
-            //parametroCobrancaDTO.setCobradoPeloBackoffice(politica.isCobradoPeloBackoffice());
             parametroCobrancaDTO.setAcumulaDivida(politica.isAcumulaDivida()?true:false);
             parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
             parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
@@ -277,8 +273,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
                 
                 parametroCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
                 parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail() ? true : false);
-                parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil() ? true : false);
-                parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao() != null ? formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO);
+                parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil() ? true : false);           
                 parametroCobrancaDTO.setFormaCobrancaBoleto(formaCobranca.getFormaCobrancaBoleto());
                 parametroCobrancaDTO.setTaxaMulta(formaCobranca.getTaxaMulta());
                 parametroCobrancaDTO.setValorMulta(formaCobranca.getValorMulta());
@@ -415,7 +410,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         }
         politica.setPrincipal(parametroCobrancaDTO.isPrincipal());
         //politica.setCobradoPeloBackoffice(parametroCobrancaDTO.isCobradoPeloBackoffice());
-        politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
         politica.setFormaEmissao(parametroCobrancaDTO.getFormaEmissao());
         politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
         
@@ -423,6 +417,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         politica.setDistribuidor(distribuidorRepository.obter());
         politica.setFatorVencimento(Integer.valueOf(parametroCobrancaDTO.getFatorVencimento().toString()));
         politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
+        
+        if(parametroCobrancaDTO.isPrincipal()){
+        	 politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
+        	 this.atualizarAcumuloDeDividas(parametroCobrancaDTO.isAcumulaDivida());
+        }
         
         formaCobranca.setDiasDoMes(parametroCobrancaDTO.getDiasDoMes());
         formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
@@ -439,7 +438,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
             formaCobranca.setValorMulta(parametroCobrancaDTO.getValorMulta());
         }
         
-        formaCobranca.setValorMinimoEmissao(parametroCobrancaDTO.getValorMinimo());
         formaCobranca.setVencimentoDiaUtil(parametroCobrancaDTO.isVencimentoDiaUtil());
         
         if(TipoCobranca.BOLETO.equals(parametroCobrancaDTO.getTipoCobranca()) || TipoCobranca.BOLETO_EM_BRANCO.equals(parametroCobrancaDTO.getTipoCobranca())){
@@ -565,7 +563,18 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         }
     }
     
-    @Override
+    private void atualizarAcumuloDeDividas(boolean acumulaDivida) {
+    	
+    	List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.buscarTodos();
+		
+    	for(PoliticaCobranca item : politicasCobranca){
+    		item.setAcumulaDivida(acumulaDivida);
+    		politicaCobrancaRepository.merge(item);
+    	}
+	}
+
+
+	@Override
     @Transactional
     public void dasativarPoliticaCobranca(final Long idPolitica) {
         
@@ -598,5 +607,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
                 politicaCobrancaRepository.obterTiposCobrancaDistribuidor();
         
         return tiposCobranca;
+    }
+    
+    @Override
+    public Fornecedor obterFornecedorPadrao() {
+    	
+    	return politicaCobrancaRepository.obterFornecedorPadrao();
     }
 }

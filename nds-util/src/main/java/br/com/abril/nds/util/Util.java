@@ -63,6 +63,19 @@ public abstract class Util {
         return null;
     }
     
+    public static <E extends Enum<E>> E getEnumByEnumName(final E[] values, final String enumName) {
+        
+        for (final E enumConstant : values) {
+            
+            if (enumConstant.name().equals(enumName)) {
+                
+                return enumConstant;
+            }
+        }
+        
+        return null;
+    }
+    
     public static boolean isAjaxRequest(final HttpServletRequest request) {
         
         if (request == null) {
@@ -222,10 +235,10 @@ public abstract class Util {
             
         case BANCO_BRADESCO:
             return Util.padLeft(idDivida.toString(), "0", 11);
-            
+
         case BANCO_DO_BRASIL:
-            return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
-            
+            return codSacado + Util.padLeft(idDivida.toString(), "0", 7);
+
         case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
             

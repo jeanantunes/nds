@@ -30,6 +30,7 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
@@ -125,22 +126,27 @@ public class EstudoAlgoritmoService {
     private JornaleirosNovos jornaleirosNovos;
     
     public static void calculate(final EstudoTransient estudo) {
-        // Somatória da venda média de todas as cotas e
+       
+    	// Somatória da venda média de todas as cotas e
         // Somatória de reparte das edições abertas de todas as cotas
-        estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
+    	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
         estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
         estudo.setTotalPDVs(BigDecimal.ZERO);
+        
         for (final CotaEstudo cota : estudo.getCotas()) {
-            if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
+            
+        	if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
                     ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
                 estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
             }
             estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(
                     cota.getSomaReparteEdicoesAbertas()));
+            
             if (cota.getQuantidadePDVs() != null) {
                 estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
             }
         }
+        
     }
     
     public static void somarVendaMedia(final EstudoTransient estudo) {
@@ -251,6 +257,7 @@ public class EstudoAlgoritmoService {
         estudo.setProdutoEdicaoEstudo(produto);
         estudo.setReparteDistribuir(reparte);
         estudo.setReparteDistribuirInicial(reparte);
+        estudo.setTipoGeracao(TipoGeracaoEstudo.VENDA_MEDIA.toString());
         
         estudo.setDistribuicaoPorMultiplos(0); // valor default
         estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor
@@ -286,6 +293,7 @@ public class EstudoAlgoritmoService {
                 ed.setPeriodo(base.getPeriodo());
                 ed.setParcial(base.isParcial());
                 ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
+                ed.setDataLancamento(base.getDataLancamento());
                 edicoesBase.add(ed);
             }
             estudo.setEdicoesBase(edicoesBase);
@@ -323,6 +331,7 @@ public class EstudoAlgoritmoService {
             
             medias.executar(cota);
         }
+        
         bonificacoes.executar(estudo);
         
         jornaleirosNovos.executar(estudo);

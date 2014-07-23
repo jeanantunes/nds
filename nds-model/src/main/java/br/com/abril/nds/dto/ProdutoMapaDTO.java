@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ProdutoMapaDTO implements Serializable{
 	
@@ -13,7 +14,7 @@ public class ProdutoMapaDTO implements Serializable{
 	private String codigoDeBarras;
 	private String precoCapa;
 	private Integer totalReparte;
-	private HashMap<Integer, Integer> boxQtde;
+	private Map<Integer, Integer> boxQtde;
 	
 	public ProdutoMapaDTO(){
 		
@@ -21,7 +22,7 @@ public class ProdutoMapaDTO implements Serializable{
 	
 	public ProdutoMapaDTO(String codigoProduto, String nomeProduto,
 			Long numeroEdicao, String codigoDeBarras, String precoCapa, Integer totalReparte,
-			HashMap<Integer, Integer> qtdeBox) {
+			Map<Integer, Integer> qtdeBox) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -94,7 +95,7 @@ public class ProdutoMapaDTO implements Serializable{
 	/**
 	 * @return the boxQtde
 	 */
-	public HashMap<Integer, Integer> getBoxQtde() {
+	public Map<Integer, Integer> getBoxQtde() {
 		return boxQtde;
 	}
 	/**

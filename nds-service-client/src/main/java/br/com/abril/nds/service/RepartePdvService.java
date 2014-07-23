@@ -14,5 +14,7 @@ public interface RepartePdvService {
 	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix);
 	
 	public RepartePDV obterRepartePorPdvMix (Long idMix, Long idProduto, Long idPdv);
+
+    public boolean verificarRepartePdv(Integer numeroCota, String codigoProduto);
 	
 }

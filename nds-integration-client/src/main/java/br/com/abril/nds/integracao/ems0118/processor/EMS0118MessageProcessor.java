@@ -59,35 +59,55 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao) consulta.uniqueResult();
 		if (null != produtoEdicao) {
 			// Atualiza valor de venda (PREÇO CAPA)
-			produtoEdicao.setPrecoVenda(input.getPreco());
-			produtoEdicao.setPrecoPrevisto(input.getPreco());
+			produtoEdicao.setPrecoVenda(tratarValoresNulo(input.getPreco(),produtoEdicao.getPrecoVenda()));
+			produtoEdicao.setPrecoPrevisto(tratarValoresNulo( input.getPreco(),produtoEdicao.getPrecoPrevisto()));
 
 			// Define valor de custo
-			double preco = input.getPreco().doubleValue();
+			double preco = produtoEdicao.getPrecoVenda().doubleValue();
 			double fator = distribuidor.getFatorDesconto().doubleValue();
 			fator = 1 - fator / 100;
 			double precoCusto = preco * fator;
 
 			// Atualiza valor de custo
-			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN));		
+					
+			if(precoCusto>0){
 			
-			this.ndsiLoggerFactory.getLogger().logInfo(
+				this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizado preço para Produto: " + input.getCodigoPublicacao() + " e Edição: " + input.getEdicao() );
+					"Atualização do Preço"
+					+" de "+produtoEdicao.getPrecoCusto()
+					+" para "+new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN)
+					+" Produto " + input.getCodigoPublicacao() + " Edição " + input.getEdicao() );
+			
+				produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN));
+				this.getSession().merge(produtoEdicao);
+			}
 		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Nenhum resultado encontrado para Produto: "
-							+ input.getCodigoPublicacao() + " e Edição: "
-							+ input.getEdicao() + " na tabela produto_edicao");
+					"Produto "
+					+ input.getCodigoPublicacao() + "  Edição "
+					+ input.getEdicao() 
+					+" não encontrado.");
 
 		}
 
 	}
 
+	private BigDecimal tratarValoresNulo(BigDecimal valor1, BigDecimal valor2) {
+		
+		if (valor1 != null) {
+			return valor1;
+		} else if (valor2 != null) {
+			return valor2;
+		}
+		
+		return valor1 == null ? valor2 != null ? valor2 : BigDecimal.ZERO : valor1;
+	}
+	
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub

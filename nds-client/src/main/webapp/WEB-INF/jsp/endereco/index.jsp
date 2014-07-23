@@ -33,7 +33,9 @@
 			<input type="hidden" id="${param.telaEndereco}idLocalidade"/>
 			
 			<input type="hidden" name="enderecoAssociacao.enderecoPessoa" id="${param.telaEndereco}enderecoPessoa"/>
-	
+			
+			<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 			<table width="754" cellpadding="2" cellspacing="2" style="text-align:left ">
 				<tr>
 					
@@ -62,7 +64,7 @@
 						
 						<div id="${param.telaEndereco}wrapperBtnPesquisaCepDesabilitado" style="display: none">
 							<span class="classPesquisar" style="opacity:0.4" title="Pesquisar Cep.">
-								<a href="#" onclick="javascript:;">&nbsp;</a>
+								<a href="javascript:void(0)" onclick="javascript:;">&nbsp;</a>
 							</span>
 				  		</div>
 						
@@ -169,13 +171,13 @@
 				  
 				    <div id="${param.telaEndereco}wrapperBtnIncluirNovoEnderecoHabilitado">
 					  	<span class="bt_novos" id="${param.telaEndereco}btnIncluirNovoEndereco">
-					  		<a href="javascript:;" onclick="${param.telaEndereco}.incluirNovoEndereco();" id="${param.telaEndereco}linkIncluirNovoEndereco" rel="tipsy" title="Incluir Novo Endereço"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
+					  		<a href="javascript:;" isEdicao="true" onclick="${param.telaEndereco}.incluirNovoEndereco();" id="${param.telaEndereco}linkIncluirNovoEndereco" rel="tipsy" title="Incluir Novo Endereço"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
 					  	</span>
 				  	</div>
 	
 				    <div id="${param.telaEndereco}wrapperBtnIncluirNovoEnderecoDesabilitado" style="display: none">
 					  	<span class="bt_add" style="opacity:0.4">
-					  		<a href="#" onclick="javascript:;" rel="tipsy" title="Incluir Novo Endereço"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
+					  		<a href="javascript:void(0)" isEdicao="true" onclick="javascript:;" rel="tipsy" title="Incluir Novo Endereço"><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /></a>
 					  	</span>
 				  	</div>
 	

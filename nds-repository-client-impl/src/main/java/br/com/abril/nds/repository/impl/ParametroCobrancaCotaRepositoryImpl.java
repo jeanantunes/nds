@@ -27,19 +27,16 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 	
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT distinct parametro.valorMininoCobranca ");
+		hql.append(" SELECT distinct parametro.cota.valorMinimoCobranca ");
 		hql.append(" FROM ParametroCobrancaCota parametro ");
-		hql.append(" WHERE parametro.valorMininoCobranca is not null ");
-		hql.append(" ORDER BY parametro.valorMininoCobranca ASC ");
+		hql.append(" WHERE parametro.cota.valorMinimoCobranca is not null ");
+		hql.append(" ORDER BY parametro.cota.valorMinimoCobranca ASC ");
 
 		Query query = getSession().createQuery(hql.toString());
 		
 		return query.list();
 		
 	}
-	
-	
-	
 
 	@Override
 	public ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota) {
@@ -69,18 +66,4 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		return (boolean) query.uniqueResult();
 	}
-
-    @Override
-    public boolean verificarDataAlteracaoTipoCota(Long idCota, Date dataOperacao) {
-        
-        Query query = this.getSession().createQuery(
-                " select case when c.alteracaoTipoCota = :data then true else false end " +
-                " from Cota c " +
-                " where c.id = :idCota ");
-        
-        query.setParameter("idCota", idCota);
-        query.setParameter("data", dataOperacao);
-        
-        return (Boolean)query.uniqueResult();
-    }
 }

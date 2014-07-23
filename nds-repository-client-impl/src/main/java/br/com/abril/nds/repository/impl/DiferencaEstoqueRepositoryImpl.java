@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,9 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -321,7 +325,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	 * 
 	 * @return Query
 	 */
-	private String gerarQueryDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+	@SuppressWarnings("deprecation")
+    private String gerarQueryDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
 										boolean totalizar) {
 		
 		String hql;
@@ -424,7 +429,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	 * @param dataLimiteLancamentoPesquisa - Data limite de lançamento para realizar a pesquisa
 	 * @param query - objeto query
 	 */
-	private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
+	@SuppressWarnings("deprecation")
+    private void aplicarParametrosParaPesquisaDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro,
 													 	 Query query) {
 		
 		if (filtro == null) {
@@ -582,7 +588,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
         return query.list();
     }
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public List<Diferenca> obterDiferencas(Date data, StatusConfirmacao... statusConfirmacao) {
 		
 		String hql = " from Diferenca diferenca where diferenca.dataMovimento = :dataMovimento "
@@ -690,4 +697,33 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		return (Long) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+    @Override
+    public List<ContasAPagarConsignadoVO> pesquisarDiferncas(
+            final String codigoProduto, final Long numeroEdicao, final Date data){
+        
+        final SQLQuery query = this.getSession().createSQLQuery(
+                "select " +
+                "  d.QTDE as diferenca, " +
+                "  d.TIPO_DIFERENCA as motivo " +
+                "from DIFERENCA d " +
+                "  join PRODUTO_EDICAO pe ON (pe.ID = d.PRODUTO_EDICAO_ID) " +
+                "  join PRODUTO p ON (p.ID = pe.PRODUTO_ID) " +
+                "  join LANCAMENTO l ON (l.PRODUTO_EDICAO_ID = pe.ID) " +
+                "where " +
+                "  (p.CODIGO = :codigoProduto OR p.CODIGO_ICD = :codigoICD OR p.CODIGO = :codigoProdin) " +
+                "  AND pe.NUMERO_EDICAO = :numeroEdicao " +
+                "  AND l.DATA_REC_DISTRIB = :data " +
+                "GROUP BY d.ID ");
+        
+        query.setParameter("codigoProduto", leftPad(codigoProduto, 8, "0"));
+        query.setParameter("codigoICD", codigoProduto);
+        query.setParameter("codigoProdin", leftPad(codigoProduto.concat("01"), 8, "0"));
+        query.setParameter("numeroEdicao", numeroEdicao);
+        query.setParameter("data", data);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsignadoVO.class));
+        
+        return query.list();
+    }
 }

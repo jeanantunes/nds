@@ -72,7 +72,7 @@
     <br />
   	<div class="linha_separa_fields">&nbsp;</div>
     	
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Mix de Produto</legend>
         <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
           <tr>
@@ -94,7 +94,7 @@
                 <td width="6%">C&oacute;digo:</td>
                 <td width="13%"><input type="text" name="codigoProduto" id="codigoProdutoMix"  onkeydown="onlyNumeric(event);" style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProdutoMix','#nomeProdutoMix',false,undefined,undefined )"/></td>
                 <td width="7%">Produto:</td>
-                <td width="24%"><input type="text" name="nomeProduto" id="nomeProdutoMix" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);" style="width:200px;"/></td>
+                <td width="24%"><input type="text" name="nomeProduto" id="nomeProdutoMix" style="width:200px;"/></td>
                 <td width="11%">Classifica&ccedil;&atilde;o:</td>
                 <td width="25%">
 	                <select name="select" id="filtroClassificacaoMix" style="width:160px;">
@@ -229,9 +229,10 @@
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           <tr>
             <td width="42"><strong>Cota:</strong></td>
-            <td width="92"><span id="codigoCotaModalReparte"></span></td>
+            <td width="92"><span id="MX_codigoCotaModalReparte"></span></td>
             <td width="44"><strong>Nome:</strong></td>
-            <td width="400"><span id="nomeCotaModalReparte" ></span></td>
+            <td width="400"><span id="MX_nomeCotaModalReparte" ></span></td>
+            <td width="400"><span id="reparteOriginal"></span></td>
             <td width="151">&nbsp;</td>
           </tr>
         </table>
@@ -243,11 +244,11 @@
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           
           <td width="42"><strong>C&oacute;digo:</strong></td>
-            <td width="92">&nbsp;<span id="codigoProdutoModalReparte"></td>
+            <td width="92">&nbsp;<span id="MX_codigoProdutoModalReparte"></td>
             <td width="44"><strong>Produto:</strong></td>
-            <td width="400">&nbsp;<span id="nomeProdutoModalReparte" ></td>
+            <td width="400">&nbsp;<span id="MX_nomeProdutoModalReparte" ></td>
             <td width="44"><strong>Classifica&ccedil;&atilde;o:</strong></td>
-            <td width="155">&nbsp;<span id="classificacaoModalReparte"></td>
+            <td width="155">&nbsp;<span id="MX_classificacaoModalReparte"></td>
           
         </table>
 
@@ -255,7 +256,7 @@
     <br clear="all" />
     <fieldset style="width:605px!important; margin-top:10px;">
    		<legend>PDV da Cota</legend>
-    	<table class="pdvCotaGrid" id="pdvCotaGrid"></table>
+    	<table class="MX_pdvCotaGrid" id="MX_pdvCotaGrid"></table>
         <table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="312">&nbsp;</td>
@@ -282,6 +283,12 @@
 	<!-- DIALOG REPARTE -->	
 	<div id="dialog-confirma-reparte" title="Confirma Reparte PDV" style="display:none;">
 	<p>A soma dos valores dos repartes definidos est&aacute; maior que o valor de reparte m&aacute;ximo. Deseja prosseguir?</p>
+	</div>
+	
+	<!-- DIALOG ALTERACAO REPARTE MIN / MAX -->
+	<div id="dialog-confirma-alteracao-reparte" title="Confirma alteração Reparte" style="display:none;">
+	<p>Ao alterar o reparte Mínimo/Máximo, os repartes por PDV serão excluídos; Com isso deverão ser cadastrados novamente.</p>
+	<p> Deseja prosseguir? </p>
 	</div>
 	
 	<!-- DIALOG NOVO MIX POR COTA -->	
@@ -376,9 +383,13 @@
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
 <script type="text/javascript" src="scripts/mixCotaProduto.js"></script>
+<script type="text/javascript" src="scripts/autoCompleteCampos.js"></script>
 <script type="text/javascript">
+
 var pesquisaProduto = new PesquisaProduto();
 var pesquisaCota = new PesquisaCota();
+
+var autoComplete = new AutoCompleteCampos();
 
 $(function(){
 	mixCotaProdutoController.init();

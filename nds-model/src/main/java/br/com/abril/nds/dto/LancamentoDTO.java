@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 
@@ -26,6 +27,10 @@ public class LancamentoDTO implements Serializable {
 	private StatusLancamento statusLancamento;
 	
 	private TipoLancamento tipoLancamento;
+	
+	private Integer numeroPeriodo;
+	
+	private FormaComercializacao formaComercializacaoProduto;
 	
 	public TipoLancamento getTipoLancamento() {
 		return tipoLancamento;
@@ -95,5 +100,26 @@ public class LancamentoDTO implements Serializable {
 	public void setStatusLancamento(StatusLancamento statusLancamento) {
 		this.statusLancamento = statusLancamento;
 	}
+
+    
+    public Integer getNumeroPeriodo() {
+        return numeroPeriodo;
+    }
+
+    
+    public void setNumeroPeriodo(Integer numeroPeriodo) {
+        this.numeroPeriodo = numeroPeriodo;
+    }
+
+	public FormaComercializacao getFormaComercializacaoProduto() {
+		return formaComercializacaoProduto;
+	}
+
+	public void setFormaComercializacaoProduto(
+			FormaComercializacao formaComercializacaoProduto) {
+		this.formaComercializacaoProduto = formaComercializacaoProduto;
+	}
+    
+    
 	
 }

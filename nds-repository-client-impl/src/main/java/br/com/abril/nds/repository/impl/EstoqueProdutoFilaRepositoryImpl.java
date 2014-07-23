@@ -1,13 +1,14 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoFila;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 
@@ -55,6 +56,28 @@ public class EstoqueProdutoFilaRepositoryImpl extends AbstractRepositoryModel<Es
 		query.setParameter("numeroCota", numeroCota);
 		
 		return query.list();
+		
+	}
+	
+	@Override
+	public void insert(Long idCota,
+    		Long idProdutoEdicao, 
+    		TipoEstoque tipoEstoque,
+    		OperacaoEstoque operacaoEstoque,
+    		BigInteger qtde){
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append("INSERT INTO ESTOQUE_PRODUTO_FILA ");
+		sql.append("(TIPO_ESTOQUE,COTA_ID,PRODUTO_EDICAO_ID,QTDE,OPERACAO_ESTOQUE) ");
+		sql.append("VALUES (:tipoEstoque,:idCota,:idProdutoEdicao,:qtde,:operacaoEstoque)");
+		
+		super.getSession().createSQLQuery(sql.toString())
+		.setParameter("tipoEstoque", tipoEstoque.name())
+		.setParameter("idCota", idCota)
+		.setParameter("idProdutoEdicao", idProdutoEdicao)
+		.setParameter("qtde", qtde)
+		.setParameter("operacaoEstoque", operacaoEstoque.name())
+		.executeUpdate();
 		
 	}
 	

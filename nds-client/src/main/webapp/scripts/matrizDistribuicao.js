@@ -147,7 +147,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			 
 			 $(id).removeClass("erow");
 			 
-			 if (T.lancamentos[i].idCopia != null) {
+			 if ((T.lancamentos[i].idCopia != null) && (i!=0)) {
 				 
 				 for (var j=0; j < 12; j++) {
 					 $($(id).children()[j]).html("");
@@ -169,10 +169,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
 		if (resultadoPesquisa[3]) {
-			$("#matrizFinalizada").show();
+			$("#matrizFinalizada", _workspace).show();
 		}
 		else {
-			$("#matrizFinalizada").hide();
+			$("#matrizFinalizada", _workspace).hide();
 		}
 		
 		$("#totalGerado", _workspace).clear();
@@ -221,25 +221,33 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         var reparte =0;
         var repDist = 0;
         
-        if((row.cell.estoque!=null && row.cell.estoque > 0) || row.cell.periodo > 1) {
-        	reparte =row.cell.estoque;
-        	repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.estoque);
-        }else {
-        	//reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
-            reparte = (row.cell.reparte);
-            repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte);
-	    }
-
+//        if((row.cell.estoque!=null && row.cell.estoque > 0) || row.cell.periodo > 1) {
+//        	reparte =row.cell.estoque;
+//        	repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.estoque);
+//        }else {
+//        	//reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
+//            reparte = (row.cell.reparte);
+//            repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte);
+//	    }
+        
+        reparte = (row.cell.reparte);
+        
+        repDist = row.cell.repDistrib;
+        
+        repDist = (repDist != undefined) ? repDist : reparte;
+        
         row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i, liberado);
 
-        row.cell.sobra = (row.cell.idEstudo == null || row.cell.idEstudo == "")?'<span id="sobra'+i+'">0</span>':
+        row.cell.sobra = (row.cell.repDistrib == null || row.cell.repDistrib == "")?'<span id="sobra'+i+'">0</span>':
             '<span id="sobra'+i+'">'+(reparte - repDist)+'</span>';
 
        
         var t  = "Previsto: " + (row.cell.reparte);
             t += "\r\nEstoque: " + row.cell.estoque;
 
-        row.cell.reparte = '<span title="' + t + '">' + reparte + '</span>'; //parseInt(row.cell.reparte, 10)
+        row.cell.reparte = '<span title="' + t + '">' + reparte + '</span>'; 
+        
+        //parseInt(row.cell.reparte, 10)
 
 		T.lancamentos.push({
 					idRow : row.cell.idRow,
@@ -625,6 +633,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.popup_confirmar_duplicarLinha = function() {
 		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}
+		
 		$( "#dialog-confirm-duplicar", _workspace ).dialog({
 		    escondeHeader: false,
 			resizable: false,
@@ -728,6 +740,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	 */
 	this.popup_confirmar_exclusao_estudo = function() {
 		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}			
+					
 		$( "#dialog-confirm-exclusao", _workspace ).dialog({
 		    escondeHeader: false,
 			resizable: false,
@@ -763,6 +779,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	 * Exibe popup de confirmação de exclusão de estudo
 	 */
 	this.popup_confirmar_reabertura_estudo = function() {
+		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}	
 		
 		$( "#dialog-confirm-reabert", _workspace ).dialog({
 		    escondeHeader: false,
@@ -864,6 +884,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).hide();
 		$("#telaPesquisaMatriz", _workspace).show();
         this.tabSomarCopiarEstudos = '';
+        $(".areaBts", _workspace).show();
     },
 	
 	this.mostraTelaCopiarProporcionalDeEstudo = function() {
@@ -929,38 +950,42 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).show();
 	},
 	
-	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
+	this.redirectToTelaAnalise = function redirectToTelaAnalise(estudo){
 
-		var matrizSelecionado_estudo =null;
-		
-		if(typeof(histogramaPosEstudoController)!="undefined"){
-			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
-		}
-		var data = [];
-		var idEstudo =  estudo || matrizSelecionado_estudo;
-		data.push({name: 'id', value: idEstudo});
-		if ($('#parcial').val() === 'true') {
-			data.push({name: "modoAnalise", value: "PARCIAL"});
-		}
-        data.push({name: "reparteCopiado", value: $("#copiarEstudo-copia-reparte").text()});
+        // Obter matriz de distribuição
+        var matriz = [],
+        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+        	dadosResumo = {},
+        	numeroEstudo = estudo;
         
-        console.log(T.estudoAserCopiado);
-        data.push({name: "estudoOrigem", value: T.estudoAserCopiado});
-        data.push({name: "dataLancamentoEdicao", value: $("#copiarEstudo-dataLancto").text()});
+        $.postJSON(url,
+                [{name : "id" , value : numeroEstudo}],
+                function(response){
+	            // CALLBACK
+	            // ONSUCESS
+	            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+	            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+	            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+	            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+	            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+	            
+	            $('#workspace').tabs({load : function(event, ui) {
+					
+	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
+	            	histogramaPosEstudoController.matrizSelecionado = matriz;
+	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
 
-		$.get(
-				contextPath + '/distribuicao/analise/parcial/',
-				data, // parametros
-				function(html){ // onSucessCallBack
-					$(divToHide).hide();
-					$(divToShow).html(html);
-					$(divToShow).show();
-					$( divToShow + ' #botaoVoltarTelaAnalise').click(function voltarTelaAnalise(){
-						$(divToShow).hide();
-						$(divToHide).show();
-					});
-			});
-		
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
+
+                var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
+        	}
+        );
+
 	},
 
 	this.somarEstudos = function() {
@@ -996,6 +1021,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.copiarProporcionalDeEstudo = function() {
 		
 		T.esconderOpcoes();
+		
+		$(".areaBts", _workspace).hide();
 		
 		if (!T.validarMarcacaoUnicoItem()) {
 			return;
@@ -1490,6 +1517,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	},
 
 	this.mostrarOpcoes = function() {
+		
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}	
+		
 		opcoesAberto = !opcoesAberto;
 		$( '.opcoesEstudos' ).toggle(opcoesAberto);		
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
@@ -1508,9 +1540,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			exibirMensagem("WARNING",["Favor gerar um estudo."]);
 			return;
 		} else {
-			$(".areaBts").hide();
+			$(".areaBts", _workspace).hide();
 			// Deve ir direto para EMS 2031
-			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
+			T.redirectToTelaAnalise($('#copiarEstudo-estudo').text());
 		}
 	},
 
@@ -1592,7 +1624,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});
 				
-				var parametros = '?codigoProduto='+ selecionado.codigoProduto +'&edicao='+ selecionado.edicao;
+				var parametros = '?idLancamento='+ selecionado.idLancamento;
 				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo'+ parametros);
 			}
 			
@@ -1605,6 +1637,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.gerarEstudoAutomatico = function() {
 	    
+		if(!verificarPermissaoAcesso(_workspace)){
+			return;
+		}
+		
 	    if (T.obeterQuantosItensMarcados() == 0) {
 	    	 exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
 		     return;
@@ -1666,39 +1702,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        	
 	        	return;
 	        }
-	        /*
-	        $('#confirmar_variaveis').dialog({
-	            escondeHeader: false,
-	            resizable: false,
-	            height:'auto',
-	            width:600,
-	            modal: true,
-	            buttons: [{
-	                id: "btnConfirmarVariaveis",
-	                text: "Confirmar",
-	                click: function() {
-	                	
-	                	if (T.estudo.estudo[0].length > 0) {
-	                		
-	                		$.each(T.estudo.estudo[0], function(index, htmlEstudo) {
-	                			
-	                			myWindow = window.open('', '_blank');
-	     	                    myWindow.document.write(htmlEstudo);
-	     	                    myWindow.focus();
-	                		});
-	                	}
-	                   
-	                    $(this).dialog("close");
-	                }
-	            },
-	            {id: "btnCancelarVariaveis",
-	                text: "Cancelar",
-	                click: function() {
-	                    $(this).dialog("close");
-	                }
-	            }]
-	        });
-            */
 	    }
 	    );
 	},
@@ -1729,16 +1732,17 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                 	var postData = [];
              	    
              	    $.each(edicoesBase, function(index, edicaoBase) {
-             	           
+             	    	
              	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : edicaoBase.codigoProduto});
-             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.edicao});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.numeroEdicao});
              	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : edicaoBase.repDistrib});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
              	    	    
              	    	    if (edicaoBase.idCopia != null) {
              	    	    	
-             	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
              	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : edicaoBase.idCopia});
              	    	    }
+             	    	
              	    });
              	    
              	   T.postGeracaoEstudoAutomatico(postData, true);
@@ -1852,5 +1856,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.esconderOpcoes();
 	};
+
 }
 //@ sourceURL=matrizDistribuicao.js

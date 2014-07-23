@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoArquivoP7DTO;
-import br.com.abril.nds.dto.IntegracaoFiscalDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaIntegracaoFiscal;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -33,18 +31,6 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 	
 	public IntegracaoFiscalRepositoryImpl() {
 		super(MovimentoEstoque.class);
-	}
-
-	@Override
-	public List<IntegracaoFiscalDTO> pesquisarPorMesAno(FiltroConsultaIntegracaoFiscal filtro) {
-		
-		return null;
-	}
-
-	@Override
-	public void obterFixacoesRepartePorProduto(FiltroConsultaIntegracaoFiscal filtro) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -86,9 +72,9 @@ public class IntegracaoFiscalRepositoryImpl extends AbstractRepositoryModel<Movi
 			.append(" DATE_FORMAT(last_day(:dataInventario2),'%d/%m/%Y') dat_inventario, ")
 			.append(" T.codMaterial cod_material, ")
 			.append(" cast(coalesce(T.ncmCodigo,'') as char) as classif_fiscal, ")
-			.append(" replace(cast(round((CASE WHEN t.descontoAplicado > 0 THEN (t.custo_unitario-(t.custo_unitario * (t.descontoAplicado - 100))) ")
+			.append(" replace(cast(round((CASE WHEN t.descontoAplicado > 0 THEN ((1-(t.descontoAplicado/100))*t.custo_unitario) ")
 			.append(" 			else t.custo_unitario END), 4) AS char), '.', ',') custo_unitario, ")
-			.append(" replace(cast(round(((CASE WHEN t.descontoAplicado > 0 THEN (t.custo_unitario-(t.custo_unitario * (t.descontoAplicado - 100))) ") 
+			.append(" replace(cast(round(((CASE WHEN t.descontoAplicado > 0 THEN ((1-(t.descontoAplicado/100))*t.custo_unitario) ") 
 			.append(" 	else t.custo_unitario END)* round(sum(entrada) - sum(saida))), 4) AS char), '.', ',') custo_total, ")
 			.append(" cast(round(sum(entrada)-sum(saida)) as char) quantidade, ")
 			.append(" :dataNow as openflex02, ")

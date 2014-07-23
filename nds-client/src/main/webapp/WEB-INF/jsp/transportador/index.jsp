@@ -165,96 +165,7 @@
 							<td><input type="text" style="width: 150px" id="inscEstadual" /></td>
 						</tr>
 					</table>
-					<table width="850" cellpadding="3" cellspacing="2">
-						<tr>
-							<td width="117">Cobrança</td>
-							<td>
-								<select style="width: 100px;" id="modalidadeCobranca" onchange="transportadorController.mostrarOpcaoSelecionada()" >
-									<option onclick="transportadorController.mostrarOpcaoTaxaFixa();" value="TAXA_FIXA">Taxa Fixa</option>
-									<option onclick="transportadorController.mostrarOpcaoPercentual()" value="PERCENTUAL">Percentual</option>
-								</select>
-							</td>
-							<td class="transpTaxaFixa">Valor R$:</td>
-							<td class="transpTaxaFixa">
-								<input type="text" id="valorTaxaFixa"/>
-							</td>
-							
-							<td width="180" class="transpPercentual" style="display: none;">Percentual Faturamento Preço Capa:</td>
-							<td class="transpPercentual" style="display: none;">
-								<input type="text" id="valorPercentualFaturamento"/>
-							</td>
-							
-							<td>
-								<input type="checkbox" id="checkPorEntrega" />
-							</td>
-							<td>
-								Por Entrega
-							</td>
-						</tr>
-					</table>
-					
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-					        <td width="20%">Periodicidade de Cobrança:</td>
-					        <td width="3%">
-					        	<input name="radioPeriodicidade" type="radio" value="DIARIO" 
-					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" id="radioPeridioDiario" />
-					        </td>
-					        <td width="7%">Diário</td>
-					        <td width="3%">
-					        	<input name="radioPeriodicidade" type="radio" value="SEMANAL" 
-					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" />
-					        </td>
-					        <td width="9%">Semanal</td>
-					        <td width="3%">
-					        	<input name="radioPeriodicidade" type="radio" value="QUINZENAL" 
-					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" />
-					        </td>
-					        <td width="10%">Quinzenal</td>
-					        <td width="3%">
-					        	<input name="radioPeriodicidade" type="radio" value="MENSAL" 
-					        		onclick="transportadorController.alterarPeriodicidadeCobranca(this.value);" />
-					        </td>
-					        <td width="42%">Mensal</td>
-						</tr>
-					</table>
-          			<table width="100%" border="0" cellspacing="1" cellpadding="1" class="perCobrancaSemanal" style="display: none;">
-	            		<tr class="checksDiasSemana">
-							<td width="20"><input type="checkbox" id="checkSegunda" value="SEGUNDA_FEIRA" name="diaSemanaCob" /></td>
-							<td width="98">Segunda-feira</td>
-							<td width="20"><input type="checkbox" id="checkTerca" value="TERCA_FEIRA" name="diaSemanaCob" /></td>
-							<td width="80">Terça-feira</td>
-							<td width="20"><input type="checkbox" id="checkQuarta" value="QUARTA_FEIRA" name="diaSemanaCob" /></td>
-							<td width="83">Quarta-feira</td>
-							<td width="20"><input type="checkbox" id="checkQuinta" value="QUINTA_FEIRA" name="diaSemanaCob" /></td>
-							<td width="85">Quinta-feira</td>
-							<td width="20"><input type="checkbox" id="checkSexta" value="SEXTA_FEIRA" name="diaSemanaCob" /></td>
-							<td width="79">Sexta-feira</td>
-							<td width="20"><input type="checkbox" id="checkSabado" value="SABADO" name="diaSemanaCob" /></td>
-							<td width="54">Sábado</td>
-							<td width="20"><input type="checkbox" id="checkDomingo" value="DOMINGO" name="diaSemanaCob" /></td>
-							<td width="58">Domingo</td>
-            			</tr>
-          			</table>
-          			<table width="100%" border="0" cellspacing="1" cellpadding="1" class="perCobrancaQuinzenal" style="display: none;">
-        				<tr>
-							<td width="396" height="24" align="right">Todo dia:&nbsp;</td>
-							<td width="69">
-								<input type="text" id="inputQuinzenalDiaInicio" 
-									onkeyup="transportadorController.calcularDiaFimCobQuinzenal();" style="width:60px;"/>
-							</td>
-							<td width="21" align="center">e</td>
-							<td width="271">
-								<input type="text" id="inputQuinzenalDiaFim" disabled="disabled" style="width:60px;"/>
-							</td>
-      					</tr>
-					</table>
-					<table width="100%" border="0" cellspacing="1" cellpadding="1" class="perCobrancaMensal" style="display: none;">
-      					<tr>
-							<td width="495" align="right">Todo dia:&nbsp;</td>
-							<td width="268"><input type="text" id="inputCobrancaMensal" style="width:60px;"/></td>
-      					</tr>
-    				</table> 
+					 
     				</fieldset>
     				<div class="linha_separa_fields">&nbsp;</div>   				
     				
@@ -318,21 +229,21 @@
 						<tr class="especialidades">
 							<td valign="top">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="transportadorController.popup_incluir_veiculo();" rel="tipsy" title="Incluir Novo Veículo">
+									<a href="javascript:;" isEdicao="true" onclick="transportadorController.popup_incluir_veiculo();" rel="tipsy" title="Incluir Novo Veículo">
 										<img src="${pageContext.request.contextPath}/images/ico_veiculo.gif" hspace="5" border="0" />
 									</a>
 								</span>
 							</td>
 							<td valign="top">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="transportadorController.popup_incluir_motorista();" rel="tipsy" title="Incluir Novo Motorista">
+									<a href="javascript:;" isEdicao="true" onclick="transportadorController.popup_incluir_motorista();" rel="tipsy" title="Incluir Novo Motorista">
 										<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0" />
 									</a>
 								</span>
 							</td>
 							<td valign="top">
 								<span class="bt_novos">
-									<a href="javascript:;" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
+									<a href="javascript:;" isEdicao="true" onclick="transportadorController.confirmarAssociacao();" rel="tipsy" title="Confirmar Associação">
 										<img border="0" src="${pageContext.request.contextPath}/images/ico_check.gif">
 									</a>
 								</span>
@@ -354,14 +265,14 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
+				<a href="javascript:;" isEdicao="true" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
 					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif"	hspace="5" border="0" />
 			</a>
 		</span>
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		<legend> Pesquisar Transportador </legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>

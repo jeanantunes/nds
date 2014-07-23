@@ -19,28 +19,14 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
     private Integer periodo;
     private boolean parcial;
     private String dataLancamentoFormatada;
-    private BigDecimal reparte;
-    private BigDecimal venda;
-    private BigDecimal percentualVenda;
+    private BigInteger reparte;
+    private BigInteger venda;
     private String status;
     private String classificacao;
     private BigInteger idClassificacao;
+    
+    private BigDecimal percentualVenda;
 
-    public BigInteger getId() {
-	return id;
-    }
-
-    public void setId(BigInteger id) {
-	this.id = id;
-    }
-
-    public BigInteger getNumeroEdicao() {
-	return numeroEdicao;
-    }
-
-    public void setNumeroEdicao(BigInteger numeroEdicao) {
-	this.numeroEdicao = numeroEdicao;
-    }
 
     public String getNome() {
 	return nome;
@@ -80,28 +66,28 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 	this.dataLancamentoFormatada = dataLancamentoFormatada;
     }
 
-    public BigDecimal getReparte() {
-	return reparte;
-    }
+	public BigInteger getReparte() {
+		return reparte;
+	}
 
-    public void setReparte(BigDecimal reparte) {
-	this.reparte = reparte;
-    }
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
 
-    public BigDecimal getVenda() {
-	return venda;
-    }
+	public BigInteger getVenda() {
+		return venda;
+	}
 
-    public void setVenda(BigDecimal venda) {
-	this.venda = venda;
-    }
+	public void setVenda(BigInteger venda) {
+		this.venda = venda;
+	}
 
-    public String getStatus() {
-	return status;
+	public String getStatus() {
+		return status;
     }
 
     public void setStatus(String status) {
-	this.status = status;
+    	this.status = status;
     }
 
     public String getClassificacao() {
@@ -120,39 +106,56 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 	this.codigoProduto = codigoProduto;
     }
 
-    public BigDecimal getPercentualVenda() {
-	return percentualVenda;
-    }
-
-    public void setPercentualVenda(BigDecimal percentualVenda) {
-	this.percentualVenda = percentualVenda;
-    }
-
     public boolean isParcial() {
 	return parcial;
     }
 
     public void setParcial(Integer parcial) {
-	if (parcial == null) {
-	    this.parcial = false;
-	} else {
-	    this.parcial = parcial.equals(1);
+		if (parcial == null) {
+		    this.parcial = false;
+		} else {
+		    this.parcial = parcial.equals(1);
+		}
+    }
+
+	public BigDecimal getPercentualVenda() {
+		return percentualVenda;
 	}
-    }
 
-    public BigInteger getIdProduto() {
-        return idProduto;
-    }
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
+	}
 
-    public void setIdProduto(BigInteger idProduto) {
-        this.idProduto = idProduto;
-    }
+	public BigInteger getId() {
+		return id;
+	}
 
-    public BigInteger getIdClassificacao() {
-        return idClassificacao;
-    }
+	public void setId(BigInteger id) {
+		this.id = id;
+	}
 
-    public void setIdClassificacao(BigInteger idClassificacao) {
-        this.idClassificacao = idClassificacao;
-    }
+	public BigInteger getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(BigInteger numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+	public BigInteger getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(BigInteger idProduto) {
+		this.idProduto = idProduto;
+	}
+
+	public BigInteger getIdClassificacao() {
+		return idClassificacao;
+	}
+
+	public void setIdClassificacao(BigInteger idClassificacao) {
+		this.idClassificacao = idClassificacao;
+	}
+	
 }

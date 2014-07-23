@@ -14,34 +14,28 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheCota,Long> {
 	
 	/**
+	 * Retorna o id do registro de ChamadaEncalheCota.
+	 * 
+	 * @param idCota
+	 * @param idProdutoEdicao
+	 * @param dataRecolhimento
+	 * 
+	 * @return Long
+	 */
+	public Long obterIdChamadaEncalheCotaNaData(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
+	
+	/**
 	 * Obtém obtém o reparte referente a chamada encalhe relacionadas a um 
 	 * numeroCota e dataRecolhimento.  
 	 * 
 	 * @param numeroCota
-	 * @param dataOperacao
+	 * @param datas
 	 * @param conferido
 	 * @param postergado
 	 * 
 	 * @return BigDecimal
 	 */
-	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Boolean conferido, Boolean postergado);
-	 
-	/**
-	 * Obtém obtém o reparte referente a chamada encalhe relacionadas a um 
-	 * numeroCota e período de dataRecolhimento.  
-	 * 
-	 * @param cotaId
-	 * @param dataOperacaoDe
-	 * @param dataOperacaoAte
-	 * @param postergado
-	 * 
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterReparteDaChamaEncalheCotaNoPeriodo(
-			Long cotaId, 
-			Date dataOperacaoDe,
-			Date dataOperacaoAte,
-			Boolean postergado);
+	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, List<Date> datas, Boolean conferido, Boolean postergado);
 	
 	
 	/**
@@ -164,5 +158,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
 	
 	ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
+	
+	Long quantidadeChamadasEncalheParaCota(Long idCota, Date periodoInicial, Date periodoFinal);
 	
 }

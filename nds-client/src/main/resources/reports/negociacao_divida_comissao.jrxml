@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_comissao" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="09609187-d4a1-4f81-aab7-a4d6ebf9c4e4">
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="1"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
@@ -76,7 +76,7 @@
 				</textElement>
 				<text><![CDATA[Negociação de Dívida]]></text>
 			</staticText>
-			<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
 				<reportElement uuid="fdbdde10-4525-44db-a5f8-c967dbbe3ce4" x="21" y="0" width="115" height="78"/>
 				<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 			</image>
@@ -136,20 +136,7 @@
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="1dcacf4f-a9fb-42c5-8bed-98db476d0496" mode="Opaque" x="-1" y="0" width="110" height="20" forecolor="#000000" backcolor="#999999"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Comissão Atual]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="e0911e91-0127-473d-87aa-b6fb7d87435b" mode="Opaque" x="109" y="0" width="111" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="e0911e91-0127-473d-87aa-b6fb7d87435b" mode="Opaque" x="0" y="0" width="555" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -161,36 +148,12 @@
 				</textElement>
 				<text><![CDATA[Utilizar]]></text>
 			</staticText>
-			<staticText>
-				<reportElement uuid="d21d0397-f0c8-4c8b-8483-317642363bfb" mode="Opaque" x="220" y="0" width="335" height="20" forecolor="#000000" backcolor="#999999"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Comissão da Cota enquanto houver saldo de divivida]]></text>
-			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="53047204-0c26-4a68-9713-f5422c755661" mode="Opaque" x="-1" y="0" width="110" height="20" backcolor="#CCCCCC"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{comissaoAtualCota}.setScale(2, RoundingMode.HALF_EVEN) + " %"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="ed3f663a-49c0-40d5-b082-cd0ed56960cf" mode="Opaque" x="109" y="0" width="111" height="20" backcolor="#CCCCCC"/>
+				<reportElement uuid="ed3f663a-49c0-40d5-b082-cd0ed56960cf" mode="Opaque" x="0" y="0" width="555" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -199,17 +162,6 @@
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{comissaoParaPagamento}.setScale(2, RoundingMode.HALF_EVEN) + " %"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="fa0eaa85-c223-4aa3-8c95-803426e17a49" mode="Opaque" x="220" y="0" width="335" height="20" backcolor="#CCCCCC"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{comissaoCotaEnquantoHouverSaldo}.setScale(2, RoundingMode.HALF_EVEN) + " %"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

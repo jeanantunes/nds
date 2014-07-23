@@ -96,8 +96,7 @@ fieldset {
 	<div
 		id="produtoEdicaoController-dialog-precos-real-previsto-divergentes"
 		title="Preços Real e Previsto divergentes">
-		<p>Os valores de preço previsto e real estão divergentes. Deseja
-			corrigir?</p>
+		<p>Os valores de preço previsto e real estão divergentes. Deseja continuar?</p>
 	</div>
 
 	<!--  INICIO POPUP CADASTRO EDICAO -->
@@ -107,6 +106,10 @@ fieldset {
 			id="produtoEdicaoController-istrac29" /> <input type="hidden"
 			name="produtoEdicaoDTO.idFornecedor"
 			id="produtoEdicaoController-idFornecedor" />
+			
+			<input type="hidden" id="produtoEdicaoController-formaComercializacao"
+			name="produtoEdicaoDTO.formaComercializacao" value="" />
+			
 
 		<div id="produtoEdicaoController-dialog-novo"
 			title="Incluir Nova Edi&ccedil;&atilde;o">
@@ -360,7 +363,7 @@ fieldset {
 							</table>
 						</fieldset>
 						<fieldset
-							style="width: 653px !important; margin-bottom: 2px; float: left;">
+							style="width: 653px !important; margin-bottom: 2px; float: left;" id="fildSet-data-recolhimento">
 							<legend>Data Recolhimento</legend>
 							<table border="0" cellSpacing="1" cellPadding="1" width="562">
 								<tbody>
@@ -373,7 +376,7 @@ fieldset {
 										<td width="90"><input
 											style="width: 70px; text-align: right;"
 											id="produtoEdicaoController-dataRecolhimentoReal"
-											disabled="disabled" name="precoPrevisto.dataRecolhimentoReal"
+											name="produtoEdicaoDTO.dataRecolhimentoReal"
 											type="text"></td>
 										<td width="170" align="right">Semana de Recolhimento:</td>
 										<td width="180"><input style="width: 70px; float: left;"
@@ -401,7 +404,7 @@ fieldset {
 								<img src="${pageContext.request.contextPath}/images/ico_add.gif"
 								border="0" /> <b> Incluir Novo</b>
 						</a>
-						</span> <span class="bt_novos"> <a name="linkRedistribuicao"
+						</span> <span class="bt_novos"> <a name="linkRedistribuicao" isEdicao="true"
 							href="javascript:;" style="display: none;"
 							onclick="produtoEdicaoController.popupRedistribuicao();"> <img
 								src="${pageContext.request.contextPath}/images/ico_salvar.gif"
@@ -515,12 +518,9 @@ fieldset {
 									<tr class="descBrinde" style="display: none;">
 										<td height="24">Descri&ccedil;&atilde;o Brinde:</td>
 										<td><select name="produtoEdicaoDTO.idBrinde"
-											id="produtoEdicaoController-descricaoBrinde"
+											id="produtoEdicaoController-selectBrinde"
 											style="width: 190px;">
 												<option value="">Selecione</option>
-												<c:forEach items="${brindes}" var="brinde">
-													<option value="${brinde.id}">${brinde.descricao}</option>
-												</c:forEach>
 										</select></td>
 									</tr>
 
@@ -592,11 +592,11 @@ fieldset {
 
 	<!-- INICIO FILTRO PESQUISA -->
 
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 
 		<input type="hidden" id="produtoEdicaoController-codigoProduto"
 			name="codigoProduto" value="" />
-
+			
 		<legend>Pesquisar Produto</legend>
 
 		<table width="950" border="0" cellpadding="2" cellspacing="1"
@@ -694,36 +694,35 @@ fieldset {
 
 	<!-- ADICIONAR EM LOTE -->
 
-	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
-		<fieldset style="width: 300px;">
-			<legend>Adicionar em Lote</legend>
-			<table width="200" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<p>Utilize o modelo de exemplo para fazer upload para o
-						sistema:</p>
-					<p>
-						<span class="bt_novos" title="Download Modelo"> <a
-							href="${pageContext.request.contextPath}/modelos/modelo_edicao.xls">
-								<img align="center" src="images/ico_excel.png" hspace="5"
-								border="0" />Modelo de exemplo
-						</a>
-						</span>
-					</p>
-					<br>
-					<br>
-					<br>
-					<hr>
-					<p>Selecione um arquivo para upload:</p>
-					<form name="arquivoUpLoadEdicao" id="arquivoUpLoadEdicao"
-						method="post" enctype="multipart/form-data">
-						<input type="file" id="xls" name="xls" />
-					</form>
-				</tr>
-			</table>
-			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
-		</fieldset>
-	</div>
-
+	<form name="arquivoUpLoadEdicao" id="arquivoUpLoadEdicao"
+		method="post" enctype="multipart/form-data">
+		<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
+			<fieldset style="width: 300px;">
+				<legend>Adicionar em Lote</legend>
+				<table width="200" border="0" cellspacing="2" cellpadding="2">
+					<tr>
+						<p>Utilize o modelo de exemplo para fazer upload para o
+							sistema:</p>
+						<p>
+							<span class="bt_novos" title="Download Modelo"> <a
+								href="${pageContext.request.contextPath}/modelos/modelo_edicao.xls">
+									<img align="center" src="images/ico_excel.png" hspace="5"
+									border="0" />Modelo de exemplo
+							</a>
+							</span>
+						</p>
+						<br>
+						<br>
+						<br>
+						<hr>
+						<p>Selecione um arquivo para upload:</p>
+							<input type="file" id="xls" name="xls" />
+					</tr>
+				</table>
+				<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
+			</fieldset>
+		</div>
+	</form>
 </body>
 
 </html>

@@ -819,6 +819,7 @@ public class EnderecoController extends BaseController {
                     || !enderecoAssociacao.getEndereco().getLogradouro().equals(endereco.getLogradouro())
                     || !enderecoAssociacao.getEndereco().getNumero().equals(endereco.getNumero())) {
                 enderecoNovo = true;
+                break;
             }
         }
         

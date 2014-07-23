@@ -126,12 +126,11 @@
 		</form>
 
 		<form id="form-ProdutosNaoBalanceadosAposConfirmacaoMatriz">
-			<div id="dialogProdutosNaoBalanceadosAposConfirmacaoMatriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
+			<div id="dialogProdutosDeOutraSemana" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 				<jsp:include page="../messagesDialog.jsp" />
-				<p>Os seguintes produtos não puderam ser balanceados. Todas as datas já estão confirmadas.</p>
+				<p>Os seguintes produtos estão com a semanda de recolhimento diferente da semana de recolhimento do fornecedor:</p>
 				<br>
-				<p><span id="descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz"></span></p>
-				<p>Deseja que os produtos sejam processados na próxima data de recolhimento disponível?</p>   
+				<p><span id="descDialogProdutosDeOutraSemana"></span></p>
 			</div>
 		</form>
 
@@ -186,7 +185,7 @@
 
 		<!-- Filtro de Pesquisa -->
 
-		<fieldset class="fieldFiltro" style="margin-top: 0px;">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados" style="margin-top: 0px;">
 
 			<legend>Pesquisar Balanceamento da Matriz de Recolhimento </legend>
 
@@ -194,7 +193,7 @@
 				<tr>
 					<td width="76">Fornecedor:</td>
 					<td colspan="3">
-						<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+						<a href="javascript:void(0)" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 						<div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 								<input type="checkbox" checked="checked" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>

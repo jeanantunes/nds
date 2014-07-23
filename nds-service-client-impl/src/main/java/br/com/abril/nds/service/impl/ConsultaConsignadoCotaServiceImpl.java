@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 
 @Service
@@ -19,10 +20,14 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	
 	@Autowired
 	private ConsultaConsignadoCotaRepository consignadoCotaRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 
 	@Override
 	@Transactional
-	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {		 
+	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+		
 		return this.consignadoCotaRepository.buscarConsignadoCota(filtro, limitar);
 	}
 
@@ -30,20 +35,25 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	@Transactional
 	public Long buscarTodosMovimentosCotaPeloFornecedor(
 			FiltroConsultaConsignadoCotaDTO filtro) {		 
+		
 		return this.consignadoCotaRepository.buscarTodosMovimentosCotaPeloFornecedor(filtro);
 	}
 
 	@Override
 	@Transactional
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
-			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {		 
+			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {		
+		
+		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		
 		return this.consignadoCotaRepository.buscarMovimentosCotaPeloFornecedor(filtro, limitar);
 	}
 
 	@Override
 	@Transactional
 	public BigDecimal buscarTotalGeralDaCota(
-			FiltroConsultaConsignadoCotaDTO filtro) {		 
+			FiltroConsultaConsignadoCotaDTO filtro) {	
+		
 		return this.consignadoCotaRepository.buscarTotalGeralDaCota(filtro);
 	}
 
@@ -51,7 +61,12 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 	@Transactional
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(
 			FiltroConsultaConsignadoCotaDTO filtro) {
-		 
+		
+		if(filtro.getIdCota() != null){
+			
+			return this.consignadoCotaRepository.buscarTotalDetalhadoPorCota(filtro);
+		}
+		
 		return this.consignadoCotaRepository.buscarTotalDetalhado(filtro);
 	}
 

@@ -46,6 +46,7 @@ import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.GeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.PeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
@@ -290,7 +291,7 @@ public class PdvServiceImpl implements PdvService {
         if(listaEnderecolAssoc == null || listaEnderecolAssoc.isEmpty()){
         
 	        List<EnderecoAssociacaoDTO> lista = this.enderecoService
-	                .buscarEnderecosPorIdPessoa(idPessoa, endRemover);
+	                .buscarEnderecosPorPessoaCotaPDVs(idPessoa, endRemover);
 	
 	        if (lista != null && !lista.isEmpty()) {
 	
@@ -401,8 +402,26 @@ public class PdvServiceImpl implements PdvService {
         if (pdvDTO.getCaracteristicaDTO() != null
                 && pdvDTO.getCaracteristicaDTO().isPontoPrincipal()) {
 
-            this.pdvRepository.setarPDVPrincipal(false, cota.getId());
+            PDV principalAtual = this.pdvRepository.obterPDVPrincipal(cota.getNumeroCota());
+            
+            List<RotaPDV> rotasPrincipal = new ArrayList<RotaPDV>(principalAtual.getRotas());
+            
+            for (RotaPDV rotaPDV : rotasPrincipal) {
+            	
+            	if (rotaPDV.getPdv().getCaracteristicas().isPontoPrincipal()) {
 
+            		rotaPDV.setPdv(pdv);
+            	}
+            }
+            
+        	pdv.setRotas(rotasPrincipal);
+            		
+            principalAtual.getCaracteristicas().setPontoPrincipal(false);
+            
+            principalAtual.setRotas(null);
+
+            this.pdvRepository.merge(principalAtual);
+            
         } else if (pdvDTO.getCaracteristicaDTO() != null
                 && !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()) {
             if (!pdvRepository.existePDVPrincipal(cota.getId(), pdv.getId())) {
@@ -1601,5 +1620,12 @@ public class PdvServiceImpl implements PdvService {
 	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxoOrdenado() {
 		return this.tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoOrdenado();
 	}
+
+    @Override
+    @Transactional(readOnly=true)
+    public Long obterQtdPdvPorCota(Integer numeroCota) {
+        
+        return this.pdvRepository.obterQtdPdvPorCota(numeroCota);
+    }
 
 }

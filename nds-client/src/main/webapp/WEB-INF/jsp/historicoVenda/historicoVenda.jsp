@@ -53,7 +53,7 @@ $(function() {
 
           <div class="porCota" >
             <div style="float:left; width:510px;">
-              <fieldset class="classFieldset" style="width:480px!important;">
+              <fieldset class="classFieldset fieldFiltroItensNaoBloqueados" style="width:480px!important;">
                 <legend>Pesquisar Produto</legend>
 
                 <form id="pesquisaPorProduto">
@@ -102,7 +102,7 @@ $(function() {
                 <table class="edicaoSelecionadaGridHistoricoVenda"></table>
               </fieldset>
             </div>
-            <fieldset class="classFieldset" style="float:left; width:417px!important; margin-left:10px!important;">
+            <fieldset class="classFieldset fieldFiltroItensNaoBloqueados" style="float:left; width:417px!important; margin-left:10px!important;">
               <legend>Pesquisar Histórico de Venda</legend>
 
               <form id="filtroHistoricoVenda">

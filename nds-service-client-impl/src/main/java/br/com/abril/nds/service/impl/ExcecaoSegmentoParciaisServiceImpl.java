@@ -64,6 +64,10 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 			
 			excessaoProdutoCota.setCodigoICD(icd);
 			
+			if(excessaoProdutoCota.getProduto() == null){
+				excessaoProdutoCota.setProduto(produtoService.obterProdutoPorICDBaseadoNoPrimeiroBarra(excessaoProdutoCota.getCodigoICD()));
+			}
+			
 			excecaoSegmentoParciaisRepository.adicionar(excessaoProdutoCota);
 		
 			}

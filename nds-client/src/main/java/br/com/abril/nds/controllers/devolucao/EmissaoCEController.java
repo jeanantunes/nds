@@ -124,7 +124,7 @@ public class EmissaoCEController extends BaseController {
 		
 		this.setFiltroSessao(filtro);
 	
-		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
+		final List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 		
 		if(lista == null || lista.isEmpty()){
 			
@@ -239,7 +239,7 @@ public class EmissaoCEController extends BaseController {
 
 	private DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoCE(FiltroEmissaoCE filtro){
 		
-		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
+		final TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
 		
 		filtro.setTipoImpressao(tipoImpressao);
 		
@@ -255,16 +255,8 @@ public class EmissaoCEController extends BaseController {
 			filtro.setQtdMaximaProdutosComTotalizacao(20);
 		}
 
-		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
 		
-		if (dados == null){
-
-		    dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
-		    
-		    session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
-		}    
-		
-		return dados;
+		return chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
 	}
 	
 	@Post
@@ -288,7 +280,7 @@ public class EmissaoCEController extends BaseController {
 			
 			if (dados == null){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir o Boleto em Branco !");
 			}
 			
 			List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
@@ -303,7 +295,7 @@ public class EmissaoCEController extends BaseController {
 			}
 			else{
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir o Boleto em Branco !");
 			}
 			
 			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();

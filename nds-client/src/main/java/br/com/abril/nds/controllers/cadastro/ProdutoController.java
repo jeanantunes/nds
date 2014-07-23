@@ -34,11 +34,9 @@ import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
-import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DescontoLogisticaService;
@@ -112,22 +110,6 @@ public class ProdutoController extends BaseController {
 	@Autowired
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 	
-	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
-	  
-	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
-	
-	private static List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
-	
-	private static List<ItemDTO<FormatoProduto,String>> listaFormatoProduto =  new ArrayList<ItemDTO<FormatoProduto,String>>();
-	
-	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
-	
-	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
-	
-	private static List<ItemDTO<FormaFisica,String>> listaFormaFisica =  new ArrayList<ItemDTO<FormaFisica,String>>();
-	
-	private static List<ItemDTO<PeriodicidadeProduto,String>> listaPeriodicidade =  new ArrayList<ItemDTO<PeriodicidadeProduto,String>>();
-	
 	private static final String PRODUTO_MANUAL = "MANUAL";
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroListaCadastroDeProdutos";
@@ -139,13 +121,13 @@ public class ProdutoController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTiposProdutoDesc();
-		
-		carregarDadosSegmentacao();
+	    final List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTiposProdutoDesc();
 		
 		if (listaTipoProduto != null && !listaTipoProduto.isEmpty()) {
 			this.result.include("listaTipoProduto", listaTipoProduto);
 		}
+		
+		carregarDadosSegmentacao();
 	}
 	
 	/**
@@ -361,7 +343,7 @@ public class ProdutoController extends BaseController {
 	 * @param produtos
 	 * @return List<ItemAutoComplete>
 	 */
-	private List<ItemAutoComplete> getAutocompleteCodigoProduto(List<Produto> produtos){
+	public List<ItemAutoComplete> getAutocompleteCodigoProduto(List<Produto> produtos){
 		
 		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
 		
@@ -476,7 +458,6 @@ public class ProdutoController extends BaseController {
      * Carrega os combos do modal de inclusão/edição do Produto.
      */
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarDadosProduto() {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
@@ -512,49 +493,37 @@ public class ProdutoController extends BaseController {
 	@Post
 	public void carregarDadosSegmentacao() {
 		
-		listaClasseSocial.clear();
+		final List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 		for(ClasseSocial item:ClasseSocial.values()){
 			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
 		}
 		result.include("listaClasseSocial",listaClasseSocial);
 		
-		listaSexo.clear();
+		final List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
 		for(Sexo item:Sexo.values()){
 			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
 		}
 		result.include("listaSexo",listaSexo);	
 		
-		listaFaixaEtaria.clear();
+		final List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
 		for(FaixaEtaria item:FaixaEtaria.values()){
 			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
 		}
 		result.include("listaFaixaEtaria",listaFaixaEtaria);	
 
-		listaFormatoProduto.clear();
+		final List<ItemDTO<FormatoProduto,String>> listaFormatoProduto =  new ArrayList<ItemDTO<FormatoProduto,String>>();
 		for(FormatoProduto item:FormatoProduto.values()){
 			listaFormatoProduto.add(new ItemDTO<FormatoProduto,String>(item,item.getDescFormatoProduto()));
 		}
 		result.include("listaFormatoProduto",listaFormatoProduto);	
 		
-		listaTipoLancamento.clear();
-		for(TipoLancamento item:TipoLancamento.values()){
-			listaTipoLancamento.add(new ItemDTO<TipoLancamento,String>(item,item.getDescricao()));
-		}
-		result.include("listaTipoLancamento",listaTipoLancamento);
-
-		listaTemaProduto.clear();
-		for(TemaProduto item:TemaProduto.values()){
-			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
-		}
-		result.include("listaTemaProduto",listaTemaProduto);
-		
-		listaFormaFisica.clear();
+		final List<ItemDTO<FormaFisica,String>> listaFormaFisica =  new ArrayList<ItemDTO<FormaFisica,String>>();
 		for(FormaFisica item:FormaFisica.values()){
 			listaFormaFisica.add(new ItemDTO<FormaFisica,String>(item,item.getDescFormaFisica()));
 		}
 		result.include("listaFormaFisica",listaFormaFisica);
 		
-		listaPeriodicidade.clear();
+		final List<ItemDTO<PeriodicidadeProduto,String>> listaPeriodicidade =  new ArrayList<ItemDTO<PeriodicidadeProduto,String>>();
 		for(PeriodicidadeProduto item:PeriodicidadeProduto.values()){
 			listaPeriodicidade.add(new ItemDTO<PeriodicidadeProduto,String>(item,item.toString()));
 		}
@@ -579,25 +548,6 @@ public class ProdutoController extends BaseController {
 new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 				"result").recursive().serialize();
 	}
-	
-	/**
-	 * Carrega o percentual de Desconto do Produto.
-	 * 
-	 * @param codigoTipoDesconto
-	 */
-	@Post
-	public void carregarPercentualDesconto(Integer codigoTipoDesconto) {
-	
-	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
-			
-		BigDecimal porcentagem = BigDecimal.ZERO;
-
-		if (descontoLogistica != null) {
-			porcentagem = descontoLogistica.getPercentualDesconto();
-		}
-		
-		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
-	}
 
 	/**
 	 * Salva o produto.
@@ -605,20 +555,24 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	 * @param produto
 	 * @param codigoEditor
 	 * @param codigoFornecedor
-	 * @param codigoTipoDesconto
+	 * @param idDesconto
 	 * @param codigoTipoProduto
 	 */
 	@Post
-	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
+	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, 
 			Long codigoTipoProduto) {
 		
 		this.validarProduto(
 			produto, codigoEditor, codigoFornecedor, 
-			codigoTipoDesconto, codigoTipoProduto);
+			idDesconto, codigoTipoProduto);
 		
+		if(codigoEditor == -1L)
+            codigoEditor = editorService.criarEditorFornecedor(codigoFornecedor);
+        
 		this.produtoService.salvarProduto(
 			produto, codigoEditor, codigoFornecedor, 
-			codigoTipoDesconto, codigoTipoProduto);
+			idDesconto, codigoTipoProduto);
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
@@ -630,7 +584,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
      * @param id
      */
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarProdutoParaEdicao(Long id) {
 		
 		if (id == null) {
@@ -679,11 +632,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	 * @param produto
 	 * @param codigoEditor
 	 * @param codigoFornecedor
-	 * @param codigoTipoDesconto
+	 * @param idDesconto
 	 * @param codigoTipoProduto
 	 */
 	private void validarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, 
-			Long codigoTipoDesconto, Long codigoTipoProduto) {
+			Long idDesconto, Long codigoTipoProduto) {
 
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -735,7 +688,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
-			if ((codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) &&
+			if ((idDesconto == null || idDesconto.intValue() == 0) &&
 					(produto.getDescricaoDesconto() == null || produto.getDescricaoDesconto().trim().isEmpty())) {
                 listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
 			}
@@ -769,6 +722,10 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 			if (produto.getTipoSegmentoProduto().getId() == null) {
                 listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
 			}
+			
+			if (codigoEditor == null || codigoEditor.intValue() == 0) {
+                listaMensagens.add("O preenchimento do campo [Editor] é obrigatório!");
+            }
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
@@ -817,21 +774,30 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	public void obterCodigoDisponivel(Long idFornecedor){
 	    
 		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(idFornecedor);
-		
-		Object[] dados = new Object[2];
+				
+		Object[] dados = new Object[4];
 		     
 		if (Origem.INTERFACE.equals(origem)) {
 
 			dados[0] = true;
 			dados[1] = "";
-
+			dados[2] = "";
+			dados[3] = "";
+			
 			result.use(Results.json()).from(dados, "result").serialize();
 
 			return;
 		}
-
+		
+		Editor editor = editorService.obterEditorPorFornecedor(idFornecedor);
+		boolean possuiEditor = (null != editor);
+		
+		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(idFornecedor);
+		
 		dados[0] = false;
 		dados[1] = this.produtoService.obterCodigoDisponivel();
+		dados[2] = possuiEditor;
+		dados[3] = fornecedor.getJuridica().getRazaoSocial();
 
 		result.use(Results.json()).from(dados, "result").serialize();
 	}
@@ -907,7 +873,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 		List<DescontoLogistica> listaDescontos = descontoLogisticaService.obterTodos();
 
 		for (DescontoLogistica descontoLogistica : listaDescontos) {
-			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao()));                       
+			listaBaseComboVO.add(new BaseComboVO(descontoLogistica.getId(), descontoLogistica.getDescricao() != null ? descontoLogistica.getDescricao() : ""));                       
 		}
 
 		return listaBaseComboVO;

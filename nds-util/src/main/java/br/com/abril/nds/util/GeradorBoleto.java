@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.ValidationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jrimum.bopepo.BancosSuportados;
 import org.jrimum.bopepo.Boleto;
 import org.jrimum.bopepo.view.BoletoViewer;
@@ -85,7 +86,8 @@ public class GeradorBoleto {
         }
         
         //CONTA BANCARIA
-        BancosSuportados bancoByNumero = getBancoByNumero(corpoBoleto.getContaNumeroBanco());
+        BancosSuportados bancoByNumero = getBancoByNumero(StringUtils.leftPad(corpoBoleto.getContaNumeroBanco(), 3, '0'));
+        //BancosSuportados bancoByNumero = getBancoByNumero(corpoBoleto.getContaNumeroBanco());
         if(bancoByNumero == null)
         	throw new ValidationException("Número do banco não encontrado: "+corpoBoleto.getContaNumeroBanco() +". favor contatar a área de sistemas. - Tabela Cobrança BANCO_ID");
         	
@@ -204,7 +206,7 @@ public class GeradorBoleto {
 		
 		if(!list.isEmpty()){
 			
-			byte[] byteArrayPdf = BoletoViewer.groupInOnePDF(list);
+			byte[] byteArrayPdf = BoletoViewer.groupInOnePdfWithTemplate(list, getClass().getResource("/boletoTemplate/BoletoNDS.pdf"));
 			
 		    return byteArrayPdf;
 		}

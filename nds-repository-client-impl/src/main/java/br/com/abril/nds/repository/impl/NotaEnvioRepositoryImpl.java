@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -176,4 +177,27 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		
 		return query.list();
 	}
+	
+	public Long quantidadeNotasEmitidasParaCota(Long idCota, Date periodoInicial, Date periodoFinal){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(notas.data) as quantidade from ( ")
+		.append(" select nota.dataEmissao as data from nota_envio nota ") 
+		.append(" where nota.NUMERO_COTA = (select cota.NUMERO_COTA from cota cota where cota.ID = :idCota )")
+		.append(" and nota.dataEmissao between :dataInicio and :dataFim ")
+		.append(" group by nota.dataEmissao) as notas ");
+		
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataInicio", periodoInicial);
+		query.setParameter("dataFim", periodoFinal);
+		query.setParameter("idCota", idCota);
+		
+		query.addScalar("quantidade",StandardBasicTypes.LONG);
+		
+		return (Long) query.uniqueResult();
+	}
+	
 }

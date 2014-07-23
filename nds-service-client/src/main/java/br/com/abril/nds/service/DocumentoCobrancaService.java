@@ -1,10 +1,13 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.movimentacao.Slip;
 
 public interface DocumentoCobrancaService {
 
@@ -15,6 +18,8 @@ public interface DocumentoCobrancaService {
 	 * @param nossoNumero
 	 */
 	byte[] gerarDocumentoCobranca(String nossoNumero);
+	
+	byte[] gerarDocumentoCobranca(String nossoNumero, boolean incrementarVias);
 	
 	/**
 	 * BOLETO
@@ -30,8 +35,12 @@ public interface DocumentoCobrancaService {
 	 * Gerar documento de Cobranca
 	 * @param dividas
 	 * @param tipoCobranca
+	 * @param politicasCobranca
 	 */
 	byte[] gerarDocumentoCobranca(List<GeraDividaDTO> dividas,TipoCobranca tipoCobranca);
+	
+	byte[] gerarDocumentoCobrancaComSlip(final List<GeraDividaDTO> dividas, final TipoCobranca tipoCobranca,
+	        final List<PoliticaCobranca> politicasCobranca, final Date data);
 
 	/**
 	 * SLIP
@@ -74,4 +83,39 @@ public interface DocumentoCobrancaService {
 	 * @return byte[]
 	 */
     byte[] gerarReciboCobranca(String nossoNumero);
+
+    /**
+     * SLIP DTO
+     * 
+     * Gera Slip da Cobrança
+     * 
+     * @param nossoNumero
+     * @param incluirNumeroSlip
+     * @param tpArquivo
+     * @return SlipDTO
+     */
+	Slip gerarSlipDTOCobranca(Long idControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+
+	/**
+     * SLIP DTO
+     * 
+     * Gera lista de SlipDTO por lista de controle de conferencia de encalhe
+     * 
+     * @param idsControleConferenciaEncalheCota
+     * @param incluirNumeroSlip
+     * @return SlipDTO
+     */
+	List<Slip> gerarListaSlipDTOCobranca(List<Long> idsControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+
+	/**
+     * SLIP
+     * 
+     * Gera lista de Slip da Cobranças
+     * 
+     * @param slipDTO
+     * @param tpArquivo
+     * @return List<byte[]>
+     */
+	List<byte[]> gerarListaSlipCobranca(List<Slip> listaSlipDTO, TipoArquivo tpArquivo);
+	
 }

@@ -29,11 +29,13 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -143,8 +145,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query = getSession().createSQLQuery(queryString);
         
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-        query.setParameter("origemInterface", Origem.INTERFACE.toString());
-        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
+        query.setParameter("origemInterface", Origem.INTERFACE.name());
+        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
+        query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
         
         if (filtro.getFornecedorId() != null) {
             
@@ -182,7 +185,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         ((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("recolhimento", StandardBasicTypes.STRING);
-        ((SQLQuery) query).addScalar("suplementar", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("matrizRecolhimento", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadaEncalheId", StandardBasicTypes.LONG);
@@ -210,18 +213,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.append("			 pe.ORIGEM as origem, ");
         query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
         query.append("			 dlp.ID as produtoDescontoLogisticaId,");
-        
-        query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ) > 1 ");
-        query.append("			  AND 			");
-        query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
-        query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID) > 1) IS NULL) then true else false end as chamadao, ");
+
+	  query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+	  query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+	  query.append("			  AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+	  query.append("			  ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheChamadao) then true else false end as chamadao, ");
+      
+      query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+      query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+      query.append("			  AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+      query.append("			  ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) then true else false end as matrizRecolhimento, ");
+
         
         query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
         query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
@@ -231,8 +233,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
         query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
-        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento,");
-        query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
+        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento ");
+        
         query.append("	from chamada_encalhe_cota cec");
         query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
         query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
@@ -264,18 +266,16 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.append("			 pe.ORIGEM as origem, ");
         query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
         query.append("			 dlp.ID as produtoDescontoLogisticaId,");
-        
-        query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID) > 1 ");
-        query.append("			  AND 			");
-        query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
-        query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
-        query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-        query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
-        query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
-        query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID) > 1) IS NULL) then true else false end as chamadao, ");
+
+        query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+        query.append("			 WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+        query.append("			 AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+        query.append("			 ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheChamadao) then true else false end as chamadao, ");
+
+        query.append("			 CASE WHEN ((SELECT chEn.TIPO_CHAMADA_ENCALHE FROM CHAMADA_ENCALHE chEn ");
+        query.append("			 WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+        query.append("			 AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
+        query.append("			 ORDER BY chEn.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) then true else false end as matrizRecolhimento, ");
         
         query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
         query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
@@ -285,8 +285,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
         query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
-        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento,");
-        query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
+        query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento ");
+        
         query.append("	from chamada_encalhe_cota cec");
         query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
         query.append("	inner join conferencia_encalhe confenc on (confenc.CHAMADA_ENCALHE_COTA_ID = cec.ID)");
@@ -397,8 +397,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
         
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-        query.setParameter("origemInterface", Origem.INTERFACE.toString());
-        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
+        query.setParameter("origemInterface", Origem.INTERFACE.name());
+        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
+        query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
         
         if (filtro.getFornecedorId() != null) {
             
@@ -482,8 +483,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     }
     
     @Override
-    public Integer obterTotalCotasAusentes(final Date dataEncalhe, final Integer diaRecolhimento,
-            final boolean isSomenteCotasSemAcao, final String sortorder, final String sortname, final int page, final int rp) {
+    public Integer obterTotalCotasAusentes(final Date dataEncalhe, final DiaSemana diaRecolhimento,
+            final boolean isSomenteCotasSemAcao, final String sortorder, final String sortname, final int page, final int rp,
+            Integer numeroCota) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -491,11 +493,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append(" ( ");
         
-        sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao).toString());
+        sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao, numeroCota).toString());
         
         sql.append(" union all ");
         
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, false).toString());
+        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, false, numeroCota).toString());
         
         sql.append(" ) as ausentes	");
         
@@ -511,8 +513,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
-        query.setParameter("diaRecolhimento", diaRecolhimento);
+        query.setParameter("diaRecolhimento", diaRecolhimento.name());
         
+        query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
+        
+        if (numeroCota != null){
+            
+            query.setParameter("numeroCota", numeroCota);
+        }
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
@@ -520,7 +528,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
     }
     
-    private StringBuilder getSqlCotaAusenteComChamadaEncalhe(final boolean indCount, final boolean isSomenteCotasSemAcao) {
+    private StringBuilder getSqlCotaAusenteComChamadaEncalhe(final boolean indCount, final boolean isSomenteCotasSemAcao,
+            Integer numeroCota) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -555,12 +564,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
         }
         
-        
         sql.append("	from                                                                ");
         sql.append("        Cota cota                                                       ");
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
         sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
+        
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
+        				
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
         sql.append("            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID  ");
@@ -617,6 +628,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
             sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
         }
         
+        if (numeroCota != null){
+            
+            sql.append(" and cota.NUMERO_COTA = :numeroCota ");
+        }
+        
         sql.append("	group by                                      ");
         sql.append("        cota.ID                                   ");
         
@@ -663,6 +679,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
         sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");
+        
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
+        
         sql.append("	inner join                                                          ");
         sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
         sql.append("            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID  ");
@@ -741,7 +760,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     
     private StringBuilder getSqlCotaAusenteSemChamadaEncalhe(final boolean indCount,
-            final boolean ignorarUnificacao) {
+            final boolean ignorarUnificacao, Integer numeroCota) {
         
         final StringBuilder sqlMovimentoFinaceiroCotaNaoConsolidado = new StringBuilder();
         
@@ -798,6 +817,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("	inner join                                              ");
         sql.append("        PESSOA pessoa                                       ");
         sql.append("            on cota.PESSOA_ID=pessoa.ID                     ");
+        
+        sql.append("            and ( cota.TIPO_COTA <> :tipoCotaAVista ) ");
+        
         sql.append("	inner join                                              ");
         sql.append("        BOX box                                             ");
         sql.append("            on cota.BOX_ID=box.ID                           ");
@@ -866,6 +888,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
         sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
         sql.append("		)                                                                                  ");
+        
+        if (numeroCota != null){
+            
+            sql.append("and cota.NUMERO_COTA = :numeroCota ");
+        }
+        
         sql.append("	group by    ");
         
         sql.append("    cota.ID, indMFCNaoConsolidado ");
@@ -877,16 +905,16 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     @Override
     @SuppressWarnings("unchecked")
-    public List<CotaAusenteEncalheDTO> obterCotasAusentes(final Date dataEncalhe, final Integer diaRecolhimento,
+    public List<CotaAusenteEncalheDTO> obterCotasAusentes(final Date dataEncalhe, final DiaSemana diaRecolhimento,
             final boolean isSomenteCotasSemAcao, final String sortorder, String sortname, final int page, final int rp) {
         
         final StringBuilder sql = new StringBuilder();
         
-        sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+        sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao, null).toString());
         
         sql.append(" union all ");
         
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, false).toString());
+        sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, false, null).toString());
         
         if("acao".equals(sortname)) {
             
@@ -931,7 +959,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
-        query.setParameter("diaRecolhimento", diaRecolhimento);
+        query.setParameter("diaRecolhimento", diaRecolhimento.name());
+        
+        query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaAusenteEncalheDTO.class));
         
@@ -1123,7 +1153,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("	box.nome as boxEncalhe, 	");
         
-        hql.append("   sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ) as total ");
+        hql.append("    ROUND(sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ),2) as total ");
         
         hql.append("   , coalesce(div.status, (");
         
@@ -1196,32 +1226,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         return ((Long)query.uniqueResult()).intValue();
     }
-    
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Cota> buscarCotaFechamentoChamadaEncalhe(final Date dataEncalhe) {
-        
-        final StringBuilder hql = new StringBuilder();
-        
-        hql.append("  SELECT cota  ")
-        .append("  FROM ChamadaEncalhe chamadaEncalhe ")
-        .append("  join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ")
-        .append("  join chamadaEncalheCota.cota cota ")
-        .append("  join chamadaEncalheCota.conferenciasEncalhe conferenciaEncalhe ")
-        .append("  join conferenciaEncalhe.controleConferenciaEncalheCota controleConferenciaEncalheCota ")
-        .append("  join controleConferenciaEncalheCota.controleConferenciaEncalhe controleConferenciaEncalhe ");
-        
-        hql.append("   WHERE controleConferenciaEncalheCota.dataOperacao= :dataEncalhe")
-        .append("   AND chamadaEncalheCota.fechado= false")
-        .append("   AND chamadaEncalheCota.postergado= false");
-        
-        final Query query = this.getSession().createQuery(hql.toString());
-        query.setDate("dataEncalhe", dataEncalhe);
-        
-        return query.list();
-    }
-    
     
     @Override
     @SuppressWarnings("unchecked")
@@ -1363,7 +1367,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         hql.append("produtoEdicao.id as produtoEdicao, ");
         hql.append("conferenciaEncalhe.movimentoEstoqueCota.qtde as exemplaresDevolucao, ");
         
-        hql.append("controleConferenciaEncalhe.data as dataRecolhimento ");
+        hql.append("controleConferenciaEncalhe.data as dataRecolhimento, ");
+        
+        hql.append("(case when conferenciaEncalhe.juramentada is null then false else conferenciaEncalhe.juramentada end) as juramentada ");
         
         hql.append("from ConferenciaEncalhe as conferenciaEncalhe ");
         hql.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
@@ -1374,6 +1380,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         hql.append("where produtoEdicao.id in (:produtosEdicoesId) ");
         
+        hql.append(" and controleConferenciaEncalhe.data = :dataEncalhe ");
+        
         if (filtro.getBoxId() != null) {
             hql.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
         }
@@ -1381,6 +1389,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query = this.getSession().createQuery(hql.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
         query.setParameterList("produtosEdicoesId", listaDeIdsProdutosEdicoes);
+        query.setParameter("dataEncalhe", filtro.getDataEncalhe());
         
         if (filtro.getBoxId() != null) {
             query.setLong("boxId", filtro.getBoxId());
@@ -1408,6 +1417,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         subquery.append(" and vp.tipoVenda = :tipoVenda ");
         subquery.append(" and vp.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
         subquery.append(" and produtoEdicao.id in (:produtosEdicoesId)");
+        subquery.append(" group by produtoEdicao.id ");
         
         final Query query = this.getSession().createQuery(subquery.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
@@ -1422,7 +1432,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     }
     
     @Override
-    public Integer obterTotalCotasAusentesSemPostergado(final Date dataEncalhe, final Integer diaRecolhimento, final boolean isSomenteCotasSemAcao,
+    public Integer obterTotalCotasAusentesSemPostergado(final Date dataEncalhe, final DiaSemana diaRecolhimento, final boolean isSomenteCotasSemAcao,
             final String sortorder, final String sortname, final int page, final int rp, final boolean ignorarUnificacao) {
         
         final StringBuilder sql = new StringBuilder();
@@ -1433,7 +1443,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao, ignorarUnificacao).toString());
         sql.append(" union all ");
-        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, ignorarUnificacao).toString());
+        sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, ignorarUnificacao, null).toString());
         
         sql.append(" ) as ausentes	");
         
@@ -1451,7 +1461,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
         
-        query.setParameter("diaRecolhimento", diaRecolhimento);
+        query.setParameter("diaRecolhimento", diaRecolhimento.name());
+        
+        query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
@@ -1467,10 +1479,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
                 + " WHERE DATA_RECOLHIMENTO = :dataOperacao) > 0 "
                 + " as chamadaEncalhe, "
                    
-                + " (SELECT count(*) FROM CONTROLE_CONFERENCIA_ENCALHE_COTA "
-                + " WHERE DATA_OPERACAO = :dataOperacao AND status='CONCLUIDO')  > 0 "
-                + " as conferenciaEncalhe, "
-
                 + " (SELECT count(* )FROM CONTROLE_FECHAMENTO_ENCALHE "
                 + " WHERE data_encalhe = :dataOperacao)  > 0 "
                 + " as fechamentoEncalhe ";
@@ -1478,15 +1486,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("dataOperacao", data);
         query.addScalar("chamadaEncalhe", StandardBasicTypes.BOOLEAN);
-        query.addScalar("conferenciaEncalhe", StandardBasicTypes.BOOLEAN);
         query.addScalar("fechamentoEncalhe", StandardBasicTypes.BOOLEAN);
         
         Object[] result = (Object[]) query.uniqueResult();
         
         Boolean chamadaEncalhe = (Boolean) result[0];
-        Boolean conferenciaEncalhe = (Boolean) result[1];
-        Boolean fechamentoEncalhe = (Boolean) result[2];
+        Boolean fechamentoEncalhe = (Boolean) result[1];
         
-        return !(chamadaEncalhe && conferenciaEncalhe && !fechamentoEncalhe);
+        return !chamadaEncalhe || fechamentoEncalhe;
     }
 }

@@ -139,6 +139,7 @@ var historicoVendaController = $.extend(true, {
 			$.post(url, params, function(data){
 			      if(data){ 
 			    	  $("#baseAnalise", historicoVendaController.workspace).hide();
+			    	  $("#analiseHistorico", historicoVendaController.workspace).hide();
 			    	  $('#analiseHistoricoContent', historicoVendaController.workspace).html(data);
 			    	  $('#analiseHistoricoContent', historicoVendaController.workspace).show();
 			    	  
@@ -271,11 +272,21 @@ var historicoVendaController = $.extend(true, {
 							functionName : "historicoVendaController.popUpCapaClose",
 							type : "onmouseout",
 						}]
+					},{
+						element : "span",
+						cellText : "qtdVendasFormatada",
+						columnName : "qtdVendasFormatada"
 					}
 				],
 				gridConfiguration : {
 					dataType: 'json',
 					colModel : [{
+						display : '',
+						name : 'sel',
+						width : 20,
+						sortable : true,
+						align : 'center'
+					},{
 						display : 'Código',
 						name : 'codigoProduto',
 						width : 40,
@@ -295,7 +306,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodoString',
 						width : 40,
 						sortable : true,
 						align : 'center'
@@ -327,12 +338,6 @@ var historicoVendaController = $.extend(true, {
 						display : 'Capa',
 						name : 'chamadaCapa',
 						width : 30,
-						sortable : true,
-						align : 'center'
-					}, {
-						display : '',
-						name : 'sel',
-						width : 20,
 						sortable : true,
 						align : 'center'
 					}],
@@ -381,7 +386,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodoString',
 						width : 40,
 						sortable : true,
 						align : 'center'

@@ -282,8 +282,8 @@ public class ExtratoEdicaoController extends BaseController {
 			int idMovimento				= (extrato.getIdMovimento() != null) ? extrato.getIdMovimento().intValue() : -1;
 			String dataMovimento 		= DateUtil.formatarDataPTBR(extrato.getDataMovimento());
 			String descTipoMovimento 	= extrato.getDescMovimento();
-			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().toString();
-			String qtdSaida 			= extrato.getQtdEdicaoSaida().toString();
+			String qtdEntrada 			= extrato.getQtdEdicaoEntrada() != null ? extrato.getQtdEdicaoEntrada().toString() :"";
+			String qtdSaida 			= extrato.getQtdEdicaoSaida() != null ? extrato.getQtdEdicaoSaida().toString() : "";
 			String qtdParcial 			= (extrato.getQtdParcial() != null) ? extrato.getQtdParcial().toString() : "";
 			String destacarValor		= (extrato.getQtdParcial().doubleValue() < 0.0D) ? "S" : "N";
 			

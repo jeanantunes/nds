@@ -19,8 +19,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.PdvVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.cadastro.CotaController;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.GeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -39,6 +41,7 @@ import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.PdvService;
@@ -486,6 +489,7 @@ public class PdvController extends BaseController {
 
 	@Post
 	@Path("/salvar")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void salvarPDV(PdvDTO pdvDTO) throws Exception{		
 		
 	

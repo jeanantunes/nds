@@ -27,7 +27,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT distinct");
+		hql.append(" SELECT ");
 		hql.append(" estudo.id AS numeroEstudo, ");
 		hql.append(" prodEdicao.numeroEdicao AS numeroEdicaoProduto, ");
 		hql.append(" produto.codigo AS codigoProduto, ");
@@ -35,15 +35,17 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" produto.periodicidade AS periodoProduto, ");
 		hql.append(" coalesce(tpClassifProduto.descricao, '') AS descicaoTpClassifProd, ");
 		
-		hql.append(" prodEdicao.parcial as permiteParcial, ");
+		hql.append(" (case when(periodoLancamentoParcial.numeroPeriodo > 1) then true else false end) as permiteParcial, ");
 //		hql.append(" estudo.status AS statusEstudo, ");
 		hql.append(" estudo.liberado AS statusGeradoOuLiberado, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor AS dataLancamento ");
+		hql.append(" lancamento.dataLancamentoDistribuidor AS dataLancamento, ");
+		hql.append(" periodoLancamentoParcial.numeroPeriodo AS codPeriodoProd ");
 		
 		hql.append(" FROM EstudoGerado estudo, Lancamento lancamento ");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
 		hql.append(" JOIN prodEdicao.produto as produto ");
 		hql.append(" left JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
+		hql.append(" left JOIN lancamento.periodoLancamentoParcial as periodoLancamentoParcial ");
 		
 		hql.append(" WHERE ");
 		
@@ -54,6 +56,9 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" )<365 ");
 		
 		hql.append(this.getSqlWhereBuscarEstudos(filtro));
+		
+		hql.append(" group by estudo.id ");
+		
 		hql.append(this.ordenarConsultaAnaliseEstudo(filtro));
 		
 		Query query = super.getSession().createQuery(hql.toString());

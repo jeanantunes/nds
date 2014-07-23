@@ -28,14 +28,14 @@ public class FollowupDistribuicaoRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeJornaleiro, ");
 //		hql.append(" MENSAGEM, ");
-		hql.append(" datediff(ajuste.dataFim,now()) as qtdDiasRestantes ");
+		hql.append(" ABS(datediff(ajuste.dataFim, (select dist.dataOperacao from Distribuidor dist))) as qtdDiasRestantes ");
 
 		hql.append(" from AjusteReparte as ajuste ");
 		
 		hql.append(" JOIN ajuste.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
-		hql.append(" where datediff(ajuste.dataFim,now())<=5 ");
+		hql.append(" where datediff(ajuste.dataFim,(select dist.dataOperacao from Distribuidor dist))<=5 ");
 		
 		hql.append(" order by cota.numeroCota, nomeJornaleiro");
 		

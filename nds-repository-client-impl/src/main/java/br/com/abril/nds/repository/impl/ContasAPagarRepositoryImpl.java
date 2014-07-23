@@ -1,25 +1,28 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
+import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
-import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorDistribuidorDTO;
 import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ContasAPagarRepository;
@@ -34,20 +37,20 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		Query query = this.getSession().createQuery(
 				this.montarQueryPorDistribuidor(true, false, false, filtro));
 		
-		this.setarParametrosQueryContasAPagar(query, filtro, true);
-		
+		this.setarParametrosQueryContasAPagar(query, filtro, true, false);
+		query.setParameter("grupoRecebFis", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 		return query.list().size();
 	}	
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ContasApagarConsultaPorDistribuidorDTO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
+	public List<ContasApagarConsultaPorDistribuidorVO> pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
 		Query query = this.getSession().createQuery(
-				this.montarQueryPorDistribuidor(false, false, false, filtro));
+				this.montarQueryPorDistribuidor(false, false, true, filtro));
 		
-		this.setarParametrosQueryContasAPagar(query, filtro, false);
-		
+		this.setarParametrosQueryContasAPagar(query, filtro, false, true);
+		query.setParameter("grupoRecebFis", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		
 		if (paginacaoVO != null){
@@ -65,8 +68,8 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		Query query = this.getSession().createQuery(
 				this.montarQueryPorDistribuidor(false, true, desconto, filtro));
 		
-		this.setarParametrosQueryContasAPagar(query, filtro, false);
-		
+		this.setarParametrosQueryContasAPagar(query, filtro, true, desconto);
+		query.setParameter("grupoRecebFis", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 		return (BigDecimal) query.uniqueResult();
 	}
 	
@@ -76,13 +79,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		if (count){
 			
-			if (filtro.getDataDe() == null){
-			
-				hql.append("select (l.dataRecolhimentoPrevista) ");
-			} else {
-				
-				hql.append("select (l.dataCriacao) ");
-			}
+			hql.append("select (l.dataRecolhimentoDistribuidor) ");
 		} else {
 			
 			if (totais){
@@ -91,333 +88,274 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			} else {
 				
 				hql.append("select new ")
-				   .append(ContasApagarConsultaPorDistribuidorDTO.class.getCanonicalName());
+				   .append(ContasApagarConsultaPorDistribuidorVO.class.getCanonicalName());
 				
-				if (filtro.getDataDe() == null){
-					
-					hql.append("( l.dataRecolhimentoPrevista as dataMovimento, ");
-				} else {
-					
-					hql.append("( l.dataCriacao as dataMovimento, ");
-				}
+				hql.append("( l.dataRecolhimentoDistribuidor as dataMovimento, ");
 			}
 			
 			hql.append(" coalesce(");
 			
 			if (desconto){
 				
-				hql.append(" sum(((l.produtoEdicao.precoVenda * coalesce(f.margemDistribuidor, 0) / 100 ) * l.reparte)) ");
+				hql.append(" sum((prEd.precoVenda - (prEd.precoVenda * (")
+				   .append(" case when prEd.origem = :origemInterface ")
+				   .append(" then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+				   .append(" else (coalesce(prEd.desconto, pr.desconto, 0) / 100) ")
+				   .append(" end) ")
+				   .append(" ) ) * me.qtde) ");
 			} else {
 				
-				hql.append(" sum((l.produtoEdicao.precoVenda * l.reparte)) ");
+				hql.append(" sum((prEd.precoVenda * me.qtde)) ");
 			}
 			
 			hql.append(",0) ");
 			
-			if (totais){
-			   
-				hql.append(" - ( ");
-			} else {
+			if (!totais){
 			   
 				hql.append(" as consignado, ");
-			}
-		   
-			//encalhe
-			hql.append(" coalesce((select sum( ");
-			
-			if (desconto){
-			   
-				hql.append(" (movimento.qtde * (conferencia.produtoEdicao.precoVenda * coalesce(fornecedor1.margemDistribuidor, 0) / 100 )) ");
-			} else {
-				
-				hql.append(" (movimento.qtde * conferencia.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from ConferenciaEncalhe conferencia ")
-		       .append(" join conferencia.movimentoEstoqueCota movimento ")
-		       .append(" join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		       .append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
-			
-			if (desconto){
-				
-				hql.append(" join conferencia.produtoEdicao.produto.fornecedores fornecedor1 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where chamadaEncalhe.dataRecolhimento = l.dataRecolhimentoPrevista) ,0) ");
-			} else {
-				
-				hql.append(" where chamadaEncalhe.dataRecolhimento = l.dataCriacao) ,0) ");
-			}
-			
-			if (totais){
-				
-				hql.append(") - (");
-			} else {
-				
-				hql.append(" as encalhe, ");
-			}
-			
-			//suplementar
-			hql.append(" coalesce((select sum( ");
-			
-			if (desconto){
-				
-				hql.append(" (m.qtde * (m.produtoEdicao.precoVenda * coalesce(fornecedor2.margemDistribuidor, 0) / 100)) ");
-			} else {
-				
-				hql.append(" (m.qtde * m.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from MovimentoEstoque m ");
-			
-			if (desconto){
-				
-				hql.append(" join m.produtoEdicao.produto.fornecedores fornecedor2 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where m.data = l.dataRecolhimentoPrevista ");
-			} else {
-				
-				hql.append(" where m.data = l.dataCriacao ");
-			}
-			
-			hql.append(" and m.qtde is not null ")
-		   	   .append(" and m.produtoEdicao.precoVenda is not null")
-		   	   .append(" and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) ,0) - ")
-		   	   
-		      .append("coalesce((select sum( ");
-			
-			if (desconto){
-				
-				hql.append(" (m2.qtde * (m2.produtoEdicao.precoVenda * coalesce(fornecedor3.margemDistribuidor, 0) / 100)) ");
-			} else {
-				
-				hql.append(" (m2.qtde * m2.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from MovimentoEstoque m2 ");
-			
-			if (desconto){
-				
-				hql.append(" join m2.produtoEdicao.produto.fornecedores fornecedor3 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where m2.data = l.dataRecolhimentoPrevista ");
-			} else {
-				
-				hql.append(" where m2.data = l.dataCriacao ");
-			}
-			
-			hql.append(" and m2.qtde is not null ")
-		       .append(" and m2.produtoEdicao.precoVenda is not null")
-		       .append(" and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida)) ,0)");
-			
-			if (totais){
-				
-				hql.append(") - (");
-			} else {
-				
-				hql.append(" as suplementacao, ");
-			}
-			
-			//FaltasSobras
-			hql.append("coalesce((select sum( ");
-			
-			if (desconto){
-				
-				hql.append(" (ld2.diferenca.qtde * (ld2.diferenca.produtoEdicao.precoVenda * coalesce(fornecedor4.margemDistribuidor, 0) / 100)) ");
-			} else {
-				
-				hql.append(" (ld2.diferenca.qtde * ld2.diferenca.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from LancamentoDiferenca ld2 ");
-			
-			if (desconto){
-				
-				hql.append(" join ld2.diferenca.produtoEdicao.produto.fornecedores fornecedor4 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where ld2.dataProcessamento = l.dataRecolhimentoPrevista ");
-			} else {
-				
-				hql.append(" where ld2.dataProcessamento = l.dataCriacao ");
-			}
-			
-			hql.append(" and ld2.diferenca.qtde is not null ")
-		       .append(" and ld2.diferenca.produtoEdicao.precoVenda is not null")
-		       .append(" and (ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraEm or ld2.diferenca.tipoDiferenca = :tipoDiferencaSobraDe)")
-		       .append(" group by ld2.diferenca.tipoDiferenca) ,0) - ")
-		       
-		       .append("coalesce((select sum( ");
-			
-			if (desconto){
-				
-				hql.append(" (ld.diferenca.qtde * (ld.diferenca.produtoEdicao.precoVenda * coalesce(fornecedor5.margemDistribuidor, 0) / 100)) ");
-			} else {
-				
-				hql.append(" (ld.diferenca.qtde * ld.diferenca.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from LancamentoDiferenca ld ");
-			
-			if (desconto){
-				
-				hql.append(" join ld.diferenca.produtoEdicao.produto.fornecedores fornecedor5 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where ld.dataProcessamento = l.dataRecolhimentoPrevista ");
-			} else {
-				
-				hql.append(" where ld.dataProcessamento = l.dataCriacao ");
-			}
-			
-			hql.append(" and ld.diferenca.qtde is not null ")
-		       .append(" and ld.diferenca.produtoEdicao.precoVenda is not null")
-		       .append(" and (ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaEm or ld.diferenca.tipoDiferenca = :tipoDiferencaFaltaDe)")
-		       .append(" group by ld.diferenca.tipoDiferenca) ,0) ");
-			
-			if (totais){
-				
-				hql.append(") - (");
-			} else {
-				
-				hql.append(" as faltasSobras, ");
-			}
-			
-			//PerdasGanhos
-			hql.append("coalesce((select sum( ");
-			
-			if (desconto){
-				
-				hql.append(" (ld3.diferenca.qtde * (ld3.diferenca.produtoEdicao.precoVenda * coalesce(fornecedor6.margemDistribuidor, 0) / 100 )) ");
-			} else {
-				
-				hql.append(" (ld3.diferenca.qtde * ld3.diferenca.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from LancamentoDiferenca ld3 ");
-			
-			if (desconto){
-				
-				hql.append(" join ld3.diferenca.produtoEdicao.produto.fornecedores fornecedor6 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where ld3.dataProcessamento = l.dataRecolhimentoPrevista ");
-			} else {
-				
-				hql.append(" where ld3.dataProcessamento = l.dataCriacao ");
-			}
-			
-			hql.append(" and ld3.diferenca.qtde is not null ")
-		   	   .append(" and ld3.diferenca.produtoEdicao.precoVenda is not null ")
-		   	   .append(" and ld3.status = :statusPerda ")
-		   	   .append(" group by ld3.diferenca.tipoDiferenca),0) + ")
-		   	   
-		   	   .append("coalesce((select sum( ");
-			
-			if (desconto){
-				
-				hql.append(" (ld4.diferenca.qtde * (ld4.diferenca.produtoEdicao.precoVenda * coalesce(fornecedor7.margemDistribuidor, 0) / 100 )) ");
-			} else {
-				
-				hql.append(" (ld4.diferenca.qtde * ld4.diferenca.produtoEdicao.precoVenda) ");
-			}
-			
-			hql.append(") ");
-			
-			hql.append(" from LancamentoDiferenca ld4 ");
-			
-			if (desconto){
-				
-				hql.append(" join ld4.diferenca.produtoEdicao.produto.fornecedores fornecedor7 ");
-			}
-			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" where ld4.dataProcessamento = l.dataRecolhimentoPrevista ");
-			} else {
-				
-				hql.append(" where ld4.dataProcessamento = l.dataCriacao ");
-			}
-			
-			hql.append(" and ld4.diferenca.qtde is not null ")
-		   	   .append(" and ld4.diferenca.produtoEdicao.precoVenda is not null ")
-		   	   .append(" and ld4.status = :statusGanho ")
-		   	   .append(" group by ld4.diferenca.tipoDiferenca),0) ");
-			
-			if (totais){
-				
-				hql.append(") ");
-			} else {
-				
-				hql.append(" as perdasGanhos) ");
-			}
+    			//encalhe
+    			hql.append(" coalesce((select sum( ");
+    			
+    			final String qtdsEncalhe = 
+    			        "(coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeJuramentado,0) + " +
+    			        " coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0))";
+    			
+    			if (desconto){
+                    
+                    hql.append(" (").append(qtdsEncalhe).append(" * (prEd2.precoVenda - (prEd2.precoVenda * ( ")
+                       .append(" case when prEd2.origem = :origemInterface ")
+                       .append(" then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+                       .append(" else (coalesce(prEd2.desconto, pr2.desconto, 0) /100) ")
+                       .append(" end) ")
+                       .append(" ))) ");
+                } else {
+                    
+                    hql.append(" (").append(qtdsEncalhe).append(" * prEd2.precoVenda) ");
+                }
+                
+                hql.append(") ")
+                   .append(" from EstoqueProduto estProd ")
+                   .append(" join estProd.produtoEdicao prEd2 ")
+                   .append(" join prEd2.lancamentos lanc ")
+                   .append(" left join prEd2.descontoLogistica descLogPrEd2")
+                   .append(" join prEd2.produto pr2 ")
+                   .append(" left join pr2.descontoLogistica descLogPr2 ")
+                   .append(" left join pr2.fornecedores fornecedor2 ")
+                   .append(" where lanc.dataRecolhimentoDistribuidor = l.dataRecolhimentoDistribuidor ")
+                   .append(" and lanc.status in (:statusLancamento) ");
+                   
+                if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+                    
+                    hql.append(" and fornecedor2.id in (:fornecedores) ");
+                }
+    			
+    		    hql.append(" ) ,0) ")
+    		       .append(" as encalhe, ")
+    			
+    			//estoque
+    		       .append(" coalesce((select sum( ");
+    			
+    			if (desconto){
+    				
+    			    hql.append(" ((estProd.qtde + coalesce(estProd.qtdeSuplementar,0))* (prEd2.precoVenda - (prEd2.precoVenda * ( ")
+    				   .append(" case when prEd2.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+                       .append(" else (coalesce(prEd2.desconto, pr2.desconto, 0) /100) ")
+                       .append(" end) ")
+                       .append(" ))) ");
+    			} else {
+    				
+    				hql.append(" ((estProd.qtde + coalesce(estProd.qtdeSuplementar,0)) * prEd2.precoVenda) ");
+    			}
+    			
+    			hql.append(") ")
+    			   .append(" from EstoqueProduto estProd ")
+    			   .append(" join estProd.produtoEdicao prEd2 ")
+    			   .append(" join prEd2.lancamentos lanc ")
+    			   .append(" left join prEd2.descontoLogistica descLogPrEd2")
+    			   .append(" join prEd2.produto pr2 ")
+    			   .append(" left join pr2.descontoLogistica descLogPr2 ")
+    			   .append(" left join pr2.fornecedores fornecedor2 ")
+    			   .append(" where lanc.dataRecolhimentoDistribuidor = l.dataRecolhimentoDistribuidor ");
+    			   
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor2.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(") ,0) ")
+    		   	   .append(" as estoque, ");
+    			
+    			//FaltasSobras
+    			hql.append("sum(coalesce((select sum( ");
+    			
+    			if (desconto){
+    				
+    				hql.append(" (estProd.qtde * (prEd2.precoVenda - (prEd2.precoVenda * ( ")
+    				   .append(" case when prEd2.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+    				   .append(" else (coalesce(prEd2.desconto, pr2.desconto, 0) /100) ")
+    				   .append(" end) ")
+    				   .append(" ))) ");
+    			} else {
+    				
+    				hql.append(" (estProd.qtde * prEd2.precoVenda) ");
+    			}
+    			
+    			hql.append(") ")
+    			   .append(" from EstoqueProduto estProd ")
+                   .append(" join estProd.produtoEdicao prEd2 ")
+                   .append(" join prEd2.lancamentos lanc ")
+                   .append(" left join prEd2.descontoLogistica descLogPrEd2")
+                   .append(" join prEd2.produto pr2 ")
+                   .append(" left join pr2.descontoLogistica descLogPr2 ")
+                   .append(" left join pr2.fornecedores fornecedor2 ")
+                   .append(" join estProd.movimentos me ")
+                   .append(" where lanc.dataRecolhimentoDistribuidor = l.dataRecolhimentoDistribuidor ")
+                   .append(" and lanc.status in (:statusLancamento) ");
+    			   
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor2.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and (me.tipoMovimento.grupoMovimentoEstoque = :tipoDiferencaSobraEm or me.tipoMovimento.grupoMovimentoEstoque = :tipoDiferencaSobraDe)")
+    		       .append(" ) ,0) - ")
+    		       
+    		       .append("coalesce((select sum( ");
+    			
+    			if (desconto){
+    			    
+    				hql.append(" (estProd.qtde * (prEd2.precoVenda - (prEd2.precoVenda * ( ")
+    				   .append(" case when prEd2.origem = :origemInterface ")
+    				   .append(" then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+    				   .append(" else (coalesce(prEd2.desconto, pr2.desconto, 0) /100) ")
+    				   .append(" end) ")
+    				   .append(" ))) ");
+    			} else {
+    				
+    				hql.append(" (estProd.qtde * prEd2.precoVenda) ");
+    			}
+    			
+    			hql.append(") ")
+                   .append(" from EstoqueProduto estProd ")
+                   .append(" join estProd.produtoEdicao prEd2 ")
+                   .append(" join prEd2.lancamentos lanc ")
+                   .append(" left join prEd2.descontoLogistica descLogPrEd2")
+                   .append(" join prEd2.produto pr2 ")
+                   .append(" left join pr2.descontoLogistica descLogPr2 ")
+                   .append(" left join pr2.fornecedores fornecedor2 ")
+                   .append(" join estProd.movimentos me ")
+                   .append(" where lanc.dataRecolhimentoDistribuidor = l.dataRecolhimentoDistribuidor ")
+                   .append(" and lanc.status in (:statusLancamento) ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor2.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and (me.tipoMovimento.grupoMovimentoEstoque = :tipoDiferencaFaltaEm or me.tipoMovimento.grupoMovimentoEstoque = :tipoDiferencaFaltaDe)")
+    		       .append(" ) ,0)) ");
+    			
+    			hql.append(" as faltasSobras, ");
+    			
+    			//PerdasGanhos
+    			hql.append("coalesce((select sum( ");
+    			
+    			if (desconto){
+    				
+    			    hql.append(" (dif.qtde * (prEd6.precoVenda - (prEd6.precoVenda * ( ")
+    			       .append(" case when prEd6.origem = :origemInterface ")
+    			       .append(" then (coalesce(descLogPrEd6.percentualDesconto, descLogPr6.percentualDesconto, 0) / 100) ")
+    			       .append(" else (coalesce(prEd6.desconto, pr6.desconto, 0) /100) ")
+    			       .append(" end) ")
+    			       .append(" ))) ");
+    			} else {
+    				
+    				hql.append(" (dif.qtde * prEd6.precoVenda) ");
+    			}
+    			
+    			hql.append(") ")
+    			   .append(" from LancamentoDiferenca ld3 ")
+    			   .append(" join ld3.diferenca dif ")
+    			   .append(" join dif.produtoEdicao prEd6 ")
+    			   .append(" left join prEd6.descontoLogistica descLogPrEd6 ")
+    			   .append(" join prEd6.produto pr6 ")
+    			   .append(" left join pr6.descontoLogistica descLogPr6 ")
+    			   .append(" left join pr6.fornecedores fornecedor6 ")
+    			   .append(" where ld3.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor6.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and dif.qtde is not null ")
+    		   	   .append(" and prEd6.precoVenda is not null ")
+    		   	   .append(" and ld3.status = :statusPerda ")
+    		   	   .append(" group by dif.tipoDiferenca),0) + ")
+    		   	   
+    		   	   .append("coalesce((select sum( ");
+    			
+    			if (desconto){
+    				
+    			    hql.append(" (dif.qtde * (prEd7.precoVenda - (prEd7.precoVenda * ( ")
+    			       .append(" case when prEd7.origem = :origemInterface ")
+    			       .append(" then (coalesce(descLogPrEd7.percentualDesconto, descLogPr7.percentualDesconto, 0) / 100) ")
+    			       .append(" else (coalesce(prEd7.desconto, pr7.desconto, 0) /100) ")
+    			       .append(" end) ")
+    			       .append(" ))) ");
+    			} else {
+    				
+    				hql.append(" (dif.qtde * prEd7.precoVenda) ");
+    			}
+    			
+    			hql.append(") ")
+    			   .append(" from LancamentoDiferenca ld4 ")
+    			   .append(" join ld4.diferenca dif ")
+    			   .append(" join dif.produtoEdicao prEd7 ")
+    			   .append(" left join prEd7.descontoLogistica descLogPrEd7 ")
+    			   .append(" join prEd7.produto pr7 ")
+    			   .append(" left join pr7.descontoLogistica descLogPr7 ")
+    			   .append(" left join pr7.fornecedores fornecedor7 ")
+    			   .append(" where ld4.dataProcessamento = l.dataRecolhimentoDistribuidor ");
+    			
+    			if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+    			    
+    			    hql.append(" and fornecedor7.id in (:fornecedores) ");
+    			}
+    			
+    			hql.append(" and ld4.diferenca.qtde is not null ")
+    		   	   .append(" and prEd.precoVenda is not null ")
+    		   	   .append(" and ld4.status = :statusGanho ")
+    		   	   .append(" group by dif.tipoDiferenca),0) ");
+    			
+    			hql.append(" as perdasGanhos) ");
+		    }
 		}
 		
-		hql.append(" from Lancamento l ");
+		hql.append(" from Lancamento l ")
+		   .append(" join l.produtoEdicao prEd ")
+		   .append(" left join prEd.movimentoEstoques me ")
+		   .append(" left join me.tipoMovimento tpMov ")
+		   .append(" left join prEd.descontoLogistica descLogPrEd")
+		   .append(" join prEd.produto pr ")
+		   .append(" left join pr.descontoLogistica descLogPr ")
+		   .append(" left join pr.fornecedores f ");
 		
-		if ((filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) ||
-				desconto){
-		
-			hql.append(" join l.produtoEdicao.produto.fornecedores f ");
-		}
-		
-		if (filtro.getDataDe() != null){
-			
-			hql.append(" where l.dataCriacao between :inicio and :fim ")
-			   .append(" and l.reparte is not null ");
-		} else {
-			
-			hql.append(" where l.reparte is not null ");
-		}
-		
-		hql.append(" and l.produtoEdicao.precoVenda is not null ");
-		
-		if (filtro.getDataDe() != null){
-		   hql.append(" and l.status = :statusLancamento ");
-		}
+		hql.append(" where l.dataRecolhimentoDistribuidor between :inicio and :fim ")
+		   .append(" and l.status in (:statusLancamento) ")
+		   .append(" and (tpMov.grupoMovimentoEstoque = :grupoRecebFis or tpMov.grupoMovimentoEstoque is null) ");
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
-			
-			hql.append(" and f.id in (:idsFornecedores) ");
+		    
+		    hql.append(" and f.id in (:fornecedores) ");
 		}
 		
 		if (!totais){
 			
-			if (filtro.getDataDe() == null){
-				
-				hql.append(" group by l.dataRecolhimentoPrevista ")
-				   .append(" order by l.dataRecolhimentoPrevista desc ");
-			} else {
-				
-				hql.append(" group by l.dataCriacao ")
-				   .append(" order by l.dataCriacao desc ");
-			}
+			hql.append(" group by l.dataRecolhimentoDistribuidor ")
+			   .append(" order by l.dataRecolhimentoDistribuidor desc ");
 		}
 		
 		if (!count && !totais){
@@ -437,56 +375,44 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		return hql.toString();
 	}
 	
-	private void setarParametrosQueryContasAPagar(Query query, FiltroContasAPagarDTO filtro, boolean buscarDatas){
+	private void setarParametrosQueryContasAPagar(Query query, FiltroContasAPagarDTO filtro, 
+	        boolean totais, boolean desconto){
 		
-		if (filtro.getDataDe() != null){
-			
-			query.setParameter("inicio", filtro.getDataDe());
-			query.setParameter("statusLancamento", StatusLancamento.RECOLHIDO);
-        }
-        
-        if (filtro.getDataAte() != null){
-        	
-        	query.setParameter("fim", filtro.getDataAte());
-        }
-
-		if (!buscarDatas){
-			//movimentos de grupo de estoque suplementar de entrada
-			List<GrupoMovimentoEstoque> movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
-			movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
-			movimentosSuplementar.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
-			movimentosSuplementar.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
-			movimentosSuplementar.add(GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE);
-			movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR);
-			query.setParameterList("movimentosSuplementarEntrada", movimentosSuplementar);
-			
-			//movimentos de grupo de estoque suplementar de saida
-			movimentosSuplementar = new ArrayList<GrupoMovimentoEstoque>();
-			movimentosSuplementar.add(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
-			movimentosSuplementar.add(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
-			movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
-			query.setParameterList("movimentosSuplementarSaida", movimentosSuplementar);
-			
-			query.setParameter("tipoDiferencaFaltaEm", TipoDiferenca.FALTA_EM);
-			query.setParameter("tipoDiferencaFaltaDe", TipoDiferenca.FALTA_DE);
-			query.setParameter("tipoDiferencaSobraEm", TipoDiferenca.SOBRA_EM);
-			query.setParameter("tipoDiferencaSobraDe", TipoDiferenca.SOBRA_DE);
-			
-			query.setParameter("statusPerda", StatusAprovacao.PERDA);
-			query.setParameter("statusGanho", StatusAprovacao.GANHO);
+		query.setParameter("inicio", filtro.getDataDe());
+		query.setParameter("fim", filtro.getDataAte());
+		
+		query.setParameterList("statusLancamento",
+		        Arrays.asList(
+		                StatusLancamento.RECOLHIDO,
+		                StatusLancamento.EM_RECOLHIMENTO,
+		                StatusLancamento.FECHADO
+		        )
+		);
+		
+		if (!totais){
+		    
+            query.setParameter("tipoDiferencaFaltaEm", GrupoMovimentoEstoque.FALTA_EM);
+            query.setParameter("tipoDiferencaFaltaDe", GrupoMovimentoEstoque.FALTA_DE);
+            query.setParameter("tipoDiferencaSobraEm", GrupoMovimentoEstoque.SOBRA_EM);
+            query.setParameter("tipoDiferencaSobraDe", GrupoMovimentoEstoque.SOBRA_DE);
+            
+            query.setParameter("statusPerda", StatusAprovacao.PERDA);
+            query.setParameter("statusGanho", StatusAprovacao.GANHO);
 		}
-		
-		
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
 			
-			query.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
+			query.setParameterList("fornecedores", filtro.getIdsFornecedores());
 		}
 		
         if (filtro.getProdutoEdicaoIDs() != null && !filtro.getProdutoEdicaoIDs().isEmpty()){
 			
 			query.setParameterList("idsProdutoEdicao", filtro.getProdutoEdicaoIDs());
 		}
+        
+        if (desconto){
+            query.setParameter("origemInterface", Origem.INTERFACE);
+        }
 	}
 
 	@SuppressWarnings("unchecked")
@@ -495,7 +421,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(this.montarQueryPorProduto(filtro));
 
-		this.setarParametrosQueryContasAPagar(query, filtro, false);
+		this.setarParametrosQueryContasAPagar(query, filtro, false, false);
 		
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		
@@ -513,7 +439,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(this.montarQueryTotaisPorProduto(filtro));
 
-		this.setarParametrosQueryContasAPagar(query, filtro, true);
+		this.setarParametrosQueryContasAPagar(query, filtro, true, false);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarGridPrincipalProdutoDTO.class));
 		
@@ -525,7 +451,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(this.montarQueryQuantidadePorProduto(filtro));
 
-		this.setarParametrosQueryContasAPagar(query, filtro, true);
+		this.setarParametrosQueryContasAPagar(query, filtro, true, false);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -534,21 +460,18 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		StringBuilder hql = new StringBuilder();
 
-		String campoRctl = filtro.getDataDe() == null?" l.dataRecolhimentoPrevista as rctl, ":" l.dataCriacao as rctl, ";
-
 		hql.append("select new ")
 		   .append(ContasApagarConsultaPorProdutoDTO.class.getCanonicalName())
 		   .append("(")
 		   .append("       produtoEdicao.id as produtoEdicaoId, ")
-		   .append(        campoRctl)
+		   .append("       l.dataRecolhimentoDistribuidor as rctl,")
 		   .append("       produto.codigo as codigo, ")
 		   .append("       produto.nome as produto, ")
 		   .append("       produtoEdicao.numeroEdicao as edicao, ")
 		   .append("       produtoEdicao.parcial as tipo, ")	   
-		   .append("       l.reparte as reparte ")
-		
-		   .append(",") 
-		
+		   .append("       l.reparte as reparte, ")
+		   .append("       f.juridica.nomeFantasia as fornecedor,")
+		   
 		   .append(this.queryPorProduto(filtro))
 		
 		   .append(")")
@@ -597,37 +520,37 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	
     private String queryPorProduto(FiltroContasAPagarDTO filtro){
 
-		StringBuilder hql = new StringBuilder();
+		final StringBuilder hql = new StringBuilder();
 		
-		String parametroData = filtro.getDataDe() == null?" l.dataRecolhimentoPrevista ":" l.dataCriacao ";
+		final String parametroData = " l.dataRecolhimentoDistribuidor ";
 			
-		hql.append("       (COALESCE((select sum(m.qtde) ")
-		   .append("           		  from MovimentoEstoque m ")
-		   .append(" 		 		  where m.data = ").append(parametroData)
-		   .append(" 		 		  and m.qtde is not null ")
-		   .append(" 		 		  and m.produtoEdicao.id = produtoEdicao.id ")
-		   .append(" 		 		  and m.produtoEdicao.precoVenda is not null ")
-	       .append(" 		 		  and m.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarEntrada)) ")
-	       .append("        ,0) - ")			   
-		   .append("	    COALESCE((select sum(m2.qtde) ")
-		   .append(" 		          from MovimentoEstoque m2 ")
-		   .append(" 		 		  where m2.data = ").append(parametroData)
-		   .append(" 		 		  and m2.qtde is not null ")
-		   .append(" 		 		  and m2.produtoEdicao.id = produtoEdicao.id ")	    
-		   .append(" 		 		  and m2.produtoEdicao.precoVenda is not null")
-		   .append(" 		 		  and m2.tipoMovimento.grupoMovimentoEstoque in (:movimentosSuplementarSaida)) ")
-		   .append("        ,0) ")
-		   .append("       ) as suplementacao, ")
-			   
-		   .append("       COALESCE((select sum(movimento.qtde) from ConferenciaEncalhe conferencia ")
-		   .append("                 join conferencia.movimentoEstoqueCota movimento ")
-		   .append("        		 join conferencia.chamadaEncalheCota chamadaEncalheCota ")
-		   .append("        		 join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")	   
-		   .append(" 		 		 where chamadaEncalhe.dataRecolhimento = ").append(parametroData)	   
-		   .append(" 				 and movimento.produtoEdicao.id = produtoEdicao.id ")	    
-		   .append("       ),0) as encalhe, ")
-
-		   .append("	   (COALESCE((select sum(ld2.diferenca.qtde) ")
+		hql.append(" (select  ")
+		   .append(" sum(estProd.qtde + coalesce(estProd.qtdeSuplementar,0)) ")
+		   .append(" from EstoqueProduto estProd ")
+           .append(" join estProd.produtoEdicao prEd2 ")
+           .append(" join prEd2.lancamentos lanc ")
+           .append(" left join prEd2.descontoLogistica descLogPrEd2")
+           .append(" join prEd2.produto pr2 ")
+           .append(" left join pr2.descontoLogistica descLogPr2 ")
+           .append(" left join pr2.fornecedores fornecedor2 ")
+           .append(" where lanc.dataRecolhimentoDistribuidor = ").append(parametroData)
+           .append(" and prEd2.id = produtoEdicao.id ")
+           .append(" ) as suplementacao, ")
+           
+		   .append(" (select sum((coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeJuramentado,0) + ")
+           .append(" coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0))) ")
+           .append(" from EstoqueProduto estProd ")
+           .append(" join estProd.produtoEdicao prEd2 ")
+           .append(" join prEd2.lancamentos lanc ")
+           .append(" left join prEd2.descontoLogistica descLogPrEd2")
+           .append(" join prEd2.produto pr2 ")
+           .append(" left join pr2.descontoLogistica descLogPr2 ")
+           .append(" left join pr2.fornecedores fornecedor2 ")
+           .append(" where lanc.dataRecolhimentoDistribuidor = ").append(parametroData)
+           .append(" and prEd2.id = produtoEdicao.id ")
+           .append(" and lanc.status in (:statusLancamento)) as encalhe, ")
+           
+           .append("	   (COALESCE((select sum(ld2.diferenca.qtde) ")
 		   .append("                  from LancamentoDiferenca ld2 ")	   
 		   .append(" 		 		  where ld2.dataProcessamento = ").append(parametroData)
 		   .append(" 		          and ld2.diferenca.qtde is not null ")
@@ -735,29 +658,14 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
     private String queryPorProdutoFrom(FiltroContasAPagarDTO filtro){    	
     	
-    	StringBuilder hql = new StringBuilder();
-    	
-    	String j = " WHERE ";
-
-    	hql.append(" from Lancamento l ")
+    	final StringBuilder hql = new StringBuilder(" from Lancamento l ")
 	       .append(" join l.produtoEdicao produtoEdicao ")
 	       .append(" join produtoEdicao.produto produto ")
-	       .append(" join produto.fornecedores f ");
-	   
-        if (filtro.getDataDe() != null){
-            hql.append(j+" l.dataCriacao >= :inicio ");
-            j = " AND ";
-            hql.append(" and l.status = :statusLancamento ");
-        }
-        
-        if (filtro.getDataAte() != null){
-            hql.append(j+" l.dataCriacao <= :fim ");
-            j = " AND ";
-        }
-	       
-	    hql.append(j+" l.reparte is not null ")
+	       .append(" join produto.fornecedores f ")
+	       .append(" where l.dataRecolhimentoDistribuidor between :inicio and :fim ")
+	       .append(" and l.status in (:statusLancamento) ")
+	       .append(" and l.reparte is not null ")
 	       .append(" and produtoEdicao.precoVenda is not null ");	      
-	       
     	
     	if (filtro.getProdutoEdicaoIDs() != null && !filtro.getProdutoEdicaoIDs().isEmpty()){
 		    hql.append(" and produtoEdicao.id in (:idsProdutoEdicao) ");
@@ -769,46 +677,43 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ContasAPagarConsignadoDTO> pesquisarDetalheConsignado(FiltroContasAPagarDTO filtro) {
-		
+	    
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ")
 		   .append("    produto2.codigo as codigo, ")
 		   .append("    produto2.nomeComercial as produto, ")
 		   .append("    produtoEdicao.numeroEdicao as edicao, ")
-		   .append(" 	produtoEdicao.precoVenda as precoCapa, ")
-		   .append(" 	produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100) as precoComDesconto, ")
-		   .append(" 	l.reparte as reparteSugerido, ")
-		   .append(" 	l.reparte - coalesce(dif.qtde,0) as reparteFinal, ")
-		   .append(" 	l.reparte - (l.reparte - coalesce(dif.qtde,0)) as diferenca, ")
-		   .append(" 	coalesce(mec.motivo, '') as motivo, ")
+		   .append(" 	coalesce(produtoEdicao.precoVenda,0) as precoCapa, ")
+		   .append(" 	coalesce(produtoEdicao.precoVenda,0) - (coalesce(produtoEdicao.precoVenda,0) * ( ")
+		   .append("      case when produtoEdicao.origem = :origemInterface ")
+		   .append("      then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+		   .append("      else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
+		   .append("      end)) as precoComDesconto, ")
+		   .append(" 	me.qtde as reparteSugerido, ")
+		   .append(" 	me.qtde - coalesce(dif.qtde,0) as reparteFinal, ")
+		   .append(" 	sum(coalesce(dif.qtde,0)) as diferenca, ")
 		   .append(" 	coalesce(pessoa.razaoSocial, '') as fornecedor, ")
-		   .append(" 	produtoEdicao.precoVenda * (l.reparte - coalesce(dif.qtde,0)) as valor, ")
-		   .append(" 	(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100)) * (l.reparte - coalesce(dif.qtde,0)) as valorComDesconto, ")
-		   .append("    coalesce(ne.chaveAcesso, '') as nfe ")
+		   .append(" 	coalesce(produtoEdicao.precoVenda,0) * (me.qtde) as valor, ")
+		   .append(" 	(coalesce(produtoEdicao.precoVenda,0) - (coalesce(produtoEdicao.precoVenda,0) * ( ")
+		   .append("      case when produtoEdicao.origem = :origemInterface ")
+           .append("      then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+           .append("      else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
+           .append("      end))) * (me.qtde) as valorComDesconto ")
 		   .append(" from ")
 		   .append(" 	Lancamento l ")
 		   .append(" 	join l.produtoEdicao produtoEdicao ")
+		   .append("    left join produtoEdicao.movimentoEstoques me ")
+		   .append("    left join me.tipoMovimento tpMov ")
+		   .append("    left join produtoEdicao.descontoLogistica descLogPrEd ")
 		   .append("	join produtoEdicao.produto produto2 ")
-		   .append("	join produto2.fornecedores fo ")
-		   .append("	join fo.juridica pessoa ")
-		   .append("    left join l.movimentoEstoqueCotas mec ")
-		   .append("    left join l.estudo estudo ")
-		   .append("    left join estudo.estudoCotas estudoCotas ")
-		   .append("    left join estudoCotas.itemNotaEnvios ine ")
-		   .append("  	left join ine.itemNotaEnvioPK.notaEnvio ne ")
+		   .append("    left join produto2.descontoLogistica descLogPr ")
+		   .append("	left join produto2.fornecedores fo ")
+		   .append("	left join fo.juridica pessoa ")
 		   .append(" 	left join produtoEdicao.diferencas dif ")
 		   .append("    left join dif.lancamentoDiferenca ld ")
-		   .append(" where l.reparte is not null ");
-		   
-		if (filtro.getDataDe() == null) {
-		   hql.append(" 	and l.dataRecolhimentoPrevista = :data ");
-		
-		} else {
-		   hql.append(" 	and l.dataCriacao = :data ")
-		   	  .append(" 	and l.status = :statusLancamento ");
-		}
-		
-		hql.append(" 	and produtoEdicao.precoVenda is not null ");
+		   .append(" where l.dataRecolhimentoDistribuidor = :data ")
+		   .append(" 	and l.status in (:statusLancamento) ")
+		   .append("    and (tpMov.grupoMovimentoEstoque = :grupoRecebFis or tpMov.grupoMovimentoEstoque is null) ");
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -820,7 +725,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
 		}
 		
-		hql.append(" order by ")
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+		    
+		    hql.append(" and fo.id in (:fornecedores) ");
+		}
+		
+		hql.append(" group by produtoEdicao.id ")
+		   .append(" order by ")
 		   .append("	pessoa.razaoSocial ");
 		
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
@@ -836,10 +747,13 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", filtro.getDataDetalhe());
 		
-		if(filtro.getDataDe() != null) {
-			query.setParameter("statusLancamento", StatusLancamento.RECOLHIDO);
-		}
-		
+		query.setParameterList("statusLancamento", 
+		        Arrays.asList(
+		                StatusLancamento.RECOLHIDO,
+		                StatusLancamento.EM_RECOLHIMENTO,
+		                StatusLancamento.FECHADO
+		        )
+		);
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -850,6 +764,15 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			
 			query.setParameter("numeroEdicao", filtro.getEdicao());
 		}
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+		    
+		    query.setParameterList("fornecedores", filtro.getIdsFornecedores());
+		}
+		
+		query.setParameter("origemInterface", Origem.INTERFACE);
+		
+		query.setParameter("grupoRecebFis", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsignadoDTO.class));
 		
@@ -860,27 +783,43 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	@Override
 	public List<ContasAPagarEncalheDTO> pesquisarDetalheEncalhe(FiltroContasAPagarDTO filtro){
 		
+	    final String qtdsEncalhe = 
+                " coalesce(estProd.qtdeDevolucaoEncalhe,0) + coalesce(estProd.qtdeJuramentado,0) + " +
+                " coalesce(estProd.qtdeDanificado,0) - coalesce(estProd.qtdePerda,0) + coalesce(estProd.qtdeGanho,0)";
+	    
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ")
-		   .append("    produto2.codigo, ")
+		   .append("    produto2.codigo as codigo, ")
 		   .append("    produto2.nomeComercial as produto, ")
 		   .append("    produtoEdicao.numeroEdicao as edicao, ")
-		   .append(" 	produtoEdicao.precoVenda as precoCapa, ")
-		   .append(" 	produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100) as precoComDesconto, ")
-		   .append(" 	l.qtde as encalhe, ")
+		   .append(" 	coalesce(produtoEdicao.precoVenda,0) as precoCapa, ")
+		   .append("    coalesce(produtoEdicao.precoVenda,0) - (coalesce(produtoEdicao.precoVenda,0) * ( ")
+           .append("      case when produtoEdicao.origem = :origemInterface ")
+           .append("      then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+           .append("      else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
+           .append("      end)) as precoComDesconto, ")
+		   .append(" 	(").append(qtdsEncalhe).append(") as encalhe, ")
 		   .append(" 	coalesce(pessoa.razaoSocial, '') as fornecedor, ")
-		   .append(" 	(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100)) as valor ")
-		   .append(" from ")
-		   .append(" 	ConferenciaEncalhe l ")
-		   .append(" 	join l.produtoEdicao produtoEdicao ")
-		   .append("	join produtoEdicao.produto produto2 ")
-		   .append("	join produto2.fornecedores fo ")
-		   .append("	join fo.juridica pessoa ")
-		   .append(" 	join l.chamadaEncalheCota chamadaEncalheCota ")
-		   .append(" 	join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		   .append(" where chamadaEncalhe.dataRecolhimento = :data ")
-		   .append(" 	and l.qtde is not null ")
-		   .append(" 	and produtoEdicao.precoVenda is not null ");
+		   .append("    (coalesce(produtoEdicao.precoVenda,0) - (coalesce(produtoEdicao.precoVenda,0) * ( ")
+           .append("      case when produtoEdicao.origem = :origemInterface ")
+           .append("      then (coalesce(descLogPrEd2.percentualDesconto, descLogPr2.percentualDesconto, 0) / 100) ")
+           .append("      else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
+           .append("      end))) * (").append(qtdsEncalhe).append(") as valor ")
+		   .append(" from EstoqueProduto estProd ")
+           .append(" join estProd.produtoEdicao produtoEdicao ")
+           
+           .append(" left join produtoEdicao.movimentoEstoques me ")
+           .append(" left join me.tipoMovimento tpMov ")
+           
+           .append(" join produtoEdicao.lancamentos lanc ")
+           .append(" left join produtoEdicao.descontoLogistica descLogPrEd2")
+           .append(" join produtoEdicao.produto produto2 ")
+           .append(" left join produto2.descontoLogistica descLogPr2 ")
+           .append(" left join produto2.fornecedores fornecedor2 ")
+           .append(" join fornecedor2.juridica pessoa ")
+           .append(" where lanc.dataRecolhimentoDistribuidor = :data ")
+           .append(" and lanc.status in (:statusLancamento) ")
+           .append(" and (tpMov.grupoMovimentoEstoque = :grupoRecebFis or tpMov.grupoMovimentoEstoque is null) ");
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -890,6 +829,11 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		if (filtro.getEdicao() != null){
 			
 			hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
+		}
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+		    
+		    hql.append(" and fornecedor2.id in (:fornecedores) ");
 		}
 		
 		hql.append(" order by ")
@@ -906,6 +850,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarEncalheDTO.class));
+		
 		query.setParameter("data", filtro.getDataDetalhe());
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
@@ -917,6 +864,23 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			
 			query.setParameter("numeroEdicao", filtro.getEdicao());
 		}
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()){
+            
+            query.setParameterList("fornecedores", filtro.getIdsFornecedores());
+        }
+		
+		query.setParameter("origemInterface", Origem.INTERFACE);
+		
+		query.setParameterList("statusLancamento",
+                Arrays.asList(
+                        StatusLancamento.RECOLHIDO,
+                        StatusLancamento.EM_RECOLHIMENTO,
+                        StatusLancamento.FECHADO
+                )
+        );
+        
+        query.setParameter("grupoRecebFis", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 		
 		return query.list();
 	}
@@ -925,30 +889,38 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 	@Override
 	public List<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro){
 		
-		StringBuilder hql = new StringBuilder();
+	    StringBuilder hql = new StringBuilder();
 		hql.append("select ")
-		   .append("    produto2.codigo, ")
+		   .append("    produto2.codigo as codigo, ")
 		   .append("    produto2.nomeComercial as produto, ")
 		   .append("    produtoEdicao.numeroEdicao as edicao, ")
 		   .append(" 	produtoEdicao.precoVenda as precoCapa, ")
-		   .append(" 	produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100) as precoComDesconto, ")
-		   .append("	boxDetalhe.codigo as box, ")
-		   .append("	diferenca.qtde as exemplares, ")
+		   .append(" 	produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ")
+		   .append("    case when produtoEdicao.origem = :origemInterface ")
+		   .append("    then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+		   .append("    else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) /100) end ")
+		   .append("    ) as precoComDesconto,")
+		   .append("	estProd.qtde as exemplares, ")
 		   .append(" 	coalesce(pessoa.razaoSocial, '') as fornecedor, ")
-		   .append(" 	(produtoEdicao.precoVenda - (produtoEdicao.precoVenda * coalesce(fo.margemDistribuidor,0) / 100)) as valor ")
-		   .append(" from ")
-		   .append(" 	LancamentoDiferenca l ")
-		   .append(" 	join l.diferenca diferenca ")
-		   .append("	join diferenca.produtoEdicao produtoEdicao ")
-		   .append("	join diferenca.rateios rateioDiferenca ")
-		   .append("	join rateioDiferenca.cota cota ")
-		   .append("	join cota.box boxDetalhe ")
-		   .append("	join produtoEdicao.produto produto2 ")
-		   .append("	join produto2.fornecedores fo ")
-		   .append("	join fo.juridica pessoa ")
-		   .append(" where l.dataProcessamento = :data ")
-		   .append(" 	and diferenca.qtde is not null ")
-		   .append(" 	and produtoEdicao.precoVenda is not null ");
+		   .append("    estProd.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ")
+           .append("    case when produtoEdicao.origem = :origemInterface ")
+           .append("    then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+           .append("    else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) /100) end) ")
+           .append("    ) as valor ")		   
+		   
+		   .append(" from EstoqueProduto estProd ")
+           .append(" join estProd.produtoEdicao produtoEdicao ")
+           .append(" join produtoEdicao.lancamentos lanc ")
+           .append(" left join produtoEdicao.descontoLogistica descLogPrEd ")
+           .append(" join produtoEdicao.produto produto2 ")
+           .append(" left join produto2.descontoLogistica descLogPr ")
+           .append(" left join produto2.fornecedores fo ")
+           .append(" left join fo.juridica pessoa ")
+           .append(" left join estProd.movimentos me ")
+           .append(" left join me.tipoMovimento tpMov ")
+           .append(" where lanc.dataRecolhimentoDistribuidor = :data ")
+           .append(" and lanc.status in (:statusLancamento) ")
+           .append(" and tpMov.grupoMovimentoEstoque in (:gruposMov) ");
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -975,6 +947,15 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", filtro.getDataDetalhe());
+		query.setParameter("origemInterface", Origem.INTERFACE);
+		
+		query.setParameterList("statusLancamento",
+                Arrays.asList(
+                        StatusLancamento.RECOLHIDO,
+                        StatusLancamento.EM_RECOLHIMENTO,
+                        StatusLancamento.FECHADO
+                )
+        );
 		
 		if (filtro.getProduto() != null && !filtro.getProduto().isEmpty()){
 			
@@ -986,12 +967,23 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			query.setParameter("numeroEdicao", filtro.getEdicao());
 		}
 		
+		query.setParameterList("gruposMov", 
+		        Arrays.asList(
+		                GrupoMovimentoEstoque.FALTA_EM, 
+		                GrupoMovimentoEstoque.FALTA_DE, 
+		                GrupoMovimentoEstoque.SOBRA_EM, 
+		                GrupoMovimentoEstoque.SOBRA_DE
+		        )
+		);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarFaltasSobrasDTO.class));
+		
 		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ContasAPagarConsultaProdutoDTO> obterProdutos(FiltroContasAPagarDTO filtro) {
+	public List<ContasAPagarConsultaProdutoVO> obterProdutos(final FiltroContasAPagarDTO filtro) {
 		StringBuilder sql = new StringBuilder();
 
 
@@ -1004,29 +996,54 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
         sql.append(" JOIN  p.fornecedores f");
         sql.append(" JOIN  f.juridica fornec");
         sql.append(" JOIN  e.pessoaJuridica edi");
+        sql.append(" JOIN  pe.lancamentos lan ");
         
         if(	filtro.getProduto()!=null || filtro.getEdicao()!=null ){
         	sql.append(" WHERE ");
-	        if(	filtro.getProduto()!=null	)
-	        	sql.append("        p.codigo = :codigoProduto ");
-	        if(	filtro.getEdicao()!=null	)
+	        
+        	if(filtro.getProduto() != null){
+        	    sql.append("  (p.codigo = :codigoProduto OR p.codigoICD = :codigoICD OR p.codigo = :codigoProdin) " );
+	        }
+	        
+	        if(filtro.getEdicao() != null){
 	        	sql.append(" AND    pe.numeroEdicao = :numeroEdicao ");
+	        }
         }
         
+        sql.append(" group by pe.id ");
         
-        sql.append(" order by "+filtro.getPaginacaoVO().getSortColumn());
-        sql.append(" "+filtro.getPaginacaoVO().getOrdenacao());
-        
+        if (filtro.getPaginacaoVO() != null && filtro.getPaginacaoVO().getSortColumn() != null){
+            
+            sql.append(" order by ");
+            
+            if ("edicao".equals(filtro.getPaginacaoVO().getSortColumn())){
+                
+                sql.append("codigo, edicao ");
+            } else {
+                
+                sql.append(filtro.getPaginacaoVO().getSortColumn());
+            }
+            
+            if (filtro.getPaginacaoVO().getOrdenacao() != null){
+                
+                sql.append(" ").append(filtro.getPaginacaoVO().getOrdenacao());
+            }
+        } else {
+            
+            sql.append(" order by lan.dataRecolhimentoDistribuidor desc, p.codigo, pe.numeroEdicao");
+        }
         
         Query query = getSession().createQuery(sql.toString());
         if(filtro.getProduto() != null){
-        	query.setParameter("codigoProduto", filtro.getProduto());
+            query.setParameter("codigoProduto", leftPad(filtro.getProduto(), 8, "0"));
+            query.setParameter("codigoICD", filtro.getProduto());
+            query.setParameter("codigoProdin", leftPad(filtro.getProduto().concat("01"), 8, "0"));
         }
         
         if(filtro.getEdicao()!=null){
         	query.setParameter("numeroEdicao", filtro.getEdicao());            
         }
-        query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoDTO.class));
+        query.setResultTransformer(new AliasToBeanResultTransformer(ContasAPagarConsultaProdutoVO.class));
         return query.list();
 
 	}
@@ -1054,6 +1071,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		movimentosSuplementar.add(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
 		query.setParameterList("movimentosSuplementarSaida", movimentosSuplementar);
 		
+		query.setParameter("data", filtro.getDataDetalhe());
 		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
 		query.setParameter("codigoProduto", filtro.getProduto());
 		
@@ -1075,7 +1093,6 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		Query query = this.getSession().createQuery(this.obterQueryPesquisaParcial(filtro, true));
 		query.setParameter("data", filtro.getDataDetalhe());
-		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
 		query.setParameter("codigoProduto", filtro.getProduto());
 		
 		return (Long) query.uniqueResult();
@@ -1094,9 +1111,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 			//porém, para a tela de contas a pagar não existe documentação que explique que intervalo seja esse.
 			//A query abaixo vai considerar TUDO que estiver lançado antes da data informada no filtro
 			
-			hql.append(" 	lp.lancamentoInicial as lcto, ")
-			   .append(" 	lp.recolhimentoFinal as rclt, ")
-			   .append(" 	l.reparte, ")
+			hql.append(" 	l.dataLancamentoDistribuidor as lcto, ")
+			   .append(" 	l.dataRecolhimentoDistribuidor as rclt, ")
+			   .append(" 	l.reparte as reparte, ")
 			   .append("	l.id as idLancamento, ")
 			   //suplementacao
 			   .append("	((select ")
@@ -1147,7 +1164,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		       .append("	  from ")
 		       .append("    	LancamentoParcial lp2 ")
 		       .append("		join lp2.periodos plp2 ")
-		       .append("		join plp2.lancamento l2 ")
+		       .append("		join plp2.lancamentos l2 ")
 		       .append("	  where ")
 		       .append("		lp2.recolhimentoFinal = :data ")
 		       .append("		and l2.status = :statusLancamento) * ")
@@ -1198,7 +1215,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		       .append("	  from ")
 		       .append("    	LancamentoParcial lp2 ")
 		       .append("		join lp2.periodos plp2 ")
-		       .append("		join plp2.lancamento l2 ")
+		       .append("		join plp2.lancamentos l2 ")
 		       .append("	  where ")
 		       .append("		lp2.recolhimentoFinal = :data ")
 		       .append("		and l2.status = :statusLancamento) * ")
@@ -1220,17 +1237,16 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		}
 		
 		hql.append(" from ")
-		   .append("    LancamentoParcial lp ")
-		   .append("    join lp.produtoEdicao pe ")
+		   .append("    PeriodoLancamentoParcial plp ")
+		   .append("    join plp.lancamentoParcial lp ")
+		   .append("	join plp.lancamentos l ")
+		   .append("    join l.produtoEdicao pe ")
 		   .append("    join pe.produto prod ")
-		   .append("	join lp.periodos plp ")
-		   .append("	join plp.lancamento l ")
 		   .append(" where ")
-		   .append("	lp.recolhimentoFinal = :data ")
-		   .append("	and l.status = :statusLancamento ")
+		   .append("	(l.dataRecolhimentoDistribuidor = :data)")
 		   .append("	and prod.codigo = :codigoProduto ");
 		
-		if (filtro.getPaginacaoVO() != null && !count){
+		if (filtro.getPaginacaoVO() != null && !count && filtro.getPaginacaoVO().getSortColumn() != null && filtro.getPaginacaoVO().getSortOrder() != null){
 			
 			hql.append(" order by ")
 			   .append(filtro.getPaginacaoVO().getSortColumn())
@@ -1240,6 +1256,4 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		
 		return hql.toString();
 	}
-
-	
 }

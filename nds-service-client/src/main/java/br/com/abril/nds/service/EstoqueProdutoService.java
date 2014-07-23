@@ -44,5 +44,12 @@ public interface EstoqueProdutoService {
 	 * @param estoqueEntrada - estoque de entrada
 	 * @param idUsuario - identificador do usuario
 	 */
-	void processarTransferencaiEntreEstoques(final Long idProdutoEdicao,final TipoEstoque estoqueSaida,final TipoEstoque estoqueEntrada,final Long idUsuario);
+	void processarTransferenciaEntreEstoques(final Long idProdutoEdicao,final TipoEstoque estoqueSaida,final TipoEstoque estoqueEntrada,final Long idUsuario);
+
+    void saveOrUpdate(EstoqueProduto estoqueProduto);
+
+    EstoqueProduto obterEstoqueProdutoParaAtualizar(Long idProdutoEdicao);
+
+    void atualizarEstoqueProdutoCota();
+    
 }

@@ -28,14 +28,18 @@ public class ItemRecebimentoFisico implements Serializable {
 	@GeneratedValue(generator = "ITEM_REC_FISICO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "QTDE_FISICO", nullable = false)
 	private BigInteger qtdeFisico;
+	
 	@OneToOne
 	@JoinColumn(name = "DIFERENCA_ID", updatable = true, insertable = true, nullable = true)
 	private Diferenca diferenca;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")
 	private RecebimentoFisico recebimentoFisico;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "ITEM_NF_ENTRADA_ID")
 	private ItemNotaFiscalEntrada itemNotaFiscal;

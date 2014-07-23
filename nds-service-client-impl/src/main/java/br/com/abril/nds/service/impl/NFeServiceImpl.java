@@ -434,7 +434,9 @@ public class NFeServiceImpl implements NFeService {
         
         if(endereco != null) {
             
-            destinatarioLogradouro 	= endereco.getTipoLogradouro() +" "+ endereco.getLogradouro();
+            destinatarioLogradouro 	= (endereco.getTipoLogradouro() == null ? "" : endereco.getTipoLogradouro()) 
+            		+ " " + (endereco.getLogradouro() == null ? "" : endereco.getLogradouro());
+            
             destinatarioNumero		= endereco.getNumero()!=null?endereco.getNumero().toString():"";
             destinatarioComplemento	= endereco.getComplemento();
             destinatarioBairro		= endereco.getBairro();
@@ -504,10 +506,14 @@ public class NFeServiceImpl implements NFeService {
             
         });
         
+        boolean temLancamentoComFuroDeProduto = false;
+        
         for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
             
             codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
-            descricaoProduto 	= itemNotaEnvio.getProdutoEdicao().getProduto().getNome();
+            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null)
+            		? itemNotaEnvio.getPublicacao()
+            				:itemNotaEnvio.getPublicacao()+" (1) ";
             produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
             
             valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
@@ -528,7 +534,13 @@ public class NFeServiceImpl implements NFeService {
             
             listaItemImpressaoNfe.add(item);
             
+            if(itemNotaEnvio.getFuroProduto()!= null){
+            	temLancamentoComFuroDeProduto = true;
+            }
+            
         }
+        
+        nfeImpressao.setItensComFuroLancamento(temLancamentoComFuroDeProduto);
         
         nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
         

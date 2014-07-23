@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaUnificacaoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaUnificacaoService;
 import br.com.caelum.vraptor.Get;
@@ -126,6 +128,14 @@ public class CotaUnificacaoController extends BaseController {
 		CotaVO cotaVO = 
 			this.cotaUnificacaoService.obterCota(numeroCota, edicao);
 		
-		result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
+		if (cotaVO == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s não encontrada.", numeroCota));
+			
+		} else {
+
+			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
+		}
+		
 	}
 }

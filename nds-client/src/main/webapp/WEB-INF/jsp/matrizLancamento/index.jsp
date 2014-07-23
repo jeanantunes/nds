@@ -57,7 +57,7 @@ balanceamentoLancamento.inicializar();
 <form id="form-excluir-lancamento">
 	<div id="dialog-excluir-lancamento" title="Remover Lançamento" style="display:none">
 			
-		<p>Deseja realmente excluir este lançamento?</p>
+		<p>Deseja realmente Excluir este lançamento:</p>
 			   
 	</div>
 </form>
@@ -67,7 +67,7 @@ balanceamentoLancamento.inicializar();
 			
 			<jsp:include page="../messagesDialog.jsp" />
 			
-			<p>Existem lançamentos não confirmados. Ao prosseguir com essa ação você perderá os dados. Deseja prosseguir?</p>
+			<p>Manter as alteraçoes do(s) lançamento(s) ou Descartar ?</p>
 			   
 </div>
 </form>
@@ -83,7 +83,7 @@ balanceamentoLancamento.inicializar();
 <form id="formVoltarConfiguracaoInicial">
 <div id="dialogVoltarConfiguracaoInicial" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
-			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
+			<p>Ao voltar a configuração inicial, você perderá os dados não-salvos. Deseja prosseguir?</p>
 			   
 </div>
 </form>
@@ -117,7 +117,7 @@ balanceamentoLancamento.inicializar();
 			  		<div class="area">
 			  			<span class="bt_novos" style="display: none;">
 		        			<!-- Voltar Configuração Inicial -->
-		        			<a id="linkVoltarConfiguracaoInicial" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
+		        			<a id="linkVoltarConfiguracaoInicial" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Voltar &agrave; Configuração Inicial N&atilde;o-Salva"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
 		        		</span>
 			  			
 			  			<span class="bt_novos" style="display: none;">
@@ -126,20 +126,20 @@ balanceamentoLancamento.inicializar();
 		                </span>
 		                
 		                <span class="bt_novos" style="display: none;">
-							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
-								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
+							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Bloquear o Dia">
+								<img height="15" width="15" src="<c:url value='images/ico_bloqueado.gif'/>"  hspace="5" border="0" />
 							</a>
 						</span>
 						
 						<span class="bt_novos" style="display: none;">
-							<a id="linkMatrizFornecedor" isEdicao="true" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
+							<a id="linkMatrizFornecedor" isEdicao="true" title="Listar Todos Produtos Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
 								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
 							</a>
 						</span>
 			  			
 			  			 <span class="bt_arq">
 							<!-- ARQUIVO -->
-							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+							<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 						    </a>
 						</span>
@@ -147,7 +147,7 @@ balanceamentoLancamento.inicializar();
 					
 						<span class="bt_arq">
 							<!-- IMPRIMIR -->	
-							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+							<a href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						    </a>
 						</span>
@@ -164,17 +164,23 @@ balanceamentoLancamento.inicializar();
 					             <img src="<c:url value='images/ico_reopen.gif'/>"  hspace="5" border="0" />
 				           </a> 
 			            </span>
+			            
+			            <span class="bt_novos" style="display: none;">
+							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvarMatriz();" title="Salvar">
+								<img height="15" width="15" src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
+							</a>
+						</span>
 			  		</div>
 			  </div>
 			  <div class="linha_separa_fields">&nbsp;</div>
-		      <fieldset class="fieldFiltro">
+		      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		   	    <legend>Pesquisar Balanceamento da Matriz de Lançamento
 		        </legend>
 		   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		   	      <tr>
 		   	        <td width="68">Fornecedor:&nbsp;</td>
 		   	        <td width="228">
-		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+		            <a href="javascript:void(0)" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 
@@ -196,7 +202,7 @@ balanceamentoLancamento.inicializar();
 		   	        <td width="112">&nbsp;</td>
 		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
-						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 					</td>
 		          </tr>
 		        </table>
@@ -245,6 +251,20 @@ balanceamentoLancamento.inicializar();
 		        </table>
 
 		    </fieldset>
+		</div>
+		<div id="dialog-confirm-dados-alterados" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar-dados-alterados" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamentoDadosAlterados">
+		        </table>
+
+		    </fieldset>
+		    
 		</div>
 		</form>
 		

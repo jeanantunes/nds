@@ -7,6 +7,18 @@ init : function() {
 		ajusteReparteController.filtroPorSegmento();
 	});
 	
+	disabledEnterModalConfirmar.push('dialog-novo-ajusteReparte');
+	
+	$('#numeroCota', ajusteReparteController.workspace).bind({
+		keyup: function(){
+			onlyNumeric(event);
+		},
+
+		change: function(){
+			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+		}
+	});
+	
 	ajusteReparteController.mask();
 
 	$(".cotasAjusteGrid").flexigrid({
@@ -125,7 +137,7 @@ init : function() {
 
 		$.each(resultado.rows, function(index, row) {
 			
-			var editar = '<a href="javascript:;" isEdicao="true" onclick="ajusteReparteController.editarAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
+			var editar = '<a href="javascript:;"  onclick="ajusteReparteController.editarAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
 							   	 '<img title="Alterar" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			var excluir = '<a href="javascript:;" isEdicao="true" onclick="ajusteReparteController.excluirAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
@@ -158,7 +170,7 @@ init : function() {
 		
 		$("#tableSegmentos").hide();
 		
-		$("#dialog-novo").dialog({
+		$("#dialog-novo-ajusteReparte").dialog({
 			resizable: false,
 			height:'auto',
 			width:630,
@@ -205,7 +217,7 @@ init : function() {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 			                 $(".cotasAjusteGrid").flexReload();
-			                 $("#dialog-novo").dialog("close");
+			                 $("#dialog-novo-ajusteReparte").dialog("close");
 					   },
 					   function(result) {
 							var tipoMensagem = result.tipoMensagem;
@@ -231,7 +243,7 @@ init : function() {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 			                 $(".cotasAjusteGrid").flexReload();
-			                 $("#dialog-novo").dialog("close");
+			                 $("#dialog-novo-ajusteReparte").dialog("close");
 					   },
 					   function(result) {
 							var tipoMensagem = result.tipoMensagem;

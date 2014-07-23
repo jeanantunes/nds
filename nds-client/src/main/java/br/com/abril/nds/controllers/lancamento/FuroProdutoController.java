@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.lancamento;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -48,6 +50,9 @@ public class FuroProdutoController extends BaseController {
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 
 	private Result result;
 	
@@ -199,15 +204,36 @@ public class FuroProdutoController extends BaseController {
 		
 		result.forwardTo(FuroProdutoController.class).index();
 	}
+	
+	/**
+     * Verifica se data é operante
+     * 
+     * @param data
+     */
+    private void validarData(String codigoProduto, Long idProdutoEdicao, Date data){
+    	
+    	final Calendar c = Calendar.getInstance();
+         
+        c.setTime(data);
+         
+        boolean diaOperante = this.furoProdutoService.isDiaOperante(codigoProduto, idProdutoEdicao, c);
+		
+		if (!diaOperante) {
+	        	
+			throw new ValidacaoException(TipoMensagem.WARNING, DateUtil.formatarDataPTBR(data)+" não é uma data em que o distribuidor realiza operação! ");
+	    }
+    }
 
 	@Post
 	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception {
+		
+		this.validarData(codigoProduto, idProdutoEdicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData));
 
 		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
 		
 		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
-
+		
 		this.furoProdutoService.validarFuroProduto(codigoProduto, 
 				idProdutoEdicao, idLancamento, 
 				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), getUsuarioLogado().getId());

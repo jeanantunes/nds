@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -162,12 +164,14 @@ public class RomaneioController extends BaseController {
 		
 		filtro.setNomesProduto(nomesProduto);
 		
+		filtro.setIsImpressao(true);
+		
 		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, true);
 		
-		FileExporter.to("romaneio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
-				listaRomaneios, RomaneioDTO.class, this.httpResponse);
+		FileExporter.to("romaneio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaRomaneios, RomaneioDTO.class, this.httpResponse);
 		
 		result.nothing();
+		
 	}
 	
 	@Get
@@ -246,18 +250,28 @@ public class RomaneioController extends BaseController {
 	}
 
 	private void carregarComboBox() {
-		List<Box> boxs = boxService.buscarPorTipo(TipoBox.LANCAMENTO);
 		
-			List<ItemDTO<Integer, String>> lista =
-				new ArrayList<ItemDTO<Integer,String>>();
+		List<ItemDTO<Long, String>> boxes = new ArrayList<ItemDTO<Long, String>>();
+
+		List<Box> listaBoxes = boxService.buscarTodos(TipoBox.LANCAMENTO);
 		
-		for (Box box : boxs) {
-			
-			lista.add(
-				new ItemDTO<Integer, String>(box.getCodigo(), box.getNome()));
+		Collections.sort(listaBoxes, new Comparator<Box>() {
+		    @Override
+		    public int compare(Box lhs, Box rhs) {
+		       
+		        return lhs.getCodigo().compareTo(rhs.getCodigo());
+		    }
+		});
+		
+		boxes.add(new ItemDTO<Long, String>(0L, "Especial"));
+		
+		for (Box box : listaBoxes) {
+
+			boxes.add(new ItemDTO<Long, String>(box.getId(), box.getCodigo()
+					+ " - " + box.getNome()));
 		}
-		
-		result.include("listaBox", lista);
+
+		result.include("listaBox", boxes);
 	}
 	
 	private void carregarComboRoteiro() {

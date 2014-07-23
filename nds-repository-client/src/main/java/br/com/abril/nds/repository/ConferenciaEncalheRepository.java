@@ -8,12 +8,25 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ProdutoEdicaoSlip;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
+	
+	/**
+	 * Retorna uma lista de Id's de ConferenciaEncalhe que 
+	 * associados ao idControleConferenciaEncalheCota cujos 
+	 * produtoEdicao associados a estes não estejam na 
+	 * listaIdProdutoEdicaoConferidos.  
+	 * 
+	 * @param idControleConfEncalheCota
+	 * @param listaIdProdutoEdicaoConferidos
+	 * 
+	 * @return List - Long
+	 */
+	public List<Long> obterIdConferenciasExcluidas(Long idControleConfEncalheCota, List<Long> listaIdProdutoEdicaoConferidos);
 	
 	/**
 	 * Obtém a quantidade de itens da conferencia de encalhe.
@@ -49,7 +62,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * Obtém lista de conferenciaEncalhe em contingência.
 	 * 
 	 * @param numeroCota
-	 * @param dataRecolhimento
+	 * @param datasRecolhimento
 	 * @param indFechado
 	 * @param indPostergado
 	 * @param listaIdProdutoEdicao
@@ -58,7 +71,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 */
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
 			Integer numeroCota,
-			Date dataRecolhimento,
+			List<Date> datasRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);
@@ -82,7 +95,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @return List - ProdutoEdicaoSlipDTO
 	 */
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	public List<ProdutoEdicaoSlip> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 
 	
 	/**
@@ -96,7 +109,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @return List<ProdutoEdicaoSlipDTO>
 	 */
-	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
+	public List<ProdutoEdicaoSlip> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
 			Long idCota,
 			Date dataOperacao,
 			boolean indPostergado,
@@ -115,5 +128,9 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
 	
-	boolean isLancamentoParcial(Long idProdutoEdicao);
+	boolean isParcialNaoFinal(Long idProdutoEdicao);
+	
+
+	public abstract void update(Long id, boolean juramentada, String observacao,
+			BigInteger qtdeInformada, BigDecimal precoCapaInformado, Long idMovimentoEstoqueCota, Long idMovimentoEstoque, BigInteger qtde);
 }

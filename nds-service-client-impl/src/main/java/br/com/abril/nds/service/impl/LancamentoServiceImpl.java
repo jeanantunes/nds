@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,18 +18,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoLancamentoVO;
+import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.planejamento.HistoricoLancamento;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -36,11 +44,16 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -78,10 +91,29 @@ public class LancamentoServiceImpl implements LancamentoService {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private TipoMovimentoService tipoMovimentoService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Value("${data_cabalistica}")
     private String dataCabalistica;
+	
+	LinkedList<Date> dinap = new LinkedList();
+	LinkedList<Date> fc = new LinkedList();
+	LinkedList<Date> dinapFC = new LinkedList();
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -162,42 +194,99 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional
-	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, 
-									  TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,
-									  TipoMovimentoEstoque tipoMovimentoJuramentado) {
+	public String confirmarExpedicao(final ExpedicaoDTO expedicaoDTO) {
 		
-		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
+		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(expedicaoDTO.getIdLancamento());
+		
+		if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())) {
+            
+		    String msgRetorno = this.tratarRedistribuicao(lancamento);
+            
+            if (msgRetorno != null) {
+                
+                return msgRetorno;
+            }
+        }
 		
 		Expedicao expedicao = new Expedicao();
-		expedicao.setDataExpedicao(dataOperacao);
-		expedicao.setResponsavel(new Usuario(idUsuario));
+		
+		expedicao.setDataExpedicao(expedicaoDTO.getDataOperacao());
+		expedicao.setResponsavel(new Usuario(expedicaoDTO.getIdUsuario()));
+		
 		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
 		expedicao.setId(idExpedicao);
 		
-		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
-				
-//		HistoricoLancamento historico = new HistoricoLancamento();
-//		historico.setDataEdicao(dataOperacao);
-//		historico.setLancamento(new Lancamento(idLancamento));
-//		
-//		historico.setResponsavel(new Usuario(idUsuario));
-//		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
-//		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
+		final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(lancamento.getFormaComercializacaoProduto()));
 		
-        // TODO: geração de historico desativada devido a criação de trigger
-        // para realizar essa geração.
-		//historicoLancamentoRepository.adicionar(historico);
+		if(produtoContaFirme){
+			
+			this.atribuirTiposMovimentoParaProdutoContaFirme(expedicaoDTO);
+			
+			lancamentoRepository.alterarLancamento(
+					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.RECOLHIDO, expedicao);
+			
+			this.processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(expedicaoDTO,lancamento);
+		}
+		else{
+			
+			lancamentoRepository.alterarLancamento(
+					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.EXPEDIDO, expedicao);
+			
+			movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento, expedicaoDTO);
+		}
 		
-		
-		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
-				lancamento.getIdProduto(), lancamento.getIdProdutoEdicao(), idLancamento, idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado);
-		
-				
-		
-		return true;
+		return null;
 	}
 
+	private void atribuirTiposMovimentoParaProdutoContaFirme(final ExpedicaoDTO expedicaoDTO) {
+		
+		final TipoMovimentoEstoque envioJornaleiroProdutoContaFirme  =
+				tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME);
+		
+		final TipoMovimentoEstoque recebimentoReparteProdutoContaFirme =
+				tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_CONTA_FIRME);
+		
+		final TipoMovimentoFinanceiro tipoMovimentoDebito =
+				tipoMovimentoFinanceiroService.buscarPorGrupoMovimento(GrupoMovimentoFinaceiro.DEBITO);
+		
+		expedicaoDTO.setTipoMovimentoDebito(tipoMovimentoDebito);
+		expedicaoDTO.setTipoMovimentoEstoque(envioJornaleiroProdutoContaFirme);
+		expedicaoDTO.setTipoMovimentoEstoqueCota(recebimentoReparteProdutoContaFirme);
+	}
+
+	private void processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(final ExpedicaoDTO expedicaoDTO,final LancamentoDTO lancamento) {
+		
+		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = 
+				movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento,expedicaoDTO);
+		
+		if(movimentosEstoqueCota!= null && !movimentosEstoqueCota.isEmpty()){
+			
+			movimentoFinanceiroCotaService.
+				processarDebitosParaCotasNoProcessoDeExpedicaoDeProdutoContaFirme(expedicaoDTO, movimentosEstoqueCota);
+		}
+	}
+
+	private String tratarRedistribuicao(LancamentoDTO lancamento) {
+	    
+	    Long idProdutoEdicao = lancamento.getIdProdutoEdicao();
+        Integer numeroPeriodo = lancamento.getNumeroPeriodo();
+	    
+        Lancamento lancamentoOriginal =
+            this.lancamentoRepository.obterLancamentoOriginalDaRedistribuicao(idProdutoEdicao, numeroPeriodo);
+        
+        if (lancamentoOriginal.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)
+                || lancamentoOriginal.getStatus().equals(StatusLancamento.EM_RECOLHIMENTO)
+                || lancamentoOriginal.getStatus().equals(StatusLancamento.RECOLHIDO)) {
+         
+            return "Produto: " + lancamentoOriginal.getProdutoEdicao().getProduto().getNome()
+                + " - Edição: " + lancamentoOriginal.getProdutoEdicao().getNumeroEdicao()
+                + " - Data Recolhimento: " + DateUtil.formatarDataPTBR(lancamentoOriginal.getDataRecolhimentoDistribuidor());
+        }
+        
+        return null;
+	}
+	
 	@Override
 	@Transactional
 	public Lancamento obterPorId(Long idLancamento) {
@@ -253,6 +342,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		return lancamentoRepository.obterStatusDoPrimeiroLancamentoDaEdicao(idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
@@ -296,7 +396,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status){
-		return lancamentoRepository.obterLancamentoDataDistribuidorInStatus(dataRecebimentoDistribuidor, status);
+		return lancamentoRepository.obterLancamentoInStatus(dataRecebimentoDistribuidor, status);
 	}
 	
 	
@@ -464,5 +564,151 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento buscarPorId(Long id) {
 		return this.lancamentoRepository.buscarPorId(id);
 	}
+	
+	@Override
+	@Transactional
+	public LinkedList<Lancamento> obterLancamentosRedistribuicoes() {
+		return this.lancamentoRepository.obterLancamentosRedistribuicoes();
+	}
+	
+	@Override
+    @Transactional
+    public void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento) {
+        
+        Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
+        
+        Integer numeroPeriodo = (lancamento.getPeriodoLancamentoParcial() != null)
+                                    ? lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo() : null;
+        
+        List<Lancamento> redistribuicoes =
+            this.lancamentoRepository.obterRedistribuicoes(idProdutoEdicao, numeroPeriodo);
+        
+        for (Lancamento redistribuicao : redistribuicoes) {
+            
+            redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
+            
+            this.lancamentoRepository.merge(redistribuicao);
+        }
+    }
+	
+	@Override
+    @Transactional
+    public void reajustarNumerosLancamento(PeriodoLancamentoParcial periodo) {
+        
+        List<Lancamento> lancamentos = 
+            this.lancamentoRepository.obterLancamentosDoPeriodoParcial(periodo.getId());
+        
+        if(!lancamentos.isEmpty()){
+        
+            int numeroLancamento = 1;
+            
+            for(Lancamento item : lancamentos) {
+                
+                item.setNumeroLancamento(numeroLancamento++);
+                
+                lancamentoRepository.merge(item);
+            }
+        }
+        
+    }
+	
+	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
+		
+	
+		List<Long> lista = new ArrayList<Long>();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Long idDinap = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorDinap())).getId();
+		Long idFc    = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
+		
+		if(idFornecedor==idDinap.intValue()){	
+		 
+		 lista.add(new Long(1));
+		 
+		 if(dinap.isEmpty()){
+		  dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+		 }
+		 
+		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
+		 
+		}else if (idFornecedor==idFc.intValue()){
+		
+		 lista.add(new Long(2));
+		 
+		 if(fc.isEmpty()){
+		  fc.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+		 }
+		 
+		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
+		 
+		}else {
+			
+		 lista.add(new Long(1));
+		 lista.add(new Long(2));
+			 
+		 if(dinapFC.isEmpty()){
+			dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+		 }
+			 
+		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinapFC);
+			 
+		}
+		
+		return dataLancamento;
+	}
+	
+	private Date obterDataLancamentoValida(Date dataLancamento,LinkedList<Date> listaDatas){
+		
+		Date anterior;
+		Date posterior;
+		Date operacao;
+		long qtAnterior;
+		long qtPosterior;
+		
+		if(listaDatas==null || listaDatas.isEmpty()){
+		 
+		  operacao = distribuidorService.obterDataOperacaoDistribuidor();
+		  
+		  if(dataLancamento.before(operacao)){
+			return operacao;
+		  }else{
+			return dataLancamento;
+		  }
+		}else if(listaDatas.contains(dataLancamento)){
+		  return dataLancamento;
+		}else if(dataLancamento.before(listaDatas.getFirst())){
+		  return listaDatas.getFirst();
+		}else{
 
+			for(int i =0;i<listaDatas.size();i++) {
+				if(i>0 && i<listaDatas.size() && dataLancamento.after(listaDatas.get(i-1)) 
+						&& dataLancamento.before(listaDatas.get(i+1))){
+
+					anterior   = listaDatas.get(i-1);
+					posterior  = listaDatas.get(i+1);
+
+					qtAnterior = dataLancamento.getTime() - anterior.getTime();
+					qtPosterior = posterior.getTime() - dataLancamento.getTime();
+
+					if(qtAnterior<qtPosterior){
+						return anterior;  
+					}else{
+						return posterior;
+					}
+
+				}
+			}
+
+			dataLancamento =  listaDatas.getFirst();
+
+		  return dataLancamento;
+		}
+		
+	}
+	
+	@Transactional(readOnly=true)
+	public Integer obterRepartePromocionalEdicao(final Long codigoProduto,final Long numeroEdicao){
+		
+		return lancamentoRepository.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
+	}
 }

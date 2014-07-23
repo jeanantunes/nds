@@ -1,5 +1,8 @@
 package br.com.abril.nds.client.vo;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -60,9 +63,9 @@ public class ContasAPagarConsignadoVO {
 		this.edicao = dto.getEdicao().toString();
 		this.precoCapa = CurrencyUtil.formatarValor(dto.getPrecoCapa());
 		this.precoComDesconto = CurrencyUtil.formatarValor(dto.getPrecoComDesconto());
-		this.reparteSugerido = dto.getReparteSugerido().toString();
-		this.reparteFinal = dto.getReparteFinal().toString();
-		this.diferenca = dto.getDiferenca().toString();
+		this.reparteSugerido = dto.getReparteSugerido() == null ? "0" : dto.getReparteSugerido().toString();
+		this.reparteFinal = dto.getReparteFinal() == null ? "0" : dto.getReparteFinal().toString();
+		this.diferenca = dto.getDiferenca() == null ? "0" : dto.getDiferenca().toString();
 		this.motivo = dto.getMotivo();
 		this.fornecedor = dto.getFornecedor();
 		this.valor = CurrencyUtil.formatarValor(dto.getValor());
@@ -116,8 +119,8 @@ public class ContasAPagarConsignadoVO {
 	public String getDiferenca() {
 		return diferenca;
 	}
-	public void setDiferenca(String diferenca) {
-		this.diferenca = diferenca;
+	public void setDiferenca(BigDecimal diferenca) {
+		this.diferenca = diferenca == null ? null : diferenca.setScale(0, RoundingMode.HALF_UP).toString();
 	}
 	public String getMotivo() {
 		return motivo;

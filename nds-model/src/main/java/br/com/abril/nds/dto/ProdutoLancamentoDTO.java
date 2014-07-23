@@ -63,6 +63,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private Date dataLancamentoDistribuidor;
 	
 	private Date dataRecolhimentoPrevista;
+	
+	private Date dataRecolhimentoDistribuidor;
 
 	private BigDecimal valorTotal;
 
@@ -90,7 +92,26 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
   	private boolean alterado;
   	
+  	private String nomeFantasia;
+  	
+  	private boolean produtoContaFirme;
+  	
+  	
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
 
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
+
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
 
 	public String getTipoLancamento() {
 		return tipoLancamento;
@@ -563,6 +584,16 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
+	}
+	
+	
+
+	public boolean isProdutoContaFirme() {
+		return produtoContaFirme;
+	}
+
+	public void setProdutoContaFirme(boolean produtoContaFirme) {
+		this.produtoContaFirme = produtoContaFirme;
 	}
 
 	/* (non-Javadoc)

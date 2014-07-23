@@ -32,29 +32,39 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	private String recolhimento;
 	
-	private boolean suplementar;
+	private boolean matrizRecolhimento;
+	
+	private boolean juramentada;
 	
 	private Date dataRecolhimento;
 	
 	private BigDecimal precoCapa;
 	private BigDecimal precoCapaDesconto;
 	private BigInteger exemplaresDevolucao;
+	private BigInteger exemplaresDevolucaoJuramentado;
+	private BigInteger exemplaresVendaEncalhe;
 	private BigDecimal total;
 	
-	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9)
-	private Long fisico;
+	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 11, fontSize=9)
+	private BigInteger fisico;
 	
-	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 8, fontSize=9)
-	private Long diferenca = Long.valueOf(0);
+	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 12, fontSize=9)
+	private BigInteger diferenca = BigInteger.ZERO;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 4, fontSize=9)
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize=9)
 	private String precoCapaFormatado;
 
-	@Export(label = "Preço Capa Desc R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize=9)
+	@Export(label = "Preço Capa Desc R$", alignment = Alignment.RIGHT, exhibitionOrder = 6, fontSize=9)
 	private String precoCapaDescFormatado;
 	
-	@Export(label = "Exempl. Devolução", alignment = Alignment.CENTER, exhibitionOrder = 6, fontSize=9)
+	@Export(label = "Devolução", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
 	private String exemplaresDevolucaoFormatado;
+	
+	@Export(label = "Exe. Juramentado", alignment = Alignment.CENTER, exhibitionOrder = 9, fontSize=9)
+    private String exemplaresJuramentadoFormatado;
+	
+	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 10, fontSize=9)
+    private String exemplaresVendaEncalheFormatado;
 	
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9)
 	private String totalFormatado;
@@ -63,10 +73,10 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	private Boolean fechado;
 	
-	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
+	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 13, fontSize=9)
 	private String estoque;
 	
-	@Export(label = "Sequência", exhibitionOrder = 1, fontSize=9)
+	@Export(label = "Sequência", exhibitionOrder = 1, fontSize=10)
 	private Integer sequencia;
 	
 	private Origem origem;
@@ -141,23 +151,39 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 		this.exemplaresDevolucaoFormatado = String.valueOf(this.exemplaresDevolucao.intValue());
 		
 	}
-	public BigDecimal getTotal() {
+    public BigInteger getExemplaresDevolucaoJuramentado() {
+        return exemplaresDevolucaoJuramentado;
+    }
+    public void setExemplaresDevolucaoJuramentado(BigInteger exemplaresDevolucaoJuramentado) {
+        this.exemplaresDevolucaoJuramentado = exemplaresDevolucaoJuramentado;
+        
+        this.exemplaresJuramentadoFormatado = String.valueOf(this.exemplaresDevolucaoJuramentado.intValue());
+    }
+    public BigInteger getExemplaresVendaEncalhe() {
+        return exemplaresVendaEncalhe;
+    }
+    public void setExemplaresVendaEncalhe(BigInteger exemplaresVendaEncalhe) {
+        this.exemplaresVendaEncalhe = exemplaresVendaEncalhe;
+        
+        this.exemplaresVendaEncalheFormatado = String.valueOf(this.exemplaresVendaEncalhe.intValue());
+    }
+    public BigDecimal getTotal() {
 		return total;
 	}
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 		this.totalFormatado = CurrencyUtil.formatarValorQuatroCasas(this.total); 
 	}
-	public Long getFisico() {
+	public BigInteger getFisico() {
 		return fisico;
 	}
-	public void setFisico(Long fisico) {
+	public void setFisico(BigInteger fisico) {
 		this.fisico = fisico;
 	}
-	public Long getDiferenca() {
+	public BigInteger getDiferenca() {
 		return diferenca;
 	}
-	public void setDiferenca(Long diferenca) {
+	public void setDiferenca(BigInteger diferenca) {
 		this.diferenca = diferenca;
 	}
 	public Boolean getFechado() {
@@ -336,15 +362,23 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 		return true;
 	}
 
-	public boolean isSuplementar() {
-		return suplementar;
+	public boolean isMatrizRecolhimento() {
+		return matrizRecolhimento;
 	}
 
-	public void setSuplementar(boolean suplementar) {
-		this.suplementar = suplementar;
+	public void setMatrizRecolhimento(boolean matrizRecolhimento) {
+		this.matrizRecolhimento = matrizRecolhimento;
 	}
+	
+    public boolean isJuramentada() {
+        return juramentada;
+    }
 
-	/**
+    public void setJuramentada(boolean juramentada) {
+        this.juramentada = juramentada;
+    }
+
+    /**
 	 * @return the chamadao
 	 */
 	public boolean isChamadao() {

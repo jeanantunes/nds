@@ -2,10 +2,13 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public class InfoConferenciaEncalheCota implements Serializable {
 	
@@ -21,9 +24,11 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private Cota cota;
 	
-	private List<ConferenciaEncalheDTO> listaConferenciaEncalhe;
+	private boolean indCotaOperacaoDiferenciada;
 	
-	private List<DebitoCreditoCotaDTO> listaDebitoCreditoCota;
+	private Set<ConferenciaEncalheDTO> listaConferenciaEncalhe;
+	
+	private List<DebitoCreditoCota> listaDebitoCreditoCota;
 	
 	private NotaFiscalEntradaCota notaFiscalEntradaCota;
 	
@@ -81,21 +86,21 @@ public class InfoConferenciaEncalheCota implements Serializable {
 		this.valorPagar = valorPagar;
 	}
 
-	public List<ConferenciaEncalheDTO> getListaConferenciaEncalhe() {
+	public Set<ConferenciaEncalheDTO> getListaConferenciaEncalhe() {
 		return listaConferenciaEncalhe;
 	}
 
 	public void setListaConferenciaEncalhe(
-			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
-		this.listaConferenciaEncalhe = listaConferenciaEncalhe;
+			Set<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+		this.listaConferenciaEncalhe = new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalhe);
 	}
 
-	public List<DebitoCreditoCotaDTO> getListaDebitoCreditoCota() {
+	public List<DebitoCreditoCota> getListaDebitoCreditoCota() {
 		return listaDebitoCreditoCota;
 	}
 
 	public void setListaDebitoCreditoCota(
-			List<DebitoCreditoCotaDTO> listaDebitoCreditoCota) {
+			List<DebitoCreditoCota> listaDebitoCreditoCota) {
 		this.listaDebitoCreditoCota = listaDebitoCreditoCota;
 	}
 
@@ -131,6 +136,16 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	public void setNotaFiscalEntradaCota(NotaFiscalEntradaCota notaFiscalEntradaCota) {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
 	}
+
+	public boolean isIndCotaOperacaoDiferenciada() {
+		return indCotaOperacaoDiferenciada;
+	}
+
+	public void setIndCotaOperacaoDiferenciada(boolean indCotaOperacaoDiferenciada) {
+		this.indCotaOperacaoDiferenciada = indCotaOperacaoDiferenciada;
+	}
+	
+	
 	
 	
 }

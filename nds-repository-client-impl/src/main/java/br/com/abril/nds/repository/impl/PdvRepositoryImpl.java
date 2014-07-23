@@ -202,6 +202,16 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
 	}
+	
+	public PDV obterPDVPrincipal(Integer numeroCota) {
+		
+		Criteria criteria = getSession().createCriteria(PDV.class);
+		criteria.createAlias("cota", "cota");
+		criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
+		criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+		criteria.setMaxResults(1);
+		return (PDV) criteria.uniqueResult();
+	}
 
 	    /**
      * Obtém PDV's por Rota
@@ -450,6 +460,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			.append("  endereco.logradouro  as  endereco , ")
 			.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
 			.append("  pdv.status as statusPDV ,")
+			.append("  pdv.caracteristicas.pontoPrincipal as principal, ")
 			.append("  cota.id as idCota ")
 			.append(" FROM PDV pdv ")
 			.append(" JOIN pdv.cota cota ")
@@ -467,5 +478,16 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	        		
 	}
 	
+	@Override
+	public Long obterQtdPdvPorCota(Integer numeroCota){
+	    
+	    final Query query = 
+	            this.getSession().createQuery(
+	                    "select count(p.id) from Cota c join c.pdvs p where c.numeroCota = :numeroCota");
+	    
+	    query.setParameter("numeroCota", numeroCota);
+	    
+	    return (Long) query.uniqueResult();
+	}
 }
 

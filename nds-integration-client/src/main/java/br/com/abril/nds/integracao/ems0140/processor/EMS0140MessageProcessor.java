@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0140Input;
@@ -40,7 +41,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
-import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.service.LancamentoService;
 
 import com.google.common.base.Strings;
 
@@ -55,6 +56,9 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
     
     @Autowired
     private ProdutoRepository produtoRepository;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
     
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
@@ -93,8 +97,9 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga + " para "
-                                + input.getChaveAcessoNF() + " com sucesso!"));
+                                + " Atualizada com Chave de Acesso NFE"
+                                +" de " + chaveAcessoAntiga 
+                                +" para "+ input.getChaveAcessoNF() + " com sucesso!"));
                 
                 return;
             }
@@ -118,13 +123,13 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 this.getSession().persist(notafiscalEntrada);
                 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO,
-                        String.format("Nota Fiscal inserida no sistema: %1$s", input.getNotaFiscal()));
+                        String.format("Nota Fiscal Inserida no sistema %1$s", input.getNotaFiscal()));
             } else {
                 
-                String msg = "Nota fiscal com produtos não encontrados no sistema";
+                String msg = "Nota Fiscal com produtos não encontrados no sistema";
                 
                 if (input.getNotaFiscal() != null && input.getNotaFiscal() > 0) {
-                    msg = String.format("Nota fiscal com produtos não encontrados no sistema, número nota: %1$s",
+                    msg = String.format("Nota Fiscal com produtos não encontrados no sistema, Número Nota %1$s",
                             input.getNotaFiscal());
                 }
                 
@@ -140,7 +145,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                     
                     EventoExecucaoEnum.REGISTRO_JA_EXISTENTE,
                     
-                    String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s",
+                    String.format("Nota Fiscal %1$s já cadastrada com Série %2$s Nota Envio %3$s",
                             notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(),
                             notafiscalEntrada.getNumeroNotaEnvio()));
             return;
@@ -234,7 +239,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         
         return (ProdutoEdicao) criteria.uniqueResult();
     }
-    
+
     private NotaFiscalEntradaFornecedor populaItemNotaFiscalEntrada(NotaFiscalEntradaFornecedor nfEntrada,
             EMS0140Input input, Message message) {
         
@@ -284,8 +289,8 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setParcial(true);
                 produtoEdicao.setAtivo(true);
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
-                produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));
-                produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+                produtoEdicao.setPrecoPrevisto(inputItem.getPreco() == null ? BigDecimal.ZERO : new BigDecimal(inputItem.getPreco()));
+                produtoEdicao.setPrecoVenda(tratarValorNulo(produtoEdicao.getPrecoPrevisto()));
                 this.getSession().persist(produtoEdicao);
                 
                 Date dataAtual = new Date();
@@ -299,9 +304,16 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
-                lancamento.setDataLancamentoDistribuidor(dataLancamento);
+                //lancamento.setDataLancamentoDistribuidor(dataLancamento);
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
                 lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
+                
+    			try {
+    				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+    				lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
+    			} catch (Exception e) {
+    			}
+    			
                 lancamento.setProdutoEdicao(produtoEdicao);
                 lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
                 lancamento.setDataStatus(dataAtual);
@@ -315,7 +327,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
             itemNFE.setQtde(new BigInteger(inputItem.getQtdExemplar().toString()));
             itemNFE.setNotaFiscal(nfEntrada);
             itemNFE.setProdutoEdicao(produtoEdicao);
-            itemNFE.setPreco(BigDecimal.valueOf(inputItem.getPreco()));
+            itemNFE.setPreco(this.tratarValorNulo(produtoEdicao.getPrecoVenda()));
             itemNFE.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
             
             Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
@@ -340,6 +352,10 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         
         return nfEntrada;
     }
+    
+    private BigDecimal tratarValorNulo(BigDecimal valor) {
+		return valor == null ? BigDecimal.ZERO : valor;
+	}
     
     private TipoProduto obterTipoProduto(String nomeTipoProduto) {
         List<TipoProduto> listaTipoProduto = this.tipoProdutoRepository.busca(nomeTipoProduto, null, null, null, null, null, 0, 1);

@@ -37,7 +37,7 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 	
 	<!-- Filtro da Pesquisa -->
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 	
 		<legend>Pesquisar Manutenção de Status</legend>
 		

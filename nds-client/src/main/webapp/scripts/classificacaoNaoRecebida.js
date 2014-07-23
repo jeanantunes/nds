@@ -517,6 +517,10 @@
 	
 	excluirCotaDaClassificacaoNaoRecebida : function excluirCotaDaClassificacaoNaoRecebida(id){
 		
+		if(!verificarPermissaoAcesso(this.workspace)){
+			return;
+		}
+		
 		var grids = classificacaoNaoRecebidaController.Grids;
 		
 		$( "#dialog-excluirCotaDaClassificacaoNaoRecebida" ).dialog({
@@ -558,6 +562,11 @@
 	},
 	
 	excluirClassificacaoNaoRecebidaDaCota : function excluirClassificacaoNaoRecebidaDaCota(id){
+		
+		if(!verificarPermissaoAcesso(this.workspace)){
+			return;
+		}
+		
 		
 		var grids = classificacaoNaoRecebidaController.Grids;
 		
@@ -820,7 +829,12 @@
 	
 	excluirClassificacao : function() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
+		
+		if(!verificarPermissaoAcesso(this.workspace)){
+			return;
+		}
+		
+		
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
 			height:170,

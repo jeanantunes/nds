@@ -75,7 +75,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setCodigoProduto(Util.padLeft(filtroExtratoEdicao.getCodigoProduto(), "0", 8));
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.PENDENTE);
 		
 		if (listaExtratoEdicao.isEmpty()){
 			
@@ -101,13 +101,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 				this.processarItemExtratoEdicaoDiferenca(itemExtratoEdicao);
 			}
 			
-			BigInteger qtdEntrada = BigInteger.ZERO;
+			BigInteger qtdEntrada = itemExtratoEdicao.getQtdEdicaoEntrada() == null ? BigInteger.ZERO : itemExtratoEdicao.getQtdEdicaoEntrada();
 			
-			qtdEntrada = itemExtratoEdicao.getQtdEdicaoEntrada();
-			
-			BigInteger qtdSaida = BigInteger.ZERO;
-			
-			qtdSaida = itemExtratoEdicao.getQtdEdicaoSaida();
+			BigInteger qtdSaida = itemExtratoEdicao.getQtdEdicaoSaida() == null ? BigInteger.ZERO : itemExtratoEdicao.getQtdEdicaoSaida();
 			
 			BigInteger qtdeParcial = qtdEntrada.subtract(qtdSaida);
 		
@@ -144,7 +140,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		String novaDescricao = itemExtratoEdicao.getDescMovimento();
 		
 		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())
-				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()) {
+				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()
+				&& !(diferenca.getTipoDiferenca().equals(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA) 
+						|| diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA))) {
 			
 			novaDescricao = novaDescricao + " COTA";
 		}
@@ -158,7 +156,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 				&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) 
 						&& !StatusIntegracao.ENCALHE.equals(statusIntegracao)
 						&& !StatusIntegracao.FORA_DO_PRAZO.equals(statusIntegracao))) {
-		    
+
 			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
 		}
 
@@ -325,14 +323,18 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		int indiceParaUtilizacao = 0;
 		
 		for (int indice = 0; indice < listaExtratoEdicao.size(); indice++) {
-			
-			if (atualizacaoEstoqueGFS.getDataAtualizacao()
-					.compareTo(listaExtratoEdicao.get(indice).getDataMovimento()) >= 0) {
-				
+
+			Long idMovimentoAtualizacao = atualizacaoEstoqueGFS.getMovimentoEstoque().getId();
+
+			ExtratoEdicaoDTO extratoEdicao = listaExtratoEdicao.get(indice);
+
+			if (idMovimentoAtualizacao.equals(extratoEdicao.getIdMovimento()) &&
+					atualizacaoEstoqueGFS.getDataAtualizacao().compareTo(extratoEdicao.getDataMovimento()) >= 0) {
+
 				indiceParaUtilizacao = indice;
 			}
 		}
-		
+
 		return indiceParaUtilizacao;
 	}
 	

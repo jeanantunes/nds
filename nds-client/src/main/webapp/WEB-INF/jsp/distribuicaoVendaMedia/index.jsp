@@ -13,7 +13,7 @@ $(function() {
 	});
 
 function popup_novo() {
-	$("#edicaoProdCadastradosGrid").flexAddData({
+	$("#edicaoProdCadastradosGrid", distribuicaoVendaMedia.workspace).flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
@@ -25,7 +25,7 @@ function popup_novo() {
 	
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
 	
-	$( "#dialog-edicoes-base" ).dialog({
+	$( "#dialog-edicoes-base", distribuicaoVendaMedia.workspace ).dialog({
 	    escondeHeader: false,
 		resizable: false,
 		height:450,
@@ -39,7 +39,8 @@ function popup_novo() {
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
 			}
-		}
+		},
+		form: $( "#dialog-edicoes-base", distribuicaoVendaMedia.workspace ).parents("form")
 	});
 };
 function popup_cancelar() {
@@ -311,6 +312,7 @@ function limparLstExcecao1(){
     </fieldset>
 </div>
 
+<form id="formEdicoesBase">
 <div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px; width: 650px ">  
 <fieldset style="width:560px!important;">
     <legend>Pesquisar Produto</legend>
@@ -361,7 +363,7 @@ function limparLstExcecao1(){
         <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
      </fieldset>
 </div>
-
+</form>
 
 
 

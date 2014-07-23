@@ -17,11 +17,13 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoFila;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -54,6 +56,9 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private EstoqueProdutoFilaRepository estoqueProdutoFilaRepository;
 	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
@@ -110,7 +115,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 			return ret;
 		}
 		
-		Integer diaInicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+		Integer diaInicioSemana = this.distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana();
 		
 		for (Date d : datas){
 			
@@ -131,7 +136,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	}
 	
 	@Transactional
-	public void processarTransferencaiEntreEstoques(
+	public void processarTransferenciaEntreEstoques(
 			final Long idProdutoEdicao, 
 			final TipoEstoque estoqueSaida, 
 			final TipoEstoque estoqueEntrada,
@@ -247,4 +252,91 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 private boolean isOperacaoEntrada(final OperacaoEstoque operacaoEstoque){
 	     return (OperacaoEstoque.ENTRADA.equals(operacaoEstoque));
 	 }
+	 
+	 @Transactional
+	 @Override
+	 public void saveOrUpdate(EstoqueProduto estoqueProduto){
+	     this.estoqueProdutoRespository.saveOrUpdate(estoqueProduto);
+	 }
+	 
+	 @Transactional
+	 @Override
+	 public EstoqueProduto obterEstoqueProdutoParaAtualizar(Long idProdutoEdicao) {
+	     
+	     return this.estoqueProdutoRespository.obterEstoqueProdutoParaAtualizar(idProdutoEdicao);
+	 }
+	 
+	 @Override
+	 @Transactional
+	 public void atualizarEstoqueProdutoCota(){
+	     
+	     final List<EstoqueProdutoFila> epfs = this.estoqueProdutoFilaRepository.buscarTodos();
+	     
+	     for (EstoqueProdutoFila epf : epfs){
+	         
+	         boolean atualizaReg = true;
+	         
+	         if (OperacaoEstoque.SAIDA.equals(epf.getOperacaoEstoque())){
+	             
+	             epf.setQtde(epf.getQtde().negate());
+	         }
+	         
+	         EstoqueProduto ep = this.obterEstoqueProdutoParaAtualizar(epf.getProdutoEdicao().getId());
+	         
+	         if (ep == null){
+	             
+	             ep = new EstoqueProduto();
+	             ep.setProdutoEdicao(epf.getProdutoEdicao());
+	         }
+	         
+	         switch(epf.getTipoEstoque()){
+	             case DEVOLUCAO_ENCALHE:
+	                 
+	                 if (ep.getQtdeDevolucaoEncalhe() == null){
+	                     
+	                     ep.setQtdeDevolucaoEncalhe(epf.getQtde());
+	                 } else {
+                        
+                        ep.setQtdeDevolucaoEncalhe(ep.getQtdeDevolucaoEncalhe().add(epf.getQtde()));
+	                 }
+	                 
+	             break;
+	             case JURAMENTADO:
+                    
+	                 if (ep.getQtdeJuramentado() == null){
+	                     
+	                     ep.setQtdeJuramentado(epf.getQtde());
+	                 } else {
+	                     
+	                     ep.setQtdeJuramentado(ep.getQtdeJuramentado().add(epf.getQtde()));
+	                 }
+	                 
+                 break;
+                 case SUPLEMENTAR:
+                     
+                     if (ep.getQtdeSuplementar() == null){
+                         
+                         ep.setQtdeSuplementar(epf.getQtde());
+                     } else {
+                         
+                         ep.setQtdeSuplementar(ep.getQtdeSuplementar().add(epf.getQtde()));
+                     }
+                     
+                 break;
+                 default:
+                     //os demais tipos de estoque não são alterados na conf. de encalhe,
+                     //ao menos não até a data em que estas linhas foram escritas
+                     atualizaReg = false;
+                     break;
+	         }
+	         
+	         if (atualizaReg){
+	             
+	             this.saveOrUpdate(ep);
+	         }
+	         
+	         this.estoqueProdutoFilaRepository.remover(epf);
+	     }
+	}
+	 
 }

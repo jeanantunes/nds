@@ -233,7 +233,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.saldo = (value.cell.saldo != null && formatMoneyValue(value.cell.saldo, 2) != 0)?
                                    (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
                
-                if(value.cell.statusDivida && value.cell.statusDivida == "NEGOCIADA") {	
+                if(value.cell.statusDivida && (value.cell.statusDivida == "NEGOCIADA" || value.cell.statusDivida == "POSTERGADA")) {	
                 	
                 	value.cell.cobrado = '<img src="'+ contextPath +'/images/hammer.png" alt="Dívida Negociada"/>';
                 	
@@ -276,6 +276,9 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {
 				
+				if(!value.cell.sequencia){
+					value.cell.sequencia ="Postergado";
+				}
 				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa, 2);
 				value.cell.precoComDesconto = formatMoneyValue(value.cell.precoComDesconto);
 				value.cell.total = formatMoneyValue(value.cell.total);
@@ -905,6 +908,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		var params = "fileType=" + fyleType + 
 			"&idConsolidado=" + contaCorrenteCotaController.idConsolidadoDebitoCredito + 
 			"&data=" + contaCorrenteCotaController.dataDebitoCredito + 
+			"&numeroCota=" + $("#cotaHidden", contaCorrenteCotaController.workspace).val() + 
 			"&sortname=" + $(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexGetSortName() +
 			"&sortorder=" + $(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).getSortOrder();
 		

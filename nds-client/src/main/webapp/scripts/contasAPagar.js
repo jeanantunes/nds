@@ -11,13 +11,13 @@ var contasAPagarController = $.extend(true, {
 		$("#produto", this.workspace).autocomplete({source: ''});
 		$("#edicao", this.workspace).numeric();
 		
-		$("#contasAPagar_Filtro_De").datepicker({
+		$("#contasAPagar_Filtro_De", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$("#contasAPagar_Filtro_Ate").datepicker({
+		$("#contasAPagar_Filtro_Ate", this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
@@ -30,8 +30,9 @@ var contasAPagarController = $.extend(true, {
 		this.initGridConsignado();
 		this.initGridEncalhe();
 		this.initGridFaltasSobras();
+		this.initGridDiferencas();
 		
-		$('#contasAPagar_areaBts').hide();
+		$('#contasAPagar_areaBts', this.workspace).hide();
 	},
 	
 	
@@ -71,7 +72,7 @@ var contasAPagarController = $.extend(true, {
 	
 	checkAll : function (check) {
 		
-		$(".contasApagarCheck").each(function(index, element) {
+		$(".contasApagarCheck", this.workspace).each(function(index, element) {
 			element.checked = check.checked;
 		});
 	},
@@ -111,11 +112,11 @@ var contasAPagarController = $.extend(true, {
 	
 		var params = $("#contasAPagarForm", this.workspace).serializeObject();
 		
-		if ($("#contasAPagarRadioDistribuidor").get(0).checked) {
+		if ($("#contasAPagarRadioDistribuidor", this.workspace).get(0).checked) {
 			this.pesquisarPorFornecedor(params);	
 		} 
 		
-		else if ($("#contasAPagarRadioProduto").get(0).checked) {
+		else if ($("#contasAPagarRadioProduto", this.workspace).get(0).checked) {
 			
 			this.pesquisarPorProduto(params);
 		}
@@ -127,7 +128,7 @@ var contasAPagarController = $.extend(true, {
 		var url = contasAPagarController.path + 'pesquisarPorProduto.json';
 		params = serializeArrayToPost('filtro.produtoEdicaoIDs', contasAPagarController.obterSelecaoColunaCheckProdutoEdicao(), params);
 		
-		$("#contasAPagar_porProdutosGrid").flexOptions({
+		$("#contasAPagar_porProdutosGrid", this.workspace).flexOptions({
 			url : url,
 			params: serializeParamsToFlexiGridPost(params),
 			preProcess : contasAPagarController.insereLinksContasAPagarPorProdutos,
@@ -135,23 +136,27 @@ var contasAPagarController = $.extend(true, {
 		});
 		
 		params['filtro.primeiraCarga'] = true;
+		params['rp'] = 15;
 		
 		$.postJSON(
 			url,
 			params,
 			function(result) {
 				
-				$("#contasAPagar_gridProdutoTotalPagto").html(result.totalPagto);
-				$("#contasAPagar_gridProdutoTotalDesconto").html(result.totalDesconto);
-				$("#contasAPagar_gridProdutoValorLiquido").html(result.valorLiquido);
-				$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$("#contasAPagar_gridProdutoTotalPagto", contasAPagarController.workspace).html(result.totalPagto);
+				$("#contasAPagar_gridProdutoTotalDesconto", contasAPagarController.workspace).html(result.totalDesconto);
+				$("#contasAPagar_gridProdutoValorLiquido", contasAPagarController.workspace).html(result.valorLiquido);
+				$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
 				$('#contasAPagar_gridProduto').show();
 				$('#contasAPagar_areaBts').show();
+				
+				$(".pesquisaContasPagar", contasAPagarController.workspace).show();
 			},
 			function(result) {
 				
-				$('#contasAPagar_gridProduto').hide();
-				$('#contasAPagar_areaBts').hide();
+				$('#contasAPagar_gridProduto', contasAPagarController.workspace).hide();
+				$('#contasAPagar_areaBts', contasAPagarController.workspace).hide();
 			},
 			true
 		);
@@ -163,12 +168,18 @@ var contasAPagarController = $.extend(true, {
 	pesquisarPorFornecedor : function (params) {
 		
 		params['filtro.primeiraCarga'] = true;
+		params['page'] = 1;
+		params['rp'] = 15;
+		
+		$.each($("input:checked[name='filtro.idsFornecedores']", this.workspace), function(index, item){
+			params['filtro.idsFornecedores['+index+']'] = item.value;
+		});
+		
 		var url = contasAPagarController.path + 'pesquisarPorFornecedor.json'; 
 		
-		$(".porDistrFornecedorGrid").flexOptions({
+		$(".porDistrFornecedorGrid", this.workspace).flexOptions({
 			url : url,
 			params: serializeParamsToFlexiGridPost(params),
-			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
 			newp : 1
 		});
 
@@ -177,17 +188,30 @@ var contasAPagarController = $.extend(true, {
 			params,
 			function(result) {
 				
-				$("#contasAPagar_gridFornecedorTotalBruto").html(result.totalBruto);
-				$("#contasAPagar_gridFornecedorTotalDesconto").html(result.totalDesconto);
-				$("#contasAPagar_gridFornecedorSaldo").html(result.saldo);
-				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData({rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
-				$('#contasAPagar_gridDistrib').show();
-				$('#contasAPagar_areaBts').show();
+				$("#contasAPagar_gridFornecedorTotalBruto", contasAPagarController.workspace).html(result.totalBruto);
+				$("#contasAPagar_gridFornecedorTotalDesconto", contasAPagarController.workspace).html(result.totalDesconto);
+				$("#contasAPagar_gridFornecedorSaldo", contasAPagarController.workspace).html(result.saldo);
+				$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page: 1, total: result.totalGrid});
+				$('#contasAPagar_gridDistrib', contasAPagarController.workspace).show();
+				$('#contasAPagar_areaBts', contasAPagarController.workspace).show();
+				
+				$(".pesquisaContasPagar", contasAPagarController.workspace).show();
+				
+				params['filtro.primeiraCarga'] = false;
+				$(".porDistrFornecedorGrid", this.workspace).flexOptions({
+					params: serializeParamsToFlexiGridPost(params)
+				});
 			},
 			function(result) {
 				
-				$('#contasAPagar_gridDistrib').hide();
-				$('#contasAPagar_areaBts').hide();
+				$('#contasAPagar_gridDistrib', contasAPagarController.workspace).hide();
+				$('#contasAPagar_areaBts', contasAPagarController.workspace).hide();
+				
+				params['filtro.primeiraCarga'] = false;
+				$(".porDistrFornecedorGrid", this.workspace).flexOptions({
+					params: serializeParamsToFlexiGridPost(params)
+				});
 			},
 			true
 		);
@@ -198,17 +222,17 @@ var contasAPagarController = $.extend(true, {
 	
 	pesquisarProdutoEdicao : function(){
 		
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
+		var params = $("#form-pesq-produto-contasAPagar", this.workspace).serialize();
 		
-		$(".contasAPagarListaProdutosGrid").flexOptions({
+		$(".contasAPagarListaProdutosGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarProduto.json?' + params, 
 			preProcess : contasAPagarController.montaColunaCheckProdutoEdicao,
 			newp : 1
 		});
 
-		$(".contasAPagarListaProdutosGrid").flexReload();
+		$(".contasAPagarListaProdutosGrid", this.workspace).flexReload();
 		
-		$('#contasAPagar_areaBts').show();
+		$('#contasAPagar_areaBts', this.workspace).show();
 	},
 	
 	
@@ -221,7 +245,7 @@ var contasAPagarController = $.extend(true, {
 		
 		var produtoEdicaoIDs = new Array();
 
-		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked").each(function(i,element) {			
+		$("input[type=checkbox][name='checkProdutoContasAPagar']:checked", this.workspace).each(function(i,element) {			
 			produtoEdicaoIDs.push(element.value);
 		});
 		
@@ -245,7 +269,8 @@ var contasAPagarController = $.extend(true, {
 				value.cell.editor = "nenhum";
 			}
 			
-			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + '" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
+			var checkbox = '<input type="checkbox" value="'+ value.cell.produtoEdicaoID + 
+				'" name="checkProdutoContasAPagar" class="contasApagarCheck"  style="float:left;"/>';
 			value.cell.sel = checkbox;
 		});
 		 
@@ -281,16 +306,18 @@ var contasAPagarController = $.extend(true, {
 		
 		$.each(data.rows, function(index, value) {
 			
-			var params = "'" + value.cell.produtoEdicaoId + "', '" 
-							 + value.cell.codigo          + "', '"
-							 + value.cell.produto         + "', '"
-							 + value.cell.edicao          + "', '"
-			                 + value.cell.fornecedor      + "', '" 
-			                 + value.cell.dataLcto        + "', '" 
-			                 + value.cell.dataFinal       + "'";
+			if (value.cell.tipo != "N"){
+				
+				var params = "'" + value.cell.produtoEdicaoId + "', '" 
+				 	+ value.cell.codigo          + "', '"
+				 	+ value.cell.produto         + "', '"
+				 	+ value.cell.edicao          + "', '"
+				 	+ value.cell.fornecedor      + "', '" 
+				 	+ value.cell.rctl	         + "'";
+				
+				value.cell.tipo = '<a href="javascript:;" onclick="contasAPagarController.popup_detalhes(' + params + ');" title="Detalhe Consignado">' + value.cell.tipo + '</a>';
+			}
 			
-			var linkTipo = '<a href="javascript:;" onclick="contasAPagarController.popup_detalhes(' + params + ');" title="Detalhe Consignado">' + value.cell.tipo + '</a>';
-			value.cell.tipo = linkTipo;
 		});
 	
 		return data;
@@ -331,7 +358,7 @@ var contasAPagarController = $.extend(true, {
 	
 	popup_pesq_produto : function () {
 		
-		$( "#dialog-pesq-produto-contasAPagar" ).dialog({
+		$( "#dialog-pesq-produto-contasAPagar", this.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:600,
@@ -340,150 +367,239 @@ var contasAPagarController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#form-pesq-produto-contasAPagar", this.workspace)
 		});
 	},
 	
 	
-	popup_detalhes : function (produtoEdicaoId, codigo, produto, edicao, fornecedor, dataLcto, dataFinal) {
+	popup_detalhes : function (produtoEdicaoId, codigo, produto, edicao, fornecedor, dataLcto) {
 		
 		// popula cabecalho
-		$("#contasAPagar_popupTipo_codigo").html(codigo);
-		$("#contasAPagar_popupTipo_produto").html(produto);
-		$("#contasAPagar_popupTipo_edicao").html(edicao);
-		$("#contasAPagar_popupTipo_fornecedor").html(fornecedor);
-		$("#contasAPagar_popupTipo_dataLcto").html(dataLcto);
-		$("#contasAPagar_popupTipo_dataFinal").html(dataFinal);
-	
-		// preenche grid
-		var params = $("#contasAPagarPesquisaProdutoEdicaoForm").serialize();
+		$("#contasAPagar_popupTipo_codigo", this.workspace).html(codigo);
+		$("#contasAPagar_popupTipo_produto", this.workspace).html(produto);
+		$("#contasAPagar_popupTipo_edicao", this.workspace).html(edicao);
+		$("#contasAPagar_popupTipo_fornecedor", this.workspace).html(fornecedor);
 		
-		$(".contasAPagar_parciaispopGrid").flexOptions({
-			url : this.path + 'pesquisarParcial.json?' + params, 
-			newp : 1
-		});
-
-		$(".contasAPagar_parciaispopGrid").flexReload();
-		
-		// abre popup
-		$("#dialog-contasAPagar-tipo").dialog({
-			resizable: false,
-			height:500,
-			width:950,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarParcial.json',
+			[{name:'filtro.produto', value:codigo}, {name:'filtro.dataDetalhe', value:dataLcto}, {name:'page', value:1}],
+			function(result) {
 				
-				},
-			 }
-		});
+				$(".contasAPagar_parciaispopGrid", contasAPagarController.workspace).flexAddData(
+						{rows: (result.rows), page : result.page, total : result.total});
+				
+				$("#dialog-contasAPagar-tipo", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:535,
+					width:955,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						
+						},
+					 },
+					 form: $("#form-contasAPagar-tipo", contasAPagarController.workspace)
+				});
+			}
+		);
 	},
 	
 	
 	popup_consignado : function(data) {
 		
-		$("#contasAPagar_dataDetalhe").val(data);
-		this.pesquisarConsignado();
+		if (data){
+			$("#contasAPagar_dataDetalhe", this.workspace).val(data);
+		}
 		
-		$("#contasAPagar_legend_popupConsignado").html(data);
-	
-		$("#dialog-contasAPagar-consignado").dialog({
-			resizable: false,
-			height:480,
-			width:940,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-				},
-			}
-		});
-	},
-	
-	
-	pesquisarConsignado : function () {
-	
-		var params = $("#contasAPagarForm").serializeArray();
+		var params = $("#contasAPagarForm", this.workspace).serializeArray();
 		
-		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado").val()});
-		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado").val()});
+		params.push({name: 'filtro.produtoConsignado', value: $("#produtoConsignado", this.workspace).val()});
+		params.push({name: 'filtro.edicaoConsignado',  value: $("#edicaoConsignado", this.workspace).val()});
 		
 		$.postJSON(
 			contasAPagarController.path + 'pesquisarConsignado.json',
 			params,
 			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupConsignado").get(0), result.totalDistrib);
-				$(".contasAPagar-consignadoGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
-			},
-			null,
-			true
+				contasAPagarController.montaTabelaTotaisDistribuidores(
+						$("#contasAPagar_table_popupConsignado", contasAPagarController.workspace).get(0), result.totalDistrib);
+				$(".contasAPagar-consignadoGrid", contasAPagarController.workspace).flexAddData(
+						{rows: contasAPagarController.montarLinkDiferencas(toFlexiGridObject(result.grid), data), page : 1, total : 1});
+				
+				if (data){
+					$("#contasAPagar_legend_popupConsignado", contasAPagarController.workspace).html(data);
+				}
+				
+				$("#dialog-contasAPagar-consignado", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:480,
+					width:940,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						},
+					},
+					form: $("#form-contasAPagar-consignado", contasAPagarController.workspace)
+				});
+			}
 		);
 	},
 	
+	montarLinkDiferencas : function(grid, data){
+		
+		$.each(grid, function(index, element){
+			
+			if (element.cell.diferenca && element.cell.diferenca != 0){
+				
+				element.cell.diferenca = 
+					'<a href="javascript:;" onclick="contasAPagarController.exibirDiferencas('
+					.concat("'").concat(element.cell.codigo).concat("'")
+					.concat(",")
+					.concat(element.cell.edicao)
+					.concat(",")
+					.concat("'").concat(data).concat("'")
+					.concat(",")
+					.concat("'").concat(element.cell.produto).concat("'")
+					.concat(');">')
+					.concat('<img style="width:15px; height:15px;" src="')
+					.concat(contextPath)
+					.concat('/images/bt_expedicao.png">')
+					.concat('</img>')
+					.concat('</a>');
+			}
+		});
+		
+		return grid;
+	},
+	
+	exibirDiferencas : function(codigoProduto, numeroEdicao, data, nomeProd){
+		
+		$.postJSON(
+			contasAPagarController.path + 'pesquisarDiferencas',
+			[{name:'codigoProduto', value:codigoProduto},
+			 {name:'numeroEdicao', value:numeroEdicao},
+			 {name:'data', value:data}],
+			function(result) {
+				
+				$("#legend_diferencas", contasAPagarController.workspace).text(
+						codigoProduto + " - " + nomeProd + ": " + numeroEdicao);
+				
+				$("#grid_diferencas", contasAPagarController.workspace).flexAddData(
+						{rows: result.rows, page: 1, total: result.rows.length});
+				
+				$("#dialog-diferencas", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:360,
+					width:300,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						},
+					},
+					form: $("#form-diferencas", contasAPagarController.workspace)
+				});
+			}
+		);
+	},
 
 	popup_encalhe : function(data) {
 		
-		$("#contasAPagar_dataDetalhe").val(data);
-		var params = $("#contasAPagarForm").serialize();
+		$("#contasAPagar_dataDetalhe", this.workspace).val(data);
+		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
 		$.postJSON(
 			this.path + "pesquisarEncalhe.json?" + params,
 			null,
 			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupEncalhe").get(0), result.totalDistrib);
-				$(".contasAPagar_encalheGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				contasAPagarController.montaTabelaTotaisDistribuidores(
+						$("#contasAPagar_table_popupEncalhe", contasAPagarController.workspace).get(0), result.totalDistrib);
+				$(".contasAPagar_encalheGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				
+				$("#contasAPagar_legend_popupEncalhe", contasAPagarController.workspace).html(data);
+				
+				$("#contasAPagar_popupEncalhe", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:460,
+					width:860,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						}
+					},
+					form: $("#form-contasAPagar_popupEncalhe", contasAPagarController.workspace)
+				});
 			}
 		);
-		
-		$("#contasAPagar_legend_popupEncalhe").html(data);
-		
-		$("#contasAPagar_popupEncalhe").dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-				}
-			}
-		});
 	},
 	
 	
 	popup_faltasSobras : function(data) {
 		
-		$("#contasAPagar_dataDetalhe").val(data);
-		var params = $("#contasAPagarForm").serialize();
+		$("#contasAPagar_dataDetalhe", this.workspace).val(data);
+		var params = $("#contasAPagarForm", this.workspace).serialize();
 		
 		$.postJSON(
 			this.path + "pesquisarFaltasSobras.json?" + params,
 			null,
 			function(result) {
-				contasAPagarController.montaTabelaTotaisDistribuidores($("#contasAPagar_table_popupFaltasSobras").get(0), result.totalDistrib);
-				$(".contasAPagar_faltasSobrasGrid").flexAddData({rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				contasAPagarController.montaTabelaTotaisDistribuidores(
+						$("#contasAPagar_table_popupFaltasSobras", contasAPagarController.workspace).get(0), result.totalDistrib);
+				$(".contasAPagar_faltasSobrasGrid", contasAPagarController.workspace).flexAddData(
+						{rows: toFlexiGridObject(result.grid), page : 1, total : 1});
+				
+				$("#contasAPagar_legend_popupFaltasSobras", contasAPagarController.workspace).html(data);
+				
+				$("#contasAPagar_popupFaltasSobras", contasAPagarController.workspace).dialog({
+					resizable: false,
+					height:460,
+					width:860,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+							$(".grids", contasAPagarController.workspace).show();
+						}
+					},
+					form: $("#form-contasAPagar_popupFaltasSobras", contasAPagarController.workspace)
+				});
 			}
 		);
-		
-		$("#contasAPagar_legend_popupFaltasSobras").html(data);
-	
-		$("#contasAPagar_popupFaltasSobras").dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids").show();
-				}
-			}
-		});
 	},
 	
+	preProcessFaltasSobras : function(data){
+		
+		$.each(data.rows, function(index, item){
+			
+			if (!item.cell.box){
+				item.cell.box = '';
+			}
+		});
+		
+		return data;
+	},
+	
+	limparCampoSemanaCE : function(){
+		
+		$("#contasAPagar_Filtro_Ce", this.workspace).val("");
+	},
+	
+	calcularPeriodoCE : function(){
+		
+		$.postJSON(
+			this.path + "calcularPeriodoCE.json",
+			[{name:'semanaCE', value:$("#contasAPagar_Filtro_Ce", this.workspace).val()}],
+			function(result) {
+				
+				$("#contasAPagar_Filtro_De", this.workspace).val(result.de.$);
+				$("#contasAPagar_Filtro_Ate", this.workspace).val(result.ate.$);
+			}
+		);
+	},
 	
 	/*
 	 * *************************
@@ -491,7 +607,7 @@ var contasAPagarController = $.extend(true, {
 	 * *************************
 	 * */
 	initcontasAPagarListaProdutosGrid : function(){
-		$(".contasAPagarListaProdutosGrid").flexigrid({
+		$(".contasAPagarListaProdutosGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -536,7 +652,7 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "codigo",
+			sortname : "edicao",
 			sortorder : "asc",
 			width : 550,
 			height : 200
@@ -546,7 +662,8 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridPesquisarPorFornecedor : function(){
 	
-		$(".porDistrFornecedorGrid").flexigrid({
+		$(".porDistrFornecedorGrid", contasAPagarController.workspace).flexigrid({
+			preProcess : contasAPagarController.insereLinksContasAPagarPorDistribuidores,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Data',
@@ -561,8 +678,8 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Suplementação R$',
-				name : 'suplementacao',
+				display : 'Estoque R$',
+				name : 'estoque',
 				width : 100,
 				sortable : true,
 				align : 'right'
@@ -579,7 +696,7 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'right',
 			}, {
-				display : 'Faltas Sobras R$',
+				display : 'Faltas/Sobras R$',
 				name : 'faltasSobras',
 				width : 110,
 				sortable : true,
@@ -611,7 +728,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridPesquisarPorProduto : function(){
 		
-		$("#contasAPagar_porProdutosGrid").flexigrid({
+		$("#contasAPagar_porProdutosGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Rclt',
@@ -650,8 +767,8 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'center',
 			}, {
-				display : 'Suplementação',
-				name : 'suplementacao',
+				display : 'Estoque',
+				name : 'estoque',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -701,7 +818,7 @@ var contasAPagarController = $.extend(true, {
 	
 	initGridParciais : function () {
 		
-		$(".contasAPagar_parciaispopGrid").flexigrid({
+		$(".contasAPagar_parciaispopGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Lcto',
@@ -789,7 +906,7 @@ var contasAPagarController = $.extend(true, {
 	
 
 	initGridConsignado : function() {
-		$(".contasAPagar-consignadoGrid").flexigrid({
+		$(".contasAPagar-consignadoGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -840,12 +957,6 @@ var contasAPagarController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Motivo',
-				name : 'motivo',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
 				display : 'Fornecedor',
 				name : 'fornecedor',
 				width : 70,
@@ -854,21 +965,15 @@ var contasAPagarController = $.extend(true, {
 			}, {
 				display : 'Valor R$',
 				name : 'valor',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor c/Desc R$',
 				name : 'valorComDesconto',
-				width : 60,
+				width : 70,
 				sortable : true,
 				align : 'right'
-			}, {
-				display : 'N° NF-e',
-				name : 'nfe',
-				width : 57,
-				sortable : true,
-				align : 'left'
 			}],
 			sortname : "codigo",
 			sortorder : "asc",
@@ -879,7 +984,7 @@ var contasAPagarController = $.extend(true, {
 	
 	
 	initGridEncalhe : function() {
-		$(".contasAPagar_encalheGrid").flexigrid({
+		$(".contasAPagar_encalheGrid", contasAPagarController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -901,7 +1006,7 @@ var contasAPagarController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'valor',
+				name : 'precoCapa',
 				width : 95,
 				sortable : true,
 				align : 'right'
@@ -939,7 +1044,8 @@ var contasAPagarController = $.extend(true, {
 	
 	
 	initGridFaltasSobras : function () {
-		$(".contasAPagar_faltasSobrasGrid").flexigrid({
+		$(".contasAPagar_faltasSobrasGrid", contasAPagarController.workspace).flexigrid({
+			preProcess : contasAPagarController.preProcessFaltasSobras,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -1003,4 +1109,47 @@ var contasAPagarController = $.extend(true, {
 		});
 	},
 	
+	initGridDiferencas : function(){
+		$("#grid_diferencas", contasAPagarController.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Quantidade',
+				name : 'diferenca',
+				width : 60,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Motivo',
+				name : 'motivo',
+				width : 120,
+				sortable : false,
+				align : 'left'
+			}]
+		});
+	},
+	
+	exportarPesquisaPrincipal: function(tipoArquivo){
+		
+		if ($("#contasAPagarRadioProduto", this.workspace).is(":checked")){
+			
+			window.open(contasAPagarController.path + "exportPesquisarPorProduto?fileType=" + tipoArquivo, "_blank");
+		} else {
+			
+			window.open(contasAPagarController.path + "exportPesquisarPorDistribuidor?fileType=" + tipoArquivo, "_blank");
+		}
+	},
+	
+	exportPesquisarParcial : function(tipoArquivo){
+		
+		window.open(
+			contasAPagarController.path + "exportPesquisarParcial?fileType=" + tipoArquivo +
+				encodeURI("&codigoProduto=" + $("#contasAPagar_popupTipo_codigo", contasAPagarController.workspace).text() +
+				"&nomeProduto=" + $("#contasAPagar_popupTipo_produto", contasAPagarController.workspace).text() +
+				"&edicao=" + $("#contasAPagar_popupTipo_edicao", contasAPagarController.workspace).text() +
+				"&nomeFornecedor=" + $("#contasAPagar_popupTipo_fornecedor", contasAPagarController.workspace).text()), 
+			"_blank");
+	}
+	
 }, BaseController);
+
+//@ sourceURL=contasAPagar.js

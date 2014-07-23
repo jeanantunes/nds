@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.FormaCobrancaExcepion;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -383,15 +384,13 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 * @param idCota
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaCota(Long idCota, 
 			                                    Long idFornecedor,
-												Date data, 
-												BigDecimal valor) {
+												Date data) {
 
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 
@@ -399,7 +398,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
 				.obterFormaCobranca(idCota, idFornecedor, diaDoMes,
-						diaDaSemana, valor);
+						diaDaSemana);
 
 		return formaCobranca;
 	}
@@ -409,24 +408,51 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 * 
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaDistribuidor(Long idFornecedor,
-														Date data, 
-														BigDecimal valor) {
+														Date data) {
 
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 
 		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 
-		
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
-				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, valor, true);
+				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, true);
 
 		return formaCobranca;
+	}
+	
+	/**
+	 * Verifica se valor à cobrar é menor ou igual ao valor minimo para cobranca estipulado para a Cota
+	 * 
+	 * @param valorMinimoCota
+	 * @param valorTotalCobrar
+	 * @return boolean
+	 */
+	@Override
+	@Transactional
+	public boolean isValorMinimoAtingido(BigDecimal valorMinimoCota, BigDecimal valorTotalCobrar){
+		
+		return valorMinimoCota.compareTo(valorTotalCobrar) <= 0;
+	}
+	
+	/**
+	 * Verifica se valor à cobrar é menor ou igual ao valor minimo para cobranca estipulado para a Cota
+	 * 
+	 * @param idCota
+	 * @param valorTotalCobrar
+	 * @return boolean
+	 */
+	@Override
+	@Transactional
+	public boolean isValorMinimoAtingido(Long idCota, BigDecimal valorTotalCobrar){
+		
+		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
+		
+		return this.isValorMinimoAtingido(cota.getValorMinimoCobranca(), valorTotalCobrar);
 	}
 
 	/**
@@ -451,7 +477,19 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		if (idCota != null) {
 
-			cota = this.cotaRepository.buscarPorId(idCota);
+			cota = this.cotaRepository.buscarPorId(idCota);	
+			
+			if (cota.getValorMinimoCobranca() == null){
+			    
+			    throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + cota.getNumeroCota() + " não possui valor mínimo de cobrança cadastrado.");
+			}
+			
+			boolean valorMinimoAtingido = this.isValorMinimoAtingido(cota.getValorMinimoCobranca(), valor);
+			
+			if (!valorMinimoAtingido){
+				
+				return null;
+			}
 		}
 
 		if (idFornecedor == null && cota != null) {
@@ -478,8 +516,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			}
 		}
 
-		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota,
-				idFornecedor, data, valor);
+		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data);
 
 		if (formaCobranca == null) {
 
@@ -491,8 +528,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		        return null; 
 			}
 			
-	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
-					data, valor);
+	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data);
 		}
 
 		return formaCobranca;
@@ -572,6 +608,24 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	public FormaCobranca obterFormaCobrancaPrincipalDistribuidor() {
 
 		return this.formaCobrancaRepository.obterFormaCobranca();
+	}
+	
+	/**
+     * Obtem FormaCobranca principal do Distribuidor com dados de fornecedor e concentração
+     * 
+     * @return FormaCobranca
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto() {
+
+        return this.formaCobrancaRepository.obterFormaCobrancaCompleto();
+    }
+	@Override
+	@Transactional(readOnly=true)
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault() {
+		
+		return this.formaCobrancaRepository.obterFormaCobrancaDefault();
 	}
 
 	@Override

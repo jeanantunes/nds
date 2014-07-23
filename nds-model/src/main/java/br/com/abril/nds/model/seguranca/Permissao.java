@@ -65,8 +65,8 @@ public enum Permissao {
 	ROLE_LANCAMENTO_ALTERACAO("Lançamento",													   				null, true),	
 	ROLE_LANCAMENTO("Lançamento",														  				   	null, ROLE_LANCAMENTO_ALTERACAO, true, null),
 	
-	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO("Bal. Matriz Lançamento",				   				Permissao.ROLE_LANCAMENTO, true), 
-	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ("Bal. Matriz Lançamento",							   			   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO, true, null), 
+	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO("Matriz de Lançamento", 				   					Permissao.ROLE_LANCAMENTO, true), 
+	ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ("Matriz de Lançamento",							   			   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO, true, null), 
 	
 	ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO("Furo de Lançamento",							   				Permissao.ROLE_LANCAMENTO, true),
 	ROLE_LANCAMENTO_FURO_PRODUTO("Furo de Lançamento",												  	   	Permissao.ROLE_LANCAMENTO, ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO, true, null),
@@ -138,8 +138,6 @@ public enum Permissao {
 	ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO("Histograma Pré Análise",                             Permissao.ROLE_DISTRIBUICAO, true),
 	ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO("Histograma Pré Análise",                                       Permissao.ROLE_DISTRIBUICAO, ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO, true, null),
 
-	
-	
 	ROLE_ESTOQUE_ALTERACAO("Estoque",																	  	null, true),
 	ROLE_ESTOQUE("Estoque",																	  			   	null, ROLE_ESTOQUE_ALTERACAO, true, null),
 	
@@ -173,6 +171,8 @@ public enum Permissao {
 	ROLE_ESTOQUE_HELP_ALTERACAO("Help",							                                            Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_HELP("Help",							                                                   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_HELP_ALTERACAO, true, null),
 	
+	ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL_ALTERACAO("Transferência de Estoque de Parciais",					Permissao.ROLE_ESTOQUE, true),
+	ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL("Transferência de Estoque de Parciais",								Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL_ALTERACAO, true, null),
 	
 	ROLE_EXPEDICAO_ALTERACAO("Expedição",															  		null, true), 
 	ROLE_EXPEDICAO("Expedição",															  				   	null, ROLE_EXPEDICAO_ALTERACAO, true, null), 
@@ -216,6 +216,9 @@ public enum Permissao {
 	
 	ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO("Conferência de Encalhe", 						  	Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA("Conferência de Encalhe", 						  		   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO, true, null),
+
+	ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO("Status Processos de Encalhe", 														Permissao.ROLE_RECOLHIMENTO, true),
+	ROLE_RECOLHIMENTO_SEMAFORO("Status Processos de Encalhe", 						  		   									Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO, true, null),
 	
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO("Venda de Encalhe / Suplementar",								Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE("Venda de Encalhe / Suplementar",									   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO, true, null),
@@ -321,6 +324,10 @@ public enum Permissao {
 	ROLE_FINANCEIRO_P3_ALTERACAO("Extração relatório P3", 													Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_P3("Extração relatório P3",																Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_P3_ALTERACAO, true, null),
 
+	ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO_ALTERACAO("Manutenção de Preço de Publicação Expedida", 			Permissao.ROLE_FINANCEIRO, true),
+	ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO("Manutenção de Preço de Publicação Expedida",						Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO_ALTERACAO, true, null),
+
+	
 	ROLE_FINANCEIRO_HELP_ALTERACAO("Help",           														Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_HELP("Help",           															 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_HELP_ALTERACAO, true, null),
 	

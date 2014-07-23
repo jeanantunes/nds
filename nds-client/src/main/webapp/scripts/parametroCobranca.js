@@ -5,6 +5,8 @@ var parametroCobrancaController = $.extend(true,
 	{
 		
 		idsFornecedoresDisponiveis : [],
+		
+		isAcumulaDivida:null,
 	
 		init : function() {
 			parametroCobrancaController.formatarCampos();
@@ -15,11 +17,7 @@ var parametroCobrancaController = $.extend(true,
 		
 	   
 		formatarCampos : function() {
-			$("#valorMinimo", this.workspace).priceFormat({
-				centsSeparator: ',',
-			    thousandsSeparator: '.',
-			    centsLimit:2	
-			});
+
 			$("#diasDoMes", this.workspace).numeric();
 			$("#diasDoMes1", this.workspace).numeric();
 			$("#diasDoMes2", this.workspace).numeric();
@@ -63,49 +61,43 @@ var parametroCobrancaController = $.extend(true,
 				}, {
 					display : 'Banco',
 					name : 'banco',
-					width : 60,
+					width : 90,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Vlr. M&iacute;n. Emiss&atilde;o R$',
-					name : 'valorMinimoEmissao',
-					width : 90,
-					sortable : true,
-					align : 'right'
-				}, {
 					display : 'Acumula Divida',
 					name : 'acumulaDivida',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Cobran&ccedil;a Unif.',
 					name : 'cobrancaUnificada',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'center',
 				}, {
 					display : 'Forma Emiss&atilde;o',
 					name : 'formaEmissao',
-					width : 110,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Fornecedores',
 					name : 'fornecedores',
-					width : 80,
+					width : 90,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Concentra&ccedil;&atilde;o Pgtos',
 					name : 'concentracaoPagamentos',
-					width : 110,
+					width : 120,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Principal',
 					name : 'principal',
-					width : 50,
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -189,7 +181,7 @@ var parametroCobrancaController = $.extend(true,
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var linkEditar = '<a isEdicao="true" href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
+				var linkEditar = '<a  href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
 						     	  	'<img title="Aprovar" src="'+contextPath+'/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
@@ -198,10 +190,6 @@ var parametroCobrancaController = $.extend(true,
 								   '</a>';
 				
 				row.cell.acao = linkEditar + linkExcluir;
-				
-				
-				row.cell.valorMinimoEmissao = $.formatNumber(row.cell.valorMinimoEmissao, {format:"#,##0.00", locale:"br"});
-				
 				
 				if(row.cell.principal){
 					row.cell.principal = '<img src="'+contextPath+'/images/ico_check.gif" border="0px"/>';
@@ -240,11 +228,23 @@ var parametroCobrancaController = $.extend(true,
 					   true,
 					   "idModal");
 		},
-	
 		
+		exibirAcumuloDivida:function(value){
+				
+			$("#acumulaDivida", parametroCobrancaController.workspace).prop("disabled", !value);
+			
+			if(!value && parametroCobrancaController.isAcumulaDivida!= null){
+				
+				$("#acumulaDivida", parametroCobrancaController.workspace).val((parametroCobrancaController.isAcumulaDivida == "S")?"N":"S");
+				parametroCobrancaController.isAcumulaDivida = null;
+			}
+		},
+	
 		popup : function() {
 			
 			parametroCobrancaController.preparaCadastroParametro();
+			
+			parametroCobrancaController.isAcumulaDivida = null;
 			
 			$("#unificadaCota", parametroCobrancaController.workspace).val("N");
 			
@@ -286,6 +286,8 @@ var parametroCobrancaController = $.extend(true,
 		popup_alterar : function(idPolitica) {
 			
 			parametroCobrancaController.obterParametro(idPolitica);
+			
+			parametroCobrancaController.isAcumulaDivida = null;
 			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
@@ -447,7 +449,6 @@ var parametroCobrancaController = $.extend(true,
 			$("#formaCobranca", this.workspace).val(resultado.formaCobranca);
 			$("#dBanco", this.workspace).val(resultado.idBanco);
 			
-			$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
 			$("#taxaMulta", this.workspace).val(resultado.taxaMulta);
 			$("#valorMulta", this.workspace).val(resultado.valorMulta);
 			$("#taxaJuros", this.workspace).val(resultado.taxaJuros);
@@ -520,12 +521,6 @@ var parametroCobrancaController = $.extend(true,
 			
 			$("#comboFornecedorPadrao", parametroCobrancaController.workspace).val(resultado.idFornecedorPadrao);
 			
-			$("#valorMinimo", this.workspace).priceFormat({
-				centsSeparator: ',',
-			    thousandsSeparator: '.',
-			    centsLimit:2	
-			});
-			
 			$("#valorMulta", this.workspace).priceFormat({
 				centsSeparator: ',',
 			    thousandsSeparator: '.',
@@ -543,6 +538,8 @@ var parametroCobrancaController = $.extend(true,
 				centsSeparator: ',',
 			    thousandsSeparator: '.'
 			});
+			
+			parametroCobrancaController.exibirAcumuloDivida(resultado.principal);
 		},	
 		
 		
@@ -559,7 +556,6 @@ var parametroCobrancaController = $.extend(true,
 					idBanco : $("#dBanco", this.workspace).val(),
 					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
 					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
-					valorMinimo : $("#valorMinimo", this.workspace).val(),
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
 					taxaJuros : $("#taxaJuros", this.worspace).val(),
@@ -670,7 +666,6 @@ var parametroCobrancaController = $.extend(true,
 			$("#formaCobranca", this.workspace).val('');
 			$("#dBanco", this.workspace).val('');
 			
-			$("#valorMinimo", this.workspace).val('');
 			$("#taxaMulta", this.workspace).val('');
 			$("#valorMulta", this.workspace).val('');
 			$("#taxaJuros", this.workspace).val('');
@@ -766,16 +761,16 @@ var parametroCobrancaController = $.extend(true,
 			var isUnificada = $("#unificada").val();
 			
 			if (isUnificada == 'N') {
-			
-				$("input[name='checkGroupFornecedores']").prop("checked", false);
-				
+
 				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 				
-				$("input[name='checkGroupFornecedores']").prop("disabled", true);
-				
+				parametroCobrancaController.habilitarTodosFornecedores();
+			
 			} else {
 				
-				parametroCobrancaController.habilitarTodosFornecedores();
+				$("input[name='checkGroupFornecedores']").prop("checked", false);
+				
+				$("input[name='checkGroupFornecedores']").prop("disabled", true);
 				
 				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			}
@@ -792,7 +787,7 @@ var parametroCobrancaController = $.extend(true,
 				previous = this.value;
 			}).on('change', function() {
 				var isUnificada = $("#unificada").val();
-				if (isUnificada == 'S') 
+				if (isUnificada == 'N') 
 					parametroCobrancaController.habilitarTodosFornecedores();
 				else
 					$("input[name='checkGroupFornecedores']").prop("checked", false);

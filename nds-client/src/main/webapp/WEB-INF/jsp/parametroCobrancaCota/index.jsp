@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript"
@@ -34,7 +35,7 @@ $(function(){
 	visibility: hidden;
 }
 
-.parametroCobrancaFileField, .form-suspensao-hidden-class {
+.parametroCobrancaFileField, .form-suspensao-hidden-class2 {
 	display: none;
 }
 
@@ -192,22 +193,18 @@ $(function(){
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.verificaDataAlteracaoTipoCota(this);"
-				onfocus="this.oldValue = this.value;">
-						<c:forEach varStatus="counter" var="itemTipoCota"
-							items="${listaTiposCota}">
-							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
-						</c:forEach>
-				</select></td>
-				
+
 				<td id="tituloDevolveEncalhe">Devolve Encalhe?</td>
 				<td id="selectDevolveEncalhe"><select name="devolveEncalhe" id="devolveEncalhe">
 						<option value="0">Sim</option>
 						<option value="1">Não</option>
 				</select></td>
+				
+				<td></td>
+				<td></td>
+				
 			</tr>
-			<tr>
+			<!-- tr>
 				<td>Unifica Cobrança?</td>
 				<td><select name="unificaCobranca" id="unificaCobranca">
 						<option value="0">Sim</option>
@@ -215,7 +212,7 @@ $(function(){
 				</select></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
-			</tr>
+			</tr -->
 			
 			<tr>
 			    <td>Fornecedor Padrão:</td>
@@ -231,31 +228,54 @@ $(function(){
 	
 	<table width="770" border="0" cellspacing="1" cellpadding="1">
 		<tbody>
-			<tr>
-				<td width="126">Sugere Suspensão:</td>
-				<td width="24"><input id="sugereSuspensao"
-					name="sugereSuspensao" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
-				<td colspan="3">
-					<div class="form-suspensao-hidden-class">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
-								<td width="13%"><input maxlength="15" type="text"
-									name="qtdDividasAberto" id="qtdDividasAberto"
-									style="width: 60px;" /></td>
-								<td width="8%">ou</td>
-								<td width="6%">R$:</td>
-								<td width="42%"><input maxlength="15" type="text"
-									name="vrDividasAberto" id="vrDividasAberto"
-									style="width: 60px;" /></td>
-							</tr>
-						</table>
-					</div>
-				</td>
-			</tr>
+		    <tr>
+			    <td width="100" style="width: 221px; ">Utiliza Politica de Suspensão do Distribuidor:</td>
+				<td width="24"><input id="sugereSuspensaoDistribuidor"
+					name="sugereSuspensaoDistribuidor" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao_distribuidor(this.checked);" /></td>
+			    <td colspan="2" style="width: 326px; "></td>
+			</tr>	
 		</tbody>
-	</table>
+	</table>		
+	
+	<div class="form-suspensao-hidden1-class">
+	
+		<table width="770" border="0" cellspacing="1" cellpadding="1">
+		
+			<tbody>	
+			
+					<tr>
+						<td width="126" style="width: 114px; ">Sugere Suspensão:</td>
+
+						<td width="24"><input id="sugereSuspensaoCota"
+							name="sugereSuspensaoCota" type="checkbox" value="" onclick="parametroCobrancaCotaController.exibe_form_suspencao(this.checked);" /></td>
+
+						<td colspan="3">
+							<div class="form-suspensao-hidden2-class">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
+										<td width="13%"><input maxlength="15" type="text"
+											name="qtdDividasAbertoCota" id="qtdDividasAbertoCota"
+											style="width: 60px;" /></td>
+										<td width="8%">ou</td>
+										<td width="6%">R$:</td>
+										<td width="42%"><input maxlength="15" type="text"
+											name="vrDividasAbertoCota" id="vrDividasAbertoCota"
+											style="width: 60px;" /></td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+		
+			</tbody>
+			
+		</table>
+		
+	</div>
+	
 	</fieldset>
+	
 </div>
 <fieldset style="width:880px!important; margin:5px;">
  	<legend>Formas de Pagamento</legend>
@@ -265,6 +285,7 @@ $(function(){
 
 <span id="FINANCEIRObtnNovaFormaPagamento" class="bt_novos"> <a
 	href="javascript:;"
+	isEdicao="true"
 	onclick="parametroCobrancaCotaController.popup_nova_unificacao();" rel="tipsy" title="Nova Forma de Pagamento">
 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 		hspace="5" border="0" /> 
@@ -294,7 +315,7 @@ $(function(){
 					    <td valign="top">&nbsp;</td>
 					    <td valign="top">
 		
-					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" style="width:150px;" onchange="parametroCobrancaCotaController.obterParametrosDistribuidor(this.value);">
+					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" class="formaCobrancaValueChangeListener" style="width:150px;" onchange="parametroCobrancaCotaController.obterParametrosDistribuidor(this.value);">
 		                        <option value="">Selecione</option>
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
 				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
@@ -372,7 +393,7 @@ $(function(){
 							        
 					             <tr>
 					                 <td width="12%">
-					                     <input type="checkbox" name="PCC-PS" id="PCC-PS" />
+					                     <input type="checkbox" name="PCC-PS" id="PCC-PS" class="formaCobrancaValueChangeListener" />
 					                 </td>    
 					                 <td width="88%">
 					                     <label for="PS">Segunda-feira</label>
@@ -381,7 +402,7 @@ $(function(){
 							            
 							     <tr>
 					                 <td>           
-							             <input type="checkbox" name="PCC-PT" id="PCC-PT" />
+							             <input type="checkbox" name="PCC-PT" id="PCC-PT" class="formaCobrancaValueChangeListener" />
 							         </td>    
 					                 <td>    
 							             <label for="PT">Terça-feira</label>
@@ -390,7 +411,7 @@ $(function(){
 					             
 					             <tr>
 					                 <td>            
-							             <input type="checkbox" name="PCC-PQ" id="PCC-PQ" />
+							             <input type="checkbox" name="PCC-PQ" id="PCC-PQ" class="formaCobrancaValueChangeListener" />
 							         </td>    
 					                 <td>      
 							             <label for="PQ">Quarta-feira</label>
@@ -399,7 +420,7 @@ $(function(){
 							                          
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PCC-PQu" id="PCC-PQu" />
+							             <input type="checkbox" name="PCC-PQu" id="PCC-PQu" class="formaCobrancaValueChangeListener" />
 							          </td>    
 					                  <td>  
 							             <label for="PQu">Quinta-feira</label>
@@ -408,7 +429,7 @@ $(function(){
 							                  
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PCC-PSex" id="PCC-PSex" />
+							             <input type="checkbox" name="PCC-PSex" id="PCC-PSex" class="formaCobrancaValueChangeListener" />
 							         </td>    
 					                 <td>      
 							             <label for="PSex">Sexta-feira</label>
@@ -417,7 +438,7 @@ $(function(){
 							               
 							      <tr>
 					                 <td>    
-							             <input type="checkbox" name="PCC-PSab" id="PCC-PSab" />
+							             <input type="checkbox" name="PCC-PSab" id="PCC-PSab" class="formaCobrancaValueChangeListener" />
 							             </td>    
 					                 <td>  
 							             <label for="PSab">Sábado</label>
@@ -426,7 +447,7 @@ $(function(){
 							                   
 							      <tr>
 					                  <td>
-							             <input type="checkbox" name="PCC-PDom" id="PCC-PDom" />
+							             <input type="checkbox" name="PCC-PDom" id="PCC-PDom" class="formaCobrancaValueChangeListener" />
 							             </td>    
 					                 <td>  
 							             <label for="PDom">Domingo</label>
@@ -467,8 +488,8 @@ $(function(){
 
 						<tr>
 							<td width="57">Nome:</td>
-							<td width="346"><select name="banco" id="banco"
-								style="width: 150px;">
+							<td width="346">
+								<select name="banco" id="banco" style="width: 150px;" class="formaCobrancaValueChangeListener">
 									<option value=""></option>
 									<c:forEach varStatus="counter" var="banco"
 										items="${listaBancos}">
@@ -549,6 +570,7 @@ $(function(){
 
 			<br clear="all" /> <span id="popupNovaFormaPagamentoIncluirNova" class="bt_add"> <a
 				href="javascript:;"
+				isEdicao="true"
 				onclick="parametroCobrancaCotaController.incluirNovaUnificacao();">
 					Incluir Novo </a>
 			</span>

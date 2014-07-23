@@ -141,22 +141,20 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		sql.append("	inner join COTA on ");
 		sql.append("	( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID) ");
 		
-		sql.append("	inner join pdv on (cota.ID = pdv.cota_id and pdv.ponto_PRINCIPAL = true) ");
+
+		sql.append("	inner join PDV on (PDV.COTA_ID = COTA.ID and PDV.PONTO_PRINCIPAL = true) ");
 		
-		sql.append("	inner join BOX on ");
-		sql.append("	( BOX.ID = COTA.BOX_ID) ");
+		sql.append("	inner join ROTA_PDV on (ROTA_PDV.PDV_ID = PDV.ID) ");
 		
-		sql.append("	inner join ROTEIRIZACAO on ");
-		sql.append("	( ROTEIRIZACAO.BOX_ID = BOX.ID) ");
+		sql.append("	inner join ROTA on (ROTA.ID = ROTA_PDV.ROTA_ID) ");
 		
-		sql.append("	inner join ROTEIRO on ");
-		sql.append("	( ROTEIRO.ROTEIRIZACAO_ID = ROTEIRIZACAO.ID) ");
+		sql.append("	inner join ROTEIRO on (ROTEIRO.ID = ROTA.ROTEIRO_ID) ");
 		
-		sql.append("	inner join ROTA on ");
-		sql.append("	( ROTA.ROTEIRO_ID = ROTEIRO.ID) ");
+		sql.append("	inner join ROTEIRIZACAO on (ROTEIRIZACAO.ID = ROTEIRO.ROTEIRIZACAO_ID) ");
 		
-		sql.append("	INNER JOIN ROTA_PDV ON (ROTA.ID = ROTA_PDV.ROTA_ID and rota_pdv.pdv_id = pdv.id) ");
+		sql.append("	inner join BOX on (BOX.ID = ROTEIRIZACAO.BOX_ID) ");
 		
+
 		sql.append("	where	");
 		
 		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
@@ -171,7 +169,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
-		sql.append("	ORDER BY BOX.NOME, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM ");
+		sql.append("	ORDER BY BOX.CODIGO,ROTEIRO.ORDEM , ROTA.ORDEM, ROTA_PDV.ORDEM  ");
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

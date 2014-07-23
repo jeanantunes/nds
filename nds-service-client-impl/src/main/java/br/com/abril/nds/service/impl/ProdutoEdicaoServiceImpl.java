@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.DataCEConferivelDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO.ModoTela;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
@@ -50,6 +52,7 @@ import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -63,19 +66,22 @@ import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
-import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
@@ -143,7 +149,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private DistribuidorService distribuidorService;
     
     @Autowired
-    private ParciaisService parciaisService;
+    private FuroProdutoService furoProdutoService;
     
     @Autowired
     private LancamentoParcialRepository lancamentoParcialRepository;
@@ -164,7 +170,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private CotaService cotaService;
     
     @Autowired
+    private CalendarioService calendarioService;
+    
+    @Autowired
     private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+    
+    @Autowired
+    private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
+    
+    @Autowired
+    private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -265,13 +280,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 }
                 
                 if (diaSemana == -1){
+                	
                     diaSemana = listaDiasSemana.get(0);
                 }
                 
-                while (calendar.get(Calendar.DAY_OF_WEEK) != diaSemana){
+                while ((calendar.get(Calendar.DAY_OF_WEEK) != diaSemana)){
+                	
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
                 }
-                
+
+                calendar.setTime(this.furoProdutoService.obterProximaDataDiaOperante(codigo,furoProdutoDTO.getIdProdutoEdicao(),calendar.getTime()));
+
                 furoProdutoDTO.setNovaData(
                         new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).format(calendar.getTime()));
             }
@@ -339,8 +358,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
         }
         
-        final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNome(
-                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel);
+        final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(null,
+                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel, null);
         
         return produtosEdicao;
 
@@ -429,7 +448,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Override
     @Transactional
-    public void salvarProdutoEdicao(final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, final InputStream imgInputStream, final boolean istrac29) {
+    public void salvarProdutoEdicao(
+            final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, 
+            final InputStream imgInputStream, final boolean istrac29, final ModoTela modoTela) {
         
         ProdutoEdicao produtoEdicao = null;
         
@@ -444,10 +465,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
         }
         
-        if (produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
+        if (!ModoTela.EDICAO.equals(modoTela) && produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
                 dto.getNumeroEdicao(), produtoEdicao.getId())) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
         }
+        
+        this.validarAlteracaoDePrecoDeCapaDoProdutoEdicao(produtoEdicao, dto);
         
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
@@ -487,6 +510,37 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
     }
     
+    private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
+    	
+    	if(produtoEdicao.getId() == null){
+    		return;
+    	}
+    	
+    	final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+    	
+    	final boolean permiteAlteracaoDePrecoSemValidacao =
+    					Arrays.asList(StatusLancamento.PLANEJADO,
+				    	    		StatusLancamento.CONFIRMADO,
+				    	    		StatusLancamento.FURO,
+				    	    		StatusLancamento.EM_BALANCEAMENTO,
+				    	    		StatusLancamento.BALANCEADO,
+				    	    		StatusLancamento.ESTUDO_FECHADO).contains(statusLancamento);
+    	
+    	if(!permiteAlteracaoDePrecoSemValidacao){
+ 
+    		final boolean precoPrevistoDiferente = (produtoEdicao.getPrecoPrevisto().compareTo(produtoEdicaoDTO.getPrecoPrevisto())!=0);
+    		
+    		final boolean precoCustoDiferente = (produtoEdicao.getPrecoVenda().compareTo(produtoEdicaoDTO.getPrecoVenda())!=0);
+    		
+    		if(precoPrevistoDiferente || precoCustoDiferente ){
+    			
+    			throw new ValidacaoException(
+    					new ValidacaoVO(TipoMensagem.WARNING,
+    							"Não é permitido alterar os valores de Preço de Capa para produtos com status de [" + statusLancamento.getDescricao()+"]"));
+    		}
+    	}
+    }
+    
     private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {
         
         if (dto.isParcial() != produtoEdicao.isParcial()
@@ -524,6 +578,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             final boolean indNovoProdutoEdicao, final Lancamento lancamento) {
         
         if(indNovoProdutoEdicao){
+        	
+        	if (!TipoLancamento.LANCAMENTO.equals(dto.getTipoLancamento())) {
+        		throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
+        	}
             
             final LancamentoParcial lancamentoParcial =
                     this.criarNovoLancamentoParcial(dto, produtoEdicao);
@@ -542,7 +600,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             LancamentoParcial lancamentoParcial  = produtoEdicao.getLancamentoParcial();
             
             if (lancamentoParcial == null) {
-                
+
+            	if (!TipoLancamento.LANCAMENTO.equals(dto.getTipoLancamento())) {
+            		throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
+            	}
+            	
                 lancamentoParcial =
                         this.criarNovoLancamentoParcial(dto, produtoEdicao);
                 
@@ -797,7 +859,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         }
         
         // Campos editáveis, independente da Origem
-        produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto().getId() == null ? null : dto.getTipoClassificacaoProduto());
+        produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto() == null || dto.getTipoClassificacaoProduto().getId() == null ? null : dto.getTipoClassificacaoProduto());
         produtoEdicao.setPrecoVenda(dto.getPrecoVenda() == null ? dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View:
         // Preço
         // Capa
@@ -844,13 +906,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private Lancamento salvarLancamento(Lancamento lancamento, final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao, final Usuario usuario) {
         
         lancamento.setNumeroLancamento(dto.getNumeroLancamento());
-        lancamento.setTipoLancamento(dto.getTipoLancamento());
-        
+
         if(dto.getDataLancamento()!=null){
             lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());
         }
         lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
         lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
+        
+        if(dto.getDataRecolhimentoDistribuidor()!=null){
+            lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+        }
         
         final BigInteger repartePromocional = dto.getRepartePromocional() == null ? BigInteger.ZERO : dto.getRepartePromocional();
         
@@ -859,6 +924,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             lancamento.setReparte(dto.getRepartePrevisto());
         }
         
+        final boolean tipoDeLancamentoRedistribuicao = TipoLancamento.REDISTRIBUICAO.equals(dto.getTipoLancamento());
+        
+        final boolean produtoEdicaoSemLancamento = (produtoEdicao.getLancamentos() == null || produtoEdicao.getLancamentos().isEmpty());  
+        
+        if(tipoDeLancamentoRedistribuicao && produtoEdicaoSemLancamento){
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
+        }
+        
+        lancamento.setTipoLancamento(dto.getTipoLancamento());
         lancamento.setRepartePromocional(repartePromocional);
         lancamento.setUsuario(usuario);
         
@@ -897,11 +972,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         final Map<String, String> validacaoMap = new HashMap<String, String>();
         
         final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+        
         if (produtoEdicao == null) {
             
             validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
         } else {
+        
+            if (Origem.INTERFACE.equals(produtoEdicao.getOrigem())) {
             
+            	validacaoMap.put("origemInterface", "Não é possível excluir edição de origem interface.");
+            }
+
             final Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
             
             for (final Lancamento lancamento : lancamentos) {
@@ -917,9 +998,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                     return validacaoMap;
                 }
                 
-                if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) {
+                List<ItemNotaFiscalEntrada> itens = this.itemNotaFiscalEntradaRepository.obterItensPorProdutoEdicao(produtoEdicao.getId());
+                
+                boolean produtoComNota = itens != null && !itens.isEmpty(); 
+                
+                if(produtoComNota) {
                     
-                    validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
+                    validacaoMap.put("edicaoComNota", "Já existe uma nota fiscal recebida para esta edição e não pode ser excluida!");
                     
                     return validacaoMap;
                 }
@@ -1088,6 +1173,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         dto.setFase(produto.getFase());
         dto.setPacotePadrao(produto.getPacotePadrao());
         dto.setPeso(produto.getPeso());
+        dto.setFormaComercializacao(produto.getFormaComercializacao());
         
         String nomeFornecedor = "";
         if (produto.getFornecedor() != null
@@ -1270,19 +1356,19 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 }
                 
                 final PeriodoLancamentoParcial primeiroPeriodo = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
+
+                dataLancamento = uLancamento.getDataLancamentoDistribuidor();
                 
-                Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial();
-                
-                if(primeiroPeriodo!= null && lancamento != null){
-                    dataLancamento = lancamento.getDataLancamentoDistribuidor();
-                }
-                else{
-                    dataLancamento = uLancamento.getDataLancamentoDistribuidor();
+                if(primeiroPeriodo!= null) {
+
+                	Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial();
+                    
+                    dataLancamento = lancamento != null ? lancamento.getDataLancamentoDistribuidor() : dataLancamento;
                 }
                 
                 final PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
                 
-                lancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
+                Lancamento lancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
                 
                 if(ultimoPeriodo!= null && lancamento!= null){
                     dto.setDataRecolhimentoReal(lancamento.getDataRecolhimentoDistribuidor());
@@ -1304,7 +1390,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             dto.setRepartePrevisto(uLancamento.getReparte());
             dto.setRepartePromocional(uLancamento.getRepartePromocional());
             
-            final int semanaRecolhimento = SemanaUtil.obterNumeroSemana(uLancamento.getDataRecolhimentoDistribuidor(), distribuidorService.inicioSemana().getCodigoDiaSemana());
+            final int semanaRecolhimento = SemanaUtil.obterNumeroSemana(uLancamento.getDataRecolhimentoDistribuidor(), distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana());
             
             dto.setSemanaRecolhimento(semanaRecolhimento);
         }
@@ -1414,7 +1500,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         BigInteger cotasEsmagadas = BigInteger.ZERO;
         BigDecimal vendaEsmagadas = BigDecimal.ZERO;
         BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
+        
         final StringBuilder strCotas = new StringBuilder();
+        
         for (int i = 0; i < newFaixasVenda.length; i++) {
             final String[] faixa = newFaixasVenda[i].split("-");
             final AnaliseHistogramaDTO obj =
@@ -1483,7 +1571,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         final AnaliseHistogramaDTO totalizar = new AnaliseHistogramaDTO();
         totalizar.setFaixaDe(BigInteger.ZERO);
-        totalizar.setFaixaAte(new BigInteger("999999"));
+        totalizar.setFaixaAte(new BigInteger("9999999"));
         totalizar.setFaixaVenda("Total");
         totalizar.setRepTotal(reparteTotal);
         totalizar.setVdaTotal(vendaTotal);
@@ -1523,29 +1611,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         switch (produtoEdicao.getOrigem()) {
         
-        case MANUAL:
-            
-            porcentagemDesconto =
-            (produtoEdicao.getDesconto() != null)
-            ? produtoEdicao.getDesconto()
-                    : produtoEdicao.getProduto().getDesconto();
-            
-            if	((porcentagemDesconto == null
-                    || BigInteger.ZERO.equals(porcentagemDesconto.unscaledValue()))
-                    && (Origem.INTERFACE.equals(produtoEdicao.getProduto().getOrigem()))) {
-                
-                final DescontoLogistica descontoLogistica =
-                        produtoEdicao.getProduto().getDescontoLogistica();
-                
-                if (descontoLogistica != null) {
-                    
-                    porcentagemDesconto =
-                            produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto();
-                }
-            }
-            
-            break;
-            
         case INTERFACE:
             
             final DescontoLogistica descontoLogistica =
@@ -1561,6 +1626,24 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             break;
             
         default:
+            
+            porcentagemDesconto =
+            (produtoEdicao.getDesconto() != null)
+            ? produtoEdicao.getDesconto()
+                    : produtoEdicao.getProduto().getDesconto();
+            
+            if  ((porcentagemDesconto == null
+                    || BigInteger.ZERO.equals(porcentagemDesconto.unscaledValue()))
+                    && (Origem.INTERFACE.equals(produtoEdicao.getProduto().getOrigem()))) {
+                
+                final DescontoLogistica descontoLog =
+                        produtoEdicao.getProduto().getDescontoLogistica();
+                
+                if (descontoLog != null) {
+                    
+                    porcentagemDesconto = descontoLog.getPercentualDesconto();
+                }
+            }
             
             break;
         }
@@ -1613,12 +1696,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             return;
         }
         
-        if(produto.getDescontoLogistica()==null) {
+        if (Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()==null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
+        } else if (!Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDesconto() == null) {
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
         }
         
-        dto.setDesconto(produto.getDescontoLogistica().getPercentualDesconto());
-        
+        dto.setDesconto(Origem.INTERFACE.equals(produto.getOrigem()) ? 
+        		produto.getDescontoLogistica().getPercentualDesconto() : 
+        		produto.getDesconto());
+
+        dto.setDescricaoDesconto(Origem.INTERFACE.equals(produto.getOrigem()) ? 
+        		produto.getDescontoLogistica().getDescricao() : 
+        		produto.getDescricaoDesconto());
+
         if(dto.getPacotePadrao()==null) {
             dto.setPacotePadrao(produto.getPacotePadrao());
         }
@@ -1635,8 +1726,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         if("SIM".equalsIgnoreCase(parcial) || "TRUE".equalsIgnoreCase(parcial)  || "PARCIAL".equalsIgnoreCase(parcial)) {
             dto.setParcial(true);
-        } else {
+        } else if("NÃO".equalsIgnoreCase(parcial) || "NAO".equalsIgnoreCase(parcial) || "FALSE".equalsIgnoreCase(parcial)) {
             dto.setParcial(false);
+        } else {
+        	throw new ValidacaoException(TipoMensagem.WARNING, String.format("Informação \"%s\" na coluna parcial está inválida", parcial));
         }
         
         final Calendar calendar = Calendar.getInstance();
@@ -1661,6 +1754,69 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	
     	return this.produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicao);
     }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento) {
+        
+        return this.produtoEdicaoRepository.obterProdutosBalanceados(dataLancamento);
+    }
     
+    @Override
+    @Transactional(readOnly=true)
+    public BigDecimal obterPrecoEdicaoParaAlteracao(final String codigoProduto, final Long numeroEdicao){
+    	
+    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto,numeroEdicao);
+    	
+    	if(produtoEdicao == null){
+    		return null;
+    	}
+    	
+    	this.validarLancamentoParaAlteracaoPreco(produtoEdicao.getId());
+    	
+    	return produtoEdicao.getPrecoVenda();
+    }
+    
+    @Override
+    @Transactional
+    public void executarAlteracaoPrecoCapa(final String codigo,final Long numeroEdicao,final BigDecimal precoProduto) {
+    	
+    	if((codigo == null || codigo.isEmpty()) || numeroEdicao == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe uma publicação para alteração."));
+		}
+		
+		if(precoProduto == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe um valor para o campo [Novo Preço]."));
+		}
+		
+		ProdutoEdicao produtoEdicao = 
+				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo,numeroEdicao);
+	
+		if(produtoEdicao == null ){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe uma publicação existente para alteração."));
+		}
+		
+		this.validarLancamentoParaAlteracaoPreco(produtoEdicao.getId());
+		
+		produtoEdicao.setPrecoVenda(precoProduto);
+		produtoEdicaoRepository.merge(produtoEdicao);
+		
+		movimentoEstoqueCotaService.atualizarPrecoProdutoExpedido(produtoEdicao.getId(),precoProduto);
+    }
+
+	private void validarLancamentoParaAlteracaoPreco(final Long idProdutoEdicao) {
+		
+		final boolean publicacaoEditavel = 
+				lancamentoRepository.existeLancamentoParaOsStatus(idProdutoEdicao,
+						StatusLancamento.EXPEDIDO,StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		
+		if(!publicacaoEditavel){
+			
+			final StatusLancamento statusLancamento = lService.obterStatusDoPrimeiroLancamentoDaEdicao(idProdutoEdicao);
+			
+			throw new  ValidacaoException(TipoMensagem.WARNING, 
+					"O status do lançamento [" +statusLancamento.getDescricao() +"] não permite alteração de preço. ");
+		}
+	}
 }
 

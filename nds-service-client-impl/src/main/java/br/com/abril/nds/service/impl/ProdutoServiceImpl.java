@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +25,7 @@ import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
@@ -76,6 +76,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Autowired
 	private TipoClassificacaoProdutoRepository tipoClassRepo;
 	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Produto obterProdutoPorNome(String nome) {
@@ -123,11 +126,8 @@ public class ProdutoServiceImpl implements ProdutoService {
         }
         if (produto == null) {
             produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
-        } if (produto == null) {
-            produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
-        } if ((produto == null) && (codigoProduto.length() <=8)) {
-            produto = produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
         }
+        
         return produto;
 	}
 	
@@ -227,12 +227,14 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Override
 	@Transactional
 	public void salvarProduto(Produto produto, Long codigoEditor,
-			Long codigoFornecedor, Long codigoTipoDesconto,
+			Long codigoFornecedor, Long idDesconto,
 			Long codigoTipoProduto) {
 
 			Editor editor =	this.editorRepository.buscarPorId(codigoEditor);
 			Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(codigoFornecedor);
 			TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(codigoTipoProduto);
+			
+			Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 			
 			if(produto.getId()!=null) {
 				
@@ -267,9 +269,10 @@ public class ProdutoServiceImpl implements ProdutoService {
 				
 				if (Origem.MANUAL == produtoExistente.getOrigem()){
 					
-					if (codigoTipoDesconto != null){
+					if (idDesconto != null){
 						
-						produtoExistente.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+						produtoExistente.setDescontoLogistica(
+						        obterDescontoLogistica(idDesconto, fornecedor.getId(), dataOperacao));
 					} else {
 						
 						produtoExistente.setDescontoLogistica(null);
@@ -290,19 +293,23 @@ public class ProdutoServiceImpl implements ProdutoService {
 				//TODO: Valor não informado na interface de cadastro de produto
 				produto.setPeso(0L);
 				
-				if (codigoTipoDesconto != null){
+				if (idDesconto != null){
 					
-					produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+					produto.setDescontoLogistica(
+					        obterDescontoLogistica(idDesconto, fornecedor.getId(), dataOperacao));
 				}
 				
 				this.produtoRepository.adicionar(produto);
 			}
 	}
 
-	private DescontoLogistica obterDescontoLogistica(Long codigoTipoDesconto) {
+	private DescontoLogistica obterDescontoLogistica(Long idDesconto, Long idFornecedor, Date dataOperacao) {
 		
-		if (codigoTipoDesconto != null && codigoTipoDesconto.intValue() > 0) {
-			return this.descontoLogisticaRepository.obterPorTipoDesconto(codigoTipoDesconto.intValue());
+		if (idDesconto != null && idDesconto.intValue() > 0) {
+			
+		    return this.descontoLogisticaRepository.obterDescontoLogisticaVigente(idDesconto.intValue(),
+		                                                                          idFornecedor,
+		                                                                          dataOperacao);
 		}
 		
 		return null;
@@ -406,7 +413,7 @@ public class ProdutoServiceImpl implements ProdutoService {
                 produto.addFornecedor(fornecedor);
         }else{
                 
-            if (!fornecedor.getId().equals(produto.getId())){
+            if (!fornecedor.getId().equals(produto.getFornecedor().getId())){
                     
                 throw new ValidacaoException(TipoMensagem.WARNING, "O [Produto] já possui movimentações e o campo [Fornecedor] não pode ser alterado.");
             }
@@ -459,6 +466,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 		}
 		
         return fornecedor.getId();
+	}
+
+	@Override
+	public Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigoICD) {
+		return produtoRepository.obterProdutoPorICDBaseadoNoPrimeiroBarra(codigoICD);
 	}
     
 }

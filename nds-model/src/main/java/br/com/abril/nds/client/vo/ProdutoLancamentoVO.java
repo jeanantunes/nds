@@ -32,6 +32,9 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	@Export(label="Recolhimento", exhibitionOrder = 6, widthPercent = 9)
 	private String dataRecolhimentoPrevista;
+
+	@Export(label="RecolhimentoDistribuidor", exhibitionOrder = 6, widthPercent = 9)
+	private String dataRecolhimentoDistribuidor;
 	
 	@Export(label="Total R$", exhibitionOrder = 7, widthPercent = 8)
 	private String valorTotal;
@@ -55,6 +58,8 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private String statusLancamento;
 	
 	@Export(label="Fornecedor", exhibitionOrder = 14, widthPercent = 9)
+	private String nomeFantasia;
+
 	private Long fornecedorId;
 
 	private String novaDataLancamento;
@@ -66,6 +71,8 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private boolean destacarLinha;
 	
 	private boolean possuiFuro;
+	
+	private boolean produtoContaFirme;
 	
 	
 	/**
@@ -80,6 +87,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getNomeFantasia() {
+		return nomeFantasia;
+	}
+
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
 	}
 
 	public String getStatusLancamento() {
@@ -181,6 +196,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 		this.descricaoLancamento = descricaoLancamento;
 	}
 
+	public String getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+
+	public void setDataRecolhimentoDistribuidor(String dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
+	
 	/**
 	 * @return the dataRecolhimentoPrevista
 	 */
@@ -344,9 +367,11 @@ public class ProdutoLancamentoVO  implements Serializable {
 		this.cancelado = cancelado;
 	}
 
+	public boolean isProdutoContaFirme() {
+		return produtoContaFirme;
+	}
 
-
-	
-
-
+	public void setProdutoContaFirme(boolean produtoContaFirme) {
+		this.produtoContaFirme = produtoContaFirme;
+	}
 }

@@ -36,7 +36,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(", hdf.desconto.id as idTipoDesconto ");
 		hql.append(", hdf.usuario.nome as usuario ");
 		hql.append(", hdf.desconto.valor as desconto ");
-		hql.append(", hdf.dataAlteracao as dataAlteracao ");
+		hql.append(", hdf.desconto.dataAlteracao as dataAlteracao ");
 		hql.append(", (case ");
 		hql.append("when (select count(hdf1.desconto.id) from HistoricoDescontoFornecedor hdf1 ");
 		hql.append("where hdf1.desconto.id = hdf.desconto.id ");
@@ -71,11 +71,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 				}
 			}
 		}
-		
-		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
-			hql.append(" and f.id in (:idFornecedores) ");
-		}
-		
+
 		hql.append(getOrdenacao(filtro));
 		
 		Query query  = getSession().createQuery(hql.toString());

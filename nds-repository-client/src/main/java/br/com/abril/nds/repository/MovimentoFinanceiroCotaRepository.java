@@ -7,7 +7,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
@@ -30,13 +31,24 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * 
 	 * @param numeroCota
-	 * @param dataOperacao
+	 * @param datas
+	 * @param tiposCota
+	 * @param idFornecedor
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota, Date dataOperacao);
+	public List<DebitoCreditoCota> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(
+	        Integer numeroCota, List<Date> datas, Long idFornecedor);
 	
-	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataOperacao);	
+	/**
+	 * Obtem movimentos financeiros da cota ainda nao processados e não consolidados
+	 * 
+	 * @param idCota
+	 * @param dataOperacao
+	 * @param tiposCota
+	 * @return List<MovimentoFinanceiroCota> 
+	 */
+	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataOperacao, List<TipoCota> tiposCota);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);	
@@ -49,15 +61,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * Obtém os débitos e crédito relativos a uma cota para determinada data de operação.
 	 * 
 	 * @param numeroCota
-	 * @param dataOperacao
+	 * @param datas
 	 * @param tiposMovimentoFinanceiroIgnorados
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(
-			Integer numeroCota, 
-			Date dataOperacao, 
-			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	public List<DebitoCreditoCota> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, List<Date> datas, 
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados, Long idFornecedor);
 	
 	/**
 	 * Obtém movimentos financeiros de uma cota por operação
@@ -94,7 +104,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	List<DebitoCreditoCota> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 
 
 	/**
@@ -113,7 +123,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @param tiposMovimentoFinanceiroIgnorados
 	 * @return
 	 */
-	List<DebitoCreditoCotaDTO> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	List<DebitoCreditoCota> obterDebitoCreditoPorPeriodoOperacao(FiltroConsultaEncalheDTO filtro, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 	
 	/**
 	 * Obtém dados de transportador por periodo
@@ -161,7 +171,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 			Collection<TipoMovimentoFinanceiro> tiposMovimento,
 			Date dataCriacao);
 
-	List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado,
+	List<DebitoCreditoCota> obterCreditoDebitoCota(Long idConsolidado,
 			Date dataCriacao, Integer numeroCota, List<TipoMovimentoFinanceiro> tiposDebitoCredito, String sortorder, String sortname);
 
 	BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado,
@@ -170,10 +180,9 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
    /**
     * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
     * @param numeroCota
-    * @param data
     * @return Long
     */
-    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data);
+    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota);
 	
    /**
     * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
@@ -185,8 +194,8 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
     * @param maxResults
     * @return List<ProcessamentoFinanceiroCotaDTO>
     */
-    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
-	                                                                      Date data, 
+    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota,
+    		                                                              Date data,
 	                                                                      String sortorder, 
 	                                                                      String sortname,
 	                                                                      int initialResult, 
@@ -241,5 +250,12 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return List - MovimentoFinanceiroCota
 	 */
     public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCotaDeConsolidado(final Long idConsolidado);
+
+	public abstract void removeByIdConsolidadoAndGrupos(Long idConsolidado,
+			List<String> grupoMovimentoFinaceiros);
+
+    public void removeByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros);
+    
+    void adicionarEmLoteDTO(final List<MovimentoFinanceiroCotaDTO> movimentoFinanceiroCota);
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,9 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -79,6 +82,9 @@ public class RegiaoController extends BaseController {
 
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	public RegiaoController(Result result) {
 		this.result = result;
@@ -183,7 +189,7 @@ public class RegiaoController extends BaseController {
 		
 		setFaturamentoCota(listaCotasRegiaoDTO);
 
-		removeRegiosInconsistentes(listaCotasRegiaoDTO, filtro);
+//		removeRegiosInconsistentes(listaCotasRegiaoDTO, filtro);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoCotaDTO>>();
 
@@ -198,9 +204,21 @@ public class RegiaoController extends BaseController {
 
 	private void setFaturamentoCota(List<RegiaoCotaDTO> listaCotasRegiaoDTO) {
 		
+	    final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.distribuidorService.obterDataOperacaoDistribuidor());
+        
+        calendar.add(Calendar.MONTH, -1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        final Date de = calendar.getTime();
+        
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        final Date ate = calendar.getTime();
+        
+        final Intervalo<Date> intervalo = new Intervalo<Date>(de, ate);
+	    
 		for (RegiaoCotaDTO regiaoCotaDTO : listaCotasRegiaoDTO) {
 			
-			BigDecimal faturamento = regiaoService.calcularFaturamentoCota(regiaoCotaDTO.getCotaId());
+			BigDecimal faturamento = regiaoService.calcularFaturamentoCota(regiaoCotaDTO.getCotaId(), intervalo);
 			
 			if(faturamento != null){
 				regiaoCotaDTO.setFaturamento(faturamento);
@@ -211,25 +229,25 @@ public class RegiaoController extends BaseController {
 		
 	}
 	
-	private void removeRegiosInconsistentes(List<RegiaoCotaDTO> listaCotasRegiaoDTO, FiltroCotasRegiaoDTO filtro) {
-		
-		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(filtro.getId());
-		
-		List<RegiaoCotaDTO> listaCotasRegiaoDTOToRemove = new ArrayList<RegiaoCotaDTO>();
-		
-		for (Integer cota:cotasCadas) {
-			
-			for (RegiaoCotaDTO regiaoCotaDTO:listaCotasRegiaoDTO) {
-				
-                if (regiaoCotaDTO.getCotaId() != null && regiaoCotaDTO.getCotaId() == cota.longValue()) {
-					
-					listaCotasRegiaoDTOToRemove.add(regiaoCotaDTO);
-				}
-			}
-		}
-		
-		listaCotasRegiaoDTO.removeAll(listaCotasRegiaoDTOToRemove);
-	}
+//	private void removeRegiosInconsistentes(List<RegiaoCotaDTO> listaCotasRegiaoDTO, FiltroCotasRegiaoDTO filtro) {
+//		
+//		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(filtro.getId());
+//		
+//		List<RegiaoCotaDTO> listaCotasRegiaoDTOToRemove = new ArrayList<RegiaoCotaDTO>();
+//		
+//		for (Integer cota:cotasCadas) {
+//			
+//			for (RegiaoCotaDTO regiaoCotaDTO:listaCotasRegiaoDTO) {
+//				
+//                if (regiaoCotaDTO.getCotaId() != null && regiaoCotaDTO.getCotaId() == cota.longValue()) {
+//					
+//					listaCotasRegiaoDTOToRemove.add(regiaoCotaDTO);
+//				}
+//			}
+//		}
+//		
+//		listaCotasRegiaoDTO.removeAll(listaCotasRegiaoDTOToRemove);
+//	}
 
 	@Post
 	@Path("/carregarRegiao")

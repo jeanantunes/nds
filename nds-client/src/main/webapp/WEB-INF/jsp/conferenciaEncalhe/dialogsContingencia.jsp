@@ -182,16 +182,16 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Juramentada:</td>
+			<td class="isParcial">Juramentada:</td>
 			<td>
-				<input isEdicao="true" type="checkbox" name="checkbox" id="checkboxJueramentadaNovoEncalhe" />
+				<input isEdicao="true" type="checkbox" name="checkbox" id="checkboxJueramentadaNovoEncalhe" class="isParcial"/>
 			</td>
 		</tr>
 	</table>
 	<br />
 	
 	<span class="bt_add">
-		<a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalheCont.adicionarEncalhe();">Incluir Novo</a>
+		<a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalheCont.adicionarEncalhe(true);">Incluir Novo</a>
 	</span>
 	
 	<br />

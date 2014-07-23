@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
+import br.com.abril.nds.dto.MovimentosEstoqueEncalheDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
@@ -25,12 +26,24 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
+    
+	
+	/**
+	 * Obtém o valor total de entrada no consignado
+	 * 
+	 * @param dataRecolhimento
+	 * @return
+	 */
+	BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento);
+
 	
 	/**
 	 * FROM: Consignado da cota com chamada de encalhe ou produto conta firme
@@ -71,7 +84,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return List - MovimentoEstoqueCota
 	 */
-	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	public List<MovimentosEstoqueEncalheDTO> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 	
 	/**
 	 * Pesquisa uma lista de ContagemDevolucao.
@@ -328,7 +341,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param idProdutoEdicao - Id do ProdutoEdicao
 	 * @return 
 	 */
-	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Long idTipoMovimento);
+	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao);
 
 	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor,
 			Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores);
@@ -414,22 +427,22 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe ou com Produtos Conta Firme
 	 * @param idCota
-	 * @param dataControleConferencia
+	 * @param datas
 	 * @param idTiposMovimentoEstoque
 	 * 
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final Date dataControleConferencia, final List<Long> idTiposMovimentoEstoque);
+	public List<MovimentosEstoqueEncalheDTO> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(final Long idCota, final List<Date> datas, final List<Long> idTiposMovimentoEstoque);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
 	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
 	 * @param idCota
 	 * @param idsTipoMovimentoEstorno
-	 * 
+	 * @param datas TODO
 	 * @return List<MovimentoEstoqueCota>
 	 */
-    public List<MovimentoEstoqueCota> obterMovimentosEstornados(final Long idCota, final List<Long> idsTipoMovimentoEstorno);
+    public List<MovimentoEstoqueCota> obterMovimentosEstornadosPorChamadaEncalhe(final Long idCota, final List<Long> idsTipoMovimentoEstorno, List<Date> datas);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 
@@ -497,5 +510,24 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public void adicionarEmLoteDTO(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
 	
 	List<CotaReparteDTO> obterReparte(Long idLancamento, Long idProdutoEdicao);
+
+	public abstract void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros,
+			String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
+
+	public abstract Long findIdByIdConferenciaEncalhe(Long idConferenciaEncalhe);
+
+	public abstract void updateById(Long id, ValoresAplicados valoresAplicados, BigInteger qtde);
+
+	public abstract BigInteger loadQtdeById(Long id);
+
+	public abstract void updateById(Long id, MovimentoFinanceiroCota movimentoFinanceiroCota);
+
+	public abstract void updateById(Long id, StatusEstoqueFinanceiro statusEstoqueFinanceiro);
+
+    void updateByCotaAndDataOpAndGrupos(Long idCota, Date dataOperacao, List<String> grupoMovimentoFinaceiros,
+            String motivo, StatusEstoqueFinanceiro financeiroNaoProcessado);
+    
+    List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento);
 	
+    void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto);
 }

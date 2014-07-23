@@ -5,15 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
@@ -48,6 +45,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		return (EstoqueProduto) criteria.uniqueResult();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Long selectForUpdate(Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -135,12 +133,9 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 			.append("	, coalesce(ep.qtde_danificado, 0) as qtdeDanificado ")
 			.append("	, coalesce(ep.qtde_devolucao_encalhe, 0) as qtdeDevolucaoEncalhe ")
 			.append("	, coalesce(ep.qtde_suplementar, 0) as qtdeSuplementar ")
-			.append("	, coalesce(rs1.qtde_juramentado, 0) as qtdeJuramentado ")
+			.append("	, coalesce(ep.qtde_juramentado, 0) as qtdeJuramentado ")
 			.append("	, ep.produto_edicao_id as produtoEdicaoId ")
-			.append("from ESTOQUE_PRODUTO ep ")
-			.append("left outer join (select produto_edicao_id, sum(qtde) as qtde_juramentado ")
-			.append("					from estoque_produto_cota_juramentado ")
-			.append("					group by produto_edicao_id) rs1 on ep.PRODUTO_EDICAO_ID=rs1.PRODUTO_EDICAO_ID ");
+			.append("from ESTOQUE_PRODUTO ep ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
@@ -300,6 +295,23 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		hql.append(" select e.qtde 				")
 		   .append(" from EstoqueProduto e 		")
 		   .append(" join e.produtoEdicao pe 	")
+		   .append(" where pe.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public BigInteger buscarQtdeEstoqueParaTransferenciaParcial(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select coalesce(e.qtde, 0) + coalesce(e.qtdeSuplementar, 0) + coalesce(e.qtdeDevolucaoEncalhe, 0) + coalesce(e.qtdeDanificado, 0) ")
+		   .append(" from EstoqueProduto e ")
+		   .append(" join e.produtoEdicao pe ")
 		   .append(" where pe.id = :idProdutoEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());

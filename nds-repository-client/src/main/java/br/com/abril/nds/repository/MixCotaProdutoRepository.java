@@ -31,9 +31,11 @@ public interface MixCotaProdutoRepository extends
 
 	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem, Usuario usuarioLogado);
 	
-	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId);
+	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long classificaoProdutoId, String codICD);
 
 	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario);
 
 	public MixCotaProduto obterMixPorCotaICDCLassificacao(Long cotaid, String codigoICD, String classificacaoProduto);
+
+    boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, Long qtd, Long tipoClassificacaoProduto);
 }

@@ -106,7 +106,7 @@ var PDV =  $.extend(true, {
 
                 var linkExclusao = '';
                 if (!PDV.isReadOnly()) {
-                    linkExclusao ='<a href="javascript:;" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
+                    linkExclusao ='<a href="javascript:;" isEdicao="true" onclick="PDV.exibirDialogExclusao('+param +' );" style="cursor:pointer">' +
                         '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir PDV" />' +
                         '</a>';
                 }
@@ -253,18 +253,21 @@ var PDV =  $.extend(true, {
 				
 		carregarAbaGeradorFluxo: function (result){
 			
-			var parametros = [];
-			
-			$.each(result.pdvDTO.geradorFluxoSecundario, function(index, valor) {
+			if(result.pdvDTO.geradorFluxoPrincipal != null){
 				
-				parametros.push({name:'codigos['+ index +']', value: valor});
-		  	});
-			
-			if(parametros.length >  0){
+				var parametros = [];
 				
-				PDV.carregarGeradorFluxoSecundario(parametros);
+				$.each(result.pdvDTO.geradorFluxoSecundario, function(index, valor) {
+					
+					parametros.push({name:'codigos['+ index +']', value: valor});
+			  	});
+				
+				if (parametros.length > 0) {
+					PDV.carregarGeradorFluxoSecundario(parametros);
+				}
 				
 				parametros.push({name:'codigos['+ (parametros.length) +']', value:result.pdvDTO.geradorFluxoPrincipal});
+				
 				PDV.carregarGeradorFluxoNotIn(parametros);
 				
 				if(result.pdvDTO.principal== false){
@@ -272,7 +275,6 @@ var PDV =  $.extend(true, {
 				}else{
 					$("#geradorFluxo").show();
 				}
-					
 				
 				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}, 
 				                  {name:"modoTela", value: PDV.modoTela.value}, 
@@ -728,7 +730,11 @@ var PDV =  $.extend(true, {
                     modal: true,
                     buttons: {
                         "Confirmar": function() {
-
+                        	
+                        	if(!verificarPermissaoAcesso(this.workspace)){
+                        		return;
+                        	}
+                        	
                         	if($("#selectAreainfluencia option:selected").val()=="-1"){
 
                         		exibirMensagemDialog("WARNING", ["[Caract./Segmentação] Área de Influência é obrigatório."], "");
@@ -1045,7 +1051,7 @@ var PDV =  $.extend(true, {
 			
 			$("#idImagem", this.workspace).attr("src",  contextPath + "/images/pdv/no_image.jpeg");
 			$("#uploadedFile", this.workspace).val('');
-			$("#selectStatus", this.workspace).val(""); 
+			$("#selectStatusPDV", this.workspace).val(""); 
 			$("#nomePDV", this.workspace).val("");
 			$("#dataInicio", this.workspace).val( $('#dataAtual',this.workspace).val() );
 			$("#contatoPDV", this.workspace).val("");

@@ -50,13 +50,39 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	
 	private TipoEdicao tipoEdicao;
 	
-	private boolean isAprovacaoAutomatica;
+	private boolean aprovacaoAutomatica;
 	
-	private boolean isLancamentoManual;
+	private boolean lancamentoManual;
 	
 	private List<MovimentoEstoqueCota> movimentos;
 	
 	private Fornecedor fornecedor;
+	
+	private String motivo;
+	
+	private String status;
+	
+	private Long idUsuario;
+	
+	private Long idTipoMovimento;
+	
+	private Integer parcelas;
+	
+	private Integer prazo;
+	
+	private Long idBaixaCobranca;
+	
+	private Long idCota;
+	
+	private Date dataIntegracao;
+	
+	private String statusIntegracao;
+	
+	private Long idFornecedor;
+	
+	private Long usuarioAprovadorId;
+	
+	public MovimentoFinanceiroCotaDTO() {}
 	
 	/**
 	 * @return the idMovimentoFinanceiroCota
@@ -231,28 +257,28 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	 * @return the isAprovacaoAutomatica
 	 */
 	public boolean isAprovacaoAutomatica() {
-		return isAprovacaoAutomatica;
+		return aprovacaoAutomatica;
 	}
 
 	/**
 	 * @param isAprovacaoAutomatica the isAprovacaoAutomatica to set
 	 */
 	public void setAprovacaoAutomatica(boolean isAprovacaoAutomatica) {
-		this.isAprovacaoAutomatica = isAprovacaoAutomatica;
+		this.aprovacaoAutomatica = isAprovacaoAutomatica;
 	}
 
 	/**
 	 * @return the isLancamentoManual
 	 */
 	public boolean isLancamentoManual() {
-		return isLancamentoManual;
+		return lancamentoManual;
 	}
 
 	/**
 	 * @param isLancamentoManual the isLancamentoManual to set
 	 */
 	public void setLancamentoManual(boolean isLancamentoManual) {
-		this.isLancamentoManual = isLancamentoManual;
+		this.lancamentoManual = isLancamentoManual;
 	}	
 	
 	@Export(label="Número da Cota", exhibitionOrder=3)
@@ -325,5 +351,103 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public Long getIdTipoMovimento() {
+		return idTipoMovimento;
+	}
+
+	public Integer getParcelas() {
+		return parcelas;
+	}
+
+	public Integer getPrazo() {
+		return prazo;
+	}
+
+	public Long getIdBaixaCobranca() {
+		return idBaixaCobranca;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public Date getDataIntegracao() {
+		return dataIntegracao;
+	}
+
+	public String getStatusIntegracao() {
+		return statusIntegracao;
+	}
+
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public void setIdTipoMovimento(Long idTipoMovimento) {
+		this.idTipoMovimento = idTipoMovimento;
+	}
+
+	public void setParcelas(Integer parcelas) {
+		this.parcelas = parcelas;
+	}
+
+	public void setPrazo(Integer prazo) {
+		this.prazo = prazo;
+	}
+
+	public void setIdBaixaCobranca(Long idBaixaCobranca) {
+		this.idBaixaCobranca = idBaixaCobranca;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public void setDataIntegracao(Date dataIntegracao) {
+		this.dataIntegracao = dataIntegracao;
+	}
+
+	public void setStatusIntegracao(String statusIntegracao) {
+		this.statusIntegracao = statusIntegracao;
+	}
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+
+	public Long getUsuarioAprovadorId() {
+		return usuarioAprovadorId;
+	}
+
+	public void setUsuarioAprovadorId(Long usuarioAprovadorId) {
+		this.usuarioAprovadorId = usuarioAprovadorId;
+	}
+	
+	
 	
 }

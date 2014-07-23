@@ -181,4 +181,6 @@ public interface EntregadorService {
 	List<Pessoa> obterEntregadorPorNome(String nomeEntregador);
 	
 	List<Pessoa> obterEntregadorPorNome(String nomeEntregador, Integer  qtdMaxResult);
+
+    List<Entregador> obterTodos();
 }

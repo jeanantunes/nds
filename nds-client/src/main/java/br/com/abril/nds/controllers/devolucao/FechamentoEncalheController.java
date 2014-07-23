@@ -3,8 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -44,10 +43,10 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -55,6 +54,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -108,7 +108,7 @@ public class FechamentoEncalheController extends BaseController {
 	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
-	protected BoletoService boletoService;
+	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
 	protected HttpSession session;
@@ -132,6 +132,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.ENCALHE);
 		
 		result.include("dataOperacao", DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
+		result.include("aceitaJuramentado", this.distribuidorService.aceitaJuramentado());
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
 		
@@ -157,8 +158,7 @@ public class FechamentoEncalheController extends BaseController {
 			this.getSession().removeAttribute("gridFechamentoEncalheDTO");
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(
-						TipoMensagem.WARNING, 
- "Não houve conferência de encalhe nesta data."), "mensagens")
+						TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens")
                     .recursive().serialize();
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
@@ -272,7 +272,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -296,7 +296,7 @@ public class FechamentoEncalheController extends BaseController {
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao,null);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
 			
@@ -320,28 +320,27 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("carregarDataPostergacao")
-	public void carregarDataPostergacao(Date dataEncalhe, Date dataPostergacao) {
+	public void carregarDataPostergacao(Date dataEncalhe) {
 		
-		try {
+		if(dataEncalhe == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data de encalhe informada na pesquisa");
+		}
+		
+		Date dataPostergacao = DateUtil.adicionarDias(dataEncalhe, 1);
+		
+		dataPostergacao = 
+			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, 0);
+		
+		if (dataPostergacao != null) {
 			
-			int quantidadeDias = 0;
+			String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
 			
-			if (dataPostergacao == null) {
-				quantidadeDias = 1;
-				dataPostergacao = dataEncalhe;
-			}
+			this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
 			
+		} else {
 			
-			dataPostergacao = 
-				this.calendarioService.adicionarDiasRetornarDiaUtil(dataPostergacao, quantidadeDias);
-			
-			if (dataPostergacao != null) {
-				String dataFormatada = DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy");
-				this.result.use(Results.json()).from(dataFormatada, "result").recursive().serialize();
-			}
-			
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data util de encalhe encontrada");
+		
 		}
 		
 	}
@@ -397,40 +396,14 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 		
-//	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
-//		
-//		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
-//		
-//		if(idsCotas != null) {
-//			
-//			for(Long idCota : idsCotas) {
-//				for(int i=0; i < listaCotasAusentes.size(); i++) {
-//					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
-//					
-//					if(dto != null && dto.getIdCota().equals(idCota)) {
-//						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
-//					}
-//				}
-//			}
-//			
-//			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
-//		}
-//		
-//	}
-
-	@Path("/dataSugestaoPostergarCota")
-	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
-		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dataEncalhe);
-				
-		Date resultado = chamadaAntecipadaEncalheService.obterProximaDataEncalhe(date);
+	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
 		
-		if (resultado != null){
-
-		    this.result.use(Results.json()).from(resultado, "resultado").serialize();
-		}
-		else{
+		if(idsCotas != null) {
 			
-			this.result.use(Results.nothing());
+			for(Long idCota : idsCotas) {
+
+				listaCotasAusentes.remove(new CotaAusenteEncalheDTO(idCota));
+			}
 		}
 	}
 	
@@ -470,11 +443,11 @@ public class FechamentoEncalheController extends BaseController {
 			
 			if (cobrarTodasCotas) {
 				
-				//idsCotas a serem retirados da lista
-				//removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
-				
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				
+				//idsCotas a serem retirados da lista
+				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
@@ -814,7 +787,21 @@ public class FechamentoEncalheController extends BaseController {
 		}
 	}
 
-	private String resolveSort(String sortname) {
+	private void validarObrigatoriedadeQuantidadeFisica(List<FechamentoFisicoLogicoDTO> listaEncalhe, boolean isAllFechamentos) {
+        
+	    if (!isAllFechamentos) {
+	    
+    	    for (FechamentoFisicoLogicoDTO dto : listaEncalhe) {
+    	        
+    	        if (!Boolean.valueOf(dto.getReplicar()) && dto.getFisico() == null) {
+    	            
+    	            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "É necessário informar o valor físico para todas as edições!"));
+    	        }
+    	    }
+	    }
+    }
+
+    private String resolveSort(String sortname) {
 
 		if (sortname != null && sortname.endsWith("Formatado")) {
 			
@@ -839,11 +826,10 @@ public class FechamentoEncalheController extends BaseController {
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
 				
                 String msgPesquisaConsolidado = "Você está tentando fazer uma "
-                    +
-						"pesquisa em modo consolidado (soma de todos os boxes). " +
- "Já existem dados salvos em modo de pesquisa por box. "
-                    + "Se você continuar, os dados serão perdidos. " +
-						"Tem certeza que deseja continuar ?";
+                    + "pesquisa em modo consolidado (soma de todos os boxes). " 
+                	+ "Já existem dados salvos em modo de pesquisa por box. "
+                    + "Se você continuar, os dados serão consolidados. " 
+                	+ "Tem certeza que deseja continuar ?";
 				
 				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msgPesquisaConsolidado), "result").recursive().serialize();
 			
@@ -873,11 +859,12 @@ public class FechamentoEncalheController extends BaseController {
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento,
 											 List<FechamentoFisicoLogicoDTO> listaNaoReplicados, boolean isAllFechamentos, 
 											 String dataEncalhe, Long fornecedorId, Long boxId) {
-		
-		if (isAllFechamentos || (listaNaoReplicados != null && !listaNaoReplicados.isEmpty())) {
 
-			listaFechamento = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
-		}
+		listaFechamento = 
+				this.mergeItensFechamento(
+						this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
+
+		this.validarObrigatoriedadeQuantidadeFisica(listaFechamento, isAllFechamentos);
 		
 		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
@@ -1004,7 +991,7 @@ public class FechamentoEncalheController extends BaseController {
 					linha.setCodigo(codigo);
 					linha.setProdutoEdicao(Long.parseLong(produtoEdicao));
 					if(fisico != null){
-						linha.setFisico(Long.parseLong(fisico));	
+						linha.setFisico(new BigInteger(fisico));	
 					}
 					linha.setReplicar(String.valueOf(checkbox));
 					
@@ -1020,7 +1007,7 @@ public class FechamentoEncalheController extends BaseController {
 			FechamentoFisicoLogicoDTO gridFechamentoEncalheDTO = new FechamentoFisicoLogicoDTO();
 			
 			if(fisico != null) {
-				gridFechamentoEncalheDTO.setFisico(Long.parseLong(fisico));	
+				gridFechamentoEncalheDTO.setFisico(new BigInteger(fisico));	
 			}
 			
 			gridFechamentoEncalheDTO.setCodigo(codigo);
@@ -1054,7 +1041,14 @@ public class FechamentoEncalheController extends BaseController {
 			return;
 		}
 		
-		byte[] dados = this.boletoService.gerarImpressaoBoletos(setNossoNumero);
+		List<byte[]> docs = new ArrayList<byte[]>();
+		
+		for (String nossoNumero : setNossoNumero){
+		    
+		    docs.add(this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero, false));
+		}
+		
+		byte[] dados = PDFUtil.mergePDFs(docs);
 		
 		this.response.setContentType("application/pdf");
 		this.response.setHeader("Content-Disposition", "attachment; filename=boletosCotasUnificadas_" +

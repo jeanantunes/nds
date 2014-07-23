@@ -34,6 +34,9 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Cota cota;
 	private List<String> cotasSemRoteirizacao;
 	private String descRoteiro;
+	private Long idEntregador;
+	private String nomeEntregador;
+	private String descRota;
 	
 	public ProdutoAbastecimentoDTO() {
 	
@@ -49,7 +52,39 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 		this.precoCapa = precoCapa;
 		this.total = total;
 	}
-	
+
+	/**
+	 * @param codigoProduto
+	 * @param nomeProduto
+	 * @param numeroEdicao
+	 * @param reparte
+	 * @param precoCapa
+	 * @param codigoBox
+	 * @param idProdutoEdicao
+	 * @param materialPromocional
+	 * @param sequenciaMatriz
+	 * @param totalBox
+	 * @param codigoBarra
+	 */
+	public ProdutoAbastecimentoDTO(String codigoProduto, String nomeProduto,
+			Long numeroEdicao, Integer reparte, String precoCapa,
+			Integer codigoBox, Long idProdutoEdicao,
+			Integer materialPromocional, Integer sequenciaMatriz,
+			String totalBox, String codigoBarra) {
+		super();
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
+		this.reparte = reparte;
+		this.precoCapa = precoCapa;
+		this.codigoBox = codigoBox;
+		this.idProdutoEdicao = idProdutoEdicao;
+		this.materialPromocional = materialPromocional;
+		this.sequenciaMatriz = sequenciaMatriz;
+		this.totalBox = totalBox;
+		this.codigoBarra = codigoBarra;
+	}
+
 	/**
 	* @return the codigoProduto
 	*/
@@ -300,5 +335,35 @@ public class ProdutoAbastecimentoDTO implements Serializable{
     
     public void setDescRoteiro(String descRoteiro) {
         this.descRoteiro = descRoteiro;
+    }
+
+    
+    public Long getIdEntregador() {
+        return idEntregador;
+    }
+
+    
+    public void setIdEntregador(Long idEntregador) {
+        this.idEntregador = idEntregador;
+    }
+
+    
+    public String getNomeEntregador() {
+        return nomeEntregador;
+    }
+
+    
+    public void setNomeEntregador(String nomeEntregador) {
+        this.nomeEntregador = nomeEntregador;
+    }
+
+    
+    public String getDescRota() {
+        return descRota;
+    }
+
+    
+    public void setDescRota(String descRota) {
+        this.descRota = descRota;
     }
 }

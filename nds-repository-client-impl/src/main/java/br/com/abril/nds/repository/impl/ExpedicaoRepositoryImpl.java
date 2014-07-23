@@ -97,11 +97,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" FROM (");
 
 		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
-															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
 															.append(this.getQntCotaAusente(false)).append(" as qntReparte, ");
 		
 		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
-															.append(this.getQntDiferencaResumoLancamento()).append(", 0) - ")
+															.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
 															.append(this.getQntCotaAusente(false)).append(" ) AS totalValorFaturado ");
 		sql.append("     FROM ");
 			
@@ -133,6 +133,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(getHqlResumoLancamento(true, false, filtro));
+		
+		hql.append(this.ordenarConsultaPorBox(filtro));
 		
 		Query query = this.getQueryResumoLancamentoPorBox(hql);
 		
@@ -236,7 +238,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		Query query = getSession().createSQLQuery(hql.toString())
 			.addScalar("dataLancamento")
 			.addScalar("idBox", StandardBasicTypes.LONG)
-			.addScalar("codigoBox")
+			.addScalar("codigoBox",StandardBasicTypes.LONG)
 			.addScalar("nomeBox")
 			.addScalar("precoCapa")
 			.addScalar("qntReparte", StandardBasicTypes.BIG_INTEGER)
@@ -253,7 +255,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
 		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
+																  	  GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_CONTA_FIRME.name()));
 		
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
@@ -351,6 +354,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		     .append("     select 												 ")
 		     .append("     sum(CASE WHEN d.TIPO_DIFERENCA='FALTA_DE' THEN -rd.QTDE ")
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='FALTA_EM' THEN -rd.QTDE ")
+		     .append(" 		       WHEN d.TIPO_DIFERENCA='FALTA_EM_DIRECIONADA_COTA' THEN -rd.QTDE ")
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_DE' THEN rd.QTDE  ")
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_EM' THEN rd.QTDE  ")
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_EM_DIRECIONADA_COTA' THEN rd.QTDE  ")
@@ -388,7 +392,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		          .append(" mec.QTDE * produtoEdicao.PRECO_VENDA AS valorFaturado, ")
 		          .append(" tp.GRUPO_MOVIMENTO_ESTOQUE as grupoMovimento, ") 
 		          .append(" produtoEdicao.ID AS produtoEdicaoId, ")
-		          .append(" CONCAT(COALESCE(box.CODIGO, ''), '-', COALESCE(box.NOME, '')) AS codigoBox, ")
+		          .append(" box.CODIGO  AS codigoBox, ")
 		          .append(" expedicao.data_expedicao AS dataExpedicao, ");
 		
 		if (isDetalhesResumo) {
@@ -422,13 +426,13 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					  .append(" on fornecedor.JURIDICA_ID=pessoa.ID ");
 		}
 
-		innerQuery.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+		innerQuery.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID = lancamento.ID ")
 				  .append(" INNER JOIN tipo_movimento tp ON tp.ID = mec.TIPO_MOVIMENTO_ID ")
 				  .append(" INNER JOIN COTA cota  ON mec.COTA_ID=cota.ID ")
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
 				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ")
-				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ")
+				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE IN( :grupoMovimentoEstoque )")
 				  .append(" AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 				  
 		
@@ -474,10 +478,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" SELECT  innerQuery.precoCapa AS precoCapa, 				 	")
 				.append(" SUM(CASE WHEN innerQuery.grupoMovimento in (" + this.getGruposFalta() + ") ")
 				.append("			 THEN -innerQuery.qntReparte ")
-				.append("			 ELSE innerQuery.qntReparte END ) - ").append(this.getQntCotaAusente(false))
+				.append("			 ELSE innerQuery.qntReparte END ) + ").append(this.getQntCotaAusente(false))
 				.append("  AS qntReparte, 						    ")
 				.append(" COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) AS qntDiferenca,")
-				.append(" sum(innerQuery.valorFaturado) - ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
+				.append(" sum(innerQuery.valorFaturado) + ").append(this.getQntCotaAusente(true)).append(" AS valorFaturado,")
 				.append(" innerQuery.codigoProduto AS codigoProduto, 			 ")
 				.append(" innerQuery.nomeProduto AS nomeProduto, 				 ")
 				.append(" innerQuery.numeroEdicao AS numeroEdicao, 				 ")
@@ -502,8 +506,51 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		   .append(" ) innerQuery ");
 				
 		sql.append(this.getAgrupamentoResumoLancamento(isAgrupamentoPorBox, isDetalhesResumo, filtro));
-
+		
 		return sql.toString();
+	}
+	
+	private String ordenarConsultaPorBox(final FiltroResumoExpedicaoDTO filtro){
+		
+		final StringBuilder hql = new StringBuilder();
+		
+		if (filtro.getOrdenacaoColunaBox() != null ){
+			
+			hql.append(" ORDER BY ");
+			
+			switch (filtro.getOrdenacaoColunaBox()) {
+			case CODIGO_BOX:
+				hql.append(" codigoBox ");
+				break;
+			case DATA_LANCAMENTO:
+				hql.append(" dataLancamento ");
+				break;
+			case DESCRICAO_BOX:
+				hql.append(" nomeBox ");
+				break;
+			case DIFERENCA:
+				hql.append(" qntDiferenca ");
+				break;
+			case QNT_PRODUTO:
+				hql.append(" qntProduto ");
+				break;
+			case REPARTE:
+				hql.append(" qntReparte ");
+				break;
+			case VALOR_FATURADO:
+				hql.append(" valorFaturado ");
+				break;
+			default:
+				hql.append(" codigoBox ");
+				break;
+			}
+			
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
+		
+		return hql.toString();
 	}
 	
 	private String getGruposFalta() {
@@ -514,6 +561,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				      GrupoMovimentoEstoque.FALTA_DE.name(),
 				      GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
 				      GrupoMovimentoEstoque.FALTA_EM.name(),
+				      GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA.name(),
 				      GrupoMovimentoEstoque.FALTA_EM_COTA.name());
 		
 		String gruposFalta = "";
@@ -532,10 +580,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append("( SELECT ");
 		
 		if(calcularValorFaturado){
-			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE ) else (mec_st.QTDE *-1) end) * precoCapa,0)");
+			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE *-1) else (mec_st.QTDE) end) * precoCapa,0)");
 		}
 		else{
-			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE ) else (mec_st.QTDE *-1) end),0)");
+			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE *-1) else (mec_st.QTDE) end),0)");
 		}
 		
 		sql.append("  FROM ");
@@ -544,7 +592,12 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append("	WHERE");
 		sql.append("	mec_st.DATA = innerQuery.dataLancamento");
 		sql.append("	AND mec_st.PRODUTO_EDICAO_ID =  produtoEdicaoId");
-		sql.append("	AND tp_movimento.GRUPO_MOVIMENTO_ESTOQUE IN('SUPLEMENTAR_COTA_AUSENTE','REPARTE_COTA_AUSENTE')");
+		sql.append("	AND tp_movimento.GRUPO_MOVIMENTO_ESTOQUE IN('SUPLEMENTAR_COTA_AUSENTE', ")
+			.append("	'REPARTE_COTA_AUSENTE', ")
+			.append("	'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', ")
+			.append("	'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO', ")
+			.append("	'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', ")
+			.append("	'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')");
 		sql.append(")");
 		
 		return sql.toString();

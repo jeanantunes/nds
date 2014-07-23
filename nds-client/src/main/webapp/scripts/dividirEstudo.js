@@ -238,11 +238,13 @@ var dividirEstudo = $.extend(true, {
 //	    	matrizDistribuicao.pesquisar();
 */
 		
-		if(response && response.length==2){
-			exibirMensagem("SUCCESS",[response[0]]);
-			$('#repartePrimeiroEstudo').val(response[1][0]);
-			$('#reparteSegundoEstudo').val(response[1][1]);
+		if(response){
+			exibirMensagem("SUCCESS",[response.msg]);
+			$('#repartePrimeiroEstudo').val(response.reparte[0]);
+			$('#reparteSegundoEstudo').val(response.reparte[1]);
 			
+			$('#numeroPrimeiroEstudo').val(response.estudo[0]);
+			$('#numeroSegundoEstudo').val(response.estudo[1]);
 			
 			if(typeof(matrizDistribuicao)=="object"){
 //		    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);

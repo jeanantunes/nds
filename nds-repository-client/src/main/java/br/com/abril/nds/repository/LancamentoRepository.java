@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -217,7 +218,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
-	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Date dataLancamento,Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
@@ -343,9 +344,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<LancamentoDTO> obterDatasStatusAgrupados(FiltroLancamentoDTO filtro,Intervalo<Date> intervalo);
 
-	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
+	List<ProdutoLancamentoDTO> verificarDataConfirmada(Date dataLancamento);
 
-	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
+	public List<Lancamento> obterLancamentoInStatus(Date dataLancamentoDistribuidor, List<StatusLancamento> status);
 	
 	void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento);
 	
@@ -408,6 +409,23 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeProdutoEdicaoParaDia(ProdutoLancamentoDTO produtoLancamentoDTO,Date novaData);
 	
+	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
+
 	List<Lancamento> obterLancamentosEmRecolhimentoParaFechamento(Date dataBase);
 	
+	List<Lancamento> obterRedistribuicoes(Long idProdutoEdicao, Integer numeroPeriodo);
+	
+	Lancamento obterLancamentoOriginalDaRedistribuicao(Long idProdutoEdicao, Integer numeroPeriodo);
+	
+	List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo);
+	
+	List<Date> obterDatasLancamentoValido(List<Long> idFornecedor);
+	
+	Lancamento obterParaAtualizar(Long id);
+	
+	Integer obterRepartePromocionalEdicao(final Long codigoProduto, final Long numeroEdicao );
+	
+	StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
+
+	boolean existeLancamentoParaOsStatus(final Long idProdutoEdicao,final StatusLancamento ...statusLancamento );
 }

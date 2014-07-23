@@ -141,14 +141,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '
 						+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+
 						'" onchange="digitacaoContagemDevolucaoController.limparCheck(\''+id+'\')"/>';
-					
-					var checked = (
-							(digitacaoContagemDevolucaoController.replicar.all && 
-							digitacaoContagemDevolucaoController.replicar.list.indexOf(id) < 0) ||
-							
-							(!digitacaoContagemDevolucaoController.replicar.all && 
-							digitacaoContagemDevolucaoController.replicar.list.indexOf(id) >= 0)
-							) ? 'checked':'';
+
+					var checked = '';
 					
 					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+id+
 						'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+id
@@ -240,8 +234,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			
 			if ($("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val() != ""){
 				$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text(
-					parseInt($("#qtdDevolucao_" + id, digitacaoContagemDevolucaoController.workspace).text()) -
-					parseInt($("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val())
+					parseInt($("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val()) -
+					parseInt($("#qtdDevolucao_" + id, digitacaoContagemDevolucaoController.workspace).text())
 				);
 			} else {
 				$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("");
@@ -268,7 +262,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					
 					if (valorAux || valorAux == "0"){
 						qtdNota.val(valorAux);
-						$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text(value - valorAux);
+						$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text(valorAux - value);
 					} else {
 						qtdNota.val("");
 						$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("");
@@ -437,6 +431,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				var colunaCodigoProduto = linha.find("td")[0];
 				var colunaNumeroEdicao = linha.find("td")[2];
 				var colunaPrecoCapa = linha.find("td")[3];
+				var colunaExemplaresDevolucao = linha.find("td")[4];
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
 				var colunaTotalComDesconto = linha.find("td")[5];
 				var colunaDiferenca = linha.find("td")[8];
@@ -450,11 +445,14 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 				var totalComDesconto = $(colunaTotalComDesconto, digitacaoContagemDevolucaoController.workspace).find("div").html();
 
-				var diferenca = $(colunaDiferenca, digitacaoContagemDevolucaoController.workspace).find("span").html();
-				
+				var qtdDevolucao = $(colunaExemplaresDevolucao, digitacaoContagemDevolucaoController.workspace).find("div").find('span').html();
+
 				var qtdNota = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val();
 				
+				var diferenca = parseInt(qtdDevolucao - qtdNota);
+				
 				var dataRecolhimentoDistribuidor = $(colunaDataRecolhimento, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
+				
 				
 				if (!$.trim(qtdNota)) {
 

@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
@@ -26,7 +26,11 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
@@ -186,17 +190,17 @@ public class InformacoesProdutoController extends BaseController {
 	@Path("/buscarItemRegiao")
 	public void buscarItemRegiao (Long idEstudo){
 		
-		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = gridItemRegiao(idEstudo);
+		TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>> tableModel = gridItemRegiao(idEstudo);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	
 	}
 	
-	private TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> gridItemRegiao (Long idEstudo) {
+	private TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>> gridItemRegiao (Long idEstudo) {
 		
-		List<InfoProdutosItemRegiaoEspecificaDTO> itensRegiao = infoProdService.buscarItemRegiao(idEstudo);
+		List<InfoProdutosBonificacaoDTO> itensRegiao = infoProdService.buscarItemRegiao(idEstudo);
 		
-		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = new TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>>();
+		TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<InfoProdutosBonificacaoDTO>>();
 	
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensRegiao));
 	
@@ -228,10 +232,10 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Post
 	@Path("/buscarReparteSobra")
-	public void buscarReparteSobra(Long idEstudo){
+	public void buscarReparteSobra(Long idEstudo,Long codigoProduto, Long numeroEdicao){
 
-		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(idEstudo);
-		
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(idEstudo, codigoProduto, numeroEdicao);
+			
 		validarDadosReparteEstudo(resumo);
 		
 		result.use(Results.json()).from(resumo, "result").serialize();
@@ -272,6 +276,10 @@ public class InformacoesProdutoController extends BaseController {
 		//sobra
 		if(resumo.getQtdSobraEstudo()==null)
 			resumo.setQtdSobraEstudo(new BigDecimal(0));
+		
+		//reparte promocional
+		if(resumo.getQtdRepartePromocional()==null)
+			resumo.setQtdRepartePromocional(new BigInteger("0"));
 		
 	}
 	

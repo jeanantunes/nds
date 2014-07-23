@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -63,23 +62,20 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	@Transactional(readOnly=true)
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
 		
-		List<ConsignadoCotaDTO> consigadoDTO;
+		List<ConsignadoCotaDTO> consignadoDTO;
 		
 		Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		
-		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || 
-		    ((cota.getTipoCota().equals(TipoCota.A_VISTA)) && 
-		     (cota.getAlteracaoTipoCota()!=null && 
-		      filtro.getDataConsolidado().compareTo(cota.getAlteracaoTipoCota()) < 0))){
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)){
 			
-			consigadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
+			consignadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
 		}
 		else{
 			
-			consigadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaAVistaConsignado(filtro);
+			consignadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaAVistaConsignado(filtro);
 		}
 		
-		return consigadoDTO;
+		return consignadoDTO;
 	}
 
 	@Override
@@ -116,7 +112,9 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 						GrupoMovimentoFinaceiro.VENDA_TOTAL,
 						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
 						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,
-						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO,
+						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR,
+						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR
 					)
 				);
 		
@@ -150,8 +148,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		List<Long> tiposMovimentoConsignado = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 					Arrays.asList(
-						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
-						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
+						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE
 					)
 				);
 		

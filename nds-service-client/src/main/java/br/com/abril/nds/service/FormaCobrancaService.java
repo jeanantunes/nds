@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -78,19 +79,17 @@ public interface FormaCobrancaService {
 	 * @param idCota
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
-    FormaCobranca obterFormaCobrancaCota(Long idCota, Long idFornecedor, Date data, BigDecimal valor);
+    FormaCobranca obterFormaCobrancaCota(Long idCota, Long idFornecedor, Date data);
 
     /**
 	 * Obtem FormaCobranca do Distribuidor com os Parâmetros passados
 	 * @param idFornecedor
 	 * @param data
-	 * @param valor
 	 * @return FormaCobranca
 	 */
-    FormaCobranca obterFormaCobrancaDistribuidor(Long idFornecedor, Date data, BigDecimal valor);
+    FormaCobranca obterFormaCobrancaDistribuidor(Long idFornecedor, Date data);
     
     /**
 	 * Obtem FormaCobranca da Cota com os Parâmetros passados. 
@@ -127,6 +126,8 @@ public interface FormaCobrancaService {
      */
     FormaCobranca obterFormaCobrancaPrincipalDistribuidor();
 
+    List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault();
+    
 	FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota);
 
 	/**
@@ -138,4 +139,24 @@ public interface FormaCobrancaService {
 	 * @return Map<Fornecedor,List<FormaCobranca>>
 	 */
 	Map<Fornecedor, List<FormaCobranca>> obterMapFornecedorFormasCobranca(Date dataOperacao);
+
+    FormaCobranca obterFormaCobrancaPrincipalDistribuidorCompleto();
+
+    /**
+	 * Verifica se valor à cobrar é menor ou igual ao valor minimo para cobranca estipulado para a Cota
+	 * 
+	 * @param valorMinimoCota
+	 * @param valorTotalCobrar
+	 * @return boolean
+	 */
+	boolean isValorMinimoAtingido(BigDecimal valorMinimoCota, BigDecimal valorTotalCobrar);
+
+	/**
+	 * Verifica se valor à cobrar é menor ou igual ao valor minimo para cobranca estipulado para a Cota
+	 * 
+	 * @param idCota
+	 * @param valorTotalCobrar
+	 * @return boolean
+	 */
+	boolean isValorMinimoAtingido(Long idCota, BigDecimal valorTotalCobrar);
 }

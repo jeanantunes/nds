@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * 
 	 * @return {@link Boleto}
 	 */
-	Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada);
+	Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apneasBoletoPagavel);
 	
 	/**
 	 * Obtém um boleto de acordo com o nosso número completo.
@@ -197,5 +198,7 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	List<Cobranca> obterBoletosNaoPagos(Date data);
 	
 	Long verificaEnvioDeEmail(String nossoNumero);
+
+    List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero);
 	
 }

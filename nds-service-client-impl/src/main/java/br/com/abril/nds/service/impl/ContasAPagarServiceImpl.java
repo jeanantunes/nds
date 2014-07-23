@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
+import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
-import br.com.abril.nds.dto.ContasAPagarConsultaProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarDistribDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
 import br.com.abril.nds.dto.ContasAPagarFaltasSobrasDTO;
-import br.com.abril.nds.dto.ContasAPagarGridPrincipalFornecedorDTO;
 import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
 import br.com.abril.nds.dto.ContasAPagarParcialDTO;
 import br.com.abril.nds.dto.ContasAPagarTotalDistribDTO;
@@ -28,7 +27,7 @@ import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.RecolhimentoService;
-import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -45,7 +44,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 
 	@Transactional
 	@Override
-	public List<ContasAPagarConsultaProdutoDTO> pesquisarProdutos(FiltroContasAPagarDTO filtro) {
+	public List<ContasAPagarConsultaProdutoVO> pesquisarProdutos(final FiltroContasAPagarDTO filtro) {
 		return contasAPagarRepository.obterProdutos(filtro);
 	}
 
@@ -127,11 +126,11 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 
 	@Transactional
 	@Override
-	public ContasAPagarGridPrincipalFornecedorDTO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
+	public ContasAPagarGridPrincipalFornecedorVO pesquisarPorDistribuidor(FiltroContasAPagarDTO filtro) {
 		
 		this.validarFiltro(filtro);
 		
-		ContasAPagarGridPrincipalFornecedorDTO retorno = new ContasAPagarGridPrincipalFornecedorDTO();
+		final ContasAPagarGridPrincipalFornecedorVO retorno = new ContasAPagarGridPrincipalFornecedorVO();
 		
 		retorno.setGrid(this.contasAPagarRepository.pesquisarPorDistribuidor(filtro));
 		retorno.setTotalGrid(this.contasAPagarRepository.pesquisarPorDistribuidorCount(filtro));
@@ -143,7 +142,9 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 			totalBruto = BigDecimal.ZERO;
 		}
 				
-		retorno.setTotalBruto(totalBruto);
+		retorno.setTotalBruto(
+		        CurrencyUtil.formatarValor(
+		                CurrencyUtil.arredondarValorParaDuasCasas(totalBruto)));
 		
 		BigDecimal totalDesconto = this.contasAPagarRepository.buscarTotalPesquisarPorDistribuidor(filtro, true);
 		
@@ -152,42 +153,28 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 			totalDesconto = BigDecimal.ZERO;
 		}
 				
-		retorno.setTotalDesconto(totalDesconto);
-		retorno.setSaldo(totalBruto.subtract(totalDesconto));
+		retorno.setTotalDesconto(
+		        CurrencyUtil.formatarValor(
+		                CurrencyUtil.arredondarValorParaDuasCasas(totalDesconto)));
+		
+		retorno.setSaldo(
+		        CurrencyUtil.formatarValor(
+		                CurrencyUtil.arredondarValorParaDuasCasas(
+		                        totalBruto.subtract(totalDesconto))));
 		
 		return retorno;
 	}
 
-	private void validarFiltro(FiltroContasAPagarDTO filtro) {
+    private void validarFiltro(FiltroContasAPagarDTO filtro) {
 		
 		if (filtro == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro de pesquisa inválido.");
 		}
 		
-		if (filtro.getDataDe() != null && filtro.getDataAte() != null){
-		
-			if (filtro.getDataDe().after(filtro.getDataAte())){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de datas inválido.");
-			}
-		}
-		
-		if (filtro.getCe() != null){
-			
-			Intervalo<Date> intervaloCE = this.recolhimentoService.getPeriodoRecolhimento(filtro.getCe());
-			
-			if (filtro.getDataDe() != null && filtro.getDataAte() != null){
-			
-				if (intervaloCE.getDe().after(filtro.getDataDe()) || intervaloCE.getAte().before(filtro.getDataAte())){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo informado fora da semana CE informada.");
-				}
-			} else {
-				
-				filtro.setDataDe(intervaloCE.getDe());
-				filtro.setDataAte(intervaloCE.getAte());
-			}
+		if (filtro.getDataDe() == null || filtro.getDataAte() == null){
+		    
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Período é obrigatório.");
 		}
 	}
 
@@ -221,19 +208,22 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		Map<String, BigDecimal> mapFornecedorTotal = new HashMap<String, BigDecimal>();
 		
+		BigDecimal valor = BigDecimal.ZERO;
+		
 		for (ContasAPagarConsignadoDTO consignado : listaConsignados){
-				
-			BigDecimal valorTotal = BigDecimal.ZERO; 
-			BigDecimal valorConsignado = consignado.getValorComDesconto();
 			
-			if (mapFornecedorTotal.containsKey(consignado.getFornecedor())) {
-				
-				valorTotal = mapFornecedorTotal.get(consignado.getFornecedor());
-			}
-			
-			valorTotal = valorTotal.add(valorConsignado);
-			
-			mapFornecedorTotal.put(consignado.getFornecedor(), valorTotal);
+		    if (mapFornecedorTotal.containsKey(consignado.getFornecedor())){
+		        
+		        if (valor != null){
+		            
+		            valor = valor.add(consignado.getValorComDesconto() == null ? BigDecimal.ZERO : consignado.getValorComDesconto());
+		        }
+		    } else {
+		        
+		        valor = consignado.getValorComDesconto() == null ? BigDecimal.ZERO : consignado.getValorComDesconto();
+		    }
+		    
+			mapFornecedorTotal.put(consignado.getFornecedor(), valor);
 		}
 		
 		return mapFornecedorTotal;
@@ -272,26 +262,24 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		dto.setGrid(lista);
 		
-		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
-		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
-		String fornecedor = null;
+		Map<String, ContasAPagarDistribDTO> contas = new HashMap<String, ContasAPagarDistribDTO>();
 		
 		for (ContasAPagarEncalheDTO encalhe : lista){
 			
-			conta.setNome(encalhe.getFornecedor());
-			conta.setTotal(conta.getTotal().add(encalhe.getPrecoCapa()));
-			
-			if (!encalhe.getFornecedor().equals(fornecedor)){
-				
-				contas.add(conta);
-				fornecedor = encalhe.getFornecedor();
-				conta = new ContasAPagarDistribDTO();
-			}
+		    final ContasAPagarDistribDTO capdto = contas.get(encalhe.getFornecedor());
+		    
+		    if (capdto == null){
+		        
+		        contas.put(
+                        encalhe.getFornecedor(), 
+                        new ContasAPagarDistribDTO(encalhe.getFornecedor(), encalhe.getValor()));
+		    } else {
+		        
+		        capdto.setTotal(capdto.getTotal().add(encalhe.getValor()));
+		    }
 		}
 		
-		contas.add(conta);
-		
-		dto.setTotalDistrib(contas);
+		dto.setTotalDistrib(contas.values());
 		
 		return dto;
 	}
@@ -300,34 +288,33 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	@Override
 	public ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> pesquisarDetalheFaltasSobras(FiltroContasAPagarDTO filtro) {
 		
-		List<ContasAPagarFaltasSobrasDTO> lista = 
+		final List<ContasAPagarFaltasSobrasDTO> lista = 
 				this.contasAPagarRepository.pesquisarDetalheFaltasSobras(filtro);
 		
-		ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = 
+		final ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO> dto = 
 				new ContasAPagarTotalDistribDTO<ContasAPagarFaltasSobrasDTO>();
 		
 		dto.setGrid(lista);
 		
-		List<ContasAPagarDistribDTO> contas = new ArrayList<ContasAPagarDistribDTO>();
-		ContasAPagarDistribDTO conta = new ContasAPagarDistribDTO();
-		String fornecedor = null;
+		final Map<String, ContasAPagarDistribDTO> contas = new HashMap<String, ContasAPagarDistribDTO>();
 		
 		for (ContasAPagarFaltasSobrasDTO faltasSobras : lista){
 			
-			conta.setNome(faltasSobras.getFornecedor());
-			conta.setTotal(conta.getTotal().add(faltasSobras.getPrecoCapa()));
-			
-			if (!faltasSobras.getFornecedor().equals(fornecedor)){
-				
-				contas.add(conta);
-				fornecedor = faltasSobras.getFornecedor();
-				conta = new ContasAPagarDistribDTO();
-			}
+		    final ContasAPagarDistribDTO cont = contas.get(faltasSobras.getFornecedor());
+		    
+		    if (cont == null){
+		        
+		        contas.put(
+		                faltasSobras.getFornecedor(), 
+		                new ContasAPagarDistribDTO(
+		                        faltasSobras.getFornecedor(), faltasSobras.getValor()));
+		    } else {
+		        
+		        cont.setTotal(cont.getTotal().add(faltasSobras.getValor()));
+		    }
 		}
 		
-		contas.add(conta);
-		
-		dto.setTotalDistrib(contas);
+		dto.setTotalDistrib(contas.values());
 		
 		return dto;
 	}

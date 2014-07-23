@@ -30,7 +30,7 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 		$("#novoDataPeriodoAte", novoDialogDebitoCreditoCotaController.workspace).mask("99/99/9999");
 		$("#novoDataVencimento", novoDialogDebitoCreditoCotaController.workspace).mask("99/99/9999");
 		
-		novoDialogDebitoCreditoCotaController.carregarRoteiros(0,0);
+		novoDialogDebitoCreditoCotaController.carregarRoteiros(undefined,0);
 		novoDialogDebitoCreditoCotaController.carregarRotas(0,0);
 
 		$(".debitosCreditosGrid_1", novoDialogDebitoCreditoCotaController.workspace).flexigrid({
@@ -219,7 +219,9 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 			
 			var inputObservacao = '<input id="observacao' + index + '" value="' + observacao + '" onkeypress="novoDialogDebitoCreditoCotaController.checarCheckbox(' + index + ')" name="debitoCredito.observacao" type="text" style="width:220px;" />';
 
-			var checkBox = '<input id="checkbox'+ index +'" title="Selecionar Lançamento" type="checkbox" name="debitoCredito.checkboxGrid" />';
+			var checkBox = '<input id="checkbox'+ index +'" title="Selecionar Lançamento"'+ 
+			(row.cell.valor ? ' checked="checked" ' : '')
+			+' type="checkbox" name="debitoCredito.checkboxGrid" />';
 
 			row.cell[0] = hiddenId + inputNumeroCota;
 			row.cell[1] = inputNomeCota;
@@ -455,7 +457,7 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 				        {name:'dataPeriodoFinal', value:dataPeriodoFinal},
 				        {name:'index', value:indexValor}];
 			
-			$.postJSON(contextPath + "financeiro/debitoCreditoCota/obterInformacoesParaLancamentoIndividual",
+			$.postJSON(contextPath + "/financeiro/debitoCreditoCota/obterInformacoesParaLancamentoIndividual",
 					    data,
 						function(result){
 							$("#valor"+indexValor, novoDialogDebitoCreditoCotaController.workspace).val(result.valor);
@@ -480,7 +482,7 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 		
 		$("#grupoMovimentoHidden", novoDialogDebitoCreditoCotaController.workspace).val(result);
 		
-		if (result=='DEBITO_SOBRE_FATURAMENTO'){
+		if (result=='DEBITO_SOBRE_FATURAMENTO' || result=='CREDITO_SOBRE_FATURAMENTO'){
 			$('#tabelaFaturamento', novoDialogDebitoCreditoCotaController.workspace).show();
 			$("#novoValor", novoDialogDebitoCreditoCotaController.workspace).val('');
 			$('#tituloNovoValor', novoDialogDebitoCreditoCotaController.workspace).hide();
@@ -508,7 +510,7 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 		var options = "";
 		
 		options += "<select name='"+name+"' id='"+name+"' style='width:150px;' onchange='"+onChange+"'>";
-		options += "<option value='0'></option>";
+		options += "<option value=''>Todos</option>";
 		$.each(result, function(index, row) {
 			if (selected == row.key.$){
 			    options += "<option selected='true' value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	

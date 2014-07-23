@@ -28,10 +28,21 @@ public class FiltroConsultaEncalheDTO {
 	@Export(label="Cota")
 	private String nomeCota;
 	
+	private boolean utilizaPrecoCapa;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
 
+	public FiltroConsultaEncalheDTO() {
+	    
+	}
+	
+	public FiltroConsultaEncalheDTO(Date data) {
+        this.dataRecolhimentoFinal = data;
+        this.dataRecolhimentoInicial = data;        
+    }
+	
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 
@@ -228,6 +239,15 @@ public class FiltroConsultaEncalheDTO {
 
 	public void setNumCota(Integer numCota) {
 		this.numCota = numCota;
+	}
+	
+
+	public boolean isUtilizaPrecoCapa() {
+		return utilizaPrecoCapa;
+	}
+
+	public void setUtilizaPrecoCapa(boolean utilizaPrecoCapa) {
+		this.utilizaPrecoCapa = utilizaPrecoCapa;
 	}
 
 	/**

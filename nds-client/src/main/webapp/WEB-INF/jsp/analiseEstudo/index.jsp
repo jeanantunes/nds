@@ -2,6 +2,11 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/histogramaPosEstudo.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
+
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <script type="text/javascript" src="scripts/analiseEstudo.js"></script>
@@ -15,7 +20,7 @@ $(function(){
 });
 </script>
 
-<div id="histogramaPosEstudoContent" />
+<div id="histogramaPosEstudoContent">
 
 <div id="AnaliseEstudoMainContent">
 
@@ -31,7 +36,7 @@ $(function(){
 
 <div class="corpo">
     <div class="container">
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	   
    	    <legend> Pesquisar </legend>
        

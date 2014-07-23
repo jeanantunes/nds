@@ -41,6 +41,7 @@ var transportadorController = $.extend(true, {
 								
 								value.cell.telefone = "";
 							}
+							
 						});
 						
 						$(".divTransportadoraGrid", transportadorController.workspace).show();
@@ -115,7 +116,7 @@ var transportadorController = $.extend(true, {
 						
 						var idAssoc = value.id;
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.excluirAssociacao('+ idAssoc +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						var acao = '<a href="javascript:;" isEdicao="true" onclick="transportadorController.excluirAssociacao('+ idAssoc +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
 						
@@ -132,6 +133,7 @@ var transportadorController = $.extend(true, {
 						value.cell.cnh = cnh;
 						value.cell.rota = rota;
 						value.cell.roteiro = roteiro;
+						
 					});
 					
 					return data;
@@ -202,8 +204,8 @@ var transportadorController = $.extend(true, {
 						
 						value.cell.sel = '<input type="radio" name="radioVeiculo" value="'+ idVeiculo +'"/>';
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" style="margin-right:10px" />';
-						acao +='</a> <a href="javascript:;" onclick="transportadorController.excluirVeiculo('+ idVeiculo +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						var acao = '<a href="javascript:;" isEdicao="true" onclick="transportadorController.editarVeiculo('+ idVeiculo +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" style="margin-right:10px" />';
+						acao +='</a> <a href="javascript:;" isEdicao="true" onclick="transportadorController.excluirVeiculo('+ idVeiculo +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
 					});
@@ -258,8 +260,8 @@ var transportadorController = $.extend(true, {
 						
 						value.cell.sel = '<input type="radio" name="radioMotorista" value="'+ idMotorista +'"/>';
 						
-						var acao = '<a href="javascript:;" onclick="transportadorController.editarMotorista('+ idMotorista +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
-						acao +='</a> <a href="javascript:;" onclick="transportadorController.excluirMotorista('+ idMotorista +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
+						var acao = '<a href="javascript:;" isEdicao="true" onclick="transportadorController.editarMotorista('+ idMotorista +');"><img src="'+ contextPath +'/images/ico_editar.gif" border="0" hspace="2" />';
+						acao +='</a> <a href="javascript:;" isEdicao="true" onclick="transportadorController.excluirMotorista('+ idMotorista +');""><img src="'+ contextPath +'/images/ico_excluir.gif" hspace="2" border="0" /></a>';
 						
 						value.cell.acao = acao;
 					});
@@ -354,7 +356,11 @@ var transportadorController = $.extend(true, {
 					
 					$.each(data.rows, function(index, value) {
 						
-						if (!value.cell.valor){
+						if(value.cell.valor){
+
+							value.cell.valor = floatToPrice(value.cell.valor);
+						}
+						else{
 							
 							value.cell.valor = "";
 						}
@@ -409,20 +415,7 @@ var transportadorController = $.extend(true, {
 			$("#gridCotasAtendidas", transportadorController.workspace).flexOptions({url: contextPath + "/cadastro/transportador/carregarCotasAtendidas"});
 			
 			$("#cnpj", transportadorController.workspace).mask("99.999.999/9999-99");
-			
-			$("#valorTaxaFixa", transportadorController.workspace).maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});
-			$("#valorPercentualFaturamento", transportadorController.workspace).maskMoney({
-				 thousands:'.', 
-				 decimal:',', 
-				 precision:2
-			});			
-			$("#inputQuinzenalDiaInicio", transportadorController.workspace).numeric();
-			$("#inputCobrancaMensal", transportadorController.workspace).numeric();
-			
+
 			$.mask.definitions['#']='[\-\.0-9]';
 			
 			$("#inscEstadual", transportadorController.workspace).mask("?##################",{placeholder:" "});
@@ -443,12 +436,10 @@ var transportadorController = $.extend(true, {
 					return true;
 				});
 			});
+
 	},
 	
-	popup_novo_transportador : function() {
-		
-		if(!verificarPermissaoAcesso(transportadorController.workspace))
-			return;
+	popup_novo_transportador : function(isEdicao) {
 		
 		fecharModalCadastroTransp = false;
 		
@@ -464,49 +455,14 @@ var transportadorController = $.extend(true, {
 					id: "btnConfirmarTransportador",
 					text: "Confirmar",
 					click: function() {
-						
-						var diaCobranca = '';
-						
-						if ($("[name=radioPeriodicidade]:checked", transportadorController.workspace).val() == "QUINZENAL"){
 							
-							diaCobranca = $("#inputQuinzenalDiaInicio", transportadorController.workspace).val();
-						} else if ($("[name=radioPeriodicidade]:checked", transportadorController.workspace).val() == "MENSAL"){
-							
-							diaCobranca = $("#inputCobrancaMensal", transportadorController.workspace).val();
-						}
-						
-						var valorCobranca = '';
-						
-						if ($("#modalidadeCobranca", transportadorController.workspace).val() == "TAXA_FIXA"){
-							
-							valorCobranca = transportadorController.preparaValor($("#valorTaxaFixa", transportadorController.workspace).val());
-						} else {
-							
-							valorCobranca = transportadorController.preparaValor($("#valorPercentualFaturamento", transportadorController.workspace).val());
-						}
-						
 						var data = [{name:"transportador.pessoaJuridica.razaoSocial", value:$("#razaoSocial", transportadorController.workspace).val()},
 									{name:"transportador.pessoaJuridica.nomeFantasia", value:$("#nomeFantasia", transportadorController.workspace).val()},
 									{name:"transportador.pessoaJuridica.email", value:$("#email", transportadorController.workspace).val()},
 									{name:"transportador.pessoaJuridica.cnpj", value:$("#cnpj", transportadorController.workspace).val()},
 									{name:"transportador.pessoaJuridica.inscricaoEstadual", value:$("#inscEstadual", transportadorController.workspace).val()},
-									{name:"transportador.responsavel", value:$("#responsavel", transportadorController.workspace).val()},
-									
-									{name:"transportador.parametroCobrancaTransportador.periodicidadeCobranca", 
-										value:$("[name=radioPeriodicidade]:checked", transportadorController.workspace).val()},
-									{name:"transportador.parametroCobrancaTransportador.diaCobranca", value: diaCobranca},
-									{name:"transportador.parametroCobrancaTransportador.modalidadeCobranca", 
-										value: $("#modalidadeCobranca", transportadorController.workspace).val()},
-									{name: "transportador.parametroCobrancaTransportador.valor", value: valorCobranca},
-									{name: "transportador.parametroCobrancaTransportador.porEntrega", 
-										value: $("#checkPorEntrega").is(':checked')}
+									{name:"transportador.responsavel", value:$("#responsavel", transportadorController.workspace).val()},	
 						];
-						
-						$.each($("[name=diaSemanaCob]:checked", transportadorController.workspace), 
-								function(index, value) {
-							
-							data.push({name: "transportador.parametroCobrancaTransportador.diasSemanaCobranca["+ index +"]", value: value.value});
-						});
 						
 						$.postJSON(contextPath + "/cadastro/transportador/cadastrarTransportador", data, 
 							function(result){
@@ -555,13 +511,6 @@ var transportadorController = $.extend(true, {
 		$("#cnpj", transportadorController.workspace).val("");
 		$("#inscEstadual", transportadorController.workspace).val("");
 		$("#responsavel", transportadorController.workspace).val("");
-		$("#valorTaxaFixa", transportadorController.workspace).val("");
-		$("#checkPorEntrega", transportadorController.workspace).uncheck();
-		$("#radioPeridioDiario", transportadorController.workspace).check();
-		$(".checksDiasSemana", transportadorController.workspace).uncheck();
-		$("#inputQuinzenalDiaInicio", transportadorController.workspace).val("");
-		$("#inputQuinzenalDiaFim", transportadorController.workspace).val("");
-		$("#inputCobrancaMensal", transportadorController.workspace).val("");
 	},
 	
 	cancelarCadastro : function(){
@@ -595,7 +544,11 @@ var transportadorController = $.extend(true, {
 	},
 
 	popup_excluir :function() {
-
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace )){
+			return;
+		}
+		
 		$("#dialog-excluir", transportadorController.workspace).dialog({
 			resizable : false,
 			height : 170,
@@ -631,19 +584,8 @@ var transportadorController = $.extend(true, {
 					id: "btnConfNovoVeiculo",
 					text: "Confirmar",
 					click: function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarVeiculos'/>", null, 
-							function(result){
-								
-								$(".veiculosGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								$("#dialog-incluir-veiculo").dialog("close");
-							}
-						);
-						*/
-						$("#dialog-incluir-veiculo", transportadorController.workspace).dialog("close");
+						
+						transportadorController.adicionarVeiculo(true);
 					}
 				},
 				{
@@ -669,7 +611,7 @@ var transportadorController = $.extend(true, {
 		});
 	},
 	
-	adicionarVeiculo : function(){
+	adicionarVeiculo : function(fecharModal){
 		
 		data = [{name:"veiculo.tipoVeiculo", value: $("#tipoVeiculo", transportadorController.workspace).val()},
 				{name:"veiculo.placa", value: $("#placa", transportadorController.workspace).val()}];
@@ -683,11 +625,20 @@ var transportadorController = $.extend(true, {
 				$("#placa", transportadorController.workspace).val("");
 				
 				$("#tipoVeiculo", transportadorController.workspace).focus();
+				
+				if(fecharModal){
+					$("#dialog-incluir-veiculo", transportadorController.workspace).dialog("close");
+				}
+	
 			}, null, true, "idModalCadastroVeiculo"
 		);
 	},
 	
 	excluirVeiculo : function(idVeiculo){
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace)){
+			return;
+		}
 		
 		$("#dialog-excluir-veiculo", transportadorController.workspace).dialog({
 			resizable : false,
@@ -791,19 +742,8 @@ var transportadorController = $.extend(true, {
 					id: "btnConfNovoMotorista",
 					text: "Confirmar",
 					click: function() {
-						/*
-						$.postJSON("<c:url value='/cadastro/transportador/cadastrarMotoristas'/>", null, 
-							function(result){
-								
-								$(".motoristasGrid").flexAddData({
-									page: result.page, total: result.total, rows: result.rows
-								});
-								
-								
-							}
-						);
-						*/
-						$("#dialog-incluir-motorista", transportadorController.workspace).dialog("close");
+						
+						transportadorController.adicionarMotorista(true);	
 					}
 				},
 				{
@@ -829,7 +769,7 @@ var transportadorController = $.extend(true, {
 		});
 	},
 	
-	adicionarMotorista : function(){
+	adicionarMotorista : function(fecharModal){
 		
 		data = [{name:"motorista.nome", value: $("#nomeMotorista", transportadorController.workspace).val()},
 				{name:"motorista.cnh", value: $("#cnhMotorista", transportadorController.workspace).val()}];
@@ -843,12 +783,21 @@ var transportadorController = $.extend(true, {
 				$("#cnhMotorista", transportadorController.workspace).val("");
 				
 				$("#nomeMotorista", transportadorController.workspace).focus();
+				
+				if(fecharModal){
+					$("#dialog-incluir-motorista", transportadorController.workspace).dialog("close");
+				}
+				
 			}, null, true, "idModalCadastroMotorista"
 		);
 	},
 	
 	excluirMotorista : function(idMotorista){
-			
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace )){
+			return;
+		}
+		
 		$("#dialog-excluir-motorista", transportadorController.workspace).dialog({
 			resizable : false,
 			height : 170,
@@ -960,83 +909,18 @@ var transportadorController = $.extend(true, {
 					$("#responsavel", transportadorController.workspace).val(result[3]);
 					$("#cnpj", transportadorController.workspace).val(result[4]);
 					$("#inscEstadual", transportadorController.workspace).val(result[5]);
-					
-					$("#modalidadeCobranca", transportadorController.workspace).val(result[6]);
-					if (result[6] == 'TAXA_FIXA') {
-						$(".transpTaxaFixa", this.workspace).show();
-						$(".transpPercentual", this.workspace).hide();
-						$("#valorTaxaFixa", 
-								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
-					}
-					if (result[6] == 'PERCENTUAL') {
-						$(".transpTaxaFixa", this.workspace).hide();
-						$(".transpPercentual", this.workspace).show();
-						$("#valorPercentualFaturamento", 
-								transportadorController.workspace).val(transportadorController.preparaValor(result[7]));
-					}
-					
-					if (result[8] == "true"){
-						
-						$("#checkPorEntrega", transportadorController.workspace).check();
-					} else {
-						
-						$("#checkPorEntrega", transportadorController.workspace).uncheck();
-					}
-					
-					transportadorController.alterarPeriodicidadeCobranca(result[9]);
-					
-					if (result[9] == "QUINZENAL"){
-						
-						$("#inputQuinzenalDiaInicio").val(result[10]);
-						transportadorController.calcularDiaFimCobQuinzenal();
-					} else if (result[9] == "MENSAL"){
-						
-						$("#inputCobrancaMensal").val(result[10]);
-					} else if (result[9] == "SEMANAL"){
-						
-						for (var i = 11 ; i < 18 ; i++){
-							
-							if (result[i]){
-								switch (result[i]){
-									case "DOMINGO":
-										$("#checkDomingo", transportadorController.workspace).check();
-									break;
-								
-									case "SEGUNDA_FEIRA":
-										$("#checkSegunda", transportadorController.workspace).check();
-									break;
-									
-									case "TERCA_FEIRA":
-										$("#checkTerca", transportadorController.workspace).check();
-									break;
-									
-									case "QUARTA_FEIRA":
-										$("#checkQuarta", transportadorController.workspace).check();
-									break;
-									
-									case "QUINTA_FEIRA":
-										$("#checkQuinta", transportadorController.workspace).check();
-									break;
-									
-									case "SEXTA_FEIRA":
-										$("#checkSexta", transportadorController.workspace).check();
-									break;
-									
-									case "SABADO":
-										$("#checkSabado", transportadorController.workspace).check();
-									break;
-								}
-							}
-						}
-					}
 				}
-			
-				transportadorController.popup_novo_transportador();
+				
+				transportadorController.popup_novo_transportador(true);
 			}
 		);
 	},
 	
 	excluirTransportadora : function(idTransp){
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace )){
+			return;
+		}
 		
 		$("#dialog-excluir", transportadorController.workspace).dialog({
 			resizable : false,
@@ -1221,6 +1105,10 @@ var transportadorController = $.extend(true, {
 	
 	excluirAssociacao : function(referencia){
 		
+		if(!verificarPermissaoAcesso(transportadorController.workspace)){
+			return;
+		}
+		
 		$("#dialog-excluir-associacao", transportadorController.workspace).dialog({
 			resizable : false,
 			height : 'auto',
@@ -1250,31 +1138,7 @@ var transportadorController = $.extend(true, {
 			form: $("#dialog-excluir-associacao", this.workspace).parents("form")
 		});
 	},
-	
-	mostrarOpcaoSelecionada : function() {
 
-		if ($("#modalidadeCobranca").val() == "TAXA_FIXA") {
-			$(".transpTaxaFixa", this.workspace).show();
-			$(".transpPercentual", this.workspace).hide();
-		} else {
-			$(".transpTaxaFixa", this.workspace).hide();
-			$(".transpPercentual", this.workspace).show();
-		}
-
-	},
-	
-	mostrarOpcaoTaxaFixa : function(){
-		
-		$(".transpTaxaFixa", this.workspace).show();
-		$(".transpPercentual", this.workspace).hide();
-	}, 
-	
-	mostrarOpcaoPercentual : function(){
-		
-		$(".transpTaxaFixa", this.workspace).hide();
-		$(".transpPercentual", this.workspace).show();
-	},
-	
 	exportarArquivo : function(fileType){
 		
 		var sortorder = $("#gridCotasAtendidas", transportadorController.workspace).getSortOrder();
@@ -1282,41 +1146,6 @@ var transportadorController = $.extend(true, {
 		
 		window.location = 
 			contextPath + "/cadastro/transportador/exportarCotasAtendidas?fileType=" + fileType + "&sortorder=" + sortorder + "&sortname=" + sortname;
-	},
-	
-	alterarPeriodicidadeCobranca : function(tipoCobranca){
-		
-		$(".perCobrancaSemanal", transportadorController.workspace).hide();
-		$(".perCobrancaQuinzenal", transportadorController.workspace).hide();
-		$(".perCobrancaMensal", transportadorController.workspace).hide();
-		
-		if (tipoCobranca == 'SEMANAL'){
-			
-			$(".perCobrancaSemanal", transportadorController.workspace).show();
-		} else if (tipoCobranca == 'QUINZENAL'){
-			
-			$(".perCobrancaQuinzenal", transportadorController.workspace).show();
-		} else if (tipoCobranca == 'MENSAL'){
-			
-			$(".perCobrancaMensal", transportadorController.workspace).show();
-		}
-		
-		$("input:radio[value="+ tipoCobranca +"]", transportadorController.workspace).check();
-	},
-	
-	calcularDiaFimCobQuinzenal : function(){
-		
-		var valorInput = parseInt($("#inputQuinzenalDiaInicio").val());
-		
-		if (!valorInput || valorInput <= 0){
-			
-			$("#inputQuinzenalDiaFim", transportadorController.workspace).val("");
-		} else {
-			
-			var diaFim = valorInput + 14 < 31 ? valorInput + 14 : 31;
-			
-			$("#inputQuinzenalDiaFim", transportadorController.workspace).val(diaFim);
-		}
 	},
 	
 	preparaValor : function(vr){

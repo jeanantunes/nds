@@ -2,6 +2,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	balanceamento : null,
 	
+	selecionados : [],
+	
 	verificarBalanceamentosAlterados : function(funcao) {
 		
 		$.postJSON(
@@ -71,10 +73,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			balanceamentoRecolhimentoController.obterParametrosPesquisa(),
 			function(result) {
 				
-				if(result.produtosNaoBalanceadosAposFechamentoMatriz
-						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+				if(result.produtosRecolhimentoDeOutraSemana
+						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
 					
-					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
 				}
 				else{
 					
@@ -148,60 +150,43 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(dataSelecionada);
 	},
 	
-	verificarProdutosNaoBalanceadosAposConfirmacaoMatriz : function(result) {
+	mostrarProdutoDeOutraSemanaDeRecolhimento : function(result) {
 		
 		var mensagemDialog ="<ul style='margin-left: 20px;'>" ;
 		
-		$.each(result.produtosNaoBalanceadosAposFechamentoMatriz, function(index, item) {
+		$.each(result.produtosRecolhimentoDeOutraSemana, function(index, item) {
 			
 			mensagemDialog += "<li style='padding-bottom: 10px;'>" + item.codigoProduto +" - "+ item.nomeProduto + " - " + item.numeroEdicao + "</li>";
 	    });	
 		
 		mensagemDialog += "</ul>";
 		
-		$("#descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz",balanceamentoRecolhimentoController.workspace).html(mensagemDialog);
+		$("#descDialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).html(mensagemDialog);
 		
-		$("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).dialog({
+		$("#dialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:600,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Fechar": function() {
 					
-					balanceamentoRecolhimentoController.processarProdutosNaoBalanceadosAposConfirmacaoMatriz(result);
-					
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					
-					balanceamentoRecolhimentoController.showResumo(false);
-					
-					$(this).dialog("close");
-				}
-			},
-			
-			form: $("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).parents("form")
-		});
-	},
-	
-	processarProdutosNaoBalanceadosAposConfirmacaoMatriz:function(results){
-		
-		$.postJSON(
-				contextPath + "/devolucao/balanceamentoMatriz/processarProdutosNaoBalanceadosAposConfirmacaoMatriz",
-				null,function(result){
-					
-					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(results);
-					$('#utilizaSedeAtendida').val(results.utilizaSedeAtendida);
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
 
+					var dataPesquisa = 
+						$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+					
+					balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
+					
 					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
 					
+					$(this).dialog("close");
 				},
-				function() {
-					
-					balanceamentoRecolhimentoController.showResumo(false);
-				}
-		);
+			},
+			
+			form: $("#dialogProdutosDeOutraSemana", balanceamentoRecolhimentoController.workspace).parents("form")
+		});
 	},
 	
 	montarResumoPeriodoBalanceamento : function(result) {
@@ -341,6 +326,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
 		
+		balanceamentoRecolhimentoController.selecionados = [];
+		
+		balanceamentoRecolhimentoController.deselectCheckAll();
+		
 		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
 		
 		if (data == null) {
@@ -364,8 +353,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
-		
-		balanceamentoRecolhimentoController.deselectCheckAll();
 		
 		if (resultado.mensagens) {
 
@@ -460,9 +447,44 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
 		
+		balanceamentoRecolhimentoController.checarBalanceamentoPaginacao();
+		
 		bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 	},
+	
+	checarBalanceamentoPaginacao : function() {
+		
+		var checkAllReprogramar = $('#checkAllReprogramar', balanceamentoRecolhimentoController.workspace)[0];
+		
+		var selTodos = checkAllReprogramar.checked;
+		
+		if (selTodos) {
 			
+			balanceamentoRecolhimentoController.selecionarTodos(checkAllReprogramar);
+			
+		} else {
+		
+			$.each(balanceamentoRecolhimentoController.selecionados, function(index, selecionado) {
+				
+				var checkReprogramar =
+					$("#checkReprogramar" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace)[0];
+				
+				if (!checkReprogramar) {
+					
+					return;
+				}
+				
+				var divNovaData = $("#divNovaData" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace);
+				
+				$(checkReprogramar).check();
+				
+				clickLineFlexigrid(checkReprogramar, true);
+				
+				balanceamentoRecolhimentoController.verificarBloqueioData(divNovaData);
+			});
+		}
+	},
+	
 	criarDivsNovaData : function() {
 		
 		$("div[name='divNovaData']", balanceamentoRecolhimentoController.workspace).each(function(index, div) {
@@ -510,24 +532,72 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	checarBalanceamento : function(idRow) {
 		
-		$("input[name='checkReprogramar']", balanceamentoRecolhimentoController.workspace).each(function() {
-		
-			var checado = this.checked;
-			
-			clickLineFlexigrid(this, checado);
-			
-			if (!checado) {
-				
-				balanceamentoRecolhimentoController.deselectCheckAll();
-			}
-		});
+		var checkReprogramar = $("#checkReprogramar" + idRow, balanceamentoRecolhimentoController.workspace)[0];
 		
 		var divNovaData = $("#divNovaData" + idRow, balanceamentoRecolhimentoController.workspace);
+		
+		var checado = checkReprogramar.checked;
+
+		clickLineFlexigrid(checkReprogramar, checado);
+		
+		if (!checado) {
+			
+			var checkAllSelected = balanceamentoRecolhimentoController.verifyCheckAll();
+			
+			if (checkAllSelected) {
+				
+				balanceamentoRecolhimentoController.adicionarBalanceamentosSelecionados();
+			}
+			
+			balanceamentoRecolhimentoController.removerBalanceamentosSelecionados(idRow);
+			
+			balanceamentoRecolhimentoController.deselectCheckAll();
+			
+		} else {
+			
+			var idFornecedor = divNovaData.find("input[name='hiddenIdFornecedor']").val();
+	
+			balanceamentoRecolhimentoController.selecionados.push(
+				{idLancamento : idRow, idFornecedor : idFornecedor});
+		}
 		
 		balanceamentoRecolhimentoController.verificarBloqueioData(divNovaData);
 	},
 	
+	adicionarBalanceamentosSelecionados : function() {
+		
+		$("input[name='checkReprogramar']", balanceamentoRecolhimentoController.workspace).each(function(index, checkReprogramar) {
+			
+			var divNovaData2 = $("#divNovaData" + checkReprogramar.value, balanceamentoRecolhimentoController.workspace);
+			
+			var idFornecedor2 = divNovaData2.find("input[name='hiddenIdFornecedor']").val();
+			
+			balanceamentoRecolhimentoController.selecionados.push(
+				{idLancamento : checkReprogramar.value, idFornecedor : idFornecedor2});
+		});
+	},
+	
+	removerBalanceamentosSelecionados : function(idLancamento) {
+		
+		var indexRemover = null;
+		
+		$.each(balanceamentoRecolhimentoController.selecionados, function(index, value) {
+			
+			if (idLancamento == value.idLancamento) {
+				
+				indexRemover = index;
+			}
+		});
+		
+		if (indexRemover != null) {
+			
+			balanceamentoRecolhimentoController.selecionados.splice(indexRemover, 1);
+		}
+	},
+	
 	selecionarTodos : function(input) {
+		
+		balanceamentoRecolhimentoController.selecionados = [];
 		
 		checkAll(input, "checkReprogramar");
 		
@@ -832,10 +902,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				if(result.produtosNaoBalanceadosAposFechamentoMatriz
-						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+				if(result.produtosRecolhimentoDeOutraSemana
+						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
 					
-					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
 				}
 				else{
 					
@@ -863,10 +933,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				if(result.produtosNaoBalanceadosAposFechamentoMatriz
-						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+				if(result.produtosRecolhimentoDeOutraSemana
+						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
 					
-					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
 				}
 				else{
 					
@@ -1018,6 +1088,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
 		   		
 				balanceamentoRecolhimentoController.deselectCheckAll();
+				
+				balanceamentoRecolhimentoController.selecionados = [];
 			},
 			null,
 			true
@@ -1026,32 +1098,17 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	obterParametrosReprogramarSelecionados : function(novaData, dataAntiga) {
 		
-		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
-		
 		var listaProdutoRecolhimento = new Array();
 		
 		var checkAllSelected = balanceamentoRecolhimentoController.verifyCheckAll();
+		
+		
+		
+		$.each(this.selecionados, function(index, value) {
 			
-		$.each(linhasDaGrid, function(index, value) {
-			
-			var linha = $(value);
-			
-			var colunaCheck = linha.find("td")[17];
-			
-			var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
-			
-			var checked = inputCheck.attr("checked") == "checked";
-			
-			if (checked) {
-				
-				var idLinha = linha.attr("id");
-				
-				var idLancamento = idLinha.replace("row", "");
-				
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
-				
-				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData});
-			}
+			listaProdutoRecolhimento.push({idFornecedor : value.idFornecedor,
+										   idLancamento : value.idLancamento,
+										   novaData : novaData});
 		});
 		
 		var param = {selecionarTodos:checkAllSelected,

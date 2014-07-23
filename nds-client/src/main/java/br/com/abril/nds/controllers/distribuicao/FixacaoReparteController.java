@@ -114,6 +114,7 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/")
 	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
+		
 	}
 
 

@@ -5,33 +5,46 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.ExpedicaoDTO;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 public interface MovimentoEstoqueService {
 
-	void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto,Long idProdutoEdicao, Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
+    void transferirEstoqueProdutoEdicaoParcialParaLancamento(Long idProdutoEdicao, Usuario usuario);
+	
+    void transferirEstoqueProdutoChamadaoParaRecolhimento(Long idProdutoEdicao, Usuario usuario);
+    
+    List<MovimentoEstoqueCotaDTO> gerarMovimentoEstoqueDeExpedicao(LancamentoDTO lancamento, ExpedicaoDTO expedicao);
+	
+	MovimentoEstoque gerarMovimentoEstoqueJuramentado(final Long idItemRecebimentoFisico, final Long idProdutoEdicao, final Long idUsuario, final BigInteger quantidade,final TipoMovimentoEstoque tipoMovimentoEstoque, MovimentoEstoqueCota movimentoEstoqueCota);
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idItemRecebimentoFisico, Long idProdutoEdicao,Long idUsuario,BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 	
     MovimentoEstoque gerarMovimentoEstoque(final Long idProdutoEdicao, final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque, boolean enfileiraAlteracaoEstoqueProduto, Cota cota);
 
 	
-	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao);
+	MovimentoEstoqueCota gerarMovimentoCota(
+	        Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, 
+	        BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
+	        ValoresAplicados valoresAplicados);
 
 	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
 
@@ -39,16 +52,16 @@ public interface MovimentoEstoqueService {
 
 	public void excluirRegistroMovimentoEstoqueDeEncalhe(Cota cota, MovimentoEstoque movimentoEstoque);
 	
+	
+
 	public void atualizarMovimentoEstoqueDeEncalhe(
 			Cota cota,
-			MovimentoEstoque movimentoEstoque, 
-			BigInteger newQtdeMovEstoque);
+			MovimentoEstoqueDTO movimentoEstoqueDTO, 
+			BigInteger newQtdeMovEstoque, Long idProdutoEdicao);
 
 
 	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 							 	 MovimentoEstoque movimentoEstoque);
-	
-	void atualizarEstoqueProdutoDaFilaCota(Integer numeroCota);
 	
 	Long atualizarEstoqueProdutoCota(TipoMovimentoEstoque tipoMovimentoEstoque,
 								 	 MovimentoEstoqueCota movimentoEstoqueCota);
@@ -121,9 +134,6 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque obterMovimentoEstoqueDoItemNotaFiscal(Long idItemNotaFiscal, TipoMovimentoEstoque tipoMovimento);
 
-	EstoqueProdutoCotaJuramentado atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
-			TipoMovimentoEstoque tipoMovimentoEstoque);
-	
 	public List<Long> obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(
 			Long idProdutoEdicao, 
 			GrupoMovimentoEstoque grupoMovimentoEstoqueRepartePromocional,

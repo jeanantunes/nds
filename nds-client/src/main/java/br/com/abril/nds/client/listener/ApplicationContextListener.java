@@ -30,6 +30,7 @@ import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.client.job.RankingFaturamentoJob;
 import br.com.abril.nds.client.job.RankingSegmentoJob;
 import br.com.abril.nds.client.job.RegiaoJob;
+import br.com.abril.nds.service.job.AtualizaEstoqueJob;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -87,18 +88,42 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendaExclusaoFixacaoReparte();
 //			this.agendaExclusaoRegiao();
 			
+			this.agendarAtualizacaoEstoqueProdutoConf(scheduler);
+			
 			scheduler.start();
 			
 		} catch (SchedulerException e) {
 			
-            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
+           LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
 		}
 		
 	}
 
-	        /*
+	private void agendarAtualizacaoEstoqueProdutoConf(Scheduler scheduler) throws SchedulerException {
+	    
+	    final String groupName = "epcJobGroupName";
+	    final String identityTrigger = "epcTriggerIdentity";
+	    final String frequencia = "0 0/10 * * * ?";
+	    
+	    QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
+	    
+	    JobDetail job = newJob(AtualizaEstoqueJob.class)
+                .withIdentity(AtualizaEstoqueJob.class.getName(), groupName)
+                .build();
+
+        CronTrigger cronTrigger = newTrigger()
+                .withIdentity(identityTrigger, groupName)
+                .withSchedule(
+                        cronSchedule(frequencia))
+                .build();
+
+        scheduler.scheduleJob(job, cronTrigger);
+        
+    }
+
+    /*
      * Efetua o agendamento do serviço de integração operacional do
      * distribuidor.
      */

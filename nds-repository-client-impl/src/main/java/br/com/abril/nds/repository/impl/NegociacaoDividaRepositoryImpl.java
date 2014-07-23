@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
@@ -14,8 +16,11 @@ import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.dto.filtro.FiltroFollowupNegociacaoDTO;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.TipoNegociacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 
@@ -110,7 +115,23 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 	@Override
 	public Negociacao obterNegociacaoPorCobranca(Long id) {
-		Query query = getSession().createQuery("select o from Negociacao o join o.cobrancasOriginarias c where c.id = " + id);
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select n.* from consolidado_financeiro_cota cfc ");
+		sql.append(" join consolidado_mvto_financeiro_cota cfmc on cfmc.CONSOLIDADO_FINANCEIRO_ID=cfc.ID ");
+		sql.append(" join movimento_financeiro_cota mfc on cfmc.MVTO_FINANCEIRO_COTA_ID=mfc.ID ");
+		sql.append(" join parcela_negociacao pn on pn.MOVIMENTO_FINANCEIRO_ID=mfc.ID ");
+		sql.append(" join negociacao n on n.ID=pn.NEGOCIACAO_ID ");
+		sql.append(" where cfc.ID=:idConsolidado ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		query.setParameter("idConsolidado", id); 
+		
+		((SQLQuery) query).addEntity(Negociacao.class);
+		
+		query.setMaxResults(1);
+
 		return (Negociacao) query.uniqueResult();
 	}
 
@@ -124,23 +145,26 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		return (Negociacao) query.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Negociacao> obterNegociacaoPorComissaoCota(Long idCota){
+	public Negociacao obterNegociacaoPorComissaoCota(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select ne from Negociacao ne ");
-		hql.append(" join ne.cobrancasOriginarias co ")
-		   .append(" join co.cota cota ")
-		   .append(" where cota.id = :idCota ")
-		   .append(" and ne.comissaoParaSaldoDivida is not null ")
-		   .append(" and ne.valorDividaPagaComissao is not null ")
-		   .append(" and ne.valorDividaPagaComissao > 0 ")
-		   .append(" order by ne.dataCriacao ");
+		final String hql = "select ne from Negociacao ne " +
+				" join ne.cobrancasOriginarias co "+
+				" join co.cota cota "+
+				" where cota.id = :idCota "+
+				" and ne.comissaoParaSaldoDivida is not null "+
+				" and ne.valorDividaPagaComissao is not null "+
+				" and ne.valorDividaPagaComissao > 0 "+
+				" and ne.tipoNegociacao = :tipoComissao "+
+				" order by ne.dataCriacao ";
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
+		query.setParameter("tipoComissao", TipoNegociacao.COMISSAO);
 		
-		return query.list();
+		query.setMaxResults(1);
+
+		return (Negociacao) query.uniqueResult();
 	}
 	
 	public Long obterQuantidadeNegociacaoFollowup(FiltroFollowupNegociacaoDTO filtro){
@@ -152,6 +176,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("statusDivida", StatusDivida.NEGOCIADA);
+		
+		query.setParameter("tipoNegociacaoComissao", TipoNegociacao.COMISSAO);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -168,16 +194,22 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			.append(" cota.numeroCota as numeroCota, ")
 			
 			.append(" case pessoa.class when 'F' then pessoa.nome when 'J' then pessoa.razaoSocial end  as nomeJornaleiro,")
+
 			
 			.append("(").append(this.obterSubSelectTipoCobranca()).append(")").append(" as tipoCobranca , ")
 			
-			.append("(").append(this.obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(")").append(" as dataVencimento, ")
+			//.append("(").append(this.obterSubSelectDataOperacao(" negociacao.id ")).append(")").append(" as dataVencimento, ")
+			
+			
+			.append(" cobranca.dataVencimento ").append(" as dataVencimento, ")
+			
 			
 			.append("(").append(this.obterSubSelectValorParcela()).append(")").append(" as valorParcela, ")
 			
 			.append("(").append(this.obrterSubSelectNumeroParcelaAtual()).append(")").append(" as numeroParcelaAtual ,")
 			
 			.append("(").append(this.obterSubSelectCountParcelas()).append(")").append(" as quantidadeParcelas ");
+
 		
 		hql.append(this.obterSqlFromConsultaNegociacao());
 		
@@ -186,6 +218,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("statusDivida", StatusDivida.NEGOCIADA);
+		
+		query.setParameter("tipoNegociacaoComissao", TipoNegociacao.COMISSAO);
 		
 		if (filtro.getPaginacao() != null) {
 
@@ -258,7 +292,11 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where divida.status =:statusDivida ")
 			
-			.append(" and negociacao.valorDividaPagaComissao is null  ")
+			.append(" and cobranca.dataVencimento = ("+this.obterSubSelectDataOperacao()+")")
+			
+			.append(" and ((negociacao.tipoNegociacao <> :tipoNegociacaoComissao) or ")
+			
+			.append("      (negociacao.valorDividaPagaComissao is not null and negociacao.valorDividaPagaComissao > 0))  ")
 			
 			.append(" and EXISTS (").append(this.subSelectUtimaParcelaPendenteAprovacao(" negociacao.id ")).append(")");
 		
@@ -295,15 +333,24 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" and cobrancaPendente.statusCobranca = 'PAGO' ")
 			
-			.append(" and parcelaPendente.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(nomeParametroNegociacao)).append(" ) ");
+			.append(" and parcelaPendente.dataVencimento = ( ").append(obterSubSelectDataOperacao()).append(" ) ");
 		
 		return hql.toString();
 	}
 
-	private String obterSubSelectDataVencimentoParcela(String nomeParametroNegociacao){
+	private String obterSubSelectDataOperacao(){
 		
 		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select distrib.dataOperacao from Distribuidor distrib");
+
+		return hql.toString();
+	}
+	
+    private String obterSubSelectDataVencimentoUltimaParcela(String nomeParametroNegociacao){
 		
+		StringBuilder hql = new StringBuilder();
+
 		hql.append(" select max(parcelaData.dataVencimento) ")
 			
 			.append(" from Cobranca cobrancaData ")
@@ -318,10 +365,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join parcelaData.negociacao negociacaoData ")
 			
-			.append(" where negociacaoData.id = "+nomeParametroNegociacao+" ")
-			
-			.append(" and cobrancaData.statusCobranca = 'PAGO' ");
-		
+			.append(" where negociacaoData.id = "+nomeParametroNegociacao+" ");
+
 		return hql.toString();
 	}
 		
@@ -345,13 +390,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoValor.id= negociacao.id ")
 			
-			.append(" and cobrancaValor.statusCobranca = 'PAGO' ")
-			
-			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
-		
+			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoUltimaParcela(" negociacao.id ")).append(" ) ");
+
 		return hql.toString();
 	}
-	
 	
 	private String obterSubSelectTipoCobranca(){
 		
@@ -373,13 +415,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoValor.id= negociacao.id ")
 			
-			.append(" and cobrancaValor.statusCobranca = 'PAGO' ")
-			
-			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
+			.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoUltimaParcela(" negociacao.id ")).append(" ) ");
 		
 		return hql.toString();
 	}
-	
 	
 	private String obterSubSelectCountParcelas(){
 		
@@ -416,9 +455,34 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" where negociacaoNumeroParcela.id = negociacao.id ")
 			
-			.append(" and parcelaNumeroParcela.dataVencimento <= (").append(obterSubSelectDataVencimentoParcela(" negociacao.id ")).append(" ) ");
+			.append(" and parcelaNumeroParcela.dataVencimento <= (").append(obterSubSelectDataVencimentoUltimaParcela(" negociacao.id ")).append(" ) ");
 			
 		return hql.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> obterListaNossoNumeroPorNegociacao(Long idNegociacao) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select cob.NOSSO_NUMERO as nossoNumero from negociacao n ");
+		sql.append(" join parcela_negociacao pn on pn.NEGOCIACAO_ID=n.ID ");
+		sql.append(" join movimento_financeiro_cota mfc on pn.MOVIMENTO_FINANCEIRO_ID=mfc.ID "); 
+		sql.append(" join consolidado_mvto_financeiro_cota cmfc on cmfc.MVTO_FINANCEIRO_COTA_ID=mfc.ID ");
+		sql.append(" join consolidado_financeiro_cota cfc on cfc.ID=cmfc.CONSOLIDADO_FINANCEIRO_ID ");
+		sql.append(" join divida_consolidado dc on dc.CONSOLIDADO_ID=cfc.ID ");
+		sql.append(" join divida d on d.ID=dc.DIVIDA_ID ");
+		sql.append(" join cobranca cob on cob.DIVIDA_ID=d.ID ");
+		sql.append(" where n.ID=:idNegociacao ");
+		sql.append(" order by cob.DT_VENCIMENTO ");		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery) query).addScalar("nossoNumero");
+		
+		query.setParameter("idNegociacao", idNegociacao);
+		
+		return query.list();
 	}
 	
 	public Long obterIdCobrancaPor(Long idNegociacao) {
@@ -443,7 +507,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 				.append(" and cobrancaValor.statusCobranca = :statusCobranca ")
 
-				.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoParcela(" :idNegociacao ")).append(" ) ")
+				.append(" and parcelaValor.dataVencimento = ( ").append(obterSubSelectDataVencimentoUltimaParcela(" :idNegociacao ")).append(" ) ")
 				
 				.append(" and EXISTS (").append(this.subSelectUtimaParcelaPendenteAprovacao(" :idNegociacao ")).append(")");
 
@@ -488,4 +552,126 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+
+    @Override
+    public boolean verificarAtivacaoCotaAposPgtoParcela(Long idCobranca) {
+        
+        SQLQuery query = this.getSession().createSQLQuery(
+                " select "+
+                "    case when parcelaneg7_.ID = i.idParcelaAtivar then true else false end as ativa "+
+                " from "+
+                "    COBRANCA cobranca0_  "+
+                " inner join "+
+                "    COTA cota1_  "+
+                "        on cobranca0_.COTA_ID=cota1_.ID  "+
+                " inner join "+
+                "    DIVIDA divida2_  "+
+                "        on cobranca0_.DIVIDA_ID=divida2_.ID  "+
+                " inner join "+
+                "    DIVIDA_CONSOLIDADO consolidad3_  "+
+                "        on divida2_.ID=consolidad3_.DIVIDA_ID  "+
+                " inner join "+
+                "    CONSOLIDADO_FINANCEIRO_COTA consolidad4_  "+
+                "        on consolidad3_.CONSOLIDADO_ID=consolidad4_.ID  "+
+                " inner join "+
+                "    CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos5_  "+
+                "        on consolidad4_.ID=movimentos5_.CONSOLIDADO_FINANCEIRO_ID  "+
+                " inner join "+
+                "    MOVIMENTO_FINANCEIRO_COTA movimentof6_  "+
+                "        on movimentos5_.MVTO_FINANCEIRO_COTA_ID=movimentof6_.ID  "+
+                " inner join "+
+                "    PARCELA_NEGOCIACAO parcelaneg7_  "+
+                "        on movimentof6_.ID=parcelaneg7_.MOVIMENTO_FINANCEIRO_ID  "+
+                " inner join "+
+                "    NEGOCIACAO negociacao8_  "+
+                "        on parcelaneg7_.NEGOCIACAO_ID=negociacao8_.ID  "+
+                " join "+
+                "   ( "+
+                "   select  "+
+                "       n.id as idNeg "+
+                "       , count(pn2.ID) as parcelaAtv "+
+                "       , pn.id as idParcelaAtivar "+
+                "   from  "+
+                "       parcela_negociacao pn "+
+                "   join  "+
+                "       negociacao n on n.id = pn.NEGOCIACAO_ID "+
+                "   join  "+
+                "       parcela_negociacao pn2 on pn2.NEGOCIACAO_ID = n.id and pn2.DATA_VENCIMENTO <= pn.DATA_VENCIMENTO "+
+                "   group by  "+
+                "       pn.id "+
+                "   order by  "+
+                "       pn.DATA_VENCIMENTO) i on i.idNeg = negociacao8_.id "+
+                " where "+
+                "    ( "+
+                "        negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA is not null "+
+                "    )  "+
+                "    and cobranca0_.ID= :idCobranca  "+
+                "    and cota1_.SITUACAO_CADASTRO<> :ativo "+
+                "    and i.parcelaAtv = negociacao8_.ATIVAR_PAGAMENTO_APOS_PARCELA");
+        
+        query.setParameter("idCobranca", idCobranca);
+        query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
+        
+        query.addScalar("ativa", StandardBasicTypes.BOOLEAN);
+        
+        final Object ret = query.uniqueResult();
+        
+        if (ret == null){
+            return false;
+        }
+        
+        return (boolean) ret;
+    }
+    
+    
+    @Override
+	public void updateValorDividaValorMovimento(final Long idConsolidado,final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros){
+    	final StringBuilder sql =  new StringBuilder();
+    	sql.append("update NEGOCIACAO nego ");
+    	sql.append("join NEGOCIACAO_MOV_FINAN nego_movi on ");
+    	sql.append("nego_movi.NEGOCIACAO_ID = nego.id ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
+    	sql.append("movi.id = nego_movi.MOV_FINAN_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on ");
+    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+
+
+    	sql.append("set VALOR_DIVIDA_PAGA_COMISSAO =  VALOR_DIVIDA_PAGA_COMISSAO + movi.VALOR ");
+
+    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros) ");
+    	sql.append("AND NOT EXISTS(SELECT parcela.id FROM PARCELA_NEGOCIACAO parcela where parcela.NEGOCIACAO_ID = nego.id)");
+    	
+    	 this.getSession().createSQLQuery(sql.toString() )
+	        .setParameter("idConsolidado", idConsolidado)
+	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+	        .executeUpdate();
+    }
+    
+    @Override
+	public void removeNegociacaoMovimentoFinanceiroByIdConsolidadoAndGrupos(Long idConsolidado, List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceiros){
+		
+    	final StringBuilder sql =  new StringBuilder();
+    	sql.append("DELETE nego_movi from NEGOCIACAO_MOV_FINAN nego_movi ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
+    	sql.append("movi.id = nego_movi.MOV_FINAN_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on ");
+    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
+    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+
+
+    	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
+    	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros) ");
+    	sql.append("AND NOT EXISTS(SELECT parcela.id FROM PARCELA_NEGOCIACAO parcela where parcela.NEGOCIACAO_ID = nego_movi.NEGOCIACAO_ID)");
+    	
+    	 this.getSession().createSQLQuery(sql.toString() )
+	        .setParameter("idConsolidado", idConsolidado)
+	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
+	        .executeUpdate();
+		
+	}
+	
 }

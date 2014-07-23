@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.model.InterfaceEnum;
+import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
@@ -48,6 +49,7 @@ import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
+import br.com.abril.nds.integracao.repository.ParametroDistribuidorRepository;
 import br.com.abril.nds.integracao.route.RouteTemplate;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.dne.Bairro;
@@ -57,7 +59,9 @@ import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoArquivo;
+import br.com.abril.nds.model.integracao.ParametroDistribuidor;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
+import br.com.abril.nds.model.integracao.TipoDistribuidor;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
@@ -82,11 +86,11 @@ public class InterfaceExecutor {
 	private static ApplicationContext applicationContext;
 	
     private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
+    
+    private static String HA_ARQUIVOS = "Arquivos a serem processados para este distribuidor";
 
     private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
-	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
-	
 	@Autowired
 	private IcdObjectService icdObjectService;
 
@@ -101,6 +105,9 @@ public class InterfaceExecutor {
 	
 	@Autowired
 	private InterfaceExecucaoRepository interfaceExecucaoRepository;
+	
+	@Autowired
+	private ParametroDistribuidorRepository parametroDistribuidorRepository;
 	
 	@Autowired
 	private FixedFormatManager ffm;
@@ -180,7 +187,7 @@ public class InterfaceExecutor {
 				this.executarInterfaceCorreios();
 			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
 				this.executarInterfaceDB(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
-			} else {
+			} else {	
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
         } catch (Exception e) {
@@ -230,7 +237,7 @@ public class InterfaceExecutor {
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
-										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
+										eitem.setDataEmissaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());
 										
 										MotivoSituacaoFaltaSobra motivo = icdObjectService.recuperaMotivoPorDetalhe(item.getDfsPK());
 										
@@ -263,11 +270,7 @@ public class InterfaceExecutor {
 	public void carregarDiretorios(InterfaceEnum interfaceEnum) {
 		
 		String parametroDir = "INBOUND_DIR";
-		
-		if(interfaceEnum.getCodigoInterface() == InterfaceEnum.EMS0140.getCodigoInterface()) {
-			parametroDir += "_NOTA_VAREJO";
-		}
-		
+	
 		this.diretorio = parametroSistemaRepository.getParametro(parametroDir);
 		
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
@@ -300,8 +303,8 @@ public class InterfaceExecutor {
 	 */
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
-		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		this.carregarDiretorios(interfaceEnum);
+		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
 		
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
@@ -311,16 +314,20 @@ public class InterfaceExecutor {
 			if (arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
+			}else{
+				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, HA_ARQUIVOS);
 			}
 			
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+			
+			interfaceEnum = this.tratarInterfaceEnumDistribuidorFilial(interfaceEnum,distribuidor);
 			
 			for (File arquivo: arquivos) {
 				
 				try {
 					
-					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario);
-					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
+					this.trataArquivo(couchDbClient, arquivo, interfaceEnum, logExecucao.getDataInicio(), nomeUsuario,interfaceExecucao);
+					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, "Inseridos no couchDB");
 					arquivo.delete();
 					
 				} catch (Exception e) {
@@ -375,6 +382,8 @@ public class InterfaceExecutor {
 				try {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
+					
+					imagem.delete();
 				} catch (FileNotFoundException e1) {
                     this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				} finally {
@@ -551,15 +560,23 @@ public class InterfaceExecutor {
 	/**
 	 * Processa o arquivo, lendo suas linhas e gravando no CouchDB.
 	 */
-	private void trataArquivo(CouchDbClient couchDbClient, File arquivo, InterfaceEnum interfaceEnum, Date dataInicio, String nomeUsuario) throws Exception {
+	@SuppressWarnings({ "unchecked", "static-access" })
+	private void trataArquivo(CouchDbClient couchDbClient, 
+			File arquivo, 
+			InterfaceEnum interfaceEnum, 
+			Date dataInicio, 
+			String nomeUsuario,
+			InterfaceExecucao interfaceExecucao) throws Exception {
 
 		FileReader in = new FileReader(arquivo);
 		Scanner scanner = new Scanner(in);
 		int linhaArquivo = 0;
 		IntegracaoDocumentMaster<?> docM = null;
 		
+		
+		
 		while (scanner.hasNextLine()) {
-
+			
 			String linha = scanner.nextLine();
 			linhaArquivo++;
 			
@@ -567,48 +584,50 @@ public class InterfaceExecutor {
 			if (StringUtils.isEmpty(linha) ||  ((int) linha.charAt(0)  == 26) ) {
 				continue;
 			} 
-
-            // TODO: verificar tamanho correto das linhas nos arquivos: difere
-            // da definição
-//			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
-//				throw new ValidacaoException(TAMANHO_LINHA);
-//			}
 			
-			if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
-				IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
+			try{
 				
-				doc.setTipoDocumento(interfaceEnum.name());
-				doc.setNomeArquivo(arquivo.getName());
-				doc.setLinhaArquivo(linhaArquivo);
-				doc.setDataHoraExtracao(dataInicio);
-				doc.setNomeUsuarioExtracao(nomeUsuario);
-	
-				couchDbClient.save(doc);
-			} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
+				if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
+					IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
+					
+					doc.setTipoDocumento(interfaceEnum.name());
+					doc.setNomeArquivo(arquivo.getName());
+					doc.setLinhaArquivo(linhaArquivo);
+					doc.setDataHoraExtracao(dataInicio);
+					doc.setNomeUsuarioExtracao(nomeUsuario);
+						
+					couchDbClient.save(doc);
+					
+				} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
 
-				IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
-				
-				if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
-					docM.addItem(docD);				
-				} else {
-					if (docM != null) {
-						couchDbClient.save(docM);							
+					IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
+					
+					if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
+						docM.addItem(docD);				
+					} else {
+						if (docM != null) {
+							couchDbClient.save(docM);							
+						}
+						
+						docM = (IntegracaoDocumentMaster<IntegracaoDocumentDetail>) this.ffm.load(interfaceEnum.getClasseMaster(), linha);
+						
+						docM.setTipoDocumento(interfaceEnum.name());
+						docM.setNomeArquivo(arquivo.getName());
+						docM.setLinhaArquivo(linhaArquivo);
+						docM.setDataHoraExtracao(dataInicio);
+						docM.setNomeUsuarioExtracao(nomeUsuario);
+						docM.addItem(docD);				
 					}
-					
-					docM = (IntegracaoDocumentMaster<IntegracaoDocumentDetail>) this.ffm.load(interfaceEnum.getClasseMaster(), linha);
-					
-					docM.setTipoDocumento(interfaceEnum.name());
-					docM.setNomeArquivo(arquivo.getName());
-					docM.setLinhaArquivo(linhaArquivo);
-					docM.setDataHoraExtracao(dataInicio);
-					docM.setNomeUsuarioExtracao(nomeUsuario);
-					docM.addItem(docD);				
-		
-					
 				}
+				
+			}catch(IllegalArgumentException | com.ancientprogramming.fixedformat4j.format.ParseException pe){
+				
+				String mensagemErro = "ERRO: Ocorreu um erro na leitura do arquivo %s na linha número %d, porém o arquivo foi processado!";
+				
+				mensagemErro = mensagemErro.format(mensagemErro,arquivo.getName(),linhaArquivo);
+				
+				LOGGER.error(mensagemErro,pe);
 			}
-			
-			
 		}
 		if (docM != null) {
 			couchDbClient.save(docM);							
@@ -618,6 +637,39 @@ public class InterfaceExecutor {
 		scanner.close();
 	}
 
+	/**
+	 * Verifica se o distribuidor é uma filial, caso seja muda a classe de parse para EMS0110
+	 * 
+	 * @param interfaceEnum
+	 * @param distribuidor
+	 * @return InterfaceEnum
+	 */
+	private InterfaceEnum tratarInterfaceEnumDistribuidorFilial(InterfaceEnum interfaceEnum,String distribuidor){
+		
+		if(interfaceEnum == null){
+			return interfaceEnum;
+		}
+		
+		if(distribuidor == null || distribuidor.isEmpty()){
+			return interfaceEnum;
+		}
+		
+		ParametroDistribuidor parametroDistribuidor = parametroDistribuidorRepository.findByCodigoDinapFC(Long.parseLong(distribuidor));
+		
+		if(parametroDistribuidor == null){
+			LOGGER.warn("PARAMETRO DO DISTRIBUIDOR: Parâmetro do distribuidor não foi encontrado para o código [ " + Long.parseLong(distribuidor) +"]" );
+		}
+		
+		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
+				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
+		
+		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
+				&& isDistribuidorFilial){
+			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
+		}
+		
+		return interfaceEnum;
+	}
 	                    /**
      * Recupera a lista de arquivos a serem processados.
      * 
@@ -629,13 +681,11 @@ public class InterfaceExecutor {
 
 		List<File> listaArquivos = new ArrayList<File>();
 		
-		String pattern = interfaceExecucao.getMascaraArquivo();
+		String pattern = (interfaceExecucao.getMascaraArquivo()!= null) 
+				? interfaceExecucao.getMascaraArquivo().trim()
+						:interfaceExecucao.getMascaraArquivo();
+				
 		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
-		
-		if (interfaceExecucao.getId() == InterfaceEnum.EMS0140.getCodigoInterface()) {
-			pattern = String.format("%s_"+pattern, codigoDistribuidor);
-			dirPath = diretorio;
-		} 
 		
 		File dir = new File(dirPath);
 		

@@ -130,13 +130,17 @@ public class BancoController extends BaseController {
         }
         
         for (final Banco banco : bancos) {
-            listaModelo.add(new CellModel(1, banco.getId() != null ? banco.getId().toString() : "", banco
-                    .getNumeroBanco() != null ? banco.getNumeroBanco() : "", banco.getNome() != null ? banco.getNome()
-                            : "", banco.getAgencia() != null ? banco.getAgencia().toString() + "-" + banco.getDvAgencia() : "",
-                                    banco.getConta() != null ? banco.getConta().toString() + "-" + banco.getDvConta() : "", banco
-                                            .getCodigoCedente() != null ? banco.getCodigoCedente().toString() : "",
-                                                    banco.getApelido() != null ? banco.getApelido().toString() : "",
-                                                            banco.getCarteira() != null ? banco.getCarteira() : "", banco.isAtivo() ? "Ativo" : "Desativado",
+            listaModelo.add(new CellModel(
+                    1, 
+                    banco.getId() != null ? banco.getId().toString() : "", 
+                    banco.getNumeroBanco() != null ? banco.getNumeroBanco() : "", 
+                    banco.getNome() != null ? banco.getNome() : "", 
+                    banco.getAgencia() != null ? banco.getAgencia().toString() + "-" + banco.getDvAgencia() : "",
+                    banco.getConta() != null ? banco.getConta().toString() + (banco.getDvConta() != null ? "-" + banco.getDvConta() : "") : "", 
+                    banco.getCodigoCedente() != null ? banco.getCodigoCedente().toString() : "",
+                    banco.getApelido() != null ? banco.getApelido().toString() : "",
+                    banco.getCarteira() != null ? banco.getCarteira() : "", 
+                    banco.isAtivo() ? "Ativo" : "Desativado",
                     ""));
         }
         
@@ -232,7 +236,6 @@ public class BancoController extends BaseController {
      */
     @Post
     @Path("/buscaBanco")
-    @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
     public void buscaBanco(final long idBanco) {
         final BancoVO bancoVO = bancoService.obterDadosBanco(idBanco);
         if (bancoVO == null) {
@@ -263,6 +266,7 @@ public class BancoController extends BaseController {
      */
     @Post
     @Path("/alteraBanco")
+    @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
     public void alteraBanco(final long idBanco, final String numero, final String nome, final String codigoCedente,
             final String agencia, final String digitoAgencia, final String conta, final String digito,
             final String apelido, final Integer carteira, final BigDecimal juros, final boolean ativo,
@@ -359,10 +363,6 @@ public class BancoController extends BaseController {
         
         if (StringUtils.isBlank(conta)) {
             errorMsgs.add("Preencha o campo conta.");
-        }
-        
-        if (StringUtils.isBlank(digito)) {
-            errorMsgs.add("Preencha o campo dígito da conta do banco.");
         }
         
         if (StringUtils.isBlank(apelido)) {

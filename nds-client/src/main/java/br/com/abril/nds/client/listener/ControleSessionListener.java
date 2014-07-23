@@ -1,17 +1,18 @@
 package br.com.abril.nds.client.listener;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import br.com.abril.nds.client.util.Constants;
-import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
+import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
+import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
 
 
 public class ControleSessionListener implements HttpSessionListener {
@@ -20,8 +21,6 @@ public class ControleSessionListener implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
 		
-//		sessionEvent.getSession().setAttribute("X9 LISTENER", 
-//				SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
 	@Override
@@ -32,7 +31,8 @@ public class ControleSessionListener implements HttpSessionListener {
 		ServletContext context = session.getServletContext();
 		
 		removerTravaConferenciaCotaUsuario(context, session);
-
+		
+		removerTravaAnaliseEstudo(context);
 	}
 	
 	/**
@@ -43,19 +43,32 @@ public class ControleSessionListener implements HttpSessionListener {
 	 * @param session
 	 */
 	private void removerTravaConferenciaCotaUsuario(ServletContext context, HttpSession session) {
-
-		String sessionID = session.getId();
 		
-		@SuppressWarnings("unchecked")
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		  ApplicationContext ctx = 
+	                WebApplicationContextUtils.
+	                      getWebApplicationContext(session.getServletContext());
 		
-		@SuppressWarnings("unchecked")
-		Map<String, String> mapaSessionIDNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
-
+		BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent = ctx.getBean(BloqueioConferenciaEncalheComponent.class);
 		
-		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(session.getServletContext(), sessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
+		bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(session);
 		
+	}
+	
+	/**
+	 * Remove a trava de análise de estudo por usuario. 
+	 * 
+	 * @param context
+	 */
+	private void removerTravaAnaliseEstudo(ServletContext context) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication == null) {
+			
+			return;
+		}
+		
+		HistogramaPosEstudoController.desbloquearAnaliseEstudo(context, authentication.getName());
 	}
 
 }

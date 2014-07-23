@@ -10,13 +10,16 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0119Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Editor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
 public class EMS0119MessageProcessor extends AbstractRepository implements
@@ -24,7 +27,11 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
+	private String codigoDinap;
 
 	public EMS0119MessageProcessor() {
 
@@ -32,7 +39,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		codigoDinap =distribuidorService.codigoDistribuidorDinap();
 	}
 
 	@Override
@@ -50,7 +57,16 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 		Produto produto = (Produto) query.uniqueResult();
 		if (null != produto) {
-
+			
+			if (produto.getFormaComercializacao()==null) {
+				produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
+				ndsiLoggerFactory.getLogger().logInfo(
+						message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao do Forma de Comercialização para: "
+								+ FormaComercializacao.CONSIGNADO.name());
+			}
+			
 			if (!produto.getNome()
 					.equals(input.getNomeDaPublicacao())) {
 				produto.setNome(input.getNomeDaPublicacao());
@@ -103,7 +119,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Codigo do Editor para: "
+							"Atualização do Codigo do Editor para "
 									+ input.getCodigoDoEditor());
 				}
 				
@@ -116,14 +132,14 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logWarning(
 							message,
 							EventoExecucaoEnum.RELACIONAMENTO,
-							String.format( "Editor %1$s não encontrado para o produto: %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
+							String.format( "Editor %1$s não encontrado para o Produto %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
 						);
 				} else {
 					produto.setEditor(ed);
 					ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Codigo do Editor para: "
+							"Atualização do Codigo do Editor para "
 									+ input.getCodigoDoEditor());
 					
 				}				
@@ -133,7 +149,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Pacote Padrao para: "
+						"Atualização do Pacote Padrão para "
 								+ input.getPacotePadrao());
 
 			}
@@ -143,7 +159,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Nome Comercial para: "
+						"Atualização do Nome Comercial para "
 								+ input.getNomeComercial());
 			}
 
@@ -152,10 +168,13 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Status para: "
+						"Atualização do Status para "
 								+ input.getPacotePadrao());
 
 			}
+			
+			produto.setTipoSegmentoProduto(new TipoSegmentoProduto(9l));
+			
 			this.getSession().merge(produto);
 
 		} else {
@@ -170,6 +189,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 			//Default data
 			produto.setPeso(0l);
 			produto.setOrigem(Origem.MANUAL);
+			produto.setFormaComercializacao(FormaComercializacao.CONSIGNADO);
 
 			
 			TipoProduto tp =  this.getTipoProduto(input.getTipoDePublicacao());
@@ -178,7 +198,7 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						String.format( "Tipo de Produto %1$s não encontrado para o produto: %2$s ", input.getTipoDePublicacao().toString(), input.getCodigoDaPublicacao() )
+						String.format( "Tipo de Produto %1$s não encontrado para o Produto %2$s ", input.getTipoDePublicacao().toString(), input.getCodigoDaPublicacao() )
 					);
 			} else {
 				produto.setTipoProduto(tp);	
@@ -189,19 +209,22 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						String.format( "Editor %1$s não encontrado para o produto: %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
+						String.format( "Editor %1$s não encontrado para o Produto %2$s ", input.getCodigoDoEditor().toString(), input.getCodigoDaPublicacao() )
 					);
 			} else {
 				produto.setEditor(ed);	
 			}
 			
-			Fornecedor fornecedor = this
-					.findFornecedor(Integer.valueOf( input.getCodigoFornecedorPublic()));
+			//Fornecedor fornecedor = this.findFornecedor(Integer.valueOf( input.getCodigoFornecedorPublic()));
+			Fornecedor fornecedor = this.findFornecedor(Integer.valueOf(codigoDinap));
+			
 			if (fornecedor != null) {
 
 				produto.addFornecedor(fornecedor);
 			}
 
+			//Tipo Segmento Default. ID Fixo.
+			produto.setTipoSegmentoProduto(new TipoSegmentoProduto(9l));
 			
 			if ((null != tp) && (null != ed)) {
 				this.getSession().persist(produto);

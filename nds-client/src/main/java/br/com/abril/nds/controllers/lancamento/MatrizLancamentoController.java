@@ -11,12 +11,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -31,9 +31,11 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -41,7 +43,7 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
-import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.service.MatrizLancamentoNovaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -73,7 +75,7 @@ public class MatrizLancamentoController extends BaseController {
     private FornecedorService fornecedorService;
     
     @Autowired
-    private MatrizLancamentoService matrizLancamentoService;
+    private MatrizLancamentoNovaService matrizLancamentoService;
     
     @Autowired
     private LancamentoService lancamentoService;
@@ -98,13 +100,17 @@ public class MatrizLancamentoController extends BaseController {
     
     private static final String DATA_ATUAL_SELECIONADA = "dataAtualSelecionada";
     
+    private static final String ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO = "lancamentosAlterados";
+    
     @Path("/")
     public void index() {
         
         removerAtributoAlteracaoSessao();
         
-        session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
-        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO,null);
+        //session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        //session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO,null);
+        //session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        //session.setAttribute(DATA_ATUAL_SELECIONADA, null);
         
         final List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
         final String data = DateUtil.formatarDataPTBR(new Date());
@@ -118,6 +124,10 @@ public class MatrizLancamentoController extends BaseController {
         validarDadosPesquisa(dataLancamento, idsFornecedores);
         
         removerAtributoAlteracaoSessao();
+        //session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        //session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO,null);
+        //session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        //session.setAttribute(DATA_ATUAL_SELECIONADA, null);
         
         final FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
         
@@ -125,6 +135,8 @@ public class MatrizLancamentoController extends BaseController {
         
         final ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoLancamento(balanceamentoLancamento);
+        
+        //session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
         
         result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
         
@@ -135,6 +147,10 @@ public class MatrizLancamentoController extends BaseController {
     public void salvar(final Date dataLancamento, final List<Long> idsFornecedores) {
         
         //Solicitado para salvar somente no dia
+    	if (dataLancamento.before(distribuidorService.obterDataOperacaoDistribuidor())) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Não é possivel salvar uma data anterior ("+dataLancamento+") a data de Operação ("+distribuidorService.obterDataOperacaoDistribuidor()+")");
+        }
         
         
         this.verificarExecucaoInterfaces();
@@ -152,16 +168,74 @@ public class MatrizLancamentoController extends BaseController {
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+        Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
                 .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
         
-        matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+            matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
         
-        balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+            balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+        /*
+        for(Date dataMatriz: matrizLancamento.keySet()){
+        
+        	Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+                .salvarMatrizLancamento(dataMatriz,idsFornecedores,matrizLancamento, getUsuarioLogado());
+        
+            matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        
+            balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+        }
+        */
+        
+        this.removerAtributoAlteracaoSessao();
         
         session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
         
+        result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"),
+                "result").recursive().serialize();
+    }
+    
+    @Post
+    @Path("/salvarMatriz")
+    public void salvarMatriz(final Date dataLancamento, final List<Long> idsFornecedores) {
+        
+        //Solicitado para salvar somente no dia
+    	if (dataLancamento.before(distribuidorService.obterDataOperacaoDistribuidor())) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Não é possivel salvar uma data anterior ("+dataLancamento+") a data de Operação ("+distribuidorService.obterDataOperacaoDistribuidor()+")");
+        }
+        
+        
+        this.verificarExecucaoInterfaces();
+        
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+                .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+        
+        if (balanceamentoLancamento == null) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+        }
+        
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento
+                .getMatrizLancamento();
+        
+        Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
+        
+        
+        for(Date dataMatriz: matrizLancamento.keySet()){
+            
+        	Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+                .salvarMatrizLancamentoTodosDias(dataMatriz,idsFornecedores,matrizLancamento, getUsuarioLogado());
+        
+            matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+        
+            balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+        }
+        
+        
         this.removerAtributoAlteracaoSessao();
+        
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
         
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"),
@@ -342,15 +416,21 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
         }
         
-        final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+        Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
         
-        for (final Date dataConfirmada : datasConfirmadas) {
-            
-            if (!dataOperacao.before(dataConfirmada)) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    	try {
+      	  dataOperacao = df.parse(df.format(dataOperacao));
+      	}catch(ParseException ex){
+      		
+      	}
+        
+        for (Date dataConfirmada : datasConfirmadas) {
+
+            if (dataOperacao.getTime()>dataConfirmada.getTime()) {
                 
                 throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Não é possível confirmar uma data menor que a data de operação [ "
-                                + DateUtil.formatarDataPTBR(dataOperacao) + " ]");
+                        "Não é possível confirmar uma data menor que a data de operação: "+ DateUtil.formatarDataPTBR(dataOperacao));
             }
         }
     }
@@ -393,34 +473,249 @@ public class MatrizLancamentoController extends BaseController {
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void perguntarDataConfirmadaOuNao(final ProdutoLancamentoDTO produtoLancamento) {
+    public void validarDataReprogramacao(final Date novaDataLancamento,
+                                             final List<ProdutoLancamentoVO> produtosLancamento) {
         
-        final boolean retornoDataConfirmada = matrizLancamentoService.isDataConfirmada(produtoLancamento);
-        result.use(Results.json()).from(retornoDataConfirmada).serialize();
+        ValidacaoDataLancamento validacaoDataLancamento = null;
+        
+        final boolean retornoDataConfirmada = matrizLancamentoService.isDataConfirmada(novaDataLancamento);
+        
+        if (retornoDataConfirmada) {
+            
+            validacaoDataLancamento = ValidacaoDataLancamento.DATA_JA_CONFIRMADA;
+        }
+        
+        List<String> listaMensagem =
+            this.validarPebNaoParciais(novaDataLancamento, produtosLancamento);
+        
+        if (validacaoDataLancamento == null && !listaMensagem.isEmpty()) {
+            
+            validacaoDataLancamento = ValidacaoDataLancamento.PEB_MENOR_7_DIAS;
+            
+            final Map<String, Object> mapa = new TreeMap<String, Object>();
+            
+            mapa.put("tipo", validacaoDataLancamento);
+            mapa.put("mensagens", listaMensagem);
+            
+            result.use(CustomJson.class).from(mapa).serialize();
+            
+            return;
+        }
+        
+        if (validacaoDataLancamento == null) {
+            
+            validacaoDataLancamento = ValidacaoDataLancamento.DATA_VALIDA;
+        }
+        
+        result.use(Results.json()).from(validacaoDataLancamento, "result").serialize();
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+	@Post
+    @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
+    public void reprogramarLancamentosSelecionadosSalvar( List<ProdutoLancamentoVO> produtosLancamento,
+            final String novaDataFormatada) {
+    	
+    	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
+    	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
+    	
+    	Date novaData =null;
+    	
+    	if(session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO)!=null){
+    		produtosLancamento = (List <ProdutoLancamentoVO>)session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO);
+    	}
+    	
+    	if(produtosLancamento==null){
+    	 produtosLancamento = (List <ProdutoLancamentoVO>)session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO);
+    	}
+    
+    	if(produtosLancamento!=null && !produtosLancamento.isEmpty() && produtosLancamento.get(0).getNovaDataLancamento()!=null){
+     		novaData= DateUtil.parseDataPTBR((String)produtosLancamento.get(0).getNovaDataLancamento());
+     	 }
+    	
+    	if(novaData==null){
+    		novaData =DateUtil.parseDataPTBR(novaDataFormatada);
+    	}
+    	
+    	if(novaData==null){
+    		novaData =DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
+    	}
+    	
+    	if(produtosLancamento!=null && !produtosLancamento.isEmpty()){
+    	 this.atualizarMapaLancamento(produtosLancamento, novaData);
+    	}
+    	
+    	session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, null);
+    	result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
+    	
+    }
+    
+    private List<String> validarPebNaoParciais(Date novadata, List<ProdutoLancamentoVO> produtosLancamento) {
+        
+        /*
+         *  Há uma regra nas parciais que não está sendo respeitada matriz. 
+         *  A PEB não pode ser menor que 7 dias, ou seja, se fizermos uma postergação 
+         *  do lançamento de qualquer parcial, o limite será data de recolhimento – 7. P.ex.
+         *  
+         *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
+         *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
+         *  
+         *  Para produtos com forma de comercialização CONTA FIRME não deve ser validado, pois o mesmo não possui recolhimento
+         */
+    	
+        List<String> listaMensagens = new ArrayList<String>();
+        
+    	if (produtosLancamento == null) {
+    		
+    		return listaMensagens;
+    	}
+    	
+        for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
+            
+        	if(produtoLancamento.isProdutoContaFirme()){
+        		continue;
+        	}
+        	
+            if (!this.isParcial(produtoLancamento)) {
+                
+                if (this.isPEBMenor7Dias(novadata, listaMensagens, produtoLancamento)) {
+                    
+                    if (listaMensagens.isEmpty()) {
+                        listaMensagens.add(
+                            "PEB não pode ser menor que 7 dias. Deseja reprogramar assim mesmo a(s) publicação(ções) abaixo:");
+                    }
+                    
+                    listaMensagens.add("Produto: " + produtoLancamento.getNomeProduto() + " Edição: "
+                        + produtoLancamento.getNumeroEdicao());
+                }
+            }
+        }
+ 
+        return listaMensagens;
+    }
+
+    private boolean isPEBMenor7Dias(Date novadata, List<String> listaMensagens, ProdutoLancamentoVO produtoLancamento) {
+        
+        if (produtoLancamento != null && produtoLancamento.getDataRecolhimentoDistribuidor() != null && novadata != null) {
+            
+            if (!novadata.before(DateUtil.subtrairDias(DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoDistribuidor()), 7))) {
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private List<String> validarPeb(Date novadata, List<ProdutoLancamentoVO> produtosLancamento, boolean reprogramarProdutosPEBMenor7Dias) {
+    	
+    	/*
+    	 *  Há uma regra nas parciais que não está sendo respeitada matriz. 
+    	 *  A PEB não pode ser menor que 7 dias, ou seja, se fizermos uma postergação 
+    	 *  do lançamento de qualquer parcial, o limite será data de recolhimento – 7. P.ex.
+    	 *  
+		 *  Parcial 1 – Lacto 01/04/2014 e recolhimento 01/05/2014, 
+		 *  o lançto poderá ser postergado somente até o dia 24/04/2014 (ou seja 01/05/2014 – 7 dias).
+		 *  
+		 *  Para produtos com forma de comercialização CONTA FIRME não deve ser validado, pois o mesmo não possui recolhimento
+    	 */
+    	List<String> listaMensagens = new ArrayList<String>();
+    	List<ProdutoLancamentoVO> produtosLancamentoAux = new ArrayList<ProdutoLancamentoVO>();
+    	produtosLancamentoAux.addAll(produtosLancamento);
+    	
+        for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
+            
+        	if(produtoLancamento.isProdutoContaFirme()){
+        		continue;
+        	}
+        	
+            if (this.isParcial(produtoLancamento)
+                    || (!this.isParcial(produtoLancamento) && !reprogramarProdutosPEBMenor7Dias)) {
+                
+                if (this.isPEBMenor7Dias(novadata, listaMensagens, produtoLancamento)) {
+                        
+                    if (listaMensagens.isEmpty()) {
+                        listaMensagens.add(
+                            "PEB não pode ser menor que 7 dias. A(s) publicação(ções) abaixo não foi/foram alterada(s):");
+                    }
+                    
+                    listaMensagens.add("Produto: " + produtoLancamento.getNomeProduto() + " Edição: "
+                        + produtoLancamento.getNumeroEdicao());
+                    
+                    produtosLancamentoAux.remove(produtoLancamento);
+                }
+            }
+        }
+ 
+    	produtosLancamento.clear();
+    	produtosLancamento.addAll(produtosLancamentoAux);
+    	return listaMensagens;
+    }
+
+    private boolean isParcial(ProdutoLancamentoVO produtoLancamento) {
+        
+        return !produtoLancamento.getDescricaoLancamento().equals(TipoLancamento.LANCAMENTO.getDescricao());
     }
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void reprogramarLancamentosSelecionados(final List<ProdutoLancamentoVO> produtosLancamento,
-            final String novaDataFormatada) {
+    public void reprogramarLancamentosSelecionados( List<ProdutoLancamentoVO> produtosLancamento,
+            final String novaDataFormatada, boolean reprogramarProdutosPEBMenor7Dias) {
         
+    	List<String> listaMensagens = new ArrayList<String>();
+    	List<String> listaMensagensAux = new ArrayList<String>();
+    	
+    	ValidacaoVO validacao =  null;
+    	
+        final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+        
+        this.validarListaParaReprogramacao(produtosLancamento);
+        
+        listaMensagensAux = this.validarPeb(novaData, produtosLancamento, reprogramarProdutosPEBMenor7Dias);
+    	 
         this.verificarExecucaoInterfaces();
         
         this.validarDadosReprogramar(novaDataFormatada);
         
         adicionarAtributoAlteracaoSessao();
         
-        final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
-        
         this.validarDatasConfirmacao(novaData);
         
-        this.validarListaParaReprogramacao(produtosLancamento);
+        if(!produtosLancamento.isEmpty()){
+         listaMensagens = this.validarDataReprogramacao(produtosLancamento, novaData);
+        }
         
-        this.validarDataReprogramacao(produtosLancamento, novaData);
+        //this.atualizarMapaLancamento(produtosLancamento, novaData);
         
-        this.atualizarMapaLancamento(produtosLancamento, novaData);
+        session.setAttribute(DATA_ATUAL_SELECIONADA, novaDataFormatada);
+   	    session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+   	 
+        if(listaMensagensAux.isEmpty() && listaMensagens.isEmpty()){
+         result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
         
-        result.use(Results.json()).from(Results.nothing()).serialize();
+        }else if(!listaMensagensAux.isEmpty() && !listaMensagens.isEmpty()){
+        	
+        	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagensAux);
+        	
+        	if(produtosLancamento.isEmpty()){
+           	 throw new ValidacaoException(validacao);
+           	}else{
+           	 List<List> listaComposta = new ArrayList<List>();
+           	 listaComposta.add(0, listaMensagensAux);
+           	 listaComposta.add(1, listaMensagens);
+           	 result.use(Results.json()).from(listaComposta,"composto").recursive().serialize();
+           	}
+        }else if(listaMensagensAux.isEmpty() && !listaMensagens.isEmpty()){
+        
+        	//validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+        	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
+        	
+        }else{
+        
+        	result.use(Results.json()).from(listaMensagensAux,"msg").recursive().serialize(); 
+        	 
+        }
     }
     
     private void removerProdutosAgrupados(final List<ProdutoLancamentoDTO> produtosLancamento) {
@@ -446,6 +741,11 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
         
+    	List<String> listaMensagens = new ArrayList<String>();
+    	List<String> listaMensagensAux = new ArrayList<String>();
+    	List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
+    	ValidacaoVO validacao = null;
+    	
         this.verificarExecucaoInterfaces();
         if (produtoLancamento != null) {
             final String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
@@ -457,19 +757,39 @@ public class MatrizLancamentoController extends BaseController {
             final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
             
             this.validarDatasConfirmacao(novaData);
-            
-            final List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
-            
+
             produtosLancamento.add(produtoLancamento);
             
             this.validarListaParaReprogramacao(produtosLancamento);
             
-            this.validarDataReprogramacao(produtosLancamento, novaData);
+            listaMensagensAux = validarPeb(novaData, produtosLancamento, true);
             
-            this.atualizarMapaLancamento(produtosLancamento, novaData);
+            if(!produtosLancamento.isEmpty()){
+             listaMensagens.addAll(this.validarDataReprogramacao(produtosLancamento, novaData));
+            }
+            //this.atualizarMapaLancamento(produtosLancamento, novaData);
         }
         
-        result.use(Results.json()).from(Results.nothing()).serialize();
+        session.setAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO, produtosLancamento);
+        
+        if(!listaMensagensAux.isEmpty()){
+        	
+        	validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagensAux);
+        	
+        	if(produtosLancamento.isEmpty()){
+           	 throw new ValidacaoException(validacao);
+           	}else{
+           	 result.use(Results.json()).from(validacao,"msg").recursive().serialize();
+           	}
+        }
+        if(!listaMensagens.isEmpty()){
+        	
+        	result.use(Results.json()).from(listaMensagens,"info").recursive().serialize();
+ 
+        }else{
+        
+            result.use(Results.json()).withoutRoot().from(Results.nothing()).recursive().serialize();
+        }
     }
     
     /**
@@ -548,30 +868,41 @@ public class MatrizLancamentoController extends BaseController {
      * @param produtosLancamento - lista de produtos de lançamento
      * @param novaData - nova data de recolhimento
      */
-    private void validarDataReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
-        
-        matrizLancamentoService.verificaDataOperacao(novaData);
+    private List<String> validarDataReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
+    	
+        //matrizLancamentoService.verificaDataOperacao(novaData);
         
         matrizLancamentoService.validarDiaSemanaDistribuicaoFornecedores(novaData);
         
         final List<String> listaMensagens = new ArrayList<String>();
         
         String produtos = "";
+        String msg;
         
         final Integer qtdDiasLimiteParaReprogLancamento = distribuidorService.qtdDiasLimiteParaReprogLancamento();
         
         for (final ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
-            final String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
+        	if(produtoLancamento.isProdutoContaFirme()){
+        		continue;
+        	}
+        	
+        	msg = matrizLancamentoService.verificaDataOperacao(novaData,produtoLancamento.getFornecedorId(),OperacaoDistribuidor.DISTRIBUICAO,produtoLancamento);
+        	
+        	if(!msg.equals("")){
+        	 listaMensagens.add(msg);
+        	}
+        	
+        	final String dataRecolhimentoDistribuidorFormatada = produtoLancamento.getDataRecolhimentoDistribuidor();
             
-            if (dataRecolhimentoPrevistaFormatada == null || dataRecolhimentoPrevistaFormatada.trim().isEmpty()) {
+            if (dataRecolhimentoDistribuidorFormatada == null || dataRecolhimentoDistribuidorFormatada.trim().isEmpty()) {
                 
                 continue;
             }
             
-            final Date dataRecolhimentoPrevista = DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoPrevista());
+            final Date dataRecolhimentoDistribuidor = DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoDistribuidor());
             
-            final Date dataLimiteReprogramacao = calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoPrevista,
+            final Date dataLimiteReprogramacao = calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoDistribuidor,
                     qtdDiasLimiteParaReprogLancamento);
             
             if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
@@ -582,14 +913,14 @@ public class MatrizLancamentoController extends BaseController {
                 
                 produtos += "<tr>" + "<td><u>Produto:</u> " + produtoLancamento.getNomeProduto() + "</td>"
                     + "<td><u>Edição:</u> " + produtoLancamento.getNumeroEdicao() + "</td>"
-                        + "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>" + "</tr>";
+                        + "<td><u>Data recolhimento:</u> " + dataRecolhimentoDistribuidorFormatada + "</td>" + "</tr>";
             }
         }
         
         if (!produtos.isEmpty()) {
             
             listaMensagens.add("A nova data de lançamento não deve ultrapassar "
-                    + "a data de recolhimento prevista menos a quantidade de dias limite ["
+                    + "a data de recolhimento menos a quantidade de dias limite ["
                     + qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):");
             
             listaMensagens
@@ -601,6 +932,8 @@ public class MatrizLancamentoController extends BaseController {
             
             throw new ValidacaoException(validacao);
         }
+        
+        return listaMensagens;
     }
     
     /**
@@ -615,6 +948,19 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "É necessário selecionar ao menos um produto para realizar a reprogramação!");
         }
+    }
+    
+    /**
+     * Verifica se data é operante
+     * 
+     * @param data
+     */
+    private void validarFeriadoSemOperacao(Date data){
+    	
+    	 if(calendarioService.isFeriadoSemOperacao(data) || calendarioService.isFeriadoMunicipalSemOperacao(data)){
+	        	
+            throw new ValidacaoException(TipoMensagem.WARNING, DateUtil.formatarDataPTBR(data)+" não é uma data operante! ");
+	    }
     }
     
     /**
@@ -653,16 +999,7 @@ public class MatrizLancamentoController extends BaseController {
             }
         }
         
-
-        if(calendarioService.isFeriadoSemOperacao(novaData)
-  	    || calendarioService.isFeriadoMunicipalSemOperacao(novaData)){
-        	
-            throw new ValidacaoException(
-                    TipoMensagem.WARNING,
-                    "A data de lançamento não pode ser alterada para uma data feriado não operante!");
-            
-        	
-        }
+        this.validarFeriadoSemOperacao(novaData);
   	  
         this.removerEAdicionarMapa(matrizLancamento, listaProdutoLancamentoAlterar, novaData);
         
@@ -735,6 +1072,10 @@ public class MatrizLancamentoController extends BaseController {
     private void removerEAdicionarMapa(final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar, final Date novaData) {
         
+    	
+    	LinkedList <Lancamento> lancamentosParciaisRebistribuicao = lancamentoService.obterLancamentosRedistribuicoes();
+    	
+    	
         // Remover do mapa
         for (final ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAlterar) {
             
@@ -743,30 +1084,155 @@ public class MatrizLancamentoController extends BaseController {
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
-            
-            if (produtosLancamentoDTO.isEmpty()) {
-                
-                matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
-                
-            } else {
-            	//Verificar se ja possui o produto - edicao no dia.
-            	//caso exista, nao permitir que a data seje alterada trac 184
-            	
-            	boolean existeProdutoEdicaoDia = lancamentoService.existeProdutoEdicaoParaDia(produtoLancamentoDTO,novaData);
-            	
-            	if(existeProdutoEdicaoDia){
-            		
-            		String stNovadata = "";
-            		
-            		if(novaData!=null){
-            			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
-            			stNovadata = ft.format(novaData);
-            		}
-            		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
-            				 "Já existe o produto "+produtoLancamentoDTO.getNomeProduto()+
-            				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
-            				 " para o dia "+stNovadata));
+
+            	String stNovadata = "";
+        		
+            	if(novaData!=null){
+            	 SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+            	 stNovadata = ft.format(novaData);
             	}
+            	
+            	Lancamento lancamento =null;
+            	Lancamento lancamentoAnterior=null;
+            	Lancamento lancamentoPosterior=null;
+            	
+
+            	for(int i =0;i<lancamentosParciaisRebistribuicao.size();i++){
+            		
+            		if(lancamentosParciaisRebistribuicao.get(i).getId().longValue() == produtoLancamentoDTO.getIdLancamento().longValue()){
+            			
+            			lancamento = lancamentosParciaisRebistribuicao.get(i);
+            			
+            			if(i>0 && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue()==
+            			lancamentosParciaisRebistribuicao.get(i-1).getProdutoEdicao().getId()){
+
+            			  lancamentoAnterior = lancamentosParciaisRebistribuicao.get(i-1);
+            			}
+            			
+            			if(i<lancamentosParciaisRebistribuicao.size()-1 && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue()==
+                    	  lancamentosParciaisRebistribuicao.get(i+1).getProdutoEdicao().getId()){
+
+                    	  lancamentoPosterior = lancamentosParciaisRebistribuicao.get(i+1);
+            			}
+            			
+            			if(lancamentoAnterior!=null ||lancamentoPosterior!=null){
+            				break;
+            			}
+            		}
+            	}
+            	
+            	if(lancamentoAnterior!=null 
+            	  && lancamentoAnterior.getPeriodoLancamentoParcial()!=null
+            	  && lancamento.getPeriodoLancamentoParcial()!=null
+            	  && lancamentoAnterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+            	  !=lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+            	  ){
+            		
+            		//No caso de parciais, a data de lançamento de uma parcial não pode inferior ao recolhimento da parcial anterior, se existir.
+            		if(novaData.before(lancamentoAnterior.getDataRecolhimentoDistribuidor())){
+            			
+            			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+                  				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
+                  				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+                  				 " não pode ser antecipado para o dia "+stNovadata+
+                  				 " pois já existe lançamento com data recolhimento "+
+                  				 lancamentoAnterior.getDataRecolhimentoDistribuidor()+
+                  				 " (Parciais Diferentes)"
+       					));
+            		}
+
+            	} else if(lancamentoAnterior!=null 
+                  	  && lancamentoAnterior.getPeriodoLancamentoParcial()!=null
+                	  && lancamentoAnterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+                	  ==lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+                	  ){
+            		
+            		if(!novaData.after(lancamentoAnterior.getDataLancamentoDistribuidor())){
+            			
+            			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+                  				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
+                  				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+                  				 " não pode ser antecipado para o dia "+stNovadata+
+                  				 " pois já existe lançamento com data lancamento "+
+                  				 lancamentoAnterior.getDataLancamentoDistribuidor()+
+                 				 " (Parciais Iguais)"
+       					));
+            		}
+            		
+            	} else if(lancamentoAnterior!=null && lancamentoAnterior.getPeriodoLancamentoParcial()==null){
+            	
+                     if(!novaData.after(lancamentoAnterior.getDataLancamentoDistribuidor())){
+            			
+            			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+                  				 "O produto  "+produtoLancamentoDTO.getNomeProduto()+
+                  				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+                  				 " não pode ser antecipado para o dia "+stNovadata+
+                  				 " pois já existe lançamento com data lancamento "+
+                  				 lancamentoAnterior.getDataLancamentoDistribuidor()+
+                 				 " (Parciais Iguais)"
+       					));
+            		}
+                // Posterior
+            	} else if(lancamentoPosterior!=null 
+                  	  && lancamentoPosterior.getPeriodoLancamentoParcial()!=null
+                	  && lancamento.getPeriodoLancamentoParcial()!=null
+                	  && lancamentoPosterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+                	  !=lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+                	  ){
+                		
+                		//No caso de parciais, a data de lançamento de uma parcial não pode inferior ao recolhimento da parcial anterior, se existir.
+                		if(!novaData.before(lancamentoPosterior.getDataLancamentoDistribuidor())){
+                			
+                			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+                      				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
+                      				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+                      				 " não pode ser posterior para o dia "+stNovadata+
+                      				 " pois já existe lançamento com data recolhimento "+
+                      				lancamentoPosterior.getDataRecolhimentoDistribuidor()+
+                      				 " (Parciais Diferentes)"
+           					));
+                		}
+
+                	} else if(lancamentoPosterior!=null 
+                      	  && lancamentoPosterior.getPeriodoLancamentoParcial()!=null
+                    	  && lancamentoPosterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+                    	  ==lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+                    	  ){
+                		
+                		if(!novaData.before(lancamentoPosterior.getDataLancamentoDistribuidor())){
+                			
+                			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+                      				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
+                      				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+                      				 " não pode ser posterior para o dia "+stNovadata+
+                      				 " pois já existe lançamento com data lancamento "+
+                      				lancamentoPosterior.getDataLancamentoDistribuidor()+
+                     				 " (Parciais Iguais)"
+           					));
+                		}
+                		
+                	} else if(lancamentoPosterior!=null && lancamentoPosterior.getPeriodoLancamentoParcial()==null){
+                	
+                         if(!novaData.before(lancamentoPosterior.getDataLancamentoDistribuidor())){
+                			
+                			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+                      				 "O produto  "+produtoLancamentoDTO.getNomeProduto()+
+                      				 " , edição "+produtoLancamentoDTO.getNumeroEdicao()+
+                      				 " não pode ser posterior para o dia "+stNovadata+
+                      				 " pois já existe lançamento com data lancamento "+
+                      				lancamentoPosterior.getDataLancamentoDistribuidor()+
+                     				 " (Parciais Iguais)"
+           					));
+                		}
+                	//}
+            	
+            	
+            	//}
+                if (produtosLancamentoDTO.isEmpty()) {
+                         
+                 matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
+                         
+                }
             	
                 produtoLancamentoDTO.setAlterado(true);
                 produtoLancamentoDTO.setStatus(StatusLancamento.CONFIRMADO);
@@ -805,8 +1271,7 @@ public class MatrizLancamentoController extends BaseController {
         
         final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
         
-        listaProdutoLancamento = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao
-                .getSortColumn());
+        listaProdutoLancamento = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
         
         final List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
         
@@ -869,9 +1334,14 @@ public class MatrizLancamentoController extends BaseController {
         produtoBalanceamentoVO.setDataRecolhimentoPrevista(DateUtil.formatarDataPTBR(produtoLancamentoDTO
                 .getDataRecolhimentoPrevista()));
         
+        produtoBalanceamentoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR(produtoLancamentoDTO
+                .getDataRecolhimentoDistribuidor()));
+        
         produtoBalanceamentoVO.setId(produtoLancamentoDTO.getIdLancamento());
         
         produtoBalanceamentoVO.setDescricaoLancamento(produtoLancamentoDTO.getDescricaoLancamento());
+        
+        produtoBalanceamentoVO.setNomeFantasia(produtoLancamentoDTO.getNomeFantasia());
         
         produtoBalanceamentoVO.setNomeProduto(produtoLancamentoDTO.getNomeProduto());
         produtoBalanceamentoVO.setNumeroEdicao(produtoLancamentoDTO.getNumeroEdicao());
@@ -924,6 +1394,8 @@ public class MatrizLancamentoController extends BaseController {
             
             produtoBalanceamentoVO.setCancelado(false);
         }
+        
+        produtoBalanceamentoVO.setProdutoContaFirme(produtoLancamentoDTO.isProdutoContaFirme());
         
         return produtoBalanceamentoVO;
     }
@@ -1084,6 +1556,8 @@ public class MatrizLancamentoController extends BaseController {
      */
     private ResultadoResumoBalanceamentoVO obterResultadoResumoLancamento(
             final BalanceamentoLancamentoDTO balanceamentoBalanceamento) {
+    	
+    	String statusResumo= StatusLancamento.BALANCEADO.name();
         
         if (balanceamentoBalanceamento == null || balanceamentoBalanceamento.getMatrizLancamento() == null
                 || balanceamentoBalanceamento.getMatrizLancamento().isEmpty()) {
@@ -1095,6 +1569,8 @@ public class MatrizLancamentoController extends BaseController {
         
         for (final Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoBalanceamento.getMatrizLancamento()
                 .entrySet()) {
+        	
+        	statusResumo= StatusLancamento.BALANCEADO.name();
             
             final Date dataRecolhimento = entry.getKey();
             
@@ -1116,6 +1592,19 @@ public class MatrizLancamentoController extends BaseController {
                 BigDecimal valorTotal = BigDecimal.ZERO;
                 
                 for (final ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+                	
+                	if(
+                	 produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.CONFIRMADO.name())
+                	|| produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.PLANEJADO.name()) 
+                	|| produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.FURO.name())){
+                	 statusResumo = StatusLancamento.CONFIRMADO.name();
+                	} else if(produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.EM_BALANCEAMENTO.name()) && (statusResumo.equals(StatusLancamento.BALANCEADO.name())||statusResumo.equals(StatusLancamento.EM_BALANCEAMENTO.name()))){
+                	 statusResumo = StatusLancamento.EM_BALANCEAMENTO.name();
+                	} else if(produtoBalanceamento.getStatusLancamento().equals(StatusLancamento.BALANCEADO.name())&& statusResumo.equals(StatusLancamento.BALANCEADO.name()) ){
+                   	 statusResumo = StatusLancamento.BALANCEADO.name();
+                   	}else{
+                		
+                	}
                     
                     if (produtoBalanceamento.isLancamentoAgrupado()) {
                         
@@ -1129,7 +1618,9 @@ public class MatrizLancamentoController extends BaseController {
                     
                     if (produtoBalanceamento.getPeso() != null) {
                         
-                        pesoTotal += produtoBalanceamento.getPeso();
+                        pesoTotal +=
+                            produtoBalanceamento.getPeso()
+                                * produtoBalanceamento.getRepartePrevisto().longValue();
                     }
                     
                     if (produtoBalanceamento.getValorTotal() != null) {
@@ -1152,6 +1643,8 @@ public class MatrizLancamentoController extends BaseController {
                     excedeCapacidadeDistribuidor = balanceamentoBalanceamento.getCapacidadeDistribuicao().compareTo(
                             qtdeExemplares) == -1;
                 }
+                
+                itemResumoPeriodoBalanceamento.setStatusResumo(statusResumo);
                 
                 itemResumoPeriodoBalanceamento.setExcedeCapacidadeDistribuidor(excedeCapacidadeDistribuidor);
                 
@@ -1285,7 +1778,10 @@ public class MatrizLancamentoController extends BaseController {
      */
     private void removerAtributoAlteracaoSessao() {
         
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, null);
         session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
+        //session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+        session.setAttribute(DATA_ATUAL_SELECIONADA, null);
     }
     
     @Post
@@ -1335,7 +1831,7 @@ public class MatrizLancamentoController extends BaseController {
             
             if (confirmacaoVO.isConfirmado()) {
                 
-                if (distribuidorService.obterDataOperacaoDistribuidor().before(data)) {
+                if (!data.before(distribuidorService.obterDataOperacaoDistribuidor())) {
                     
                     datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
                 }
@@ -1361,7 +1857,12 @@ public class MatrizLancamentoController extends BaseController {
         final FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
         
         // Recarrega o objeto na sessao
-        this.obterBalanceamentoLancamento(filtro);
+        BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
+        
+        //Aqui balanceamentoLancamentoDTO.
+        
+        session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
         
         result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive()
@@ -1377,6 +1878,11 @@ public class MatrizLancamentoController extends BaseController {
         result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
         
+    }
+    
+    public enum ValidacaoDataLancamento {
+        
+        DATA_JA_CONFIRMADA, PEB_MENOR_7_DIAS, DATA_VALIDA
     }
     
 }

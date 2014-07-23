@@ -25,7 +25,7 @@ public interface FechamentoEncalheService {
 	
 	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
 
-	Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao);
+	Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, Integer numeroCota);
 
 	void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas);
 	
@@ -73,8 +73,6 @@ public interface FechamentoEncalheService {
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
 	
-	void gerarNotaFiscal(Date dataEncalhe);
-
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);

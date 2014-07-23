@@ -31,6 +31,9 @@ function filtroPorCotaFixacao(){
 	$("#codigoProdutoFixacao").val("");
 	$("#nomeProdutoFixacao").val("");
 	
+	$("#fixReparte_divBotoesPorProduto").hide();
+	$("#fixReparte_divBotoesPorCota").show();
+	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
 	
@@ -42,6 +45,9 @@ function filtroPorProdutoFixacao(){
 	$('#fixacaoReparte_porCota').hide();
 	$("#codigoCotaFixacao").val("");
 	$("#nomeCotaFixacao").val("");
+	
+	$("#fixReparte_divBotoesPorProduto").show();
+	$("#fixReparte_divBotoesPorCota").hide();
 	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
@@ -167,7 +173,7 @@ function mostraIntervalo(){
 
 <div class="areaBts">
 		<div class="area">
-			<div class="porExcessao" style="display:none">
+			<div class="porExcessao" id="fixReparte_divBotoesPorProduto" style="display:none">
 				<span class="bt_novos" id="btNovoProduto">
 					<a href="javascript:;" rel="tipsy" title="Incluir Novo">
 						<img src="images/ico_salvar.gif" hspace="5" border="0" />
@@ -194,7 +200,7 @@ function mostraIntervalo(){
 					</a>
 				</span>
 			</div>
-			<div class="porCota" style="display:none;">
+			<div class="porCota" id="fixReparte_divBotoesPorCota" style="display:none;">
 				<span class="bt_novos" id="btNovoCota">
 					<a href="javascript:;" rel="tipsy" title="Incluir Novo">
 						<img src="images/ico_salvar.gif" hspace="5" border="0" />
@@ -229,7 +235,7 @@ function mostraIntervalo(){
     <br />
     
     
-    <fieldset class="classFieldset">
+    <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Pesquisar Fixação</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
@@ -372,7 +378,8 @@ function mostraIntervalo(){
 	<div id="modalUploadArquivo" title="Adicionar em Lote" style="display:none;">
 	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
 			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
-			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls" rel="tipsy" title="Download Modelo"><img align="center" src="images/ico_excel.png" hspace="5" border="0" /></a></span></p>
+			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls" rel="tipsy" title="Download Modelo">
+			<img align="center" src="images/ico_excel.png" hspace="5" border="0" /> Modelo de exemplo</a></span></p>
 			<br><br><br>
 			<hr>
 			<p>Selecione um arquivo para upload:</p>

@@ -49,6 +49,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		if (!StringUtil.isEmpty(nomeBox)) {
 		    criteria.add(Restrictions.ilike("nome", nomeBox, MatchMode.START));
 		}
+		criteria.addOrder(Order.asc("codigo"));
 		
 		return criteria.list();
 		
@@ -316,55 +317,81 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	@Override
 	public List<Cota> obterCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
         
-		StringBuilder hql = new StringBuilder();
+	    StringBuilder hql = new StringBuilder("select cota ");
+	    
+	    Query query = this.getSession().createQuery(
+	            this.obterQueryCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota, hql));
 		
-		hql.append(" select distinct cota from Box b  ");
-		
-		if(idRoteiro!=null && idRoteiro>0){
-			
-		    hql.append(", Roteirizacao roteirizacao ");
-		    hql.append(" join roteirizacao.roteiros roteiro ");
-		    hql.append(" join roteirizacao.box box ");
-		    
-		    if (idRota!=null && idRota>0){
-		    	
-				hql.append("join roteiro.rotas rota ");
-			}
-		}  
-		
-		hql.append(" join b.cotas cota ");
-		
-		hql.append(" where b.id = :idBox");
-		
-		if(idRoteiro!=null && idRoteiro>0){
-			
-			hql.append(" and box.id = b.id ");
-		    hql.append(" and roteiro.id = :idRoteiro ");
-		    
-		    if (idRota!=null && idRota>0){
-		    	
-				hql.append(" and rota.id = :idRota ");
-			}
-		}
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idBox", idBox);
-		
-		if (idRoteiro!=null && idRoteiro>0){
-			
-			query.setParameter("idRoteiro", idRoteiro);
-			
-			if(idRota!=null && idRota>0){
-				
-			    query.setParameter("idRota", idRota);
-			}
-		}
+		this.setParametrosCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota, query);
 		
 		return query.list();
 	}
-	
-	/**
+
+    private String obterQueryCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota, StringBuilder hql) {
+        
+	    hql.append(" from PDV pdv ")
+	       .append(" join pdv.cota cota ")
+	       .append(" join pdv.rotas rotaPDV ")
+	       .append(" join rotaPDV.rota rota ")
+	       .append(" join rota.roteiro roteiro ")
+	       .append(" join roteiro.roteirizacao roteirizacao ")
+	       .append(idBox != null && idBox < 1 ? " left" : "")
+	       .append(" join roteirizacao.box box ");
+	    
+	    boolean indWhere = false;
+	    
+	    if (idRota != null && idRota != 0){
+	        
+	        hql.append(indWhere ? " and " : " where ")
+	           .append(" rota.id = :idRota ");
+	        
+	        indWhere = true;
+	    }
+
+        if (idRoteiro != null && idRoteiro != 0){
+            
+            hql.append(indWhere ? " and " : " where ")
+               .append(" roteiro.id = :idRoteiro ");
+            indWhere = true;
+        }
+        
+        if (idBox != null){
+            
+            hql.append(indWhere ? " and " : " where ");
+            
+            if (idBox < 1){
+                
+                hql.append(" roteirizacao.box is null ");
+            } else {
+                
+                hql.append(" box.id = :idBox ");
+            }
+        }
+        
+        hql.append("order by box.codigo, roteiro.ordem, rota.ordem ");
+    
+        return hql.toString();
+    }
+    
+    private void setParametrosCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota, Query query) {
+        
+        if (idRota != null && idRota != 0){
+            
+            query.setParameter("idRota", idRota);
+        }
+        
+        if (idRoteiro != null && idRoteiro != 0){
+            
+            query.setParameter("idRoteiro", idRoteiro);
+        }
+        
+        if (idBox != null && idBox > 0){
+            
+            query.setParameter("idBox", idBox);
+        }
+    }
+
+    /**
 	 * Obtém Quantidade de Cotas por Box, Rota e Roteiro
 	 * @param idBox
 	 * @param idRoteiro
@@ -374,50 +401,11 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	@Override
 	public Long obterQuantidadeCotasPorBoxRoteiroRota(Long idBox, Long idRoteiro, Long idRota) {
         
-		StringBuilder hql = new StringBuilder();
+		StringBuilder hql = new StringBuilder("select count(cota.id) ");
 		
-		hql.append(" select count(cota) from Box b  ");
+		Query query = this.getSession().createQuery(this.obterQueryCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota, hql));
 		
-		if(idRoteiro!=null && idRoteiro>0){
-			
-		    hql.append(", Roteirizacao roteirizacao ");
-		    hql.append(" join roteirizacao.roteiros roteiro ");
-		    hql.append(" join roteirizacao.box box ");
-		    
-		    if (idRota!=null && idRota>0){
-		    	
-				hql.append("join roteiro.rotas rota ");
-			}
-		}  
-		
-		hql.append(" join b.cotas cota ");
-		
-		hql.append(" where b.id = :idBox");
-		
-		if(idRoteiro!=null && idRoteiro>0){
-			
-			hql.append(" and box.id = b.id ");
-		    hql.append(" and roteiro.id = :idRoteiro ");
-		    
-		    if (idRota!=null && idRota>0){
-		    	
-				hql.append(" and rota.id = :idRota ");
-			}
-		}
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idBox", idBox);
-		
-		if (idRoteiro!=null && idRoteiro>0){
-			
-			query.setParameter("idRoteiro", idRoteiro);
-			
-			if(idRota!=null && idRota>0){
-				
-			    query.setParameter("idRota", idRota);
-			}
-		}
+		this.setParametrosCotasPorBoxRoteiroRota(idBox, idRoteiro, idRota, query);
 		
 		return (Long) query.uniqueResult();
 	}

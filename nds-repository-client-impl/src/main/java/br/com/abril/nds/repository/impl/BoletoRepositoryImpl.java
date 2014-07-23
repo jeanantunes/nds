@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDe
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -346,23 +348,60 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
      * @param dividaAcumulada
      */
 	@Override
-	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
+	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apneasBoletoPagavel) {
 		
 		Criteria criteria = super.getSession().createCriteria(Boleto.class);
 		
 		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
 		
-		if (dividaAcumulada != null) {
+		if (dividaAcumulada != null || apneasBoletoPagavel) {
 			
 			criteria.createAlias("divida", "divida");
 			
 			criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
 		}
 		
+		if (apneasBoletoPagavel){
+		    
+		    criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
+		    criteria.add(Restrictions.isNull("dataPagamento"));
+		    criteria.add(Restrictions.in("divida.status", 
+		            Arrays.asList(
+		                    StatusDivida.EM_ABERTO, 
+		                    StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, 
+		                    StatusDivida.PENDENTE_INADIMPLENCIA)));
+		}
+		
 		criteria.setMaxResults(1);
 		
 		return (Boleto) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+    @Override
+    public List<Boleto> obterPorNossoNumero(Collection<String> nossoNumero) {
+	    
+	    StringBuilder hql = new StringBuilder("select b from Boleto b ");
+	    hql.append(" JOIN b.cota cota ")
+           .append(" left JOIN cota.box box ")
+           .append(" left JOIN cota.pdvs pdv ")
+           .append(" left JOIN cota.pessoa pessoa ")
+           .append(" left JOIN cota.parametroCobranca parametroCobranca ")
+           .append(" left JOIN pdv.rotas rotaPdv  ")
+           .append(" left JOIN rotaPdv.rota rota  ")
+           .append(" left JOIN rota.roteiro roteiro ")
+           .append(" where b.nossoNumero in (:nossoNumero) ")
+           .append(" and roteiro.tipoRoteiro != :tipoRoteiroEspecial ")
+           .append(" ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+	    
+	    final Query query = this.getSession().createQuery(hql.toString());
+        
+	    query.setParameterList("nossoNumero", nossoNumero);
+	    
+	    query.setParameter("tipoRoteiroEspecial", TipoRoteiro.ESPECIAL);
+	    
+        return query.list();
+    }
 	
 	@Override
 	public Boleto obterPorNossoNumeroCompleto(String nossoNumeroCompleto, Boolean dividaAcumulada) {
@@ -509,7 +548,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
   		   .append("			then cobranca.cota.pessoa.nome")
   		   .append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ")
   		   .append(" 		cobranca.banco.apelido as nomeBanco, ")
-		   .append(" 		concat(cobranca.banco.conta, '-', cobranca.banco.dvConta) as numeroConta, ")
+		   .append(" 		concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ")
   		   .append(" 		cobranca.nossoNumeroCompleto as nossoNumero, ")
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		cobranca.dataVencimento as dataVencimento ")
@@ -541,7 +580,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("			then cobranca.cota.pessoa.nome");
 		hql.append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ");
 		hql.append("  banco.apelido as nomeBanco, ");
-		hql.append("  concat(banco.conta, '-', banco.dvConta) as numeroConta, ");
+		hql.append("  concat(banco.conta, case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ");
 		hql.append("  cobranca.nossoNumero as nossoNumero, ");
 		hql.append("  baixaAutomatica.valorPago as valorBoleto, ");
 		hql.append("  cobranca.dataVencimento as dataVencimento");
@@ -572,7 +611,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" select baixaAutomatica.status as motivoRejeitado, ")
 		   .append(" 		baixaAutomatica.banco.apelido as nomeBanco, ")
-		   .append(" 		concat(baixaAutomatica.banco.conta, '-', baixaAutomatica.banco.dvConta) as numeroConta, ")
+		   .append(" 		concat(baixaAutomatica.banco.conta, case when baixaAutomatica.banco.dvConta is not null then concat('-',baixaAutomatica.banco.dvConta) else '' end) as numeroConta, ")
 		   .append(" 		baixaAutomatica.valorPago as valorBoleto ")
 		   .append(this.obterFromWhereConsultaBoletosRejeitados());
 		
@@ -601,7 +640,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" select baixaAutomatica.status as motivoDivergencia, ")
 		   .append(" 		baixaAutomatica.banco.apelido as nomeBanco, ")
-		   .append(" 		concat(baixaAutomatica.banco.conta, '-', baixaAutomatica.banco.dvConta) as numeroConta, ")
+		   .append(" 		concat(baixaAutomatica.banco.conta, case when baixaAutomatica.banco.dvConta is not null then concat('-',baixaAutomatica.banco.dvConta) else '' end) as numeroConta, ")
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		baixaAutomatica.valorPago as valorPago, ")
 		   .append(" 		cobranca.valor - baixaAutomatica.valorPago as valorDiferenca ")
@@ -633,7 +672,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("			then cobranca.cota.pessoa.nome");
 		hql.append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ");
 		hql.append("  cobranca.banco.apelido as nomeBanco, ");
-		hql.append("  concat(cobranca.banco.conta, '-', cobranca.banco.dvConta) as numeroConta, ");
+		hql.append("  concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ");
 		hql.append("  cobranca.nossoNumero as nossoNumero, ");
 		hql.append("  cobranca.valor as valorBoleto, ");
 		hql.append("  cobranca.dataVencimento as dataVencimento");
@@ -663,7 +702,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select banco.apelido as nomeBanco, ")
-		   .append(" 		concat(banco.conta, '-', banco.dvConta) as numeroConta, ")
+		   .append(" 		concat(banco.conta, case when banco.dvConta is not null then concat('-', banco.dvConta) else '' end) as numeroConta, ")
   		   .append(" 		sum(baixaAutomatica.valorPago) as valorPago, ")
   		   .append(" 		baixaAutomatica.dataPagamento as dataVencimento ")
   		   .append(this.obterFromWhereConsultaTotalBancario())
@@ -905,11 +944,13 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" and cobranca.statusCobranca =:statusCobranca ");
 		hql.append(" and divida.status != :statusPendente ");
 		hql.append(" and cobranca.dataPagamento is null ");
+		hql.append(" and cobranca.oriundaNegociacaoAvulsa = :oriundaNegociacaoAvulsa ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+		query.setParameter("oriundaNegociacaoAvulsa", false);
 		query.setParameter("statusPendente", StatusDivida.PENDENTE_INADIMPLENCIA);
 		
 		return query.list();

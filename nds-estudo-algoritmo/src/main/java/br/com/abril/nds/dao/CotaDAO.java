@@ -191,7 +191,13 @@ public class CotaDAO {
 		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
 		cota.setMix(rs.getBoolean("MIX"));
-		cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
+		
+		if(rs.getString("TIPO_DISTRIBUICAO_COTA")!=null && !rs.getString("TIPO_DISTRIBUICAO_COTA").isEmpty()) {
+			cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
+		} else {
+			cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.CONVENCIONAL);
+		}
+		
 		cota.setRecebeParcial(rs.getBoolean("RECEBE_RECOLHE_PARCIAIS"));
 		cota.setExcecaoParcial(rs.getBoolean("COTA_EXCECAO_PARCIAL"));
 		traduzAjusteReparte(rs, cota);
@@ -253,6 +259,7 @@ public class CotaDAO {
 	params.put("produto_edicao_id", edicao.getId());
 	if (edicao.isParcial()) {
 	    params.put("numero_periodo", edicao.getPeriodo());
+	    params.put("dtLancamento", edicao.getDataLancamento());
 	}
 	List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
 	    @Override

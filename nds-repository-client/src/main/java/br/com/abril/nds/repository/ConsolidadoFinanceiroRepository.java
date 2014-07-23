@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoFinanceiroCota, Long> {
 	
@@ -54,4 +55,9 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	 * Método que obtem os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota do tipo À Vista
 	 */
 	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
+
+    List<DebitoCreditoCota> buscarMovFinanPorCotaEData(
+            Long idCota, List<Date> datas, Long idFornecedor);
+
+    List<DebitoCreditoCota> obterConsolidadosDataOperacaoSlip(Long idCota, Date dataOperacao);
 }

@@ -48,18 +48,18 @@ public class ReparteFecharDiaDTO implements Serializable {
     @Export(label = "Transf.", alignment = Alignment.CENTER, exhibitionOrder = 8)
 	private BigInteger qtdeTransferencia;
 	
-    @Export(label = "A Distr.", alignment = Alignment.CENTER, exhibitionOrder = 9)
+    @Export(label = "Promocional", alignment = Alignment.CENTER, exhibitionOrder = 9)
+   	private BigInteger qtdeDiferenca;
+      
+    @Export(label = "A Distr.", alignment = Alignment.CENTER, exhibitionOrder = 10)
 	private BigInteger qtdeDistribuir;
 	
-    @Export(label = "Distribuido", alignment = Alignment.CENTER, exhibitionOrder = 10)
+    @Export(label = "Distribuido", alignment = Alignment.CENTER, exhibitionOrder = 11)
 	private BigInteger qtdeDistribuido;
 	
-    @Export(label = "Sobra Distr.", alignment = Alignment.LEFT, exhibitionOrder = 11)
+    @Export(label = "Sobra Distr.", alignment = Alignment.LEFT, exhibitionOrder = 12)
 	private BigInteger qtdeSobraDistribuicao;
-	
-    @Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 12)
-	private BigInteger qtdeDiferenca;
-    
+	 
     private BigInteger qtdeDiferencaLogicoFisico;
 
 	private BigDecimal sobras;
@@ -80,7 +80,7 @@ public class ReparteFecharDiaDTO implements Serializable {
 	
     public ReparteFecharDiaDTO(Long idProdutoEdicao, String codigo, String nomeProduto, Long numeroEdicao, BigDecimal precoVenda, BigInteger qtdeReparte,
             BigInteger qtdeSobraDe, BigInteger qtdeSobraEm, BigInteger qtdeFaltaDe, BigInteger qtdeFaltaEm, BigInteger qtdeDistribuido, 
-            BigInteger qtdeTransferencia) {
+            BigInteger qtdeTransferencia, BigInteger qtdeDiferenca) {
         this.idProdutoEdicao = idProdutoEdicao;
     	this.codigo = codigo;
         this.nomeProduto = nomeProduto;
@@ -93,12 +93,11 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.qtdeFaltaEm = Util.nvl(qtdeFaltaEm, BigInteger.ZERO);
         this.qtdeDistribuido = Util.nvl(qtdeDistribuido, BigInteger.ZERO);
         this.qtdeTransferencia = Util.nvl(qtdeTransferencia, BigInteger.ZERO);
-        
+        this.qtdeDiferenca = Util.nvl(qtdeDiferenca, BigInteger.ZERO);
         this.qtdeSobra = this.qtdeSobraDe.add(this.qtdeSobraEm);
         this.qtdeFalta = this.qtdeFaltaDe.add(this.qtdeFaltaEm);
-        this.qtdeDistribuir = this.qtdeReparte.add(this.qtdeSobra).subtract(this.qtdeFalta).add(this.qtdeTransferencia);
+        this.qtdeDistribuir = this.qtdeReparte.add(this.qtdeSobra).subtract(this.qtdeFalta).add(this.qtdeTransferencia).subtract(this.qtdeDiferenca);
         this.qtdeSobraDistribuicao = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
-        this.qtdeDiferenca = this.qtdeDistribuir.subtract(this.qtdeDistribuido).subtract(this.qtdeSobraDistribuicao);
         this.qtdeDiferencaLogicoFisico = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
         this.valorPrecoCapaFormatado = (precoVenda == null) ? CurrencyUtil.formatarValor(BigDecimal.ZERO) :  CurrencyUtil.formatarValor(precoVenda);
         

@@ -5,8 +5,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -32,28 +30,39 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
-import br.com.abril.nds.model.planejamento.EstudoPDV;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.InformacoesProdutoService;
+import br.com.abril.nds.service.MixCotaProdutoService;
+import br.com.abril.nds.service.PdvService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.util.BigIntegerUtil;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
+
+    private static final int QTDE_PARCIAIS_BASE = 3;
 
     @Autowired
     private EstudoPDVRepository estudoPDVRepository;
@@ -78,9 +87,18 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Autowired
     private ProdutoEdicaoRepository produtoEdicaoRepository;
+    
+    @Autowired
+    private ProdutoService produtoServc;
 
     @Autowired
     private InformacoesProdutoService infoProdService;
+    
+    @Autowired
+    private FixacaoReparteService fixacaoReparteService;
+
+    @Autowired
+    private MixCotaProdutoService mixCotaService;
     
     @Autowired
 	private EstudoService estudoService;
@@ -91,23 +109,28 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Autowired
     private EstudoGeradoRepository estudoGerado;
     
+    @Autowired 
+    private UsuarioService usuarioService;
+    
+    @Autowired
+    private PdvService pdvService;
+    
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
     
     private Map<String, String> mapClassificacaoCota;
 
     @Override
     @Transactional
     public EstudoCotaGerado buscarPorId(Long id) {
+    	if(id== null){
+    		return null;
+    	}
     	EstudoCotaGerado estudo = new EstudoCotaGerado();
         estudo.setEstudo(estudoGeradoRepository.buscarPorId(id));
         return estudo;
     }
-
-    @Override
-    @Transactional
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
-        return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId);
-    }
-
+    
     @Override
     @Transactional
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
@@ -115,19 +138,38 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
         
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
-            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId()));
+    	    
+            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial()));
+            
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
-                int contadorParciais = 0;
-                for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+                int contadorParciais = 1;
+                
+                List<EdicoesProdutosDTO> edicoesProdutoPorCota =
+                    this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota());
+                
+                for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
                     if (edicoesProdutosDTO.isParcial()) {
-                        temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), edicoesProdutosDTO.getEdicao().longValue(), edicoesProdutosDTO.getCodigoProduto(), Long.valueOf(edicoesProdutosDTO.getPeriodo())));
-                        if (++contadorParciais > 2) {
+
+                        temp.add(edicoesProdutosDTO);
+                        
+                        if (contadorParciais++ >= QTDE_PARCIAIS_BASE) {
                             break;
                         }
                     }
                 }
+                
+                this.completarParciaisBase(temp, QTDE_PARCIAIS_BASE);
+                
+                EdicoesProdutosDTO edicoesProdutosAcumulado = 
+                        this.getReparteVendaAcumulado(edicoesProdutoPorCota);
+                
+                if (edicoesProdutosAcumulado != null) {
+                
+                    temp.add(edicoesProdutosAcumulado);
+                }
+                
                 item.setEdicoesBase(temp);
             }
         } else {
@@ -167,6 +209,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao);
                     edicoesComVenda.addAll(buscaHistoricoDeVendas);
                 		
+                    /*
                     if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
                         AnaliseParcialDTO buscarReparteDoEstudo = analiseParcialRepository.buscarReparteDoEstudo(queryDTO.getEstudoOrigem(), item.getCota());
 
@@ -181,6 +224,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                             }
                         }
                     }
+                    */
                 		
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                         for (EdicoesProdutosDTO ed : edicoesComVenda) {
@@ -194,24 +238,134 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                         }
                     }
                 }
-                // tratamento para deixar as vendas zeradas em caso de edicao aberta
-                for (EdicoesProdutosDTO edicao : edicoesProdutosDTOMap.values()) {
-                    if (edicao.isEdicaoAberta()) {
-                	    edicao.setVenda(BigDecimal.ZERO);
-                    }
-                }
+                
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
             }
         }
+    	
+    	for (AnaliseParcialDTO itemCota : lista) {
+			
+    		if(itemCota.getNpdv().compareTo(BigInteger.ONE) > 0){
+				
+				Integer qtdRepartePDVDefinido = 0;
+				
+				EstudoGerado estGerado = estudoGerado.buscarPorId(queryDTO.getEstudoId());
+				Cota cota = cotaRepository.obterPorNumerDaCota(itemCota.getCota());
+				
+				switch (itemCota.getLeg()) {
+				case "MX":
+					
+					if(estGerado.getProdutoEdicao().getTipoClassificacaoProduto() == null){
+						break;
+					}
+					
+					MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estGerado.getProdutoEdicao().getProduto().getCodigoICD());
+					
+					if(mixCotaProduto != null){
+						for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+							if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
+								++qtdRepartePDVDefinido;
+							}
+						}
+					}
+					
+					break;
+
+				case "FX":
+					
+					if(estGerado.getProdutoEdicao().getTipoClassificacaoProduto() == null){
+						break;
+					}
+					
+					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, estGerado.getProdutoEdicao().getProduto().getCodigoICD(), estGerado.getProdutoEdicao().getTipoClassificacaoProduto());
+					
+					if(fixacaoReparte != null){
+						for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
+							if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
+								++qtdRepartePDVDefinido;
+							}
+						}
+					}
+					
+					break;
+					
+				default:
+					List<PdvDTO> pdvs = pdvService.obterPDVs(itemCota.getCota());
+					for (PdvDTO pdv : pdvs) {
+						if(pdv.getReparte() != null && pdv.getReparte() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					break;
+				}
+				
+				if(qtdRepartePDVDefinido > 1){
+					itemCota.setContemRepartePorPDV(true);
+				}
+				
+			}
+    		
+		}
+    	
         return lista;
     }
 
+    private void completarParciaisBase(List<EdicoesProdutosDTO> temp, int quantidadeParciaisBase) {
+        
+        for (int i = temp.size(); i < quantidadeParciaisBase; i++) {
+            
+            temp.add(new EdicoesProdutosDTO());
+        }
+    }
+    
+    private EdicoesProdutosDTO getReparteVendaAcumulado(List<EdicoesProdutosDTO> edicoesProdutoPorCota) {
+        
+        if (edicoesProdutoPorCota.isEmpty()) {
+            
+            return null;
+        }
+        
+        BigInteger reparte = BigInteger.ZERO;
+        BigInteger venda = BigInteger.ZERO;
+        
+        for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
+            
+            reparte = BigIntegerUtil.soma(reparte, edicoesProdutosDTO.getReparte());
+            venda = BigIntegerUtil.soma(venda, edicoesProdutosDTO.getVenda());
+        }
+
+        EdicoesProdutosDTO edicoesProdutosAcumulado = new EdicoesProdutosDTO();
+        
+        edicoesProdutosAcumulado.setReparte(BigDecimal.valueOf(reparte.doubleValue()));
+        edicoesProdutosAcumulado.setVenda(BigDecimal.valueOf(venda.doubleValue()));
+        
+        return edicoesProdutosAcumulado;
+    }
+
+    public List<EdicoesProdutosDTO> getEdicoesProdutoPorCota(List<EdicoesProdutosDTO> edicoesProdutosDTO, Integer numeroCota) {
+        
+        List<EdicoesProdutosDTO> edicoesProdutoPorCota = new ArrayList<>();
+        
+        for (EdicoesProdutosDTO edicaoProdutoDTO : edicoesProdutosDTO) {
+            
+            if (edicaoProdutoDTO.getNumeroCota().equals(numeroCota)) {
+                
+                edicoesProdutoPorCota.add(edicaoProdutoDTO);
+            }
+        }
+        
+        return edicoesProdutoPorCota;
+    }
+    
+    @Transactional
     private void carregarInformacoesEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
         for (EdicoesProdutosDTO edicao : edicoesBase) {
             edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
         }
     }
 
+    @Transactional
     private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
 
         List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
@@ -234,55 +388,92 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     @Transactional
-    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
-	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota);
+    public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
+	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
     }
     
     @Override
     @Transactional
-    public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado) {
+    public void atualizaReparte(Long estudoId, Integer numeroCota, Long reparte, Long reparteDigitado) {
     	
-    	this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado);
+    	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
     	
-        analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos() == 1){
+    		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
+    	}
+    	
+    	if(reparteDigitado > 0){
+    		analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
+    	}else{
+    		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(numeroCota.intValue(), estudoId);
+    		estudoCotaGerado.removerEstudoCotaGerado(estudoCota.getId());
+    	}
+    	
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
     
-    private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado) {
-    	
-    	EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(estudoId);
-    	
-    	if (estudoGerado.getDistribuicaoPorMultiplos() != null
-    			&& estudoGerado.getDistribuicaoPorMultiplos() == 1) {
+    @Transactional
+    private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado, EstudoGerado estudo) {
     		
-    		BigInteger multiplo = 
-    			new BigInteger(estudoGerado.getPacotePadrao().toString());
-    		
-    		BigInteger novoReparte = new BigInteger(reparteDigitado.toString());
-    		
-    		if (!novoReparte.mod(multiplo).equals(BigInteger.ZERO)) {
-    			
-    			throw new ValidacaoException(
-    				TipoMensagem.WARNING, "Reparte deve ser múltiplo de " + multiplo);
-    		}
-    	}
+		BigInteger multiplo = new BigInteger(estudo.getPacotePadrao().toString());
+		
+		BigInteger novoReparte = new BigInteger(reparteDigitado.toString());
+		
+		if (!novoReparte.mod(multiplo).equals(BigInteger.ZERO)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Reparte deve ser múltiplo de " + multiplo);
+		}
     }
 
     @Override
     @Transactional
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
-        return analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
+        
+    	List<PdvDTO> lista = analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
+    	
+//    	EstudoCotaGerado estCotaGerado = estudoService.obterEstudoCotaGerado(numeroCota, idEstudo);
+//    	
+//    	if(estCotaGerado.getClassificacao().equalsIgnoreCase("FX")){
+//
+////    		FixacaoReparte fixacaoReparte = fixacaoReparteService.buscarPorProdutoCotaClassificacao(estCotaGerado.getCota(), estCotaGerado.getEstudo().getProdutoEdicao().getProduto().getCodigoICD(), estCotaGerado.getEstudo().getProdutoEdicao().getTipoClassificacaoProduto());
+//    		
+////    		for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
+//			
+//    		for (PdvDTO pdv : lista) {
+//				pdv.setRepartePDV(fixPdv.getRepartePdv());
+//			}
+//
+////			}
+//    		
+//    	}else{
+//    		if(estCotaGerado.getClassificacao().equalsIgnoreCase("MX")){
+//
+//    			MixCotaProduto mixCotaProduto = mixCotaService.obterMixPorCotaProduto(estCotaGerado.getCota().getId(), estCotaGerado.getEstudo().getProdutoEdicao().getTipoClassificacaoProduto().getId(), estCotaGerado.getEstudo().getProdutoEdicao().getProduto().getCodigoICD());	
+//				
+//    			for (RepartePDV mixPdv : mixCotaProduto.getRepartesPDV()) {
+//    				for (PdvDTO pdv : lista) {
+//    					if(pdv.getId().equals(mixPdv.getPdv().getId())){
+//    						pdv.setRepartePDV(mixPdv.getReparte());
+//    					}
+//    				}
+//    			}
+//    		}
+//    	}
+    	
+    	return lista;
     }
 
     @Override
     @Transactional
     public void liberar(Long id, List<CotaLiberacaoEstudo> cotas) {
     	
-    	for (CotaLiberacaoEstudo cota : cotas) {
-    		
-    		this.validarDistribuicaoPorMultiplo(id, cota.getReparte().longValue());
-    	}
+    	EstudoGerado estudoGerado = estudoService.obterEstudo(id);
     	
+    	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos()==1){
+    		for (CotaLiberacaoEstudo cota : cotas) {
+    			this.validarDistribuicaoPorMultiplo(id, cota.getReparte().longValue(), estudoGerado);
+    		}
+    	}
     	estudoService.liberar(id);
     }
 
@@ -291,7 +482,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
-            cotaQueNaoEntrouNoEstudoDTO.setDescricaoMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
+        	
+        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo().equals("") || cotaQueNaoEntrouNoEstudoDTO.getMotivo() == null){
+        		cotaQueNaoEntrouNoEstudoDTO.setMotivo("SH");
+        	}
+        	
+            cotaQueNaoEntrouNoEstudoDTO.setSiglaMotivo(cotaQueNaoEntrouNoEstudoDTO.getMotivo());
+            cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
         }
         return cotaQueNaoEntrouNoEstudoDTOList;
     }
@@ -314,26 +511,23 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
         Map<Long, PDV> pdvMap = new HashMap<>();
+        
         for (PDV pdv : cota.getPdvs()) {
+        	
             pdvMap.put(pdv.getId(), pdv);
         }
 
         for (PdvDTO pdvDTO : reparteMap) {
-            PDV pdv = pdvMap.get(pdvDTO.getId());
-            EstudoPDV estudoPDV = estudoPDVRepository.buscarPorEstudoCotaPDV(estudo, cota, pdv);
-
-            if (estudoPDV == null) {
-                estudoPDV = new EstudoPDV();
-            estudoPDV.setEstudo(estudo);
-            estudoPDV.setCota(cota);
-                estudoPDV.setPdv(pdv);
-            }
-
-            estudoPDV.setReparte(BigInteger.valueOf(pdvDTO.getReparte()));
-            estudoPDVRepository.merge(estudoPDV);
+            
+        	PDV pdv = pdvMap.get(pdvDTO.getId());
+        	
+        	if(pdvDTO.getReparte()!= null){
+        		
+        		estudoService.gerarEstudoPDV(estudo, cota, pdv, BigInteger.valueOf(pdvDTO.getReparte()));
+        	}
         }
 
-        if (legenda.equalsIgnoreCase("FX")) {
+        if ("FX".equalsIgnoreCase(legenda)) {
             List<RepartePDVDTO> repartePDVDTOs = new ArrayList<>();
             for (PdvDTO pdvDTO : reparteMap) {
                 RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
@@ -346,7 +540,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             repartePdvService.salvarRepartesPDV(repartePDVDTOs, produto.getCodigo(),fixacaoReparte.getId(),manterFixa);
     }
 
-        if (legenda.equalsIgnoreCase("MX")) {
+        if ("MX".equalsIgnoreCase(legenda)) {
             List<RepartePDVDTO> repartePDVDTOs = new ArrayList<>();
             for (PdvDTO pdvDTO : reparteMap) {
                 RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
@@ -355,54 +549,17 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 repartePDVDTOs.add(repartePDVDTO);
             }
             Produto produto = estudo.getProdutoEdicao().getProduto();
-            MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), produto.getId());
+            MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estudo.getProdutoEdicao().getProduto().getCodigoICD());
             repartePdvService.salvarRepartesPDVMix(repartePDVDTOs, produto.getCodigo(), mixCotaProduto.getId());
         }
     }
-
+    
     @Override
     @Transactional
-    public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {
-        return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto);
+    public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao) {
+        return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto, idClassifProdEdicao);
     }
-
-    @Override
-    @Transactional
-    public List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
-        List<AnaliseEstudoDetalhesDTO> list = new LinkedList<>();
-
-        for (AnaliseEstudoDetalhesDTO dto : produtoEdicaoList) {
-            AnaliseEstudoDetalhesDTO detalhesDTO;
-            if (dto.isParcial()) {
-                detalhesDTO = analiseParcialRepository.historicoEdicaoBase(dto.getIdProdutoEdicao(), dto.getNumeroPeriodo());
-            } else {
-                detalhesDTO = analiseParcialRepository.buscarDetalhesAnalise(dto.getIdProdutoEdicao());
-            }
-            BeanUtils.copyProperties(detalhesDTO, dto, new String[]{"idProdutoEdicao", "parcial", "numeroPeriodo", "ordemExibicao"});
-            list.add(dto);
-        }
-
-        Collections.sort(list, new Comparator<AnaliseEstudoDetalhesDTO>() {
-            @Override
-            public int compare(AnaliseEstudoDetalhesDTO o1, AnaliseEstudoDetalhesDTO o2) {
-                if (o1.isParcial()) {
-                    if (o1.getDataLancamento() == null || o2.getDataLancamento() == null) {
-                        return 0;
-                    }
-                int dt = o2.getDataLancamento().compareTo(o1.getDataLancamento());
-                    if (dt != 0 || o1.getNumeroPeriodo() == null || o2.getNumeroPeriodo() == null) {
-                    return dt;
-                }
-                    return o2.getNumeroPeriodo().compareTo(o1.getNumeroPeriodo());
-                } else {
-                    return o1.getOrdemExibicao().compareTo(o2.getOrdemExibicao());
-                }
-            }
-        });
-
-        return list;
-    }
-
+    
     private String traduzClassificacaoCota(String motivo) {
         if (mapClassificacaoCota == null) {
             populaMapClassificacaoCota();
@@ -438,7 +595,91 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
 	@Override
 	@Transactional
-	public BigDecimal obterReparteLancamentoEstudo(Long idEstudo) {
-		return estudoGerado.reparteEstudoOriundoDoLancamento(idEstudo);
+	public BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo) {
+		return estudoGerado.reparteFisicoOuPrevistoLancamento(idEstudo);
+	}
+
+	@Override
+	@Transactional
+	public void atualizarFixacaoOuMix(Long estudoId, Integer numeroCota, Long reparteDigitado, String LegendaCota) {
+		
+        EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoId);
+        Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
+        Produto produto = estudo.getProdutoEdicao().getProduto();
+        Usuario usuarioLogado = usuarioService.getUsuarioLogado();
+
+        
+        if(LegendaCota.equalsIgnoreCase("FX")){
+
+        	FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, produto.getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
+        	
+        	fixacaoReparte.setQtdeExemplares(reparteDigitado.intValue());
+        	fixacaoReparte.setUsuario(usuarioLogado);
+        	fixacaoReparte.setDataHora(new Date());
+        	
+        	fixacaoReparteRepository.alterar(fixacaoReparte);
+        	
+        }else{
+        	
+        	MixCotaProduto mix = 
+        	        mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(
+        	                cota.getId(), 
+        	                produto.getCodigoICD(), 
+        	                estudo.getProdutoEdicao().getTipoClassificacaoProduto().getDescricao());
+        	
+        	if (this.pdvService.obterQtdPdvPorCota(numeroCota) == 1){
+        	    
+        	    if (reparteDigitado < mix.getReparteMaximo()){
+        	        
+        	        mix.setReparteMinimo(reparteDigitado);
+        	    } else {
+        	        
+        	        mix.setReparteMaximo(reparteDigitado);
+        	    }
+        	    
+        	} else {
+        	    
+        	    mix.setReparteMinimo(reparteDigitado);
+                mix.setReparteMaximo(reparteDigitado);
+        	}
+        	
+        	mix.setUsuario(usuarioLogado);
+        	mix.setDataHora(new Date());
+        	
+        	mixCotaProdutoRepository.alterar(mix);
+        	
+        }
+        
+	}
+	
+	@Transactional
+	@Override
+	public ValidacaoException validarLiberacaoDeEstudo(Long estudoId) {
+
+		ValidacaoException validacao = null;
+		
+    	EstudoGerado estudoGerado = estudoGeradoRepository.buscarPorId(estudoId);
+    	
+    	BigDecimal reparteFisicoOuPrevisto = reparteFisicoOuPrevistoLancamento(estudoId);
+    	
+    	
+    	for (EstudoCotaGerado estudoCota : estudoGerado.getEstudoCotas()) {
+    		if(BigIntegerUtil.isMenorQueZero(estudoCota.getReparte())){
+    			validacao = new ValidacaoException(TipoMensagem.WARNING,"Há cota(s) com reparte(s) negativo(s), por favor ajustá-la(s)!");
+    			break;
+    		}
+    	} 
+
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
+    	}
+    	
+    	
+    	if(validacao == null){
+    		validacao = new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
+    	}
+		
+		return validacao;
+		
 	}
 }

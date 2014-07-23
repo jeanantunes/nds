@@ -45,6 +45,12 @@
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						</a>
 					</span>
+					
+					<span class="bt_novos">
+						<a isEdicao="true" href="javascript:impressaoBoletosController.imprimirDividas('BOLETO_SLIP')" rel="tipsy" title="Imprimir Boletos e Slips">
+							<img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" />
+						</a>
+					</span>
 				</div>
  					
  					<span class="bt_arq">
@@ -60,7 +66,7 @@
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 	   	    <legend> Gerar Dívida</legend>
 	   	    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   					<tr>

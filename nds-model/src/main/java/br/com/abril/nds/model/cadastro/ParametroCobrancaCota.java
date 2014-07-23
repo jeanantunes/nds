@@ -1,15 +1,10 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -41,24 +36,11 @@ public class ParametroCobrancaCota implements Serializable {
 	@JoinColumn(name = "COTA_ID", unique = true)
 	private Cota cota;
 	
-	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
-	private BigDecimal valorMininoCobranca;
-	
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
 	
 	@Column(name = "UNIFICA_COBRANCA")
 	private Boolean unificaCobranca;
-	
-	@Column(name = "DEVOLVE_ENCALHE")
-	private Boolean devolveEncalhe;
-	
-	@Embedded
-	private PoliticaSuspensao politicaSuspensao;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA")
-	private TipoCota tipoCota;
 	
 	@ManyToOne
 	@JoinColumn(name = "FORNECEDOR_ID")
@@ -80,28 +62,12 @@ public class ParametroCobrancaCota implements Serializable {
 		this.cota = cota;
 	}
 
-	public BigDecimal getValorMininoCobranca() {
-		return valorMininoCobranca;
-	}
-
-	public void setValorMininoCobranca(BigDecimal valorMininoCobranca) {
-		this.valorMininoCobranca = valorMininoCobranca;
-	}
-
 	public Integer getFatorVencimento() {
 		return fatorVencimento;
 	}
 
 	public void setFatorVencimento(Integer fatorVencimento) {
 		this.fatorVencimento = fatorVencimento;
-	}
-	
-	public PoliticaSuspensao getPoliticaSuspensao() {
-		return politicaSuspensao;
-	}
-	
-	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
-		this.politicaSuspensao = politicaSuspensao;
 	}
 
 	public Set<FormaCobranca> getFormasCobrancaCota() {
@@ -110,14 +76,6 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setFormasCobrancaCota(Set<FormaCobranca> formasCobrancaCota) {
 		this.formasCobrancaCota = formasCobrancaCota;
-	}
-	
-	public TipoCota getTipoCota() {
-		return tipoCota;
-	}
-
-	public void setTipoCota(TipoCota tipoCota) {
-		this.tipoCota = tipoCota;
 	}
 	
 	public Fornecedor getFornecedorPadrao() {
@@ -134,13 +92,5 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setUnificaCobranca(Boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
-	}
-
-	public Boolean isDevolveEncalhe() {
-		return devolveEncalhe;
-	}
-
-	public void setDevolveEncalhe(Boolean devolveEncalhe) {
-		this.devolveEncalhe = devolveEncalhe;
 	}
 }

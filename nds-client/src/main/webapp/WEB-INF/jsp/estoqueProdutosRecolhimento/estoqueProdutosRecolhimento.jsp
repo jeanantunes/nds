@@ -22,7 +22,7 @@
 	</div>
     
     <div class="linha_separa_fields">&nbsp;</div>
-    	<fieldset class="fieldFiltro">
+    	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	    	<legend>Pesquisar Produtos em Recolhimento</legend>
    	    	<table width="400" border="0" class="filtro">
    	    		<tr>

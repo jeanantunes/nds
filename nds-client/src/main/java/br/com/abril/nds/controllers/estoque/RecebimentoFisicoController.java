@@ -262,8 +262,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         final Long idNotaFiscal = notaFiscal.getId();
         
-        List<RecebimentoFisicoDTO> itensRecebimentoFisico =
-                recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+        List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
         
         if(itensRecebimentoFisico == null) {
             itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
@@ -573,7 +572,7 @@ public class RecebimentoFisicoController extends BaseController {
             itemRecebimento.setPrecoDesconto(
                     produtoEdicao.getPrecoVenda().subtract(
                             produtoEdicao.getPrecoVenda().multiply(
-                                    produtoEdicao.getDesconto())).setScale(
+                                    produtoEdicao.getDesconto().divide(new BigDecimal(100)))).setScale(
                                             2, RoundingMode.HALF_EVEN).toString());
             
         } else {
@@ -1161,7 +1160,7 @@ public class RecebimentoFisicoController extends BaseController {
                 if (dto.getPercentualDesconto() != null) {
                     valorDesconto = dto.getPrecoCapa().subtract(
                             dto.getPrecoCapa().multiply(
-                                    dto.getPercentualDesconto())).setScale(4, RoundingMode.HALF_EVEN).toString();
+                                    dto.getPercentualDesconto().divide(new BigDecimal(100)))).setScale(4, RoundingMode.HALF_EVEN).toString();
                 } else {
                     
                     valorDesconto = dto.getPrecoItem().setScale(4, RoundingMode.HALF_EVEN).toString();

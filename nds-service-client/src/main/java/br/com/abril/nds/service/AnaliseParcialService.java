@@ -4,14 +4,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
-import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
@@ -20,10 +19,9 @@ public interface AnaliseParcialService {
 
 	EstudoCotaGerado buscarPorId(Long id);
 	List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO);
-	void atualizaClassificacaoCota(Long estudoId, Long numeroCota);
-	void atualizaReparte(Long estudoId, Long numeroCota, Long reparte, Long reparteDigitado);
+	void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota);
+	void atualizaReparte(Long estudoId, Integer numeroCota, Long reparte, Long reparteDigitado);
 	void liberar(Long id, List<CotaLiberacaoEstudo> cotas);
-	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
@@ -32,9 +30,7 @@ public interface AnaliseParcialService {
 
     void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa);
 
-    CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto);
-
-    List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> idsProdutoEdicao);
+    CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto, Long idClassifProdEdicao);
 
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
 
@@ -42,5 +38,10 @@ public interface AnaliseParcialService {
     
     List<EstudoCotaGerado> obterEstudosCotaGerado(Long id);
     
-    BigDecimal obterReparteLancamentoEstudo (Long idEstudo);
+    BigDecimal reparteFisicoOuPrevistoLancamento (Long idEstudo);
+    
+	void atualizarFixacaoOuMix(Long estudoId, Integer numeroCota, Long reparteDigitado, String legendaCota);
+	
+	ValidacaoException validarLiberacaoDeEstudo(Long estudoId);
+
 }

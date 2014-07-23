@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.TipoNegociacao;
@@ -24,12 +25,14 @@ public interface NegociacaoDividaService {
 	
 	Long criarNegociacao(Integer numeroCota, List<ParcelaNegociacao> parcelas, TipoNegociacao tipoNegociacao, BigDecimal valorDividaPagaComissao, 
 			List<Long> idsCobrancasOriginarias, Usuario usuarioResponsavel, boolean negociacaoAvulsa, Integer ativarCotaAposParcela,
-			BigDecimal comissaoParaSaldoDivida, BigDecimal comissaoOriginalCota, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco);
+			BigDecimal comissaoParaSaldoDivida, boolean isentaEncargos, FormaCobranca formaCobranca, Long idBanco);
 	
 	Negociacao obterNegociacaoPorId(Long idNegociacao);
 	
 	List<byte[]> gerarBoletosNegociacao(Long idNegociacao);
-
+	
+	List<byte[]> imprimirRecibos(final Long idNegociacao);
+	
 	byte[] imprimirNegociacao(Long idNegociacao, String valorDividaSelecionada) throws Exception;
 	
 	List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca);
@@ -46,4 +49,6 @@ public interface NegociacaoDividaService {
 	Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro);
 	
 	void abaterNegociacaoPorComissao(Long idCota, BigDecimal valorTotalReparte, BigDecimal valorTotalEncalhe, Usuario usuario);
+
+    void verificarAtivacaoCotaAposPgtoParcela(Cobranca cobranca, Usuario usuario);
 }

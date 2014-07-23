@@ -55,7 +55,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			// Passar para a próxima linha
 			ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.HIERARQUIA,
-					"Codigo Cota " + input.getCodCota() + " nao encontrado.");
+					"Cota " + input.getCodCota() + " não encontrado.");
 			return;
 		}
 	
@@ -120,7 +120,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de telefone para a cota "
+					"O arquivo não contém dados de Telefone para a Cota "
 							+ cota.getNumeroCota());
 		}
 	}
@@ -152,7 +152,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		ndsiLoggerFactory.getLogger().logInfo(
 				message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualizacao do Telefone PDV "
+				"Alteração do Telefone PDV "
 						+ telefonePDV.getId());
 			
 	}
@@ -240,7 +240,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de endereco para a cota "
+					"O arquivo não contém dados de endereço para a Cota "
 							+ cota.getNumeroCota());
 		}
 	}
@@ -394,7 +394,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 					message,
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Ponto PDV " + input.getTipoPontoVenda()
-							+ " nao encontrado.");
+							+ " não encontrado.");
 
 		} else {
 
@@ -411,7 +411,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualizacao da PDV " + pdv.getId());
+				"Alteração da PDV " + pdv.getId());
 	}
 	
 	/*
@@ -443,7 +443,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 					message,
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Ponto PDV " + input.getTipoPontoVenda()
-							+ " nao encontrado.");
+							+ " não encontrado.");
 
 		} else {
 

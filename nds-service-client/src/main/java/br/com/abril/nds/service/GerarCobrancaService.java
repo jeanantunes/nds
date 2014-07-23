@@ -8,6 +8,7 @@ import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 
@@ -58,6 +59,22 @@ public interface GerarCobrancaService {
 			           Long idUsuario, 
 			           Set<String> setNossoNumeroEnvioEmail,
 			           Set<String> setNossoNumeroCentralizacao) throws GerarCobrancaValidacaoException;
+	
+	/**
+	 * Consolida Financeiro, Gera Divida e Gera Cobrança para cotas de Tipos Específicos (A_VISTA/CONSIGNADO)
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumeroEnvioEmail
+	 * @param setNossoNumeroCentralizacao
+	 * @param tiposCota
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	void gerarCobranca(Long idCota, 
+			           Long idUsuario, 
+			           Set<String> setNossoNumero,
+			           Set<String> setNossoNumeroCentralizacao, 
+			           List<TipoCota> tiposCota) throws GerarCobrancaValidacaoException;
 	
 	/**
 	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cotas especificas

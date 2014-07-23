@@ -40,17 +40,61 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DiaSemana> obterDiasOperacaoDiferenciadaCota(final Integer numeroCota, final Date dataOperacao) {
-	    Criteria criteria = super.getSession().createCriteria(GrupoCota.class);
-	    criteria.createAlias("diasRecolhimento", "dia");
-	    criteria.createAlias("cotas", "cota");
-	    
-	    addDataVigencia(dataOperacao, criteria);
-	    criteria.add(Restrictions.eq("cota.numeroCota", numeroCota));
-	    
-	    criteria.setProjection(Projections.distinct(Projections.property("dia."+ CollectionPropertyNames.COLLECTION_ELEMENTS)));
-	    
 		
-		return (List<DiaSemana>) criteria.list();
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select diaRecolhimento	");
+		
+		hql.append(" from GrupoCota g ");
+
+		hql.append(" inner join g.diasRecolhimento diaRecolhimento	");
+	
+		hql.append(" left join g.cotas cota ");
+		
+		hql.append(" left join g.municipios municipio ");
+		
+		hql.append(" where ");
+		
+		hql.append(" g.dataInicioVigencia <= :dataOperacao and ");
+		
+		hql.append(" ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) and ");
+		
+		hql.append(" ( ");
+	    
+		hql.append(" cota.numeroCota = :numeroCota ");
+		
+		hql.append(" or municipio = ");
+			
+		hql.append(" 	( ");
+		
+		hql.append(" 	select max(ender.cidade) from Cota cota "); 
+			
+		hql.append(" 	inner join cota.pdvs pdv ");
+			
+		hql.append(" 	inner join pdv.enderecos enderecoPDV ");
+		
+		hql.append("    inner join enderecoPDV.endereco ender  ");
+			
+		hql.append(" 	where cota.numeroCota = :numeroCota and ");
+		
+		hql.append("	pdv.caracteristicas.pontoPrincipal = true and	");
+		
+		hql.append(" 	enderecoPDV.principal = true ");
+		
+		hql.append(" 	) ");
+		
+		hql.append(" ) ");
+		
+		
+		hql.append(" group by diaRecolhimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (List<DiaSemana>) query.list();
 		
 	}
 	
@@ -181,4 +225,80 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		
 		return new HashSet<String>(query.list());
 	}
+	
+	/**
+	 * Obtém lista de GrupoCota(Operação diferenciada)
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return List<GrupoCota>
+	 */ 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GrupoCota> obterListaGrupoCotaPorCotaId(Long idCota, Date dataOperacao){
+		
+		StringBuilder hql = new StringBuilder("select g ");
+		hql.append(" from GrupoCota g ")
+		   .append(" left join g.municipios municipio ")
+		   .append(" left join g.cotas cota ")
+		   .append(" where ")
+		   .append(" ( ")
+		   .append("     cota.id = :idCota ")
+		   .append("     or municipio in (select e.cidade ")
+		   .append("                      from PDV pdv ")
+		   .append("                      join pdv.enderecos enderecoPdv   ")
+           .append("                      join enderecoPdv.endereco e   ")
+           .append("                      join pdv.cota c ")
+		   .append("                      where c.id = :idCota  ")
+		   .append("                      and pdv.caracteristicas.pontoPrincipal is true ")
+		   .append("                     ) ")
+	       .append(" ) ")
+		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia <= :dataOperacao ) ")
+		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) ");
+		   
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (List<GrupoCota>) query.list();
+	}	
+	
+	/**
+	 * Obtém lista de GrupoCota(Operação diferenciada)
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @return List<GrupoCota>
+	 */ 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GrupoCota> obterListaGrupoCotaPorNumeroCota(Integer numeroCota, Date dataOperacao){
+		
+		StringBuilder hql = new StringBuilder("select g ");
+		hql.append(" from GrupoCota g ")
+		   .append(" left join g.municipios municipio ")
+		   .append(" left join g.cotas cota ")
+		   .append(" where ")
+		   .append(" ( ")
+		   .append("     cota.numeroCota = :numeroCota ")
+		   .append("     or municipio in (select e.cidade ")
+		   .append("                      from PDV pdv ")
+		   .append("                      join pdv.enderecos enderecoPdv   ")
+           .append("                      join enderecoPdv.endereco e   ")
+           .append("                      join pdv.cota c ")
+		   .append("                      where c.numeroCota = :numeroCota  ")
+		   .append("                      and pdv.caracteristicas.pontoPrincipal is true ")
+		   .append("                     ) ")
+	       .append(" ) ")
+		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia <= :dataOperacao ) ")
+		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) ");
+		   
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (List<GrupoCota>) query.list();
+	}	
 }

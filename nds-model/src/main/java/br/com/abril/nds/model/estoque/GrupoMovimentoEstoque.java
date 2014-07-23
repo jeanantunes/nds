@@ -28,6 +28,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Envio de reparte à cota pelo distribuidor
 	 */
 	ENVIO_JORNALEIRO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Envio de reparte do tipo conta firme à cota pelo distribuidor
+	 */
+	ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 
 	/**
 	 * Ocorre durante o a funcionalidade "Fechamento Encalhe" (Fechamento Estoque Físico X Lógico)
@@ -40,7 +45,7 @@ public enum GrupoMovimentoEstoque  {
 	 * Ocorre durante o a funcionalidade "Fechamento Encalhe" (Fechamento Estoque Físico X Lógico)
 	 * representando a saída de produtos do distribuidor que antes entraram de forma juramentada.
 	 */
-	ENVIO_JORNALEIRO_JURAMENTADO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	ENVIO_JORNALEIRO_JURAMENTADO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.JURAMENTADO),
 
 	
 	/**
@@ -51,7 +56,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Recebimento do encalhe JURAMENTADO da cota pelo distribuidor
 	 */
-	RECEBIMENTO_ENCALHE_JURAMENTADO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE), 
+	RECEBIMENTO_ENCALHE_JURAMENTADO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.JURAMENTADO), 
 	
 	/**
 	 * Sobra de pacote distribuidor
@@ -122,7 +127,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Sobra em pacote direcionada para cota
 	 */
-	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Sobra em direcionada para estoque de devolução de encalhe
@@ -140,9 +145,14 @@ public enum GrupoMovimentoEstoque  {
 	FALTA_EM_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 	
 	/**
+	 * Falta em pacote direcionada para cota
+	 */
+	FALTA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	
+	/**
 	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
 	 */
-	FALTA_PARA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	FALTA_EM_DIRECIONADA_COTA(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
 	
 	/**
 	 * Contra-partida dos movimentos de falta, quando direcionados para cota.
@@ -153,6 +163,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Recebimento do reparte cota
 	 */
 	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Recebimento do reparte do tipo conta firme pela cota
+	 */
+	RECEBIMENTO_REPARTE_CONTA_FIRME(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * Envio do encalhe cota
@@ -300,6 +315,11 @@ public enum GrupoMovimentoEstoque  {
 	 * 
 	 */
 	TRANSFERENCIA_SAIDA_LANCAMENTO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * 
+	 */
+	TRANSFERENCIA_PARCIAL_SAIDA_LANCAMENTO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 
 	/**
 	 * 
@@ -310,6 +330,11 @@ public enum GrupoMovimentoEstoque  {
 	 * 
 	 */
 	TRANSFERENCIA_SAIDA_SUPLEMENTAR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+	
+	/**
+	 * 
+	 */
+	TRANSFERENCIA_PARCIAL_SAIDA_SUPLEMENTAR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
 	
 	/**
 	 * 
@@ -334,6 +359,11 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * 
 	 */
+	TRANSFERENCIA_PARCIAL_SAIDA_PRODUTOS_DANIFICADOS(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS),
+	
+	/**
+	 * 
+	 */
 	TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
 
 	/**
@@ -344,6 +374,10 @@ public enum GrupoMovimentoEstoque  {
 	TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 	
 	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	TRANSFERENCIA_PARCIAL_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 
 	GRUPO_MATERIAL_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.MATERIAL_PROMOCIONAL),
 	

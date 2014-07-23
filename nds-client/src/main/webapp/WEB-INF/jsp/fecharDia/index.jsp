@@ -152,12 +152,12 @@
 				<table class="cotasGrid"></table>
 			      
 				<span class="bt_novos" title="Gerar Arquivo">
-				  	<a id="lnkExportacaoCotaXLS" href="#" title="Arquivo">
+				  	<a id="lnkExportacaoCotaXLS" href="javascript:void(0)" title="Arquivo">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
 					</a>
 				</span>
 				<span class="bt_novos" title="Imprimir">
-					<a id="lnkExportacaoCotaPDF" href="#" title="Imprimir">
+					<a id="lnkExportacaoCotaPDF" href="javascript:void(0)" title="Imprimir">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir
 				 	</a>
 				</span>
@@ -362,7 +362,7 @@
    
     <div class="container">
     	
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Fechar o Dia</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -370,7 +370,7 @@
               <td width="111"><input onchange="fecharDiaController.tratarExibicaoPesquisa();" id="dataDaOperacao" type="text" value="${dataOperacao}" style="width: 70px;"/></td>
               <td width="185">
               	<span class="bt_novos" title="Iniciar Fechamento do Dia" id="idTituloBoataoFechamentoDiario">
-              		<a isEdicao="true" href="#" onclick="fecharDiaController.popup_processos();">
+              		<a isEdicao="true" href="javascript:void(0)" onclick="fecharDiaController.popup_processos();">
               			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png" id="idImgBotaoFecamentoDiario">
               			<span id="idBotaoFechamentoDiario">Iniciar Fechamento do Dia</span>
               		</a>
@@ -422,6 +422,10 @@
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalTransferencia"></div></td>
       </tr>
       <tr>
+        <td align="left" style="border-bottom:1px solid #ccc;">(-) Promocional</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDiferenca"></div></td>
+      </tr>
+      <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">(=) A Distribuir</td>
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalADistribuir"></div></td>
         </tr>
@@ -432,11 +436,7 @@
       <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Sobra Dist.</td>
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSobraDistribuido"></div></td>
-        </tr>
-      <tr>
-        <td align="left" style="border-bottom:1px solid #ccc;">Diferença</td>
-        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalDiferenca"></div></td>
-      </tr>
+       </tr>
       <tr>
         <td align="left">&nbsp;</td>
         <td align="right">&nbsp;</td>

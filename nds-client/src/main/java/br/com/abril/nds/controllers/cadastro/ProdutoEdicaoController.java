@@ -29,14 +29,11 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
-import br.com.abril.nds.model.cadastro.ClasseSocial;
-import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.Sexo;
-import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -101,97 +98,65 @@ public class ProdutoEdicaoController extends BaseController {
 	@Autowired
 	private ProdutoService prodService;
 	
-	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
-	  
-	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
-	
-	private static List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
-
-	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
-
-	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
-	
-	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
-
-	private static List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
-
-	private static List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
-	
-    /** Traz a página inicial. */
+	/** Traz a página inicial. */
 	@Get
 	@Path("/")
 	public void index() {
 		
 		this.carregarDadosCombo();
 	}
-
-	                                                                                        /**
+                                                                                       /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
-		
-		listaClasseSocial.clear();
-		for(ClasseSocial item:ClasseSocial.values()){
-			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
-		}
-		result.include("listaClasseSocial",listaClasseSocial);
-		
-		listaSexo.clear();
-		for(Sexo item:Sexo.values()){
-			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
-		}
-		result.include("listaSexo",listaSexo);	
-		
-		listaFaixaEtaria.clear();
-		for(FaixaEtaria item:FaixaEtaria.values()){
-			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
-		}
-		result.include("listaFaixaEtaria",listaFaixaEtaria);	
-		
-		listaTemaProduto.clear();
-		for(TemaProduto item:TemaProduto.values()){
-			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
-		}
-		result.include("listaTemaProduto",listaTemaProduto);	
-		
-		listaGrupoProduto.clear();
+	    
+		final List<ItemDTO<GrupoProduto,String>> listaGrupoProduto = new ArrayList<ItemDTO<GrupoProduto,String>>();
 		for(GrupoProduto item:GrupoProduto.values()){
 			listaGrupoProduto.add(new ItemDTO<GrupoProduto,String>(item,item.getNome()));
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
-		
-		listaStatusLancamento.clear();
-		
+
+		final List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
 			
 			listaStatusLancamento.add(
 				new ItemDTO<StatusLancamento, String>(
 					statusLancamento, statusLancamento.getDescricao()));
 		}
-		
 		result.include("listaStatusLancamento", listaStatusLancamento);
-		
-		listaTipoSegmentoProduto.clear();
+
+		final List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoSegmentoProduto tipoSegmentoProduto : tipoSegmentoProdutoService.obterTipoSegmentoProduto()) {
 			listaTipoSegmentoProduto.add(
 					new ItemDTO<Long, String>(
 							tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
 		}
-		
 		result.include("listaTipoSegmentoProduto", listaTipoSegmentoProduto);
-		
-		List<Brinde> brindes = brindeService.obterBrindes();
-		result.include("brindes", brindes);
-		
-		List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
-		
-		comboClassificacao.clear();
+
+		final List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
+		final List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
 		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
 		result.include("listaClassificacao",comboClassificacao);
     }
 
+	@Post
+	@Path("/obterBrindes.json")
+	public void obterBrindes(){
+	    
+		final List<Brinde> brindes = brindeService.obterBrindes();
+		
+		final List<ItemDTO<Long,String>> comboBrindes =  new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Brinde b : brindes) {
+			
+			comboBrindes.add(new ItemDTO<Long,String>(b.getId(), b.getDescricao()));
+		}
+	    
+		result.use(Results.json()).from(comboBrindes, "result").recursive().serialize();
+	}
+	
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
@@ -274,7 +239,6 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
-	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
     public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, Long idProdutoEdicao, String situacaoProdutoEdicao,
             boolean redistribuicao) {
 		
@@ -301,13 +265,20 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void salvar(UploadedFile imagemCapa,
 			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
 			
 		produtoEdicaoDTO.setModoTela(modoTela);
-		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
-
-		ValidacaoVO vo = null;
+		
+		if(FormaComercializacao.CONTA_FIRME.equals(produtoEdicaoDTO.getFormaComercializacao())){
+			
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataLancamentoPrevisto());
+			produtoEdicaoDTO.setDataRecolhimentoPrevisto(produtoEdicaoDTO.getDataLancamentoPrevisto());
+		}
+		else{			
+			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
+		}
 		 
 		try {
 			
@@ -324,22 +295,19 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream,istrac29);
+			produtoEdicaoService.salvarProdutoEdicao(
+			        produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), 
+			        contentType, imgInputStream,istrac29, modoTela);
 			
-            vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
+            this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
 			
 		} catch (ValidacaoException e) {
-			
-			vo = e.getValidacao();
 
+			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
 			
-			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
-		
-		} finally {
-			
-			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage()), "result").recursive().serialize();
 		}
 	}
 	
@@ -431,12 +399,15 @@ public class ProdutoEdicaoController extends BaseController {
 				String contentType = null;
 				InputStream imgInputStream = null;
 				
-				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false);
+				produtoEdicaoService.salvarProdutoEdicao(
+				        prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false,
+				        null);
 				
 			} 
 			catch (Exception e) {
 			    if(e instanceof ValidacaoException)
-			        listaMensagem.add(e.getMessage());
+			        listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
+			                + prodEdicao.getNumeroEdicao() + " está inválido. " + e.getMessage());
 			    else
 			        listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
 			                + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
@@ -466,17 +437,17 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			if(peDTO.getLancamento()!=null){
 				
-				try {				    
-					peDTO.setTipoLancamento(TipoLancamento.valueOf(peDTO.getLancamento().toUpperCase()));
-					
-				} catch (Exception e) {
-					
-				}				
+				peDTO.setTipoLancamento(TipoLancamento.getByDescricao(peDTO.getLancamento()));
+			}
+
+			if(!Strings.isNullOrEmpty(peDTO.getClassificacao())) {
+
+				TipoClassificacaoProduto tipoClassificacao = 
+						this.tipoClassificacaoProdutoService.obterPorClassificacao(peDTO.getClassificacao());
+				
+				peDTO.setTipoClassificacaoProduto(tipoClassificacao);
 			}
 			
-			if(!Strings.isNullOrEmpty(peDTO.getClassificacao()))
-			    peDTO.setTipoClassificacaoProduto(tipoClassificacaoProdutoService.obterPorClassificacao(peDTO.getClassificacao()));
-            
 			if(peDTO.getDtLancPrevisto()!=null)
 			peDTO.setDataLancamentoPrevisto(DateUtil.parseDataPTBR(peDTO.getDtLancPrevisto()));
 			
@@ -614,11 +585,14 @@ public class ProdutoEdicaoController extends BaseController {
 				listaMensagens.add("Campo 'Data de Recolhimento Previsto' não está em um formato válido.(ex: '21/01/2001')");
 			}
 			
-			if(dto.getDataRecolhimentoPrevisto() != null 
-			        && dto.getDataRecolhimentoPrevisto()!=null
-			        &&!validarDataLancamentoMenorRecolhimento(dto))
-                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
-			
+			if(!FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())){
+				
+				if(dto.getDataRecolhimentoPrevisto() != null 
+				        && dto.getDataRecolhimentoPrevisto()!=null
+				        &&!validarDataLancamentoMenorRecolhimento(dto))
+	                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
+				
+			}
 			
 			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
                 listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");

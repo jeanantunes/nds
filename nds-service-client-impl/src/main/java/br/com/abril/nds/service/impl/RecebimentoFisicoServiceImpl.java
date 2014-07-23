@@ -320,29 +320,37 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 		List<String> mensagens = new ArrayList<>();
 		
-		final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
-		
 		for (RecebimentoFisicoDTO item : listaItensNota) {
 
 			ProdutoEdicao produtoEdicao = this.produtoEdicaoService.buscarPorID(item.getIdProdutoEdicao());
 
-			DescontoLogistica descontoLogistica = produtoEdicao.getDescontoLogistica() != null ? 
+			BigDecimal percentualProduto = null;
+			if(!produtoEdicao.getOrigem().equals(Origem.INTERFACE)) {
+				
+				percentualProduto = produtoEdicao.getDesconto();
+				
+			} else {
+				DescontoLogistica descontoLogistica = produtoEdicao.getDescontoLogistica() != null ? 
 					produtoEdicao.getDescontoLogistica() : produtoEdicao.getProduto().getDescontoLogistica();
 					
-			if (descontoLogistica == null) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, 
-						"Produto " + produtoEdicao.getProduto().getCodigo() + " sem desconto cadastrado!");
+				percentualProduto = descontoLogistica == null ? null : descontoLogistica.getPercentualDesconto();
 			}
 
-			BigDecimal percentualProduto = descontoLogistica.getPercentualDesconto().divide(ONE_HUNDRED);
+			if (percentualProduto == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, 
+						"Produto " + produtoEdicao.getProduto().getNome() 
+								   + " [Cod.: " + produtoEdicao.getProduto().getCodigo() 
+								   + " Ed.: " + produtoEdicao.getNumeroEdicao() + "]"
+								   + " sem desconto cadastrado!");
+			}
 			
 			if (BigDecimalUtil.neq(percentualProduto, item.getPercentualDesconto())) {
 				
 				mensagens.add(" [Cod.:" + produtoEdicao.getProduto().getCodigo() 
 							 + " Ed.: " + produtoEdicao.getNumeroEdicao() + "]"
-							 + " - Cadastro: " + percentualProduto.multiply(ONE_HUNDRED).setScale(2, RoundingMode.HALF_EVEN) + "%"
-							 + " / Nota: "  + item.getPercentualDesconto().multiply(ONE_HUNDRED).setScale(2, RoundingMode.HALF_EVEN) + "%");
+							 + " - Cadastro: " + percentualProduto.setScale(2, RoundingMode.HALF_EVEN) + "%"
+							 + " / Nota: "  + item.getPercentualDesconto().setScale(2, RoundingMode.HALF_EVEN) + "%");
 			}
 		}
 		
@@ -900,7 +908,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 		
 	        /**
-     * Atualização de Data e Satatus em Recebimento Fisico.
+     * Alteração de Data e Satatus em Recebimento Fisico.
      * 
      * @param usuarioLogado
      * @param notaFiscal

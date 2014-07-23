@@ -38,6 +38,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
@@ -105,6 +106,9 @@ public class MatrizDistribuicaoController extends BaseController {
 
     @Autowired
     private ProdutoService produtoService;
+    
+    @Autowired
+    private EstudoService estudoService;
 
     @Autowired
     private ProdutoEdicaoAlgoritimoService produtoEdicaoAlgoritimoService;
@@ -273,7 +277,7 @@ public class MatrizDistribuicaoController extends BaseController {
         produtoDistribuicaoVO.setNomeProduto(infoDTO.getNomeProduto());
         produtoDistribuicaoVO.setNumeroEdicao(new BigInteger(infoDTO.getNumeroEdicao().toString()));
         produtoDistribuicaoVO.setClassificacao(infoDTO.getTipoClassificacaoProdutoDescricao());
-        produtoDistribuicaoVO.setDataLancto(infoDTO.getDataLcto());
+        produtoDistribuicaoVO.setDataLancto(infoDTO.getDatalanc());
         produtoDistribuicaoVO.setReparte(new BigDecimal(infoDTO.getReparteDistribuido()));
         produtoDistribuicaoVO.setEstudoLiberado(infoDTO.getEstudoLiberado());
         produtoDistribuicaoVO.setQtdeReparteEstudo(infoDTO.getQtdeReparteEstudo());
@@ -288,6 +292,9 @@ public class MatrizDistribuicaoController extends BaseController {
         Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
         BigInteger idLancamento = BigInteger.valueOf(copiaProporcionalDeDistribuicaoVO.getIdLancamento());
         removeItemListaDeItensDuplicadosNaSessao(idLancamento, copiaProporcionalDeDistribuicaoVO.getIdCopia());
+        
+        estudoService.criarRepartePorPDV(idEstudo);
+        
         result.use(Results.json()).from(idEstudo, "result").recursive().serialize();
     }
 
@@ -676,7 +683,7 @@ public class MatrizDistribuicaoController extends BaseController {
                 msgErro.addAll(e.getValidacao().getListaMensagens());
             } catch (Exception e) {
                 LOGGER.error("Erro na geração automatica do estudo.", e);
-                msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao());
+                msgErro.add("Erro na geração do estudo, produto - " + produtoDistribuicaoVO.getCodigoProduto() + ", edição - " + produtoDistribuicaoVO.getNumeroEdicao());
             }
         }
 
@@ -696,9 +703,9 @@ public class MatrizDistribuicaoController extends BaseController {
 
 
     @Get
-    public void histogramaPosEstudo(String codigoProduto, String edicao) {
+    public void histogramaPosEstudo(Long idLancamento) {
 
-        result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo(codigoProduto, edicao);
+        result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo(idLancamento);
     }
 
     @Post

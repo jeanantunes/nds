@@ -35,6 +35,7 @@ import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -76,6 +77,28 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return (ChamadaEncalhe) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+    public List<Long> obterIdsProdutoEdicaoNaMatrizRecolhimento(
+			Date dataEncalhe, 
+			List<Long> idsProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select chamadaEncalhe.produtoEdicao.id from ChamadaEncalhe chamadaEncalhe 	");
+		hql.append(" where chamadaEncalhe.dataRecolhimento = :dataEncalhe 			");
+		hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe 	");
+		hql.append(" and chamadaEncalhe.produtoEdicao.id in (:idsProdutoEdicao) 	");
+		hql.append(" group by chamadaEncalhe.produtoEdicao.id ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		query.setParameter("dataEncalhe", dataEncalhe);
+
+		return (List<Long>) query.list();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long cotaID) {
@@ -118,20 +141,24 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao,
 				 									 TipoChamadaEncalhe tipoChamadaEncalhe,
-				 									 Date dataRecolhimento) {
+				 									 Boolean fechado) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ");
+		hql.append(" select chamadaEncalhe ");
+		hql.append(" from ChamadaEncalhe chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ");
 		hql.append(" where chamadaEncalhe.produtoEdicao = :produtoEdicao ");
 		
 		if (tipoChamadaEncalhe != null ) {
 			hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
 		}
 		
-		if (dataRecolhimento != null ) {
-			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		if (fechado != null ) {
+			hql.append(" and chamadaEncalheCota.fechado = :fechado ");
 		}
+		
+		hql.append(" group by chamadaEncalhe.id");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -141,8 +168,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		}
 		
-		if (dataRecolhimento != null ) {
-			query.setParameter("dataRecolhimento", dataRecolhimento);
+		if (fechado != null ) {
+			query.setParameter("fechado", fechado);
 		}
 		
 		return  query.list();
@@ -389,17 +416,17 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" select ");
 		sql.append(" sum(chamadaenc14_.QTDE_PREVISTA) as qtdeExemplares, ");
 		sql.append(" sum(chamadaenc14_.QTDE_PREVISTA*produtoedi17_.PRECO_VENDA) as vlrTotalCe ");
-		sql.append(" from ");
-		sql.append(" CHAMADA_ENCALHE_COTA chamadaenc14_ ");
-		sql.append(" inner join ");
-		sql.append(" CHAMADA_ENCALHE chamadaenc15_ ");
-		sql.append(" on chamadaenc14_.CHAMADA_ENCALHE_ID=chamadaenc15_.ID ");
-		sql.append(" inner join ");
-		sql.append(" PRODUTO_EDICAO produtoedi17_ ");
-		sql.append(" on chamadaenc15_.PRODUTO_EDICAO_ID=produtoedi17_.ID ");
-		sql.append(" inner join ");
-		sql.append(" COTA cota16_ ");
-		sql.append(" on chamadaenc14_.COTA_ID=cota16_.ID ");
+		sql.append(" from CHAMADA_ENCALHE_COTA chamadaenc14_ ");
+		sql.append(" inner join CHAMADA_ENCALHE chamadaenc15_ on chamadaenc14_.CHAMADA_ENCALHE_ID=chamadaenc15_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoedi17_ on chamadaenc15_.PRODUTO_EDICAO_ID=produtoedi17_.ID ");
+		
+		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
+		    
+		    sql.append(" inner join PRODUTO prod on produtoedi17_.PRODUTO_ID = prod.ID ");
+		    sql.append(" inner join PRODUTO_FORNECEDOR prod_fornec on prod.ID = prod_fornec.PRODUTO_ID ");
+		}
+		
+		sql.append(" inner join COTA cota16_ on chamadaenc14_.COTA_ID=cota16_.ID ");
 		sql.append(" where ");
 		sql.append(" cota16_.ID= ? ");
 		sql.append(" and chamadaenc14_.POSTERGADO= ? ");
@@ -417,6 +444,19 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getDtRecolhimentoAte() != null) {
 			sql.append(" and chamadaenc15_.DATA_RECOLHIMENTO <= ? ");
 			param.add(filtro.getDtRecolhimentoAte());
+		}
+		
+		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
+		    
+		    sql.append(" and prod_fornec.fornecedores_ID in ( ");
+		    
+		    for (int index = 0 ; index < filtro.getFornecedores().size() ; index++){
+		        
+		        sql.append((index > 0) ? ", ?" : " ? ");
+		        param.add(filtro.getFornecedores().get(index));
+		    }
+		    
+		    sql.append(")");
 		}
 		
 		@SuppressWarnings("rawtypes")
@@ -643,41 +683,43 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuffer hql  = new StringBuffer();
 		
+		String operacaoDiferenciada = " case when (select count(c.id) from GrupoCota gc join gc.cotas c where c.id=cota.id) = 0 then %s "
+									+ " when chamadaEncalhe.dataRecolhimento between :dataDe AND :dataAte then true "
+									+ " else false end as apresentaQuantidadeEncalhe, ";
+
 		if(	datasControleFechamentoEncalhe!=null &&
 			!datasControleFechamentoEncalhe.isEmpty() && 
 			datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 			
-			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
-			hql.append(" or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  ");
-			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			String caseFechamento = " case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe) "
+								  + " or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  "
+								  + " then true else false end ";
 			
-			return hql;
+			return hql.append(String.format(operacaoDiferenciada,caseFechamento));
 				
 		}
 
 		if(	datasControleFechamentoEncalhe!=null &&
 			!datasControleFechamentoEncalhe.isEmpty()) {
 			
-			hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
-			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			String caseFechamento = " case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  "
+								  + " then true else false end ";
 			
-			return hql;
-				
+			return hql.append(String.format(operacaoDiferenciada,caseFechamento));				
 		}
 		
 		if(	datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 				
-				hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) ");
-				hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			String caseFechamento = " case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) "
+								  + " then true else false end  ";
 				
-				return hql;
+			return hql.append(String.format(operacaoDiferenciada,caseFechamento));
 					
 		}
 		
-		return hql;
-		
+		return hql;	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -806,7 +848,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getDtRecolhimentoAte() != null) {
 			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
-		}		
+		}
+		
+		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
+		    
+		    hql.append(" and fornecedores.id in (:fornec) ");
+		    param.put("fornec", filtro.getFornecedores());
+		}
 	}
 
 	@Override
@@ -1044,7 +1092,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
 			.append(" 	, mec.PRODUTO_EDICAO_ID as idProdutoEdicao ")
-			.append(" 	, mec.DATA_APROVACAO as dataMovimento")
+			.append(" 	, mec.DATA as dataMovimento")
 			.append(" 	, nei.nota_envio_id as numeroNotaEnvio")
 			.append(" 	, mec.QTDE as reparte ")
 			.append(" from chamada_encalhe ce ")
@@ -1060,7 +1108,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" 	from chamada_encalhe ce ")
 			.append(" 	inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
 			.append(" 	inner join cota c on c.id = cec.COTA_ID ")
-			.append(" 	inner join movimento_estoque_cota mec on mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and mec.COTA_ID = cec.COTA_ID ")
+			
+			.append("    inner join chamada_encalhe_lancamento cel on ce.id = cel.chamada_encalhe_id ")
+	        .append("    inner join lancamento l on l.id = cel.lancamento_id ")
+            .append("    INNER JOIN movimento_estoque_cota mec ON mec.lancamento_id = l.ID ")
+			
+			.append(" 	and mec.COTA_ID = cec.COTA_ID ")
 			.append(" 	inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
 			.append(" 	where 1 = 1 ");
 		
@@ -1069,7 +1122,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		sql	.append(" 	and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar)) ")
-			.append(" 	group by mec.cota_id, mec.PRODUTO_EDICAO_ID ")
+		    .append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
+			.append(" 	group by mec.PRODUTO_EDICAO_ID, mec.COTA_ID ")
 			.append(" 	having count(0) > 1 ")
 			.append(" ) rs_sup on rs_sup.id = mec.cota_id and rs_sup.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ") // and mec.DATA_APROVACAO <> rs_sup.DATA_APROVACAO ")
 			.append(" where 1 = 1 ");
@@ -1079,6 +1133,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 			
 		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte)) ");
+		sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+		
 		/*	.append(" and mec.data_aprovacao not in ( ")
 			.append(" 	select data_aprovacao ")
 			.append(" 	from chamada_encalhe ce ")
@@ -1096,12 +1152,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" 	group by mec.cota_id, mec.PRODUTO_EDICAO_ID ")
 			.append(" 	having count(0) > 1 ")
 			.append(" ) ")*/
-		sql	.append(" group by mec.cota_id, mec.PRODUTO_EDICAO_ID, mec.DATA_APROVACAO ")
+		sql	.append(" group by mec.ID ")
 			.append(" union ")
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
 			.append(" 	, mec.PRODUTO_EDICAO_ID as idProdutoEdicao ")
-			.append(" 	, mec.DATA_APROVACAO as dataMovimento ")
+			.append(" 	, mec.DATA as dataMovimento ")
 			.append(" 	, null as numeroNotaEnvio ")
 			.append(" 	, sum(mec.QTDE) as reparte ")
 			.append(" from chamada_encalhe ce ")
@@ -1116,7 +1172,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoCompraSuplementar)) ")
-			.append(" group by mec.cota_id, mec.PRODUTO_EDICAO_ID, mec.DATA_APROVACAO ")
+			.append(" group by mec.PRODUTO_EDICAO_ID ")
 			/*.append(" union ")
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
@@ -1152,8 +1208,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaProdutoEmissaoCEDTO.class));
 		
-		query.setParameter("movimentoRecebimentoReparte", "RECEBIMENTO_REPARTE");
-		query.setParameter("movimentoCompraSuplementar", "COMPRA_SUPLEMENTAR");
+		query.setParameter("movimentoRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameter("movimentoCompraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name());
 		if(filtro != null && filtro.getDtRecolhimentoDe() != null && filtro.getDtRecolhimentoAte() != null) {
 			query.setParameter("recolhimentoDe", filtro.getDtRecolhimentoDe());
 			query.setParameter("recolhimentoAte", filtro.getDtRecolhimentoAte());

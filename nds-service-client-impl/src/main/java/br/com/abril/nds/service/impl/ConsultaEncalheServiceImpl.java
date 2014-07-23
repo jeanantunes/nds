@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -21,13 +21,13 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.PDFUtil;
@@ -50,12 +50,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConsultaEncalheService#pesquisarEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO)
@@ -65,9 +60,14 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
 		
-		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
-		
 		Integer qtdeConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+		
+		if (qtdeConsultaEncalhe == null || qtdeConsultaEncalhe.equals(0)) {
+			
+			return info;
+		}
+		
+		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
 		BigDecimal valorTotalReparte = BigDecimal.ZERO;
 		
@@ -86,7 +86,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			valorVendaDia = (valorTotalReparte==null?BigDecimal.ZERO:valorTotalReparte).subtract(valorTotalEncalhe==null?BigDecimal.ZERO:valorTotalEncalhe);
 		}
 		
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCotaDTO>();
+		List<DebitoCreditoCota> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCota>();
 		
 		List<Long> listaIdControleConfEncalheCota = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
@@ -98,7 +98,10 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				
 				if(controleConfEncalheCota != null) {
 					
-					List<DebitoCreditoCotaDTO> listDebCred = conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(controleConfEncalheCota);
+					List<DebitoCreditoCota> listDebCred = 
+					        conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(
+					                controleConfEncalheCota,
+					                filtro.getIdFornecedor());
 				
 					if(listDebCred!= null && !listDebCred.isEmpty()) {
 						listaDebitoCreditoCotaDTO.addAll(listDebCred);
@@ -112,7 +115,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		if (listaDebitoCreditoCotaDTO != null) {
 			
-			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
+			for (DebitoCreditoCota debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
 				
 				if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 					
@@ -133,15 +136,15 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCotaDTO));
 		
-		info.setValorVendaDia(valorVendaDia);
+		info.setValorVendaDia(valorVendaDia.setScale(2, RoundingMode.HALF_EVEN));
 		
-		info.setValorDebitoCredito(valorDebitoCredito);
+		info.setValorDebitoCredito(valorDebitoCredito.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorPagar(valorPagar);
+		info.setValorPagar(valorPagar.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorReparte(valorTotalReparte);
+		info.setValorReparte(valorTotalReparte.setScale(2, RoundingMode.HALF_EVEN));
 		
-		info.setValorEncalhe(valorTotalEncalhe);
+		info.setValorEncalhe(valorTotalEncalhe.setScale(2, RoundingMode.HALF_EVEN));
 		
 		return info;
 	}
@@ -178,21 +181,22 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	
 	@Transactional
 	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro) {
+		
 		byte[] retorno = null; 
-		byte[] arquivo; 
-	
+
 		List<Long> listaConferenciaEncalheCotas = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
 		if (listaConferenciaEncalheCotas != null) {
-			
+
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
-			for(Long idControleConferenciaEncalheCota : listaConferenciaEncalheCotas) {
+			byte[] arquivo;
 			
+			for (Long idControleConferenciaEncalheCota: listaConferenciaEncalheCotas){
+				
 				arquivo = this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, false, TipoArquivo.PDF);
 				
-				arquivos.add(arquivo);
-			
+				arquivos.add(arquivo);	
 			}
 
 			if (arquivos.size() == 1) {
@@ -214,12 +218,12 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	 * @param listaDebitoCreditoCotaDTO
 	 * @return
 	 */
-	private List<DebitoCreditoCotaVO> carregaDebitoCreditoCotaVO(List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO) {
+	private List<DebitoCreditoCotaVO> carregaDebitoCreditoCotaVO(List<DebitoCreditoCota> listaDebitoCreditoCotaDTO) {
 		List<DebitoCreditoCotaVO> listaDebitoCreditoCotaVO = new ArrayList<DebitoCreditoCotaVO>();
 		DebitoCreditoCotaVO debitoCreditoCotaVO;
 		
 		if(listaDebitoCreditoCotaDTO != null) {
-			for(DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
+			for(DebitoCreditoCota debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
 				
 				String tipoLancamento	= (debitoCreditoCotaDTO.getTipoLancamento() != null) ? debitoCreditoCotaDTO.getTipoLancamento().toString() : ""; 
 				String dataLancamento	= (debitoCreditoCotaDTO.getDataLancamento() != null) ? DateUtil.formatarDataPTBR(debitoCreditoCotaDTO.getDataLancamento()) : "";

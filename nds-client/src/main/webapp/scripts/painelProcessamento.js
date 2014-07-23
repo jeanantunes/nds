@@ -4,10 +4,8 @@ var painelProcessamentoController = $.extend(true, {
 		this.initGridDetalheInterfaceGrid();
 		this.initGridDetalheProcessamentoGrid();
 		this.initGridPainelInterfaceGrid();
-		this.initGridPainelProcessamentoGrid();
-		this.pesquisarInterfaces();
+		this.alterarProcessamento();
 		this.bindButtonsInterfaces();
-		$( "#tabPainel", painelProcessamentoController.workspace ).tabs();
 	},
 	initGridDetalheInterfaceGrid : function() {
 		$(".detalheInterfaceGrid", painelProcessamentoController.workspace).flexigrid({
@@ -65,7 +63,7 @@ var painelProcessamentoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "tipoErro",
+			sortname : "Default",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -73,45 +71,6 @@ var painelProcessamentoController = $.extend(true, {
 			showTableToggleBtn : true,			
 			width : 700,
 			height : 200
-		});
-	},
-	initGridPainelProcessamentoGrid : function() {
-		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexigrid({
-			preProcess : painelProcessamentoController.executarPreProcessamentoGrid,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Processos',
-				name : 'nome',
-				width : 539,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Processamento',
-				name : 'dataProcessmento',
-				width : 130,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Hora Processamento',
-				name : 'horaProcessamento',
-				width : 130,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "nome",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 920,
-			height : 'auto'
 		});
 	},
 	initGridPainelInterfaceGrid : function() {
@@ -216,24 +175,35 @@ var painelProcessamentoController = $.extend(true, {
 			form: $("#dialog-operacional", this.workspace).parents("form")
 		});
 	},
-	pesquisarInterfaces : function() {
+	
+	alterarProcessamento : function() {
+		
 		painelProcessamentoController.bindButtonsInterfaces();
+		
+		var codigoDistribuidor = $("#toggleFornecedores :radio:checked").val();
+		
+		if (codigoDistribuidor == "") {
+			
+			$(".areaBts", painelProcessamentoController.workspace).hide();
+			$(".grids", painelProcessamentoController.workspace).hide();
+			$("#divProcessamento", painelProcessamentoController.workspace).show();
+			
+			return;
+		}
+		
+		
+		$("#divProcessamento", painelProcessamentoController.workspace).hide();
+		$(".areaBts", painelProcessamentoController.workspace).show();
+		$(".grids", painelProcessamentoController.workspace).show();
+		
 		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 			url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
-			params: [],
+			params: [{name: 'codigoDistribuidor', value: codigoDistribuidor}],
 			newp: 1,
 		});
 		$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 	},
-	pesquisarProcessos : function() {
-		painelProcessamentoController.bindButtonsProcessos();
-		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
-			url : contextPath + '/administracao/painelProcessamento/pesquisarProcessos',
-			params: [],
-			newp : 1,
-		});
-		$(".painelProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
-	},
+	
 	executarPreProcessamentoInterfaceGrid : function(resultado) {
 		
 		if (resultado.mensagens) {
@@ -403,7 +373,7 @@ var painelProcessamentoController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 					var data = [{name: 'idInterface', value: idInterface}];
-					$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
+					$.postJSON(contextPath + "/administracao/painelProcessamento/gerarRankingSegmento",
 							   data,
 							   function (resultado) {
 
@@ -433,6 +403,27 @@ var painelProcessamentoController = $.extend(true, {
 		});
 	},
 	
+	gerarRankingSegmento : function() {
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/gerarRankingSegmento",
+				null,
+				function (resultado) {
+				
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	}
+		);
+	},
+	
+	gerarRankingFaturamento : function() {
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/gerarRankingFaturamento",
+				null,
+				function (resultado) {
+				
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	}
+		);
+	},
 	
 	reprocessarInterfacesEmOrdem : function() {
 		

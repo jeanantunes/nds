@@ -90,12 +90,15 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		if(row.venda == undefined){
 			row.venda = '';
-		}else {
-			row.percentualVenda = floatToPrice(row.percentualVenda);
 		}
-		if(row.percentualVenda == undefined){
+		
+		if ((row.reparte && row.venda) && (row.reparte != 0 && row.venda != 0)) {
+			row.percentualVenda = floatToPrice(row.venda * 100 / row.reparte); 
+		} else {
+			
 			row.percentualVenda = '';
 		}
+		
 	};
 	
 	this.selecionarPesoProduto = function(index, select){
@@ -210,7 +213,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
 		
-		$("#edicaoProdCadastradosGrid").flexOptions({
+		$("#edicaoProdCadastradosGrid", this.workspace).flexOptions({
 			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
 			params: data,
 			preProcess: function(result){
@@ -655,30 +658,35 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		
 		
-		var codProduto = $('#codigoProduto').val();
+		var codProduto = $('#codigoProduto',this.workspace).val();
 		
 		if(codProduto == ""){
-			codProduto = $('#codigoProduto').text();
+			codProduto = $('#codigoProduto',this.workspace).text();
 		}
 		
-		numEdicao = $('#numeroEdicao').val()
+		numEdicao = $('#numeroEdicao',this.workspace).val();
 		
 		if(numEdicao == ""){
-			var numEdicao = $('#numeroEdicao').html()
+			var numEdicao = $('#numeroEdicao', this.workspace).html();
 		}
 		
 		data.push({name : "codigoProduto", value : codProduto});
 		data.push({name : "numeroEdicao", value : numEdicao});
-		data.push({name : "idLancamento", value : $('#idLancamento').val()});
-		data.push({name : "dataLancamento", value: $('#dataLancamento').html()});
-        //TODO adicionar numero periodo caso o idLancamento nao seja o suficiente
-		
+		data.push({name : "idLancamento", value : $('#idLancamento',this.workspace).val()});
+		data.push({name : "dataLancamento", value: $('#dataLancamento',this.workspace).html()});
+        //TODO adicionar numero periodo caso o idLancamento nao s
+
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    //usado para exibir as variaveis do estudo
             
 			myWindow = window.open('', '_blank');
-            myWindow.document.write(result.list[0]);
-            myWindow.focus();
+			
+			if(myWindow && myWindow.document) {
+				myWindow.document.write(result.list[0]);
+				myWindow.focus();
+			} else {
+				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
+			}
             
             var isLiberado = result.list[2];
             	
@@ -689,25 +697,16 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             if(typeof(matrizDistribuicao)=="object"){
             		matrizDistribuicao.carregarGrid();
             }
-            
-            $("#codigoPesquisaBases").remove();
-    		$("#produtoPesquisaBases").remove();
-    		$("#produtoPesquisaBases").remove();
-    		$("#edicaoProdCadastradosGrid").remove();
-            
+
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
+		
 		});
 	};
 	
 	this.cancelar = function(){
-		
-		$("#codigoPesquisaBases").remove();
-		$("#produtoPesquisaBases").remove();
-		$("#produtoPesquisaBases").remove();
-		$("#edicaoProdCadastradosGrid").remove();
-		
-		$(".ui-tabs-selected").find("span").click();
-		$("a[href='"+pathTela+"/matrizDistribuicao']").click();
+
+		$(".ui-tabs-selected").find("span[class*='ui-icon-close']").click();
+		selectTabTitle('Matriz Distribuição');
 	};
 	
 	this.redirectToTelaAnalise = function(){

@@ -31,6 +31,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
@@ -45,6 +46,9 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
 	private static final String INDICE_PESSOA_JURIDICA = "J";
 	private static final String INDICE_PESSOA_FISICA = "F";
@@ -200,7 +204,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"Atualizacao da Cota " + cota.getNumeroCota());
+				"Atualização da Cota " + cota.getNumeroCota());
 
 		cota.setNumeroCota(input.getCodCota());
 		cota.setPossuiContrato(false);
@@ -240,7 +244,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de endereco para a cota "
+					"O Arquivo não Contém dados de Endereço para a Cota "
 							+ cota.getNumeroCota());
 		}
 
@@ -318,7 +322,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Telefone Cota "
+						"Atualização do Telefone Cota "
 								+ telefoneCota.getId());
 
 
@@ -333,7 +337,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de telefone para a cota "
+					"O Arquivo não Contém dados de Telefone para a Cota "
 							+ cota.getNumeroCota());
 		}
 	}
@@ -373,8 +377,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		historicoSituacaoCota.setDataEdicao(new Date());
 		historicoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
-		Usuario usuarioResponsavel = new Usuario();
-		usuarioResponsavel.setId(2L);
+		Usuario usuarioResponsavel = this.usuarioRepository.buscarPorId(1L);
 		historicoSituacaoCota.setResponsavel(usuarioResponsavel);
 		
 		getSession().persist(historicoSituacaoCota);
@@ -418,7 +421,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de endereco para a cota "
+					"O Arquivo não Contém dados de Endereço para a Cota "
 							+ cota.getNumeroCota());
 		}
 
@@ -441,7 +444,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"O arquivo nao contem dados de telefone para a cota "
+					"O Arquivo nao Contém dados de Telefone para a Cota "
 							+ cota.getNumeroCota());
 		}
 	}
@@ -523,7 +526,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.RELACIONAMENTO,
-								"Endereço atualizado para cota: " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+								"Endereço atualizado para Cota " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
 						
 						persistiuEndereco = true;
 					}
@@ -544,7 +547,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.RELACIONAMENTO,
-								"Endereço atualizado para cota: " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+								"Endereço atualizado para Cota " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
 						
 						persistiuEndereco = true;
 						

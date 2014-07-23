@@ -15,6 +15,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
@@ -184,10 +185,17 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	@Override
-	public DiaSemana buscarInicioSemana() {
+	public DiaSemana buscarInicioSemanaRecolhimento() {
 		
 		return (DiaSemana) 
-				this.getSession().createQuery("select inicioSemana from Distribuidor").uniqueResult();
+				this.getSession().createQuery("select inicioSemanaRecolhimento from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public DiaSemana buscarInicioSemanaLancamento() {
+		
+		return (DiaSemana) 
+				this.getSession().createQuery("select inicioSemanaLancamento from Distribuidor").uniqueResult();
 	}
 
 	@Override
@@ -236,9 +244,10 @@ public class DistribuidorRepositoryImpl extends
 
 	@Override
 	public Integer obterNumeroDiasNovaCobranca() {
-		
-		return (Integer)
-				this.getSession().createQuery("select numeroDiasNovaCobranca from Distribuidor").uniqueResult();
+		//alterado a pedido do negócio, track MNDS-275
+//		return (Integer)
+//				this.getSession().createQuery("select numeroDiasNovaCobranca from Distribuidor").uniqueResult();
+	    return 1;
 	}
 
 	@Override
@@ -623,5 +632,12 @@ public class DistribuidorRepositoryImpl extends
 		   .append(" join d.parametrosRecolhimentoDistribuidor p ");
 		
 		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
+
+	@Override
+	@Transactional
+	public void alterar(Distribuidor entity) {
+		super.alterar(entity);
+		super.getSession().getSessionFactory().getCache().evictQueryRegions();
 	}
 }

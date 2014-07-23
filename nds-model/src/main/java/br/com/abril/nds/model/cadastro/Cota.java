@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -65,6 +66,12 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
 	
+	@Embedded
+	private PoliticaSuspensao politicaSuspensao;
+	
+	@Column(name = "SUGERE_SUSPENSAO_DISTRIBUIDOR", nullable = false)
+	private boolean sugereSuspensaoDistribuidor = true;
+	
 	@Column(name = "POSSUI_CONTRATO", nullable = false)
 	private boolean possuiContrato;
 	
@@ -103,11 +110,17 @@ public class Cota implements Serializable {
 	private ParametroCobrancaCota parametroCobranca;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)", nullable=false)
+	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)")
 	private TipoCota tipoCota;
+	
+	@Column(name = "DEVOLVE_ENCALHE")
+	private Boolean devolveEncalhe;
 		
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
+	
+	@OneToOne(mappedBy="cota")
+	private ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name="ID_FIADOR")
@@ -185,9 +198,8 @@ public class Cota implements Serializable {
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
 	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "ALTERACAO_TIPO_COTA")
-	private Date alteracaoTipoCota;
+	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
+	private BigDecimal valorMinimoCobranca;
 	
 	@ManyToMany(mappedBy = "cotas", fetch = FetchType.LAZY)
 	private Set<CotaUnificacao> cotasUnificacao;
@@ -253,6 +265,22 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public PoliticaSuspensao getPoliticaSuspensao() {
+		return politicaSuspensao;
+	}
+
+	public void setPoliticaSuspensao(PoliticaSuspensao politicaSuspensao) {
+		this.politicaSuspensao = politicaSuspensao;
+	}
+
+	public boolean isSugereSuspensaoDistribuidor() {
+		return sugereSuspensaoDistribuidor;
+	}
+
+	public void setSugereSuspensaoDistribuidor(boolean sugereSuspensaoDistribuidor) {
+		this.sugereSuspensaoDistribuidor = sugereSuspensaoDistribuidor;
+	}
+
 	public boolean isPossuiContrato() {
 		return possuiContrato;
 	}
@@ -343,6 +371,14 @@ public class Cota implements Serializable {
 
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
+	}
+	
+	public Boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
 	}
 
 	public Fiador getFiador() {
@@ -595,6 +631,20 @@ public class Cota implements Serializable {
 		return null;
 	}
 	
+	public List<PDV> getPDVSecundarios(){
+		
+		List<PDV> pdvs = new ArrayList<>();
+		
+		for(PDV item : this.getPdvs()){
+			
+			if(!item.getCaracteristicas().isPontoPrincipal()){
+				
+				pdvs.add(item);
+			}
+		}
+		return pdvs;
+	}
+	
 	public EnderecoCota getEnderecoPorTipoEndereco(TipoEndereco tipoEndereco){
 		for(EnderecoCota item : this.getEnderecos()){
 			if(item.getTipoEndereco() == tipoEndereco){
@@ -616,38 +666,32 @@ public class Cota implements Serializable {
 		return rankingSegmento;
 	}
 
-
 	public void setRankingSegmento(List<RankingSegmento> rankingSegmento) {
 		this.rankingSegmento = rankingSegmento;
 	}
-
 
 	public List<EstoqueProdutoCota> getEstoqueProdutoCota() {
 		return estoqueProdutoCota;
 	}
 
-
 	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
 		this.estoqueProdutoCota = estoqueProdutoCota;
 	}
-
 
 	public Integer getRecebeRecolheParciais() {
 		return recebeRecolheParciais;
 	}
 
-
 	public void setRecebeRecolheParciais(Integer recebeRecolheParciais) {
 		this.recebeRecolheParciais = recebeRecolheParciais;
 	}
-	
 
-	public Date getAlteracaoTipoCota() {
-		return alteracaoTipoCota;
+	public BigDecimal getValorMinimoCobranca() {
+		return valorMinimoCobranca;
 	}
 
-	public void setAlteracaoTipoCota(Date alteracaoTipoCota) {
-		this.alteracaoTipoCota = alteracaoTipoCota;
+	public void setValorMinimoCobranca(BigDecimal valorMinimoCobranca) {
+		this.valorMinimoCobranca = valorMinimoCobranca;
 	}
 
 	public Set<CotaUnificacao> getCotasUnificacao() {
@@ -657,5 +701,18 @@ public class Cota implements Serializable {
 	public void setCotasUnificacao(Set<CotaUnificacao> cotasUnificacao) {
 		this.cotasUnificacao = cotasUnificacao;
 	}
+
+
+	public ParametroCobrancaDistribuicaoCota getParametroCobrancaDistribuicaoCota() {
+		return parametroCobrancaDistribuicaoCota;
+	}
+
+
+	public void setParametroCobrancaDistribuicaoCota(
+			ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota) {
+		this.parametroCobrancaDistribuicaoCota = parametroCobrancaDistribuicaoCota;
+	}
+	
+	
 	
 }

@@ -45,13 +45,17 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -63,6 +67,7 @@ import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.util.Intervalo;
 
@@ -122,6 +127,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private FuroProdutoRepository furoProdutoRepository;
+    
+    @Autowired
+    private EstudoService estudoService;
+    
+    @Autowired
+    private EstudoGeradoRepository estudoGeradoRepository;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -206,8 +217,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
                 GrupoMovimentoEstoque.SOBRA_DE,
                 GrupoMovimentoEstoque.SOBRA_EM,
-                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA,
-                GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO   
+                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA
         };
         
         final Map<Long, BigInteger> mapProdutos =
@@ -244,8 +254,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             if (lancamento.getEstudo() == null) {
                 
-                throw new ValidacaoException(
-TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
+                throw new ValidacaoException(TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             }
             
             final ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
@@ -261,7 +270,7 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
                     break;
                 }
             }
-            
+
             itemNotaEnvio.setProdutoEdicao(produtoEdicao);
             itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
             itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
@@ -465,10 +474,15 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             itemNotaEnvio = new ItemNotaEnvio();
         }
         
+        String nomePublicacao = 
+        		TipoEstudoCota.JURAMENTADO.equals(estudoCota.getTipoEstudo()) ?
+        				produtoEdicao.getProduto().getNome() + " Juramentado" : 
+    					produtoEdicao.getProduto().getNome();
+        
         itemNotaEnvio.setProdutoEdicao(produtoEdicao);
         itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
         itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-        itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
+        itemNotaEnvio.setPublicacao(nomePublicacao);
         itemNotaEnvio.setDesconto(percentualDesconto);
         itemNotaEnvio.setReparte(quantidade);
         itemNotaEnvio.setPrecoCapa(precoVenda);
@@ -774,7 +788,20 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
             
             notasEnvio.add(notaEnvio);
             
+            this.processarEstudoPDV(cota, listaItemNotaEnvio);
         }
+    }
+    
+    private void processarEstudoPDV(final Cota cota, final List<ItemNotaEnvio> itensNotaEnvio){
+    	
+    	for(ItemNotaEnvio item : itensNotaEnvio){
+    		
+    		Estudo estudo = item.getEstudoCota().getEstudo();
+    		
+    		EstudoGerado estudoGerado = estudoGeradoRepository.buscarPorId(estudo.getId());
+    		
+    	    estudoService.gerarEstudoPDV(estudoGerado, cota, item.getReparte());
+    	}
     }
         
     /* Retorna uma lista com os movimentos estoque cota filtrados, onde os

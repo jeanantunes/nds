@@ -103,7 +103,7 @@
 					<td><strong>Tipo de Desconto:</strong></td>
 					<td>
 						<select name="comboTipoDesconto"  id="comboTipoDesconto" class="habilitarCampoInterface" 
-						        style="width:200px; display: none;" onchange="produtoController.carregarPercentualDesconto();" >
+						        style="width:200px; display: none;" >
 						</select>
 						<input type="text" id="tipoDescontoManual" style="width:200px; display: none;" />
 					</td>
@@ -289,7 +289,7 @@
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		<legend> Pesquisar Produtos</legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>

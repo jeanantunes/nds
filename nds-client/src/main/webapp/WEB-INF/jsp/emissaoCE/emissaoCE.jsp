@@ -51,7 +51,7 @@
 			
 				<span class="bt_novos">
 					<!-- IMPRESSAO CE -->
-					<a href="#" id="imprimirCE" rel="tipsy" title="Imprimir CE">
+					<a href="javascript:void(0)" id="imprimirCE" rel="tipsy" title="Imprimir CE">
 					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
 				</span>
 				
@@ -63,7 +63,7 @@
 				
 				<span class="bt_arq">
 					<!-- IMPRESSAO BOLETOS EM BRANCO -->
-					<a href="#" id="imprimirBoletosEmBranco" rel="tipsy" title="Imprimir Boletos em Branco">
+					<a href="javascript:void(0)" id="imprimirBoletosEmBranco" rel="tipsy" title="Imprimir Boletos em Branco">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
 				</span>
 				
@@ -75,7 +75,7 @@
 			</div>
 		</div>
     	<div class="linha_separa_fields">&nbsp;</div>
-      <fieldset class="fieldFiltro">
+      <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    	    <legend>Pesquisar CE´s</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>

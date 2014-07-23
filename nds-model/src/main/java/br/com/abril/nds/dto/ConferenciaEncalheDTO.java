@@ -7,7 +7,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 
-public class ConferenciaEncalheDTO implements Serializable {
+public class ConferenciaEncalheDTO implements Serializable, Comparable<ConferenciaEncalheDTO> {
 
 	private static final long serialVersionUID = -6012294358522142934L;
 	
@@ -25,7 +25,7 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean possuiBrinde;
 	
-	private boolean parcial;
+	private boolean parcialNaoFinal;
 	
 	private boolean isContagemPacote;
 	
@@ -40,6 +40,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 	 * Quantidade apontada na conferência de encalhe
 	 */	
 	private BigInteger qtdExemplar;
+	
+	/**
+	 * Também equivale a quantidade apontada na conferência de encalhe, porém 
+	 * é um campo do tipo {@code String} devido a possibilidade do usuário digitar
+	 * a quantidade acompanhada do sufixo "e" no recolhimento de produtos do
+	 * tipo cromo, para assim "forçar" a contabilização deste por envelopes.
+	 */
+	private String qtdExemplarDaGrid;
 
 	/**
 	 *  Quantidade informada. Refere-se a qtde do item da nota fiscal de entrada da cota.
@@ -276,12 +284,12 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.precoCapaInformado = precoCapaInformado;
 	}
 
-	public boolean isParcial() {
-		return parcial;
+	public boolean isParcialNaoFinal() {
+		return parcialNaoFinal;
 	}
 
-	public void setParcial(boolean parcial) {
-		this.parcial = parcial;
+	public void setParcialNaoFinal(boolean parcialNaoFinal) {
+		this.parcialNaoFinal = parcialNaoFinal;
 	}
 
 	/**
@@ -332,6 +340,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.parcialCalculado = parcialCalculado;
 	}
 
+	public String getQtdExemplarDaGrid() {
+		return qtdExemplarDaGrid;
+	}
+
+	public void setQtdExemplarDaGrid(String qtdExemplarDaGrid) {
+		this.qtdExemplarDaGrid = qtdExemplarDaGrid;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -356,5 +372,28 @@ public class ConferenciaEncalheDTO implements Serializable {
 		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ConferenciaEncalheDTO o) {
+		
+		if(o == null) {
+			return 1;
+		}
+		
+		if(this.codigoSM == null && o.getCodigoSM() == null) {
+			return 0;
+		}
+		
+		if(this.codigoSM != null && o.getCodigoSM() == null) {
+			return 1;
+		}
+		
+		if(this.codigoSM == null && o.getCodigoSM() != null) {
+			return -1;
+		}
+		
+		return this.codigoSM.compareTo(o.getCodigoSM());
+		
 	}
 }

@@ -3,8 +3,6 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	init : function() {
 		
-		$('.porProduto').hide();
-		$('.porCota').hide();
 		
 		$(".mixCotasGrid").flexigrid({
 			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridCota(data);},
@@ -173,7 +171,7 @@ var mixCotaProdutoController = $.extend(true, {
 			height : 255
 		});
 		//Grid de repartes por pdv
-		$(".pdvCotaGrid").flexigrid({
+		$(".MX_pdvCotaGrid").flexigrid({
 			preProcess: function(data){return mixCotaProdutoController.preProcessarListaPdv(data);},
 			dataType : 'json',
 			colModel : [ {
@@ -211,8 +209,19 @@ var mixCotaProdutoController = $.extend(true, {
 			height : 200
 		});
 		
-		},
+		$('.porProduto').hide();
+		$('.porCota').hide();
+		$("#reparteOriginal").hide();
 		
+		$('#nomeCotaMix').keyup(function (){
+			autoComplete.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#codigoCotaMix', '#nomeCotaMix', "nomeCota", 3);
+		});
+		
+		$('#nomeProdutoMix').keyup(function (){
+			autoComplete.autoCompletarPorNome("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigoProdutoMix', '#nomeProdutoMix', "nome", 3);
+		});
+		
+	},
 		
 		
 	//funcao de pre-processamento do resultado da busca de fixacao por produto
@@ -271,7 +280,7 @@ var mixCotaProdutoController = $.extend(true, {
 		return data;
 	},	
 	
-	updateReparteMinMax:function(input,tipoCampo,idMix,lastValue){
+	updateReparteMinMax:function(input, tipoCampo, idMix, lastValue){
 		
 			
 		var listaNovoReparte = new Array();
@@ -304,20 +313,37 @@ var mixCotaProdutoController = $.extend(true, {
 			  });
 		 
 		 
-		$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+		 $("#dialog-confirma-alteracao-reparte").dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
 
-			if($("#radio").attr('checked') == 'checked'){
-				$(".mixCotasGrid").flexReload();
-			}
-			else{
-				$(".mixProdutosGrid").flexReload();
-			}
-			
-		}, function(){
-			input.value=lastValue;
-			
-			
-		});
+						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+							
+							if($("#radio").attr('checked') == 'checked'){
+								$(".mixCotasGrid").flexReload();
+							}
+							else{
+								$(".mixProdutosGrid").flexReload();
+							}
+							
+						}, function(){
+							input.value=lastValue;
+						});
+						
+						$(this).dialog("close");
+					},
+					"Cancelar": function() {
+						input.value=lastValue;
+						$(this).dialog("close");
+					}
+				},
+			});
+		 
+		 
 		
 		
 	},
@@ -460,9 +486,9 @@ var mixCotaProdutoController = $.extend(true, {
 		'</a>';
 		
 		//Checa quantidade de pdvs. Caso seja maior que 1 o retorna botoes editar/excluir senao apenas o botao excluir
-//		if (cell.qtdPdv > 1) {
+		if (cell.qtdPdv > 1) {
 			components = imgAlteracao;
-//		}
+		}
 			components += imgExcluir;
 		
 		return  components;
@@ -921,7 +947,6 @@ var mixCotaProdutoController = $.extend(true, {
 		});
 	},
 	
-
 	//funcao que executa chamada postJSON que busca dados do mix 
 	editarRepartePorPdv:function (id, reparteMinimo, reparteMaximo, idCota, idProduto){
 	
@@ -932,6 +957,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}
 		
 		var reparteTotal= reparteMaximo;
+		$("#reparteOriginal").text(reparteTotal).hide();
 		//parametros da pesquisa de repartes por pdv 
 		parametrosPesquisaReparte = [];
 		parametrosPesquisaReparte.push({
@@ -951,17 +977,15 @@ var mixCotaProdutoController = $.extend(true, {
 		$.postJSON(contextPath + '/distribuicao/mixCotaProduto/editarRepartePorPdv', parametrosPesquisaReparte
 		,		
 		function(result){
-			$("#codigoCotaModalReparte").text(result.numeroCota);
-			$("#nomeCotaModalReparte").text(result.nomeCota);
-			$("#codigoProdutoModalReparte").text(result.codigoProduto);
-			$("#nomeProdutoModalReparte").text(result.nomeProduto);
-			$("#classificacaoModalReparte").text(result.classificacaoProduto);
-//			$(".reparteGridinput:eq(0)").val(reparteTotal);
+			$("#MX_codigoCotaModalReparte").text(result.numeroCota);
+			$("#MX_nomeCotaModalReparte").text(result.nomeCota);
+			$("#MX_codigoProdutoModalReparte").text(result.codigoProduto);
+			$("#MX_nomeProdutoModalReparte").text(result.nomeProduto);
+			$("#MX_classificacaoModalReparte").text(result.classificacaoProduto);
+//			$("#reparteOriginal").text(result.reparteMaximo).hide();
+//			$(".MX_reparteGridinput:eq(0)").val(reparteTotal);
 		});
 		
-		
- 
-
 		$( "#dialog-defineReparte" ).dialog({
 			resizable: false,
 			height:590,
@@ -971,8 +995,11 @@ var mixCotaProdutoController = $.extend(true, {
 			
 			buttons: {
 				"Confirmar": function() {
+					
 					var somaReparte=0;
-					  $("#pdvCotaGrid .reparteGridinput").each(function(idx, linha){
+					listaPDV =[];
+					
+					  $("#MX_pdvCotaGrid .MX_reparteGridinput").each(function(idx, linha){
 						  if(linha.name == 'undefined'){
 							  codigos.push(0);
 						  }else{
@@ -1002,11 +1029,11 @@ var mixCotaProdutoController = $.extend(true, {
 					  
 					  listaPDV.push({
 						  name : "codProduto" , 
-						  value : $("#codigoProdutoModalReparte").text()
+						  value : $("#MX_codigoProdutoModalReparte").text()
 						  });
 					  listaPDV.push({
 						  name : "codCota" , 
-						  value : $("#codigoCotaModalReparte").text()
+						  value : $("#MX_codigoCotaModalReparte").text()
 						  });
 					  
 					  listaPDV.push({
@@ -1079,22 +1106,22 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//funcao que executa a chamada que preenche a grid de repartes por pdv
 	preencherGridPdv:function(parametrosPesquisaReparte){
-		$(".pdvCotaGrid").flexOptions({
+		$(".MX_pdvCotaGrid").flexOptions({
 			url: contextPath + "/distribuicao/mixCotaProduto/carregarGridPdv",
 			dataType : 'json',
 			params: parametrosPesquisaReparte
 		});
 		
-		$(".pdvCotaGrid").flexReload();
+		$(".MX_pdvCotaGrid").flexReload();
 	},
 	//funcao que limpa os dados que foram carregados no modal de reparte ao fechar a tela
 	limparCamposModalReparteAoFechar:function(){
-		$("#codigoCotaModalReparte").text("");
-		$("#nomeCotaModalReparte").text("");
-		$("#codigoProdutoModalReparte").text("");
-		$("#nomeProdutoModalReparte").text("");
-		$("#classificacaoModalReparte").text("");
-		$(".pdvCotaGrid").html("");
+		$("#MX_codigoCotaModalReparte").text("");
+		$("#MX_nomeCotaModalReparte").text("");
+		$("#MX_codigoProdutoModalReparte").text("");
+		$("#MX_nomeProdutoModalReparte").text("");
+		$("#MX_classificacaoModalReparte").text("");
+		$(".MX_pdvCotaGrid").html("");
 	},
 	
 	//funcao de pre-processamento da grid de repartes por pdv, adicionando inputs de reparte para cada linha da grid
@@ -1102,7 +1129,6 @@ var mixCotaProdutoController = $.extend(true, {
 		if (data.result){
 			data.rows = data.result[1].rows;
 		}
-		var i;
 		
 		if(data.rows.length==1){
 			exibirMensagem("WARNING", ["Operação não pode ser realizada. A cota possui somente 01 PDV."]);
@@ -1110,17 +1136,36 @@ var mixCotaProdutoController = $.extend(true, {
 			return;
 		}
 		
+		var isReparteDefinido = false;
+		var qtdReparteDivididoPorPDV = 0;
 		
-		for (i = 0 ; i < data.rows.length; i++) {
-
-			disabled = (data.rows.length==1)?"disabled='disabled'":"";
-			data.rows[i].cell["reparte"]=mixCotaProdutoController.getInputReparte(data.rows[i].cell,disabled);
+		for (var i=0; i<data.rows.length; i++){
+			if(data.rows[i].cell.reparte > 0){
+				qtdReparteDivididoPorPDV++;
+			}
 		}
 		
-		$('.pdvCotaGrid').show();
+		if(qtdReparteDivididoPorPDV > 1){
+			isReparteDefinido = true;
+		}
+		
+        for (var i=0; i<data.rows.length; i++) {
+            
+        	var cell = data.rows[i].cell;
+            
+        	if(isReparteDefinido){
+        		cell.reparte = '<input class="MX_reparteGridinput" name="'+data.rows[i].cell.id+'" value="#">'.replace(/#/, data.rows[i].cell.reparte);
+        	}else{
+        		cell.reparte = '<input class="MX_reparteGridinput" name="'+data.rows[i].cell.id+'" value="#">'.replace(/#/, 0);
+        	}
+        }
+		
+		$('.MX_pdvCotaGrid').show();
+	
 		if (data.result){
 			return data.result[1];
 		}
+		
 		return data;
 
 	},
@@ -1134,8 +1179,8 @@ var mixCotaProdutoController = $.extend(true, {
 	},
 	
 	//funcao que retorna input de reparte a grid de reparte por pdv
-	getInputReparte:function(cell,disabled){
-		return "<input type='text' maxlength='5' size='7' "+disabled+" class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+	getInputReparte:function(cell){
+		return "<input type='text' maxlength='5' size='7' class='MX_reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
 		
 	},
 	//funcao de exibicao de grid

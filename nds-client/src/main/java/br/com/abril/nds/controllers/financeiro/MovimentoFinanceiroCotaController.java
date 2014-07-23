@@ -1,9 +1,11 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -13,10 +15,14 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -53,11 +59,40 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 	private CotaService cotaService;
 	
 	@Autowired
+	private FechamentoEncalheService fechamentoEncalheService;
+	
+	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	@Path("/")
 	public void index(){
 		
+	}
+	
+	/**
+	 * Verifica se houve Fechamento de Encalhe e Confirmação de Expedição para 
+	 * liberar o processamento Financeiro da Cota à Vista na data de operação atual
+	 * 
+	 * @param dataOperacao
+	 */
+	private void verificaLiberacaoProcessamentoFinanceiro(Date dataOperacao){
+		
+        boolean fechamentoRealizado = this.fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(dataOperacao);
+		
+		if (!fechamentoRealizado){
+			
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Fechamento de Encalhe ainda não realizado !");
+		}
+		
+		List<Lancamento> lcto = this.lancamentoService.obterLancamentoDataDistribuidorInStatus(dataOperacao, Arrays.asList(StatusLancamento.BALANCEADO));
+		
+		if (lcto!=null && !lcto.isEmpty()){
+			
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Expedição pendente de Confirmação !");
+		}
 	}
 
 	@Post
@@ -70,6 +105,8 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 		
 		Date data = this.distribuidorService.obterDataOperacaoDistribuidor();
 
+		this.verificaLiberacaoProcessamentoFinanceiro(data);
+		
 		List<ProcessamentoFinanceiroCotaVO> processamentoFinanceiroCotaVO = this.movimentoFinanceiroCotaService.obterProcessamentoFinanceiroCota(numeroCota, 
 				                                                                                                                                 data, 
 				                                                                                                                                 sortorder, 

@@ -9,8 +9,8 @@ function Distribuicao(tela) {
 
     this.inicializar = function() {
 		
-    	  D.verificarTipoConvencional();
-		
+		D.verificarTipoConvencional();
+		  
 	},                        
     
 	this.verificarTipoConvencional = function(idCota) {
@@ -114,21 +114,51 @@ function Distribuicao(tela) {
 			
 			data.push({name:'distribuicao.utilizaTermoAdesao',		value: D.get("utilizaTermoAdesao")});
 			data.push({name:'distribuicao.termoAdesaoRecebido',		value: D.get("termoAdesaoRecebido")});
-			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregaBanca")});
-			data.push({name:'distribuicao.taxaFixa',				value: floatValue(D.get("taxaFixaEntregaBanca"))});
-			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregaBanca")});
-			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregaBanca")});
-			data.push({name:'distribuicao.baseCalculo',	            value: D.get("baseCalculo")});
-			
+							
 		} else if (tipoEntrega == 'ENTREGADOR') {
 			
 			data.push({name:'distribuicao.utilizaProcuracao',		value: D.get("utilizaProcuracao")});
 			data.push({name:'distribuicao.procuracaoRecebida',		value: D.get("procuracaoRecebida")});
-			data.push({name:'distribuicao.percentualFaturamento',	value: D.get("percentualFaturamentoEntregador")});
-			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarenciaEntregador")});
-			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarenciaEntregador")});
 		}
 		
+		if (tipoEntrega == 'ENTREGADOR' || tipoEntrega == 'ENTREGA_EM_BANCA'){
+			
+			data.push({name:'distribuicao.baseCalculo',	            value: D.get("baseCalculo")});
+			
+			if (D.get("modalidadeCobranca") == "TAXA_FIXA"){
+
+				data.push({name:'distribuicao.taxaFixa', value: D.get("valorTaxaFixa")});
+				
+			} else {
+
+				data.push({name:'distribuicao.percentualFaturamento',	value: D.get("valorPercentualFaturamento")});
+			}
+			
+			data.push({name:'distribuicao.modalidadeCobranca',	    value: D.get("modalidadeCobranca")});
+			data.push({name:'distribuicao.porEntrega',	            value: D.get("checkPorEntrega")});
+			data.push({name:'distribuicao.inicioPeriodoCarencia',	value: D.get("inicioPeriodoCarencia")});
+			data.push({name:'distribuicao.fimPeriodoCarencia',		value: D.get("fimPeriodoCarencia")});
+			
+			var diaCobranca = '';
+			
+			var periodicidade = $("[name="+tela+"radioPeriodicidade]:checked", this.workspace).val();
+			
+			var diaSemanaCobranca = $("[name="+tela+"diaSemanaCob]:checked", this.workspace).val();
+			
+			if (periodicidade == "QUINZENAL"){
+				
+				diaCobranca = D.get("inputQuinzenalDiaInicio");
+				
+			} else if (periodicidade == "MENSAL"){
+				
+				diaCobranca = D.get("inputCobrancaMensal");
+			}
+			
+			data.push({name:'distribuicao.periodicidadeCobranca',	value: periodicidade});
+			data.push({name:'distribuicao.diaCobranca',	            value: diaCobranca});
+			data.push({name:'distribuicao.diaSemanaCobranca', 		value:diaSemanaCobranca});
+		}
+
 		return data;
 	},
 	
@@ -185,29 +215,55 @@ function Distribuicao(tela) {
 			
 			D.set('utilizaTermoAdesao',					dto.utilizaTermoAdesao);
 			D.set('termoAdesaoRecebido',				dto.termoAdesaoRecebido);
-			D.set('percentualFaturamentoEntregaBanca',	dto.percentualFaturamento);
-			D.set('taxaFixaEntregaBanca',				dto.taxaFixa);
-			D.set('inicioPeriodoCarenciaEntregaBanca',	dto.inicioPeriodoCarencia);
-			D.set('fimPeriodoCarenciaEntregaBanca',		dto.fimPeriodoCarencia);
-			D.set('baseCalculo',			            dto.baseCalculo);
-			
-			D.$('taxaFixaEntregaBanca').priceFormat({
-		        allowNegative : false,
-		        centsSeparator : ',',
-		        thousandsSeparator : '.'
-		    });
 			
 			D.setNomeTermoAdesao(dto.nomeTermoAdesao);
 			
+	
 		} else if (tipoEntrega == 'ENTREGADOR') {
 		
-			D.set('utilizaProcuracao',					dto.utilizaProcuracao);
-			D.set('procuracaoRecebida',					dto.procuracaoRecebida);
-			D.set('percentualFaturamentoEntregador',	dto.percentualFaturamento);
-			D.set('inicioPeriodoCarenciaEntregador',	dto.inicioPeriodoCarencia);
-			D.set('fimPeriodoCarenciaEntregador',		dto.fimPeriodoCarencia);
+			D.set('utilizaProcuracao',dto.utilizaProcuracao);
 			
 			D.setNomeProcuracao(dto.nomeProcuracao);
+		}
+		
+		if(tipoEntrega == 'ENTREGADOR' || tipoEntrega == 'ENTREGA_EM_BANCA'){
+			
+			D.set("modalidadeCobranca",dto.modalidadeCobranca);
+			
+			D.set('baseCalculo',dto.baseCalculo);
+			
+			if (dto.modalidadeCobranca == 'TAXA_FIXA') {
+				$(".transpTaxaFixa", this.workspace).show();
+				$(".transpPercentual", this.workspace).hide();
+				D.set("valorTaxaFixa",dto.taxaFixa ? floatToPrice(dto.taxaFixa) : '');
+			}
+			if (dto.modalidadeCobranca == 'PERCENTUAL') {
+				$(".transpTaxaFixa", this.workspace).hide();
+				$(".transpPercentual", this.workspace).show();
+				D.set("valorPercentualFaturamento", dto.percentualFaturamento ? floatToPrice(dto.percentualFaturamento) : '');
+			}
+			
+			D.set("checkPorEntrega",dto.porEntrega);
+			
+			D.set('inicioPeriodoCarencia',	dto.inicioPeriodoCarencia);
+			D.set('fimPeriodoCarencia',		dto.fimPeriodoCarencia);
+			
+			D.alterarPeriodicidadeCobranca(dto.periodicidadeCobranca);
+			
+			if (dto.periodicidadeCobranca == "QUINZENAL"){
+				
+				D.set("inputQuinzenalDiaInicio",dto.diaCobranca);
+				
+				D.calcularDiaFimCobQuinzenal();
+				
+			} else if (dto.periodicidadeCobranca == "MENSAL"){
+				
+				D.set("inputCobrancaMensal",dto.diaCobranca);
+				
+			} else if (dto.periodicidadeCobranca == "SEMANAL"){
+				
+				$("input:radio[value="+ dto.diaSemanaCobranca +"]", this.workspace).check();
+			}
 		}
 		
 		D.carregarConteudoTipoEntrega(tipoEntrega, false, false);
@@ -286,14 +342,14 @@ function Distribuicao(tela) {
 		
 	this.downloadTermoAdesao = function() {
 		
-		var valorTaxa = floatValue(D.get("taxaFixaEntregaBanca"));
+		var valorTaxa = floatValue(D.get("valorTaxaFixa"));
 
-		var params = {taxa:valorTaxa, percentual:D.get("percentualFaturamentoEntregaBanca")};
+		var params = {taxa:valorTaxa, percentual:D.get("valorPercentualFaturamento")};
 		
 		$.postJSON(contextPath + "/cadastro/cota/validarValoresParaDownload",
 				params,
 				function() {
-					document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+valorTaxa+"&percentual="+D.get("percentualFaturamentoEntregaBanca"));
+					document.location.assign(contextPath + "/cadastro/cota/downloadTermoAdesao?termoAdesaoRecebido="+D.get("termoAdesaoRecebido")+"&numeroCota="+D.get("numCota")+"&taxa="+valorTaxa+"&percentual="+D.get("valorPercentualFaturamento"));
 				},
 				null,
 				true,
@@ -385,6 +441,81 @@ function Distribuicao(tela) {
 		 return $("#" + tela + campo);
 	},
 	
+	this.mostrarOpcaoSelecionada = function() {
+
+		if (D.get("modalidadeCobranca") == "TAXA_FIXA") {
+			$(".transpTaxaFixa", this.workspace).show();
+			$(".transpPercentual", this.workspace).hide();
+		} else {
+			$(".transpTaxaFixa", this.workspace).hide();
+			$(".transpPercentual", this.workspace).show();
+		}
+		
+		D.limparCamposCobranca();
+	},
+	
+	this.mostrarOpcaoTaxaFixa = function(){
+		
+		$(".transpTaxaFixa", this.workspace).show();
+		$(".transpPercentual", this.workspace).hide();
+		
+		D.limparCamposCobranca();
+	}, 
+	
+	this.mostrarOpcaoPercentual = function(){
+		
+		$(".transpTaxaFixa", this.workspace).hide();
+		$(".transpPercentual", this.workspace).show();
+		
+		D.limparCamposCobranca();
+	},
+	
+	this.limparCamposCobranca = function(){
+		
+		D.set('valorPercentualFaturamento',	"");
+		D.set('valorTaxaFixa',"");
+		D.set('baseCalculo','');
+	},
+	
+	this.alterarPeriodicidadeCobranca = function(tipoCobranca){
+		
+		$(".perCobrancaSemanal",this.workspace).hide();
+		$(".perCobrancaQuinzenal", this.workspace).hide();
+		$(".perCobrancaMensal", this.workspace).hide();
+		
+		if (tipoCobranca == 'SEMANAL'){
+			
+			$(".perCobrancaSemanal", this.workspace).show();
+		} else if (tipoCobranca == 'QUINZENAL'){
+			
+			$(".perCobrancaQuinzenal", this.workspace).show();
+		} else if (tipoCobranca == 'MENSAL'){
+			
+			$(".perCobrancaMensal", this.workspace).show();
+		}
+		
+		$("input:radio[value="+ tipoCobranca +"]", this.workspace).check();
+		
+		$("input[id$=inputQuinzenalDiaFim", this.workspace).attr("disabled","disabled");
+		
+		D.set("inputQuinzenalDiaInicio",'');
+		D.set("inputQuinzenalDiaFim",'');
+		D.set("inputCobrancaMensal",'');
+		D.set("diaSemanaCob",'');
+	},
+	
+	this.calcularDiaFimCobQuinzenal = function(){
+		
+		var valorInput = parseInt(D.get("inputQuinzenalDiaInicio"));
+		
+		if (!valorInput || valorInput <= 0){
+			D.set("inputQuinzenalDiaFim","");
+		} else {
+			var diaFim = valorInput + 14 < 31 ? valorInput + 14 : 31;
+			D.set("inputQuinzenalDiaFim",diaFim);
+		}
+	},
+	
 	this.mostrarEsconderDiv = function(classDiv, exibir) {
 		
 		$("." + classDiv).toggle(exibir);
@@ -392,16 +523,33 @@ function Distribuicao(tela) {
 	
 	this.mostarPopUpAteracaoTipoEntrega = function(value) {
 		
-		var tipoEntregaHidden = D.get('tipoEntregaHidden');
+		var param = [{name:"numeroCota",value:D.get('numCota')},
+		             {name:"tipoEntrega",value:value}];
 		
-		if (tipoEntregaHidden == "" || tipoEntregaHidden == 'COTA_RETIRA') {
+		$.postJSON(contextPath + "/cadastro/cota/validarTipoEntrega",
+				param,function (result) {
 			
-			D.set('tipoEntregaHidden', value);
+			var tipoEntregaHidden = D.get('tipoEntregaHidden');
 			
-			D.carregarConteudoTipoEntrega(value, false, true);
+			if (tipoEntregaHidden == "" || tipoEntregaHidden == 'COTA_RETIRA') {
+				
+				D.set('tipoEntregaHidden', value);
+				
+				D.carregarConteudoTipoEntrega(value, true, true);
+			}
+			else{
+				
+				D.exibirModalConfirmacao(value);
+			}
+
+		},function(result){
 			
-			return ;
-		}
+			D.set("tipoEntrega",  D.get('tipoEntregaHidden'));
+			
+		},true);
+	};
+	
+	this.exibirModalConfirmacao = function(value){
 		
 		$("#dialogMudancaTipoEntrega").dialog({
 			resizable: false,
@@ -433,7 +581,7 @@ function Distribuicao(tela) {
 				}
 			]
 		});
-	};
+	},
 	
 	this.carregarConteudoTipoEntrega = function(value, limparCampos, carregarValores) {
 		
@@ -449,11 +597,6 @@ function Distribuicao(tela) {
 			
 			D.mostrarEsconderConteudoEntregaBanca(true, limparCampos);
 			
-			if (carregarValores) {
-				
-				D.carregarValoresCamposEntregaBanca();	
-			}
-			
 		} else if (value == "ENTREGADOR") {
 			
 			D.mostrarEsconderConteudoEntregaBanca(false, limparCampos);
@@ -466,19 +609,6 @@ function Distribuicao(tela) {
 			
 			D.mostrarEsconderConteudoEntregador(false, limparCampos);
 		}
-	};
-	
-	this.carregarValoresCamposEntregaBanca = function() {
-		
-		$.postJSON(contextPath + "/cadastro/cota/carregarValoresEntregaBanca",
-			{numCota:D.get("numCota")},
-			function (result) {
-			
-				D.set('percentualFaturamentoEntregaBanca',	result.percentualFaturamento);
-				D.set('taxaFixaEntregaBanca',				result.taxaFixa);
-			},
-			null,
-			true);
 	};
 	
     this.distribuidorUtilizaTermoAdesao = function() {
@@ -534,13 +664,15 @@ function Distribuicao(tela) {
 		
 		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregaBanca",
 											 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
-											 "utilizaTermoAdesao", limparCampos);
+											 "utilizaTermoAdesao",null,null, limparCampos);
 		
 		D.distribuidorUtilizaTermoAdesao();
 		
 		D.mostrarEsconderConteudoTipoEntrega(false,
 				 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
-				 "utilizaTermoAdesao", limparCampos);
+				 "utilizaTermoAdesao",null,null, limparCampos);
+		
+		D.mostrarEsconderDiv("dadosComuns", exibirDiv);
 		
 	};
 	
@@ -550,6 +682,8 @@ function Distribuicao(tela) {
 											 "divUtilizaProcuracao", "divProcuracaoRecebida",
 											 "utilizaProcuracao", "procuracaoRecebida", limparCampos);
 		
+		D.mostrarEsconderDiv("dadosComuns", exibirDiv);
+		
 		D.distribuidorUtilizaProcuracao();
 	};
 
@@ -558,7 +692,7 @@ function Distribuicao(tela) {
 													   campoUtilizaArquivo, campoArquivoRecebido, limparCampos) {
 		
 		D.mostrarEsconderDiv(divConteudoTipoEntrega, exibirDiv);
-
+		
 		if (!exibirDiv && limparCampos) {
 			
 			D.set(campoUtilizaArquivo, false);
@@ -600,11 +734,6 @@ function Distribuicao(tela) {
 		
 		if (tipoEntrega == "ENTREGA_EM_BANCA") {
 			
-			D.set('percentualFaturamentoEntregaBanca',	"");
-			D.set('taxaFixaEntregaBanca',				"");
-			D.set('inicioPeriodoCarenciaEntregaBanca',	"");
-			D.set('fimPeriodoCarenciaEntregaBanca',		"");
-			
 			$("#nomeArquivoTermoAdesao").html("");
 			
 			$.postJSON(contextPath + "/cadastro/cota/excluirTermoAdesao",
@@ -614,10 +743,6 @@ function Distribuicao(tela) {
 					true);
 			
 		} else if (tipoEntrega == "ENTREGADOR") {
-		
-			D.set('percentualFaturamentoEntregador',	"");
-			D.set('inicioPeriodoCarenciaEntregador',	"");
-			D.set('fimPeriodoCarenciaEntregador',		"");
 			
 			$("#nomeArquivoProcuracao").html("");
 			
@@ -627,6 +752,18 @@ function Distribuicao(tela) {
 					null,
 					true);
 		}
+		
+		D.set('valorPercentualFaturamento',	"");
+		D.set('valorTaxaFixa',				"");
+		D.set('inicioPeriodoCarencia',	"");
+		D.set('fimPeriodoCarencia',		"");
+		D.set("inputQuinzenalDiaInicio",'');
+		D.set("inputCobrancaMensal",'');
+		D.set("diaSemanaCob",'');
+		D.set("checkPorEntrega",false);
+		D.alterarPeriodicidadeCobranca("DIARIO");
+		D.set('baseCalculo','');
+		
 	};
 	
 	this.setNomeTermoAdesao = function(nomeTermoAdesao) {
@@ -661,11 +798,6 @@ function Distribuicao(tela) {
 		
 		$("input[name='fimPeriodoCarencia']").mask("99/99/9999");
 		
-		D.$("taxaFixaEntregaBanca").maskMoney({decimal:",", thousands:"."});
-		
-		
-		$("input[name='percentualFaturamento']").mask("99.99");
-		
 		var options = {
 			success: D.tratarRetornoUpload
 	    };
@@ -673,6 +805,24 @@ function Distribuicao(tela) {
 		$('#formUploadTermoAdesao').ajaxForm(options);
 		
 		$('#formUploadProcuracao').ajaxForm(options);
+		
+		$("input[id$=valorTaxaFixa", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		$("input[id$=valorPercentualFaturamento", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});	
+		
+	
+		$("input[id$=inputQuinzenalDiaInicio", this.workspace).numeric();
+		
+		$("input[id$=inputCobrancaMensal",this.workspace).numeric();
+		
+		
 	});
 }
 

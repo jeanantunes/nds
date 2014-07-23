@@ -5,8 +5,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 
 /**
  * Representação de Campos da tela de Distribuição (Cadastro de Cota)
@@ -54,6 +57,12 @@ public class DistribuicaoDTO implements Serializable  {
 	private String nomeTermoAdesao;
 	private String nomeProcuracao;
 	private String tipoDistribuicaoCota;
+	
+	private ModalidadeCobranca modalidadeCobranca;
+	private boolean porEntrega;
+	private PeriodicidadeCobranca periodicidadeCobranca;
+	private Integer diaCobranca;
+	private DiaSemana diaSemanaCobranca;
 	
 	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
 	
@@ -575,6 +584,46 @@ public class DistribuicaoDTO implements Serializable  {
 
 	public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+	public ModalidadeCobranca getModalidadeCobranca() {
+		return modalidadeCobranca;
+	}
+
+	public void setModalidadeCobranca(ModalidadeCobranca modalidadeCobranca) {
+		this.modalidadeCobranca = modalidadeCobranca;
+	}
+
+	public boolean isPorEntrega() {
+		return porEntrega;
+	}
+
+	public void setPorEntrega(boolean porEntrega) {
+		this.porEntrega = porEntrega;
+	}
+
+	public PeriodicidadeCobranca getPeriodicidadeCobranca() {
+		return periodicidadeCobranca;
+	}
+
+	public void setPeriodicidadeCobranca(PeriodicidadeCobranca periodicidadeCobranca) {
+		this.periodicidadeCobranca = periodicidadeCobranca;
+	}
+
+	public Integer getDiaCobranca() {
+		return diaCobranca;
+	}
+
+	public void setDiaCobranca(Integer diaCobranca) {
+		this.diaCobranca = diaCobranca;
+	}
+
+	public DiaSemana getDiaSemanaCobranca() {
+		return diaSemanaCobranca;
+	}
+
+	public void setDiaSemanaCobranca(DiaSemana diaSemanaCobranca) {
+		this.diaSemanaCobranca = diaSemanaCobranca;
 	}
 	
 	

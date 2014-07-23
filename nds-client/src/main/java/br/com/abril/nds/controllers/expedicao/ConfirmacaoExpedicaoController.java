@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -23,10 +24,12 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -69,6 +72,13 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
+	
+	
+	@Autowired
+	private CalendarioService calendarioService;
+	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
 		
 	protected static final String SUCESSO = "SUCCESS";
 	protected static final String ALERTA = "WARNING";
@@ -217,25 +227,46 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				
 				session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento(1, selecionados.size()));
 				
-				TipoMovimentoEstoque tipoMovimento =
+				final TipoMovimentoEstoque tipoMovimento =
 					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 				
-				TipoMovimentoEstoque tipoMovimentoJuramentado =
+				final TipoMovimentoEstoque tipoMovimentoJuramentado =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
 				
-				TipoMovimentoEstoque tipoMovimentoCota =
+				final TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				
-				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+				final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+				
+				final Date dataVencimentoDebito = calendarioService.obterProximaDataDiaUtil(dataOperacao);
+				
+				final Fornecedor fornecedorPadraoDistribuidor = politicaCobrancaService.obterFornecedorPadrao();
 				
 				//Ordena IDS
 				long[] lista = Longs.toArray(selecionados);
 		        Arrays.sort(lista); 
 		        selecionados = Longs.asList(lista);
 				
+		        String retorno = null;
+		        List<String> listaRetorno = new ArrayList<>();
+		        
 				for(int i=0; i<selecionados.size(); i++) {
-					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);
-					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));	
+					
+					final ExpedicaoDTO expedicaoDTO = new ExpedicaoDTO(
+							selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, 
+							tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado, 
+							dataVencimentoDebito,fornecedorPadraoDistribuidor.getId());
+					
+					retorno = lancamentoService.confirmarExpedicao(expedicaoDTO);
+					
+					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
+					
+					this.tratarMensagemRetorno(retorno, listaRetorno);
+				}
+				
+				if (!listaRetorno.isEmpty()) {
+				    
+				    throw new ValidacaoException(TipoMensagem.WARNING, listaRetorno);
 				}
 				
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
@@ -276,6 +307,21 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
+
+        private void tratarMensagemRetorno(String retorno, List<String> listaRetorno) {
+            
+            if (retorno != null) {
+                
+                if (listaRetorno.isEmpty()) {
+                    
+                    listaRetorno.add("Redistribuição não pode ser expedida, "
+                            + "pois o lançamento já se encontra em processo de recolhimento. "
+                            + "Caso necessário reabra a matriz de recolhimento!");
+                }
+                
+                listaRetorno.add(retorno);
+            }
+        }
 		
 		private Object getMsgProcessamento(Integer atual, Integer total) {
 			

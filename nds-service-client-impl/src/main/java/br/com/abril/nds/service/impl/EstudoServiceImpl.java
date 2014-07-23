@@ -3,10 +3,14 @@ package br.com.abril.nds.service.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.slf4j.Logger;
@@ -15,26 +19,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
+import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
+import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.FixacaoReparteRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -57,15 +76,24 @@ public class EstudoServiceImpl implements EstudoService {
 
 	@Autowired
 	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
-	
-	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
     
     @Autowired
     private LancamentoService lancamentoService;
+    
+    @Autowired
+    private HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService;
+    
+    @Autowired
+    private EstudoPDVRepository estudoPDVRepository;
+    
+    @Autowired
+    private MixCotaProdutoRepository mixCotaProdRepository;
+    
+    @Autowired
+    private FixacaoReparteRepository fixacaoReparteRepository;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -77,19 +105,46 @@ public class EstudoServiceImpl implements EstudoService {
 	@Transactional
 	public void gravarEstudo(EstudoGerado estudo) {
 	    
-		estudo.setId(this.obterUltimoAutoIncrement());
-		
 	    for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
+	    }
+	    
+	    if(estudo.getReparteMinimo() == null){
+	    	estudo.setReparteMinimo(BigInteger.ZERO);
 	    }
 	    
 	    estudoGeradoRepository.adicionar(estudo);
 	}
 
+	/**
+	 * Verifica se existem edicões bases para estudo
+	 * 
+	 * @param estudoId
+	 * @return boolean
+	 */
+	private boolean isEdicoesBaseEstudo(Long estudoId){
+		
+        List<Long> listaIdEdicaoBaseEstudo = histogramaPosEstudoFaixaReparteService.obterIdEdicoesBase(Long.valueOf(estudoId));
+		
+		boolean isEdicoesBase = (listaIdEdicaoBaseEstudo !=null && !listaIdEdicaoBaseEstudo.isEmpty());
+		
+		return isEdicoesBase;
+	}
+	
 	@Override
 	@Transactional
-	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
-		return estudoGeradoRepository.obterResumoEstudo(estudoId);
+	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId, Long codigoProduto, Long numeroEdicao) {
+		
+		boolean isEdicoesBase = this.isEdicoesBaseEstudo(estudoId);
+		
+		ResumoEstudoHistogramaPosAnaliseDTO analiseDTO = estudoGeradoRepository.obterResumoEstudo(estudoId, isEdicoesBase);
+		
+		if(codigoProduto!= null && numeroEdicao!= null){
+			final Integer reparte = lancamentoService.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
+			analiseDTO.setQtdRepartePromocional(BigIntegerUtil.valueOfInteger(reparte));
+		}
+		
+		return analiseDTO;
 	}
 
 	@Override
@@ -109,13 +164,6 @@ public class EstudoServiceImpl implements EstudoService {
 
 		List<Long> listIdEstudoAdicionado = null;
 
-		EstudoGerado obterEstudo = this.obterEstudo(listEstudo.get(0).getId());
-		EstudoGerado obterEstudo2 = this.obterEstudo(listEstudo.get(1).getId());
-		
-        if (obterEstudo != null && obterEstudo2 != null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, " Número dos estudo gerados já estão sendo utilizados.");
-		}
-		
 		if (listEstudo != null && !listEstudo.isEmpty()) {
 
 			// 2 estudo para ser salvo
@@ -220,13 +268,6 @@ public class EstudoServiceImpl implements EstudoService {
 		this.estudoGeradoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Long obterUltimoAutoIncrement() {
-		return this.estudoGeradoRepository.obterUltimoAutoIncrement();
-		
-	}
-
 	@Transactional
 	public EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,
 	        Date dataLancamento, Long lancamentoId){
@@ -235,7 +276,6 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		EstudoGerado estudo = new EstudoGerado();
 		
-		estudo.setId(this.obterUltimoAutoIncrement());
 		estudo.setDataCadastro(dataOperacao);
 		estudo.setDataLancamento(dataLancamento);
 		estudo.setProdutoEdicao(produtoEdicao);
@@ -243,24 +283,39 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setReparteDistribuir(quantidadeReparte);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		estudo.setLancamentoID(lancamentoId);
+		estudo.setLiberado(false);
 		
 		return estudoGeradoRepository.merge(estudo);
 	}
 	
 	@Transactional
+    public Estudo atualizarEstudo(Long estudoId, BigInteger reparteAtualizar) {
+        
+	    Estudo estudo = this.estudoRepository.buscarPorId(estudoId);
+	    
+	    estudo.setQtdeReparte(
+            BigIntegerUtil.soma(estudo.getQtdeReparte(), reparteAtualizar));
+	    
+	    estudo.setReparteDistribuir(
+            BigIntegerUtil.soma(estudo.getReparteDistribuir(), reparteAtualizar));
+	    
+        return this.estudoRepository.merge(estudo);
+    }
+	
+	@Transactional
 	public Estudo liberar(Long idEstudoGerado) {
-		
-		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
+
+		EstudoGerado estudoGerado = this.estudoGeradoRepository.obterParaAtualizar(idEstudoGerado);
 		
 		Lancamento lancamento = 
-			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+			this.lancamentoRepository.obterParaAtualizar(estudoGerado.getLancamentoID());
 		
 		if (lancamento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamento para este estudo.");
 		}
 		
-		if (lancamento.getEstudo() != null) {
+		if (lancamento.getEstudo() != null || estudoGerado.isLiberado()) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um estudo liberado para este lançamento.");
 		}
@@ -301,7 +356,7 @@ public class EstudoServiceImpl implements EstudoService {
 		lancamento.setEstudo(estudo);
 		
 		this.lancamentoRepository.alterar(lancamento);
-			
+		
 		return estudo;
 	}
 	
@@ -320,5 +375,208 @@ public class EstudoServiceImpl implements EstudoService {
         estudoRepository.alterarPorId(estudoId, campos);
         estudoGeradoRepository.alterarPorId(estudoId, campos);
     }
+    
+    @Override
+    @Transactional
+    public void gerarEstudoPDV(final EstudoGerado estudo, final Cota cota, final BigInteger reparte) {
+		
+    	PDV pdvPrincipal = cota.getPDVPrincipal();
+    	
+    	List<PDV> pdvsSecundarios = cota.getPDVSecundarios();
+    	
+    	EstudoPDV estudoPDVPrincipal = this.gerarEstudoPDV(estudo, cota, pdvPrincipal);
+    	
+    	final boolean naoNecessitaReprocessamento = 
+    		estudoPDVPrincipal.getId() == null || (pdvsSecundarios == null || pdvsSecundarios.isEmpty());
+    	
+    	if (naoNecessitaReprocessamento) {
+    		
+    		estudoPDVPrincipal.setReparte(reparte);
+    		
+    		estudoPDVRepository.merge(estudoPDVPrincipal);
+    		
+    		return;
+    	}
+    	
+    	this.reprocessarEstudosPDV(estudo, cota, reparte, pdvsSecundarios,estudoPDVPrincipal);
+	}
+
+	private void reprocessarEstudosPDV(final EstudoGerado estudo,
+			final Cota cota, final BigInteger reparte,
+			List<PDV> pdvsSecundarios, EstudoPDV estudoPDVPrincipal) {
+		
+		BigInteger quantidadeTotalRepartePdvs = estudoPDVRepository.obterTotalReparte(estudo, cota);
+    	
+		BigInteger diferenca = reparte.subtract(quantidadeTotalRepartePdvs);
+		
+		final boolean naoHaDiferenca = diferenca.compareTo(BigInteger.ZERO) == 0;
+		
+		if (naoHaDiferenca) {
+			
+			return;
+		}
+		
+		final boolean haDiferencaPositiva = diferenca.compareTo(BigInteger.ZERO) > 0;
+		
+		if (haDiferencaPositiva) {
+			
+			estudoPDVPrincipal.setReparte(estudoPDVPrincipal.getReparte().add(diferenca));
+    		
+    		estudoPDVRepository.merge(estudoPDVPrincipal);
+    		
+    		return;
+    		
+		} else {
+			
+			this.processarDiferencaNegativaEstudosPDV(estudo, cota, pdvsSecundarios,
+					estudoPDVPrincipal, diferenca);
+		}
+	}
+
+	private void processarDiferencaNegativaEstudosPDV(final EstudoGerado estudo,
+			final Cota cota, List<PDV> pdvsSecundarios,
+			EstudoPDV estudoPDVPrincipal, BigInteger diferenca) {
+		
+		diferenca = diferenca.abs();
+		
+		for(PDV pdvSecundario : pdvsSecundarios){
+			
+			EstudoPDV estudoPDVSecundario = 
+				estudoPDVRepository.buscarPorEstudoCotaPDV(estudo, cota, pdvSecundario);
+			
+			while (diferenca.longValue() > 0) {
+				
+				if (!estudoPDVSecundario.getReparte().equals(BigInteger.ZERO)) {
+					
+					estudoPDVSecundario.setReparte(estudoPDVSecundario.getReparte().subtract(BigInteger.ONE));
+					
+				} else {
+					
+					break;
+				}
+				
+				diferenca = diferenca.subtract(BigInteger.ONE);
+			}
+			
+			estudoPDVRepository.merge(estudoPDVSecundario);
+		}
+		
+		final boolean aindaHaDiferenca = diferenca.compareTo(BigInteger.ZERO) > 0;
+		
+		if (aindaHaDiferenca) {
+			
+			estudoPDVPrincipal.setReparte(estudoPDVPrincipal.getReparte().subtract(diferenca));
+			
+			estudoPDVRepository.merge(estudoPDVPrincipal);
+		}
+	}
+    
+    @Override
+    @Transactional
+    public EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota, final PDV pdv, final BigInteger reparte) {
+		
+    	EstudoPDV estudoPDV = this.gerarEstudoPDV(estudo, cota,pdv);
+    	
+    	estudoPDV.setReparte(reparte);
+		
+		return this.estudoPDVRepository.merge(estudoPDV);
+	}
+    
+    private EstudoPDV gerarEstudoPDV(final EstudoGerado estudo, final Cota cota, final PDV pdv) {
+    	
+    	EstudoPDV estudoPDV = estudoPDVRepository.buscarPorEstudoCotaPDV(estudo, cota, pdv);
+
+		if (estudoPDV == null) {
+			
+		    estudoPDV = new EstudoPDV();
+		    
+		    estudoPDV.setEstudo(estudo);
+		    estudoPDV.setCota(cota);
+		    estudoPDV.setPdv(pdv);
+		    estudoPDV.setReparte(BigInteger.ZERO);
+		}
+		
+		return estudoPDV;
+    }
+
+	@Override
+	@Transactional
+	public EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId) {
+		return estudoCotaGeradoRepository.obterEstudoCotaGerado(numeroCota, estudoId);
+	}
+
+	@Override
+	@Transactional
+	public void criarRepartePorPDV(Long id) {
+		
+		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(id);
+		Integer qtdRepartePDVDefinido = 0;
+		
+		for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
+			
+			if(estudoCota.getQuantidadePDVS() != null && estudoCota.getQuantidadePDVS() > 1){
+
+				switch (estudoCota.getClassificacao()) {
+				
+				case "FX":
+
+					FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(estudoCota.getCota(), estudo.getProdutoEdicao().getProduto().getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
+					
+					for (FixacaoRepartePdv fixacaoPDV : fixacaoReparte.getRepartesPDV()) {
+						if(fixacaoPDV.getRepartePdv() != null && fixacaoPDV.getRepartePdv() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					if(qtdRepartePDVDefinido > 1){
+						
+						for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
+							for (PDV pdv : estudoCota.getCota().getPdvs()) {
+								if(pdv.getId().equals(fixPdv.getPdv().getId())){
+									
+									BigInteger reparte = BigIntegerUtil.valueOfInteger(fixPdv.getRepartePdv());
+
+									this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+									
+								}
+							}
+						}
+						
+					}
+					
+					break;
+					
+				case "MX":
+					
+					MixCotaProduto mixCotaProduto = mixCotaProdRepository.obterMixPorCotaProduto(estudoCota.getCota().getId(), estudo.getProdutoEdicao().getTipoClassificacaoProduto().getId(), estudo.getProdutoEdicao().getProduto().getCodigoICD());
+					
+					for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+						if(pdvMix.getReparte() != null && pdvMix.getReparte() > 0){
+							++qtdRepartePDVDefinido;
+						}
+					}
+					
+					if(qtdRepartePDVDefinido > 1){
+	
+						for (RepartePDV pdvMix : mixCotaProduto.getRepartesPDV()) {
+						
+							for (PDV pdv : estudoCota.getCota().getPdvs()) {
+								
+								if(pdv.getId().equals(pdvMix.getPdv().getId())){
+									BigInteger reparte = BigIntegerUtil.valueOfInteger(pdvMix.getReparte());
+									this.gerarEstudoPDV(estudoCota.getEstudo(), estudoCota.getCota(), pdv, reparte);
+								}
+								
+							}
+						}
+					}
+					break;
+				}
+				
+			}
+			
+		}
+		
+	}
 
 }

@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,9 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -48,13 +48,14 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FileService;
-import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -88,6 +89,9 @@ public class ParametroCobrancaCotaController extends BaseController {
     private BancoService bancoService;
     
     @Autowired
+    private DistribuidorService distribuidorService;
+    
+    @Autowired
     private CotaService cotaService;
     
     @Autowired
@@ -110,9 +114,6 @@ public class ParametroCobrancaCotaController extends BaseController {
     
     @Autowired
     private ParametroSistemaService parametroSistemaService;
-    
-    @Autowired
-    private FormaCobrancaService formaCobrancaService;
     
     private final HttpServletResponse httpResponse;
     
@@ -355,7 +356,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
     }
     
-	                                                        /**
+	/**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * 
      * @param idCota
@@ -388,9 +389,8 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
-    
-    
-	                                                        /**
+   
+	/**
      * Método responsável por obter os dados default da forma de cobranca
      * principal dos parametros de cobrança do distribuidor.
      * 
@@ -411,7 +411,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
     }
     
-	                                                        /**
+	/**
      * Método responsável por postar os dados do parametro de cobrança da cota.
      * 
      * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou
@@ -419,34 +419,30 @@ public class ParametroCobrancaCotaController extends BaseController {
      */
     @Post
     @Path("/postarParametroCobranca")
-    public void postarParametroCobranca(final ParametroCobrancaCotaDTO parametroCobranca){
+    public void postarParametroCobranca(final ParametroCobrancaCotaDTO parametroCobranca, boolean parametroCobrancaAlterado){
         
         validarParametroCobrancaCota(parametroCobranca);
         
-        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
-            // A cota sempre terá uma forma de cobrança a forma de cobrança
-            // principal do Distribuidor
+        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0
+        		&& parametroCobrancaAlterado) {
+
             parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
             
         } else {
             parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
         }
         
-        this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+        if(parametroCobranca.isContrato()){
+        	this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+        }
         
-        cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
+        cotaService.salvarCaracteristicasFinanceirasEspecificasCota(parametroCobranca);
         
-        result.use(Results.json())
-.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
-                Constantes.PARAM_MSGS).recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
+                						Constantes.PARAM_MSGS).recursive().serialize();
     }
     
-    
     private void validarParametroCobrancaCota(final ParametroCobrancaCotaDTO parametroCobranca) {
-        
-        if(parametroCobranca.getTipoCota() == null) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
-        }
         
         if(parametroCobranca.getIdFornecedor() == null) {
             throw new ValidacaoException(TipoMensagem.WARNING,
@@ -454,7 +450,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                        /**
+	/**
      * Formata os dados de FormaCobranca, apagando valores que não são
      * compatíveis com o Tipo de Cobranca escolhido.
      * 
@@ -551,18 +547,23 @@ public class ParametroCobrancaCotaController extends BaseController {
     @Path("/postarFormaCobranca")
     public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, final String tipoFormaCobranca, final List<Long> listaIdsFornecedores, final ParametroCobrancaCotaDTO parametroCobranca){
         
+        if(tipoFormaCobranca == null)
+            throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Pagamento não selecionado.");
+        
         if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
             formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
         }
         
-        if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
-            formaCobranca.setFornecedoresId(listaIdsFornecedores);
+        if ((listaIdsFornecedores==null)|| (listaIdsFornecedores.isEmpty())){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedores  não foram informados.");
         }
         
+        formaCobranca.setFornecedoresId(listaIdsFornecedores);
+
+        parametroCobrancaCotaService.validarFormaCobranca(formaCobranca);
+        
         formaCobranca = formatarFormaCobranca(formaCobranca);
-        
-        validarFormaCobranca(formaCobranca);
-        
+                
         // Caso a cota não possua formas de cobrança, informa que essa cobrança
         // veio pelo distribuidor
         if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
@@ -581,10 +582,9 @@ public class ParametroCobrancaCotaController extends BaseController {
         
         parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);
         
-        result.use(Results.json())
-.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),
-                Constantes.PARAM_MSGS)
-                .recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),
+						                Constantes.PARAM_MSGS)
+						                .recursive().serialize();
     }
     
     @Post
@@ -617,7 +617,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                        /**
+    /**
      * Método responsável por desativar Forma de Cobranca
      * 
      * @param idFormaCobranca
@@ -626,9 +626,9 @@ public class ParametroCobrancaCotaController extends BaseController {
     @Path("/excluirFormaCobranca")
     public void excluirFormaCobranca(final Long idFormaCobranca){
         
-        this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);	
-    	
 		this.parametroCobrancaCotaService.excluirParametroCobrancaCota(idFormaCobranca);
+		
+		this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),
                                                         Constantes.PARAM_MSGS).recursive().serialize();
@@ -694,7 +694,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                        /**
+    /**
      * @return obtém arquivo anexo
      */
     private byte[] obterArquivoAnexo() {
@@ -721,19 +721,19 @@ public class ParametroCobrancaCotaController extends BaseController {
         return arquivo;
     }
     
-    private boolean salvarContrato(final Date inicioContrato, final Date terminoContrato){
+    private boolean salvarContrato(Long idCota, final Date inicioContrato, final Date terminoContrato){
+    	
+    	parametroCobrancaCotaService.salvarContrato(idCota, session.getAttribute(CONTRATO_UPLOADED) != null, inicioContrato, terminoContrato);
         
         if (session.getAttribute(CONTRATO_UPLOADED) != null) {
             
             final ContratoVO contrato = (ContratoVO) session.getAttribute(CONTRATO_UPLOADED);
+            
             if(contrato != null) {
+            	
                 contrato.setDataInicio(inicioContrato);
                 contrato.setDataTermino(terminoContrato);
-                parametroCobrancaCotaService.salvarContrato(contrato.getIdCota(), contrato.isRecebido(), contrato
-                        .getDataInicio(), contrato.getDataTermino());
-                
-                
-                
+
                 final File file = contrato.getTempFile();
                 
                 if (file != null) {
@@ -798,31 +798,28 @@ public class ParametroCobrancaCotaController extends BaseController {
         return false;
     }
     
-    
-	                                                        /**
+	/**
      * Método responsável por postar os dados da aba financeiro que são
      * específicos da cota.
      * 
-     * @param inicioContrato
-     * @param terminoContrato
-     * @param tipoCota
+     * @param parametroCobranca
      */
     @Post
-    @Path("/salvarFinanceiroEspecificoDaCota")
-    public void salvarFinanceiroEspecificoDaCota(final Long idCota, final Date inicioContrato, final Date terminoContrato, final TipoCota tipoCota) {
+    @Path("/salvarContratoECaracteristicasFinanceirasEspecificasCota")
+    public void salvarContratoECaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca) {
         
         String msg1 = "";
         String msg2 = "";
         String msg = "";
         
-        if (this.salvarContrato(inicioContrato, terminoContrato)){
+        if ((parametroCobranca.isContrato()) && (this.salvarContrato(parametroCobranca.getIdCota(), parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato()))){
             
             msg1 = "Contrato";
         }
         
-        if (cotaService.salvarTipoCota(idCota, tipoCota)){
+        if (cotaService.salvarCaracteristicasFinanceirasEspecificasCota(parametroCobranca)){
             
-            msg2 = "Tipo da cota";
+            msg2 = "Características Financeiras Específicas";
         }
         
         if (!msg1.equals("") || !msg2.equals("")){
@@ -964,150 +961,6 @@ public class ParametroCobrancaCotaController extends BaseController {
     }
     
     
-	                                                        /**
-     * Método responsável pela validação dos dados da Forma de Cobranca.
-     * 
-     * @param formaCobranca
-     */
-    public void validarFormaCobranca(final FormaCobrancaDTO formaCobranca){
-        
-        //validar();
-        
-        if(formaCobranca.getTipoCobranca()==null){
-            throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
-        }
-        
-        if (formaCobranca.getTipoFormaCobranca()==null){
-            throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
-        }
-        
-        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-            if (formaCobranca.getDiaDoMes()==null){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
-            }
-            else{
-                if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
-                }
-            }
-        }
-        
-        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
-            if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
-            }
-            else{
-                if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
-                }
-            }
-        }
-        
-        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-            if((!formaCobranca.isDomingo())&&
-                    (!formaCobranca.isSegunda())&&
-                    (!formaCobranca.isTerca())&&
-                    (!formaCobranca.isQuarta())&&
-                    (!formaCobranca.isQuinta())&&
-                    (!formaCobranca.isSexta())&&
-                    (!formaCobranca.isSabado())){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");
-            }
-        }
-        
-        if (formaCobranca.getIdBanco()==null){
-            if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
-                    (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
-            }
-        }
-        
-        if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-                (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
-            
-            if (StringUtils.isEmpty(formaCobranca.getNomeBanco())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
-            }
-            if (StringUtils.isEmpty(formaCobranca.getNumBanco())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
-            }
-            
-            if (formaCobranca.getConta() == null) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
-            }
-            if (StringUtils.isEmpty(formaCobranca.getContaDigito())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
-            }
-            
-            if (formaCobranca.getAgencia() == null) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
-            }
-            if (StringUtils.isEmpty(formaCobranca.getAgenciaDigito())) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
-            }
-        }
-        
-        if (formaCobranca.isRecebeEmail()){
-            final Cota cota = cotaService.obterPorId(formaCobranca.getIdCota());
-            if (cota.getPessoa().getEmail()==null){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
-            }
-        }
-        
-        if ((formaCobranca.getFornecedoresId()!=null)&&(formaCobranca.getFornecedoresId().size()>0)){
-            
-            // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
-            // DA CONCENTRAÇÃO SEMANAL
-            if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-                if (!formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
-                        formaCobranca.getIdCota(),
-                        formaCobranca.getFornecedoresId(),
-                        formaCobranca.getTipoFormaCobranca(),
-                        formaCobranca.isDomingo(),
-                        formaCobranca.isSegunda(),
-                        formaCobranca.isTerca(),
-                        formaCobranca.isQuarta(),
-                        formaCobranca.isQuinta(),
-                        formaCobranca.isSexta(),
-                        formaCobranca.isSabado())){
-                    
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Esta forma de cobrança já está configurada para a Cota.");
-                }
-            }
-            
-            // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
-            // DA CONCENTRAÇÃO MENSAL
-            else{
-                if (!formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
-                        formaCobranca.getIdCota(),
-                        formaCobranca.getFornecedoresId(),
-                        formaCobranca.getTipoFormaCobranca(),
-                        Arrays.asList(formaCobranca.getDiaDoMes(),
-                                formaCobranca.getPrimeiroDiaQuinzenal(),
-                                formaCobranca.getSegundoDiaQuinzenal()))){
-                    
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "Esta forma de cobrança já está configurada para a Cota.");
-                }
-            }
-        }
-    }
-    
     @Post("/calcularDataTermino.json")
     public void calcularDataTermino(final Date dataInicio) {
         
@@ -1135,11 +988,21 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(entregadorService.verificarEntregador(idCota), "result").serialize();
     }
     
-    @Post
-    public void verificarDataAlteracaoTipoCota(Long idCota){
+    @Post("/obterPoliticaSuspensaoDistribuidor.json")
+    public void obterPoliticaSuspensaoDistribuidor(){
         
-        this.parametroCobrancaCotaService.verificarDataAlteracaoTipoCota(idCota);
+    	Distribuidor d = this.distribuidorService.obter();
+    	
+        PoliticaSuspensao pl = d.getPoliticaSuspensao();
+
+        ParametroCobrancaCotaDTO pDTO = new ParametroCobrancaCotaDTO();
         
-        this.result.use(Results.json()).from("result", "").recursive().serialize();
+        pDTO.setSugereSuspensao(d.isSugereSuspensao());
+        
+        pDTO.setQtdDividasAberto(pl!=null?pl.getNumeroAcumuloDivida():null);
+        
+        pDTO.setVrDividasAberto(pl!=null?CurrencyUtil.formatarValor(pl.getValor()):null);
+        
+        this.result.use(Results.json()).from(pDTO, "result").recursive().serialize();
     }
 }

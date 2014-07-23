@@ -79,7 +79,7 @@ var lancamentosSelecionados = [];
 				<div class="area">
 				<div id=btnsMatrizDistribuicao style="display: none;">
 							<span class="bt_novos">
-			         	  		<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
+			         	  		<a id="linkExcluir" idEdicao="true" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
 									<img id="imgExcluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>
  						        </a>
 		         	  		</span>
@@ -132,18 +132,18 @@ var lancamentosSelecionados = [];
 							</span>
 							
 							<span class="bt_novos" id="spanGerarEstudoAutomatico">
-								<a id="linkGerarEstudoAutomatico" href="#" onclick="" rel="tipsy" title="Gera&ccedil;&atilde;o Autom&aacute;tica">
+								<a id="linkGerarEstudoAutomatico" href="javascript:void(0)" onclick="" rel="tipsy" title="Gera&ccedil;&atilde;o Autom&aacute;tica">
 									<img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />
 								</a>
 							</span>
 		         	  		
 		         	  		<span class="bt_arq">
-								<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+								<a href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 							    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 						   	 	</a>
 						   	</span>
 							<span class="bt_arq">
-								<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+								<a href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 							    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0"/>
 						    	</a>
 							</span>
@@ -157,14 +157,14 @@ var lancamentosSelecionados = [];
 			<div class="linha_separa_fields">&nbsp;</div>
 		     
 			    <div id="telaPesquisaMatriz"> 
-			      <fieldset class="fieldFiltroMatriz">
+			      <fieldset class="fieldFiltroMatriz fieldFiltroItensNaoBloqueados">
 			   	    <legend>Pesquisar Matriz de Distribui&ccedil&atildeo
 		        </legend>
 		   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		   	      <tr>
 		   	        <td width="68">Fornecedor:&nbsp;</td>
 		   	        <td width="228">
-		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
+		            <a href="javascript:void(0)" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 

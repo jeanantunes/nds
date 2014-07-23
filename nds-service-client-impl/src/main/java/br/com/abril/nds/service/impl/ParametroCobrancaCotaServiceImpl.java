@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -22,15 +23,17 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.client.vo.ContratoVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.dto.ContratoTransporteDTO;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
@@ -193,12 +196,15 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	public ParametroCobrancaCotaDTO obterDadosParametroCobrancaPorCota(Long idCota) {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
+		
 		PoliticaSuspensao politicaSuspensao = null; 
+		
 		ParametroCobrancaCota parametroCobranca = null;
 		
 		boolean parametroDistribuidor = false;
 		
 		ParametroCobrancaCotaDTO parametroCobrancaDTO = null;
+		
 		if (cota != null) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
@@ -208,15 +214,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
 			
 			parametroCobrancaDTO.setIdCota(cota.getId());
+			
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
-			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
+
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
+			
 			parametroCobrancaDTO.setTipoCota(cota.getTipoCota());
 			
 			if(cota.getContratoCota() != null) {
+				
 				parametroCobrancaDTO.setInicioContrato(cota.getContratoCota().getDataInicio());
+				
 				parametroCobrancaDTO.setTerminoContrato(cota.getContratoCota().getDataTermino());
 			}
+			
 			
 			parametroCobranca = cota.getParametroCobranca();
 			
@@ -231,10 +242,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobranca = new ParametroCobrancaCota();
 
 				parametroCobranca.setCota(cota);
+				
 				parametroCobranca.setFormasCobrancaCota(null);
-
-				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor != null ? 
-														 formaCobrancaDistribuidor.getValorMinimoEmissao() : BigDecimal.ZERO);
 				
 				if(politicaCobranca != null) {
 					
@@ -243,55 +252,49 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 					parametroCobranca.setUnificaCobranca(politicaCobranca.isUnificaCobranca());
 
 					parametroCobranca.setFornecedorPadrao(politicaCobranca.getFornecedorPadrao());
-				}
-				
-				if(distribuidor.getPoliticaSuspensao()!=null){
-				    
-					PoliticaSuspensao ps = new PoliticaSuspensao();
-			    	ps.setNumeroAcumuloDivida(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());
-				    ps.setValor(distribuidor.getPoliticaSuspensao().getValor());				
-				    parametroCobranca.setPoliticaSuspensao(ps);
-				}
-								
+				}					
 			}
 
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
+			
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			
-			if (parametroCobranca.getValorMininoCobranca() != null) {
-				parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(parametroCobranca.getValorMininoCobranca()));
+			if (parametroCobranca.getCota().getValorMinimoCobranca() != null) {
+				
+				parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(parametroCobranca.getCota().getValorMinimoCobranca()));
 			}
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
-			parametroCobrancaDTO.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe()!=null?parametroCobranca.isDevolveEncalhe():true);
+			
+			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
+			
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
-			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
-			
-			if (cota.isSugereSuspensao() && politicaSuspensao != null){
+			if (cota.isSugereSuspensaoDistribuidor()){
 				
-				parametroCobrancaDTO.setSugereSuspensao(true);
-				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
+				politicaSuspensao = distribuidor.getPoliticaSuspensao();	
+			}
+			else {
 				
-				if (politicaSuspensao.getValor() != null) {
-					parametroCobrancaDTO.setVrDividasAberto(CurrencyUtil.formatarValor(politicaSuspensao.getValor()));
+				if (cota.isSugereSuspensao()){
+						
+				    politicaSuspensao = cota.getPoliticaSuspensao();
 				}
 			}
 			
-			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);		
-			
-			//Obtem Valor e Qtd do Distribuidor caso sejam null, VAZIO ou ZERO   
-			if ((parametroCobrancaDTO.getVrDividasAberto()==null || "".equals(parametroCobrancaDTO.getVrDividasAberto()) || 
-					CurrencyUtil.converterValor(parametroCobrancaDTO.getVrDividasAberto()).compareTo(BigDecimal.ZERO) < 1) && 
-					(parametroCobrancaDTO.getQtdDividasAberto()==null || parametroCobrancaDTO.getQtdDividasAberto() < 1)){
-			
-				if(distribuidor.getPoliticaSuspensao()!=null){
-					
-					parametroCobrancaDTO.setVrDividasAberto(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
-					
-					parametroCobrancaDTO.setQtdDividasAberto(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());				
-				}
+			if(politicaSuspensao!=null){
+				
+				parametroCobrancaDTO.setVrDividasAberto(politicaSuspensao.getValor()!=null?CurrencyUtil.formatarValor(politicaSuspensao.getValor()):null);
+				
+				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());				
 			}
+			
+			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
+			
+			parametroCobrancaDTO.setSugereSuspensaoDistribuidor(cota.isSugereSuspensaoDistribuidor());
+			
+			
+			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);			
 		}
 
 		return parametroCobrancaDTO;
@@ -448,11 +451,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			} else {
 				novo=false;
 				//POLITICA DE SUSPENSAO DO PARAMETRO DE COBRANCA DA COTA
-				politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
+				politicaSuspensao = cota.getPoliticaSuspensao();
 			}
 
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
-			parametroCobranca.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
 			
 			if (politicaSuspensao == null) {
@@ -470,13 +472,13 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				politicaSuspensao.setValor(null);
 			}
 			
-			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
+			cota.setPoliticaSuspensao(politicaSuspensao);
 			
 			
 			Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedor());
 			parametroCobranca.setFornecedorPadrao(fornecedor);
 			
-			parametroCobranca.setDevolveEncalhe(parametroCobrancaDTO.isDevolveEncalhe());
+			cota.setDevolveEncalhe(parametroCobrancaDTO.isDevolveEncalhe());
 			
 			if (novo) {
 				parametroCobranca.setCota(cota);
@@ -488,7 +490,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			cota.setParametroCobranca(parametroCobranca);
 			cota.setSugereSuspensao(parametroCobrancaDTO.isSugereSuspensao());
+			cota.setSugereSuspensaoDistribuidor(parametroCobrancaDTO.isSugereSuspensaoDistribuidor());
 			cota.setPossuiContrato(parametroCobrancaDTO.isContrato());
+			cota.setValorMinimoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 						
 			this.cotaRepository.merge(cota);
 		}
@@ -504,6 +508,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Transactional
 	public void postarFormaCobranca(FormaCobrancaDTO formaCobrancaDTO) {
 		
+	    tratarPrimeiraFormaCobrancaEspecificaParaCota(formaCobrancaDTO);
+	    	    
 		FormaCobranca formaCobranca = null;
 		ContaBancariaDeposito contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
@@ -675,7 +681,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		formaCobranca.setTaxaJurosMensal((formaCobranca.getTaxaJurosMensal() == null ? BigDecimal.ZERO : formaCobranca.getTaxaJurosMensal()));
 	    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta() == null ? BigDecimal.ZERO : formaCobranca.getTaxaMulta()));
-	    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao() == null ? BigDecimal.ZERO : formaCobranca.getValorMinimoEmissao()));
 		
 		formaCobranca.setAtiva(true);
 		
@@ -717,10 +722,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    	
 				parametroCobranca.setCota(c);
 				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
-				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
 				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getPoliticaCobranca().getFornecedorPadrao());
-				parametroCobranca.setPoliticaSuspensao(null);
+				c.setPoliticaSuspensao(null);
 				
 				parametroCobrancaCotaRepository.adicionar(parametroCobranca);
 				formaCobranca.setPoliticaCobranca(null);
@@ -745,9 +749,76 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}    
     }	
 
+	@Override
+	@Transactional(readOnly=true)
+	public List<FormaCobrancaDefaultVO> obterFormaCobrancaCotaDefault(Integer numeroCota) {
+		
+		return this.formaCobrancaRepository.obterFormaCobrancaCotaDefault(numeroCota);
+	}
 	
+
+	private void tratarPrimeiraFormaCobrancaEspecificaParaCota(FormaCobrancaDTO formaCobrancaDTO) {
+       
+       if( !isCriacaoPrimeiraFormaCobrancaEspecificaParaCota(formaCobrancaDTO) )
+           return;
+       
+       copiarFormaCobrancaDoDistribuidorParaACota(formaCobrancaDTO.getIdCota());       
+       
+       this.validarFormaCobranca(formaCobrancaDTO);
+   }
+
 	
-   /**
+    private void copiarFormaCobrancaDoDistribuidorParaACota(Long idCota) {
+        
+        FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidorCompleto();
+        
+        FormaCobranca copia = new FormaCobranca();
+        copia.setAtiva(true);
+        copia.setBanco(fc.getBanco());
+        copia.setContaBancariaCota(fc.getContaBancariaCota());
+        copia.setDiasDoMes(fc.getDiasDoMes());
+        copia.setFormaCobrancaBoleto(fc.getFormaCobrancaBoleto());
+        copia.setFornecedores(fc.getFornecedores());
+        copia.setInstrucoes(fc.getInstrucoes());
+        copia.setParametroCobrancaCota(fc.getParametroCobrancaCota());
+        copia.setPoliticaCobranca(fc.getPoliticaCobranca());
+        copia.setPrincipal(true);
+        copia.setRecebeCobrancaEmail(fc.isRecebeCobrancaEmail());
+        copia.setTaxaJurosMensal(fc.getTaxaJurosMensal());
+        copia.setTaxaMulta(fc.getTaxaMulta());
+        copia.setTipoCobranca(fc.getTipoCobranca());
+        copia.setTipoFormaCobranca(fc.getTipoFormaCobranca());
+        copia.setValorMulta(fc.getValorMulta());
+        copia.setVencimentoDiaUtil(fc.isVencimentoDiaUtil());
+        
+        Cota cota = cotaRepository.buscarCotaPorID(idCota);
+        ParametroCobrancaCota parametro = cota.getParametroCobranca();
+        copia.setParametroCobrancaCota(parametro);
+        
+        copia = formaCobrancaRepository.merge(copia);
+        
+        Set<ConcentracaoCobrancaCota> listaCCC = new HashSet<>();
+        for (ConcentracaoCobrancaCota conc : fc.getConcentracaoCobrancaCota()) {
+            ConcentracaoCobrancaCota ccc = new ConcentracaoCobrancaCota();
+            ccc.setDiaSemana(conc.getDiaSemana());
+            ccc.setFormaCobranca(copia);
+            
+            concentracaoCobrancaRepository.adicionar(ccc);
+            listaCCC.add(ccc);
+        }
+        copia.setConcentracaoCobrancaCota(listaCCC);
+    }
+
+
+
+    private boolean isCriacaoPrimeiraFormaCobrancaEspecificaParaCota(FormaCobrancaDTO formaCobrancaDTO) {
+        
+        return formaCobrancaDTO.getIdFormaCobranca() == null && formaCobrancaDTO.isParametroDistribuidor() == true;
+    }
+    
+    
+    
+    /**
     * Obtém Formas de Cobrança da cota
     * @param idCota: ID da cota
     * @return Formas de cobrança da Cota
@@ -867,27 +938,49 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				strConcentracoes .append("Diariamente");
 			}
 			
+			final String detalhesTipoPagto = this.obterDetalheTipoPagamento(formaCobrancaItem);
+			
+
+			FormaCobrancaDTO formaCobranca = new FormaCobrancaDTO(
+				formaCobrancaItem.getId(),
+				strFornecedores.toString(),
+				strConcentracoes.toString(),
+				(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
+				detalhesTipoPagto,
+				isParametroDistribuidor,
+				descUnificacao
+			);
+
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
 				for (Fornecedor itemFornecedor:fornecedores){
-					if (strFornecedores.length()>0){
-						strFornecedores.append("/");
-					}
-					strFornecedores.append(itemFornecedor.getJuridica().getRazaoSocial());
+					formaCobranca.addFornecedor(new Fornecedor(itemFornecedor.getId(), itemFornecedor.getJuridica().getNomeFantasia()));
 				}
 			}
 			
-			formasCobrancaDTO.add(
-				new FormaCobrancaDTO(
-					formaCobrancaItem.getId(),
-					strFornecedores.toString(),
-					strConcentracoes.toString(),
-					(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					(formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():""),
-					isParametroDistribuidor,
-					descUnificacao
-				)
-			);
+			formasCobrancaDTO.add(formaCobranca);
 		}
+	}
+
+	private String obterDetalheTipoPagamento(final FormaCobranca formaCobrancaItem) {
+		
+		String detalhesTipoPagto = "";
+		
+		if(formaCobrancaItem.getBanco()!= null){
+			
+			detalhesTipoPagto = (formaCobrancaItem.getBanco().getDvConta() != null)
+					? String.format("%s : %s : %s - %s",
+									formaCobrancaItem.getBanco().getNome(), 
+									formaCobrancaItem.getBanco().getAgencia(), 
+									formaCobrancaItem.getBanco().getConta(),
+				                    formaCobrancaItem.getBanco().getDvConta())
+		            
+				                    : String.format("%s : %s : %s",
+						    						formaCobrancaItem.getBanco().getNome(), 
+						    						formaCobrancaItem.getBanco().getAgencia(), 
+						    						formaCobrancaItem.getBanco().getConta());                    
+		}
+		
+		return detalhesTipoPagto;
 	}
 	
 	/*
@@ -1055,8 +1148,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		ContratoCota contrato = cota.getContratoCota();
 		
-		if(contrato == null) 
-			contrato = new ContratoCota();
+		contrato = (contrato == null)?new ContratoCota():contrato;
 		
 		Calendar c1 = Calendar.getInstance();
 		Calendar c2 = Calendar.getInstance();
@@ -1067,16 +1159,19 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		int prazoEmMeses = (c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12;     
         prazoEmMeses = prazoEmMeses + ((12 - (c1.get(Calendar.MONTH)) + (c2.get(Calendar.MONTH)-12)));     
         		
-		contrato.setAvisoPrevioRescisao(Integer.parseInt(contratoDTO.getAvisoPrevio()));
+		contrato.setAvisoPrevioRescisao(contratoDTO.getAvisoPrevio()!=null?Integer.parseInt(contratoDTO.getAvisoPrevio()):0);
 		contrato.setDataInicio(contratoDTO.getInicio());
 		contrato.setDataTermino(contratoDTO.getTermino());
 		contrato.setExigeDocumentacaoSuspencao(cota.isSugereSuspensao());
 		contrato.setCota(cota);
 		contrato.setPrazo(prazoEmMeses);
 		contrato.setRecebido(isRecebido);
-		
+
 		this.contratoService.salvarContrato(contrato);
 		
+		cota.setPossuiContrato(true);
+		
+		this.cotaRepository.merge(cota);
 	}
 
 	@Transactional
@@ -1239,8 +1334,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	}
 	
 	@Transactional(readOnly = true)
-	public List<BigDecimal> comboValoresMinimos(){
-		return this.parametroCobrancaCotaRepository.comboValoresMinimos();
+	public List<BigDecimal> comboValoresMinimos() {
+		List<BigDecimal> valoresMinimos = new ArrayList<>();
+		for(BigDecimal valorMinimo : this.parametroCobrancaCotaRepository.comboValoresMinimos()) {
+			valoresMinimos.add(CurrencyUtil.arredondarValorParaDuasCasas(valorMinimo));
+		}
+		return valoresMinimos;
 	}
 
 	/**
@@ -1274,8 +1373,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			for (FormaCobranca formaCobranca : fcs){
 				
 				formaCobranca.setFornecedores(null);
-				
-				this.formaCobrancaRepository.merge(formaCobranca);
 				
 				this.formaCobrancaRepository.remover(formaCobranca);
 			}
@@ -1321,31 +1418,36 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setInstrucoes(formaCobrancaDistribuidor.getInstrucoes());
 		
 		if(cota.getParametroCobranca() == null) {
+			
 			ParametroCobrancaCota pcc = new ParametroCobrancaCota();
 		
 			pcc.setCota(cota);
 			pcc.setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			pcc.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
 			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
-			pcc.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
 			
 			PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 			
 			politicaSuspensao.setNumeroAcumuloDivida(parametroCobranca.getQtdDividasAberto());
 			politicaSuspensao.setValor(CurrencyUtil.converterValor(parametroCobranca.getVrDividasAberto()));
 			
-			pcc.setPoliticaSuspensao(politicaSuspensao);
+			cota.setPoliticaSuspensao(politicaSuspensao);
 			
 			parametroCobrancaCotaRepository.adicionar(pcc);
+			
 			cota.setParametroCobranca(pcc);
 		} else {
+			
 			cota.getParametroCobranca().setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			cota.getParametroCobranca().setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
 		}
 		
 		formaCobranca.setParametroCobrancaCota(cota.getParametroCobranca());
 		
-		//formaCobranca.setPoliticaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca());
+		cota.setValorMinimoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
+		
+		this.cotaRepository.merge(cota);
+		
 		formaCobranca.setPrincipal(true);
 		formaCobranca.setRecebeCobrancaEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
 		formaCobranca.setTaxaJurosMensal(formaCobrancaDistribuidor.getTaxaJurosMensal());
@@ -1353,11 +1455,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setValorMulta(formaCobrancaDistribuidor.getValorMulta());
 		formaCobranca.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
-		formaCobranca.setValorMinimoEmissao(formaCobrancaDistribuidor.getValorMinimoEmissao());
 		formaCobranca.setVencimentoDiaUtil(formaCobrancaDistribuidor.isVencimentoDiaUtil());
 		
 		formaCobrancaRepository.adicionar(formaCobranca);
-		
 	}
 	
 	/**
@@ -1394,19 +1494,187 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		return cota.getParametroCobranca().getFornecedorPadrao();
 	}
 
-
-
+    /**
+     * Método responsável pela validação dos dados da Forma de Cobranca.
+     * 
+     * @param formaCobranca
+     */
     @Override
-    @Transactional(readOnly=true)
-    public void verificarDataAlteracaoTipoCota(Long idCota) {
+    public void validarFormaCobranca(final FormaCobrancaDTO formaCobranca){
         
-        Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+        //validar();
         
-        if (this.parametroCobrancaCotaRepository.verificarDataAlteracaoTipoCota(idCota, dataOperacao)){
-            
-            throw new ValidacaoException(
-                    TipoMensagem.WARNING, 
-                    "Não é permitido alterar o tipo da cota mais de uma vez na mesma data de operação");
+        if(formaCobranca.getTipoCobranca()==null){
+            throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
         }
+        
+        if (formaCobranca.getTipoFormaCobranca()==null){
+            throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
+        }
+        
+        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+            if (formaCobranca.getDiaDoMes()==null){
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
+            }
+            else{
+                if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+                }
+            }
+        }
+        
+        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+            if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
+            }
+            else{
+                if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+                }
+            }
+        }
+        
+        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+            if((!formaCobranca.isDomingo())&&
+                    (!formaCobranca.isSegunda())&&
+                    (!formaCobranca.isTerca())&&
+                    (!formaCobranca.isQuarta())&&
+                    (!formaCobranca.isQuinta())&&
+                    (!formaCobranca.isSexta())&&
+                    (!formaCobranca.isSabado())){
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");
+            }
+        }
+        
+        if (formaCobranca.getIdBanco()==null){
+            if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
+            }
+        }
+        
+        if (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA){
+            
+            if (StringUtils.isEmpty(formaCobranca.getNomeBanco())) {
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
+            }
+            if (StringUtils.isEmpty(formaCobranca.getNumBanco())) {
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
+            }
+            
+            if (formaCobranca.getConta() == null) {
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
+            }
+            if (StringUtils.isEmpty(formaCobranca.getContaDigito())) {
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
+            }
+            
+            if (formaCobranca.getAgencia() == null) {
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
+            }
+            if (StringUtils.isEmpty(formaCobranca.getAgenciaDigito())) {
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
+            }
+        }
+        
+        if (formaCobranca.isRecebeEmail()){
+            final Cota cota = cotaService.obterPorId(formaCobranca.getIdCota());
+            if (cota.getPessoa().getEmail()==null){
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
+            }
+        }
+        
+        if ((formaCobranca.getFornecedoresId()!=null)&&(formaCobranca.getFornecedoresId().size()>0)){
+            
+            // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
+            // DA CONCENTRAÇÃO SEMANAL
+            if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+                if (!formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
+                        formaCobranca.getIdCota(),
+                        formaCobranca.getFornecedoresId(),
+                        formaCobranca.getTipoFormaCobranca(),
+                        formaCobranca.isDomingo(),
+                        formaCobranca.isSegunda(),
+                        formaCobranca.isTerca(),
+                        formaCobranca.isQuarta(),
+                        formaCobranca.isQuinta(),
+                        formaCobranca.isSexta(),
+                        formaCobranca.isSabado())){
+                    
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Os fornecedores já possuem uma forma de pagamento cadastrada para este dia.");
+                }
+            }
+            
+            // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
+            // DA CONCENTRAÇÃO MENSAL
+            else{
+                if (!formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
+                        formaCobranca.getIdCota(),
+                        formaCobranca.getFornecedoresId(),
+                        formaCobranca.getTipoFormaCobranca(),
+                        Arrays.asList(formaCobranca.getDiaDoMes(),
+                                formaCobranca.getPrimeiroDiaQuinzenal(),
+                                formaCobranca.getSegundoDiaQuinzenal()))){
+                    
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Os fornecedores já possuem uma forma de pagamento cadastrada para este dia.");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Obtem Politica de Suspensao da Cota ou do Distribuidor
+     * 
+     * @param cota
+     * @return PoliticaSuspensao
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PoliticaSuspensao obterPoliticaSuspensaoCota(Cota cota) {
+    	
+    	if (cota.isSugereSuspensaoDistribuidor()){
+    		
+    		Distribuidor d = this.distribuidorRepository.obter();
+    		
+    		return d.getPoliticaSuspensao();
+    	}
+        
+        return cota.getPoliticaSuspensao();
+    }
+    
+    /**
+     * Verifica se cota utiliza politica de suspensao, seja propria ou do distribuidor
+     * 
+     * @param cota
+     * @return boolean
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isSugereSuspensao(Cota cota) {
+    	
+    	if (cota.isSugereSuspensaoDistribuidor()){
+    		
+    		Distribuidor d = this.distribuidorRepository.obter();
+    		
+    		return d.isSugereSuspensao();
+    	}
+    		
+    	return cota.isSugereSuspensao();
     }
 }

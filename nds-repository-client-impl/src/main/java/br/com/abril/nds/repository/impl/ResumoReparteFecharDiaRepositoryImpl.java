@@ -8,9 +8,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
@@ -52,6 +53,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
 		    .append(" 		       ELSE 0 END),0) ")
@@ -70,6 +72,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         String templateHqlDiferencaRateioCota =  new StringBuilder("(select ")
 	        .append(" COALESCE( sum(CASE  ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda * -1 )")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
@@ -88,6 +91,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	        .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
 	        .append(" and produtoEdicaoME.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
         
+        String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
+	        .append(" (select COALESCE(sum(me.qtde*me.produtoEdicao.precoVenda),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+		       .append(" where me.dataAprovacao = :data ")
+		       .append(" and me.status = :statusAprovado ")
+		       .append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional )")
+		       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
+        
         StringBuilder hql = new StringBuilder(" select COALESCE(sum(hstEstoque.qtde * produtoEdicao.precoVenda),0)")
         	.append(" + ").append(templateHqlRecebimentoEstoqueFisico).append(" + ").append(templateHqlDiferenca).append(" as totalReparte, ");
                 
@@ -100,12 +110,14 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
            .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida) ")
            .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as totalTransferencias, ");
 	    
-        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
+        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in ( :grupoMovimentoEnvioJornaleiro ) ")
            .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
            .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
            .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) ")
            .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") + ")
-           .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaRateioCota")).append(" as totalDistribuido ");
+           .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaRateioCota")).append(" as totalDistribuido ,");
+        
+        hql.append(templateHqlRecebimentoEstoqueFisicoPromocional).append(" as totalDiferenca ");
         
         hql.append(" from Expedicao expedicao ")
 	        .append(" join expedicao.lancamentos lancamento " )
@@ -125,47 +137,23 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
         query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
         query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
-        query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-        query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
-        query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+        query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);  
+        query.setParameterList("grupoMovimentoRecebimentoFisicoPromocional",Arrays.asList(
+        		GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL,
+        		GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL));
+        this.atribuirGruposMovimentoEnvioJornaleiro(query, "grupoMovimentoEnvioJornaleiro");
+        this.atribuirGruposMovimentoEstornoEnvioJornaleiro(query, "grupoMovimentoEstornoEnvioJornaleiro");
+        this.atribuirStatusIntegracaoGFS(query, "statusIntegracaoGFS");
+        this.atribuirTipoDiferencaSobras(query, "tipoDiferencaSobras");
+        this.atribuirTipoDiferencaFalta(query,"tipoDiferencaFaltas");
+        this.atribuirTipoDiferenca(query,"tipoDiferenca");
+        this.atribuirTipoDiferencaRateioCota(query, "tipoDiferencaRateioCota");
         
-        query.setParameterList("statusIntegracaoGFS", Arrays.asList(StatusIntegracao.EM_PROCESSAMENTO,
-													        		StatusIntegracao.EM_PROCESSO,
-													        		StatusIntegracao.SOLICITADO,
-													        		StatusIntegracao.NAO_INTEGRADO,
-													        		StatusIntegracao.RE_INTEGRADO,
-													        		StatusIntegracao.INTEGRADO,
-													        		StatusIntegracao.AGUARDANDO_GFS));
-        
-        query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
-        															TipoDiferenca.SOBRA_EM,
-        															TipoDiferenca.GANHO_DE,
-        															TipoDiferenca.GANHO_EM));
-        
-        query.setParameterList("tipoDiferencaFaltas", Arrays.asList(TipoDiferenca.FALTA_DE,
-        															TipoDiferenca.FALTA_EM,
-        															TipoDiferenca.PERDA_DE,
-        															TipoDiferenca.PERDA_EM));
-        
-        query.setParameterList("tipoDiferenca", Arrays.asList(TipoDiferenca.SOBRA_DE,
-															  TipoDiferenca.SOBRA_EM,
-															  TipoDiferenca.GANHO_DE,
-															  TipoDiferenca.GANHO_EM,
-															  TipoDiferenca.SOBRA_DE,
-    														  TipoDiferenca.SOBRA_EM,
-    														  TipoDiferenca.GANHO_DE,
-    														  TipoDiferenca.GANHO_EM));
-        
-        query.setParameterList("tipoDiferencaRateioCota", Arrays.asList(TipoDiferenca.SOBRA_EM,
-																		TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
-																		TipoDiferenca.GANHO_EM,
-																		TipoDiferenca.FALTA_EM,
-																		TipoDiferenca.PERDA_EM));
-
         try {
         	
             Constructor<SumarizacaoReparteDTO> constructor = 
-            		SumarizacaoReparteDTO.class.getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class,BigDecimal.class);
+            		SumarizacaoReparteDTO.class.getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class, 
+            				BigDecimal.class,BigDecimal.class,BigDecimal.class);
             
             query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
         
@@ -180,8 +168,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
 	    return (SumarizacaoReparteDTO) query.uniqueResult();
 	}
-		
-    @Override
+	
+	@Override
 	public List<ReparteFecharDiaDTO> obterResumoReparte(Date data, Date dataReparteHistoico){
 	   return obterLancamentosExpedidos(data, null,dataReparteHistoico);
 	}
@@ -233,7 +221,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	       .append(" and me.status = :statusAprovado ")
 	       .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
 	       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
-     
+        
+        String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
+	        .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+	        .append(" where me.dataAprovacao = :data ")
+	        .append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional) ")
+	        .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
+        
         StringBuilder hql = new StringBuilder("select distinct produtoEdicao.id as idProdutoEdicao, produto.codigo as codigo, ");
 				      hql.append("produto.nome as nomeProduto, ");
 				      hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
@@ -248,7 +242,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         // Quantidade efetiva distribuída, considerando movimento de envio de
         // reparte, como também o estorno, em caso de furo
-        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ");
+        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoEnvioJornaleiro )");
         hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
         hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
         hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro)) as qtdeDistribuido, ");
@@ -257,7 +251,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ");
         hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
         hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
-        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida)) as qtdeTransferencia ");
+        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida)) as qtdeTransferencia, ");
+        
+        hql.append( templateHqlRecebimentoEstoqueFisicoPromocional).append(" as qtdeDiferenca ");
         
     	 hql.append(" from Expedicao expedicao ")
 	         .append(" join expedicao.lancamentos lancamento " )
@@ -276,9 +272,10 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("dataConsultaHistorico", dataReparteHistoico);
         query.setParameter("data", dataInicio);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-        query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
         query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
-        query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+        query.setParameterList("grupoMovimentoRecebimentoFisicoPromocional",Arrays.asList(
+        		GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL,
+        		GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL));
         query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
         query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
         query.setParameter("statusFuro", StatusLancamento.FURO);
@@ -287,7 +284,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameterList("tipoDiferencaFaltaDe", Arrays.asList(TipoDiferenca.FALTA_DE,TipoDiferenca.PERDA_DE));
         query.setParameterList("tipoDiferencaFaltaEm", Arrays.asList(TipoDiferenca.FALTA_EM,TipoDiferenca.PERDA_EM));
         query.setParameter("tipoDirecionamentoDiferenca", TipoDirecionamentoDiferenca.ESTOQUE);
-        
+        this.atribuirGruposMovimentoEnvioJornaleiro(query, "grupoMovimentoEnvioJornaleiro");
+        this.atribuirGruposMovimentoEstornoEnvioJornaleiro(query, "grupoMovimentoEstornoEnvioJornaleiro");
         
         if (paginacao != null) {
             query.setFirstResult(paginacao.getPosicaoInicial());
@@ -300,7 +298,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
                             BigDecimal.class, BigInteger.class,
                             BigInteger.class, BigInteger.class,
                             BigInteger.class, BigInteger.class,
-                            BigInteger.class, BigInteger.class);
+                            BigInteger.class, BigInteger.class,BigInteger.class);
             query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
         } catch (NoSuchMethodException | SecurityException e) {
             String msg = "Erro definindo result transformer para classe: " + ReparteFecharDiaDTO.class.getName();
@@ -309,6 +307,80 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         } 
         return query.list();
     }
+    
+    private void atribuirGruposMovimentoEstornoEnvioJornaleiro(final Query query, final String paramName){
+    	
+    	query.setParameterList(paramName, Arrays.asList(
+        		GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO, 
+        		GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE, 
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO,
+        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR));
+    }
+    
+    private void atribuirGruposMovimentoEnvioJornaleiro(final Query query, final String paramName){
+    	
+    	query.setParameterList(paramName, Arrays.asList(
+        		GrupoMovimentoEstoque.ENVIO_JORNALEIRO, 
+        		GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE, 
+        		GrupoMovimentoEstoque.VENDA_ENCALHE, 
+        		GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR));
+    }
+    
+    private void atribuirTipoDiferencaRateioCota(final Query query, final String paramName) {
+		
+    	query.setParameterList(paramName, Arrays.asList(
+    			TipoDiferenca.SOBRA_EM,
+				TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
+				TipoDiferenca.GANHO_EM,
+				TipoDiferenca.FALTA_EM,
+				TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
+				TipoDiferenca.PERDA_EM));
+	}
+
+	private void atribuirTipoDiferencaFalta(final Query query, final String paramName) {
+		
+		query.setParameterList(paramName, Arrays.asList(
+				TipoDiferenca.FALTA_DE,
+				TipoDiferenca.FALTA_EM,
+				TipoDiferenca.PERDA_DE,
+				TipoDiferenca.PERDA_EM));
+	}
+
+	private void atribuirTipoDiferencaSobras(final Query query, final String paramName) {
+		
+		query.setParameterList(paramName, Arrays.asList(
+				TipoDiferenca.SOBRA_DE,
+				TipoDiferenca.SOBRA_EM,
+				TipoDiferenca.GANHO_DE,
+				TipoDiferenca.GANHO_EM));
+	}
+
+	private void atribuirStatusIntegracaoGFS(final Query query, final String paramName) {
+		
+		query.setParameterList(paramName, Arrays.asList(
+				StatusIntegracao.EM_PROCESSAMENTO,
+        		StatusIntegracao.EM_PROCESSO,
+        		StatusIntegracao.SOLICITADO,
+        		StatusIntegracao.NAO_INTEGRADO,
+        		StatusIntegracao.RE_INTEGRADO,
+        		StatusIntegracao.INTEGRADO,
+        		StatusIntegracao.AGUARDANDO_GFS));
+	}
+	
+	private void atribuirTipoDiferenca(final Query query, final String paramName) {
+			
+		query.setParameterList(paramName, Arrays.asList(
+				TipoDiferenca.FALTA_DE,
+				TipoDiferenca.FALTA_EM,
+				TipoDiferenca.PERDA_DE,
+				TipoDiferenca.PERDA_EM,
+				TipoDiferenca.SOBRA_DE,
+				TipoDiferenca.SOBRA_EM,
+				TipoDiferenca.GANHO_DE,
+				TipoDiferenca.GANHO_EM));
+	 }
 
     
 }

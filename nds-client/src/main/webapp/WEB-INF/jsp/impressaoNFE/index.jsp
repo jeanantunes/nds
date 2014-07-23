@@ -35,7 +35,7 @@
 
 	<div class="container">
 
-		<fieldset class="classFieldset">
+		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend> Pesquisar NF-e</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
@@ -101,7 +101,7 @@
 					<td><input type="text" name="idBoxInicial" id="idBoxInicial" style="width: 76px;" /> &nbsp;Até &nbsp; <input
 						type="text" name="idBoxFinal" id="idBoxFinal" style="width: 76px;" /></td>
 					<td>Fornecedor:</td>
-					<td><a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
+					<td><a href="javascript:void(0)" id="selFornecedor">Clique e Selecione o Fornecedor</a>
 						<div id="menuFornecedores" class="menu_fornecedor" style="display: none;">
 							<span class="bt_sellAll"> <input type="checkbox" name="selecionarTodosFornecedores"
 								id="selecionarTodosFornecedores" onclick="impressaoNfeController.checkTodosFornecedores();" style="float: left;" />
@@ -168,7 +168,7 @@
 						<td width="88"><input type="text" id="dialog-pesqProdutos-codigoProduto" name="dialog-pesqProdutos-codigoProduto" style="width: 80px;" /></td>
 						<td width="45">Produto:</td>
 						<td width="180"><input type="text" id="dialog-pesqProdutos-nomeProduto" name="dialog-pesqProdutos-nomeProduto"  style="width: 180px;" /></td>
-						<td width="15"><span class="classPesquisar"> <a href="#" onclick="impressaoNfeController.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', this.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', this.workspace).val());"> </a>
+						<td width="15"><span class="classPesquisar"> <a href="javascript:void(0)" onclick="impressaoNfeController.filtrarProdutos($('#dialog-pesqProdutos-codigoProduto', this.workspace).val(), $('#dialog-pesqProdutos-nomeProduto', this.workspace).val());"> </a>
 						</span></td>
 					</tr>
 				</table>

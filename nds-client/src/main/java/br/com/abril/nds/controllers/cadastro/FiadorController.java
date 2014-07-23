@@ -200,6 +200,7 @@ public class FiadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void cadastrarFiadorCpf(PessoaFisica pessoa){
 		
 		this.validarDadosEntradaPessoaFisica(pessoa);
@@ -606,6 +607,7 @@ public class FiadorController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void cadastrarFiadorCnpj(PessoaJuridica fiador){
 		
 		this.validarDadosEntradaPessoJuridica(fiador);
@@ -652,7 +654,6 @@ public class FiadorController extends BaseController {
 	}
 	
 	@Post
-	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void editarFiador(Long idFiador){
 		
 		limparDadosSessao();

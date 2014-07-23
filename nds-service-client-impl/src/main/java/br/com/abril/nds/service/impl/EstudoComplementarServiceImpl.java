@@ -26,6 +26,7 @@ import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
@@ -34,7 +35,9 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
-
+import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.UsuarioService;
 
 @Service
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
@@ -59,12 +62,21 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     private InformacoesProdutoRepository informacoesProdutoRepository;
     
     @Autowired
+    private LancamentoService lancamentoService;
+    
+    @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
+    
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
 
     @Override
     @Transactional(readOnly = true)
-    public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(
-	    long idEstudoBase) {
+    public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(long idEstudoBase) {
+	
 	EstudoComplementarDTO estudoComplDto = null;
 	EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudoBase);
 
@@ -93,6 +105,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	estudoComplDto.setIdPublicacao(pe.getNumeroEdicao());
 	estudoComplDto.setIdPEB(pe.getProduto().getPeb());
 	estudoComplDto.setNomeFornecedor( pe.getProduto().getFornecedor().getJuridica().getNomeFantasia()==null?"":pe.getProduto().getFornecedor().getJuridica().getNomeFantasia());
+	estudoComplDto.setTipoSegmentoProduto(estudo.getProdutoEdicao().getProduto().getTipoSegmentoProduto().getDescricao()!=null?estudo.getProdutoEdicao().getProduto().getTipoSegmentoProduto().getDescricao():"");
 
 	Set<Lancamento> lancamentos = pe.getLancamentos();
 
@@ -129,26 +142,28 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
         }
 
+        EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
+        
+        validarEdicaoEProduto(estudoComplementarVO, estudo);
+        
         BigInteger reparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
         BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
 
-        EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
 
         EstudoGerado estudo1 = new EstudoGerado();
-        BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas"});
+        BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas", "dataAlteracao"});
         estudo1.setLiberado(false);
         estudo1.setProdutoEdicao(new ProdutoEdicao(estudoComplementarVO.getIdProdutoEdicao()));
         estudo1.setQtdeReparte(qtdDistribuido);
         estudo1.setReparteDistribuir(qtdDistribuido);
         estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
-
-        Long id = this.estudoService.obterUltimoAutoIncrement();
-
-        estudo1.setId(id);
+        estudo1.setDataCadastro(new Date());
+        estudo1.setUsuario(this.usuarioService.getUsuarioLogado());
+        estudo1.setTipoGeracaoEstudo(TipoGeracaoEstudo.DIVISAO);
 
         // Gera Novo Estudo
         Long idEstudo = estudoGeradoRepository.adicionar(estudo1);
-
+        
         List<EstudoCotaGerado> cotas = new ArrayList<>();
 
         for (EstudoCotaGerado cota : estudoCotas) {
@@ -192,8 +207,21 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
             estudoCotaGeradoRepository.adicionar(cota); 
         }
 
+        this.matrizDistribuicaoService.atualizarPercentualAbrangencia(idEstudo);
+        
         return idEstudo;
     }
+
+	private void validarEdicaoEProduto(EstudoComplementarVO estudoComplementarVO, EstudoGerado estudo) {
+		
+		Lancamento lancParaEstudo = lancamentoService.buscarPorId(estudoComplementarVO.getIdLancamento());
+        
+        if((lancParaEstudo.getProdutoEdicao().getNumeroEdicao() != estudo.getProdutoEdicao().getNumeroEdicao()) || 
+        		(lancParaEstudo.getProdutoEdicao().getProduto().getCodigo() != estudo.getProdutoEdicao().getProduto().getCodigo())){
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING, "O estudo utilizado como base, não é da mesma edição/produto do estudo a ser criado.");
+        }
+	}
 
     private List<EstudoCotaGerado> ordenarCotas(List<EstudoCotaGerado> estudoCotas, EstudoComplementarVO estudoComplementarVO) {
 	Map<Long, EstudoCotaGerado> mapCotas = new HashMap<>();

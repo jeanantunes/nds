@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -72,22 +73,44 @@ CaracteristicaDistribuicaoRepository {
         .append(" pes2.NOME_FANTASIA as 'nomeEditor', ")
         .append(" ped.CHAMADA_CAPA as 'chamadaCapa', ")
         .append(" ped.NUMERO_EDICAO as 'numeroEdicao', ")
-        .append(" tipoclas.descricao as 'classificacao', ")
-        .append(" ped.PRECO_VENDA as 'precoCapa', ")
-        .append(" est.QTDE as 'venda', ")
-        .append(" lan.REPARTE as 'reparte', ")
-        .append(" lan.DATA_LCTO_PREVISTA as 'dataLancamento', ")
-        .append(" lan.DATA_REC_PREVISTA as 'dataRecolhimento', ")
+        .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
+        .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
+        
+		.append("   round((select sum(epc.qtde_recebida)                                ")
+		.append("        from estoque_produto_cota epc,                                 ")
+		.append("             produto_edicao prodedic                                   ")
+		.append("       where epc.produto_edicao_id = prodedic.id                       ")
+		.append("             and epc.produto_edicao_id = ped.id),0) as 'reparte',      ")
+		.append("  case                                                                 ")
+		.append("     when lan.status = 'fechado' or lan.status = 'recolhido'           ")
+		.append("     then                                                              ")
+		.append("        round((select sum(epc.qtde_recebida- epc.qtde_devolvida)       ")
+		.append("              from estoque_produto_cota epc,                           ")
+		.append("                   produto_edicao prodedic                             ")
+		.append("             where epc.produto_edicao_id = prodedic.id                 ")
+		.append("                   and epc.produto_edicao_id = ped.id),0)              ")
+		.append("     else                                                              ")
+		.append("        round((select sum(epc.qtde_recebida)                           ")
+		.append("              from estoque_produto_cota epc,                           ")
+		.append("                   produto_edicao prodedic                             ")
+		.append("             where epc.produto_edicao_id = prodedic.id                 ")
+		.append("                   and epc.produto_edicao_id = ped.id),0)              ")
+		.append("  end                                                                  ")
+		.append("     as 'venda',                                                       ")
+        
+        
+        .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', ")
+        .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', ")
         .append(" tiposeg.DESCRICAO as 'segmento' ")
         
         .append(" from produto pro ")
-        .append(" left join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
+        .append("  join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
         .append(" left join tipo_segmento_produto tiposeg ON tiposeg.ID = pro.TIPO_SEGMENTO_PRODUTO_ID ")
         .append(" left join tipo_classificacao_produto tipoclas ON tipoclas.ID = ped.tipo_classificacao_produto_id ")
         .append(" left join brinde bri ON bri.ID = ped.BRINDE_ID  ")
         .append(" left join editor edi on edi.id = pro.editor_id ")
-        .append(" left join pessoa pes2 on pes2.id = edi.JURIDICA_ID ")
-        .append(" left join lancamento lan on lan.ID = ped.ID  ")
+        .append(" join pessoa pes2 on pes2.id = edi.JURIDICA_ID ")
+        .append(" left join lancamento lan on lan.PRODUTO_EDICAO_ID = ped.ID  ")
         .append(" left join estoque_produto est on est.PRODUTO_EDICAO_ID = ped.ID  ")
         .append(" where  1=1 ");
         
@@ -260,7 +283,7 @@ CaracteristicaDistribuicaoRepository {
         sql.append(" select distinct ")
         .append(" pro.codigo as 'codigoProduto', ")
         .append(" pro.nome as 'nomeProduto', ")
-        .append(" pes2.NOME_FANTASIA as 'nomeEditor' ")
+        .append(" coalesce(pes2.NOME_FANTASIA, pes2.RAZAO_SOCIAL) as 'nomeEditor' ")
         .append(" from produto pro ")
         
         .append(" left join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")

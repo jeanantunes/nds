@@ -9,6 +9,7 @@ import com.google.common.base.Strings;
 
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
@@ -72,6 +73,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	@XlsMapper(value="cod_corporativo")
 	private String codigoDeBarrasCorporativo;
 	
+	private boolean contagemPacote;
 	private BigDecimal precoPrevisto;
 	private Long id;
 	private Integer sequenciaMatriz;
@@ -95,6 +97,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private boolean permiteValeDesconto;
 	private boolean parcial;
 	private Integer periodo;
+	private String periodoString;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
@@ -152,7 +155,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String dataLancamentoFormatada;
 	private BigInteger qtdeVendas;
 	private BigInteger reparte;
-	private String qtdVendasFormatada = "0";
+	private String qtdVendasFormatada;
 	
 	private String precoVendaFormatado;
 	private String precoPrevistoFormatado;
@@ -165,6 +168,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Double percentualVenda;
 	private Long reparteEstudo;
 	private Long tipoSegmentoProdutoId;
+	
+	private FormaComercializacao formaComercializacao;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -904,7 +909,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
-		this.tipoClassificacaoFormatado = tipoClassificacaoProduto.getDescricao();
+		this.tipoClassificacaoFormatado = tipoClassificacaoProduto == null ? "" : tipoClassificacaoProduto.getDescricao();
 	}
 
 	public String getStatus() {
@@ -921,6 +926,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setPeriodo(Integer periodo) {
 	    this.periodo = periodo;
+	    
+	    if(periodo != null){
+	    	this.periodoString = periodo.toString();
+	    }else{
+	    	this.periodoString = "";
+	    }
+	    
 	}
 
 	public Long getIdProduto() {
@@ -936,7 +948,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 
 	public void setLancamento(String lancamento) {
-		this.lancamento = lancamento.toUpperCase().replace("Ç", "C");
+		this.lancamento = lancamento;
 	}
 
 	public String getDtLancPrevisto() {
@@ -1035,4 +1047,28 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
     public void setIdFornecedor(Long idFornecedor) {
         this.idFornecedor = idFornecedor;
     }
+
+	public boolean isContagemPacote() {
+		return contagemPacote;
+	}
+
+	public void setContagemPacote(boolean contagemPacote) {
+		this.contagemPacote = contagemPacote;
+	}
+
+	public FormaComercializacao getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(FormaComercializacao formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+
+	public String getPeriodoString() {
+		return periodoString;
+	}
+
+	public void setPeriodoString(String periodoString) {
+		this.periodoString = periodoString;
+	}
 }

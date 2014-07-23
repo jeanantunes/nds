@@ -117,6 +117,8 @@ public class MatrizRecolhimentoController extends BaseController {
     
     private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
     
+    private static final String ATRIBUTO_SESSAO_PRODUTOS_RECOLHIMENTO = "produtosRecolhimento";
+    
     @Get
     @Path("/")
     public void index() {
@@ -179,6 +181,9 @@ public class MatrizRecolhimentoController extends BaseController {
                 if (balanceamentoRecolhimentoAux.getProdutosRecolhimentoNaoBalanceados() != null)
                     balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimentoAux
                             .getProdutosRecolhimentoNaoBalanceados());
+                if (balanceamentoRecolhimentoAux.getProdutosRecolhimentoDeOutraSemana() != null)
+                    balanceamentoRecolhimento.addProdutosRecolhimentoDeOutraSemana(balanceamentoRecolhimentoAux
+                            .getProdutosRecolhimentoDeOutraSemana());
                 
             }
             this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO, balanceamentoRecolhimento);
@@ -198,38 +203,33 @@ public class MatrizRecolhimentoController extends BaseController {
         
         resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
         
-        resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados());
-        
+		resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
+	        balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
+		
         removerAtributoAlteracaoSessao();
         
         configurarFiltropesquisa(anoNumeroSemana, dataPesquisa, listaIdsFornecedores);
         
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
+            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
+        
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
     
-    @Post
-    @Path("/processarProdutosNaoBalanceadosAposConfirmacaoMatriz")
-    public void processarProdutosNaoBalanceadosAposConfirmacaoMatriz() {
+    private void processarProdutosNaoBalanceadosAposConfirmacaoMatriz(List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados) {
         
         verificarExecucaoInterfaces();
         
-        BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = (BalanceamentoRecolhimentoDTO) this.httpSession
-                .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-        
         FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
         
-        recolhimentoService.processarProdutosProximaSemanaRecolhimento(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados(), filtro.getAnoNumeroSemana());
-        
-        this.result.use(Results.json()).from(Results.nothing()).serialize();
+        recolhimentoService.processarProdutosProximaSemanaRecolhimento(produtosRecolhimentoNaoBalanceados, filtro.getAnoNumeroSemana());
     }
     
     private Integer tratarSemana(Integer anoNumeroSemana, Date dataPesquisa) {
         
         if (anoNumeroSemana == null && dataPesquisa != null) {
             
-            return SemanaUtil.obterAnoNumeroSemana(dataPesquisa, this.distribuidorService.inicioSemana()
+            return SemanaUtil.obterAnoNumeroSemana(dataPesquisa, this.distribuidorService.inicioSemanaRecolhimento()
                     .getCodigoDiaSemana());
         }
         
@@ -242,7 +242,7 @@ public class MatrizRecolhimentoController extends BaseController {
             
             int anoBase = SemanaUtil.getAno(anoNumeroSemana);
             
-            return SemanaUtil.obterDataDaSemanaNoAno(anoNumeroSemana, this.distribuidorService.inicioSemana()
+            return SemanaUtil.obterDataDaSemanaNoAno(anoNumeroSemana, this.distribuidorService.inicioSemanaRecolhimento()
                     .getCodigoDiaSemana(), anoBase);
         }
         
@@ -341,10 +341,13 @@ public class MatrizRecolhimentoController extends BaseController {
         ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
         
-        resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados());
+        resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
+            balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
         
         removerAtributoAlteracaoSessao();
+        
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
+            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
         
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
@@ -423,10 +426,13 @@ public class MatrizRecolhimentoController extends BaseController {
         ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
         
-        resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento
-                .getProdutosRecolhimentoNaoBalanceados());
+        resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
+            balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
         
         removerAtributoAlteracaoSessao();
+        
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
+            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
         
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
@@ -458,6 +464,10 @@ public class MatrizRecolhimentoController extends BaseController {
         filtro.setDataPesquisa(DateUtil.parseDataPTBR(dataFormatada));
         
         List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento = obterListaProdutoRecolhimentoDTO(dataFormatada);
+        
+        this.removeAtributoProdutosParaRecolhimentoSessao();
+        
+        this.adicionarAtributoProdutosParaRecolhimentoSessao(listaProdutoRecolhimento);
         
         if (listaProdutoRecolhimento != null && !listaProdutoRecolhimento.isEmpty()) {
             
@@ -537,7 +547,7 @@ public class MatrizRecolhimentoController extends BaseController {
     @Path("/reprogramarSelecionados")
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
-            String novaDataFormatada, String dataAntigaFormatada) {
+            String novaDataFormatada, String dataAntigaFormatada, boolean selecionarTodos) {
         
         verificarExecucaoInterfaces();
         
@@ -546,20 +556,25 @@ public class MatrizRecolhimentoController extends BaseController {
         this.validarDadosReprogramar(novaDataFormatada, filtro.getAnoNumeroSemana());
         
         Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
-        
+
         this.validarDataReprogramacao(filtro.getAnoNumeroSemana(), novaData, filtro.getDataPesquisa());
+
+        if (selecionarTodos){
+        
+            listaProdutoRecolhimento = this.obterListaProdutoRecolhimentoFormatadoVO();
+        }
         
         this.validarListaParaReprogramacao(listaProdutoRecolhimento);
         
         Date dataAntiga = DateUtil.parseDataPTBR(dataAntigaFormatada);
-        
+ 
         this.atualizarMapaRecolhimento(listaProdutoRecolhimento, novaData, dataAntiga);
         
         this.adicionarAtributoAlteracaoSessao();
         
         this.result.use(Results.json()).from(Results.nothing()).serialize();
     }
-    
+
     @Post
     @Path("/reprogramarRecolhimentoUnico")
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
@@ -1307,21 +1322,43 @@ public class MatrizRecolhimentoController extends BaseController {
     
     private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
         
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+
+        if (DateUtil.isDataInicialMaiorDataFinal(dataOperacao, novaData)) {
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não é possível reprogramar para uma data anterior à data de operação do sistema.");
+        }
+
         this.recolhimentoService.verificaDataOperacao(novaData);
         
         List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
         
-        for (ConfirmacaoVO confirmacao : confirmacoes) {
+        Intervalo<Date> periodoRecolhimento = this.recolhimentoService.getPeriodoRecolhimento(numeroSemana);
+        
+        if (DateUtil.validarDataEntrePeriodo(novaData, periodoRecolhimento.getDe(), periodoRecolhimento.getAte())) {
             
-            if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+            for (ConfirmacaoVO confirmacao : confirmacoes) {
                 
-                if (confirmacao.isConfirmado()) {
+                if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
                     
-                    throw new ValidacaoException(TipoMensagem.WARNING,
-                            "O recolhimento não pode ser reprogramado para uma data já confirmada!");
+                    if (confirmacao.isConfirmado()) {
+                        
+                        throw new ValidacaoException(TipoMensagem.WARNING,
+                                "O recolhimento não pode ser reprogramado para uma data já confirmada!");
+                    }
                 }
+            }    
+            
+        } else {
+            
+            if (this.recolhimentoService.existeRecolhimentoBalanceado(novaData)) {
+                
+                throw new ValidacaoException(TipoMensagem.WARNING, 
+                        "O recolhimento não pode ser reprogramado para uma data já confirmada!");
             }
         }
+        
     }
     
     /**
@@ -1864,9 +1901,14 @@ public class MatrizRecolhimentoController extends BaseController {
         
         Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
         
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
         for (Entry<Date, Boolean> item : entrySet) {
             
-            confirmacoesVO.add(new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+        	if (item.getValue() || DateUtil.isDataInicialMaiorIgualDataFinal(item.getKey(), dataOperacao)) {
+        	
+        		confirmacoesVO.add(new ConfirmacaoVO(DateUtil.formatarDataPTBR(item.getKey()), item.getValue()));
+        	}
         }
         
         if (confirmacoesVO.isEmpty()) {
@@ -1910,4 +1952,53 @@ public class MatrizRecolhimentoController extends BaseController {
         // this.result.use(Results.json()).from("", "result").serialize();
     }
 
+    /**
+     * Adiciona atributo na sessao com todos os produtos para recolhimento
+     */
+    private void adicionarAtributoProdutosParaRecolhimentoSessao(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento){
+    	
+    	this.httpSession.setAttribute(ATRIBUTO_SESSAO_PRODUTOS_RECOLHIMENTO, listaProdutoRecolhimento);
+    }
+    
+    /**
+     * Remove atributo na sessao com todos os produtos para recolhimento
+     */
+    private void removeAtributoProdutosParaRecolhimentoSessao() {
+        
+        this.httpSession.removeAttribute(ATRIBUTO_SESSAO_PRODUTOS_RECOLHIMENTO);
+    }
+    
+    /**
+     * Obtem todos os produtos para recolhimento armazenados na sessão
+     */
+    private List<ProdutoRecolhimentoDTO> obterAtributoProdutosParaRecolhimentoSessao() {
+        
+    	@SuppressWarnings("unchecked")
+		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento = (List<ProdutoRecolhimentoDTO>) this.httpSession.getAttribute(ATRIBUTO_SESSAO_PRODUTOS_RECOLHIMENTO);
+    	
+    	return listaProdutoRecolhimento;
+    }
+    
+    /**
+     * Obtem todos os produtos para recolhimento armazenados na sessão já formatados
+     * 
+     * @return List<ProdutoRecolhimentoFormatadoVO>
+     */
+    private List<ProdutoRecolhimentoFormatadoVO> obterListaProdutoRecolhimentoFormatadoVO(){
+    	
+        List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento = this.obterAtributoProdutosParaRecolhimentoSessao();
+        
+        List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO=this.obterListaProdutoRecolhimentoVO(listaProdutoRecolhimento);
+    	
+        List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimentoFormatadoVO = new ArrayList<ProdutoRecolhimentoFormatadoVO>();
+        
+        for (ProdutoRecolhimentoVO vo : listaProdutoRecolhimentoVO) {
+            
+            ProdutoRecolhimentoFormatadoVO produtoRecolhimentoFormatadoVO = this.formatarProdutoRecolhimento(vo);
+            
+            listaProdutoRecolhimentoFormatadoVO.add(produtoRecolhimentoFormatadoVO);
+        }
+        
+        return listaProdutoRecolhimentoFormatadoVO;
+    }
 }

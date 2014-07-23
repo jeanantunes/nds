@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
@@ -237,7 +239,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		switch (filtro.getOrdenacaoColuna()) {
 			
 			case BOX:
-				hql.append(" order by nomeBox ");
+				hql.append(" order by box.codigo ");
 				break;
 				
 			case NOME_COTA:
@@ -611,11 +613,29 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" join rota.rotaPDVs rotaPdv ");
 		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" join pdv.cota cota ");
-		hql.append(" order by b.id, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+		hql.append(" order by b.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 		
 		return query.list();
+	}
+	
+	@Override
+	public boolean existeRotaParaCota(final Integer numeroCota){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(rotaPDV.ID) from rota_pdv rotaPDV join pdv pdv on pdv.ID = rotaPDV.PDV_ID ");
+		hql.append(" join cota cota on cota.ID = pdv.COTA_ID ");
+		hql.append(" where cota.NUMERO_COTA  =:numeroCota ");
+		
+		Query query  = getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("numeroCota",numeroCota);
+		
+		BigInteger  quantidade = (BigInteger) query.uniqueResult();
+		
+		return (Util.nvl(quantidade, BigInteger.ZERO).longValue() > 0);
 	}
 
 }

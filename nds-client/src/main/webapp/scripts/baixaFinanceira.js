@@ -1238,10 +1238,10 @@ var baixaFinanceiraController = $.extend(true, {
     	
 		baixaFinanceiraController.validarCamposBaixa();
 		
-		var valorDividas = formatMoneyValue($("#valorDividasHidden", baixaFinanceiraController.workspace).val(),2); 
-		var desconto = formatMoneyValue($("#descontoDividas", baixaFinanceiraController.workspace).val()); 
-		var juros = formatMoneyValue($("#jurosDividas", baixaFinanceiraController.workspace).val()); 
-		var multa = formatMoneyValue($("#multaDividas", baixaFinanceiraController.workspace).val()); 
+		var valorDividas = $("#valorDividasHidden", baixaFinanceiraController.workspace).val(); 
+		var desconto = $("#descontoDividas", baixaFinanceiraController.workspace).val(); 
+		var juros = $("#jurosDividas", baixaFinanceiraController.workspace).val(); 
+		var multa = $("#multaDividas", baixaFinanceiraController.workspace).val(); 
 		
 		var param = {vlDivida : valorDividas , vlMulta : multa , vlJuros :juros, vlDesconto: desconto};
 		
@@ -1276,7 +1276,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var juros = formatMoneyValue($("#jurosDividas", baixaFinanceiraController.workspace).val()); 
 		var multa = formatMoneyValue($("#multaDividas", baixaFinanceiraController.workspace).val()); 
 
-		var param = {vlDivida : valorDividas , vlMulta : multa , vlJuros :juros, vlDesconto: desconto , vlPago: valorPago };
+		var param = {vlDividaStr : valorDividas , vlMultaStr : multa , vlJurosStr :juros, vlDescontoStr: desconto , vlPagoStr: valorPago };
 		
 		$.postJSON(contextPath + "/financeiro/baixa/calcularSaldoDivida",param,
 		function(result) {

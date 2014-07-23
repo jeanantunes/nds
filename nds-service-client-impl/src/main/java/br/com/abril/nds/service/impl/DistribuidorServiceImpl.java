@@ -192,9 +192,16 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public DiaSemana inicioSemana() {
+	public DiaSemana inicioSemanaRecolhimento() {
 		
-		return this.distribuidorRepository.buscarInicioSemana();
+		return this.distribuidorRepository.buscarInicioSemanaRecolhimento();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DiaSemana inicioSemanaLancamento() {
+		
+		return this.distribuidorRepository.buscarInicioSemanaLancamento();
 	}
 
 	@Override
@@ -432,8 +439,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(final Date dataRecolhimento, final Long ...idsFornecedor) {
 		
-		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
-				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
 		final List<Integer> diasSemanaDistribuidorOpera = 
 				this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,idsFornecedor);
@@ -606,12 +612,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return dataAProcessar;
 	}
 	
-	
 	/**
-	 * Método que obtém uma lista de datas de recolhimento 
-	 * anteriores ou posterior a dataAtual informada em que o distribuidor opera.
-	 * 
-	 * 
+	 * Método que obtém uma lista de datas operacionais a partir da data atual
+	 * (datas posteriores ou anteriores a data atual de acordo com o parâmetro posterior).
 	 * @param dataAtual
 	 * @param qtndDiasUteis
 	 * @param diasSemanaDistribuidorOpera
@@ -620,7 +623,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * @return List - Date
 	 */
 	@Override
-	public List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+	public List<Date> obterListaDataOperacional(
 			Date dataAtual, 
 			int qtndDiasUteis, 
 			final List<Integer> diasSemanaDistribuidorOpera,
@@ -631,7 +634,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		final int qtdDias =  posterior ? 1 : -1;
 		
 		do {
-			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, false);
+			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, posterior);
 			listaDatasRecolhimento.add(dataAtual);
 		} while(--qtndDiasUteis> 0);
 		
@@ -713,5 +716,24 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	public boolean isConferenciaCegaFechamentoEncalhe() {
 		
 		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Integer obterNumeroSemana(Date data){
+	    
+	    if (data == null){
+	        
+	        data = this.obterDataOperacaoDistribuidor();
+	    }
+	    
+	    final DiaSemana diaSemana = this.inicioSemanaRecolhimento();
+        
+        if (diaSemana == null) {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Dados do distribuidor inexistentes: início semana");
+        }
+        
+        return SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
 	}
 }

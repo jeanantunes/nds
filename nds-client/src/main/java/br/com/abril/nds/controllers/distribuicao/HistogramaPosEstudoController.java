@@ -1,7 +1,12 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +25,21 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoBaseSugeridaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -41,10 +51,13 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO)
 public class HistogramaPosEstudoController extends BaseController{
 	
-	private String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999"}; 
+	private final String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999","0-999999999"}; 
 	
 	@Autowired
 	private Result result;
+	
+	@Autowired
+	private HttpSession session;
 	
 	@Autowired
 	private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService; 
@@ -66,14 +79,28 @@ public class HistogramaPosEstudoController extends BaseController{
 
     @Autowired
     private MatrizDistribuicaoService matrizDistribuicaoService;
+    
+    @Autowired
+	private UsuarioService usuarioService;
+    
+    public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
+
+    @Autowired
+    private LancamentoService lancamentoService;
 
     @Path("/index")
-	public void histogramaPosEstudo(String codigoProduto, String edicao) {
-	    if (codigoProduto != null && !codigoProduto.isEmpty() && edicao != null && !edicao.isEmpty()) {
-			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
+	public void histogramaPosEstudo(Long idLancamento) {
+	    
+        if (idLancamento != null) {
+			
+            Lancamento lancamento = lancamentoService.obterPorId(idLancamento);
+            
 			String modoAnalise = "NORMAL";
 			
-			if (produtoEdicao.isParcial()) {
+			PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
+			
+			if (periodo != null && periodo.getNumeroPeriodo() > 1) {
+			
 			    modoAnalise = "PARCIAL";
 			}
 			
@@ -93,10 +120,15 @@ public class HistogramaPosEstudoController extends BaseController{
 
     @Post
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
-		Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
-		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
 		
+    	Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
+		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
+		
+		String loginUsuario = super.getUsuarioLogado().getLogin();
+		
+		this.bloquearAnaliseEstudo(produtoEdicao.getId(), this.session, loginUsuario);
+		
 		selecionado.setParcial(produtoEdicao.isParcial());
 
 		String modoAnalise = "NORMAL";
@@ -132,7 +164,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	
 	@Post
 	public void carregarDadosFieldSetResumoEstudo(long estudoId){
-		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId);
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId, null, null);
 		
 		result.use(Results.json()).withoutRoot().from(resumo).recursive().serialize();
 	}
@@ -149,20 +181,28 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 		
 		List<Long> listaIdEdicaoBaseEstudo = histogramaPosEstudoFaixaReparteService.obterIdEdicoesBase(Long.valueOf(estudoId));
+
+		int lFaixas = faixaReparteInicial.length;
+		
+		Integer[][] faixasAgrupadas = new Integer[lFaixas][2];
+		
+		int i = 0;
 		
 		for (String faixas : faixaIterator) {
+			
 			int faixaDe = Integer.parseInt(faixas.split("-")[0]);
+			
 			int faixaAte = Integer.parseInt(faixas.split("-")[1]);
 			
-			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId, listaIdEdicaoBaseEstudo);
+			faixasAgrupadas[i][0] = faixaDe;
 			
-			base.add(baseEstudoAnaliseFaixaReparteDTO);
+			faixasAgrupadas[i][1] = faixaAte;
+			
+			i++;
 		}
 		
-        // última faixa
-		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId, listaIdEdicaoBaseEstudo);
-		base.add(baseEstudoAnaliseFaixaReparteDTO);
-		
+		base = this.histogramaPosEstudoFaixaReparteService.obterListaHistogramaPosEstudo(faixasAgrupadas, estudoId, listaIdEdicaoBaseEstudo);
+
 		TableModel<CellModelKeyValue<HistogramaPosEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(base));
@@ -197,6 +237,71 @@ public class HistogramaPosEstudoController extends BaseController{
 		tableModel.setTotal(6);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void bloquearAnaliseEstudo(Long idProdutoEdicao, 
+									   HttpSession session, 
+									   String loginUsuario) {
+		
+		if (idProdutoEdicao == null) {
+			
+			throw new ValidacaoException(
+				new ValidacaoVO(TipoMensagem.WARNING, "Estudo inválido!"));
+		}
+		
+		Map<Long, String> mapaAnaliseEstudo = 
+			(Map<Long, String>) session.getServletContext().getAttribute(
+				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		
+		if (mapaAnaliseEstudo != null) {
+			
+			String loginUsuarioBloqueio = mapaAnaliseEstudo.get(idProdutoEdicao);
+			
+			if (loginUsuarioBloqueio != null
+					&& !loginUsuarioBloqueio.equals(loginUsuario)) {
+				
+				throw new ValidacaoException(
+					new ValidacaoVO(TipoMensagem.WARNING, 
+						"Este estudo já está sendo analisado pelo usuário [" 
+							+ this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio) + "]."));
+			}
+		} else {
+		
+			mapaAnaliseEstudo = new HashMap<Long, String>();
+		}
+		
+		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario);
+		
+		session.getServletContext().setAttribute(
+			MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void desbloquearAnaliseEstudo(ServletContext servletContext, String loginUsuario) {
+
+		Map<Long, String> mapaAnaliseEstudo = 
+			(Map<Long, String>) servletContext.getAttribute(
+				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		
+		if (mapaAnaliseEstudo != null) {
+			
+			for (Map.Entry<Long, String> entry : mapaAnaliseEstudo.entrySet()) {
+				
+				if (entry.getValue().equals(loginUsuario)) {
+					
+					mapaAnaliseEstudo.remove(entry.getKey());
+					
+					break;
+				}
+			}
+		}
+	}
+	
+	@Post 
+	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO)
+	public void validar(){
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
 }

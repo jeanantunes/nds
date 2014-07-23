@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1034,12 +1035,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 
 					rota = this.rotaRepository.buscarPorId(rotaDTO.getId());
                     
-					rota.setRoteiro(roteiro);
-					rota.setOrdem(rotaDTO.getOrdem());
-					
 					if (rota != null) {
 						
-						rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
+						rota.setRoteiro(roteiro);
+						rota.setOrdem(rotaDTO.getOrdem());
+						
+						if (rotaDTO.getPdvsExclusao() != null && !rotaDTO.getPdvsExclusao().isEmpty()) {
+							
+							rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
+							
+		                	desassociarBoxCota(rotaDTO.getPdvsExclusao());
+						}
 					}
                 }
                 
@@ -1070,6 +1076,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		return roteirizacaoExistente;
     }
+	
+	private void desassociarBoxCota(Collection<Long> pdvsExclusao) {
+		
+		for (Long idPDV : pdvsExclusao) {
+
+			Cota cota = this.pdvRepository.buscarPorId(idPDV).getCota();
+			cota.setBox(null);
+			
+			this.cotaRepository.merge(cota);
+		}
+	}
 
 	private void processarRoteirosExcluidos(Roteirizacao roteirizacaoExistente,
 			Set<Long> roteirosExclusao) {
@@ -1105,7 +1122,9 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 							
 							Cota cota = pdv.getCota();
 							
-							if(cota != null) {
+							final boolean tipoDeRoteiroNaoEspecial = !rotaPDV.isTipoRoteiroEspecial();
+							
+							if(cota != null && tipoDeRoteiroNaoEspecial) {
 								
 								cota.setBox(null);
 								
@@ -1567,10 +1586,10 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		if ((codigoBoxDe != null && codigoBoxDe > 0)||(codigoBoxAte != null && codigoBoxAte > 0)){
+		if ((codigoBoxDe != null )||(codigoBoxAte != null )){
 		
 			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
-			
+				
 			for (Box box : boxes){
 			
 				List<Roteiro> roteiros = this.buscarRoteiroDeBox(box.getId());

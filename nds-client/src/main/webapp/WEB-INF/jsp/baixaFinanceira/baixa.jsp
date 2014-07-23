@@ -81,7 +81,7 @@
 
 	<div class="linha_separa_fields">&nbsp;</div>
 
-	<fieldset class="fieldFiltro">
+	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		
 		<legend>Baixa Financeira</legend>
 		
@@ -399,7 +399,7 @@
 					    </td>
 					    <td width="100" id="valorDividas" ></td>
 					    
-					    <td class="dataPagamentoManual" width="100">Data Pagamento:</td>
+					    <td class="dataPagamentoManual" width="100"><strong>Data Pagamento:</strong></td>
 			            <td class="dataPagamentoManual">
 							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManual();" name="dtPagamentoManual" type="text" id="dtPagamentoManual" style="width:80px; text-align:right;" />
 						</td>
@@ -407,19 +407,19 @@
 					  </tr>
 					  <tr>
 					    <td><strong>Multa R$:</strong></td>
-					    <td colspan="3"><input  maxlength="16" id="multaDividas" name="multaDividas" onchange="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td><strong>Juros R$:</strong></td>
-					    <td colspan="3"><input maxlength="16" id="jurosDividas" name="jurosDividas" onchange="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td><strong>Desconto R$:</strong></td>
-					    <td colspan="3"><input maxlength="16" id="descontoDividas" name="descontoDividas" onchange="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td><strong>Valor pago R$:</strong></td>
-					    <td colspan="3"><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onchange="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td>&nbsp;</td>

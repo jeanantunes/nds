@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -116,9 +117,6 @@ public class HistoricoVendaController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 			
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistoricoVendaDTO.OrdemColuna.values(), sortname));
-		
-//		Produto produto = this.produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
-		filtro.getProdutoDto().setCodigoProduto(Util.padLeft(filtro.getProdutoDto().getCodigoProduto(), "0", 8));
 		
 		// valida se o filtro foi devidamente preenchido pelo usuário
 		filtroValidate(filtro.validarEntradaFiltroProduto(), filtro);
@@ -303,32 +301,50 @@ public class HistoricoVendaController extends BaseController {
 
 			if (dto.getEd1Reparte() != null){
 				suma.setEd1Reparte(dto.getEd1Reparte() + (suma.getEd1Reparte() == null ? 0 : suma.getEd1Reparte()));
-				suma.setEd1Venda(dto.getEd1Venda() + (suma.getEd1Venda() == null ? 0 : suma.getEd1Venda()));
+				
+				if (dto.getEd1Venda() != null){
+				    suma.setEd1Venda(dto.getEd1Venda() + (suma.getEd1Venda() == null ? 0 : suma.getEd1Venda()));
+				}
 			}
 			
 			if (dto.getEd2Reparte() != null){
 				suma.setEd2Reparte(dto.getEd2Reparte() + (suma.getEd2Reparte() == null ? 0 : suma.getEd2Reparte()));
-				suma.setEd2Venda(dto.getEd2Venda() + (suma.getEd2Venda() == null ? 0 : suma.getEd2Venda()));
+				
+				if (dto.getEd2Venda() != null){
+				    suma.setEd2Venda(dto.getEd2Venda() + (suma.getEd2Venda() == null ? 0 : suma.getEd2Venda()));
+				}
 			}
 			
 			if (dto.getEd3Reparte() != null){
 				suma.setEd3Reparte(dto.getEd3Reparte() + (suma.getEd3Reparte() == null ? 0 : suma.getEd3Reparte()));
-				suma.setEd3Venda(dto.getEd3Venda() + (suma.getEd3Venda() == null ? 0 : suma.getEd3Venda()));
+				
+				if (dto.getEd3Venda() != null){
+				    suma.setEd3Venda(dto.getEd3Venda() + (suma.getEd3Venda() == null ? 0 : suma.getEd3Venda()));
+				}
 			}
 			
 			if (dto.getEd4Reparte() != null){
 				suma.setEd4Reparte(dto.getEd4Reparte() + (suma.getEd4Reparte() == null ? 0 : suma.getEd4Reparte()));
-				suma.setEd4Venda(dto.getEd4Venda() + (suma.getEd4Venda() == null ? 0 : suma.getEd4Venda()));
+				
+				if (dto.getEd4Venda() != null){
+				    suma.setEd4Venda(dto.getEd4Venda() + (suma.getEd4Venda() == null ? 0 : suma.getEd4Venda()));
+				}
 			}
 			
 			if (dto.getEd5Reparte() != null){
 				suma.setEd5Reparte(dto.getEd5Reparte() + (suma.getEd5Reparte() == null ? 0 : suma.getEd5Reparte()));
-				suma.setEd5Venda(dto.getEd5Venda() + (suma.getEd5Venda() == null ? 0 : suma.getEd5Venda()));
+				
+				if (dto.getEd5Venda() != null){
+				    suma.setEd5Venda(dto.getEd5Venda() + (suma.getEd5Venda() == null ? 0 : suma.getEd5Venda()));
+				}
 			}
 			
 			if (dto.getEd6Reparte() != null){
 				suma.setEd6Reparte(dto.getEd6Reparte() + (suma.getEd6Reparte() == null ? 0 : suma.getEd6Reparte()));
-				suma.setEd6Venda(dto.getEd6Venda() + (suma.getEd6Venda() == null ? 0 : suma.getEd6Venda()));
+				
+				if (dto.getEd6Venda() != null){
+				    suma.setEd6Venda(dto.getEd6Venda() + (suma.getEd6Venda() == null ? 0 : suma.getEd6Venda()));
+				}
 			}
 		}
 		
@@ -394,8 +410,8 @@ public class HistoricoVendaController extends BaseController {
 			}
 			break;
 		case COTAS_A_VISTA:
-		    resultList.add(new ItemDTO("CONSIGNADO", "Consignado"));
-		    resultList.add(new ItemDTO("A_VISTA", "Cotas à Vista"));
+		    resultList.add(new ItemDTO(TipoCota.CONSIGNADO.name(), TipoCota.CONSIGNADO.getDescTipoCota()));
+		    resultList.add(new ItemDTO(TipoCota.A_VISTA.name(), TipoCota.A_VISTA.getDescTipoCota()));
 			break;
 		case COTAS_NOVAS_RETIVADAS :
 		    resultList.add(new ItemDTO(1, "Sim"));

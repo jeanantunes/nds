@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,27 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 	@Override
 	public List<Long> obterIdEdicoesBase(Long idEstudo) {
 		return histogramaPosEstudoRepository.obterListaIdProdEdicoesBaseEstudo(idEstudo);
+	}
+
+	@Override
+	@Transactional
+	public List<HistogramaPosEstudoAnaliseFaixaReparteDTO> obterListaHistogramaPosEstudo(Integer[][] faixas, 
+			                                                                             Integer estudoId, 
+			                                                                             List<Long> listaIdEdicaoBase) {
+
+		List<HistogramaPosEstudoAnaliseFaixaReparteDTO> listaHistoricoPosEstudo = new ArrayList<HistogramaPosEstudoAnaliseFaixaReparteDTO>();
+		
+		for(Integer[] fx : faixas){
+			
+			HistogramaPosEstudoAnaliseFaixaReparteDTO historicoPosEstudo = this.histogramaPosEstudoRepository.obterHistogramaPosEstudo(fx[0], 
+					                                                                                                                   fx[1], 
+					                                                                                                                   estudoId, 
+					                                                                                                                   listaIdEdicaoBase);
+			
+			listaHistoricoPosEstudo.add(historicoPosEstudo);
+		}
+
+		return listaHistoricoPosEstudo;
 	}
 
 }

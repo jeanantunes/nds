@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +33,7 @@ import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.dto.CalendarioFeriadoWrapper;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
@@ -81,14 +81,17 @@ public class CalendarioServiceImpl implements CalendarioService {
     @Override
     @Transactional(readOnly = true)
     public Date adicionarDiasUteis(final Date data, final int numDias, String localidade){
-        final Calendar cal = Calendar.getInstance();
+        
+    	final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
+        
+        String localidadeDistribuidor = distribuidorRepository.obter().getEnderecoDistribuidor().getEndereco().getCidade();
         
         if (numDias == 0) {
             
             // Verifica se o dia informado é util.
             // Caso não seja, incrementa até encontrar o primeiro dia útil.
-            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade)) {
+            while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidadeDistribuidor)) {
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
             }
             
@@ -99,7 +102,7 @@ public class CalendarioServiceImpl implements CalendarioService {
                 
                 cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 
-                while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal, localidade)) {
+                while (DateUtil.isSabadoDomingo(cal) || (localidade != null && isFeriado(cal, localidade)) || isFeriado(cal, localidadeDistribuidor)) {
                     cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
                 }
             }
@@ -205,9 +208,9 @@ public class CalendarioServiceImpl implements CalendarioService {
     protected boolean isFeriado(final Calendar cal, String localidade) {
         
         if (cal != null) {
-            if(localidade == null){
+            if(localidade == null) {
                 return feriadoRepository.isFeriado(cal.getTime());
-            }else{
+            } else {
                 return feriadoRepository.isFeriado(cal.getTime(), localidade);
             }
         }
@@ -694,11 +697,7 @@ public class CalendarioServiceImpl implements CalendarioService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        final List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.ESTADUAL, TipoFeriado.FEDERAL);
-        
-        final List<Feriado> feriados = feriadoRepository.obterFeriados(data, tiposFeriado, false);
-        
-        return !feriados.isEmpty();
+        return feriadoRepository.isNaoOpera(data);
     }
     
     @Override
@@ -710,28 +709,10 @@ public class CalendarioServiceImpl implements CalendarioService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        boolean feriadoMunicipalSemOperacao = false;
+       final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
         
-        final List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.MUNICIPAL);
+       return feriadoRepository.isNaoOpera(data, localidadeDistribuidor);
         
-        final List<Feriado> feriados = feriadoRepository.obterFeriados(data, tiposFeriado, false);
-        
-        if (!feriados.isEmpty()) {
-            
-            final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
-            
-            for (final Feriado feriado : feriados) {
-                
-                if (localidadeDistribuidor != null && feriado.getLocalidade() != null
-                        && feriado.getLocalidade().toUpperCase().equals(localidadeDistribuidor.toUpperCase())) {
-                    
-                    feriadoMunicipalSemOperacao = true;
-                    
-                    break;
-                }
-            }
-        }
-        return feriadoMunicipalSemOperacao;
     }
     
     /**

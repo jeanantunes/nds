@@ -858,6 +858,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                     datasExpectativaReparte, entry.getValue());
             
             datasExpectativaReparteOrdenadas.addAll(dadosBalanceamentoLancamento.getDatasBalanceaveis());
+            //datasExpectativaReparteOrdenadas.removeAll(dadosBalanceamentoLancamento.getDatasNaoBalanceaveis());
             
             for (final Date dataLancamentoPrevista : datasExpectativaReparteOrdenadas) {
                 
@@ -937,6 +938,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                         (TreeSet <Date>)dadosBalanceamentoLancamento.getDatasBalanceaveis(), dadosBalanceamentoLancamento,
                         idFornecedor);
             }
+            
+            if (!produtosLancamentoNaoBalanceadosTotal.isEmpty()) {
+            	System.out.println("faltam "+produtosLancamentoNaoBalanceadosTotal.size()+" produtos a balancear");
+            }
         }
         
         return matrizLancamento;
@@ -1009,6 +1014,16 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         datasExpectativaReparteOrdenado.addAll(datasExpectativaReparte);
         
+        /*
+        for (final Date dataDistribuicao : datasExpectativaReparte) {
+        	
+          if(!distribuidorRepository.obterDataOperacaoDistribuidor().after(dataDistribuicao)){
+          	if(!datasExpectativaReparteOrdenado.contains(dataDistribuicao)){
+          	 datasExpectativaReparteOrdenado.add(dataDistribuicao);
+          	}
+          }
+        } 
+        */       
         return datasExpectativaReparteOrdenado;
     }
     
@@ -1821,10 +1836,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Override
     @Transactional
-    public boolean isDataConfirmada(final ProdutoLancamentoDTO produtoLancamentoDTO) {
+    public boolean isDataConfirmada(final Date dataLancamento) {
         
         final List<ProdutoLancamentoDTO> listaverificadaConfirmada = lancamentoRepository
-                .verificarDataConfirmada(produtoLancamentoDTO);
+                .verificarDataConfirmada(dataLancamento);
         
         if (listaverificadaConfirmada.isEmpty()) {
             
@@ -1860,7 +1875,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                         filtro.getIdsFornecedores());
         
         final List<ProdutoLancamentoDTO> produtosLancamento = lancamentoRepository
-                .obterBalanceamentoLancamento(periodoDistribuicao,
+                .obterBalanceamentoLancamento(dataLancamento,periodoDistribuicao,
                         filtro.getIdsFornecedores());
         
         BigInteger media = BigInteger.ZERO;
@@ -1877,8 +1892,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         for (final ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
             media = media.add(produtoLancamento.getRepartePrevisto());
-            datasExpectativaReparte.add(produtoLancamento
-                    .getDataLancamentoDistribuidor());
+            
+            if(!distribuidorRepository.obterDataOperacaoDistribuidor().after(produtoLancamento.getDataLancamentoDistribuidor())){
+             datasExpectativaReparte.add(produtoLancamento.getDataLancamentoDistribuidor());
+            }
         }
         
         final Set<Date> datasExpedicaoConfirmada = lancamentoRepository
@@ -1925,7 +1942,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
      */
     private Intervalo<Date> getPeriodoDistribuicao(final Date dataLancamento) {
         
-        final int codigoDiaSemana = distribuidorRepository.buscarInicioSemana()
+        final int codigoDiaSemana = distribuidorRepository.buscarInicioSemanaRecolhimento()
                 .getCodigoDiaSemana();
         
         final Date dataInicialSemana = SemanaUtil.obterDataInicioSemana(
@@ -2027,7 +2044,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
                 
                 try {
                     
-                    this.verificaDataOperacao(data);
+                    this.verificaDataOperacao(data,null,null);
                     
                     datasDistribuicaoDoFornecedor.add(data);
                     
@@ -2046,7 +2063,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     
     @Override
     @Transactional
-    public void verificaDataOperacao(final Date data) {
+    public void verificaDataOperacao(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
         
         final Calendar cal = Calendar.getInstance();
         
@@ -2278,5 +2295,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
         }
     }
+
     
 }

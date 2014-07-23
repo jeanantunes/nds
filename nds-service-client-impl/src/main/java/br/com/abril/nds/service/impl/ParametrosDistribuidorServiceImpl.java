@@ -320,49 +320,52 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Garantia
 		parametrosDistribuidor.setUtilizaGarantiaPdv(distribuidor.isUtilizaGarantiaPdv());
 		
-		    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor
-		            .getTiposGarantiasAceita()) {
-		        
-		        if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
-		            parametrosDistribuidor.setUtilizaChequeCaucao(true);
-		            parametrosDistribuidor
-		            .setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
-		            parametrosDistribuidor.setUtilizaFiador(true);
-		            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
-		            parametrosDistribuidor.setUtilizaImovel(true);
-		            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
-		            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
-		            parametrosDistribuidor
-		            .setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
-		            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
-		            parametrosDistribuidor
-		            .setValidadeNotaPromissoria(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-		           
-		            parametrosDistribuidor
-		            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
-		                    .getValor());
-		        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
-		            parametrosDistribuidor.setUtilizaOutros(true);
-		            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita
-		                    .getValor());
-		        }
-		    }
-
+	    for (TipoGarantiaAceita tipoGarantiaAceita : distribuidor
+	            .getTiposGarantiasAceita()) {
+	        
+	        if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
+	            parametrosDistribuidor.setUtilizaChequeCaucao(true);
+	            parametrosDistribuidor
+	            .setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
+	            parametrosDistribuidor.setUtilizaFiador(true);
+	            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita
+	                    .getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
+	            parametrosDistribuidor.setUtilizaImovel(true);
+	            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita
+	                    .getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
+	            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
+	            parametrosDistribuidor
+	            .setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
+	            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
+	            parametrosDistribuidor
+	            .setValidadeNotaPromissoria(tipoGarantiaAceita
+	                    .getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
+	           
+	            parametrosDistribuidor
+	            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
+	                    .getValor());
+	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
+	            parametrosDistribuidor.setUtilizaOutros(true);
+	            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita
+	                    .getValor());
+	        }
+	    }
+	    
 		// Negociação de Dividas
 		if (distribuidor.getPoliticaSuspensao() != null) {
 			if (distribuidor.getPoliticaSuspensao().getNumeroAcumuloDividaWrapped() != null) 
 				parametrosDistribuidor.setSugereSuspensaoQuandoAtingirBoletos(CurrencyUtil.formatarValorTruncado(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida()));
 			if (distribuidor.getPoliticaSuspensao().getValor() != null)
 				parametrosDistribuidor.setSugereSuspensaoQuandoAtingirReais(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
+			
+			parametrosDistribuidor.setSugereSuspensao(distribuidor.isSugereSuspensao());
 		}
+
 		parametrosDistribuidor.setParcelamentoDividas(distribuidor.isParcelamentoDividas());
 		
 		if(distribuidor.getDescontoCotaNegociacao() == null ||  distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
@@ -464,6 +467,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
             }
 				
         parametrosDistribuidor.setListPercentualExcedente(listPercentualExcedenteVO);
+        
+        parametrosDistribuidor.setPararAcumuloDividas(distribuidor.isPararAcumuloDividas());
                 
 		return parametrosDistribuidor;
 	}
@@ -572,9 +577,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCodigoCidadeIBGE(
 			(enderecoVO.getCodigoCidadeIBGE() == null) ? null : enderecoVO.getCodigoCidadeIBGE().intValue());
 		
+		enderecoDistribuidor.setPrincipal(true);
 		enderecoDistribuidor.setDistribuidor(distribuidor);
 		enderecoDistribuidor.setTipoEndereco(enderecoVO.getTipoEndereco());
 		enderecoDistribuidor.setEndereco(endereco);
+		enderecoDistribuidor.setPrincipal(true);
 		
 		enderecoDistribuidorRepository.merge(enderecoDistribuidor);
 		
@@ -828,7 +835,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 			politicaSuspensao.setNumeroAcumuloDivida(null);
 		}
-
+		
 		if (parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais() != null && !parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais().isEmpty()) {
 			politicaSuspensao.setValor(CurrencyUtil.getBigDecimal(parametrosDistribuidor.getSugereSuspensaoQuandoAtingirReais()));
 		} else {
@@ -836,6 +843,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 
 		distribuidor.setPoliticaSuspensao(politicaSuspensao);
+		
+		distribuidor.setSugereSuspensao(parametrosDistribuidor.isSugereSuspensao());
 				
 		if(parametrosDistribuidor.getUtilizaDesconto() != null && parametrosDistribuidor.getUtilizaDesconto())
 			distribuidor.setDescontoCotaNegociacao(CurrencyUtil.converterValor(parametrosDistribuidor.getPercentualDesconto()));

@@ -21,7 +21,7 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	
 	public EstudoGerado obterEstudoECotasPorIdEstudo(Long idEstudo);
 	
-	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id);
+	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id, boolean isEdicoesBaseEspecificas);
 	
 	public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
 	
@@ -33,7 +33,8 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 
     int obterCotasComRepartePorIdEstudo(Long estudoId);
 
-	Long obterUltimoAutoIncrement();
+	BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo);
 	
-	BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo);	
+	EstudoGerado obterParaAtualizar(Long id);
+	
 }

@@ -16,14 +16,18 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<!-- TOMCAT -->
-	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>
+	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}">
+	    <jee:environment>zeroDateTimeBehavior=convertToNull</jee:environment>
+	</jee:jndi-lookup>
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 	
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
 		<constructor-arg ref="dataSource" />	
 	</bean>
 
-	<task:annotation-driven />
+	<task:annotation-driven executor="myExecutor"/>
+	
+	<task:executor id="myExecutor" pool-size="5"/>
 	
 	<util:properties id="properties" location="classpath:nds-client.properties" />		
 	<util:properties id="queries" location="classpath:/query.properties" />
@@ -95,7 +99,9 @@
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory"></bean>
+	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory">
+		<property name="enableQuartzTasks" value="true"/>
+	</bean>
 	
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     	<property name="configLocation" value="classpath:quartz.properties"/>

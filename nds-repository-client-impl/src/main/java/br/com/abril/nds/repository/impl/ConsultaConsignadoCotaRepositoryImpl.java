@@ -28,8 +28,6 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
@@ -108,13 +106,18 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("			THEN LCTO.DATA_LCTO_DISTRIBUIDOR ");
 		sql.append("			ELSE MEC.DATA END AS dataLancamento, ");
 		
+		sql.append(" 	CASE ");
+		sql.append("			WHEN LCTO.ID IS NOT NULL ");
+		sql.append("			THEN LCTO.DATA_REC_DISTRIB ");
+		sql.append("			ELSE MEC.DATA END AS dataRecolhimento, ");
+		
 		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
 		
 		if (filtro.getIdCota() == null){
 
-            sql.append(" 	COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) AS desconto, ");
+            sql.append(" 	COALESCE((COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) AS desconto, ");
 			
-			sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) - COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) AS precoDesconto, ");
+			sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) - COALESCE((COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) AS precoDesconto, ");
 			
 			sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
 			sql.append("	  ) AS reparte, ");
@@ -123,7 +126,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append("	 *SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
 			sql.append("    ) AS total, ");
 			
-			sql.append(" 	(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) - COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) ");
+			sql.append(" 	(COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) - COALESCE((COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) ");
 			sql.append("	 *SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
 			sql.append("    ) AS totalDesconto ");		
 		}
@@ -185,13 +188,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		if(filtro.getPaginacao()!=null && limitar){
 			
@@ -215,6 +212,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 				dto.setNumeroEdicao(rs.getLong("numeroEdicao"));
 				dto.setNomeFornecedor(rs.getString("nomeFornecedor"));
 				dto.setDataLancamento(rs.getDate("dataLancamento"));
+				dto.setDataRecolhimento(rs.getDate("dataRecolhimento"));
 				dto.setPrecoCapa(rs.getBigDecimal("precoCapa"));
 				dto.setDesconto(rs.getBigDecimal("desconto"));
 				dto.setPrecoDesconto(rs.getBigDecimal("precoDesconto"));
@@ -229,68 +227,21 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
 	
-	private StringBuilder getSqlTuplasCotaAVista(){
-	    return getSqlTuplasCotaAVista(true, true);
-	}
-	
 	/**
 	 * Obtem tuplas de cotas do tipo à vista ou consignado para a consulta de consignado
 	 * 
 	 * @return StringBuilder
 	 */
-	private StringBuilder getSqlTuplasCotaAVista(boolean addCotaVista, boolean addOutrasCotas){
+	private StringBuilder getSqlTuplasCotaAVista(boolean addOutrasCotas){
 		
-	    
-	    
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("AND (");
 
 		if(addOutrasCotas) {
+			
 		    sql.append("        ((c.TIPO_COTA = :tipoCotaConsignado) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
-		}
-		
-		if(addCotaVista && addOutrasCotas)
-		    sql.append(" OR ");
-		
-		if(addCotaVista) {
-		
-    		sql.append("        ( ");
-    		
-    		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
-    		
-    		sql.append("          (   ");
-    		
-    		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) OR ");
-    		
-    		sql.append("              (");
-    		
-    		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
-    		
-    		sql.append("                  (");
-    		
-    		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
-    		
-    		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
-    		
-    		sql.append("                  )");
-    		
-    		sql.append("              ) ");
-    		
-    		sql.append("          ) AND ");
-    		
-    		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
-    		
-    		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
-    		
-    		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
-    		
-    		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
-    		
-    		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
-    		
-    		sql.append("        ) ");
-		}
+		}   
 
 		sql.append("    )");
 		
@@ -303,7 +254,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
 		
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		
@@ -324,6 +275,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" WHERE ");
 		
 		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+	
+		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
 		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL ");
        
@@ -352,18 +305,21 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 		
 		if(filtro.getAddCotaVista() == null || filtro.getAddOutrasCotas() == null)
-		    sql.append(this.getSqlTuplasCotaAVista());
+		    sql.append(this.getSqlTuplasCotaAVista(true));
 		else {
-		    sql.append(this.getSqlTuplasCotaAVista(filtro.getAddCotaVista(), filtro.getAddOutrasCotas()));
+		    sql.append(this.getSqlTuplasCotaAVista(filtro.getAddOutrasCotas()));
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
-			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+	
+	/**
+	 * Monta query de busca de consignados da cota por fornecedor
+	 * 
+	 * @param filtro
+	 * @return StringBuilder
+	 */
+	private StringBuilder getQueryMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro){
 		
-		StringBuilder sql = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT "); 
 		sql.append(" consignadoDistribuidor.numeroCota as numeroCota, ");
@@ -389,7 +345,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" PJ.RAZAO_SOCIAL AS nomeFornecedor, "); 
 		sql.append(" forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
@@ -400,6 +356,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
+		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -411,7 +368,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-		sql.append(this.getSqlTuplasCotaAVista());
+		sql.append(this.getSqlTuplasCotaAVista(true));
 
 		sql.append(" GROUP BY pe.ID, c.id ");
 
@@ -419,6 +376,41 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		sql.append(" ) AS consignadoDistribuidor ");
 		sql.append(" GROUP BY numeroCota, idFornecedor ");
+
+		return sql;
+	}
+
+	/**
+	 * Atribui parametros em query de consulta de consignados da cota por fornecedor
+	 * 
+	 * @param query
+	 * @param filtro
+	 */
+	private Query setParametrosBuscaMovimentoCotaPeloFornecedor(Query query, FiltroConsultaConsignadoCotaDTO filtro){
+		
+		if(filtro.getIdCota()!=null) {
+			query.setParameter("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null ) { 
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+
+		query.setParameterList("tipoMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()));
+
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		
+		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+
+		return query;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
+			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+		
+		StringBuilder sql = this.getQueryMovimentosCotaPeloFornecedor(filtro);
 
 		if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getSortColumn() != null) {
@@ -433,26 +425,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 		
 		Query query =  getSession().createSQLQuery(sql.toString());
-		
-		if(filtro.getIdCota()!=null) {
-			query.setParameter("idCota", filtro.getIdCota());
-		}
 
-		if(filtro.getIdFornecedor() != null ) { 
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-
-		query.setParameterList("tipoMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()));
-
-		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
-		
-		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
-		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
+		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -474,7 +448,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 		
 		return query.list();
-		 
 	}
 
 	@Override
@@ -488,7 +461,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" SELECT c.numero_cota AS numeroCota, forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
@@ -499,6 +472,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
+		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -510,7 +484,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 
-		sql.append(this.getSqlTuplasCotaAVista());
+		sql.append(this.getSqlTuplasCotaAVista(true));
 
 		sql.append(" GROUP BY pe.ID, c.id ");
 
@@ -532,13 +506,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 		
 		((SQLQuery) query).addScalar("contador", StandardBasicTypes.LONG);
 
@@ -561,8 +529,15 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         sql.append("	C.ID as cotaId,  ");
 
-        sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
-		
+        if (filtro.getIdCota() != null) {
+        
+        	sql.append("    SUM( COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+        	
+        } else {
+        	
+        	sql.append("    SUM( COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ) AS total ");
+        }
+        
         this.setarFromWhereConsultaConsignado(sql, filtro);
 		
 		sql.append(" GROUP BY ");
@@ -589,13 +564,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
 		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -623,7 +592,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         
         return total;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(FiltroConsultaConsignadoCotaDTO filtro) {
@@ -632,84 +601,59 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
         sql.append(" SELECT SUM(totalGeral.total) AS total, ");
         
-        sql.append(" totalGeral.fornecedorId as fornecedorId, ");
+        sql.append(" totalGeral.nomeFornecedor as nomeFornecedor ");
+		
+		sql.append(" FROM (  ");
+		
+		sql.append( this.getQueryMovimentosCotaPeloFornecedor(filtro) );
+		
+		sql.append("      ) as totalGeral ");
+		
+		sql.append(" GROUP BY totalGeral.nomeFornecedor ");
+		
+		Query query =  getSession().createSQLQuery(sql.toString());
+
+		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(TotalConsultaConsignadoCotaDetalhado.class));
+		
+		((SQLQuery) query).addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+		
+		((SQLQuery) query).addScalar("nomeFornecedor", StandardBasicTypes.STRING);
+		
+		return (List<TotalConsultaConsignadoCotaDetalhado>) query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhadoPorCota(
+			FiltroConsultaConsignadoCotaDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+
+        sql.append(" SELECT SUM(totalGeral.totalDesconto) AS total, ");
         
         sql.append(" totalGeral.nomeFornecedor as nomeFornecedor ");
 		
 		sql.append(" FROM (  ");
 		
-        sql.append("       SELECT ");
-        
-        sql.append("       fornecedor8_.id as fornecedorId, ");
-        
-        sql.append("       PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
-        
-        sql.append("    ((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) - COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) ");
-        sql.append("     )*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END) ");
-        sql.append("    ) AS total ");
-        
-        this.setarFromWhereConsultaConsignado(sql, filtro);
+		sql.append( this.getQueryMovimentosCotaPeloFornecedor(filtro) );
 		
-		sql.append(" GROUP BY ");
-		sql.append(" PE.ID, C.ID ");
+		sql.append("      ) as totalGeral ");
 		
-		sql.append(" HAVING ");
-		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
-				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))<>0 "); 
+		sql.append(" GROUP BY totalGeral.nomeFornecedor ");
+		
+		Query query =  getSession().createSQLQuery(sql.toString());
 
-		sql.append(" ) AS totalGeral ");
-		
-		sql.append(" GROUP BY totalGeral.fornecedorId ");
+		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		query.setResultTransformer(new AliasToBeanResultTransformer(TotalConsultaConsignadoCotaDetalhado.class));
 		
-		if (filtro.getIdCota()!=null) {
-			
-			parameters.put("idCota", filtro.getIdCota());
-		}
-
-		if (filtro.getIdFornecedor() != null ) {
-			
-			parameters.put("idFornecedor", filtro.getIdFornecedor());
-		}
+		((SQLQuery) query).addScalar("total", StandardBasicTypes.BIG_DECIMAL);
 		
-		if(filtro.getDataInicio() != null)
-		    parameters.put("dataInicio", filtro.getDataInicio());
-        
-        if(filtro.getDataFim() != null)
-            parameters.put("dataFim", filtro.getDataFim());
-
-        if(filtro.getTipoOperacao() != null)
-            parameters.put("tipoEstoque", filtro.getTipoOperacao().name());
-                
-		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
-
-		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		((SQLQuery) query).addScalar("nomeFornecedor", StandardBasicTypes.STRING);
 		
-		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
-		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
-		
-		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
-
-		@SuppressWarnings("rawtypes")
-		RowMapper cotaRowMapper = new RowMapper() {
-
-			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
-
-				TotalConsultaConsignadoCotaDetalhado dto = new TotalConsultaConsignadoCotaDetalhado();
-				
-				dto.setNomeFornecedor(rs.getString("nomeFornecedor"));
-				dto.setTotal(rs.getBigDecimal("total"));
-				
-				return dto;
-			}
-		};
-		
-		return (List<TotalConsultaConsignadoCotaDetalhado>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+		return (List<TotalConsultaConsignadoCotaDetalhado>) query.list();
 	}
-		
+	
 }

@@ -76,50 +76,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 													 Long idUsuario) 
 													 throws TipoMovimentoEstoqueInexistenteException {
 		
-		for (Integer numCota : numCotas) {
-			
-			this.validarCotaAusenteNaData(numCota, data);
-			
-			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
-			
-			List<GrupoMovimentoEstoque> gruposMovimentoEstoqueCota = 
-				Arrays.asList(
-					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
-					GrupoMovimentoEstoque.SOBRA_DE_COTA,
-					GrupoMovimentoEstoque.SOBRA_EM_COTA,
-					GrupoMovimentoEstoque.FALTA_DE_COTA,
-					GrupoMovimentoEstoque.FALTA_EM_COTA
-				); 
-			
-			List<MovimentoEstoqueCota> movimentosCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
-					data, cota.getId(), gruposMovimentoEstoqueCota);
-			
-			List<MovimentoEstoqueCota> movimentosEstoqueCotaEnvio =
-				this.movimentoEstoqueService.enviarSuplementarCotaAusente(
-					data, cota.getId(), movimentosCota);
-			
-			CotaAusente cotaAusente = 
-				gerarCotaAusente(numCota, data, idUsuario, cota, movimentosEstoqueCotaEnvio);
-			
-			this.cotaAusenteRepository.adicionar(cotaAusente);
-		}
-	}
-		
-	private CotaAusente gerarCotaAusente(Integer numCota, 
-										 Date data, 
-										 Long idUsuario, 
-										 Cota cota,
-										 List<MovimentoEstoqueCota> movimentosEstoqueCota) 
-										 throws TipoMovimentoEstoqueInexistenteException {
-
-		CotaAusente cotaAusente = new CotaAusente();
-		
-		cotaAusente.setCota(cota);
-		cotaAusente.setData(data);
-		cotaAusente.setMovimentosEstoqueCota(movimentosEstoqueCota);
-		
-		return cotaAusente;
+		this.enviarParaSuplementar(numCotas, data, idUsuario);
 	}
 	
 	@Transactional 
@@ -129,27 +86,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 												 List<MovimentoEstoqueCotaDTO> movimentosRateio) 
 												 throws TipoMovimentoEstoqueInexistenteException{
 		
-		List<CotaAusente> cotasAusentes = new ArrayList<CotaAusente>();
-		
-		for (Integer numCota : numCotas) {
-				
-			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
-
-			List<MovimentoEstoqueCota> movimentosCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
-					data, cota.getId(), Arrays.asList(GrupoMovimentoEstoque.values()));
-
-			List<MovimentoEstoqueCota> movimentosCotaEnvio =
-				this.movimentoEstoqueService.enviarSuplementarCotaAusente(
-					data, cota.getId(), movimentosCota);
-			
-			CotaAusente cotaAusente = 
-				gerarCotaAusente(numCota, data, idUsuario, cota, movimentosCotaEnvio);
-			
-			cotasAusentes.add(cotaAusente);
-			
-			this.cotaAusenteRepository.adicionar(cotaAusente);
-		}
+		List<CotaAusente> cotasAusentes = this.enviarParaSuplementar(numCotas, data, idUsuario);
 		
 		List<MovimentoEstoqueCotaDTO> movimentosCota = 
 			this.movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(
@@ -174,6 +111,51 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		}
 	}
 	
+	private List<CotaAusente> enviarParaSuplementar(List<Integer> numerosCotasAusentes, 
+													Date data, 
+													Long idUsuario)
+													throws TipoMovimentoEstoqueInexistenteException {
+
+		List<CotaAusente> cotasAusentes = new ArrayList<CotaAusente>();
+
+		for (Integer numeroCotaAusente : numerosCotasAusentes) {
+
+			validarCotaAusenteNaData(numeroCotaAusente, data);
+			
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCotaAusente);
+
+			List<MovimentoEstoqueCota> movimentosCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
+					data, cota.getId(), Arrays.asList(GrupoMovimentoEstoque.values()));
+
+			List<MovimentoEstoqueCota> movimentosCotaEnvio = 
+				this.movimentoEstoqueService.enviarSuplementarCotaAusente(
+					data, cota.getId(), movimentosCota);
+
+			CotaAusente cotaAusente = this.gerarCotaAusente(
+				numeroCotaAusente, data, idUsuario, cota, movimentosCotaEnvio);
+
+			cotasAusentes.add(cotaAusente);
+
+			cotaAusente.setId(this.cotaAusenteRepository.adicionar(cotaAusente));			
+		}
+
+		return cotasAusentes;
+	}
+
+	private CotaAusente gerarCotaAusente(Integer numCota, Date data, Long idUsuario, Cota cota,
+										 List<MovimentoEstoqueCota> movimentosEstoqueCota)
+										 throws TipoMovimentoEstoqueInexistenteException {
+
+		CotaAusente cotaAusente = new CotaAusente();
+
+		cotaAusente.setCota(cota);
+		cotaAusente.setData(data);
+		cotaAusente.setMovimentosEstoqueCota(movimentosEstoqueCota);
+
+		return cotaAusente;
+	}
+	
 	public void validarCotaAusenteNaData(Integer numCota, Date data) {
 		
 		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO();
@@ -188,7 +170,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					+ numCota + "' já está declarada como ausente.");
 		}
 	}
-	
 	
 	/**
 	 * Obtem quantidade à restaurar da Cota ausente, considerando quantidade disponivel no estoque suplementar
@@ -244,28 +225,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		}
 		
 		return qtdeExistenteSuplementar;
-	}
-	
-	/**
-	 * Obtem quantidade à retirar do estoque do distribuidor, considerando o que ja foi rateado para outras cotas 
-	 * @param movimento
-	 * @param qtdeARestaurarCotaAusente
-	 * @param edicaoXRateio
-	 * @return BigInteger
-	 */
-	private BigInteger obterQuantidadeARetirarEstoqueDistribuidor(MovimentoEstoqueCota movimento,
-			                                                      BigInteger qtdeARestaurarCotaAusente,
-			                                                      Map<Long, BigInteger> edicaoXRateio){
-		
-		BigInteger qtdeARetirarEstoqueDistribuidor = BigInteger.ZERO;
-		
-		BigInteger qtdeRateioEdicao = edicaoXRateio.get(movimento.getProdutoEdicao().getId()) != null ? 
-					                  edicaoXRateio.get(movimento.getProdutoEdicao().getId()): 
-					                  BigInteger.ZERO;
-
-        qtdeARetirarEstoqueDistribuidor = qtdeARestaurarCotaAusente.subtract(qtdeRateioEdicao);
-        
-        return qtdeARetirarEstoqueDistribuidor;
 	}
 	
    /**
@@ -348,7 +307,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 															        idUsuario, 
 															        qtdeARestaurarCotaAusenteSuplementar, 
 															        tipoMovimentoCota,
-																	dataOperacaoDistribuidor);
+																	dataOperacaoDistribuidor, null);
 				}	
 			}	
 		}

@@ -43,6 +43,8 @@ import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -70,14 +72,17 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -99,6 +104,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProduto;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
+import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -112,6 +118,7 @@ import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.ParametroCobrancaDistribuicaoCotaRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
@@ -136,12 +143,13 @@ import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.ListUtils;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -266,6 +274,12 @@ public class CotaServiceImpl implements CotaService {
     @Autowired
     private CotaBaseService cotaBaseService;
     
+    @Autowired
+    private ParametroCobrancaDistribuicaoCotaRepository parametroCobrancaDistribuicaoCotaRepository;
+    
+    @Autowired
+    private AssociacaoVeiculoMotoristaRotaRepository motoristaRotaRepository;
+    
     @Transactional(readOnly = true)
     @Override
     public List<CotaDTO> obterCotas(final FiltroCotaDTO filtro) {
@@ -356,14 +370,6 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(final Long idCota) {
         
-        final Cota cota = cotaRepository.buscarPorId(idCota);
-        
-        if(cota == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
-        }
-        
-        final Long idPessoa = cota.getPessoa().getId();
-        
         final Set<Long> endRemover = new HashSet<Long>();
         
         final List<EnderecoAssociacaoDTO> listRetorno = new ArrayList<EnderecoAssociacaoDTO>();
@@ -377,15 +383,6 @@ public class CotaServiceImpl implements CotaService {
             for (final EnderecoAssociacaoDTO dto : listaEnderecolAssoc){
                 
                 endRemover.add(dto.getEndereco().getId());
-            }
-        }
-        else{
-            
-            final List<EnderecoAssociacaoDTO> lista = enderecoService.buscarEnderecosPorIdPessoa(idPessoa, endRemover);
-            
-            if (lista!= null && !lista.isEmpty()){
-                
-                listRetorno.addAll(lista);
             }
         }
         
@@ -512,18 +509,6 @@ public class CotaServiceImpl implements CotaService {
             
             enderecoCotaRepository.merge(enderecoCota);
         }
-    }
-    
-    /**
-     * ENDERECO
-     * 
-     * Remove lista de EnderecoCota
-     * 
-     * @param cota
-     * @param listaEnderecoAssociacao
-     */
-    private void removerEnderecosCota(final Cota cota, final List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
-        removerEnderecosCota(listaEnderecoAssociacao);
     }
     
     /**
@@ -670,20 +655,34 @@ public class CotaServiceImpl implements CotaService {
                 if(telefoneDTO!= null && telefoneDTO.getId()!= null){
                     telefoneCota = cotaRepository.obterTelefonePorTelefoneCota(telefoneDTO.getId(), cota.getId());
                     
-                    if(telefoneCota == null){
-                        telefoneCota = new TelefoneCota();
-                        telefoneCota.setCota(cota);
-                    }
-                    final Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
-                    telefoneCota.setPrincipal(dto.isPrincipal());
-                    telefoneCota.setTelefone(telefone);
-                    telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+                    telefoneCota = popularTelefone(cota, pessoa, dto, telefoneCota, telefoneDTO);
                     
                     telefoneCotaRepository.merge(telefoneCota);
+                }else{
+                	
+                	telefoneCota = popularTelefone(cota, pessoa, dto, telefoneCota, telefoneDTO);
+                	
+                	telefoneCotaRepository.adicionar(telefoneCota);
                 }
             }
         }
     }
+
+	private TelefoneCota popularTelefone(final Cota cota, final Pessoa pessoa, final TelefoneAssociacaoDTO dto, TelefoneCota telefoneCota, final TelefoneDTO telefoneDTO) {
+		
+		if(telefoneCota == null){
+		    telefoneCota = new TelefoneCota();
+		    telefoneCota.setCota(cota);
+		}
+		
+		final Telefone telefone = new Telefone(telefoneDTO.getId(), telefoneDTO.getNumero(), telefoneDTO.getRamal(), telefoneDTO.getDdd(), pessoa);
+
+		telefoneCota.setPrincipal(dto.isPrincipal());
+		telefoneCota.setTelefone(telefone);
+		telefoneCota.setTipoTelefone(dto.getTipoTelefone());
+		
+		return telefoneCota;
+	}
     
     /**
      * TELEFONE
@@ -922,7 +921,7 @@ public class CotaServiceImpl implements CotaService {
     }
     
     @Override
-    @Transactional
+    @Transactional(readOnly=true)
     public DistribuicaoDTO obterDadosDistribuicaoCota(final Long idCota) {
         
         if(idCota == null) {
@@ -935,7 +934,7 @@ public class CotaServiceImpl implements CotaService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
         }
         
-        final ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
+        final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
         
         final boolean qtdePDVAutomatico = distribuidorService.preenchimentoAutomaticoPDV();
         
@@ -952,69 +951,77 @@ public class CotaServiceImpl implements CotaService {
             dto.setQtdeAutomatica(true);
         }
         
-        if (parametro == null) {
+        if (parametroDistribuicaoCota == null) {
             return this.setDistribuicaoDefault(dto);
             
-        } else if ((parametro.getSlipImpresso() == null || !parametro.getSlipImpresso())
-                && (parametro.getSlipEmail() == null || !parametro.getSlipEmail())
-                && (parametro.getBoletoImpresso() == null || !parametro.getBoletoImpresso())
-                && (parametro.getBoletoEmail() == null || !parametro.getBoletoEmail())
-                && (parametro.getBoletoSlipImpresso() == null || !parametro.getBoletoSlipImpresso())
-                && (parametro.getBoletoSlipEmail() == null || !parametro.getBoletoSlipEmail())
-                && (parametro.getReciboImpresso() == null || !parametro.getReciboImpresso())
-                && (parametro.getReciboEmail() == null || !parametro.getReciboEmail())
-                && (parametro.getChamadaEncalheImpresso() == null || !parametro.getChamadaEncalheImpresso())
-                && (parametro.getChamadaEncalheEmail() == null || !parametro.getChamadaEncalheEmail())
-                && (parametro.getNotaEnvioImpresso() == null || !parametro.getNotaEnvioImpresso())
-                && (parametro.getNotaEnvioEmail() == null || !parametro.getNotaEnvioEmail()))
+        } else if ((parametroDistribuicaoCota.getSlipImpresso() == null || !parametroDistribuicaoCota.getSlipImpresso())
+                && (parametroDistribuicaoCota.getSlipEmail() == null || !parametroDistribuicaoCota.getSlipEmail())
+                && (parametroDistribuicaoCota.getBoletoImpresso() == null || !parametroDistribuicaoCota.getBoletoImpresso())
+                && (parametroDistribuicaoCota.getBoletoEmail() == null || !parametroDistribuicaoCota.getBoletoEmail())
+                && (parametroDistribuicaoCota.getBoletoSlipImpresso() == null || !parametroDistribuicaoCota.getBoletoSlipImpresso())
+                && (parametroDistribuicaoCota.getBoletoSlipEmail() == null || !parametroDistribuicaoCota.getBoletoSlipEmail())
+                && (parametroDistribuicaoCota.getReciboImpresso() == null || !parametroDistribuicaoCota.getReciboImpresso())
+                && (parametroDistribuicaoCota.getReciboEmail() == null || !parametroDistribuicaoCota.getReciboEmail())
+                && (parametroDistribuicaoCota.getChamadaEncalheImpresso() == null || !parametroDistribuicaoCota.getChamadaEncalheImpresso())
+                && (parametroDistribuicaoCota.getChamadaEncalheEmail() == null || !parametroDistribuicaoCota.getChamadaEncalheEmail())
+                && (parametroDistribuicaoCota.getNotaEnvioImpresso() == null || !parametroDistribuicaoCota.getNotaEnvioImpresso())
+                && (parametroDistribuicaoCota.getNotaEnvioEmail() == null || !parametroDistribuicaoCota.getNotaEnvioEmail()))
         {
             
             dto = this.setDistribuicaoDefault(dto);
             
         } else {
-            dto.setNeImpresso(parametro.getNotaEnvioImpresso());
-            dto.setNeEmail(parametro.getNotaEnvioEmail());
-            dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
-            dto.setCeEmail(parametro.getChamadaEncalheEmail());
-            dto.setSlipImpresso(parametro.getSlipImpresso());
-            dto.setSlipEmail(parametro.getSlipEmail());
-            dto.setBoletoImpresso(parametro.getBoletoImpresso());
-            dto.setBoletoEmail(parametro.getBoletoEmail());
-            dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
-            dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
-            dto.setReciboImpresso(parametro.getReciboImpresso());
-            dto.setReciboEmail(parametro.getReciboEmail());
+            dto.setNeImpresso(parametroDistribuicaoCota.getNotaEnvioImpresso());
+            dto.setNeEmail(parametroDistribuicaoCota.getNotaEnvioEmail());
+            dto.setCeImpresso(parametroDistribuicaoCota.getChamadaEncalheImpresso());
+            dto.setCeEmail(parametroDistribuicaoCota.getChamadaEncalheEmail());
+            dto.setSlipImpresso(parametroDistribuicaoCota.getSlipImpresso());
+            dto.setSlipEmail(parametroDistribuicaoCota.getSlipEmail());
+            dto.setBoletoImpresso(parametroDistribuicaoCota.getBoletoImpresso());
+            dto.setBoletoEmail(parametroDistribuicaoCota.getBoletoEmail());
+            dto.setBoletoSlipImpresso(parametroDistribuicaoCota.getBoletoSlipImpresso());
+            dto.setBoletoSlipEmail(parametroDistribuicaoCota.getBoletoSlipEmail());
+            dto.setReciboImpresso(parametroDistribuicaoCota.getReciboImpresso());
+            dto.setReciboEmail(parametroDistribuicaoCota.getReciboEmail());
         }
-        
-        
-        
-        
         
         if(!qtdePDVAutomatico) {
-            dto.setQtdePDV(parametro.getQtdePDV());
+            dto.setQtdePDV(parametroDistribuicaoCota.getQtdePDV());
         }
         
-        dto.setAssistComercial(parametro.getAssistenteComercial());
-        dto.setGerenteComercial(parametro.getGerenteComercial());
+        dto.setAssistComercial(parametroDistribuicaoCota.getAssistenteComercial());
+        dto.setGerenteComercial(parametroDistribuicaoCota.getGerenteComercial());
         
-        dto.setDescricaoTipoEntrega(parametro.getDescricaoTipoEntrega());
+        dto.setDescricaoTipoEntrega(parametroDistribuicaoCota.getDescricaoTipoEntrega());
         
-        dto.setObservacao(parametro.getObservacao());
-        dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
-        dto.setSolNumAtras(parametro.getSolicitaNumAtras());
-        dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
-        dto.setUtilizaTermoAdesao(parametro.getUtilizaTermoAdesao());
-        dto.setTermoAdesaoRecebido(parametro.getTermoAdesaoRecebido());
-        dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
-        dto.setProcuracaoRecebida(parametro.getProcuracaoRecebida());
-        dto.setTaxaFixa(MathUtil.round(parametro.getTaxaFixa(), 2));
-        dto.setPercentualFaturamento(MathUtil.round(parametro.getPercentualFaturamento(), 2));
-        dto.setBaseCalculo(parametro.getBaseCalculo());
-        dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
-        dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
+        dto.setObservacao(parametroDistribuicaoCota.getObservacao());
+        dto.setRepPorPontoVenda(parametroDistribuicaoCota.getRepartePorPontoVenda());
+        dto.setSolNumAtras(parametroDistribuicaoCota.getSolicitaNumAtras());
+        dto.setRecebeRecolhe(parametroDistribuicaoCota.getRecebeRecolheParciais());
+        dto.setUtilizaTermoAdesao(parametroDistribuicaoCota.getUtilizaTermoAdesao());
+        dto.setTermoAdesaoRecebido(parametroDistribuicaoCota.getTermoAdesaoRecebido());
+        dto.setUtilizaProcuracao(parametroDistribuicaoCota.getUtilizaProcuracao());
+        dto.setProcuracaoRecebida(parametroDistribuicaoCota.getProcuracaoRecebida());
+        dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametroDistribuicaoCota.getInicioPeriodoCarencia()));
+        dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametroDistribuicaoCota.getFimPeriodoCarencia()));
         dto.setTipoDistribuicaoCota(cotaRepository.obterTipoDistribuicao(idCota).name());
-        dto.setRecebeComplementar(parametro.getRecebeComplementar());
+        dto.setRecebeComplementar(parametroDistribuicaoCota.getRecebeComplementar());
         
+       ParametroCobrancaDistribuicaoCota parametro = 
+        		parametroCobrancaDistribuicaoCotaRepository.obterParametroPorCota(cota.getId());
+        
+        if(parametro!= null){
+        	  
+        	  dto.setDiaCobranca(parametro.getDiaCobranca());
+              dto.setDiaSemanaCobranca(parametro.getDiaSemanaCobranca());
+              dto.setModalidadeCobranca(parametro.getModalidadeCobranca());
+              dto.setPercentualFaturamento(parametro.getPercentualFaturamento());
+              dto.setPeriodicidadeCobranca(parametro.getPeriodicidadeCobranca());
+              dto.setPorEntrega(parametro.isPorEntrega());
+              dto.setTaxaFixa(parametro.getTaxaFixa());
+              dto.setBaseCalculo(parametro.getBaseCalculo());
+        }
+
         return dto;
     }
     
@@ -1065,9 +1072,6 @@ public class CotaServiceImpl implements CotaService {
         parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
         parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
         parametros.setProcuracaoRecebida(dto.getProcuracaoRecebida());
-        parametros.setTaxaFixa(dto.getTaxaFixa());
-        parametros.setPercentualFaturamento(dto.getPercentualFaturamento());
-        parametros.setBaseCalculo(dto.getBaseCalculo());
         
         if (dto.getInicioPeriodoCarencia() != null) {
             parametros.setInicioPeriodoCarencia(DateUtil.parseDataPTBR(dto.getInicioPeriodoCarencia()));
@@ -1124,9 +1128,7 @@ public class CotaServiceImpl implements CotaService {
             
         }
         
-        
-        if(
-                
+        if(              
                 parametrosDistribuidorConferenciaCota.getBoletoEmail().equals(dto.getBoletoEmail()) &&
                 parametrosDistribuidorConferenciaCota.getBoletoImpresso().equals(dto.getBoletoImpresso()) &&
                 
@@ -1173,20 +1175,52 @@ public class CotaServiceImpl implements CotaService {
             parametros.setNotaEnvioEmail(dto.getNeEmail());
         }
         
-        
         cota.setParametroDistribuicao(parametros);
         
         cotaRepository.merge(cota);
         
-        this.atualizaTermoAdesao(
-                cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGA_EM_BANCA);
+        this.atualizaTermoAdesao(cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGA_EM_BANCA);
         
-        this.atualizaTermoAdesao(
-                cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGADOR);
+        this.atualizaTermoAdesao(cota.getNumeroCota().toString(), DescricaoTipoEntrega.ENTREGADOR);
+        
+        this.processarParametrosCobrancaDistribuicao(dto,cota);
     }
     
-    
-    @Override
+    @Transactional
+    public void processarParametrosCobrancaDistribuicao(DistribuicaoDTO dto, Cota cota) {
+    	
+    	ParametroCobrancaDistribuicaoCota parametro = cota.getParametroCobrancaDistribuicaoCota();
+    	
+    	if(DescricaoTipoEntrega.COTA_RETIRA.equals(dto.getDescricaoTipoEntrega())){
+    		
+    		if (parametro!= null){
+             	
+            	parametroCobrancaDistribuicaoCotaRepository.remover(parametro);
+            }
+    		
+    		return;
+    	}
+    	
+    	if(parametro == null){
+    		parametro = new ParametroCobrancaDistribuicaoCota();
+    	}
+    	
+    	ModalidadeCobranca modalidadeCobranca = dto.getModalidadeCobranca();
+    	
+    	parametro.setCota(cota);
+    	parametro.setDiaCobranca(dto.getDiaCobranca());
+    	parametro.setDiaSemanaCobranca(dto.getDiaSemanaCobranca());
+    	parametro.setModalidadeCobranca(modalidadeCobranca);
+    	parametro.setPercentualFaturamento(dto.getPercentualFaturamento());
+    	parametro.setPeriodicidadeCobranca(dto.getPeriodicidadeCobranca());
+    	parametro.setPorEntrega(dto.isPorEntrega());
+    	parametro.setTaxaFixa(dto.getTaxaFixa());
+    	parametro.setBaseCalculo(dto.getBaseCalculo());
+ 
+    	parametroCobrancaDistribuicaoCotaRepository.merge(parametro);
+	}
+
+	@Override
     @Transactional(readOnly = true)
     public CotaDTO obterDadosCadastraisCota(final Long idCota){
         
@@ -1205,11 +1239,10 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setNumeroCota(cota.getNumeroCota());
         cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
         cotaDTO.setDataInclusao(cota.getInicioAtividade());
-        cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica()!= null
-                ?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
-        cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica()!= null
-                ?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
+        cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
+        cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
+        cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
         
         if (cota.getTipoDistribuicaoCota() != null) {
             cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
@@ -1222,9 +1255,7 @@ public class CotaServiceImpl implements CotaService {
         processarTitularidadeCota(cota, cotaDTO);
         
         cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
-        cotaDTO.setRecebeComplementar(
-                cota.getParametroDistribuicao() == null ? false :
-                    cota.getParametroDistribuicao().getRecebeComplementar());
+        cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
         
         return cotaDTO;
     }
@@ -1426,7 +1457,6 @@ public class CotaServiceImpl implements CotaService {
             cota = new Cota();
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
-            cota.setTipoCota(TipoCota.CONSIGNADO);
             incluirPDV = true;
             newCota = true;
         }
@@ -1445,6 +1475,8 @@ public class CotaServiceImpl implements CotaService {
         
         cota.setNumeroCota(cotaDto.getNumeroCota());
         
+        cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
+        
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
         cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
@@ -1452,6 +1484,8 @@ public class CotaServiceImpl implements CotaService {
         cota.setPessoa(persistePessoaCota(cota, cotaDto));
         
         cota.setTipoDistribuicaoCota(cotaDto.getTipoDistribuicaoCota());
+        
+        this.atibuirDadosDistribuicaoDaCota(cota);
         
         cota  = cotaRepository.merge(cota);
         
@@ -1483,7 +1517,25 @@ public class CotaServiceImpl implements CotaService {
         return cota.getId();
     }
     
-    @Override
+    private void atibuirDadosDistribuicaoDaCota(final Cota cota) {
+		
+    	if(cota.getId()!= null){
+    		return;
+    	}
+    	
+    	if(cota.getParametroDistribuicao() == null){
+    		cota.setParametroDistribuicao(new ParametroDistribuicaoCota());
+    	}
+    	
+    	cota.getParametroDistribuicao().setRecebeRecolheParciais(true);;
+    	
+		if(TipoDistribuicaoCota.CONVENCIONAL.equals(cota.getParametroDistribuicao())){
+			
+			cota.getParametroDistribuicao().setRecebeComplementar(true);
+		}
+	}
+
+	@Override
     @Transactional
     public void atualizaTermoAdesao(final String numCota, final DescricaoTipoEntrega descricaoTipoEntrega) throws FileNotFoundException, IOException {
         
@@ -1695,6 +1747,10 @@ public class CotaServiceImpl implements CotaService {
         
         if(cotaDto.getTipoDistribuicaoCota() == null){
             mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
+        }
+        
+        if(cotaDto.getTipoCotaFinanceiro() == null){
+            mensagensValidacao.add("O preenchimento do campo [Forma de Pagamento] é obrigatório!");
         }
         
         if (!mensagensValidacao.isEmpty()){
@@ -2410,7 +2466,7 @@ public class CotaServiceImpl implements CotaService {
                 enderecoCotaRepository.obterEnderecoPorTipoEndereco(
                         cota.getId(), TipoEndereco.LOCAL_ENTREGA);
         
-        if (enderecoCota != null){
+        if (enderecoCota != null) {
             
             final String numeroEndereco = enderecoCota.getEndereco().getNumero()!= null?enderecoCota.getEndereco().getNumero():"";
             
@@ -2418,18 +2474,19 @@ public class CotaServiceImpl implements CotaService {
             dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
             dto.setCEPEntrega(Util.adicionarMascaraCEP(enderecoCota.getEndereco().getCep()));
             dto.setCidadeEntrega(enderecoCota.getEndereco().getCidade());
+            
         } else {
             
             final PDV pdv = pdvRepository.obterPDVPrincipal(cota.getId());
             
-            if (pdv != null){
+            if (pdv != null) {
                 
                 dto.setReferenciaEndereco(pdv.getPontoReferencia());
                 dto.setHorariosFuncionamento(pdv.getPeriodos()!=null?pdv.getPeriodos().size()>0?pdv.getPeriodos():null:null);
                 
                 final Endereco enderecoPDV = enderecoPDVRepository.buscarEnderecoPrincipal(pdv.getId());
                 
-                if (enderecoPDV != null){
+                if (enderecoPDV != null) {
                     
                     final String numeroEndereco =  enderecoPDV.getNumero()!=null ? enderecoPDV.getNumero():"";
                     
@@ -2442,11 +2499,10 @@ public class CotaServiceImpl implements CotaService {
         }
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("SUBREPORT_DIR",
-                Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
+        parameters.put("SUBREPORT_DIR", Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
         
         final String informacoesComplementares = distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
-        parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");
+        parameters.put("infoComp", informacoesComplementares != null ? informacoesComplementares : "");
         parameters.put("LOGO",JasperUtil.getImagemRelatorio(parametrosDistribuidorService.getLogotipoDistribuidor()));
         
         final List<TermoAdesaoDTO> listaDTO = new ArrayList<TermoAdesaoDTO>();
@@ -2454,55 +2510,11 @@ public class CotaServiceImpl implements CotaService {
         
         final JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaDTO);
         
-        final URL url =
-                Thread.currentThread().getContextClassLoader().getResource("/reports/termo_adesao.jasper");
+        final URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/termo_adesao.jasper");
         
         final String path = url.toURI().getPath();
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
-    }
-    
-    @Override
-    @Transactional(readOnly = true)
-    public DistribuicaoDTO carregarValoresEntregaBanca(final Integer numCota) {
-        
-        final DistribuicaoDTO dto = new DistribuicaoDTO();
-        
-        final Cota cota = cotaRepository.obterPorNumeroDaCota(numCota);
-        
-        if (cota == null) {
-            
-            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
-        }
-        
-        this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
-        
-        dto.setUtilizaTermoAdesao(distribuidorRepository.utilizaTermoAdesao());
-        
-        return dto;
-    }
-    
-    private DistribuicaoDTO obterPercentualFaturamentoTaxaFixa(final Long idCota, final DistribuicaoDTO dto) {
-        
-        final PDV pdv = pdvRepository.obterPDVPrincipal(idCota);
-        
-        if (pdv != null) {
-            
-            final Rota rota = rotaRepository.obterRotaPorPDV(pdv.getId(), idCota);
-            
-            if (rota != null) {
-                
-                final Entregador entregador = entregadorRepository.obterEntregadorPorRota(rota.getId());
-                
-                if (entregador != null) {
-                    
-                    dto.setTaxaFixa(entregador.getTaxaFixa());
-                    dto.setPercentualFaturamento(entregador.getPercentualFaturamento());
-                }
-            }
-        }
-        
-        return dto;
     }
     
     @Override
@@ -2991,41 +3003,112 @@ public class CotaServiceImpl implements CotaService {
         return cotas;
     }
     
-    @Transactional
-    @Override
-    public boolean salvarTipoCota(final long idCota, final TipoCota tipoCota){
-        
-        final Cota cota = this.obterPorId(idCota);
-        
-        if (!cota.getTipoCota().equals(tipoCota)){
-            
-            cota.setTipoCota(tipoCota);
-            
-            cota.setAlteracaoTipoCota(distribuidorService.obterDataOperacaoDistribuidor());
-            
-            this.alterarCota(cota);
-            
-            return true;
-        }
-        
-        return false;
-    }
-    
-    
     /**
-     * Verifica se a cota teve seu tipo alterado na data informada
+     * Altera politica de suspensão da Cota
+     * 
      * @param cota
-     * @param data
+     * @param sugereSuspensao
+     * @param sugereSuspensaoDistribuidor
+     * @param qtdDividasAberto
+     * @param vrDividasAberto
      * @return boolean
      */
-    @Override
+    private boolean salvarPoliticaSuspensaoCota(Cota cota,
+    		                                    boolean sugereSuspensao,
+    		                                    boolean sugereSuspensaoDistribuidor,
+                                                Integer qtdDividasAberto,
+                                                BigDecimal vrDividasAberto){
+    	
+    	if (sugereSuspensaoDistribuidor){
+
+    		if (cota.isSugereSuspensaoDistribuidor() != sugereSuspensaoDistribuidor){
+    			
+    			cota.setSugereSuspensaoDistribuidor(sugereSuspensaoDistribuidor);
+    			
+    			return true;
+    		}
+    		
+    		return false;
+    	}
+    	
+    	cota.setSugereSuspensaoDistribuidor(sugereSuspensaoDistribuidor);
+    	
+    	PoliticaSuspensao ps = cota.getPoliticaSuspensao();
+    	
+    	if (ps==null){
+    		
+    		ps = new PoliticaSuspensao();
+    		
+    		cota.setPoliticaSuspensao(ps);
+    	}
+    	
+    	BigInteger qtdAcumuloAtual = BigIntegerUtil.valueOfInteger(ps.getNumeroAcumuloDivida());
+    			
+    	BigInteger qtdAcumuloInformado = BigIntegerUtil.valueOfInteger(qtdDividasAberto);	
+    	
+    	if ((cota.isSugereSuspensao() != sugereSuspensao) ||
+    		(BigIntegerUtil.compareToTryNull(qtdAcumuloAtual, qtdAcumuloInformado) != 0) ||
+            (BigDecimalUtil.compareToTryNull(ps.getValor(), vrDividasAberto) != 0)){
+    		
+    		ps.setNumeroAcumuloDivida(qtdDividasAberto);
+    		
+    		ps.setValor(vrDividasAberto);
+    		
+    		cota.setSugereSuspensao(sugereSuspensao);
+    		
+    		return true;
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Salva as caracteristicas financeiras especificas da Cota
+     * 
+     * @param parametroCobranca
+     * @return boolean
+     */
     @Transactional
-    public boolean isCotaAlteradaNaData(final Cota cota, final Date data){
+    @Override
+	public boolean salvarCaracteristicasFinanceirasEspecificasCota(final ParametroCobrancaCotaDTO parametroCobranca){
         
-        final boolean isAlteracaoTipoCotaNaDataAtual = cota.getAlteracaoTipoCota()!=null &&
-                cota.getAlteracaoTipoCota().compareTo(data)==0;
+    	boolean alterado = false;
+    	
+        final Cota cota = this.obterPorId(parametroCobranca.getIdCota());
         
-        return isAlteracaoTipoCotaNaDataAtual;
+        BigDecimal valorMinimoCobranca = parametroCobranca.getValorMinimoBigDecimal();
+        
+        if (BigDecimalUtil.compareToTryNull(cota.getValorMinimoCobranca(), valorMinimoCobranca) != 0){
+            
+            cota.setValorMinimoCobranca(valorMinimoCobranca);
+            
+            alterado = true;
+        }
+        
+        if ((cota.isDevolveEncalhe()==null) || (parametroCobranca.isDevolveEncalhe() != cota.isDevolveEncalhe())){
+                
+            cota.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe());
+
+            alterado = true;
+        }
+        
+        boolean politicaSuspensaoAlterado = this.salvarPoliticaSuspensaoCota(cota, 
+        		                                                             parametroCobranca.isSugereSuspensao(), 
+        		                                                             parametroCobranca.isSugereSuspensaoDistribuidor(),
+        		                                                             parametroCobranca.getQtdDividasAberto(), 
+        		                                                             parametroCobranca.getVrDividasAbertoBigDecimal());
+        
+        if (politicaSuspensaoAlterado){
+        	
+        	alterado = true;
+        }
+        
+        if (alterado){
+        	
+        	this.alterarCota(cota);
+        }
+        
+        return alterado;
     }
     
     @Override
@@ -3033,5 +3116,54 @@ public class CotaServiceImpl implements CotaService {
     public Long obterIdPorNumeroCota(final Integer numeroCota) {
         
         return cotaRepository.obterIdPorNumeroCota(numeroCota);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public String obterEmailCota(Integer numeroCota) {
+        
+        if (numeroCota == null){
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota é obritatório.");
+        }
+        
+        return this.cotaRepository.obterEmailCota(numeroCota);
+    }
+    
+    @Override
+    public List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota() {
+    	
+    	return cotaRepository.obterParametrosDistribuicaoEntregaCota();
+    }
+    
+    @Override
+    public void validarTipoEntrega(Integer numeroCota,DescricaoTipoEntrega tipoEntrega) {
+    	
+    	if(tipoEntrega == null ||
+    			DescricaoTipoEntrega.COTA_RETIRA.equals(tipoEntrega)){
+    		return;
+    	}
+    	
+    	Long quantidadeEntregaTransportador = motoristaRotaRepository.obterQuantidadeAssociaoesDaCota(numeroCota);
+    	
+    	if(DescricaoTipoEntrega.ENTREGA_EM_BANCA.equals(tipoEntrega)){
+    		
+    		if(quantidadeEntregaTransportador < 1){
+    			
+    			 throw new ValidacaoException(
+    					 TipoMensagem.WARNING, 
+    					 "Tipo de Entrega não pode ser selecionado. A roteirização da cota não está associada a um Transportador");
+    		}
+    		
+    	}
+    	else if(DescricaoTipoEntrega.ENTREGADOR.equals(tipoEntrega)){
+    		
+    		if(quantidadeEntregaTransportador > 0){
+    			
+    			 throw new ValidacaoException(
+    					 TipoMensagem.WARNING, 
+    					 "Tipo de Entrega não pode ser selecionado. A roteirização da cota está associada a um Transportador");
+    		}
+    	}
     }
 }

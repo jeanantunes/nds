@@ -84,10 +84,12 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
 		jpql.append(" FROM Lancamento lancamento ");
 		jpql.append(" WHERE lancamento.dataLancamentoDistribuidor = :dataOperacao ")
-		    .append("   AND lancamento.status = :status ");
+		    .append("   AND lancamento.status = :status ")
+		    .append("   AND lancamento.produtoEdicao.ativo = :ativo ");
 		
 		Query query = getSession().createQuery(jpql.toString());
-
+		
+		query.setParameter("ativo", true);
 		query.setParameter("status", StatusLancamento.BALANCEADO);
 		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
 		
@@ -113,7 +115,8 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		// jpql.append(" and estudo.status = :statusEstudo ");
 				
-		jpql.append(" AND  lancamento.status=:status ");	
+		jpql.append(" AND  lancamento.status=:status ");
+		jpql.append(" AND  lancamento.produtoEdicao.ativo = :ativo ");
 		jpql.append(" GROUP BY produto.codigo, produto.nome, pe.numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(jpql.toString());
@@ -123,7 +126,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 
 		//query.setParameter("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
-		
+		query.setParameter("ativo", true);
 		query.setParameterList("status", listaLancamentos);
 		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
 		
@@ -204,6 +207,24 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		}
 		
 		return ((BigDecimal)query.uniqueResult()).intValue() > 0;
+	}
+
+	@Override
+	public boolean existeMatrizRecolhimentoSalva(Date dataOperacaoDistribuidor) {
+
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" SELECT count(l.id) ");
+		jpql.append(" FROM Lancamento l ");
+		jpql.append(" WHERE l.dataRecolhimentoDistribuidor = :dataOperacaoDistribuidor ");
+		jpql.append(" AND l.status = :matrizSalva ");
+				
+		Query query = getSession().createQuery(jpql.toString());
+		
+		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
+		query.setParameter("matrizSalva", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+
+		return ((Long) query.uniqueResult()) > 0;
 	}
 
 	@SuppressWarnings("unchecked")

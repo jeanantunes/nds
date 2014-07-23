@@ -1,5 +1,3 @@
- <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
-
 <head>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -33,6 +31,9 @@
 </head>
 
 <body>
+
+ <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+ 
 		<form id="form-excluir">
 			<div id="dialog-excluir" title="Lançamento Faltas e Sobras">
 				<p>Confirma esta Exclus&atilde;o?</p>
@@ -112,7 +113,7 @@
 			
 			<div class="linha_separa_fields">&nbsp;</div>	
 				
-			<fieldset class="fieldFiltro">
+			<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 			
 				<legend>Lan&ccedil;amento Faltas e Sobras</legend>
 					  
@@ -168,7 +169,7 @@
 					    <td id="selecionarTodos" width="110">
 					    	<span class="bt_sellAll" style="float: right;">
 								<label for="sel">Selecionar Todos</label>					
-								<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosID" onclick="lancamentoController.selecionarTodos(this);" style="float: left;">
+								<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosDiferencaID" onclick="lancamentoController.selecionarTodos(this);" style="float: left;">
 							</span>
 					    </td>
 					</tr>

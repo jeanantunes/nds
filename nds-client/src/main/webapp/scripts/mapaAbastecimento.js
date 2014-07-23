@@ -7,35 +7,6 @@
 	this.mapas = [];
 	this.produtosSelecionados = [],
 	
-	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		
-		var codigoProduto = $(idCodigo, _workspace).val();
-		
-		codigoProduto = $.trim(codigoProduto);
-		
-		$(idCodigo, _workspace).val(codigoProduto);
-		
-		if (codigoProduto && codigoProduto.length > 0) {
-			
-			$.postJSON(contextPath + "/mapaAbastecimento/getProdutosPorCodigo",
-					   {'filtro.codigo': codigoProduto,
-					    dataLancamento: T.get("dataLancamento")},
-					   function(result) {
-							
-							T.adicionarProduto(result.codigo, result.nome);
-				
-							T.mostrarProdutosSelecionados();
-
-							$(idCodigo, _workspace).val("");
-					   },
-					   function() {
-						   
-						   $(idCodigo, _workspace).val("");
-					   }
-			);
-		}
-	},
-	
 	this.carregarProdutos = function() {
 		
 		$("#selectProdutos", _workspace).val("");
@@ -47,7 +18,7 @@
 					   var options = "";
 					   
 					   $.each(result, function(index, row) {
-						   options += "<option value='" + row.key.$ + "_" + row.value.$ + "'>" + row.value.$ + "</option>";
+						   options += "<option value='" + row.key.$ + "'>" + row.value.$ + "</option>";
 					   });
 					   
 					   $("#selectProdutos", _workspace).html(options);
@@ -85,9 +56,9 @@
 	
 	this.getProdutosSelecionados = function() {
 		
-		$.each( $('#selectProdutos', this.workspace).val(), function(index, row) {
+		$.each( $('#selectProdutos option:selected', this.workspace), function(index, row) {
 			
-			T.adicionarProduto(row.split('_')[0], row.split('_')[1]);
+			T.adicionarProduto(row.value, row.text);
 		});
 	},
 	
@@ -212,7 +183,7 @@
 			T.preencherGrid(
 				flexiGrid, 
 				pathTela + "/mapaAbastecimento/pesquisar", 
-				T.processarMensagens, 
+				T.processarRetornoPesquisaPorRota,
 				grid,
 				params
 			);
@@ -266,6 +237,8 @@
 			break;
 		
 		case 'ENTREGADOR':
+			
+			$("#nomeEntregador", _workspace).text($("#idEntregador option:selected", _workspace).text());
 			
 			T.preencherGrid(
 				".mapaAbastecimentoEntregadorGrid", 
@@ -353,15 +326,31 @@
 		var produto = T.produtosSelecionados[0];
 		
 		if(produto) {
-			var codigoProduto = produto.id;
-			var nomeProduto = produto.nome;
-			$("#codigoProdutoHeader", _workspace).html(codigoProduto);
-			$("#nomeProdutoHeader", _workspace).html(nomeProduto);
+			
+			$("#nomeProdutoHeader", _workspace).html(produto.nome);
 		}
 		
-		var edicaoProduto = T.get('edicao');
-
-		$("#edicaoProdutoHeader", _workspace).html(edicaoProduto);
+		if (result.rows){
+			$.each(result.rows, function(index, item){
+				
+				item.cell.codigoBox += (" - " + item.cell.nomeBox);
+			});
+		}
+		
+		return result;
+	},
+	
+	this.processarRetornoPesquisaPorRota = function(result){
+		
+		T.processarMensagens(result);
+		
+		if (result.rows){
+			
+			$.each(result.rows, function(index, item){
+				
+				item.cell.codigoBox += (" - " + item.cell.nomeBox);
+			});
+		}
 		
 		return result;
 	},
@@ -414,6 +403,10 @@
 	
 	this.atualizarBoxRota = function(isCotaDefined) {		
 
+		if (!T.get('codigoCota')){
+			isCotaDefined = false;
+		}
+		
 		var data = [];
 		
 		if(isCotaDefined)
@@ -447,6 +440,14 @@
 			$('#rota', _workspace).enable();
 			$('#roteiro', _workspace).enable();
 		}
+		
+		if (result[3]){
+			
+			result[3].splice(0,0,{"key": {"@class": "string","$": ""},"value": {"@class": "string","$": "Selecione..."}});
+			$("#idEntregador", _workspace).html(
+					montarComboBox(result[3], false)
+			);
+		}
 	},
 	
 	this.carregarDetalhes = function(indice) {
@@ -469,7 +470,7 @@
 			
 		case 'BOX':
 			T.atualizarBoxRota();
-			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','codigoCota','nomeCota');
 			T.desbloquearCampos('box','quebraPorCota');
 			T.bloquearLinkProdutos();
 			T.displayEntregador(false);
@@ -477,14 +478,14 @@
 			break;
 		case 'ROTA':
 			T.atualizarBoxRota();
-			T.bloquearCampos('codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.bloquearCampos('codigoProduto','nomeProduto','codigoCota','nomeCota');
 			T.desbloquearCampos('box','rota','roteiro','quebraPorCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
-			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','quebraPorCota');
 			T.desbloquearCampos('codigoCota','nomeCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
@@ -492,37 +493,37 @@
 			break;
 		case 'PRODUTO_X_COTA' :
 			T.bloquearCampos('box','rota','roteiro','quebraPorCota');
-			T.desbloquearCampos('codigoCota','nomeCota', 'codigoProduto','nomeProduto','edicao');
+			T.desbloquearCampos('codigoCota','nomeCota', 'codigoProduto','nomeProduto');
 			T.desbloquearLinkProdutos();
 			T.displayEntregador(false);
 			break;
 		case 'PRODUTO':
 			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.desbloquearCampos('codigoProduto','nomeProduto');
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
 			break;
 		case 'PROMOCIONAL':
 			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.desbloquearCampos('codigoProduto','nomeProduto');
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
 			break;
 		case 'PRODUTO_ESPECIFICO':
 			T.bloquearCampos('box','rota','roteiro','codigoCota','nomeCota','quebraPorCota');
-			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.desbloquearCampos('codigoProduto','nomeProduto');
 			T.desbloquearLinkProdutos();
 			break;
 		case 'ENTREGADOR':
 			T.atualizarBoxRota();
 			T.bloquearCampos('quebraPorCota');
-			T.desbloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota');
+			T.desbloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','codigoCota','nomeCota');
 			T.displayEntregador(true);
 			T.bloquearLinkProdutos();
 			T.desbloquearLinkProdutos();
 			break;			
 		default:
-			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','edicao','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','codigoCota','nomeCota','quebraPorCota');
 			break;
 		}
 	},	
@@ -558,12 +559,16 @@
 		data.push({name:'filtro.box',				value: T.get("box")});
 		data.push({name:'filtro.rota',				value: T.get("rota")});
 		data.push({name:'filtro.roteiro',				value: T.get("roteiro")});
+		
 		$.each(T.produtosSelecionados, function(index, row) {
-			data.push({name:'filtro.codigosProduto[' + index + ']',	value: row.id});
+			data.push({name:'filtro.codigosProduto[' + index + ']',	value: row.id.split('_')[0]});
+		});
+		
+		$.each(T.produtosSelecionados, function(index, row) {
+			data.push({name:'filtro.numerosEdicao[' + index + ']',	value: row.id.split('_')[1]});
 		});
 		
 		data.push({name:'filtro.nomeProduto',		value: T.get("nomeProduto")});
-		data.push({name:'filtro.edicaoProduto',			value: T.get("edicao")});
 		data.push({name:'filtro.codigoCota',		value: T.get("codigoCota")});
 		data.push({name:'filtro.nomeCota',			value: T.get("nomeCota")});
 		data.push({name:'filtro.quebraPorCota',	value: T.get("quebraPorCota")});
@@ -745,7 +750,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}],
-		sortname : "codigoProduto",
+		sortname : "nomeProduto",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,

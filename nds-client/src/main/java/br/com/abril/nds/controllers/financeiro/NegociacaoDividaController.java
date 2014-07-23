@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
+import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -41,9 +42,13 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
@@ -95,6 +100,12 @@ public class NegociacaoDividaController extends BaseController {
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
 	
+	@Autowired
+	private ParametroCobrancaCotaService parametroCobrancaCotaService;
+	
+	@Autowired
+	private EmailService emailService;
+	
 	public NegociacaoDividaController(Result result) {
 		super();
 		this.result = result;
@@ -117,15 +128,35 @@ public class NegociacaoDividaController extends BaseController {
 		filtro.setAtivo(true);
 		
 		List<Banco> bancos = this.bancoService.obterBancos(filtro);
-		
+
 		this.result.include("qntdParcelas", parcelas);
 		this.result.include("bancos", bancos);
-		
-		List<TipoCobranca> tiposCobranca = this.cobrancaService.obterTiposCobrancaCadastradas();
-		
-		this.result.include("tipoPagamento", tiposCobranca);
-		
+
 		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, null);
+	}
+
+	@Post
+	public void atualizarFormaCobranca(Integer numeroCota, boolean isNegociacaoAvulsa) {
+		
+		List<FormaCobrancaDefaultVO> formaCobranca = this.obterFormaCobrancaNegociacao(numeroCota, isNegociacaoAvulsa);
+		
+		this.result.use(Results.json()).from(formaCobranca, "result").recursive().serialize();
+	}
+	
+	private List<FormaCobrancaDefaultVO> obterFormaCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
+		
+		List<FormaCobrancaDefaultVO> tiposCobranca = new ArrayList<FormaCobrancaDefaultVO>();
+		
+		if (isNegociacaoAvulsa) {
+			
+			tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+
+		} else {
+
+			tiposCobranca = this.parametroCobrancaCotaService.obterFormaCobrancaCotaDefault(numeroCota);
+		}
+
+		return tiposCobranca;
 	}
 	
 	@Path("/pesquisar.json")
@@ -221,7 +252,7 @@ public class NegociacaoDividaController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO)
-	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoAtualCota, BigDecimal comissaoUtilizar, 
+	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoUtilizar, 
 			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
 			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,
 			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
@@ -294,14 +325,49 @@ public class NegociacaoDividaController extends BaseController {
 				negociacaoAvulsa, 
 				ativarAposPagar, 
 				comissaoUtilizar, 
-				comissaoAtualCota,
 				isentaEncargos,
 				formaCobranca,
 				idBanco);
 		
 		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, idNegociacao);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
+		final String emailCota = this.cotaService.obterEmailCota(filtro.getNumeroCota());
+		
+		if (recebeCobrancaPorEmail && emailCota != null){
+		
+    		try{
+    		    
+    		    final List<byte[]> dados = new ArrayList<byte[]>();
+    		    
+    		    if (valorDividaComissao != null){
+    		    
+        		    dados.add(this.negociacaoDividaService.imprimirNegociacao(idNegociacao, valorDividaComissao.toString()));
+    		    }
+    		    
+    		    if (negociacaoAvulsa && parcelas != null && !parcelas.isEmpty()){
+    		        
+    		        dados.addAll(this.negociacaoDividaService.gerarBoletosNegociacao(idNegociacao));
+    		    }
+    		    
+    		    final byte[] arquivo = PDFUtil.mergePDFs(dados);
+    		    
+    		    final AnexoEmail anexoEmail = new AnexoEmail("negociacao_divida", arquivo, TipoAnexo.PDF);
+    		    
+    		    this.emailService.enviar("Negociação de Dívida", 
+    		            "Segue em anexo documentos pertinentes.", new String[]{emailCota}, anexoEmail);
+    		    
+    		} catch(Exception e){
+    		    
+    		    this.result.use(Results.json()).from(new ValidacaoVO(
+    	                TipoMensagem.WARNING, "Negociação efetuada, erro ao enviar e-mail: " + e.getMessage()), 
+    	                "result").recursive().serialize();
+    		    
+    		    return;
+    		}
+		}
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(
+		        TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
 	}
 
 	@Post
@@ -313,32 +379,25 @@ public class NegociacaoDividaController extends BaseController {
 				((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA))
 				.getNumeroCota();
 		
-		BigDecimal comissaoCota = this.descontoService.obterComissaoCota(numeroCota);
-		
-		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0) {
-			
-			this.result.use(Results.json()).from("", "result").serialize();
-		} else {
-			
-			comissaoCota = comissaoCota == null ? BigDecimal.ZERO : comissaoCota;
-			
-			List<Object> valoresDesconto = new ArrayList<Object>();
+		List<Object> valoresDesconto = new ArrayList<Object>();
+
+		if (comissao != null && BigDecimal.ZERO.compareTo(comissao) != 0) {
+
 			valoresDesconto.add(comissao);
-			valoresDesconto.add(comissaoCota.setScale(2, RoundingMode.HALF_EVEN));
-			
-			//forma cobrança 'default' da cota
-			FormaCobranca formaDefault = 
-				this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
-			
-			if (formaDefault == null){
-				
-				formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-			}
-			
-			valoresDesconto.add(formaDefault.getTipoCobranca());
-			
-			this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 		}
+
+		//forma cobrança 'default' da cota
+		FormaCobranca formaDefault = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
+		
+		if (formaDefault == null){
+			
+			formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		}
+		
+		valoresDesconto.add(formaDefault.getTipoCobranca());
+		
+		this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 	}
 	
 	public void imprimirNegociacao(String valorDividaSelecionada) throws Exception{
@@ -359,6 +418,32 @@ public class NegociacaoDividaController extends BaseController {
 		this.httpServletResponse.getOutputStream().close();
 		
 		this.result.use(Results.nothing());
+	}
+	
+	public void imprimirRecibo() throws IOException {
+		
+		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
+		
+		if (idNegociacao == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, "É necessário confirmar a negociação antes de imprimir.");
+		}
+		
+		List<byte[]> arquivos = this.negociacaoDividaService.imprimirRecibos(idNegociacao);
+		
+		this.httpServletResponse.setContentType("application/pdf");
+		this.httpServletResponse.setHeader("Content-Disposition",
+				"attachment; filename=recibo.pdf");
+		
+		byte[] arquivo = PDFUtil.mergePDFs(arquivos);
+
+		OutputStream output = this.httpServletResponse.getOutputStream();
+		output.write(arquivo);
+
+		this.httpServletResponse.getOutputStream().close();
+
+		this.result.use(Results.nothing());		
 	}
 	
 	public void imprimirBoletos() throws IOException{

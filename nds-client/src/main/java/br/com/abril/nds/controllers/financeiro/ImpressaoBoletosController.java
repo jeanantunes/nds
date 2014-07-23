@@ -507,7 +507,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 		byte[] arquivo = null;
 
-		if ("BOLETO".equals(tipoImpressao)) {
+		if ("BOLETO".equals(tipoImpressao) || "BOLETO_SLIP".equals(tipoImpressao)) {
 
 			message = "Não foi encontrado Boleto para impressão.";
 
@@ -523,7 +523,7 @@ public class ImpressaoBoletosController extends BaseController {
 			}
 		}
 
-		arquivo = dividaService.gerarArquivoImpressao(filtro);
+		arquivo = dividaService.gerarArquivoImpressao(filtro, "BOLETO_SLIP".equals(tipoImpressao));
 
 		if (arquivo == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, message);

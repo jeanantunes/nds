@@ -23,8 +23,6 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
-import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
@@ -502,5 +500,28 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		return (List<BigInteger>) query.list();
 	}
 
+	@Override
+	public BigInteger obterQtdDeEdicoesNoRanger(String codigoICD, Integer edInicial, Integer edFinal) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" SELECT ");
+		sql.append(" 	count(pe.NUMERO_EDICAO) ");
+		sql.append(" FROM produto_edicao pe ");
+		sql.append(" 	JOIN produto pd on pe.PRODUTO_ID = pd.ID ");
+		sql.append(" 	JOIN lancamento lc on lc.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" WHERE pd.codigo_icd = :icd ");
+		sql.append(" 	   AND pe.NUMERO_EDICAO >= :edInicial ");
+		sql.append(" 	   AND pe.NUMERO_EDICAO < :edFinal ");
+		sql.append(" 	   AND lc.STATUS in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("icd", codigoICD);
+		query.setParameter("edInicial", edInicial);
+		query.setParameter("edFinal", edFinal);
+		
+		return (BigInteger) query.uniqueResult();
+	}
 	
 }

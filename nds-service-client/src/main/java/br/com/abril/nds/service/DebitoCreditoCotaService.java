@@ -4,16 +4,29 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
 public interface DebitoCreditoCotaService {
 
+	/**
+	 * Obtém uma lista de valores financeiros relativos a cota 
+	 * cuja data de criação dos mesmos equivale a data informada 
+	 * por parâmetro contanto que não tenham entrado no calculo 
+	 * da cobrança da cota na data em questão.
+	 * 
+	 * @param cota
+	 * @param dataOperacao
+	 * 
+	 * @return List - DebitoCreditoDTO
+	 */
+	List<DebitoCreditoCota> obterListaResumoCobranca(Cota cota, Date dataOperacao);
+	
 	MovimentoFinanceiroCotaDTO gerarMovimentoFinanceiroCotaDTO(DebitoCreditoDTO debitoCreditoDTO);
 	
 	/**
@@ -66,22 +79,23 @@ public interface DebitoCreditoCotaService {
 	/**
 	 * Obtem lista de Débitos e Créditos quem não pertencem à reparte ou encalhe
 	 * @param cota
-	 * @param dataOperacao
+	 * @param datas
+	 * @param idFornecedor
 	 * @return List<DebitoCreditoCotaDTO>
 	 */
-	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota,
-			Date dataOperacao);
+	List<DebitoCreditoCota> obterListaDebitoCreditoCotaDTO(Cota cota,
+			List<Date> datas, Long idFornecedor);
 
 	/**
 	 * Obtem Outros Valores
 	 * 
 	 * @param infoConfereciaEncalheCota
 	 * @param cota
-	 * @param dataOperacao
+	 * @param datas
 	 */
 	void carregarDadosDebitoCreditoDaCota(
 			InfoConferenciaEncalheCota infoConfereciaEncalheCota, Cota cota,
-			Date dataOperacao);
+			List<Date> datas);
 
 	/**
 	 * Verifica se o Movimento Financeiro pode ser Editado
@@ -93,4 +107,10 @@ public interface DebitoCreditoCotaService {
 	 * @return boolean
 	 */
 	boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota);
+	
+	/**
+	 * Processa os movimentos de debito para cota referente as entregas (Transportador/Entregador) de mercadoria.
+	 * @param dataOperacao TODO
+	 */
+	void processarDebitoDeDistribuicaoDeEntregaDaCota(Date dataOperacao);
 }

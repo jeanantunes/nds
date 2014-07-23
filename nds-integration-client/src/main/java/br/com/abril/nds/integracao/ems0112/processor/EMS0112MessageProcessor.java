@@ -282,84 +282,84 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				
 				if(!input.getNumeroEditor().equals(ed.getEndereco().getNumero())){
 					ed.getEndereco().setNumero(input.getNumeroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Endereco para: "+ed.getEndereco().getNumero());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Número Endereço para "+ed.getEndereco().getNumero());
 				}
 				
 				if(!input.getComplementoEditor().equals(ed.getEndereco().getComplemento())){
 					ed.getEndereco().setComplemento(input.getComplementoEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Complemento para: "+ed.getEndereco().getComplemento());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Complemento para "+ed.getEndereco().getComplemento());
 				}
 				
 				if(!input.getTipoLogradouroEditor().equals(ed.getTipoEndereco().toString())){
 					ed.getEndereco().setTipoLogradouro(input.getTipoLogradouroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Tipo Endereco para: "+ed.getTipoEndereco().toString());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Tipo Endereço para "+ed.getTipoEndereco().toString());
 				}
 
 				if(!input.getLogradouroEditor().equals(ed.getEndereco().getLogradouro())){
 					ed.getEndereco().setLogradouro(input.getLogradouroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Logradouro para: "+ed.getEndereco().getLogradouro());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Logradouro para "+ed.getEndereco().getLogradouro());
 				}
 
 				if(!input.getCidadeEditor().equals(ed.getEndereco().getCidade())){
 					ed.getEndereco().setCidade(input.getCidadeEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cidade para: "+ed.getEndereco().getCidade());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração da Cidade para "+ed.getEndereco().getCidade());
 				}
 
 				if(!input.getUfEditor().equals(ed.getEndereco().getUf())){
 					ed.getEndereco().setUf(input.getUfEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Sigla UF para: "+ed.getEndereco().getUf());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração da Sigla UF para "+ed.getEndereco().getUf());
 				}
 
 				if(!input.getCepEditor().equals(ed.getEndereco().getCep())){
 					ed.getEndereco().setCep(input.getCepEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CEP para: "+ed.getEndereco().getCep());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do CEP para "+ed.getEndereco().getCep());
 				}
 
 				if(!input.getBairroEditor().equals(ed.getEndereco().getBairro())){
 					ed.getEndereco().setBairro(input.getBairroEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Bairro para: "+ed.getEndereco().getBairro());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Bairro para "+ed.getEndereco().getBairro());
 				}						
 				
 			} else if(ed.getTipoEndereco() == TipoEndereco.LOCAL_ENTREGA) {
 				
 				if(!input.getNumeroEntrega().equals(ed.getEndereco().getNumero())){
 					ed.getEndereco().setNumero(input.getNumeroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Endereco para: "+ed.getEndereco().getNumero());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Número Endereço para "+ed.getEndereco().getNumero());
 				}
 				
 				if(!input.getComplementoEntrega().equals(ed.getEndereco().getComplemento())){
 					ed.getEndereco().setComplemento(input.getComplementoEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Complemento para: "+ed.getEndereco().getComplemento());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Complemento para "+ed.getEndereco().getComplemento());
 				}
 									
 				if(!input.getTipoLogradouroEntrega().equals(ed.getTipoEndereco().toString())){
 					ed.getEndereco().setTipoLogradouro(input.getTipoLogradouroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Tipo Endereco para: "+ed.getTipoEndereco().toString());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Tipo Endereço para "+ed.getTipoEndereco().toString());
 				}
 				
 				if(!input.getLogradouroEntrega().equals(ed.getEndereco().getLogradouro())){
 					ed.getEndereco().setLogradouro(input.getLogradouroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Logradouro para: "+ed.getEndereco().getLogradouro());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Logradouro para "+ed.getEndereco().getLogradouro());
 				}
 				
 				if(!input.getCidadeEntrega().equals(ed.getEndereco().getCidade())){
 					ed.getEndereco().setCidade(input.getCidadeEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Cidade para: "+ed.getEndereco().getCidade());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração da Cidade para "+ed.getEndereco().getCidade());
 				}
 				
 				if(!input.getUfEntrega().equals(ed.getEndereco().getUf())){
 					ed.getEndereco().setUf(input.getUfEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Sigla UF para: "+ed.getEndereco().getUf());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração da Sigla UF para "+ed.getEndereco().getUf());
 				}
 				
 				if(!input.getCepEntrega().equals(ed.getEndereco().getCep())){
 					ed.getEndereco().setCep(input.getCepEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CEP para: "+ed.getEndereco().getCep());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do CEP para "+ed.getEndereco().getCep());
 				}
 				
 				if(!input.getBairroEntrega().equals(ed.getEndereco().getBairro())){
 					ed.getEndereco().setBairro(input.getBairroEntrega());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Codigo Bairro para: "+ed.getEndereco().getBairro());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Código Bairro para "+ed.getEndereco().getBairro());
 				}
 			
 			}
@@ -452,36 +452,36 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				
 				if(!input.getDddFax().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddFax());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD (Fax) para: "+telefone.getTelefone().getDdd());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do DDD (Fax) para "+telefone.getTelefone().getDdd());
 				}
 				
 				if(!input.getTelefoneFax().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneFax());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero (Fax) para: "+telefone.getTelefone().getNumero());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Número (Fax) para "+telefone.getTelefone().getNumero());
 				}
 				
 			} else if(telefone.isPrincipal() == true) {
 				
 				if(!input.getDddEditor().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD Principal para: "+telefone.getTelefone().getDdd());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do DDD Principal para "+telefone.getTelefone().getDdd());
 				}
 				
 				if(!input.getTelefoneEditor().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Principal para: "+telefone.getTelefone().getNumero());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Número Principal para "+telefone.getTelefone().getNumero());
 				}
 				
 			} else if(telefone.getTipoTelefone() == TipoTelefone.CONTATO) {
 				
 				if(!input.getDddContato().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddContato());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD Principal para: "+telefone.getTelefone().getDdd());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do DDD Principal para "+telefone.getTelefone().getDdd());
 				}
 				
 				if(!input.getTelefoneContato().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneContato());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Principal para: "+telefone.getTelefone().getNumero());
+					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Alteração do Número Principal para "+telefone.getTelefone().getNumero());
 				}
 			}
 					
@@ -526,7 +526,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logInfo(
 						message
 						, EventoExecucaoEnum.INF_DADO_ALTERADO
-						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
+						, "Inseridos dados de Telefone do Editor "+ input.getNomeEditor());
 				
 			} else if(tipo == TipoTelefone.COMERCIAL) {	
 				//TELEFONE [PRINCIPAL]
@@ -546,7 +546,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logInfo(
 						message
 						, EventoExecucaoEnum.INF_DADO_ALTERADO
-						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
+						, "Inseridos dados de Telefone do Editor "+ input.getNomeEditor());
 				
 			}
 			

@@ -8,7 +8,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	oldTabContent : "",
 	oldTabHeight : 0,
 	matrizDistribuicaoController : null,
-
+	
 	createInput : function createInput(id, value){
 		return '<input type="text" id="input' + id + '" onchange="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
@@ -51,7 +51,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 
 	init : function () {
-
+		
 		var flexGridService = new FlexGridService();
 
 		/**
@@ -60,132 +60,36 @@ var histogramaPosEstudoController = $.extend(true, {
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
 
-			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
-			    '&modoAnalise='+ histogramaPosEstudoController.modoAnalise;
+			var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
+			
+			if(reparteOrigemCopia != '' || reparteOrigemCopia != undefined){
+				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
+				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise +'&reparteCopiado=' +reparteOrigemCopia;
+			}else{
+				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
+				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise;
+			}
+			
+			reparteOrigemCopia = '';
+
 			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
-
-			/*
-			$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + '/distribuicao/analiseEstudo');
-			$('#workspace').tabs({load : function(event, ui) {
-
-				$("#idEstudo").val(histogramaPosEstudoController.matrizSelecionado.estudo);
-				analiseEstudoController.carregarEstudos();
-
-				$('#workspace').tabs({load : function(event, ui) {}});
-			}});
-			*/
 		});
 
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
 		$('#recalcularEstudo').click(function(){
-			histogramaPosEstudoController.recalcularEstudo();
+			
+			histogramaPosEstudoController.verificarPermissaoAcesso(histogramaPosEstudoController.recalcularEstudo);
 		});
 
 		$('#excluirEstudo').click(function(){
-			$( "#popup_confirmar_exclusao_estudo" ).dialog({
-				resizable: false,
-				height:150,
-				width:200,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
-						$( this ).dialog( "close" );
-
-						var url = contextPath + "/distribuicao/histogramaPosEstudo/excluirEstudo",
-							matrizSelecionada = histogramaPosEstudoController.matrizSelecionado;
-
-						$.postJSON(
-							url,
-							[{name : "id", value : matrizSelecionada.estudo}],
-							function(response){
-								// refaz a pesquisa na matriz de distribuicao
-								var filtro = histogramaPosEstudoController.matrizDistribuicaoController.parametrosDePesquisa;
-								histogramaPosEstudoController.matrizDistribuicaoController.pesquisar(filtro);
-								// fecha a aba
-								$('.ui-tabs-selected').children('.ui-icon-close').click();
-							}
-						);
-
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
+			
+			histogramaPosEstudoController.verificarPermissaoAcesso(histogramaPosEstudoController.montarModalExclusaoEstudo);
 		});
 
 		$('#alterarFaixaReparte').click(function(){
-			$( "#dialog-alterar-faixa" ).dialog({
-				resizable: false,
-				height:340,
-				width:400,
-				modal: true,
-				open: function(){
-					var grids = histogramaPosEstudoController.Grids,
-						createInput = histogramaPosEstudoController.createInput,
-						createImgExcluir = histogramaPosEstudoController.createImgExcluir;
-
-					grids.FaixasReparteGrid.tableModel.rows = [];
-
-					for ( var index in grids.EstudosAnaliseGrid.tableModel.rows) {
-						row = grids.EstudosAnaliseGrid.tableModel.rows[index];
-
-						if (index != grids.EstudosAnaliseGrid.tableModel.rows.length - 1) {
-
-							rowId = parseInt(index) + 1;
-
-							var regx = /\s{0,}[0-9]+\s{0,}a\s{0,}[0-9]+/;
-							var faixasArr = regx.exec(row.cell.faixaReparte)[0].split("a");
-
-							newRow = {
-								id : rowId,
-								cell : {
-									faixaReparteDe : parseInt(faixasArr[0]),
-									faixaReparteAte : createInput(rowId, parseInt(faixasArr[1])),
-
-									acao : createImgExcluir(rowId)
-								}
-							};
-
-							grids.FaixasReparteGrid.addData(newRow);
-						}
-					};
-				},
-				buttons: {
-					"Confirmar": function () {
-						$( this ).dialog( "close" );
-
-						var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
-							faixasReparte = [],
-							row = {},
-							faixa;
-
-						faixasReparte.push({
-								name : "estudoId",
-								value : histogramaPosEstudoController.fieldSetValues.estudo
-						});
-
-						for ( var int = 0; int < faixasReparteGrid.tableModel.rows.length; int++) {
-							row = faixasReparteGrid.tableModel.rows[int];
-
-                            faixa = row.cell.faixaReparteDe + "-" + $(row.cell.faixaReparteAte).val();
-
-							faixasReparte.push({
-								name : "faixasReparte",
-								value : faixa
-							});
-						}
-
-						histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-							params : faixasReparte
-						});
-
-					},
-					"Cancelar": function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
+			
+			histogramaPosEstudoController.verificarPermissaoAcesso(histogramaPosEstudoController.montarModalAlterarFaixa);
+	
 		});
 
 		$('#baseEstudo').click(function(){
@@ -263,7 +167,7 @@ var histogramaPosEstudoController = $.extend(true, {
 							sortable : true,
 							align : 'right'
 						}, {
-							display : 'Vda Nominal',
+							display : 'Vda Total',
 							name : 'vendaNominalFormatado',
 							width : 65,
 							sortable : true,
@@ -414,6 +318,125 @@ var histogramaPosEstudoController = $.extend(true, {
 					}
 				})
 		};
+	},
+	
+	montarModalExclusaoEstudo:function(){
+		
+		$( "#popup_confirmar_exclusao_estudo" ).dialog({
+			resizable: false,
+			height:150,
+			width:200,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+
+					var url = contextPath + "/distribuicao/histogramaPosEstudo/excluirEstudo",
+						matrizSelecionada = histogramaPosEstudoController.matrizSelecionado;
+
+					$.postJSON(
+						url,
+						[{name : "id", value : matrizSelecionada.estudo}],
+						function(response){
+							// refaz a pesquisa na matriz de distribuicao
+							var filtro = histogramaPosEstudoController.matrizDistribuicaoController.parametrosDePesquisa;
+							histogramaPosEstudoController.matrizDistribuicaoController.pesquisar(filtro);
+							// fecha a aba
+							$('.ui-tabs-selected').children('.ui-icon-close').click();
+						}
+					);
+
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	},
+	
+	montarModalAlterarFaixa:function(){
+		
+		$( "#dialog-alterar-faixa" ).dialog({
+			resizable: false,
+			height:340,
+			width:400,
+			modal: true,
+			open: function(){
+				var grids = histogramaPosEstudoController.Grids,
+					createInput = histogramaPosEstudoController.createInput,
+					createImgExcluir = histogramaPosEstudoController.createImgExcluir;
+
+				grids.FaixasReparteGrid.tableModel.rows = [];
+
+				for ( var index in grids.EstudosAnaliseGrid.tableModel.rows) {
+					row = grids.EstudosAnaliseGrid.tableModel.rows[index];
+
+					if (index != grids.EstudosAnaliseGrid.tableModel.rows.length - 1) {
+
+						rowId = parseInt(index) + 1;
+
+						var regx = /\s{0,}[0-9]+\s{0,}a\s{0,}[0-9|\.]+/;
+						var faixasArr = regx.exec(row.cell.faixaReparte)[0].split("a");
+
+						newRow = {
+							id : rowId,
+							cell : {
+								faixaReparteDe : parseInt(faixasArr[0]),
+								faixaReparteAte : createInput(rowId, parseInt(faixasArr[1])),
+
+								acao : createImgExcluir(rowId)
+							}
+						};
+
+						grids.FaixasReparteGrid.addData(newRow);
+					}
+				};
+			},
+			buttons: {
+				"Confirmar": function () {
+					$( this ).dialog( "close" );
+
+					var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+						faixasReparte = [],
+						row = {},
+						faixa;
+
+					faixasReparte.push({
+							name : "estudoId",
+							value : histogramaPosEstudoController.fieldSetValues.estudo
+					});
+
+					for ( var int = 0; int < faixasReparteGrid.tableModel.rows.length; int++) {
+						row = faixasReparteGrid.tableModel.rows[int];
+
+                        faixa = row.cell.faixaReparteDe + "-" + $(row.cell.faixaReparteAte).val();
+
+						faixasReparte.push({
+							name : "faixasReparte",
+							value : faixa
+						});
+					}
+
+					histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+						params : faixasReparte
+					});
+
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	},
+	
+	verificarPermissaoAcesso:function(funcao){
+	
+		var	url = contextPath + "/distribuicao/histogramaPosEstudo/validar";
+
+		$.postJSON(url,null,function(result) {
+			funcao();
+		},null,true);
+		
 	},
 
 	abrirAnaliseFaixa : function(faixaDe, faixaAte,idxFaixa) {
@@ -655,6 +678,37 @@ var histogramaPosEstudoController = $.extend(true, {
 //        urlAnalise += '&repDistrib=' + $('#fieldSetResumoReparteDistribuida').text().replace(/\D/g, '');
 
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
+	},
+	
+	desbloquearAnaliseEstudo : function(indexAba) {
+		
+		if(typeof matrizDistribuicao != "undefined"){
+			$.postJSON(
+					contextPath + "/distribuicao/analiseEstudo/desbloquear",
+					null,
+					function() {
+						$("#workspace").tabs("remove", indexAba);
+						removeTabByTitle('Distribuição Venda Média');
+						removeTabByTitle('Distribuição Manual');
+						matrizDistribuicao.mostraTelaMatrizDistribuicao();
+					}
+			);
+		}else{
+			$("#workspace").tabs("remove", indexAba);
+		}
+		
+	},
+	
+	voltar : function() {
+		
+		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
+		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
+		
+		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
+		
+		/*removeTabByTitle('Distribuição Venda Média');*/
+		selectTabTitle('Matriz Distribuição');
+		
 	}
 
 }, BaseController);

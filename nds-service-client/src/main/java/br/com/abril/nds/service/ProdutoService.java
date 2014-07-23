@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
@@ -82,10 +81,10 @@ public interface ProdutoService {
 	 * @param produto
 	 * @param codigoEditor
 	 * @param codigoFornecedor
-	 * @param codigoTipoDesconto
+	 * @param idDesconto
 	 * @param codigoTipoProduto
 	 */
-	void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, Long codigoTipoProduto);
+	void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, Long codigoTipoProduto);
 	
 	/**
 	 * Retorna o Produto pelo se ID.
@@ -124,4 +123,5 @@ public interface ProdutoService {
     
     Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto);
 	
+    Produto obterProdutoPorICDBaseadoNoPrimeiroBarra (String codigoICD);
 }

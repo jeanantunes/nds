@@ -50,7 +50,9 @@ public interface DistribuidorService {
 
 	Boolean utilizaProcuracaoEntregadores();
 
-	DiaSemana inicioSemana();
+	DiaSemana inicioSemanaRecolhimento();
+	
+	DiaSemana inicioSemanaLancamento();
 
 	Boolean utilizaSugestaoIncrementoCodigo();
 
@@ -106,7 +108,7 @@ public interface DistribuidorService {
 	
 	public List<Integer> getListaDiaOrdinalAceitaRecolhimento();
 	
-	List<Date> obterListaDatasRecolhimentoAPartirDataAtual(
+	List<Date> obterListaDataOperacional(
 			Date dataAtual, 
 			int qtndDiasUteis, 
 			final List<Integer> diasSemanaDistribuidorOpera,
@@ -169,5 +171,6 @@ public interface DistribuidorService {
 	boolean isConferenciaCegaRecebimentoFisico();
 	
 	boolean isConferenciaCegaFechamentoEncalhe();
-	
+
+    Integer obterNumeroSemana(Date data);
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -139,12 +140,13 @@ public class TransportadorRepositoryImpl extends
 		hql.append(CotaAtendidaTransportadorVO.class.getCanonicalName())
 		   .append("(cota.numeroCota, CASE WHEN cota.pessoa.class = 'J' THEN cota.pessoa.razaoSocial ELSE cota.pessoa.nome END, cota.box.nome || '-' || cota.box.codigo, ")
 		   .append(" assoc.rota.roteiro.descricaoRoteiro, assoc.rota.descricaoRota, ")
-		   .append(" coalesce(cota.parametroDistribuicao.taxaFixa, cota.parametroDistribuicao.percentualFaturamento))")
+		   .append(" coalesce(parametroCobrancaDistribuicaoCota.taxaFixa, parametroCobrancaDistribuicaoCota.percentualFaturamento,''))")
 		   .append(" from AssociacaoVeiculoMotoristaRota assoc ")
 		   .append(" join assoc.rota rota ")
 		   .append(" join rota.rotaPDVs rotaPDV ")
 		   .append(" join rotaPDV.pdv pdv ")
 		   .append(" join pdv.cota cota ")
+		   .append(" left join cota.parametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota")
 		   .append(" where assoc.transportador.id = :idTransportador ");
 		
 		if ("numeroCota".equals(sortname)){

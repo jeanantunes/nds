@@ -14,13 +14,14 @@ $(function() {
 	$('#voltarBaseAnalise').click(function(){
 		$("#baseAnalise").show();
   	 	$('#analiseHistoricoContent').hide();
+  	 	$("#analiseHistorico").show();
 	})
 	
-function mostraDados(){
-	$('.detalhesDados').show();
+function mostraDados_historicoVenda(){
+	$('.detalhesDados-historicoVenda').show();
 	}
-function escondeDados(){
-	$('.detalhesDados').hide();
+function escondeDados_historicoVenda(){
+	$('.detalhesDados-historicoVenda').hide();
 	}
 </script>
    
@@ -38,7 +39,7 @@ function escondeDados(){
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados{display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); z-index:1; width:950px; }
+.detalhesDados-historicoVenda{display:none; background:#fff; margin-left: 164px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); z-index:1; width:950px; }
 </style>
 
 <div id="dialog-cotas-detalhes" title="Pontos de Vendas" style="display:none;">  
@@ -87,15 +88,15 @@ function escondeDados(){
 				<b>Base de Estudo < evento > com < status >.</b></p>
 	</div>
     
-    	<div class="detalhesDados">
-        <a href="javascript:;" onclick="escondeDados();" style="float:right;margin-right:5px; margin-top:5px;"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a>
-    	  <table width="950" border="0" cellpadding="2" cellspacing="2" class="dadosTab">
-    	    <tr id="analiseHistoricoPopUpNomeProduto" />
-    	    <tr id="analiseHistoricoPopUpNumeroEdicao" />
-    	    <tr id="analiseHistoricoPopUpDatalancamento" />
-    	    <tr id="analiseHistoricoPopUpReparte" />
-    	    <tr id="analiseHistoricoPopUpVenda" />
-  	    </table>
+    	<div class="detalhesDados-historicoVenda" style="margin-left: 0px;">
+        	<a href="javascript:;" onclick="escondeDados_historicoVenda();" style="float:right; margin-right:5px; margin-top:5px;"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a>
+	    	<table border="0" cellpadding="2" cellspacing="2" class="dadosTab">
+	    		<tr id="analiseHistoricoPopUpNomeProduto" />
+	    	    <tr id="analiseHistoricoPopUpNumeroEdicao" />
+	    	    <tr id="analiseHistoricoPopUpDatalancamento" />
+	    	    <tr id="analiseHistoricoPopUpReparte" />
+	    	    <tr id="analiseHistoricoPopUpVenda" />
+	  	    </table>
     	</div>
       <fieldset class="classFieldset">
        	  <legend>Histórico de Vendas</legend>
@@ -116,7 +117,7 @@ function escondeDados(){
                 	</c:if>
                 </c:forEach>
                 
-                <td width="22" align="center"><a href="javascript:;" onclick="mostraDados();"><img src="images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" /></a></td>
+                <td width="22" align="center"><a href="javascript:;" onclick="mostraDados_historicoVenda();"><img src="images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" /></a></td>
             </tr>
           </table>
         <table class="baseHistoricoGrid"></table>

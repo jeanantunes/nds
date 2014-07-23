@@ -57,9 +57,9 @@
                                     </c:forEach>
                             </select></td>
     
-                            <td width="185">Acumula D&iacute;vida:</td>
+                            <td width="185" style="text-align: right;">Acumula D&iacute;vida:</td>
                             <td width="270"><select name="acumulaDivida"
-                                id="acumulaDivida" style="width: 80px;">
+                                id="acumulaDivida" style="width: 80px;" onchange="parametroCobrancaController.isAcumulaDivida = this.value">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             </select></td>
@@ -77,27 +77,20 @@
                                         <option value="${banco.key}">${banco.value}</option>
                                     </c:forEach>
                             </select></td>
+                      
+                        </tr>
     
-                            <td>Vencimentos somente em dia &uacute;til:</td>
+                        <tr>
+                        
+                            <td style="width: 228px; ">Vencimentos somente em dia &uacute;til:</td>
                             <td><select name="vencimentoDiaUtil" id="vencimentoDiaUtil"
                                 style="width: 80px;">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
-                            </select></td>
-                        </tr>
-    
-                        <tr>
-                            <td valign="top">
-                            	<label class="tdValorMinimo" for="banco">Vlr. M&iacute;nimo Emiss&atilde;o:</label>
-                            </td>
-                            <td valign="top">
-                            	<input class="tdValorMinimo" type="text"
-                                maxlength="16" name="valorMinimo" id="valorMinimo"
-                                style="width: 70px; text-align:right;" />
-                            </td>
-                            <td>Cobran&ccedil;a Unificada:</td>
+                            </select></td> 
                             
                         </tr>
+                        
                         <tr>
                             <td><label class="tdMulta" for="taxaMulta">Multa %:</label></td>
     
@@ -176,9 +169,9 @@
     					<tr>
     						<td>Principal</td>
     						<td align="left">
-                            	<input type="checkbox" name="principal" id="principal" />
+                            	<input type="checkbox" name="principal" id="principal" onclick="parametroCobrancaController.exibirAcumuloDivida(this.checked)"/>
                             </td>
-                            <td>Impress&atilde;o:</td>
+                            <td style="text-align: right;">Impress&atilde;o:</td>
                             <td>
                                 <div id="formasEmissao" />
                             </td>
@@ -187,7 +180,7 @@
                         <tr>
                             <td valign="top">Instru&ccedil;&otilde;es:</td>
                             <td colspan="3"><textarea name="instrucoes" rows="2"
-                                    maxlength="100" id="instrucoes" style="width: 645px;"
+                                    maxlength="100" id="instrucoes" style="width: 605px; height: 46px"
                                     readonly="true"></textarea></td>
                         </tr>
                         
@@ -405,7 +398,7 @@
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
-		<fieldset class="fieldFiltro">
+		<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 			<legend>Pesquisar Parâmetros de Cobran&ccedil;a</legend>
 			<table width="950" border="0" cellpadding="2" cellspacing="1"
 				class="filtro">

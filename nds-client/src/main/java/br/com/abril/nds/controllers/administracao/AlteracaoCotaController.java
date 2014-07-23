@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.cadastro.validator.DistribuicaoEntregaValidator;
 import br.com.abril.nds.dto.ArquivoDTO;
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroModalDistribuicao;
 import br.com.abril.nds.dto.filtro.FiltroModalFornecedor;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -28,6 +31,7 @@ import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -52,6 +56,13 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Resource
 @Path("/administracao/alteracaoCota")
@@ -189,10 +200,17 @@ public class AlteracaoCotaController extends BaseController {
                 }
                 
             } else {
+            	
                 filtroAlteracaoCotaDTO.getFiltroModalFornecedor().setListFornecedores(fornecedoresAtivos);
             }
+            
+            List<ItemDTO<BaseCalculo, String>> basesCalculo =  new ArrayList<ItemDTO<BaseCalculo, String>>();
+    		for (BaseCalculo itemBaseCalculo: BaseCalculo.values()){
+    			basesCalculo.add(new ItemDTO<BaseCalculo, String>(itemBaseCalculo, itemBaseCalculo.getValue()));
+    		}
+    		filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setBasesCalculo(basesCalculo);
         }
-        
+       
         result.use(Results.json()).from(filtroAlteracaoCotaDTO, "filtroAlteracaoCotaDTO").recursive().serialize();
     }
     
@@ -212,20 +230,29 @@ public class AlteracaoCotaController extends BaseController {
     @Post
     public void salvarAlteracao(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
         
-        if (filtroAlteracaoCotaDTO.getFiltroModalFornecedor() != null
-                && filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados() != null
-                && filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados().isEmpty()) {
-            
-            throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos 1 Fornecedor");
-        }
-        
+    	this.validarDadosDistribuicaoEntrega(filtroAlteracaoCotaDTO);
+    	
         alteracaoCotaService.salvarAlteracoes(filtroAlteracaoCotaDTO);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."),
                 Constantes.PARAM_MSGS).recursive().serialize();
     }
     
-    public void preencherFiltroFinanceiro(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
+    private void validarDadosDistribuicaoEntrega(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+		
+    	FiltroModalDistribuicao distribuicao = filtroAlteracaoCotaDTO.getFiltroModalDistribuicao();
+    	
+    	if(distribuicao!= null){
+    		
+        	if(distribuicao.getDescricaoTipoEntrega()!= null 
+        			&& !DescricaoTipoEntrega.COTA_RETIRA.equals(distribuicao.getDescricaoTipoEntrega())){
+        		
+        		DistribuicaoEntregaValidator.validar(distribuicao);
+        	}
+    	}    	
+	}
+    
+	public void preencherFiltroFinanceiro(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
         
         // FINANCEIRO
         if (cota.getParametroCobranca().getFatorVencimento() != null) {
@@ -233,19 +260,19 @@ public class AlteracaoCotaController extends BaseController {
                     cota.getParametroCobranca().getFatorVencimento());
         }
         
-        if (cota.getParametroCobranca().getValorMininoCobranca() != null) {
+        if (cota.getValorMinimoCobranca() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo(
-                    String.valueOf(cota.getParametroCobranca().getValorMininoCobranca()));
+                    String.valueOf(cota.getValorMinimoCobranca()));
         }
-        if (cota.getParametroCobranca().getPoliticaSuspensao() != null) {
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
+        if (cota.getPoliticaSuspensao() != null) {
+            if (cota.getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(
-                        cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida());
+                        cota.getPoliticaSuspensao().getNumeroAcumuloDivida());
             }
             
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null) {
+            if (cota.getPoliticaSuspensao().getValor() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto(
-                        String.valueOf(cota.getParametroCobranca().getPoliticaSuspensao().getValor()));
+                        String.valueOf(cota.getPoliticaSuspensao().getValor()));
             }
         }
         
@@ -254,152 +281,124 @@ public class AlteracaoCotaController extends BaseController {
     public void preencherFiltroDistribuicao(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
         
         if (cota.getParametroDistribuicao().getAssistenteComercial() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(
-                    cota.getParametroDistribuicao().getAssistenteComercial());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(cota.getParametroDistribuicao().getAssistenteComercial());
         }
         
         if (cota.getParametroDistribuicao().getGerenteComercial() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmGerenteComercial(
-                    cota.getParametroDistribuicao().getGerenteComercial());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmGerenteComercial(cota.getParametroDistribuicao().getGerenteComercial());
         }
         
         if (cota.getParametroDistribuicao().getObservacao() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setObservacao(
-                    cota.getParametroDistribuicao().getObservacao());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setObservacao(cota.getParametroDistribuicao().getObservacao());
         }
         
         if (cota.getParametroDistribuicao().getRepartePorPontoVenda() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(
-                    cota.getParametroDistribuicao().getRepartePorPontoVenda());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setRepartePontoVenda(cota.getParametroDistribuicao().getRepartePorPontoVenda());
         }
         
         if (cota.getParametroDistribuicao().getSolicitaNumAtras() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(
-                    cota.getParametroDistribuicao().getSolicitaNumAtras());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setSolicitacaoNumAtrasoInternet(cota.getParametroDistribuicao().getSolicitaNumAtras());
         }
         
         if (cota.getParametroDistribuicao().getRecebeRecolheParciais() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(
-                    cota.getParametroDistribuicao().getRecebeRecolheParciais());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setRecebeRecolheProdutosParciais(cota.getParametroDistribuicao().getRecebeRecolheParciais());
         }
         
-        // Tipo Entrega
-        if (cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setDescricaoTipoEntrega(
-                    cota.getParametroDistribuicao().getDescricaoTipoEntrega());
-            
-            if (cota.getParametroDistribuicao().getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)) {
-                if (cota.getParametroDistribuicao().getUtilizaTermoAdesao() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesao(
-                            cota.getParametroDistribuicao().getUtilizaTermoAdesao());
-                }
-                if (cota.getParametroDistribuicao().getTermoAdesaoRecebido() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesaoRecebido(
-                            cota.getParametroDistribuicao().getTermoAdesaoRecebido());
-                }
-                // TODO arquivo
-                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregaBanca(
-                            cota.getParametroDistribuicao().getPercentualFaturamento());
-                }
-                if (cota.getParametroDistribuicao().getTaxaFixa() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTaxaFixaEntregaBanca(
-                            cota.getParametroDistribuicao().getTaxaFixa());
-                }
-                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregaBanca(
-                            cota.getParametroDistribuicao().getInicioPeriodoCarencia());
-                }
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregaBanca(
-                            cota.getParametroDistribuicao().getFimPeriodoCarencia());
-                }
-            } else {
-                if (cota.getParametroDistribuicao().getUtilizaProcuracao() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracao(
-                            cota.getParametroDistribuicao().getUtilizaProcuracao());
-                }
-                if (cota.getParametroDistribuicao().getProcuracaoRecebida() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracaoRecebida(
-                            cota.getParametroDistribuicao().getProcuracaoRecebida());
-                }
-                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregador(
-                            cota.getParametroDistribuicao().getPercentualFaturamento());
-                }
-                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregador(
-                            cota.getParametroDistribuicao().getInicioPeriodoCarencia());
-                }
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
-                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregador(
-                            cota.getParametroDistribuicao().getFimPeriodoCarencia());
-                }
-            }
-        }
+        this.carregarDadosDistribuicaoEntrega(filtroAlteracaoCotaDTO, cota);
         
         // --Emissao Documentos
         if (cota.getParametroDistribuicao().getSlipImpresso() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipImpresso(
-                    cota.getParametroDistribuicao().getSlipImpresso());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipImpresso(cota.getParametroDistribuicao().getSlipImpresso());
         }
         
         if (cota.getParametroDistribuicao().getSlipEmail() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipEmail(
-                    cota.getParametroDistribuicao().getSlipEmail());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipEmail(cota.getParametroDistribuicao().getSlipEmail());
         }
         
         if (cota.getParametroDistribuicao().getBoletoImpresso() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(
-                    cota.getParametroDistribuicao().getBoletoImpresso());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(cota.getParametroDistribuicao().getBoletoImpresso());
         }
         
         if (cota.getParametroDistribuicao().getBoletoEmail() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoEmail(
-                    cota.getParametroDistribuicao().getBoletoEmail());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoEmail(cota.getParametroDistribuicao().getBoletoEmail());
         }
         
         if (cota.getParametroDistribuicao().getBoletoSlipImpresso() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipImpresso(
-                    cota.getParametroDistribuicao().getBoletoSlipImpresso());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipImpresso(cota.getParametroDistribuicao().getBoletoSlipImpresso());
         }
         
         if (cota.getParametroDistribuicao().getBoletoSlipEmail() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipEmail(
-                    cota.getParametroDistribuicao().getBoletoSlipEmail());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipEmail(cota.getParametroDistribuicao().getBoletoSlipEmail());
         }
         
         if (cota.getParametroDistribuicao().getReciboImpresso() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboImpresso(
-                    cota.getParametroDistribuicao().getReciboImpresso());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboImpresso(cota.getParametroDistribuicao().getReciboImpresso());
         }
         
         if (cota.getParametroDistribuicao().getReciboEmail() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboEmail(
-                    cota.getParametroDistribuicao().getReciboEmail());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboEmail(cota.getParametroDistribuicao().getReciboEmail());
         }
         
         if (cota.getParametroDistribuicao().getNotaEnvioImpresso() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioImpresso(
-                    cota.getParametroDistribuicao().getNotaEnvioImpresso());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioImpresso(cota.getParametroDistribuicao().getNotaEnvioImpresso());
         }
         
         if (cota.getParametroDistribuicao().getNotaEnvioEmail() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioEmail(
-                    cota.getParametroDistribuicao().getNotaEnvioEmail());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioEmail(cota.getParametroDistribuicao().getNotaEnvioEmail());
         }
         
         if (cota.getParametroDistribuicao().getChamadaEncalheImpresso() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc()
-            .setIsChamdaEncalheImpresso(cota.getParametroDistribuicao().getChamadaEncalheImpresso());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheImpresso(cota.getParametroDistribuicao().getChamadaEncalheImpresso());
         }
         
         if (cota.getParametroDistribuicao().getChamadaEncalheEmail() != null) {
-            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(
-                    cota.getParametroDistribuicao().getChamadaEncalheEmail());
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(cota.getParametroDistribuicao().getChamadaEncalheEmail());
         }
         
     }
+
+	private void carregarDadosDistribuicaoEntrega(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
+		
+		// Tipo Entrega
+        if (cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null) {
+            filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setDescricaoTipoEntrega(cota.getParametroDistribuicao().getDescricaoTipoEntrega());
+            
+            if (cota.getParametroDistribuicao().getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)) {
+                if (cota.getParametroDistribuicao().getUtilizaTermoAdesao() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesao(cota.getParametroDistribuicao().getUtilizaTermoAdesao());
+                }
+                if (cota.getParametroDistribuicao().getTermoAdesaoRecebido() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesaoRecebido(cota.getParametroDistribuicao().getTermoAdesaoRecebido());
+                }
+                
+            } else {
+                if (cota.getParametroDistribuicao().getUtilizaProcuracao() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracao(cota.getParametroDistribuicao().getUtilizaProcuracao());
+                }
+                if (cota.getParametroDistribuicao().getProcuracaoRecebida() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracaoRecebida(cota.getParametroDistribuicao().getProcuracaoRecebida());
+                }
+            }
+            
+            ParametroCobrancaDistribuicaoCota parametro = cota.getParametroCobrancaDistribuicaoCota();
+
+            if(parametro!= null){
+            	
+            	FiltroModalDistribuicao distribuicaoDTO = filtroAlteracaoCotaDTO.getFiltroModalDistribuicao();
+                
+                distribuicaoDTO.setCarenciaInicio(cota.getParametroDistribuicao().getInicioPeriodoCarencia());
+                distribuicaoDTO.setCarenciaFim(cota.getParametroDistribuicao().getFimPeriodoCarencia());
+                distribuicaoDTO.setDiaCobranca(parametro.getDiaCobranca());
+                distribuicaoDTO.setDiaSemanaCobranca(parametro.getDiaSemanaCobranca());
+                distribuicaoDTO.setModalidadeCobranca(parametro.getModalidadeCobranca());
+                distribuicaoDTO.setPercentualFaturamento(parametro.getPercentualFaturamento());
+                distribuicaoDTO.setPeriodicidadeCobranca(parametro.getPeriodicidadeCobranca());
+                distribuicaoDTO.setPorEntrega(parametro.isPorEntrega());
+                distribuicaoDTO.setTaxaFixa(parametro.getTaxaFixa());
+                distribuicaoDTO.setBaseCalculo(parametro.getBaseCalculo());
+            }
+        }
+	}
     
     private static void removerFornecedorAssociadoLista(final List<ItemDTO<Long, String>> listFornecedoresCota,
             final List<ItemDTO<Long, String>> fornecedoresAtivos) {
@@ -475,27 +474,26 @@ public class AlteracaoCotaController extends BaseController {
     }
     
     @Get
-    public void downloadTermoAdesao(final Boolean termoAdesaoRecebido, final Integer numeroCota, final BigDecimal taxa,
+    public void downloadTermoAdesao(final Boolean termoAdesaoRecebido, final List<Integer> idsCotas, final BigDecimal taxa,
             final BigDecimal percentual) throws Exception {
         
-        download(termoAdesaoRecebido, numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);
+        download(termoAdesaoRecebido, idsCotas, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);
     }
     
     @Get
-    public void downloadProcuracao(final Boolean procuracaoRecebida, final Integer numeroCota) throws Exception {
+    public void downloadProcuracao(final Boolean procuracaoRecebida, final List<Integer> numeroCota) throws Exception {
         
         download(procuracaoRecebida, numeroCota, TipoParametroSistema.PATH_PROCURACAO, null, null);
     }
     
-    private void download(final Boolean documentoRecebido, final Integer numeroCota, final TipoParametroSistema parametroPath,
+    private void download(final Boolean documentoRecebido, final List<Integer> idsCotas, final TipoParametroSistema parametroPath,
             final BigDecimal taxa, final BigDecimal percentual) throws Exception {
         
-        final ParametroSistema raiz = parametroSistemaService
-                .buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
+        final ParametroSistema raiz = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
         
         final ParametroSistema path = parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);
         
-        final String dirBase = (raiz.getValor() + path.getValor() + numeroCota.toString()).replace("\\", "/");
+        final String dirBase = (raiz.getValor() + path.getValor() + idsCotas.toString()).replace("\\", "/");
         
         final ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
         
@@ -508,13 +506,56 @@ public class AlteracaoCotaController extends BaseController {
             
             if (TipoParametroSistema.PATH_TERMO_ADESAO.equals(parametroPath)) {
                 
-                arquivo = cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
-                
+            	List<byte[]> pdfs = new ArrayList<>();
+            	
+            	for(Integer idCota : idsCotas) {
+            		Cota c = cotaService.obterPorId(Long.valueOf(idCota));
+            		if(c != null) {
+            			byte[] pdf = cotaService.getDocumentoTermoAdesao(c.getNumeroCota(), taxa, percentual);
+            			pdfs.add( pdf );
+            		}
+            	}
+            	
+            	ByteArrayOutputStream byteArrayOutputStream = null; 
+                 
+                try { 
+                	
+                  Document document = new Document(); 
+                  byteArrayOutputStream = new ByteArrayOutputStream(); 
+                  PdfWriter pdfWriter = PdfWriter.getInstance(document, byteArrayOutputStream); 
+
+                  document.open(); 
+                  PdfContentByte pdfContentByte = pdfWriter.getDirectContent(); 
+                  PdfImportedPage pdfImportedPage = null; 
+
+                  for(byte[] pdf : pdfs) {
+	                  PdfReader pdfReader = new PdfReader(pdf); 
+	
+	                  for (int i = 0; i < pdfReader.getNumberOfPages(); i++) { 
+	                      document.newPage(); 
+	                      pdfImportedPage = pdfWriter.getImportedPage(pdfReader, i + 1); 
+	                      float width = pdfImportedPage.getWidth(); 
+	                      float height = pdfImportedPage.getHeight(); 
+	                      document.setPageSize(new Rectangle(width, height)); // doesent work 
+	                      pdfContentByte.addTemplate(pdfImportedPage, 0, 0); 
+	                  }
+                  }
+
+                  document.close(); 
+                  arquivo = byteArrayOutputStream.toByteArray(); 
+                } catch (Exception e) {
+                	
+                }
+            	
                 nomeArquivo = NOME_DEFAULT_TERMO_ADESAO;
                 
             } else {
                 
-                arquivo = cotaService.getDocumentoProcuracao(numeroCota);
+            	ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+            	for(Integer idCota : idsCotas) {
+            		outputStream.write( cotaService.getDocumentoProcuracao(idCota) );
+            	}
+                arquivo = outputStream.toByteArray();
                 
                 nomeArquivo = NOME_DEFAULT_PROCURACAO;
             }

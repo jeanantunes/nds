@@ -129,6 +129,11 @@
 											try {
 												validation = JSON.parse(xhr.responseText);
 												exibirMensagem(validation.mensagens.tipoMensagem, validation.mensagens.listaMensagens);
+												
+												var index = $("#workspace").tabs('option', 'selected');
+												
+												$("#workspace").tabs("remove", index);
+												
 												return;
 											} catch(error) { /*not a JSON*/ }
 											
@@ -170,6 +175,10 @@
 										$span = $($span).addClass("lancamento_faltas_sobras");
 									}else if (url.indexOf("/matrizLancamento") >= 0) {
 										$span = $($span).addClass("matriz_lancamento");
+									}else if ((url.indexOf("/matrizDistribuicao/histogramaPosEstudo") >= 0)
+										|| (url.indexOf("/distribuicao/analiseEstudo") >= 0)) {
+										
+										$span = $($span).addClass("analise_estudo");
 									}
 									
 									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
@@ -194,6 +203,7 @@
 												var indAbaLancamentoFaltasSobras = $(this).parent().find('.lancamento_faltas_sobras').index() > -1;
 												var indAbaConferenciaEncalheContigencia = $(this).parent().find('.conferencia_encalhe_contigencia').index() > -1;
 												var indAbaMatrizLancamento = $(this).parent().find('.matriz_lancamento').index() > -1;
+												var indAbaAnaliseEstudo = $(this).parent().find('.analise_estudo').index() > -1;
 												
 												if(indAbaConferenciaEncalhe) {
 													
@@ -228,6 +238,10 @@
 															$("#workspace").tabs("remove", index);
 														}
 													);
+													
+												} else if (indAbaAnaliseEstudo) {
+													
+													histogramaPosEstudoController.desbloquearAnaliseEstudo(index);
 													
 												} else {
 													
@@ -496,6 +510,7 @@
 			</div>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/commons/loading.jsp" />
+		<jsp:include page="/WEB-INF/jsp/commons/usuario.jsp" />
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">

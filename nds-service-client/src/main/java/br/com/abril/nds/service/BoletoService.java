@@ -19,6 +19,8 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
@@ -53,6 +55,8 @@ public interface BoletoService {
 			 		  Banco banco, Date dataPagamento);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException, ValidationException;
+	
+	byte[] gerarImpressaoBoleto(Boleto boleto, List<PoliticaCobranca> politicasCobranca) throws IOException, ValidationException;
 
 	void enviarBoletoEmail(String nossoNumero);
 	
@@ -249,4 +253,7 @@ public interface BoletoService {
 	BoletoAntecipado obterBoletoEmBrancoPorNossoNumero(String nossoNumero);
 	
 	BoletoAntecipado obterBoletoEmBrancoPorId(Long idBoletoAntecipado);
+	
+	byte[] gerarImpressaoBoleto(final Boleto boleto, Pessoa cedente, boolean aceitaPagamentoVencido,
+            final List<PoliticaCobranca> politicasCobranca) throws IOException, ValidationException;
 }

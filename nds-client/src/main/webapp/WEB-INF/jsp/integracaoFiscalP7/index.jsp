@@ -1,15 +1,19 @@
-<%@ page contentType="text/html" pageEncoding="UTF-8" %>  
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+
 
 <script>
 
 var month,year;
 var dateInventario;
+
 $(function(){
 	$( "#datepickerMesAno").datepicker({
 		changeMonth: true,
         changeYear: true,
 		showOn: "button",
 		dateFormat: 'MM/yy',
+		monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
 		buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 		buttonImageOnly: true,
 		onClose: function(dateText, inst) { 
@@ -19,6 +23,9 @@ $(function(){
 	        
 	        $("#mesInput").val(month);
 	        $("#anoInput").val(year);
+	        $("#mesInputXLS").val(month);
+	        $("#anoInputXLS").val(year);
+	        
 	        $(this).datepicker('setDate', dateInventario);
 	    },
 	    beforeShow: function() {
@@ -54,6 +61,7 @@ function submitForm(f){
 }
 
 </script>
+ 
 <div>
 
 <style type="text/css">
@@ -66,14 +74,12 @@ function submitForm(f){
 <br clear="all"/>
     <br />
     
-    <fieldset class="classFieldset">
+    <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Integra&ccedil;&atilde;o Fiscal P7</legend>
         <table border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr width="50">
           <td>M&ecirc;s/Ano:</td>
 
-<!-- <td width="50"> <input type="text" maxlength="6" /></td> -->
-            
 		   	<td>
 				 <input class="campoDePesquisa" type="text" name="" id="datepickerMesAno" readonly="readonly" style="width:120px;" value="" />
 				 
@@ -81,6 +87,12 @@ function submitForm(f){
 				 <input type="hidden" name="mes" id="mesInput" value=""/>
 				 <input type="hidden" name="ano" id="anoInput" value=""/>
 				</form>
+				
+				<form method="POST" action="${pageContext.request.contextPath}/financeiro/integracaoFiscalP7/exportarXLS" id="formInventarioXLS">
+				 <input type="hidden" name="mes" id="mesInputXLS" value=""/>
+				 <input type="hidden" name="ano" id="anoInputXLS" value=""/>
+				</form>
+				
 			 
 		 	</td>
 		   	        
@@ -89,11 +101,17 @@ function submitForm(f){
 		<tr>
             <td>
             	<span class="bt_novos" title="Gerar Arquivo">
-					<a href="javascript:submitForm('#formInventario');">
+					<a href="javascript:submitForm('#formInventario');" rel="tipsy" title="Arquivo .TXT">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Arquivo
 					</a>
-				</span>  
+				</span>
+				<span class="bt_arq" id="gerarAquivoP7XLS">
+				<a href="javascript:submitForm('#formInventarioXLS');" rel="tipsy" title="Arquivo .XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+					Arquivo
+				</a>
+			</span>  
             </td>
 		</tr>
             

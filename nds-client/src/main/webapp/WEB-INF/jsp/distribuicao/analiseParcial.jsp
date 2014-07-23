@@ -6,6 +6,7 @@
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/analiseParcial-dataTable.js"></script>
+<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/usuario/usuario.js"></script>
 
 <script language="javascript" type="text/javascript">
 
@@ -22,11 +23,11 @@ $(function() {
     }
   });
 
-function mostraDados(){
-	$('.detalhesDados').show();
+function mostraDados_analiseParcial(){
+	analiseParcialController.montarDadosDetalhesEdicoesBases();
 	}
-function escondeDados(){
-	$('.detalhesDados').hide();
+function escondeDados_analiseParcial(){
+	$('.detalhesDados-analiseParcial').hide();
 	}
 	
 </script>
@@ -43,9 +44,9 @@ function escondeDados(){
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+.detalhesDados-analiseParcial{position:absolute; display:none; background:#fff; margin-left: 265px; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+
 <c:if test="${estudo.idEstudoOrigemCopia != null}">
-.detalhesDados{margin-left: 62px;}
 </c:if>
 #tabelaDetalheAnalise tr { line-height: normal; }
 .class_linha_impar {background:#f0f0f0; }
@@ -113,66 +114,26 @@ table.dadosTab { margin-left: 370px;}
                 <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
 				<b>Base de Estudo < evento > com < status >.</b></p>
 	</div>
-
-    	<div class="detalhesDados">
-            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
-            <table border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise">
-                <tr class="class_linha_impar">
-                    <td><strong>Código:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_par">
-                    <td><strong>Produto:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_impar" id="edicoes">
-                    <td><strong>Edição:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_par" id="dataLancamentos">
-                    <td><strong>Data Lançamento:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_impar" id="repartes">
-                    <td><strong>Reparte:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="class_linha_par" id="vendas">
-                    <td><strong>Venda:</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+		
+    	<div class="detalhesDados-analiseParcial" style="margin-left: 0px;">
+            
+            <div style="float: right;">
+            	<a href="javascript:;" onclick="escondeDados_analiseParcial();">
+            		<img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />
+            	</a>
+           	</div>
+           	
+            <table border="0" cellpadding="2" cellspacing="2" style="margin-left: 265px;" class="dadosTab" id="tabelaDetalheAnalise">
+                <tr class="class_linha_impar" id="analiseParcialPopUpCodProduto"></tr>
+                <tr class="class_linha_par" id="analiseParcialPopUpNomeProduto"></tr>
+                <tr class="class_linha_impar" id="analiseParcialPopUpNumeroEdicao"></tr>
+                <tr class="class_linha_par" id="analiseParcialPopUpDatalancamento"></tr>
+                <tr class="class_linha_impar" id="analiseParcialPopUpReparte"></tr>
+                <tr class="class_linha_par" id="analiseParcialPopUpVenda"></tr>
   	        </table>
+  	        
         </div>
+        
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
 			<input type="hidden" id="produtoEdicaoId" value="${estudo.produtoEdicao.id}" />
@@ -188,6 +149,7 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="dataLancamentoEdicao" value="${dataLancamentoEdicao}" />
 			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
 			<input type="hidden" id="tipoClassificacaoProdutoDescricao" value="${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}" />
+			<input type="hidden" id="numeroPeriodo" value="${lancamento.periodoLancamentoParcial.numeroPeriodo}" />
 			
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
@@ -266,7 +228,7 @@ table.dadosTab { margin-left: 370px;}
 					    </span>
                     </td>
 					<td align="center">
-                        <a href="javascript:;" onclick="mostraDados();">
+                        <a href="javascript:;" onclick="mostraDados_analiseParcial();">
                             <img src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" />
                         </a>
                     </td>
@@ -375,7 +337,7 @@ table.dadosTab { margin-left: 370px;}
 				</c:choose>
 				
                 <span class="bt_novos">
-                    <a href="javascript:;" id="botaoVoltarTelaAnalise" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));selectTabTitle('Histograma Pré Análise');">
+                    <a href="javascript:;" id="botaoVoltarTelaAnalise" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Histograma Pré Análise');">
                         <img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar
 				    </a>
 				</span>
@@ -394,7 +356,7 @@ table.dadosTab { margin-left: 370px;}
             </c:if>
                 <%--<br/>--%>
 				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo à Distribuir:</span>
-				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra}</span>
+				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra == null ? 0 : estudo.sobra}</span>
 			</div>
 		</fieldset>
 	</div>
@@ -416,7 +378,8 @@ table.dadosTab { margin-left: 370px;}
 					<td width="209">
 						<input type="text" name="cotasQueNaoEntraramNoEstudo_nome" id="cotasQueNaoEntraramNoEstudo_nome" style="width: 185px;"/>
                     </td>
-                    <td><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
+                    <td><span class="classPesquisar" onclick="analiseParcialController.cotasQueNaoEntraramNoEstudo();" style="margin: 0 5px;">
+                    <a href="javascript:;">&nbsp;</a></span></td>
 				</tr>
 				<tr>
 					<td>Motivo:</td>
@@ -468,7 +431,7 @@ table.dadosTab { margin-left: 370px;}
 			<legend>Cotas que não entraram no estudo</legend>
 			<table class="cotasEstudoGrid" id="cotasNaoSelec"></table>
 			<div style="float: right; margin-top: 5px; margin-right: 60px;">
-				<strong>Saldo:</strong> <span id="saldoReparteNaoSelec">999</span>
+				<strong>Saldo:</strong> <span id="saldoReparteNaoSelec">0</span>
 			</div>
 		</fieldset>
 	</div>
@@ -578,7 +541,7 @@ table.dadosTab { margin-left: 370px;}
         </fieldset>
 	</div>
 
-    <div id="dialog-defineReparte" title="Define Reparte por PDV" style="display:none;">
+    <div id="AP_dialog-defineReparte" title="Define Reparte por PDV" style="display:none;">
         <fieldset style="width:605px !important;">
             <legend>Dados da Cota</legend>
             <table width="500" border="0" cellspacing="1" cellpadding="1">
@@ -610,13 +573,14 @@ table.dadosTab { margin-left: 370px;}
         <br clear="all" />
         <fieldset style="width:605px !important; margin-top:10px;">
             <legend>PDV da Cota</legend>
-            <table class="pdvCotaGrid"></table>
+            <table class="pdvCotaGrid_AP"></table>
             <table width="600" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td width="312">&nbsp;
                     </td>
                     <td width="174">&nbsp;</td>
-                    <td width="71" align="center"><span class="reparteCota">999</span></td>
+                    <td width="71" align="center">
+                    	<span class="reparteCota" id="reparteCota">0</span></td>
                     <td width="43">&nbsp;</td>
                 </tr>
                 <tr>
@@ -627,39 +591,41 @@ table.dadosTab { margin-left: 370px;}
         </fieldset>
 
     </div>
-
-    <div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto" style="display:none;">
-        <fieldset style="width:700px!important;">
-            <legend>Pesquisar Produto</legend>
-
-            <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
-                <tr>
-                    <td width="36">Código:</td>
-                    <td width="76"><input type="text" class="inputCodigoEB" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
-                    <td width="40">Produto:</td>
-                    <td width="180"><input type="text" class="inputProdutoEB" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
-                    <td width="35">Edição:</td>
-                    <td width="61"><input type="text" class="inputEdicaoEB" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
-                    <td style="width: 80px;">Classificação:</td>
-                    <td>
-                        <select name="idClassificacao" id="filtroClassificacao" style="width:120px;">
-                            <option value="-1">SELECIONE</option>
-                            <c:forEach items="${classificacaoList}" var="tipoClassificacao">
-                                <option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
-                            </c:forEach>
-                        </select>
-                    </td>
-                    <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
-                </tr>
-            </table>
-
-        </fieldset>
-
-        <fieldset style="width:700px!important; margin-top:10px;">
-            <legend>Edições do Produto</legend>
-            <table id="edicaoProdCadastradosGrid"></table>
-        </fieldset>
-    </div>
+	
+	<form id="form-edicoes-produtos">
+	    <div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto" style="display:none;">
+	        <fieldset style="width:700px!important;">
+	            <legend>Pesquisar Produto</legend>
+	
+	            <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	                <tr>
+	                    <td width="36">Código:</td>
+	                    <td width="76"><input type="text" class="inputCodigoEB" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
+	                    <td width="40">Produto:</td>
+	                    <td width="180"><input type="text" class="inputProdutoEB" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
+	                    <td width="35">Edição:</td>
+	                    <td width="61"><input type="text" class="inputEdicaoEB" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
+	                    <td style="width: 80px;">Classificação:</td>
+	                    <td>
+	                        <select name="idClassificacao" id="filtroClassificacao" style="width:120px;">
+	                            <option value="-1">SELECIONE</option>
+	                            <c:forEach items="${classificacaoList}" var="tipoClassificacao">
+	                                <option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
+	                            </c:forEach>
+	                        </select>
+	                    </td>
+	                    <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
+	                </tr>
+	            </table>
+	
+	        </fieldset>
+	
+	        <fieldset style="width:700px!important; margin-top:10px;">
+	            <legend>Edições do Produto</legend>
+	            <table id="edicaoProdCadastradosGrid"></table>
+	        </fieldset>
+	    </div>
+	</form>
 
     <div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
@@ -667,17 +633,7 @@ table.dadosTab { margin-left: 370px;}
 
     <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
 
-    <div id="dialog-confirmacao-senha" title="Confirmação" style="display: none;">
-        <p>
-            <span id="msg-confirma"></span>
-            <br><br>
-            <span>Esta ação requer confirmação com senha.</span>
-            <br><br>
-            <input type="password" width="80" maxlength="10" id="password"/>
-        </p>
-    </div>
-
-	<script type="text/javascript">
+    <script type="text/javascript">
 		 $(function(){
 			analiseParcialController.init('${estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });

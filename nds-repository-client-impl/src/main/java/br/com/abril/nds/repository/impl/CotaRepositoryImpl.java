@@ -16,6 +16,7 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -46,6 +47,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
@@ -53,11 +55,18 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
+import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
+import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -83,6 +92,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.QueryUtil;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -106,9 +116,28 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
      * Construtor.
      */
     public CotaRepositoryImpl() {
-        
         super(Cota.class);
     }
+    
+    public Cota selectForUpdate(Long numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT C.* ");
+		
+		hql.append(" FROM COTA C ");
+		
+		hql.append(" WHERE C.NUMERO_COTA = :numeroCota FOR UPDATE ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		((org.hibernate.SQLQuery)query).addEntity(Cota.class);
+		
+		return (Cota) query.uniqueResult();
+		
+	}
     
     @Override
     public Cota obterPorNumeroDaCota(final Integer numeroCota) {
@@ -366,7 +395,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("dataOperacao", dataOperacao);
         query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
         query.setParameterList("statusDividaEmAbertoPendente", new String[] { StatusDivida.EM_ABERTO.name(),
-                StatusDivida.PENDENTE_INADIMPLENCIA.name(), StatusDivida.PENDENTE.name() });
+                StatusDivida.PENDENTE_INADIMPLENCIA.name()});
         query.setParameter("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO.name());
     }
     
@@ -377,10 +406,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
            .append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
            
-           .append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
-           .append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
-           .append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
-           .append("		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <= ( ")
+           .append(" WHERE COTA_.SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
+           .append(" AND ((COTA_.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+           .append(" 		AND COTA_.NUM_ACUMULO_DIVIDA <> 0 ")
+           .append("		AND COTA_.NUM_ACUMULO_DIVIDA <= ( ")
            .append("											SELECT count(DIVIDA.ID) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
@@ -391,9 +420,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ")
-           .append("       AND POLITICACOTA.VALOR_SUSPENSAO <> 0 ")
-           .append("		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+           .append("	   (COTA_.VALOR_SUSPENSAO IS NOT NULL ")
+           .append("       AND COTA_.VALOR_SUSPENSAO <> 0 ")
+           .append("		AND COTA_.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
@@ -403,10 +432,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL or POLITICACOTA.VALOR_SUSPENSAO IS NULL) ")
-           .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ")
-           .append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ")
-           .append("		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (")
+           .append("	   ((COTA_.NUM_ACUMULO_DIVIDA IS NULL or COTA_.VALOR_SUSPENSAO IS NULL) ")
+           .append("	    AND COTA_.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+           .append("	    AND COTA_.NUM_ACUMULO_DIVIDA <> 0 ")
+           .append("		AND COTA_.NUM_ACUMULO_DIVIDA <= (")
            .append("											SELECT count(DIVIDA.ID) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
@@ -417,10 +446,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
            .append("	   OR ")
-           .append("	   ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL or POLITICACOTA.VALOR_SUSPENSAO IS NULL) ")
-           .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ")
-           .append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0")
-           .append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+           .append("	   ((COTA_.NUM_ACUMULO_DIVIDA IS NULL or COTA_.VALOR_SUSPENSAO IS NULL) ")
+           .append("	    AND COTA_.VALOR_SUSPENSAO IS NOT NULL ")
+           .append("	    AND COTA_.VALOR_SUSPENSAO <> 0")
+           .append("		AND COTA_.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
            .append("											FROM DIVIDA DIVIDA ")
            .append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
            .append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
@@ -429,7 +458,25 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
            .append("                                                               AND COBRANCA_.STATUS_COBRANCA = :statusCobrancaNaoPago)")
            .append("	   ) ")
-           .append(") ")
+           .append("           OR  ")
+           .append("           	COTA_.ID in ")
+           .append("           	(select ")
+           .append("           		dv.COTA_ID ")
+           .append("         	 from negociacao ng ")
+           .append("         join parcela_negociacao pn ")
+           .append("         	on pn.NEGOCIACAO_ID = ng.ID ")
+           .append("         join movimento_financeiro_cota mfc ")
+           .append("    	     ON  mfc.ID = pn.MOVIMENTO_FINANCEIRO_ID ")
+           .append("         join divida dv ")
+           .append("        	 ON dv.cota_id = mfc.cota_id ")
+           .append("         join cobranca cb ")
+           .append("         	on cb.DIVIDA_ID = dv.ID ")
+           .append("         where ")
+           .append("         dv.STATUS in ('EM_ABERTO', 'PENDENTE_INADIMPLENCIA') ")
+           .append("         	and cb.DT_VENCIMENTO < :dataOperacao ")
+           .append("         group by dv.id) ")
+           
+           .append(" ) ")
            .append("  group by cota_.ID ");
     }
     
@@ -2399,6 +2446,31 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         return (Cota) query.uniqueResult();
     }
     
+    @Override
+    public GrupoCota obterOperacaoVigenteCota(Long idCota, Date dataInicio, Date dataFim) {
+
+    	Criteria criteria = this.getSession().createCriteria(GrupoCota.class);
+    	
+    	criteria.createAlias("cotas", "cota");
+    	
+    	Criterion vigenciaRestriction = Restrictions.and(
+			Restrictions.ge("dataInicioVigencia", dataInicio),
+			Restrictions.or(
+				Restrictions.isNull("dataFimVigencia"),
+				Restrictions.le("dataFimVigencia", dataFim)
+			)
+		);
+    	
+    	criteria.add(Restrictions.eq("cota.id", idCota));
+    	criteria.add(vigenciaRestriction);
+
+    	criteria.addOrder(Order.asc("diasRecolhimento"));
+    	
+    	criteria.setMaxResults(1);
+    	
+    	return (GrupoCota) criteria.uniqueResult();
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<CotaDTO> buscarCotasQuePossuemRangeReparte(final BigInteger qtdReparteInicial,
@@ -3001,19 +3073,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         hql.append(" join pe.lancamentos l ");
         hql.append(" where ");
         
-        for (int i = 0; i < filtro.getCodigosProduto().size(); i++) {
-            hql.append(" p.codigo = :codigoProduto_" + i + " and ");
-        }
-        hql.append(" pe.numeroEdicao = :numeroEdicao and ");
         hql.append(" ( l.status = :balanceado or l.status = :expedido ) and ");
         hql.append(" l.dataLancamentoPrevista = :dataPrevista ");
         
+        if (filtro.getCodigosProduto() != null && !filtro.getCodigosProduto().isEmpty()){
+            
+            hql.append(" and p.codigo in (:codigoProduto) ");
+        }
+        
+        if (filtro.getNumerosEdicao() != null && !filtro.getNumerosEdicao().isEmpty()){
+            
+            hql.append(" and pe.numeroEdicao in (:numeroEdicao) ");
+        }
+        
         final Query query = this.getSession().createQuery(hql.toString());
         
-        for (int i = 0; i < filtro.getCodigosProduto().size(); i++) {
-            query.setParameter("codigoProduto_" + i, filtro.getCodigosProduto().get(i));
-        }
-        query.setParameter("numeroEdicao", filtro.getEdicaoProduto());
+        query.setParameterList("codigoProduto", filtro.getCodigosProduto());
+        query.setParameterList("numeroEdicao", filtro.getNumerosEdicao());
         query.setParameter("balanceado", StatusLancamento.BALANCEADO);
         query.setParameter("expedido", StatusLancamento.EXPEDIDO);
         query.setParameter("dataPrevista", filtro.getDataDate());
@@ -3131,26 +3207,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
      * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a
      * data atual
      * 
-     * @param data
      * @return List<Cota>
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Cota> obterCotasTipoAVista(final Date data) {
+    public List<Cota> obterCotasTipoAVista() {
         
         final StringBuilder hql = new StringBuilder("select c ")
         
         .append(" from Cota c ")
         
-        .append(" where c.tipoCota = :tipoCota ")
-        
-        .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+        .append(" where c.tipoCota = :tipoCota ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
         query.setParameter("tipoCota", TipoCota.A_VISTA);
-        
-        query.setParameter("data", data);
         
         return query.list();
     }
@@ -3248,7 +3319,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
     
     @Override
-    public CotaDTO buscarCotaPorNumero(final Integer numeroCota, final String codigoProduto) {
+    public CotaDTO buscarCotaPorNumero(final Integer numeroCota, final String codigoProduto, final Long idClassifProdEdicao) {
         
         final StringBuilder sql = new StringBuilder();
         sql.append(" select ");
@@ -3270,18 +3341,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append("  fx.qtde_exemplares fxQuantidadeExemplares ");
         sql.append(" from cota");
         sql.append("   left join pessoa pe on pe.id = cota.pessoa_id");
-        sql.append("   left join produto p on p.codigo = :codigoProduto");
+        sql.append("   left join produto p on p.codigo_icd = :codigoProduto");
         sql.append("   left join ranking_segmento rks on rks.cota_id = cota.id and p.tipo_segmento_produto_id = rks.tipo_segmento_produto_id ");
         sql.append("   left join ranking_faturamento rkf on rkf.cota_id = cota.id ");
-        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.codigo_icd = mix.codigo_icd");
+        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.codigo_icd = mix.codigo_icd and mix.TIPO_CLASSIFICACAO_PRODUTO_ID = :idClassificacao ");
         sql.append("   left join usuario u on u.id = mix.id_usuario ");
-        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.codigo_icd = fx.codigo_icd ");
+        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.codigo_icd = fx.codigo_icd and fx.ID_CLASSIFICACAO_EDICAO = :idClassificacao ");
         sql.append(" where cota.numero_cota = :numeroCota ");
+        sql.append(" Group By cota.numero_cota ");
         
         final SQLQuery query = getSession().createSQLQuery(sql.toString());
         
         query.setParameter("codigoProduto", codigoProduto);
         query.setParameter("numeroCota", numeroCota);
+        query.setParameter("idClassificacao", idClassifProdEdicao);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         return (CotaDTO) query.uniqueResult();
@@ -3441,5 +3514,75 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("idCota", idCota);
         
         return (TipoDistribuicaoCota) query.uniqueResult();
+    }
+
+    @Override
+    public String obterEmailCota(Integer numeroCota) {
+        
+        Query query = this.getSession().createQuery(
+                "select c.pessoa.email from Cota c where c.numeroCota = :numeroCota ");
+        
+        query.setParameter("numeroCota", numeroCota);
+        
+        return (String) query.uniqueResult();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota(){
+    	
+    	final StringBuilder hql = new StringBuilder();
+        
+    	hql.append(" select distinct cota.ID as idCota , ")
+    		.append(" 	cota.DESCRICAO_TIPO_ENTREGA as tipoEntrega, ")
+		    .append("	cota.INICIO_PERIODO_CARENCIA as inicioCarencia,  ")
+		    .append("	cota.FIM_PERIODO_CARENCIA as fimCarencia, ")
+		    .append("	parametroCob.BASE_CALCULO as baseCalculo, ")
+		    .append("	parametroCob.DIA_COBRANCA as diaCobranca, ")
+		    .append("	parametroCob.DIA_SEMANA as diaSemana, ")
+		    .append("	parametroCob.MODELIDADE_COBRANCA as modalidadeCobranca, ")
+		    .append("	parametroCob.PERCENTUAL_FATURAMENTO percentualFaturamento, ")
+		    .append("	parametroCob.PERIODICIDADE_COBRANCA periodicidade, ")
+		    .append("	parametroCob.POR_ENTREGA  as porEntrega, ")
+		    .append("	parametroCob.TAXA_FIXA as taxaFixa ")
+		    .append(" from cota cota ")
+		    .append("	join parametro_cobranca_distribuicao_cota parametroCob on parametroCob.COTA_ID = cota.ID ")
+		    .append("   join pdv pdv on pdv.COTA_ID = cota.ID ")
+		    .append("   join rota_pdv rotaPdv on rotaPDV.PDV_ID  = pdv.ID ")
+		    .append("   join rota rota on rota.ID = rotaPdv.ROTA_ID ")
+		    .append(" where cota.SITUACAO_CADASTRO IN (:statusCadastro) ")
+		    .append(" and cota.TIPO_DISTRIBUICAO_COTA <> :cotaRetira ");
+		
+        final SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+        
+        query.setParameter("cotaRetira", DescricaoTipoEntrega.COTA_RETIRA.name());
+        query.setParameterList("statusCadastro", Arrays.asList(SituacaoCadastro.ATIVO.name(),SituacaoCadastro.SUSPENSO.name()));
+         
+        query.addScalar("idCota",StandardBasicTypes.LONG)
+	        .addScalar("inicioCarencia",StandardBasicTypes.DATE)
+	        .addScalar("fimCarencia",StandardBasicTypes.DATE)
+	        .addScalar("baseCalculo", QueryUtil.obterTypeEnum(BaseCalculo.class))
+	        .addScalar("diaCobranca",StandardBasicTypes.INTEGER)
+	        .addScalar("diaSemana",QueryUtil.obterTypeEnum(DiaSemana.class))
+	        .addScalar("modalidadeCobranca", QueryUtil.obterTypeEnum(ModalidadeCobranca.class))
+	        .addScalar("percentualFaturamento",StandardBasicTypes.BIG_DECIMAL)
+	        .addScalar("periodicidade",QueryUtil.obterTypeEnum(PeriodicidadeCobranca.class))
+	        .addScalar("taxaFixa",StandardBasicTypes.BIG_DECIMAL)
+	        .addScalar("porEntrega",StandardBasicTypes.BOOLEAN)
+	        .addScalar("tipoEntrega",QueryUtil.obterTypeEnum(DescricaoTipoEntrega.class));
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(ParametroDistribuicaoEntregaCotaDTO.class));
+        
+        return query.list();
+    }
+    
+    @Override
+    public Fornecedor obterFornecedorPadrao(Long idCota) {
+    	
+    	Query query = getSession().createQuery(" select c.parametroCobranca.fornecedorPadrao from Cota c where c.id =:idCota ");
+    	
+    	query.setParameter("idCota", idCota);
+    	query.setMaxResults(1);
+    	
+    	return (Fornecedor) query.uniqueResult();
     }
 }

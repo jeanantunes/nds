@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,9 +13,12 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
 
@@ -31,6 +35,12 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
 	
+	@Autowired
+	private FechamentoEncalheService fechamentoEncalheService;
+	
+	@Autowired
+	private PoliticaCobrancaRepository politicaCobrancaRepository;
+	
 	@Transactional
 	@Override
 	public byte[] gerarArquivoImpressao(String nossoNumero) {
@@ -40,8 +50,21 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	
 	@Transactional
 	@Override
-	public byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro) {
+	public byte[] gerarArquivoImpressao(final FiltroDividaGeradaDTO filtro, final boolean comSlip) {
 		
+	    //caso a impressão inclua boleto e slip deve-se verifcar se as cotas ausentes foram cobradas
+	    if (comSlip){
+    	    
+    	    final Integer qtdCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(
+    	            filtro.getDataMovimento(), true, filtro.getNumeroCota());
+    	    
+    	    if (qtdCotasAusentes != null && qtdCotasAusentes > 0){
+    	        
+    	        throw new ValidacaoException(TipoMensagem.WARNING, 
+    	                "Não é possível gerar a impressão. Ainda existem cotas pendentes de geração de cobrança.");
+    	    }
+	    }
+	    
 		filtro.setColunaOrdenacao(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO);
 		
 		List<GeraDividaDTO> dividas = null;
@@ -57,7 +80,19 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		if(dividas.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dívidas a serem impressas.");
 		
-		return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
+		final List<PoliticaCobranca> politicasCobranca = 
+                politicaCobrancaRepository.obterPoliticasCobranca(
+                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+		
+		if (comSlip){
+		
+		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(
+		            dividas, filtro.getTipoCobranca(), politicasCobranca,
+		            filtro.getDataMovimento());
+		} else {
+		    
+		    return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
+		}
 	}
 
 	@Transactional
