@@ -70,6 +70,8 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" produto.codigo as codigoProduto, ")
 		.append(" produto.CODIGO_ICD as codigoICD, ")
 		.append(" produto.nome as nomeProduto, ")
+		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%d/%c/%Y') as data, ")
+		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%H:%i') as hora, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
@@ -96,8 +98,20 @@ public class MixCotaProdutoRepositoryImpl extends
 //		   .append(" 		and produto_id = (produto.id)")
 //		   .append(" )")
 		
-		   sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ")
-		   .append(" group by id ");
+		sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ");
+		
+		sql.append(" group by id ");
+		
+		if (filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equals("data")) {
+		    
+		    sql.append(" order by temp_mix.dataHora");
+		    
+		} else {
+		    
+		    sql.append(" order by temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn());    
+		}
+		
+        sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		//query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -179,6 +193,8 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" produto.nome as nomeProduto, ")
 		.append(" coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '')  as nomeCota, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
+		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%d/%c/%Y') as data, ")
+        .append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%H:%i') as hora, ")
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
 		.append(" mix_cota_produto.ID_COTA as idCota, ")
@@ -219,8 +235,18 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		sql.append(StringUtils.join(l," and "))
 		.append("  group by cota.numero_cota,mix_cota_produto.codigo_icd,mix_cota_produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
-		.append(" order by cota.numero_cota ");
+		.append(" order by ");
 	
+		if (filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn().equals("data")) {
+            
+            sql.append(" dataHora ");
+            
+        } else {
+            
+            sql.append(filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn());
+        }
+		
+		sql.append(" " + filtroConsultaMixProdutoDTO.getPaginacao().getSortOrder());
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());

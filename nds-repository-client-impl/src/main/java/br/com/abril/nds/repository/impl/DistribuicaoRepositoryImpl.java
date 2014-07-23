@@ -105,7 +105,10 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 	}
 	 	
 	 	sql.append(" group by lanc.id, estudo.ID ");
-	 	sql.append(" order by codigoProduto, numeroEdicao");
+	 	
+	 	sql.append(" order by liberado, idEstudo ");
+	 	sql.append(" , " + filtro.getPaginacao().getSortColumn() + " " + filtro.getPaginacao().getOrdenacao());
+//	 	sql.append(" order by codigoProduto, numeroEdicao");
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
@@ -127,7 +130,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		
 		List<ProdutoDistribuicaoVO> result = query.list();
 		
-		Collections.sort(result);
+//		Collections.sort(result);
 		
 		return result;
 	}
