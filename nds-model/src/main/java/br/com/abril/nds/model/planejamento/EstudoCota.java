@@ -22,6 +22,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -52,6 +54,7 @@ public class EstudoCota implements Serializable {
     private BigInteger qtdeEfetiva;
 
     @ManyToOne(optional = false)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "ESTUDO_ID")
     private Estudo estudo;
 
@@ -370,11 +373,6 @@ public class EstudoCota implements Serializable {
 			if (other.getEstudo() != null)
 				return false;
 		} else if (!this.getEstudo().equals(other.getEstudo()))
-			return false;
-		if (this.getMovimentosEstoqueCota() == null) {
-			if (other.getMovimentosEstoqueCota() != null)
-				return false;
-		} else if (!this.getMovimentosEstoqueCota().equals(other.getMovimentosEstoqueCota()))
 			return false;
 		return true;
 	}
