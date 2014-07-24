@@ -274,8 +274,6 @@ public class Estudo implements Serializable  {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getLancamentos() == null) ? 0 : this.getLancamentos().hashCode());
-		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
 		return result;
 	}
 
@@ -297,16 +295,6 @@ public class Estudo implements Serializable  {
 			if (other.getEstudoCotas() != null)
 				return false;
 		} else if (!this.getEstudoCotas().equals(other.getEstudoCotas()))
-			return false;
-		if (this.getLancamentos() == null) {
-			if (other.getLancamentos() != null)
-				return false;
-		} else if (!this.getLancamentos().equals(other.getLancamentos()))
-			return false;
-		if (this.getProdutoEdicao() == null) {
-			if (other.getProdutoEdicao() != null)
-				return false;
-		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
 			return false;
 		return true;
 	}
