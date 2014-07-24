@@ -90,8 +90,6 @@ var impressaoBoletosController = $.extend(true, {
 			}],
 			usepager : true,
 			useRp : true,
-			sortname : "numeroCota",
-			sortorder : "asc",
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
@@ -172,10 +170,24 @@ var impressaoBoletosController = $.extend(true, {
 		
 		$("#divImpressoes").hide();
 		
-		$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
-			url: contextPath + "/financeiro/impressaoBoletos/consultar",
-			params: impressaoBoletosController.formData(),newp: 1
-		});
+		if( $("#numCota", impressaoBoletosController.workspace).val().length ) {
+			$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
+				url: contextPath + "/financeiro/impressaoBoletos/consultar",
+				params: impressaoBoletosController.formData(),
+				newp: 1,
+				sortorder: "desc",
+				sortname: "dataVencimento"
+			});
+		} else {
+			$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
+				url: contextPath + "/financeiro/impressaoBoletos/consultar",
+				params: impressaoBoletosController.formData(),
+				newp: 1,
+				sortname : "numeroCota",
+				sortorder : "asc",
+			});
+		}
+		
 		
 		$("#impressosGrid", impressaoBoletosController.workspace).flexReload();
 
