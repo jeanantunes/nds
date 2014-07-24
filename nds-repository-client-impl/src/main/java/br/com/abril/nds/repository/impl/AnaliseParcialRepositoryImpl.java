@@ -467,7 +467,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setLong(0, reparteSubtraido);
         query.setLong(1, reparteSubtraido);
         query.setLong(2, estudoId);
-        query.setInteger(3, numeroCota);
+        query.setLong(3, numeroCota);
         query.executeUpdate();
     }
 
@@ -486,7 +486,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setString(0, classificacaoCota);
         query.setLong(1, estudoId);
-        query.setInteger(2, numeroCota);
+        query.setLong(2, numeroCota);
         query.executeUpdate();
     }
 
@@ -652,7 +652,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         Query query = getSession().createSQLQuery(sql.toString())
-                .addScalar("numeroCota", StandardBasicTypes.LONG)
+                .addScalar("numeroCota", StandardBasicTypes.INTEGER)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("motivo", StandardBasicTypes.STRING);
