@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -22,7 +23,7 @@ public abstract class Aprovacao implements Serializable {
 	 */
 	private static final long serialVersionUID = -225924432753902717L;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "APROVADOR_ID")
 	private Usuario aprovador;
 	

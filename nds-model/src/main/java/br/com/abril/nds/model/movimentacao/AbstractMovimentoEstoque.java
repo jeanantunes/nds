@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -24,6 +27,7 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 	protected BigInteger qtde;
 	
 	@ManyToOne(optional = false)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	protected ProdutoEdicao produtoEdicao;
 	

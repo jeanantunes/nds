@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
@@ -39,6 +40,8 @@ public class FiltroNFeDTO implements Serializable {
 	private Long idRota;  
 	
 	private Long idCota;
+	
+	private Set<Long> idsCota;
 	
 	private Long idFornecedor;
 	
@@ -145,6 +148,14 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
+	}
+
+	public Set<Long> getIdsCota() {
+		return idsCota;
+	}
+
+	public void setIdsCota(Set<Long> idsCota) {
+		this.idsCota = idsCota;
 	}
 
 	public Long getIdFornecedor() {

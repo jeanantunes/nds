@@ -8,6 +8,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -15,6 +16,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -37,20 +41,21 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(optional = false)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
 	private EstoqueProdutoCota estoqueProdutoCota;
 	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
-	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
+	private MovimentoEstoqueCota movimentoEstoqueCotaFuro;
 	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ESTORNO_ID")
-	MovimentoEstoqueCota movimentoEstoqueCotaEstorno;
+	private MovimentoEstoqueCota movimentoEstoqueCotaEstorno;
 	
 	// Esta data é utilizada para a data do lançamento do distribuidor aparecer corretamente na consulta consignado cota
 	// Implementado em conjunto com Cesar Pop Punk
@@ -62,11 +67,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
 	 */
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
 	
@@ -74,11 +79,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
-	@ManyToOne(optional=true)
+	@ManyToOne(fetch=FetchType.LAZY, optional=true)
 	@JoinColumns({
 		@JoinColumn(name="NOTA_ENVIO_ITEM_NOTA_ENVIO_ID", referencedColumnName="NOTA_ENVIO_ID"),
 		@JoinColumn(name="NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA")
@@ -87,7 +92,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	@OneToOne(optional = true)
     @JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_JURAMENTADO_ID")
-    MovimentoEstoqueCota movimentoEstoqueCotaJuramentado;
+    private MovimentoEstoqueCota movimentoEstoqueCotaJuramentado;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "FORMA_COMERCIALIZACAO")

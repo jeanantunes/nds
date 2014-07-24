@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +17,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import br.com.abril.nds.model.aprovacao.Aprovacao;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -37,7 +41,7 @@ public abstract class Movimento extends Aprovacao {
 	@Column(name = "ID")
 	private Long id;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
@@ -50,6 +54,7 @@ public abstract class Movimento extends Aprovacao {
 	private Date dataCriacao;
 
 	@ManyToOne(optional = false)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "TIPO_MOVIMENTO_ID")
 	private TipoMovimento tipoMovimento;
 	
