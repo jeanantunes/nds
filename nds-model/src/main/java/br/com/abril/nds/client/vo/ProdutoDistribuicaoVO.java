@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -33,7 +34,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private String periodo;
 	
 	@Export(label="Preço RS", exhibitionOrder = 4)
-	private BigDecimal precoVenda;
+	private String precoVenda;
 
 	@Export(label="Clas.", exhibitionOrder = 5)
 	private String classificacao;
@@ -166,12 +167,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		}
 	}
 
-	public BigDecimal getPrecoVenda() {
+	public String getPrecoVenda() {
 		return precoVenda;
 	}
 
 	public void setPrecoVenda(BigDecimal precoVenda) {
-		this.precoVenda = precoVenda;
+	    this.precoVenda = CurrencyUtil.formatarValor(precoVenda);
 	}
 
 	public Integer getPctPadrao() {
