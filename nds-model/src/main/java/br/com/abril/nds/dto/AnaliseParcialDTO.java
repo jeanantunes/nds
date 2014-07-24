@@ -131,12 +131,8 @@ public class AnaliseParcialDTO implements Serializable {
 	return ultimoReparte;
     }
 
-    public void setUltimoReparte(BigDecimal ultimoReparte) {
-	if (ultimoReparte == null) {
-	    this.ultimoReparte = null;
-	} else {
-	    this.ultimoReparte = ultimoReparte.toBigInteger();
-	}
+    public void setUltimoReparte(BigInteger ultimoReparte) {
+        this.ultimoReparte = ultimoReparte;
     }
     @Export(label = "Reparte 1", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte1() {

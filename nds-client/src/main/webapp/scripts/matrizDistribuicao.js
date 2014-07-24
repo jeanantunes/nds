@@ -1479,6 +1479,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				align : 'center'
 			 }
 			],
+			sortname : "nomeProduto",
+			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

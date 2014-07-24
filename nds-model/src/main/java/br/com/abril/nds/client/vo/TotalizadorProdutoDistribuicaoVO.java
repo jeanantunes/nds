@@ -11,7 +11,7 @@ public class TotalizadorProdutoDistribuicaoVO  implements Serializable {
 
 	private Integer totalEstudosLiberados;
 	
-	private Integer totalEstudosGerados;
+	private Integer totalSemEstudo;
 	
 	private boolean matrizFinalizada;
 	
@@ -31,16 +31,17 @@ public class TotalizadorProdutoDistribuicaoVO  implements Serializable {
 	public void setTotalEstudosLiberados(Integer totalEstudosLiberados) {
 		this.totalEstudosLiberados = totalEstudosLiberados;
 	}
+	
+    public Integer getTotalSemEstudo() {
+        return totalSemEstudo;
+    }
 
-	public Integer getTotalEstudosGerados() {
-		return totalEstudosGerados;
-	}
+    
+    public void setTotalSemEstudo(Integer totalSemEstudo) {
+        this.totalSemEstudo = totalSemEstudo;
+    }
 
-	public void setTotalEstudosGerados(Integer totalEstudosGerados) {
-		this.totalEstudosGerados = totalEstudosGerados;
-	}
-
-	public boolean isMatrizFinalizada() {
+    public boolean isMatrizFinalizada() {
 		return matrizFinalizada;
 	}
 
