@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
-import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -214,7 +213,8 @@ public class FornecedorServiceImpl implements FornecedorService {
 				fornecedor = this.fornecedorRepository.buscarPorId(id);
 				
 				this.cobrancaFornecedorValidator.filter(
-					idCota, 
+					null,
+					this.cotaRepository.buscarCotaPorID(idCota), 
 					fornecedor, 
 					null
 				).validate();

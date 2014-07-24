@@ -476,7 +476,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
 		.append(" AND mec.notaFiscalEmitida = false ")
-		.append(" AND mec.qtde <> 0 ");
+		.append(" AND mec.qtde > 0 ");
 		
 		if(filtro.getNotaFiscalTipoEmissao() != null) {
 			if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
@@ -506,6 +506,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// Cota:		
 		if(filtro.getIdCota() != null) {
 			hql.append(" AND cota.id = :cotaId ");
+		} else if(filtro.getIdsCota() != null) {
+			hql.append(" AND cota.id in (:cotaIds) ");
 		}
 
 		// Intervalo de Cota:
@@ -574,6 +576,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		if(filtro.getIdCota() != null) {
 			query.setParameter("cotaId", filtro.getIdCota());
+		} else if(filtro.getIdsCota() != null) {
+			query.setParameterList("cotaIds", filtro.getIdsCota());
 		}
 
 		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {

@@ -284,7 +284,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * @return String
      */
     private String getOrdenacaoDivida(final FiltroDividaGeradaDTO filtro) {
-        
+    	
         if (FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO.equals(filtro.getColunaOrdenacao())) {
             return " ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ";
         }

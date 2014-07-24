@@ -15,6 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 
@@ -50,6 +53,7 @@ public class ChamadaEncalheCota implements Serializable {
 	private BigInteger qtdePrevista;
 	
 	@ManyToOne(optional = false)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "CHAMADA_ENCALHE_ID")
 	private ChamadaEncalhe chamadaEncalhe;
 

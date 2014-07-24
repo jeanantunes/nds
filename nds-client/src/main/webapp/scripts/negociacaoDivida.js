@@ -974,12 +974,13 @@ var negociacaoDividaController = $.extend(true, {
 			$('#divBanco', negociacaoDividaController.workspace).hide();
 
 		}else {
-			$('#gridVenctos', negociacaoDividaController.workspace).hide();
+			$('#gridVenctos', negociacaoDividaController.workspace).show();
 			$('#gridCheque', negociacaoDividaController.workspace).hide();
 			$('#divChequeDeposito', negociacaoDividaController.workspace).hide();
 			$('#divBanco', negociacaoDividaController.workspace).hide();
 
 		}
+		
 	},
 	
 	valorSelecionadoSemEncargo: 0,

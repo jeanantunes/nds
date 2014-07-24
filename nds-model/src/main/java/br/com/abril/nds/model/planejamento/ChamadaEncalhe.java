@@ -163,8 +163,6 @@ public class ChamadaEncalhe implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
-		result = prime * result + ((this.getLancamentos() == null) ? 0 : this.getLancamentos().hashCode());
 		result = prime * result + ((this.getSequencia() == null) ? 0 : this.getSequencia().hashCode());
 		return result;
 	}
@@ -182,21 +180,6 @@ public class ChamadaEncalhe implements Serializable {
 			if (other.getId() != null)
 				return false;
 		} else if (!this.getId().equals(other.getId()))
-			return false;
-		if (this.getChamadaEncalheCotas() == null) {
-			if (other.getChamadaEncalheCotas() != null)
-				return false;
-		} else if (!this.getChamadaEncalheCotas().equals(other.getChamadaEncalheCotas()))
-			return false;
-		if (this.getLancamentos() == null) {
-			if (other.getLancamentos() != null)
-				return false;
-		} else if (!this.getLancamentos().equals(other.getLancamentos()))
-			return false;
-		if (this.getProdutoEdicao() == null) {
-			if (other.getProdutoEdicao() != null)
-				return false;
-		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
 			return false;
 		if (this.getSequencia() == null) {
 			if (other.getSequencia() != null)
