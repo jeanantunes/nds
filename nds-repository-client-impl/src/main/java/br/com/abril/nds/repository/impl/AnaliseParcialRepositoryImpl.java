@@ -65,13 +65,20 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
         sql.append("       (select epc.qtde_recebida ");
         sql.append("                 from lancamento l ");
-        sql.append("                 join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
-        sql.append("                 join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
-        sql.append("                 join cota _c on _c.id = epc.cota_id ");
-        sql.append("                 join produto _p on _p.id = _ped.produto_id ");
+        sql.append("                 left join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
+        sql.append("                 left join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
+        sql.append("                 left join cota _c on _c.id = epc.cota_id ");
+        sql.append("                 left join produto _p on _p.id = _ped.produto_id ");
         sql.append("                 where _p.codigo = :codigoProduto ");
-        sql.append("                 and l.status in (:statusLanc) ");
-        sql.append("                 and _c.id = c.id ");
+        sql.append("                 and (_c.id = c.id or _c.id is null) ");
+        sql.append("                 and l.data_lcto_distribuidor < ( ");
+        sql.append("                    select _ul.data_lcto_distribuidor ");
+        sql.append("                        from lancamento _ul ");
+        sql.append("                        join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
+        sql.append("                        join produto p on p.id = pe.PRODUTO_ID ");
+        sql.append("                        where p.codigo = :codigoProduto ");
+        sql.append("                        order by _ul.data_lcto_distribuidor desc limit 1 ");
+        sql.append("                 )");
         sql.append("                order by l.data_lcto_distribuidor desc ");
         sql.append("                limit 1) ultimoReparte, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
@@ -87,12 +94,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
 
         params.put("codigoProduto", queryDTO.getCodigoProduto());
-        params.put("statusLanc", Arrays.asList(StatusLancamento.EXPEDIDO.name(),
-                StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
-                StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
-                StatusLancamento.EM_RECOLHIMENTO.name(),
-                StatusLancamento.RECOLHIDO.name(), 
-                StatusLancamento.FECHADO.name()));
         
         StringBuilder where = new StringBuilder();
         StringBuilder order = new StringBuilder();
