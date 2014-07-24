@@ -235,9 +235,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             }
             
             this.cobrancaFornecedorValidator.filter(
-            	estudoCota.getIdCota(), 
+            	descontos,
+            	this.cotaRepository.buscarCotaPorID(estudoCota.getIdCota()), 
             	produtoEdicao.getProduto().getFornecedor(), 
-            	produtoEdicao.getProduto().getCodigo()
+            	produtoEdicao.getProduto()
             ).validate();
 
             tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
