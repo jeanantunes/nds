@@ -2,6 +2,7 @@ package br.com.abril.nds.service.validation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,10 +19,13 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 import br.com.abril.nds.repository.DescontoDistribuidorRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 
 @Component
@@ -40,23 +44,28 @@ public class CobrancaFornecedorValidator {
     private DescontoProdutoRepository descontoProdutoRepository;
     
     @Autowired
+    private DescontoService descontoService;  
+    
+    @Autowired
     private CotaRepository cotaRepository;
     
-    public Validate filter(Long idCota, Fornecedor fornecedor, String codigoProduto) {
+    public Validate filter(Map<String, DescontoDTO> descontos, Cota cota, Fornecedor fornecedor, Produto produto) {
 
-    	return new Validate(idCota, fornecedor, codigoProduto);
+    	return new Validate(descontos, cota, fornecedor, produto);
     }
 
     public class Validate {
     	
-    	private Long idCota;
+    	private Cota cota;
     	private Fornecedor fornecedor;
-    	private String codigoProduto;
+    	private Produto produto;
+    	private Map<String, DescontoDTO> descontos;
 
-    	public Validate(Long idCota, Fornecedor fornecedor, String codigoProduto) {
-    		this.idCota = idCota;
+    	public Validate(Map<String, DescontoDTO> descontos, Cota cota, Fornecedor fornecedor, Produto produto) {
+    		this.descontos = descontos;
+    		this.cota = cota;
     		this.fornecedor = fornecedor;
-    		this.codigoProduto = codigoProduto;
+    		this.produto = produto;
     	}
     	
     	private boolean hasDescontoGeral() {
@@ -77,14 +86,14 @@ public class CobrancaFornecedorValidator {
     	
     	private boolean hasDescontoPorCota() {
     		
-    		if (this.idCota == null) {
+    		if (this.cota == null) {
 
         		return false;	
     		}
     		
     		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
     		
-    		filtro.setIdCota(this.idCota);
+    		filtro.setIdCota(this.cota.getId());
     		
     		List<TipoDescontoCotaDTO> desconto = CobrancaFornecedorValidator.this.descontoCotaRepository.obterDescontoCota(filtro);
     		
@@ -93,14 +102,14 @@ public class CobrancaFornecedorValidator {
     	
     	private boolean hasDescontoPorProduto() {
 
-    		if (this.codigoProduto == null) {
+    		if (this.produto == null) {
 
         		return false;	
     		}
     		
     		FiltroTipoDescontoProdutoDTO filtro = new FiltroTipoDescontoProdutoDTO();
     		
-    		filtro.setCodigoProduto(this.codigoProduto);
+    		filtro.setCodigoProduto(this.produto.getCodigo());
     		
     		List<TipoDescontoProdutoDTO> desconto = CobrancaFornecedorValidator.this.descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
     		
@@ -111,7 +120,7 @@ public class CobrancaFornecedorValidator {
         public void validate() {
 
         	List<FormaCobrancaDTO> formasCobrancaCota = 
-        			CobrancaFornecedorValidator.this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(this.idCota);
+        			CobrancaFornecedorValidator.this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(this.cota.getId());
 
         	boolean fornecedorValido = false;
 
@@ -121,25 +130,42 @@ public class CobrancaFornecedorValidator {
 
            			fornecedorValido = true;
            			
-           			if (this.codigoProduto == null) {
+           			if (this.produto == null) {
            				break;
            			}
+           			
+           			if (this.descontos != null) {
+	           			try {
+							if (CobrancaFornecedorValidator.this.descontoService.obterDescontoPor(
+								this.descontos, this.cota.getId(), this.fornecedor.getId(), 
+									this.produto.getId(), null) != null) {
+								
+								break;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+           			} else {
+        			
+           				if (this.hasDescontoGeral()) {
+           					break;
+           				} else if (this.hasDescontoPorCota()) {
+           					break;
+           				} else if (this.hasDescontoPorProduto()) {
+           					break;
+           				}
+           			}
 
-        			if (this.hasDescontoGeral()) {
-        				break;
-        			} else if (this.hasDescontoPorCota()) {
-            			break;
-        			} else if (this.hasDescontoPorProduto()) {
-        				break;
-        			}
-
-        			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Desconto não encontrado para o produto [Cod.: %s]", this.codigoProduto));
+        			throw new ValidacaoException(
+        				TipoMensagem.WARNING, 
+        					String.format("Desconto não encontrado para o produto [Cod.: %s]", 
+        						this.produto.getCodigo()));
         		}
         	}
 
         	if (!fornecedorValido) {
 
-        		Cota cota = CobrancaFornecedorValidator.this.cotaRepository.buscarPorId(this.idCota);
+        		Cota cota = CobrancaFornecedorValidator.this.cotaRepository.buscarPorId(this.cota.getId());
 
         		throw new ValidacaoException(TipoMensagem.WARNING, 
         				String.format("Não existem formas de cobrança cadastradas para o fornecedor %s na cota %s", 
