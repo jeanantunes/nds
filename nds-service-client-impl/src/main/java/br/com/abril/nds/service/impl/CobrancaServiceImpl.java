@@ -151,7 +151,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			return BigDecimal.ZERO;
 		}
 		
-		dataVencimento = this.calendarioService.obterProximaDataDiaUtil(dataVencimento);
+		dataCalculoJuros = this.calendarioService.obterProximaDataDiaUtil(dataCalculoJuros);
 		
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 

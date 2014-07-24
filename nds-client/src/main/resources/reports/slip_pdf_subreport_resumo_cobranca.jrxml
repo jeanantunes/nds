@@ -52,18 +52,18 @@
 		</band>
 	</title>
 	<detail>
-		<band height="12" splitType="Stretch">
+		<band height="9" splitType="Stretch">
 			<textField>
-				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="0" y="0" width="208" height="12" backcolor="#F0F0F0"/>
+				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="0" y="0" width="208" height="9" backcolor="#F0F0F0"/>
 				<textElement>
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{observacoes} == null ? "" : $F{observacoes})]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="208" y="0" width="288" height="12" backcolor="#F0F0F0"/>
+				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="208" y="0" width="288" height="9" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valor}.setScale(2,java.math.RoundingMode.HALF_UP)]]></textFieldExpression>
 			</textField>
