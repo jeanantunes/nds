@@ -655,7 +655,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         Query query = getSession().createSQLQuery(sql.toString())
-                .addScalar("numeroCota", StandardBasicTypes.LONG)
+                .addScalar("numeroCota", StandardBasicTypes.INTEGER)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("motivo", StandardBasicTypes.STRING);

@@ -1,10 +1,7 @@
 package br.com.abril.nds.dto;
 
-import java.util.Date;
-
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Delimiter;
 
 @Delimiter("|")

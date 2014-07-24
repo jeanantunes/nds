@@ -830,7 +830,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 
                 produtoSlip.setQtdeTotalProdutos(String.valueOf(qtdeTotalProdutosDia.intValue()));
                 
-                produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia));
+                produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia.setScale(2,java.math.RoundingMode.HALF_UP)));
                 
                 qtdeTotalProdutosDia = BigInteger.ZERO;
                 valorTotalEncalheDia = BigDecimal.ZERO;
@@ -999,8 +999,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         slipDTO.setDescricaoRota(descricaoRota);
         slipDTO.setTotalProdutoDia(qtdeTotalProdutos);
         slipDTO.setTotalProdutos(qtdeTotalProdutos);
-        slipDTO.setValorEncalheDia(valorTotalEncalhe);
-        slipDTO.setValorTotalEncalhe(valorTotalEncalhe);
+        slipDTO.setValorEncalheDia(valorTotalEncalhe.setScale(2,java.math.RoundingMode.HALF_UP));
+        slipDTO.setValorTotalEncalhe(valorTotalEncalhe.setScale(2,java.math.RoundingMode.HALF_UP));
         
         slipDTO.setValorTotalDesconto(valorTotalDesconto);
         slipDTO.setValorTotalSemDesconto(valorTotalSemDesconto);
@@ -1030,7 +1030,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         parametersSlip.put("DATA_CONFERENCIA", slipDTO.getDataConferencia());
         parametersSlip.put("CE_JORNALEIRO", slipDTO.getCeJornaleiro());
         parametersSlip.put("TOTAL_PRODUTOS", slipDTO.getTotalProdutos());
-        parametersSlip.put("VALOR_TOTAL_ENCA", slipDTO.getValorTotalEncalhe() );
+        parametersSlip.put("VALOR_TOTAL_ENCA", slipDTO.getValorTotalEncalhe().setScale(2,java.math.RoundingMode.HALF_UP) );
         parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slipDTO.getValorTotalPagar());
         parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", pagamentoPendente);
         parametersSlip.put("VALOR_MULTA_MORA", slipDTO.getValorTotalPagar());
