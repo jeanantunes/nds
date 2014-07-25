@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.RankingDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
+import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
@@ -201,15 +202,12 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O período deve ser especificado corretamente.");
 		}
 
-		List<RegistroRankingSegmentoDTO> lista = this.relatorioVendasRepository.obterRankingSegmento(filtro);
-		
-		// TODO Auto-generated method stub
-		return lista;
+		return this.relatorioVendasRepository.obterRankingSegmento(filtro);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public Integer obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro) {		
+	public TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro) {		
 		return this.relatorioVendasRepository.obterQuantidadeRegistrosRankingSegmento(filtro);		
 	}
 	

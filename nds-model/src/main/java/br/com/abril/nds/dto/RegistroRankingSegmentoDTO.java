@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
-import br.com.abril.nds.util.export.Footer;
-import br.com.abril.nds.util.export.FooterType;
 @Exportable
 public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements Serializable {
 
@@ -22,7 +20,6 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 	@Export(label="Nome",exhibitionOrder=3, widthPercent=40)
 	private String nomeCota;
 
-//	@Footer(label="Faturamento total", alignWithHeader="Faturamento Capa R$", type=FooterType.SUM)
 	private BigDecimal faturamentoCapa;
 	
 	@Export(label="Faturamento Capa R$",exhibitionOrder=4)
@@ -70,13 +67,13 @@ public class RegistroRankingSegmentoDTO extends RegistroCurvaABCDTO implements S
 	}
 	
 	@Override
-	@Export(label="Part. %")
+	@Export(label="Part. %", exhibitionOrder=5)
 	public String getParticipacaoFormatado() {
 		return super.getParticipacaoFormatado();
 	}
 	
 	@Override
-	@Export(label="Part. Acum. %")
+	@Export(label="Part. Acum. %", exhibitionOrder=6)
 	public String getParticipacaoAcumuladaFormatado() {
 		return super.getParticipacaoAcumuladaFormatado();
 	}
