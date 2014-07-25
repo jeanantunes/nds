@@ -198,7 +198,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
         if (queryDTO.getFaixaAte() != null) {
             where.append(" and ec.reparte <= :faixaAte ");
-            params.put("faixaA", queryDTO.getFaixaAte());
+            params.put("faixaAte", queryDTO.getFaixaAte());
         }
 
         sql.append(where);
