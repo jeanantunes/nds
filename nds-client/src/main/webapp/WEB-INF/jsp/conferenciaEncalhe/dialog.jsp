@@ -342,7 +342,10 @@
 			<table>
 				<tr>
 					<td>Usu&aacute;rio:</td>
-					<td><input type="text" id="inputUsuarioSup"/></td>
+					<td>
+						<input type="password" name="failAutoFill" style="display:none" />
+						<input type="text" id="inputUsuarioSup"/>
+					</td>
 				</tr>
 				<tr>
 					<td>Senha:</td>

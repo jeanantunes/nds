@@ -327,11 +327,17 @@
 			<table>
 				<tr>
 					<td>Usu&aacute;rio:</td>
-					<td><input type="text" id="inputUsuarioSup"/></td>
+					
+					<input type="password" name="failAutoFill" style="display:none" />
+					
+					<td>
+						<input type="text" id="inputUsuarioSup"/>
+					</td>
 				</tr>
 				<tr>
 					<td>Senha:</td>
-					<td><input type="password" id="inputSenha" onkeypress="ConferenciaEncalheCont.enterOnSupervisorModal(event)"/></td>
+					<td><input type="password" id="inputSenha" onkeypress="ConferenciaEncalheCont.enterOnSupervisorModal(event)"/>
+					</td>
 				</tr>
 			</table>
 		</div>

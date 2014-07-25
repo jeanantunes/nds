@@ -835,7 +835,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$('#inputUsuarioSup').select();
+									
+									$('#inputUsuarioSup', this.workspace).select();
+									
 								}, 1);
 								
 							},
@@ -1057,7 +1059,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$('#inputUsuarioSup').select();
+									
+									$('#inputUsuarioSup', this.workspace).select();
+									
 								}, 1);
 								
 							},
