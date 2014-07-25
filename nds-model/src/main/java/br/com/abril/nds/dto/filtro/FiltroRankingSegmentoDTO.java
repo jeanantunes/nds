@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
@@ -16,6 +17,7 @@ public class FiltroRankingSegmentoDTO {
 	private Long idTipoSegmento;
 	@Export(label="Tipo Segmento",widthPercent=50)
 	private String descricaoTipoSegmento;
+	private BigDecimal totalFaturamento;
 	private PaginacaoVO paginacao;
 	
 	public FiltroRankingSegmentoDTO() { }
@@ -57,4 +59,10 @@ public class FiltroRankingSegmentoDTO {
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
 	}
+	public BigDecimal getTotalFaturamento() {
+		return totalFaturamento;
+	}
+	public void setTotalFaturamento(BigDecimal totalFaturamento) {
+		this.totalFaturamento = totalFaturamento;
+	}	
 }

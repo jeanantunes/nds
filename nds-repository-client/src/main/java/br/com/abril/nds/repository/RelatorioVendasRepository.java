@@ -7,6 +7,7 @@ import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
+import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
@@ -47,5 +48,5 @@ public interface RelatorioVendasRepository {
 	
 	Integer obterQtdRegistrosCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 	
-	Integer obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro);	
+	TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro);	
 }

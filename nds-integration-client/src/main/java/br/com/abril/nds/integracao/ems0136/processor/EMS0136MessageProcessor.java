@@ -2,9 +2,11 @@ package br.com.abril.nds.integracao.ems0136.processor;
 
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -60,12 +62,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
 
 	private static final int PEB_MINIMA = 10;
-	
+
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_EXPEDIDO = 
-			ImmutableList.of(StatusLancamento.EXPEDIDO);  
-	
+			ImmutableList.of(StatusLancamento.EXPEDIDO);
+
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_ABERTO = 
-			ImmutableList.of(StatusLancamento.PLANEJADO,StatusLancamento.CONFIRMADO);
+			ImmutableList.of(
+				StatusLancamento.PLANEJADO,
+				StatusLancamento.CONFIRMADO
+			);
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {}
@@ -87,15 +92,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		this.tratarDatasInput(input, produtoEdicao.getProduto().getFornecedor().getId());
 
-		Set<Lancamento> lancamentosAbertos = this.tratarLancamentosAExcluir(produtoEdicao, input);
+		LancamentoHelper helper = this.tratarLancamentosExistentes(produtoEdicao, input);
 		
 		LancamentoParcial lancamentoParcial = this.tratarLancamentoParciall(input,produtoEdicao);
 		
 		PeriodoLancamentoParcial periodo = this.tratarPeriodo(lancamentoParcial, input);
 		
-		Lancamento lancamento = this.tratarLancamento(produtoEdicao, periodo, input);
+		Lancamento lancamento = this.tratarLancamento(produtoEdicao, periodo, helper, input);
 		
-		this.remove(lancamentosAbertos);
+		this.remove(helper.getLancamentosRemover());
 
 		this.merge(lancamentoParcial, periodo, lancamento, produtoEdicao);
 	}
@@ -166,44 +171,44 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * @param dataRecolhimento - Recolhimento útil, vindo do arquivo.
 	 * @return Lançamentos que serão removidos, posteriormente.
 	 */
-	private Set<Lancamento> tratarLancamentosAExcluir(ProdutoEdicao produtoEdicao, EMS0136Input input) {
+	private LancamentoHelper tratarLancamentosExistentes(ProdutoEdicao produtoEdicao, EMS0136Input input) {
 		
-		Set<Lancamento> lancamentosRemover = new HashSet<>();
+		LancamentoHelper helper = new LancamentoHelper();
 
 		LancamentoParcial lp = produtoEdicao.getLancamentoParcial();
 
 		if (lp != null && input.getNumeroPeriodo() > lp.getPeriodoFinal().getNumeroPeriodo()) {
 
-			return lancamentosRemover;
+			return helper;
 		}
-
-		Date dataRecolhimento = input.getDataRecolhimento();
 
 		Set<Lancamento> lancamentosDaEdicao = produtoEdicao.getLancamentos();
 
 		for (Lancamento lancamentoAtual : lancamentosDaEdicao) {
 
 			if (LANCAMENTO_EXPEDIDO.contains(lancamentoAtual.getStatus())) {
-				lancamentoAtual.setDataRecolhimentoPrevista(dataRecolhimento);
-				lancamentoAtual.setDataRecolhimentoDistribuidor(dataRecolhimento);
+				lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
+				lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+				helper.addLancamentoManter(lancamentoAtual);
 			} else if (LANCAMENTO_ABERTO.contains(lancamentoAtual.getStatus())) {
-				lancamentosRemover.add(lancamentoAtual);
+				helper.addLancamentosRemover(lancamentoAtual);
+			} else {
+				helper.addLancamentoManter(lancamentoAtual);
 			}
 		}
 
 		if (lp != null) {
 
-			for (Lancamento lancamentoRemover : lancamentosRemover) {
+			for (Lancamento lancamentoRemover : helper.getLancamentosRemover()) {
 				
 				lp.getPeriodos().remove(lancamentoRemover.getPeriodoLancamentoParcial());
 			}
 			
-			lancamentosDaEdicao.removeAll(lancamentosRemover);
+			lancamentosDaEdicao.removeAll(helper.getLancamentosRemover());
 		}
 
-		return lancamentosRemover;
+		return helper;
 	}
-	
 
 	/**
 	 * Obtém um lançamento parcial referente ao produto edição a ser tratado na interface.
@@ -345,11 +350,21 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 	private Lancamento tratarLancamento(
 			ProdutoEdicao produtoEdicao, 
-			PeriodoLancamentoParcial periodo, 
+			PeriodoLancamentoParcial periodo,
+			LancamentoHelper helper,
 			EMS0136Input input) {
 		
 		Date dataLancamento = input.getDataLancamento();
 		Date dataRecolhimento = input.getDataRecolhimento();
+		
+		if (helper.getLancamentosManter() != null && !helper.getLancamentosManter().isEmpty()) {
+			
+			Lancamento first = helper.getLancamentosManter().first();
+			
+			first.setPeriodoLancamentoParcial(periodo);
+			
+			return first;
+		}
 		
 		if (periodo.getPrimeiroLancamento() != null) {
 			
@@ -425,4 +440,51 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	@Override
 	public void posProcess(Object tempVar) { }
 
+	final class LancamentoHelper {
+		
+		private SortedSet<Lancamento> lancamentosRemover = null;
+		private SortedSet<Lancamento> lancamentosManter = null;
+		
+		private final Comparator<Lancamento> dataLancamentoComparator;
+
+		public LancamentoHelper() {
+			
+			this.dataLancamentoComparator = new Comparator<Lancamento>() {
+				@Override
+				public int compare(Lancamento l1, Lancamento l2) {
+					
+					if (l1 == null || l2 == null) {
+						return -1;
+					}
+					
+					return l1.getDataLancamentoDistribuidor().compareTo(l2.getDataLancamentoDistribuidor());
+				}
+			};
+
+			this.lancamentosRemover = new TreeSet<Lancamento>(this.dataLancamentoComparator);				
+			this.lancamentosManter = new TreeSet<Lancamento>(this.dataLancamentoComparator);				
+		}
+
+		public SortedSet<Lancamento> getLancamentosRemover() {
+			return lancamentosRemover;
+		}
+		public void setLancamentosRemover(SortedSet<Lancamento> lancamentosRemover) {
+			this.lancamentosRemover = lancamentosRemover;
+		}
+		public SortedSet<Lancamento> getLancamentosManter() {
+			return lancamentosManter;
+		}
+		public void setLancamentosExpedidos(SortedSet<Lancamento> lancamentosManter) {
+			this.lancamentosManter = lancamentosManter;
+		}
+		
+		public void addLancamentoManter(Lancamento lancamento) {
+			this.lancamentosManter.add(lancamento);
+		}
+		
+		public void addLancamentosRemover(Lancamento lancamento) {
+			this.lancamentosRemover.add(lancamento);
+		}		
+	}
+	
 }
