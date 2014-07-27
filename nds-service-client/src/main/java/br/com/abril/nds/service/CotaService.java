@@ -442,4 +442,6 @@ public interface CotaService {
 	List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota();
 
 	void validarTipoEntrega(Integer numeroCota, DescricaoTipoEntrega tipoEntrega);
+
+	Boolean validarNumeroCota(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota);
 }

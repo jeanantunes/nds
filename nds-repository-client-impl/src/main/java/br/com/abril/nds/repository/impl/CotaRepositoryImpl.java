@@ -90,6 +90,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamen
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.QueryUtil;
@@ -3584,5 +3585,27 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	query.setMaxResults(1);
     	
     	return (Fornecedor) query.uniqueResult();
+    }
+    
+    @Override
+    public Boolean validarNumeroCota(Integer numCota, TipoDistribuicaoCota tipoDistribuicaoCota){
+    	
+    	 final StringBuilder sql = new StringBuilder();
+         
+    	 sql.append("select count(*) ");
+         sql.append("  from cota c ");
+         sql.append(" where c.NUMERO_COTA in (:numCota)");
+         sql.append("   and c.SITUACAO_CADASTRO in (upper(:situacaoCadastroAtivo), upper(:situacaoCadastroSuspenso)) ");
+         sql.append("   and c.TIPO_DISTRIBUICAO_COTA = upper(:tipoDistribuicaoCota) ");
+         
+         final SQLQuery query = getSession().createSQLQuery(sql.toString());
+         
+         query.setParameter("numCota", numCota);
+         query.setParameter("situacaoCadastroAtivo", SituacaoCadastro.ATIVO.toString());
+         query.setParameter("situacaoCadastroSuspenso", SituacaoCadastro.SUSPENSO.toString());
+         query.setParameter("tipoDistribuicaoCota", tipoDistribuicaoCota.toString());
+    	
+    	
+    	return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
     }
 }
