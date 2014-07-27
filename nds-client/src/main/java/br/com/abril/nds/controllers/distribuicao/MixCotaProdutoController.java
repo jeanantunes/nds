@@ -41,6 +41,7 @@ import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -93,6 +94,9 @@ public class MixCotaProdutoController extends BaseController {
 	
 	@Autowired
 	RepartePdvService repartePdvService;
+	
+	@Autowired
+	TipoClassificacaoProdutoService TpClassProdService;
 
 	FiltroConsultaMixPorCotaDTO filtroMixPorCota;
 
@@ -467,23 +471,31 @@ public class MixCotaProdutoController extends BaseController {
 
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
+		// 30 item - 01'05"
+		
 		List<MixCotaDTO> mixCotaDTOInconsistente = validaMixEmLote(listMixExcel);
 		
 		//salvar lista listMixExcel 
 		List<MixCotaProdutoDTO> mixCotaProdutoDTOList = new ArrayList<MixCotaProdutoDTO>();
+		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
 			
-			String codigo = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto()).getCodigoICD();  
-			mix.setCodigoICD(codigo);
+			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
 			
-			mix.setClassificacaoProduto(mixCotaDTO.getClassificacaoProduto());
+			String codigo = prod != null ? prod.getCodigoICD() : "";  
 			
-			mix.setNumeroCota(mixCotaDTO.getNumeroCota().toString());
-			mix.setReparteMinimo(mixCotaDTO.getReparteMinimo().longValue());
-			mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
-			
-			mixCotaProdutoDTOList.add(mix);
+			if(!StringUtils.isBlank(codigo)){
+
+				MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
+
+				mix.setCodigoICD(codigo);
+				mix.setClassificacaoProduto(mixCotaDTO.getClassificacaoProduto());
+				mix.setNumeroCota(mixCotaDTO.getNumeroCota().toString());
+				mix.setReparteMinimo(mixCotaDTO.getReparteMinimo().longValue());
+				mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
+				
+				mixCotaProdutoDTOList.add(mix);
+			}
 		}
 		
 		if(!mixCotaProdutoDTOList.isEmpty()){
@@ -513,34 +525,80 @@ public class MixCotaProdutoController extends BaseController {
 	}
 
 	private List<MixCotaDTO> validaMixEmLote(List<MixCotaDTO> listMixExcel) {
+		
 		List<MixCotaDTO> listCotaInconsistente = new ArrayList<MixCotaDTO>();
+		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		List<String> descricaoList = ListUtils.getValuePathList("descricao", classificacoes);
+		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			if(StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())){
+			if(StringUtils.isBlank(mixCotaDTO.getCodigoProduto())){
 				mixCotaDTO.setError("Código de produto inválido.");
-			}else if( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0)){
-				mixCotaDTO.setError("Número de Cota Inválido.");
-				
-			}else if(( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )){
-				mixCotaDTO.setError("Reparte mínimo Inválido.");
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
 			}
-			else if( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0 
+			if( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0)){
+				mixCotaDTO.setError("Número de Cota Inválido.");
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
+			}
+			if(( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )){
+				mixCotaDTO.setError("Reparte mínimo Inválido.");
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
+			}
+			if( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0 
 					|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ){
 				mixCotaDTO.setError("Reparte Máximo Inválido.");
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
+			}
+			if(StringUtils.isNotEmpty(mixCotaDTO.getError())){
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
 			}
 			
-			if(StringUtils.isNotEmpty(mixCotaDTO.getError())){
+			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
+				mixCotaDTO.setError("Reparte Mínimo inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
 			
+			/*
+			if(StringUtils.isBlank(mixCotaDTO.getClassificacaoProduto())){
+				if(!TpClassProdService.validarClassificacao(mixCotaDTO.getClassificacaoProduto())){
+					listCotaInconsistente.add(mixCotaDTO);
+				}
+			}
+			*/
+			
+			
+			if(!descricaoList.contains(mixCotaDTO.getClassificacaoProduto())){
+				mixCotaDTO.setError("Classificação inválida.");
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+			
+			
+			if(!cotaService.validarNumeroCota(mixCotaDTO.getNumeroCota(), TipoDistribuicaoCota.ALTERNATIVO)){
+				mixCotaDTO.setError("Cota Inválida.");
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+			
+			
+			
+
 		}
+		
+			
 		listMixExcel.removeAll(listCotaInconsistente);
 		
+		/*
 		if (listMixExcel.isEmpty()) {
 			
 			return listCotaInconsistente;
-		}	
+		}
+		*/	
 		
+		/*
 		//validar se o reparteMaximo é maior que o reparteMinimo
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
@@ -548,6 +606,7 @@ public class MixCotaProdutoController extends BaseController {
 				listCotaInconsistente.add(mixCotaDTO);
 			}
 		}
+		
 		listMixExcel.removeAll(listCotaInconsistente);
 		
 		if (listMixExcel.isEmpty()) {
@@ -555,11 +614,17 @@ public class MixCotaProdutoController extends BaseController {
 			return listCotaInconsistente;
 		}	
 		
+		*/
+		
+		
+		/*
+		
 		//validar se a cota existe		
 		Integer[] cotaIdArray = new Integer[listMixExcel.size()];
 		for (int i = 0; i < listMixExcel.size(); i++) {
 			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
 		}
+		
 		List<Integer> verificarNumeroCotaExiste = cotaService.numeroCotaExiste(TipoDistribuicaoCota.ALTERNATIVO, cotaIdArray);
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
@@ -574,10 +639,15 @@ public class MixCotaProdutoController extends BaseController {
 		if (listMixExcel.isEmpty()) {
 			
 			return listCotaInconsistente;
-		}	
+		}
+		
+		//
+		 
+		 */
+		
+		/*
 		
 		// validar se o produto existe
-		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			String showMsg=null;
 			
@@ -600,7 +670,10 @@ public class MixCotaProdutoController extends BaseController {
 		if (listMixExcel.isEmpty()) {
 			
 			return listCotaInconsistente;
-		}	
+		}
+		*/	
+		
+		/*
 		
 		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
 		List<String> descricaoList = ListUtils.getValuePathList("descricao", classificacoes);
@@ -614,7 +687,7 @@ public class MixCotaProdutoController extends BaseController {
 		
 		listMixExcel.removeAll(listCotaInconsistente);
 		
-		
+		*/
 		return listCotaInconsistente;
 
 	}
@@ -681,7 +754,6 @@ public class MixCotaProdutoController extends BaseController {
 	public void pesquisarPorCodigoProduto(String codigoProduto){
 		ArrayList<Object> objects = new ArrayList<>();
 		Produto produto = null;
-		String descricaoClassificacao;
 				
 		produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
