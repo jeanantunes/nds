@@ -28,10 +28,6 @@ public class TipoSegmentoProdutoServiceImpl implements TipoSegmentoProdutoServic
 	public List<TipoSegmentoProduto> obterTipoSegmentoProdutoOrdenados(Ordenacao ordem) {
 		return tipoSegmentoProdutoRepo.obterTipoSegmentoProdutoOrdenados(ordem);
 	}
-	
-//	@Transactional
-//	@Override
-//	public TipoSegm
 
 	@Transactional(readOnly = true)
 	@Override

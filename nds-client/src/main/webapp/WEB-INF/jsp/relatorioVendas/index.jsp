@@ -261,6 +261,14 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 			<fieldset class="classFieldset" id="relatorioSegmentacao" style="display: none;">
 				<legend>Segmentação</legend>
 				<table class="segmentacaoGrid"></table>
+				<table width="950" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="432">&nbsp;</td>
+						<td width="73"><strong>Total:</strong></td>
+						<td width="205"></td>
+						<td width="240">R$ <span id="totalFaturamentoCapaSegmento"></td>
+					</tr>
+				</table>
 			</fieldset>
 			
 			<div class="linha_separa_fields">&nbsp;</div>
