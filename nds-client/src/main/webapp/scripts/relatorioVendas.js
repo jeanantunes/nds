@@ -395,7 +395,7 @@ var relatorioVendasController = $.extend(true, {
 		});
 				
 		$(".segmentacaoGrid",relatorioVendasController.workspace).flexigrid({
-			preProcess: relatorioVendasController.executarPreProcessamentoCota,
+			preProcess: relatorioVendasController.executarPreProcessamentoSegmentacao,
 			dataType : 'json',
 			colModel : [ { 
 				display : 'Ranking',
@@ -909,6 +909,25 @@ var relatorioVendasController = $.extend(true, {
 		return resultado.tableModel;
 	},
 
+	executarPreProcessamentoSegmentacao: function(result) {
+		
+		var tableModel = null;
+		var totalFaturamentoCapa = 0;
+		
+		$.each(result, function(index, item) {
+			
+			if (item[0] === 'tableModel') {
+				tableModel = item[1];
+			} else if (item[0] === 'totalFaturamentoCapa') {
+				totalFaturamentoCapa = item[1];
+			}
+		});
+		
+		$("#totalFaturamentoCapaSegmento", relatorioVendasController.workspace).html(totalFaturamentoCapa);
+		$(".grids", relatorioVendasController.workspace).show();
+		return tableModel;
+	},
+	
 	executarPreProcessamentoPopUp : function(resultado) {
 		if (resultado.mensagens) {
 			exibirMensagem(

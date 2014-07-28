@@ -168,13 +168,13 @@ public class MixCotaProdutoRepositoryImpl extends
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
-		/*if (paginacao.getQtdResultadosPorPagina() != null) {
+		if (paginacao.getQtdResultadosPorPagina() != null) {
 			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-		}*/
+		}
 
-		/*if (paginacao.getPosicaoInicial() != null) {
+		if (paginacao.getPosicaoInicial() != null) {
 			query.setFirstResult(paginacao.getPosicaoInicial());
-		}*/
+		}
 	}
 
 

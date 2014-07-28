@@ -9,6 +9,9 @@ $(function() {
 			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares2');
 			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares3');
 		});
+		$(".ui-tabs-selected").find("span[class*='ui-icon-close']").click(function() {
+			distribuicaoVendaMedia.produtoEdicaoBases=[];
+		});
 		distribuicaoVendaMedia.carregarEventos();
 	});
 

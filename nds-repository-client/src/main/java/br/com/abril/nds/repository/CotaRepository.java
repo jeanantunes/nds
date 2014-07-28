@@ -438,5 +438,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota();
 
 	Fornecedor obterFornecedorPadrao(Long idCota);
-	
+
+	Boolean validarNumeroCota(Integer numCota, TipoDistribuicaoCota tipoDistribuicaoCota);
 }

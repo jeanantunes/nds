@@ -3193,12 +3193,14 @@ public class CotaServiceImpl implements CotaService {
     }
     
     @Override
+    @Transactional
     public List<ParametroDistribuicaoEntregaCotaDTO> obterParametrosDistribuicaoEntregaCota() {
     	
     	return cotaRepository.obterParametrosDistribuicaoEntregaCota();
     }
     
     @Override
+    @Transactional
     public void validarTipoEntrega(Integer numeroCota,DescricaoTipoEntrega tipoEntrega) {
     	
     	if(tipoEntrega == null ||
@@ -3227,5 +3229,11 @@ public class CotaServiceImpl implements CotaService {
     					 "Tipo de Entrega não pode ser selecionado. A roteirização da cota está associada a um Transportador");
     		}
     	}
+    }
+    
+    @Override
+    @Transactional
+    public Boolean validarNumeroCota(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota){
+    	return cotaRepository.validarNumeroCota(numeroCota, tipoDistribuicaoCota);
     }
 }

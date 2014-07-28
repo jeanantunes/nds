@@ -698,6 +698,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             if(typeof(matrizDistribuicao)=="object"){
             		matrizDistribuicao.carregarGrid();
             }
+            
+            T.produtoEdicaoBases = [];
 
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		
@@ -707,6 +709,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	this.cancelar = function(){
 
 		$(".ui-tabs-selected").find("span[class*='ui-icon-close']").click();
+		T.produtoEdicaoBases = [];
 		selectTabTitle('Matriz Distribuição');
 	};
 	

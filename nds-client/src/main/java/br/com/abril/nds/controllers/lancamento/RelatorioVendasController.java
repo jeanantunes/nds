@@ -7,7 +7,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,6 +29,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
+import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
@@ -493,28 +496,39 @@ public class RelatorioVendasController extends BaseController {
 		
 		filtro.setDescricaoTipoSegmento(descricaoSegmento);
 		
-		Integer count = this.relatorioVendasService.obterQuantidadeRegistrosRankingSegmento(filtro);
+		TotalizadorRankingSegmentoDTO totalizador = this.relatorioVendasService.obterQuantidadeRegistrosRankingSegmento(filtro);
+		
+		Integer count = totalizador.getQuantidadeRegistros();
 		
 		if (count == 0) {			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		filtro.setTotalFaturamento(totalizador.getTotalFaturamentoCapa());
 		
 		this.session.setAttribute(FILTRO_PESQUISA_RANKING_SEGMENTO, filtro);
 		
 		TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> tableModel = 
 				this.obterTableModelRankingSegmento(filtro, count);
 		
-		this.result.use(Results.json()).from(tableModel).recursive().serialize();
+		Map<String, Object> retorno = new HashMap<String, Object>();
+		
+		retorno.put("tableModel", tableModel);
+		retorno.put("totalFaturamentoCapa", totalizador.getTotalFaturamentoCapaFormatado());
+		
+		this.result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 	}
 	
 	private TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> obterTableModelRankingSegmento(FiltroRankingSegmentoDTO filtro, int rows) {
-		
+
 		TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> tableModel = 
 				new TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>>();
 		
+		List<RegistroRankingSegmentoDTO> lista = this.relatorioVendasService.obterRankingSegmento(filtro);
+
 		tableModel.setTotal(rows);
 		tableModel.setPage(filtro.getPaginacao() == null ? 1 : filtro.getPaginacao().getPaginaAtual());
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(this.relatorioVendasService.obterRankingSegmento(filtro)));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(PaginacaoUtil.paginarEmMemoria(lista, filtro.getPaginacao())));
 
 		return tableModel;
 	}

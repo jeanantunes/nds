@@ -1534,10 +1534,11 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	autenticarSupervisor : function(index){
-		var paramUsuario = [
-			{name:"usuario", value:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val()},
-			{name:"senha",value:$("#inputSenha", ConferenciaEncalhe.workspace).val()}
-		];
+		
+		var paramUsuario = {
+				usuario:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val(),
+				senha:$("#inputSenha", ConferenciaEncalhe.workspace).val()
+		};
 		
 		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
 			

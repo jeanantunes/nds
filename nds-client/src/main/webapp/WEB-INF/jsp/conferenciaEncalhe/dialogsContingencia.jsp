@@ -316,6 +316,7 @@
 </form>
 
 <form id="form-autenticar-supervisor">
+<<<<<<< HEAD
 	<div id="dialog-autenticar-supervisor" title="Permiss&atilde;o de Supervisor Necess&aacute;ria" style="display:none">
 		<fieldset style="width: 360px;">
 			<legend id="msgSupervisor"></legend>
@@ -333,4 +334,29 @@
 			</div>
 		</fieldset>
 	</div>
+=======
+<div id="dialog-autenticar-supervisor" title="Permiss&atilde;o de Supervisor Necess&aacute;ria" style="display:none">
+	<fieldset style="width: 360px;">
+		<legend id="msgSupervisor"></legend>
+		<div align="center">
+			<table>
+				<tr>
+					<td>Usu&aacute;rio:</td>
+					
+					<input type="password" name="failAutoFill" style="display:none" />
+					
+					<td>
+						<input type="text" id="inputUsuarioSup"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Senha:</td>
+					<td><input type="password" id="inputSenha" onkeypress="ConferenciaEncalheCont.enterOnSupervisorModal(event)"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</fieldset>
+</div>
+>>>>>>> DGBti/master
 </form>

@@ -20,7 +20,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
@@ -157,9 +156,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private ConferenciaEncalheAsyncComponent conferenciaEncalheAsyncComponent;  
 	
 	@Autowired
-	private MovimentoEstoqueService movimentoEstoqueService;
-	
-	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
@@ -194,9 +190,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
     private NFeService nFeService;
-
-	@Autowired
-	private SchedulerFactoryBean schedulerFactoryBean;
 	
 	@Autowired
 	private BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent;
@@ -396,7 +389,9 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	public void iniciarConferenciaEncalhe(final Integer numeroCota){
-		
+
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
+
 		limparDadosSessao();
 		
 		final Cota cota = this.conferenciaEncalheService.validarCotaParaInicioConferenciaEncalhe(numeroCota);
@@ -404,8 +399,6 @@ public class ConferenciaEncalheController extends BaseController {
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
 	        throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 	    }
-		
-		bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(numeroCota, this.session);
 		
 		carregarMapaDatasEncalheConferiveis(numeroCota);
 		
@@ -473,7 +466,29 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
+<<<<<<< HEAD
      * Obtém no banco de dados as informações da conferencia de encalhe da cota em questão e setta em session.
+=======
+	 * Verifica se há encalhe informado em algum item da lista de conferência
+	 * 
+	 * @param itensConferencia
+	 * @return boolean
+	 */
+	private boolean isEncalheInformado(Set<ConferenciaEncalheDTO> itensConferencia){
+		
+		for (ConferenciaEncalheDTO item : itensConferencia){
+			
+			if (item.getQtdInformada().compareTo(BigInteger.ZERO) > 0){
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+>>>>>>> DGBti/master
      * Obtém no banco de dados as informações da conferencia de encalhe da cota
      * em questão e setta em session.
      * 
@@ -487,6 +502,10 @@ public class ConferenciaEncalheController extends BaseController {
 		this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
+		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
+	        	
+	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
+		}	
 	}
 	
 	@Post
@@ -737,7 +756,6 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		return null;
-		
 	}
 
 	/**
@@ -941,7 +959,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaAlterado();
 		
-		this.carregarListaConferencia(null, false, false);
+		this.carregarListaConferencia(null, false, false);		
 	}
 	
 	private void desautorizarVendaNegativa() {
@@ -1307,7 +1325,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularValoresMonetarios(dados, false);
 		
 		this.calcularTotais(dados);
-		
+
 		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
 	}
 	
