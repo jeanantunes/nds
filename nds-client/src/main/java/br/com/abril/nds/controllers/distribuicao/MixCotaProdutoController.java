@@ -471,8 +471,6 @@ public class MixCotaProdutoController extends BaseController {
 
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
-		// 30 item - 01'05"
-		
 		List<MixCotaDTO> mixCotaDTOInconsistente = validaMixEmLote(listMixExcel);
 		
 		//salvar lista listMixExcel 
@@ -562,132 +560,18 @@ public class MixCotaProdutoController extends BaseController {
 				mixCotaDTO.setError("Reparte Mínimo inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
-			
-			/*
-			if(StringUtils.isBlank(mixCotaDTO.getClassificacaoProduto())){
-				if(!TpClassProdService.validarClassificacao(mixCotaDTO.getClassificacaoProduto())){
-					listCotaInconsistente.add(mixCotaDTO);
-				}
-			}
-			*/
-			
-			
 			if(!descricaoList.contains(mixCotaDTO.getClassificacaoProduto())){
 				mixCotaDTO.setError("Classificação inválida.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
-			
-			
 			if(!cotaService.validarNumeroCota(mixCotaDTO.getNumeroCota(), TipoDistribuicaoCota.ALTERNATIVO)){
 				mixCotaDTO.setError("Cota Inválida.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
-			
-			
-			
-
-		}
-		
-			
-		listMixExcel.removeAll(listCotaInconsistente);
-		
-		/*
-		if (listMixExcel.isEmpty()) {
-			
-			return listCotaInconsistente;
-		}
-		*/	
-		
-		/*
-		//validar se o reparteMaximo é maior que o reparteMinimo
-		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
-				mixCotaDTO.setError("Reparte Mínimo inválido.");
-				listCotaInconsistente.add(mixCotaDTO);
-			}
 		}
 		
 		listMixExcel.removeAll(listCotaInconsistente);
 		
-		if (listMixExcel.isEmpty()) {
-			
-			return listCotaInconsistente;
-		}	
-		
-		*/
-		
-		
-		/*
-		
-		//validar se a cota existe		
-		Integer[] cotaIdArray = new Integer[listMixExcel.size()];
-		for (int i = 0; i < listMixExcel.size(); i++) {
-			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
-		}
-		
-		List<Integer> verificarNumeroCotaExiste = cotaService.numeroCotaExiste(TipoDistribuicaoCota.ALTERNATIVO, cotaIdArray);
-		
-		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			if(!verificarNumeroCotaExiste.contains(mixCotaDTO.getNumeroCota())){
-				mixCotaDTO.setError("Cota Inválida.");
-				listCotaInconsistente.add(mixCotaDTO);
-			}
-		}
-		
-		listMixExcel.removeAll(listCotaInconsistente);
-
-		if (listMixExcel.isEmpty()) {
-			
-			return listCotaInconsistente;
-		}
-		
-		//
-		 
-		 */
-		
-		/*
-		
-		// validar se o produto existe
-		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			String showMsg=null;
-			
-			try {
-				Produto p = this.produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
-				showMsg = (p==null)?"Produto não encontrado.":null;
-			} catch (Exception e) {
-				showMsg = e.getMessage();
-			}
-			finally{
-				if(showMsg!=null){
-					mixCotaDTO.setError(showMsg);
-					listCotaInconsistente.add(mixCotaDTO);
-				}
-			}
-		}
-		
-		listMixExcel.removeAll(listCotaInconsistente);
-
-		if (listMixExcel.isEmpty()) {
-			
-			return listCotaInconsistente;
-		}
-		*/	
-		
-		/*
-		
-		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
-		List<String> descricaoList = ListUtils.getValuePathList("descricao", classificacoes);
-		
-		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			if(!descricaoList.contains(mixCotaDTO.getClassificacaoProduto())){
-				mixCotaDTO.setError("Classificação inválida.");
-				listCotaInconsistente.add(mixCotaDTO);
-			}
-		}
-		
-		listMixExcel.removeAll(listCotaInconsistente);
-		
-		*/
 		return listCotaInconsistente;
 
 	}
