@@ -13,6 +13,17 @@ var distribuicaoManual = $.extend(true, {
 	isSolicitarSenhaReparte : true,
 	isSolicitarSenhaCotaSuspensa : true,
 	
+	focusRight : function focusRight(input){
+		
+	    var position = $(input).val().length;
+	    
+	    setTimeout(function(){
+	    	
+	        $(input).focus().setCursorPosition(position);
+	        
+	    },1);
+	},
+	
 	obterMatrizSelecionada : function obterMatrizSelecionada(){
 		var selecionado = {};
 		
@@ -207,27 +218,44 @@ var distribuicaoManual = $.extend(true, {
 	},
 	
 	construirLinhaVazia : function() {
+		
 		if (!distribuicaoManual.existeLinhaVazia()) {
+			
 			var linhaVazia = '';
+			
 			if (!distribuicaoManual.workspace.find('tbody')[0]) {
+				
 				linhaVazia += '<tbody>';
 			}
+			
 			linhaVazia += '<tr id="row'+ (distribuicaoManual.rowCount + 1) +'"><td align="left" abbr="numeroCota"><div style="text-align: left; width: 90px;">';
 			linhaVazia += distribuicaoManual.inputNumeroCota.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '');
+			
 			linhaVazia += '</div></td><td align="left" abbr="nomeCota"><div style="text-align: left; width: 135px;">';
 			linhaVazia += distribuicaoManual.inputNomeCota.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '');
+			
 			linhaVazia += '</div></td><td align="center" abbr="reparte"><div style="text-align: center; width: 65px;">';
 			linhaVazia += distribuicaoManual.inputReparte.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '0');
+			
 			linhaVazia += '</div></td><td align="center" abbr="percEstoque"><div style="text-align: center; width: 80px;">';
 			linhaVazia += distribuicaoManual.inputPercEstoque.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '0');
+			
 			linhaVazia += '</div></td></tr>';
+			
 			if (!distribuicaoManual.workspace.find('tbody')[0]) {
+				
 				linhaVazia += '</tbody>';
+				
 				distribuicaoManual.workspace.append(linhaVazia);
 			} else {
+				
 				distribuicaoManual.workspace.find('tbody').append(linhaVazia);
 			}
+			
 			this.configAutoComplete('#nomeCotaGrid'+ distribuicaoManual.rowCount, distribuicaoManual.rowCount);
+			
+			distribuicaoManual.focusRight("#reparteGrid"+distribuicaoManual.rowCount);
+			
 			distribuicaoManual.rowCount++;
 		}
 	},
