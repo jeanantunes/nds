@@ -813,7 +813,6 @@ function insertTelaAnalise(divToHide, divToShow, estudo){
 	
 }
 
-
 //simply visual, let's you know when the correct iframe is selected
 /*$(window).on("focus", function(e) {
  $("html, body").css({ background: "#FFF", color: "#000" })
