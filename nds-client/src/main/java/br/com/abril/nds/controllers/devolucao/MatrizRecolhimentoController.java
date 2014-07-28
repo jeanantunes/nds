@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -118,6 +119,14 @@ public class MatrizRecolhimentoController extends BaseController {
     private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
     
     private static final String ATRIBUTO_SESSAO_PRODUTOS_RECOLHIMENTO = "produtosRecolhimento";
+
+	private static final String SORT_NAME_CODIGO_PRODUTO = "codigoProduto";
+
+	private static final String SORT_NAME_NOME_PRODUTO = "nomeProduto";
+	
+	private static final String SORT_NAME_NUMERO_EDICAO = "numeroEdicao";
+	
+	
     
     @Get
     @Path("/")
@@ -993,8 +1002,16 @@ public class MatrizRecolhimentoController extends BaseController {
         
         int totalRegistros = listaProdutoRecolhimentoVO.size();
         
-        listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
-                sortname);
+        if(this.isSortNamePorCodigoOuNomeProduto(sortname)){
+        
+            listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
+                 sortname,SORT_NAME_NUMERO_EDICAO);
+        }
+        else{
+
+            listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
+            		sortname);            
+        }
         
         TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>> tableModel = new TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>>();
         
@@ -1018,6 +1035,11 @@ public class MatrizRecolhimentoController extends BaseController {
         tableModel.setRows(listaCellModel);
         
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
+    
+    private boolean isSortNamePorCodigoOuNomeProduto(String sortName){
+    	
+    	return (SORT_NAME_CODIGO_PRODUTO.equals(sortName)|| SORT_NAME_NOME_PRODUTO.equals(sortName));
     }
     
     private List<ProdutoRecolhimentoVO> obterListaProdutoRecolhimentoVO(
