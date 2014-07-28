@@ -21,6 +21,8 @@ var distribuicaoManual = $.extend(true, {
 	    	
 	        $(input).focus().setCursorPosition(position);
 	        
+	        $(input).select();
+	        
 	    },1);
 	},
 	
