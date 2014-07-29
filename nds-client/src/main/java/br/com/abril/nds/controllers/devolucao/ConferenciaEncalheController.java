@@ -253,8 +253,17 @@ public class ConferenciaEncalheController extends BaseController {
 	public void obterBoxLogado(){
 		
         Long idBoxlogado = (Long) this.session.getAttribute(ID_BOX_LOGADO_SESSION);
+        
+        if(idBoxlogado != null) {
 
-		this.result.use(Results.json()).from(idBoxlogado).serialize();
+    		this.result.use(Results.json()).from(idBoxlogado).serialize();
+
+        } else {
+    		
+        	this.result.use(Results.json()).from("").serialize();
+        	
+        }
+        
 	}
 	
 	@Post
