@@ -116,11 +116,11 @@ var histogramaPosEstudoController = $.extend(true, {
 					onSuccess : histogramaPosEstudoController.popularFieldsetResumoEstudo,
 					preProcess : function(response){
 						var rowConsolidada = $(response.rows).last()[0];
-						rowConsolidada.cell.faixaReparte = "Total:";
-
+						
 						histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel = response;
 
 						$.each( response.rows, function( key, row ) {
+
 							histogramaPosEstudoController.formatarColunasGrid(row.cell);
 
 							if (rowConsolidada.id !== row.id) {
@@ -141,7 +141,7 @@ var histogramaPosEstudoController = $.extend(true, {
 								}
 							}
 						});
-
+						
 						histogramaPosEstudoController.analiseGridRowConsolidada = rowConsolidada;
 
 						return response;
