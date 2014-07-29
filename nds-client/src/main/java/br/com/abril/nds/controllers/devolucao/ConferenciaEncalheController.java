@@ -253,8 +253,17 @@ public class ConferenciaEncalheController extends BaseController {
 	public void obterBoxLogado(){
 		
         Long idBoxlogado = (Long) this.session.getAttribute(ID_BOX_LOGADO_SESSION);
+        
+        if(idBoxlogado != null) {
 
-		this.result.use(Results.json()).from(idBoxlogado).serialize();
+    		this.result.use(Results.json()).from(idBoxlogado).serialize();
+
+        } else {
+    		
+        	this.result.use(Results.json()).from("").serialize();
+        	
+        }
+        
 	}
 	
 	@Post
@@ -514,6 +523,25 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
+	 * Verifica se há encalhe informado em algum item da lista de conferência
+	 * 
+	 * @param itensConferencia
+	 * @return boolean
+	 */
+	private boolean isEncalheInformado(Set<ConferenciaEncalheDTO> itensConferencia){
+		
+		for (ConferenciaEncalheDTO item : itensConferencia){
+			
+			if (item.getQtdInformada().compareTo(BigInteger.ZERO) > 0){
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
      * Obtém no banco de dados as informações da conferencia de encalhe da cota
      * em questão e setta em session.
      * 
@@ -528,7 +556,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
-		if(infoConfereciaEncalheCota.getListaConferenciaEncalhe().size() > 0){
+		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		}	

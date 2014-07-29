@@ -194,7 +194,7 @@ public class AnaliseParcialController extends BaseController {
         filtroQueryDTO.setEstudoId(id);
         filtroQueryDTO.setFaixaDe(faixaDe);
         filtroQueryDTO.setFaixaAte(faixaAte);
-        filtroQueryDTO.setModoAnalise(session.getAttribute("modoAnalise").toString());
+        filtroQueryDTO.setModoAnalise(session.getAttribute("modoAnalise") != null ? session.getAttribute("modoAnalise").toString() : null);
         filtroQueryDTO.setCodigoProduto(codigoProduto);
         filtroQueryDTO.setNumeroEdicao(numeroEdicao);
         filtroQueryDTO.setNumeroCotaStr(numeroCotaStr);
