@@ -9,4 +9,6 @@ public interface TipoClassificacaoProdutoRepository extends Repository<TipoClass
 	public List<TipoClassificacaoProduto> obterTodos() ;
 
     public TipoClassificacaoProduto obterPorClassificacao(String classificacaoProduto);
+    
+    public Boolean validarClassificacao(String classificacaoProduto);
 }

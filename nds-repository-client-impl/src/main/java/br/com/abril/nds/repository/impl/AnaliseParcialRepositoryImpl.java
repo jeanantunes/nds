@@ -705,7 +705,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo_gerado ");
-        sql.append("   set sobra = sobra - (qtde_reparte - ?), ");
+        sql.append("   set sobra = coalesce(sobra, 0) - (qtde_reparte - ?), ");
         sql.append("       qtde_reparte = ? ");
         sql.append(" where id = ? ");
 
