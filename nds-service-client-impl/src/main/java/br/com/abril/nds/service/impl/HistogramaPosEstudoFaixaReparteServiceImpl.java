@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,10 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 	@Transactional(readOnly = true)
 	@Override
 	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId, List<Long> listaIdEdicaoBase) {
-		return histogramaPosEstudoRepository.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId, listaIdEdicaoBase);
+		
+		Integer[] faixa = {faixaDe, faixaAte};
+
+		return histogramaPosEstudoRepository.obterHistogramaPosEstudo(estudoId, listaIdEdicaoBase, faixa);
 	}
 	
 	@Transactional
@@ -35,19 +37,33 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 			                                                                             Integer estudoId, 
 			                                                                             List<Long> listaIdEdicaoBase) {
 
-		List<HistogramaPosEstudoAnaliseFaixaReparteDTO> listaHistoricoPosEstudo = new ArrayList<HistogramaPosEstudoAnaliseFaixaReparteDTO>();
+		List<HistogramaPosEstudoAnaliseFaixaReparteDTO> listaHistoricoPosEstudo = 
+				 this.histogramaPosEstudoRepository.obterHistogramaPosEstudo(estudoId, listaIdEdicaoBase, faixas);
 		
-		for(Integer[] fx : faixas){
+		HistogramaPosEstudoAnaliseFaixaReparteDTO consolidado = new HistogramaPosEstudoAnaliseFaixaReparteDTO("Total");
+
+		faixasIterator: for (int i = 0; i < faixas.length; i++) {
 			
-			HistogramaPosEstudoAnaliseFaixaReparteDTO historicoPosEstudo = this.histogramaPosEstudoRepository.obterHistogramaPosEstudo(fx[0], 
-					                                                                                                                   fx[1], 
-					                                                                                                                   estudoId, 
-					                                                                                                                   listaIdEdicaoBase);
+			String inicioFaixa = String.valueOf(faixas[i][0]);
+			String fimFaixa = String.valueOf(faixas[i][1]);
 			
-			listaHistoricoPosEstudo.add(historicoPosEstudo);
+			for(HistogramaPosEstudoAnaliseFaixaReparteDTO historico : listaHistoricoPosEstudo) {
+
+				String faixaHistorico = historico.getFaixaReparte();
+				
+				if (faixaHistorico.startsWith(inicioFaixa) && faixaHistorico.endsWith(fimFaixa)) {
+					
+					consolidado.consolidar(historico);
+					
+					continue faixasIterator;
+				}
+			}
+
+			listaHistoricoPosEstudo.add(new HistogramaPosEstudoAnaliseFaixaReparteDTO(inicioFaixa + " a " + fimFaixa));
 		}
+		
+		listaHistoricoPosEstudo.add(consolidado);
 
 		return listaHistoricoPosEstudo;
 	}
-
 }

@@ -51,7 +51,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO)
 public class HistogramaPosEstudoController extends BaseController{
 	
-	private final String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999","0-999999999"}; 
+	private final String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999"}; 
 	
 	@Autowired
 	private Result result;
