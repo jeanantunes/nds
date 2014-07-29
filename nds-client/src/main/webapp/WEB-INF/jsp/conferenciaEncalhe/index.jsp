@@ -29,7 +29,9 @@
 	</style>
 	
 	<script type="text/javascript">
-		
+
+		var VEIO_DO_BT_BOX_ENCALHE = false;
+	
 		$(function(){
 			
 			ConferenciaEncalhe.init();

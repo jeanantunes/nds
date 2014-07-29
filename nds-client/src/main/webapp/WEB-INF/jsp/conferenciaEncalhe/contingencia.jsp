@@ -17,7 +17,9 @@
 	</style>
 	<script>
 		$(function(){
+
 			ConferenciaEncalheCont.init();
+			
 			bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 		});
 	</script>
