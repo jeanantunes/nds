@@ -283,7 +283,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
 		
-		ConferenciaEncalhe.abrirModalLogadoDoBotao();
+		ConferenciaEncalhe.popup_logado();
 		
 	},
 	
@@ -1734,12 +1734,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$('#pesq_cota', ConferenciaEncalhe.workspace).focus();
 					
-					var indexAbaConferenciaEnc = $("li", $('.ui-tabs-nav')).index($(".ui-tabs-nav").find('.conferencia_encalhe').parent());
-					if(!VEIO_DO_BT_BOX_ENCALHE && indexAbaConferenciaEnc > -1){
-						//Aba conferencia aberta
-						
-						$("#workspace").tabs("remove", indexAbaConferenciaEnc);
+					if(!VEIO_DO_BT_BOX_ENCALHE){
+						$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
 					}
+					
 					VEIO_DO_BT_BOX_ENCALHE = false;
 				}
 			},

@@ -40,7 +40,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
-import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.EstudoRepository;

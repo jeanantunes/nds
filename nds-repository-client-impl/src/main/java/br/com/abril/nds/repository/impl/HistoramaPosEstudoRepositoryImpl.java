@@ -20,13 +20,76 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		super(Object.class);
 	}
 	
+	private String obterRestricaoCaseFaixaReparte(Integer[][] faixas) {
+		
+		StringBuilder retorno = new StringBuilder(" CASE ");
+		
+		for (Integer[] faixa : faixas) {
+
+			retorno.append(" WHEN ");
+			retorno.append(String.format(" EC.REPARTE BETWEEN %s AND %s ", faixa[0], faixa[1]));
+			retorno.append(" THEN ");
+			retorno.append("'");
+			retorno.append(faixa[0]);
+			retorno.append(" a ");
+			retorno.append(faixa[1]);
+			retorno.append("'");
+		}
+		
+		retorno.append(" END ");
+
+		return retorno.toString();
+	}
+	
+	private String obterRestricaoWhereFaixaReparte(Integer[][] faixas) {
+		
+		StringBuilder retorno = new StringBuilder(" AND ( ");
+		
+		int i = 0;
+		
+		for (Integer[] faixa : faixas) {
+
+			if ( i != 0) {
+			
+				retorno.append(" OR ");
+			}
+			
+			retorno.append(String.format(" EC.REPARTE BETWEEN %s AND %s ", faixa[0], faixa[1]));
+			
+			i++;
+		}
+		
+		retorno.append(" ) ");
+
+		return retorno.toString();
+	}
+	
 	@Override
-	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId, List<Long> listaIdEdicaoBase) {
+	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(Integer estudoId, List<Long> listaIdEdicaoBase, Integer[] faixa) {
+		
+		SQLQuery query = this.obterQueryHistogramaPosEstudo(estudoId, listaIdEdicaoBase, true, faixa);
+		
+		query.setMaxResults(1);
+		
+		return (HistogramaPosEstudoAnaliseFaixaReparteDTO) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<HistogramaPosEstudoAnaliseFaixaReparteDTO> obterHistogramaPosEstudo(Integer estudoId, List<Long> listaIdEdicaoBase, Integer[]... faixas) {
+
+		SQLQuery query = this.obterQueryHistogramaPosEstudo(estudoId, listaIdEdicaoBase, false, faixas);
+		
+		return query.list();
+	}
+
+	
+	private SQLQuery obterQueryHistogramaPosEstudo(Integer estudoId, List<Long> listaIdEdicaoBase, boolean filtrarFaixaEspecifica, Integer[]... faixas) {
 		
 		boolean isEdicoesBaseEspecificas = (listaIdEdicaoBase !=null && !listaIdEdicaoBase.isEmpty());
 		
         String tuplaSqlEdicoesBase = " ";
-		
+        
         if (isEdicoesBaseEspecificas){
 		    
         	tuplaSqlEdicoesBase = " AND EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ";
@@ -34,7 +97,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
         
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  SELECT '").append(faixaDe).append(" a ").append(faixaAte).append("' faixaReparte, ");
+		sql.append("  SELECT faixaReparte, ");
 		
 		sql.append("       SUM(REPARTE) reparteTotal, ");
 		
@@ -64,7 +127,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		sql.append("  	   group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
 		
-		sql.append("  FROM (SELECT REP.ID, ");
+		sql.append("  FROM (SELECT REP.faixaReparte, REP.ID, ");
 		
 		sql.append("               REP.NUMERO_COTA, ");
 		
@@ -79,7 +142,13 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 
 		sql.append("               (CASE WHEN SUM(REP.REPARTE) < SUM(VENDA_MEDIA) THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
 		
-		sql.append("        FROM (SELECT C.ID, ");
+		sql.append("        FROM (SELECT  						" );
+
+		sql.append(this.obterRestricaoCaseFaixaReparte(faixas));
+		
+		sql.append(" AS faixaReparte, ");
+
+		sql.append("		 			 C.ID, 			");
 		
 		sql.append("                     C.NUMERO_COTA, ");
 		
@@ -112,18 +181,24 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		sql.append("              JOIN COTA C ON C.ID = EC.COTA_ID ");
 		
-		sql.append("              WHERE EC.ESTUDO_ID = :ESTUDO_ID) REP ");
-
+		sql.append("              WHERE EC.ESTUDO_ID = :ESTUDO_ID ");
 		
-		sql.append("        WHERE REP.REPARTE BETWEEN :DE AND :ATE GROUP BY NUMERO_COTA) TES ");
+		sql.append("              AND EC.REPARTE IS NOT NULL 	  ");
+		
+		if (filtrarFaixaEspecifica) {
+		
+			sql.append(this.obterRestricaoWhereFaixaReparte(faixas));
+		}
+		
+		sql.append("	) REP ");
+
+		sql.append("        GROUP BY NUMERO_COTA) TES ");
+		
+		sql.append(" GROUP BY faixaReparte");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("ESTUDO_ID", estudoId);
-		
-		query.setParameter("DE", faixaDe);
-		
-		query.setParameter("ATE", faixaAte);
 		
 		if (isEdicoesBaseEspecificas){
 			
@@ -132,11 +207,10 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(HistogramaPosEstudoAnaliseFaixaReparteDTO.class));
 
-		HistogramaPosEstudoAnaliseFaixaReparteDTO resultado = (HistogramaPosEstudoAnaliseFaixaReparteDTO) query.uniqueResult();
-		
-		return resultado;
+		return query;
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterListaIdProdEdicoesBaseEstudo(Long idEstudo) {
