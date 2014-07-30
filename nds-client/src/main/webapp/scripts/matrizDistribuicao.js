@@ -1483,7 +1483,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
-			rp : 15,
+			rp : 50,
 			showTableToggleBtn : true,
 			width : 1100,
 			height : 220,
