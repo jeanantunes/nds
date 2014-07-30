@@ -244,7 +244,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("leg", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("cotaNova", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("juramento", StandardBasicTypes.BIG_DECIMAL);
-        ((SQLQuery) query).addScalar("ultimoReparte", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("ultimoReparte", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("ajustado", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("quantidadeAjuste", StandardBasicTypes.BIG_INTEGER);
         
