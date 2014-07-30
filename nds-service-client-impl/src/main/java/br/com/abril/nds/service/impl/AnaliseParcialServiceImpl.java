@@ -245,7 +245,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	for (AnaliseParcialDTO itemCota : lista) {
 			
-    		if(itemCota.getNpdv().compareTo(BigInteger.ONE) > 0){
+    		if((itemCota.getNpdv()!= null)&&(itemCota.getNpdv().compareTo(BigInteger.ONE)) > 0){
 				
 				Integer qtdRepartePDVDefinido = 0;
 				

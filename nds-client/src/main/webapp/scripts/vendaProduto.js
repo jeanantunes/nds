@@ -18,6 +18,7 @@ var vendaProdutoController = $.extend(true, {
 			},
 			blur: function(){
 				autoComp.pesquisarPorCodigo ("/produto/pesquisarPorCodigoProduto",'#codigo', '#produto', 'codigoProduto');
+				$("#selectClassificacao").focus();
 			}
 		});
 		
@@ -25,7 +26,7 @@ var vendaProdutoController = $.extend(true, {
 			keyup: function(){
 				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
 			},
-			blur: function(){
+			change: function(){
 				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
 			}
 		});
