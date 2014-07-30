@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -37,5 +38,23 @@ public class TipoClassificacaoProdutoRepositoryImpl extends AbstractRepositoryMo
         
          return obj == null ? null : (TipoClassificacaoProduto) obj;
     }
+
+
+	@Override
+	public Boolean validarClassificacao(String classificacaoProduto) {
+		
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select count(*) ");
+		sql.append(" 	from tipo_classificacao_produto ");
+		sql.append(" where descricao = :descricao ");
+
+		Query query = super.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("descricao", classificacaoProduto.toUpperCase());
+		
+		return ((Long)query.uniqueResult()>0);
+
+	}
 
 }

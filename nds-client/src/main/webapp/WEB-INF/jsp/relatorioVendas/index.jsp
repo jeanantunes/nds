@@ -1,7 +1,7 @@
 <head>
 <title>Relatório de Vendas</title>
 <style type="text/css">
-.linhaCota, .linhaProduto{display:none;}
+.linhaCota, .linhaProduto, .linhaSegmentacao{display:none;}
 .filtro label{width:auto!important; margin-bottom: 0px!important;  margin-top: 4px!important; margin-left: 0px!important; margin-right: 0px;!important}
 </style>
 <script language="javascript" type="text/javascript" src='scripts/jquery.numeric.js'></script>
@@ -63,7 +63,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 
 		<fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
 			<legend> Relatório de Vendas</legend>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="20"><input type="radio" name="filtro" id="filtro_distrib" onclick="relatorioVendasController.mostra_distrib();relatorioVendasController.limparFiltros();" value="radio" /></td>
 					<td><label for="filtro_distrib">Curva ABC Distribuidor</label></td>
@@ -73,6 +73,11 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 					<td><label for="filtro_produto">Curva ABC Produto</label></td>
 					<td width="20" align="right"><input type="radio" name="filtro" id="filtro_cota" value="radio" onclick="relatorioVendasController.mostra_cota();relatorioVendasController.limparFiltros();" /></td>
 					<td><label for="filtro_cota">Curva ABC Cota</label></td>
+					
+					<td width="20" align="right"><input type="radio" name="filtro" id="filtro_segmentacao" value="radio" onclick="relatorioVendasController.mostra_segmentacao();relatorioVendasController.limparFiltros();" /></td>
+					<td><label for="filtro_segmentacao">Segmento</label></td>
+										
+					
 					<td width="45">Período:</td>
 					<td><input type="text" name="datepickerDe" id="datepickerDe" style="width: 60px;" /></td>
 					<td width="25">Até:</td>
@@ -88,7 +93,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
 					<td>&nbsp;</td>
-					<td colspan="6">
+					<td colspan="7">
 						<label>Cota:</label> 
 							<input type="text" style="width: 80px; float: left; margin: 5px;" 
 								   name="numeroCotaListaCota" id="numeroCotaListaCota"
@@ -109,6 +114,23 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 											undefined,
 											undefined);" /> 
 						<label>Produto:</label> <input type="text" style="width: 200px; float: left; margin: 5px;" id="nomeProdutoListaProduto" name="nomeProdutoListaProduto" />
+					</td>
+				</tr>
+				
+				<tr class="linhaSegmentacao">
+					<td>&nbsp;</td>
+					<td colspan="3">&nbsp;</td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
+					<td colspan="9">
+						<div style="float:right;">
+							<label>Segmento:</label> 
+							<select id="selectSegmentacao">
+								<c:forEach items="${segmentacoes}" var="segmentacao">
+									<option value="${segmentacao.id}">${segmentacao.descricao}</option>
+								</c:forEach>
+							</select>
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -235,6 +257,20 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 					</tr>
 				</table>
 			</fieldset>
+			
+			<fieldset class="classFieldset" id="relatorioSegmentacao" style="display: none;">
+				<legend>Segmentação</legend>
+				<table class="segmentacaoGrid"></table>
+				<table width="950" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="432">&nbsp;</td>
+						<td width="73"><strong>Total:</strong></td>
+						<td width="205"></td>
+						<td width="240">R$ <span id="totalFaturamentoCapaSegmento"></td>
+					</tr>
+				</table>
+			</fieldset>
+			
 			<div class="linha_separa_fields">&nbsp;</div>
 
 			<div class="linha_separa_fields">&nbsp;</div>

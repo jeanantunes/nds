@@ -344,8 +344,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 					);
 				},
 				"Cancelar" : function() {
+
+					window.event.preventDefault();
+					
 					$(this).dialog("close");
+					
 					$('#pesq_cota', ConferenciaEncalheCont.workspace).focus();
+					
+					$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+					
 				}
 			}, open : function(){
 				
@@ -716,7 +723,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 	},
 	
-	atualizarValores: function(index) {
+	atualizarValores: function(index, focusOnInput) {
 		
 		if(ConferenciaEncalheCont.processandoConferenciaEncalhe){
 			return;
@@ -751,11 +758,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
-				 setTimeout(function(){
-					 $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
-				 }, 1);
-				
 				ConferenciaEncalheCont.numeroCotaEditavel(false);
+				
+				if(focusOnInput) {
+					
+					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
+					
+					setTimeout(function(){
+						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
+					},1);
+					
+				}
 				
 			},
 			function(result) {
@@ -763,6 +776,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 				if (result.mensagens){
 
 					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+					
+					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
+					
+					setTimeout(function(){
+						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
+					},1);
+					
 				}
 			}, null, null, false
 		);
@@ -822,7 +842,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$('#inputUsuarioSup').select();
+									
+									$('#inputUsuarioSup', this.workspace).select();
+									
 								}, 1);
 								
 							},
@@ -893,7 +915,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}
 				
 				if (index){
-					ConferenciaEncalheCont.atualizarValores(index);
+					ConferenciaEncalheCont.atualizarValores(index, true);
 				}
 				
 				if (callback){
@@ -1044,7 +1066,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 								ConferenciaEncalheCont.configurarNavegacaoSetas($('#form-autenticar-supervisor').find('button'));
 								
 								setTimeout(function(){
-									$('#inputUsuarioSup').select();
+									
+									$('#inputUsuarioSup', this.workspace).select();
+									
 								}, 1);
 								
 							},
@@ -1271,13 +1295,26 @@ var ConferenciaEncalheCont = $.extend(true, {
 	nextInputExemplares : function(curIndex, evt) {
 	
 		if (evt.keyCode == 13 || evt.keyCode == 40) {
+			
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			nextElement.focus();
-			nextElement.select();
-		}else if (event.keyCode == 38) {
+			
+			var position = $(nextElement).val().length;
+			
+			setTimeout(function(){
+				$(nextElement).focus().selectRange(0, position);
+			},1);
+			
+		
+		} else if (event.keyCode == 38) {
+			
 			var nextElement = $('[tabindex=' + (curIndex - 1) + ']');
-			nextElement.focus();
-			nextElement.select();  
+
+			var position = $(nextElement).val().length;
+			
+			setTimeout(function(){
+				$(nextElement).focus().selectRange(0, position);
+			},1);
+			
 		} 
 	},
 	

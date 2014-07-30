@@ -275,7 +275,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
 		
-		ConferenciaEncalhe.abrirModalLogadoDoBotao();
+		ConferenciaEncalhe.popup_logado();
 		
 	},
 	
@@ -1235,12 +1235,22 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 				
 				var proximoCampo = (index - 1); 
-				$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+
+				var position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				
+				setTimeout(function(){
+					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').focus().setCursorPosition(position);
+				},1);
 				
 			} else if (e.keyCode == 40 || e.keyCode == 13) {
 				
 				var proximoCampo = (index + 1);
-				$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').select();
+
+				var position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				
+				setTimeout(function(){
+					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').focus().setCursorPosition(position);
+				},1);
 				
 			} 
 			
@@ -1250,13 +1260,14 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$(listaItemGrid).each(function(index, element){
 			
-			$(element).find("[id^='qtdExemplaresGrid_']").select();
+			var position = $(element).find("[id^='qtdExemplaresGrid_']").val().length;
 			
+			setTimeout(function(){
+				$(element).find("[id^='qtdExemplaresGrid_']").focus().setCursorPosition(position);
+			},1);
 			return false;
 			
 		});
-			
-		
 		
 	},
 	
@@ -1346,10 +1357,6 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text(result.qtdRecebida);
 				
 				ConferenciaEncalhe.numeroCotaEditavel(false);
-				
-				setTimeout(function(){
-					$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).select();
-				}, 1);
 				
 			}, function(){
 				
@@ -1508,10 +1515,11 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	autenticarSupervisor : function(index){
-		var paramUsuario = [
-			{name:"usuario", value:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val()},
-			{name:"senha",value:$("#inputSenha", ConferenciaEncalhe.workspace).val()}
-		];
+		
+		var paramUsuario = {
+				usuario:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val(),
+				senha:$("#inputSenha", ConferenciaEncalhe.workspace).val()
+		};
 		
 		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
 			
@@ -1707,12 +1715,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$('#pesq_cota', ConferenciaEncalhe.workspace).focus();
 					
-					var indexAbaConferenciaEnc = $("li", $('.ui-tabs-nav')).index($(".ui-tabs-nav").find('.conferencia_encalhe').parent());
-					if(!VEIO_DO_BT_BOX_ENCALHE && indexAbaConferenciaEnc > -1){
-						//Aba conferencia aberta
-						
-						$("#workspace").tabs("remove", indexAbaConferenciaEnc);
+					if(!VEIO_DO_BT_BOX_ENCALHE){
+						$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
 					}
+					
 					VEIO_DO_BT_BOX_ENCALHE = false;
 				}
 			},

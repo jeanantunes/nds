@@ -76,11 +76,9 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
-import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
-import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.BoletoEmailService;
@@ -88,7 +86,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
-import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -143,9 +140,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
-	private GeradorArquivoCobrancaBancoService geradorArquivoCobrancaBancoService;
-	
-	@Autowired
 	private CobrancaControleConferenciaEncalheCotaRepository cobrancaControleConferenciaEncalheCotaRepository;
 	
 	@Autowired
@@ -153,9 +147,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -171,9 +162,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private BoletoEmailRepository boletoEmailRepository;
-	
-	@Autowired
-	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;

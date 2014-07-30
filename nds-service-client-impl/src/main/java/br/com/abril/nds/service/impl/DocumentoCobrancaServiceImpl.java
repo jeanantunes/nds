@@ -830,7 +830,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 
                 produtoSlip.setQtdeTotalProdutos(String.valueOf(qtdeTotalProdutosDia.intValue()));
                 
-                produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia));
+                produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia.setScale(2,java.math.RoundingMode.HALF_UP)));
                 
                 qtdeTotalProdutosDia = BigInteger.ZERO;
                 valorTotalEncalheDia = BigDecimal.ZERO;
@@ -999,24 +999,24 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         slipDTO.setDescricaoRota(descricaoRota);
         slipDTO.setTotalProdutoDia(qtdeTotalProdutos);
         slipDTO.setTotalProdutos(qtdeTotalProdutos);
-        slipDTO.setValorEncalheDia(valorTotalEncalhe);
-        slipDTO.setValorTotalEncalhe(valorTotalEncalhe);
+        slipDTO.setValorEncalheDia(valorTotalEncalhe.setScale(2,java.math.RoundingMode.HALF_UP));
+        slipDTO.setValorTotalEncalhe(valorTotalEncalhe.setScale(2,java.math.RoundingMode.HALF_UP));
         
-        slipDTO.setValorTotalDesconto(valorTotalDesconto);
-        slipDTO.setValorTotalSemDesconto(valorTotalSemDesconto);
+        slipDTO.setValorTotalDesconto(valorTotalDesconto.setScale(2,java.math.RoundingMode.HALF_UP));
+        slipDTO.setValorTotalSemDesconto(valorTotalSemDesconto.setScale(2,java.math.RoundingMode.HALF_UP));
         
-        slipDTO.setValorDevido(valorTotalReparte);
+        slipDTO.setValorDevido(valorTotalReparte.setScale(2,java.math.RoundingMode.HALF_UP));
         slipDTO.setValorSlip(valorTotalReparte.subtract(valorTotalEncalhe));
         
-        slipDTO.setValorTotalPagar(valorTotalPagar);
+        slipDTO.setValorTotalPagar(valorTotalPagar.setScale(2,java.math.RoundingMode.HALF_UP));
         slipDTO.setNumSlip(numeroSlip);
         slipDTO.setListaProdutoEdicaoSlip(listaProdutoEdicaoSlip);
         
         final BigDecimal pagamentoPendente = slipDTO.getValorTotalPagar().compareTo(valorVenda)>0?slipDTO.getValorTotalPagar().subtract(valorVenda):BigDecimal.ZERO;
-        slipDTO.setPagamentoPendente(pagamentoPendente);
+        slipDTO.setPagamentoPendente(pagamentoPendente.setScale(2,java.math.RoundingMode.HALF_UP));
         
         final BigDecimal valorCreditoDif = valorVenda.compareTo(slipDTO.getValorTotalPagar())>0?valorVenda.subtract(slipDTO.getValorTotalPagar()):BigDecimal.ZERO;
-        slipDTO.setValorCreditoDif(valorCreditoDif);
+        slipDTO.setValorCreditoDif(valorCreditoDif.setScale(2,java.math.RoundingMode.HALF_UP));
         
         final Map<String, Object> parametersSlip = new HashMap<String, Object>();
         slipDTO.setParametersSlip(parametersSlip);
@@ -1030,11 +1030,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         parametersSlip.put("DATA_CONFERENCIA", slipDTO.getDataConferencia());
         parametersSlip.put("CE_JORNALEIRO", slipDTO.getCeJornaleiro());
         parametersSlip.put("TOTAL_PRODUTOS", slipDTO.getTotalProdutos());
-        parametersSlip.put("VALOR_TOTAL_ENCA", slipDTO.getValorTotalEncalhe() );
-        parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slipDTO.getValorTotalPagar());
-        parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", pagamentoPendente);
-        parametersSlip.put("VALOR_MULTA_MORA", slipDTO.getValorTotalPagar());
-        parametersSlip.put("VALOR_CREDITO_DIF", valorCreditoDif);
+        parametersSlip.put("VALOR_TOTAL_ENCA", slipDTO.getValorTotalEncalhe().setScale(2,java.math.RoundingMode.HALF_UP) );
+        parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slipDTO.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP));
+        parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", pagamentoPendente.setScale(2,java.math.RoundingMode.HALF_UP));
+        parametersSlip.put("VALOR_MULTA_MORA", slipDTO.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP));
+        parametersSlip.put("VALOR_CREDITO_DIF", valorCreditoDif.setScale(2,java.math.RoundingMode.HALF_UP));
         slipDTO.setCeJornaleiro(null);
         
         try {
@@ -1082,20 +1082,20 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         slipDTO.setValorTotalPagar(totalPagar);
         
-        slipDTO.setValorLiquidoDevido(slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto()));
+        slipDTO.setValorLiquidoDevido(valorTotalSemDesconto.subtract(valorTotalDesconto).setScale(2,java.math.RoundingMode.HALF_UP));
         
-        parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slipDTO.getValorLiquidoDevido());
+        parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slipDTO.getValorLiquidoDevido().setScale(2,java.math.RoundingMode.HALF_UP));
         
-        parametersSlip.put("VALOR_DEVIDO", valorTotalReparte);
-        slipDTO.setValorTotalReparte(valorTotalReparte);
+        parametersSlip.put("VALOR_DEVIDO", valorTotalReparte.setScale(2,java.math.RoundingMode.HALF_UP));
+        slipDTO.setValorTotalReparte(valorTotalReparte.setScale(2,java.math.RoundingMode.HALF_UP));
         
-        parametersSlip.put("VALOR_SLIP", slipDTO.getValorSlip());
+        parametersSlip.put("VALOR_SLIP", slipDTO.getValorSlip().setScale(2,java.math.RoundingMode.HALF_UP));
         
-        parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slipDTO.getValorTotalSemDesconto());
+        parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slipDTO.getValorTotalSemDesconto().setScale(2,java.math.RoundingMode.HALF_UP));
         
-        parametersSlip.put("VALOR_TOTAL_DESCONTO", slipDTO.getValorTotalDesconto());
+        parametersSlip.put("VALOR_TOTAL_DESCONTO", slipDTO.getValorTotalDesconto().setScale(2,java.math.RoundingMode.HALF_UP));
         
-        parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(totalPagar.setScale(2,java.math.RoundingMode.HALF_UP)));
+        parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(totalPagar));
         
         parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", distribuidorService.obterRazaoSocialDistribuidor());
         

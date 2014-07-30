@@ -16,10 +16,13 @@ import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.dto.RankingDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
+import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
+import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.CotaRepository;
@@ -183,6 +186,29 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		carregarParticipacaoCurvaABCCota(lista, participacaoTotal);
 		
 		return lista;
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<RegistroRankingSegmentoDTO> obterRankingSegmento(FiltroRankingSegmentoDTO filtro) {
+		
+		if (filtro.getIdTipoSegmento() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de segmento.");
+		}
+		
+		if ((filtro.getDe() != null && filtro.getAte() == null) || (filtro.getDe() == null && filtro.getAte() != null)) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "O período deve ser especificado corretamente.");
+		}
+
+		return this.relatorioVendasRepository.obterRankingSegmento(filtro);
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro) {		
+		return this.relatorioVendasRepository.obterQuantidadeRegistrosRankingSegmento(filtro);		
 	}
 	
 	@Transactional
