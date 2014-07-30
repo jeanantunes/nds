@@ -9,7 +9,19 @@ var analiseParcialController = $.extend(true, {
     edicoesBaseDadosEdicoes : [],
     inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" />',
     tipoExibicao : 'NORMAL',
-
+    
+                                     
+    totalizarEdicoesBasesDadosEdicoes : function(indice, reparte, venda){
+    	
+    	if (edicoesBaseDadosEdicoes[indice] != undefined){ 
+    	
+    	    edicoesBaseDadosEdicoes[indice].reparte = reparte;
+    	
+    	    edicoesBaseDadosEdicoes[indice].venda = venda;
+    	}
+    },                                
+                                  
+    
     exibirMsg: function(tipo, texto) {
         exibirMensagem(tipo, texto);
     },
@@ -264,8 +276,12 @@ var analiseParcialController = $.extend(true, {
         $('#total_de_cotas').text(totalCotas);
 
         for (var j = 1; j < 7; j++) {
+        	
             $('#total_reparte'+ j).text(totais[j].reparte);
+            
             $('#total_venda'+ j).text(totais[j].venda);
+            
+            analiseParcialController.totalizarEdicoesBasesDadosEdicoes(j-1, totais[j].reparte, totais[j].venda);
         }
     },
     
@@ -665,10 +681,11 @@ var analiseParcialController = $.extend(true, {
 
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
         }
-        
-       if(resultado.rows[0].cell.edicoesBase != undefined){
-    	   edicoesBaseDadosEdicoes = resultado.rows[0].cell.edicoesBase; 
-       }
+
+        if(resultado.rows[0].cell.edicoesBase != undefined){
+      	   
+        	edicoesBaseDadosEdicoes = resultado.rows[0].cell.edicoesBase; 
+        }    
         
         return resultado;
     },
