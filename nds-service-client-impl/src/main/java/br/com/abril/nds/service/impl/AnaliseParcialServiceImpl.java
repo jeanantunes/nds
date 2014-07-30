@@ -629,10 +629,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         	
         	if (this.pdvService.obterQtdPdvPorCota(numeroCota) == 1){
         	    
-        	    if (reparteDigitado < mix.getReparteMaximo()){
+        	    if (reparteDigitado < mix.getReparteMinimo()){
         	        
         	        mix.setReparteMinimo(reparteDigitado);
-        	    } else {
+        	        
+        	    } else if(reparteDigitado > mix.getReparteMaximo()) {
         	        
         	        mix.setReparteMaximo(reparteDigitado);
         	    }
