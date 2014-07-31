@@ -88,7 +88,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("               from pdv as pdvs ");
         sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         sql.append(" where ec.ESTUDO_ID = :estudoId ");
-        
 
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
