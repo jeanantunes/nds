@@ -617,6 +617,7 @@ var distribuicaoManual = $.extend(true, {
 					$(this).dialog("destroy");
 				}
 			},
+			form: $("#formUploadLoteDistbManual")
 		});
 	},
 	
