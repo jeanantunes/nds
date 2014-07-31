@@ -21,13 +21,18 @@ var vendaProdutoController = $.extend(true, {
 			}
 		});
 		
-		$('#produto', workSpace).bind({
-			keyup: function(){
-				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
+		$("#produto",produtoController.workspace).autocomplete({
+			source:function(param ,callback) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
 			},
-			blur: function(){
-				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
-			}
+			select : function(event, ui) {
+				$('#codigo',produtoController.workspace).val(ui.item.chave.codigo);
+				
+			},
+			minLength: 2,
+			delay : 0,
+		}).keyup(function(){
+			this.value = this.value.toUpperCase();
 		});
 		
 		$(".area", workSpace).hide();
