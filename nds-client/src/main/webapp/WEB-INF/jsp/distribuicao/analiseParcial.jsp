@@ -356,7 +356,7 @@ table.dadosTab { margin-left: 370px;}
             </c:if>
                 <%--<br/>--%>
 				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo à Distribuir:</span>
-				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${saldoSobraReparteDistribuido}</span>
+				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudo.sobra == null ? 0 : estudo.sobra}</span>
 			</div>
 		</fieldset>
 	</div>
