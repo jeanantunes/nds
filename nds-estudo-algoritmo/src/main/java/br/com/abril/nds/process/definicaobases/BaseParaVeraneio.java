@@ -38,10 +38,11 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	public void executar(EstudoTransient estudo)  {
 		// copia lista para não afetar o loop após modificações.
 		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>(estudo.getEdicoesBase());
+		estudoAlgoritmoService.carregarParametros(estudo);
 
 		for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
 			if (estudo.isPracaVeraneio()) {
-				if (validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
+				if (validaPeriodoVeraneio(produtoEdicao.getDataLancamento())) {
 					produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
 					adicionarEdicoesAnterioresAoEstudo(produtoEdicao, estudo);
 				} else {
@@ -69,7 +70,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 		estudo.getEdicoesBase().addAll(edicoesAnosAnteriores);
 	}
 
-	private boolean validaPeriodoVeranio(Date dataLancamento) {
+	private boolean validaPeriodoVeraneio(Date dataLancamento) {
 		MonthDay inicioVeraneio = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
 		MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_15.getData());
 		MonthDay dtLancamento = new MonthDay(dataLancamento);
