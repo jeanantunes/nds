@@ -5,6 +5,7 @@
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/historicoVenda.js" ></script>
 <script type="text/javascript" src="scripts/autoCompleteCampos.js" ></script>
+<script type="text/javascript" src="scripts/utils.js" ></script>
 <script language="javascript" type="text/javascript">
 
 $(function() {
