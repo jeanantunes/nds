@@ -3,11 +3,14 @@ package br.com.abril.nds.repository;
 import java.math.BigInteger;
 import java.util.List;
 
+import br.com.abril.nds.dto.EstoqueProdutoFilaDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoFila;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 
 public interface EstoqueProdutoFilaRepository extends Repository<EstoqueProdutoFila, Long> {
+	
+	List<EstoqueProdutoFilaDTO> buscarTodosEstoqueProdutoFila();
 	
 	List<EstoqueProdutoFila> buscarEstoqueProdutoFilaDaCota(Long idCota);
 	
