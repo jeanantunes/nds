@@ -245,7 +245,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	for (AnaliseParcialDTO itemCota : lista) {
 			
-    		if(itemCota.getNpdv().compareTo(BigInteger.ONE) > 0){
+    		if((itemCota.getNpdv()!= null)&&(itemCota.getNpdv().compareTo(BigInteger.ONE)) > 0){
 				
 				Integer qtdRepartePDVDefinido = 0;
 				
@@ -629,10 +629,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         	
         	if (this.pdvService.obterQtdPdvPorCota(numeroCota) == 1){
         	    
-        	    if (reparteDigitado < mix.getReparteMaximo()){
+        	    if (reparteDigitado < mix.getReparteMinimo()){
         	        
         	        mix.setReparteMinimo(reparteDigitado);
-        	    } else {
+        	        
+        	    } else if(reparteDigitado > mix.getReparteMaximo()) {
         	        
         	        mix.setReparteMaximo(reparteDigitado);
         	    }
