@@ -39,6 +39,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	@Override
     @Transactional(readOnly = true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
+    	
+    	
+    	List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
+    			StatusLancamento.BALANCEADO_RECOLHIMENTO.name(), 
+    			StatusLancamento.RECOLHIDO.name(), 
+    			StatusLancamento.FECHADO.name());
+    	
     	StringBuilder sql = new StringBuilder();
         sql.append("select distinct ");
         sql.append("	c.numero_cota cota, ");
@@ -75,7 +82,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("       from lancamento _ul ");
 		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
 		sql.append("       join produto _p on _p.id = pe.PRODUTO_ID ");
-		sql.append("       where _p.codigo = p.codigo))) ultimoReparte, ");
+		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento)))) ultimoReparte, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
         sql.append("  from estudo_cota_gerado ec ");
@@ -91,8 +98,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append(" and  ec.reparte is not null and ec.reparte > 0  ");
         
-        
-
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
                 sql.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between :reparteFrom and :reparteTo ");
@@ -171,8 +176,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
         
         Query query = getSession().createSQLQuery(sql.toString());
-        
         query.setParameter("estudoId", queryDTO.getEstudoId());
+        query.setParameterList("statusLancamento", statusLancamento);
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
