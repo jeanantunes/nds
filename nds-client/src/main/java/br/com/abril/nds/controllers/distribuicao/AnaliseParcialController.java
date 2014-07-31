@@ -22,7 +22,6 @@ import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
-import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -107,10 +106,6 @@ public class AnaliseParcialController extends BaseController {
 
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
-        
-        ResumoEstudoHistogramaPosAnaliseDTO rehpaDTO = estudoService.obterResumoEstudo(id
-        		, Long.valueOf(estudoCota.getEstudo().getProdutoEdicao().getProduto().getCodigo())
-        		, estudoCota.getEstudo().getProdutoEdicao().getNumeroEdicao());
 
         this.clearEdicoesBaseSession();
         
@@ -131,8 +126,6 @@ public class AnaliseParcialController extends BaseController {
         result.include("reparteCopiado", reparteCopiado);
         result.include("dataLancamentoEdicao", dataLancamentoEdicao);
         result.include("classificacaoList", tipoClassificacaoProdutoService.obterTodos());
-        result.include("saldoSobraReparteDistribuido", (rehpaDTO.getQtdSobraEstudo() != null && rehpaDTO.getQtdSobraEstudo().longValue() != 0) 
-        		? rehpaDTO.getQtdSobraEstudo() : (rehpaDTO.getSaldo() != null && rehpaDTO.getSaldo().longValue() != 0) ? rehpaDTO.getSaldo() : 0);
 
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {

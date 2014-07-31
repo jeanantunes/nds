@@ -1,5 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -14,9 +17,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +83,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
@@ -105,6 +114,7 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.job.AtualizaEstoqueJob;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
@@ -216,6 +226,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private EstudoGeradoRepository estudoGeradoRepository;
+    
+    @Autowired
+    private EstoqueProdutoFilaRepository estoqueProdutoFilaRepository;
+    
+    @Autowired
+	private SchedulerFactoryBean schedulerFactoryBean;
+    
     
     @Override
     @Transactional
@@ -1142,13 +1159,55 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     }
     
     
+    private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
+
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		
+	    JobDetail job = newJob(AtualizaEstoqueJob.class).build();
+	    
+	    Trigger trigger = newTrigger().startNow().build();
+        
+		try {
+			
+			scheduler.scheduleJob(job, trigger);
+		
+		} catch (SchedulerException e) {
+        
+			throw new ValidacaoException(TipoMensagem.WARNING, "Falha na atualização de estoque de produtos");
+		
+		}
+		
+    }
+    
+    /**
+     * Método que faz consulta na tbl estoque_produto_fila. 
+     * Caso existam registros nessa tbl sera disparado o job 
+     * de atualizacao de estoque de produto informado o usuário 
+     * para tentar o encerramento o de encalhe dentro de alguns 
+     * minutos.
+     */
+    @Transactional(readOnly=true)
+    public void verificarEstoqueProdutoNaoAtualizado() {
+    	
+    	boolean indExisteEstoqueProdutoFila = estoqueProdutoFilaRepository.verificarExitenciaEstoqueProdutoFila();
+    	
+    	if(indExisteEstoqueProdutoFila) {
+    		
+    		agendarAgoraAtualizacaoEstoqueProdutoConf();
+
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Existem registros de estoque de produto desatualizados, tente novamente dentro de alguns minutos.");
+    		
+    	}
+    	
+    }
+    
     
     @Override
     @Transactional
     public Set<String> encerrarOperacaoEncalhe(final Date dataEncalhe, final Usuario usuario,
             final FiltroFechamentoEncalheDTO filtroSessao, final List<FechamentoFisicoLogicoDTO> listaEncalheSessao,
             final boolean cobrarCotas) {
-        
+    	
         final Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true, true);
         
         if (totalCotasAusentes > 0) {

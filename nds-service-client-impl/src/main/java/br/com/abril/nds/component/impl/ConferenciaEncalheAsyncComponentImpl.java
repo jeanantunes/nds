@@ -85,6 +85,8 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 					usuario, 
 					indConferenciaContingencia);
 		
+			agendarAgoraAtualizacaoEstoqueProdutoConf();
+			
 			conferenciaEncalheService.sinalizarFimProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 
 		
@@ -97,7 +99,6 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 		} 
 		
 	}
-	
 
 	private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
 
