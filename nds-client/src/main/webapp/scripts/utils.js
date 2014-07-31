@@ -813,6 +813,55 @@ function insertTelaAnalise(divToHide, divToShow, estudo){
 	
 }
 
+   /**
+    * Ordena o Table Model considerando a coluna informada
+    */
+    function obterTableModelOrdenado(tableModel, col){
+	
+	    var sizeTableModel = tableModel.rows.length;
+
+        var rows_tm = tableModel.rows;
+	  
+	    var tm_ordenado = {
+	    		               page : tableModel.page,
+			                   rows : new Array(),
+			                   total : tableModel.total
+	                      };
+	  
+	    while (tm_ordenado.rows.length < sizeTableModel){
+
+	        var size_tm = rows_tm.length;
+	    	  
+	    	var valorMaior = '0';
+	
+	    	var i = 0;
+	    	  
+	    	var i_remove = -1;
+	    	  
+	    	while (i < size_tm) {
+	    		  
+	            row = rows_tm[i];
+	    		  
+	    		cell = row.cell;		
+	
+	    		if (cell[col] > valorMaior){
+	    			  
+	    	        valorMaior = cell[col];
+	
+	    			i_remove = i; 
+	    		}
+	    		  
+				i++;
+	    	}
+	    	  
+	    	tm_ordenado.rows.push(rows_tm[i_remove]);
+	    	  
+	        rows_tm.splice(i_remove,1);
+	    }		
+	    
+	    return tm_ordenado;
+    }
+
 //simply visual, let's you know when the correct iframe is selected
 /*$(window).on("focus", function(e) {
  $("html, body").css({ background: "#FFF", color: "#000" })
