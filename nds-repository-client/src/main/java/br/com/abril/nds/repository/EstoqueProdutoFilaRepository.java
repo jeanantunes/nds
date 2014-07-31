@@ -10,6 +10,8 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 
 public interface EstoqueProdutoFilaRepository extends Repository<EstoqueProdutoFila, Long> {
 	
+	boolean verificarExitenciaEstoqueProdutoFila();
+	
 	List<EstoqueProdutoFilaDTO> buscarTodosEstoqueProdutoFila();
 	
 	List<EstoqueProdutoFila> buscarEstoqueProdutoFilaDaCota(Long idCota);

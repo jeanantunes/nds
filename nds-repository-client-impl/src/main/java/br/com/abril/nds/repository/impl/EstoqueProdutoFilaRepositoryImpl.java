@@ -21,7 +21,23 @@ public class EstoqueProdutoFilaRepositoryImpl extends AbstractRepositoryModel<Es
 		super(EstoqueProdutoFila.class);
 	}
 
-
+	@Override
+	public boolean verificarExitenciaEstoqueProdutoFila() {
+	
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(e.id) ");
+		hql.append(" from EstoqueProdutoFila e ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		Long qtde = (Long) query.uniqueResult();
+		
+		return (qtde != null && qtde > 0L);
+		
+	}
+	
+	
 	@Override
 	public List<EstoqueProdutoFilaDTO> buscarTodosEstoqueProdutoFila() {
 	
