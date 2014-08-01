@@ -91,7 +91,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         sql.append(" where ec.ESTUDO_ID = :estudoId ");
         
-        sql.append(" and  ec.reparte is not null and ec.reparte > 0  ");
+        sql.append(" and  ec.reparte is not null and ec.reparte >= 0  ");
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
@@ -640,7 +640,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         where.append(" and ec.estudo_id = ? ");
-        where.append("   and (ec.reparte = 0 or ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
+        where.append("   and (ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
         where.append("   and ec.classificacao <> 'S' ");
         paramsWhere.add(queryDTO.getEstudo());
 
