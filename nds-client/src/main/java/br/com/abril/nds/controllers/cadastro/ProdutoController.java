@@ -179,8 +179,8 @@ public class ProdutoController extends BaseController {
 				produtoAutoComplete = new Produto();
 				produtoAutoComplete.setCodigo(produto.getCodigo());
 				
-				ItemAutoComplete itemAutoComplete =
-					new ItemAutoComplete(produto.getNome(), null, produtoAutoComplete);
+				
+				ItemAutoComplete itemAutoComplete = new ItemAutoComplete(produtoAutoComplete.getCodigo(), produto.getNome(), produtoAutoComplete);
 				
 				listaProdutos.add(itemAutoComplete);
 			}
@@ -201,8 +201,7 @@ public class ProdutoController extends BaseController {
 			for (Produto produto : listaProduto) {
 				produtoAutoComplete = new ProdutoVO(produto.getCodigo(),produto.getNome(),produto);
 				
-				ItemAutoComplete itemAutoComplete =
-					new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
+				ItemAutoComplete itemAutoComplete = new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
 				
 				listaProdutos.add(itemAutoComplete);
 			}

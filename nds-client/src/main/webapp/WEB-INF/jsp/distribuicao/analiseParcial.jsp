@@ -123,7 +123,7 @@ table.dadosTab { margin-left: 370px;}
             	</a>
            	</div>
            	
-            <table border="0" cellpadding="2" cellspacing="2" style="margin-left: 265px;" class="dadosTab" id="tabelaDetalheAnalise">
+            <table border="0" cellpadding="2" cellspacing="2" style="margin-left: 319px;" class="dadosTab" id="tabelaDetalheAnalise">
                 <tr class="class_linha_impar" id="analiseParcialPopUpCodProduto"></tr>
                 <tr class="class_linha_par" id="analiseParcialPopUpNomeProduto"></tr>
                 <tr class="class_linha_impar" id="analiseParcialPopUpNumeroEdicao"></tr>

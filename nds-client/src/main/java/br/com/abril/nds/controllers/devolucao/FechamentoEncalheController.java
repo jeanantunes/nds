@@ -632,6 +632,8 @@ public class FechamentoEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
 		
+		fechamentoEncalheService.verificarEstoqueProdutoNaoAtualizado();
+		
 		try {
 		
 			if (dataEncalhe == null) {
@@ -859,7 +861,9 @@ public class FechamentoEncalheController extends BaseController {
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento,
 											 List<FechamentoFisicoLogicoDTO> listaNaoReplicados, boolean isAllFechamentos, 
 											 String dataEncalhe, Long fornecedorId, Long boxId) {
-
+		
+		fechamentoEncalheService.verificarEstoqueProdutoNaoAtualizado();
+		
 		listaFechamento = 
 				this.mergeItensFechamento(
 						this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
