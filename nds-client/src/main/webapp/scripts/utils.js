@@ -813,24 +813,23 @@ function insertTelaAnalise(divToHide, divToShow, estudo){
 	
 }
 
-<<<<<<< HEAD
-/**
- * @returns intervalo de datas validos (true) ou invalidos (false)
- */
-function validarDatas(dataInicial, dataFinal) {
-	
-	var dataSemFormatacao_1 = parseInt(dataInicial.split("/")[2].toString() + dataInicial.split("/")[1].toString() + dataInicial.split("/")[0].toString());
-	var dataSemFormatacao_2 = parseInt(dataFinal.split("/")[2].toString() + dataFinal.split("/")[1].toString() + dataFinal.split("/")[0].toString());
-	 
-	 if (dataSemFormatacao_2 >= dataSemFormatacao_1){
-	   return true;
-	 }else{
-		 return false;		
-	 }
-    
-    return false;
-}
-=======
+	/**
+	 * @returns intervalo de datas validos (true) ou invalidos (false)
+	 */
+	function validarDatas(dataInicial, dataFinal) {
+		
+		var dataSemFormatacao_1 = parseInt(dataInicial.split("/")[2].toString() + dataInicial.split("/")[1].toString() + dataInicial.split("/")[0].toString());
+		var dataSemFormatacao_2 = parseInt(dataFinal.split("/")[2].toString() + dataFinal.split("/")[1].toString() + dataFinal.split("/")[0].toString());
+		 
+		 if (dataSemFormatacao_2 >= dataSemFormatacao_1){
+		   return true;
+		 }else{
+			 return false;		
+		 }
+	    
+	    return false;
+	}
+
    /**
     * Ordena o Table Model considerando a coluna informada
     */
@@ -879,7 +878,6 @@ function validarDatas(dataInicial, dataFinal) {
 	    
 	    return tm_ordenado;
     }
->>>>>>> DGBti/master
 
 //simply visual, let's you know when the correct iframe is selected
 /*$(window).on("focus", function(e) {
