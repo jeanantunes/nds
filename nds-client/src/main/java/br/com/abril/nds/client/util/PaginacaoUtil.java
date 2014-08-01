@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.NullComparator;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
@@ -32,7 +33,7 @@ public class PaginacaoUtil {
 	 */
 	public static <T extends Object> List<T> paginarEOrdenarEmMemoria(List<T> lista,
 																	  PaginacaoVO paginacao,
-																	  String nomeAtributoOrdenacao) {
+																	  String... nomeAtributoOrdenacao) {
 		
 		if (paginacao == null) {
 			
@@ -106,7 +107,7 @@ public class PaginacaoUtil {
 	@SuppressWarnings("unchecked")
 	public static <T extends Object> Collection<T> ordenarEmMemoria(List<T> listaAOrdenar,
 															  Ordenacao ordenacao,
-															  String nomeAtributoOrdenacao) {
+															  String ...nomeAtributoOrdenacao) {
 		
 		if (listaAOrdenar == null || listaAOrdenar.isEmpty()) {
 			
@@ -123,7 +124,13 @@ public class PaginacaoUtil {
 			throw new IllegalArgumentException("Nome do atributo para ordenação nulo!");
 		}
 		
-		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
+		ComparatorChain chain = new ComparatorChain();
+			
+		for(String item : nomeAtributoOrdenacao){
+			chain.addComparator(new BeanComparator(item, new NullComparator()));
+		}
+				
+		Collections.sort(listaAOrdenar, chain);
 
 		if (Ordenacao.DESC.equals(ordenacao)) {
 

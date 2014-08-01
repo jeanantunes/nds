@@ -394,4 +394,46 @@ public class ProdutoRecolhimentoVO {
 	public String getEncalheFormatado() {
 		return encalheFormatado;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((codigoProduto == null) ? 0 : codigoProduto.hashCode());
+		result = prime * result
+				+ ((nomeProduto == null) ? 0 : nomeProduto.hashCode());
+		result = prime * result
+				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoRecolhimentoVO other = (ProdutoRecolhimentoVO) obj;
+		if (codigoProduto == null) {
+			if (other.codigoProduto != null)
+				return false;
+		} else if (!codigoProduto.equals(other.codigoProduto))
+			return false;
+		if (nomeProduto == null) {
+			if (other.nomeProduto != null)
+				return false;
+		} else if (!nomeProduto.equals(other.nomeProduto))
+			return false;
+		if (numeroEdicao == null) {
+			if (other.numeroEdicao != null)
+				return false;
+		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		return true;
+	}
+	
+	
 }

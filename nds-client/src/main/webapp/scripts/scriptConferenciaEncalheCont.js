@@ -369,8 +369,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 					);
 				},
 				"Cancelar" : function() {
+
+					window.event.preventDefault();
+					
 					$(this).dialog("close");
+					
 					$('#pesq_cota', ConferenciaEncalheCont.workspace).focus();
+					
+					$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+					
 				}
 			}, open : function(){
 				

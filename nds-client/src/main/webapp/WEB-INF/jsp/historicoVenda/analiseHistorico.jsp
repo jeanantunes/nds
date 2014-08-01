@@ -90,8 +90,8 @@ function escondeDados_historicoVenda(){
     
     	<div class="detalhesDados-historicoVenda" style="margin-left: 0px;">
         	<a href="javascript:;" onclick="escondeDados_historicoVenda();" style="float:right; margin-right:5px; margin-top:5px;"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a>
-	    	<table border="0" cellpadding="2" cellspacing="2" class="dadosTab">
-	    		<tr id="analiseHistoricoPopUpNomeProduto" />
+	    	<small></small><table border="0" cellpadding="2" cellspacing="2" class="dadosTab"><small>
+	    		</small><tr id="analiseHistoricoPopUpNomeProduto" />
 	    	    <tr id="analiseHistoricoPopUpNumeroEdicao" />
 	    	    <tr id="analiseHistoricoPopUpDatalancamento" />
 	    	    <tr id="analiseHistoricoPopUpReparte" />

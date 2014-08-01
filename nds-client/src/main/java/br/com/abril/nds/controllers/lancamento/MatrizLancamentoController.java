@@ -101,6 +101,12 @@ public class MatrizLancamentoController extends BaseController {
     private static final String DATA_ATUAL_SELECIONADA = "dataAtualSelecionada";
     
     private static final String ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO = "lancamentosAlterados";
+
+	private static final Object SORT_NAME_NOME_PRODUTO = "nomeProduto";
+
+	private static final Object SORT_NAME_CODIGO_PRODUTO = "codigoProdutoFormatado";
+
+	private static final String SORT_NAME_NUMERO_EDICAO = "numeroEdicao";
     
     @Path("/")
     public void index() {
@@ -1271,7 +1277,14 @@ public class MatrizLancamentoController extends BaseController {
         
         final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
         
-        listaProdutoLancamento = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
+        if(this.isSortNamePorCodigoOuNomeProduto(paginacao.getSortColumn())){
+            
+        	listaProdutoLancamento = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn(),SORT_NAME_NUMERO_EDICAO);
+        }
+        else{
+
+        	listaProdutoLancamento = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());            
+        }
         
         final List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
         
@@ -1293,6 +1306,11 @@ public class MatrizLancamentoController extends BaseController {
         
         result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
         
+    }
+    
+    private boolean isSortNamePorCodigoOuNomeProduto(String sortName){
+    	
+    	return (SORT_NAME_CODIGO_PRODUTO.equals(sortName)|| SORT_NAME_NOME_PRODUTO.equals(sortName));
     }
     
     private Double getValorTotal(final List<ProdutoLancamentoDTO> listaProdutoLancamento) {

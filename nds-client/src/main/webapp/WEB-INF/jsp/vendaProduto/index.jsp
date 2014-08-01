@@ -1,4 +1,4 @@
-f<head>
+<head>
 
 <script type="text/javascript" src="scripts/endereco.js"></script>
 <script type="text/javascript" src="scripts/vendaProduto.js"></script>

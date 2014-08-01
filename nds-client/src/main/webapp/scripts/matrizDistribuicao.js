@@ -1483,7 +1483,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
-			rp : 15,
+			rp : 50,
 			showTableToggleBtn : true,
 			width : 1100,
 			height : 220,
@@ -1612,10 +1612,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					for(var prop in selecionado){
 					    if (prop == 'edicao') {
 					        edicao = selecionado[prop];
-                                            }
-                                            if (prop == 'codigoProduto') {
-                                                codigoProduto = selecionado[prop];
-                                            }
+                        }
+                        if (prop == 'codigoProduto') {
+                            codigoProduto = selecionado[prop];
+                        }
 						params.push({
 							name : "selecionado." + prop, value : selecionado[prop]
 						});

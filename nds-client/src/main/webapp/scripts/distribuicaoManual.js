@@ -15,11 +15,13 @@ var distribuicaoManual = $.extend(true, {
 	
 	focusRight : function focusRight(input){
 		
-	    var position = $(input).val().length;
+	    var position = $(input, distribuicaoManual.workspace).val().length;
 	    
 	    setTimeout(function(){
 	    	
-	        $(input).focus().setCursorPosition(position);
+	        $(input, distribuicaoManual.workspace).focus().setCursorPosition(position);
+	        
+	        $(input, distribuicaoManual.workspace).select();
 	        
 	    },1);
 	},
@@ -42,7 +44,6 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.workspace = $('.estudosManuaisGrid');
 		this.configGrid();
 		distribuicaoManual.workspace.find('tbody').append(distribuicaoManual.construirLinhaVazia());
-		distribuicaoManual.rowCount++;
 		
 		distribuicaoManual.idLancamento = lancamentoSelecionado.idLancamento;
 		this.atualizarTotalDistribuido(0);
@@ -51,6 +52,7 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.isSolicitarSenhaReparte = true;
 		distribuicaoManual.isSolicitarSenhaCotaSuspensa = true;
 		
+		distribuicaoManual.focusRight("#numeroCotaGrid"+(distribuicaoManual.rowCount - 1));
 	},
 	
 	voltar : function() {
@@ -253,9 +255,9 @@ var distribuicaoManual = $.extend(true, {
 			}
 			
 			this.configAutoComplete('#nomeCotaGrid'+ distribuicaoManual.rowCount, distribuicaoManual.rowCount);
-			
+				
 			distribuicaoManual.focusRight("#reparteGrid"+distribuicaoManual.rowCount);
-			
+
 			distribuicaoManual.rowCount++;
 		}
 	},
@@ -615,6 +617,7 @@ var distribuicaoManual = $.extend(true, {
 					$(this).dialog("destroy");
 				}
 			},
+			form: $("#formUploadLoteDistbManual")
 		});
 	},
 	
