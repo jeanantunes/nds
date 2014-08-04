@@ -21,12 +21,12 @@ var vendaProdutoController = $.extend(true, {
 			}
 		});
 		
-		$("#produto",produtoController.workspace).autocomplete({
+		$("#produto", vendaProdutoController.workspace).autocomplete({
 			source:function(param ,callback) {
 				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
 			},
 			select : function(event, ui) {
-				$('#codigo',produtoController.workspace).val(ui.item.chave.codigo);
+				$('#codigo', vendaProdutoController.workspace).val(ui.item.chave.codigo);
 				
 			},
 			minLength: 2,
@@ -117,8 +117,8 @@ var vendaProdutoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "numEdicao",
-			sortorder : "asc",
+			sortname : "dataLancamento",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

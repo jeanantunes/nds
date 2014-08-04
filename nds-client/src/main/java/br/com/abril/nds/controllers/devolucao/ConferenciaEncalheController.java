@@ -2752,4 +2752,29 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		usuarioService.salvar(usuarioLogado);
 	}
 	
+	@Post
+	public void ordenarListaPorSM(){
+		
+		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info == null){
+			
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+		}
+		
+		List<ConferenciaEncalheDTO> lista = new ArrayList<ConferenciaEncalheDTO>();
+		
+		lista.addAll(info.getListaConferenciaEncalhe());
+		
+		lista = (List<ConferenciaEncalheDTO>) PaginacaoUtil.ordenarEmMemoria(lista, Ordenacao.ASC, "codigoSM");
+		
+		final Map<String, Object> dados = new HashMap<String, Object>();
+		
+		dados.put("itensConferencia", lista);
+		
+		dados.put("isDistribuidorAceitaJuramentado", info.isDistribuidorAceitaJuramentado());
+		
+		result.use(CustomJson.class).from(dados).serialize();
+	}
+	
 }
