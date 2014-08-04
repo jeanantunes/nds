@@ -351,6 +351,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
+        hql.append(" and ((select count(cbc.id) from CotaBaseCota cbc where cbc.cotaBase.id = cotaBase.id and cbc.dtFimVigencia > (select dataOperacao from Distribuidor)) > 0)");
         
         if (dto.getNumeroCota() != null) {
         	hql.append(" and cota.numeroCota = :numeroCota");
