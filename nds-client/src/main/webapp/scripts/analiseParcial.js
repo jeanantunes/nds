@@ -546,10 +546,6 @@ var analiseParcialController = $.extend(true, {
                     }
                 }
                 
-                if(reparteDigitado == 0){
-                	$("#row"+idRowGrid, analiseParcialController.workspace).remove();
-                }
-                
             },
             error: function() {
                 analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
