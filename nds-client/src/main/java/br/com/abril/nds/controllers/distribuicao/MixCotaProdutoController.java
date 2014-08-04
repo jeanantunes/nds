@@ -469,6 +469,8 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/uploadArquivoLote")
 	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
 
+		//LOGGER.debug("Iniciando execução do estudo.");
+		
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
 		List<MixCotaDTO> mixCotaDTOInconsistente = validaMixEmLote(listMixExcel);
