@@ -65,7 +65,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("         where mec.tipo_movimento_id = 32 ");
         sql.append("           and mec.cota_id = c.id ");
         sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
-        sql.append("       coalesce((select epc.qtde_recebida ");
+        sql.append("       (select epc.qtde_recebida ");
 		sql.append("       from lancamento l ");
 		sql.append("       left join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
 		sql.append("       left join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
@@ -73,18 +73,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("       left join produto _p on _p.id = _ped.produto_id ");
 		sql.append("       where _p.codigo = p.codigo ");
 		sql.append("       and (_c.id = c.id or _c.id is null) ");
-		sql.append("       and l.data_lcto_distribuidor < (select max(_ul.data_lcto_distribuidor) from lancamento _ul ");
-		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
-		sql.append("       join produto _p on _p.id = pe.produto_id where _p.codigo = p.codigo" );
-		sql.append("       ) and l.id = (select max(_l.id) from lancamento _l ");
-		sql.append("       join produto_edicao pe on pe.id = _l.produto_edicao_id ");
-		sql.append("       join produto _p1 on _p1.id = pe.produto_id ");
-		sql.append("       where _p1.codigo = p.codigo ");
-		sql.append("       and _l.data_lcto_distribuidor < (select max(_ul.data_lcto_distribuidor) ");
+		sql.append("       and l.data_lcto_distribuidor = (select max(_ul.data_lcto_distribuidor) ");
 		sql.append("       from lancamento _ul ");
-		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
-		sql.append("       join produto _p on _p.id = pe.PRODUTO_ID ");
-		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento)))), 0) ultimoReparte, ");
+		sql.append("       inner join produto_edicao _pe on _pe.id = _ul.produto_edicao_id ");
+		sql.append("       inner join produto _p on _p.id = _pe.PRODUTO_ID ");
+		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento))) ultimoReparte, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
         sql.append("  from estudo_cota_gerado ec ");
@@ -98,7 +91,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         sql.append(" where ec.ESTUDO_ID = :estudoId ");
         
-        sql.append(" and  ec.reparte is not null and ec.reparte > 0  ");
+        sql.append(" and  ec.reparte is not null and ec.reparte >= 0  ");
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
@@ -647,7 +640,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         where.append(" and ec.estudo_id = ? ");
-        where.append("   and (ec.reparte = 0 or ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
+        where.append("   and (ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
         where.append("   and ec.classificacao <> 'S' ");
         paramsWhere.add(queryDTO.getEstudo());
 
