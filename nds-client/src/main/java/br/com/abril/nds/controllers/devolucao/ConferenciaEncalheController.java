@@ -5,13 +5,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -575,7 +576,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		result.use(CustomJson.class).from(dados).serialize();
 	}
-
+	
 	/**
 	 * Retorna um mapa com os dados apresentados na 
 	 * conferencia de encalhe.
@@ -620,10 +621,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Map<String, Object> dados = new HashMap<String, Object>();
 		
-		List<ConferenciaEncalheDTO> conferenciasOrdenadas = new ArrayList<ConferenciaEncalheDTO>(infoConfereciaEncalheCota.getListaConferenciaEncalhe()); 
-		Collections.sort(conferenciasOrdenadas);
+		Collection<ConferenciaEncalheDTO> listaOrdenada = ordenarListaConferenciaEncalhe(
+				infoConfereciaEncalheCota.getListaConferenciaEncalhe(), 
+				indConferenciaContingencia, 
+				indObtemDadosFromBD);
 		
-		dados.put("listaConferenciaEncalhe", conferenciasOrdenadas);
+		dados.put("listaConferenciaEncalhe", listaOrdenada);
 		
 		dados.put("listaDebitoCredito", this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
 		
@@ -676,6 +679,47 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularTotais(dados);
 		
 		return dados;
+	}
+	
+	private Collection<ConferenciaEncalheDTO> ordenarListaConferenciaEncalhe(
+			Set<ConferenciaEncalheDTO> lista,
+			boolean indConferenciaContingencia, 
+			boolean indFromBD) {
+		
+		if(indConferenciaContingencia) {
+			
+			return PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
+							Ordenacao.ASC, 
+							"codigoSM");
+			
+		} 
+		
+		if(indFromBD) {
+			
+			Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
+					PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
+					Ordenacao.ASC, 
+					"codigoSM");
+			
+			Integer qtde = listaConferenciaEncalhe.size();
+			
+			for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
+				conferencia.setInstanteConferido(--qtde);
+			}
+			
+			return listaConferenciaEncalhe;
+			
+		} else {
+			
+			return PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
+					Ordenacao.DESC, 
+					"instanteConferido");
+			
+		}
+		
+		
+		
+		
 	}
 	
 	/**
@@ -1905,7 +1949,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	private Set<ConferenciaEncalheDTO> obterCopiaListaConferenciaEncalheCota(final Set<ConferenciaEncalheDTO> oldListaConferenciaEncalheCota) {
 		
-		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new TreeSet<ConferenciaEncalheDTO>();
+		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new HashSet<ConferenciaEncalheDTO>();
 		
 		for(final ConferenciaEncalheDTO conf : oldListaConferenciaEncalheCota) {
 		
@@ -2667,7 +2711,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		Set<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
 		
 		if (lista == null){
-			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
 		return info.getListaConferenciaEncalhe();
