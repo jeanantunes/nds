@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
 import br.com.abril.nds.client.util.Constants;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -65,6 +66,7 @@ import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -2704,6 +2706,31 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		usuarioLogado.setBox(box);
 		
 		usuarioService.salvar(usuarioLogado);
+	}
+	
+	@Post
+	public void ordenarListaPorSM(){
+		
+		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info == null){
+			
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+		}
+		
+		List<ConferenciaEncalheDTO> lista = new ArrayList<ConferenciaEncalheDTO>();
+		
+		lista.addAll(info.getListaConferenciaEncalhe());
+		
+		lista = (List<ConferenciaEncalheDTO>) PaginacaoUtil.ordenarEmMemoria(lista, Ordenacao.ASC, "codigoSM");
+		
+		final Map<String, Object> dados = new HashMap<String, Object>();
+		
+		dados.put("itensConferencia", lista);
+		
+		dados.put("isDistribuidorAceitaJuramentado", info.isDistribuidorAceitaJuramentado());
+		
+		result.use(CustomJson.class).from(dados).serialize();
 	}
 	
 }
