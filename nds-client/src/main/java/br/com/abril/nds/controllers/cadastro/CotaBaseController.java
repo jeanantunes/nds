@@ -33,6 +33,7 @@ import br.com.abril.nds.service.CotaBaseCotaService;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -76,6 +77,9 @@ public class CotaBaseController extends BaseController {
 	private SegmentoNaoRecebidoService segmentoNaoRecebidoService;
 	
 	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
 	private HttpSession session;
 	
 	@Autowired
@@ -110,7 +114,8 @@ public class CotaBaseController extends BaseController {
 		}
 		
 		if (existeCotaBase) {
-			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
+			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal(), 
+			        this.distribuidorService.obterDataOperacaoDistribuidor()));
 		}
 		else {
 			filtro.setDataInicial(null);
@@ -122,13 +127,13 @@ public class CotaBaseController extends BaseController {
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
 
-	private String calcularDiasRestantes(Date dataFinal) {		
+	private String calcularDiasRestantes(Date dataFinal, Date dataOperacao) {		
 		
 		Calendar dtFinal = Calendar.getInstance();
 		dtFinal.setTime(dataFinal);
 		
 		Calendar dtInicial = Calendar.getInstance();
-		dtInicial.setTime(new Date());
+		dtInicial.setTime(dataOperacao);
 		
 		long m1 = dtFinal.getTimeInMillis();
 		long m2 = dtInicial.getTimeInMillis();
@@ -191,21 +196,19 @@ public class CotaBaseController extends BaseController {
 	 */
 	private List<CotaBaseDTO> obterListaCotaBaseFormatada(CotaBaseDTO dto) {
 		
-		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
+		final List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
 		
 		if(!listaCotaBase.isEmpty()){
 			
-			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
+			final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			for(CotaBaseDTO cotaBase : listaCotaBase){
-				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
-				if(cotaBase.getDtFinal().after(new Date())){
+				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal(), dataOperacao));
+				if(cotaBase.getDtFinal().after(dataOperacao)){
 					cotaBase.setSituacao("Ativo");
 				}else{
 					cotaBase.setSituacao("Inativo");
 				}
-				
-				listaFormatada.add(cotaBase);
 			}
 			
 		}
