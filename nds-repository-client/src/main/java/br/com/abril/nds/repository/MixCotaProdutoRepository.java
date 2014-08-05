@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.MixCotaDTO;
@@ -38,4 +39,6 @@ public interface MixCotaProdutoRepository extends
 	public MixCotaProduto obterMixPorCotaICDCLassificacao(Long cotaid, String codigoICD, String classificacaoProduto);
 
     boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, Long qtd, Long tipoClassificacaoProduto);
+    
+    void atualizarReparte(boolean isPDVUnico, Long mixID, Long reparte, Usuario usuario, Date data);
 }

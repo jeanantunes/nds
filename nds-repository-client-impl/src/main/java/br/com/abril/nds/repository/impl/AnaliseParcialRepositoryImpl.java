@@ -42,6 +42,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	StringBuilder sql = new StringBuilder();
         sql.append("select distinct ");
         sql.append("	c.numero_cota cota, ");
+        
+        sql.append("	case when pdv_qtd.quantidade > 1 then ( ");
+        sql.append("	case when count(case when pdv_fx.ID is not null then 1 ");
+        sql.append("	when pdv_mx.ID is not null then 1 ");
+        sql.append("	when pdv_default.ID is not null then 1 ");
+        sql.append("	else 0 end) > 1 then 1 else 0 end) ");
+        sql.append("	else 0 end as contemRepartePorPDV, ");
+        
+        sql.append("	fx.ID as fixacaoID, mx.ID as mixID, ");        
+        
         sql.append("    c.classificacao_espectativa_faturamento classificacao, ");
         sql.append("    coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
         sql.append("    pdv_qtd.quantidade npdv, ");
@@ -55,6 +65,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("         where mec.tipo_movimento_id = 32 ");
         sql.append("           and mec.cota_id = c.id ");
         sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
+        
         sql.append("       (select epc.qtde_recebida ");
 		sql.append("       from lancamento l ");
 		sql.append("       left join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
@@ -65,17 +76,21 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("       and (_c.id = c.id or _c.id is null) ");
 		sql.append("       and l.data_lcto_distribuidor < (select max(_ul.data_lcto_distribuidor) from lancamento _ul ");
 		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
-		sql.append("       join produto _p on _p.id = pe.produto_id where _p.codigo = p.codigo" );
+		sql.append("       where _p.ID = pe.produto_id" );
+		
+		
+		
 		sql.append("       ) and l.id = (select max(_l.id) from lancamento _l ");
 		sql.append("       join produto_edicao pe on pe.id = _l.produto_edicao_id ");
-		sql.append("       join produto _p1 on _p1.id = pe.produto_id ");
-		sql.append("       where _p1.codigo = p.codigo ");
+		sql.append("       where _p.ID = pe.produto_id ");
+		
 		sql.append("       and _l.data_lcto_distribuidor < ( ");
 		sql.append("       select max(_ul.data_lcto_distribuidor) ");
 		sql.append("       from lancamento _ul ");
 		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
-		sql.append("       join produto _p on _p.id = pe.PRODUTO_ID ");
-		sql.append("       where _p.codigo = p.codigo))) ultimoReparte, ");
+		sql.append("       where _p.ID = pe.produto_id))) ultimoReparte, ");
+		
+        sql.append("       0 as ultimoReparte, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
         sql.append("  from estudo_cota_gerado ec ");
@@ -84,6 +99,15 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  left join estudo_gerado e on (e.id = ec.estudo_id) ");
         sql.append("  left join produto_edicao pe on (pe.id = e.produto_edicao_id) ");
         sql.append("  left join produto p on (p.id = pe.produto_id) ");
+
+        sql.append("  left join fixacao_reparte fx on fx.codigo_icd=p.codigo_icd and fx.id_cota=c.id and fx.id_classificacao_edicao=pe.tipo_classificacao_produto_id ");
+        sql.append("  left join fixacao_reparte_pdv pdv_fx on pdv_fx.ID_FIXACAO_REPARTE=fx.ID ");
+
+        sql.append("  left join mix_cota_produto mx on mx.codigo_icd=p.codigo_icd and mx.id_cota=c.id and mx.tipo_classificacao_produto_id=pe.tipo_classificacao_produto_id ");
+        sql.append("  left join reparte_pdv pdv_mx on pdv_mx.MIX_COTA_PRODUTO_ID=mx.ID ");
+
+        sql.append("  left join pdv pdv_default on pdv_default.COTA_ID=c.ID ");
+
         sql.append("  left join (select cota_id cota_id, count(*) quantidade ");
         sql.append("               from pdv as pdvs ");
         sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
@@ -161,8 +185,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         if (queryDTO.getFaixaAte() != null) {
             sql.append(" and ec.reparte <= :faixaAte ");
-        }        
-    
+        }
+        
+        sql.append(" group by c.ID ");
+
         if (queryDTO.possuiOrdenacaoNMaiores() || queryDTO.possuiOrdenacaoRanking()) {
             sql.append(" order by ").append("ranking.qtde desc").append("limit").append(queryDTO.getFilterSortFrom().intValue() - 1)
             .append(" , ").append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()) + 1);
@@ -250,6 +276,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("ultimoReparte", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("ajustado", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("quantidadeAjuste", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("mixID", StandardBasicTypes.LONG);
+        ((SQLQuery) query).addScalar("fixacaoID", StandardBasicTypes.LONG);
+        ((SQLQuery) query).addScalar("contemRepartePorPDV", StandardBasicTypes.BOOLEAN);
+        
         
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
         return query.list();
