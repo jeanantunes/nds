@@ -64,7 +64,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private static final int PEB_MINIMA = 10;
 
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_EXPEDIDO = 
-			ImmutableList.of(StatusLancamento.EXPEDIDO);
+			ImmutableList.of(
+				StatusLancamento.FURO, 
+				StatusLancamento.BALANCEADO, 
+				StatusLancamento.EM_BALANCEAMENTO, 
+				StatusLancamento.EXPEDIDO
+			);
 
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_ABERTO = 
 			ImmutableList.of(
@@ -187,9 +192,19 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		for (Lancamento lancamentoAtual : lancamentosDaEdicao) {
 
 			if (LANCAMENTO_EXPEDIDO.contains(lancamentoAtual.getStatus())) {
+				
+				int numeroLancamento = 1;
+				
+				if (lancamentoAtual.getPeriodoLancamentoParcial() != null) {
+					numeroLancamento = lancamentoAtual.getPeriodoLancamentoParcial().getPrimeiroLancamento().getNumeroLancamento() + 1; 
+				}
+
+				lancamentoAtual.setNumeroLancamento(numeroLancamento);
 				lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
 				lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+
 				helper.addLancamentoManter(lancamentoAtual);
+
 			} else if (LANCAMENTO_ABERTO.contains(lancamentoAtual.getStatus())) {
 				helper.addLancamentosRemover(lancamentoAtual);
 			} else {
