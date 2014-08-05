@@ -784,6 +784,28 @@ function mostra_status(opcao) {
 
 }
 
+function bindAjaxLoading() {
+	
+	$("#ajaxLoading").bind("ajaxStart", function() {
+		$(this).fadeIn(200);
+		pageRefresh.disable();
+		
+	});
+	
+	$("#ajaxLoading").bind("ajaxStop", function() {
+		$(document).unbind('keydown');
+		$(this).fadeOut(200);
+		redimensionarWorkspace();
+		pageRefresh.enable();
+		
+	});
+}
+
+function unbindAjaxLoading() {
+	
+	$("#ajaxLoading").unbind("ajaxStart ajaxStop");
+}
+
 function focarPrimeiroElemento() {
 	$('input:visible:enabled:first').focus();
 }

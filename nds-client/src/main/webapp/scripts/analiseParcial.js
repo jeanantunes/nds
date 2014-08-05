@@ -1036,8 +1036,16 @@ var analiseParcialController = $.extend(true, {
         });
 
         $('#baseEstudoGridParcial')
-        .on('blur', 'tr td input:text', function(event){
-            analiseParcialController.atualizaReparte(this, true);
+        .on('focus', 'tr td input:text', function(event){
+        	
+        	unbindAjaxLoading();
+        	
+        }).on('blur', 'tr td input:text', function(event){
+            
+        	analiseParcialController.atualizaReparte(this, true);
+        	
+        	bindAjaxLoading();
+
         }).on('keyup', 'tr td input:text', function(event){
             if(event.which === 13) {//tab === 9
                 $(event.currentTarget)
