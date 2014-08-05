@@ -18,15 +18,9 @@ import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.dto.TipoSegmentoProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
-import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
+import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
@@ -93,14 +87,10 @@ public class HistogramaPosEstudoController extends BaseController{
 	    
         if (idLancamento != null) {
 			
-            Lancamento lancamento = lancamentoService.obterPorId(idLancamento);
-            
 			String modoAnalise = "NORMAL";
 			
-			PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
-			
-			if (periodo != null && periodo.getNumeroPeriodo() > 1) {
-			
+			if (this.lancamentoService.isLancamentoParcial(idLancamento)) {
+
 			    modoAnalise = "PARCIAL";
 			}
 			
@@ -121,38 +111,26 @@ public class HistogramaPosEstudoController extends BaseController{
     @Post
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
 		
-    	Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
-		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
-		
+    	EstudoGeradoPreAnaliseDTO estudo = this.estudoService.obterEstudoPreAnalise(Long.parseLong(selecionado.getEstudo()));
+				
 		String loginUsuario = super.getUsuarioLogado().getLogin();
 		
-		this.bloquearAnaliseEstudo(produtoEdicao.getId(), this.session, loginUsuario);
+		this.bloquearAnaliseEstudo(estudo.getIdProdutoEdicao(), this.session, loginUsuario);
 		
-		selecionado.setParcial(produtoEdicao.isParcial());
+		selecionado.setParcial(estudo.isParcial());
 
 		String modoAnalise = "NORMAL";
-		if (produtoEdicao.isParcial()) {
-			selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
+		if (estudo.isParcial()) {
+			selecionado.setPeriodicidadeProduto(estudo.getPeriodicidade().getOrdem());
 			modoAnalise = "PARCIAL";
 		}
-		
-		TipoSegmentoProduto segmento = produto.getTipoSegmentoProduto();
-		
-		if (segmento == null) {
+
+		if (estudo.getTipoSegmentoProduto() == null) {
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "É necessário cadastrar um segmento para o produto.");
 		}
 		
-		TipoSegmentoProdutoDTO segmentoDTO = new TipoSegmentoProdutoDTO();
-		
-		if (segmento != null) {
-		
-			segmentoDTO.setIdSegmento(segmento.getId());
-			segmentoDTO.setDescricao(segmento.getDescricao());
-		}
-		
-		selecionado.setTipoSegmentoProduto(segmentoDTO);
+		selecionado.setTipoSegmentoProduto(estudo.getTipoSegmentoProduto());
 		if (estudo != null && estudo.isLiberado()) {
 			selecionado.setEstudoLiberado(Boolean.TRUE);
 		} else {

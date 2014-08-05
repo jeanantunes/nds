@@ -292,6 +292,15 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento obterPorId(Long idLancamento) {
 		return lancamentoRepository.buscarPorId(idLancamento);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public boolean isLancamentoParcial(Long idLancamento) {
+		
+		Boolean isParcial = this.lancamentoRepository.isLancamentoParcial(idLancamento);
+		
+		return isParcial != null ? isParcial : false;
+	}
 
 	@Override
 	@Transactional
