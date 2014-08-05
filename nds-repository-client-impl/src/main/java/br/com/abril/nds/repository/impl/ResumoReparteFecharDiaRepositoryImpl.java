@@ -51,6 +51,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
@@ -379,7 +380,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 				TipoDiferenca.SOBRA_DE,
 				TipoDiferenca.SOBRA_EM,
 				TipoDiferenca.GANHO_DE,
-				TipoDiferenca.GANHO_EM));
+				TipoDiferenca.GANHO_EM,
+				TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
+				TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA));
 	 }
 
     
