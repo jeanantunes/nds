@@ -757,7 +757,6 @@ var pageRefresh = {
 			}
 		};
 		
-		
 	}
 };
 
@@ -785,6 +784,8 @@ function disableShortcutRefresh(e) {
 	if(!e) throw "this function must be bind with a key event";
 	
 	if (pressedF5(e) || pressedCtrlR(e)) {
+		
+		reloadPage = true;
 		
 		e.returnValue = false;
 	    e.keyCode = 0;
