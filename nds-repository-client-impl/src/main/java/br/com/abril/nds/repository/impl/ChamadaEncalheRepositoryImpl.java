@@ -232,7 +232,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" case pessoa4_.TIPO  ");
 		sql.append("      when 'F' then pessoa4_.NOME "); 
 		sql.append(" 	  when 'J' then pessoa4_.RAZAO_SOCIAL  ");
-		sql.append(" end as nomeCota ");
+		sql.append(" end as nomeCota, ");
+		sql.append(" sum(chamadaenc0_.QTDE_PREVISTA) as qtdeExemplares, ");
+		sql.append(" sum(chamadaenc0_.QTDE_PREVISTA * produtoedi5_.PRECO_VENDA) as vlrTotalCe ");
 		
 		gerarFromWhereSQL(filtro, sql, param);
 		
@@ -248,7 +250,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 				cota.setNumCota(rs.getInt("numCota"));
 				cota.setIdCota(rs.getLong("idCota"));
 				cota.setNomeCota(rs.getString("nomeCota"));
-				
+				cota.setQtdeExemplares(BigInteger.valueOf(rs.getInt("qtdeExemplares")));
+				cota.setVlrTotalCe(rs.getBigDecimal("vlrTotalCe"));
 				return cota;
 			}
 		};
@@ -259,10 +262,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(lista == null || lista.size() ==0)
 			return null;
 		
-		for(CotaEmissaoDTO dto : lista){
-			
-			setQtdExamplaresVlrTotalCe(filtro, dto, false);
-		}
+		/** FIXME
+		 * for(CotaEmissaoDTO dto : lista){
+		 *	setQtdExamplaresVlrTotalCe(filtro, dto, false);
+		 * }
+		 */
+		
+		
 		
 		return lista;
 	}

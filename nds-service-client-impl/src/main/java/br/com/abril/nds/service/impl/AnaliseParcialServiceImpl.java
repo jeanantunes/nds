@@ -338,7 +338,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
     	
-    	if(reparteDigitado > 0){
+    	if(reparteDigitado >= 0){
     		analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
     	}else{
     		EstudoCotaGerado estudoCota = estudoService.obterEstudoCotaGerado(numeroCota.intValue(), estudoId);

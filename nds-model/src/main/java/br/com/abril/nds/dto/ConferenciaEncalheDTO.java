@@ -7,7 +7,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 
-public class ConferenciaEncalheDTO implements Serializable, Comparable<ConferenciaEncalheDTO> {
+public class ConferenciaEncalheDTO implements Serializable {
 
 	private static final long serialVersionUID = -6012294358522142934L;
 	
@@ -30,6 +30,12 @@ public class ConferenciaEncalheDTO implements Serializable, Comparable<Conferenc
 	private boolean isContagemPacote;
 	
 	private boolean parcialCalculado;
+	
+	/**
+	 * O instante em que o objeto que representa conferência de encalhe
+	 * foi conferido (ou criado).
+	 */
+	private long instanteConferido = System.currentTimeMillis();
 	
 	/**
 	 * Utilizado como referência para o valor do reparte.
@@ -94,6 +100,14 @@ public class ConferenciaEncalheDTO implements Serializable, Comparable<Conferenc
 	private TipoChamadaEncalhe tipoChamadaEncalhe;
 
 	
+	public long getInstanteConferido() {
+		return instanteConferido;
+	}
+
+	public void setInstanteConferido(long instanteConferido) {
+		this.instanteConferido = instanteConferido;
+	}
+
 	public Long getIdConferenciaEncalhe() {
 		return idConferenciaEncalhe;
 	}
@@ -115,7 +129,11 @@ public class ConferenciaEncalheDTO implements Serializable, Comparable<Conferenc
 	}
 
 	public void setQtdExemplar(BigInteger qtdExemplar) {
+		
 		this.qtdExemplar = qtdExemplar;
+		
+		this.instanteConferido = System.currentTimeMillis();
+		
 	}
 
 	public String getCodigoDeBarras() {
@@ -374,26 +392,4 @@ public class ConferenciaEncalheDTO implements Serializable, Comparable<Conferenc
 		return true;
 	}
 
-	@Override
-	public int compareTo(ConferenciaEncalheDTO o) {
-		
-		if(o == null) {
-			return 1;
-		}
-		
-		if(this.codigoSM == null && o.getCodigoSM() == null) {
-			return 0;
-		}
-		
-		if(this.codigoSM != null && o.getCodigoSM() == null) {
-			return 1;
-		}
-		
-		if(this.codigoSM == null && o.getCodigoSM() != null) {
-			return -1;
-		}
-		
-		return this.codigoSM.compareTo(o.getCodigoSM());
-		
-	}
 }

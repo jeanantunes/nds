@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.EstoqueProdutoFilaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -59,6 +61,10 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	
 	@Autowired
 	private EstoqueProdutoFilaRepository estoqueProdutoFilaRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRespository;
+	
 	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
@@ -270,9 +276,9 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 @Transactional
 	 public void atualizarEstoqueProdutoCota(){
 	     
-	     final List<EstoqueProdutoFila> epfs = this.estoqueProdutoFilaRepository.buscarTodos();
+	     final List<EstoqueProdutoFilaDTO> epfs = this.estoqueProdutoFilaRepository.buscarTodosEstoqueProdutoFila();
 	     
-	     for (EstoqueProdutoFila epf : epfs){
+	     for (EstoqueProdutoFilaDTO epf : epfs){
 	         
 	         boolean atualizaReg = true;
 	         
@@ -281,12 +287,12 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	             epf.setQtde(epf.getQtde().negate());
 	         }
 	         
-	         EstoqueProduto ep = this.obterEstoqueProdutoParaAtualizar(epf.getProdutoEdicao().getId());
+	         EstoqueProduto ep = this.obterEstoqueProdutoParaAtualizar(epf.getIdProdutoEdicao());
 	         
 	         if (ep == null){
 	             
 	             ep = new EstoqueProduto();
-	             ep.setProdutoEdicao(epf.getProdutoEdicao());
+	             ep.setProdutoEdicao(produtoEdicaoRespository.buscarPorId(epf.getIdProdutoEdicao()));
 	         }
 	         
 	         switch(epf.getTipoEstoque()){
@@ -335,7 +341,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	             this.saveOrUpdate(ep);
 	         }
 	         
-	         this.estoqueProdutoFilaRepository.remover(epf);
+	         this.estoqueProdutoFilaRepository.removerPorId(epf.getId());
 	     }
 	}
 	 

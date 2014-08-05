@@ -28,6 +28,8 @@ var analiseParcialController = $.extend(true, {
 
     mostrarModalBaseVisualizacao:function(){
     	
+    	$('#prodCadastradosGrid tbody').empty();
+    	
     	var objEdicoesBase = {};
         objEdicoesBase.page = 1;
         objEdicoesBase.total = 1;
@@ -92,7 +94,10 @@ var analiseParcialController = $.extend(true, {
                     });
 
                     if (!hasErros) {
-                        parameters.push({name: 'id', value: $('#estudoId').val()},
+                        
+                    	analiseParcialController.baseInicialAnalise = null;
+                    	
+                    	parameters.push({name: 'id', value: $('#estudoId').val()},
                             {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
                             {name: 'codigoProduto', value: $('#codigoProduto').val()},
                             {name: 'faixaDe', value: $('#faixaDe').val()},
@@ -553,10 +558,6 @@ var analiseParcialController = $.extend(true, {
 //                    }catch(e){
 //                        exibirMensagem('WARNING', [e.message]);
 //                    }
-                }
-                
-                if(reparteDigitado == 0){
-                	$("#row"+idRowGrid, analiseParcialController.workspace).remove();
                 }
                 
             },

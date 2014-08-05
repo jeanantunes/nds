@@ -39,6 +39,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	@Override
     @Transactional(readOnly = true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
+    	
+    	
+    	List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
+    			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
+    			StatusLancamento.EM_RECOLHIMENTO.name(),
+    			StatusLancamento.RECOLHIDO.name(),
+    			StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
+    			StatusLancamento.FECHADO.name());
+    	
+    	
     	StringBuilder sql = new StringBuilder();
         sql.append("select distinct ");
         sql.append("	c.numero_cota cota, ");
@@ -74,23 +84,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("       left join produto _p on _p.id = _ped.produto_id ");
 		sql.append("       where _p.codigo = p.codigo ");
 		sql.append("       and (_c.id = c.id or _c.id is null) ");
-		sql.append("       and l.data_lcto_distribuidor < (select max(_ul.data_lcto_distribuidor) from lancamento _ul ");
-		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
-		sql.append("       where _p.ID = pe.produto_id" );
-		
-		
-		
-		sql.append("       ) and l.id = (select max(_l.id) from lancamento _l ");
-		sql.append("       join produto_edicao pe on pe.id = _l.produto_edicao_id ");
-		sql.append("       where _p.ID = pe.produto_id ");
-		
-		sql.append("       and _l.data_lcto_distribuidor < ( ");
-		sql.append("       select max(_ul.data_lcto_distribuidor) ");
+		sql.append("       and l.data_lcto_distribuidor = (select max(_ul.data_lcto_distribuidor) ");
 		sql.append("       from lancamento _ul ");
-		sql.append("       join produto_edicao pe on pe.id = _ul.produto_edicao_id ");
-		sql.append("       where _p.ID = pe.produto_id))) ultimoReparte, ");
-		
-        sql.append("       0 as ultimoReparte, ");
+		sql.append("       inner join produto_edicao _pe on _pe.id = _ul.produto_edicao_id ");
+		sql.append("       inner join produto _p on _p.id = _pe.PRODUTO_ID ");
+		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento))) ultimoReparte, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
         sql.append("  from estudo_cota_gerado ec ");
@@ -113,10 +111,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         sql.append(" where ec.ESTUDO_ID = :estudoId ");
         
-        sql.append(" and  ec.reparte is not null and ec.reparte > 0  ");
+        sql.append(" and  ec.reparte is not null and ec.reparte >= 0  ");
         
-        
-
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
                 sql.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between :reparteFrom and :reparteTo ");
@@ -197,8 +193,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
         
         Query query = getSession().createSQLQuery(sql.toString());
-        
         query.setParameter("estudoId", queryDTO.getEstudoId());
+        query.setParameterList("statusLancamento", statusLancamento);
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
@@ -670,7 +666,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         where.append(" and ec.estudo_id = ? ");
-        where.append("   and (ec.reparte = 0 or ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
+        where.append("   and (ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
         where.append("   and ec.classificacao <> 'S' ");
         paramsWhere.add(queryDTO.getEstudo());
 

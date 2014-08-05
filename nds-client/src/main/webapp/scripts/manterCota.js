@@ -1491,6 +1491,7 @@ var COTA_CPF = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoCotaFinanceiro", value: $("#tipoCotaFinanceiro", this.workspace).val()});
         formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
 
         if (MANTER_COTA.numeroCota) {
