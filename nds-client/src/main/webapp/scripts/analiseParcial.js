@@ -493,11 +493,21 @@ var analiseParcialController = $.extend(true, {
     },
     
     atualizarReparteCota : function(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element, idRowGrid){
-    	
+
     	var legendaCota = legenda_element.text();
+
+    	var mixID 	  = legenda_element.find("span").html() === 'MX' ? legenda_element.find("span").attr("mixID") : '';
+    	var fixacaoID = legenda_element.find("span").html() === 'FX' ? legenda_element.find("span").attr("fixacaoID") : '';
     	
     	$.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
-            data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido, 'reparteDigitado' : reparteDigitado, 'legendaCota' : legendaCota},
+            data: {
+            	'numeroCota': numeroCota, 
+            	'estudoId': $('#estudoId').val(), 
+            	'variacaoDoReparte': reparteSubtraido, 
+            	'reparteDigitado' : reparteDigitado, 
+            	'legendaCota' : legendaCota,
+            	'fixacaoMixID': mixID ? mixID : fixacaoID
+            },
             success: function(result) {
             	
             	if (result.mensagens) {
@@ -535,15 +545,19 @@ var analiseParcialController = $.extend(true, {
                         	}));
 
                 if (typeof histogramaPosEstudoController != 'undefined') {
-                    //tenta atualizar os valores da tela de histograma pré analise
-                    try{
-                        histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-                            params : [{ name : 'estudoId' , value : $('#estudoId').val()}]
-                        });
-                        //histogramaPosEstudoController.popularFieldsetResumoEstudo();
-                    }catch(e){
-                        exibirMensagem('WARNING', [e.message]);
-                    }
+                	
+                	histogramaPosEstudoController.change.refreshGrid = true;
+                	histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
+                	
+//                    //tenta atualizar os valores da tela de histograma pré analise
+//                    try{
+//                        histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+//                            params : [{ name : 'estudoId' , value : $('#estudoId').val()}]
+//                        });
+//                        //histogramaPosEstudoController.popularFieldsetResumoEstudo();
+//                    }catch(e){
+//                        exibirMensagem('WARNING', [e.message]);
+//                    }
                 }
                 
             },
@@ -670,7 +684,11 @@ var analiseParcialController = $.extend(true, {
                 cell.leg = '';
             }
             if (cell.leg !== '') {
-                cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'">'+ cell.leg +'</span>';
+            	
+            	var mixID = cell.mixID ? 'mixID="' + cell.mixID + '"': '';
+            	var fixacaoID = cell.fixacaoID ? 'fixacaoID="' + cell.fixacaoID  + '"': '';
+            	
+                cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'"' + mixID + ' ' + fixacaoID + '>'+ cell.leg +'</span>';
             }
             if (cell.juramento == 0) {
                 cell.juramento = '';

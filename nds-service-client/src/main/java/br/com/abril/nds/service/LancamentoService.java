@@ -38,6 +38,9 @@ public interface LancamentoService {
 	
 	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo);
 	
+	boolean isLancamentoParcial(Long idLancamento);
+	
+	
 	        /**
      * Confirma expedição de lançamento
 	         * @param expedicaoDTO TODO
