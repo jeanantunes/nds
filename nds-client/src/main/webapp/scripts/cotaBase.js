@@ -7,6 +7,7 @@ var cotaBaseController = $.extend(true, {
 	
 	init : function(){
 		
+		$("#indiceAjuste").val("1.0");
 		$("#indiceAjuste").mask("9.9");
 		$("#idCota", cotaBaseController.workspace).focus();
 
@@ -438,7 +439,7 @@ var cotaBaseController = $.extend(true, {
 				
 			}
 			if(aux === 0){
-				$("#indiceAjuste").val("");
+				$("#indiceAjuste").val("1.0");
 				$("#indiceAjuste").mask("9.9");
 			}		
 		});
