@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -681,6 +682,38 @@ public class ConferenciaEncalheController extends BaseController {
 		return dados;
 	}
 	
+	private Collection<ConferenciaEncalheDTO> ordenarConferenciasEncalheContingencia(Collection<ConferenciaEncalheDTO> conferenciasContingencia) {
+		
+		conferenciasContingencia = PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(conferenciasContingencia), 
+				Ordenacao.ASC, 
+				"codigoSM");
+		
+		Iterator<ConferenciaEncalheDTO> it = conferenciasContingencia.iterator();
+		
+		List<ConferenciaEncalheDTO> confsForaDoPrimeiroDia = new ArrayList<>();
+		
+		Integer primeiroDiaRecolhimento = 1;
+		
+		while(it.hasNext()) {
+			
+			ConferenciaEncalheDTO iterado = it.next();
+			
+			if(!primeiroDiaRecolhimento.equals(iterado.getDia())) {
+				confsForaDoPrimeiroDia.add(iterado);
+				it.remove();
+			}
+			
+			
+		}
+		
+		conferenciasContingencia.addAll(confsForaDoPrimeiroDia);
+		
+		return conferenciasContingencia;
+		
+		
+	}
+	
+	
 	private Collection<ConferenciaEncalheDTO> ordenarListaConferenciaEncalhe(
 			Set<ConferenciaEncalheDTO> lista,
 			boolean indConferenciaContingencia, 
@@ -688,9 +721,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(indConferenciaContingencia) {
 			
-			return PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
-							Ordenacao.ASC, 
-							"codigoSM");
+			return ordenarConferenciasEncalheContingencia(lista);
 			
 		} 
 		
@@ -1027,7 +1058,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaAlterado();
 		
-		this.carregarListaConferencia(null, false, false);		
+		this.carregarListaConferencia(null, false, indConferenciaContingencia);		
 	}
 	
 	private void desautorizarVendaNegativa() {
