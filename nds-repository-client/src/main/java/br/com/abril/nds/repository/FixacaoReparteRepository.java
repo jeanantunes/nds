@@ -51,4 +51,6 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	
 	BigInteger obterQtdDeEdicoesNoRanger (String codigoICD, Integer edInicial, Integer edFinal);
 	
+	void atualizarQtdeExemplares(Long fixacaoID, Integer qtdeExemplares, Date data, Usuario usuario);
+	
 }

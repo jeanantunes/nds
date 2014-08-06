@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -508,5 +509,36 @@ public class MixCotaProdutoRepositoryImpl extends
 	    query.setParameter("tipoClassificacaoProduto", tipoClassificacaoProduto);
 	    
 	    return (boolean) query.uniqueResult();
+	}
+
+	@Override
+	public void atualizarReparte(boolean isPDVUnico, Long mixID, Long reparte, Usuario usuario, Date data) {
+
+		StringBuilder statement = new StringBuilder();
+
+		statement.append(" update mix_cota_produto ")
+				 .append(" set datahora = :data, ");
+		
+		if (isPDVUnico) {
+		
+			statement.append(" reparte_min = (case when :reparte < reparte_min then :reparte else reparte_min end), ")
+					 .append(" reparte_max = (case when :reparte > reparte_max then :reparte else reparte_max end), ");
+		} else {
+
+			statement.append(" reparte_min = :reparte, ")
+			 		 .append(" reparte_max = :reparte, ");
+		}
+
+		statement.append(" id_usuario = :idUsuario ")
+				 .append(" where id = :mixID ");
+
+		SQLQuery query = this.getSession().createSQLQuery(statement.toString());
+		
+		query.setParameter("reparte", reparte);
+		query.setParameter("idUsuario", usuario.getId());
+		query.setParameter("mixID", mixID);
+		query.setParameter("data", data);
+		
+		query.executeUpdate();
 	}
 }
