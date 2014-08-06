@@ -571,8 +571,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Override
     @Transactional
     public void salvarFechamentoEncalhe(final FiltroFechamentoEncalheDTO filtro,
-            final List<FechamentoFisicoLogicoDTO> listaFechamento,
-            final List<FechamentoFisicoLogicoDTO> listaNaoReplicados) {
+            final List<FechamentoFisicoLogicoDTO> listaFechamento) {
         
         FechamentoFisicoLogicoDTO fechamento;
         BigInteger qtd = null;
@@ -581,9 +580,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             fechamento = listaFechamento.get(i);
             
-            final FechamentoFisicoLogicoDTO fechamentoNaoReplicado = this.selecionarFechamentoPorProdutoEdicao(
-                    listaNaoReplicados, fechamento.getProdutoEdicao());
-
             final BigInteger exemplaresDevolucao = fechamento.getExemplaresDevolucao() == null ?
             		BigInteger.ZERO : fechamento.getExemplaresDevolucao();
             
@@ -593,11 +589,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
             
-            if (fechamentoNaoReplicado != null) {
-                
-                qtd = fechamentoNaoReplicado.getFisico();
-                
-            } else if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
+            if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
 
                 qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
 
@@ -627,7 +619,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 fechamentoEncalheRepository.adicionar(fechamentoEncalhe);
                 
             } else {
-                
+               
                 fechamentoEncalhe.setQuantidade(qtd);
                 fechamentoEncalheRepository.alterar(fechamentoEncalhe);
             }
@@ -1443,31 +1435,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
         }
     }
-    
-    private FechamentoFisicoLogicoDTO selecionarFechamentoPorProdutoEdicao(
-            final List<FechamentoFisicoLogicoDTO> fechamentos, final Long codigoProdutoEdicao) {
-        
-        if (fechamentos == null || fechamentos.isEmpty() || codigoProdutoEdicao == null) {
-            
-            return null;
-        }
-        
-        for (final FechamentoFisicoLogicoDTO fechamento : fechamentos) {
-            
-            if (codigoProdutoEdicao.equals(fechamento.getProdutoEdicao())) {
-                
-                return fechamento;
-            }
-        }
-        
-        return null;
-    }
-    
+
     @Override
     @Transactional
     public void salvarFechamentoEncalheBox(final FiltroFechamentoEncalheDTO filtro,
-            final List<FechamentoFisicoLogicoDTO> listaFechamento,
-            final List<FechamentoFisicoLogicoDTO> listaNaoReplicados) {
+            final List<FechamentoFisicoLogicoDTO> listaFechamento) {
         
         FechamentoFisicoLogicoDTO fechamento;
         BigInteger qtd = null;
@@ -1475,15 +1447,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         for (int i = 0; i < listaFechamento.size(); i++) {
             
             fechamento = listaFechamento.get(i);
-            
-            final FechamentoFisicoLogicoDTO fechamentoNaoReplicado = this.selecionarFechamentoPorProdutoEdicao(
-                    listaNaoReplicados, fechamento.getProdutoEdicao());
-            
-            if (fechamentoNaoReplicado != null) {
-                
-                qtd = fechamentoNaoReplicado.getFisico();
-                
-            } else if (filtro.isCheckAll()) {
+
+            if (filtro.isCheckAll()) {
                 
                 qtd = fechamento.getExemplaresDevolucao();
                 
