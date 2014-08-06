@@ -717,30 +717,14 @@ public class ParciaisServiceImpl implements ParciaisService{
 				
 				Lancamento lancamentoPeriodo = periodoAnterior.getLancamentoPeriodoParcial();
 				
-				validarStatusLancamentoPeriodo(lancamentoPeriodo,"Lançamento não pode ser excluido! É necessário manter um período final");
+				validarStatusLancamentoPeriodoExclusao(lancamentoPeriodo,"Lançamento não pode ser excluido! É necessário manter um período final");
 				
 				periodoAnterior.setTipo(TipoLancamentoParcial.FINAL);			
 			}
 		}
 
-		//this.atualizarRecolhimentosPeriodoAnterior(periodoAnterior, periodo.getUltimoLancamento().getDataRecolhimentoDistribuidor());
+		this.atualizarRecolhimentosPeriodoAnterior(periodoAnterior, periodo.getUltimoLancamento().getDataRecolhimentoDistribuidor());
 
-//		Lancamento l = periodo.getLancamentos().get(0);
-//		for(HistoricoLancamento hl : l.getHistoricos()) {
-//			hl.setLancamento(null);
-//			historicoLancamentoRepository.remover(hl);
-//			historicoLancamentoRepository.flush();
-//		}
-//		l.setPeriodoLancamentoParcial(null);
-//
-//		lancamentoRepository.remover(l);
-		
-//		periodo.setLancamentos(null);
-//		
-//		periodoLancamentoParcialRepository.alterar(periodo);
-				
-//		List<Lancamento> redistribuicoes = periodoLancamentoParcialRepository.obterRedistribuicoes(periodo.getId());
-		
 		List<Lancamento> redistribuicoes = periodo.getRedistribuicoes();
 		
 		if(!redistribuicoes.isEmpty()) {
@@ -766,6 +750,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 	private void validarStatusLancamentoPeriodo(Lancamento lancamento, String mensagem) {
 		
 		if(!getStatusLancamentoPreExpedicao().contains(lancamento.getStatus())){ 
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
+		}
+	}
+
+	private void validarStatusLancamentoPeriodoExclusao(Lancamento lancamento, String mensagem) {
+		
+		if(!getStatusLancamentoRecolhimento().contains(lancamento.getStatus())){ 
 			throw new ValidacaoException(TipoMensagem.WARNING, mensagem);
 		}
 	}
@@ -973,6 +964,22 @@ public class ParciaisServiceImpl implements ParciaisService{
 		statusLancamentos.add(StatusLancamento.PLANEJADO);
 		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO);
 		statusLancamentos.add(StatusLancamento.BALANCEADO);
+		
+		return statusLancamentos;
+	}
+	
+	private List<StatusLancamento> getStatusLancamentoRecolhimento() {
+		
+		List<StatusLancamento> statusLancamentos = new ArrayList<>();
+		
+		statusLancamentos.add(StatusLancamento.CONFIRMADO);
+		statusLancamentos.add(StatusLancamento.PLANEJADO);
+		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO);
+		statusLancamentos.add(StatusLancamento.BALANCEADO);
+		
+		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		statusLancamentos.add(StatusLancamento.FURO);
+		statusLancamentos.add(StatusLancamento.EXPEDIDO);
 		
 		return statusLancamentos;
 	}
