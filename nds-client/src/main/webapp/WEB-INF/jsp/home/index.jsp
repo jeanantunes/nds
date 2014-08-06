@@ -300,19 +300,8 @@
 	});
 	
 	$(document).ready(function() {
-		
-		$("#ajaxLoading").ajaxStart(function() {
-			$(this).fadeIn(200);
-			pageRefresh.disable();
-			
-		});
-		$("#ajaxLoading").ajaxStop(function() {
-			$(document).unbind('keydown');
-			document.onkeydown = fkey;
-			$(this).fadeOut(200);
-			redimensionarWorkspace();
-			pageRefresh.enable();
-		});
+
+		bindAjaxLoading();
 		
 		redimensionarWorkspace();
 		

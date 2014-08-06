@@ -25,14 +25,14 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 		return histogramaPosEstudoRepository.obterHistogramaPosEstudo(estudoId, listaIdEdicaoBase, faixa);
 	}
 	
-	@Transactional
+	@Transactional(readOnly=true)
 	@Override
 	public List<Long> obterIdEdicoesBase(Long idEstudo) {
 		return histogramaPosEstudoRepository.obterListaIdProdEdicoesBaseEstudo(idEstudo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<HistogramaPosEstudoAnaliseFaixaReparteDTO> obterListaHistogramaPosEstudo(Integer[][] faixas, 
 			                                                                             Integer estudoId, 
 			                                                                             List<Long> listaIdEdicaoBase) {
