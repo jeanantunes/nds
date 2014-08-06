@@ -980,8 +980,13 @@ var lancamentoNovoController = $.extend(true, {
 			var tipoDiferencaAnterior = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
 			
 			lancamentoNovoController.popupNovasDiferencas();
-			
+
 			$("#tipoDiferenca", lancamentoNovoController.workspace).val(tipoDiferencaAnterior);
+			
+			lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({tipoDiferenca: tipoDiferencaAnterior, clearInputs:true});
+			
+			lancamentoNovoController.recalcularReparteAtual();
+			
 		}
 	},
 	

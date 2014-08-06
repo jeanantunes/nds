@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.Lists;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
@@ -111,7 +114,16 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			if (filtro.getTipoDiferenca() != null) {
 			
-				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+				if( TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.equals(filtro.getTipoDiferenca()) ) {
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+											TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO,
+											TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS,
+											TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO,
+											TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR));
+				} else {
+					query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+				}
+				
 			}
 			
 			if (filtro.getPaginacao() != null) {
@@ -157,9 +169,19 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
 		}
 		
-		if (filtro.getTipoDiferenca() != null) {
 		
-			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+		if (filtro.getTipoDiferenca() != null) {
+			
+			if( TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.equals(filtro.getTipoDiferenca()) ) {
+				query.setParameterList("tipoDiferenca", Arrays.asList(
+										TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO,
+										TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS,
+										TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO,
+										TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR));
+			} else {
+				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+			}
+			
 		}
 		
 		return (Long) query.uniqueResult();
@@ -200,8 +222,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
+				
+				if(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.equals(filtro.getTipoDiferenca())) {
+					hql += " and diferenca.tipoDiferenca in (:tipoDiferenca) ";
+				} else {
+					hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+				}
 	
-				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
 			}
 		}
 		
