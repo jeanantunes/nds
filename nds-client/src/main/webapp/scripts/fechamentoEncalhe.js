@@ -269,6 +269,8 @@ var fechamentoEncalheController = $.extend(true, {
 		$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 		$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).hide();
 		$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).hide();
+
+		fechamentoEncalheController.fechamentosManuais = [];
 		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
@@ -314,15 +316,22 @@ var fechamentoEncalheController = $.extend(true, {
 			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
 			$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).show();
 		}
-		
+
 		fechamentoEncalheController.desabilitarBotaoConfirmar(fechamentoEncalheController.modoBox.ativo);
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
+			var fisicoDigitado = fechamentoEncalheController.fechamentosManuais[row.cell.produtoEdicao];
 			
+			var valorFisico = fisicoDigitado ? fisicoDigitado : row.cell.fisico == null ? '' : row.cell.fisico;
+
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			
+			if (fisicoDigitado) {
+				
+				row.cell.diferenca = valorFisico - row.cell.exemplaresDevolucao; 
+			}
+
 			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 
 			if((row.cell.replicar == 'true' || (!fechamentoEncalheController.modoBox.ativo && fechamentoEncalheController.checkAllGrid)) 
