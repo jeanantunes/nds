@@ -302,6 +302,11 @@ public class CotaBaseController extends BaseController {
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
+		if (cota == null){
+		    
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada");
+		}
+		
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
 		
 		validarCota(cota, cotaBase, null);
@@ -426,10 +431,6 @@ public class CotaBaseController extends BaseController {
 				obterSegmentosNaoRecebidosCadastradosNaCota(cota);		
 		
 		listaSegmentosNaoRecebidos.addAll(this.segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosCotaBase(cota.getId()));
-		
-		if(listaSegmentosNaoRecebidos.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-		}
 		
 		TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>> tableModel =
 				new TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>>();
