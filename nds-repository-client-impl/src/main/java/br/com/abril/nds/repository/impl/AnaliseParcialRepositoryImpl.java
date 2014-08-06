@@ -59,7 +59,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("    (select coalesce(reparte, 0) from estudo_cota_gerado where estudo_id = e.estudo_origem_copia and cota_id = ec.cota_id) reparteEstudoOrigemCopia, ");
         sql.append("    coalesce(ec.reparte,0) reparteSugerido, ");
         sql.append("    ec.classificacao leg, ");
-        sql.append("    ec.cota_nova cotaNova, ");
+        sql.append("    (select count(cbc.ID) ");
+        sql.append("        from cota_base_cota cbc ");
+        sql.append("        join cota_base cb on cbC.COTA_BASE_ID = cb.ID ");
+        sql.append("       where cb.COTA_ID = c.ID and cbc.DT_FIM_VIGENCIA > (select DATA_OPERACAO from distribuidor)) > 0 ");
+        sql.append("    cotaNova, ");
         sql.append("    (select coalesce(sum(mec.qtde), 0) ");
         sql.append("          from movimento_estoque_cota mec ");
         sql.append("         where mec.tipo_movimento_id = 32 ");
@@ -77,7 +81,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("       from lancamento _ul ");
 		sql.append("       inner join produto_edicao _pe on _pe.id = _ul.produto_edicao_id ");
 		sql.append("       inner join produto _p on _p.id = _pe.PRODUTO_ID ");
-		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento))) ultimoReparte, ");
+		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento)) order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
         sql.append("  from estudo_cota_gerado ec ");
