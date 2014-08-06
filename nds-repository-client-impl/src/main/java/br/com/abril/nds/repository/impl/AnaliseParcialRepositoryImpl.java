@@ -256,11 +256,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
         
         if (queryDTO.getFaixaAte() != null) {
-        	query.setParameter("faixaAte", queryDTO.getFaixaDe());
+        	query.setParameter("faixaAte", queryDTO.getFaixaAte());
         }
 
         if (StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())) {
-            query.setParameter("numeroCota", queryDTO.getNumeroCotaStr());
+            query.setParameterList("numeroCota", queryDTO.getNumeroCotas());
         }
         
         ((SQLQuery) query).addScalar("cota", StandardBasicTypes.INTEGER);
