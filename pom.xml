@@ -31,10 +31,10 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
-                        <version>4.2.5</version>
-                </dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.2.5</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -47,11 +47,6 @@
 				<version>2.5</version>
 				<type>jar</type>
 				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<artifactId>log4j</artifactId>
-				<groupId>log4j</groupId>
-				<version>1.2.16</version>
 			</dependency>
 			<dependency>
 				<groupId>javassist</groupId>
@@ -146,12 +141,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.6.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.6.1</version>
+				<version>1.7.7</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.persistence</groupId>
@@ -189,9 +179,9 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>aspectj</groupId>
+				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
-				<version>1.5.3</version>
+				<version>1.8.1</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -334,12 +324,13 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>log4j</artifactId>
-			<groupId>log4j</groupId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -490,7 +481,7 @@
 				<module>nds-server</module>
 				<module>nds-estudo-algoritmo</module>
 				<module>nds-homologador</module>
-<!-- 			<module>nds-test</module> -->
+				<!-- <module>nds-test</module> -->
 			</modules>
 		</profile>
 
@@ -511,7 +502,7 @@
 				<module>nds-estudo-algoritmo</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>testProfile</id>
 			<modules>
@@ -519,7 +510,7 @@
 				<module>nds-test</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>backend-without-integration</id>
 			<modules>
