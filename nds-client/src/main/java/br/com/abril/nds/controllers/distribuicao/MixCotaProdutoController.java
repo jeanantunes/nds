@@ -471,8 +471,6 @@ public class MixCotaProdutoController extends BaseController {
 	@LogFuncional(value="Cadastro de Mix em lote")
 	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
 
-		//LOGGER.debug("Iniciando execução do estudo.");
-		
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
 		List<MixCotaDTO> mixCotaDTOInconsistente = validaMixEmLote(listMixExcel);
