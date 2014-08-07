@@ -611,11 +611,11 @@ var distribuicaoManual = $.extend(true, {
 					}else{
 						distribuicaoManual.executarSubmitArquivo();
 					}
-					$(this).dialog("destroy");
+					$( this ).dialog( "close" );
 				},
 				"Cancelar": function() {
-					$(this).dialog("destroy");
-				}
+					$( this ).dialog( "close" );
+				},
 			},
 			form: $("#formUploadLoteDistbManual")
 		});
@@ -654,7 +654,7 @@ var distribuicaoManual = $.extend(true, {
 	        			$("#distbManual_gerarEstudo").hide();
 	        			$("#distbManual_importacao").hide();
 	        			$("#distbManual_cancelar").hide();
-	        			$("#fieldDistribuicao-cotas").hide()
+	        			$("#fieldDistribuicao-cotas").hide();
 	        			
 	        			if(typeof(matrizDistribuicao)=="object"){
 	        				matrizDistribuicao.carregarGrid();
