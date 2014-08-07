@@ -6,25 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 @Embeddable
 public class ItemNotaEnvioPK implements Serializable {
 	
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3070206919433825685L;
-
-
-
 
 	@ManyToOne(optional=false)
 	@JoinColumn(name="NOTA_ENVIO_ID")
 	private NotaEnvio notaEnvio;
-	
-	
-	
-	
+
 	@Column(name="SEQUENCIA", nullable=false)
 	private Integer sequencia;
 
@@ -39,17 +30,12 @@ public class ItemNotaEnvioPK implements Serializable {
 	}
 
 
-
-
 	/**
 	 * @return the notaEnvio
 	 */
 	public NotaEnvio getNotaEnvio() {
 		return notaEnvio;
 	}
-
-
-
 
 	/**
 	 * @param notaEnvio the notaEnvio to set
@@ -58,18 +44,12 @@ public class ItemNotaEnvioPK implements Serializable {
 		this.notaEnvio = notaEnvio;
 	}
 
-
-
-
 	/**
 	 * @return the sequencia
 	 */
 	public Integer getSequencia() {
 		return sequencia;
 	}
-
-
-
 
 	/**
 	 * @param sequencia the sequencia to set
