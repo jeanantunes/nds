@@ -179,14 +179,14 @@ public class EstudoAlgoritmoService {
     }
     
     public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(final ProdutoEdicaoEstudo edicao) {
+    	
         List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
         
         if (!listaEdicoesBase.isEmpty()) {
             return listaEdicoesBase;
         }
         
-        listaEdicoesBase = definicaoBasesDAO
-                .listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
+        listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
         if (listaEdicoesBase.isEmpty()) {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
                     "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));

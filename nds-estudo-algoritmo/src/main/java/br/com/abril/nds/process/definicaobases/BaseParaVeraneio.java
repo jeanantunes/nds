@@ -36,12 +36,12 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 
 	@Override
 	public void executar(EstudoTransient estudo)  {
+		
 		// copia lista para não afetar o loop após modificações.
 		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>(estudo.getEdicoesBase());
-		estudoAlgoritmoService.carregarParametros(estudo);
 
-		for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
-			if (estudo.isPracaVeraneio()) {
+		if (estudo.isPracaVeraneio()) {
+			for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
 				if (validaPeriodoVeraneio(produtoEdicao.getDataLancamento())) {
 					produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
 					adicionarEdicoesAnterioresAoEstudo(produtoEdicao, estudo);
@@ -53,24 +53,47 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	}
 
 	private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicaoEstudo produtoEdicao, EstudoTransient estudo) {
+		
 		List<ProdutoEdicaoEstudo> edicoesAnosAnterioresSaidaVeraneio = estudoAlgoritmoService.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
+		
 		if (!edicoesAnosAnterioresSaidaVeraneio.isEmpty()) {
-			estudo.getEdicoesBase().addAll(edicoesAnosAnterioresSaidaVeraneio);
+			
+			for(ProdutoEdicaoEstudo pee : edicoesAnosAnterioresSaidaVeraneio) {
+				if(!estudo.getEdicoesBase().contains(pee)) {
+					estudo.getEdicoesBase().add(pee);
+				}
+			}
+			/*
+			Set<ProdutoEdicaoEstudo> edicoesBases = new HashSet<ProdutoEdicaoEstudo>(estudo.getEdicoesBase());
+			edicoesBases.addAll(edicoesAnosAnterioresSaidaVeraneio);
+			estudo.getEdicoesBase().clear();
+			estudo.getEdicoesBase().addAll(edicoesBases);
+			*/
 		}
 	}
 
 	private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicaoEstudo produtoEdicaoBase, EstudoTransient estudo)  {
+		
 		List<ProdutoEdicaoEstudo> edicoesAnosAnteriores = estudoAlgoritmoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
+		
 		if (edicoesAnosAnteriores.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontradas outras bases para veraneio, favor inserir bases manualmente."));
 		}
+		
 		for (ProdutoEdicaoEstudo edicao : edicoesAnosAnteriores) {
 			edicao.setIndicePeso(BigDecimal.valueOf(2));
+			if(!estudo.getEdicoesBase().contains(edicao)) {
+				estudo.getEdicoesBase().add(edicao);
+				//estudo.getEdicoesBase().addAll(edicoesAnosAnteriores);
+			} else if(estudo.getEdicoesBase().contains(edicao) 
+					&& !estudo.getEdicoesBase().get(estudo.getEdicoesBase().indexOf(edicao)).getIndicePeso().equals(edicao.getIndicePeso())) {
+				estudo.getEdicoesBase().get(estudo.getEdicoesBase().indexOf(edicao)).setIndicePeso(BigDecimal.valueOf(2));
+			}
 		}
-		estudo.getEdicoesBase().addAll(edicoesAnosAnteriores);
+		
 	}
 
-	private boolean validaPeriodoVeraneio(Date dataLancamento) {
+	public boolean validaPeriodoVeraneio(Date dataLancamento) {
 		MonthDay inicioVeraneio = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
 		MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_15.getData());
 		MonthDay dtLancamento = new MonthDay(dataLancamento);

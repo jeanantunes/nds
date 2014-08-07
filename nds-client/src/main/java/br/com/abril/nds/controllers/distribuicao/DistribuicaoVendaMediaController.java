@@ -185,7 +185,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
         definicaoBases.executar(estudoTemp);
         selecionados.clear();
         
-        if (estudoTemp.getEdicoesBase() != null && !estudoTemp.getEdicoesBase().isEmpty()){
+        if (estudoTemp.getEdicoesBase() != null && !estudoTemp.getEdicoesBase().isEmpty()) {
+        	
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
     		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false));
@@ -196,6 +197,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		}
         }
 	}
+	
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 	
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, selecionados);

@@ -39,19 +39,32 @@ public class DefinicaoBases extends ProcessoAbstrato {
     
     @Override
     public void executar(final EstudoTransient estudo)  {
+    	
+    	estudoAlgoritmoService.carregarParametros(estudo);
+    	
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
-            LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
-            
-            if (!edicoesBase.isEmpty()) {
-                edicoesBase = filtrarClassificacao(edicoesBase, estudo);
-                edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
-                excluiEdicoesComMaisDeDoisAnos(edicoesBase);
-                excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
-                
-                estudo.setEdicoesBase(edicoesBase);
-                
-                baseParaVeraneio.executar(estudo);
-            }
+        	
+        	if(estudo.isPracaVeraneio() 
+        			&& baseParaVeraneio.validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
+        		
+        		List<ProdutoEdicaoEstudo> edicoesAnosAnteriores = estudoAlgoritmoService.buscaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo());
+        		
+        		estudo.setEdicoesBase(new LinkedList<ProdutoEdicaoEstudo>(edicoesAnosAnteriores));
+        		baseParaVeraneio.executar(estudo);
+        	} else {
+        		
+        		LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
+        		
+        		if (!edicoesBase.isEmpty()) {
+        			edicoesBase = filtrarClassificacao(edicoesBase, estudo);
+        			edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
+        			excluiEdicoesComMaisDeDoisAnos(edicoesBase);
+        			excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
+        			
+        			estudo.setEdicoesBase(edicoesBase);        			
+        		}
+        	}
+        	
         }
     }
     
