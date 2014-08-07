@@ -598,7 +598,7 @@ var distribuicaoManual = $.extend(true, {
 	add_lote : function() {
 		$("#modalUploadArquivo-DistbManual").dialog({
 			resizable: false,
-			height:200,
+			height:300,
 			width:400,
 			modal: true,
 			buttons: {
