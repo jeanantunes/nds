@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.log.LogFuncional;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
@@ -467,6 +468,7 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/uploadArquivoLote")
+	@LogFuncional(value="Cadastro de Mix em lote")
 	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
 
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);

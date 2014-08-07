@@ -277,7 +277,7 @@ var lancamentoController = $.extend(true, {
 				"Confirmar": function() {
 					$.postJSON(
 						contextPath + "/estoque/diferenca/confirmarLancamentos", 
-						null,
+						[{name:'todos', value:$("#selecionarTodosDiferencaID", lancamentoController.workspace).is(":checked")}],
 						function(result) {
 
 							lancamentoController.inicializar();
@@ -343,7 +343,7 @@ var lancamentoController = $.extend(true, {
 					
 					$.postJSON(
 						contextPath + "/estoque/diferenca/cancelarLancamentos", 
-						null,
+						[{name:'todos', value:$("#selecionarTodosDiferencaID", lancamentoController.workspace).is(":checked")}],
 						function(result) {
 
 							lancamentoController.inicializar();

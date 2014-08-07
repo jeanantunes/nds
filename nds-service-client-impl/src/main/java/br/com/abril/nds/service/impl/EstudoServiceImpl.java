@@ -35,6 +35,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -99,6 +100,13 @@ public class EstudoServiceImpl implements EstudoService {
 	public EstudoGerado obterEstudo(Long id) {
 		return this.estudoGeradoRepository.buscarPorId(id);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EstudoGeradoPreAnaliseDTO obterEstudoPreAnalise(Long id) {
+		return this.estudoGeradoRepository.obterEstudoPreAnalise(id);
+	}
+
 
 	@Override
 	@Transactional
@@ -131,7 +139,7 @@ public class EstudoServiceImpl implements EstudoService {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId, Long codigoProduto, Long numeroEdicao) {
 		
 		boolean isEdicoesBase = this.isEdicoesBaseEstudo(estudoId);

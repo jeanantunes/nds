@@ -598,7 +598,7 @@ var distribuicaoManual = $.extend(true, {
 	add_lote : function() {
 		$("#modalUploadArquivo-DistbManual").dialog({
 			resizable: false,
-			height:'auto',
+			height:300,
 			width:400,
 			modal: true,
 			buttons: {
@@ -664,7 +664,7 @@ var distribuicaoManual = $.extend(true, {
 	        			exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
 	        		}
 		        	
-	                $("#modalUploadArquivo-DistbManual").dialog("destroy");
+	                $("#modalUploadArquivo-DistbManual").dialog("close");
 		        }
 		   },
 		   url:  contextPath +"/distribuicaoManual/uploadArquivoLoteDistbManual",				   

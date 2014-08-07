@@ -6,10 +6,10 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -681,6 +681,38 @@ public class ConferenciaEncalheController extends BaseController {
 		return dados;
 	}
 	
+	private Collection<ConferenciaEncalheDTO> ordenarConferenciasEncalheContingencia(Collection<ConferenciaEncalheDTO> conferenciasContingencia) {
+		
+		conferenciasContingencia = PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(conferenciasContingencia), 
+				Ordenacao.ASC, 
+				"codigoSM");
+		
+		Iterator<ConferenciaEncalheDTO> it = conferenciasContingencia.iterator();
+		
+		List<ConferenciaEncalheDTO> confsForaDoPrimeiroDia = new ArrayList<>();
+		
+		Integer primeiroDiaRecolhimento = 1;
+		
+		while(it.hasNext()) {
+			
+			ConferenciaEncalheDTO iterado = it.next();
+			
+			if(!primeiroDiaRecolhimento.equals(iterado.getDia())) {
+				confsForaDoPrimeiroDia.add(iterado);
+				it.remove();
+			}
+			
+			
+		}
+		
+		conferenciasContingencia.addAll(confsForaDoPrimeiroDia);
+		
+		return conferenciasContingencia;
+		
+		
+	}
+	
+	
 	private Collection<ConferenciaEncalheDTO> ordenarListaConferenciaEncalhe(
 			Set<ConferenciaEncalheDTO> lista,
 			boolean indConferenciaContingencia, 
@@ -688,9 +720,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(indConferenciaContingencia) {
 			
-			return PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
-							Ordenacao.ASC, 
-							"codigoSM");
+			return ordenarConferenciasEncalheContingencia(lista);
 			
 		} 
 		
@@ -1027,7 +1057,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaAlterado();
 		
-		this.carregarListaConferencia(null, false, false);		
+		this.carregarListaConferencia(null, false, indConferenciaContingencia);		
 	}
 	
 	private void desautorizarVendaNegativa() {
@@ -2063,15 +2093,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	}
 	
 	@Post
-	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
-		
-		final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO = obterFromSessionMapaDatasEncalheConferiveis();
-		
-		final List<ProdutoEdicao> listaProdutoEdicao =
-			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
-				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS, mapaDataCEConferivelDTO);
-		
+	public void autocompletarProdutoPorCodigoNome(final String codigoNomeProduto){
+
 		final List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		final List<ProdutoEdicao> listaProdutoEdicao = this.obterProduto(codigoNomeProduto);
 		
 		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
 			
@@ -2088,6 +2114,49 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto) throws EncalheRecolhimentoParcialException {
+
+		final List<ProdutoEdicao> listaProdutoEdicao = this.obterProduto(codigoNomeProduto);
+		
+		if (listaProdutoEdicao != null && listaProdutoEdicao.size() == 1) {
+
+			final Integer numeroCota = this.getNumeroCotaFromSession();
+			
+			final ProdutoEdicaoDTO p = 
+					this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, listaProdutoEdicao.get(0).getId());
+			
+			final Map<String, Object> dados = new HashMap<String, Object>();
+			
+			if (p != null){
+				
+				dados.put("idProdutoEdicaoNovoEncalhe", p.getId());
+				dados.put("descricaoProduto", p.getCodigoProduto() + " - " + p.getNomeProduto() + " - " + p.getNumeroEdicao());
+				dados.put("numeroEdicao", p.getNumeroEdicao());
+				dados.put("precoVenda", p.getPrecoVenda());
+				dados.put("desconto", p.getPrecoComDesconto());
+				dados.put("parcial",p.isParcial());
+			}
+			
+			this.result.use(CustomJson.class).from(dados).serialize();
+		
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.NONE, "Há mais de uma edição para o produto pesquisado.");
+		}
+	}
+
+	private List<ProdutoEdicao> obterProduto(final String codigoNomeProduto) {
+
+		final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO = obterFromSessionMapaDatasEncalheConferiveis();
+		
+		final List<ProdutoEdicao> listaProdutoEdicao =
+			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
+				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS, mapaDataCEConferivelDTO);
+		
+		return listaProdutoEdicao;
 	}
 	
 	@Post
@@ -2397,7 +2466,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				
 				dados.put("numeroEdicao", p.getNumeroEdicao());
 				dados.put("precoVenda", p.getPrecoVenda());
-				dados.put("desconto", p.getDesconto());
+				dados.put("desconto", p.getPrecoComDesconto());
 				dados.put("parcial",p.isParcial());
 			}
 			
