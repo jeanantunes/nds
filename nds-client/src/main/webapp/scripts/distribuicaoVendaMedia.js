@@ -213,7 +213,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
 		
-		$("#edicaoProdCadastradosGrid", this.workspace).flexOptions({
+		$("#edicaoProdCadastradosGrid-1", this.workspace).flexOptions({
 			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
 			params: data,
 			preProcess: function(result){

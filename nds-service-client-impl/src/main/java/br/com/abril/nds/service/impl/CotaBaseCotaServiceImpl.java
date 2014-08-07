@@ -12,12 +12,16 @@ import br.com.abril.nds.model.cadastro.CotaBaseCota;
 import br.com.abril.nds.model.cadastro.TipoAlteracao;
 import br.com.abril.nds.repository.CotaBaseCotaRepository;
 import br.com.abril.nds.service.CotaBaseCotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Service
 public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 
 	@Autowired
 	private CotaBaseCotaRepository cotaBaseCotaRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Override
 	@Transactional
@@ -46,20 +50,22 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 	@Override
 	@Transactional
 	public void desativarCotaBase(CotaBase cotaBase, Cota cotaParaDesativar) {
-		CotaBaseCota cotaBaseCotaParaAtualizar = this.cotaBaseCotaRepository.desativarCotaBase(cotaBase, cotaParaDesativar);
+		
+	    final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+	    
+	    final CotaBaseCota cotaBaseCotaParaAtualizar = 
+	            this.cotaBaseCotaRepository.desativarCotaBase(cotaBase, cotaParaDesativar);
 		cotaBaseCotaParaAtualizar.setAtivo(false);
-		cotaBaseCotaParaAtualizar.setDtFimVigencia(new Date());
+		cotaBaseCotaParaAtualizar.setDtFimVigencia(dataOperacao);
 		cotaBaseCotaRepository.alterar(cotaBaseCotaParaAtualizar);
 		
-		CotaBaseCota cotaBaseCotaExluida = new CotaBaseCota();
+		final CotaBaseCota cotaBaseCotaExluida = new CotaBaseCota();
 		cotaBaseCotaExluida.setCota(cotaParaDesativar);
-		cotaBaseCotaExluida.setDtFimVigencia(new Date());
+		cotaBaseCotaExluida.setDtFimVigencia(dataOperacao);
 		cotaBaseCotaExluida.setCotaBase(cotaBase);
 		cotaBaseCotaExluida.setTipoAlteracao(TipoAlteracao.EXCLUSAO);
 		cotaBaseCotaExluida.setAtivo(false);
 		cotaBaseCotaRepository.adicionar(cotaBaseCotaExluida);
-		
-		
 	}
 
 	@Override

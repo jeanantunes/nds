@@ -91,43 +91,39 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Path("/")
     public void index() {
 
-	result.include("fornecedores",  fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+        result.include("fornecedores",  fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
 
-	this.iniciarComboBox();
+        this.iniciarComboBox();
 
-	this.iniciarComboRota();
+        this.iniciarComboRota();
 
-	this.iniciarComboRoteiro();
+        this.iniciarComboRoteiro();
     }
 
     /**
      * Inicia o combo Roteiro
      */
     private void iniciarComboRoteiro() {
-
-	result.include("roteiros", this.roteirizacaoService.getComboTodosRoteiros());
+        result.include("roteiros", this.roteirizacaoService.getComboTodosRoteiros());
     }
 
     /**
      * Inicia o combo Rota
      */
     private void iniciarComboRota() {
-
-	result.include("rotas", this.roteirizacaoService.getComboTodosRotas());
+        result.include("rotas", this.roteirizacaoService.getComboTodosRotas());
     }
 
     /**
      * Inicia o combo Box
      */
     private void iniciarComboBox() {
-
-	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+        result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
     }
 
     @Post
     public void obterDataDistribuidor(){
-
-	this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
+        this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
     }
 
     @Post
@@ -137,24 +133,22 @@ public class GeracaoNotaEnvioController extends BaseController {
 	    List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 	    String sortname, String sortorder, int rp, int page) {
 
-	if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
-	    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
+    	if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
+    	    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
+    
+    	FiltroConsultaNotaEnvioDTO filtro = this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
+    			intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
+    			listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
+    
+    	Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
+    	
+    	if (qtdResult == null || qtdResult == 0){
+    	    throw new ValidacaoException(TipoMensagem.WARNING, "Não existem notas a serem geradas para o filtro escolhido.");
+    	}
+    
+    	List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 
-	FiltroConsultaNotaEnvioDTO filtro = 
-		this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
-			intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
-			listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
-
-	Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
-	if (qtdResult == null || qtdResult == 0){
-
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Não existem notas a serem geradas para o filtro escolhido.");
-	}
-
-	List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
-
-	result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
+	    result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
     }
 
     @Post
@@ -167,8 +161,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		filtro.setCadastro(SituacaoCadastro.SUSPENSO);
 		filtro.setPaginacaoVO(new PaginacaoVO());
 	
-		List<ConsultaNotaEnvioDTO> cotasAusentes =
-			geracaoNotaEnvioService.busca(filtro);
+		List<ConsultaNotaEnvioDTO> cotasAusentes = geracaoNotaEnvioService.busca(filtro);
 	
 		if (cotasAusentes != null && !cotasAusentes.isEmpty())
 		    hasCotasAusentes = true;
@@ -179,36 +172,28 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Post
     public void exportar(FileType fileType) throws IOException {
 
-	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+        FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 
-	filtro.getPaginacaoVO().setPaginaAtual(null);
-	filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
+        filtro.getPaginacaoVO().setPaginaAtual(null);
+        filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
 
-	List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
-		geracaoNotaEnvioService.busca(filtro);
+        List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO = geracaoNotaEnvioService.busca(filtro);
 
-	FileExporter.to("nota-envio", fileType).inHTTPResponse(
-this.getNDSFileHeader(), filtro,
-		consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,
-		this.httpServletResponse);
+        FileExporter.to("nota-envio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,this.httpServletResponse);
 
-	result.use(Results.nothing());
+        result.use(Results.nothing());
     }
 
     @Post
     public void transferirSuplementar(List<Long> listaIdCotas) {
 
-	ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor =
-		this.distribuidorService.parametrosRecolhimentoDistribuidor();
+        ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = this.distribuidorService.parametrosRecolhimentoDistribuidor();
 
-	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+        FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 
-	this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(parametrosRecolhimentoDistribuidor, listaIdCotas, 
-		filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
+        this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(parametrosRecolhimentoDistribuidor, listaIdCotas, filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
 
-	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
-                        "Transferência de reparte para suplementar realizada com sucesso."),
-		Constantes.PARAM_MSGS).recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência de reparte para suplementar realizada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
     }
 
     @Post
@@ -217,9 +202,7 @@ this.getNDSFileHeader(), filtro,
 
 		session.setAttribute(COTAS_ID, listaIdCotas);
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
- "Geração de NE."), Constantes.PARAM_MSGS)
-                .recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração de NE."), Constantes.PARAM_MSGS).recursive().serialize();
     }
 
     private byte[] getNotas(){
@@ -230,8 +213,7 @@ this.getNDSFileHeader(), filtro,
 	
 		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
 	
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não foram encontrado itens para exportar"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 		}
 	
 		byte[] notasGeradas = null;
@@ -292,15 +274,13 @@ this.getNDSFileHeader(), filtro,
      */
     private FiltroConsultaNotaEnvioDTO getFiltroNotaEnvioSessao() {
 
-	FiltroConsultaNotaEnvioDTO filtro = 
-		(FiltroConsultaNotaEnvioDTO) this.session.getAttribute(FILTRO_CONSULTA_NOTA_ENVIO);
+        FiltroConsultaNotaEnvioDTO filtro = (FiltroConsultaNotaEnvioDTO) this.session.getAttribute(FILTRO_CONSULTA_NOTA_ENVIO);
 
-	if (filtro == null) {
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não foram encontrado itens para exportar"));
-	}
+        if (filtro == null) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+        }
 
-	return filtro;
+        return filtro;
     }
 
 
@@ -310,35 +290,35 @@ this.getNDSFileHeader(), filtro,
 	    List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 	    String sortname, String sortorder, int rp, int page) {
 
-	Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+        Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 
-	Intervalo<Integer> intervaloCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
+        Intervalo<Integer> intervaloCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
 
-	Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloMovimentoDe, intervaloMovimentoAte);
+        Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloMovimentoDe, intervaloMovimentoAte);
 
-	PaginacaoVO paginacao = new PaginacaoVO();
+        PaginacaoVO paginacao = new PaginacaoVO();
 
-	paginacao.setOrdenacao(Ordenacao.ASC);
-	paginacao.setPaginaAtual(page);
-	paginacao.setQtdResultadosPorPagina(rp);
-	paginacao.setSortOrder(sortorder);
-	paginacao.setSortColumn(sortname);
+        paginacao.setOrdenacao(Ordenacao.ASC);
+        paginacao.setPaginaAtual(page);
+        paginacao.setQtdResultadosPorPagina(rp);
+        paginacao.setSortOrder(sortorder);
+        paginacao.setSortColumn(sortname);
 
-	FiltroConsultaNotaEnvioDTO filtroConsultaNotaEnvioDTO = new FiltroConsultaNotaEnvioDTO();
+        FiltroConsultaNotaEnvioDTO filtroConsultaNotaEnvioDTO = new FiltroConsultaNotaEnvioDTO();
 
-	filtroConsultaNotaEnvioDTO.setDataEmissao(dataEmissao);
-	filtroConsultaNotaEnvioDTO.setIdFornecedores(listaIdFornecedores);
-	filtroConsultaNotaEnvioDTO.setIdRota(idRota);
-	filtroConsultaNotaEnvioDTO.setIdRoteiro(idRoteiro);
-	filtroConsultaNotaEnvioDTO.setIntervaloBox(intervaloBox);
-	filtroConsultaNotaEnvioDTO.setIntervaloCota(intervaloCota);
-	filtroConsultaNotaEnvioDTO.setIntervaloMovimento(intervaloDateMovimento);
-	filtroConsultaNotaEnvioDTO.setExibirNotasEnvio(exibirNotasEnvio);
-	filtroConsultaNotaEnvioDTO.setPaginacaoVO(paginacao);
+        filtroConsultaNotaEnvioDTO.setDataEmissao(dataEmissao);
+        filtroConsultaNotaEnvioDTO.setIdFornecedores(listaIdFornecedores);
+        filtroConsultaNotaEnvioDTO.setIdRota(idRota);
+        filtroConsultaNotaEnvioDTO.setIdRoteiro(idRoteiro);
+        filtroConsultaNotaEnvioDTO.setIntervaloBox(intervaloBox);
+        filtroConsultaNotaEnvioDTO.setIntervaloCota(intervaloCota);
+        filtroConsultaNotaEnvioDTO.setIntervaloMovimento(intervaloDateMovimento);
+        filtroConsultaNotaEnvioDTO.setExibirNotasEnvio(exibirNotasEnvio);
+        filtroConsultaNotaEnvioDTO.setPaginacaoVO(paginacao);
 
-	session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
+        session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
 
-	return filtroConsultaNotaEnvioDTO;
+        return filtroConsultaNotaEnvioDTO;
     }
 
     @Get
@@ -357,15 +337,14 @@ this.getNDSFileHeader(), filtro,
 
     	String dataRecolhimento = null;
 
-    	if(filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte()))
+    	if (filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte())) {
     		dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());
-    	else
-    		dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" +
- "até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
-
+    	} else {
+    		dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" + "até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
+    	}
+    	
     	result.include("dataLancamento", dataRecolhimento);
     	result.include("notaEnvio", notaEnvio);
     	
     }
-
 }

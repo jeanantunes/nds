@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -16,6 +17,8 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
  *
  */
 public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
+	
+	EstudoGeradoPreAnaliseDTO obterEstudoPreAnalise(Long id);
 	
 	void liberarEstudo(List<Long> listIdEstudos, boolean liberado);
 	

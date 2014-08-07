@@ -784,6 +784,28 @@ function mostra_status(opcao) {
 
 }
 
+function bindAjaxLoading() {
+	
+	$("#ajaxLoading").bind("ajaxStart", function() {
+		$(this).fadeIn(200);
+		pageRefresh.disable();
+		
+	});
+	
+	$("#ajaxLoading").bind("ajaxStop", function() {
+		$(document).unbind('keydown');
+		$(this).fadeOut(200);
+		redimensionarWorkspace();
+		pageRefresh.enable();
+		
+	});
+}
+
+function unbindAjaxLoading() {
+	
+	$("#ajaxLoading").unbind("ajaxStart ajaxStop");
+}
+
 function focarPrimeiroElemento() {
 	$('input:visible:enabled:first').focus();
 }
@@ -869,5 +891,17 @@ function selectTabTitle(title){
 		
 }
 
+function getTabByTitle(title) {
+
+	var tabToSelect=-1;
+	$("#workspace li.ui-state-default a").each(function(idx,comp){
+		//console.log($(comp).text());
+		if($(comp).text()==title){
+			tabToSelect=idx;
+			return -1;
+		}
+	});
 	
+	return tabToSelect;
+}
 //@ sourceURL=NDS.js

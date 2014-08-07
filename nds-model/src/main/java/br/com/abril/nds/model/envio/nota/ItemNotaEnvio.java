@@ -9,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -30,7 +31,7 @@ public class ItemNotaEnvio implements Serializable {
 	@EmbeddedId
 	private ItemNotaEnvioPK itemNotaEnvioPK;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 	
@@ -61,7 +62,7 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name="DESCONTO", precision=18, scale=4, nullable=false)
 	private BigDecimal desconto;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
@@ -226,4 +227,30 @@ public class ItemNotaEnvio implements Serializable {
 	public void setSequenciaMatrizLancamento(Integer sequenciaMatrizLancamento) {
 		this.sequenciaMatrizLancamento = sequenciaMatrizLancamento;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getCodigoProduto() == null) ? 0 : this.getCodigoProduto().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ItemNotaEnvio other = (ItemNotaEnvio) obj;
+		if (this.getCodigoProduto() == null) {
+			if (other.getCodigoProduto() != null)
+				return false;
+		} else if (!this.getCodigoProduto().equals(other.getCodigoProduto()))
+			return false;
+		return true;
+	}
+	
 }
