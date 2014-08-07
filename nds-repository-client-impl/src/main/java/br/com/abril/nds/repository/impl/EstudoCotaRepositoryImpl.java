@@ -181,7 +181,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 			query.setParameter("dataFim", periodo.getAte());
 		}
 
-	return query.list();
+		return query.list();
     }
 
     @SuppressWarnings("unchecked")

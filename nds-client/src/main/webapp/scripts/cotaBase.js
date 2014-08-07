@@ -263,7 +263,12 @@ var cotaBaseController = $.extend(true, {
 		
 		$(document.body).keydown(function(e) {
 			if(keyEventEnterAux(e)){
-				cotaBaseController.mostrar_normal();
+				
+				if ($("#isGeral", cotaBaseController.workspace).is(":checked")){
+					cotaBaseController.mostrar_geral();
+				} else {
+					cotaBaseController.mostrar_normal();
+				}
 			}
 			
 			return true;
@@ -280,6 +285,15 @@ var cotaBaseController = $.extend(true, {
 		}
 	});
 	
+	},
+	
+	clickPesquisar : function(){
+		
+		if ($("#isGeral", cotaBaseController.workspace).is(":checked")){
+			cotaBaseController.mostrar_geral();
+		} else {
+			cotaBaseController.mostrar_normal();
+		}
 	},
 	
 	executarPreProcessamentoDetalhesGrid : function(resultado){
@@ -366,6 +380,8 @@ var cotaBaseController = $.extend(true, {
 
 			return resultado;
 		}
+		
+		$(".grids", cotaBaseController.workspace).show();
 		
 		return cotaBaseController.prepararGridPrincipal(resultado);
 	},
@@ -457,9 +473,21 @@ var cotaBaseController = $.extend(true, {
 		
 		var parametroPesquisaCota ='\'#numeroCotaGrid'+ index+ '\',' + index;
 		
-		var inputNumeroCota ='<input type="text" id="numeroCotaGrid'+index+'" name="numeroCotaGrid" value="'+valor+'" onchange="cotaBaseController.pesquisarCota('+parametroPesquisaCota+')" style="width:55px; float:left; margin-right:10px;"  />';
+		var inputNumeroCota ='<input type="text" id="numeroCotaGrid'+index+'" name="numeroCotaGrid" value="'+valor+'" onchange="cotaBaseController.pesquisarCota('+parametroPesquisaCota+')" style="width:55px; float:left; margin-right:10px;"' + 
+		' onkeydown="cotaBaseController.avoidENTER(event, this); " '
+		+  '/>';
 		
 		return inputNumeroCota;
+	},
+	
+	//evita que o preproces da grid seja chamada quando ENTER é pressionado, simulando um TAB
+	//pediram isso, não me culpe
+	avoidENTER : function(e, element){
+		if (e.keyCode == 13){
+			e.stopPropagation();
+			$(element).blur();
+			return false;
+		}
 	},
 	
 	pesquisarCota : function(numeroCota, index) {
@@ -484,38 +512,53 @@ var cotaBaseController = $.extend(true, {
 						);
 						
 					}					
-					$("#numeroCotaGrid"+index).val("");					
+					cotaBaseController.atribuirDadosCota(null,index);
 				}, true,null
 		);
 	},
 	
 	atribuirDadosCota:function(resultado, index){
 		
-		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+','+resultado.idCota+')">'+resultado.nomeCota+'</a>';
-		$("#nomeCotaGrid"+index, cotaBaseController.workspace).html(linkFotoPDV);
-		
- 		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text(resultado.tipoPDV);
- 		$("#bairroGrid"+index, cotaBaseController.workspace).text(resultado.bairro);
- 		$("#cidadeGrid"+index, cotaBaseController.workspace).text(resultado.cidade);
- 		
- 		$("#geradorDeFluxoGrid"+index, cotaBaseController.workspace).text(resultado.geradorDeFluxo);
- 		$("#areaInfluenciaGrid"+index, cotaBaseController.workspace).text(resultado.areaInfluencia);
- 		$("#faturamentoGrid"+index, cotaBaseController.workspace).text(resultado.faturamentoMedio);
-		
- 		var linkSegmento = 
-		'<a href="javascript:;" onclick="cotaBaseController.segmentosNaoRecebidos('+ resultado.numeroCota +');" style="cursor:pointer">' +
-	   		'<img title="Segmentos" src="' + contextPath + '/images/ico_distribuicao_bup.gif" hspace="5" border="0px" />' +
-	   	'</a>';
-		
-		var linkExcluir = 
-		'<a href="javascript:;" style="margin-right: 5px;cursor:pointer"  onclick="cotaBaseController.excluirPeso(null, '+ index +');">' +
-			'<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
-		'</a>';
-		
-		$("#acao"+index, cotaBaseController.workspace).html(linkSegmento + linkExcluir);
-		
-		cotaBaseController.segmentosNaoRecebidos(resultado.numeroCota);
-		
+		if (resultado){
+			
+			$("#numeroCotaGrid" + index, cotaBaseController.workspace).val(resultado.numeroCota);
+			
+			var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+','+resultado.idCota+')">'+resultado.nomeCota+'</a>';
+			$("#nomeCotaGrid"+index, cotaBaseController.workspace).html(linkFotoPDV);
+			
+	 		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text(resultado.tipoPDV);
+	 		$("#bairroGrid"+index, cotaBaseController.workspace).text(resultado.bairro);
+	 		$("#cidadeGrid"+index, cotaBaseController.workspace).text(resultado.cidade);
+	 		
+	 		$("#geradorDeFluxoGrid"+index, cotaBaseController.workspace).text(resultado.geradorDeFluxo);
+	 		$("#areaInfluenciaGrid"+index, cotaBaseController.workspace).text(resultado.areaInfluencia);
+	 		$("#faturamentoGrid"+index, cotaBaseController.workspace).text(resultado.faturamentoMedio);
+			
+	 		var linkSegmento = 
+			'<a href="javascript:;" onclick="cotaBaseController.segmentosNaoRecebidos('+ resultado.numeroCota +');" style="cursor:pointer">' +
+		   		'<img title="Segmentos" src="' + contextPath + '/images/ico_distribuicao_bup.gif" hspace="5" border="0px" />' +
+		   	'</a>';
+			
+			var linkExcluir = 
+			'<a href="javascript:;" style="margin-right: 5px;cursor:pointer"  onclick="cotaBaseController.excluirPeso(null, '+ index +');">' +
+				'<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
+			'</a>';
+			
+			$("#acao"+index, cotaBaseController.workspace).html(linkSegmento + linkExcluir);
+			
+			cotaBaseController.segmentosNaoRecebidos(resultado.numeroCota);
+		} else {
+			
+			$("#numeroCotaGrid" + index, cotaBaseController.workspace).val("");
+			$("#nomeCotaGrid"+index, cotaBaseController.workspace).html("");
+	 		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text("");
+	 		$("#bairroGrid"+index, cotaBaseController.workspace).text("");
+	 		$("#cidadeGrid"+index, cotaBaseController.workspace).text("");
+	 		$("#geradorDeFluxoGrid"+index, cotaBaseController.workspace).text("");
+	 		$("#areaInfluenciaGrid"+index, cotaBaseController.workspace).text("");
+	 		$("#faturamentoGrid"+index, cotaBaseController.workspace).text("");
+	 		$("#acao"+index, cotaBaseController.workspace).html("");
+		}
  	},
 	
 	porSegmento : function(){
@@ -528,26 +571,13 @@ var cotaBaseController = $.extend(true, {
 		$('.classSegmento').hide();
 	},
 	
-	mostraPesqGeral : function (){
-		
-		if(document.getElementById('isGeral').checked){
-			//cotaBaseController.limparDadosDoFiltro(true);
-			$('.pesqGeral').show();
-			$('.pesqNormal').hide();
-		}else{
-			$('.pesqGeral').hide();
-			$('.pesqNormal').show();
-			
-		}
-	},
-	
 	mostrar_geral : function (){
 		
-		$('.pesqGeralGrid').show();
-		$('.pesqCotasGrid').hide();		
-		$('.historicoGrid').hide();
+		$('.pesqGeralGrid', cotaBaseController.workspace).show();
+		$('.pesqCotasGrid', cotaBaseController.workspace).hide();		
+		$('.historicoGrid', cotaBaseController.workspace).hide();
 		
-		var numeroCota = $('#idCota').val().trim();
+		var numeroCota = $('#idCota', cotaBaseController.workspace).val().trim();
 		
 		$("#consultaEquivalentesGrid", cotaBaseController.workspace).flexOptions({
 			url: contextPath + "/cadastro/cotaBase/pesquisarCotasBasePesquisaGeral",
@@ -890,10 +920,10 @@ var cotaBaseController = $.extend(true, {
 					{numeroCota:numeroCota},
 				function(result) {						
 					cotaBaseController.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack);
-					$('.pesqCotasGrid' , cotaBaseController.workspace).hide();
 				},
 				function() {
-					cotaBaseController.pesquisarPorNumeroErrorCallBack(idCampoNumeroCota, errorCallBack);					
+					cotaBaseController.pesquisarPorNumeroErrorCallBack(idCampoNumeroCota, errorCallBack);
+					$('.pesqCotasGrid' , cotaBaseController.workspace).hide();
 				}, 
 				isFromModal
 			);

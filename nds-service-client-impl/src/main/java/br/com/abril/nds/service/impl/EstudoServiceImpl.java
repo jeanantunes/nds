@@ -393,8 +393,7 @@ public class EstudoServiceImpl implements EstudoService {
     	
     	EstudoPDV estudoPDVPrincipal = this.gerarEstudoPDV(estudo, cota, pdvPrincipal);
     	
-    	final boolean naoNecessitaReprocessamento = 
-    		estudoPDVPrincipal.getId() == null || (pdvsSecundarios == null || pdvsSecundarios.isEmpty());
+    	final boolean naoNecessitaReprocessamento = estudoPDVPrincipal.getId() == null || (pdvsSecundarios == null || pdvsSecundarios.isEmpty());
     	
     	if (naoNecessitaReprocessamento) {
     		
