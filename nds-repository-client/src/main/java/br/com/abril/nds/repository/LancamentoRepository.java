@@ -428,4 +428,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 
 	boolean existeLancamentoParaOsStatus(final Long idProdutoEdicao,final StatusLancamento ...statusLancamento );
+
+	Boolean isLancamentoParcial(Long idLancamento);
 }

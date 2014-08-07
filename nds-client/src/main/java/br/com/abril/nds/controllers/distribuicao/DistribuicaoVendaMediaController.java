@@ -169,14 +169,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
                 selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProdutoEdicao().getProduto()
                         .getCodigo(), null, base.getProdutoEdicao().getNumeroEdicao(), base.getProdutoEdicao()
                         .getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto()
-                        .getId() : null, false));
+                        .getId() : null, false, base.getProdutoEdicao().isParcial()));
 	    }
     } else if (estudo != null) {
         List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudo.getId());
         for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
                 selecionados.addAll(distribuicaoVendaMediaService.pesquisar(edicaoBaseEstudoDTO.getCodigoProduto(),
-                        edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false));
-        }
+                        edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false, edicaoBaseEstudoDTO.isParcial()));        
+                }
     } else {
         EstudoTransient estudoTemp = new EstudoTransient();
         estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(
@@ -188,10 +188,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
         if (estudoTemp.getEdicoesBase() != null && !estudoTemp.getEdicoesBase().isEmpty()){
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
-    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false));
+    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, base.isParcial()));
     		    } else {
     		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
-                                    base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false));
+                                    base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false, base.isParcial()));
     		    }
     		}
         }

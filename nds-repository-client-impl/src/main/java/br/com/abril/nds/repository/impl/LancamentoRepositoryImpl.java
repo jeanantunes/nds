@@ -2746,4 +2746,21 @@ public class LancamentoRepositoryImpl extends
     	return (!query.list().isEmpty());
     }
     
+    @Override
+    public Boolean isLancamentoParcial(Long idLancamento) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select pe.parcial from lancamento l ");
+		sql.append(" join produto_edicao pe on l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" where l.id = :idlanc ");
+
+		Query query = getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("idlanc", idLancamento);
+
+		return (Boolean) query.uniqueResult();
+
+	}
+    
 }

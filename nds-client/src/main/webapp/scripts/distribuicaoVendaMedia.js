@@ -207,11 +207,13 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var produto = $("#produtoPesquisaBases").val();
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#selectClassificacao").val();
+		var idLancamento = $("#idLancamento").val();
 		
 		data.push({name:"filtro.codigo", value:codigo});
 		data.push({name:"filtro.nome", value:produto});
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
+		data.push({name:"filtro.idLancamento", value:idLancamento});
 		
 		$("#edicaoProdCadastradosGrid", this.workspace).flexOptions({
 			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
