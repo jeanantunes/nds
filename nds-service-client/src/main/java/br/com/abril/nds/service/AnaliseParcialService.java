@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
@@ -40,7 +41,7 @@ public interface AnaliseParcialService {
     
     BigDecimal reparteFisicoOuPrevistoLancamento (Long idEstudo);
     
-	void atualizarFixacaoOuMix(Long estudoId, Integer numeroCota, Long reparteDigitado, String legendaCota);
+	void atualizarFixacaoOuMix(ReparteFixacaoMixWrapper wrapper);
 	
 	ValidacaoException validarLiberacaoDeEstudo(Long estudoId);
 

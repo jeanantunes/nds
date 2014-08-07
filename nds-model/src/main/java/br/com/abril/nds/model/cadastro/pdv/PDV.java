@@ -14,6 +14,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -60,7 +61,7 @@ public class PDV implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataInclusao;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "COTA_ID")
 	@Cascade(value = {org.hibernate.annotations.CascadeType.PERSIST,
 					  org.hibernate.annotations.CascadeType.MERGE,

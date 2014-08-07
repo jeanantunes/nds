@@ -1910,7 +1910,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in (:gruposMovimento) ");
         
-        hql.append(" group by produtoEdicao.id ");
+        hql.append(" group by produtoEdicao.id, movimento.qtde ");
         
         final Query query = getSession().createQuery(hql.toString());
         
@@ -3457,10 +3457,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return (Long) query.uniqueResult();
     }
     
-    @SuppressWarnings("unchecked")
     @Override
-    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
-            final Long idCota, final Intervalo<Date> periodo,
+    @SuppressWarnings("unchecked")
+    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(final Long idCota, 
+    		final Intervalo<Date> periodo,
             final List<Long> listaIdFornecedores,
             final List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota) {
         
@@ -3474,6 +3474,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("   join pe.produto p   ");
         sql.append("   join p.fornecedores f   ");
         sql.append("   where mec.estudoCota is null and lancamento.estudo is not null  ");
+        sql.append("   and mec.itemNotaEnvio is null ");
+        
         
         if(listaGruposMovimentoEstoqueCota != null && !listaGruposMovimentoEstoqueCota.isEmpty()) {
             sql.append("  and tm.grupoMovimentoEstoque in (:gruposMovimentosEstoque)  ");
@@ -3494,7 +3496,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final Query query = this.getSession().createQuery(sql.toString());
         
         query.setParameterList("gruposMovimentosEstoque", listaGruposMovimentoEstoqueCota);
+        
         query.setParameter("cotaID", idCota);
+        
         if (periodo != null) {
             query.setParameter("dataInicial", periodo.getDe());
             query.setParameter("dataFinal", periodo.getAte());
@@ -3502,18 +3506,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("fornecedoresID", listaIdFornecedores);
         
         return query.list();
-    }
-    
-    @Override
-    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
-            final Long idCota, final Intervalo<Date> periodo,
-            final List<Long> listaIdFornecedores,
-            final GrupoMovimentoEstoque grupoMovimentoEstoque) {
-        
-        final List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota = new ArrayList<GrupoMovimentoEstoque>();
-        listaGruposMovimentoEstoqueCota.add(grupoMovimentoEstoque);
-        
-        return this.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, listaGruposMovimentoEstoqueCota);
     }
     
     @Override

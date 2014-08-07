@@ -11,6 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -28,13 +29,10 @@ import javax.persistence.TemporalType;
 @SequenceGenerator(name = "NOTA_ENVIO_SEQ", initialValue = 1, allocationSize = 1)
 public class NotaEnvio implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -194455126920689804L;
 
 	@Id
-	@GeneratedValue(generator = "NOTA_ENVIO_SEQ")
+	@GeneratedValue
 	private Long numero;
 
 	@Column(name = "CODIGO_NATUREZA_OPERACAO")
@@ -57,7 +55,7 @@ public class NotaEnvio implements Serializable {
 	@Embedded
 	private IdentificacaoDestinatario destinatario;
 
-	@OneToMany(mappedBy = "itemNotaEnvioPK.notaEnvio", cascade=CascadeType.ALL)
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "itemNotaEnvioPK.notaEnvio")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
 	
 	@Column(name = "NOTA_FISCAL_ID", nullable = false)
@@ -195,5 +193,43 @@ public class NotaEnvio implements Serializable {
 
 	public void setNotaFiscalID(Long notaFiscalID) {
 		this.notaFiscalID = notaFiscalID;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getChaveAcesso() == null) ? 0 : this.getChaveAcesso().hashCode());
+		result = prime * result + ((this.getDataEmissao() == null) ? 0 : this.getDataEmissao().hashCode());
+		result = prime * result + ((this.getNumero() == null) ? 0 : this.getNumero().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NotaEnvio other = (NotaEnvio) obj;
+		if (this.getChaveAcesso() == null) {
+			if (other.getChaveAcesso() != null)
+				return false;
+		} else if (!this.getChaveAcesso().equals(other.getChaveAcesso()))
+			return false;
+		if (this.getDataEmissao() == null) {
+			if (other.getDataEmissao() != null)
+				return false;
+		} else if (!this.getDataEmissao().equals(other.getDataEmissao()))
+			return false;
+		if (this.getNumero() == null) {
+			if (other.getNumero() != null)
+				return false;
+		} else if (!this.getNumero().equals(other.getNumero()))
+			return false;
+		return true;
+
 	}
 }

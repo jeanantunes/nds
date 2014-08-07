@@ -1270,7 +1270,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> conferencias = conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao);
 			
 			if(conferencias!=null) {
-				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(conferencias));
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(conferencias));
 			}
 			
 			return;
@@ -1282,13 +1282,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota, null);
 			
 			if(listaConferenciaEncalheDTO != null) {
-				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
 			}
 			
 		} 
 		
 		if(info.getListaConferenciaEncalhe() == null) {
-			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
 		if(indConferenciaContingencia) {

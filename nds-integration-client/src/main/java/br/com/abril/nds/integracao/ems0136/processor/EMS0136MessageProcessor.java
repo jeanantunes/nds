@@ -64,7 +64,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private static final int PEB_MINIMA = 10;
 
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_EXPEDIDO = 
-			ImmutableList.of(StatusLancamento.EXPEDIDO);
+			ImmutableList.of(
+				StatusLancamento.FURO, 
+				StatusLancamento.BALANCEADO, 
+				StatusLancamento.EM_BALANCEAMENTO, 
+				StatusLancamento.EXPEDIDO
+			);
 
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_ABERTO = 
 			ImmutableList.of(
@@ -94,6 +99,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		LancamentoHelper helper = this.tratarLancamentosExistentes(produtoEdicao, input);
 		
+		if (helper.getLancamentosManter().isEmpty() && !this.validarDatasLancamento(input.getDataLancamento(), input.getDataRecolhimento())) {
+			
+			return;
+		}
+
 		LancamentoParcial lancamentoParcial = this.tratarLancamentoParciall(input,produtoEdicao);
 		
 		PeriodoLancamentoParcial periodo = this.tratarPeriodo(lancamentoParcial, input);
@@ -187,16 +197,26 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		for (Lancamento lancamentoAtual : lancamentosDaEdicao) {
 
 			if (LANCAMENTO_EXPEDIDO.contains(lancamentoAtual.getStatus())) {
+				
+				int numeroLancamento = 1;
+				
+				if (lancamentoAtual.getPeriodoLancamentoParcial() != null) {
+					numeroLancamento = lancamentoAtual.getPeriodoLancamentoParcial().getPrimeiroLancamento().getNumeroLancamento() + 1; 
+				}
+
+				lancamentoAtual.setNumeroLancamento(numeroLancamento);
 				lancamentoAtual.setDataRecolhimentoPrevista(input.getDataRecolhimento());
 				lancamentoAtual.setDataRecolhimentoDistribuidor(input.getDataRecolhimento());
+
 				helper.addLancamentoManter(lancamentoAtual);
+
 			} else if (LANCAMENTO_ABERTO.contains(lancamentoAtual.getStatus())) {
 				helper.addLancamentosRemover(lancamentoAtual);
 			} else {
 				helper.addLancamentoManter(lancamentoAtual);
 			}
 		}
-
+		
 		if (lp != null) {
 
 			for (Lancamento lancamentoRemover : helper.getLancamentosRemover()) {
@@ -271,6 +291,20 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		input.setDataRecolhimento(dataRecolhimento);
 	}
 	
+	private boolean validarDatasLancamento(Date dataLancamento, Date dataRecolhimento) {
+		
+		if (DateUtil.obterDiferencaDias(dataLancamento, dataRecolhimento) < PEB_MINIMA) {
+			
+			return false;
+
+		} else if (DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataRecolhimento)) {
+
+			return false;
+		}
+
+		return true;
+	}
+	
 	private Date getProximaDataUtil(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
 		
 		Date novaData = this.parciaisService.obterDataUtilMaisProxima(data);
@@ -318,11 +352,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		periodo.setNumeroPeriodo(ultimoPeriodo.getNumeroPeriodo()+1);
 		periodo.setTipo(TipoLancamentoParcial.FINAL);
-		
-		if (periodo.peb() < PEB_MINIMA) {
-			
-			throw new IllegalArgumentException("Período com PEB menor que 10 dias.");
-		}
 		
 		return periodo;
 	}

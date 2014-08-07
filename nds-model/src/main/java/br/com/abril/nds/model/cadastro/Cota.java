@@ -59,7 +59,7 @@ public class Cota implements Serializable {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
 	
@@ -92,10 +92,10 @@ public class Cota implements Serializable {
 	private Set<TelefoneCota> telefones = new HashSet<TelefoneCota>();
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@OneToOne(mappedBy = "cota")
+	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota")
 	private ContratoCota contratoCota;
 	
-	@ManyToOne
+	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 	
@@ -106,7 +106,7 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
-	@OneToOne(mappedBy = "cota")
+	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
 
 	@Enumerated(EnumType.STRING)
@@ -119,10 +119,10 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
 	
-	@OneToOne(mappedBy="cota")
+	@OneToOne(fetch=FetchType.LAZY, mappedBy="cota")
 	private ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name="ID_FIADOR")
 	private Fiador fiador;
 	
@@ -136,7 +136,7 @@ public class Cota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	
-	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	@OneToMany(fetch=FetchType.LAZY, mappedBy="cota")
 	private List<RankingSegmento> rankingSegmento;
 	
 	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
@@ -171,7 +171,7 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica;
 	
-	@OneToOne(mappedBy = "cota",cascade={CascadeType.REMOVE})
+	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota",cascade={CascadeType.REMOVE})
 	private BaseReferenciaCota baseReferenciaCota;
 	
 	@OneToMany(mappedBy = "cota",cascade={CascadeType.REMOVE})
@@ -593,14 +593,26 @@ public class Cota implements Serializable {
 		return null;
 	}
 	
-	public PDV getPDVPrincipal(){
-		for(PDV item : this.getPdvs()){
-			if(item.getCaracteristicas().isPontoPrincipal()){
+	public PDV getPDVPrincipal() {
+		for(PDV item : this.getPdvs()) {
+			if(item.getCaracteristicas().isPontoPrincipal()) {
 				return item;
 			}
 		}
 		return null;
 	}
+	
+	public TelefoneCota getTefefonePrincipal() {
+		
+		for(TelefoneCota telefoneCota : this.getTelefones()) {
+			if(telefoneCota.isPrincipal()){
+				return telefoneCota;
+			}
+		}
+		
+		return null;
+	}
+	
 	
 	public List<PDV> getPDVSecundarios(){
 		

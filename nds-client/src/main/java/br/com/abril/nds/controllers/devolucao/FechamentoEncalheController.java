@@ -235,14 +235,14 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/salvar")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
-	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, List<FechamentoFisicoLogicoDTO> listaNaoReplicados,
-					   boolean isAllFechamentos, String dataEncalhe, Long fornecedorId, Long boxId) {
+	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, boolean isAllFechamentos, 
+					   String dataEncalhe, Long fornecedorId, Long boxId) {
 		
 		List<FechamentoFisicoLogicoDTO> todosFechamentos = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
 		
 		List<FechamentoFisicoLogicoDTO> fechamentos = mergeItensFechamento(todosFechamentos, listaFechamento);
 
-		gravaFechamentoEncalhe(fechamentos, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
+		gravaFechamentoEncalhe(fechamentos, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
 		
 		this.getSession().removeAttribute("listaDeGrid");
 		
@@ -632,6 +632,8 @@ public class FechamentoEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
 		
+		fechamentoEncalheService.verificarEstoqueProdutoNaoAtualizado();
+		
 		try {
 		
 			if (dataEncalhe == null) {
@@ -856,10 +858,12 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/salvarNoEncerrementoOperacao")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
-	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento,
-											 List<FechamentoFisicoLogicoDTO> listaNaoReplicados, boolean isAllFechamentos, 
-											 String dataEncalhe, Long fornecedorId, Long boxId) {
-
+	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, 
+											 boolean isAllFechamentos, String dataEncalhe, 
+											 Long fornecedorId, Long boxId) {
+		
+		fechamentoEncalheService.verificarEstoqueProdutoNaoAtualizado();
+		
 		listaFechamento = 
 				this.mergeItensFechamento(
 						this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0), listaFechamento);
@@ -868,7 +872,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
-			gravaFechamentoEncalhe(listaFechamento, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
+			gravaFechamentoEncalhe(listaFechamento, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
 		}
 
 		this.result.use(Results.json()).from("", "result").serialize();
@@ -876,7 +880,6 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private void gravaFechamentoEncalhe(
 			List<FechamentoFisicoLogicoDTO> listaFechamento,
-			List<FechamentoFisicoLogicoDTO> listaNaoReplicados, 
 			boolean isAllFechamentos, 
 			String dataEncalhe, 
 			Long fornecedorId, 
@@ -894,10 +897,10 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (boxId == null){ 
 			
-			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento, listaNaoReplicados);
+			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
 		} else {
 			
-			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento, listaNaoReplicados);
+			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
 		}
 	}
 	

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- APPENDER PARA LOG DAS FUNCIONALIDADES DO SISTEMA -->
+	<appender name="FILE_FUNCIONAL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		
+		<file>${catalina.home}/logs/funcional.log</file>
+    	<append>true</append>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      		<fileNamePattern>funcional.%d{yyyy-MM-dd}.log</fileNamePattern>
+      		<maxHistory>30</maxHistory>      		
+    	</rollingPolicy>
+		
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">   
+	      <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+	        <marker>MARKER_LOG_FUNCIONAL</marker>
+	      </evaluator>
+	     <onMismatch>DENY</onMismatch>
+	     <onMatch>ACCEPT</onMatch>
+	   </filter>
+
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%10(%d{yyyy-MM-dd;HH:mm:ss}) - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- APPENDER PARA LOG DAS FUNCIONALIDADES REFERENTE AO FECHAMENTO DIARIO -->
+	<appender name="FILE_FECHAR_DIA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		
+		<file>${catalina.home}/logs/fecharDia.log</file>
+    	<append>true</append>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      		<fileNamePattern>fecharDia.%d{yyyy-MM-dd}.log</fileNamePattern>
+      		<maxHistory>30</maxHistory>      		
+    	</rollingPolicy>
+		
+		<encoder>
+			<pattern>%d{yyyy-MM-dd;HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- APPENDER PARA LOG DAS FUNCIONALIDADES REFERENTE A ENVIO DE E-MAIL BOLETOS -->
+	<appender name="FILE_ENVIO_EMAIL_BOLETO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		
+		<file>${catalina.home}/logs/envioEmailBoletos.log</file>
+    	<append>true</append>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      		<fileNamePattern>envioEmailBoletos.%d{yyyy-MM-dd}.log</fileNamePattern>
+      		<maxHistory>30</maxHistory>      		
+    	</rollingPolicy>
+		
+		<encoder>
+			<pattern>%d{yyyy-MM-dd;HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+	<logger name="br.com.abril.nds" level="WARN" additivity="false">
+		 <appender-ref ref="FILE_FUNCIONAL" />
+	</logger>
+	
+	<logger name="br.com.abril.nds.controllers.administracao.FecharDiaController" level="INFO" additivity="false">
+		 <appender-ref ref="FILE_FECHAR_DIA" />
+	</logger>
+	
+	<logger name="br.com.abril.nds.service.impl.FecharDiaServiceImpl" level="INFO" additivity="false">
+		 <appender-ref ref="FILE_FECHAR_DIA" />
+	</logger>
+	
+	
+	<logger name="br.com.abril.nds.controllers.financeiro.BoletoEmailController" level="INFO" additivity="false">
+		 <appender-ref ref="FILE_ENVIO_EMAIL_BOLETO" />
+	</logger>
+	
+	<logger name="br.com.abril.nds.controllers.financeiro.BoletoEmailServiceImpl" level="INFO" additivity="false">
+		 <appender-ref ref="FILE_ENVIO_EMAIL_BOLETO" />
+	</logger>
+	
+	<logger name="br.com.caelum.vraptor" level="ERROR"/>
+	
+	<!-- <logger name="org.hibernate.typeorg.hibernate.hql.ast.AST" level="ERROR"/>
+  	<logger name="org.hibernate.tool.hbm2ddl" level="ERROR" />
+  	<logger name="org.hibernate.hql" level="ERROR" />
+  	<logger name="org.hibernate.cache" level="ERROR" />
+  	<logger name="org.hibernate.jdbc" level="DEBUG" />
+  	<logger name="org.hibernate.SQL" level="WARN" /> -->
+	
+</configuration>

@@ -48,11 +48,6 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<artifactId>log4j</artifactId>
-				<groupId>log4j</groupId>
-				<version>1.2.16</version>
-			</dependency>
-			<dependency>
 				<groupId>javassist</groupId>
 				<artifactId>javassist</artifactId>
 				<version>3.12.1.GA</version>
@@ -145,12 +140,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.6.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.6.1</version>
+				<version>1.7.7</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.persistence</groupId>
@@ -188,9 +178,9 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>aspectj</groupId>
+				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
-				<version>1.5.3</version>
+				<version>1.8.1</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -333,12 +323,13 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>log4j</artifactId>
-			<groupId>log4j</groupId>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -526,7 +517,7 @@
 				<module>nds-estudo-algoritmo</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>testProfile</id>
 			<modules>
@@ -534,7 +525,7 @@
 				<module>nds-test</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>backend-without-integration</id>
 			<modules>

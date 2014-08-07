@@ -8,6 +8,10 @@ var histogramaPosEstudoController = $.extend(true, {
 	oldTabContent : "",
 	oldTabHeight : 0,
 	matrizDistribuicaoController : null,
+	change: {
+		refreshGrid: false,
+		estudoId: ''
+	},
 	
 	createInput : function createInput(id, value){
 		return '<input type="text" id="input' + id + '" onchange="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
@@ -53,6 +57,27 @@ var histogramaPosEstudoController = $.extend(true, {
 	init : function () {
 		
 		var flexGridService = new FlexGridService();
+		
+		$("#workspace").tabs({
+		    select: function (event, ui) {
+		        
+		    	var _thisIndex = getTabByTitle('Histograma Pré Análise');
+
+		    	if (ui.index === _thisIndex && histogramaPosEstudoController.change.refreshGrid) {
+
+		    		histogramaPosEstudoController.change.refreshGrid=false;
+
+		    		try{
+                      histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+                          params : [{ name : 'estudoId' , value : histogramaPosEstudoController.change.estudoId}]
+                      });
+                      histogramaPosEstudoController.popularFieldsetResumoEstudo();
+                  }catch(e){
+                      exibirMensagem('WARNING', [e.message]);
+                  }
+		    	}
+		    }
+		});
 
 		/**
 		 * Associando eventos ao DOM
@@ -62,7 +87,7 @@ var histogramaPosEstudoController = $.extend(true, {
 
 			var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
 			
-			if(reparteOrigemCopia != '' || reparteOrigemCopia != undefined){
+			if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
 				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
 				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise +'&reparteCopiado=' +reparteOrigemCopia;
 			}else{

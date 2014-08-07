@@ -149,7 +149,7 @@ var historicoVendaController = $.extend(true, {
 			    	  // tr produto
 			    	  $('#analiseHistoricoPopUpNomeProduto', historicoVendaController.workspace).html('');
 			    	  $('#analiseHistoricoPopUpNomeProduto', historicoVendaController.workspace).append(
-			    			  "<td class='class_linha_1' width='39%' ><strong>Produto:</strong></td>");
+			    			  "<td class='class_linha_1' width = '39%'><strong>Produto:</strong></td>");
 			    	  
 			    	  // tr numeroEdicao
 			    	  $('#analiseHistoricoPopUpNumeroEdicao', historicoVendaController.workspace).html('');
@@ -171,15 +171,21 @@ var historicoVendaController = $.extend(true, {
 			    	  $('#analiseHistoricoPopUpVenda', historicoVendaController.workspace).append(
 			    			  "<td class='class_linha_2' ><strong>Venda:</strong></td>");
 			    	  
-			    	  var qtdEdicoesSelecionadas = grids.EdicaoSelecionadaGrid.tableModel.rows.length;
+			    	  var tm = grids.EdicaoSelecionadaGrid.tableModel;
 			    	  
+			    	  var qtdEdicoesSelecionadas = tm.rows.length;
+
+			    	  var tm_ordenado = obterTableModelOrdenado(tm, 'numeroEdicao');
+
+			    	  var size_tm_ordenado = tm_ordenado.rows.length;
+
 			    	  // carregando popUp_analiseHistoricoVenda
-			    	  for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+			    	  for ( var int = 0; int < size_tm_ordenado; int++) {
 			    		  
-			    		  row = grids.EdicaoSelecionadaGrid.tableModel.rows[int];
+			    		  row = tm_ordenado.rows[int];
 			    		  
 			    	      $('#analiseHistoricoPopUpNomeProduto', historicoVendaController.workspace).append(
-			    	    		  '<td align="center" class="class_linha_1" width="10%">'+row.cell.nomeProduto+'</td>');
+			    	    		  '<td align="center" class="class_linha_1">'+row.cell.nomeProduto+'</td>');
 			    	      
 			    	      $('#analiseHistoricoPopUpNumeroEdicao', historicoVendaController.workspace).append(
 			    	    		  '<td align="center" class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
@@ -192,15 +198,12 @@ var historicoVendaController = $.extend(true, {
 			    	      
 			    	      $('#analiseHistoricoPopUpVenda', historicoVendaController.workspace).append(
 			    	    		  '<td align="center" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
-			    	  }
+			    	  }		    
 			    	  
-			    	  $('#analiseHistoricoPopUpNomeProduto td:eq(1)', historicoVendaController.workspace).attr("width","9%");
-			    	  $('#analiseHistoricoPopUpNomeProduto td:eq(6)', historicoVendaController.workspace).attr("width","16%");
-			    	  
-			    	  qtdEdicoesSelecionadas = 6 - grids.EdicaoSelecionadaGrid.tableModel.rows.length; 
+			    	  size_tm_ordenado = 6 - tm_ordenado.rows.length; 
 
 			    	  // por estética de layout, insiro elementos td vazios
-			    	  for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+			    	  for ( var int = 0; int < size_tm_ordenado; int++) {
 			    		  $('#analiseHistoricoPopUpNomeProduto', historicoVendaController.workspace).append('<td class="class_linha_1"></td>');
 			    	      $('#analiseHistoricoPopUpNumeroEdicao', historicoVendaController.workspace).append('<td class="class_linha_1"></td>');
 			    	      $('#analiseHistoricoPopUpDatalancamento', historicoVendaController.workspace).append('<td width="130" align="center" class="class_linha_2"></td>');
@@ -465,7 +468,7 @@ var historicoVendaController = $.extend(true, {
 			
 		});
 	},
-	
+
 	limparGrids : function limparGrids(grid){
 		
 		var tamanhoGrid = grid.tableModel.rows.length;

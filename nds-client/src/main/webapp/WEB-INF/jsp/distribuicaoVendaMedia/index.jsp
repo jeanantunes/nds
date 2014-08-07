@@ -16,7 +16,7 @@ $(function() {
 	});
 
 function popup_novo() {
-	$("#edicaoProdCadastradosGrid", distribuicaoVendaMedia.workspace).flexAddData({
+	$("#edicaoProdCadastradosGrid-1", distribuicaoVendaMedia.workspace).flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
@@ -363,7 +363,7 @@ function limparLstExcecao1(){
 
     <fieldset style="width:655px!important; margin-top:10px;">
     	<legend>Edições do Produto</legend>
-        <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
+        <table class="edicaoProdCadastradosGrid-1" id="edicaoProdCadastradosGrid-1"></table>
      </fieldset>
 </div>
 </form>
@@ -791,7 +791,7 @@ $(".listaRegiaoGrid").flexigrid({
 	width : 400,
 	height : 200
 });
-$(".edicaoProdCadastradosGrid").flexigrid({	
+$(".edicaoProdCadastradosGrid-1").flexigrid({	
 	dataType : 'json',
 	colModel : [ {
 		display : 'Código',

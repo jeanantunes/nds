@@ -46,6 +46,7 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -737,9 +738,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" FROM ").append(" Cota cota  ").append(" JOIN cota.pessoa pessoa ").append(" JOIN cota.box box ")
-        .append(" JOIN cota.estoqueProdutoCotas estoqueProdutoCota ").append(
-                " JOIN cota.estudoCotas estudoCota ").append(" JOIN estudoCota.estudo estudo ").append(
-                        " JOIN estudo.produtoEdicao produtoEdicao  ").append(" JOIN produtoEdicao.produto produto ")
+        .append(" JOIN cota.estoqueProdutoCotas estoqueProdutoCota ")
+        .append(" JOIN estoqueProdutoCota.produtoEdicao produtoEdicao  ").append(" JOIN produtoEdicao.produto produto ")
                         .append(" JOIN produtoEdicao.lancamentos lancamento ").append(" JOIN cota.pdvs pdv ").append(
                                 " LEFT JOIN pdv.rotas rotaPdv  ").append(" LEFT JOIN rotaPdv.rota rota  ").append(
                                         " LEFT JOIN rota.roteiro roteiro ").append(" LEFT JOIN roteiro.roteirizacao roteirizacao ");
@@ -1683,8 +1683,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidasEAEmitir(
-            final FiltroConsultaNotaEnvioDTO filtro) {
+    public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidasEAEmitir(final FiltroConsultaNotaEnvioDTO filtro) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -3696,4 +3695,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	
     	return (BigIntegerUtil.isMaiorQueZero((BigInteger)query.uniqueResult()));
     }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ItemDTO<String, String>> obterCotasSemRoterizacao(List<Long> listaIdCotas) {
+		StringBuilder hql = new StringBuilder();
+			
+		hql.append(" SELECT cota.numeroCota as key, ")
+		   .append(" coalesce(pessoa.nome, pessoa.razaoSocial, '') as value ")
+		   .append(" FROM ").append(" Cota cota  ").append(" JOIN cota.pessoa pessoa ").append(" LEFT JOIN cota.box box ")
+	       .append(" WHERE cota.id in (:ids) ")
+		   .append(" AND cota.box is null ");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("ids", listaIdCotas);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		
+		return query.list();
+	}
 }

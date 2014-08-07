@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +36,25 @@ public class AnaliseParcialQueryDTO {
 
 	public void setNumeroCotaStr(String numeroCotaStr) {
 		this.numeroCotaStr = numeroCotaStr;
+	}
+	
+	public List<Integer> getNumeroCotas() {
+		
+		if (this.numeroCotaStr == null) {
+			
+			return null;
+		}
+
+		String[] str = this.numeroCotaStr.split(",");
+
+		List<Integer> numerosCota = new ArrayList<Integer>();
+
+		for (String numeroStr : str) {
+
+			numerosCota.add(Integer.valueOf(numeroStr));
+		}
+
+		return numerosCota;
 	}
 
 	public List<EdicoesProdutosDTO> getEdicoesBase() {

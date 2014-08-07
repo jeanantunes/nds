@@ -5,12 +5,14 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 
@@ -37,6 +40,38 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	public EstudoGeradoRepositoryImpl() {
 		
 		super(EstudoGerado.class);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EstudoGeradoPreAnaliseDTO obterEstudoPreAnalise(Long id) {
+		
+		Criteria c = this.getSession().createCriteria(EstudoGerado.class);
+		c.createAlias("produtoEdicao", "produtoEdicao");
+		c.createAlias("produtoEdicao.produto", "produto");
+		c.createAlias("produto.tipoSegmentoProduto", "tipoSegmentoProduto");
+
+		c.add(Restrictions.eq("id", id));
+		
+		c.setProjection(
+			Projections.projectionList().add(
+				Projections.alias(Projections.property("produtoEdicao.parcial"), "parcial")
+			).add(
+				Projections.alias(Projections.property("produto.periodicidade"), "periodicidade")
+			).add(
+				Projections.alias(Projections.property("tipoSegmentoProduto.id"), "idTipoSegmentoProduto")
+			).add(
+				Projections.alias(Projections.property("tipoSegmentoProduto.descricao"), "descricaoTipoSegmentoProduto")
+			).add(
+				Projections.alias(Projections.property("liberado"), "liberado")
+			).add(
+				Projections.alias(Projections.property("produtoEdicao.id"), "idProdutoEdicao")
+			)
+		);
+		
+		c.setResultTransformer(Transformers.aliasToBean(EstudoGeradoPreAnaliseDTO.class));
+		
+		return (EstudoGeradoPreAnaliseDTO) c.uniqueResult();
 	}
 	
 	@Override
@@ -94,10 +129,10 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   select "); 
 		sql.append("   eg.QTDE_REPARTE as qtdReparteADistribuir, "); 
 		sql.append("   coalesce(eg.REPARTE_MINIMO, 0) as qtdReparteMinimoEstudo, ");
-		sql.append("   sum(ecg.REPARTE) as qtdReparteDistribuidoEstudo, ");
-		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end) as qtdCotasAtivas, ");
-		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end) as qtdCotasRecebemReparte, ");
+		sql.append("   sum(ecg.REPARTE) * count(distinct ecg.ID)/count(ecg.ID)  as qtdReparteDistribuidoEstudo, ");
+		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
+		sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end)*count(distinct c.ID) / count(c.ID) as qtdCotasAtivas, ");
+		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
 		sql.append("   COUNT(DISTINCT (CASE WHEN epc.qtde_recebida - epc.qtde_devolvida > 0 THEN epc.cota_id ELSE NULL END)) as qtdCotasQueVenderam, ");
 				
 		sql.append("   CASE WHEN (estp.QTDE IS NULL OR estp.QTDE=0) "); 

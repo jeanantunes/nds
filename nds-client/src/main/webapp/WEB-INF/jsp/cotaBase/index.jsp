@@ -13,9 +13,6 @@ $(function(){
 
 </script>
 
-<style>
-.pesqGeral{display:none;}
-</style>
 </head>
  
 <body>
@@ -209,13 +206,11 @@ $(function(){
 	             <td>Até:
 	             </td>
 	             <td width="85"><input type="text" name="periodoAte" id="periodoAte" disabled="disabled" style="width:60px;"/></td>
-	             <td width="20"><input type="checkbox" name="isGeral" id="isGeral" onclick="cotaBaseController.mostraPesqGeral();" /></td>
+	             <td width="20"><input type="checkbox" name="isGeral" id="isGeral"/></td>
 	             <td width="63">Pesquisa Geral?</td>
 	             <td colspan="2">
 	             
-	                 <span class="bt_pesquisar pesqGeral"><a href="javascript:;" onclick="cotaBaseController.mostrar_geral();">Pesquisar</a></span>
-	                 
-	                 <span class="bt_pesquisar pesqNormal"><a href="javascript:;" onclick="cotaBaseController.mostrar_normal();">Pesquisar</a></span>
+	                 <span class="bt_pesquisar pesqNormal"><a href="javascript:;" onclick="cotaBaseController.clickPesquisar();">Pesquisar</a></span>
 	             </td>
 	           </tr>
 	         </table>
