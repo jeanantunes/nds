@@ -429,6 +429,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
 		comparatorChain.addComparator(new BeanComparator("nomeProduto"));
+		comparatorChain.addComparator(new BeanComparator("numeroEdicao"));
 		
 		Collections.sort(produtosRecolhimento, comparatorChain);
 	}
