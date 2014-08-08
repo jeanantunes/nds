@@ -8,8 +8,8 @@
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <style type="text/css">
 
-body{font-size:13px!important;}
-td{padding-left:3px;padding-right:3px;}
+body{font-size:25px!important;}
+td{padding-left:3px;padding-right:3px;font-size:13px!important;}
 .titulo{ color:#333; font-size:10px;!important;}
 .dadosNota{ color:#000;}
 
@@ -35,10 +35,6 @@ function imprimir(){
 	$( "#btImpressao" ).hide();
 	window.print();
 }
-
-
-
-
 
 </script>
 </head>
@@ -161,7 +157,7 @@ function imprimir(){
               <td width="50" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Qtde. Dev</strong></td>
   </tr>
             <tr class="class_linha_3">
-              <td colspan="10" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;"><strong>Código de Barras</strong></td>
+              <td colspan="10" class="relatorios" style="padding-left:10px; border-left:1px solid #000; border-bottom:1px solid #000; border-right:1px solid #000;"><strong>Código de Barras</strong></td>
             </tr>
            
            
@@ -311,8 +307,8 @@ function imprimir(){
         </tr>
         <tr class="class_linha_3">
           <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000; "><strong>Código</strong></td>
-          <td width="95" align="left" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Edição</strong></td>
-          <td width="95" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Preço Desc R$</strong></td>
+          <td width="70" align="left" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Edição</strong></td>
+          <td width="100" align="left" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Preço Desc R$</strong></td>
           <td colspan="2" class="relatorios" width="86" style="padding-left:5px; border-left:1px solid #000; border-left:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
                 
