@@ -1137,9 +1137,7 @@ var analiseParcialController = $.extend(true, {
                         {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: false, align: 'center'}],
             width : 490,
             height : 200,
-            autoload: false,
-            sortorder:'asc',
-            sortname:'numeroCota'
+            autoload: false
         });
         
         

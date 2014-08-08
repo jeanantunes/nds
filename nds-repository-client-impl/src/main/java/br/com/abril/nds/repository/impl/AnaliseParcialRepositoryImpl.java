@@ -40,7 +40,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     @Transactional(readOnly = true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
-    	
     	List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
     			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
     			StatusLancamento.EM_RECOLHIMENTO.name(),
@@ -48,218 +47,279 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     			StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
     			StatusLancamento.FECHADO.name());
     	
-    	
     	StringBuilder sql = new StringBuilder();
+    	
         sql.append("select distinct ");
+        
         sql.append("	c.numero_cota cota, ");
         
         sql.append("	case when pdv_qtd.quantidade > 1 then ( ");
         sql.append("	case when count(case when pdv_fx.ID is not null then 1 ");
-        sql.append("	when pdv_mx.ID is not null then 1 ");
-        sql.append("	when pdv_default.ID is not null then 1 ");
-        sql.append("	else 0 end) > 1 then 1 else 0 end) ");
+        sql.append("	                when pdv_mx.ID is not null then 1 ");
+        sql.append("	                when pdv_default.ID is not null then 1 ");
+        sql.append("	                else 0 end) > 1 then 1 else 0 end) ");
         sql.append("	else 0 end as contemRepartePorPDV, ");
         
         sql.append("	fx.ID as fixacaoID, mx.ID as mixID, ");        
         
         sql.append("    c.classificacao_espectativa_faturamento classificacao, ");
-        sql.append("    coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
-        sql.append("    pdv_qtd.quantidade npdv, ");
-        sql.append("    ec.qtde_efetiva reparteEstudo, ");
-        sql.append("    (select coalesce(reparte, 0) from estudo_cota_gerado where estudo_id = e.estudo_origem_copia and cota_id = ec.cota_id) reparteEstudoOrigemCopia, ");
-        sql.append("    coalesce(ec.reparte,0) reparteSugerido, ");
-        sql.append("    ec.classificacao leg, ");
-        sql.append("    (select count(cbc.ID) ");
-        sql.append("        from cota_base_cota cbc ");
-        sql.append("        join cota_base cb on cbC.COTA_BASE_ID = cb.ID ");
-        sql.append("       where cb.COTA_ID = c.ID and cbc.DT_FIM_VIGENCIA > (select DATA_OPERACAO from distribuidor)) > 0 ");
-        sql.append("    cotaNova, ");
-        sql.append("    (select coalesce(sum(mec.qtde), 0) ");
-        sql.append("          from movimento_estoque_cota mec ");
-        sql.append("         where mec.tipo_movimento_id = 32 ");
-        sql.append("           and mec.cota_id = c.id ");
-        sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
         
-        sql.append("       (select epc.qtde_recebida ");
-		sql.append("       from lancamento l ");
-		sql.append("       left join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
-		sql.append("       left join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
-		sql.append("       left join cota _c on _c.id = epc.cota_id ");
-		sql.append("       left join produto _p on _p.id = _ped.produto_id ");
-		sql.append("       where _p.codigo = p.codigo ");
-		sql.append("       and (_c.id = c.id or _c.id is null) ");
-		sql.append("       and l.data_lcto_distribuidor = (select max(_ul.data_lcto_distribuidor) ");
-		sql.append("       from lancamento _ul ");
-		sql.append("       inner join produto_edicao _pe on _pe.id = _ul.produto_edicao_id ");
-		sql.append("       inner join produto _p on _p.id = _pe.PRODUTO_ID ");
-		sql.append("       where _p.codigo = p.codigo and _ul.status in (:statusLancamento)) order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");
-        sql.append("       (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
-        sql.append("       (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
+        sql.append("    coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
+        
+        sql.append("    pdv_qtd.quantidade npdv, ");
+        
+        sql.append("    ec.qtde_efetiva reparteEstudo, ");
+        
+        sql.append("    (select coalesce(reparte, 0) from estudo_cota_gerado where estudo_id = e.estudo_origem_copia and cota_id = ec.cota_id) reparteEstudoOrigemCopia, ");
+        
+        sql.append("    coalesce(ec.reparte,0) reparteSugerido, ");
+        
+        sql.append("    ec.classificacao leg, ");
+
+        sql.append("    (select count(cbc.ID) ");
+        sql.append("     from cota_base_cota cbc ");
+        sql.append("     join cota_base cb on cbC.COTA_BASE_ID = cb.ID ");
+        sql.append("     where cb.COTA_ID = c.ID and cbc.DT_FIM_VIGENCIA > (select DATA_OPERACAO from distribuidor)) > 0 cotaNova, ");
+        
+        sql.append("    (select coalesce(sum(mec.qtde), 0) ");
+        sql.append("     from movimento_estoque_cota mec ");
+        sql.append("     where mec.tipo_movimento_id = 32 ");
+        sql.append("     and mec.cota_id = c.id ");
+        sql.append("     and mec.produto_edicao_id = pe.id) juramento, ");
+        
+        sql.append("    (select epc.qtde_recebida ");
+		sql.append("     from lancamento l ");
+		sql.append("     left join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
+		sql.append("     left join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
+		sql.append("     left join cota _c on _c.id = epc.cota_id ");
+		sql.append("     left join produto _p on _p.id = _ped.produto_id ");
+		sql.append("     where _p.codigo = p.codigo ");
+		sql.append("     and (_c.id = c.id or _c.id is null) ");
+		sql.append("     and l.data_lcto_distribuidor = (select max(_ul.data_lcto_distribuidor) ");
+		sql.append("                                     from lancamento _ul ");
+		sql.append("                                     inner join produto_edicao _pe on _pe.id = _ul.produto_edicao_id ");
+		sql.append("                                     inner join produto _p on _p.id = _pe.PRODUTO_ID ");
+		sql.append("                                     where _p.codigo = p.codigo and _ul.status in (:statusLancamento)) ");
+		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");
+		
+        sql.append("     (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
+        
+        sql.append("     (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
+
         sql.append("  from estudo_cota_gerado ec ");
+        
         sql.append("  left join cota c on (c.id = ec.cota_id) ");
+        
         sql.append("  left join pessoa pes on (c.pessoa_id = pes.id) ");
+        
         sql.append("  left join estudo_gerado e on (e.id = ec.estudo_id) ");
+        
         sql.append("  left join produto_edicao pe on (pe.id = e.produto_edicao_id) ");
+        
         sql.append("  left join produto p on (p.id = pe.produto_id) ");
 
         sql.append("  left join fixacao_reparte fx on fx.codigo_icd=p.codigo_icd and fx.id_cota=c.id and fx.id_classificacao_edicao=pe.tipo_classificacao_produto_id ");
+        
         sql.append("  left join fixacao_reparte_pdv pdv_fx on pdv_fx.ID_FIXACAO_REPARTE=fx.ID ");
 
         sql.append("  left join mix_cota_produto mx on mx.codigo_icd=p.codigo_icd and mx.id_cota=c.id and mx.tipo_classificacao_produto_id=pe.tipo_classificacao_produto_id ");
+        
         sql.append("  left join reparte_pdv pdv_mx on pdv_mx.MIX_COTA_PRODUTO_ID=mx.ID ");
 
         sql.append("  left join pdv pdv_default on pdv_default.COTA_ID=c.ID ");
 
         sql.append("  left join (select cota_id cota_id, count(*) quantidade ");
-        sql.append("               from pdv as pdvs ");
-        sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
-        sql.append(" where ec.ESTUDO_ID = :estudoId ");
-        
-        sql.append(" and  ec.reparte is not null and ec.reparte >= 0  ");
+        sql.append("             from pdv as pdvs ");
+        sql.append("             group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
-            if (queryDTO.possuiOrdenacaoReparte()) {
-                sql.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between :reparteFrom and :reparteTo ");
-            }
 
-            if (queryDTO.possuiOrdenacaoRanking()) {
-                sql.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between :rankingFrom and :rankingTo ");
-                sql.append(" left join ranking_segmento ranking on (ranking.cota_id = c.id and p.tipo_segmento_produto_id = ranking.tipo_segmento_produto_id) ");
-            }
+            if (queryDTO.possuiOrdenacaoNMaiores() || queryDTO.possuiOrdenacaoRanking()){
 
-            if (queryDTO.possuiOrdenacaoNMaiores()) {
             	sql.append(" left join ranking_segmento ranking on (ranking.cota_id = c.id and p.tipo_segmento_produto_id = ranking.tipo_segmento_produto_id) ");
             }
 
             if (queryDTO.possuiPercentualDeVenda()) {
+            	
                 sql.append(" left join estoque_produto_cota epc on (epc.cota_id = ec.cota_id and epc.produto_edicao_id = e.produto_edicao_id) ");
-                sql.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between :percentualFrom and :percentualTo ");
             }
         }
         
         if (queryDTO.possuiElemento()) {
+        	
             if (queryDTO.elementoIsTipoPontoVenda()) {
+            	
                 sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1 and pdv.tipo_ponto_pdv_id = :tipoPontoVenda ) ");
             }
             
             if (queryDTO.elementoIsGeradoorDeFluxo()) {
+            	
                 sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1) ");
+                
                 sql.append(" join gerador_fluxo_pdv gfp on (gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = :geraFluxo) ");
             }
             
             if (queryDTO.elementoIsBairro()) {
+            	
                 sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1) ");
+                
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
+                
                 sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.bairro = :bairro ");
             }
             if (queryDTO.elementoIsRegiao()) {
+            	
                 sql.append(" join registro_cota_regiao as rcr on (rcr.cota_id = c.id and rcr.regiao_id = :regiao) ");
             }
             if (queryDTO.elementoIsAreaDeInfluencia()) {
+            	
                 sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1 and pdv.area_influencia_pdv_id = :areaDeInfluencia) ");
             }
             if (queryDTO.elementoIsDistrito()) {
+            	
                 sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1) ");
+                
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
+                
                 sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.uf = :distrito ");
             }
             if (queryDTO.elementoIsCotasAVista()) {
+            	
                 sql.append(" join parametro_cobranca_cota pcc on pcc.cota_id = c.id ");
+                
                 sql.append(" and pcc.tipo_cota = upper(:cotasAVista) ");
             }
+        }   
+
+        sql.append("  where ec.ESTUDO_ID = :estudoId ");
+            
+        sql.append("  and  ec.reparte is not null and ec.reparte >= 0  ");
+        
+        if (queryDTO.possuiOrdenacaoPlusFiltro()) {
+        	
+            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking()) {
+            	
+                sql.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between :filterSortFrom and :filterSortTo ");
+            }
+            
+            if (queryDTO.possuiPercentualDeVenda()) {
+
+                sql.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between :filterSortFrom and :filterSortTo ");
+            }
+        }    
+  
+        if (queryDTO.possuiElemento()) {
+            
             if (queryDTO.elementoIsCotasNovas()) {
+            	
                 sql.append(" and ec.classificacao "+ (queryDTO.getValorElemento().equals("1") ? "=" : "<>") +" 'S' ");
             }
+            
             if (queryDTO.elementoTipoDistribuicaoCota()) {
+            	
             	sql.append(" and c.TIPO_DISTRIBUICAO_COTA = :valorElemento ");
             }
         }
 
         if (StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())) {
+        	
             sql.append(" and c.numero_cota in (:numeroCota) ");
         }
 
         if (queryDTO.getFaixaDe() != null) {
+        	
             sql.append(" and ec.reparte >= :faixaDe ");
         }
         
         if (queryDTO.getFaixaAte() != null) {
+        	
             sql.append(" and ec.reparte <= :faixaAte ");
         }
         
         sql.append(" group by c.ID ");
 
         if (queryDTO.possuiOrdenacaoNMaiores() || queryDTO.possuiOrdenacaoRanking()) {
-            sql.append(" order by ").append("ranking.qtde desc").append("limit").append(queryDTO.getFilterSortFrom().intValue() - 1)
-            .append(" , ").append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()) + 1);
+        	
+            sql.append(" order by ").append(" ranking.qtde desc ").append(" limit ").append(queryDTO.getFilterSortFrom().intValue()>0?queryDTO.getFilterSortFrom().intValue() - 1:0)
+            
+               .append(" , ").append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()) + 1);
+            
         } else if (queryDTO.possuiOrderBy()) {
+        	
             sql.append(" order by ").append(queryDTO.getSortName()).append(" ").append(queryDTO.getSortOrder());
         }
         
         Query query = getSession().createSQLQuery(sql.toString());
+        
         query.setParameter("estudoId", queryDTO.getEstudoId());
+        
         query.setParameterList("statusLancamento", statusLancamento);
         
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
-            if (queryDTO.possuiOrdenacaoReparte()) {
-            	query.setParameter("reparteFrom", queryDTO.getFilterSortFrom());
-            	query.setParameter("reparteTo", queryDTO.getFilterSortTo());
-            }
-            
-            if (queryDTO.possuiOrdenacaoRanking()) {
-            	query.setParameter("rankingFrom", queryDTO.getFilterSortFrom());
-            	query.setParameter("rankingTo", queryDTO.getFilterSortTo());
-            }
-
-            if (queryDTO.possuiPercentualDeVenda()) {
-                query.setParameter("percentualFrom", queryDTO.getFilterSortFrom());
-                query.setParameter("percentualTo", queryDTO.getFilterSortTo());
+        	
+            if (queryDTO.possuiOrdenacaoReparte() || queryDTO.possuiOrdenacaoRanking() || queryDTO.possuiPercentualDeVenda()) {
+            	
+            	query.setParameter("filterSortFrom", queryDTO.getFilterSortFrom());
+            	
+            	query.setParameter("filterSortTo", queryDTO.getFilterSortTo());
             }
         }    
         
         if (queryDTO.possuiElemento()) {
+        	
         	if (queryDTO.elementoIsTipoPontoVenda()) {
+        		
         		query.setParameter("tipoPontoVenda", queryDTO.getValorElemento());        		
         	}
         	
         	if (queryDTO.elementoIsGeradoorDeFluxo()) {
+        		
         		query.setParameter("geraFluxo", queryDTO.getValorElemento());
         	}
         	
         	if (queryDTO.elementoIsBairro()) {
+        		
         		query.setParameter("bairro", queryDTO.getValorElemento());
         	}
         	
         	if (queryDTO.elementoIsRegiao()) {
+        		
         		query.setParameter("regiao", queryDTO.getValorElemento());
         	}
         	
         	if (queryDTO.elementoIsAreaDeInfluencia()) {
+        		
         		query.setParameter("areaDeInfluencia", queryDTO.getValorElemento());
         	}
         	
         	if (queryDTO.elementoIsDistrito()) {
+        		
         		query.setParameter("distrito", queryDTO.getValorElemento());
         	}
         	
         	if (queryDTO.elementoIsCotasAVista()) {
+        		
         		query.setParameter("cotasAVista", queryDTO.getValorElemento().replaceAll("-","_"));
         	}
         	
             if (queryDTO.elementoTipoDistribuicaoCota()) {
+            	
              	query.setParameter("tipoDistribuicaoCota", queryDTO.getValorElemento().toUpperCase());
             }
         }
         
         if (queryDTO.getFaixaDe() != null) {
+        	
             query.setParameter("faixaDe", queryDTO.getFaixaDe());
         }
         
         if (queryDTO.getFaixaAte() != null) {
+
         	query.setParameter("faixaAte", queryDTO.getFaixaAte());
         }
 
         if (StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())) {
+        	
             query.setParameterList("numeroCota", queryDTO.getNumeroCotas());
         }
         
@@ -280,10 +340,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("fixacaoID", StandardBasicTypes.LONG);
         ((SQLQuery) query).addScalar("contemRepartePorPDV", StandardBasicTypes.BOOLEAN);
         
-        
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
-        return query.list();
         
+        return query.list();
     }
 
     @SuppressWarnings("unchecked")
@@ -707,7 +766,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         } else {
         	
-        	sql.append(" numeroCota ");
+        	sql.append(" rks.QTDE desc ");
         }
 
         Query query = getSession().createSQLQuery(sql.toString())

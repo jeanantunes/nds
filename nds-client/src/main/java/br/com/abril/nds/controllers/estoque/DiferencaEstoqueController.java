@@ -1356,7 +1356,7 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
     @Post
     @SuppressWarnings("unchecked")
     @Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
-    public void confirmarLancamentos() {
+    public void confirmarLancamentos(boolean todos) {
         
         final Boolean modoNovaDiferenca = (Boolean) httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
         
@@ -1368,17 +1368,26 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         final FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
                 (FiltroLancamentoDiferencaEstoqueDTO) httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
         
-        if(modoNovaDiferenca != null && modoNovaDiferenca ){
-            listaNovasDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+        if (todos){
+            
+            filtroPesquisa.setPaginacao(null);
+            filtroPesquisa.setOrdenacaoColuna(null);
+            listaNovasDiferencas = new HashSet<Diferenca>();
+            listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
         } else {
             
-            listaNovasDiferencas = new HashSet<Diferenca>();
-            
-            // Para não limitar os resultados que irão ser persistidos no
-            // sistema
-            filtroPesquisa.getPaginacao().setPaginaAtual(1);
-            filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
-            listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
+            if(modoNovaDiferenca != null && modoNovaDiferenca ){
+                listaNovasDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+            } else {
+                
+                listaNovasDiferencas = new HashSet<Diferenca>();
+                
+                // Para não limitar os resultados que irão ser persistidos no
+                // sistema
+                filtroPesquisa.getPaginacao().setPaginaAtual(1);
+                filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
+                listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
+            }
         }
         
         this.validarDiferencasSelecionadas(listaNovasDiferencas);
@@ -1460,7 +1469,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     @SuppressWarnings("unchecked")
     @Post
     @Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
-    public void cancelarLancamentos() {
+    public void cancelarLancamentos(boolean todos) {
         
         final Boolean modoNovaDiferenca =
                 (Boolean) httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
@@ -1485,7 +1494,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             }
             
             diferencaEstoqueService.cancelarDiferencas(
-                    filtroPesquisa, idsDiferencasSelecionadas, this.getUsuarioLogado().getId());
+                    filtroPesquisa, todos ? null : idsDiferencasSelecionadas, this.getUsuarioLogado().getId());
             
         } else {
             
