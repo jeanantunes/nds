@@ -247,12 +247,12 @@ public class EmissaoCEController extends BaseController {
 			
 			filtro.setQtdProdutosPorPagina(20);
 			filtro.setQtdCapasPorPagina(81);
-			filtro.setQtdMaximaProdutosComTotalizacao(19);
+			filtro.setQtdMaximaProdutosComTotalizacao(17);
 		} else {
 			
 			filtro.setQtdProdutosPorPagina(25);
 			filtro.setQtdCapasPorPagina(49);
-			filtro.setQtdMaximaProdutosComTotalizacao(20);
+			filtro.setQtdMaximaProdutosComTotalizacao(18);
 		}
 
 		
