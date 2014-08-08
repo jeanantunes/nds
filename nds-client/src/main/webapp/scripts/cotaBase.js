@@ -9,8 +9,6 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#indiceAjuste").val("1.0");
 		$("#indiceAjuste").mask("9.9");
-		$("#idCota", cotaBaseController.workspace).focus();
-
 		
 		$(".consultaSegmentosGrid").flexigrid({	
 			preProcess: cotaBaseController.executarPreProcessamentoSegmentos,
@@ -261,14 +259,23 @@ var cotaBaseController = $.extend(true, {
 		
 		focusSelectRefField($("#idCota", this.workspace));
 		
-		$(document.body).keydown(function(e) {
+		$($("#idCota", this.workspace)).keydown(function(e) {
 			if(keyEventEnterAux(e)){
 				
-				if ($("#isGeral", cotaBaseController.workspace).is(":checked")){
+				if ($("#isGeral", this.workspace).is(":checked")){
 					cotaBaseController.mostrar_geral();
 				} else {
 					cotaBaseController.mostrar_normal();
 				}
+			}
+			
+			return true;
+		});
+		
+		$($("#indiceAjuste", this.workspace)).keydown(function(e) {
+			if(keyEventEnterAux(e)){
+				
+				$("#numeroCotaGrid0", this.workspace).focus();
 			}
 			
 			return true;
@@ -480,7 +487,7 @@ var cotaBaseController = $.extend(true, {
 		return inputNumeroCota;
 	},
 	
-	//evita que o preproces da grid seja chamada quando ENTER é pressionado, simulando um TAB
+	//quando ENTER é pressionado simula um blur
 	//pediram isso, não me culpe
 	avoidENTER : function(e, element){
 		if (e.keyCode == 13){
@@ -899,6 +906,18 @@ var cotaBaseController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
+			}, close : function(){
+				
+				$.each($("[name=numeroCotaGrid]", cotaBaseController.workspace),
+					function(index, item){
+						if (item.value == ""){
+							
+							setTimeout(function(){item.focus();}, 100);
+							
+							return false;
+						}
+					}
+				);
 			}
 		});
 	},
