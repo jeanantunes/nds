@@ -42,15 +42,21 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" SELECT ");
         sql.append("     pe.id, ");
-        sql.append("     pe.numero_edicao numeroEdicao, ");
+        sql.append("     pe.numero_edicao numeroEdicao, "); 
         sql.append("     p.id idProduto, ");
         sql.append("     p.codigo codigoProduto, ");
         sql.append("     p.nome nome, ");
-        sql.append("     plp.numero_periodo periodo, ");
-        sql.append("     CASE ");
-        sql.append("         WHEN plp.id IS NULL THEN 0 ");
-        sql.append("         ELSE 1 ");
-        sql.append("     END parcial, ");
+        
+        if (!filtro.isConsolidado()) {
+            
+            sql.append("     plp.numero_periodo periodo, ");
+            
+            sql.append("     CASE ");
+            sql.append("         WHEN plp.id IS NULL THEN 0 ");
+            sql.append("         ELSE 1 ");
+            sql.append("     END parcial, ");
+        }
+        
         sql.append("     l.data_lcto_prevista dataLancamento, ");
         sql.append("     l.status status, ");
         sql.append("     tcp.id idClassificacao, ");
@@ -98,7 +104,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 			sql.append("   and tcp.id = :classificacao ");
 		}
 		
-		sql.append(" group by pe.numero_edicao, pe.id, plp.numero_periodo ");
+		sql.append(" group by pe.numero_edicao, pe.id");
+		
+		if (!filtro.isConsolidado()) {
+		    
+		    sql.append(" , plp.numero_periodo ");
+		}
+		
 		sql.append(ordenarConsulta(filtro));
 		
 		Query query = getSession().createSQLQuery(sql.toString());
