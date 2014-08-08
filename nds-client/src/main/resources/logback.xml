@@ -69,7 +69,7 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="br.com.abril.nds" level="WARN" additivity="false">
+	<logger name="br.com.abril.nds" level="WARN">
 		 <appender-ref ref="FILE_FUNCIONAL" />
 	</logger>
 	
