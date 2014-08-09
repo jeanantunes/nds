@@ -30,6 +30,8 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
@@ -59,7 +61,8 @@ public class Cota implements Serializable {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
-	@ManyToOne(fetch=FetchType.LAZY, optional = false)
+	@Fetch(FetchMode.JOIN)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
 	
