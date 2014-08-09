@@ -71,6 +71,12 @@ public class UploaderXlsUtilTest {
 	    public String getContentType() {
 		return "multipart/form-data";
 	    }
+
+		@Override
+		public long getSize() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 	};
     }
 }
