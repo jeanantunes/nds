@@ -144,7 +144,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     
     @SuppressWarnings("unchecked")
    	@Override
-   	public List<ProdutoEdicaoVendaMediaDTO> pesquisarEdicoesBasesParaLancamentoParcial(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
+   	public List<ProdutoEdicaoVendaMediaDTO> pesquisarEdicoesBasesParaLancamentoParcial(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean isFindByICD) {
 
     	StringBuilder sql = new StringBuilder();
 
@@ -208,7 +208,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
    		    sql.append("   and pe.numero_edicao = :numero_edicao ");
    		}
            
-   		sql.append("   and p.codigo = :codigo_produto ");
+   		if (filtro.getCodigo() != null) {
+   			if (isFindByICD) {
+   				sql.append("   and p.codigo_icd = :codigo_produto ");
+   			} else {
+   				sql.append("   and p.codigo = :codigo_produto ");
+   			}
+   		}
        
    		if (filtro.getClassificacao() != null) {
    			sql.append("   and tcp.id = :classificacao ");
@@ -223,10 +229,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
    		if (filtro.getEdicao()  != null) {
    		    query.setLong("numero_edicao", filtro.getEdicao());
    		}
+   		
+   		
    		if (filtro.getCodigo() != null) {			
    			query.setString("codigo_produto", filtro.getCodigo());
    			
    		}
+   		
    		if (filtro.getClassificacao()  != null) {
    		    query.setLong("classificacao", filtro.getClassificacao());
    		}

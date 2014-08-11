@@ -34,7 +34,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
 		List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo = new ArrayList<>();
     	
     	if((filtro.getIdLancamento()!=null) && (lancamentoRepository.isLancamentoParcial(filtro.getIdLancamento()))){
-    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(filtro);
+    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(filtro, true);
     	}else{
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(filtro);
     	}
@@ -74,7 +74,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     	List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo = new ArrayList<>();
     	
     	if(isParcial){
-    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao, 0L));
+    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao, 0L), usarICD);
     	}else{
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
     	}

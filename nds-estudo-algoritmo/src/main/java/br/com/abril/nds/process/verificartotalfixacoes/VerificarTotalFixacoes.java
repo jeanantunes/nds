@@ -25,12 +25,12 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Component
 public class VerificarTotalFixacoes extends ProcessoAbstrato {
 
-    @Autowired
-    private SelecaoBancas selecaoBancas;
+//    @Autowired
+//    private SelecaoBancas selecaoBancas;
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	selecaoBancas.executar(estudo);
+//	selecaoBancas.executar(estudo);
 
 	if (estudo.isUsarFixacao()) {
 	    BigInteger somaFixacao = BigInteger.ZERO;

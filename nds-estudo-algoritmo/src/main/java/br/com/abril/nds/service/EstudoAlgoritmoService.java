@@ -46,6 +46,7 @@ import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
+import br.com.abril.nds.process.verificartotalfixacoes.SelecaoBancas;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -85,6 +86,9 @@ public class EstudoAlgoritmoService {
     
     @Autowired
     private VerificarTotalFixacoes verificarTotalFixacoes;
+    
+    @Autowired
+    private SelecaoBancas selecaoBancas; 
     
     @Autowired
     private AjusteReparte ajusteReparte;
@@ -321,6 +325,8 @@ public class EstudoAlgoritmoService {
         carregarParametros(estudo);
         
         definicaoBases.executar(estudo);
+        
+        selecaoBancas.executar(estudo);
         
         verificarTotalFixacoes.executar(estudo);
         
