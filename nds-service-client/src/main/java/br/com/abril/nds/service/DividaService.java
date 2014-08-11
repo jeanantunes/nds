@@ -92,7 +92,22 @@ public interface DividaService {
      */
 	BigDecimal obterTotalDividasAbertoCota(Long idCota);
 
+	/**
+	 * Verifica se cota possui dividas vencidas em aberto
+	 * 
+	 * @param idCota
+	 * @return boolean
+	 */
+	boolean cotaPossuiDividasVencidasEmAberto(Long idCota);
 
+	/**
+	 * Obtem valor total de dividas vencidas em aberto da cota
+	 * 
+	 * @param idCota
+	 * @return boolean
+	 */
+	BigDecimal obterTotalDividasVencidasEmAberto(Long idCota);
+	
 	DividaComissaoDTO obterDadosDividaComissao(Long idDivida);
 	
     /**
