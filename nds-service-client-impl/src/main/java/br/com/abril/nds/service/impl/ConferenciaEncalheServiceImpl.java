@@ -1686,7 +1686,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
+	@Transactional
 	public void validarCotaProcessandoEncalhe(Integer numeroCota) {
 		
 		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
