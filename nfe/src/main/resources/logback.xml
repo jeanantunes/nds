@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- APPENDER PARA LOG DAS FUNCIONALIDADES REFERENTE A NF-E -->
+	<appender name="NF_E" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		
+		<file>${catalina.home}/logs/nf_e.log</file>
+    	<append>true</append>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      		<fileNamePattern>nf_e.%d{yyyy-MM-dd}.log</fileNamePattern>
+      		<maxHistory>30</maxHistory>      		
+    	</rollingPolicy>
+		
+		<encoder>
+			<pattern>%d{yyyy-MM-dd;HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+	<logger name="br.com.abril.nds.nfe" level="INFO" additivity="false">
+		 <appender-ref ref="NF_E" />
+	</logger>
+	
+	<logger name="br.com.caelum.vraptor" level="ERROR"/>
+	
+	<!-- <logger name="org.hibernate.typeorg.hibernate.hql.ast.AST" level="ERROR"/>
+  	<logger name="org.hibernate.tool.hbm2ddl" level="ERROR" />
+  	<logger name="org.hibernate.hql" level="ERROR" />
+  	<logger name="org.hibernate.cache" level="ERROR" />
+  	<logger name="org.hibernate.jdbc" level="DEBUG" />
+  	<logger name="org.hibernate.SQL" level="WARN" /> -->
+	
+</configuration>
