@@ -275,13 +275,16 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
                     this.historicoSituacaoCotaRepository.obterUltimoHistorico(
                         cota.getNumeroCota(), SituacaoCadastro.SUSPENSO);
                 
-                long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
-                        Calendar.getInstance().getTime());
+                if (ultimoHistorico!=null){
                 
-                if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
-                    
-                    msgs.add(
-                        "Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
+	                long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
+	                        Calendar.getInstance().getTime());
+	                
+	                if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+	                    
+	                    msgs.add(
+	                        "Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
+	                }
                 }
             }
             

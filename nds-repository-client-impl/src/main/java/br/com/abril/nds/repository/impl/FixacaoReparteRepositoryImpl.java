@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -523,5 +524,25 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		
 		return (BigInteger) query.uniqueResult();
 	}
-	
+
+	@Override
+	public void atualizarQtdeExemplares(Long fixacaoID, Integer qtdeExemplares, Date data, Usuario usuario) {
+		
+		StringBuilder statement = new StringBuilder();
+		
+		statement.append(" update fixacao_reparte ")
+				 .append(" set qtde_exemplares = :qtdeExemplares, ")
+				 .append(" data_hora = :dataHora, ")
+				 .append(" id_usuario = :idUsuario ")
+				 .append(" where id = :fixacaoID ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(statement.toString());
+		
+		query.setParameter("qtdeExemplares", qtdeExemplares);
+		query.setParameter("dataHora", data);
+		query.setParameter("idUsuario", usuario.getId());
+		query.setParameter("fixacaoID", fixacaoID);
+		
+		query.executeUpdate();
+	}
 }

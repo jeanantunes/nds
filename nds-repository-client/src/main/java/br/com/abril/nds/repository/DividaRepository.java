@@ -92,10 +92,20 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	
 	/**
      * Obtem somatório das dividas em aberto de uma Cota
+     * 
      * @param idCota
      * @return BigDecimal
      */
 	BigDecimal obterTotalDividasAbertoCota(Long idCota);
+	
+	/**
+     * Obtem total de dividas vencidas em aberto da cota
+     * 
+     * @param idCota
+     * @param data
+     * @return BigDecimal
+     */
+	BigDecimal obterTotalDividasVencidasCota(Long idCota, Date data);
 
 	BigDecimal obterValorDividasDataOperacao(boolean dividaVencendo, boolean dividaAcumulada);
 
@@ -164,5 +174,4 @@ public interface DividaRepository extends Repository<Divida, Long>{
     long contarDividasVencerApos(Date data);
     
     Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada);
-    
 }

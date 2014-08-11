@@ -272,6 +272,9 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var _this = this;
 			
+			_this.gerarNotaEnvio();
+			
+			/*
 			$.postJSON(this.path + 'hasCotasAusentes', null, function(data) {
 				
 				var tipoMensagem = data.tipoMensagem;
@@ -284,6 +287,7 @@ var geracaoNotaEnvioController = $.extend({
 				_this.gerarNotaEnvio();
 				
 			});
+			*/
 		},
 		
 		/**
@@ -646,6 +650,21 @@ var geracaoNotaEnvioController = $.extend({
 			);
 		},
 
+		setarParametrosNotaEnvio : function () {
+			var params = [
+			   {name:"filtro.intervaloBoxDe",        value:$("#idProduto", produtoController.workspace).val()},
+			   {name:"filtro.intervaloBoxAte",       value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.intervaloCotaDe",       value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.intervaloCotaAte",      value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.intervaloMovimentoDe",  value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.intervaloMovimentoAte", value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.dataEmissao",           value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.idRoteiro",             value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.idRota",                value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.exibirNotasEnvio",      value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+			   {name:"filtro.listaIdFornecedores",   value:$("#tipoDescontoManual", produtoController.workspace).val()}];
+		},
+		
 		/**
 		 * objeto utilizado para encapsular as colunas da grid de Cotas Ausentes
 		 */

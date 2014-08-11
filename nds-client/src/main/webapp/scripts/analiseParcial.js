@@ -493,11 +493,21 @@ var analiseParcialController = $.extend(true, {
     },
     
     atualizarReparteCota : function(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element, idRowGrid){
-    	
+
     	var legendaCota = legenda_element.text();
+
+    	var mixID 	  = legenda_element.find("span").html() === 'MX' ? legenda_element.find("span").attr("mixID") : '';
+    	var fixacaoID = legenda_element.find("span").html() === 'FX' ? legenda_element.find("span").attr("fixacaoID") : '';
     	
     	$.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
-            data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido, 'reparteDigitado' : reparteDigitado, 'legendaCota' : legendaCota},
+            data: {
+            	'numeroCota': numeroCota, 
+            	'estudoId': $('#estudoId').val(), 
+            	'variacaoDoReparte': reparteSubtraido, 
+            	'reparteDigitado' : reparteDigitado, 
+            	'legendaCota' : legendaCota,
+            	'fixacaoMixID': mixID ? mixID : fixacaoID
+            },
             success: function(result) {
             	
             	if (result.mensagens) {
@@ -535,19 +545,19 @@ var analiseParcialController = $.extend(true, {
                         	}));
 
                 if (typeof histogramaPosEstudoController != 'undefined') {
-                    //tenta atualizar os valores da tela de histograma pré analise
-                    try{
-                        histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-                            params : [{ name : 'estudoId' , value : $('#estudoId').val()}]
-                        });
-                        //histogramaPosEstudoController.popularFieldsetResumoEstudo();
-                    }catch(e){
-                        exibirMensagem('WARNING', [e.message]);
-                    }
-                }
-                
-                if(reparteDigitado == 0){
-                	$("#row"+idRowGrid, analiseParcialController.workspace).remove();
+                	
+                	histogramaPosEstudoController.change.refreshGrid = true;
+                	histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
+                	
+//                    //tenta atualizar os valores da tela de histograma pré analise
+//                    try{
+//                        histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+//                            params : [{ name : 'estudoId' , value : $('#estudoId').val()}]
+//                        });
+//                        //histogramaPosEstudoController.popularFieldsetResumoEstudo();
+//                    }catch(e){
+//                        exibirMensagem('WARNING', [e.message]);
+//                    }
                 }
                 
             },
@@ -674,7 +684,11 @@ var analiseParcialController = $.extend(true, {
                 cell.leg = '';
             }
             if (cell.leg !== '') {
-                cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'">'+ cell.leg +'</span>';
+            	
+            	var mixID = cell.mixID ? 'mixID="' + cell.mixID + '"': '';
+            	var fixacaoID = cell.fixacaoID ? 'fixacaoID="' + cell.fixacaoID  + '"': '';
+            	
+                cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'"' + mixID + ' ' + fixacaoID + '>'+ cell.leg +'</span>';
             }
             if (cell.juramento == 0) {
                 cell.juramento = '';
@@ -1022,8 +1036,16 @@ var analiseParcialController = $.extend(true, {
         });
 
         $('#baseEstudoGridParcial')
-        .on('blur', 'tr td input:text', function(event){
-            analiseParcialController.atualizaReparte(this, true);
+        .on('focus', 'tr td input:text', function(event){
+        	
+        	unbindAjaxLoading();
+        	
+        }).on('blur', 'tr td input:text', function(event){
+            
+        	analiseParcialController.atualizaReparte(this, true);
+        	
+        	bindAjaxLoading();
+
         }).on('keyup', 'tr td input:text', function(event){
             if(event.which === 13) {//tab === 9
                 $(event.currentTarget)
@@ -1115,9 +1137,7 @@ var analiseParcialController = $.extend(true, {
                         {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: false, align: 'center'}],
             width : 490,
             height : 200,
-            autoload: false,
-            sortorder:'asc',
-            sortname:'numeroCota'
+            autoload: false
         });
         
         

@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -417,9 +418,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @param situacoesCadastro
      * @return List<Cota>
      */
-    List<Cota> obterCotasIntervaloNumeroCota(Integer cotaDe,
-            Integer cotaAte,
-            List<SituacaoCadastro> situacoesCadastro);
+    List<Cota> obterCotasIntervaloNumeroCota(Integer cotaDe, Integer cotaAte, List<SituacaoCadastro> situacoesCadastro);
     
     SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota);
     
@@ -440,4 +439,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Fornecedor obterFornecedorPadrao(Long idCota);
 
 	Boolean validarNumeroCota(Integer numCota, TipoDistribuicaoCota tipoDistribuicaoCota);
+	
+	List<ItemDTO<String, String>> obterCotasSemRoterizacao(List<Long> listaIdCotas);
 }

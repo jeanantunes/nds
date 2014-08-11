@@ -399,12 +399,17 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Post
 	@Path("/dividasAbertoCota")
 	public void dividasAbertoCota(Integer numeroCota){
+		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-		BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
+		
+		BigDecimal totalDividas = this.dividaService.obterTotalDividasVencidasEmAberto(cota.getId());
+		
 		ValidacaoVO validacao = null;
 	
 		if (totalDividas!=null){
+			
 			if (totalDividas.floatValue() > 0f){
+				
 				validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "AVISO: A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalDividas.floatValue()) +" de dívidas em aberto !");
 			}
 		}	

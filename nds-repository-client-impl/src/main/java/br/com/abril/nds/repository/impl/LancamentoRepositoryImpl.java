@@ -28,6 +28,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -377,6 +378,18 @@ public class LancamentoRepositoryImpl extends
 
 		return existeLancamentoConfirmado;
 
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Boolean isLancamentoParcial(Long idLancamento) {
+		
+		Criteria c = this.getSession().createCriteria(Lancamento.class);
+		c.createAlias("produtoEdicao", "produtoEdicao");
+		c.add(Restrictions.eq("id", idLancamento));
+		c.setProjection(Projections.property("produtoEdicao.parcial"));
+		
+		return (Boolean) c.uniqueResult();
 	}
 
 	public Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor,

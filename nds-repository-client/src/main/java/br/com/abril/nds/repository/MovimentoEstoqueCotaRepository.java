@@ -473,19 +473,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
 			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota);
-
-	/**
-	 * Obtém movimentos de estoque cota que não possuem estudos.
-	 * 
-	 * @param idCota
-	 * @param periodo
-	 * @param listaIdFornecedores
-	 * @param rateioReparteCotaAusente
-	 * @return
-	 */
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
-
+	
 	/**
 	 * 
 	 * @param idEstudo
