@@ -84,7 +84,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		 */
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
-
+			
 			var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
 			
 			if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
@@ -96,8 +96,32 @@ var histogramaPosEstudoController = $.extend(true, {
 			}
 			
 			reparteOrigemCopia = '';
+			
+			var abaAberta = false;
+			
+			$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+				if($(v).text() == 'Análise de Estudos') {
+					console.log(k +' - '+ $(v).text());
+					$("#workspace").tabs('option', 'selected', k); 
+					$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+					// $("#workspace").tabs('load', k);
+					abaAberta = true;
+				} 
+			});
+			
+			if(abaAberta){
+				
+				$('#workspace').tabs({load : function(event, ui) {
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
 
-			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+				
+				$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+			} else {
+				
+				$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+			}
+			
 		});
 
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
