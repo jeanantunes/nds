@@ -1,12 +1,15 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class TotalConsultaConsignadoCotaDetalhado {
+public class TotalConsultaConsignadoCotaDetalhado implements Serializable {
+	
+	private static final long serialVersionUID = -7690195221366930002L;
 	
 	private BigDecimal total;
 	private String nomeFornecedor;

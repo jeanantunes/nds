@@ -779,7 +779,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             this.atualizaMovimentosEstoqueItemNotaEnvio(notaEnvio, listaItemNotaEnvio);
             this.notaEnvioRepository.adicionar(notaEnvio);    
             
-            this.processarEstudoPDV(cota, listaItemNotaEnvio);
+            // FIXME refatorar o para gerar estudo de PDV na geração do  estudo...
+            
+            // this.processarEstudoPDV(cota, listaItemNotaEnvio);
         } else {
         	notasEnvio.remove(notaEnvio);
         }
