@@ -421,6 +421,14 @@ public class NFeServiceImpl implements NFeService {
 				List<Cota> cotas = null;
 				if(itensMovimentosFiscais.size() > 0) {
 					
+					if(naturezaOperacao.isNotaFiscalDevolucaoSimbolica()) {
+						
+						filtro.setNotaFiscalDevolucaoSimbolica(true);
+					} else if(naturezaOperacao.isNotaFiscalVendaConsignado()) {
+						
+						filtro.setNotaFiscalVendaConsignado(true);
+					}
+					
 					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMFF(filtro);
 				} else {
 				
@@ -494,7 +502,7 @@ public class NFeServiceImpl implements NFeService {
 		} else {
 			
 			this.notaFiscalService.exportarNotasFiscais(notas);
-//			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 			
 		}
 		
