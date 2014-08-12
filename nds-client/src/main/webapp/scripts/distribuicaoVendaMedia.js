@@ -735,6 +735,15 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
 	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
 	            
+	            
+	            $('#workspace').bind('tabsselect', function(event, ui) {
+	                // Objects available in the function context:
+	               console.log(ui.tab);     // anchor element of the selected (clicked) tab
+	               console.log(ui.panel);   // element, that contains the selected/clicked tab contents
+	               console.log(ui.index);   // zero-based index of the selected (clicked) tab
+	            
+	           });
+	            
 	            $('#workspace').tabs({load : function(event, ui) {
 					
 	            	histogramaPosEstudoController.dadosResumo = dadosResumo;

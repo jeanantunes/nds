@@ -583,62 +583,69 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<Cota> cotasNaoContribuintesNaoExigemNFe = new ArrayList<Cota>();
 		
-		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+		try {
 			
-			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 				
-				for (Cota cota : cotas) {
+				if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
 					
-					if(cota.getParametrosCotaNotaFiscalEletronica() != null 
-							&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS())  
-							&& cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()) {
+					for (Cota cota : cotas) {
 						
-						cotasContribuintesExigemNFe.add(cota);
-					} else {
-						
-						cotasNaoContribuintesNaoExigemNFe.add(cota);
+						if(cota.getParametrosCotaNotaFiscalEletronica() != null 
+								&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS())  
+								&& cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()) {
+							
+							cotasContribuintesExigemNFe.add(cota);
+						} else {
+							
+							cotasNaoContribuintesNaoExigemNFe.add(cota);
+						}
 					}
-				}
-				
-				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 					
-					if(cotasContribuintesExigemNFe.isEmpty()) {
+					if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 						
-						throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
-					} else {
+						if(cotasContribuintesExigemNFe.isEmpty()) {
+							
+							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+						} else {
+							
+							this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuintesExigemNFe);
+							notasGeradas = true;
+							break;
+						}
+					} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)
+							&& filtro.getNotaFiscalTipoEmissao() != null
+								&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {		
 						
-						this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuintesExigemNFe);
+						this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuintesNaoExigemNFe);
 						notasGeradas = true;
-						break;
+						if(filtro.getNotaFiscalTipoEmissao() != null
+								&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+							break;
+						}
+					} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_POR_DESTINATARIO)
+							&& filtro.getNotaFiscalTipoEmissao() != null
+								&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
+						
+						this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuintesNaoExigemNFe);
+						notasGeradas = true;
+						if(filtro.getNotaFiscalTipoEmissao() != null
+								&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+							break;
+						}
 					}
-				} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)
-						&& filtro.getNotaFiscalTipoEmissao() != null
-							&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {		
 					
-					this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuintesNaoExigemNFe);
-					notasGeradas = true;
-					if(filtro.getNotaFiscalTipoEmissao() != null
-							&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
-						break;
+					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuintesExigemNFe);
+					if(notas != null && !notas.isEmpty() ) {
+						notasGeradas = true;
 					}
-				} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_POR_DESTINATARIO)
-						&& filtro.getNotaFiscalTipoEmissao() != null
-							&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
 					
-					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuintesNaoExigemNFe);
-					notasGeradas = true;
-					if(filtro.getNotaFiscalTipoEmissao() != null
-							&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
-						break;
-					}
 				}
-				
-				this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuintesExigemNFe);
-				if(notas != null && !notas.isEmpty() ) {
-					notasGeradas = true;
-				}
-				
 			}
+		} catch (Exception e) {
+			
+			LOGGER.error("Erro ao Gerar NF-e", e);
+			throw e;
 		}
 		
 		if(!notasGeradas) {
@@ -880,6 +887,14 @@ public class NFeServiceImpl implements NFeService {
 			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 			naturezaOperacaoRepository.merge(naturezaOperacao);
 			
+			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
+			
+			Map<String, TributoAliquota> tributoAliquota = new HashMap<String, TributoAliquota>();
+			
+			for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
+				tributoAliquota.put(tributo.getNomeTributo(), tributo);
+			}
+			
 			final Usuario usuario = this.usuarioService.getUsuarioLogado();
 			
 			notaFiscal.setUsuario(usuario);
@@ -894,12 +909,34 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
-			// obter os movimentos de cada cota
+			// obter os movimentos da cota
+			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
+			final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
+			
+			List<TipoMovimento> itensMovimentosFiscais = notaFiscalService.obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
+				
 			filtro.setIdCota(cota.getId());
-			final List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro);
-			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
+			if(itensMovimentosFiscais.size() > 0) {
+				
+				movimentosFechamentoFiscal.addAll(this.notaFiscalRepository.obterMovimentosFechamentosFiscaisCota(filtro));
+			} else {
+				
+				movimentosEstoqueCota.addAll(this.notaFiscalRepository.obterMovimentosEstoqueCota(filtro));
 			}
+			
+			if(itensMovimentosFiscais.size() > 0) {
+				
+				for (final MovimentoFechamentoFiscal movimentoFechamentoFiscal : movimentosFechamentoFiscal) {
+					
+					ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoFechamentoFiscal, tributoAliquota);
+				}
+			} else {
+				
+				for (final MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
+					
+					ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoAliquota);
+				}
+			}			
 			
 			List<NotaFiscal> notasFiscaisSubdivididas = subdividirNotasFiscaisPorLimiteItens(parametrosSistema, notaFiscal, naturezaOperacao, distribuidor, transportadores);
 			
