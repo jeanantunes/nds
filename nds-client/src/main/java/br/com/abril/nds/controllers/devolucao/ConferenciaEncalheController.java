@@ -274,6 +274,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (idBox != null){
 		
+			final Usuario usuarioLogado = this.getUsuarioLogado();
+			this.session.setAttribute("usuarioSupervisor", usuarioLogado.isSupervisor());
+			
 			conferenciaEncalheSessionScopeAttr.setIdBoxLogado(idBox);
 			
 			this.session.setAttribute(ID_BOX_LOGADO_SESSION, idBox);
@@ -685,7 +688,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciasContingencia = PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(conferenciasContingencia), 
 				Ordenacao.ASC, 
-				"codigoSM");
+				"codigoSM", "numeroEdicao");
 		
 		Iterator<ConferenciaEncalheDTO> it = conferenciasContingencia.iterator();
 		
@@ -729,7 +732,7 @@ public class ConferenciaEncalheController extends BaseController {
 			Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
 					PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
 					Ordenacao.ASC, 
-					"codigoSM");
+					"codigoSM", "numeroEdicao");
 			
 			Integer qtde = listaConferenciaEncalhe.size();
 			
@@ -989,7 +992,8 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void informaVendaNegativa(final Long idProdutoEdicao, final String quantidade, final Boolean juramentada, final boolean indConferenciaContingencia){
 		
-        final boolean supervisor = usuarioService.isSupervisor();
+        //final boolean supervisor = usuarioService.isSupervisor();
+        final boolean supervisor = (boolean) (this.session.getAttribute("usuarioSupervisor") != null ? this.session.getAttribute("usuarioSupervisor") : false);
 
         ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao);
 
@@ -1473,7 +1477,8 @@ public class ConferenciaEncalheController extends BaseController {
     		
             final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
             
-            final boolean supervisor = usuarioService.isSupervisor();
+            final boolean supervisor = (boolean) (this.session.getAttribute("usuarioSupervisor") != null ? this.session.getAttribute("usuarioSupervisor") : false);
+            //usuarioService.isSupervisor();
             
             if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)){
                 
