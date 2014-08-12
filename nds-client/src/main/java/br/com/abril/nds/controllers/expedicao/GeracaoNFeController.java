@@ -8,6 +8,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.service.impl.NFeServiceImpl;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
@@ -55,6 +58,8 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 public class GeracaoNFeController extends BaseController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNFeController.class);
+	
 	@Autowired
 	private Result result;
 	
@@ -287,6 +292,8 @@ public class GeracaoNFeController extends BaseController {
 			this.nfeService.gerarNotaFiscal(filtro);
 			
 		} catch (Exception e) {
+			
+			LOGGER.error("Erro ao gerar NF-e.", e);
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		} 
 		
