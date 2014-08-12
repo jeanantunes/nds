@@ -834,7 +834,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		query.setParameter("true", true);
 		
-		query.setParameter("false", false);
+		if((filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado())
+				|| (filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica())) {
+			
+			query.setParameter("false", false);
+		}
 		
 		// Data Movimento:	...  Até   ...
 		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
