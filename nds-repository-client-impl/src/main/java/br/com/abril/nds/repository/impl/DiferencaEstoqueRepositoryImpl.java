@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.Lists;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
@@ -111,7 +114,44 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			if (filtro.getTipoDiferenca() != null) {
 			
-				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+				switch (filtro.getTipoDiferenca()) {
+				
+					case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO,
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS,
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO,
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR));
+						break;
+					
+					case FALTA_EM:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.FALTA_EM,
+								TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
+								TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA));
+						break;
+
+					case SOBRA_DE:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.SOBRA_DE,
+								TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA));
+						break;
+
+						
+					case SOBRA_EM:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.SOBRA_EM,
+								TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA,
+								TipoDiferenca.SOBRA_ENVIO_PARA_COTA));
+						break;
+
+						
+					default:
+						query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+						break;
+				}
+				
+				
 			}
 			
 			if (filtro.getPaginacao() != null) {
@@ -156,11 +196,48 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
 		}
-		
+
 		if (filtro.getTipoDiferenca() != null) {
-		
-			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
-		}
+			
+			switch (filtro.getTipoDiferenca()) {
+			
+				case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO,
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS,
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO,
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR));
+					break;
+				
+				case FALTA_EM:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.FALTA_EM,
+							TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
+							TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA));
+					break;
+
+				case SOBRA_DE:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.SOBRA_DE,
+							TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA));
+					break;
+
+					
+				case SOBRA_EM:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.SOBRA_EM,
+							TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA,
+							TipoDiferenca.SOBRA_ENVIO_PARA_COTA));
+					break;
+
+					
+				default:
+					query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+					break;
+			}
+			
+			
+		}		
 		
 		return (Long) query.uniqueResult();
 	}
@@ -195,13 +272,22 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		if (filtro != null) {
 			
 			if (filtro.getDataMovimento() != null) {
-
 				hql += " and diferenca.dataMovimento = :dataMovimento ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
+				
+				if( TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.equals(filtro.getTipoDiferenca()) ||
+					TipoDiferenca.FALTA_EM.equals(filtro.getTipoDiferenca()) ||
+					TipoDiferenca.SOBRA_DE.equals(filtro.getTipoDiferenca()) ||
+					TipoDiferenca.SOBRA_EM.equals(filtro.getTipoDiferenca()) ) {
+					
+					hql += " and diferenca.tipoDiferenca in (:tipoDiferenca) ";
+					
+				} else {
+					hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+				}
 	
-				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
 			}
 		}
 		

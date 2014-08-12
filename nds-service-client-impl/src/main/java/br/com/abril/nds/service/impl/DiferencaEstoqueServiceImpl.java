@@ -1651,31 +1651,6 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
     }
     
     @Override
-    @Transactional
-    public Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
-            final Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, final Long id,
-            final RateioCotaVO rateioCotaVO) {
-        
-        List<RateioCotaVO> listaRateiosCadastrados = mapaRateiosCadastrados.get(id);
-        
-        if (listaRateiosCadastrados == null) {
-            
-            listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
-        }
-        
-        if (listaRateiosCadastrados.contains(rateioCotaVO)) {
-            
-            listaRateiosCadastrados.remove(rateioCotaVO);
-        }
-        
-        listaRateiosCadastrados.add(rateioCotaVO);
-        
-        mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
-        
-        return mapaRateiosCadastrados;
-    }
-    
-    @Override
     @Transactional(readOnly = true)
     public boolean validarProdutoEmRecolhimento(final ProdutoEdicao produtoEdicao){
         

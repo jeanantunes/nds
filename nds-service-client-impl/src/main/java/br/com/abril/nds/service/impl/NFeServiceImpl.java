@@ -427,6 +427,9 @@ public class NFeServiceImpl implements NFeService {
 					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMEC(filtro);
 				}
 				
+				if (cotas == null || cotas.isEmpty()) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Não existem itens a serem gerados para o filtro.");
+				}
 				
 				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 					
