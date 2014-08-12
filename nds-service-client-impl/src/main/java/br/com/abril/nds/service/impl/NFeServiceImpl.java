@@ -1019,6 +1019,11 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
 		
+		if(cotas == null || cotas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota fiscal.");
+		}
+		
 		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
 				

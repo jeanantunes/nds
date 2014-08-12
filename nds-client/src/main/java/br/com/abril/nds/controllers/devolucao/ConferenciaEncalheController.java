@@ -662,7 +662,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciasContingencia = PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(conferenciasContingencia), 
 				Ordenacao.ASC, 
-				"codigoSM");
+				"codigoSM", "numeroEdicao");
 		
 		Iterator<ConferenciaEncalheDTO> it = conferenciasContingencia.iterator();
 		
@@ -706,7 +706,7 @@ public class ConferenciaEncalheController extends BaseController {
 			Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
 					PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
 					Ordenacao.ASC, 
-					"codigoSM");
+					"codigoSM", "numeroEdicao");
 			
 			Integer qtde = listaConferenciaEncalhe.size();
 			
