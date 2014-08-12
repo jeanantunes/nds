@@ -562,11 +562,7 @@ public class ConferenciaEncalheController extends BaseController {
         return false;
     }
 
-    /**
-=======
-	
 	/**
->>>>>>> 24ebb2f9a768f8e7765f72ccf96f146212099fd4
 	 * Retorna um mapa com os dados apresentados na 
 	 * conferencia de encalhe.
 	 * 

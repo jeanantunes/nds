@@ -170,7 +170,6 @@ public class BloqueioConferenciaEncalheComponent {
 		mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
 	}
 
-	
 	private void definirIdentificaoDoUsuario(HttpSession session) {
 
 		final Usuario usuario = usuarioService.getUsuarioLogado();
@@ -194,6 +193,4 @@ public class BloqueioConferenciaEncalheComponent {
 
 	}
 
-	
-	
 }
