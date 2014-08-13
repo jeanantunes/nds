@@ -13,8 +13,6 @@ import v1.pessoadetalhe.ebo.abril.types.ObterDadosFiscais;
 import v1.pessoadetalhe.ebo.abril.types.ObterDadosFiscaisElementDocument;
 import v1.pessoadetalhe.ebo.abril.types.ObterDadosFiscaisResponse;
 import v1.pessoadetalhe.ebo.abril.types.ObterDadosFiscaisResponseElementDocument;
-import v1.pessoadetalhe.ebo.abril.types.PessoaDto;
-import v1.pessoadetalhe.ebo.abril.types.PessoaType;
 import br.com.abril.axis2.PessoaCRPService_2Stub;
 import br.com.abril.canonico.v1.comum.cabecalhoabril.CabecalhoAbril;
 import br.com.abril.canonico.v1.comum.cabecalhoabril.CabecalhoAbrilDocument;

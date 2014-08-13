@@ -368,7 +368,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
             }
         }
         
-        hql.append("order by box.codigo, roteiro.ordem, rota.ordem ");
+        hql.append("order by box.codigo, roteiro.ordem, rota.ordem, cota.numeroCota ");
     
         return hql.toString();
     }

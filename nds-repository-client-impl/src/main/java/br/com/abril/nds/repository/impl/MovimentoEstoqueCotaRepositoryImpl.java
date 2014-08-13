@@ -651,10 +651,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    final StringBuilder sql = new StringBuilder();
 	    
 	    sql.append("SELECT");
-	    sql.append("	SUM(	");
+	    sql.append("	coalesce(SUM(	");
 	    sql.append("		CASE WHEN REPARTES.DIARECOLHIMENTO <> 1 THEN 0        ");
 	    sql.append("		ELSE (REPARTES.PRECOVENDA * REPARTES.QTDREPARTE) END  ");
-	    sql.append("	) AS totalReparte ");
+	    sql.append("	),0) AS totalReparte ");
 	    sql.append("FROM ( ");
 	    sql.append(" SELECT ");
 	    sql.append("	SUM( IF(TM.OPERACAO_ESTOQUE='SAIDA', MEC.QTDE*-1, MEC.QTDE) ) AS QTDREPARTE,                              ");

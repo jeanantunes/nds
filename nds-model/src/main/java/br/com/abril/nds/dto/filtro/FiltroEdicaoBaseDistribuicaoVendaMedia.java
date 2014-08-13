@@ -9,6 +9,8 @@ public class FiltroEdicaoBaseDistribuicaoVendaMedia extends FiltroDTO {
 	private Long edicao;
 	private Long classificacao;
 	
+	private boolean consolidado;
+	
 	public FiltroEdicaoBaseDistribuicaoVendaMedia(String codigo, String nome,
 			Long edicao, Long classificacao) {
 		this.codigo = codigo;
@@ -69,10 +71,16 @@ public class FiltroEdicaoBaseDistribuicaoVendaMedia extends FiltroDTO {
 	public void setClassificacao(Long classificacao) {
 		this.classificacao = classificacao;
 	}
-	public OrdemColuna getOrdemColuna() {
+    public OrdemColuna getOrdemColuna() {
 		return ordemColuna;
 	}
 	public void setOrdemColuna(OrdemColuna ordemColuna) {
 		this.ordemColuna = ordemColuna;
 	}
+    public boolean isConsolidado() {
+        return consolidado;
+    }
+    public void setConsolidado(boolean consolidado) {
+        this.consolidado = consolidado;
+    }
 }

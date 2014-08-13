@@ -1,12 +1,7 @@
 package br.com.abril.nds.service.impl;
 
-import static org.mockito.Mockito.when;
-
-import java.util.Date;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 

@@ -65,4 +65,6 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 
 	public abstract void updateById(Long id, BigInteger qtde);
 	
+	BigDecimal obterSaldoDeReparteExpedido(final Date dataMovimento);
+	
 }

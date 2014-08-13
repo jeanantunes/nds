@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;

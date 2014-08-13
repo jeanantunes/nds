@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;

@@ -1,12 +1,20 @@
 package br.com.abril.nds.model.planejamento;
 
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.math.BigInteger;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 
 /**
  * Created with IntelliJ IDEA.

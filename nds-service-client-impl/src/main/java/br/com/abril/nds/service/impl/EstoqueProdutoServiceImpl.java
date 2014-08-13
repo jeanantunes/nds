@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.EstoqueProdutoFila;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;

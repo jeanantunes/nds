@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
@@ -419,6 +418,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final List<Integer> listaDiasRecolheAtrasado = distribuidorService.getListaDiaOrdinalAceitaRecolhimento();
 		
 		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor);
+		
+		if(diasSemanaDistribuidorOpera.isEmpty()){
+		    throw new ValidacaoException(TipoMensagem.ERROR, "Existe fornecedor com dia de recolhimento não cadastrado.");
+		}
 		
 		final List<Date> datasAnteriores = distribuidorService.obterListaDataOperacional(
 				dataOperacao, 

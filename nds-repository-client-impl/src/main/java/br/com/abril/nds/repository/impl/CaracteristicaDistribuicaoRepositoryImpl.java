@@ -15,7 +15,6 @@ import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 

@@ -6,8 +6,8 @@ import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class RelatorioTiposProdutosVO implements Serializable {

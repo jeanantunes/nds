@@ -3,8 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.util.upload.XlsMapper;
 

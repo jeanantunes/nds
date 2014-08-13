@@ -16,14 +16,11 @@ import org.springframework.stereotype.Component;
 //import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Header;
 //import br.com.abril.nds.integracao.ems0122.outbound.EMS0122Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 //import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 //import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.service.integracao.DistribuidorService;
-
-import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 
 @Component

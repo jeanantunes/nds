@@ -16,9 +16,9 @@ import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 import br.com.abril.nds.model.fiscal.nota.OrigemProduto;
 import br.com.abril.nds.model.fiscal.nota.PIS;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 import br.com.abril.nds.repository.TributacaoRepository;
 import br.com.abril.nds.service.TributacaoService;
 

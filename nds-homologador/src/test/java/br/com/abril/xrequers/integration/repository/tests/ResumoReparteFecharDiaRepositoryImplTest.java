@@ -1,7 +1,6 @@
 package br.com.abril.xrequers.integration.repository.tests;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ExportFooterVerticalTestVO {

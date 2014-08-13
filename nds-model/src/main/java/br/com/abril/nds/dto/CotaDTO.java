@@ -1,7 +1,5 @@
 package br.com.abril.nds.dto;
 
-import br.com.abril.nds.model.cadastro.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
+import br.com.abril.nds.model.cadastro.Sexo;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 
 public class CotaDTO implements Serializable {
 

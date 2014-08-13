@@ -8,8 +8,8 @@ import java.math.RoundingMode;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class ConsignadoCotaDTO implements Serializable{
 	

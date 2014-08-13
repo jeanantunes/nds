@@ -1,27 +1,14 @@
 package br.com.abril.nds.integracao.ems0120.processor;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
-import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Detalhe;
-import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
-import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 

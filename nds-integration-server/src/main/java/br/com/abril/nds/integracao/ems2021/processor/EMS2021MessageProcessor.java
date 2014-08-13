@@ -1,22 +1,13 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.lightcouch.CouchDbClient;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
-import br.com.abril.nds.model.integracao.icd.IcdEdicaoBaseEstrategia;
-import br.com.abril.nds.model.integracao.icd.IcdEstrategia;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component

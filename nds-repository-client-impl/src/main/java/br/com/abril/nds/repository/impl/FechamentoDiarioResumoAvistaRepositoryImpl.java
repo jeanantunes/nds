@@ -3,7 +3,6 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 

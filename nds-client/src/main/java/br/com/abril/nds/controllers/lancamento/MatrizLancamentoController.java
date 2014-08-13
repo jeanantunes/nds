@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -37,6 +38,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -44,6 +46,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizLancamentoNovaService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -90,6 +93,9 @@ public class MatrizLancamentoController extends BaseController {
     private DistribuidorService distribuidorService;
     
     @Autowired
+    private UsuarioService usuarioService;
+    
+    @Autowired
     private CalendarioService calendarioService;
     
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
@@ -107,6 +113,8 @@ public class MatrizLancamentoController extends BaseController {
 	private static final Object SORT_NAME_CODIGO_PRODUTO = "codigoProdutoFormatado";
 
 	private static final String SORT_NAME_NUMERO_EDICAO = "numeroEdicao";
+
+    private static final String TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE = "trava_matriz_lancamento";
     
     @Path("/")
     public void index() {
@@ -152,6 +160,8 @@ public class MatrizLancamentoController extends BaseController {
     @Path("/salvar")
     public void salvar(final Date dataLancamento, final List<Long> idsFornecedores) {
         
+        this.bloquearMatrizLancamento();
+        
         //Solicitado para salvar somente no dia
     	if (dataLancamento.before(distribuidorService.obterDataOperacaoDistribuidor())) {
             
@@ -174,8 +184,10 @@ public class MatrizLancamentoController extends BaseController {
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
+        Usuario usuario = getUsuarioLogado();
+        
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
-                .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
+                .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, usuario);
         
             matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
         
@@ -199,6 +211,8 @@ public class MatrizLancamentoController extends BaseController {
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"),
                 "result").recursive().serialize();
+        
+        desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
     }
     
     @Post
@@ -382,6 +396,8 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void confirmarMatrizLancamento(final List<Date> datasConfirmadas) {
         
+        this.bloquearMatrizLancamento();
+        
         this.verificarExecucaoInterfaces();
         
         final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
@@ -399,8 +415,10 @@ public class MatrizLancamentoController extends BaseController {
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
+        Usuario usuario = getUsuarioLogado();
+        
         final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
-                .confirmarMatrizLancamento(matrizLancamento, datasConfirmadas, getUsuarioLogado());
+                .confirmarMatrizLancamento(matrizLancamento, datasConfirmadas, usuario);
         
         matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
         
@@ -413,6 +431,8 @@ public class MatrizLancamentoController extends BaseController {
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lançamento confirmado com sucesso!"),
                 "result").recursive().serialize();
+        
+        desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
     }
     
     private void validarDatasConfirmacao(final Date... datasConfirmadas) {
@@ -526,6 +546,8 @@ public class MatrizLancamentoController extends BaseController {
     	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	
+        this.bloquearMatrizLancamento();
+        
     	Date novaData =null;
     	
     	if(session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO)!=null){
@@ -669,6 +691,8 @@ public class MatrizLancamentoController extends BaseController {
     public void reprogramarLancamentosSelecionados( List<ProdutoLancamentoVO> produtosLancamento,
             final String novaDataFormatada, boolean reprogramarProdutosPEBMenor7Dias) {
         
+        this.bloquearMatrizLancamento();
+        
     	List<String> listaMensagens = new ArrayList<String>();
     	List<String> listaMensagensAux = new ArrayList<String>();
     	
@@ -746,6 +770,8 @@ public class MatrizLancamentoController extends BaseController {
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
+        
+        this.bloquearMatrizLancamento();
         
     	List<String> listaMensagens = new ArrayList<String>();
     	List<String> listaMensagensAux = new ArrayList<String>();
@@ -1901,6 +1927,39 @@ public class MatrizLancamentoController extends BaseController {
     public enum ValidacaoDataLancamento {
         
         DATA_JA_CONFIRMADA, PEB_MENOR_7_DIAS, DATA_VALIDA
+    }
+    
+    private void bloquearMatrizLancamento() {
+        
+        String loginUsuarioContext = 
+            (String) this.session.getServletContext().getAttribute(
+                    TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
+        
+        String usuario = super.getUsuarioLogado().getLogin();
+        
+        if (loginUsuarioContext != null
+                && !loginUsuarioContext.equals(usuario)) {
+                
+            throw new ValidacaoException(
+                new ValidacaoVO(TipoMensagem.WARNING, 
+                    "A matriz de lançamento já está em processamento pelo usuário [" 
+                        + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]."));
+        }
+        
+        this.session.getServletContext().setAttribute(
+            TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE, usuario);
+    }
+    
+    public static void desbloquearMatrizLancamento(ServletContext servletContext, String usuario) {
+
+        String loginUsuarioContext = 
+            (String) servletContext.getAttribute(
+                    TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
+        
+        if (usuario.equals(loginUsuarioContext)) {
+            
+            servletContext.removeAttribute(TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
+        }
     }
     
 }

@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Sets;
-
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.service.EditorService;
+
+import com.google.common.collect.Sets;
 
 @Service
 public class EditorServiceImpl implements EditorService {

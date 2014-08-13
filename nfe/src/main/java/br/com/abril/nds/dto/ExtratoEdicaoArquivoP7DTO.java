@@ -4,8 +4,8 @@ import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.util.export.Delimiter;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 @Delimiter("|")

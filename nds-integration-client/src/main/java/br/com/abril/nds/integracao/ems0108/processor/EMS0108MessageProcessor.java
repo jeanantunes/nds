@@ -12,7 +12,6 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.data.helper.LancamentoDataHelper;
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;

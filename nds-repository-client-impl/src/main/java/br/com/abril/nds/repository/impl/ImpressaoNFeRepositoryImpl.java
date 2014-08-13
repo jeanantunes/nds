@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;

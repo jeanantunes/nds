@@ -7,8 +7,8 @@ import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * DTO que representa os detalhes de diferenças. 

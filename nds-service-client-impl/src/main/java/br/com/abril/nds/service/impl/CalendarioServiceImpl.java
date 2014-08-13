@@ -33,7 +33,6 @@ import br.com.abril.nds.dto.CalendarioFeriadoDTO;
 import br.com.abril.nds.dto.CalendarioFeriadoWrapper;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;

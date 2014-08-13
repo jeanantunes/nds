@@ -9,10 +9,10 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Footer;
-import br.com.abril.nds.util.export.FooterType;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 
 @Exportable
 public class CotaSuspensaoDTO implements Serializable{
