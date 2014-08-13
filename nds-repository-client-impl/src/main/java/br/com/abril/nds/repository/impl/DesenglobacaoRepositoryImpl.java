@@ -2,10 +2,11 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;

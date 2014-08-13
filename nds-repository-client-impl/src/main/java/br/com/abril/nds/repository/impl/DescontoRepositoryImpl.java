@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoRepository;
 

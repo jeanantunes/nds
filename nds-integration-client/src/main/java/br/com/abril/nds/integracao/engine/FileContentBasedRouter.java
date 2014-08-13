@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.integracao.engine.data.FileRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.util.OSUtil;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.util.OSUtil;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
 

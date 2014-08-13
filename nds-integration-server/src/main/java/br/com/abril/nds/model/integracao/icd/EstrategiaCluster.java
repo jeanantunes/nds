@@ -2,8 +2,6 @@ package br.com.abril.nds.model.integracao.icd;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.com.abril.nds.model.integracao.icd.pks.EstrategiaClusterPK;

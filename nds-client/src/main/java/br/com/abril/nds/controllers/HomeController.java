@@ -201,8 +201,7 @@ public class HomeController {
         if (mapaMenus.get(menuDTO) == null) {
             insereMenus(permissao, mapa);
         } else {
-            ((Map) mapaMenus.get(menuDTO)).put(new MenuDTO(permissao, this.getUrlByPermission(permissao)),
-                    new TreeMap());
+            ((Map) mapaMenus.get(menuDTO)).put(new MenuDTO(permissao, this.getUrlByPermission(permissao)), new TreeMap());
         }
         return (Map) mapaMenus.get(menuDTO);
     }

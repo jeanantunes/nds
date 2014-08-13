@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.ICMS;
-
 import br.com.abril.nds.model.fiscal.nota.ICMSST;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.PIS;

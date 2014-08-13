@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.StringUtil;
 
 public class DescontoProdutoDTO implements Serializable {
 

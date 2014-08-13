@@ -16,9 +16,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import br.com.abril.nds.model.integracao.LogExecucao;
-import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
-
 @Entity
 @Table(name = "LOG_EXECUCAO_ARQUIVO")
 @SequenceGenerator(name="LOG_EXECUCAO_ARQUIVO_SEQ", initialValue = 1, allocationSize = 1)

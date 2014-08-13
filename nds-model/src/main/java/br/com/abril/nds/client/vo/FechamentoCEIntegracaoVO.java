@@ -6,8 +6,8 @@ import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FechamentoCEIntegracaoVO implements Serializable {

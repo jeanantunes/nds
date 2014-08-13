@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
-import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;

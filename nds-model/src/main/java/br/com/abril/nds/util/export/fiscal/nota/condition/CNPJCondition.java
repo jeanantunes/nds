@@ -1,6 +1,7 @@
 package br.com.abril.nds.util.export.fiscal.nota.condition;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.caelum.stella.validation.CNPJValidator;
 

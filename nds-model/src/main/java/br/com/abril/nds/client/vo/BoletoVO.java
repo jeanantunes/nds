@@ -6,8 +6,8 @@ import java.util.Date;
 
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * Value Object que representa dados do boleto.

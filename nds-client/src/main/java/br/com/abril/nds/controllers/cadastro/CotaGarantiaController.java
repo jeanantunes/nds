@@ -11,9 +11,7 @@ import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
-import br.com.abril.nds.dto.FiadorDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;

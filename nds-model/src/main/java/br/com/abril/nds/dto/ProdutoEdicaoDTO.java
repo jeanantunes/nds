@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import com.google.common.base.Strings;
-
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -21,6 +19,8 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.upload.XlsMapper;
+
+import com.google.common.base.Strings;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 

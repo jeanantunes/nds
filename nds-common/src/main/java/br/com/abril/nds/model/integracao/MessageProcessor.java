@@ -2,8 +2,6 @@ package br.com.abril.nds.model.integracao;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import br.com.abril.nds.model.integracao.Message;
-
 public interface MessageProcessor {
 	
 	/**

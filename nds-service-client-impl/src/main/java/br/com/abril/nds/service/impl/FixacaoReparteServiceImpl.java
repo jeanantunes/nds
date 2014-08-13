@@ -26,7 +26,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;

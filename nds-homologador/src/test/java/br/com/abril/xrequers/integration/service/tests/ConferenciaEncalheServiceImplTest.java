@@ -1,7 +1,7 @@
 package br.com.abril.xrequers.integration.service.tests;
 
-import static org.mockito.Mockito.when;
 import static br.com.abril.xrequers.integration.service.tests.TestUtil.criarData;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Calendar;

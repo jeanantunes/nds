@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.ems0128.processor.EMS0128MessageProcessor;
-import br.com.abril.nds.integracao.model.canonic.EMS0140Input;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.repository.AbstractRepository;

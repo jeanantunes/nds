@@ -1,7 +1,6 @@
 package br.com.abril.nds.integracao.ems0109.processor;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -30,7 +29,6 @@ import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Util;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
