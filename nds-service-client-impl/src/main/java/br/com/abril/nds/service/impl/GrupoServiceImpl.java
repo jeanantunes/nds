@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.beans.Transient;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -232,6 +233,7 @@ public class GrupoServiceImpl implements GrupoService {
     /**
      * @return
      */
+    @Transactional
     @Override
     public Date getDataInicioProximaSemanaSemCE() {
         final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemanaRecolhimento().getCodigoDiaSemana();
