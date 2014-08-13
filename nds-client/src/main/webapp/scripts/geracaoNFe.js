@@ -5,7 +5,7 @@ var geracaoNFeController = $.extend({
 	 */
 	path : contextPath + '/expedicao/geracaoNFe/',
 	
-	geracaoLiberada : true,
+	geracaoLiberada : false,
 	
 	/**
 	 * objeto utilizado para encapsular os dados do filtro de pesquisa
@@ -35,10 +35,9 @@ var geracaoNFeController = $.extend({
 		this.initFlexiGrids();
 		this.initFiltroDatas();
 		
-		$('.fieldFiltro :input, .fieldFiltro select').on('change', function() {
+		$('.fieldFiltro :input, .fieldFiltro select', this.workspace).on('change', function() {
 			geracaoNFeController.geracaoLiberada = false;
 		});
-		
 		
 		params = [];
 		params.push({name: 'tipoEmitente', value: 'DISTRIBUIDOR'});
