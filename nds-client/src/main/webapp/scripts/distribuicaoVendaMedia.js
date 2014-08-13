@@ -208,11 +208,15 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var produto = $("#produtoPesquisaBases").val();
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#selectClassificacao").val();
+		var modoAnalise = $("#modoAnalise").val();
+		var idProdutoEdicao = $("#idProdutoEdicao").val();
 		
 		data.push({name:"filtro.codigo", value:codigo});
 		data.push({name:"filtro.nome", value:produto});
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
+		data.push({name:"modoAnalise", value:modoAnalise});
+		data.push({name:"idProdutoEdicao", value:idProdutoEdicao});
 		
 		$("#edicaoProdCadastradosGrid-1", this.workspace).flexOptions({
 			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",

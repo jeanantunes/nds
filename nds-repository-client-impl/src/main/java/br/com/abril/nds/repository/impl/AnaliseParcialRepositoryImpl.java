@@ -368,6 +368,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append(" where epe.estudo_id = :estudoId ");
 //        sql.append(" and l.DATA_LCTO_PREVISTA= :dataLancamento ");
+        sql.append("  group by pe.id ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
         sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
 

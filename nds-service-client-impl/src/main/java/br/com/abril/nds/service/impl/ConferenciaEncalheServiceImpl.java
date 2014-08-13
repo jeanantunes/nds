@@ -420,6 +420,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor);
 		
+		if(diasSemanaDistribuidorOpera.isEmpty()){
+		    throw new ValidacaoException(TipoMensagem.ERROR, "Existe fornecedor com dia de recolhimento não cadastrado.");
+		}
+		
 		final List<Date> datasAnteriores = distribuidorService.obterListaDataOperacional(
 				dataOperacao, 
 				QUANTIDADE_DIAS_UTEIS, 
