@@ -147,7 +147,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         final Query query = this.getSession().createQuery("select c from Cota c join fetch c.pessoa join fetch c.box where c.numeroCota = :numeroCota");
         
         query.setParameter("numeroCota", numeroCota);
-        query.setCacheable(true);
+        // query.setCacheable(true);
         
         return (Cota) query.uniqueResult();
     }

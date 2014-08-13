@@ -1202,11 +1202,34 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
             this.validarNovoRateio(rateioCotaVO,diferencaVO);
             
             mapaRateiosCadastrados =
-                    diferencaEstoqueService.incluirSeNaoExisteNoMapa(
+                    this.incluirSeNaoExisteNoMapa(
                             mapaRateiosCadastrados, diferencaVO.getId(), rateioCotaVO);
         }
         
         httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, mapaRateiosCadastrados);
+    }
+    
+    private Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
+            final Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, final Long id,
+            final RateioCotaVO rateioCotaVO) {
+        
+        List<RateioCotaVO> listaRateiosCadastrados = mapaRateiosCadastrados.get(id);
+        
+        if (listaRateiosCadastrados == null) {
+            
+            listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
+        }
+        
+        if (listaRateiosCadastrados.contains(rateioCotaVO)) {
+            
+            listaRateiosCadastrados.remove(rateioCotaVO);
+        }
+        
+        listaRateiosCadastrados.add(rateioCotaVO);
+        
+        mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
+        
+        return mapaRateiosCadastrados;
     }
     
     private void validarNovosRateios(final List<RateioCotaVO> listaNovosRateios,final DiferencaVO diferencaVO) {
@@ -1368,29 +1391,23 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         final FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
                 (FiltroLancamentoDiferencaEstoqueDTO) httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
         
-        if (todos){
-            
-            filtroPesquisa.setPaginacao(null);
-            filtroPesquisa.setOrdenacaoColuna(null);
-            listaNovasDiferencas = new HashSet<Diferenca>();
-            listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
+        if(modoNovaDiferenca != null && modoNovaDiferenca ){
+            listaNovasDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
         } else {
             
-            if(modoNovaDiferenca != null && modoNovaDiferenca ){
-                listaNovasDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-            } else {
-                
-                listaNovasDiferencas = new HashSet<Diferenca>();
-                
-                // Para não limitar os resultados que irão ser persistidos no
-                // sistema
-                filtroPesquisa.getPaginacao().setPaginaAtual(1);
-                filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
-                listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
-            }
+            listaNovasDiferencas = new HashSet<Diferenca>();
+            
+            // Para não limitar os resultados que irão ser persistidos no
+            // sistema
+            filtroPesquisa.getPaginacao().setPaginaAtual(1);
+            filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
+            listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
         }
         
-        this.validarDiferencasSelecionadas(listaNovasDiferencas);
+        if (!todos){
+        
+            this.validarDiferencasSelecionadas(listaNovasDiferencas);
+        }
         
         diferencaEstoqueService.efetuarAlteracoes(
                 listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuarioLogado().getId(), modoNovaDiferenca);
