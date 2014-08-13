@@ -482,7 +482,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.selecionarCheck = function(check, index) {
 		
 		T.lancamentos[index].selecionado = check.checked;
-		$("#selTodos", _workspace).uncheck();			
+		
+		$(".selTodos", this.workspace).each(function(index, element) {
+			element.checked = check.checked;
+		});
+		//alteracaoCotaController.verificarCheck();
+		
 	},
 	
 	this.finalizaItem = function(index) {
@@ -1605,6 +1610,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				exibirMensagem("WARNING",["Selecione um produto que tenha um estudo gerado."]);
 				return;
 			} else {
+				
+				$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+					if($(v).text() == 'Histograma Pré Análise') {
+						console.log(k +' - '+ $(v).text());
+						$("#workspace").tabs('option', 'selected', k); 
+						$("#workspace").tabs('load', k); 
+					} 
+				});
+				
 				$('#workspace').tabs({load : function(event, ui) {
 					
 					params = [];

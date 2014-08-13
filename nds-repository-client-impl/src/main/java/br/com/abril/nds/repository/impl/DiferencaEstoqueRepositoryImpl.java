@@ -15,6 +15,7 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
@@ -25,6 +26,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
@@ -812,4 +814,109 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
         
         return query.list();
     }
+	
+	@Override
+	public BigDecimal obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(final Date dataFechamento) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum( ");
+		sql.append("			if(diferenca_.TIPO_DIFERENCA IN ('PERDA_EM','FALTA_EM_DIRECIONADA_COTA','FALTA_EM') ");
+		sql.append("				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA *-1 ");
+		sql.append("				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA "); 
+		sql.append("			) ");
+		sql.append(" ),0) as valor "); 
+		
+		sql.append(" from DIFERENCA diferenca_ ");
+		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
+	    
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao "); 
+		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
+	    sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
+	    sql.append("		select distinct produtoEdicao.ID ");
+	    sql.append("		from EXPEDICAO expedicaoProduto ");
+	    sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+	    sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+	    sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+	    sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+	    sql.append("		and produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+	    sql.append(" ) ");
+	    sql.append(" and diferenca_.id in ( ");
+	    sql.append("	select  distinct rateioDiferencaCota.DIFERENCA_ID from  RATEIO_DIFERENCA rateioDiferencaCota "); 
+	    sql.append(" ) ");
+		
+	    SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataFechamento);
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameterList("tiposDiferenca", Arrays.asList( 
+												   TipoDiferenca.SOBRA_EM.name(),
+												   TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.GANHO_EM.name(),
+												   TipoDiferenca.FALTA_EM.name(),
+												   TipoDiferenca.PERDA_EM.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS.name()));
+		
+		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(final Date dataFechamento) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum( ");
+		sql.append("			if(diferenca_.TIPO_DIFERENCA IN ('PERDA_EM','FALTA_EM_DIRECIONADA_COTA','FALTA_EM') ");
+		sql.append("				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA ");
+		sql.append("				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA *-1 ");
+		sql.append("			) ");
+		sql.append(" ),0) as valor ");
+		
+		sql.append(" from DIFERENCA diferenca_ ");
+		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
+	    
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao ");
+		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
+	    
+		sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
+		sql.append("		select distinct produtoEdicao.ID "); 
+		sql.append("		from EXPEDICAO expedicaoProduto ");
+		sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+		sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+		sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+		sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+		sql.append("		and produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		sql.append(" ) ");
+		sql.append(" and diferenca_.id in ( ");
+		sql.append("	select  distinct rateioDiferencaCota.DIFERENCA_ID from  RATEIO_DIFERENCA rateioDiferencaCota "); 
+		sql.append(" ) ");        
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataFechamento);
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameterList("tiposDiferenca", Arrays.asList( 
+												   TipoDiferenca.SOBRA_EM.name(),
+												   TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.GANHO_EM.name(),
+												   TipoDiferenca.FALTA_EM.name(),
+												   TipoDiferenca.PERDA_EM.name()));
+		
+		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

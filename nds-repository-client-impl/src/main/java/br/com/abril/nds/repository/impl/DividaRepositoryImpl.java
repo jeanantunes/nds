@@ -941,11 +941,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         
         if (TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)) {
             
-            hql.append(" where cobranca.dataVencimento > :data and cobranca.statusCobranca = :statusNaoPago   ");
+            hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
             
         } else {
             
-            hql.append(" where cobranca.dataVencimento <= :data  and cobranca.statusCobranca = :statusNaoPago ")
+            hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ")
             .append(" and cobranca.divida.status != :pendenteInadimplente ");
         }
         
@@ -1031,11 +1031,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         
         if (TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)) {
             
-            hql.append(" where cobranca.dataVencimento > :data and cobranca.statusCobranca = :statusNaoPago   ");
+            hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
             
         } else {
             
-            hql.append(" where cobranca.dataVencimento <= :data  and cobranca.statusCobranca = :statusNaoPago ")
+            hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ")
             .append("	and cobranca.divida.status != :pendenteInadimplente	");
         }
         
