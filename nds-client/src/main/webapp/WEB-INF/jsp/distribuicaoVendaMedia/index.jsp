@@ -393,6 +393,8 @@ function limparLstExcecao1(){
                 	<fieldset style="width:280px!important; margin-bottom:10px; float:left;">
                     	<legend>Dados da Distribuição</legend>
                         <input type="hidden" id="idLancamento" value="${lancamento.id}"/>
+                        <input type="hidden" id="idProdutoEdicao" value="${lancamento.produtoEdicao.id}"/>
+                        <input type="hidden" id="modoAnalise" value="${modoAnalise}"/>
                     	<table width="280" border="0" cellspacing="2" cellpadding="2">
                           <tr>
                             <td>Produto:</td>

@@ -119,4 +119,8 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	List<Diferenca> obterDiferencas(Date data, StatusConfirmacao... statusConfirmacao);
 
     List<ContasAPagarConsignadoVO> pesquisarDiferncas(String codigoProduto, Long numeroEdicao, Date data);
+
+	BigDecimal obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(final Date dataFechamento);
+	
+	BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(final Date dataFechamento);
 }
