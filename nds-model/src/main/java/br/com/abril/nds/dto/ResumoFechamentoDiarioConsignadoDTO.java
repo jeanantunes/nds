@@ -104,7 +104,64 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		
 	}
 	
-	public class ResumoConsignado extends Resumo {}
+	public class ResumoConsignado extends Resumo {
+		
+		protected BigDecimal valorCE;
+		
+		protected BigDecimal valorExpedicao;
+		
+		protected BigDecimal valorOutrosValoresSaidas;
+		
+		protected BigDecimal valorOutrosValoresEntrada;
+
+		public BigDecimal getValorCE() {
+			return valorCE;
+		}
+
+		public void setValorCE(BigDecimal valorCE) {
+			this.valorCE = valorCE;
+		}
+
+		public BigDecimal getValorExpedicao() {
+			return valorExpedicao;
+		}
+
+		public void setValorExpedicao(BigDecimal valorExpedicao) {
+			this.valorExpedicao = valorExpedicao;
+		}
+
+		public BigDecimal getValorOutrosValoresSaidas() {
+			return valorOutrosValoresSaidas;
+		}
+
+		public void setValorOutrosValoresSaidas(BigDecimal valorOutrosValoresSaidas) {
+			this.valorOutrosValoresSaidas = valorOutrosValoresSaidas;
+		}
+
+		public BigDecimal getValorOutrosValoresEntrada() {
+			return valorOutrosValoresEntrada;
+		}
+
+		public void setValorOutrosValoresEntrada(BigDecimal valorOutrosValoresEntrada) {
+			this.valorOutrosValoresEntrada = valorOutrosValoresEntrada;
+		}
+		
+		public String getValorOutrosValoresSaidasFormatado() {
+			return CurrencyUtil.formatarValor(this.valorOutrosValoresSaidas);
+		}
+		
+		public String getValorOutrosValoresEntradaFormatado() {
+			return CurrencyUtil.formatarValor(this.valorOutrosValoresEntrada);
+		}
+		
+		public String getValorCEFormatado() {
+			return CurrencyUtil.formatarValor(this.valorCE);
+		}
+		
+		public String getValorExpedicaoFormatado() {
+			return CurrencyUtil.formatarValor(this.valorExpedicao);
+		}
+	}
 	
 	public class ResumoAVista extends Resumo {}
 

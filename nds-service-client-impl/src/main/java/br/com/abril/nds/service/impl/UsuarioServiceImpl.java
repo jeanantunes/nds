@@ -42,7 +42,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	 * @see br.com.abril.nds.service.UsuarioService#quantidade(br.com.abril.nds.model.seguranca.Usuario)
 	 */
 	@Override
-
+	@Transactional
 	public int quantidade(Usuario usuario) {
 		return Integer.valueOf(usuarioRepository.quantidade(usuario).toString());
 	}
@@ -66,12 +66,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public Usuario buscar(Long codigoUsuario) {
 		Usuario usuario = usuarioRepository.buscarPorId(codigoUsuario);
 		return usuario;
 	}
 
 	@Override
+	@Transactional
 	public boolean validarSenha(Long idUsuario, String senha) {
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
 		if (usuario.getSenha().equals(senha)) {
@@ -80,32 +82,36 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return false;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Transactional
 	public List<GrupoPermissao> buscarGrupoPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getGruposPermissoes());
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Transactional
 	public List<Permissao> buscarPermissoes(Long codigoUsuario) {
 		return new ArrayList(usuarioRepository.buscarPorId(codigoUsuario).getPermissoes());
 	}
 
 	@Override
+	@Transactional
 	public String getNomeUsuarioLogado() {
         String loginUsuario = getCurrentUserName();
 		return usuarioRepository.getNomeUsuarioPorLogin(loginUsuario);
 	}
 
 	@Override
+	@Transactional
 	public Usuario getUsuarioLogado() {
         String loginUsuario = getCurrentUserName();
 		return usuarioRepository.getUsuarioLogado(loginUsuario);
 	}
-
 	
 	@Override
+	@Transactional
 	public boolean existeUsuario(String login) {
 		if (usuarioRepository.getNomeUsuarioPorLogin(login) != null) {
 			return true;
@@ -120,6 +126,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public boolean verificarUsuarioSupervisor(String usuario, String senha) {
 		
 		try {
@@ -140,6 +147,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      * br.com.abril.nds.service.UsuarioService#isSupervisor(java.lang.String)
      */
     @Override
+    @Transactional
     public Boolean isSupervisor(String login) {
         return usuarioRepository.isSupervisor(login);
     }
@@ -151,6 +159,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      * br.com.abril.nds.service.UsuarioService#isSupervisor(java.lang.String)
      */
     @Override
+    @Transactional
     public Boolean isSupervisor() {
         String loginUsuario = getCurrentUserName();
         return this.isSupervisor(loginUsuario);
@@ -163,6 +172,7 @@ public class UsuarioServiceImpl implements UsuarioService {
      * br.com.abril.nds.service.UsuarioService#isSupervisor(java.lang.String)
      */
     @Override
+    @Transactional
     public Boolean isNotSupervisor() {
         
         return !this.isSupervisor();

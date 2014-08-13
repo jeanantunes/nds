@@ -506,6 +506,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     	this.lancamentoRepository.merge(lancamento);
     }
     
+    @Transactional
     public HashMap<String, Set<Date>> obterDiasMatrizLancamentoAbertos(){
     	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
     	
@@ -621,6 +622,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         
     }
 	
+	@Transactional
 	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
 		
 	

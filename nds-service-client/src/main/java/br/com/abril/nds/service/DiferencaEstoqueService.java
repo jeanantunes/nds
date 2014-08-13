@@ -143,10 +143,6 @@ public interface DiferencaEstoqueService {
 			Set<DiferencaVO> listaNovasDiferencasVO, DiferencaVO diferencaVO,
 			Long idDiferenca);
 
-	Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
-			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
-			RateioCotaVO rateioCotaVO);
-	
 	boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
 
     void validarRateioParaCotasInativas(List<RateioCotaVO> rateioCotas);
