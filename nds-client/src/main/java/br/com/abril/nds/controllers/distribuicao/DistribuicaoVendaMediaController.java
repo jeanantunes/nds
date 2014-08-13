@@ -32,6 +32,7 @@ import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
@@ -247,15 +248,35 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	carregarComboClassificacao();
 
 	session.setAttribute(ProdutoDistribuicaoVO.class.getName(), produtoDistribuicaoVO);
+    
+    String modoAnalise = "NORMAL";
+    
+    PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
+    
+    if (periodo != null && periodo.getNumeroPeriodo() > 1) {
+    
+        modoAnalise = "PARCIAL";
+    }
+    
+    result.include("modoAnalise", modoAnalise);
     }
 
     @Path("pesquisarProdutosEdicao")
     @Post
-    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String sortorder, String sortname, int page, int rp) {
+    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String modoAnalise, Long idProdutoEdicao, String sortorder, String sortname, int page, int rp) {
     	
     	filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
     	filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroEdicaoBaseDistribuicaoVendaMedia.OrdemColuna.values(), sortname));	
 		
+    	Long idProdutoEdicaoPesquisa = null;
+    	
+    	if (filtro.getCodigo() != null && filtro.getEdicao() != null) {
+    	    
+    	    idProdutoEdicaoPesquisa = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString()).getId();
+    	}
+    	
+    	filtro.setConsolidado(modoAnalise.equals("NORMAL") || idProdutoEdicaoPesquisa == null || !idProdutoEdicao.equals(idProdutoEdicaoPesquisa));
+    	
     	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
     	filtro.setCodigo(produto.getCodigoICD());
     	

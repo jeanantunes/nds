@@ -207,11 +207,15 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var produto = $("#produtoPesquisaBases").val();
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#selectClassificacao").val();
+		var modoAnalise = $("#modoAnalise").val();
+		var idProdutoEdicao = $("#idProdutoEdicao").val();
 		
 		data.push({name:"filtro.codigo", value:codigo});
 		data.push({name:"filtro.nome", value:produto});
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
+		data.push({name:"modoAnalise", value:modoAnalise});
+		data.push({name:"idProdutoEdicao", value:idProdutoEdicao});
 		
 		$("#edicaoProdCadastradosGrid-1", this.workspace).flexOptions({
 			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
@@ -733,6 +737,15 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
 	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
 	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+	            
+	            
+	            $('#workspace').bind('tabsselect', function(event, ui) {
+	                // Objects available in the function context:
+	               console.log(ui.tab);     // anchor element of the selected (clicked) tab
+	               console.log(ui.panel);   // element, that contains the selected/clicked tab contents
+	               console.log(ui.index);   // zero-based index of the selected (clicked) tab
+	            
+	           });
 	            
 	            $('#workspace').tabs({load : function(event, ui) {
 					
