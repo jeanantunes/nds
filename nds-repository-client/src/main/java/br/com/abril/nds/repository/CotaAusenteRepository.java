@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -20,5 +21,9 @@ public interface CotaAusenteRepository extends Repository<CotaAusente,Long> {
 	 List<ProdutoEdicaoSuplementarDTO> obterDadosExclusaoCotaAusente(Long idCotaAusente);
 	 
 	 List<Long> obterIdsCotasAusentesNoPeriodo(Intervalo<Date> periodo);
+	 
+	 BigDecimal obterSaldoDeEntradaDoConsignadoDasCotasAusenteNoDistribuidor(final Date dataMovimentacao);
+	 
+	 BigDecimal obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(final Date dataMovimentacao);
 	 
 }
