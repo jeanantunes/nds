@@ -5,6 +5,8 @@ var geracaoNFeController = $.extend({
 	 */
 	path : contextPath + '/expedicao/geracaoNFe/',
 	
+	geracaoLiberada : true,
+	
 	/**
 	 * objeto utilizado para encapsular os dados do filtro de pesquisa
 	 */
@@ -32,6 +34,11 @@ var geracaoNFeController = $.extend({
 		this.initButtons();
 		this.initFlexiGrids();
 		this.initFiltroDatas();
+		
+		$('.fieldFiltro :input, .fieldFiltro select').on('change', function() {
+			geracaoNFeController.geracaoLiberada = false;
+		});
+		
 		
 		params = [];
 		params.push({name: 'tipoEmitente', value: 'DISTRIBUIDOR'});
@@ -419,6 +426,8 @@ var geracaoNFeController = $.extend({
 	 */
 	pesquisar : function() {
 		
+		geracaoNFeController.geracaoLiberada = true;
+		
 		if($("#geracaoNfe-filtro-naturezaOperacao").val() < 0) {
 			exibirMensagem('WARNING', ['Selecione uma Natureza de Operação.']);
 			return;
@@ -585,6 +594,12 @@ var geracaoNFeController = $.extend({
 	
 	gerar : function() {
 
+		if(!geracaoNFeController.geracaoLiberada) {
+			
+			exibirMensagem("WARNING", ["Efetue a pesquisa para habilitar a geração!"]);
+			return;
+		}
+		
 		var params = new Array();
 		
 		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
@@ -743,6 +758,7 @@ var geracaoNFeController = $.extend({
 	verificarRegimeEspecialNaturezaOperacao : function(el) {
 		params = [];
 		params.push({name: 'naturezaOperacaoId', value: el.value});
+		
 		$.postJSON(this.path + 'verificarRegimeEspecialNaturezaOperacao', params, function(data) {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
