@@ -319,7 +319,8 @@ public class CotaBaseController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não pode ser adicionada!");
 		}
 		
-		else if(filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+		else if(filtro.getTpDistribCota() != null && filtro.getTpDistribCota().getDescTipoDistribuicaoCota() != null 
+				&& filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
 		}
 		
