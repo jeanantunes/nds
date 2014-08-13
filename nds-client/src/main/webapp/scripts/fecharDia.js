@@ -1469,14 +1469,60 @@ var fecharDiaController =  $.extend(true, {
 	   return linhaBranco; 
 	},
 	
+	popup_valorEntradaConsigando:function(resumo){
+		
+		$( "#dialog-consolidado-valor-entrada", fecharDiaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:350,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			
+			form: $("#dialog-consolidado-valor-entrada", fecharDiaController.workspace).parents("form")
+		});
+	},
+	
+	popup_valorSaidaConsigando:function(resumo){
+		
+		$( "#dialog-consolidado-valor-saida", fecharDiaController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:350,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( this ).dialog( "close" );
+				},
+			},
+			
+			form: $("#dialog-consolidado-valor-saida", fecharDiaController.workspace).parents("form")
+		});
+	},
+	
 	gerarLinhaResumoConsignado : function(resumo) {
+		
+		$("#consignaddo-entrada-valorCE",fecharDiaController.workspace).html(resumo.resumoConsignado.valorCEFormatado);
+		
+		$("#consignaddo-entrada-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresEntradaFormatado);
+		
+		$("#consignaddo-saida-valorExpedicaoDia",fecharDiaController.workspace).html(resumo.resumoConsignado.valorExpedicaoFormatado);
+		
+		$("#consignaddo-saida-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado);
 		
 		var linhaResumo = "<tr>";
 		
+		var valorEntrada = "<a href=\"javascript:;\" onclick=\"fecharDiaController.popup_valorEntradaConsigando();\">" + resumo.resumoConsignado.valorEntradasFormatado +"</a>";
+		
+		var valorSaida = "<a href=\"javascript:;\" onclick=\"fecharDiaController.popup_valorSaidaConsigando();\">" + resumo.resumoConsignado.valorSaidasFormatado +"</a>";
+		
 		linhaResumo += "<td width=\"164\" style=\"border-bottom:1px solid #ccc;\">Consignado</td>";
 		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAnteriorFormatado + "</td>";
-		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorEntradasFormatado + "</td>";
-		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.valorSaidasFormatado + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + valorEntrada + "</td>";
+		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + valorSaida + "</td>";
 		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAtualFormatado + "</td>";
 		
 		linhaResumo += "</tr>";
