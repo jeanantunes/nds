@@ -365,7 +365,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Path("adicionarProdutoEdicaoABase")
     @Post
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
-	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
+    	
+    	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
 	
 		if ((resultadoPesquisa != null) && (resultadoPesquisa.size() > 0)) {
 		
@@ -376,12 +377,12 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		
 			if ((indexes != null) && (indexes.size() > 0)) {
 			    for (Integer index : indexes) {
-				if (index != null) {
-				    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
-				    if (!selecionados.contains(produtoEdicao)) {
-					selecionados.add(produtoEdicao);
-				    }
-				}
+					if (index != null) {
+					    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
+					    if (!selecionados.contains(produtoEdicao)) {
+					    	selecionados.add(produtoEdicao);
+					    }
+					}
 			    }
 			}
 			session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
