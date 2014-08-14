@@ -389,7 +389,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			idsLancamento, usuario, mapaLancamentoRecolhimento,
 			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
 		
-		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
+		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana, usuario);
 		
 		return matrizConfirmada;
 	}
@@ -594,9 +594,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * @param mapaDataRecolhimentoLancamentos - mapa de datas de recolhimento e
      *            identificadores de lancamentos.
      * @param numeroSemana - número da semana
+	     * @param usuario 
      */
 	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
-			 						  Integer numeroSemana) {
+			 						  Integer numeroSemana, Usuario usuario) {
 		
 		if (mapaDataRecolhimentoLancamentos == null || mapaDataRecolhimentoLancamentos.isEmpty()) {
 		
@@ -633,7 +634,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
 
 					Cota cota = cotaReparte.getCota();
-					
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
 					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalheProdutoEdicao);
@@ -641,7 +641,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalheProdutoEdicao, dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
-											
+						
+						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					    
 					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
@@ -660,7 +661,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor());
+					this.criarChamadaEncalheCota(
+				        qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
 				}
 			}
 		}
@@ -709,10 +711,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * @param qtdPrevista - quantidade prevista
      * @param cota - cota
      * @param chamadaEncalhe chamada de encalhe
+	 * @param usuario 
      */
 	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe,
-										 Date dataLctoDistribuidor) {
+										 Date dataLctoDistribuidor,
+										 Usuario usuario) {
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
 			
@@ -743,6 +747,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		chamadaEncalheCota.setUsuario(usuario);
 		
 		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		
