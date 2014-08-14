@@ -1252,7 +1252,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		return this.cobrancaRepository.obterTiposCobrancaCadastradas();
 	}
-
+	
+	@Transactional
     @Override
     public void validarDataPagamentoCobranca(List<Long> idCobrancas, Date dataPagamento) {
         List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasDataEmissaoMaiorQue(dataPagamento, idCobrancas);
