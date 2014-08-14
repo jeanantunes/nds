@@ -624,9 +624,11 @@ var historicoVendaController = $.extend(true, {
 		
 		if (grids.EdicaoSelecionadaGrid.tableModel.rows) {
 			for ( var index in grids.EdicaoSelecionadaGrid.tableModel.rows) {
-				if(grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.numeroEdicao == row.cell.numeroEdicao){
+				if((grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.numeroEdicao == row.cell.numeroEdicao)
+						&& (grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.codigoProduto == row.cell.codigoProduto)){
 					containsElement.contain = true;
 					containsElement.rowId = grids.EdicaoSelecionadaGrid.tableModel.rows[index].id;
+					break;
 				}
 			}
 		}
