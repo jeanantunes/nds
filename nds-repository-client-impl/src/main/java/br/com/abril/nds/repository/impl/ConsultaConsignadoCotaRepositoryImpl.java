@@ -30,6 +30,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements
@@ -440,11 +441,17 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		((SQLQuery) query).addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
 		if (filtro.getPaginacao() != null) {
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null){
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
 			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar){
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosTotal().equals(0)) {
+				filtro.getPaginacao().setQtdResultadosTotal(query.list().size());
+			}
 		}
 		
 		return query.list();

@@ -260,16 +260,14 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> 
-		efetuarConsultaConsignadoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro) {
+	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> efetuarConsultaConsignadoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro) {
 		
-		List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = 
-				this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, true);
+		List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, true);
 		
-		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = 
-				new TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>>();
+		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>>();
 		
 		Long totalRegistros = this.consultaConsignadoCota.buscarTodosMovimentosCotaPeloFornecedor(filtro);
+		
 		if(totalRegistros == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
