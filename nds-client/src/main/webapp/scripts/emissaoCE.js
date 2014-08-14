@@ -96,6 +96,20 @@ var EmissaoCEController = $.extend(true, {
 		doGet("emissaoCE/imprimirCE", null, "_blank");
 	},
 
+	imprimirCENovo : function() {
+		
+		var data = this.getFiltro();
+		
+		$.postJSON(
+				contextPath + "/emissaoCE/imprimirCENovo", data,
+				function(result) { 
+					
+				},
+				null
+		);
+	},
+	
+	
 	imprimirBoletoEmBranco : function(){
 			
 		document.location.assign(contextPath + "/emissaoCE/imprimeBoletoEmBranco");

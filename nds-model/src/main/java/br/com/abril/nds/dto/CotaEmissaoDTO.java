@@ -16,14 +16,18 @@ import br.com.abril.nds.util.export.Exportable;
 public class CotaEmissaoDTO implements Serializable{
 
 	private static final long serialVersionUID = 3527246197853581250L;
-
+	
 	private Long idCota;
+	
 	@Export(label="Cota")
 	private Integer numCota;
+	
 	@Export(label="Nome")
 	private String nomeCota;
+	
 	@Export(label="Qtde. Exemplares")
 	private Integer qtdeExemplares;
+	
 	@Export(label="Valor Total CE R$")
 	private String vlrTotalCe;
 	
@@ -38,32 +42,49 @@ public class CotaEmissaoDTO implements Serializable{
 	private boolean quebraTotalizacaoUltimaPagina;
 	
 	private String numeroNome;
+	
 	private String cnpj;
+	
 	private String endereco;
+	
 	private String cidade;
+	
 	private String uf;
+	
 	private String cep;
+	
 	private String inscricaoEstadual;
+	
 	private String dataRecolhimento;
+	
 	private String dataEmissao;
+	
 	private Integer box;
+	
 	private String nomeBox;
+	
 	private String codigoRota;
+	
 	private String nomeRota;
+	
 	private String codigoRoteiro;
+	
 	private String nomeRoteiro;
 	
 	private String numDocumento;
 	
-
 	private String vlrReparte;	
+	
 	private String vlrComDesconto;	
+	
 	private String vlrReparteLiquido;	
+	
 	private String vlrEncalhe;	
+	
 	private String vlrTotalLiquido;
 	
 	private String periodoRecolhimento;
-
+	
 	public CotaEmissaoDTO() {
 		
 	}

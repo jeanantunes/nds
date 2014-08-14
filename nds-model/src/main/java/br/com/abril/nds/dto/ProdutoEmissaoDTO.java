@@ -12,7 +12,6 @@ public class ProdutoEmissaoDTO implements Serializable{
 
 	private static final long serialVersionUID = -6994377052719897181L;
 	
-	
 	private Long idProdutoEdicao;
 	
 	private Integer sequencia;
