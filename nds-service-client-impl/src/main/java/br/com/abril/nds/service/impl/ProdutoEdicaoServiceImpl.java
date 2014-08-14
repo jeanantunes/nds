@@ -457,57 +457,39 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             listaMensagens.add("Código do produto inválido!");
 		}
 		
-		if (!dto.isOrigemInterface()) {
+			
+		Date dataLancDistribuidor = dto.getDataLancamento();
+		Date dataRecDistribuidor = dto.getDataRecolhimentoDistribuidor();
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-			if(dto.getDataLancamentoPrevisto()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.DISTRIBUICAO)) {
-	                listaMensagens.add("Data de lançamento prevista deve ser um dia operante!");
-				}
+		if(dataLancDistribuidor!= null && dataRecDistribuidor != null) {
+			if(dataLancDistribuidor.compareTo(dataRecDistribuidor) >= 0 ) {
+	            listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data lançamento distribuidor!");
 			}
-			
-			if(dto.getDataRecolhimentoPrevisto()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataRecolhimentoPrevisto(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.RECOLHIMENTO)) {
-	                listaMensagens.add("Data de recolhimento prevista deve ser um dia operante!");
-				}
-			}
-			
-			Date dataLancDistribuidor = dto.getDataLancamento();
-			
-			Date dataRecDistribuidor = dto.getDataRecolhimentoDistribuidor();
-			
-			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-			
-			if(dataLancDistribuidor!= null && dataRecDistribuidor != null) {
-				if(dataLancDistribuidor.compareTo(dataRecDistribuidor) >= 0 ) {
-	                listaMensagens.add("Data de lançamento distribuidor deve ser um dia operante!");
-				}
-			}
+		}
 
-			if(dataRecDistribuidor != null && dataRecDistribuidor.compareTo(dataOperacao) <= 0 ) {
-                listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data de operação do sistema!");
-			}
+		if(dataRecDistribuidor != null && dataRecDistribuidor.compareTo(dataOperacao) <= 0 ) {
+            listaMensagens.add("Data de recolhimento distribuidor deve ser maior que a data de operação do sistema!");
+		}
 			
+		if(dto.getDataLancamento()!=null) {
+            if (!this.calendarioService.isDiaOperante(dto.getDataLancamento(), dto.getIdFornecedor(),
+                    OperacaoDistribuidor.DISTRIBUICAO)) {
+                listaMensagens.add("Data de lançamento deve ser um dia operante!");
+			}
 		}
 		
-
-		if (!dto.isOrigemInterface() || dto.isLancamentoExcluido()) {
-			
-			if(dto.getDataLancamento()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamento(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.DISTRIBUICAO)) {
-	                listaMensagens.add("Data de lançamento deve ser um dia operante!");
-				}
+		if(dataRecDistribuidor!=null) {
+            if (!this.calendarioService.isDiaOperante(dataRecDistribuidor, dto.getIdFornecedor(),
+                    OperacaoDistribuidor.RECOLHIMENTO)) {
+                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
 			}
-			
-			if(dto.getDataRecolhimentoDistribuidor()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataRecolhimentoDistribuidor(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.RECOLHIMENTO)) {
-	                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
-				}
-			}
-			
+		}
+		
+		boolean indMatrizRecolhimentoConfirmada = lancamentoRepository.existeMatrizRecolhimentoConfirmado(dto.getDataRecolhimentoDistribuidor());
+		
+		if(indMatrizRecolhimentoConfirmada) {
+            listaMensagens.add("Escolha outra data de recolhimento. Matriz de recolhimento já confirmada nesta data!");
 		}
 		
 		if(dto.getId()!=null) {
@@ -621,8 +603,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {
         
-        if (dto.isParcial() != produtoEdicao.isParcial()
-                && this.isLancamentoBalanceadoRecolhimento(lancamento)) {
+        if (this.isLancamentoBalanceadoRecolhimento(lancamento)) {
             
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
                     "Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
@@ -646,10 +627,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     }
     
     private boolean isLancamentoBalanceadoRecolhimento(final Lancamento lancamento) {
-        
-        return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(lancamento.getStatus())
+    	
+        return StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(lancamento.getStatus()) 
+        		|| StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(lancamento.getStatus())
                 || StatusLancamento.EM_RECOLHIMENTO.equals(lancamento.getStatus())
-                || StatusLancamento.RECOLHIDO.equals(lancamento.getStatus());
+    			|| StatusLancamento.CANCELADO.equals(lancamento.getStatus())
+                || StatusLancamento.RECOLHIDO.equals(lancamento.getStatus())
+    			|| StatusLancamento.FECHADO.equals(lancamento.getStatus());
+
     }
     
     private void salvarLancamentoParcial(final ProdutoEdicaoDTO dto,final ProdutoEdicao produtoEdicao, final Usuario usuario,
