@@ -1739,6 +1739,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return logMessage;
 	}
 	
+	@Transactional
 	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e) {
 		
 		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
