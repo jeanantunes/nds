@@ -1865,6 +1865,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			postData.push({name : "produtoDistribuicaoVO.idCopia", 	    value : selecionado.idCopia});
 		}
 		
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Distribuição Venda Média') {
+				console.log(k +' - '+ $(v).text());
+				$("#workspace").tabs('option', 'selected', k); 
+				$("#workspace").tabs("remove", k);
+				// $("#workspace").tabs('load', k); 
+			} 
+		});
+		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', pathTela + '/distribuicaoVendaMedia/index');

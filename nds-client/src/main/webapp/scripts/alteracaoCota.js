@@ -181,7 +181,7 @@ var alteracaoCotaController = $.extend(true, {
 				name : 'vencimento',
 				width : 90,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}, {
 				display : 'Valor M&iacute;nimo R$',
 				name : 'valorMinimo',
@@ -199,7 +199,7 @@ var alteracaoCotaController = $.extend(true, {
 				name : 'box',
 				width : 70,
 				sortable : true,
-				align : 'right'
+				align : 'left'
 			}, {
 				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
