@@ -748,6 +748,14 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            
 	           });
 	            
+	            $('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+					if($(v).text() == 'Histograma Pré Análise') {
+						console.log(k +' - '+ $(v).text());
+						$("#workspace").tabs('option', 'selected', k); 
+						$("#workspace").tabs('load', k); 
+					} 
+				});
+	            
 	            $('#workspace').tabs({load : function(event, ui) {
 					
 	            	histogramaPosEstudoController.dadosResumo = dadosResumo;

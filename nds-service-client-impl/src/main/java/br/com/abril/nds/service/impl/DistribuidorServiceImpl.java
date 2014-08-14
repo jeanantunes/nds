@@ -426,6 +426,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return ordinal;
 	}
 	
+	@Transactional
 	public List<Integer> getListaDiaOrdinalAceitaRecolhimento() {
 		
 		final ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
