@@ -20,6 +20,7 @@ import org.hibernate.annotations.FetchMode;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Entidade com as chamadas de encalhes das cotas
@@ -62,6 +63,10 @@ public class ChamadaEncalheCota implements Serializable {
 	
 	@Column(name = "PROCESSO_UTILIZA_NFE", nullable = false)
 	private boolean processoUtilizaNfe;
+
+	@ManyToOne(optional = true)
+    @JoinColumn(name = "USUARIO_ID")
+    private Usuario usuario;
 	
 	public ChamadaEncalheCota() {
 		super();
@@ -203,4 +208,14 @@ public class ChamadaEncalheCota implements Serializable {
 			return false;
 		return true;
 	}
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
 }

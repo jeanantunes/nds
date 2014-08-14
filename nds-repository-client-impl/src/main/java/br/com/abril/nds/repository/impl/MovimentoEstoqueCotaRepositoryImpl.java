@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -3599,7 +3600,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<CotaReparteDTO> obterReparte(final Long idLancamento, final Long idProdutoEdicao) {
+    public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -3609,7 +3610,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'ENTRADA') ");
         sql.append(" 	then (mec.qtde) ");
         sql.append(" 	else (-mec.qtde) end ");
-        sql.append(" ) as reparte ");
+        sql.append(" ) as reparte, ");
+        sql.append(" lancamento.id as idLancamento ");
         
         sql.append(" from MovimentoEstoqueCota mec ");
         
@@ -3621,11 +3623,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" join mec.produtoEdicao produtoEdicao ");
         
+        sql.append(" join lancamento.produtoEdicao produtoEdicaoLcto ");
+        
         sql.append(" left join mec.movimentoEstoqueCotaFuro mecFuro ");
         
-        sql.append(" where lancamento.id = :idLancamento ");
+        sql.append(" where lancamento.id IN (:idsLancamento) ");
         
-        sql.append(" and produtoEdicao.id = :idProdutoEdicao ");
+        sql.append(" and produtoEdicao.id = produtoEdicaoLcto.id ");
         
         sql.append(" and mecFuro.id is null ");
         
@@ -3637,13 +3641,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final Query query = this.getSession().createQuery(sql.toString());
         
-        query.setParameter("idLancamento", idLancamento);
-        
-        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        query.setParameterList("idsLancamento", idsLancamento);
+
+        query.setParameterList(
+                "gruposMovimentoReparte",
+                Arrays.asList(
+                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
         
         query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
-        
-        query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         

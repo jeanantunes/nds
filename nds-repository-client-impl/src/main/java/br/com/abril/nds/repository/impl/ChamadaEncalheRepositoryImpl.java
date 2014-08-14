@@ -174,6 +174,48 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return  query.list();
 	}
+	
+	/**
+	 * Obtém lista de ChamadaEncalhe de ProdutoEdicao dos lancamentos
+	 * 
+	 * @param idsLancamento
+	 * @param fechado
+	 * @return List<ChamadaEncalhe>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaEncalhe> obterChamadasEncalheLancamentos(Set<Long> idsLancamento, Boolean fechado) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select chamadaEncalhe ");
+		
+		hql.append(" from ChamadaEncalhe chamadaEncalhe ");
+		
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ");
+		
+		hql.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");
+		
+		hql.append(" where produtoEdicao.id IN (select pe.id from Lancamento l join l.produtoEdicao pe where l.id IN (:idsLancamento))");
+		
+		if (fechado != null ) {
+			
+			hql.append(" and chamadaEncalheCota.fechado = :fechado ");
+		}
+		
+		hql.append(" group by chamadaEncalhe.id");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (fechado != null ) {
+			
+			query.setParameter("fechado", fechado);
+		}
+		
+		query.setParameterList("idsLancamento", idsLancamento);
+		
+		return  query.list();
+	}
 
 	/**
 	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  

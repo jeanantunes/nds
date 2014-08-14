@@ -1526,7 +1526,7 @@ public class ConferenciaEncalheController extends BaseController {
     
         if(!isVendaNegativaProduto){
         	
-            this.result.use(Results.json()).from("OK", "result").serialize();
+            this.result.use(Results.json()).from("", "result").serialize();
         }
 	}
 
