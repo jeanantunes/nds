@@ -1724,13 +1724,14 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					confirmarPopup_logado();
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(e) {
 					
 					window.event.preventDefault();
 					
