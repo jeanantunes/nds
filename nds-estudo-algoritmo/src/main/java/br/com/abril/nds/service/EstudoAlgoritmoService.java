@@ -162,18 +162,22 @@ public class EstudoAlgoritmoService {
     }
     
     public void carregarParametros(final EstudoTransient estudo) {
+    	
         estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo()
                 .getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao(), estudo
                 .getProdutoEdicaoEstudo().getIdLancamento()));
+        
         if (estudo.getPacotePadrao() == null) {
             estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
         }
+        
         estudo.getProdutoEdicaoEstudo().setPacotePadrao(0);
         estudoDAO.carregarParametrosDistribuidor(estudo);
         estudoDAO.carregarPercentuaisExcedente(estudo);
     }
     
     public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(final ProdutoEdicaoEstudo edicao) {
+    	
         LOGGER.info("Buscando edições para estudo.");
         return definicaoBasesDAO.getEdicoesBases(edicao);
     }
@@ -191,29 +195,42 @@ public class EstudoAlgoritmoService {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
                     "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
         }
+        
         return listaEdicoesBase;
     }
     
     public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(final ProdutoEdicaoEstudo edicao) {
+    	
         return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
     }
     
-    private List<LocalDate> getDatasPeriodoVeraneio(final ProdutoEdicaoEstudo edicao) {
+    public List<LocalDate> getDatasPeriodoVeraneio(final ProdutoEdicaoEstudo edicao) {
+    	
+    	if(edicao == null || edicao.getDataLancamento() == null) {
+    		throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição para estudo inválido.");
+    	}
+    	
         final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
         periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
-        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_15));
+        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_28));
         periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
-        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_15));
+        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_28));
+        
         return periodoVeraneio;
     }
     
-    private List<LocalDate> getDatasPeriodoSaidaVeraneio(final ProdutoEdicaoEstudo edicao) {
-        final List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
+    public List<LocalDate> getDatasPeriodoSaidaVeraneio(final ProdutoEdicaoEstudo edicao) {
+        
+    	if(edicao == null || edicao.getDataLancamento() == null) {
+    		throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição para estudo inválido.");
+    	}
+    	
+    	final List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.MARCO_01));
         periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_19));
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.FEVEREIRO_16));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.MARCO_01));
         periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_19));
         return periodoSaidaVeraneio;
     }
