@@ -643,6 +643,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					if (chamadaEncalhe == null) {
 											
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+					    
+					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
