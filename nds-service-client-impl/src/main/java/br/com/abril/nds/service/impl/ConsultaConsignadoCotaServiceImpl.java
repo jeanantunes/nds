@@ -33,14 +33,6 @@ public class ConsultaConsignadoCotaServiceImpl implements ConsultaConsignadoCota
 
 	@Override
 	@Transactional
-	public Long buscarTodosMovimentosCotaPeloFornecedor(
-			FiltroConsultaConsignadoCotaDTO filtro) {		 
-		
-		return this.consignadoCotaRepository.buscarTodosMovimentosCotaPeloFornecedor(filtro);
-	}
-
-	@Override
-	@Transactional
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
 			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {		
 		
