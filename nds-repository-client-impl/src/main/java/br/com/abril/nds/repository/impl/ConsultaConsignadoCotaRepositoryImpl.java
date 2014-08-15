@@ -30,7 +30,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements
@@ -441,6 +440,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		((SQLQuery) query).addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
 		if (filtro.getPaginacao() != null) {
+			if (filtro.getPaginacao().getQtdResultadosTotal().equals(0)) {
+				filtro.getPaginacao().setQtdResultadosTotal(query.list().size());
+			}
+			
 			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null){
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
@@ -448,76 +451,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar){
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
-			
-			if (filtro.getPaginacao().getQtdResultadosTotal().equals(0)) {
-				filtro.getPaginacao().setQtdResultadosTotal(query.list().size());
-			}
 		}
 		
 		return query.list();
-	}
-
-	@Override
-	public Long buscarTodosMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro) {
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT count(*) AS contador FROM  ");
-		
-		sql.append(" ( SELECT consignadoDistribuidor.numeroCota, consignadoDistribuidor.idFornecedor FROM ( ");
-		
-		sql.append(" SELECT c.numero_cota AS numeroCota, forn.ID AS idFornecedor ");
-		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
-		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
-		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
-		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
-		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
-		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
-		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
-		sql.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ");
-		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
-		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
-		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
-		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
-		
-		if(filtro.getIdFornecedor()!=null) {
-		
-			sql.append(" AND forn.ID = :idFornecedor ");
-		}
-		
-		if(filtro.getIdCota()!=null) {
-		
-			sql.append(" AND c.ID = :idCota ");
-		}
-
-		sql.append(this.getSqlTuplasCotaAVista(true));
-
-		sql.append(" GROUP BY pe.ID, c.id ");
-
-		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
-
-		sql.append(" ) AS consignadoDistribuidor GROUP BY consignadoDistribuidor.numeroCota, consignadoDistribuidor.idFornecedor ) as total ");
-		
-		Query query =  getSession().createSQLQuery(sql.toString());
-		
-		if(filtro.getIdCota()!=null) {
-			query.setParameter("idCota", filtro.getIdCota());
-		}
-
-		if(filtro.getIdFornecedor() != null ) { 
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-
-		query.setParameterList("tipoMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()));
-
-		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
-		
-		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
-		
-		((SQLQuery) query).addScalar("contador", StandardBasicTypes.LONG);
-
-		return (Long) query.uniqueResult();
 	}
 
 	@Override
