@@ -482,7 +482,7 @@ public class ProdutoEdicaoController extends BaseController {
      */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, ModoTela modoTela) {
 		
-		List<String> listaMensagensValidacao = validarDadosBasicosEdicao(dto, codigoProduto);
+		List<String> listaMensagensValidacao = produtoEdicaoService.validarDadosBasicosEdicao(dto, codigoProduto);
 		
 		if (!listaMensagensValidacao.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
@@ -493,56 +493,6 @@ public class ProdutoEdicaoController extends BaseController {
 			}
 		}
 		
-	}
-
-	private List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-						
-		ProdutoEdicao pe = null;
-		
-		if(codigoProduto == null) {
-            listaMensagens.add("Código do produto inválido!");
-		}
-		
-		if (!dto.isOrigemInterface()) {
-		
-			if(dto.getDataLancamentoPrevisto()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.DISTRIBUICAO)) {
-	                listaMensagens.add("Data de lançamento prevista deve ser um dia operante!");
-				}
-			}
-			
-			if(dto.getDataRecolhimentoPrevisto()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataRecolhimentoPrevisto(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.RECOLHIMENTO)) {
-	                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
-				}
-			}
-		}
-
-		if (!dto.isOrigemInterface() || dto.isLancamentoExcluido()) {
-		
-			if(dto.getDataLancamento()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamento(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.DISTRIBUICAO)) {
-	                listaMensagens.add("Data de lançamento deve ser um dia operante!");
-				}
-			}
-		}
-		
-		if(dto.getId()!=null) {
-
-			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
-			
-			if(pe == null) {
-                listaMensagens.add("Produto Edição inválido!");
-			}
-			
-		}
-		
-		return listaMensagens;
 	}
 	
 
@@ -585,14 +535,6 @@ public class ProdutoEdicaoController extends BaseController {
 				listaMensagens.add("Campo 'Data de Recolhimento Previsto' não está em um formato válido.(ex: '21/01/2001')");
 			}
 			
-			if(!FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())){
-				
-				if(dto.getDataRecolhimentoPrevisto() != null 
-				        && dto.getDataRecolhimentoPrevisto()!=null
-				        &&!validarDataLancamentoMenorRecolhimento(dto))
-	                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
-				
-			}
 			
 			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
                 listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
@@ -641,11 +583,6 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		return listaMensagens;
-	}
-	
-	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
-	    
-		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
 	                                                                                        /**
