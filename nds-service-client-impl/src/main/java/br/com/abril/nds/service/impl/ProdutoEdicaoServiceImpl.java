@@ -446,33 +446,43 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
     }
     
+    private boolean isDataRecolhimentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento) {
+    	
+		if( dto.getDataRecolhimentoDistribuidor() != null && 
+	    	dto.getDataRecolhimentoDistribuidor().compareTo(lancamento.getDataRecolhimentoDistribuidor()) == 0 ) {
+				return false;
+		}
+		
+		return true;
+    	
+    }
+    
+    private boolean isDataLancamentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento)  {
+
+		if( dto.getDataLancamento() != null && 
+			dto.getDataLancamento().compareTo(lancamento.getDataLancamentoDistribuidor()) == 0 ) {
+			return false;
+		}
+		
+		return true;
+
+    }
+    
     @Transactional(readOnly=true)
 	public List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
     	
     	boolean indDataLancamentoAlterada = true;
-    	
     	boolean indDataRecolhimentoAlterada = true;
-
-    	Lancamento lancamento = null;
     	
     	if(dto.getId()!=null) {
     		
-    		lancamento = lService.obterPrimeiroLancamentoDaEdicao(dto.getId());
-
-        	if(lancamento != null) {
-        		if( dto.getDataLancamento() != null && 
-        			dto.getDataLancamento().compareTo(lancamento.getDataLancamentoDistribuidor()) == 0 ) {
-        			indDataLancamentoAlterada = false;
-        		}
-        		if( dto.getDataRecolhimentoDistribuidor() != null && 
-            		dto.getDataRecolhimentoDistribuidor().compareTo(lancamento.getDataRecolhimentoDistribuidor()) == 0 ) {
-        			indDataRecolhimentoAlterada = false;
-        		}
+    		Lancamento lancamento = lService.obterPrimeiroLancamentoDaEdicao(dto.getId());
+        	
+    		if(lancamento != null) {
+        		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento);
+        		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
         	}
-
     	}
-    	
-    	
     	
 		List<String> listaMensagens = new ArrayList<String>();
 						
@@ -555,12 +565,25 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         ProdutoEdicao produtoEdicao = null;
         
+        boolean indDataLancamentoAlterada = true;
+        
+        boolean indDataRecolhimentoAlterada = true;
+    	
+    	if(dto.getId()!=null) {
+    		
+    		Lancamento lancamento = lService.obterPrimeiroLancamentoDaEdicao(dto.getId());
+        	
+    		if(lancamento != null) {
+        		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento);
+        		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
+        	}
+    	}
+        
         final boolean indNovoProdutoEdicao = (dto.getId() == null);
         
         if (indNovoProdutoEdicao) {
             produtoEdicao = new ProdutoEdicao();
             produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigoProdin(codigoProduto));
-            
             produtoEdicao.setOrigem(Origem.MANUAL);
         } else {
             produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
@@ -578,7 +601,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         Lancamento lancamento = this.obterLancamento(dto, produtoEdicao);
         
-        this.validarRegimeRecolhimento(dto, lancamento, produtoEdicao);
+        this.validarRegimeRecolhimento(dto, lancamento, produtoEdicao, indDataRecolhimentoAlterada);
         
         // 02) Salvar imagem:
         if (imgInputStream != null) {
@@ -642,9 +665,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	}
     }
     
-    private void validarRegimeRecolhimento(final ProdutoEdicaoDTO dto, final Lancamento lancamento, final ProdutoEdicao produtoEdicao) {
-        
-        if (this.isLancamentoBalanceadoRecolhimento(lancamento)) {
+    private void validarRegimeRecolhimento(
+    		final ProdutoEdicaoDTO dto, 
+    		final Lancamento lancamento, 
+    		final ProdutoEdicao produtoEdicao,
+    		final boolean indDataRecolhimentoAlterada ) {
+    	
+        if (indDataRecolhimentoAlterada && this.isLancamentoBalanceadoRecolhimento(lancamento)) {
             
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
                     "Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
