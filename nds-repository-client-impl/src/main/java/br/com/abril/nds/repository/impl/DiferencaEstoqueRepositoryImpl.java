@@ -311,7 +311,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.dataMovimento ";
 					break;
 				case CODIGO_PRODUTO:
-					hql += "order by diferenca.produtoEdicao.produto.codigo ";
+					hql += "order by lpad(diferenca.produtoEdicao.produto.codigo, 8 , '0') ";
 					break;
 				case DESCRICAO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.nome ";
