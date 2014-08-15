@@ -1306,9 +1306,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             if (idLancamento==null) {
                 
-                idLancamento =
-                        lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-                                new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+                idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
             

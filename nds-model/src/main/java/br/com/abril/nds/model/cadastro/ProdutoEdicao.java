@@ -680,6 +680,7 @@ public class ProdutoEdicao implements Serializable {
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
 		result = prime * result + ((this.getNumeroEdicao() == null) ? 0 : this.getNumeroEdicao().hashCode());
 		result = prime * result + ((this.getProduto() == null) ? 0 : this.getProduto().hashCode());
+		
 		return result;
 	}
 
@@ -703,16 +704,17 @@ public class ProdutoEdicao implements Serializable {
 		} else if (!this.getNumeroEdicao().equals(other.getNumeroEdicao()))
 			return false;
 		if (this.getProduto() == null) {
-			if (other.getProduto() != null)
-				return false;
+	        if (other.getProduto() != null)
+	        	return false;
 		} else if (!this.getProduto().equals(other.getProduto()))
 			return false;
+		
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return produto.toString() + "-" + numeroEdicao.toString();
+		return (produto != null && numeroEdicao != null) ? produto.toString() + "-" + numeroEdicao.toString() : "";
 	}
 
 }
