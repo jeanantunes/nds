@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +16,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
-
-import com.google.common.collect.Lists;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
@@ -314,7 +311,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.dataMovimento ";
 					break;
 				case CODIGO_PRODUTO:
-					hql += "order by diferenca.produtoEdicao.produto.codigo ";
+					hql += "order by lpad(diferenca.produtoEdicao.produto.codigo, 8 , '0') ";
 					break;
 				case DESCRICAO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.nome ";
