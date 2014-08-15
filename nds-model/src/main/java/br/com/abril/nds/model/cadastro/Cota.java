@@ -726,11 +726,7 @@ public class Cota implements Serializable {
 				return false;
 		} else if (!this.getNumeroCota().equals(other.getNumeroCota()))
 			return false;
-		if (this.getBox() == null) {
-			if (other.getBox() != null)
-				return false;
-		} else if (!this.getBox().equals(other.getBox()))
-			return false;
+		
 		return true;
 	}
 
