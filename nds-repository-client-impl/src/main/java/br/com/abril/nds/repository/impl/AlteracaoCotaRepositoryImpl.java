@@ -81,7 +81,7 @@ public class AlteracaoCotaRepositoryImpl extends
 					.append("cota.NUMERO_COTA as numeroCota, ")
 					.append("CASE pessoaCota.TIPO WHEN 'J' THEN pessoaCota.RAZAO_SOCIAL ELSE pessoaCota.NOME END as nomeRazaoSocial, ")
 					.append("parametroCobranca.FATOR_VENCIMENTO as vencimento, ")
-					.append("cota.VALOR_MINIMO_COBRANCA as valorMinimo, ")
+					.append("ROUND(cota.VALOR_MINIMO_COBRANCA, 2) as valorMinimo, ")
 					.append("cota.DESCRICAO_TIPO_ENTREGA as tipoEntrega, ")
 					.append("box.NOME as box, ")
 					.append("GROUP_CONCAT(pessoaFornecedor.RAZAO_SOCIAL SEPARATOR '/ ') AS nomeFornecedor, ")
