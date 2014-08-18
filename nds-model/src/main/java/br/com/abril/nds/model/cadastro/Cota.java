@@ -98,7 +98,7 @@ public class Cota implements Serializable {
 	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota")
 	private ContratoCota contratoCota;
 	
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 	

@@ -283,7 +283,7 @@ implements MovimentoEstoqueRepository {
 		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
 		query.setParameter("statusFuro", StatusLancamento.FURO.name());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
-		query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
 		
 		query.addScalar("VALOR_EXPEDIDO",StandardBasicTypes.BIG_DECIMAL);
 		

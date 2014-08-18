@@ -383,7 +383,6 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
         var linhasDaGrid = $(".debitosCreditosGrid_1 tr", novoDialogDebitoCreditoCotaController.workspace);
         
 		$.each(linhasDaGrid, function(index, value) {
-			$("#valor"+index, novoDialogDebitoCreditoCotaController.workspace).val('');
 			if (!habilita){
 			    $("#valor"+index, novoDialogDebitoCreditoCotaController.workspace).attr('readonly','readonly');
 			}

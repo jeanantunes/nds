@@ -127,7 +127,7 @@ public interface MovimentoEstoqueService {
 													TipoMovimentoEstoque tipoMovimentoEstoque,
 													boolean isMovimentoDiferencaAutomatica,
 													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
-													StatusIntegracao statusIntegracao, Origem origem);
+													StatusIntegracao statusIntegracao, Origem origem, boolean isFaltaDirecionadaCota);
 	
 	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Distribuidor distribuidor, Date dataLancamento, ProdutoEdicao produtoEdicao, 
 			Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, 
