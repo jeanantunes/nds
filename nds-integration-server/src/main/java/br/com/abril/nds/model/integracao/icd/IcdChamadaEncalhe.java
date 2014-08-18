@@ -36,7 +36,7 @@ public class IcdChamadaEncalhe {
 	private Date dataEmissao;
 	
 	@Column(name = "DATA_ANO_REFERENCIA_CHEN")
-	private Long dataAnoReferencia;
+	private Integer dataAnoReferencia;
 	
 	@Column(name = "TIPO_STATUS_CHEN")
 	private String tipoStatus;
@@ -143,11 +143,11 @@ public class IcdChamadaEncalhe {
 		this.dataEmissao = dataEmissao;
 	}
 
-	public Long getDataAnoReferencia() {
+	public Integer getDataAnoReferencia() {
 		return dataAnoReferencia;
 	}
 
-	public void setDataAnoReferencia(Long dataAnoReferencia) {
+	public void setDataAnoReferencia(Integer dataAnoReferencia) {
 		this.dataAnoReferencia = dataAnoReferencia;
 	}
 	
