@@ -367,8 +367,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		List<Object[]> listaResultados = query.list();
 		
-		Set<Diferenca> setDiferencas = new HashSet<Diferenca>();
-		
 		List<Diferenca> listaDiferencas = new ArrayList<Diferenca>();
 		
 		for (Object[] resultado : listaResultados) {
@@ -381,10 +379,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 									
 			diferenca.setQtde((BigInteger) resultado[3]);
 			
-			setDiferencas.add(diferenca);
+			listaDiferencas.add(diferenca);
 		}
-		
-		listaDiferencas.addAll(setDiferencas);
 		
 		return listaDiferencas;
 	}
@@ -551,13 +547,42 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
-			if(filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
-				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA});
-			} else if (filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
-				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA});
-			} else {
-				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
-			}
+		    
+		    final Set<TipoDiferenca> tiposDiferenca = new HashSet<TipoDiferenca>();
+		    
+		    switch (filtro.getTipoDiferenca()){
+    		    case FALTA_DE:
+    		        tiposDiferenca.add(TipoDiferenca.FALTA_DE);
+    		        tiposDiferenca.add(TipoDiferenca.PERDA_DE);
+    		    break;
+    		    case FALTA_EM:
+    		        tiposDiferenca.add(TipoDiferenca.FALTA_EM);
+    		        tiposDiferenca.add(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA);
+    		        tiposDiferenca.add(TipoDiferenca.PERDA_EM);
+    		    break;
+    		    case SOBRA_DE:
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_DE);
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.GANHO_DE);
+                break;
+    		    case SOBRA_EM:
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_EM);
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_ENVIO_PARA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.GANHO_EM);
+                break;
+    		    case AJUSTE_REPARTE_FALTA_COTA:
+                    tiposDiferenca.add(TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS);
+                break;
+                default:
+                    tiposDiferenca.add(filtro.getTipoDiferenca());
+		    }
+		    
+			query.setParameterList("tipoDiferenca", tiposDiferenca);
 		}
 	}
 	
