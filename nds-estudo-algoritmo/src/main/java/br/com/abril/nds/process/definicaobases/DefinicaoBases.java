@@ -44,12 +44,8 @@ public class DefinicaoBases extends ProcessoAbstrato {
     	
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
         	
-        	if(estudo.isPracaVeraneio() 
-        			&& baseParaVeraneio.validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
-        		
-        		//List<ProdutoEdicaoEstudo> edicoesAnosAnteriores = estudoAlgoritmoService.buscaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo());
-        		
-        		//estudo.setEdicoesBase(new LinkedList<ProdutoEdicaoEstudo>(edicoesAnosAnteriores));
+        	if(estudo.isPracaVeraneio()) { 
+        			//&& baseParaVeraneio.validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
         		
         		baseParaVeraneio.executar(estudo);
         		
