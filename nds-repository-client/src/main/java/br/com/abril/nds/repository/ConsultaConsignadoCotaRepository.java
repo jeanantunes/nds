@@ -15,8 +15,6 @@ public interface ConsultaConsignadoCotaRepository extends Repository<MovimentoEs
 	
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
-	public Long buscarTodosMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro);
-	
 	public BigDecimal buscarTotalGeralDaCota(FiltroConsultaConsignadoCotaDTO filtro);
 	
 	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhado(FiltroConsultaConsignadoCotaDTO filtro);

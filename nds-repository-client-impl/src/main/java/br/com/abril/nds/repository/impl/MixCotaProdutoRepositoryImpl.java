@@ -109,7 +109,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		    
 		} else {
 		    
-		    sql.append(" order by temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn());    
+		    sql.append(" order by lpad(temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn() + ", 6, '0')");    
 		}
 		
         sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
