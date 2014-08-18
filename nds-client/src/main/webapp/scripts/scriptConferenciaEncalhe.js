@@ -1733,7 +1733,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				},
 				"Cancelar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					$(this).dialog("close");
 					
