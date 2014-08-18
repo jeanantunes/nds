@@ -108,11 +108,20 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 					Date dataMaisProxima = null;
 					if(dataMaisProximaAnterior == null && dataMaisProximaPosterior != null) {
 						dataMaisProxima = dataMaisProximaPosterior;
+					} else if(dataMaisProximaPosterior == null && dataMaisProximaAnterior != null) {
+						dataMaisProxima = dataMaisProximaAnterior;
+					} else {
+						if(Math.abs(dataLancamentoProdutoEdicao.getTime() - dataMaisProximaAnterior.getTime()) < 
+								Math.abs(dataLancamentoProdutoEdicao.getTime() - dataMaisProximaPosterior.getTime())) {
+							
+						} else {
+							
+						}
 					}
 					
 					for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
 						
-						if(ed.getDataLancamento().equals(dataMaisProxima)) {
+						if(ed.getDataLancamento().equals(dataMaisProxima) && !edicoes.contains(ed)) {
 							edicoes.add(ed);
 							break;
 						}

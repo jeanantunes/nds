@@ -261,10 +261,10 @@ public class EstudoAlgoritmoService {
     	
     	final List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.MARCO_01));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_16));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.DEZEMBRO_19));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
         periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_19));
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.MARCO_01));
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_19));
         return periodoSaidaVeraneio;
     }
     
