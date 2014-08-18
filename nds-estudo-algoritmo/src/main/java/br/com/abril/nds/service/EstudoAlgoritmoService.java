@@ -204,6 +204,39 @@ public class EstudoAlgoritmoService {
         return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
     }
     
+    public List<LocalDate> getDatasUltimoVeraneio(final ProdutoEdicaoEstudo edicao) {
+    	
+    	if(edicao == null || edicao.getDataLancamento() == null) {
+    		throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição para estudo inválido.");
+    	}
+    	
+        final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
+        final Date dataLancamento = edicao.getDataLancamento();
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_28));
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_28));
+    	
+        return periodoVeraneio;
+    }
+    
+    public List<LocalDate> getDatasPenultimoVeraneio(final ProdutoEdicaoEstudo edicao) {
+    	
+    	if(edicao == null || edicao.getDataLancamento() == null) {
+    		throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição para estudo inválido.");
+    	}
+    	
+        final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
+        final Date dataLancamento = edicao.getDataLancamento();
+        	
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_28));
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
+    	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_28));
+        
+        return periodoVeraneio;
+    }
+    
     public List<LocalDate> getDatasPeriodoVeraneio(final ProdutoEdicaoEstudo edicao) {
     	
     	if(edicao == null || edicao.getDataLancamento() == null) {
@@ -434,4 +467,44 @@ public class EstudoAlgoritmoService {
         }
         return false;
     }
+    
+    public LinkedList<ProdutoEdicaoEstudo> limitarEdicoesApenasSeis(final List<ProdutoEdicaoEstudo> edicoesBase, final EstudoTransient estudo) {
+    	
+    	final LinkedList<ProdutoEdicaoEstudo> nova = new LinkedList<>();
+    	if(estudo == null || estudo.getProdutoEdicaoEstudo() == null || edicoesBase == null || edicoesBase.size() < 1) {
+    		return nova;
+    	}
+    	
+        int qtdeParciais = 0;
+        for (final ProdutoEdicaoEstudo base : edicoesBase) {
+            if (!base.isEdicaoAberta()) {
+                if (nova.size() < 6) {
+                    if (base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) {
+                        if (qtdeParciais < 4) {
+                            qtdeParciais++;
+                        } else {
+                            continue;
+                        }
+                    }
+                    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) ||
+                            !base.isParcial()) {
+                        nova.add(base);
+                    }
+                }
+            }
+            if (nova.size() == 6) {
+                break;
+            }
+        }
+        if (nova.size() < 3) {
+            for (final ProdutoEdicaoEstudo base : edicoesBase) {
+                if (base.isEdicaoAberta()) {
+                    nova.add(base);
+                    break;
+                }
+            }
+        }
+        return nova;
+    }
+    
 }

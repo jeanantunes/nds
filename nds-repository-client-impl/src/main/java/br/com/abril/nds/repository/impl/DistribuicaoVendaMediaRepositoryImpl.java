@@ -57,7 +57,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
             sql.append("     END parcial, ");
         }
         
-        sql.append("     l.data_lcto_prevista dataLancamento, ");
+        sql.append("     l.data_lcto_distribuidor dataLancamento, ");
         sql.append("     l.status status, ");
         sql.append("     tcp.id idClassificacao, ");
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");

@@ -59,7 +59,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
         		
         		if (!edicoesBase.isEmpty()) {
         			edicoesBase = filtrarClassificacao(edicoesBase, estudo);
-        			edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
+        			edicoesBase = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesBase, estudo);
         			excluiEdicoesComMaisDeDoisAnos(edicoesBase);
         			excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
         			
@@ -79,40 +79,6 @@ public class DefinicaoBases extends ProcessoAbstrato {
             }
         }
         return listaFiltrada;
-    }
-    
-    private LinkedList<ProdutoEdicaoEstudo> limitarEdicoesApenasSeis(final List<ProdutoEdicaoEstudo> edicoesBase, final EstudoTransient estudo) {
-        final LinkedList<ProdutoEdicaoEstudo> nova = new LinkedList<>();
-        int qtdeParciais = 0;
-        for (final ProdutoEdicaoEstudo base : edicoesBase) {
-            if (!base.isEdicaoAberta()) {
-                if (nova.size() < 6) {
-                    if (base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) {
-                        if (qtdeParciais < 4) {
-                            qtdeParciais++;
-                        } else {
-                            continue;
-                        }
-                    }
-                    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) ||
-                            !base.isParcial()) {
-                        nova.add(base);
-                    }
-                }
-            }
-            if (nova.size() == 6) {
-                break;
-            }
-        }
-        if (nova.size() < 3) {
-            for (final ProdutoEdicaoEstudo base : edicoesBase) {
-                if (base.isEdicaoAberta()) {
-                    nova.add(base);
-                    break;
-                }
-            }
-        }
-        return nova;
     }
     
     private void excluiEdicoesComMaisDeDoisAnos(final List<ProdutoEdicaoEstudo> edicoesBase) {
