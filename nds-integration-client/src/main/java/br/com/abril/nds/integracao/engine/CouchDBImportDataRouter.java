@@ -102,7 +102,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			
 			messageAux.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
 			messageAux.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
-			messageAux.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(),   doc.getNomeArquivo());
+			messageAux.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), doc.getNomeArquivo() != null ? doc.getNomeArquivo() : "");
 			messageAux.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
 			messageAux.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
 			messageAux.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
