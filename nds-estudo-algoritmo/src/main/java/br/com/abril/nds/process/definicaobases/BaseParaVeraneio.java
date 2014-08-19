@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -100,24 +101,28 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
 					cal.add(Calendar.YEAR, ((anoProdutoEdicao - anoEncontrado) == 1) ? -2 : -1);
-					Date dataLancamentoProdutoEdicao = cal.getTime();
 					
-					Date dataMaisProximaAnterior = new TreeSet<Date>(dates).lower(dataLancamentoProdutoEdicao);
-					Date dataMaisProximaPosterior = new TreeSet<Date>(dates).higher(dataLancamentoProdutoEdicao);
+					DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());										
+					DateTime dataMaisProximaAnterior = new DateTime(new TreeSet<Date>(dates).lower(cal.getTime()));
+					DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(dates).higher(cal.getTime()));
 					
-					Date dataMaisProxima = null;
-					if(dataMaisProximaAnterior == null && dataMaisProximaPosterior != null) {
+					DateTime dataMaisProxima = null;
+					/*if(dataMaisProximaAnterior == null && dataMaisProximaPosterior != null) {
 						dataMaisProxima = dataMaisProximaPosterior;
 					} else if(dataMaisProximaPosterior == null && dataMaisProximaAnterior != null) {
 						dataMaisProxima = dataMaisProximaAnterior;
+					} else {*/
+					if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) < 
+							Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
+							&& dataLancamentoProdutoEdicao.monthOfYear() == dataMaisProximaAnterior.monthOfYear()) {
+							
+						dataMaisProxima = dataMaisProximaAnterior;
+						
 					} else {
-						if(Math.abs(dataLancamentoProdutoEdicao.getTime() - dataMaisProximaAnterior.getTime()) < 
-								Math.abs(dataLancamentoProdutoEdicao.getTime() - dataMaisProximaPosterior.getTime())) {
-							
-						} else {
-							
-						}
+						
+						dataMaisProxima = dataMaisProximaPosterior;
 					}
+					//}
 					
 					for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
 						
