@@ -20,7 +20,6 @@ import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
 public class DBImportDataRouter extends AbstractRepository implements BaseRouter {
-	
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;

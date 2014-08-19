@@ -290,7 +290,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		sql.append("			inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");
 		sql.append("			inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
 		sql.append("			where lancamento.STATUS<>:statusFuro");
-		sql.append("                and lancamento.DATA_LCTO_DISTRIBUIDOR=:dataMovimento ");
+		sql.append("                and lancamento.DATA_LCTO_DISTRIBUIDOR<:dataMovimento ");
 		sql.append("				and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado");
 		sql.append("		)");
 		
@@ -335,7 +335,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID  ");
 		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID  ");
 		sql.append("			where lancamento.STATUS<>:statusFuro ");
-		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR=:dataMovimento ");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR<:dataMovimento ");
 		sql.append("				and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado ");
 		sql.append("		) ");
 			
