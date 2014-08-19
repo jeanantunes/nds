@@ -596,6 +596,8 @@ public class LancamentoServiceImpl implements LancamentoService {
         for (Lancamento redistribuicao : redistribuicoes) {
             
             redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
+            redistribuicao.setStatus(lancamento.getStatus());
+            
             
             this.lancamentoRepository.merge(redistribuicao);
         }
