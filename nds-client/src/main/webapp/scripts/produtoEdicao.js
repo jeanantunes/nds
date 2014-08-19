@@ -1142,11 +1142,25 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	submeterProdutoEdicao : function(closePopUp) {
 		
+		var camposValidaveisBloqueados = $('#produtoEdicaoController-formUpload').find(':input:disabled:.produtoEdicaoCampoValidavel');
+		
+		$(camposValidaveisBloqueados).removeAttr('disabled');
+		
 		$("#produtoEdicaoController-formUpload").ajaxSubmit({
 			beforeSubmit: function(arr, formData, options) {
 				// Incluir aqui as validacoes;
 			},
-			success: function(responseText, statusText, xhr, $form)  { 
+			
+			error: function() {
+				
+				$(camposValidaveisBloqueados).attr('disabled','disabled');
+				
+			},
+			
+			success: function(responseText, statusText, xhr, $form)  {
+				
+				$(camposValidaveisBloqueados).attr('disabled','disabled');
+				
 				var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
 				var tipoMensagem = mensagens.tipoMensagem;
 				var listaMensagens = mensagens.listaMensagens;

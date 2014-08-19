@@ -1111,57 +1111,54 @@ public class MatrizLancamentoController extends BaseController {
         // Remover do mapa
         for (final ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAlterar) {
             
-            final List<ProdutoLancamentoDTO> produtosLancamentoDTO = matrizLancamento.get(produtoLancamentoDTO
-                    .getNovaDataLancamento());
+            final List<ProdutoLancamentoDTO> produtosLancamentoDTO = matrizLancamento.get(produtoLancamentoDTO.getNovaDataLancamento());
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
-
             	String stNovadata = "";
         		
-            	if(novaData!=null){
-            	 SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
-            	 stNovadata = ft.format(novaData);
+            	if(novaData != null) {
+	            	SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+	            	stNovadata = ft.format(novaData);
             	}
             	
-            	Lancamento lancamento =null;
-            	Lancamento lancamentoAnterior=null;
-            	Lancamento lancamentoPosterior=null;
+            	Lancamento lancamento = null;
+            	Lancamento lancamentoAnterior = null;
+            	Lancamento lancamentoPosterior = null;
             	
 
-            	for(int i =0;i<lancamentosParciaisRebistribuicao.size();i++){
+            	for(int i = 0; i<lancamentosParciaisRebistribuicao.size(); i++) {
             		
-            		if(lancamentosParciaisRebistribuicao.get(i).getId().longValue() == produtoLancamentoDTO.getIdLancamento().longValue()){
+            		if(lancamentosParciaisRebistribuicao.get(i).getId().longValue() == produtoLancamentoDTO.getIdLancamento().longValue()) {
             			
             			lancamento = lancamentosParciaisRebistribuicao.get(i);
             			
-            			if(i>0 && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue()==
-            			lancamentosParciaisRebistribuicao.get(i-1).getProdutoEdicao().getId()){
+            			if(i > 0 && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue() == lancamentosParciaisRebistribuicao.get(i-1).getProdutoEdicao().getId()){
 
-            			  lancamentoAnterior = lancamentosParciaisRebistribuicao.get(i-1);
+            				lancamentoAnterior = lancamentosParciaisRebistribuicao.get(i-1);
             			}
             			
-            			if(i<lancamentosParciaisRebistribuicao.size()-1 && lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue()==
-                    	  lancamentosParciaisRebistribuicao.get(i+1).getProdutoEdicao().getId()){
+            			if(i<lancamentosParciaisRebistribuicao.size()-1 
+            					&& lancamentosParciaisRebistribuicao.get(i).getProdutoEdicao().getId().longValue() == lancamentosParciaisRebistribuicao.get(i+1).getProdutoEdicao().getId()) {
 
-                    	  lancamentoPosterior = lancamentosParciaisRebistribuicao.get(i+1);
+            				lancamentoPosterior = lancamentosParciaisRebistribuicao.get(i+1);
             			}
             			
-            			if(lancamentoAnterior!=null ||lancamentoPosterior!=null){
+            			if(lancamentoAnterior != null || lancamentoPosterior != null) {
+            				
             				break;
             			}
             		}
             	}
             	
-            	if(lancamentoAnterior!=null 
-            	  && lancamentoAnterior.getPeriodoLancamentoParcial()!=null
-            	  && lancamento.getPeriodoLancamentoParcial()!=null
-            	  && lancamentoAnterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
-            	  !=lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
-            	  ){
+            	if(lancamentoAnterior != null 
+	            	  && lancamentoAnterior.getPeriodoLancamentoParcial() != null
+	            	  && lancamento.getPeriodoLancamentoParcial() != null
+	            	  && lancamentoAnterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() != lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
+            	  ) {
             		
             		//No caso de parciais, a data de lançamento de uma parcial não pode inferior ao recolhimento da parcial anterior, se existir.
-            		if(novaData.before(lancamentoAnterior.getDataRecolhimentoDistribuidor())){
+            		if(novaData.before(lancamentoAnterior.getDataRecolhimentoDistribuidor())) {
             			
             			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
                   				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
@@ -1173,13 +1170,13 @@ public class MatrizLancamentoController extends BaseController {
        					));
             		}
 
-            	} else if(lancamentoAnterior!=null 
-                  	  && lancamentoAnterior.getPeriodoLancamentoParcial()!=null
+            	} else if(lancamentoAnterior != null 
+                  	  && lancamentoAnterior.getPeriodoLancamentoParcial() != null
                 	  && lancamentoAnterior.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
                 	  ==lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo().intValue() 
                 	  ){
             		
-            		if(!novaData.after(lancamentoAnterior.getDataLancamentoDistribuidor())){
+            		if(!novaData.after(lancamentoAnterior.getDataLancamentoDistribuidor())) {
             			
             			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
                   				 "O produto parcial "+produtoLancamentoDTO.getNomeProduto()+
@@ -1191,7 +1188,7 @@ public class MatrizLancamentoController extends BaseController {
        					));
             		}
             		
-            	} else if(lancamentoAnterior!=null && lancamentoAnterior.getPeriodoLancamentoParcial()==null){
+            	} else if(lancamentoAnterior!=null && lancamentoAnterior.getPeriodoLancamentoParcial()==null) {
             	
                      if(!novaData.after(lancamentoAnterior.getDataLancamentoDistribuidor())){
             			
