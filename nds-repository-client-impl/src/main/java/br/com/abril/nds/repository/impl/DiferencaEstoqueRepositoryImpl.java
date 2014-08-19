@@ -571,9 +571,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
                     tiposDiferenca.add(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA);
                     tiposDiferenca.add(TipoDiferenca.GANHO_EM);
                 break;
-    		    case AJUSTE_REPARTE_FALTA_COTA:
-                    tiposDiferenca.add(TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA);
-                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO);
+    		    case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+    		        tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO);
+    		        tiposDiferenca.add(TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA);
                     tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO);
                     tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR);
                     tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS);
