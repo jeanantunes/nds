@@ -264,17 +264,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		if(!Strings.isNullOrEmpty(input.getCodigoICD())) {
 			
 		    produto.setCodigoICD(new Integer(input.getCodigoICD()).toString());
-		}else {
-			
-			if(!input.getCodigoPublicacao().substring(0,1).equals("0")){
-			 
-				produto.setCodigoICD(new Integer(input.getCodigoPublicacao().substring(0,6)).toString());
-		    
-			}else{
-		    
-		    	produto.setCodigoICD(new Integer(input.getCodigoPublicacao().substring(2,8)).toString());
-		    	
-		    }
 		}
 		
 		produto.setSlogan(input.getSlogan());
@@ -613,11 +602,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             produto.setPeso(input.getPeso());
 		}
 		
-		if (input.getCodigoICD()!=null && 
-		   !input.getCodigoICD().trim().equals("0") && 
-		   !input.getCodigoICD().trim().equals("000000") && 
-		   !input.getCodigoICD().trim().equals("") && 
-		   !Strings.isNullOrEmpty(input.getCodigoICD()) 
+		if (input.getCodigoICD()!=null && !input.getCodigoICD().trim().equals("") && !Strings.isNullOrEmpty(input.getCodigoICD()) 
 		        && (produto.getCodigoICD()== null ||!Objects.equal(produto.getCodigoICD(), input.getCodigoICD()))) {
 		   
 		    this.ndsiLoggerFactory.getLogger().logInfo(message,
