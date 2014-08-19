@@ -433,8 +433,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		Collections.sort(produtosRecolhimento, comparatorChain);
 	}
-	
-	    /**
+
+	/**
      * Método que atualiza as informações dos lançamentos.
      * 
      * @param idsLancamento - identificadores de lançamentos
@@ -479,10 +479,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
-				lancamento.setUsuario(usuario);
-
-				this.parciaisService.alterarRecolhimento(lancamento, novaData);
-
+				lancamento.setUsuario(usuario);		
+				
+				lancamento.setDataRecolhimentoDistribuidor(novaData);
+				
+				if (lancamento.getPeriodoLancamentoParcial() != null){
+				
+				    this.parciaisService.alterarRecolhimento(lancamento, novaData);
+				}
+				
 				this.lancamentoRepository.merge(lancamento);
 
 				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
