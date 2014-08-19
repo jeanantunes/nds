@@ -22,6 +22,8 @@ var lancamentoController = $.extend(true, {
 		$("#datePickerDataMovimento", lancamentoController.workspace).mask("99/99/9999");
 
 		$("#selectTiposDiferenca", lancamentoController.workspace).val(null);
+		
+		$("#selecionarTodosDiferencaID", lancamentoController.workspace).prop('checked', false);
 	},
 	
 	executarPreProcessamento : function(data) {

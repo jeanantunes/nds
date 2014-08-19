@@ -41,6 +41,19 @@ public interface ProdutoEdicaoService {
 	public ProdutoEdicao obterProdutoEdicao(Long idProdutoEdicao, boolean indCarregaFornecedores);
 	
 	/**
+	 * Valida informações básicas do produto edição e devolve
+	 * uma lista de {@code String} caso incosistências sejam 
+	 * encontradas.
+	 * 
+	 * @param dto
+	 * @param codigoProduto
+	 * 
+	 * @return List - String
+	 */
+	public List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto);
+
+	
+	/**
 	 * Obtém os produtos edição de acordo com o nome do produto.
 	 * 
 	 * @param nomeProduto - nome do produto

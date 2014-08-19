@@ -84,8 +84,7 @@ public class HomeController {
         // respeitada e evitar
         // que uma permissão filha seja carregada antes da permissão pai.
         final Set<Permissao> permissoes = new TreeSet<Permissao>();
-        for (final GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities()) {
+        for (final GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
             try {
                 permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
             } catch (final IllegalArgumentException e) {
@@ -191,8 +190,7 @@ public class HomeController {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map insereMenus(final Permissao permissao, final Map mapaMenus) {
         
-        final MenuDTO menuDTO = new MenuDTO(permissao.getPermissaoPai(), this.getUrlByPermission(permissao
-                .getPermissaoPai()));
+        final MenuDTO menuDTO = new MenuDTO(permissao.getPermissaoPai(), this.getUrlByPermission(permissao.getPermissaoPai()));
         
         final Permissao paiDoPai = permissao.getPermissaoPai();
         
