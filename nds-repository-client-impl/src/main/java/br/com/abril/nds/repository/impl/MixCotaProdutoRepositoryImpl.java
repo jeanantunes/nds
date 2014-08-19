@@ -91,14 +91,6 @@ public class MixCotaProdutoRepositoryImpl extends
 	
 		sql.append(" mix_cota_produto.ID_COTA = :cota ");
 		
-//		sql.append(" and lancamento.status='FECHADO'");
-//		   .append(" and epc.produto_edicao_id in (")
-//		   .append("      select produto_edicao.id from produto_edicao") 
-//		   .append(" 		join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
-//		   .append(" 		where lancamento.status='FECHADO'")
-//		   .append(" 		and produto_id = (produto.id)")
-//		   .append(" )")
-		
 		sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ");
 		
 		sql.append(" group by id ");
@@ -109,7 +101,12 @@ public class MixCotaProdutoRepositoryImpl extends
 		    
 		} else {
 		    
-		    sql.append(" order by lpad(temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn() + ", 6, '0')");    
+			if(filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equalsIgnoreCase("codigoICD")){
+				sql.append(" order by lpad(temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn() + ", 6, '0')");    
+			}else{
+				sql.append(" order by temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn());
+			}
+			
 		}
 		
         sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
