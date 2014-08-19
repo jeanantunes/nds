@@ -31,7 +31,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
-import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -567,18 +566,14 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		if (modoTela != null && modoTela.equals(ModoTela.REDISTRIBUICAO)) {
-            
-            if (dto.getDataLancamentoPrevisto() == null) {
-                listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
-            }
 		
 			Date maiorDataLancamento =
 				this.lancamentoService.getMaiorDataLancamento(dto.getId());
 			
-            if (maiorDataLancamento != null && dto.getDataLancamentoPrevisto() != null
-					&& dto.getDataLancamentoPrevisto().compareTo(maiorDataLancamento) <= 0) {
+            if (maiorDataLancamento != null && dto.getDataLancamento() != null
+					&& dto.getDataLancamento().compareTo(maiorDataLancamento) <= 0) {
 				
-                listaMensagens.add("Já existe redistribuição cadastrada nessa data!");
+            	listaMensagens.add("Data de redistribuição deve ser maior que ultima data de lançamento cadastrada!");
 			}
 		}
 		
