@@ -373,7 +373,7 @@ var painelProcessamentoController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 					var data = [{name: 'idInterface', value: idInterface}];
-					$.postJSON(contextPath + "/administracao/painelProcessamento/gerarRankingSegmento",
+					$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
 							   data,
 							   function (resultado) {
 
