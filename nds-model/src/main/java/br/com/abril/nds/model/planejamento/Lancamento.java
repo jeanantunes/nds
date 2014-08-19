@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -118,15 +117,15 @@ public class Lancamento implements Serializable {
 	private Integer sequenciaMatriz;
 	
 	@NotFound(action = NotFoundAction.IGNORE)
-	@ManyToOne(fetch=FetchType.LAZY, cascade = {CascadeType.ALL})
+	@ManyToOne(cascade = {CascadeType.ALL})
 	@JoinColumn(name = "ESTUDO_ID", insertable = true, updatable = true)
 	private Estudo estudo;
 	
-	@ManyToOne(fetch=FetchType.LAZY, optional = true)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "PERIODO_LANCAMENTO_PARCIAL_ID")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
