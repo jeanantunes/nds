@@ -8,7 +8,9 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 public class PagamentoDividasDTO {
-
+	
+	private Date dataOperacao;
+	
 	private Date dataPagamento;
 	
 	private BigDecimal valorDividas;
@@ -118,5 +120,15 @@ public class PagamentoDividasDTO {
 	public void setBanco(Banco banco) {
 		this.banco = banco;
 	}
+
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
+	}
+	
+	
 	
 }
