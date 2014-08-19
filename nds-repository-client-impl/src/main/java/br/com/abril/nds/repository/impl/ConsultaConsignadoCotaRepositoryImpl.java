@@ -321,29 +321,39 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
         StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT "); 
-		sql.append(" consignadoDistribuidor.numeroCota as numeroCota, ");
-		sql.append(" consignadoDistribuidor.nomeCota as nomeCota, ");
-		sql.append(" sum(consignadoDistribuidor.reparte) as consignado, ");
-		sql.append(" sum(consignadoDistribuidor.total) as total, ");
-		sql.append(" sum(consignadoDistribuidor.totalDesconto) as totalDesconto, ");
-		sql.append(" consignadoDistribuidor.nomeFornecedor as nomeFornecedor, ");
-		sql.append(" consignadoDistribuidor.idFornecedor as idFornecedor ");
+        sql.append(" SELECT ");
+        
+		sql.append(" c.NUMERO_COTA AS numeroCota,                                          ");
+		sql.append("     CASE                                                              ");
+		sql.append("         WHEN p.NOME IS NOT NULL THEN p.NOME                           ");
+		sql.append("         WHEN p.RAZAO_SOCIAL IS NOT NULL THEN p.RAZAO_SOCIAL           ");
+		sql.append("         ELSE NULL                                                     ");
+		sql.append("     END                                                               ");
+		sql.append("         AS nomeCota,                                                  ");
+		sql.append("     SUM(CASE                                                          ");
+		sql.append("           WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE          ");
+		sql.append("           ELSE 0                                                      ");
+		sql.append("         END                                                           ");
+		sql.append("         - (CASE                                                       ");
+		sql.append("               WHEN TM.OPERACAO_ESTOQUE = 'SAIDA' THEN MEC.QTDE        ");
+		sql.append("               ELSE 0                                                  ");
+		sql.append("           END))                                                       ");
+		sql.append("         AS consignado,                                                ");
+		sql.append("     SUM(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)                  ");
+		sql.append("         * (CASE                                                       ");
+		sql.append("               WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE      ");
+		sql.append("               ELSE MEC.QTDE * -1                                      ");
+		sql.append("           END))                                                       ");
+		sql.append("         AS total,                                                     ");
+		sql.append("     SUM(COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)           ");
+		sql.append("         * (CASE                                                       ");
+		sql.append("               WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA' THEN MEC.QTDE      ");
+		sql.append("               ELSE MEC.QTDE * -1                                      ");
+		sql.append("           END))                                                       ");
+		sql.append("         AS totalDesconto,                                             ");
+		sql.append("     PJ.RAZAO_SOCIAL AS nomeFornecedor,                                ");
+		sql.append("     forn.ID AS idFornecedor                                           ");
 
-		sql.append(" FROM ( ");
-
-		sql.append(" SELECT  ");
-		sql.append(" c.NUMERO_COTA AS numeroCota, "); 
-
-		sql.append(" CASE WHEN p.NOME IS NOT NULL THEN p.NOME "); 
-		sql.append(" WHEN p.RAZAO_SOCIAL IS NOT NULL THEN p.RAZAO_SOCIAL ELSE NULL END AS nomeCota, "); 
-
-		sql.append(" SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS reparte, "); 
-		sql.append(" SUM(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE *-1 END)) AS total, "); 
-		sql.append(" SUM(COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) * (CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END)) AS totalDesconto, ");
-
-		sql.append(" PJ.RAZAO_SOCIAL AS nomeFornecedor, "); 
-		sql.append(" forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
 		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
@@ -354,6 +364,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
 		sql.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ");
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
+		
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
@@ -370,11 +381,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(this.getSqlTuplasCotaAVista(true));
 
-		sql.append(" GROUP BY pe.ID, c.id ");
-
-		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
-
-		sql.append(" ) AS consignadoDistribuidor ");
 		sql.append(" GROUP BY numeroCota, idFornecedor ");
 
 		return sql;
@@ -542,17 +548,46 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		StringBuilder sql = new StringBuilder();
 
-        sql.append(" SELECT SUM(totalGeral.total) AS total, ");
+        sql.append(" SELECT ");
         
-        sql.append(" totalGeral.nomeFornecedor as nomeFornecedor ");
+		sql.append("  SUM(    ");
+		sql.append("       COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)    ");
+		sql.append("       * (CASE    ");
+		sql.append("             WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA'    ");
+		sql.append("             THEN    ");
+		sql.append("                MEC.QTDE    ");
+		sql.append("             ELSE    ");
+		sql.append("                MEC.QTDE * -1    ");
+		sql.append("          END))    ");
+		sql.append("       AS total,    ");
+		sql.append("    PJ.RAZAO_SOCIAL AS nomeFornecedor    ");
+
+		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PE.PRODUTO_ID=F.PRODUTO_ID ");
+		sql.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ");
+		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		
-		sql.append(" FROM (  ");
+		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
+		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
+		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
-		sql.append( this.getQueryMovimentosCotaPeloFornecedor(filtro) );
+		if(filtro.getIdFornecedor()!=null) {
 		
-		sql.append("      ) as totalGeral ");
+			sql.append(" AND forn.ID = :idFornecedor ");
+		}
 		
-		sql.append(" GROUP BY totalGeral.nomeFornecedor ");
+		if(filtro.getIdCota()!=null) {
+		
+			sql.append(" AND c.ID = :idCota ");
+		}
+		
+		sql.append(this.getSqlTuplasCotaAVista(true));
+
+		sql.append(" GROUP BY forn.id ");
 		
 		Query query =  getSession().createSQLQuery(sql.toString());
 
@@ -569,23 +604,50 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhadoPorCota(
-			FiltroConsultaConsignadoCotaDTO filtro) {
+	public List<TotalConsultaConsignadoCotaDetalhado> buscarTotalDetalhadoPorCota(FiltroConsultaConsignadoCotaDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
 
-        sql.append(" SELECT SUM(totalGeral.totalDesconto) AS total, ");
+        sql.append(" SELECT ");
         
-        sql.append(" totalGeral.nomeFornecedor as nomeFornecedor ");
+		sql.append("  SUM(COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)  ");
+		sql.append("      * (CASE                                              ");
+		sql.append("            WHEN TM.OPERACAO_ESTOQUE = 'ENTRADA'           ");
+		sql.append("            THEN                                           ");
+		sql.append("               MEC.QTDE                                    ");
+		sql.append("            ELSE                                           ");
+		sql.append("               MEC.QTDE * -1                               ");
+		sql.append("         END))                                             ");
+		sql.append("       AS total,     ");
+		sql.append("    PJ.RAZAO_SOCIAL AS nomeFornecedor    ");
+
+		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
+		sql.append(" INNER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID) ");
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PE.PRODUTO_ID=F.PRODUTO_ID ");
+		sql.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ");
+		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		
-		sql.append(" FROM (  ");
+		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
+		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
+		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
-		sql.append( this.getQueryMovimentosCotaPeloFornecedor(filtro) );
+		if(filtro.getIdFornecedor()!=null) {
 		
-		sql.append("      ) as totalGeral ");
+			sql.append(" AND forn.ID = :idFornecedor ");
+		}
 		
-		sql.append(" GROUP BY totalGeral.nomeFornecedor ");
+		if(filtro.getIdCota()!=null) {
 		
+			sql.append(" AND c.ID = :idCota ");
+		}
+		
+		sql.append(this.getSqlTuplasCotaAVista(true));
+
+		sql.append(" GROUP BY forn.id ");
+                
 		Query query =  getSession().createSQLQuery(sql.toString());
 
 		query = this.setParametrosBuscaMovimentoCotaPeloFornecedor(query, filtro);
