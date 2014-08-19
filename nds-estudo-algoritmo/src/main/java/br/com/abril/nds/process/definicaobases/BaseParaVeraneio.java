@@ -66,7 +66,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 				edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
 						, estudoAlgoritmoService.getDatasPeriodoVeraneio(estudo.getProdutoEdicaoEstudo()));
 			} 
-			
+
 			if(edicoes != null && !edicoes.isEmpty()) {
 				
 				if(!this.isEdicoesMesmoMesAnosAnterioresValidas(edicoes)) {
