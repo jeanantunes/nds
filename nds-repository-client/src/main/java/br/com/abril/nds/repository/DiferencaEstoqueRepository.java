@@ -123,4 +123,6 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	BigDecimal obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(final Date dataFechamento);
 	
 	BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(final Date dataFechamento);
+	
+	BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(final Date dataFechamento);
 }

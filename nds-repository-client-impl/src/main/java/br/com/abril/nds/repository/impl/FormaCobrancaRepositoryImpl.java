@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -274,10 +273,10 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         hql.append(" from FormaCobranca f ");	
 		hql.append(" join f.politicaCobranca p ");
 		hql.append(" left join f.banco banco ");		
-		hql.append(" where p.ativo = :indAtivo ");
-
+		hql.append(" where p.ativo = :indtrue ");
+		
 		Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("indAtivo", true);
+        query.setParameter("indtrue", true);
 
         query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaDefaultVO.class));        
 
@@ -349,14 +348,14 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select banco.id as idBanco, banco.nome as nomeBanco, formaCobranca.tipoCobranca as tipoCobranca ");
+		sql.append(" select distinct banco.id as idBanco, banco.nome as nomeBanco, formaCobranca.tipoCobranca as tipoCobranca ");
 		sql.append(" from FormaCobranca formaCobranca ");
 		sql.append(" inner join formaCobranca.parametroCobrancaCota parametroCobrancaCota ");
-		sql.append(" inner join parametroCobrancaCota.fornecedorPadrao fornecedorPadrao ");
-		sql.append(" inner join formaCobranca.fornecedores fornecedor ");
-		sql.append(" inner join formaCobranca.banco banco ");
-		sql.append(" where parametroCobrancaCota.cota.numeroCota = :numeroCota ");
-		sql.append(" and fornecedor.id = fornecedorPadrao.id ");
+		sql.append(" inner join parametroCobrancaCota.cota cota ");
+		//certas formas de cobrança não tem banco, ex.: dinheiro
+		sql.append(" left join formaCobranca.banco banco ");
+		sql.append(" where cota.numeroCota = :numeroCota ");
+		sql.append(" and formaCobranca.ativa = true ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("numeroCota", numeroCota);
