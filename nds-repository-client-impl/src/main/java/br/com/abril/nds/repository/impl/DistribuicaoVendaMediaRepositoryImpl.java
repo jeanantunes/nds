@@ -57,7 +57,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
             sql.append("     END parcial, ");
         }
         
-        sql.append("     l.data_lcto_prevista dataLancamento, ");
+        sql.append("     l.data_lcto_distribuidor dataLancamento, ");
         sql.append("     l.status status, ");
         sql.append("     tcp.id idClassificacao, ");
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");
@@ -193,7 +193,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                     break;
 
                 default:
-                    hql.append(" ORDER BY l.data_lcto_prevista desc ");
+                    hql.append(" ORDER BY l.data_lcto_distribuidor desc ");
             }
 
             if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -201,7 +201,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
             }
 
         } else {
-            hql.append(" ORDER BY l.data_lcto_prevista desc ");
+            hql.append(" ORDER BY l.data_lcto_distribuidor desc ");
         }
 
 		return hql.toString();
