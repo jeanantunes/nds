@@ -342,11 +342,13 @@ fieldset {
 									<tr>
 										<td width="60">Previsto:</td>
 										<td width="90"><input type="text"
+											class="produtoEdicaoCampoValidavel"
 											name="produtoEdicaoDTO.dataLancamentoPrevisto"
 											id="produtoEdicaoController-dataLancamentoPrevisto"
 											style="width: 70px;" /></td>
 										<td width="30">Real:</td>
 										<td width="120"><input type="text"
+											class="produtoEdicaoCampoValidavel"
 											name="produtoEdicaoDTO.dataLancamento"
 											id="produtoEdicaoController-dataLancamento"
 											style="width: 70px; text-align: center;" disabled="disabled" /></td>
@@ -370,10 +372,12 @@ fieldset {
 									<tr>
 										<td width="60">Previsto:</td>
 										<td width="90"><input style="width: 70px; float: left;"
+											class="produtoEdicaoCampoValidavel"
 											id="produtoEdicaoController-dataRecolhimentoPrevisto"
 											name="produtoEdicaoDTO.dataRecolhimentoPrevisto" type="text"></td>
 										<td width="30" align="right">Real:</td>
 										<td width="90"><input
+											class="produtoEdicaoCampoValidavel"
 											style="width: 70px; text-align: right;"
 											id="produtoEdicaoController-dataRecolhimentoReal"
 											name="produtoEdicaoDTO.dataRecolhimentoReal"
