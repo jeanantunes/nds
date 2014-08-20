@@ -154,6 +154,11 @@ public class NegociacaoDividaController extends BaseController {
 		} else {
 
 			tiposCobranca = this.parametroCobrancaCotaService.obterFormaCobrancaCotaDefault(numeroCota);
+			
+			if (tiposCobranca == null || tiposCobranca.isEmpty()){
+			    
+			    tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+			}
 		}
 
 		return tiposCobranca;

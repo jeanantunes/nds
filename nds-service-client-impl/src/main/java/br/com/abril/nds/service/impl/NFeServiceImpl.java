@@ -592,8 +592,8 @@ public class NFeServiceImpl implements NFeService {
 					for (Cota cota : cotas) {
 						
 						if(cota.getParametrosCotaNotaFiscalEletronica() != null 
-								&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS())  
-								&& cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()) {
+								&& (cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()  
+										|| cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica())) {
 							
 							cotasContribuintesExigemNFe.add(cota);
 						} else {
