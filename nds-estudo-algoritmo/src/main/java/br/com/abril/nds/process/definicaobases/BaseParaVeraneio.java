@@ -73,6 +73,8 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 				
 				if(!this.isEdicoesMesmoMesAnosAnterioresValidas(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes)) {
 					
+					edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
+					
 					Calendar calPE = Calendar.getInstance();
 					calPE.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
 					int mesProdutoEdicao = calPE.get(Calendar.MONTH);
@@ -104,22 +106,8 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 					cal.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
 					cal.add(Calendar.YEAR, ((anoProdutoEdicao - anoEncontrado) == 1) ? -2 : -1);
 					
-					DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());										
-					DateTime dataMaisProximaAnterior = new DateTime(new TreeSet<Date>(dates).lower(cal.getTime()));
-					DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(dates).higher(cal.getTime()));
-					
-					DateTime dataMaisProxima = null;
-					if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) < 
-							Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
-							&& dataLancamentoProdutoEdicao.monthOfYear() == dataMaisProximaAnterior.monthOfYear()) {
-							
-						dataMaisProxima = dataMaisProximaAnterior;
-						
-					} else {
-						
-						dataMaisProxima = dataMaisProximaPosterior;
-					}
-					//}
+					DateTime dataMaisProximaDT = extrairDataMaisProximaLancamento(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), cal.get(Calendar.YEAR), dates);
+					Date dataMaisProxima = (dataMaisProximaDT != null ? dataMaisProximaDT.toDate() : estudo.getProdutoEdicaoEstudo().getDataLancamento());
 					
 					for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
 						
@@ -130,6 +118,8 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 					}
 					
 				}
+				
+				edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
 				
 				for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
 					produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
@@ -188,30 +178,102 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 
 	private boolean isEdicoesMesmoMesAnosAnterioresValidas(DateTime dataLancamento, List<ProdutoEdicaoEstudo> edicoes) {
 
-		extrairEdicoesMesmoMesAnosAnteriores(dataLancamento, edicoes);
+		List<ProdutoEdicaoEstudo> edicoesEncontradas = extrairEdicoesMesmoMesAnosAnteriores(dataLancamento, edicoes);
 		
-		return false;
+		return (edicoesEncontradas != null && edicoesEncontradas.size() == 2);
 	}
 
-	private void extrairEdicoesMesmoMesAnosAnteriores(DateTime dataLancamento, List<ProdutoEdicaoEstudo> edicoes) {
-		Map<Integer, List<ProdutoEdicaoEstudo>> datasAnosAnteriores = new HashMap<Integer, List<ProdutoEdicaoEstudo>>();
+	private List<ProdutoEdicaoEstudo> extrairEdicoesMesmoMesAnosAnteriores(DateTime dataLancamento, List<ProdutoEdicaoEstudo> edicoes) {
 		
-		List<ProdutoEdicaoEstudo> ultimoAno = new ArrayList<ProdutoEdicaoEstudo>();
-		List<ProdutoEdicaoEstudo> penultimoAno = new ArrayList<ProdutoEdicaoEstudo>();
+		List<ProdutoEdicaoEstudo> edicoesEncontradas = new ArrayList<ProdutoEdicaoEstudo>(); 
+		
+		int ultimoAno = (dataLancamento.getYear() - 1);
+		int penultimoAno = (dataLancamento.getYear() - 2);
+		
+		Map<Integer, List<Date>> datasAnosAnteriores = new HashMap<Integer, List<Date>>();
+		
+		List<Date> listUltimoAno = new ArrayList<Date>();
+		List<Date> listPenultimoAno = new ArrayList<Date>();
 		
 		for(ProdutoEdicaoEstudo pee : edicoes) {
 			
 			if(pee.getDataLancamento() != null) {
-				if(new DateTime(pee.getDataLancamento()).getYear() == (dataLancamento.getYear() - 1)) {
-					ultimoAno.add(pee);
-				} else if(new DateTime(pee.getDataLancamento()).getYear() == (dataLancamento.getYear() - 2)) {
-					penultimoAno.add(pee);
+				
+				if(new DateTime(pee.getDataLancamento()).getYear() == ultimoAno) {
+					
+					listUltimoAno.add(pee.getDataLancamento());
+				} 
+				
+				if(new DateTime(pee.getDataLancamento()).getYear() == penultimoAno) {
+					
+					listPenultimoAno.add(pee.getDataLancamento());
 				}
 			}
 		}
 		
-		datasAnosAnteriores.put((dataLancamento.getYear() - 1), ultimoAno);
-		datasAnosAnteriores.put((dataLancamento.getYear() - 2), penultimoAno);
+		datasAnosAnteriores.put(ultimoAno, listUltimoAno);
+		datasAnosAnteriores.put(penultimoAno, listPenultimoAno);
+		
+		Date dataMaisProximaUltimoAno = extrairDataMaisProximaLancamento(dataLancamento, ultimoAno, datasAnosAnteriores);
+		Date dataMaisProximaPenultimoAno = extrairDataMaisProximaLancamento(dataLancamento, penultimoAno, datasAnosAnteriores);
+		
+		for(ProdutoEdicaoEstudo pee : edicoes) {
+			
+			if(pee.getDataLancamento() != null) {
+				
+				if(pee.getDataLancamento().equals(dataMaisProximaUltimoAno)) {
+					
+					edicoesEncontradas.add(pee);
+				} 
+				
+				if(pee.getDataLancamento().equals(dataMaisProximaPenultimoAno)) {
+					
+					edicoesEncontradas.add(pee);
+				}
+			}
+		}
+		
+		return edicoesEncontradas;
+		
+	}
+
+	private Date extrairDataMaisProximaLancamento(DateTime dataLancamento, int anoDesejado, Map<Integer, List<Date>> datasAnosAnteriores) {
+		
+		if(datasAnosAnteriores == null || datasAnosAnteriores.get(anoDesejado) == null) {
+			return null;
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataLancamento.toDate());
+		cal.set(Calendar.YEAR, anoDesejado);
+		
+		DateTime dataMaisProxima = extrairDataMaisProximaLancamento(dataLancamento, anoDesejado, datasAnosAnteriores.get(anoDesejado));
+		
+		return dataMaisProxima.toDate();
+	}
+	
+	private DateTime extrairDataMaisProximaLancamento(DateTime dataLancamento, int anoDesejado, List<Date> datas) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataLancamento.toDate());
+		cal.set(Calendar.YEAR, anoDesejado);
+		
+		DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());										
+		DateTime dataMaisProximaAnterior = new DateTime(new TreeSet<Date>(datas).lower(cal.getTime()));
+		DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(datas).higher(cal.getTime()));
+		
+		DateTime dataMaisProxima = null;
+		if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) < 
+				Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
+				&& dataLancamentoProdutoEdicao.monthOfYear().equals(dataMaisProximaAnterior.monthOfYear())) {
+				
+			dataMaisProxima = dataMaisProximaAnterior;
+		} else {
+			
+			dataMaisProxima = dataMaisProximaPosterior;
+		}
+		
+		return dataMaisProxima;
 	}
 
 	private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicaoEstudo produtoEdicao, EstudoTransient estudo) {
