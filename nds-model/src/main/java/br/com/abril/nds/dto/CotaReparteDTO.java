@@ -11,6 +11,7 @@ public class CotaReparteDTO implements Serializable{
 	
 	private Cota cota;
 	private BigInteger reparte;
+	private Long idLancamento;
 	
 	/**
 	 * @return the cota
@@ -35,6 +36,17 @@ public class CotaReparteDTO implements Serializable{
 	 */
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+	}
+	/**
+	 * @return the idLancamento
+	 */
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+	/**
+	 * @param idLancamento the idLancamento to set
+	 */
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
 	}	
-	
 }

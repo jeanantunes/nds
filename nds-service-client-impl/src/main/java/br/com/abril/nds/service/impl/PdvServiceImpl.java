@@ -404,23 +404,27 @@ public class PdvServiceImpl implements PdvService {
 
             PDV principalAtual = this.pdvRepository.obterPDVPrincipal(cota.getNumeroCota());
             
-            List<RotaPDV> rotasPrincipal = new ArrayList<RotaPDV>(principalAtual.getRotas());
-            
-            for (RotaPDV rotaPDV : rotasPrincipal) {
+            if(principalAtual != null) {
             	
-            	if (rotaPDV.getPdv().getCaracteristicas().isPontoPrincipal()) {
-
-            		rotaPDV.setPdv(pdv);
+            	List<RotaPDV> rotasPrincipal = new ArrayList<RotaPDV>(principalAtual.getRotas());
+            	
+            	for (RotaPDV rotaPDV : rotasPrincipal) {
+            		
+            		if (rotaPDV.getPdv().getCaracteristicas().isPontoPrincipal()) {
+            			
+            			rotaPDV.setPdv(pdv);
+            		}
             	}
+            	
+            	pdv.setRotas(rotasPrincipal);
+            	
+            	principalAtual.getCaracteristicas().setPontoPrincipal(false);
+            	
+            	principalAtual.setRotas(null);
+            	
+            	this.pdvRepository.merge(principalAtual);
             }
             
-        	pdv.setRotas(rotasPrincipal);
-            		
-            principalAtual.getCaracteristicas().setPontoPrincipal(false);
-            
-            principalAtual.setRotas(null);
-
-            this.pdvRepository.merge(principalAtual);
             
         } else if (pdvDTO.getCaracteristicaDTO() != null
                 && !pdvDTO.getCaracteristicaDTO().isPontoPrincipal()) {

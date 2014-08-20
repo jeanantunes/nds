@@ -818,7 +818,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		
 		
-		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataBaixa(pagamento.getDataOperacao());
 		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		
 		baixaManual.setValorPago(valorCobrancaCorrigida);
@@ -1048,7 +1048,7 @@ public class CobrancaServiceImpl implements CobrancaService {
     	
     	BaixaManual baixaManual = new BaixaManual();
 		
-		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataBaixa(pagamento.getDataOperacao());
 		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		baixaManual.setValorPago(valorRestante);
 		baixaManual.setCobranca(cobrancaParcial);
@@ -1252,7 +1252,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		return this.cobrancaRepository.obterTiposCobrancaCadastradas();
 	}
-
+	
+	@Transactional
     @Override
     public void validarDataPagamentoCobranca(List<Long> idCobrancas, Date dataPagamento) {
         List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasDataEmissaoMaiorQue(dataPagamento, idCobrancas);

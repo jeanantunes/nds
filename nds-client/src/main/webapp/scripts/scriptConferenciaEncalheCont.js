@@ -343,9 +343,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 						}, null, true, "idModalBoxRecolhimento"
 					);
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(e) {
 
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					$(this).dialog("close");
 					

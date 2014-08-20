@@ -1261,11 +1261,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
             throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento de Estoque não encontrado.");
         }
-        
+
         return movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
                 diferenca.getProdutoEdicao().getId(), idUsuario,
                 diferenca.getQtde(), tipoMovimentoEstoque,
-                isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
+                isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, 
+                statusIntegracao, origem, TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.equals(tipoDiferenca));
     }
     
     private void tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
