@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -22,7 +23,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.job.AtualizaEstoqueJob;
 
 
 @Component

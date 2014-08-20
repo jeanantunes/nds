@@ -432,25 +432,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public Date getMaiorDataLancamento(Long idProdutoEdicao) {
-		
-		Date maiorDataLancamentoPrevisto = 
-			this.lancamentoRepository.getMaiorDataLancamentoPrevisto(idProdutoEdicao);
-		
-		Date maiorDataLancamentoDistribuidor =
-			this.lancamentoRepository.getMaiorDataLancamentoDistribuidor(idProdutoEdicao);
-		
-		if (maiorDataLancamentoPrevisto == null || maiorDataLancamentoDistribuidor == null) {
-		
-			return null;
-		}
-		
-		if (maiorDataLancamentoPrevisto.after(maiorDataLancamentoDistribuidor)) {
-			
-			return maiorDataLancamentoPrevisto;
-		} else {
-			
-			return maiorDataLancamentoDistribuidor;
-		}
+		return this.lancamentoRepository.getMaiorDataLancamentoDistribuidor(idProdutoEdicao);
 	}
 
 	@Override
@@ -596,6 +578,8 @@ public class LancamentoServiceImpl implements LancamentoService {
         for (Lancamento redistribuicao : redistribuicoes) {
             
             redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
+            redistribuicao.setStatus(lancamento.getStatus());
+            
             
             this.lancamentoRepository.merge(redistribuicao);
         }
