@@ -3,12 +3,16 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.MonthDay;
 import org.joda.time.Years;
@@ -506,5 +510,116 @@ public class EstudoAlgoritmoService {
         }
         return nova;
     }
+    
+public List<ProdutoEdicaoEstudo> obterEdicoesPenultimoVeraneio(EstudoTransient estudo) {
+		
+		if(estudo == null || estudo.getProdutoEdicaoEstudo() == null) {
+			return null;
+		}
+		
+		List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
+				, this.getDatasPenultimoVeraneio(estudo.getProdutoEdicaoEstudo()));
+		
+		List<Date> dates = new ArrayList<Date>();
+		for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
+			dates.add(ed.getDataLancamento());
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
+		cal.add(Calendar.YEAR, -2);
+		
+		DateTime dataMaisProximaDT = extrairDataMaisProximaLancamento(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), cal.get(Calendar.YEAR), dates);
+		Date dataMaisProxima = (dataMaisProximaDT != null ? dataMaisProximaDT.toDate() : estudo.getProdutoEdicaoEstudo().getDataLancamento());
+		
+		List<ProdutoEdicaoEstudo> edicoes = null;
+		if(edicoesComplementares != null) {
+			edicoes = new ArrayList<ProdutoEdicaoEstudo>();
+		}
+		for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
+			
+			if(ed.getDataLancamento().equals(dataMaisProxima) && !edicoes.contains(ed)) {
+				edicoes.add(ed);
+				break;
+			}
+		}
+		
+		return edicoes;
+	}
+	
+	public List<ProdutoEdicaoEstudo> obterEdicoesUltimoVeraneio(EstudoTransient estudo) {
+		
+		if(estudo == null || estudo.getProdutoEdicaoEstudo() == null) {
+			return null;
+		}
+		
+		List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
+				, this.getDatasPenultimoVeraneio(estudo.getProdutoEdicaoEstudo()));
+		
+		List<Date> dates = new ArrayList<Date>();
+		for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
+			dates.add(ed.getDataLancamento());
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
+		cal.add(Calendar.YEAR, -2);
+		
+		DateTime dataMaisProximaDT = extrairDataMaisProximaLancamento(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), cal.get(Calendar.YEAR), dates);
+		Date dataMaisProxima = (dataMaisProximaDT != null ? dataMaisProximaDT.toDate() : estudo.getProdutoEdicaoEstudo().getDataLancamento());
+		
+		List<ProdutoEdicaoEstudo> edicoes = null;
+		if(edicoesComplementares != null) {
+			edicoes = new ArrayList<ProdutoEdicaoEstudo>();
+		}
+		for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
+			
+			if(ed.getDataLancamento().equals(dataMaisProxima) && !edicoes.contains(ed)) {
+				edicoes.add(ed);
+				break;
+			}
+		}
+		
+		return edicoes;
+	}
+	
+	public Date extrairDataMaisProximaLancamento(DateTime dataLancamento, int anoDesejado, Map<Integer, List<Date>> datasAnosAnteriores) {
+		
+		if(datasAnosAnteriores == null || datasAnosAnteriores.get(anoDesejado) == null) {
+			return null;
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataLancamento.toDate());
+		cal.set(Calendar.YEAR, anoDesejado);
+		
+		DateTime dataMaisProxima = extrairDataMaisProximaLancamento(dataLancamento, anoDesejado, datasAnosAnteriores.get(anoDesejado));
+		
+		return dataMaisProxima.toDate();
+	}
+	
+	public DateTime extrairDataMaisProximaLancamento(DateTime dataLancamento, int anoDesejado, List<Date> datas) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataLancamento.toDate());
+		cal.set(Calendar.YEAR, anoDesejado);
+		
+		DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());										
+		DateTime dataMaisProximaAnterior = new DateTime(new TreeSet<Date>(datas).lower(cal.getTime()));
+		DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(datas).higher(cal.getTime()));
+		
+		DateTime dataMaisProxima = null;
+		if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) < 
+				Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
+				&& dataLancamentoProdutoEdicao.monthOfYear().equals(dataMaisProximaAnterior.monthOfYear())) {
+				
+			dataMaisProxima = dataMaisProximaAnterior;
+		} else {
+			
+			dataMaisProxima = dataMaisProximaPosterior;
+		}
+		
+		return dataMaisProxima;
+	}
     
 }

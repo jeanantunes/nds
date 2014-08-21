@@ -55,30 +55,31 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 			return;
 		}
 		
-		List<ProdutoEdicaoEstudo> edicoes = null;
+		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>();
 		if(estudo.getProdutoEdicaoEstudo() != null 
 				&& validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
 			
 			//Obtem edicoes do mesmo mes em ate 2 anos anteriores
-			edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(estudo.getProdutoEdicaoEstudo());
+			//edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(estudo.getProdutoEdicaoEstudo());
 			
-			if(edicoes == null || edicoes.isEmpty()) {
+			//if(edicoes == null || edicoes.isEmpty()) {
 				
 				//Se nao houver edicoes no anos anteriores no mesmo mes, obtem do periodo de veraneio
-				edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
-						, estudoAlgoritmoService.getDatasPeriodoVeraneio(estudo.getProdutoEdicaoEstudo()));
-			}
+			//edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
+			//		, estudoAlgoritmoService.getDatasPeriodoVeraneio(estudo.getProdutoEdicaoEstudo()));
+			//}
 
-			if(edicoes != null && !edicoes.isEmpty()) {
+			//if(edicoes != null && !edicoes.isEmpty()) {
 				
-				if(!this.isEdicoesMesmoMesAnosAnterioresValidas(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes)) {
+				//if(!this.isEdicoesMesmoMesAnosAnterioresValidas(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes)) {
 					
-					edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
-					
+					/*
 					Calendar calPE = Calendar.getInstance();
 					calPE.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
 					int mesProdutoEdicao = calPE.get(Calendar.MONTH);
 					int anoProdutoEdicao = calPE.get(Calendar.YEAR);
+
+					edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
 					
 					int anoEncontrado = 0;
 					
@@ -96,36 +97,41 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 							, ((anoProdutoEdicao - anoEncontrado) == 1) ? 
 									estudoAlgoritmoService.getDatasPenultimoVeraneio(estudo.getProdutoEdicaoEstudo())
 									: estudoAlgoritmoService.getDatasUltimoVeraneio(estudo.getProdutoEdicaoEstudo()));
+					*/
 					
-					List<Date> dates = new ArrayList<Date>();
-					for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
-						dates.add(ed.getDataLancamento());
-					}
-					
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
-					cal.add(Calendar.YEAR, ((anoProdutoEdicao - anoEncontrado) == 1) ? -2 : -1);
-					
-					DateTime dataMaisProximaDT = extrairDataMaisProximaLancamento(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), cal.get(Calendar.YEAR), dates);
-					Date dataMaisProxima = (dataMaisProximaDT != null ? dataMaisProximaDT.toDate() : estudo.getProdutoEdicaoEstudo().getDataLancamento());
-					
-					for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
+					List<ProdutoEdicaoEstudo> edicoesVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudo);
+					if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
 						
-						if(ed.getDataLancamento().equals(dataMaisProxima) && !edicoes.contains(ed)) {
-							edicoes.add(ed);
-							break;
-						}
+						edicoes.addAll(edicoesVeraneio); 
 					}
 					
-				}
+					edicoesVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudo);
+					if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
+						
+						edicoes.addAll(edicoesVeraneio); 
+					}
+					
+					//edicoesComplementares = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
+					//		, estudoAlgoritmoService.getDatasUltimoVeraneio(estudo.getProdutoEdicaoEstudo()));
+					
+				//}
 				
-				edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
+				//edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
 				
 				for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
 					produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
 				}
 				
-				if(edicoes.size() < NUM_MAX_EDICOES_BASES) {
+				if(edicoes.isEmpty()) {
+					
+					List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
+					edicoesComplementares = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesComplementares, estudo);
+					
+					for(ProdutoEdicaoEstudo pee : edicoesComplementares) {
+						edicoes.add(pee);
+					}
+					
+				} else if(edicoes.size() < NUM_MAX_EDICOES_BASES) {
 					
 					List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
 					//.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
@@ -149,7 +155,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 					
 				}
 				
-			}
+			//}
 			
 			edicoes = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoes, estudo);
 		} else {
@@ -214,8 +220,8 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 		datasAnosAnteriores.put(ultimoAno, listUltimoAno);
 		datasAnosAnteriores.put(penultimoAno, listPenultimoAno);
 		
-		Date dataMaisProximaUltimoAno = extrairDataMaisProximaLancamento(dataLancamento, ultimoAno, datasAnosAnteriores);
-		Date dataMaisProximaPenultimoAno = extrairDataMaisProximaLancamento(dataLancamento, penultimoAno, datasAnosAnteriores);
+		Date dataMaisProximaUltimoAno = estudoAlgoritmoService.extrairDataMaisProximaLancamento(dataLancamento, ultimoAno, datasAnosAnteriores);
+		Date dataMaisProximaPenultimoAno = estudoAlgoritmoService.extrairDataMaisProximaLancamento(dataLancamento, penultimoAno, datasAnosAnteriores);
 		
 		for(ProdutoEdicaoEstudo pee : edicoes) {
 			
@@ -235,45 +241,6 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 		
 		return edicoesEncontradas;
 		
-	}
-
-	private Date extrairDataMaisProximaLancamento(DateTime dataLancamento, int anoDesejado, Map<Integer, List<Date>> datasAnosAnteriores) {
-		
-		if(datasAnosAnteriores == null || datasAnosAnteriores.get(anoDesejado) == null) {
-			return null;
-		}
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dataLancamento.toDate());
-		cal.set(Calendar.YEAR, anoDesejado);
-		
-		DateTime dataMaisProxima = extrairDataMaisProximaLancamento(dataLancamento, anoDesejado, datasAnosAnteriores.get(anoDesejado));
-		
-		return dataMaisProxima.toDate();
-	}
-	
-	private DateTime extrairDataMaisProximaLancamento(DateTime dataLancamento, int anoDesejado, List<Date> datas) {
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dataLancamento.toDate());
-		cal.set(Calendar.YEAR, anoDesejado);
-		
-		DateTime dataLancamentoProdutoEdicao = new DateTime(cal.getTime());										
-		DateTime dataMaisProximaAnterior = new DateTime(new TreeSet<Date>(datas).lower(cal.getTime()));
-		DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(datas).higher(cal.getTime()));
-		
-		DateTime dataMaisProxima = null;
-		if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) < 
-				Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
-				&& dataLancamentoProdutoEdicao.monthOfYear().equals(dataMaisProximaAnterior.monthOfYear())) {
-				
-			dataMaisProxima = dataMaisProximaAnterior;
-		} else {
-			
-			dataMaisProxima = dataMaisProximaPosterior;
-		}
-		
-		return dataMaisProxima;
 	}
 
 	private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicaoEstudo produtoEdicao, EstudoTransient estudo) {

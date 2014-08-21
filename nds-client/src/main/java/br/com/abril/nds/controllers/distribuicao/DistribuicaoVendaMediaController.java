@@ -67,6 +67,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public static final String SELECIONADOS_PRODUTO_EDICAO_BASE = "selecionados-produto-edicao-base";
 
     public static final String RESULTADO_PESQUISA_PRODUTO_EDICAO = "resultado-pesquisa-produto-edicao";
+    
+    public static final String SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO = "resultado-pesquisa-produto-edicao-base-veranenio";
 
     @Autowired
     private Result result;
@@ -150,6 +152,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
+	session.removeAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO);
 
 	EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
 
@@ -207,8 +210,21 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    	}
     		    	
     		        selecionados.addAll(produtosBase);
+    		        
     		    }
     		}
+    		
+    		if(estudoTemp.isPracaVeraneio()) {
+	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
+	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
+	        	
+	        	if((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
+	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())) {
+	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, true);
+	        	} else {
+	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
+	        	}
+	        }
         }
 	}
 	
@@ -398,6 +414,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 					}
 			    }
 			}
+			
 			session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 			result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
 		} else {
@@ -406,6 +423,16 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		}
     }
 
+    @Post
+    public void existeBaseVeraneio() {
+    	
+    	if(session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO) != null) {
+    		result.use(Results.json()).from(session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO), "existeBaseVeraneio").recursive().serialize();
+    	} else {
+    		result.nothing();
+    	}
+    }
+    
     @Path("gerarEstudo")
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento, String dataLancamento) throws Exception {

@@ -62,6 +62,21 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	                exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
 	            }
 	    );
+	    
+	    $.postJSON(
+	            pathTela + "/distribuicaoVendaMedia/existeBaseVeraneio", 
+	            null,
+	            function(result) {
+	            	if(result && !result.existeBaseVeraneio) {
+	            		
+	            		exibirMensagem("WARNING", ["Não foram encontradas bases de veraneio."]);
+	            	}
+	            },
+	            function(){
+	                exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
+	            }
+	    );
+	    
 	};
 	
 	this.preencherGridBases = function(resultado){
