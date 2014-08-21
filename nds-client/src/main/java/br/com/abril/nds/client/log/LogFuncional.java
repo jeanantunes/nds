@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface LogFuncional {
  
-  String value();
+  String value() default "";
 }
 

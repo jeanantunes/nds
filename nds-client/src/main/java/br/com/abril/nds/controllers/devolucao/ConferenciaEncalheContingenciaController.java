@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.log.LogFuncional;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -28,6 +29,7 @@ public class ConferenciaEncalheContingenciaController extends BaseController {
 	private Result result;
 	
 	@Path("/")
+	@LogFuncional(value="Conferência de Encalhe Contingência [Abertura da tela]")
 	public void index(){
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();

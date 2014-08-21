@@ -488,8 +488,15 @@ public class NFeServiceImpl implements NFeService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota fiscal.");
 		}
 		
-		for (NotaFiscal notaFiscal : notas) {
-			notaFiscalRepository.adicionar(notaFiscal);
+		try {
+			
+			for (NotaFiscal notaFiscal : notas) {
+				notaFiscalRepository.adicionar(notaFiscal);
+			}
+		} catch(Exception e) {
+			
+			LOGGER.error("Erro ao salvar NF-e.", e);
+			throw e;
 		}
 		
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);

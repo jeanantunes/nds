@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
+import br.com.abril.nds.client.log.LogFuncional;
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
@@ -96,12 +97,6 @@ import com.itextpdf.text.pdf.codec.Base64;
 public class ConferenciaEncalheController extends BaseController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConferenciaEncalheController.class);	
-	
-	private final ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
-	
-	public ConferenciaEncalheController(final ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr){
-		this.conferenciaEncalheSessionScopeAttr = conferenciaEncalheSessionScopeAttr;
-	}
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
@@ -197,6 +192,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent;
 	
+	@Autowired
+	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
+	
 	private void preCarregarBoxes(){
 		
 		 // Obter box usuário
@@ -213,6 +211,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Path("/")
+	@LogFuncional(value="Conferência de Encalhe [Abertura da tela]")
 	public void index() {
 		
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
@@ -229,6 +228,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Path("/contingencia")
+	@LogFuncional(value="Conferência de Encalhe [Abertura tela Contingência]")
 	public void contingencia() {
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -289,6 +289,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Escolha do box]")
 	public void salvarIdBoxSessao(final Long idBox){
 		
 		if (idBox != null){
@@ -403,6 +404,7 @@ public class ConferenciaEncalheController extends BaseController {
      * @param numeroCota
      */
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
 	public void iniciarConferenciaEncalhe(final Integer numeroCota){
 
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
@@ -521,7 +523,11 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void carregarListaConferencia(Integer numeroCota, final boolean indObtemDadosFromBD, final boolean indConferenciaContingencia) {
+	@LogFuncional(value="Conferência de Encalhe [Carregamento da lista de encalhes]")
+	public void carregarListaConferencia(
+			Integer numeroCota, 
+			final boolean indObtemDadosFromBD,  
+			final boolean indConferenciaContingencia){
 		
 		final Map<String, Object> dados = this.obterMapaConferenciaEncalhe(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
 		
@@ -1006,6 +1012,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Adicionar produto]")
 	public void adicionarProdutoConferido(final Long produtoEdicaoId, final String qtdExemplares, final Boolean juramentada, final boolean indConferenciaContingencia) {
 		
 		if (produtoEdicaoId == null){
@@ -1084,6 +1091,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Adicionar produto]")
 	public void adicionarProdutoEdicaoConferidoDiretamente(final Long produtoEdicaoId, final String qtdExemplares) {
 		
 		if (produtoEdicaoId == null){
@@ -1232,6 +1240,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Autorizar venda negativa]")
 	public void autorizarVendaNegativa(
 			final Long produtoEdicaoId,
 			final String qtdExemplares,
@@ -1281,6 +1290,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Atualizar valores grid]")
 	public void atualizarValoresGridInteira(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final boolean indConferenciaContingencia) {
 		
 		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
@@ -1397,7 +1407,8 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)	
+	@LogFuncional(value="Conferência de Encalhe [Atualizar valores grid]")
 	public void atualizarValores(final Long idConferencia, String qtdExemplares, final Boolean juramentada, final BigDecimal valorCapa, final boolean indConferenciaContingencia){
 		
 		final ConferenciaEncalheDTO conf = atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, valorCapa, indConferenciaContingencia);
@@ -1416,6 +1427,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Verificar permissão supervisor]")
 	public boolean verificarPermissaoSupervisorProduto(final String qtdExemplares,
 											 final String usuario, 
 											 final String senha, 
@@ -1446,6 +1458,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Verificar permissão supervisor]")
 	public void verificarPermissaoSupervisor(final Long idConferencia, final String qtdExemplares, 
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
@@ -1614,6 +1627,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Alterar quantidade]")
 	public void alterarQtdeValorInformado(final Long idConferencia, final Long qtdInformada, final BigDecimal valorCapaInformado){
 		
 		final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -1687,6 +1701,7 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Salvar conferência]")
 	public void salvarConferencia(final boolean indConferenciaContingencia){
 		
 		this.verificarInicioConferencia();
@@ -1713,7 +1728,9 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+                "result").recursive()
+                .serialize();
 	}
 	
 	
@@ -1742,6 +1759,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Geração de documento]")
 	public void gerarDocumentoConferenciaEncalhe(final DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
 		try {
@@ -1874,6 +1892,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Impressão documento cobrança]")
 	public void imprimirDocumentosCobranca(final String tipo_documento_impressao_encalhe) throws IOException{
 		
 		final Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
@@ -1969,6 +1988,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Finalizar conferência]")
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -2237,6 +2257,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Excluir conferência]")
 	public void excluirConferencia(final Long idConferenciaEncalhe){
 		
 		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -2261,7 +2282,8 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void gravarObservacaoConferencia(final Long idConferenciaEncalhe, final String observacao){
+	@LogFuncional(value="Conferência de Encalhe [Gravar observação]")
+	public void gravarObservacaoConferecnia(final Long idConferenciaEncalhe, final String observacao){
 		
 		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
@@ -2312,6 +2334,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Salvar nota fiscal]")
 	public void salvarNotaFiscal(final NotaFiscalEntradaCota notaFiscal){
 		
 	    Map<String, Object> dadosNotaFiscal = new HashMap<String, Object>();
@@ -2333,6 +2356,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@SuppressWarnings("unchecked")
+	@LogFuncional(value="Conferência de Encalhe [Carregar nota fiscal]")
 	public void carregarNotaFiscal(){
 		
 		final Map<String, Object> dadosNotaFiscal = (Map<String, Object>) this.session.getAttribute(NOTA_FISCAL_CONFERENCIA);
@@ -2358,6 +2382,7 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Verificar total nota fiscal]")
 	public void verificarValorTotalNotaFiscal(final boolean indConferenciaContingencia) throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -2395,6 +2420,7 @@ public class ConferenciaEncalheController extends BaseController {
      * @param qtdCEInformado
      */
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Verificar total CE]")
 	public void verificarValorTotalCE(final BigDecimal valorCEInformado, final BigInteger qtdCEInformado) {
 
 		final Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
@@ -2929,6 +2955,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Ordenação por SM]")
 	public void ordenarListaPorSM(){
 		
 		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();

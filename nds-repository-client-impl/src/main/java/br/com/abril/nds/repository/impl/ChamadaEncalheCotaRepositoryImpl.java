@@ -842,4 +842,23 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return query.list();
 	}
 	
+	/**
+	 * Remove Chamadas de Encalhe de Cota por lista de ID da chamada de encalhe
+	 * 
+	 * @param ids
+	 */
+	@Override
+	public void removerChamadaEncalheCotaPorIdsChamadaEncalhe(List<Long> ids) {
+		
+        String hql  = "DELETE FROM ChamadaEncalheCota WHERE chamadaEncalhe.id in (:ids)" ;
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameterList("ids", ids);	
+		
+		query.executeUpdate();
+		
+		getSession().flush();
+		
+	}
 }
