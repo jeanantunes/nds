@@ -349,7 +349,6 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
 		query.setParameterList("grupoMovimentos", Arrays.asList(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name(),
 																 GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),
-																 GrupoMovimentoEstoque.VENDA_ENCALHE.name(),
 																 GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name()));
 		
 		query.addScalar("VALOR_COTA_AUSENTE",StandardBasicTypes.BIG_DECIMAL);

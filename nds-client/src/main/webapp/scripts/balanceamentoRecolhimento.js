@@ -80,21 +80,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 				else{
 					
-					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
-					
-					var dataPesquisa = 
-						$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
-					
-					balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
-					
-					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
+					balanceamentoRecolhimentoController.tratarRetornoPesquisa(result);
 				}
-				
-				balanceamentoRecolhimentoController.verificarMatrizesConfirmadas();
-				
-				balanceamentoRecolhimentoController.obterDatasConfirmadasParaReabertura();
-
 			},
 			function() {
 				balanceamentoRecolhimentoController.showResumo(false);
@@ -102,12 +89,30 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		);
 	},
 	
-	verificarMatrizesConfirmadas: function() {
+	tratarRetornoPesquisa : function(result) {
+		
+		balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+		
+		$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
+		
+		var dataPesquisa = 
+			$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+		
+		balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
+		
+		balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
+		
+		balanceamentoRecolhimentoController.verificarBloqueioBotoes();
+	},
+	
+	verificarBloqueioBotoes: function() {
 		
 		$.getJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/isTodasDatasConfirmadas", 
 			null,
 			function(result) {
+				
+				balanceamentoRecolhimentoController.habilitarLinks();
 				
 				if (result) {
 
@@ -116,7 +121,26 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					balanceamentoRecolhimentoController.habilitarLink(
 						"linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento
 					);
+					
+					balanceamentoRecolhimentoController.habilitarLink(
+						"linkReabrirMatriz", balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost
+					);
 				}
+				
+				if (eval($("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val())) {
+					
+					var links = $("a[isEdicao='true']", balanceamentoRecolhimentoController.workspace);
+					
+					$.each(links, function(index, link) {
+						
+						if (link.id) {
+						
+							balanceamentoRecolhimentoController.bloquearLink(link.id);
+						}
+					});
+				}
+				
+				bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 			}
 		);
 	},
@@ -171,15 +195,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			buttons: {
 				"Fechar": function() {
 					
-					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
-
-					var dataPesquisa = 
-						$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
-					
-					balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
-					
-					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
+					balanceamentoRecolhimentoController.tratarRetornoPesquisa(result);
 					
 					$(this).dialog("close");
 				},
@@ -251,19 +267,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 	    $("span[name='qtdeExemplares']", balanceamentoRecolhimentoController.workspace).tooltip();
 	    
-	   
-	    	
-	    	balanceamentoRecolhimentoController.habilitarLinks();
-	    	
-	    	balanceamentoRecolhimentoController.habilitarCheckAll();
-	    	
-	    	$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
-	    		disableSelect : false
-	    	});
-	   
-	    
-	    	balanceamentoRecolhimentoController.showResumo(true);
-	    	 	
+	    balanceamentoRecolhimentoController.habilitarCheckAll();
+    	
+    	$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
+    		disableSelect : false
+    	});
+    	
+    	balanceamentoRecolhimentoController.showResumo(true);
 	},
 	
 	defineUtilizacaoSedeAtendida : function() {
@@ -293,6 +303,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.bloquearLink("linkSalvar", balanceamentoRecolhimentoController.workspace);
 		balanceamentoRecolhimentoController.bloquearLink("linkConfiguracaoInicial", balanceamentoRecolhimentoController.workspace);
 		balanceamentoRecolhimentoController.bloquearLink("linkReprogramar", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkReabrirMatriz", balanceamentoRecolhimentoController.workspace);
 	},
 	
 	habilitarLinks : function() {
@@ -303,8 +314,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
 		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.confirmacaoConfiguracaoInicial(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
-		
-		bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.habilitarLink("linkReabrirMatriz", balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost);
 	},
 	
 	bloquearLink : function(idLink) {
@@ -448,8 +458,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.criarDivsNovaData();
 		
 		balanceamentoRecolhimentoController.checarBalanceamentoPaginacao();
-		
-		bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 	},
 	
 	checarBalanceamentoPaginacao : function() {
@@ -505,8 +513,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var bloqueioAlteracaoBalanceamento = $(divNovaData, balanceamentoRecolhimentoController.workspace).find("input[name='hiddenBloqueioAlteracaoBalanceamento']").val();
 		
+		var bloquearBotoes = $("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val();
+		
 		if (inputCheck.attr("checked") == "checked"
-				|| eval(bloqueioAlteracaoBalanceamento)) {	
+				|| eval(bloqueioAlteracaoBalanceamento)
+				|| eval(bloquearBotoes)) {	
 		
 			$(inputNovaData, balanceamentoRecolhimentoController.workspace).disable();
 			
@@ -883,9 +894,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			       	}
         	   	}
 				
-				balanceamentoRecolhimentoController.verificarMatrizesConfirmadas();
-				
-				balanceamentoRecolhimentoController.obterDatasConfirmadasParaReabertura();
+				balanceamentoRecolhimentoController.verificarBloqueioBotoes();
 			},
 			null,
 			true,
@@ -1295,33 +1304,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	deselectCheckAll : function() {
 		
 		$("#checkAllReprogramar", balanceamentoRecolhimentoController.workspace).attr("checked", false);
-	}, 
-	
-	obterDatasConfirmadasParaReabertura: function() {
-
-		$.getJSON(
-			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReabertura", 
-			null,
-			function(result) {
-				
-				if (result.length == 0) {
-					
-					balanceamentoRecolhimentoController.bloquearLink("linkReabrirMatriz", balanceamentoRecolhimentoController.workspace);
-					
-				} else {
-				
-					balanceamentoRecolhimentoController.popularPopupReaberturaMatrizes(result);
-
-					balanceamentoRecolhimentoController.habilitarLink(
-						"linkReabrirMatriz", balanceamentoRecolhimentoController.abrirPopupReabrirMatriz
-					);
-				}
-			}
-		);		
 	},
 	
 	obterDatasConfirmadasParaReaberturaPost: function() {
-
 		
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReaberturaPost", 
@@ -1336,30 +1321,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 					balanceamentoRecolhimentoController.popularPopupReaberturaMatrizes(result);
 
-					balanceamentoRecolhimentoController.habilitarLink(
-						"linkReabrirMatriz", balanceamentoRecolhimentoController.abrirPopupReabrirMatriz
-					);
+					balanceamentoRecolhimentoController.abrirPopupReabrirMatriz();
 				}
 			}
 		);		
 	},
 	
-	verificaDatasConfirmadasParaReaberturaPost: function() {
-
-		
-		$.postJSON(
-			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReaberturaPost", 
-			null,
-			function(result) {
-				
-				if (result.length == 0) {
-					
-					balanceamentoRecolhimentoController.bloquearLink("linkReabrirMatriz", balanceamentoRecolhimentoController.workspace);
-					
-				}
-			}
-		);		
-	},
 	validarLancamentoParaReabertura: function() {
 	 $.postJSON(contextPath + "/devolucao/balanceamentoMatriz/validarLancamentoParaReabertura", null,function(result) {});
 	},
@@ -1396,7 +1363,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			beforeClose: function() {
 				if(exec){
 				  exec =false;
-				  balanceamentoRecolhimentoController.verificaDatasConfirmadasParaReaberturaPost();
 				  balanceamentoRecolhimentoController.validarLancamentoParaReabertura();
 				}
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
@@ -1438,6 +1404,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					result.tipoMensagem, 
 					result.listaMensagens
 				);
+				
+				balanceamentoRecolhimentoController.verificarBloqueioBotoes();
 			}
 		);
 	},
@@ -1501,6 +1469,70 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			$('.fieldFiltro').css('margin-top','27px');
 		}
 		
+	},
+	
+	verificarBloqueioMatrizRecolhimento : function() {
+		
+		$("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val(false);
+		
+		$.postJSON(
+				contextPath + "/devolucao/balanceamentoMatriz/verificarBloqueioMatrizRecolhimentoPost", 
+				null, 
+				function(result) {
+					
+					balanceamentoRecolhimentoController.mostrarPopUpBloqueio();
+				},
+				function() {
+					
+					$("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val(true);
+					
+					balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
+				}
+		);
+	},
+	
+	mostrarPopUpBloqueio : function() {
+		
+		$("#dialog-bloqueio-matriz", balanceamentoRecolhimentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Sim": function() {
+					
+					$.postJSON(
+							contextPath + "/devolucao/balanceamentoMatriz/bloquearMatrizRecolhimento", 
+							null,
+							function(result) {
+							
+								balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
+								
+								$("#dialog-bloqueio-matriz", balanceamentoRecolhimentoController.workspace).dialog("close");
+								
+							}, null
+					);
+					
+				},
+				"Não": function() {
+					
+					$.postJSON(
+							contextPath + "/devolucao/balanceamentoMatriz/desbloquearMatrizRecolhimentoPost", 
+							null,
+							function(result) {
+							
+								$("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val(true);
+								
+								balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
+								
+								$("#dialog-bloqueio-matriz", balanceamentoRecolhimentoController.workspace).dialog("close");
+								
+							}, null
+					);
+				}
+			},
+			form: $("#dialog-bloqueio-matriz", balanceamentoRecolhimentoController.workspace).parents("form")			
+		});
 	}
 
 }, BaseController);

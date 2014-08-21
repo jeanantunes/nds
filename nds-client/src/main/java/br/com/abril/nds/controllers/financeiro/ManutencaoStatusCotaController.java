@@ -1,24 +1,15 @@
 package br.com.abril.nds.controllers.financeiro;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.job.StatusCotaJob;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
@@ -185,82 +176,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 		result.forwardTo(ManutencaoStatusCotaController.class).index();
 	}
 	
-	/*
-	 * Cria o job para atualização da nova situação da cota.
-	 *  
-	 * @param novoHistoricoSituacaoCota - novo histórico de situação da cota
-	 * 
-	 * @throws SchedulerException Exceção de agendamento
-	 */
-	private void criarJobAtualizacaoNovaSituacaoCota(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
-		
-		JobDataMap jobDataMap = new JobDataMap();
-
-		jobDataMap.put(StatusCotaJob.HISTORICO_SITUACAO_COTA_DATA_KEY, novoHistoricoSituacaoCota);
-		
-		jobDataMap.put(StatusCotaJob.FIM_PERIODO_VALIDADE_SITUACAO_COTA_DATA_KEY, false);
-		
-	    this.criarJobQuartz(
-	    	novoHistoricoSituacaoCota, novoHistoricoSituacaoCota.getDataInicioValidade(), jobDataMap);
-	}
-	
-	/*
-	 * Cria o job para atualização da situação anterior da cota.
-	 *  
-	 * @param novoHistoricoSituacaoCota - novo histórico de situação da cota
-	 * 
-	 * @throws SchedulerException Exceção de agendamento
-	 */
-	private void criarJobAtualizacaoSituacaoAnteriorCota(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
-		
-		if (novoHistoricoSituacaoCota.getDataFimValidade() == null) {
-			
-			return;
-		}
-		
-		JobDataMap jobDataMap = new JobDataMap();
-
-		jobDataMap.put(StatusCotaJob.HISTORICO_SITUACAO_COTA_DATA_KEY, novoHistoricoSituacaoCota);
-		
-		jobDataMap.put(StatusCotaJob.FIM_PERIODO_VALIDADE_SITUACAO_COTA_DATA_KEY, true);
-		
-	    this.criarJobQuartz(
-	    	novoHistoricoSituacaoCota, novoHistoricoSituacaoCota.getDataFimValidade(), jobDataMap);
-	}
-	
-	/*
-	 * Cria um job do quartz.
-	 * 
-	 * @param novoHistoricoSituacaoCota - novo histórico de situação da cota
-	 * @param dataInicio - data de início do agendamento
-	 * @param jobDataMap - dados para o agendamento
-	 * 
-	 * @throws SchedulerException Exceção de agendamento
-	 */
-	private void criarJobQuartz(HistoricoSituacaoCota novoHistoricoSituacaoCota, 
-								Date dataInicio,
-								JobDataMap jobDataMap) throws SchedulerException {
-	
-		String jobKey = String.valueOf(new Date().getTime());
-	    
-	    String jobGroup = novoHistoricoSituacaoCota.getCota().getId().toString();
-		
-	    JobDetail job = 
-	    	newJob(StatusCotaJob.class).withIdentity(jobKey, jobGroup).usingJobData(jobDataMap).build();
-
-	    Trigger trigger =
-	    	newTrigger()
-	    		.startAt(dataInicio)
-	    		.endAt(dataInicio)
-	    		.withSchedule(
-	    			simpleSchedule()
-		    			.withMisfireHandlingInstructionFireNow()
-		    	).build();
-
-	    Scheduler scheduler = this.schedulerFactoryBean.getScheduler();
-	    
-	    scheduler.scheduleJob(job, trigger);
-	}
 	
 	/*
 	 * Configura a paginação do filtro de pesquisa.
