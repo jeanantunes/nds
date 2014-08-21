@@ -75,7 +75,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.processarLinhaBases = function(index, row){
-		row.pesoInput = '<select name="select'+index+'" id="select'+index+'" onchange="distribuicaoVendaMedia.selecionarPesoProduto('+index+', this)" ><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>';
+		row.pesoInput = '<select name="select'+index+'" id="select'+index+'" onchange="distribuicaoVendaMedia.selecionarPesoProduto('+index+', this)" ><option value="1" '+ (row.indicePeso && row.indicePeso == 1 ? "selected":"") +' >1</option><option value="2" '+ (row.indicePeso && row.indicePeso == 2 ? "selected":"") +' >2</option><option value="3" '+ (row.indicePeso && row.indicePeso == 3 ? "selected":"") +' >3</option></select>';
 		row.peso = 1;
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBase(' + index + ', this)" type="checkbox" value=""/>';
 		

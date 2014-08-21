@@ -190,10 +190,23 @@ public class DistribuicaoVendaMediaController extends BaseController {
         	
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
-    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false));
+    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false);
+    		    	
+    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
+    		    		pevm.setIndicePeso(base.getIndicePeso());
+    		    	}
+    		    	
+    		        selecionados.addAll(produtosBase);
     		    } else {
-    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
-                                    base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false));
+    		    	
+    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
+                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false);
+    		    	
+    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
+    		    		pevm.setIndicePeso(base.getIndicePeso());
+    		    	}
+    		    	
+    		        selecionados.addAll(produtosBase);
     		    }
     		}
         }
