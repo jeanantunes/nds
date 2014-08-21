@@ -2,13 +2,11 @@ package br.com.abril.nds.process.definicaobases;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
@@ -39,14 +37,14 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class BaseParaVeraneio extends ProcessoAbstrato {
 
 	private static int NUM_MAX_EDICOES_BASES = 6;
-	
+
 	private static int NUM_MAX_EDICOES_BASES_COMPLEMENTARES = 2;
-	
+
 	@Autowired
 	private EstudoAlgoritmoService estudoAlgoritmoService;
-	
+
 	@Autowired
-    private DefinicaoBasesDAO definicaoBasesDAO;
+	private DefinicaoBasesDAO definicaoBasesDAO;
 
 	@Override
 	public void executar(EstudoTransient estudo)  {
@@ -54,130 +52,65 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 		if(estudo == null || !estudo.isPracaVeraneio()) {
 			return;
 		}
-		
+
 		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>();
 		if(estudo.getProdutoEdicaoEstudo() != null 
 				&& validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
-			
-			//Obtem edicoes do mesmo mes em ate 2 anos anteriores
-			//edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(estudo.getProdutoEdicaoEstudo());
-			
-			//if(edicoes == null || edicoes.isEmpty()) {
-				
-				//Se nao houver edicoes no anos anteriores no mesmo mes, obtem do periodo de veraneio
-			//edicoes = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
-			//		, estudoAlgoritmoService.getDatasPeriodoVeraneio(estudo.getProdutoEdicaoEstudo()));
-			//}
 
-			//if(edicoes != null && !edicoes.isEmpty()) {
-				
-				//if(!this.isEdicoesMesmoMesAnosAnterioresValidas(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes)) {
-					
-					/*
-					Calendar calPE = Calendar.getInstance();
-					calPE.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
-					int mesProdutoEdicao = calPE.get(Calendar.MONTH);
-					int anoProdutoEdicao = calPE.get(Calendar.YEAR);
+			List<ProdutoEdicaoEstudo> edicoesVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudo);
+			if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
 
-					edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
-					
-					int anoEncontrado = 0;
-					
-					for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(produtoEdicao.getDataLancamento());
-						int mes = cal.get(Calendar.MONTH);
-						
-						if(mes == mesProdutoEdicao) {
-							anoEncontrado = cal.get(Calendar.YEAR);
-						}
-					}
-					
-					List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
-							, ((anoProdutoEdicao - anoEncontrado) == 1) ? 
-									estudoAlgoritmoService.getDatasPenultimoVeraneio(estudo.getProdutoEdicaoEstudo())
-									: estudoAlgoritmoService.getDatasUltimoVeraneio(estudo.getProdutoEdicaoEstudo()));
-					*/
-					
-					List<ProdutoEdicaoEstudo> edicoesVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudo);
-					if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
-						
-						edicoes.addAll(edicoesVeraneio); 
-					}
-					
-					edicoesVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudo);
-					if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
-						
-						edicoes.addAll(edicoesVeraneio); 
-					}
-					
-					//edicoesComplementares = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
-					//		, estudoAlgoritmoService.getDatasUltimoVeraneio(estudo.getProdutoEdicaoEstudo()));
-					
-				//}
-				
-				//edicoes = extrairEdicoesMesmoMesAnosAnteriores(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), edicoes);
-				
-				for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
-					produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
+				edicoes.addAll(edicoesVeraneio); 
+			}
+
+			edicoesVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudo);
+			if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
+
+				edicoes.addAll(edicoesVeraneio); 
+			}
+
+			for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
+				produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
+			}
+
+			if(edicoes.isEmpty()) {
+
+				List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
+				edicoesComplementares = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesComplementares, estudo);
+
+				for(ProdutoEdicaoEstudo pee : edicoesComplementares) {
+					edicoes.add(pee);
 				}
-				
-				if(edicoes.isEmpty()) {
-					
-					List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
-					edicoesComplementares = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesComplementares, estudo);
-					
-					for(ProdutoEdicaoEstudo pee : edicoesComplementares) {
-						edicoes.add(pee);
-					}
-					
-				} else if(edicoes.size() < NUM_MAX_EDICOES_BASES) {
-					
-					List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
-					//.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
-					//, estudoAlgoritmoService.getDatasPeriodoVeraneio(estudo.getProdutoEdicaoEstudo()));
-					
-					edicoesComplementares = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesComplementares, estudo);
-					
-					if(NUM_MAX_EDICOES_BASES - edicoes.size() == 1 && edicoesComplementares.size() > 1) {
+
+			} else if(edicoes.size() < NUM_MAX_EDICOES_BASES) {
+
+				List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
+
+				edicoesComplementares = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesComplementares, estudo);
+
+				if(NUM_MAX_EDICOES_BASES - edicoes.size() == 1 && edicoesComplementares.size() > 1) {
+					edicoes.add(edicoesComplementares.get(1));
+				} else if(NUM_MAX_EDICOES_BASES - edicoes.size() >= NUM_MAX_EDICOES_BASES_COMPLEMENTARES) {
+
+					if(edicoesComplementares.size() == 2) {
+
+						edicoes.add(edicoesComplementares.get(0));
+					} else if(edicoesComplementares.size() > 2) {
+
+						edicoes.add(edicoesComplementares.get(0));
 						edicoes.add(edicoesComplementares.get(1));
-					} else if(NUM_MAX_EDICOES_BASES - edicoes.size() >= NUM_MAX_EDICOES_BASES_COMPLEMENTARES) {
-						
-						if(edicoesComplementares.size() == 2) {
-							
-							edicoes.add(edicoesComplementares.get(0));
-						} else if(edicoesComplementares.size() > 2) {
-							
-							edicoes.add(edicoesComplementares.get(0));
-							edicoes.add(edicoesComplementares.get(1));
-						}
 					}
-					
 				}
-				
-			//}
-			
+
+			}
+
 			edicoes = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoes, estudo);
 		} else {
-			
+
 			edicoes = estudoAlgoritmoService.buscaEdicoesAnosAnterioresSaidaVeraneio(estudo.getProdutoEdicaoEstudo());
 			edicoes = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoes, estudo);			
 		}
-		
-		// copia lista para não afetar o loop após modificações.
-		//List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>(estudo.getEdicoesBase());
 
-		/*
-		for (ProdutoEdicaoEstudo produtoEdicao : edicoes) {
-			if (validaPeriodoVeraneio(produtoEdicao.getDataLancamento())) {
-				produtoEdicao.setIndicePeso(BigDecimal.valueOf(2));
-				//adicionarEdicoesAnterioresAoEstudo(produtoEdicao, estudo);
-			} else {
-				//adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(produtoEdicao, estudo);
-			}
-		}
-		*/
-		
 		estudo.setEdicoesBase(new LinkedList<ProdutoEdicaoEstudo>(edicoes));
 
 	}
