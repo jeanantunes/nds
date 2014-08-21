@@ -571,9 +571,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
                     tiposDiferenca.add(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA);
                     tiposDiferenca.add(TipoDiferenca.GANHO_EM);
                 break;
-    		    case AJUSTE_REPARTE_FALTA_COTA:
-                    tiposDiferenca.add(TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA);
-                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO);
+    		    case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+    		        tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO);
+    		        tiposDiferenca.add(TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA);
                     tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO);
                     tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR);
                     tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS);
@@ -923,6 +923,62 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 												   TipoDiferenca.SOBRA_EM.name(),
 												   TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(),
 												   TipoDiferenca.GANHO_EM.name()));
+		
+		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(final Date dataFechamento) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		
+		sql.append(" coalesce(sum( if(diferenca_.TIPO_DIFERENCA IN ('SOBRA_EM','SOBRA_EM_DIRECIONADA_COTA','GANHO_EM') ");
+		sql.append(" 				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA ");
+		sql.append(" 				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA*-1) ");  
+		sql.append(" 		  ),0) as valor  ");
+		
+		sql.append(" from DIFERENCA diferenca_ ");
+		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
+	    
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao ");
+		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
+	    
+		sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
+		sql.append("		select distinct produtoEdicao.ID "); 
+		sql.append("		from EXPEDICAO expedicaoProduto ");
+		sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+		sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+		sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+		sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+		sql.append("		and   lancamentoProduto.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
+		sql.append("		and   produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		
+		sql.append(" ) ");
+		sql.append(" and diferenca_.id in ( ");
+		sql.append("	select  distinct rateioDiferencaCota.DIFERENCA_ID from  RATEIO_DIFERENCA rateioDiferencaCota "); 
+		sql.append(" ) ");        
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataFechamento);
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameterList("tiposDiferenca", Arrays.asList( 
+												   TipoDiferenca.SOBRA_EM.name(),
+												   TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.GANHO_EM.name(),
+												   TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.FALTA_EM.name(),
+												   TipoDiferenca.PERDA_EM.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS.name()));
 		
 		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
 		

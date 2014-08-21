@@ -680,8 +680,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         resumoConsignado.setValorEntradas(valorCE.add(resumoConsignado.getValorOutrosValoresEntrada()));
         
        //Valores de Saida no consignado do Distribuidor
+        
         BigDecimal valorExpedido = Util.nvl(
         		movimentoEstoqueRepository.obterSaldoDeReparteExpedido(dataFechamento),BigDecimal.ZERO);
+        
+        valorExpedido = valorExpedido.add(Util.nvl(
+                diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
         
         BigDecimal valorDiferencasSaida =  Util.nvl(
         		diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
