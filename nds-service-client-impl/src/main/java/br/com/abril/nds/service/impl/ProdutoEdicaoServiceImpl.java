@@ -616,18 +616,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
         }
+            
+        final Usuario usuario = usuarioService.getUsuarioLogado();
         
-        if ((!produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE)
-                || dto.getModoTela().equals(ModoTela.REDISTRIBUICAO)) ||  istrac29) {
+        lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+        
+        if(dto.isParcial()) {
             
-            final Usuario usuario = usuarioService.getUsuarioLogado();
-            
-            lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
-            
-            if(dto.isParcial()) {
-                
-                this.salvarLancamentoParcial(dto, produtoEdicao,usuario, indNovoProdutoEdicao, lancamento);
-            }
+            this.salvarLancamentoParcial(dto, produtoEdicao,usuario, indNovoProdutoEdicao, lancamento);
         }
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);

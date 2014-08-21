@@ -74,5 +74,12 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	 * @return List<ChamadaEncalhe>
 	 */
 	List<ChamadaEncalhe> obterChamadasEncalheLancamentos(Set<Long> idsLancamento, Boolean fechado);
+
+	/**
+	 * Remove chamadas de Encalhe por lista de ID da chamada de encalhe
+	 * 
+	 * @param ids
+	 */
+	void removerChamadaEncalhePorIds(List<Long> ids);
 	
 }

@@ -1276,5 +1276,35 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    
 	    return (Date) criteria.uniqueResult();
 	}
-	
+
+	/**
+	 * Remove chamadas de Encalhe por lista de ID da chamada de encalhe
+	 * 
+	 * @param ids
+	 */
+	@Override
+	public void removerChamadaEncalhePorIds(List<Long> ids) {
+		
+		
+		String sqlCel  = "DELETE FROM CHAMADA_ENCALHE_LANCAMENTO WHERE CHAMADA_ENCALHE_ID in (:ids)" ;
+			
+		Query querySqlCel = getSession().createSQLQuery(sqlCel);
+			
+		querySqlCel.setParameterList("ids", ids);	
+			
+		querySqlCel.executeUpdate();
+		
+		
+        String sqlCe  = "DELETE FROM CHAMADA_ENCALHE WHERE id in (:ids)" ;
+		
+		Query querySqlCe = getSession().createSQLQuery(sqlCe);
+		
+		querySqlCe.setParameterList("ids", ids);	
+		
+		querySqlCe.executeUpdate();
+		
+		
+		getSession().flush();
+		
+	}
 }
