@@ -203,6 +203,7 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaFisica.getNome());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaFisica.getEmail());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaFisica.getId());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual("");
 
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
