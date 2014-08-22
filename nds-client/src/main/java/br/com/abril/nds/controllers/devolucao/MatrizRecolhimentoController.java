@@ -268,7 +268,7 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void confirmar(List<Date> datasConfirmadas) {
         
-        this.bloquearMatrizRecolhimento();
+        this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -305,8 +305,6 @@ public class MatrizRecolhimentoController extends BaseController {
                 .from(new ValidacaoVO(TipoMensagem.SUCCESS,
                         "Balanceamento da matriz de recolhimento confirmado com sucesso!"), "result").recursive()
                 .serialize();
-        
-        desbloquearMatrizRecolhimento(this.httpSession.getServletContext(), usuario.getLogin());
     }
     
     private void validarDatasBalanceamentoMatriz(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
@@ -462,7 +460,7 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void salvar() {
         
-        this.bloquearMatrizRecolhimento();
+        this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -478,8 +476,6 @@ public class MatrizRecolhimentoController extends BaseController {
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de recolhimento salvo com sucesso!"),
                 Constantes.PARAM_MSGS).recursive().serialize();
-        
-        desbloquearMatrizRecolhimento(this.httpSession.getServletContext(), usuario.getLogin());
     }
     
     @Post
@@ -550,6 +546,8 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void voltarConfiguracaoOriginal() {
         
+        this.verificarBloqueioMatrizRecolhimento();
+        
         this.validarDataConfirmacaoConfiguracaoInicial();
         
         FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -575,7 +573,7 @@ public class MatrizRecolhimentoController extends BaseController {
     public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
             String novaDataFormatada, String dataAntigaFormatada, boolean selecionarTodos) {
         
-        this.bloquearMatrizRecolhimento();
+        this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -609,7 +607,7 @@ public class MatrizRecolhimentoController extends BaseController {
     public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoFormatadoVO produtoRecolhimento,
             String dataAntigaFormatada) {
         
-        this.bloquearMatrizRecolhimento();
+        this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -1765,38 +1763,6 @@ public class MatrizRecolhimentoController extends BaseController {
         this.result.use(Results.json()).from(datasConfirmadas, "result").serialize();
     }
     
-    @Get
-    public void obterDatasConfirmadasReabertura() {
-        
-        List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
-        
-        List<String> datasConfirmadasReabertura = new ArrayList<>();
-        
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        Date data = new Date();
-        
-        for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
-            
-            try {
-                
-                data = format.parse(confirmacaoVO.getMensagem());
-                
-            } catch (ParseException ex) {
-                
-            }
-            
-            if (confirmacaoVO.isConfirmado()) {
-                
-                if (this.distribuidorService.obterDataOperacaoDistribuidor().before(data)) {
-                    
-                    datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
-                }
-            }
-        }
-        
-        this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
-    }
-    
     @Post
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void obterDatasConfirmadasReaberturaPost() {
@@ -1832,6 +1798,8 @@ public class MatrizRecolhimentoController extends BaseController {
     
     @Post
     public void reabrirMatriz(List<Date> datasReabertura) {
+        
+        this.verificarBloqueioMatrizRecolhimento();
         
         if (datasReabertura == null || datasReabertura.isEmpty()) {
             
@@ -2045,7 +2013,15 @@ public class MatrizRecolhimentoController extends BaseController {
         return listaProdutoRecolhimentoFormatadoVO;
     }
     
-    private void bloquearMatrizRecolhimento() {
+    @Post
+    public void verificarBloqueioMatrizRecolhimentoPost() {
+        
+        this.verificarBloqueioMatrizRecolhimento();
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    public void verificarBloqueioMatrizRecolhimento() {
         
         String loginUsuarioContext = 
             (String) this.httpSession.getServletContext().getAttribute(
@@ -2058,12 +2034,32 @@ public class MatrizRecolhimentoController extends BaseController {
                 
             throw new ValidacaoException(
                 new ValidacaoVO(TipoMensagem.WARNING, 
-                    "A matriz de recolhimento já está em processamento pelo usuário [" 
-                        + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]."));
+                    "A matriz de recolhimento está bloqueada pelo usuário [" 
+                        + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]. Somente será possível realizar consultas na matriz."));
         }
+    }
+    
+    @Post
+    public void bloquearMatrizRecolhimento() {
+        
+        this.verificarBloqueioMatrizRecolhimento();
+        
+        String usuario = super.getUsuarioLogado().getLogin();
         
         this.httpSession.getServletContext().setAttribute(
             TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE, usuario);
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    @Post
+    public void desbloquearMatrizRecolhimentoPost() {
+        
+        Usuario usuario = getUsuarioLogado();
+        
+        desbloquearMatrizRecolhimento(this.httpSession.getServletContext(), usuario.getLogin());
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
     }
     
     public static void desbloquearMatrizRecolhimento(ServletContext servletContext, String usuario) {

@@ -361,11 +361,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		((SQLQuery) query).addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
 
-//		if (filtro.getPaginacao() != null) {
-//			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-//			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-//		}
-		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroRankingSegmentoDTO.class));
 		
 		return query.list();

@@ -1,5 +1,6 @@
 package br.com.abril.nds.client.log;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,7 +29,7 @@ public class LogFuncionalAspect {
 		
 		Class clazz = joinPoint.getTarget().getClass();
 		
-		LogFuncionalUtil.logar(logFuncional.value(),StatusLog.INCIADO,nomeUsuario, clazz);
+		LogFuncionalUtil.logar(this.extrairFuncionalidade(logFuncional, clazz),this.extrairMetodo(joinPoint),StatusLog.INCIADO,nomeUsuario, clazz);
 		
 		StopWatch stopWatch = new StopWatch();
 		
@@ -42,10 +43,24 @@ public class LogFuncionalAspect {
 			
 			stopWatch.stop();
 			
-			LogFuncionalUtil.logar(logFuncional.value(),StatusLog.FINALIZADO,nomeUsuario,clazz,stopWatch.getTotalTimeMillis());
+			LogFuncionalUtil.logar(this.extrairFuncionalidade(logFuncional, clazz),this.extrairMetodo(joinPoint),StatusLog.FINALIZADO,nomeUsuario,clazz,stopWatch.getTotalTimeMillis());
 		}
 		
 		return retVal;
 	}
 	
+	private String extrairMetodo(JoinPoint joinPoint) {
+		
+		return joinPoint.getSignature().getDeclaringTypeName() + "#" + joinPoint.getSignature().getName();
+	}
+	
+	private String extrairFuncionalidade(LogFuncional logFuncional, Class<?> clazz) {
+		
+		if (logFuncional != null && !logFuncional.value().isEmpty()) {
+
+			return logFuncional.value();
+		}
+		
+		return clazz.getSimpleName();
+	}	
 }
