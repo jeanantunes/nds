@@ -29,15 +29,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.util.DateUtil;
 
 /**
  * @author T30541
@@ -516,34 +513,7 @@ public class Lancamento implements Serializable {
 			return;
 		}
 
-		this.validarPEB();
-
 		this.periodoLancamentoParcial.reajustarProximoLancamentoParcial(proximaDataLancamento);
-	}
-
-	/**
-	 * Valida a PEB do lançamento, que não poder ser menor que {@value #PEB_MINIMA_LANCAMENTO} dias.
-	 */
-	public void validarPEB() {
-		
-		if (DateUtil.obterDiferencaDias(this.dataLancamentoDistribuidor, this.dataRecolhimentoDistribuidor) < PEB_MINIMA_LANCAMENTO) {
-			
-			List<String> mensagens = new ArrayList<String>();
-			
-			mensagens.add(String.format(
-				"Produto %s Cod.:%s / Ed.:%s inconsistente.",
-				this.produtoEdicao.getProduto().getNome(),
-				this.produtoEdicao.getProduto().getCodigo(),
-				this.produtoEdicao.getNumeroEdicao()
-			)); 
-			
-			mensagens.add(String.format(
-				"Não podem haver períodos com peb menor que %s dias.", 
-				PEB_MINIMA_LANCAMENTO)
-			);
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,mensagens);
-		}
 	}
 
 	public boolean isRecolhido() {
