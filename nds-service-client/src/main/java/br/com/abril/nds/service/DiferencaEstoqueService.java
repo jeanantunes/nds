@@ -2,7 +2,6 @@ package br.com.abril.nds.service;
 
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,7 +123,7 @@ public interface DiferencaEstoqueService {
 	
 	void validarDadosParaImpressaoNaData(String dataMovimentoFormatada);
 
-	HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(
+	Set<Diferenca> verificarDiferencasIguais(
 			Set<Diferenca> listaDiferencas,
 			Diferenca diferenca);
 
