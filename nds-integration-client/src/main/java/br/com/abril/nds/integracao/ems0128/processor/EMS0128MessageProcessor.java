@@ -68,11 +68,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
-						
-		view.key("EMS0128");
+		
+		view.startKey(new Object[] {"EMS0128"});
+		view.endKey("EMS0128", "");
+
 		view.includeDocs(true);
 		try {
-			ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+			ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, EMS0128Input.class);
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 				
 				EMS0128Input doc = (EMS0128Input) row.getDoc();

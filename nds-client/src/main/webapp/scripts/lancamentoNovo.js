@@ -8,6 +8,12 @@ var lancamentoNovoController = $.extend(true, {
 	houveAlteracaoLancamentos:false,
 
 	init : function () {
+
+		$("#linkIncluirNovaDiferenca",lancamentoNovoController.workspace).click(function(e){
+			e.preventDefault();
+			lancamentoNovoController.incluirNovo();
+		});
+		
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -105,7 +111,6 @@ var lancamentoNovoController = $.extend(true, {
 			height : 180,
 			disableSelect: true
 		});
-		
 	},
 	
 	resetarCamposTela: function(){
@@ -647,7 +652,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 
 	cadastrarNovasDiferencas : function(isBotaoIncluirNovo) {
-		
+	
 		var lancamentoPorCota = $('#checkboxLancCota', lancamentoNovoController.workspace).attr('checked') ? true : false;
 		
 		if (lancamentoNovoController.redirecionarProdutosEstoque) {

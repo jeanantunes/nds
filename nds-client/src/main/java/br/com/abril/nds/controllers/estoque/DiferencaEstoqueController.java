@@ -669,18 +669,20 @@ public class DiferencaEstoqueController extends BaseController {
             final List<RateioCotaVO> rateioCotas,
             final TipoEstoque tipoEstoque,
             final String pacotePadrao) {
-        if(!direcionadoParaEstoque) {
+        
+    	if(!direcionadoParaEstoque) {
             
             validarTipoDiferenca(tipoDiferenca, diferenca, qntReparteRateio, TipoDirecionamentoDiferenca.COTA);
             
             DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca, codigoProduto, edicaoProduto, diferenca, reparteAtual, tipoEstoque, pacotePadrao);
             diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
+           
+			final Long idDiferenca = incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
             
-            final Long idDiferenca = incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
-            
-            final Set<DiferencaVO> listaNovasDiferencasVO = (HashSet<DiferencaVO>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+			final Set<DiferencaVO> listaNovasDiferencasVO = (HashSet<DiferencaVO>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
             
             diferencaVO = diferencaEstoqueService.verificarDiferencaComListaSessao(listaNovasDiferencasVO, diferencaVO, idDiferenca);
+            
             try {
                 
                 cadastrarRateioCotas(rateioCotas, diferencaVO);
@@ -950,6 +952,7 @@ public class DiferencaEstoqueController extends BaseController {
 TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
     }
     
+    
     @SuppressWarnings("unchecked")
     private Long incluirDiferencaEstoque(final DiferencaVO diferencaVO, final TipoDiferenca tipoDiferenca) {
         
@@ -960,11 +963,6 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         this.validarProdutoDuplicadoLancamento(diferencasNovas);
         
         Set<DiferencaVO> listaNovasDiferencasVO = (HashSet<DiferencaVO>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
-        
-        
-        /*
-         * Lista VO
-         */
         
         if (listaNovasDiferencasVO == null) {
             
@@ -994,24 +992,14 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         final Diferenca diferenca = this.obterDiferenca(diferencaVO, id, dataMovimentacao);
         
         listaDiferencas.removeAll(Collections.singleton(null));
-        final Map<Long, Set<Diferenca>> mapaLongListaDiferencas = diferencaEstoqueService.verificarDiferencasIguais(
-                listaDiferencas, diferenca);
-        final Set<Entry<Long, Set<Diferenca>>> entrySet = mapaLongListaDiferencas.entrySet();
-        final Entry<Long, Set<Diferenca>> iterator = entrySet.iterator().next();
         
-        listaDiferencas = iterator.getValue();
-        final Long idListaUpdate = iterator.getKey();
-        
+        listaDiferencas = diferencaEstoqueService.verificarDiferencasIguais(listaDiferencas, diferenca);
         
         httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
         
         httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
         
-        if(idListaUpdate != null) {
-            return idListaUpdate;
-        } else {
-            return diferenca.getId();
-        }
+        return diferenca.getId();
     }
     
     private <E> Long gerarIdentificadorDiferenca(final List<E> listaParaOperacao){
