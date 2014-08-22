@@ -1523,9 +1523,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 							
 								$("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val(true);
 								
-								balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
-								
 								$("#dialog-bloqueio-matriz", balanceamentoRecolhimentoController.workspace).dialog("close");
+								
+								balanceamentoRecolhimentoController.desbloquearMatrizRecolhimento(
+									function() {
+										balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
+									}
+								);
 								
 							}, null
 					);
@@ -1533,7 +1537,22 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			},
 			form: $("#dialog-bloqueio-matriz", balanceamentoRecolhimentoController.workspace).parents("form")			
 		});
-	}
+	},
+	
+	desbloquearMatrizRecolhimento : function(funcao) {
+
+		$.postJSON(
+				contextPath + "/devolucao/balanceamentoMatriz/desbloquearMatrizRecolhimentoPost",
+				null,
+				function(result) {
+					
+					if (funcao) {
+						
+						funcao();
+					}
+				}
+		);
+	},
 
 }, BaseController);
 
