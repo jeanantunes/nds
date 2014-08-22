@@ -27,8 +27,8 @@ import br.com.abril.nds.dto.ChamadaEncalheImpressaoWrapper;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
+import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
-import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -726,6 +726,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
+		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
+		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
 		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
@@ -737,7 +739,13 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		for(CotaEmissaoDTO dto : lista) {
 			
 			Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());
-
+			
+			dto.setEmissorNome(distribuidor.getRazaoSocial());
+			dto.setEmissorInscricaoEstadual(distribuidor.getInscricaoEstatual());
+			dto.setEmissorCEP(distribuidor.getCep());
+			dto.setEmissorMunicipio(distribuidor.getCidade());
+			// dto.setEmissorNumero(distribuidor.getEndereco());
+			
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 
 			if(endereco != null) {

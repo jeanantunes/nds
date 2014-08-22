@@ -100,13 +100,13 @@ var EmissaoCEController = $.extend(true, {
 		
 		var data = this.getFiltro();
 		
-		$.postJSON(
-				contextPath + "/emissaoCE/imprimirCENovo", data,
-				function(result) { 
-					
-				},
-				null
-		);
+		var path = contextPath + "/emissaoCE/imprimirCENovo";
+		
+		$.fileDownload(path, {
+			httpMethod : "POST",
+			data : data
+		});
+		
 	},
 	
 	

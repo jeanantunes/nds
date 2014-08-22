@@ -15,7 +15,6 @@ public class ChamadaEncalheImpressaoWrapper implements Serializable {
 	public ChamadaEncalheImpressaoWrapper(CotaEmissaoDTO cotaEmissao) {
 		
 		emissaoCEImpressao = new ArrayList<CotaEmissaoDTO>();
-		
 		emissaoCEImpressao.add(cotaEmissao);
 		
 	}

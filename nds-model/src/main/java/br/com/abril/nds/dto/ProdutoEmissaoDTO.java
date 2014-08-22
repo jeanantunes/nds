@@ -50,9 +50,15 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private BigDecimal vlrDesconto;
 	
+	private BigDecimal valorUnitarioProduto;
+	
+	private BigDecimal valorTotalProduto;
+	
 	private BigInteger vendido;
 	
 	private String vlrVendido;
+	
+	private Integer quantidadeReparte;
 	
 	/**
 	 * A flag abaixo indica se a instância
@@ -340,5 +346,29 @@ public class ProdutoEmissaoDTO implements Serializable{
 
 	public void setConfereciaRealizada(Boolean confereciaRealizada) {
 		this.confereciaRealizada = confereciaRealizada;
+	}
+
+	public Integer getQuantidadeReparte() {
+		return quantidadeReparte;
+	}
+
+	public void setQuantidadeReparte(Integer quantidadeReparte) {
+		this.quantidadeReparte = quantidadeReparte;
+	}
+
+	public BigDecimal getValorUnitarioProduto() {
+		return valorUnitarioProduto;
+	}
+
+	public void setValorUnitarioProduto(BigDecimal valorUnitarioProduto) {
+		this.valorUnitarioProduto = valorUnitarioProduto;
+	}
+
+	public BigDecimal getValorTotalProduto() {
+		return valorTotalProduto;
+	}
+
+	public void setValorTotalProduto(BigDecimal valorTotalProduto) {
+		this.valorTotalProduto = valorTotalProduto;
 	}
 }

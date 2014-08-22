@@ -23,6 +23,7 @@ var MANTER_COTA = $.extend(true, {
     modoTela: null,
     idHistorico:"",
     resultCotaLength:0,
+    dialogCotaAberto:false,
     
     init: function() {
     	
@@ -455,7 +456,7 @@ var MANTER_COTA = $.extend(true, {
         );
     },
 
-    validarEmail : function (idInput)	{
+    validarEmail : function (idInput) {
         er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
 
         if($(idInput, this.workspace).val().length == 0){
@@ -464,7 +465,7 @@ var MANTER_COTA = $.extend(true, {
 
         if(!er.exec($(idInput, this.workspace).val())) {
             $(idInput, this.workspace).focus();
-            exibirMensagemDialog("WARNING",["E-mail inv&aacutelido."],"");
+            exibirMensagemDialog("WARNING",["E-mail inválido."],"");
         }
     },
 

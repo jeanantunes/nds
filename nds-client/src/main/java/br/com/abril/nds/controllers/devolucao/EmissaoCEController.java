@@ -343,12 +343,12 @@ public class EmissaoCEController extends BaseController {
 	}
 
     public void imprimirCENovo(FiltroEmissaoCE filtro) {
-         
+        
 	    byte[] notasGeradas = null;
 	    
 	    try {
             
-            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);; 
+            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
     
             if (notasGeradas != null) {
     
