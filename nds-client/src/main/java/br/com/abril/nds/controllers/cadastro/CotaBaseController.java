@@ -302,7 +302,7 @@ public class CotaBaseController extends BaseController {
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		if (cota == null){
+		if (cota == null) {
 		    
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada");
 		}
@@ -315,21 +315,20 @@ public class CotaBaseController extends BaseController {
 		
 		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);
 		
-		if(filtro == null){
+		if(filtro == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não pode ser adicionada!");
 		}
 		
 		else if(filtro.getTpDistribCota() != null && filtro.getTpDistribCota().getDescTipoDistribuicaoCota() != null 
-				&& filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+				&& filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
 		}
 		
-		else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
+		else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + filtro.getNumeroCota() + "\" não pode ser adicionada!");
-		}else{
+		} else {
 			this.result.use(Results.json()).from(filtro, "result").recursive().serialize();			
 		}
-		
 		
 	}
 
@@ -342,7 +341,6 @@ public class CotaBaseController extends BaseController {
 		Cota cotaParaDesativar = this.cotaService.obterPorId(idCotaBase);
 		
 		cotaBaseCotaService.desativarCotaBase(cotaBase, cotaParaDesativar);			
-		
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota excluida com sucesso."), "result").recursive().serialize();
 		

@@ -548,6 +548,7 @@ var MANTER_COTA = $.extend(true, {
                     if (MANTER_COTA.isModoTelaCadastroCota()) {
                         if (!MANTER_COTA.fecharModalCadastroCota && !confirmado) {
                             MANTER_COTA.cancelarCadastro();
+                            $('#emailNFCPF').removeAttr('onblur');
                         }
 
                         return MANTER_COTA.fecharModalCadastroCota || confirmado;
@@ -618,16 +619,18 @@ var MANTER_COTA = $.extend(true, {
                 "Confirmar": function() {
 
                     MANTER_COTA.fecharModalCadastroCota = true;
-
+                    
+                    $('#emailNFCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNFCPF\')');
                     $("#dialog-close", this.workspace).dialog("close");
                     $("#dialog-cancelar-cadastro-cota", this.workspace).dialog("close");
                     $("#dialog-cota", this.workspace).dialog("close");
                     if (acaoPosCancelar) {
                         acaoPosCancelar();
                     }
-
                 },
                 "Cancelar": function() {
+                	
+                	$('#emailNFCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNFCPF\')');
                     MANTER_COTA.fecharModalCadastroCota = false;
                     $(this, this.workspace).dialog("close");
                 }
