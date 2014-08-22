@@ -44,7 +44,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     	
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
         	
-        	if(estudo.isPracaVeraneio()) { 
+        	if(estudo.isPracaVeraneio() && !estudo.getProdutoEdicaoEstudo().isColecao()) { 
         		
         		baseParaVeraneio.executar(estudo);
         		

@@ -214,7 +214,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    }
     		}
     		
-    		if(estudoTemp.isPracaVeraneio()) {
+    		if(estudoTemp.isPracaVeraneio() 
+    				&& estudoAlgoritmoService.validaPeriodoVeraneio(estudoTemp.getProdutoEdicaoEstudo().getDataLancamento())
+    				&& !estudoTemp.getProdutoEdicaoEstudo().isColecao()) {
+    			
 	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
 	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
 	        	
