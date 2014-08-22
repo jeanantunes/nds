@@ -993,17 +993,19 @@ $(".lstComponentesGrid").flexigrid({
 $(".dadosBasesGrid").flexigrid({
 	//url : '../xml/dadosDistribB-xml.xml',
 	dataType : 'json',
-	colModel : [{display: 'Código',     name: 'codigoProduto',   width: 45, sortable: true, align: 'left'},
+	colModel : [{display: '',           name: 'select',          width: 15, sortable: true, align: 'center'},
+	    	    {display: 'Peso',       name: 'pesoInput',       width: 30, sortable: true, align: 'center'},
+	    	    {display: 'Código',     name: 'codigoProduto',   width: 45, sortable: true, align: 'left'},
 	    	    {display: 'Produto',    name: 'nome',            width: 70, sortable: true, align: 'left'},
-	    	    {display: 'Edição',     name: 'numeroEdicao',    width: 35, sortable: true, align: 'left'},
+	    	    {display: 'Edição',     name: 'numeroEdicao',    width: 30, sortable: true, align: 'left'},
 	    	    {display: 'Classific.', name: 'classificacao',   width: 60, sortable: true, align: 'left'},
-	    	    {display: 'Período',    name: 'periodo',         width: 40, sortable: true, align: 'center'},
+	    	    {display: 'Per.',       name: 'periodo',         width: 20, sortable: true, align: 'center'},
+	    	    {display: 'Data Lcto.', name: 'dataLancamentoFormatada',  width: 60, sortable: true, align: 'right'},
 	    	    {display: 'Status',     name: 'status',          width: 55, sortable: true, align: 'left'},
 	    	    {display: 'Reparte',    name: 'reparte',         width: 35, sortable: true, align: 'center'},
 	    	    {display: 'Venda',      name: 'venda',           width: 35, sortable: true, align: 'center' },
-	    	    {display: 'Venda %',    name: 'percentualVenda', width: 40, sortable: true, align: 'right'},
-	    	    {display: 'Peso',       name: 'pesoInput',       width: 40, sortable: true, align: 'center'},
-	    	    {display: '',           name: 'select',          width: 20, sortable: true, align: 'center'}],
+	    	    {display: 'Venda %',    name: 'percentualVenda', width: 40, sortable: true, align: 'right'}
+	    	    ],
 	width : 610,
 	height : 240
 });

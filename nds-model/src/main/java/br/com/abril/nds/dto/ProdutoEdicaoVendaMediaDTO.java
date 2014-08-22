@@ -27,6 +27,7 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
     
     private BigDecimal percentualVenda;
 
+    private BigDecimal indicePeso;
 
     public String getNome() {
 	return nome;
@@ -156,6 +157,14 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
 	public void setIdClassificacao(BigInteger idClassificacao) {
 		this.idClassificacao = idClassificacao;
+	}
+
+	public BigDecimal getIndicePeso() {
+		return indicePeso;
+	}
+
+	public void setIndicePeso(BigDecimal indicePeso) {
+		this.indicePeso = indicePeso;
 	}
 	
 }

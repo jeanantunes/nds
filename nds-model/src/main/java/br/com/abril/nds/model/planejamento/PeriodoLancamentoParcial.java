@@ -256,12 +256,10 @@ public class PeriodoLancamentoParcial implements Serializable {
 			lancamento.setDataLancamentoPrevista(novaDataLancamento);
 			lancamento.setDataLancamentoDistribuidor(novaDataLancamento);
 
-			lancamento.validarPEB();
-
 			proximoPeriodo.validarDataLancamentoRedistribuicoesPeriodo();
 		}		
 	}
-
+	
 	/**
 	 * Valida se há alguma redistribuição cadastrada neste período com uma data igual ou anterior à nova data de lançamento.
 	 */

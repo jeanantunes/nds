@@ -119,7 +119,7 @@
 		<form id="form-bloqueio-matriz">
 		<div id="dialog-bloqueio-matriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 
-			<p>Deseja bloquear para outros usuários a matriz de recolhimento para edição?</p>
+			<p>Deseja bloquear para outros usuários a Matriz de Recolhimento para edição?</p>
 
 		</div>
 		</form>

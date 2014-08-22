@@ -61,6 +61,7 @@ public class DefinicaoBasesDAO {
 	}
 
 	private List<ProdutoEdicaoEstudo> listaEdicoesAnosAnteriores(ProdutoEdicaoEstudo edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
+		
 		Map<String, Object> params = new HashMap<>();
 		params.put("CODIGO_PRODUTO", edicao.getProduto().getCodigo());
 		if (mesmoMes) {

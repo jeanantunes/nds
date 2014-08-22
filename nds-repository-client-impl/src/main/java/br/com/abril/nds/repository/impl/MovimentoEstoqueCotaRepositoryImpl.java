@@ -883,6 +883,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" left join CONTROLE_CONFERENCIA_ENCALHE_COTA  ");
         sql.append("                 on (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CONTROLE_CONFERENCIA_ENCALHE_COTA.ID ");
         sql.append("                 AND CONTROLE_CONFERENCIA_ENCALHE_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
+        sql.append("				 AND CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO between :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+        
+        if (filtro.getIdCota() != null) {
+        	
+        	sql.append(" AND CONTROLE_CONFERENCIA_ENCALHE_COTA.COTA_ID = :idCota ");
+        }
+        
         sql.append(" ) ");
         
         sql.append(" inner join COTA cota on cota.ID = MEC_REPARTE.COTA_ID ");
@@ -1059,19 +1066,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             subSqlVendaProduto.append(" and vp.ID_COTA = :idCota ");
         }
         
-        final StringBuilder subSqlEncalhe = new StringBuilder();
-        subSqlEncalhe.append(" select coalesce(sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE_INFORMADA, 0) ), 0) ");
-        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1 ");
-        subSqlEncalhe.append(" join CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC on ");
-        subSqlEncalhe.append("		(CCEC.ID = CONFERENCIA_ENCALHE_1.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID) ");
-        subSqlEncalhe.append(" where  ");
-        subSqlEncalhe.append(" CONFERENCIA_ENCALHE_1.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
-        subSqlEncalhe.append(" and CCEC.DATA_OPERACAO between :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+        final StringBuilder qtdeInformadaEncalhe = 
+        	new StringBuilder("coalesce(sum(COALESCE(CONFERENCIA_ENCALHE.QTDE_INFORMADA, 0)), 0)");
         
-        if (filtro.getIdCota() != null) {
-            
-            subSqlEncalhe.append(" and CCEC.COTA_ID = :idCota ");
-        }
+//        subSqlEncalhe.append(" select coalesce(sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE_INFORMADA, 0) ), 0) ");
+//        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1 ");
+//        subSqlEncalhe.append(" join CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC on ");
+//        subSqlEncalhe.append("		(CCEC.ID = CONFERENCIA_ENCALHE_1.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID) ");
+//        subSqlEncalhe.append(" where  ");
+//        subSqlEncalhe.append(" CONFERENCIA_ENCALHE_1.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+//        subSqlEncalhe.append(" and CCEC.DATA_OPERACAO between :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+//        
+//        if (filtro.getIdCota() != null) {
+//            
+//            subSqlEncalhe.append(" and CCEC.COTA_ID = :idCota ");
+//        }
         
         final StringBuilder subSqlValoresDesconto = new StringBuilder();
         
@@ -1079,7 +1088,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             
             subSqlValoresDesconto.append("    COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO, PRODUTO_EDICAO.PRECO_VENDA, 0) as precoComDesconto, ");
             subSqlValoresDesconto.append("	COALESCE(MEC_REPARTE.VALOR_DESCONTO, 0) as valorDesconto, ");
-            subSqlValoresDesconto.append("	( ( "+ subSqlEncalhe +") * COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO , PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valorComDesconto, ");
+            subSqlValoresDesconto.append("	( ( "+ qtdeInformadaEncalhe +") * COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO , PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valorComDesconto, ");
             
         } else {
             
@@ -1100,20 +1109,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR,PRODUTO_EDICAO.DESCONTO, 0) as valorDesconto, ");
             
             subSqlValoresDesconto.append("  (CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
-            subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+            subSqlValoresDesconto.append("	COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+            subSqlValoresDesconto.append("	(COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
             subSqlValoresDesconto.append("  COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100, 1)))");
             subSqlValoresDesconto.append("  WHEN DESCONTO.ID IS NOT NULL THEN  ( ");
-            subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+            subSqlValoresDesconto.append("	COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+            subSqlValoresDesconto.append("	(COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
             subSqlValoresDesconto.append("  COALESCE(DESCONTO.VALOR/100, 1)))");
             
             subSqlValoresDesconto.append("  WHEN PRODUTO_EDICAO.DESCONTO IS NOT NULL THEN  ( ");
-            subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+            subSqlValoresDesconto.append("	COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+            subSqlValoresDesconto.append("	(COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
             subSqlValoresDesconto.append("  COALESCE(PRODUTO_EDICAO.DESCONTO/100, 1)))");
             
-            subSqlValoresDesconto.append("  ELSE COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) END");
+            subSqlValoresDesconto.append("  ELSE COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) END");
             subSqlValoresDesconto.append("	) as valorComDesconto, ");
         }
         
@@ -1151,14 +1160,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(subSqlValoresDesconto);
             
             if (filtro.getIdCota() != null) {
-                sql.append("	( ( "+ subSqlEncalhe +") * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
+                sql.append("	( ( "+ qtdeInformadaEncalhe +") * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
             } else {
-                sql.append("	( ( "+ subSqlEncalhe +" ) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
+                sql.append("	( ( "+ qtdeInformadaEncalhe +" ) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
             }
             
             sql.append(" SUM(COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC_REPARTE.qtde*-1, MEC_REPARTE.qtde),0)) as reparte, ");
             
-            sql.append("( ( ").append(subSqlEncalhe).append(" ) - ( ").append(subSqlVendaProduto).append(") ) as encalhe, ");
+            sql.append("( ( ").append(qtdeInformadaEncalhe).append(" ) - ( ").append(subSqlVendaProduto).append(") ) as encalhe, ");
             
             sql.append("	FORNECEDOR.ID						as idFornecedor,		");
             

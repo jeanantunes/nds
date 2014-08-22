@@ -358,7 +358,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
 					$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", {idBox:$("#boxLogado").val()}, 
 						function(){
