@@ -396,14 +396,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
     	
     	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
-	
+
 		if ((resultadoPesquisa != null) && (resultadoPesquisa.size() > 0)) {
-		
+
 			List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 			if (selecionados == null) {
 			    selecionados = new ArrayList<>();
 			}
-		
+
 			if ((indexes != null) && (indexes.size() > 0)) {
 			    for (Integer index : indexes) {
 					if (index != null) {
@@ -414,7 +414,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 					}
 			    }
 			}
-			
+
 			session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 			result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
 		} else {

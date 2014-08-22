@@ -554,7 +554,7 @@ public List<ProdutoEdicaoEstudo> obterEdicoesPenultimoVeraneio(EstudoTransient e
 		}
 		
 		List<ProdutoEdicaoEstudo> edicoesComplementares = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(estudo.getProdutoEdicaoEstudo()
-				, this.getDatasPenultimoVeraneio(estudo.getProdutoEdicaoEstudo()));
+				, this.getDatasUltimoVeraneio(estudo.getProdutoEdicaoEstudo()));
 		
 		List<Date> dates = new ArrayList<Date>();
 		for(ProdutoEdicaoEstudo ed : edicoesComplementares) {
@@ -563,7 +563,7 @@ public List<ProdutoEdicaoEstudo> obterEdicoesPenultimoVeraneio(EstudoTransient e
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(estudo.getProdutoEdicaoEstudo().getDataLancamento());
-		cal.add(Calendar.YEAR, -2);
+		cal.add(Calendar.YEAR, -1);
 		
 		DateTime dataMaisProximaDT = extrairDataMaisProximaLancamento(new DateTime(estudo.getProdutoEdicaoEstudo().getDataLancamento()), cal.get(Calendar.YEAR), dates);
 		Date dataMaisProxima = (dataMaisProximaDT != null ? dataMaisProximaDT.toDate() : estudo.getProdutoEdicaoEstudo().getDataLancamento());
@@ -609,14 +609,20 @@ public List<ProdutoEdicaoEstudo> obterEdicoesPenultimoVeraneio(EstudoTransient e
 		DateTime dataMaisProximaPosterior = new DateTime(new TreeSet<Date>(datas).higher(cal.getTime()));
 		
 		DateTime dataMaisProxima = null;
-		if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) < 
-				Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
-				&& dataLancamentoProdutoEdicao.monthOfYear().equals(dataMaisProximaAnterior.monthOfYear())) {
-				
-			dataMaisProxima = dataMaisProximaAnterior;
-		} else {
+		if(new TreeSet<Date>(datas).contains(cal.getTime())) {
+			dataMaisProxima = new DateTime(cal.getTime());
+		}
+		if(dataMaisProxima == null) {
 			
-			dataMaisProxima = dataMaisProximaPosterior;
+			if(Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaAnterior.toDate().getTime()) <= 
+					Math.abs(dataLancamentoProdutoEdicao.toDate().getTime() - dataMaisProximaPosterior.toDate().getTime())
+					&& dataLancamentoProdutoEdicao.monthOfYear().equals(dataMaisProximaAnterior.monthOfYear())) {
+				
+				dataMaisProxima = dataMaisProximaAnterior;
+			} else {
+				
+				dataMaisProxima = dataMaisProximaPosterior;
+			}
 		}
 		
 		return dataMaisProxima;

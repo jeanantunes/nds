@@ -67,7 +67,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            pathTela + "/distribuicaoVendaMedia/existeBaseVeraneio", 
 	            null,
 	            function(result) {
-	            	if(result && !result.existeBaseVeraneio) {
+	            	if(result && !result.boolean) {
 	            		
 	            		exibirMensagem("WARNING", ["Não foram encontradas bases de veraneio."]);
 	            	}
