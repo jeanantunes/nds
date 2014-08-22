@@ -707,7 +707,7 @@ public class ProdutoEdicao implements Serializable {
 
 	@Override
 	public String toString() {
-		return produto.toString() + "-" + numeroEdicao.toString();
+		return (produto != null && numeroEdicao != null) ? produto.toString() + "-" + numeroEdicao.toString() : "";
 	}
 
 }
