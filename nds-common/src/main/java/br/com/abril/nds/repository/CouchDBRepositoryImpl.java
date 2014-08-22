@@ -3,8 +3,6 @@ package br.com.abril.nds.repository;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
