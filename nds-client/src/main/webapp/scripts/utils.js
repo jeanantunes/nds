@@ -740,12 +740,40 @@ var pageRefresh = {
 		
 		handler.off();
 		
-		$(document).unbind('keydown', disableShortcutRefresh);
+		//$(document).unbind('keydown', disableShortcutRefresh);
 		
-		window.onbeforeunload = null;
+		//window.onbeforeunload = null;
+		
+		window.onbeforeunload = function(e) {
+			
+			if(!reloadPage) {
+
+				$.ajax({
+					type: 'POST',
+					async: false,
+					url: contextPath + "/j_spring_security_logout",
+					data: ''
+				});
+			}
+		};
 		
 	}
 };
+
+document.onkeydown = fkey;
+document.onkeypress = fkey;
+document.onkeyup = fkey;
+
+var reloadPage = false;
+
+function fkey(e) {
+	e = e || window.event;
+	if( reloadPage ) return; 
+	
+	if (pressedF5(e) || pressedCtrlR(e)) {
+		reloadPage = true;
+	}
+}
 
 /**
  * Desabilita os atalhos para pageRefresh (F5 e Ctrl+R)
@@ -757,6 +785,8 @@ function disableShortcutRefresh(e) {
 	
 	if (pressedF5(e) || pressedCtrlR(e)) {
 		
+		reloadPage = true;
+		
 		e.returnValue = false;
 	    e.keyCode = 0;
 	    
@@ -766,16 +796,34 @@ function disableShortcutRefresh(e) {
 	    return false;
 	}
 	
-    function pressedF5(e) {
-    	return ((e.which || e.keyCode) == 116); 
-    };
-    
-    function pressedCtrlR(e) {
-    	
-    	if(navigator.platform == "MacIntel") return (handler.keys[82] && handler.keys[91]);
-    	return ((e.wich || e.keyCode) == 82 && (e.ctrlKey || window.event.ctrlKey));
-    };
 }
+
+function pressedF5(e) {
+	
+	var result = ((e.which || e.keyCode) == 116);
+	
+	reloadPage = result ? true : false;
+	
+	return result; 
+};
+
+function pressedCtrlR(e) {
+	
+	var result = false;
+	if(navigator.platform == "MacIntel") {
+		result = (handler.keys[82] && handler.keys[91]);
+		
+		reloadPage = result ? true : false;
+		
+		return result;
+	} 
+	
+	result = ((e.wich || e.keyCode) == 82 && (e.ctrlKey || window.event.ctrlKey));
+	
+	reloadPage = result ? true : false;
+	
+	return result;
+};
 
 function addTabWithPost(tabs, label, postResponse, blankPath) {
 	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
