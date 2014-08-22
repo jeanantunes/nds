@@ -2758,5 +2758,27 @@ public class LancamentoRepositoryImpl extends
     	
     	return (!query.list().isEmpty());
     }
-    
+
+	@Override
+	public boolean existemLancamentosConfirmados(Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(l.id) from lancamento l ");
+		sql.append(" where l.DATA_REC_DISTRIB = :dataRecolhimento ");
+		sql.append(" and l.STATUS in (:statusConfirmados) ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameterList("statusConfirmados", Arrays.asList(
+			StatusLancamento.BALANCEADO_RECOLHIMENTO.name(), 
+			StatusLancamento.EM_RECOLHIMENTO.name(), 
+			StatusLancamento.RECOLHIDO.name())
+		);
+		
+		BigInteger count = (BigInteger) query.uniqueResult();
+
+		return count != null && count.compareTo(BigInteger.ZERO) > 0;
+	}    
 }

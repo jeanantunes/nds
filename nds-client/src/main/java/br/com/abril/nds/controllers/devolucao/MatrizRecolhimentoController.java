@@ -2042,6 +2042,8 @@ public class MatrizRecolhimentoController extends BaseController {
     @Post
     public void bloquearMatrizRecolhimento() {
         
+        this.verificarBloqueioMatrizRecolhimento();
+        
         String usuario = super.getUsuarioLogado().getLogin();
         
         this.httpSession.getServletContext().setAttribute(
