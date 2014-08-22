@@ -638,5 +638,24 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
         
         return (Lancamento) query.uniqueResult();
     }
-	
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosParciais(Long idLancamentoParcial) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select l from ");
+		sql.append(" Lancamento l ");
+		sql.append(" where l.periodoLancamentoParcial.lancamentoParcial.id = :idLancamentoParcial ");
+		sql.append(" and l.tipoLancamento = :tipoLancamento ");
+		sql.append(" order by l.dataRecolhimentoDistribuidor asc ");
+
+		Query query = this.getSession().createQuery(sql.toString());
+		
+		query.setParameter("idLancamentoParcial", idLancamentoParcial);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
+
+		return query.list();
+	}	
 }
