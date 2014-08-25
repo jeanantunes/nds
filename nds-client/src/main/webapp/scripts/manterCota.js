@@ -548,6 +548,9 @@ var MANTER_COTA = $.extend(true, {
                         if (!MANTER_COTA.fecharModalCadastroCota && !confirmado) {
                             MANTER_COTA.cancelarCadastro();
                             $('#emailNFCPF').removeAttr('onblur');
+                            $('#emailNF').removeAttr('onblur');
+                            $('#email').removeAttr('onblur');
+                            $('#emailCPF').removeAttr('onblur');
                         }
 
                         return MANTER_COTA.fecharModalCadastroCota || confirmado;
@@ -619,7 +622,10 @@ var MANTER_COTA = $.extend(true, {
 
                     MANTER_COTA.fecharModalCadastroCota = true;
                     
+                    $('#email').attr('onblur','MANTER_COTA.validarEmail(\'#email\')');
+                    $('#emailCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailCPF\')');
                     $('#emailNFCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNFCPF\')');
+                    $('#emailNF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNF\')');
                     $("#dialog-close", this.workspace).dialog("close");
                     $("#dialog-cancelar-cadastro-cota", this.workspace).dialog("close");
                     $("#dialog-cota", this.workspace).dialog("close");
@@ -629,8 +635,11 @@ var MANTER_COTA = $.extend(true, {
                 },
                 "Cancelar": function() {
                 	
+                	$('#email').attr('onblur','MANTER_COTA.validarEmail(\'#email\')');
+                	$('#emailCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailCPF\')');
                 	$('#emailNFCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNFCPF\')');
-                    MANTER_COTA.fecharModalCadastroCota = false;
+                	$('#emailNF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNF\')');
+                	MANTER_COTA.fecharModalCadastroCota = false;
                     $(this, this.workspace).dialog("close");
                 }
             },
