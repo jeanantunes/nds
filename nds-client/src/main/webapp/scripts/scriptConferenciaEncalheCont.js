@@ -973,7 +973,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#lstProdutos", ConferenciaEncalheCont.workspace).bind("autocompletechange", function(evt, ui) {
 
-			functionBuscaProduto('pesquisarProdutoPorCodigoNome', $(this).val(), function(result) {
+			functionBuscaProduto('autocompletarUnicoProdutoPorCodigoNome', $(this).val(), function(result) {
 				if (result){
 					ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = result.idProdutoEdicaoNovoEncalhe;
 					$("#lstProdutos", ConferenciaEncalheCont.workspace).val(result.descricaoProduto);
