@@ -741,10 +741,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());
 			
 			dto.setEmissorNome(distribuidor.getRazaoSocial());
+			dto.setCnpj(distribuidor.getCnpj());
 			dto.setEmissorInscricaoEstadual(distribuidor.getInscricaoEstatual());
 			dto.setEmissorCEP(distribuidor.getCep());
 			dto.setEmissorMunicipio(distribuidor.getCidade());
-			// dto.setEmissorNumero(distribuidor.getEndereco());
+			dto.setEndereco(distribuidor.getEndereco());
 			
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 

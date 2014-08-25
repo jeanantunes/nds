@@ -60,6 +60,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private Integer quantidadeReparte;
 	
+	private String TR;
+	
 	/**
 	 * A flag abaixo indica se a instância
 	 * em questão é um objeto duplicado para
@@ -370,5 +372,13 @@ public class ProdutoEmissaoDTO implements Serializable{
 
 	public void setValorTotalProduto(BigDecimal valorTotalProduto) {
 		this.valorTotalProduto = valorTotalProduto;
+	}
+
+	public String getTR() {
+		return TR;
+	}
+
+	public void setTR(String tR) {
+		TR = tR;
 	}
 }
