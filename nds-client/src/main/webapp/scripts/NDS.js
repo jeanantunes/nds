@@ -1,9 +1,5 @@
 // JavaScript Document
 var timeout = null;
-$("a").click(function () {
-	pageRefresh.enableLinks();
-});
-
 $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status == 601) {
 		 exibirMensagem('ERROR',['Sua sessão expirou.\nVocê será redirecionado para a página de login.']);
