@@ -787,6 +787,25 @@ public class LancamentoRepositoryImpl extends
 
 		return (Lancamento) query.uniqueResult();
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+    public List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao) {
+
+        StringBuilder hql = new StringBuilder();
+
+        hql.append(" select lancamento ")
+                .append(" from Lancamento lancamento ")
+                .append(" join lancamento.produtoEdicao prEd ")
+                .append(" where prEd.id = :idProdutoEdicao ");
+
+        Query query = getSession().createQuery(hql.toString());
+
+        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        
+        return query.list();
+    }
 
 	@Override
 	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(
