@@ -323,6 +323,9 @@ var geracaoNFeController = $.extend({
 				
 				if(data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
+					if(data.rows[index].cell["notaFiscalConsolidada"]) {
+						data.rows[index].cell["numeroCota"] = '<span style="color: red;">'+ data.rows[index].cell["numeroCota"] +' *</span>';
+					}
 				} else if(data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
 				
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
