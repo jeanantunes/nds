@@ -972,6 +972,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}, true, "idModalNovoEncalhe");
 		};
 		
+
 		$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete({
 			
 			source: function(request, response) {

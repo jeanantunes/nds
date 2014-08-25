@@ -76,6 +76,15 @@ public class DistribuidorRepositoryImpl extends
 		return query.list();
 	}
 	
+	public boolean buscarDistribuidorAceitaRecolhimentoParcialAtraso() {
+		
+		StringBuilder hql = new StringBuilder(" select d.aceitaRecolhimentoParcialAtraso from Distribuidor d ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		return (boolean) query.uniqueResult();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
