@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,17 +158,20 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 
 	private void fecharLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
 		
-		Lancamento lancamentoOrigem = 
-			this.lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicaoOrigem.getId());
+		List<Lancamento> lancamentos = 
+			this.lancamentoRepository.obterLancamentosDaEdicao(produtoEdicaoOrigem.getId());
 		
-		if (lancamentoOrigem == null) {
+		if (lancamentos == null || lancamentos.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamento para o produto/edição de origem.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há lançamento para o produto/edição de origem.");
 		}
 		
-		lancamentoOrigem.setStatus(StatusLancamento.FECHADO);
-		
-		this.lancamentoRepository.alterar(lancamentoOrigem);
+		for (Lancamento lancamentoOrigem : lancamentos){
+		    
+		    lancamentoOrigem.setStatus(StatusLancamento.FECHADO);
+	        
+	        this.lancamentoRepository.alterar(lancamentoOrigem);
+		}
 	}
 
 	private void validarProdutosTransferencia(ProdutoEdicao produtoEdicaoOrigem,

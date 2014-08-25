@@ -1726,23 +1726,34 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				},
 				"Não": function() {
 					
-					$.postJSON(
-							contextPath + "/matrizLancamento/desbloquearMatrizLancamentoPost", 
-							null,
-							function(result) {
-							
-								$("#bloquearBotoes", _workspace).val(true);
-								
-								balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);
-								
-								$("#dialog-bloqueio-matriz", _workspace).dialog("close");
-								
-							}, null
+					$("#bloquearBotoes", _workspace).val(true);
+					
+					$("#dialog-bloqueio-matriz", _workspace).dialog("close");
+					
+					balanceamentoLancamento.desbloquearMatrizLancamento(
+						function() {
+							balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);
+						}
 					);
 				}
 			},
 			form: $("#dialog-bloqueio-matriz", _workspace).parents("form")			
 		});
+	},
+	
+	this.desbloquearMatrizLancamento = function(funcao) {
+
+		$.postJSON(
+				contextPath + "/matrizLancamento/desbloquearMatrizLancamentoPost",
+				null,
+				function(result) {
+					
+					if (funcao) {
+						
+						funcao();
+					}
+				}
+		);
 	},
 	
 	this.bloquearLink = function(idLink) {
