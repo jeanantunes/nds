@@ -114,6 +114,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @return Lancamento
 	 */
 	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+	
+	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
 
 	/**
 	 * Obtém uma lista de lancamentos de acordo com o parâmetro informado
