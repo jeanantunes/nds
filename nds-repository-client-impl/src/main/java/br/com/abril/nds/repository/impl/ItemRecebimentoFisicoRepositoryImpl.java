@@ -57,7 +57,7 @@ public class ItemRecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public List<ItemRecebimentoFisico> obterItemPorIdRecebimentoFisico(Long idRecebimentoFisico) {
 		
-		if(	idRecebimentoFisico == null) {
+		if (idRecebimentoFisico == null) {
 			throw new NullPointerException();
 		}
 		
@@ -72,4 +72,15 @@ public class ItemRecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel
 		return query.list();
 	}
 
+	@Override
+	public void removerRecebimentoFisicoLancamento(Long idLancamento) {
+
+		String delete = " delete from LANCAMENTO_ITEM_RECEB_FISICO where LANCAMENTO_ID = :idLancamento";
+		
+		Query query = this.getSession().createSQLQuery(delete);
+		
+		query.setParameter("idLancamento", idLancamento);
+		
+		query.executeUpdate();
+	}
 }

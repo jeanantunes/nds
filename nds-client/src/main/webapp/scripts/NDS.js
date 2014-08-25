@@ -793,6 +793,9 @@ function bindAjaxLoading() {
 	});
 	
 	$("#ajaxLoading").bind("ajaxStop", function() {
+		$("a").click(function () {
+	        window.onbeforeunload = null;
+	    });
 		$(document).unbind('keydown');
 		document.onkeydown = fkey;
 		$(this).fadeOut(200);
