@@ -1476,7 +1476,12 @@ public class ConferenciaEncalheController extends BaseController {
 	public void verificarPermissaoSupervisor(final Long idConferencia, final String qtdExemplares, 
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
-	
+		
+		if (qtdExemplares == null){
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de exemplares.");
+		}
+		
 		boolean isVendaNegativaProduto = false; 
 		
         if (usuario != null) {
