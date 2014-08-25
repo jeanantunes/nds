@@ -193,7 +193,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                     break;
 
                 default:
-                    hql.append(" ORDER BY l.data_lcto_prevista desc ");
+                    hql.append(" ORDER BY l.data_lcto_distribuidor desc ");
             }
 
             if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -201,7 +201,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
             }
 
         } else {
-            hql.append(" ORDER BY l.data_lcto_prevista desc ");
+            hql.append(" ORDER BY l.data_lcto_distribuidor desc ");
         }
 
 		return hql.toString();
