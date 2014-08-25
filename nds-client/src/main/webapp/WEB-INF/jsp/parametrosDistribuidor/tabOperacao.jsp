@@ -300,8 +300,20 @@
                 <td>5º</td>
                 <td>Dias</td>
               </tr>
-              <tr>
               
+              <tr>
+	              <td colspan="11">Aceita recolhimento de produto parcial em atraso:</td>
+	              <td>
+	                    <c:if test="${parametrosDistribuidor.aceitaRecolhimentoParcialAtraso}">
+                          <input name="parametrosDistribuidor.aceitaRecolhimentoParcialAtraso" id="aceitaRecolhimentoParcialAtraso" type="checkbox" checked="checked" />
+                        </c:if>
+                        <c:if test="${empty parametrosDistribuidor.aceitaRecolhimentoParcialAtraso or (not parametrosDistribuidor.aceitaRecolhimentoParcialAtraso)}">
+                          <input name="parametrosDistribuidor.aceitaRecolhimentoParcialAtraso" id="aceitaRecolhimentoParcialAtraso" type="checkbox"/>
+                        </c:if>
+	              </td>
+              </tr>
+              
+              <tr>
               
                 <td>&nbsp;</td>
                 <td>

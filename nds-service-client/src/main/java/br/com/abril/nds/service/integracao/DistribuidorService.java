@@ -24,6 +24,8 @@ public interface DistribuidorService {
 	
 	public boolean isDistribuidor(Integer codigo);
 	
+	public boolean distribuidorAceitaRecolhimentoParcialAtraso();
+	
 	public void alterar(Distribuidor distribuidor);
 
 	public DistribuidorDTO obterDadosEmissao();
