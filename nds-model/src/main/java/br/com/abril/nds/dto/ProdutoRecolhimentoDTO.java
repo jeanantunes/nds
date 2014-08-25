@@ -450,5 +450,5 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 				StatusLancamento.EM_RECOLHIMENTO.equals(statusLancamento) ||  
 				StatusLancamento.RECOLHIDO.equals(statusLancamento);
 	}
-
+	
 }
