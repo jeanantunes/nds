@@ -11,4 +11,6 @@ public interface ItemRecebimentoFisicoRepository extends Repository<ItemRecebime
 	Long obterItemPorDataLancamentoIdProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
 	
 	List<ItemRecebimentoFisico> obterItemPorIdRecebimentoFisico(Long idRecebimentoFisico);
+	
+	void removerRecebimentoFisicoLancamento(Long idLancamento);
 }
