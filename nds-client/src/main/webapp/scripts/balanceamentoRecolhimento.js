@@ -4,6 +4,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	selecionados : [],
 	
+	nonSelected : [],
+	
+	checkAllGrid : false,
+	
 	verificarBalanceamentosAlterados : function(funcao) {
 		
 		$.postJSON(
@@ -438,13 +442,44 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	   		   			+       ' value="' + row.id + '" disabled="disabled"  />';
 		} else {
 			
-			retornoHTML = '<input type="checkbox" id="checkReprogramar' + row.id + '"'
-	   		   			+       ' name="checkReprogramar" isEdicao="true" '
-	   		   			+       ' value="' + row.id + '"'
-	   		   			+       ' onclick="balanceamentoRecolhimentoController.checarBalanceamento(\'' + row.id + '\');" />';
+//			if(row.cell.replicar == 'true' || balanceamentoRecolhimentoController.checkallGrid == true 
+//					&& ($.inArray(row.cell.id, fechamentoEncalheController.nonSelected) < 0) ){
+				
+			if(balanceamentoRecolhimentoController.checkallGrid){	
+				
+				retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, true);
+				
+			}else{
+				
+				if(row.cell.replicar == 'true'){
+					retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, true);
+				}else{
+					retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, false);
+				}
+				
+			}
+		}
+		return retornoHTML;
+	},
+	
+	getElementCheckedOrUnchecked : function (id, checked){
+		
+		var retornoHTML = '';
+		
+		if(checked){
+			retornoHTML = '<input type="checkbox" id="checkReprogramar' + id + '"'
+			+       ' name="checkReprogramar" isEdicao="true" '
+			+       ' value="' + id + '"'
+			+       ' onclick="balanceamentoRecolhimentoController.checarBalanceamento(\'' + id + '\');" checked />';
+		}else{
+			retornoHTML = '<input type="checkbox" id="checkReprogramar' + id + '"'
+			+       ' name="checkReprogramar" isEdicao="true" '
+			+       ' value="' + id + '"'
+			+       ' onclick="balanceamentoRecolhimentoController.checarBalanceamento(\'' + id + '\');" />';
 		}
 		
 		return retornoHTML;
+		
 	},
 	
 	executarAposProcessamento : function() {
@@ -457,41 +492,40 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
 		
-		balanceamentoRecolhimentoController.checarBalanceamentoPaginacao();
+//		balanceamentoRecolhimentoController.checarBalanceamentoPaginacao();
 	},
 	
-	checarBalanceamentoPaginacao : function() {
-		
-		var checkAllReprogramar = $('#checkAllReprogramar', balanceamentoRecolhimentoController.workspace)[0];
-		
-		var selTodos = checkAllReprogramar.checked;
-		
-		if (selTodos) {
-			
-			balanceamentoRecolhimentoController.selecionarTodos(checkAllReprogramar);
-			
-		} else {
-		
-			$.each(balanceamentoRecolhimentoController.selecionados, function(index, selecionado) {
-				
-				var checkReprogramar =
-					$("#checkReprogramar" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace)[0];
-				
-				if (!checkReprogramar) {
-					
-					return;
-				}
-				
-				var divNovaData = $("#divNovaData" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace);
-				
-				$(checkReprogramar).check();
-				
-				clickLineFlexigrid(checkReprogramar, true);
-				
-				balanceamentoRecolhimentoController.verificarBloqueioData(divNovaData);
-			});
-		}
-	},
+//	checarBalanceamentoPaginacao : function() {
+//		
+//		var checkAllReprogramar = $('#checkAllReprogramar', balanceamentoRecolhimentoController.workspace)[0];
+//		
+//		var selTodos = checkAllReprogramar.checked;
+//		
+//		if (selTodos) {
+//			
+//			balanceamentoRecolhimentoController.selecionarTodos(checkAllReprogramar);
+//			
+//		} else {
+//		
+//			$.each(balanceamentoRecolhimentoController.selecionados, function(index, selecionado) {
+//				
+//				var checkReprogramar = $("#checkReprogramar" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace)[0];
+//				
+//				if (!checkReprogramar) {
+//					
+//					return;
+//				}
+//				
+//				var divNovaData = $("#divNovaData" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace);
+//				
+//				$(checkReprogramar).check();
+//				
+//				clickLineFlexigrid(checkReprogramar, true);
+//				
+//				balanceamentoRecolhimentoController.verificarBloqueioData(divNovaData);
+//			});
+//		}
+//	},
 	
 	criarDivsNovaData : function() {
 		
@@ -549,6 +583,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var checado = checkReprogramar.checked;
 
+		dataHolder.hold('matrizRecolhimentoDataHolder', idRow , 'checado', checado);
+
 		clickLineFlexigrid(checkReprogramar, checado);
 		
 		if (!checado) {
@@ -558,6 +594,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			if (checkAllSelected) {
 				
 				balanceamentoRecolhimentoController.adicionarBalanceamentosSelecionados();
+				
+			}else{
+				
+//				balanceamentoRecolhimentoController.selecionados.push(
+//						{idLancamento : checkReprogramar.value, idFornecedor : idFornecedor2});
+				
+				balanceamentoRecolhimentoController.nonSelected.push({idLancamento : idRow})
+				dataHolder.hold('matrizRecolhimentoDataHolder', idRow, 'checado', checado);
 			}
 			
 			balanceamentoRecolhimentoController.removerBalanceamentosSelecionados(idRow);
@@ -608,6 +652,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	selecionarTodos : function(input) {
 		
+		balanceamentoRecolhimentoController.checkallGrid = input.checked;
+		
 		balanceamentoRecolhimentoController.selecionados = [];
 		
 		checkAll(input, "checkReprogramar");
@@ -617,6 +663,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			var checado = this.checked;
 			
 			clickLineFlexigrid(this, checado);
+			
+			dataHolder.hold('matrizRecolhimentoDataHolder', this.value, 'checado', checado);
 		});
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
@@ -1474,6 +1522,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	verificarBloqueioMatrizRecolhimento : function() {
 		
 		$("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val(false);
+		
+		dataHolder.clearAction('matrizRecolhimentoDataHolder', balanceamentoRecolhimentoController.workspace);
 		
 		$.postJSON(
 				contextPath + "/devolucao/balanceamentoMatriz/verificarBloqueioMatrizRecolhimentoPost", 

@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoDiferenciadoVO;
@@ -132,6 +133,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	private static final String SORT_NAME_NUMERO_EDICAO = "numeroEdicao";
 	
 	public static final String TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE = "trava_matriz_recolhimento";
+	
+	private static final String DATA_HOLDER_ACTION_KEY = "matrizRecolhimentoDataHolder";
     
     @Get
     @Path("/")
@@ -226,9 +229,21 @@ public class MatrizRecolhimentoController extends BaseController {
         
         processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
             balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
-        
+
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
+    
+	private String getCheckedFromDataHolder(String codigo) {
+			
+		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		
+		if (dataHolder != null) {
+
+			return dataHolder.getData(DATA_HOLDER_ACTION_KEY, codigo, "checado");
+		}
+		
+		return "false";
+	}
     
     private void processarProdutosNaoBalanceadosAposConfirmacaoMatriz(List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados) {
         
@@ -366,6 +381,8 @@ public class MatrizRecolhimentoController extends BaseController {
         
         processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
             balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
+        
+//        resultadoResumoBalanceamento.getListaResumoPeriodoBalanceamento();
         
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
@@ -1544,6 +1561,7 @@ public class MatrizRecolhimentoController extends BaseController {
                     }
                     
                     itemResumoPeriodoBalanceamento.getIdsProdutoEdicao().add(produtoRecolhimento.getIdProdutoEdicao());
+                    
                 }
                 
                 boolean excedeCapacidadeDistribuidor = false;
@@ -2006,6 +2024,8 @@ public class MatrizRecolhimentoController extends BaseController {
         for (ProdutoRecolhimentoVO vo : listaProdutoRecolhimentoVO) {
             
             ProdutoRecolhimentoFormatadoVO produtoRecolhimentoFormatadoVO = this.formatarProdutoRecolhimento(vo);
+            
+            produtoRecolhimentoFormatadoVO.setReplicar(getCheckedFromDataHolder(produtoRecolhimentoFormatadoVO.getIdLancamento().toString()));
             
             listaProdutoRecolhimentoFormatadoVO.add(produtoRecolhimentoFormatadoVO);
         }

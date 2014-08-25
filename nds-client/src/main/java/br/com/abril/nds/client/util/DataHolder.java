@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -70,5 +71,88 @@ public class DataHolder implements Serializable {
 	public void setActionMap(Map<String, Map<String, Map<String, String>>> actionMap) {
 		this.actionMap = actionMap;
 	}
+	
+	
+	public void setHold (String actionKey, String dataKey, String fieldKey, String fieldValue, DataHolder dataHolder){
+		
+		Map<String, Map<String, Map<String, String>>> actionMap = this.getActionMap(dataHolder);
+		
+		Map<String, Map<String, String>> actionDataMap = this.getActionDataMap(actionKey, actionMap);
+		
+		Map<String, String> dataMap = this.getDataMap(dataKey, actionDataMap);
+
+		this.configureDataHolder(actionKey, dataKey, fieldKey, fieldValue, dataHolder, actionMap, actionDataMap, dataMap);
+	}
+	
+	
+	
+	/*
+	 * Configures the data holder with the values.
+	 */
+	private void configureDataHolder(String actionKey, 
+									 String dataKey,
+									 String fieldKey, 
+									 String fieldValue, 
+									 DataHolder dataHolder,
+									 Map<String, Map<String, Map<String, String>>> actionMap,
+									 Map<String, Map<String, String>> actionDataMap,
+									 Map<String, String> dataMap) {
+		
+		dataMap.put(fieldKey, fieldValue);
+		
+		actionDataMap.put(dataKey, dataMap);
+		
+		actionMap.put(actionKey, actionDataMap);
+		
+		dataHolder.setActionMap(actionMap);
+	}
+
+	/*
+	 * Obtains the data map from the action data map using the data key.
+	 */
+	private Map<String, String> getDataMap(String dataKey,
+										   Map<String, Map<String, String>> actionDataMap) {
+		
+		Map<String, String> dataMap = actionDataMap.get(dataKey);
+		
+		if (dataMap == null) {
+			
+			dataMap = new HashMap<String, String>();
+		}
+		
+		return dataMap;
+	}
+
+	/*
+	 * Obtains the action data map from the action map using the action key.
+	 */
+	private Map<String, Map<String, String>> getActionDataMap(String actionKey, 
+															  Map<String, Map<String, Map<String, String>>> actionMap) {
+		
+		Map<String, Map<String, String>> actionDataMap = actionMap.get(actionKey);
+		
+		if (actionDataMap == null) {
+			
+			actionDataMap = new HashMap<String, Map<String, String>>();
+		}
+		
+		return actionDataMap;
+	}
+
+	/*
+	 * Obtains the action map from the data holder.
+	 */
+	private Map<String, Map<String, Map<String, String>>> getActionMap(DataHolder dataHolder) {
+		
+		Map<String, Map<String, Map<String, String>>> actionMap = dataHolder.getActionMap();
+		
+		if (actionMap == null) {
+			
+			actionMap = new HashMap<String, Map<String, Map<String, String>>>();
+		}
+		
+		return actionMap;
+	}
+
 
 }
