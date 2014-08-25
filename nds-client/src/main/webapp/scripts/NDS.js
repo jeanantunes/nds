@@ -1,5 +1,9 @@
 // JavaScript Document
 var timeout = null;
+$("a").click(function () {
+	pageRefresh.enableLinks();
+});
+
 $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status == 601) {
 		 exibirMensagem('ERROR',['Sua sessão expirou.\nVocê será redirecionado para a página de login.']);
@@ -793,6 +797,9 @@ function bindAjaxLoading() {
 	});
 	
 	$("#ajaxLoading").bind("ajaxStop", function() {
+		$("a").click(function () {
+	        window.onbeforeunload = null;
+	    });
 		$(document).unbind('keydown');
 		document.onkeydown = fkey;
 		$(this).fadeOut(200);

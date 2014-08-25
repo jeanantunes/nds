@@ -757,6 +757,15 @@ var pageRefresh = {
 			}
 		};
 		
+	},
+	
+	enableLinks: function() {
+		
+		handler.off();
+		
+		$(document).unbind('keydown', disableShortcutRefresh);
+		
+		window.onbeforeunload = null;
 	}
 };
 
