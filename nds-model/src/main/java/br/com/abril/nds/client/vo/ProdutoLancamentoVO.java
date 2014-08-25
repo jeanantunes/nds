@@ -12,52 +12,52 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private Long id;
 	
-	@Export(label="Codigo", exhibitionOrder = 0, widthPercent = 9)
+	@Export(label="Codigo", exhibitionOrder = 0, widthPercent = 6)
 	private String codigoProduto;
 	
-	@Export(label="Produto", exhibitionOrder = 1, widthPercent = 21)
+	@Export(label="Produto", exhibitionOrder = 1, widthPercent = 18)
 	private String nomeProduto;
 	
-	@Export(label="Edição", exhibitionOrder = 2)
+	@Export(label="Edição", exhibitionOrder = 2, widthPercent = 0)
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$", exhibitionOrder = 3)
+	@Export(label="Capa R$", exhibitionOrder = 3, widthPercent = 0)
 	private String precoVenda;
 	
-	@Export(label="Reparte", exhibitionOrder = 4)
+	@Export(label="Reparte", exhibitionOrder = 4, widthPercent = 0)
 	private String repartePrevisto;
 	
-	@Export(label="Lançamento", exhibitionOrder = 5, widthPercent = 10)
+	@Export(label="Lançamento", exhibitionOrder = 5, widthPercent = 8)
 	private String descricaoLancamento;
 	
-	@Export(label="Recolhimento", exhibitionOrder = 6, widthPercent = 9)
+	@Export(label="Recolhim.", exhibitionOrder = 6, widthPercent = 6)
 	private String dataRecolhimentoPrevista;
 
-	@Export(label="RecolhimentoDistribuidor", exhibitionOrder = 6, widthPercent = 9)
+	@Export(label="Rec. Dist.", exhibitionOrder = 7, widthPercent = 6)
 	private String dataRecolhimentoDistribuidor;
 	
-	@Export(label="Total R$", exhibitionOrder = 7, widthPercent = 8)
+	@Export(label="Total R$", exhibitionOrder = 8, widthPercent = 6)
 	private String valorTotal;
 	
-	@Export(label="PEB", exhibitionOrder = 8)
+	@Export(label="PEB", exhibitionOrder = 9, widthPercent = 3)
 	private Long peb;
 	
-	@Export(label="Físico", exhibitionOrder = 9)
+	@Export(label="Físico", exhibitionOrder = 10, widthPercent = 4)
 	private String reparteFisico;
 	
-	@Export(label="Distribuição", exhibitionOrder = 10)
+	@Export(label="Distrib.", exhibitionOrder = 11, widthPercent = 0)
 	private String distribuicao;
 	
-	@Export(label="Previsto", exhibitionOrder = 11, widthPercent = 9)
+	@Export(label="Previsto", exhibitionOrder = 12, widthPercent = 6)
 	private String dataLancamentoPrevista;
 	
-	@Export(label="Excluir", exhibitionOrder = 12, widthPercent = 9)
+	//@Export(label="Excluir", exhibitionOrder = 13, widthPercent = 0)
 	private boolean cancelado;
 	
 	@Export(label="Status", exhibitionOrder = 13, widthPercent = 9)
 	private String statusLancamento;
 	
-	@Export(label="Fornecedor", exhibitionOrder = 14, widthPercent = 9)
+	@Export(label="Fornec.", exhibitionOrder = 14, widthPercent = 5)
 	private String nomeFantasia;
 
 	private Long fornecedorId;

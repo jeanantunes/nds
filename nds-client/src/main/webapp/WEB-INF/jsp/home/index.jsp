@@ -175,6 +175,8 @@
 										$span = $($span).addClass("lancamento_faltas_sobras");
 									}else if (url.indexOf("/matrizLancamento") >= 0) {
 										$span = $($span).addClass("matriz_lancamento");
+									}else if (url.indexOf("/devolucao/balanceamentoMatriz") >= 0) {
+										$span = $($span).addClass("matriz_recolhimento");
 									}else if ((url.indexOf("/matrizDistribuicao/histogramaPosEstudo") >= 0)
 										|| (url.indexOf("/distribuicao/analiseEstudo") >= 0)) {
 										
@@ -203,6 +205,7 @@
 												var indAbaLancamentoFaltasSobras = $(this).parent().find('.lancamento_faltas_sobras').index() > -1;
 												var indAbaConferenciaEncalheContigencia = $(this).parent().find('.conferencia_encalhe_contigencia').index() > -1;
 												var indAbaMatrizLancamento = $(this).parent().find('.matriz_lancamento').index() > -1;
+												var indAbaMatrizRecolhimento = $(this).parent().find('.matriz_recolhimento').index() > -1;
 												var indAbaAnaliseEstudo = $(this).parent().find('.analise_estudo').index() > -1;
 												
 												if(indAbaConferenciaEncalhe) {
@@ -236,8 +239,16 @@
 														function() {
 															
 															$("#workspace").tabs("remove", index);
+															
+															balanceamentoLancamento.desbloquearMatrizLancamento();
 														}
 													);
+													
+												} else if (indAbaMatrizRecolhimento) {
+													
+													$("#workspace").tabs("remove", index);
+													
+													balanceamentoRecolhimentoController.desbloquearMatrizRecolhimento();
 													
 												} else if (indAbaAnaliseEstudo) {
 													
@@ -471,7 +482,7 @@
 					</script> </label>
 				
 					<label>
-						<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
+						<a href="javascript:;" onclick="logout()" id="lnkLogoff" title="Sair do Sistema">Sair</a>
 					</label>
 	
 				</div>
