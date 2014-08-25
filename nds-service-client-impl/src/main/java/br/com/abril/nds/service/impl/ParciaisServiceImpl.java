@@ -16,6 +16,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -28,10 +29,12 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
+import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -75,6 +78,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	@Autowired
+	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -95,7 +101,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de recolhimento não é um dia util.");
 		}
 
-		if (DateUtil.isDataInicialMaiorIgualDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
+		if (DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento não pode ser maior que a data de recolhimento final.");
 		}
 		
@@ -312,11 +318,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 	private PeriodoLancamentoParcial obterPeriodoPosterior(Date dataRecolhimento, Long idProdutoEdicao) {
 
 		return this.periodoLancamentoParcialRepository.obterPeriodoPosterior(dataRecolhimento, idProdutoEdicao);
-	}
-	
-	private PeriodoLancamentoParcial obterPeriodoAnterior(Date dataRecolhimento, Long idProdutoEdicao) {
-
-		return this.periodoLancamentoParcialRepository.obterPeriodoAnterior(dataRecolhimento, idProdutoEdicao);
 	}
 	
 	@Transactional
@@ -610,7 +611,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(lancamento == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento não deve ser nulo.");
 		
-		this.validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi realizado, não pode ser alterado.");
+		if (lancamento.getDataLancamentoDistribuidor().compareTo(dataLancamento) != 0) {
+			
+			this.validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi realizado, não pode ser alterado.");
+		}
 
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 
@@ -629,14 +633,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
 		lancamento.setDataLancamentoPrevista(dataLancamento);
-		
-//		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
-//		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 
 		lancamento.alterarRecolhimentoParcial(
 			dataRecolhimento, 
 			this.obterProximaDataComFatorRelancamentoParcialDistribuidor(dataRecolhimento)
 		);
+		
+		this.validarPEBLancamento(lancamento);
 
 		lancamento.setUsuario(usuario);
 		
@@ -732,12 +735,17 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Id do Lancamento não deve ser nulo.");
 		}
 			
-		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);		
+		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 		
 		if(lancamento == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento não deve ser nulo.");
 		}
 		
+		if (lancamento.getRecebimentos() != null) {
+
+			this.itemRecebimentoFisicoRepository.removerRecebimentoFisicoLancamento(lancamento.getId());
+		}
+
 		validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi expedido, não pode ser excluido.");
 
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);

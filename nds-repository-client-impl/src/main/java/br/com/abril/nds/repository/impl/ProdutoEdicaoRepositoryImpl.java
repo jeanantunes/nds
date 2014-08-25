@@ -1867,7 +1867,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			final Integer numeroCota, 
 			final Integer quantidadeRegisttros,
 			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel,
-			final Date dataOperacao) {
+			final Date dataOperacao,
+			final boolean indAceitaRecolhimentoParcialAtraso) {
 		
 		final StringBuilder hql = new StringBuilder(" select produtoEdicao ");
 		   
@@ -1895,7 +1896,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			if(dataOperacao!=null){
 				hql.append(" and ce.dataRecolhimento = :dataOperacao ");
 			} else {
-				carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
+				carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel, indAceitaRecolhimentoParcialAtraso);
 			}
 		
 			hql.append(" group by produtoEdicao.id			")
@@ -1918,7 +1919,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if(dataOperacao!=null){
 			query.setParameter("dataOperacao", dataOperacao);
 		} else {
-			carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);
+			carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel, indAceitaRecolhimentoParcialAtraso);
 		}
 		
 		query.setMaxResults(quantidadeRegisttros);
@@ -1930,7 +1931,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	private void carregarHQLParametrosFornecedorDatasEncalhe(
 			final StringBuilder hql,
 			final Query query,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel) {
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel, 
+			final boolean indAceitaRecolhimentoParcialAtraso) {
 		
 		if(query == null) {
 
@@ -1956,14 +1958,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				boolean indOr = false;
 				
-				if(criaHqlParcial) {
+				
+				if(criaHqlParcial && !indAceitaRecolhimentoParcialAtraso) {
 					hql.append(" ((produtoEdicao.parcial = true and ce.dataRecolhimento in (:datasRecolhimentoParcial_"+idFornecedor+")))" );
 					indOr = true;
 				}
 				
 				if(criaHqlNaoParcial) {
+					
 					hql.append(indOr ? " or " : "");
-					hql.append(" ((produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
+					
+					if(indAceitaRecolhimentoParcialAtraso) {
+						hql.append(" ((ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
+					} else {
+						hql.append(" ((produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
+					}
+					
 				}
 				
 				hql.append(" 	) ");
@@ -1987,7 +1997,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				final List<Date> listaDataConferivelProdutoParcial = entrada.getValue().getListaDataConferivelProdutoParcial();
 				final List<Date> listaDataConferivelProdutoNaoParcial = entrada.getValue().getListaDataConferivelProdutoNaoParcial();
 				
-				if(!listaDataConferivelProdutoParcial.isEmpty()) {
+				if(!listaDataConferivelProdutoParcial.isEmpty() && !indAceitaRecolhimentoParcialAtraso) {
 					query.setParameterList("datasRecolhimentoParcial_"+entrada.getKey(), listaDataConferivelProdutoParcial);
 				}
 

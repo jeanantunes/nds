@@ -601,8 +601,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date primeiroDiaEncalheOperacaoDiferenciada = obterDataPrimeiroDiaEncalheOperacaoDiferenciada(numeroCota, dataRecolhimentoCE);
 		
-		if(produtoEdicao.isParcial()
-				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
+		boolean aceitaRecolhimentoParcialAtraso = distribuidorService.distribuidorAceitaRecolhimentoParcialAtraso();
+		
+		if(produtoEdicao.isParcial() &&
+		   !aceitaRecolhimentoParcialAtraso && 
+		   !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
 			
 			if(primeiroDiaEncalheOperacaoDiferenciada.compareTo(dataOperacao)!=0) {
 
@@ -853,8 +856,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		ChamadaEncalheCota chamadaEncalheCota = null;
 		
-		if(produtoEdicao.isParcial()
-				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
+		boolean aceitaRecolhimentoParcialAtraso = distribuidorService.distribuidorAceitaRecolhimentoParcialAtraso();
+		
+		if(	produtoEdicao.isParcial() && 
+			!aceitaRecolhimentoParcialAtraso &&
+			!isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
 			chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicaoParcial(cota, produtoEdicao);
 		} else {
 			chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -864,7 +870,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		if(produtoEdicao.isParcial()) {
+		if(produtoEdicao.isParcial() && !aceitaRecolhimentoParcialAtraso) {
 		
 			return chamadaEncalheCota;
 			
@@ -3400,9 +3406,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(!indCotaOperacaoDif) {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
-         
+        
+		boolean indAceitaRecolhimentoParcialAtraso = distribuidorService.distribuidorAceitaRecolhimentoParcialAtraso();
+		
 		final List<ProdutoEdicao> listaProdutoEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(codigoSM,
-                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO, dataOperacao);
+                null, numeroCota, quantidadeRegistros, mapaDataCEConferivelDTO, dataOperacao, indAceitaRecolhimentoParcialAtraso);
 		
 		final List<ItemAutoComplete> listaItem = new ArrayList<ItemAutoComplete>();
 		

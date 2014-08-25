@@ -111,6 +111,14 @@ public class Distribuidor {
 	private boolean supervisionaVendaNegativa;
 	
 	/**
+	 * Flag indicando que este distribuidor aceita recolhimento
+	 * de produto edicao parcial em atraso. (1o 2o 3o 4o e/ou 5o dia 
+	 * de acordo com parametrização).
+	 */
+	@Column(name = "ACEITA_RECOLHIMENTO_PARCIAL_ATRASO")
+	private boolean aceitaRecolhimentoParcialAtraso;
+	
+	/**
 	 * Parametrização de Política de Chamadão do Distribuidor
 	 */
 	@Embedded
@@ -1226,4 +1234,14 @@ public class Distribuidor {
             List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
+
+	public boolean isAceitaRecolhimentoParcialAtraso() {
+		return aceitaRecolhimentoParcialAtraso;
+	}
+
+	public void setAceitaRecolhimentoParcialAtraso(
+			boolean aceitaRecolhimentoParcialAtraso) {
+		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
+	}
+	
 }
