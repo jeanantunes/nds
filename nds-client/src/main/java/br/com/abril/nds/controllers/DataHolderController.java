@@ -42,7 +42,7 @@ public class DataHolderController {
 		
 		DataHolder dataHolder = this.getCurrentDataHolder();
 		
-		dataHolder.setHold(actionKey, dataKey, fieldKey, fieldValue, dataHolder);
+		dataHolder.hold(actionKey, dataKey, fieldKey, fieldValue, dataHolder);
 		
 		this.httpSession.setAttribute(DataHolder.SESSION_ATTRIBUTE_NAME, dataHolder);
 		
@@ -73,8 +73,7 @@ public class DataHolderController {
 	@Post
 	public void clearAction(String actionKey) {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = this.getCurrentDataHolder(); 
 		
 		if (dataHolder != null) {
 		
@@ -100,8 +99,7 @@ public class DataHolderController {
 	@Post
 	public void clearData(String actionKey, String dataKey) {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = this.getCurrentDataHolder();
 		
 		if (dataHolder != null) {
 		
@@ -129,8 +127,7 @@ public class DataHolderController {
 	@Post
 	public void clearAll() {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = this.getCurrentDataHolder();
 		
 		if (dataHolder != null) {
 		

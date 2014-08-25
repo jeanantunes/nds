@@ -73,7 +73,7 @@ public class DataHolder implements Serializable {
 	}
 	
 	
-	public void setHold (String actionKey, String dataKey, String fieldKey, String fieldValue, DataHolder dataHolder){
+	public void hold (String actionKey, String dataKey, String fieldKey, String fieldValue, DataHolder dataHolder){
 		
 		Map<String, Map<String, Map<String, String>>> actionMap = this.getActionMap(dataHolder);
 		

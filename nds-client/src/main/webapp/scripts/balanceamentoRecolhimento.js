@@ -442,10 +442,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	   		   			+       ' value="' + row.id + '" disabled="disabled"  />';
 		} else {
 			
-//			if(row.cell.replicar == 'true' || balanceamentoRecolhimentoController.checkallGrid == true 
-//					&& ($.inArray(row.cell.id, fechamentoEncalheController.nonSelected) < 0) ){
-				
-			if(balanceamentoRecolhimentoController.checkallGrid){	
+			if((balanceamentoRecolhimentoController.checkAllGrid) && (row.cell.replicar == undefined || !row.cell.replicar == 'false')){	
 				
 				retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, true);
 				
@@ -492,40 +489,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
 		
-//		balanceamentoRecolhimentoController.checarBalanceamentoPaginacao();
 	},
-	
-//	checarBalanceamentoPaginacao : function() {
-//		
-//		var checkAllReprogramar = $('#checkAllReprogramar', balanceamentoRecolhimentoController.workspace)[0];
-//		
-//		var selTodos = checkAllReprogramar.checked;
-//		
-//		if (selTodos) {
-//			
-//			balanceamentoRecolhimentoController.selecionarTodos(checkAllReprogramar);
-//			
-//		} else {
-//		
-//			$.each(balanceamentoRecolhimentoController.selecionados, function(index, selecionado) {
-//				
-//				var checkReprogramar = $("#checkReprogramar" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace)[0];
-//				
-//				if (!checkReprogramar) {
-//					
-//					return;
-//				}
-//				
-//				var divNovaData = $("#divNovaData" + selecionado.idLancamento, balanceamentoRecolhimentoController.workspace);
-//				
-//				$(checkReprogramar).check();
-//				
-//				clickLineFlexigrid(checkReprogramar, true);
-//				
-//				balanceamentoRecolhimentoController.verificarBloqueioData(divNovaData);
-//			});
-//		}
-//	},
 	
 	criarDivsNovaData : function() {
 		
@@ -597,9 +561,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 			}else{
 				
-//				balanceamentoRecolhimentoController.selecionados.push(
-//						{idLancamento : checkReprogramar.value, idFornecedor : idFornecedor2});
-				
 				balanceamentoRecolhimentoController.nonSelected.push({idLancamento : idRow})
 				dataHolder.hold('matrizRecolhimentoDataHolder', idRow, 'checado', checado);
 			}
@@ -652,7 +613,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	selecionarTodos : function(input) {
 		
-		balanceamentoRecolhimentoController.checkallGrid = input.checked;
+		if(input.checked == false){
+			dataHolder.clearAction('matrizRecolhimentoDataHolder', balanceamentoRecolhimentoController.workspace);
+		}
+		
+		balanceamentoRecolhimentoController.checkAllGrid = input.checked;
 		
 		balanceamentoRecolhimentoController.selecionados = [];
 		
@@ -1501,7 +1466,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			],
 			beforeClose: function() {
 				clearMessageDialogTimeout("dialog-confirmar");
-				//balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
 		    },
 		    form: $("#dialog-confirm-balanceamento", balanceamentoRecolhimentoController.workspace).parents("form")
 		});
