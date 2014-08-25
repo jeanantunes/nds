@@ -47,6 +47,26 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				
 				T.mostrarBotoesAcao();
 				
+				T.habilitarLink("linkVoltarConfiguracaoInicial", T.abrirAlertaVoltarConfiguracaoInicial);
+				T.habilitarLink("linkReprogramar", T.reprogramarSelecionados);
+				T.habilitarLink("linkBloquearDia", T.salvar);
+				T.habilitarLink("linkConfirmar", T.obterConfirmacaoBalanceamento);
+				T.habilitarLink("linkReabrirMatriz", T.obterDatasConfirmadasParaReabertura);
+				T.habilitarLink("linkSalvar", T.salvarMatriz);
+				
+				if (eval($("#bloquearBotoes", _workspace).val())) {
+					
+					var links = $("a[isEdicao='true']", _workspace);
+					
+					$.each(links, function(index, link) {
+						
+						if (link.id) {
+							
+							T.bloquearLink(link.id);
+						}
+					});
+				}
+
 				T.escolherDataAbrirGrid(result, dataLancamento);
 			},
 			function() {
@@ -1152,10 +1172,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var checado = row.checked;
 		
+		var bloquearBotoes = eval($("#bloquearBotoes", _workspace).val());
+		
 		var input = $(row.parentElement.parentElement.parentElement).find("input[type='text']");
 		var a = $(row.parentElement.parentElement.parentElement).find("a[name='reprogramar']");
 		
-		if(checado) {				
+		if(checado || bloquearBotoes) {
 			input.disable();
 			a.attr('onclick',  'return;' + a.attr('onclick') );
 			a.parent().addClass("linkDisabled");
@@ -1657,11 +1679,100 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 		);
 		
+	},
+	
+	this.verificarBloqueioMatrizLancamento = function() {
+		
+		$("#bloquearBotoes", _workspace).val(false);
+		
+		$.postJSON(
+				contextPath + "/matrizLancamento/verificarBloqueioMatrizLancamentoPost", 
+				null, 
+				function(result) {
+					
+					balanceamentoLancamento.mostrarPopUpBloqueio();
+				},
+				function() {
+					
+					$("#bloquearBotoes", _workspace).val(true);
+					
+					balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);
+				}
+		);
+	},
+	
+	this.mostrarPopUpBloqueio = function() {
+		
+		$("#dialog-bloqueio-matriz", _workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Sim": function() {
+					
+					$.postJSON(
+							contextPath + "/matrizLancamento/bloquearMatrizLancamento", 
+							null,
+							function(result) {
+							
+								balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);
+								
+								$("#dialog-bloqueio-matriz", _workspace).dialog("close");
+								
+							}, null
+					);
+					
+				},
+				"Não": function() {
+					
+					$("#bloquearBotoes", _workspace).val(true);
+					
+					$("#dialog-bloqueio-matriz", _workspace).dialog("close");
+					
+					balanceamentoLancamento.desbloquearMatrizLancamento(
+						function() {
+							balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);
+						}
+					);
+				}
+			},
+			form: $("#dialog-bloqueio-matriz", _workspace).parents("form")			
+		});
+	},
+	
+	this.desbloquearMatrizLancamento = function(funcao) {
+
+		$.postJSON(
+				contextPath + "/matrizLancamento/desbloquearMatrizLancamentoPost",
+				null,
+				function(result) {
+					
+					if (funcao) {
+						
+						funcao();
+					}
+				}
+		);
+	},
+	
+	this.bloquearLink = function(idLink) {
+		
+		var link = $("#" + idLink, _workspace);
+		link.addClass("linkDisabled");
+		link.unbind("click");
+		link.css("text-decoration", "none");
+	},
+	
+	this.habilitarLink = function(idLink, funcao) {
+		
+		var link = $("#" + idLink, _workspace);
+		link.removeClass("linkDisabled");
+		link.unbind("click");
+		link.bind("click", funcao);
+		link.css("text-decoration", "");
 	};
 	
 }
-
-
-
 
 //@ sourceURL=balanceamentoLancamento.js  

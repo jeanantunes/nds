@@ -160,7 +160,7 @@ public class MatrizLancamentoController extends BaseController {
     @Path("/salvar")
     public void salvar(final Date dataLancamento, final List<Long> idsFornecedores) {
         
-        this.bloquearMatrizLancamento();
+        this.verificarBloqueioMatrizLancamento();
         
         //Solicitado para salvar somente no dia
     	if (dataLancamento.before(distribuidorService.obterDataOperacaoDistribuidor())) {
@@ -211,8 +211,6 @@ public class MatrizLancamentoController extends BaseController {
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"),
                 "result").recursive().serialize();
-        
-        desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
     }
     
     @Post
@@ -396,7 +394,7 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void confirmarMatrizLancamento(final List<Date> datasConfirmadas) {
         
-        this.bloquearMatrizLancamento();
+        this.verificarBloqueioMatrizLancamento();
         
         this.verificarExecucaoInterfaces();
         
@@ -431,8 +429,6 @@ public class MatrizLancamentoController extends BaseController {
         result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lançamento confirmado com sucesso!"),
                 "result").recursive().serialize();
-        
-        desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
     }
     
     private void validarDatasConfirmacao(final Date... datasConfirmadas) {
@@ -464,6 +460,8 @@ public class MatrizLancamentoController extends BaseController {
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void voltarConfiguracaoOriginal() {
+        
+        this.verificarBloqueioMatrizLancamento();
         
         this.verificarExecucaoInterfaces();
         
@@ -543,11 +541,11 @@ public class MatrizLancamentoController extends BaseController {
     public void reprogramarLancamentosSelecionadosSalvar( List<ProdutoLancamentoVO> produtosLancamento,
             final String novaDataFormatada) {
     	
+        this.verificarBloqueioMatrizLancamento();
+        
     	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	//final Date novaData = DateUtil.parseDataPTBR((String)session.getAttribute(DATA_ATUAL_SELECIONADA));
     	
-        this.bloquearMatrizLancamento();
-        
     	Date novaData =null;
     	
     	if(session.getAttribute(ATRIBUTO_SESSAO_LANCAMENTOS_ALTERADO)!=null){
@@ -691,7 +689,7 @@ public class MatrizLancamentoController extends BaseController {
     public void reprogramarLancamentosSelecionados( List<ProdutoLancamentoVO> produtosLancamento,
             final String novaDataFormatada, boolean reprogramarProdutosPEBMenor7Dias) {
         
-        this.bloquearMatrizLancamento();
+        this.verificarBloqueioMatrizLancamento();
         
     	List<String> listaMensagens = new ArrayList<String>();
     	List<String> listaMensagensAux = new ArrayList<String>();
@@ -771,7 +769,7 @@ public class MatrizLancamentoController extends BaseController {
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
         
-        this.bloquearMatrizLancamento();
+        this.verificarBloqueioMatrizLancamento();
         
     	List<String> listaMensagens = new ArrayList<String>();
     	List<String> listaMensagensAux = new ArrayList<String>();
@@ -1888,6 +1886,8 @@ public class MatrizLancamentoController extends BaseController {
     @Post
     public void reabrirMatriz(final List<Date> datasReabertura, final Date dataLancamento, final List<Long> idsFornecedores) {
         
+        this.verificarBloqueioMatrizLancamento();
+        
         if (datasReabertura == null || datasReabertura.isEmpty()) {
             
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
@@ -1929,7 +1929,15 @@ public class MatrizLancamentoController extends BaseController {
         DATA_JA_CONFIRMADA, PEB_MENOR_7_DIAS, DATA_VALIDA
     }
     
-    private void bloquearMatrizLancamento() {
+    @Post
+    public void verificarBloqueioMatrizLancamentoPost() {
+        
+        this.verificarBloqueioMatrizLancamento();
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    public void verificarBloqueioMatrizLancamento() {
         
         String loginUsuarioContext = 
             (String) this.session.getServletContext().getAttribute(
@@ -1942,12 +1950,32 @@ public class MatrizLancamentoController extends BaseController {
                 
             throw new ValidacaoException(
                 new ValidacaoVO(TipoMensagem.WARNING, 
-                    "A matriz de lançamento já está em processamento pelo usuário [" 
-                        + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]."));
+                    "A matriz de lançamento está bloqueada pelo usuário [" 
+                        + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]. Somente será possível realizar consultas na matriz."));
         }
+    }
+    
+    @Post
+    public void bloquearMatrizLancamento() {
+        
+        this.verificarBloqueioMatrizLancamento();
+        
+        String usuario = super.getUsuarioLogado().getLogin();
         
         this.session.getServletContext().setAttribute(
-            TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE, usuario);
+                TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE, usuario);
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    @Post
+    public void desbloquearMatrizLancamentoPost() {
+        
+        Usuario usuario = getUsuarioLogado();
+        
+        desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
     }
     
     public static void desbloquearMatrizLancamento(ServletContext servletContext, String usuario) {

@@ -333,7 +333,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
 					$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", {idBox:$("#boxLogado").val()}, 
 						function(){
@@ -386,8 +386,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				if(resultado != "" && resultado.resultado!=""){
 					
 					var callApplet = '';
-					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
-						callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">';
+					callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
 					callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
 					callApplet+='</applet>';						
 					

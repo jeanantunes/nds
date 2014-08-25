@@ -30,17 +30,17 @@ public class LogFuncionalUtil {
 		}
 	}
 	
-	public static void logar(String nomeFuncionalidade, StatusLog statusLog,String nomeUsuario, Class<?> clazz){
+	public static void logar(String nomeFuncionalidade, String metodoExecutado, StatusLog statusLog,String nomeUsuario, Class<?> clazz){
 		
 		final Logger logger = LoggerFactory.getLogger(clazz);
 		
-		logger.warn(marker,"[Usuario] {} - [Funcionalidade]{} - [Status]{}",nomeUsuario,nomeFuncionalidade,statusLog.toString());
+		logger.warn(marker,"[Usuario] {} - [Funcionalidade]{} - [Método]{} - [Status]{}",nomeUsuario,nomeFuncionalidade,metodoExecutado,statusLog.toString());
 	}
 	
-	public static void logar(String nomeFuncionalidade, StatusLog statusLog,String nomeUsuario, Class<?> clazz,Long tempoExecucao){
+	public static void logar(String nomeFuncionalidade, String metodoExecutado, StatusLog statusLog,String nomeUsuario, Class<?> clazz,Long tempoExecucao){
 		
 		final Logger logger = LoggerFactory.getLogger(clazz);
 		
-		logger.warn(marker,"[Usuario] {} - [Funcionalidade]{} - [Status]{} - [Tempo Processamento] {}",nomeUsuario,nomeFuncionalidade,statusLog.toString(),tempoExecucao);
+		logger.warn(marker,"[Usuario] {} - [Funcionalidade]{} - [Método]{} - [Status]{} - [Tempo Processamento] {}",nomeUsuario,nomeFuncionalidade,metodoExecutado,statusLog.toString(),tempoExecucao);
 	}
 }
