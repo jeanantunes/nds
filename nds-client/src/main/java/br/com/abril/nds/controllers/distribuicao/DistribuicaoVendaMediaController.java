@@ -157,14 +157,17 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
 
 	Lancamento lancamento;
+	
 	if (lancamentoId == null) {
 	    lancamento = findLancamentoBalanceado(produtoEdicao);
 	} else {
 	    lancamento = lancamentoService.obterLancamentoNaMesmaSessao(lancamentoId);
 	}
+	
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = new ArrayList<>();
 	Estrategia estrategia = estrategiaService.buscarPorProdutoEdicao(produtoEdicao);
 	EstrategiaDTO estrat = new EstrategiaDTO();
+	
 	if (estrategia != null) {
 	    BeanUtils.copyProperties(estrategia, estrat);
 	    selecionados.clear();
@@ -203,7 +206,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    } else {
     		    	
     		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
-                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false);
+                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, true);
     		    	
     		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
     		    		pevm.setIndicePeso(base.getIndicePeso());
