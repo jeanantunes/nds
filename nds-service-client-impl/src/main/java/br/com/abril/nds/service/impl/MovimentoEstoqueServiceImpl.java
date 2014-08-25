@@ -42,6 +42,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -235,9 +236,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             }
             
             this.cobrancaFornecedorValidator.filter(
-            	estudoCota.getIdCota(), 
+            	descontos,
+            	this.cotaRepository.buscarCotaPorID(estudoCota.getIdCota()), 
             	produtoEdicao.getProduto().getFornecedor(), 
-            	produtoEdicao.getProduto().getCodigo()
+            	produtoEdicao.getProduto()
             ).validate();
 
             tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
@@ -529,11 +531,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final BigInteger quantidade,final TipoMovimentoEstoque tipoMovimentoEstoque,
             final boolean isMovimentoDiferencaAutomatica,
             final boolean validarTransfEstoqueDiferenca,
-            final Date dataLancamento, final StatusIntegracao statusIntegracao, final Origem origem) {
+            final Date dataLancamento, final StatusIntegracao statusIntegracao, final Origem origem, final boolean isFaltaDirecionadaCota) {
         
         final MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade,
                 tipoMovimentoEstoque, origem, null,
-                false, isMovimentoDiferencaAutomatica, validarTransfEstoqueDiferenca, statusIntegracao, false, null);
+                isFaltaDirecionadaCota, isMovimentoDiferencaAutomatica, validarTransfEstoqueDiferenca, statusIntegracao, false, null);
         return movimentoEstoque;
     }
     

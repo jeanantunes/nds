@@ -28,6 +28,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -377,6 +378,18 @@ public class LancamentoRepositoryImpl extends
 
 		return existeLancamentoConfirmado;
 
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Boolean isLancamentoParcial(Long idLancamento) {
+		
+		Criteria c = this.getSession().createCriteria(Lancamento.class);
+		c.createAlias("produtoEdicao", "produtoEdicao");
+		c.add(Restrictions.eq("id", idLancamento));
+		c.setProjection(Projections.property("produtoEdicao.parcial"));
+		
+		return (Boolean) c.uniqueResult();
 	}
 
 	public Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor,
@@ -2745,5 +2758,27 @@ public class LancamentoRepositoryImpl extends
     	
     	return (!query.list().isEmpty());
     }
-    
+
+	@Override
+	public boolean existemLancamentosConfirmados(Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(l.id) from lancamento l ");
+		sql.append(" where l.DATA_REC_DISTRIB = :dataRecolhimento ");
+		sql.append(" and l.STATUS in (:statusConfirmados) ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameterList("statusConfirmados", Arrays.asList(
+			StatusLancamento.BALANCEADO_RECOLHIMENTO.name(), 
+			StatusLancamento.EM_RECOLHIMENTO.name(), 
+			StatusLancamento.RECOLHIDO.name())
+		);
+		
+		BigInteger count = (BigInteger) query.uniqueResult();
+
+		return count != null && count.compareTo(BigInteger.ZERO) > 0;
+	}    
 }

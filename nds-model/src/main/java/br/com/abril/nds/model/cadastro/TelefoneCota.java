@@ -2,6 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -18,7 +19,8 @@ public class TelefoneCota extends AssociacaoTelefone {
 	@GeneratedValue(generator = "TELEFONE_COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	@ManyToOne(optional = false)
+	
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	

@@ -1,5 +1,27 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/lancamentoNovo.js"></script>
 
+<style type="text/css">
+.btn_diferenca {
+	width: 110px;
+	line-height:25px;
+	float: left;cursor:pointer;
+	vertical-align: middle;
+	background:url(./images/bt_add_novo.png) no-repeat left center;
+	border: 1px outset buttonface;
+}
+
+.btn_diferenca:hover b  {
+    text-decoration: underline;
+    color:#00649F;
+}
+
+.btn_diferenca:focus b  {
+    text-decoration: underline;
+    color:#00649F;
+}
+
+	</style>
+
 <input type="hidden" id="idProdutoEdicao"/>
 
  <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
@@ -138,6 +160,8 @@
 		</table>
     </fieldset>
 	
+	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+	
 	<div class="prodSemCota" style="display:block;">
     	
     	<fieldset style="width:650px!important;">
@@ -238,7 +262,11 @@
 					</table>
 				</div>
 			</fieldset>
+			
+			<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+			
 		</div>
+
 	</div>
 
 	<div class="prodComCota" style="display:none;">
@@ -285,14 +313,15 @@
 		</fieldset>
 		
 		<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+		
 	</div>
-
-	<br />
 	
-	<span id="viewIncluirNovaDiferenca" class="bt_add ">
-		<a href="javascript:;" onclick="lancamentoNovoController.incluirNovo();">Incluir Novo</a>
+	<span id="viewIncluirNovaDiferenca">
+		<button id="linkIncluirNovaDiferenca" class="btn_diferenca">
+			<b style="margin-left: 20px;">Incluir Novo</b>
+		</button>
 	</span>
-	
+
 	<script language="javascript" type="text/javascript">
 		$(function(){
 			lancamentoNovoController.init();

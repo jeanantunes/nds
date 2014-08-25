@@ -32,6 +32,7 @@ import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
@@ -66,6 +67,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public static final String SELECIONADOS_PRODUTO_EDICAO_BASE = "selecionados-produto-edicao-base";
 
     public static final String RESULTADO_PESQUISA_PRODUTO_EDICAO = "resultado-pesquisa-produto-edicao";
+    
+    public static final String SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO = "resultado-pesquisa-produto-edicao-base-veranenio";
 
     @Autowired
     private Result result;
@@ -149,6 +152,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
+	session.removeAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO);
 
 	EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
 
@@ -185,17 +189,45 @@ public class DistribuicaoVendaMediaController extends BaseController {
         definicaoBases.executar(estudoTemp);
         selecionados.clear();
         
-        if (estudoTemp.getEdicoesBase() != null && !estudoTemp.getEdicoesBase().isEmpty()){
+        if (estudoTemp.getEdicoesBase() != null && !estudoTemp.getEdicoesBase().isEmpty()) {
+        	
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
-    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false));
+    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false);
+    		    	
+    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
+    		    		pevm.setIndicePeso(base.getIndicePeso());
+    		    	}
+    		    	
+    		        selecionados.addAll(produtosBase);
     		    } else {
-    		        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
-                                    base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false));
+    		    	
+    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
+                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false);
+    		    	
+    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
+    		    		pevm.setIndicePeso(base.getIndicePeso());
+    		    	}
+    		    	
+    		        selecionados.addAll(produtosBase);
+    		        
     		    }
     		}
+    		
+    		if(estudoTemp.isPracaVeraneio()) {
+	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
+	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
+	        	
+	        	if((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
+	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())) {
+	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, true);
+	        	} else {
+	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
+	        	}
+	        }
         }
 	}
+	
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 	
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, selecionados);
@@ -245,15 +277,35 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	carregarComboClassificacao();
 
 	session.setAttribute(ProdutoDistribuicaoVO.class.getName(), produtoDistribuicaoVO);
+    
+    String modoAnalise = "NORMAL";
+    
+    PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
+    
+    if (periodo != null && periodo.getNumeroPeriodo() > 1) {
+    
+        modoAnalise = "PARCIAL";
+    }
+    
+    result.include("modoAnalise", modoAnalise);
     }
 
     @Path("pesquisarProdutosEdicao")
     @Post
-    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String sortorder, String sortname, int page, int rp) {
+    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String modoAnalise, Long idProdutoEdicao, String sortorder, String sortname, int page, int rp) {
     	
     	filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
     	filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroEdicaoBaseDistribuicaoVendaMedia.OrdemColuna.values(), sortname));	
 		
+    	Long idProdutoEdicaoPesquisa = null;
+    	
+    	if (filtro.getCodigo() != null && filtro.getEdicao() != null) {
+    	    
+    	    idProdutoEdicaoPesquisa = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString()).getId();
+    	}
+    	
+    	filtro.setConsolidado(modoAnalise.equals("NORMAL") || idProdutoEdicaoPesquisa == null || !idProdutoEdicao.equals(idProdutoEdicaoPesquisa));
+    	
     	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
     	filtro.setCodigo(produto.getCodigoICD());
     	
@@ -342,25 +394,27 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Path("adicionarProdutoEdicaoABase")
     @Post
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
-	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
-	
+    	
+    	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
+
 		if ((resultadoPesquisa != null) && (resultadoPesquisa.size() > 0)) {
-		
+
 			List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 			if (selecionados == null) {
 			    selecionados = new ArrayList<>();
 			}
-		
+
 			if ((indexes != null) && (indexes.size() > 0)) {
 			    for (Integer index : indexes) {
-				if (index != null) {
-				    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
-				    if (!selecionados.contains(produtoEdicao)) {
-					selecionados.add(produtoEdicao);
-				    }
-				}
+					if (index != null) {
+					    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
+					    if (!selecionados.contains(produtoEdicao)) {
+					    	selecionados.add(produtoEdicao);
+					    }
+					}
 			    }
 			}
+
 			session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 			result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
 		} else {
@@ -369,6 +423,16 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		}
     }
 
+    @Post
+    public void existeBaseVeraneio() {
+    	
+    	if(session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO) != null) {
+    		result.use(Results.json()).from(session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO), "existeBaseVeraneio").recursive().serialize();
+    	} else {
+    		result.nothing();
+    	}
+    }
+    
     @Path("gerarEstudo")
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento, String dataLancamento) throws Exception {

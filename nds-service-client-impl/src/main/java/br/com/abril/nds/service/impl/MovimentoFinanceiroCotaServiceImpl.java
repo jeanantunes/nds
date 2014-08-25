@@ -1391,11 +1391,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 tipoMovimentoFinanceiro, totalGeral, dataOperacao, usuario);
     }
     
-    
-
-    
-    
-    
     /**
      * Gera Financeiro para Movimentos de Estoque da Cota à Vista referentes à
      * Envio de Reparte.

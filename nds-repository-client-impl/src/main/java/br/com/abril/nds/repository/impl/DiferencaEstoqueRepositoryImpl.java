@@ -14,6 +14,7 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsignadoVO;
@@ -22,6 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
@@ -111,7 +113,44 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			if (filtro.getTipoDiferenca() != null) {
 			
-				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+				switch (filtro.getTipoDiferenca()) {
+				
+					case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO,
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS,
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO,
+								TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR));
+						break;
+					
+					case FALTA_EM:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.FALTA_EM,
+								TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
+								TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA));
+						break;
+
+					case SOBRA_DE:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.SOBRA_DE,
+								TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA));
+						break;
+
+						
+					case SOBRA_EM:
+						query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.SOBRA_EM,
+								TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA,
+								TipoDiferenca.SOBRA_ENVIO_PARA_COTA));
+						break;
+
+						
+					default:
+						query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+						break;
+				}
+				
+				
 			}
 			
 			if (filtro.getPaginacao() != null) {
@@ -156,11 +195,48 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
 		}
-		
+
 		if (filtro.getTipoDiferenca() != null) {
-		
-			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
-		}
+			
+			switch (filtro.getTipoDiferenca()) {
+			
+				case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO,
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS,
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO,
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR));
+					break;
+				
+				case FALTA_EM:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.FALTA_EM,
+							TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
+							TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA));
+					break;
+
+				case SOBRA_DE:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.SOBRA_DE,
+							TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA));
+					break;
+
+					
+				case SOBRA_EM:
+					query.setParameterList("tipoDiferenca", Arrays.asList(
+							TipoDiferenca.SOBRA_EM,
+							TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA,
+							TipoDiferenca.SOBRA_ENVIO_PARA_COTA));
+					break;
+
+					
+				default:
+					query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+					break;
+			}
+			
+			
+		}		
 		
 		return (Long) query.uniqueResult();
 	}
@@ -195,13 +271,22 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		if (filtro != null) {
 			
 			if (filtro.getDataMovimento() != null) {
-
 				hql += " and diferenca.dataMovimento = :dataMovimento ";
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
+				
+				if( TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.equals(filtro.getTipoDiferenca()) ||
+					TipoDiferenca.FALTA_EM.equals(filtro.getTipoDiferenca()) ||
+					TipoDiferenca.SOBRA_DE.equals(filtro.getTipoDiferenca()) ||
+					TipoDiferenca.SOBRA_EM.equals(filtro.getTipoDiferenca()) ) {
+					
+					hql += " and diferenca.tipoDiferenca in (:tipoDiferenca) ";
+					
+				} else {
+					hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+				}
 	
-				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
 			}
 		}
 		
@@ -226,7 +311,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.dataMovimento ";
 					break;
 				case CODIGO_PRODUTO:
-					hql += "order by diferenca.produtoEdicao.produto.codigo ";
+					hql += "order by lpad(diferenca.produtoEdicao.produto.codigo, 8 , '0') ";
 					break;
 				case DESCRICAO_PRODUTO:
 					hql += "order by diferenca.produtoEdicao.produto.nome ";
@@ -282,8 +367,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		List<Object[]> listaResultados = query.list();
 		
-		Set<Diferenca> setDiferencas = new HashSet<Diferenca>();
-		
 		List<Diferenca> listaDiferencas = new ArrayList<Diferenca>();
 		
 		for (Object[] resultado : listaResultados) {
@@ -296,10 +379,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 									
 			diferenca.setQtde((BigInteger) resultado[3]);
 			
-			setDiferencas.add(diferenca);
+			listaDiferencas.add(diferenca);
 		}
-		
-		listaDiferencas.addAll(setDiferencas);
 		
 		return listaDiferencas;
 	}
@@ -466,13 +547,42 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
-			if(filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
-				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA});
-			} else if (filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
-				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA});
-			} else {
-				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
-			}
+		    
+		    final Set<TipoDiferenca> tiposDiferenca = new HashSet<TipoDiferenca>();
+		    
+		    switch (filtro.getTipoDiferenca()){
+    		    case FALTA_DE:
+    		        tiposDiferenca.add(TipoDiferenca.FALTA_DE);
+    		        tiposDiferenca.add(TipoDiferenca.PERDA_DE);
+    		    break;
+    		    case FALTA_EM:
+    		        tiposDiferenca.add(TipoDiferenca.FALTA_EM);
+    		        tiposDiferenca.add(TipoDiferenca.FALTA_EM_DIRECIONADA_COTA);
+    		        tiposDiferenca.add(TipoDiferenca.PERDA_EM);
+    		    break;
+    		    case SOBRA_DE:
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_DE);
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.GANHO_DE);
+                break;
+    		    case SOBRA_EM:
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_EM);
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_ENVIO_PARA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.GANHO_EM);
+                break;
+    		    case ALTERACAO_REPARTE_PARA_LANCAMENTO:
+    		        tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO);
+    		        tiposDiferenca.add(TipoDiferenca.AJUSTE_REPARTE_FALTA_COTA);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR);
+                    tiposDiferenca.add(TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS);
+                break;
+                default:
+                    tiposDiferenca.add(filtro.getTipoDiferenca());
+		    }
+		    
+			query.setParameterList("tipoDiferenca", tiposDiferenca);
 		}
 	}
 	
@@ -726,4 +836,152 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
         
         return query.list();
     }
+	
+	@Override
+	public BigDecimal obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(final Date dataFechamento) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum(diferenca_.QTDE*produtoEdicao_.PRECO_VENDA),0)  as valor "); 
+		
+		sql.append(" from DIFERENCA diferenca_ ");
+		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
+	    
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao "); 
+		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
+	    sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
+	    sql.append("		select distinct produtoEdicao.ID ");
+	    sql.append("		from EXPEDICAO expedicaoProduto ");
+	    sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+	    sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+	    sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+	    sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+	    sql.append("		and produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+	    sql.append("		and data_lcto_distribuidor <:dataMovimentacao ");
+	    sql.append(" ) ");
+	    sql.append(" and diferenca_.id in ( ");
+	    sql.append("	select  distinct rateioDiferencaCota.DIFERENCA_ID from  RATEIO_DIFERENCA rateioDiferencaCota "); 
+	    sql.append(" ) ");
+		
+	    SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataFechamento);
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameterList("tiposDiferenca", Arrays.asList( 
+												   TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.FALTA_EM.name(),
+												   TipoDiferenca.PERDA_EM.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS.name()));
+		
+		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(final Date dataFechamento) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum(diferenca_.QTDE*produtoEdicao_.PRECO_VENDA),0) as valor ");
+		
+		sql.append(" from DIFERENCA diferenca_ ");
+		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
+	    
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao ");
+		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
+	    
+		sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
+		sql.append("		select distinct produtoEdicao.ID "); 
+		sql.append("		from EXPEDICAO expedicaoProduto ");
+		sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+		sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+		sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+		sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+		sql.append("		and   lancamentoProduto.DATA_LCTO_DISTRIBUIDOR <:dataMovimentacao ");
+		sql.append("		and   produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		
+		sql.append(" ) ");
+		sql.append(" and diferenca_.id in ( ");
+		sql.append("	select  distinct rateioDiferencaCota.DIFERENCA_ID from  RATEIO_DIFERENCA rateioDiferencaCota "); 
+		sql.append(" ) ");        
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataFechamento);
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameterList("tiposDiferenca", Arrays.asList( 
+												   TipoDiferenca.SOBRA_EM.name(),
+												   TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.GANHO_EM.name()));
+		
+		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(final Date dataFechamento) {
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		
+		sql.append(" coalesce(sum( if(diferenca_.TIPO_DIFERENCA IN ('SOBRA_EM','SOBRA_EM_DIRECIONADA_COTA','GANHO_EM') ");
+		sql.append(" 				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA ");
+		sql.append(" 				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA*-1) ");  
+		sql.append(" 		  ),0) as valor  ");
+		
+		sql.append(" from DIFERENCA diferenca_ ");
+		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
+		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
+	    
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao ");
+		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
+	    
+		sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
+		sql.append("		select distinct produtoEdicao.ID "); 
+		sql.append("		from EXPEDICAO expedicaoProduto ");
+		sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+		sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+		sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+		sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+		sql.append("		and   lancamentoProduto.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
+		sql.append("		and   produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		
+		sql.append(" ) ");
+		sql.append(" and diferenca_.id in ( ");
+		sql.append("	select  distinct rateioDiferencaCota.DIFERENCA_ID from  RATEIO_DIFERENCA rateioDiferencaCota "); 
+		sql.append(" ) ");        
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimentacao", dataFechamento);
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameterList("tiposDiferenca", Arrays.asList( 
+												   TipoDiferenca.SOBRA_EM.name(),
+												   TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.GANHO_EM.name(),
+												   TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+												   TipoDiferenca.FALTA_EM.name(),
+												   TipoDiferenca.PERDA_EM.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR.name(),
+												   TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS.name()));
+		
+		query.addScalar("valor",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

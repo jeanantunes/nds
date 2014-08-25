@@ -292,6 +292,15 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento obterPorId(Long idLancamento) {
 		return lancamentoRepository.buscarPorId(idLancamento);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public boolean isLancamentoParcial(Long idLancamento) {
+		
+		Boolean isParcial = this.lancamentoRepository.isLancamentoParcial(idLancamento);
+		
+		return isParcial != null ? isParcial : false;
+	}
 
 	@Override
 	@Transactional
@@ -423,25 +432,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public Date getMaiorDataLancamento(Long idProdutoEdicao) {
-		
-		Date maiorDataLancamentoPrevisto = 
-			this.lancamentoRepository.getMaiorDataLancamentoPrevisto(idProdutoEdicao);
-		
-		Date maiorDataLancamentoDistribuidor =
-			this.lancamentoRepository.getMaiorDataLancamentoDistribuidor(idProdutoEdicao);
-		
-		if (maiorDataLancamentoPrevisto == null || maiorDataLancamentoDistribuidor == null) {
-		
-			return null;
-		}
-		
-		if (maiorDataLancamentoPrevisto.after(maiorDataLancamentoDistribuidor)) {
-			
-			return maiorDataLancamentoPrevisto;
-		} else {
-			
-			return maiorDataLancamentoDistribuidor;
-		}
+		return this.lancamentoRepository.getMaiorDataLancamentoDistribuidor(idProdutoEdicao);
 	}
 
 	@Override
@@ -497,6 +488,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     	this.lancamentoRepository.merge(lancamento);
     }
     
+    @Transactional
     public HashMap<String, Set<Date>> obterDiasMatrizLancamentoAbertos(){
     	List<Object[]> lista = lancamentoRepository.buscarDiasMatrizLancamentoAbertos();
     	
@@ -586,6 +578,8 @@ public class LancamentoServiceImpl implements LancamentoService {
         for (Lancamento redistribuicao : redistribuicoes) {
             
             redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
+            redistribuicao.setStatus(lancamento.getStatus());
+            
             
             this.lancamentoRepository.merge(redistribuicao);
         }
@@ -612,6 +606,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         
     }
 	
+	@Transactional
 	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
 		
 	

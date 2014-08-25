@@ -14,11 +14,15 @@ import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
+import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
@@ -292,8 +296,99 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		return query.list();
 	}
+
+	@Override
+	public TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro) {
+
+		Query query = this.getSession().createSQLQuery(
+
+			new StringBuilder().append(
+				"select count(total.id) as quantidadeRegistros, sum(total.faturamentoCapa) as totalFaturamentoCapa from "
+			).append(
+				"(select c.ID as id, sum(case when tm.OPERACAO_ESTOQUE=:entradaEstoque then mec.QTDE else mec.QTDE*-1 end) * pe.PRECO_VENDA as faturamentoCapa " 
+			).append(
+				this.obterFromWhereRankingSegmento(filtro)
+			).append(
+				") as total"
+			).toString()
+		);
+
+		query.setParameter("tipoSegmentoID", filtro.getIdTipoSegmento());
+		query.setParameter("entradaEstoque", OperacaoEstoque.ENTRADA.name());
+		
+		if (filtro.getDe() != null && filtro.getAte() != null) {
+			query.setParameter("dataDe", filtro.getDe());
+			query.setParameter("dataAte", filtro.getAte());
+		}
+		
+		query.setResultTransformer(Transformers.aliasToBean(TotalizadorRankingSegmentoDTO.class));
+
+		return (TotalizadorRankingSegmentoDTO) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RegistroRankingSegmentoDTO> obterRankingSegmento(FiltroRankingSegmentoDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select @ranking\\:=@ranking+1 as ranking, @partAcum\\:=@partAcum+((consulta_segmento.faturamentoCapa*100)/:totalFaturamento) as participacaoAcumulada, ")
+		   .append(" consulta_segmento.numeroCota as numeroCota, consulta_segmento.nomeCota as nomeCota, consulta_segmento.faturamentoCapa as faturamentoCapa,  ")
+		   .append(" (consulta_segmento.faturamentoCapa*100)/:totalFaturamento as participacao ")
+		   .append(" from ")
+		   .append(" (select @ranking\\:=0, @partAcum\\:=0) r,")
+		   .append(" ( select c.NUMERO_COTA as numeroCota, ") 
+		   .append(" sum(mec.QTDE) as qtd, coalesce(pes.NOME, pes.RAZAO_SOCIAL) as nomeCota, ")
+		   .append(" sum(case when tm.OPERACAO_ESTOQUE=:entradaEstoque then mec.QTDE else mec.QTDE*-1 end) * pe.PRECO_VENDA as faturamentoCapa ")
+		   .append(this.obterFromWhereRankingSegmento(filtro))
+	   	   .append(" order by faturamentoCapa desc, c.NUMERO_COTA asc ) as consulta_segmento");
+
+		Query query = this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("tipoSegmentoID", filtro.getIdTipoSegmento());
+		query.setParameter("entradaEstoque", OperacaoEstoque.ENTRADA.name());
+		query.setParameter("totalFaturamento", filtro.getTotalFaturamento());
+
+		if (filtro.getDe() != null && filtro.getAte() != null) {
+			query.setParameter("dataDe", filtro.getDe());
+			query.setParameter("dataAte", filtro.getAte());
+		}
+
+		((SQLQuery) query).addScalar("ranking", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("nomeCota");
+		((SQLQuery) query).addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+
+		query.setResultTransformer(Transformers.aliasToBean(RegistroRankingSegmentoDTO.class));
+		
+		return query.list();
+	}
 	
-	
+	private String obterFromWhereRankingSegmento(FiltroRankingSegmentoDTO filtro) {
+		
+		StringBuilder from = new StringBuilder();
+		
+		from.append(" from ranking_segmento rs ")
+			.append(" join produto p on p.TIPO_SEGMENTO_PRODUTO_ID=:tipoSegmentoID ")
+			.append(" join produto_edicao pe on pe.PRODUTO_ID=p.ID ")
+			.append(" join cota c on c.ID=rs.COTA_ID ")
+			.append(" join pessoa pes on pes.ID=c.PESSOA_ID ")
+			.append(" join movimento_estoque_cota mec on mec.COTA_ID=c.ID and mec.PRODUTO_EDICAO_ID=pe.ID ")
+			.append(" join tipo_movimento tm on tm.ID=mec.TIPO_MOVIMENTO_ID ")
+			.append(" where rs.TIPO_SEGMENTO_PRODUTO_ID=:tipoSegmentoID ");
+		
+		if (filtro.getDe() != null && filtro.getAte() != null) {
+			from.append(" and mec.DATA between :dataDe and :dataAte ");
+		}
+
+		from.append(" group by c.ID ")
+			.append(" having sum(rs.QTDE) > 0 ");
+
+		return from.toString();
+	}
+
 	public StringBuilder obterFromWhereObterCurvaABC(FiltroCurvaABCDTO filtro, AgrupamentoCurvaABC agrupamento) {
 		
 		StringBuilder sql = new StringBuilder();

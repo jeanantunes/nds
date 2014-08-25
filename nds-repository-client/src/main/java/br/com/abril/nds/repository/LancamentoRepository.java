@@ -56,6 +56,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	Date obterDataRecolhimentoDistribuidor(String codigoProduto, Long numeroEdicao);
 
+	Boolean isLancamentoParcial(Long idLancamento);
+	
 	/**
 	 * Método que retorna o balanceamento do recolhimento referentes a um
 	 * periodo e determinados fornecedores.
@@ -428,4 +430,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 
 	boolean existeLancamentoParaOsStatus(final Long idProdutoEdicao,final StatusLancamento ...statusLancamento );
+	
+	boolean existemLancamentosConfirmados(Date dataRecolhimento);
 }

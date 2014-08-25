@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,8 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" produto.codigo as codigoProduto, ")
 		.append(" produto.CODIGO_ICD as codigoICD, ")
 		.append(" produto.nome as nomeProduto, ")
+		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%d/%c/%Y') as data, ")
+		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%H:%i') as hora, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
@@ -88,16 +91,25 @@ public class MixCotaProdutoRepositoryImpl extends
 	
 		sql.append(" mix_cota_produto.ID_COTA = :cota ");
 		
-//		sql.append(" and lancamento.status='FECHADO'");
-//		   .append(" and epc.produto_edicao_id in (")
-//		   .append("      select produto_edicao.id from produto_edicao") 
-//		   .append(" 		join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
-//		   .append(" 		where lancamento.status='FECHADO'")
-//		   .append(" 		and produto_id = (produto.id)")
-//		   .append(" )")
+		sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ");
 		
-		   sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ")
-		   .append(" group by id ");
+		sql.append(" group by id ");
+		
+		if (filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equals("data")) {
+		    
+		    sql.append(" order by temp_mix.dataHora");
+		    
+		} else {
+		    
+			if(filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equalsIgnoreCase("codigoICD")){
+				sql.append(" order by lpad(temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn() + ", 6, '0')");    
+			}else{
+				sql.append(" order by temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn());
+			}
+			
+		}
+		
+        sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		//query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -154,13 +166,13 @@ public class MixCotaProdutoRepositoryImpl extends
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
-		/*if (paginacao.getQtdResultadosPorPagina() != null) {
+		if (paginacao.getQtdResultadosPorPagina() != null) {
 			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-		}*/
+		}
 
-		/*if (paginacao.getPosicaoInicial() != null) {
+		if (paginacao.getPosicaoInicial() != null) {
 			query.setFirstResult(paginacao.getPosicaoInicial());
-		}*/
+		}
 	}
 
 
@@ -179,6 +191,8 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" produto.nome as nomeProduto, ")
 		.append(" coalesce(pessoa.nome_fantasia, pessoa.razao_social, pessoa.nome, '')  as nomeCota, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
+		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%d/%c/%Y') as data, ")
+        .append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%H:%i') as hora, ")
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
 		.append(" mix_cota_produto.ID_COTA as idCota, ")
@@ -219,8 +233,18 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		sql.append(StringUtils.join(l," and "))
 		.append("  group by cota.numero_cota,mix_cota_produto.codigo_icd,mix_cota_produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
-		.append(" order by cota.numero_cota ");
+		.append(" order by ");
 	
+		if (filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn().equals("data")) {
+            
+            sql.append(" dataHora ");
+            
+        } else {
+            
+            sql.append(filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn());
+        }
+		
+		sql.append(" " + filtroConsultaMixProdutoDTO.getPaginacao().getSortOrder());
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -482,5 +506,36 @@ public class MixCotaProdutoRepositoryImpl extends
 	    query.setParameter("tipoClassificacaoProduto", tipoClassificacaoProduto);
 	    
 	    return (boolean) query.uniqueResult();
+	}
+
+	@Override
+	public void atualizarReparte(boolean isPDVUnico, Long mixID, Long reparte, Usuario usuario, Date data) {
+
+		StringBuilder statement = new StringBuilder();
+
+		statement.append(" update mix_cota_produto ")
+				 .append(" set datahora = :data, ");
+		
+		if (isPDVUnico) {
+		
+			statement.append(" reparte_min = (case when :reparte < reparte_min then :reparte else reparte_min end), ")
+					 .append(" reparte_max = (case when :reparte > reparte_max then :reparte else reparte_max end), ");
+		} else {
+
+			statement.append(" reparte_min = :reparte, ")
+			 		 .append(" reparte_max = :reparte, ");
+		}
+
+		statement.append(" id_usuario = :idUsuario ")
+				 .append(" where id = :mixID ");
+
+		SQLQuery query = this.getSession().createSQLQuery(statement.toString());
+		
+		query.setParameter("reparte", reparte);
+		query.setParameter("idUsuario", usuario.getId());
+		query.setParameter("mixID", mixID);
+		query.setParameter("data", data);
+		
+		query.executeUpdate();
 	}
 }

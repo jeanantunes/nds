@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.TreeSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Sets;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -399,6 +396,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final List<Integer> listaDiasRecolheAtrasado = distribuidorService.getListaDiaOrdinalAceitaRecolhimento();
 		
 		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor);
+		
+		if(diasSemanaDistribuidorOpera.isEmpty()){
+		    throw new ValidacaoException(TipoMensagem.ERROR, "Existe fornecedor com dia de recolhimento não cadastrado.");
+		}
 		
 		final List<Date> datasAnteriores = distribuidorService.obterListaDataOperacional(
 				dataOperacao, 
@@ -1230,7 +1231,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> conferencias = conferenciaEncalheBackupRepository.obterDadosConferenciasEncalheBackup(numeroCota, dataOperacao);
 			
 			if(conferencias!=null) {
-				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(conferencias));
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(conferencias));
 			}
 			
 			return;
@@ -1244,13 +1245,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConfEncalheCota);
 			
 			if(listaConferenciaEncalheDTO != null) {
-				info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
+				info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalheDTO));
 			}
 			
 		} 
 		
 		if(info.getListaConferenciaEncalhe() == null) {
-			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
 		if(indConferenciaContingencia) {
@@ -1689,7 +1690,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
+	@Transactional
 	public void validarCotaProcessandoEncalhe(Integer numeroCota) {
 		
 		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);
@@ -1738,6 +1739,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return logMessage;
 	}
 	
+	@Transactional
 	public void sinalizarErroProcessoEncalhe(Integer numeroCota, Exception e) {
 		
 		Semaforo semaforo = semaforoRepository.buscarPorId(numeroCota);

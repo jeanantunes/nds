@@ -22,6 +22,8 @@ var lancamentoController = $.extend(true, {
 		$("#datePickerDataMovimento", lancamentoController.workspace).mask("99/99/9999");
 
 		$("#selectTiposDiferenca", lancamentoController.workspace).val(null);
+		
+		$("#selecionarTodosDiferencaID", lancamentoController.workspace).prop('checked', false);
 	},
 	
 	executarPreProcessamento : function(data) {
@@ -277,7 +279,7 @@ var lancamentoController = $.extend(true, {
 				"Confirmar": function() {
 					$.postJSON(
 						contextPath + "/estoque/diferenca/confirmarLancamentos", 
-						null,
+						[{name:'todos', value:$("#selecionarTodosDiferencaID", lancamentoController.workspace).is(":checked")}],
 						function(result) {
 
 							lancamentoController.inicializar();
@@ -343,7 +345,7 @@ var lancamentoController = $.extend(true, {
 					
 					$.postJSON(
 						contextPath + "/estoque/diferenca/cancelarLancamentos", 
-						null,
+						[{name:'todos', value:$("#selecionarTodosDiferencaID", lancamentoController.workspace).is(":checked")}],
 						function(result) {
 
 							lancamentoController.inicializar();

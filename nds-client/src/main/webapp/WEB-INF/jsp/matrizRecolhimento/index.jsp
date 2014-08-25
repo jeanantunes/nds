@@ -26,6 +26,8 @@
 	<body>
 
 		<input id="utilizaSedeAtendida" type="hidden" value="false">
+		
+		<input id="bloquearBotoes" type="hidden" value="false">
 
 		<div class="areaBts resumoPeriodo" style="display: none;">
 		<div class="area">
@@ -39,13 +41,13 @@
 
 
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkEditor" href="javascript:;" title="Balancear Editor">
+				<a id="linkEditor" href="javascript:;" title="Balancear Editor">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif">
 				</a>
 			</span>
 
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
+				<a id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
 					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_financeiro.png">
 				</a>
 			</span>
@@ -85,8 +87,8 @@
 			</span>
 
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkReabrirMatriz" title="Reabrir Matriz">
-					<img border="0" hspace="5" onclick='balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost();' src="${pageContext.request.contextPath}/images/ico_reopen.gif">
+				<a isEdicao="true" id="linkReabrirMatriz" href="javascript:;" title="Reabrir Matriz">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reopen.gif">
 				</a>
 			</span>
 
@@ -110,6 +112,14 @@
 			<jsp:include page="../messagesDialog.jsp" />
 
 			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
+
+		</div>
+		</form>
+		
+		<form id="form-bloqueio-matriz">
+		<div id="dialog-bloqueio-matriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
+
+			<p>Deseja bloquear para outros usuários a Matriz de Recolhimento para edição?</p>
 
 		</div>
 		</form>
@@ -225,7 +235,7 @@
 					</td>
 					<td width="164">
 						<span class="bt_pesquisar" title="Pesquisar">
-							<a href="javascript:;" onclick="balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);"></a>
+							<a href="javascript:;" onclick="balanceamentoRecolhimentoController.verificarBloqueioMatrizRecolhimento();"></a>
 						</span>
 					</td>
 				</tr>

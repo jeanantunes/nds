@@ -174,6 +174,48 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return  query.list();
 	}
+	
+	/**
+	 * Obtém lista de ChamadaEncalhe de ProdutoEdicao dos lancamentos
+	 * 
+	 * @param idsLancamento
+	 * @param fechado
+	 * @return List<ChamadaEncalhe>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaEncalhe> obterChamadasEncalheLancamentos(Set<Long> idsLancamento, Boolean fechado) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select chamadaEncalhe ");
+		
+		hql.append(" from ChamadaEncalhe chamadaEncalhe ");
+		
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ");
+		
+		hql.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");
+		
+		hql.append(" where produtoEdicao.id IN (select pe.id from Lancamento l join l.produtoEdicao pe where l.id IN (:idsLancamento))");
+		
+		if (fechado != null ) {
+			
+			hql.append(" and chamadaEncalheCota.fechado = :fechado ");
+		}
+		
+		hql.append(" group by chamadaEncalhe.id");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (fechado != null ) {
+			
+			query.setParameter("fechado", fechado);
+		}
+		
+		query.setParameterList("idsLancamento", idsLancamento);
+		
+		return  query.list();
+	}
 
 	/**
 	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  
@@ -232,7 +274,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" case pessoa4_.TIPO  ");
 		sql.append("      when 'F' then pessoa4_.NOME "); 
 		sql.append(" 	  when 'J' then pessoa4_.RAZAO_SOCIAL  ");
-		sql.append(" end as nomeCota ");
+		sql.append(" end as nomeCota, ");
+		sql.append(" sum(chamadaenc0_.QTDE_PREVISTA) as qtdeExemplares, ");
+		sql.append(" sum(chamadaenc0_.QTDE_PREVISTA * produtoedi5_.PRECO_VENDA) as vlrTotalCe ");
 		
 		gerarFromWhereSQL(filtro, sql, param);
 		
@@ -248,7 +292,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 				cota.setNumCota(rs.getInt("numCota"));
 				cota.setIdCota(rs.getLong("idCota"));
 				cota.setNomeCota(rs.getString("nomeCota"));
-				
+				cota.setQtdeExemplares(BigInteger.valueOf(rs.getInt("qtdeExemplares")));
+				cota.setVlrTotalCe(rs.getBigDecimal("vlrTotalCe"));
 				return cota;
 			}
 		};
@@ -259,10 +304,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(lista == null || lista.size() ==0)
 			return null;
 		
-		for(CotaEmissaoDTO dto : lista){
-			
-			setQtdExamplaresVlrTotalCe(filtro, dto, false);
-		}
+		/** FIXME
+		 * for(CotaEmissaoDTO dto : lista){
+		 *	setQtdExamplaresVlrTotalCe(filtro, dto, false);
+		 * }
+		 */
+		
+		
 		
 		return lista;
 	}
@@ -1228,5 +1276,35 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    
 	    return (Date) criteria.uniqueResult();
 	}
-	
+
+	/**
+	 * Remove chamadas de Encalhe por lista de ID da chamada de encalhe
+	 * 
+	 * @param ids
+	 */
+	@Override
+	public void removerChamadaEncalhePorIds(List<Long> ids) {
+		
+		
+		String sqlCel  = "DELETE FROM CHAMADA_ENCALHE_LANCAMENTO WHERE CHAMADA_ENCALHE_ID in (:ids)" ;
+			
+		Query querySqlCel = getSession().createSQLQuery(sqlCel);
+			
+		querySqlCel.setParameterList("ids", ids);	
+			
+		querySqlCel.executeUpdate();
+		
+		
+        String sqlCe  = "DELETE FROM CHAMADA_ENCALHE WHERE id in (:ids)" ;
+		
+		Query querySqlCe = getSession().createSQLQuery(sqlCe);
+		
+		querySqlCe.setParameterList("ids", ids);	
+		
+		querySqlCe.executeUpdate();
+		
+		
+		getSession().flush();
+		
+	}
 }

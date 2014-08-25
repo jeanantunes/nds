@@ -1261,11 +1261,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
             throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento de Estoque não encontrado.");
         }
-        
+
         return movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
                 diferenca.getProdutoEdicao().getId(), idUsuario,
                 diferenca.getQtde(), tipoMovimentoEstoque,
-                isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
+                isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, 
+                statusIntegracao, origem, TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.equals(tipoDiferenca));
     }
     
     private void tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
@@ -1488,81 +1489,100 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
     
     @Override
     @Transactional
-    public HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(
-            final Set<Diferenca> listaDiferencas,
+    public Set<Diferenca> verificarDiferencasIguais(final Set<Diferenca> listaDiferencas,
             final Diferenca diferenca) {
         
-        Long idDiferenca = diferenca.getId();
-        final HashMap<Long, Set<Diferenca>> mapa = new HashMap<Long, Set<Diferenca>>();
-        if (listaDiferencas != null) {
-            if (!listaDiferencas.isEmpty()) {
-                
-                final Set<Diferenca> listaDiferencasClone = new HashSet<Diferenca>();
-                listaDiferencasClone.addAll(listaDiferencas);
-                final Iterator<Diferenca> iterator = listaDiferencasClone.iterator();
-                
-                while( iterator.hasNext() ) {
-                    
-                    final Diferenca diferencaCadastrada = iterator.next();
-                    
-                    if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao())
-                            && diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())
-                            && diferencaCadastrada.getTipoDirecionamento().equals(diferenca.getTipoDirecionamento())
-                            && diferencaCadastrada.getTipoEstoque().equals(diferenca.getTipoEstoque())) {
-                        
-                        idDiferenca = diferencaCadastrada.getId();
-                        
-                        final BigInteger diferencaInicial = diferencaCadastrada.getQtde();
-                        final BigDecimal valorTotalDiferenca = diferencaCadastrada.getValorTotalDiferenca();
-                        
-                        diferencaCadastrada.setQtde(diferencaInicial.add(diferenca.getQtde()));
-                        diferencaCadastrada.setValorTotalDiferenca(valorTotalDiferenca.add(diferenca.getValorTotalDiferenca()));
-                    } else {
-                        listaDiferencas.add(diferenca);
-                    }
-                }
-            } else {
-                listaDiferencas.add(diferenca);
-            }
-            mapa.put(idDiferenca, listaDiferencas);
-        }
-        return mapa;
+    	if(listaDiferencas == null){
+    		
+    		return listaDiferencas;
+    	}
+    	 
+    	if (!listaDiferencas.isEmpty()) {
+    		
+    		if(!this.atualizarItem(listaDiferencas, diferenca)){
+        		
+        		listaDiferencas.add(diferenca);
+        	}
+    	}
+    	else{
+    		
+    		listaDiferencas.add(diferenca);
+    	}
+  
+        return listaDiferencas;
     }
+
+	private boolean atualizarItem(final Set<Diferenca> listaDiferencas,
+            final Diferenca diferenca){
+		
+		boolean itemAtualizado = false;
+		
+		for(Diferenca item : listaDiferencas){
+			
+			if(item.getProdutoEdicao().equals(diferenca.getProdutoEdicao())
+	                && item.getTipoDiferenca().equals(diferenca.getTipoDiferenca())
+	                && item.getTipoDirecionamento().equals(diferenca.getTipoDirecionamento())
+	                && item.getTipoEstoque().equals(diferenca.getTipoEstoque())) {
+				
+	            final BigInteger diferencaInicial = item.getQtde();
+	            final BigDecimal valorTotalDiferenca = item.getValorTotalDiferenca();
+	            
+	            item.setQtde(diferencaInicial.add(diferenca.getQtde()));
+	            item.setValorTotalDiferenca(valorTotalDiferenca.add(diferenca.getValorTotalDiferenca()));
+	            
+	            itemAtualizado = true;
+	        }
+		}
+	
+		return itemAtualizado;
+	}
     
     @Override
     @Transactional
-    public Set<DiferencaVO> verificarDiferencasVOIguais(
-            final Set<DiferencaVO> listaNovaDiferencaVO, final DiferencaVO diferencaVO) {
+    public Set<DiferencaVO> verificarDiferencasVOIguais(final Set<DiferencaVO> listaNovaDiferencaVO, 
+    		final DiferencaVO diferencaVO) {
         
-        if (listaNovaDiferencaVO != null) {
-            if (!listaNovaDiferencaVO.isEmpty()) {
-                
-                final Set<DiferencaVO> listaDiferencasClone = new HashSet<DiferencaVO>();
-                listaDiferencasClone.addAll(listaNovaDiferencaVO);
-                final Iterator<DiferencaVO> iterator = listaDiferencasClone.iterator();
-                
-                while (iterator.hasNext()) {
-                    
-                    final DiferencaVO diferencaVoCadastrada = iterator.next();
-                    
-                    if (diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto())
-                            && diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao())
-                            && diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca())
-                            && diferencaVoCadastrada.getTipoDirecionamento().equals(diferencaVO.getTipoDirecionamento())
-                            && diferencaVoCadastrada.getTipoEstoque().equals(diferencaVO.getTipoEstoque())) {
-                        
-                        final BigInteger quantidade = diferencaVoCadastrada.getQuantidade();
-                        
-                        diferencaVoCadastrada.setQuantidade(quantidade.add(diferencaVO.getQuantidade()));
-                    } else {
-                        listaNovaDiferencaVO.add(diferencaVO);
-                    }
-                }
-            } else {
-                listaNovaDiferencaVO.add(diferencaVO);
+		 if (listaNovaDiferencaVO == null) {
+			 
+			 return listaNovaDiferencaVO;
+		 }
+    	   
+    	if(!listaNovaDiferencaVO.isEmpty()){
+    		 
+    		if(!this.atualizarItem(listaNovaDiferencaVO, diferencaVO)){
+            	
+            	listaNovaDiferencaVO.add(diferencaVO);
             }
-        }
+    	}
+    	else{
+    		
+    		listaNovaDiferencaVO.add(diferencaVO);
+    	}
+     
         return listaNovaDiferencaVO;
+    }
+    
+    private boolean atualizarItem(final Set<DiferencaVO> listaDiferencas,final DiferencaVO novaDiferenca){
+    	
+    	boolean itemAtualizado = false;
+    	
+    	for(DiferencaVO diferenca : listaDiferencas){
+    		
+    		if (diferenca.getCodigoProduto().equals(novaDiferenca.getCodigoProduto())
+                    && diferenca.getNumeroEdicao().equals(novaDiferenca.getNumeroEdicao())
+                    && diferenca.getTipoDiferenca().equals(novaDiferenca.getTipoDiferenca())
+                    && diferenca.getTipoDirecionamento().equals(novaDiferenca.getTipoDirecionamento())
+                    && diferenca.getTipoEstoque().equals(novaDiferenca.getTipoEstoque())) {
+                
+                final BigInteger quantidade = diferenca.getQuantidade();
+                
+                diferenca.setQuantidade(quantidade.add(diferenca.getQuantidade()));
+                
+                itemAtualizado = true;
+            }
+    	}
+    	
+    	return itemAtualizado;
     }
     
     @Override
@@ -1648,31 +1668,6 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
             }
         }
         return diferencaVO;
-    }
-    
-    @Override
-    @Transactional
-    public Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
-            final Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, final Long id,
-            final RateioCotaVO rateioCotaVO) {
-        
-        List<RateioCotaVO> listaRateiosCadastrados = mapaRateiosCadastrados.get(id);
-        
-        if (listaRateiosCadastrados == null) {
-            
-            listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
-        }
-        
-        if (listaRateiosCadastrados.contains(rateioCotaVO)) {
-            
-            listaRateiosCadastrados.remove(rateioCotaVO);
-        }
-        
-        listaRateiosCadastrados.add(rateioCotaVO);
-        
-        mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
-        
-        return mapaRateiosCadastrados;
     }
     
     @Override

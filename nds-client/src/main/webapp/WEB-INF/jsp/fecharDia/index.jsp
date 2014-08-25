@@ -342,6 +342,37 @@
 
 </div>
 
+<form id="form-consolidado-valor-entrada">
+<div id="dialog-consolidado-valor-entrada" title="Consignado" style="display:none;">
+	<fieldset style="width:300px;">
+    	<legend>Entradas R$</legend>
+        <table >
+        	<tr>
+        		<td>CE do dia: <span id="consignaddo-entrada-valorCE"></span></td>
+        	</tr>
+        	<tr>
+        		<td>Outras movimentações: <span id="consignaddo-entrada-outrosValores"></span></td>
+        	</tr>
+        </table>
+    </fieldset>
+</div>
+</form>
+
+<form id="form-consolidado-valor-saida">
+<div id="dialog-consolidado-valor-saida" title="Consignado" style="display:none;">
+	<fieldset style="width:300px;">
+    	<legend>Saídas R$</legend>
+        <table >
+        	<tr>
+        		<td>Expedição do dia: <span id="consignaddo-saida-valorExpedicaoDia"></span></td>
+        	</tr>
+        	<tr>
+        		<td>Outras movimentações: <span id="consignaddo-saida-outrosValores"></span></td>
+        	</tr>
+        </table>
+    </fieldset>
+</div>
+</form>
 	<form id="form-processos">
 		<div id="dialog-processos" title="Status Processos" style="display:none;">
 		  <fieldset style="width:260px;">

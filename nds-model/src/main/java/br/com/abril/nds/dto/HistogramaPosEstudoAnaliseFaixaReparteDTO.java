@@ -41,6 +41,16 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 	private String qtdCotaPossuemReparteMenorVendaFormatado = "0";
 	
 	private String numeroCotasStr = "";
+	
+	private Integer reparteToOrder;
+	
+	public HistogramaPosEstudoAnaliseFaixaReparteDTO() {
+		
+	}
+	
+	public HistogramaPosEstudoAnaliseFaixaReparteDTO(String faixaReparte) {
+		this.faixaReparte = faixaReparte;
+	}
 
 	public String getReparteTotalFormatado() {
 		return reparteTotalFormatado;
@@ -147,6 +157,78 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 		this.numeroCotasStr = numeroCotasStr;
 	}
 
-	
-	
+	public BigDecimal getReparteTotal() {
+		return reparteTotal == null ? BigDecimal.ZERO : reparteTotal;
+	}
+
+	public BigDecimal getReparteMedio() {
+		return reparteMedio == null ? BigDecimal.ZERO : reparteMedio;
+	}
+
+	public BigDecimal getVendaNominal() {
+		return vendaNominal == null ? BigDecimal.ZERO : vendaNominal;
+	}
+
+	public BigDecimal getVendaMedia() {
+		return vendaMedia == null ? BigDecimal.ZERO : vendaMedia;
+	}
+
+	public BigDecimal getVendaPercent() {
+		return vendaPercent == null ? BigDecimal.ZERO : vendaPercent;
+	}
+
+	public BigDecimal getEncalheMedio() {
+		return encalheMedio == null ? BigDecimal.ZERO : encalheMedio;
+	}
+
+	public BigDecimal getParticipacaoReparte() {
+		return participacaoReparte == null ? BigDecimal.ZERO : participacaoReparte;
+	}
+
+	public BigInteger getQtdCotas() {
+		return qtdCotas == null ? BigInteger.ZERO : qtdCotas;
+	}
+
+	public BigInteger getQtdCotaPossuemReparteMenorVenda() {
+		return qtdCotaPossuemReparteMenorVenda == null ? BigInteger.ZERO : qtdCotaPossuemReparteMenorVenda;
+	}
+
+	public Integer getReparteToOrder() {
+		return reparteToOrder;
+	}
+
+	public void setReparteToOrder(Integer reparteToOrder) {
+		this.reparteToOrder = reparteToOrder;		
+	}
+
+	public void consolidar(HistogramaPosEstudoAnaliseFaixaReparteDTO consolidar) {
+		
+		this.setReparteTotal(
+			this.getReparteTotal().add(consolidar.getReparteTotal())
+		);
+		this.setReparteMedio(
+			this.getReparteMedio().add(consolidar.getReparteMedio())
+		);
+		this.setVendaNominal(
+			this.getVendaNominal().add(consolidar.getVendaNominal())
+		);
+		this.setVendaMedia(
+			this.getVendaMedia().add(consolidar.getVendaMedia())
+		);
+		this.setVendaPercent(
+			this.getVendaPercent().add(consolidar.getVendaPercent())
+		);
+		this.setEncalheMedio(
+			this.getEncalheMedio().add(consolidar.getEncalheMedio())
+		);
+		this.setParticipacaoReparte(
+			this.getParticipacaoReparte().add(consolidar.getParticipacaoReparte())
+		);
+		this.setQtdCotas(
+			this.getQtdCotas().add(consolidar.getQtdCotas())
+		);
+		this.setQtdCotaPossuemReparteMenorVenda(
+			this.getQtdCotaPossuemReparteMenorVenda().add(consolidar.getQtdCotaPossuemReparteMenorVenda())
+		);
+	}
 }

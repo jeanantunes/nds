@@ -7,7 +7,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,12 +27,15 @@ import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.client.vo.ResultadoCurvaABCEditor;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.RegistroRankingSegmentoDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
+import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -40,6 +45,7 @@ import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RelatorioVendasService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -50,6 +56,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -92,17 +99,22 @@ public class RelatorioVendasController extends BaseController {
 	
 	@Autowired
 	private EditorService editorService;
+	
+	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
 
 	private static final String FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCDistribuidor";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCEditor";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_COTA_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCCota";
 	private static final String FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE = "filtroPesquisaCurvaABCHistoricoEditor";
+	private static final String FILTRO_PESQUISA_RANKING_SEGMENTO = "filtroPesquisaRankingSegmento";
 	
 	private static final int DISTRIBUIDOR 	  = 1;
 	private static final int EDITOR       	  = 2;
 	private static final int PRODUTO      	  = 3;
 	private static final int COTA         	  = 4;
 	private static final int HISTORICO_EDITOR = 5;
+	private static final int SEGMENTO 		  = 6;
 
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
@@ -116,6 +128,7 @@ public class RelatorioVendasController extends BaseController {
 		result.include("fornecedores", fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO));
 		result.include("editores", editorService.obterEditoresDesc());
 		result.include("municipios", enderecoService.obterMunicipiosCotas());
+		result.include("segmentacoes", tipoSegmentoProdutoService.obterTipoSegmentoProdutoOrdenados(Ordenacao.ASC));
 	}
 	
 	public RelatorioVendasController(Result result) {
@@ -154,6 +167,9 @@ public class RelatorioVendasController extends BaseController {
 			break;
 		case HISTORICO_EDITOR:
 			exportarHistoricoEditor(fileType);
+			break;
+		case SEGMENTO:
+			this.exportarSegmento(fileType);
 			break;
 		default:
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de relatório " + tipoRelatorio + " não encontrado!");
@@ -208,6 +224,25 @@ public class RelatorioVendasController extends BaseController {
 		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, exportacao, RegistroCurvaABCExportacaoDistribuidorVO.class, this.httpServletResponse);
 		
 		result.nothing();
+	}
+	
+	private void exportarSegmento(FileType fileType) throws IOException {
+		
+		FiltroRankingSegmentoDTO filtro = (FiltroRankingSegmentoDTO) this.session.getAttribute(FILTRO_PESQUISA_RANKING_SEGMENTO);
+		
+		if (filtro == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Realiza uma pesquisa.");
+		}
+		
+		filtro.setPaginacao(null);
+		
+		List<RegistroRankingSegmentoDTO> rankingSegmento = this.relatorioVendasService.obterRankingSegmento(filtro);
+		
+		FileExporter.to("ranking-segmento", fileType).inHTTPResponse(
+			this.getNDSFileHeader(), filtro, rankingSegmento, RegistroRankingSegmentoDTO.class, this.httpServletResponse
+		);
+		
+		this.result.nothing();
 	}
 	
 	
@@ -448,6 +483,56 @@ public class RelatorioVendasController extends BaseController {
 				"", "", sortorder, sortname, page, rp);
 	}
 
+	@Post
+	@Path("/pesquisarRankingSegmentacao")
+	public void pesquisarRankingSegmentacao(Long idSegmentacao, String descricaoSegmento, Date dataDe, Date dataAte, 
+			String sortorder, String sortname, int page, int rp) {
+		
+		if (idSegmentacao == null) {			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de segmento.");
+		}
+		
+		FiltroRankingSegmentoDTO filtro = new FiltroRankingSegmentoDTO(dataDe, dataAte, idSegmentacao, page, rp, sortorder, sortname);
+		
+		filtro.setDescricaoTipoSegmento(descricaoSegmento);
+		
+		TotalizadorRankingSegmentoDTO totalizador = this.relatorioVendasService.obterQuantidadeRegistrosRankingSegmento(filtro);
+		
+		Integer count = totalizador.getQuantidadeRegistros();
+		
+		if (count == 0) {			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		filtro.setTotalFaturamento(totalizador.getTotalFaturamentoCapa());
+		
+		this.session.setAttribute(FILTRO_PESQUISA_RANKING_SEGMENTO, filtro);
+		
+		TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> tableModel = 
+				this.obterTableModelRankingSegmento(filtro, count);
+		
+		Map<String, Object> retorno = new HashMap<String, Object>();
+		
+		retorno.put("tableModel", tableModel);
+		retorno.put("totalFaturamentoCapa", totalizador.getTotalFaturamentoCapaFormatado());
+		
+		this.result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+	}
+	
+	private TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> obterTableModelRankingSegmento(FiltroRankingSegmentoDTO filtro, int rows) {
+
+		TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>> tableModel = 
+				new TableModel<CellModelKeyValue<RegistroRankingSegmentoDTO>>();
+		
+		List<RegistroRankingSegmentoDTO> lista = this.relatorioVendasService.obterRankingSegmento(filtro);
+
+		tableModel.setTotal(rows);
+		tableModel.setPage(filtro.getPaginacao() == null ? 1 : filtro.getPaginacao().getPaginaAtual());
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(PaginacaoUtil.paginarEmMemoria(lista, filtro.getPaginacao())));
+
+		return tableModel;
+	}
+	
 	/**
 	 * Realiza a pesquisa da curva ABC do distribuidor com os parametros da busca avançada
 	 * @param dataDe

@@ -50,8 +50,8 @@
 	</div>
 	
 	<!-- DIALOG  UPLOAD -->		
-	<div id="modalUploadArquivo-DistbManual" title="Adicionar em Lote" style="display:none;">
 	 <form id="formUploadLoteDistbManual"  method="post" enctype="multipart/form-data">
+		<div id="modalUploadArquivo-DistbManual" title="Adicionar em Lote" style="display:none;">
 			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
 			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_distribuicao_santos.xls" rel="tipsy" title="Download Modelo">
 			<img align="center" src="images/ico_excel.png" hspace="5" border="0" /> Modelo de exemplo</a></span></p>
@@ -67,9 +67,8 @@
 			<input type="hidden" name="estudoDTO.dataLancamento" id="dataLancamentoXLS" value=""/>
 			<input type="hidden" name="estudoDTO.lancamentoId" id="lancamentoIdXLS" value=""/>
 			
-			
+		</div>		
 	  </form>
-	</div>
 	
 	<!-- DIALOG MSG UPLOAD -->		
 	<div id="dialog-msg-upload" title="Adicionar em Lote" style="display:none;">

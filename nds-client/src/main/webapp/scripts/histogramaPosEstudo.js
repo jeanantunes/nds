@@ -8,6 +8,10 @@ var histogramaPosEstudoController = $.extend(true, {
 	oldTabContent : "",
 	oldTabHeight : 0,
 	matrizDistribuicaoController : null,
+	change: {
+		refreshGrid: false,
+		estudoId: ''
+	},
 	
 	createInput : function createInput(id, value){
 		return '<input type="text" id="input' + id + '" onchange="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
@@ -53,16 +57,37 @@ var histogramaPosEstudoController = $.extend(true, {
 	init : function () {
 		
 		var flexGridService = new FlexGridService();
+		
+		$("#workspace").tabs({
+		    select: function (event, ui) {
+		        
+		    	var _thisIndex = getTabByTitle('Histograma Pré Análise');
+
+		    	if (ui.index === _thisIndex && histogramaPosEstudoController.change.refreshGrid) {
+
+		    		histogramaPosEstudoController.change.refreshGrid=false;
+
+		    		try{
+                      histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+                          params : [{ name : 'estudoId' , value : histogramaPosEstudoController.change.estudoId}]
+                      });
+                      histogramaPosEstudoController.popularFieldsetResumoEstudo();
+                  }catch(e){
+                      exibirMensagem('WARNING', [e.message]);
+                  }
+		    	}
+		    }
+		});
 
 		/**
 		 * Associando eventos ao DOM
 		 */
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
-
+			
 			var reparteOrigemCopia = $("#copiarEstudo-copia-reparte", MatrizDistribuicao.workspace).text();
 			
-			if(reparteOrigemCopia != '' || reparteOrigemCopia != undefined){
+			if(reparteOrigemCopia != '' && reparteOrigemCopia != undefined){
 				var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
 				'&modoAnalise='+ histogramaPosEstudoController.modoAnalise +'&reparteCopiado=' +reparteOrigemCopia;
 			}else{
@@ -71,8 +96,32 @@ var histogramaPosEstudoController = $.extend(true, {
 			}
 			
 			reparteOrigemCopia = '';
+			
+			var abaAberta = false;
+			
+			$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+				if($(v).text() == 'Análise de Estudos') {
+					console.log(k +' - '+ $(v).text());
+					$("#workspace").tabs('option', 'selected', k); 
+					$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
+					// $("#workspace").tabs('load', k);
+					abaAberta = true;
+				} 
+			});
+			
+			if(abaAberta){
+				
+				$('#workspace').tabs({load : function(event, ui) {
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
 
-			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+				
+				$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+			} else {
+				
+				$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+			}
+			
 		});
 
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
@@ -116,11 +165,11 @@ var histogramaPosEstudoController = $.extend(true, {
 					onSuccess : histogramaPosEstudoController.popularFieldsetResumoEstudo,
 					preProcess : function(response){
 						var rowConsolidada = $(response.rows).last()[0];
-						rowConsolidada.cell.faixaReparte = "Total:";
-
+						
 						histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel = response;
 
 						$.each( response.rows, function( key, row ) {
+
 							histogramaPosEstudoController.formatarColunasGrid(row.cell);
 
 							if (rowConsolidada.id !== row.id) {
@@ -141,7 +190,7 @@ var histogramaPosEstudoController = $.extend(true, {
 								}
 							}
 						});
-
+						
 						histogramaPosEstudoController.analiseGridRowConsolidada = rowConsolidada;
 
 						return response;

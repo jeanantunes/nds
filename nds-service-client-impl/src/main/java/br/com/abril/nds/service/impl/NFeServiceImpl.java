@@ -296,7 +296,7 @@ public class NFeServiceImpl implements NFeService {
                 && lista.get(0).getEstudoCota().getEstudo().getDataLancamento() != null) {
             dataLancamento = lista.get(0).getEstudoCota().getEstudo().getDataLancamento();
         } else {
-            dataLancamento = notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
+            dataLancamento = this.notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
         }
         
         final Long numeroNF 	    		= notaEnvio.getNumero();
@@ -511,9 +511,7 @@ public class NFeServiceImpl implements NFeService {
         for(final ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
             
             codigoProduto 		= itemNotaEnvio.getCodigoProduto().toString();
-            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null)
-            		? itemNotaEnvio.getPublicacao()
-            				:itemNotaEnvio.getPublicacao()+" (1) ";
+            descricaoProduto 	= (itemNotaEnvio.getFuroProduto()==null) ? itemNotaEnvio.getPublicacao() : itemNotaEnvio.getPublicacao()+" (1) ";
             produtoEdicao		= itemNotaEnvio.getProdutoEdicao().getNumeroEdicao();
             
             valorUnitarioProduto = itemNotaEnvio.getPrecoCapa();
@@ -537,7 +535,6 @@ public class NFeServiceImpl implements NFeService {
             if(itemNotaEnvio.getFuroProduto()!= null){
             	temLancamentoComFuroDeProduto = true;
             }
-            
         }
         
         nfeImpressao.setItensComFuroLancamento(temLancamentoComFuroDeProduto);

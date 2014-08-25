@@ -43,7 +43,6 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
-import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -95,6 +94,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
+import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
@@ -300,6 +300,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private CotaAusenteRepository cotaAusenteRepository;
 
 	
 	@Autowired
@@ -632,64 +635,101 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		return obterResumoConsignadoComFechamentoNaoProcessado(dataFechamento);
 	}
-
-	//resumoConsignado.setSaldoAtual(consultaConsignadoCotaRepository.buscarTotalDetalhadoSomado(
-      //      new FiltroConsultaConsignadoCotaDTO(false, true, null, null, null)));
 	
 	private ResumoFechamentoDiarioConsignadoDTO obterResumoConsignadoComFechamentoNaoProcessado(Date dataFechamento) {
 	    
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
 
-	        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
-	            resumoFechamentoDiarioConsignado.new ResumoConsignado();
+        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
+            resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
-	        //Consignado
-	        resumoConsignado.setSaldoAnterior(fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento));
-	        
-	        FiltroConsultaEncalheDTO filtroEntradaConsignado = new FiltroConsultaEncalheDTO(dataFechamento);
-	        filtroEntradaConsignado.setUtilizaPrecoCapa(true);
-	        
-	        resumoConsignado.setValorEntradas(this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento));
+        this.processarValoresConsignado(dataFechamento,
+				resumoFechamentoDiarioConsignado, resumoConsignado);
 
-	        resumoConsignado.setValorSaidas(
-	            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-	                dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
+        ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
+            resumoFechamentoDiarioConsignado.new ResumoAVista();
 
-	        if (resumoConsignado.getSaldoAnterior() == null) {resumoConsignado.setSaldoAnterior(BigDecimal.ZERO);}
-	        if (resumoConsignado.getValorEntradas() == null) {resumoConsignado.setValorEntradas(BigDecimal.ZERO);}
-	        if (resumoConsignado.getValorSaidas() == null) {resumoConsignado.setValorSaidas(BigDecimal.ZERO);}
-	        
-	        resumoConsignado.setSaldoAtual(
-	                resumoConsignado.getSaldoAnterior().subtract(
-	                        resumoConsignado.getValorEntradas()).add(resumoConsignado.getValorSaidas()));
-	        
-	        resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+        this.processarValoresConignadoAVista(dataFechamento,
+        		resumoFechamentoDiarioConsignado, resumoAVista);
 
-	        ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
-	            resumoFechamentoDiarioConsignado.new ResumoAVista();
+        return resumoFechamentoDiarioConsignado;
+	}
 
-	        //A Vista
-	        resumoAVista.setSaldoAnterior(
-	                this.fechamentoDiarioResumoAvistaRepository.obterSaldoAVistaFechamentoDiarioAnterior(dataFechamento));
+	private void processarValoresConsignado(
+			Date dataFechamento,
+			ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado,
+			ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado) {
+		
+		resumoConsignado.setSaldoAnterior(Util.nvl(
+				fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento),BigDecimal.ZERO));
+		
+        //Valores de Entrada no consignado do Distribuidor
+        BigDecimal valorCE = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento), BigDecimal.ZERO);
+        
+        BigDecimal valorDiferencasEntrada = Util.nvl(
+        		diferencaRepository.obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        
+        BigDecimal valorCotaAusenteEntrada = Util.nvl(
+        		cotaAusenteRepository.obterSaldoDeEntradaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        
+        resumoConsignado.setValorCE(valorCE);
+        
+        resumoConsignado.setValorOutrosValoresEntrada(valorDiferencasEntrada.add(valorCotaAusenteEntrada));
+        
+        resumoConsignado.setValorEntradas(valorCE.add(resumoConsignado.getValorOutrosValoresEntrada()));
+        
+       //Valores de Saida no consignado do Distribuidor
+        
+        BigDecimal valorExpedido = Util.nvl(
+        		movimentoEstoqueRepository.obterSaldoDeReparteExpedido(dataFechamento),BigDecimal.ZERO);
+        
+        valorExpedido = valorExpedido.add(Util.nvl(
+                diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
+        
+        BigDecimal valorDiferencasSaida =  Util.nvl(
+        		diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        
+        BigDecimal valorCotaAusenteSaida = Util.nvl(
+        		cotaAusenteRepository.obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        
+        resumoConsignado.setValorExpedicao(valorExpedido);
+        
+        resumoConsignado.setValorOutrosValoresSaidas(valorDiferencasSaida.add(valorCotaAusenteSaida));
+        
+        resumoConsignado.setValorSaidas(valorExpedido.add(resumoConsignado.getValorOutrosValoresSaidas()));
+       
+        resumoConsignado.setSaldoAtual(
+                resumoConsignado.getSaldoAnterior().subtract(
+                        resumoConsignado.getValorEntradas()).add(resumoConsignado.getValorSaidas()));
+        
+        resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+	}
 
-	        resumoAVista.setValorEntradas(
-	            this.movimentoEstoqueRepository.obterSaldoDistribuidorEntrada(
-	                dataFechamento, FormaComercializacao.CONTA_FIRME));
+	private void processarValoresConignadoAVista(
+			Date dataFechamento,
+			ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado,
+			ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista) {
 
-	        resumoAVista.setValorSaidas(
-	            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-	                dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
+        resumoAVista.setSaldoAnterior(
+                this.fechamentoDiarioResumoAvistaRepository.obterSaldoAVistaFechamentoDiarioAnterior(dataFechamento));
 
-	        if (resumoAVista.getSaldoAnterior()==null){resumoAVista.setSaldoAnterior(BigDecimal.ZERO);}
-	        if (resumoAVista.getValorEntradas()==null){resumoAVista.setValorEntradas(BigDecimal.ZERO);}
-	        if (resumoAVista.getValorSaidas()==null){resumoAVista.setValorSaidas(BigDecimal.ZERO);}
-	        resumoAVista.setSaldoAtual(
-	            resumoAVista.getSaldoAnterior().subtract(
-	                resumoAVista.getValorEntradas()).add(resumoAVista.getValorSaidas()));
+        resumoAVista.setValorEntradas(
+            this.movimentoEstoqueRepository.obterSaldoDistribuidorEntrada(
+                dataFechamento, FormaComercializacao.CONTA_FIRME));
 
-	        resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
+        resumoAVista.setValorSaidas(
+            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+                dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
 
-	        return resumoFechamentoDiarioConsignado;
+        if (resumoAVista.getSaldoAnterior()==null){resumoAVista.setSaldoAnterior(BigDecimal.ZERO);}
+        if (resumoAVista.getValorEntradas()==null){resumoAVista.setValorEntradas(BigDecimal.ZERO);}
+        if (resumoAVista.getValorSaidas()==null){resumoAVista.setValorSaidas(BigDecimal.ZERO);}
+        resumoAVista.setSaldoAtual(
+            resumoAVista.getSaldoAnterior().subtract(
+                resumoAVista.getValorEntradas()).add(resumoAVista.getValorSaidas()));
+
+        resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
 	}
 	
 	private ResumoFechamentoDiarioConsignadoDTO obterResumoConsignadoComFechamentoProcessado(Date dataFechamento){
@@ -710,6 +750,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			resumoConsignado.setValorSaidas(resumoConsignadoDia.getValorSaidas());
 			
 			resumoConsignado.setSaldoAtual(resumoConsignadoDia.getSaldoAtual());
+			
+			resumoConsignado.setValorCE(resumoConsignadoDia.getValorCE());
+			
+			resumoConsignado.setValorExpedicao(resumoConsignadoDia.getValorExpedicao());
+			
+			resumoConsignado.setValorOutrosValoresEntrada(resumoConsignadoDia.getValorOutrasMovimentacoesEntrada());
+			
+			resumoConsignado.setValorOutrosValoresSaidas(resumoConsignadoDia.getValorOutrasMovimentacoesSaida());
 			
 			resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 		}
@@ -1073,10 +1121,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		FechamentoDiarioResumoConsignado valorResumoConsignado = new FechamentoDiarioResumoConsignado();
 		
 		valorResumoConsignado.setFechamentoDiario(fechamento);
-		valorResumoConsignado.setSaldoAnterior(rmConsignado .getSaldoAnterior());
-		valorResumoConsignado.setSaldoAtual(rmConsignado .getSaldoAtual());
-		valorResumoConsignado.setValorEntradas(rmConsignado .getValorEntradas());
-		valorResumoConsignado.setValorSaidas(rmConsignado .getValorSaidas());
+		valorResumoConsignado.setSaldoAnterior(rmConsignado.getSaldoAnterior());
+		valorResumoConsignado.setSaldoAtual(rmConsignado.getSaldoAtual());
+		valorResumoConsignado.setValorEntradas(rmConsignado.getValorEntradas());
+		valorResumoConsignado.setValorSaidas(rmConsignado.getValorSaidas());
+		valorResumoConsignado.setValorCE(rmConsignado.getValorCE());
+		valorResumoConsignado.setValorExpedicao(rmConsignado.getValorExpedicao());
+		valorResumoConsignado.setValorOutrasMovimentacoesEntrada(rmConsignado.getValorOutrosValoresEntrada());
+		valorResumoConsignado.setValorOutrasMovimentacoesSaida(rmConsignado.getValorOutrosValoresSaidas());
 		
 		fechamentoDiarioResumoConsignadoRepository.adicionar(valorResumoConsignado);
 	}

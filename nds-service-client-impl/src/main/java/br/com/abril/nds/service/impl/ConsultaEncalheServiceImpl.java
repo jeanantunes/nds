@@ -136,15 +136,15 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCotaDTO));
 		
-		info.setValorVendaDia(valorVendaDia.setScale(2, RoundingMode.HALF_EVEN));
+		info.setValorVendaDia(valorVendaDia.setScale(2, RoundingMode.HALF_UP));
 		
 		info.setValorDebitoCredito(valorDebitoCredito.setScale(2, RoundingMode.HALF_UP));
 		
 		info.setValorPagar(valorPagar.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorReparte(valorTotalReparte.setScale(2, RoundingMode.HALF_EVEN));
+		info.setValorReparte(valorTotalReparte.setScale(2, RoundingMode.HALF_UP));
 		
-		info.setValorEncalhe(valorTotalEncalhe.setScale(2, RoundingMode.HALF_EVEN));
+		info.setValorEncalhe(valorTotalEncalhe.setScale(2, RoundingMode.HALF_UP));
 		
 		return info;
 	}

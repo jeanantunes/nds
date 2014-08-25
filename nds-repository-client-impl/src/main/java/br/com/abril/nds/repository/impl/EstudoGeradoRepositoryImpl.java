@@ -5,12 +5,14 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 
@@ -37,6 +40,38 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	public EstudoGeradoRepositoryImpl() {
 		
 		super(EstudoGerado.class);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EstudoGeradoPreAnaliseDTO obterEstudoPreAnalise(Long id) {
+		
+		Criteria c = this.getSession().createCriteria(EstudoGerado.class);
+		c.createAlias("produtoEdicao", "produtoEdicao");
+		c.createAlias("produtoEdicao.produto", "produto");
+		c.createAlias("produto.tipoSegmentoProduto", "tipoSegmentoProduto");
+
+		c.add(Restrictions.eq("id", id));
+		
+		c.setProjection(
+			Projections.projectionList().add(
+				Projections.alias(Projections.property("produtoEdicao.parcial"), "parcial")
+			).add(
+				Projections.alias(Projections.property("produto.periodicidade"), "periodicidade")
+			).add(
+				Projections.alias(Projections.property("tipoSegmentoProduto.id"), "idTipoSegmentoProduto")
+			).add(
+				Projections.alias(Projections.property("tipoSegmentoProduto.descricao"), "descricaoTipoSegmentoProduto")
+			).add(
+				Projections.alias(Projections.property("liberado"), "liberado")
+			).add(
+				Projections.alias(Projections.property("produtoEdicao.id"), "idProdutoEdicao")
+			)
+		);
+		
+		c.setResultTransformer(Transformers.aliasToBean(EstudoGeradoPreAnaliseDTO.class));
+		
+		return (EstudoGeradoPreAnaliseDTO) c.uniqueResult();
 	}
 	
 	@Override
@@ -72,93 +107,61 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 
 	@Override
 	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId, boolean isEdicoesBaseEspecificas) {
-		
+
 		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT ");
-		
-		sql.append("   qtdReparteDistribuidor, ");
-		
-		sql.append("   (qtdReparteDistribuidor - qtdReparteADistribuir) as qtdSobraEstudo, ");
-		
-		sql.append("   (qtdReparteADistribuir - qtdReparteDistribuidoEstudo) as saldo, ");
-		
+
+		sql.append("   select  qtdReparteDistribuidor, ");
+		sql.append("   (qtdReparteDistribuidor - qtdReparteADistribuir) AS qtdSobraEstudo, ");
+		sql.append("   (qtdReparteADistribuir - qtdReparteDistribuidoEstudo) AS saldo, ");
 		sql.append("   qtdReparteDistribuidoEstudo, ");
-		
-		sql.append("   qtdCotasAtivas, ");
-		
-		sql.append("   qtdCotasRecebemReparte, ");
-		
-		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		
-		sql.append("   CAST(qtdReparteMinimoSugerido as UNSIGNED INTEGER) as qtdReparteMinimoSugerido, ");
-		
-		sql.append("   (qtdReparteDistribuidoEstudo / qtdCotasRecebemReparte) as reparteMedioCota, ");
-		
+		sql.append("   CAST(qtdCotasAtivas AS UNSIGNED INTEGER) as qtdCotasAtivas, ");
+		sql.append("   CAST(qtdCotasRecebemReparte AS UNSIGNED INTEGER) as qtdCotasRecebemReparte, ");
+		sql.append("   CAST(qtdCotasAdicionadasPelaComplementarAutomatica AS UNSIGNED INTEGER) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
+		sql.append("   CAST(qtdReparteMinimoSugerido AS UNSIGNED INTEGER) AS qtdReparteMinimoSugerido, ");
+		sql.append("   (qtdReparteDistribuidoEstudo / qtdCotasRecebemReparte) AS reparteMedioCota, ");
 		sql.append("   abrangenciaSugerida, ");
-		
-		sql.append("   CAST(qtdReparteMinimoEstudo as UNSIGNED INTEGER) as qtdReparteMinimoEstudo, ");
-		
-		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 AS abrangenciaEstudo     ");
-		
-		if (isEdicoesBaseEspecificas){
-			
-			sql.append("   , ");
-		
-		    sql.append("   ( qtdCotasQueVenderam  / qtdCotasAtivas ) * 100 AS abrangenciaDeVenda ");
-		}
+		sql.append("   CAST(qtdReparteMinimoEstudo AS UNSIGNED INTEGER) AS qtdReparteMinimoEstudo, ");
+		sql.append("   (qtdCotasRecebemReparte / qtdCotasAtivas) * 100 AS abrangenciaEstudo , ");
+		sql.append("   (qtdCotasQueVenderam / qtdCotasAtivas) * 100 AS abrangenciaDeVenda ");
+       
+		sql.append("   from ( ");
 
-		sql.append("   FROM ");
-		
-		sql.append("   ( ");
-		
-		sql.append("     SELECT ");
-		
-		
-		sql.append("       (SELECT case when (estp.QTDE is null or estp.QTDE=0) then case when plp.NUMERO_PERIODO=1 then ((lc.REPARTE)-lc.REPARTE_PROMOCIONAL) else CASE WHEN lc.REPARTE=0 THEN eg.QTDE_REPARTE ELSE lc.REPARTE END end else estp.qtde end as rprte ");
-		
-		sql.append("       	FROM estudo_gerado eg JOIN lancamento lc ON lc.ID = eg.LANCAMENTO_ID LEFT JOIN periodo_lancamento_parcial plp ON plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
-		
-		sql.append("       	LEFT JOIN estoque_produto estp ON estp.PRODUTO_EDICAO_ID = eg.PRODUTO_EDICAO_ID where eg.ID = :estudoId ) AS qtdReparteDistribuidor, ");
-		
-		
-		sql.append("       (SELECT qtde_reparte FROM estudo_gerado where id = :estudoId) AS qtdReparteADistribuir, ");
-		
-		sql.append("       (SELECT sum(reparte) FROM estudo_cota_gerado WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
-		
-		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
-		
-		
-		sql.append("       (SELECT count(DISTINCT estudo_cota_gerado.cota_id) "); 
-		
-		sql.append("       FROM estudo_cota_gerado");
-		
-		sql.append(" 	   WHERE ESTUDO_ID = :estudoId AND reparte IS NOT NULL) AS qtdCotasRecebemReparte, ");
-		
-		
-		sql.append("       (SELECT COUNT(id) FROM estudo_cota_gerado WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		
-		sql.append(" 	   IFNULL((SELECT estg.reparte_minimo as repMin FROM estudo_gerado estg WHERE id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
-		
-		sql.append("	   (SELECT estrat.reparte_minimo FROM estrategia estrat JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrat.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");
-		
-		sql.append("	   (SELECT estrategia.abrangencia FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS abrangenciaSugerida      ");
-		
-		if (isEdicoesBaseEspecificas){
-			
-			sql.append("   , ");
+		sql.append("   select "); 
+		sql.append("   eg.QTDE_REPARTE as qtdReparteADistribuir, "); 
+		sql.append("   coalesce(eg.REPARTE_MINIMO, 0) as qtdReparteMinimoEstudo, ");
+		sql.append("   sum(ecg.REPARTE) * count(distinct ecg.ID)/count(ecg.ID)  as qtdReparteDistribuidoEstudo, ");
+		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
+		sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end)*count(distinct c.ID) / count(c.ID) as qtdCotasAtivas, ");
+		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
+		sql.append("   COUNT(DISTINCT (CASE WHEN epc.qtde_recebida - epc.qtde_devolvida > 0 THEN epc.cota_id ELSE NULL END)) as qtdCotasQueVenderam, ");
+				
+		sql.append("   CASE WHEN (estp.QTDE IS NULL OR estp.QTDE=0) "); 
+		sql.append("   THEN CASE WHEN plp.NUMERO_PERIODO=1 "); 
+		sql.append("   THEN ((l.REPARTE)-l.REPARTE_PROMOCIONAL) "); 
+		sql.append("   ELSE CASE WHEN l.REPARTE=0 "); 
+		sql.append("   THEN eg.QTDE_REPARTE "); 
+		sql.append("   ELSE l.REPARTE "); 
+		sql.append("   END "); 
+		sql.append("   END ");
+		sql.append("   ELSE estp.qtde "); 
+		sql.append("   END AS qtdReparteDistribuidor, ");
 
-		    sql.append(" 	   (SELECT COUNT( DISTINCT (CASE WHEN qtde_recebida - qtde_devolvida > 0 THEN cota_id ELSE null END)) ");
-		    
-		    sql.append(" 	    FROM estoque_produto_cota");
-		    
-		    sql.append(" 		WHERE estoque_produto_cota.produto_edicao_id IN (SELECT produto_edicao_id FROM estudo_produto_edicao_base WHERE estudo_id = :estudoId)");
-		    
-		    sql.append(" 		AND estoque_produto_cota.cota_id IN (SELECT cota_id FROM estudo_cota_gerado WHERE estudo_id = :estudoId)) AS qtdCotasQueVenderam");
-		}
-		
-		sql.append("   ) AS base ");
-		
+		sql.append("   est.ABRANGENCIA AS abrangenciaSugerida, ");
+		sql.append("   est.REPARTE_MINIMO as qtdReparteMinimoSugerido ");
+
+		sql.append("   from estudo_gerado eg "); 
+		sql.append("   join lancamento l on l.ID=eg.LANCAMENTO_ID ");
+		sql.append("   left join periodo_lancamento_parcial plp ON plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append("   left join estudo_cota_gerado ecg on ecg.ESTUDO_ID=eg.ID ");
+		sql.append("   left join estudo_produto_edicao_base epeb on epeb.ESTUDO_ID=eg.ID ");
+		sql.append("   left join estoque_produto_cota epc on epc.PRODUTO_EDICAO_ID=epeb.PRODUTO_EDICAO_ID and epc.COTA_ID=ecg.COTA_ID ");
+		sql.append("   left join estoque_produto estp on estp.PRODUTO_EDICAO_ID=eg.PRODUTO_EDICAO_ID ");
+		sql.append("   left join cota c on c.ID=ecg.COTA_ID ");
+		sql.append("   left join estrategia est on eg.PRODUTO_EDICAO_ID=est.PRODUTO_EDICAO_ID ");
+		sql.append("   where eg.ID=:estudoId ");
+
+		sql.append("   ) as base; ");
+
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("estudoId", estudoId);

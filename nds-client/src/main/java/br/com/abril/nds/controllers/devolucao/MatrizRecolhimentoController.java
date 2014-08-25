@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -43,12 +44,14 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -107,6 +110,9 @@ public class MatrizRecolhimentoController extends BaseController {
     private GrupoService grupoService;
     
     @Autowired
+    private UsuarioService usuarioService; 
+    
+    @Autowired
     private LancamentoService lancamentoService;
     
     private static final String ATRIBUTO_SESSAO_FILTRO_PESQUISA_BALANCEAMENTO_RECOLHIMENTO = "filtroPesquisaBalanceamentoRecolhimento";
@@ -118,6 +124,14 @@ public class MatrizRecolhimentoController extends BaseController {
     private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
     
     private static final String ATRIBUTO_SESSAO_PRODUTOS_RECOLHIMENTO = "produtosRecolhimento";
+
+	private static final String SORT_NAME_CODIGO_PRODUTO = "codigoProduto";
+
+	private static final String SORT_NAME_NOME_PRODUTO = "nomeProduto";
+	
+	private static final String SORT_NAME_NUMERO_EDICAO = "numeroEdicao";
+	
+	public static final String TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE = "trava_matriz_recolhimento";
     
     @Get
     @Path("/")
@@ -254,6 +268,8 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void confirmar(List<Date> datasConfirmadas) {
         
+        this.verificarBloqueioMatrizRecolhimento();
+        
         verificarExecucaoInterfaces();
         
         if (datasConfirmadas == null || datasConfirmadas.size() <= 0) {
@@ -271,9 +287,11 @@ public class MatrizRecolhimentoController extends BaseController {
         TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = this
                 .clonarMapaRecolhimento(balanceamentoRecolhimento.getMatrizRecolhimento());
         
+        Usuario usuario = getUsuarioLogado();
+        
         TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada = recolhimentoService
                 .confirmarBalanceamentoRecolhimento(matrizRecolhimento, filtro.getAnoNumeroSemana(), datasConfirmadas,
-                        getUsuarioLogado(), balanceamentoRecolhimento.getProdutosRecolhimentoAgrupados());
+                        usuario, balanceamentoRecolhimento.getProdutosRecolhimentoAgrupados());
         
         matrizRecolhimento = this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
         
@@ -442,12 +460,16 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void salvar() {
         
+        this.verificarBloqueioMatrizRecolhimento();
+        
         verificarExecucaoInterfaces();
         
         BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = (BalanceamentoRecolhimentoDTO) this.httpSession
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
         
-        recolhimentoService.salvarBalanceamentoRecolhimento(getUsuarioLogado(), balanceamentoRecolhimento);
+        Usuario usuario = getUsuarioLogado();
+        
+        recolhimentoService.salvarBalanceamentoRecolhimento(usuario, balanceamentoRecolhimento);
         
         removerAtributoAlteracaoSessao();
         
@@ -524,6 +546,8 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void voltarConfiguracaoOriginal() {
         
+        this.verificarBloqueioMatrizRecolhimento();
+        
         this.validarDataConfirmacaoConfiguracaoInicial();
         
         FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -548,6 +572,8 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
             String novaDataFormatada, String dataAntigaFormatada, boolean selecionarTodos) {
+        
+        this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -580,6 +606,8 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoFormatadoVO produtoRecolhimento,
             String dataAntigaFormatada) {
+        
+        this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -993,8 +1021,16 @@ public class MatrizRecolhimentoController extends BaseController {
         
         int totalRegistros = listaProdutoRecolhimentoVO.size();
         
-        listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
-                sortname);
+        if(this.isSortNamePorCodigoOuNomeProduto(sortname)){
+        
+            listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
+                 sortname,SORT_NAME_NUMERO_EDICAO);
+        }
+        else{
+
+            listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
+            		sortname);            
+        }
         
         TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>> tableModel = new TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>>();
         
@@ -1018,6 +1054,11 @@ public class MatrizRecolhimentoController extends BaseController {
         tableModel.setRows(listaCellModel);
         
         result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
+    
+    private boolean isSortNamePorCodigoOuNomeProduto(String sortName){
+    	
+    	return (SORT_NAME_CODIGO_PRODUTO.equals(sortName)|| SORT_NAME_NOME_PRODUTO.equals(sortName));
     }
     
     private List<ProdutoRecolhimentoVO> obterListaProdutoRecolhimentoVO(
@@ -1722,38 +1763,6 @@ public class MatrizRecolhimentoController extends BaseController {
         this.result.use(Results.json()).from(datasConfirmadas, "result").serialize();
     }
     
-    @Get
-    public void obterDatasConfirmadasReabertura() {
-        
-        List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
-        
-        List<String> datasConfirmadasReabertura = new ArrayList<>();
-        
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        Date data = new Date();
-        
-        for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
-            
-            try {
-                
-                data = format.parse(confirmacaoVO.getMensagem());
-                
-            } catch (ParseException ex) {
-                
-            }
-            
-            if (confirmacaoVO.isConfirmado()) {
-                
-                if (this.distribuidorService.obterDataOperacaoDistribuidor().before(data)) {
-                    
-                    datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
-                }
-            }
-        }
-        
-        this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
-    }
-    
     @Post
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void obterDatasConfirmadasReaberturaPost() {
@@ -1789,6 +1798,8 @@ public class MatrizRecolhimentoController extends BaseController {
     
     @Post
     public void reabrirMatriz(List<Date> datasReabertura) {
+        
+        this.verificarBloqueioMatrizRecolhimento();
         
         if (datasReabertura == null || datasReabertura.isEmpty()) {
             
@@ -2001,4 +2012,66 @@ public class MatrizRecolhimentoController extends BaseController {
         
         return listaProdutoRecolhimentoFormatadoVO;
     }
+    
+    @Post
+    public void verificarBloqueioMatrizRecolhimentoPost() {
+        
+        this.verificarBloqueioMatrizRecolhimento();
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    public void verificarBloqueioMatrizRecolhimento() {
+        
+        String loginUsuarioContext = 
+            (String) this.httpSession.getServletContext().getAttribute(
+                    TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE);
+        
+        String usuario = super.getUsuarioLogado().getLogin();
+        
+        if (loginUsuarioContext != null
+                && !loginUsuarioContext.equals(usuario)) {
+                
+            throw new ValidacaoException(
+                new ValidacaoVO(TipoMensagem.WARNING, 
+                    "A matriz de recolhimento está bloqueada pelo usuário [" 
+                        + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]. Somente será possível realizar consultas na matriz."));
+        }
+    }
+    
+    @Post
+    public void bloquearMatrizRecolhimento() {
+        
+        this.verificarBloqueioMatrizRecolhimento();
+        
+        String usuario = super.getUsuarioLogado().getLogin();
+        
+        this.httpSession.getServletContext().setAttribute(
+            TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE, usuario);
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    @Post
+    public void desbloquearMatrizRecolhimentoPost() {
+        
+        Usuario usuario = getUsuarioLogado();
+        
+        desbloquearMatrizRecolhimento(this.httpSession.getServletContext(), usuario.getLogin());
+        
+        this.result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+    
+    public static void desbloquearMatrizRecolhimento(ServletContext servletContext, String usuario) {
+
+        String loginUsuarioContext = 
+            (String) servletContext.getAttribute(
+                    TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE);
+        
+        if (usuario.equals(loginUsuarioContext)) {
+            
+            servletContext.removeAttribute(TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE);
+        }
+    }
+    
 }

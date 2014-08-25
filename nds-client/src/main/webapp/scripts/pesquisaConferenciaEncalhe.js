@@ -34,6 +34,8 @@ var PesquisaConferenciaEncalhe = {
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog("close");
 				
+				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result, true);	
+				
 			}
 			
 		);

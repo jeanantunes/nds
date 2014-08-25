@@ -29,31 +29,31 @@ var mixCotaProdutoController = $.extend(true, {
 				display : 'Rep. Médio',
 				name : 'reparteMedio',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Vda. Média',
 				name : 'vendaMedia',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimoInput',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Rep. Inf. Max.',
 				name : 'reparteMaximoInput',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Usuário',
@@ -77,10 +77,10 @@ var mixCotaProdutoController = $.extend(true, {
 				display : 'Ação',
 				name : 'acao',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
-			sortname : "codigo",
+			sortname : "codigoICD",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -110,31 +110,31 @@ var mixCotaProdutoController = $.extend(true, {
 				display : 'Rep. Médio',
 				name : 'reparteMedio',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Vda. Média',
 				name : 'vendaMedia',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimoInput',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Rep. Inf. Max.',
 				name : 'reparteMaximoInput',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			},  {
 				display : 'Usuário',
@@ -158,7 +158,7 @@ var mixCotaProdutoController = $.extend(true, {
 				display : 'Ação',
 				name : 'acao',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numeroCota",

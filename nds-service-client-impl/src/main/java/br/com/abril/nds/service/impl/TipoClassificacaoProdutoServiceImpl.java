@@ -34,4 +34,10 @@ public class TipoClassificacaoProdutoServiceImpl implements	TipoClassificacaoPro
        return repo.obterPorClassificacao(classificacao);
     }
 
+    @Transactional(readOnly=true)
+	@Override
+	public Boolean validarClassificacao(String classificacao) {
+    	return repo.validarClassificacao(classificacao);
+	}
+
 }

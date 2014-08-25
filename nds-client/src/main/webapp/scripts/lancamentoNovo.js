@@ -8,6 +8,12 @@ var lancamentoNovoController = $.extend(true, {
 	houveAlteracaoLancamentos:false,
 
 	init : function () {
+
+		$("#linkIncluirNovaDiferenca",lancamentoNovoController.workspace).click(function(e){
+			e.preventDefault();
+			lancamentoNovoController.incluirNovo();
+		});
+		
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -105,10 +111,9 @@ var lancamentoNovoController = $.extend(true, {
 			height : 180,
 			disableSelect: true
 		});
-		
 	},
 	
-	resetarCamposTela:function(){
+	resetarCamposTela: function(){
 		
 		$("#codigoProdutoInput", lancamentoNovoController.workspace).val("");
 		$("#nomeProdutoInput", lancamentoNovoController.workspace).val("");
@@ -163,9 +168,10 @@ var lancamentoNovoController = $.extend(true, {
 		$("#incluirNovosProduto", lancamentoNovoController.workspace).show();
 		$("#divDataNotaEnvio",lancamentoNovoController.workspace).find("img").show();
 		$("#viewIncluirNovaDiferenca", lancamentoNovoController.workspace).show();
+		
 	},
 	
-	popupNovasDiferencas : function() {
+	popupNovasDiferencas : function(camposRecarregar) {
 		
 		if(!verificarPermissaoAcesso(lancamentoNovoController.workspace)){
 			return;
@@ -178,14 +184,22 @@ var lancamentoNovoController = $.extend(true, {
 		lancamentoNovoController.idDiferenca = null;
 		
 		lancamentoNovoController.openModalDiferenca();
+
+		var tipoDiferenca = null;
 		
-		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+		if(camposRecarregar) {
+			tipoDiferenca = camposRecarregar.tipoDiferenca;
+		} else {
+			tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+		}
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({
 			tipoDiferenca: tipoDiferenca,
 			direcionamento: 'ESTOQUE',
-			clearInputs: true
+			clearInputs: true,
+			camposRecarregar : camposRecarregar
 		});
+	
 	},
 	
 	editarDiferenca:function(idDiferenca){
@@ -553,6 +567,7 @@ var lancamentoNovoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout();
 			},
+			
 			form: $("#dialogNovasDiferencas", this.workspace).parents("form")
 		});
 	},
@@ -637,7 +652,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 
 	cadastrarNovasDiferencas : function(isBotaoIncluirNovo) {
-		
+	
 		var lancamentoPorCota = $('#checkboxLancCota', lancamentoNovoController.workspace).attr('checked') ? true : false;
 		
 		if (lancamentoNovoController.redirecionarProdutosEstoque) {
@@ -977,11 +992,15 @@ var lancamentoNovoController = $.extend(true, {
 		}
 		else{
 			
-			var tipoDiferencaAnterior = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+			var camposRecarregar = {
+				tipoDiferenca :  $("#tipoDiferenca", lancamentoNovoController.workspace).val(),
+				cotaInputAlteracaoReparte : $("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val(),
+				nomeInputAlteracaoReparte : $("#nomeInputAlteracaoReparte", lancamentoNovoController.workspace).val(),
+				selectTipoEstoqueAlteracaoReparte : $("#selectTipoEstoqueAlteracaoReparte", lancamentoNovoController.workspace).val()
+			};
 			
-			lancamentoNovoController.popupNovasDiferencas();
+			lancamentoNovoController.popupNovasDiferencas(camposRecarregar);
 			
-			$("#tipoDiferenca", lancamentoNovoController.workspace).val(tipoDiferencaAnterior);
 		}
 	},
 	
@@ -1489,6 +1508,14 @@ var lancamentoNovoController = $.extend(true, {
 		$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(valorReparteAtual);
 	},
 	
+	recarregarValoresDialogDiferenca : function(camposRecarregar) {
+		for (var property in camposRecarregar) {
+			if (camposRecarregar.hasOwnProperty(property)) {
+				$('#'+property, lancamentoNovoController.workspace).val(camposRecarregar[property]);
+			}
+		}
+	},
+	
 	tratarVisualizacaoOpcaoEstoque:function(params) {
 	
 		var value = params.tipoDiferenca;
@@ -1533,7 +1560,13 @@ var lancamentoNovoController = $.extend(true, {
 			
 			lancamentoNovoController.limparCamposProdutoAlteracaoReparte();
 			
-			lancamentoNovoController.buscarEstoquesAlteracaoReparte();
+			var estoqueAlteracaoReparte = null;
+			
+			if(params && params.camposRecarregar && params.camposRecarregar.selectTipoEstoqueAlteracaoReparte) {
+				estoqueAlteracaoReparte = params.camposRecarregar.selectTipoEstoqueAlteracaoReparte;
+			}
+			
+			lancamentoNovoController.buscarEstoquesAlteracaoReparte(estoqueAlteracaoReparte);
 			
 			$('#paraCota', lancamentoNovoController.workspace).prop('checked', false);
 			$('#paraCota', lancamentoNovoController.workspace).prop('disabled', false);
@@ -1554,6 +1587,11 @@ var lancamentoNovoController = $.extend(true, {
 				$("#paraEstoque", this.workspace).check();
 			}
 		}
+		
+		if(params.camposRecarregar) {
+			lancamentoNovoController.recarregarValoresDialogDiferenca(params.camposRecarregar);
+		}
+		
 	},
 	
 	limparCamposProdutoAlteracaoReparte : function() {
@@ -1587,7 +1625,7 @@ var lancamentoNovoController = $.extend(true, {
 		$('#saldoConsignado', this.workspace).text(saldoConsignado);
 	},
 	
-	buscarEstoquesAlteracaoReparte : function() {
+	buscarEstoquesAlteracaoReparte : function(estoqueAlteracaoReparte) {
 		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/buscarEstoquesAlteracaoReparte",
@@ -1599,6 +1637,11 @@ var lancamentoNovoController = $.extend(true, {
 				$.each(result, function(index, item){
 					$("#selectTipoEstoqueAlteracaoReparte").append('<option value="'+item.nameEnum+'">'+item.desc+'</option>');
 				});
+				
+				if(estoqueAlteracaoReparte) {
+					$("#selectTipoEstoqueAlteracaoReparte").val(estoqueAlteracaoReparte);
+				}
+				
 			},
 			null,
 			true

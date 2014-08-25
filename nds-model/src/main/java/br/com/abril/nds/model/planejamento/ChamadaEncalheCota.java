@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * Entidade com as chamadas de encalhes das cotas
@@ -56,6 +57,9 @@ public class ChamadaEncalheCota implements Serializable {
 	@OneToMany(mappedBy = "chamadaEncalheCota")
 	private Set<ConferenciaEncalhe> conferenciasEncalhe = new HashSet<ConferenciaEncalhe>();
 	
+	@ManyToOne(optional = true)
+    @JoinColumn(name = "USUARIO_ID")
+    private Usuario usuario;
 	
 	public ChamadaEncalheCota() {
 		super();
@@ -146,5 +150,14 @@ public class ChamadaEncalheCota implements Serializable {
 	public void setConferenciasEncalhe(Set<ConferenciaEncalhe> conferenciasEncalhe) {
 		this.conferenciasEncalhe = conferenciasEncalhe;
 	}
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
 }

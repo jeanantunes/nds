@@ -49,6 +49,9 @@ public class AnaliseParcialDTO implements Serializable {
     private BigInteger quantidadeAjuste;
     private Boolean contemRepartePorPDV = false;
     
+    private Long mixID;
+    private Long fixacaoID;
+    
     public String getDescricaoLegenda() {
         return descricaoLegenda;
     }
@@ -131,12 +134,8 @@ public class AnaliseParcialDTO implements Serializable {
 	return ultimoReparte;
     }
 
-    public void setUltimoReparte(BigDecimal ultimoReparte) {
-	if (ultimoReparte == null) {
-	    this.ultimoReparte = null;
-	} else {
-	    this.ultimoReparte = ultimoReparte.toBigInteger();
-	}
+    public void setUltimoReparte(BigInteger ultimoReparte) {
+        this.ultimoReparte = ultimoReparte;
     }
     @Export(label = "Reparte 1", alignment = Alignment.LEFT, exhibitionOrder = 16)
     public BigInteger getReparte1() {
@@ -265,6 +264,8 @@ public class AnaliseParcialDTO implements Serializable {
 	return null;
     }
     
+    
+    
     public List<EdicoesProdutosDTO> getEdicoesBase() {
         return edicoesBase;
     }
@@ -326,5 +327,20 @@ public class AnaliseParcialDTO implements Serializable {
 	public void setContemRepartePorPDV(Boolean contemRepartePorPDV) {
 		this.contemRepartePorPDV = contemRepartePorPDV;
 	}
-	
+
+	public Long getMixID() {
+		return mixID;
+	}
+
+	public void setMixID(Long mixID) {
+		this.mixID = mixID;
+	}
+
+	public Long getFixacaoID() {
+		return fixacaoID;
+	}
+
+	public void setFixacaoID(Long fixacaoID) {
+		this.fixacaoID = fixacaoID;
+	}
 }

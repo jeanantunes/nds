@@ -151,7 +151,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			return BigDecimal.ZERO;
 		}
 		
-		dataVencimento = this.calendarioService.obterProximaDataDiaUtil(dataVencimento);
+		dataCalculoJuros = this.calendarioService.obterProximaDataDiaUtil(dataCalculoJuros);
 		
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 
@@ -763,8 +763,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		boolean aceitaPagamentoMaior 	= distrib.getAceitaBaixaPagamentoMaior();
 		boolean aceitaPagamentoMenor 	= distrib.getAceitaBaixaPagamentoMenor();
-		boolean aceitaPagamentoVencido 	= distrib.getAceitaBaixaPagamentoVencido();
-		Date dataOperacao = distrib.getDataOperacao();		
+		boolean aceitaPagamentoVencido 	= distrib.getAceitaBaixaPagamentoVencido();	
 		
 		BigDecimal valorTotalAPagar = BigDecimal.ZERO;
 		
@@ -785,7 +784,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 		}
 		
-		
 		if(!aceitaPagamentoMaior && valorPagamentoCobranca.compareTo(valorTotalAPagar) > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento excedendo o valor da cobrança.");
 		}
@@ -794,7 +792,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento menor que o valor da cobrança.");
 		}
 		
-		if(!aceitaPagamentoVencido && dataOperacao.compareTo(dataVencimento) > 0) {
+		boolean dataDePagamentoMenorQueDataVencimento = (pagamento.getDataPagamento().compareTo(dataVencimento) < 0);
+		
+		if(!aceitaPagamentoVencido && dataDePagamentoMenorQueDataVencimento) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento de cobrança vencida.");
 		}
 		
@@ -818,7 +818,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		
 		
-		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataBaixa(pagamento.getDataOperacao());
 		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		
 		baixaManual.setValorPago(valorCobrancaCorrigida);
@@ -1048,7 +1048,7 @@ public class CobrancaServiceImpl implements CobrancaService {
     	
     	BaixaManual baixaManual = new BaixaManual();
 		
-		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataBaixa(pagamento.getDataOperacao());
 		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		baixaManual.setValorPago(valorRestante);
 		baixaManual.setCobranca(cobrancaParcial);
@@ -1252,7 +1252,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		return this.cobrancaRepository.obterTiposCobrancaCadastradas();
 	}
-
+	
+	@Transactional
     @Override
     public void validarDataPagamentoCobranca(List<Long> idCobrancas, Date dataPagamento) {
         List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasDataEmissaoMaiorQue(dataPagamento, idCobrancas);

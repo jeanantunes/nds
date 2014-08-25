@@ -482,7 +482,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.selecionarCheck = function(check, index) {
 		
 		T.lancamentos[index].selecionado = check.checked;
-		$("#selTodos", _workspace).uncheck();			
+		
+		$(".selTodos", this.workspace).each(function(index, element) {
+			element.checked = check.checked;
+		});
+		//alteracaoCotaController.verificarCheck();
+		
 	},
 	
 	this.finalizaItem = function(index) {
@@ -1479,9 +1484,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				align : 'center'
 			 }
 			],
+			sortname : "nomeProduto",
+			sortorder : "asc",
 			usepager : true,
 			useRp : true,
-			rp : 15,
+			rp : 50,
 			showTableToggleBtn : true,
 			width : 1100,
 			height : 220,
@@ -1603,6 +1610,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				exibirMensagem("WARNING",["Selecione um produto que tenha um estudo gerado."]);
 				return;
 			} else {
+				
+				$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+					if($(v).text() == 'Histograma Pré Análise') {
+						console.log(k +' - '+ $(v).text());
+						$("#workspace").tabs('option', 'selected', k); 
+						$("#workspace").tabs('load', k); 
+					} 
+				});
+				
 				$('#workspace').tabs({load : function(event, ui) {
 					
 					params = [];
@@ -1610,10 +1626,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					for(var prop in selecionado){
 					    if (prop == 'edicao') {
 					        edicao = selecionado[prop];
-                                            }
-                                            if (prop == 'codigoProduto') {
-                                                codigoProduto = selecionado[prop];
-                                            }
+                        }
+                        if (prop == 'codigoProduto') {
+                            codigoProduto = selecionado[prop];
+                        }
 						params.push({
 							name : "selecionado." + prop, value : selecionado[prop]
 						});
@@ -1848,6 +1864,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			postData.push({name : "produtoDistribuicaoVO.idLancamento", value : selecionado.idLancamento});
 			postData.push({name : "produtoDistribuicaoVO.idCopia", 	    value : selecionado.idCopia});
 		}
+		
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Distribuição Venda Média') {
+				console.log(k +' - '+ $(v).text());
+				$("#workspace").tabs('option', 'selected', k); 
+				$("#workspace").tabs("remove", k);
+				// $("#workspace").tabs('load', k); 
+			} 
+		});
 		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

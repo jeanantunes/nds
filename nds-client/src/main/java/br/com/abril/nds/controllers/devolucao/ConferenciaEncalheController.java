@@ -5,13 +5,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -19,11 +20,12 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
+import br.com.abril.nds.client.log.LogFuncional;
 import br.com.abril.nds.client.util.Constants;
+import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -54,7 +56,6 @@ import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.GrupoService;
-import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
@@ -67,6 +68,7 @@ import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -82,12 +84,6 @@ import com.itextpdf.text.pdf.codec.Base64;
 public class ConferenciaEncalheController extends BaseController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConferenciaEncalheController.class);	
-	
-	private final ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
-	
-	public ConferenciaEncalheController(final ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr){
-		this.conferenciaEncalheSessionScopeAttr = conferenciaEncalheSessionScopeAttr;
-	}
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
@@ -147,9 +143,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private ConferenciaEncalheAsyncComponent conferenciaEncalheAsyncComponent;  
 	
 	@Autowired
-	private MovimentoEstoqueService movimentoEstoqueService;
-	
-	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
@@ -176,6 +169,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent;
 	
+	@Autowired
+	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
+	
 	private void preCarregarBoxes(){
 		
 		 // Obter box usuário
@@ -192,6 +188,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Path("/")
+	@LogFuncional(value="Conferência de Encalhe [Abertura da tela]")
 	public void index() {
 		
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
@@ -210,6 +207,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Path("/contingencia")
+	@LogFuncional(value="Conferência de Encalhe [Abertura tela Contingência]")
 	public void contingencia() {
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -258,15 +256,28 @@ public class ConferenciaEncalheController extends BaseController {
 	public void obterBoxLogado(){
 		
         Long idBoxlogado = (Long) this.session.getAttribute(ID_BOX_LOGADO_SESSION);
+        
+        if(idBoxlogado != null) {
 
-		this.result.use(Results.json()).from(idBoxlogado).serialize();
+    		this.result.use(Results.json()).from(idBoxlogado).serialize();
+
+        } else {
+    		
+        	this.result.use(Results.json()).from("").serialize();
+        	
+        }
+        
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Escolha do box]")
 	public void salvarIdBoxSessao(final Long idBox){
 		
 		if (idBox != null){
 		
+			final Usuario usuarioLogado = this.getUsuarioLogado();
+			this.session.setAttribute("usuarioSupervisor", usuarioLogado.isSupervisor());
+			
 			conferenciaEncalheSessionScopeAttr.setIdBoxLogado(idBox);
 			
 			this.session.setAttribute(ID_BOX_LOGADO_SESSION, idBox);
@@ -443,13 +454,14 @@ public class ConferenciaEncalheController extends BaseController {
      * @param numeroCota
      */
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
 	public void iniciarConferenciaEncalhe(final Integer numeroCota){
-		
+
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
+
 		limparDadosSessao();
 
 		validarCotaParaInicioConferenciaEncalhe(numeroCota);
-		
-		bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(numeroCota, this.session);
 		
 		carregarMapaDatasEncalheConferiveis(numeroCota);
 		
@@ -519,6 +531,25 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
+	 * Verifica se há encalhe informado em algum item da lista de conferência
+	 * 
+	 * @param itensConferencia
+	 * @return boolean
+	 */
+	private boolean isEncalheInformado(Set<ConferenciaEncalheDTO> itensConferencia){
+		
+		for (ConferenciaEncalheDTO item : itensConferencia){
+			
+			if (item.getQtdInformada().compareTo(BigInteger.ZERO) > 0){
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
      * Obtém no banco de dados as informações da conferencia de encalhe da cota
      * em questão e setta em session.
      * 
@@ -533,9 +564,14 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
+		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
+	        	
+	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
+		}	
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Carregamento da lista de encalhes]")
 	public void carregarListaConferencia(
 			Integer numeroCota, 
 			final boolean indObtemDadosFromBD,  
@@ -546,7 +582,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		result.use(CustomJson.class).from(dados).serialize();
 	}
-
+	
 	/**
 	 * Retorna um mapa com os dados apresentados na 
 	 * conferencia de encalhe.
@@ -591,10 +627,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Map<String, Object> dados = new HashMap<String, Object>();
 		
-		List<ConferenciaEncalheDTO> conferenciasOrdenadas = new ArrayList<ConferenciaEncalheDTO>(infoConfereciaEncalheCota.getListaConferenciaEncalhe()); 
-		Collections.sort(conferenciasOrdenadas);
+		Collection<ConferenciaEncalheDTO> listaOrdenada = ordenarListaConferenciaEncalhe(
+				infoConfereciaEncalheCota.getListaConferenciaEncalhe(), 
+				indConferenciaContingencia, 
+				indObtemDadosFromBD);
 		
-		dados.put("listaConferenciaEncalhe", conferenciasOrdenadas);
+		dados.put("listaConferenciaEncalhe", listaOrdenada);
 		
 		dados.put("listaDebitoCredito", this.obterTableModelDebitoCreditoCota(infoConfereciaEncalheCota.getListaDebitoCreditoCota()));
 		
@@ -647,6 +685,77 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularTotais(dados);
 		
 		return dados;
+	}
+	
+	private Collection<ConferenciaEncalheDTO> ordenarConferenciasEncalheContingencia(Collection<ConferenciaEncalheDTO> conferenciasContingencia) {
+		
+		conferenciasContingencia = PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(conferenciasContingencia), 
+				Ordenacao.ASC, 
+				"codigoSM", "numeroEdicao");
+		
+		Iterator<ConferenciaEncalheDTO> it = conferenciasContingencia.iterator();
+		
+		List<ConferenciaEncalheDTO> confsForaDoPrimeiroDia = new ArrayList<>();
+		
+		Integer primeiroDiaRecolhimento = 1;
+		
+		while(it.hasNext()) {
+			
+			ConferenciaEncalheDTO iterado = it.next();
+			
+			if(!primeiroDiaRecolhimento.equals(iterado.getDia())) {
+				confsForaDoPrimeiroDia.add(iterado);
+				it.remove();
+			}
+			
+			
+		}
+		
+		conferenciasContingencia.addAll(confsForaDoPrimeiroDia);
+		
+		return conferenciasContingencia;
+		
+		
+	}
+	
+	
+	private Collection<ConferenciaEncalheDTO> ordenarListaConferenciaEncalhe(
+			Set<ConferenciaEncalheDTO> lista,
+			boolean indConferenciaContingencia, 
+			boolean indFromBD) {
+		
+		if(indConferenciaContingencia) {
+			
+			return ordenarConferenciasEncalheContingencia(lista);
+			
+		} 
+		
+		if(indFromBD) {
+			
+			Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
+					PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
+					Ordenacao.ASC, 
+					"codigoSM", "numeroEdicao");
+			
+			Integer qtde = listaConferenciaEncalhe.size();
+			
+			for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
+				conferencia.setInstanteConferido(--qtde);
+			}
+			
+			return listaConferenciaEncalhe;
+			
+		} else {
+			
+			return PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
+					Ordenacao.DESC, 
+					"instanteConferido");
+			
+		}
+		
+		
+		
+		
 	}
 	
 	/**
@@ -749,7 +858,6 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		return null;
-		
 	}
 
 	/**
@@ -887,7 +995,8 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void informaVendaNegativa(final Long idProdutoEdicao, final String quantidade, final Boolean juramentada, final boolean indConferenciaContingencia){
 		
-        final boolean supervisor = usuarioService.isSupervisor();
+        //final boolean supervisor = usuarioService.isSupervisor();
+        final boolean supervisor = (boolean) (this.session.getAttribute("usuarioSupervisor") != null ? this.session.getAttribute("usuarioSupervisor") : false);
 
         ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao);
 
@@ -916,6 +1025,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Adicionar produto]")
 	public void adicionarProdutoConferido(final Long produtoEdicaoId, final String qtdExemplares, final Boolean juramentada, final boolean indConferenciaContingencia) {
 		
 		if (produtoEdicaoId == null){
@@ -955,7 +1065,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaAlterado();
 		
-		this.carregarListaConferencia(null, false, false);
+		this.carregarListaConferencia(null, false, indConferenciaContingencia);		
 	}
 	
 	private void desautorizarVendaNegativa() {
@@ -994,6 +1104,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Adicionar produto]")
 	public void adicionarProdutoEdicaoConferidoDiretamente(final Long produtoEdicaoId, final String qtdExemplares) {
 		
 		if (produtoEdicaoId == null){
@@ -1142,6 +1253,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Autorizar venda negativa]")
 	public void autorizarVendaNegativa(
 			final Long produtoEdicaoId,
 			final String qtdExemplares,
@@ -1191,6 +1303,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Atualizar valores grid]")
 	public void atualizarValoresGridInteira(final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, final boolean indConferenciaContingencia) {
 		
 		if(listaConferenciaEncalhe!=null && !listaConferenciaEncalhe.isEmpty()) {
@@ -1307,7 +1420,8 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)	
+	@LogFuncional(value="Conferência de Encalhe [Atualizar valores grid]")
 	public void atualizarValores(final Long idConferencia, String qtdExemplares, final Boolean juramentada, final BigDecimal valorCapa, final boolean indConferenciaContingencia){
 		
 		final ConferenciaEncalheDTO conf = atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, valorCapa, indConferenciaContingencia);
@@ -1321,11 +1435,12 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularValoresMonetarios(dados);
 		
 		this.calcularTotais(dados);
-		
+
 		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Verificar permissão supervisor]")
 	public boolean verificarPermissaoSupervisorProduto(final String qtdExemplares,
 											 final String usuario, 
 											 final String senha, 
@@ -1357,6 +1472,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Verificar permissão supervisor]")
 	public void verificarPermissaoSupervisor(final Long idConferencia, final String qtdExemplares, 
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
@@ -1371,7 +1487,8 @@ public class ConferenciaEncalheController extends BaseController {
     		
             final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
             
-            final boolean supervisor = usuarioService.isSupervisor();
+            final boolean supervisor = (boolean) (this.session.getAttribute("usuarioSupervisor") != null ? this.session.getAttribute("usuarioSupervisor") : false);
+            //usuarioService.isSupervisor();
             
             if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)){
                 
@@ -1431,7 +1548,7 @@ public class ConferenciaEncalheController extends BaseController {
         }
     
         if(!isVendaNegativaProduto){
-
+        	
             this.result.use(Results.json()).from("", "result").serialize();
         }
 	}
@@ -1520,6 +1637,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Alterar quantidade]")
 	public void alterarQtdeValorInformado(final Long idConferencia, final Long qtdInformada, final BigDecimal valorCapaInformado){
 		
 		final Set<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -1589,6 +1707,7 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Salvar conferência]")
 	public void salvarConferencia(final boolean indConferenciaContingencia){
 		
 		this.verificarInicioConferencia();
@@ -1638,8 +1757,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
-		this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 "result").recursive()
                 .serialize();
 	}
@@ -1670,6 +1788,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	}
 
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Geração de documento]")
 	public void gerarDocumentoConferenciaEncalhe(final DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
 		try {
@@ -1802,6 +1921,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 
 	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Impressão documento cobrança]")
 	public void imprimirDocumentosCobranca(final String tipo_documento_impressao_encalhe) throws IOException{
 		
 		final Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
@@ -1877,7 +1997,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	private Set<ConferenciaEncalheDTO> obterCopiaListaConferenciaEncalheCota(final Set<ConferenciaEncalheDTO> oldListaConferenciaEncalheCota) {
 		
-		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new TreeSet<ConferenciaEncalheDTO>();
+		final Set<ConferenciaEncalheDTO> newListaConferenciaEncalheCota = new HashSet<ConferenciaEncalheDTO>();
 		
 		for(final ConferenciaEncalheDTO conf : oldListaConferenciaEncalheCota) {
 		
@@ -1897,6 +2017,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Finalizar conferência]")
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -1991,15 +2112,11 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	}
 	
 	@Post
-	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
-		
-		final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO = obterFromSessionMapaDatasEncalheConferiveis();
-		
-		final List<ProdutoEdicao> listaProdutoEdicao =
-			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
-				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS, mapaDataCEConferivelDTO);
-		
+	public void autocompletarProdutoPorCodigoNome(final String codigoNomeProduto){
+
 		final List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		final List<ProdutoEdicao> listaProdutoEdicao = this.obterProduto(codigoNomeProduto);
 		
 		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
 			
@@ -2016,6 +2133,49 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}
 		
 		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto) throws EncalheRecolhimentoParcialException {
+
+		final List<ProdutoEdicao> listaProdutoEdicao = this.obterProduto(codigoNomeProduto);
+		
+		if (listaProdutoEdicao != null && listaProdutoEdicao.size() == 1) {
+
+			final Integer numeroCota = this.getNumeroCotaFromSession();
+			
+			final ProdutoEdicaoDTO p = 
+					this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, listaProdutoEdicao.get(0).getId());
+			
+			final Map<String, Object> dados = new HashMap<String, Object>();
+			
+			if (p != null){
+				
+				dados.put("idProdutoEdicaoNovoEncalhe", p.getId());
+				dados.put("descricaoProduto", p.getCodigoProduto() + " - " + p.getNomeProduto() + " - " + p.getNumeroEdicao());
+				dados.put("numeroEdicao", p.getNumeroEdicao());
+				dados.put("precoVenda", p.getPrecoVenda());
+				dados.put("desconto", p.getPrecoComDesconto());
+				dados.put("parcial",p.isParcial());
+			}
+			
+			this.result.use(CustomJson.class).from(dados).serialize();
+		
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.NONE, "Há mais de uma edição para o produto pesquisado.");
+		}
+	}
+
+	private List<ProdutoEdicao> obterProduto(final String codigoNomeProduto) {
+
+		final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO = obterFromSessionMapaDatasEncalheConferiveis();
+		
+		final List<ProdutoEdicao> listaProdutoEdicao =
+			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
+				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS, mapaDataCEConferivelDTO);
+		
+		return listaProdutoEdicao;
 	}
 	
 	@Post
@@ -2037,6 +2197,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Excluir conferência]")
 	public void excluirConferencia(final Long idConferenciaEncalhe){
 		
 		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -2061,6 +2222,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Gravar observação]")
 	public void gravarObservacaoConferecnia(final Long idConferenciaEncalhe, final String observacao){
 		
 		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -2112,6 +2274,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Salvar nota fiscal]")
 	public void salvarNotaFiscal(final NotaFiscalEntradaCota notaFiscal){
 		
 		validarCamposNotaFiscalEntrada(notaFiscal);
@@ -2130,6 +2293,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 	}
 	
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Carregar nota fiscal]")
 	public void carregarNotaFiscal(){
 		
 		@SuppressWarnings("unchecked")
@@ -2157,6 +2321,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
      */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	@LogFuncional(value="Conferência de Encalhe [Verificar total nota fiscal]")
 	public void verificarValorTotalNotaFiscal(final boolean indConferenciaContingencia) throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -2196,6 +2361,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
      * @param qtdCEInformado
      */
 	@Post
+	@LogFuncional(value="Conferência de Encalhe [Verificar total CE]")
 	public void verificarValorTotalCE(final BigDecimal valorCEInformado, final BigInteger qtdCEInformado) {
 
 		final Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
@@ -2325,7 +2491,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				
 				dados.put("numeroEdicao", p.getNumeroEdicao());
 				dados.put("precoVenda", p.getPrecoVenda());
-				dados.put("desconto", p.getDesconto());
+				dados.put("desconto", p.getPrecoComDesconto());
 				dados.put("parcial",p.isParcial());
 			}
 			
@@ -2639,7 +2805,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		Set<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
 		
 		if (lista == null){
-			info.setListaConferenciaEncalhe(new TreeSet<ConferenciaEncalheDTO>());
+			info.setListaConferenciaEncalhe(new HashSet<ConferenciaEncalheDTO>());
 		}
 		
 		return info.getListaConferenciaEncalhe();
@@ -2678,6 +2844,32 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		usuarioLogado.setBox(box);
 		
 		usuarioService.salvar(usuarioLogado);
+	}
+	
+	@Post
+	@LogFuncional(value="Conferência de Encalhe [Ordenação por SM]")
+	public void ordenarListaPorSM(){
+		
+		final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
+		
+		if (info == null){
+			
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+		}
+		
+		List<ConferenciaEncalheDTO> lista = new ArrayList<ConferenciaEncalheDTO>();
+		
+		lista.addAll(info.getListaConferenciaEncalhe());
+		
+		lista = (List<ConferenciaEncalheDTO>) PaginacaoUtil.ordenarEmMemoria(lista, Ordenacao.ASC, "codigoSM");
+		
+		final Map<String, Object> dados = new HashMap<String, Object>();
+		
+		dados.put("itensConferencia", lista);
+		
+		dados.put("isDistribuidorAceitaJuramentado", info.isDistribuidorAceitaJuramentado());
+		
+		result.use(CustomJson.class).from(dados).serialize();
 	}
 	
 }

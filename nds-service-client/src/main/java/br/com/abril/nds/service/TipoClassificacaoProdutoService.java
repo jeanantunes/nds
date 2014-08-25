@@ -11,4 +11,6 @@ public interface TipoClassificacaoProdutoService {
 	TipoClassificacaoProduto buscarPorId(Long id);
 
     TipoClassificacaoProduto obterPorClassificacao(String classificacao);
+    
+    Boolean validarClassificacao(String classificacao);
 }

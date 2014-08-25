@@ -874,6 +874,8 @@ public class BaixaFinanceiraController extends BaseController {
 		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
 								  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
 		pagamento.setValorDividas(valorDividasConvertido);
 		pagamento.setValorMulta(valorMultaConvertido);
@@ -883,7 +885,8 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento( (dataPagamento == null) ? this.distribuidorService.obterDataOperacaoDistribuidor() : dataPagamento);
+		pagamento.setDataPagamento( (dataPagamento == null) ? dataOperacao : dataPagamento);
+		pagamento.setDataOperacao(dataOperacao);
 		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
