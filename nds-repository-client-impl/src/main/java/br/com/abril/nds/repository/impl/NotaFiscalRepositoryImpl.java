@@ -729,17 +729,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" LEFT JOIN cota.box box ")
 		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
-		.append(" LEFT JOIN roteirizacao.roteiros roteiro ");
-
-		if(filtro.getIdRota() != null) {	
-		//	hql.append(" LEFT JOIN roteiro.rotas rota ");
-		}
-
-		hql.append(" JOIN mffc.produtoEdicao produtoEdicao")
+		.append(" LEFT JOIN roteirizacao.roteiros roteiro ")
+		.append(" JOIN mffc.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" WHERE mffc.data BETWEEN :dataInicial AND :dataFinal ")
-		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ");
+		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ")
+		.append(" AND mffc.qtde > 0 ");
 		
 		if(filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado()) {
 			
