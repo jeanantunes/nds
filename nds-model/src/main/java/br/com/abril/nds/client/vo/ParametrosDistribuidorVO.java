@@ -57,6 +57,7 @@ public class ParametrosDistribuidorVO {
     private boolean diaRecolhimentoQuarto;
     private boolean diaRecolhimentoQuinto;
     private boolean limiteCEProximaSemana;
+    private boolean aceitaRecolhimentoParcialAtraso;
     private boolean supervisionaVendaNegativa;
     private boolean conferenciaCegaRecebimento;
     private boolean conferenciaCegaEncalhe;
@@ -1374,5 +1375,16 @@ public class ParametrosDistribuidorVO {
 	public void setListPercentualExcedente(
 			List<DistribuidorPercentualExcedenteVO> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
-	}    
+	}
+
+	public boolean isAceitaRecolhimentoParcialAtraso() {
+		return aceitaRecolhimentoParcialAtraso;
+	}
+
+	public void setAceitaRecolhimentoParcialAtraso(
+			boolean aceitaRecolhimentoParcialAtraso) {
+		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
+	} 
+	
+	
 }

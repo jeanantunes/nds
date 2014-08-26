@@ -33,6 +33,8 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 															Collection<Long> idsForncedores,
 													    	OperacaoDistribuidor operacaoDistribuidor);
 	
+	public boolean buscarDistribuidorAceitaRecolhimentoParcialAtraso();
+	
 	/**
 	 * Recupera o endereço principal do distribuidor.
 	 * @return endereço principal do distribuidor.
