@@ -150,6 +150,14 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	
 	@Override
 	@Transactional(readOnly = true)
+	public boolean distribuidorAceitaRecolhimentoParcialAtraso() {
+		
+		return this.distribuidorRepository.buscarDistribuidorAceitaRecolhimentoParcialAtraso();
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public boolean aceitaJuramentado(){
 		
 		return this.distribuidorRepository.aceitaJuramentado();

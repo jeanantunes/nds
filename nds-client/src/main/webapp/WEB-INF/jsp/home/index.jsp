@@ -482,7 +482,7 @@
 					</script> </label>
 				
 					<label>
-						<a href="javascript:;" onclick="logout()" title="Sair do Sistema">Sair</a>
+						<a href="javascript:;" onclick="logout()" id="lnkLogoff" title="Sair do Sistema">Sair</a>
 					</label>
 	
 				</div>

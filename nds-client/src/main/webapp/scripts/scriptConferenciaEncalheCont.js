@@ -966,35 +966,19 @@ var ConferenciaEncalheCont = $.extend(true, {
 					$("#dialog-encalhe input[name!='lstProdutos']", ConferenciaEncalheCont.workspace).val("");
 
 					$("#dialog-encalhe input", ConferenciaEncalheCont.workspace).first().focus();
+					
 					$("#dialog-encalhe input", ConferenciaEncalheCont.workspace).first().keydown();
 					
 				}, true, "idModalNovoEncalhe");
 		};
 		
-		$("#lstProdutos", ConferenciaEncalheCont.workspace).bind("autocompletechange", function(evt, ui) {
 
-			functionBuscaProduto('pesquisarProdutoPorCodigoNome', $(this).val(), function(result) {
-				if (result){
-					ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = result.idProdutoEdicaoNovoEncalhe;
-					$("#lstProdutos", ConferenciaEncalheCont.workspace).val(result.descricaoProduto);
-					$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result.numeroEdicao);
-					$("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result.precoVenda).toFixed(2));
-					$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result.desconto).toFixed(4));
-					
-					if(result.parcial){
-						$(".isParcial", ConferenciaEncalheCont.workspace).show();
-					}
-					else{
-						$(".isParcial", ConferenciaEncalheCont.workspace).hide();
-					}				
-				}
-			});
-		});
-		
 		$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete({
+			
 			source: function(request, response) {
 				
 				functionBuscaProduto('autocompletarProdutoPorCodigoNome', request.term, function(result) {
+					
 					response(result);
 				});	
 				
@@ -1006,18 +990,25 @@ var ConferenciaEncalheCont = $.extend(true, {
 					function(result2){
 					
 						if (result2){
+							
 							ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = ui.item.chave.long;
-							$("#lstProdutos", ConferenciaEncalheCont.workspace).val(ui.item.chave.string);
+							
 							$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result2.numeroEdicao);
+							
 							$("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.precoVenda).toFixed(2));
+							
 							$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.desconto).toFixed(4));
+							
 							$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
+							
 							$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
 
 							if(result2.parcial){
+								
 								$(".isParcial", ConferenciaEncalheCont.workspace).show();
 							}
 							else{
+								
 								$(".isParcial", ConferenciaEncalheCont.workspace).hide();
 							}
 							
@@ -1028,7 +1019,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 					}, function() {
 					
 						ConferenciaEncalheCont.limparCamposNovoEncalhe();
+						
 						$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
+						
 						$(".isParcial", ConferenciaEncalheCont.workspace).show();
 					}, 
 					true, "idModalNovoEncalhe"
@@ -1146,23 +1139,32 @@ var ConferenciaEncalheCont = $.extend(true, {
 	limparCamposNovoEncalhe: function(){
 		
 		$("#lstProdutos", ConferenciaEncalheCont.workspace).val("");
+		
 		$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
+		
 		$("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
+		
 		$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
+		
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
+		
 		$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val("");
 		
 		$(".isParcial", ConferenciaEncalheCont.workspace).show();
 		
 		if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado){
+			
 			$("#checkboxJueramentadaNovoEncalhe", ConferenciaEncalheCont.workspace).removeAttr('disabled');
 		}else{
+			
 			$("#checkboxJueramentadaNovoEncalhe", ConferenciaEncalheCont.workspace).attr('disabled', true);
 		}
+		
 		$("#checkboxJueramentadaNovoEncalhe", ConferenciaEncalheCont.workspace).removeAttr("checked");
 	},
 	
 	calcularValorTotalNovoEncalhe: function() {
+		
 		$("#valorTotalNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(($("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val()) * $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()).toFixed(2));
 	},
 	
