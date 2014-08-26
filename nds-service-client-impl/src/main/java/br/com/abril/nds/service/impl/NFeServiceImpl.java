@@ -1069,7 +1069,7 @@ public class NFeServiceImpl implements NFeService {
 		
 		List<CotaExemplaresDTO> cotasContribuinteEmitente = new ArrayList<CotaExemplaresDTO>();
 		
-		List<CotaExemplaresDTO> cotas =  notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
+		List<CotaExemplaresDTO> cotas = notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
 		
 		if(cotas == null || cotas.isEmpty()) {
 			

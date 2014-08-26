@@ -251,6 +251,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setConferenciaCegaEncalhe(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaEncalhe());
 		parametrosDistribuidor.setConferenciaCegaRecebimento(distribuidor.getParametrosRecolhimentoDistribuidor().isConferenciaCegaRecebimento());
 		parametrosDistribuidor.setTipoContabilizacaoCE(distribuidor.getTipoContabilizacaoCE());
+		parametrosDistribuidor.setAceitaRecolhimentoParcialAtraso(distribuidor.isAceitaRecolhimentoParcialAtraso());
 		parametrosDistribuidor.setSupervisionaVendaNegativa(distribuidor.isSupervisionaVendaNegativa());		
 		
 		// Capacidade de Manuseio
@@ -689,6 +690,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setAceitaJuramentado(parametrosDistribuidor.isAceitaEncalheJuramentada());
 		
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
+		
+		distribuidor.setAceitaRecolhimentoParcialAtraso(parametrosDistribuidor.isAceitaRecolhimentoParcialAtraso());
+		
 		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
 		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
 		

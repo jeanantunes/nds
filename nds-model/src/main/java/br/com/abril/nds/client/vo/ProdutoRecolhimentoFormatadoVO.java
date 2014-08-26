@@ -54,6 +54,8 @@ public class ProdutoRecolhimentoFormatadoVO {
 	
 	private Long peb;
 	
+	private String replicar = "";
+	
 	public Long getPeb() {
 		return peb;
 	}
@@ -375,4 +377,12 @@ public class ProdutoRecolhimentoFormatadoVO {
 		this.aceiteDataNova = aceiteDataNova;
 	}
 
+	public String getReplicar() {
+		return replicar;
+	}
+
+	public void setReplicar(String replicar) {
+		this.replicar = replicar;
+	}
+	
 }
