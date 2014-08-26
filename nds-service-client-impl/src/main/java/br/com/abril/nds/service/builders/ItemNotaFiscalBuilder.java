@@ -167,7 +167,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
 		produtoServico.setValorUnitario(valorUnitario);
-		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().add(valorTotalBruto)));
+		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade()))));
 		
 		produtoServico.setValorDesconto(BigDecimal.ZERO);
 		
