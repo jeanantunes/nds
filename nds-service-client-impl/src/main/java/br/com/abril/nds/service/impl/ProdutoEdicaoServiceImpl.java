@@ -358,8 +358,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
         }
         
+        boolean indAceitaRecolhimentoParcialAtraso = distribuidorService.distribuidorAceitaRecolhimentoParcialAtraso();
+        
         final List<ProdutoEdicao> produtosEdicao = produtoEdicaoRepository.obterProdutoPorCodigoNomeCodigoSM(null,
-                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel, null);
+                codigoNomeProduto, numeroCota, quantidadeRegistros, mapaDataCEConferivel, null, indAceitaRecolhimentoParcialAtraso);
         
         return produtosEdicao;
 
