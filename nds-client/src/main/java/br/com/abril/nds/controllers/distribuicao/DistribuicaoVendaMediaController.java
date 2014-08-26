@@ -206,7 +206,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    } else {
     		    	
     		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
-                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, true);
+                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false);
     		    	
     		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
     		    		pevm.setIndicePeso(base.getIndicePeso());
