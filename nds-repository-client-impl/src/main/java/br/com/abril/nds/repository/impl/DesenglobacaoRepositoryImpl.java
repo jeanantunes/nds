@@ -53,6 +53,22 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 	query.setParameter("numeroCota", numeroCota);
 	return query.list();
     }
+    
+    @Transactional(readOnly = true)
+    public Desenglobacao obterDesenglobacao(Integer numeroCotaDesenglobada, Integer numeroCotaEnglobada) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Desenglobacao d where d.cotaDesenglobada.numeroCota = :numeroCotaDesenglobada ");
+		hql.append(" and d.cotaEnglobada.numeroCota = :numeroCotaEnglobada ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCotaDesenglobada", numeroCotaDesenglobada);
+		query.setParameter("numeroCotaEnglobada", numeroCotaEnglobada);
+		
+		return (Desenglobacao) query.uniqueResult();
+    }
 
     @Transactional(readOnly = true)
     public Float verificaPorcentagemCota(Long cotaId) {
@@ -65,17 +81,24 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
     @Override
     public void inserirCotasDesenglobadas(final List<Desenglobacao> cotasDesenglobadas) {
 
-	for (Desenglobacao desenglobacao : cotasDesenglobadas) {
-	    List<Desenglobacao> lista = obterDesenglobacaoPorCota(desenglobacao.getCotaEnglobada().getNumeroCota());
-	    if (lista != null && lista.size() > 0) {
-		for (Desenglobacao d : lista) {
-		    d.setPorcentagemCota(desenglobacao.getPorcentagemCota());
-		    alterar(d);
+		for (Desenglobacao desenglobacao : cotasDesenglobadas) {
+			
+			Desenglobacao desenglobacaoExistente = 
+				this.obterDesenglobacao(
+					desenglobacao.getCotaDesenglobada().getNumeroCota(), 
+						desenglobacao.getCotaEnglobada().getNumeroCota());
+			
+			if (desenglobacaoExistente != null) {
+				
+				desenglobacaoExistente.setPorcentagemCota(desenglobacao.getPorcentagemCota());
+				
+				alterar(desenglobacaoExistente);
+				
+			} else {
+			
+				adicionar(desenglobacao);
+			}
 		}
-	    } else {
-		adicionar(desenglobacao);
-	    }
-	}
     }
 
     @Override
