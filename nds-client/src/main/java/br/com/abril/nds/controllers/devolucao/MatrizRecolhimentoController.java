@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoDiferenciadoVO;
@@ -132,6 +133,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	private static final String SORT_NAME_NUMERO_EDICAO = "numeroEdicao";
 	
 	public static final String TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE = "trava_matriz_recolhimento";
+	
+	private static final String DATA_HOLDER_ACTION_KEY = "matrizRecolhimentoDataHolder";
     
     @Get
     @Path("/")
@@ -226,7 +229,7 @@ public class MatrizRecolhimentoController extends BaseController {
         
         processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
             balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
-        
+
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
     
@@ -1025,8 +1028,7 @@ public class MatrizRecolhimentoController extends BaseController {
         
             listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
                  sortname,SORT_NAME_NUMERO_EDICAO);
-        }
-        else{
+        }else{
 
             listaProdutoRecolhimentoVO = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO, paginacao,
             		sortname);            
@@ -1045,10 +1047,12 @@ public class MatrizRecolhimentoController extends BaseController {
             
             ProdutoRecolhimentoFormatadoVO produtoRecolhimento = this.formatarProdutoRecolhimento(vo);
             
-            cellModel = new CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>(Integer.valueOf(vo.getIdLancamento()),
-                    produtoRecolhimento);
+            produtoRecolhimento.setReplicar(getCheckedFromDataHolder(produtoRecolhimento.getIdLancamento()));
+
+            cellModel = new CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>(Integer.valueOf(vo.getIdLancamento()),produtoRecolhimento);
             
             listaCellModel.add(cellModel);
+            
         }
         
         tableModel.setRows(listaCellModel);
@@ -1544,6 +1548,7 @@ public class MatrizRecolhimentoController extends BaseController {
                     }
                     
                     itemResumoPeriodoBalanceamento.getIdsProdutoEdicao().add(produtoRecolhimento.getIdProdutoEdicao());
+                    
                 }
                 
                 boolean excedeCapacidadeDistribuidor = false;
@@ -2007,11 +2012,25 @@ public class MatrizRecolhimentoController extends BaseController {
             
             ProdutoRecolhimentoFormatadoVO produtoRecolhimentoFormatadoVO = this.formatarProdutoRecolhimento(vo);
             
+            produtoRecolhimentoFormatadoVO.setReplicar(getCheckedFromDataHolder(produtoRecolhimentoFormatadoVO.getIdLancamento()));
+            
             listaProdutoRecolhimentoFormatadoVO.add(produtoRecolhimentoFormatadoVO);
         }
         
         return listaProdutoRecolhimentoFormatadoVO;
     }
+    
+    private String getCheckedFromDataHolder(String codigo) {
+		
+		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		
+		if (dataHolder != null) {
+
+			return dataHolder.getData(DATA_HOLDER_ACTION_KEY, codigo, "checado");
+		}
+		
+		return "false";
+	}
     
     @Post
     public void verificarBloqueioMatrizRecolhimentoPost() {

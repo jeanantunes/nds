@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -43,95 +42,20 @@ public class DataHolderController {
 		
 		DataHolder dataHolder = this.getCurrentDataHolder();
 		
-		Map<String, Map<String, Map<String, String>>> actionMap = this.getActionMap(dataHolder);
-		
-		Map<String, Map<String, String>> actionDataMap = this.getActionDataMap(actionKey, actionMap);
-		
-		Map<String, String> dataMap = this.getDataMap(dataKey, actionDataMap);
-
-		this.configureDataHolder(actionKey, dataKey, fieldKey, fieldValue, 
-			dataHolder, actionMap, actionDataMap, dataMap);
+		dataHolder.hold(actionKey, dataKey, fieldKey, fieldValue, dataHolder);
 		
 		this.httpSession.setAttribute(DataHolder.SESSION_ATTRIBUTE_NAME, dataHolder);
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
 	
-	/*
-	 * Configures the data holder with the values.
-	 */
-	private void configureDataHolder(String actionKey, 
-									 String dataKey,
-									 String fieldKey, 
-									 String fieldValue, 
-									 DataHolder dataHolder,
-									 Map<String, Map<String, Map<String, String>>> actionMap,
-									 Map<String, Map<String, String>> actionDataMap,
-									 Map<String, String> dataMap) {
-		
-		dataMap.put(fieldKey, fieldValue);
-		
-		actionDataMap.put(dataKey, dataMap);
-		
-		actionMap.put(actionKey, actionDataMap);
-		
-		dataHolder.setActionMap(actionMap);
-	}
-
-	/*
-	 * Obtains the data map from the action data map using the data key.
-	 */
-	private Map<String, String> getDataMap(String dataKey,
-										   Map<String, Map<String, String>> actionDataMap) {
-		
-		Map<String, String> dataMap = actionDataMap.get(dataKey);
-		
-		if (dataMap == null) {
-			
-			dataMap = new HashMap<String, String>();
-		}
-		
-		return dataMap;
-	}
-
-	/*
-	 * Obtains the action data map from the action map using the action key.
-	 */
-	private Map<String, Map<String, String>> getActionDataMap(String actionKey, 
-															  Map<String, Map<String, Map<String, String>>> actionMap) {
-		
-		Map<String, Map<String, String>> actionDataMap = actionMap.get(actionKey);
-		
-		if (actionDataMap == null) {
-			
-			actionDataMap = new HashMap<String, Map<String, String>>();
-		}
-		
-		return actionDataMap;
-	}
-
-	/*
-	 * Obtains the action map from the data holder.
-	 */
-	private Map<String, Map<String, Map<String, String>>> getActionMap(DataHolder dataHolder) {
-		
-		Map<String, Map<String, Map<String, String>>> actionMap = dataHolder.getActionMap();
-		
-		if (actionMap == null) {
-			
-			actionMap = new HashMap<String, Map<String, Map<String, String>>>();
-		}
-		
-		return actionMap;
-	}
-
+	
 	/*
 	 * Obtains the current data holder from session or create a new one.
 	 */
 	private DataHolder getCurrentDataHolder() {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
 		
 		if (dataHolder == null) {
 			
@@ -149,8 +73,7 @@ public class DataHolderController {
 	@Post
 	public void clearAction(String actionKey) {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = this.getCurrentDataHolder(); 
 		
 		if (dataHolder != null) {
 		
@@ -176,8 +99,7 @@ public class DataHolderController {
 	@Post
 	public void clearData(String actionKey, String dataKey) {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = this.getCurrentDataHolder();
 		
 		if (dataHolder != null) {
 		
@@ -205,8 +127,7 @@ public class DataHolderController {
 	@Post
 	public void clearAll() {
 		
-		DataHolder dataHolder =
-			(DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = this.getCurrentDataHolder();
 		
 		if (dataHolder != null) {
 		
