@@ -9,12 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
-import org.joda.time.MonthDay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.DefinicaoBasesDAO;
-import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.EstudoTransient;
@@ -55,7 +53,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 
 		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<ProdutoEdicaoEstudo>();
 		if(estudo.getProdutoEdicaoEstudo() != null 
-				&& validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
+				&& estudoAlgoritmoService.validaPeriodoVeraneio(estudo.getProdutoEdicaoEstudo().getDataLancamento())) {
 
 			List<ProdutoEdicaoEstudo> edicoesVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudo);
 			if(edicoesVeraneio != null && !edicoesVeraneio.isEmpty()) {
@@ -209,14 +207,6 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 			}
 		}
 		
-	}
-
-	public boolean validaPeriodoVeraneio(Date dataLancamento) {
-		MonthDay inicioVeraneio = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
-		MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_28.getData());
-		MonthDay dtLancamento = new MonthDay(dataLancamento);
-
-		return dtLancamento.isAfter(inicioVeraneio) || dtLancamento.isBefore(fimVeraneio);
 	}
 
 }

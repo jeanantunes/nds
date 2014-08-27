@@ -313,7 +313,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
+			
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
@@ -322,7 +322,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	private void carregarComboFornecedores() {
 		
-		List<ItemDTO<Long, String>> listaFornecedoresCombo = fornecedorService.obterFornecedoresUnificados();
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = fornecedorService.obterFornecedoresFcDinap();
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
