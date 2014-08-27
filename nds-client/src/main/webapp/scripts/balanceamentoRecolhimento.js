@@ -557,7 +557,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 			}else{
 				
-				balanceamentoRecolhimentoController.nonSelected.push({idLancamento : idRow})
+				balanceamentoRecolhimentoController.nonSelected.push({idLancamento : idRow});
 				dataHolder.hold('matrizRecolhimentoDataHolder', idRow, 'checado', checado);
 			}
 			
