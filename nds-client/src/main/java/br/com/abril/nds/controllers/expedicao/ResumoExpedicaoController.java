@@ -473,7 +473,7 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setCodigoProduto(expd.getCodigoProduto());
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
-			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
+			resumoExpedicaoVO.setPrecoCapa(expd.getPrecoCapa() != null ? CurrencyUtil.formatarValor(expd.getPrecoCapa()) : "0");
 			resumoExpedicaoVO.setReparte(expd.getQntReparte() == null ? BigInteger.ZERO: expd.getQntReparte());
 			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
 			

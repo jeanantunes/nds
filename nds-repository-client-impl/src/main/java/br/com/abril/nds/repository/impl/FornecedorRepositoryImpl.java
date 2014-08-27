@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -660,6 +661,18 @@ public class FornecedorRepositoryImpl extends
 
 		return query.list();
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> obterFornecedoresFcDinap(String codigoDinap,
+			String codigoFC) {
+		
+		final Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.add(Restrictions.in("codigoInterface",Arrays.asList(Integer.parseInt(codigoDinap),Integer.parseInt(codigoFC))));
+		
+		return criteria.list();
 	}
 
 }

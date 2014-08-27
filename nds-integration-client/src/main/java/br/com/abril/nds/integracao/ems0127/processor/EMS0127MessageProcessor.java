@@ -67,11 +67,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 		try {	
 
-			String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
-			
 			// Validar código do distribuidor:
 			Distribuidor distribuidor = this.distribuidorService.obter();
-			if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())) {
+			if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())
+					|| !distribuidor.getCodigoDistribuidorFC().equals(input.getCodigoDistribuidor())) {
 				
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
@@ -80,7 +79,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 				
 			}
 			
-			dbClient = getCouchDBClient(codigoDistribuidor);
+			dbClient = getCouchDBClient(input.getCodigoDistribuidor());
 			
 			ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(message, input);
 			
