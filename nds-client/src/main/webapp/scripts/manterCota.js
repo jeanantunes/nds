@@ -2123,5 +2123,4 @@ function GridAntigosProprietarios(element, workspace) {
         });
     };
 }
-
 //@ sourceURL=manterCota.js
