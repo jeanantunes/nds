@@ -15,41 +15,41 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private static final long serialVersionUID = -6711767359292325571L;
 
-	@Export(label = "Sequencial", alignment = Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "Seq", alignment = Alignment.LEFT, exhibitionOrder = 1, widthPercent=5)
 	private Long sequencial;
 	
-	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2,widthPercent=6)
 	private String codigoProduto;
 	
-	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 3)
+	@Export(label = "Produto", alignment = Alignment.LEFT, exhibitionOrder = 3, widthPercent=25)
 	private String nomeProduto;
 	
-	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4)
+	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4, widthPercent=5)
 	private Long numeroEdicao;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private BigInteger reparte;
 
-	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 10 )
 	private BigInteger venda;
 
 	private BigDecimal precoCapa;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder =11 )
 	private String precoCapaFormatado;
 
 	private BigDecimal valorVenda;
 
-	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8)
+	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8 )
 	private BigInteger encalhe;
 	
-	@Export(label = "Estoque", alignment = Alignment.RIGHT, exhibitionOrder = 9)
+	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 7)
 	private BigInteger estoque;
 	
-	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 10)
+	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder =9 )
 	private BigInteger diferenca;
 	
-	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 11)
+	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 12)
 	private String valorVendaFormatado;
 		
 	private String tipoFormatado;
