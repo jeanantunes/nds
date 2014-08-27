@@ -69,26 +69,30 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-
-		balanceamentoRecolhimentoController.fecharGridBalanceamento();
 		
-		$.postJSON(
-			contextPath + "/devolucao/balanceamentoMatriz/pesquisar", 
-			balanceamentoRecolhimentoController.obterParametrosPesquisa(),
-			function(result) {
+		dataHolder.clearAction('matrizRecolhimentoDataHolder', 
+			function(){
+				balanceamentoRecolhimentoController.fecharGridBalanceamento();
 				
-				if(result.produtosRecolhimentoDeOutraSemana
-						&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
-					
-					balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
-				}
-				else{
-					
-					balanceamentoRecolhimentoController.tratarRetornoPesquisa(result);
-				}
-			},
-			function() {
-				balanceamentoRecolhimentoController.showResumo(false);
+				$.postJSON(
+					contextPath + "/devolucao/balanceamentoMatriz/pesquisar", 
+					balanceamentoRecolhimentoController.obterParametrosPesquisa(),
+					function(result) {
+						
+						if(result.produtosRecolhimentoDeOutraSemana
+								&& result.produtosRecolhimentoDeOutraSemana.length > 0 ){
+							
+							balanceamentoRecolhimentoController.mostrarProdutoDeOutraSemanaDeRecolhimento(result);
+						}
+						else{
+							
+							balanceamentoRecolhimentoController.tratarRetornoPesquisa(result);
+						}
+					},
+					function() {
+						balanceamentoRecolhimentoController.showResumo(false);
+					}
+				);
 			}
 		);
 	},
@@ -442,18 +446,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	   		   			+       ' value="' + row.id + '" disabled="disabled"  />';
 		} else {
 			
-			if((balanceamentoRecolhimentoController.checkAllGrid) && (row.cell.replicar == undefined || !row.cell.replicar == 'false')){	
-				
+			if(row.cell.replicar == 'true' || $("#checkAllReprogramar", balanceamentoRecolhimentoController.workspace).is(":checked")){
 				retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, true);
-				
 			}else{
-				
-				if(row.cell.replicar == 'true'){
-					retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, true);
-				}else{
-					retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, false);
-				}
-				
+				retornoHTML = balanceamentoRecolhimentoController.getElementCheckedOrUnchecked(row.id, false);
 			}
 		}
 		return retornoHTML;
@@ -614,10 +610,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	selecionarTodos : function(input) {
 		
 		if(input.checked == false){
-			dataHolder.clearAction('matrizRecolhimentoDataHolder', balanceamentoRecolhimentoController.workspace);
+			dataHolder.clearAction('matrizRecolhimentoDataHolder');
 		}
-		
-		balanceamentoRecolhimentoController.checkAllGrid = input.checked;
 		
 		balanceamentoRecolhimentoController.selecionados = [];
 		
@@ -999,6 +993,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					
 					exibirMensagem('SUCCESS',[ 'Configuração reiniciada com sucesso.' ]);
 				}
+				
+				dataHolder.clearAction('matrizRecolhimentoDataHolder');
 			},
 			function(result) {
 				
@@ -1487,7 +1483,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val(false);
 		
-		dataHolder.clearAction('matrizRecolhimentoDataHolder', balanceamentoRecolhimentoController.workspace);
+		dataHolder.clearAction('matrizRecolhimentoDataHolder');
 		
 		$.postJSON(
 				contextPath + "/devolucao/balanceamentoMatriz/verificarBloqueioMatrizRecolhimentoPost", 

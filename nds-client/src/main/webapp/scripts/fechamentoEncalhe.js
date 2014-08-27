@@ -260,7 +260,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	pesquisar : function(aplicaRegraMudancaTipo) {
 		
-		dataHolder.clearAction('fechamentoEncalhe', fechamentoEncalheController.workspace);
+		dataHolder.clearAction('fechamentoEncalhe');
 		
 		if (aplicaRegraMudancaTipo == null ){
 			aplicaRegraMudancaTipo = false;

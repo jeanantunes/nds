@@ -264,7 +264,7 @@ var chamadaoController = $.extend(true, {
 		
 		chamadaoController.ACAO_TELA = "PESQUISAR";
 		
-		dataHolder.clearAction('chamadaoHolder', chamadaoController.workspace);
+		dataHolder.clearAction('chamadaoHolder');
 		
 		chamadaoController.nonSelected = [];
 		
