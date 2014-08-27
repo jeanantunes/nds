@@ -50,12 +50,15 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 		
 		Criteria criteria = addRestrictions(nomeTipoProduto, codigo, codigoNCM, codigoNBM);
 		
-		orderBy = (orderBy.equals("ncm")?"n.codigo":orderBy);
-		
-		if (Ordenacao.ASC == ordenacao) {
-			criteria.addOrder(Order.asc(orderBy));
-		} else if (Ordenacao.DESC == ordenacao) {
-			criteria.addOrder(Order.desc(orderBy));
+		if (orderBy != null) {
+		    
+    		orderBy = (orderBy.equals("ncm")?"n.codigo":orderBy);
+    		
+    		if (Ordenacao.ASC == ordenacao) {
+    			criteria.addOrder(Order.asc(orderBy));
+    		} else if (Ordenacao.DESC == ordenacao) {
+    			criteria.addOrder(Order.desc(orderBy));
+    		}
 		}
 		
 		if (maxResults >= 0 && initialResult >= 0 ) {
