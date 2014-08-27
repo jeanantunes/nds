@@ -232,6 +232,7 @@ public class GrupoServiceImpl implements GrupoService {
     /**
      * @return
      */
+    @Transactional
     @Override
     public Date getDataInicioProximaSemanaSemCE() {
         final int diaInicioSemana = this.distribuidorRepository.buscarInicioSemanaRecolhimento().getCodigoDiaSemana();

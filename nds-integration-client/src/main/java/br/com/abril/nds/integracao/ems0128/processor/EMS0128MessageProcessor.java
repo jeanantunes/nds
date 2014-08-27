@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
+import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.model.Origem;
@@ -68,16 +69,18 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
-						
-		view.key("EMS0128");
+		
+		view.startKey(new Object[] {RouteInterface.EMS0128.getName(), null});
+		view.endKey(RouteInterface.EMS0128.getName(), "");
+
 		view.includeDocs(true);
 		try {
-			ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+			ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, EMS0128Input.class);
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 				
 				EMS0128Input doc = (EMS0128Input) row.getDoc();
 				
-                if (doc != null && !doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
+                if (doc != null && doc.getSituacaoSolicitacao() != null && !doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
 					for (EMS0128InputItem eitem : doc.getItems()) {

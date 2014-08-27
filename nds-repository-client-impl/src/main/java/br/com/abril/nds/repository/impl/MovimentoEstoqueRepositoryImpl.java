@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
@@ -244,6 +246,48 @@ implements MovimentoEstoqueRepository {
                                                                         TipoDiferenca.PERDA_EM));
         
         return (BigDecimal) query.uniqueResult();
+	}
+	
+	public BigDecimal obterSaldoDeReparteExpedido(final Date dataMovimento){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum(movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA),0) as VALOR_EXPEDIDO ");
+				
+		sql.append(" from ");
+		sql.append("		MOVIMENTO_ESTOQUE movimentoEstoque ");
+		sql.append("		join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+		sql.append("		join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+		
+		sql.append(" where ");
+		sql.append("	movimentoEstoque.DATA=:dataMovimento ");
+		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEnvioAoJornaleiro)");
+		sql.append("	and ");
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		sql.append("			select distinct produtoEdicao_.ID ");
+		sql.append("			from ");
+		sql.append("				EXPEDICAO expedicao ");
+		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID ");
+		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");
+		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
+		sql.append("			where lancamento.STATUS<>:statusFuro");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR=:dataMovimento");
+		sql.append("		        and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado");
+		sql.append("		) ");
+
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimento", dataMovimento);
+		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+		query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		
+		query.addScalar("VALOR_EXPEDIDO",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 	
 

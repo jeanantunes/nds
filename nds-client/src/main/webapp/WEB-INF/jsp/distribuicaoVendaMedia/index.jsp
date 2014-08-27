@@ -16,7 +16,7 @@ $(function() {
 	});
 
 function popup_novo() {
-	$("#edicaoProdCadastradosGrid", distribuicaoVendaMedia.workspace).flexAddData({
+	$("#edicaoProdCadastradosGrid-1", distribuicaoVendaMedia.workspace).flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
@@ -344,7 +344,7 @@ function limparLstExcecao1(){
 	          	<td width="76">Classifica&ccedil;&atilde;o:</td>
 	            <td colspan="3">
 		        <select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
-			        <option selected="selected">Selecione...</option>
+			        <option value="-1" selected="selected">Selecione...</option>
 			        <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
 			            <option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>
 			        </c:forEach>
@@ -363,7 +363,7 @@ function limparLstExcecao1(){
 
     <fieldset style="width:655px!important; margin-top:10px;">
     	<legend>Edições do Produto</legend>
-        <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
+        <table class="edicaoProdCadastradosGrid-1" id="edicaoProdCadastradosGrid-1"></table>
      </fieldset>
 </div>
 </form>
@@ -393,6 +393,8 @@ function limparLstExcecao1(){
                 	<fieldset style="width:280px!important; margin-bottom:10px; float:left;">
                     	<legend>Dados da Distribuição</legend>
                         <input type="hidden" id="idLancamento" value="${lancamento.id}"/>
+                        <input type="hidden" id="idProdutoEdicao" value="${lancamento.produtoEdicao.id}"/>
+                        <input type="hidden" id="modoAnalise" value="${modoAnalise}"/>
                     	<table width="280" border="0" cellspacing="2" cellpadding="2">
                           <tr>
                             <td>Produto:</td>
@@ -791,7 +793,7 @@ $(".listaRegiaoGrid").flexigrid({
 	width : 400,
 	height : 200
 });
-$(".edicaoProdCadastradosGrid").flexigrid({	
+$(".edicaoProdCadastradosGrid-1").flexigrid({	
 	dataType : 'json',
 	colModel : [ {
 		display : 'Código',
@@ -991,17 +993,19 @@ $(".lstComponentesGrid").flexigrid({
 $(".dadosBasesGrid").flexigrid({
 	//url : '../xml/dadosDistribB-xml.xml',
 	dataType : 'json',
-	colModel : [{display: 'Código',     name: 'codigoProduto',   width: 45, sortable: true, align: 'left'},
+	colModel : [{display: '',           name: 'select',          width: 15, sortable: true, align: 'center'},
+	    	    {display: 'Peso',       name: 'pesoInput',       width: 30, sortable: true, align: 'center'},
+	    	    {display: 'Código',     name: 'codigoProduto',   width: 45, sortable: true, align: 'left'},
 	    	    {display: 'Produto',    name: 'nome',            width: 70, sortable: true, align: 'left'},
-	    	    {display: 'Edição',     name: 'numeroEdicao',    width: 35, sortable: true, align: 'left'},
+	    	    {display: 'Edição',     name: 'numeroEdicao',    width: 30, sortable: true, align: 'left'},
 	    	    {display: 'Classific.', name: 'classificacao',   width: 60, sortable: true, align: 'left'},
-	    	    {display: 'Período',    name: 'periodo',         width: 40, sortable: true, align: 'center'},
+	    	    {display: 'Per.',       name: 'periodo',         width: 20, sortable: true, align: 'center'},
+	    	    {display: 'Data Lcto.', name: 'dataLancamentoFormatada',  width: 60, sortable: true, align: 'right'},
 	    	    {display: 'Status',     name: 'status',          width: 55, sortable: true, align: 'left'},
 	    	    {display: 'Reparte',    name: 'reparte',         width: 35, sortable: true, align: 'center'},
 	    	    {display: 'Venda',      name: 'venda',           width: 35, sortable: true, align: 'center' },
-	    	    {display: 'Venda %',    name: 'percentualVenda', width: 40, sortable: true, align: 'right'},
-	    	    {display: 'Peso',       name: 'pesoInput',       width: 40, sortable: true, align: 'center'},
-	    	    {display: '',           name: 'select',          width: 20, sortable: true, align: 'center'}],
+	    	    {display: 'Venda %',    name: 'percentualVenda', width: 40, sortable: true, align: 'right'}
+	    	    ],
 	width : 610,
 	height : 240
 });

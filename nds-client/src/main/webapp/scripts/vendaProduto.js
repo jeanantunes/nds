@@ -21,13 +21,18 @@ var vendaProdutoController = $.extend(true, {
 			}
 		});
 		
-		$('#produto', workSpace).bind({
-			keyup: function(){
-				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
+		$("#produto", vendaProdutoController.workspace).autocomplete({
+			source:function(param ,callback) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
 			},
-			blur: function(){
-				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
-			}
+			select : function(event, ui) {
+				$('#codigo', vendaProdutoController.workspace).val(ui.item.chave.codigo);
+				
+			},
+			minLength: 2,
+			delay : 0,
+		}).keyup(function(){
+			this.value = this.value.toUpperCase();
 		});
 		
 		$(".area", workSpace).hide();
@@ -112,8 +117,8 @@ var vendaProdutoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "numEdicao",
-			sortorder : "asc",
+			sortname : "dataLancamento",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

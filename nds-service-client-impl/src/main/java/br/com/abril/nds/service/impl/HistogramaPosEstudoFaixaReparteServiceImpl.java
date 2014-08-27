@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +27,14 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 		return histogramaPosEstudoRepository.obterHistogramaPosEstudo(estudoId, listaIdEdicaoBase, faixa);
 	}
 	
-	@Transactional
+	@Transactional(readOnly=true)
 	@Override
 	public List<Long> obterIdEdicoesBase(Long idEstudo) {
 		return histogramaPosEstudoRepository.obterListaIdProdEdicoesBaseEstudo(idEstudo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<HistogramaPosEstudoAnaliseFaixaReparteDTO> obterListaHistogramaPosEstudo(Integer[][] faixas, 
 			                                                                             Integer estudoId, 
 			                                                                             List<Long> listaIdEdicaoBase) {
@@ -44,6 +46,8 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 
 		faixasIterator: for (int i = 0; i < faixas.length; i++) {
 			
+			Integer reparteToOrder = faixas[i][0];
+			
 			String inicioFaixa = String.valueOf(faixas[i][0]);
 			String fimFaixa = String.valueOf(faixas[i][1]);
 			
@@ -53,16 +57,42 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 				
 				if (faixaHistorico.startsWith(inicioFaixa) && faixaHistorico.endsWith(fimFaixa)) {
 					
+					historico.setReparteToOrder(reparteToOrder);
+					
 					consolidado.consolidar(historico);
 					
 					continue faixasIterator;
 				}
 			}
+			
+			HistogramaPosEstudoAnaliseFaixaReparteDTO novaFaixa = 
+					new HistogramaPosEstudoAnaliseFaixaReparteDTO(inicioFaixa + " a " + fimFaixa);
 
-			listaHistoricoPosEstudo.add(new HistogramaPosEstudoAnaliseFaixaReparteDTO(inicioFaixa + " a " + fimFaixa));
+			novaFaixa.setReparteToOrder(reparteToOrder);
+			
+			listaHistoricoPosEstudo.add(novaFaixa);
 		}
 		
 		listaHistoricoPosEstudo.add(consolidado);
+
+		return this.ordenarHistograma(listaHistoricoPosEstudo);
+	}
+	
+	private List<HistogramaPosEstudoAnaliseFaixaReparteDTO> ordenarHistograma(List<HistogramaPosEstudoAnaliseFaixaReparteDTO> listaHistoricoPosEstudo) {
+		
+		Collections.sort(listaHistoricoPosEstudo, new Comparator<HistogramaPosEstudoAnaliseFaixaReparteDTO>() {
+
+			@Override
+			public int compare(HistogramaPosEstudoAnaliseFaixaReparteDTO o1, HistogramaPosEstudoAnaliseFaixaReparteDTO o2) {
+
+				if (o1.getReparteToOrder() == null || o2.getReparteToOrder() == null) {
+					
+					return 1;
+				}
+				
+				return o1.getReparteToOrder().compareTo(o2.getReparteToOrder());
+			}			
+		});
 
 		return listaHistoricoPosEstudo;
 	}

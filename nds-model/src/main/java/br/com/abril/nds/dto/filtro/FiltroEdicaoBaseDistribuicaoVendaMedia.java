@@ -10,6 +10,8 @@ public class FiltroEdicaoBaseDistribuicaoVendaMedia extends FiltroDTO {
 	private Long classificacao;
 	private Long idLancamento;
 	
+	private boolean consolidado;
+	
 	public FiltroEdicaoBaseDistribuicaoVendaMedia(String codigo, String nome,
 			Long edicao, Long classificacao, Long idLancamento) {
 		this.codigo = codigo;
@@ -68,10 +70,14 @@ public class FiltroEdicaoBaseDistribuicaoVendaMedia extends FiltroDTO {
 	public Long getClassificacao() {
 		return classificacao;
 	}
-	public void setClassificacao(Long classificacao) {
-		this.classificacao = classificacao;
+	public void setClassificacao(String classificacao) {
+		if(!classificacao.equalsIgnoreCase("selecione...") || !classificacao.equalsIgnoreCase("selecione")){
+			this.classificacao = new Long(classificacao);
+		}else{
+			this.classificacao = null;
+		}
 	}
-	public OrdemColuna getOrdemColuna() {
+    public OrdemColuna getOrdemColuna() {
 		return ordemColuna;
 	}
 	public void setOrdemColuna(OrdemColuna ordemColuna) {
@@ -83,4 +89,10 @@ public class FiltroEdicaoBaseDistribuicaoVendaMedia extends FiltroDTO {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
+    public boolean isConsolidado() {
+        return consolidado;
+    }
+    public void setConsolidado(boolean consolidado) {
+        this.consolidado = consolidado;
+    }
 }

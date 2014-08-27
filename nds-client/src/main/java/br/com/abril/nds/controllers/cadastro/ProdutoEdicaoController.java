@@ -31,7 +31,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
-import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -482,7 +481,7 @@ public class ProdutoEdicaoController extends BaseController {
      */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, ModoTela modoTela) {
 		
-		List<String> listaMensagensValidacao = validarDadosBasicosEdicao(dto, codigoProduto);
+		List<String> listaMensagensValidacao = produtoEdicaoService.validarDadosBasicosEdicao(dto, codigoProduto);
 		
 		if (!listaMensagensValidacao.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
@@ -493,56 +492,6 @@ public class ProdutoEdicaoController extends BaseController {
 			}
 		}
 		
-	}
-
-	private List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
-		
-		List<String> listaMensagens = new ArrayList<String>();
-						
-		ProdutoEdicao pe = null;
-		
-		if(codigoProduto == null) {
-            listaMensagens.add("Código do produto inválido!");
-		}
-		
-		if (!dto.isOrigemInterface()) {
-		
-			if(dto.getDataLancamentoPrevisto()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.DISTRIBUICAO)) {
-	                listaMensagens.add("Data de lançamento prevista deve ser um dia operante!");
-				}
-			}
-			
-			if(dto.getDataRecolhimentoPrevisto()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataRecolhimentoPrevisto(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.RECOLHIMENTO)) {
-	                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
-				}
-			}
-		}
-
-		if (!dto.isOrigemInterface() || dto.isLancamentoExcluido()) {
-		
-			if(dto.getDataLancamento()!=null) {
-	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamento(), dto.getIdFornecedor(),
-	                    OperacaoDistribuidor.DISTRIBUICAO)) {
-	                listaMensagens.add("Data de lançamento deve ser um dia operante!");
-				}
-			}
-		}
-		
-		if(dto.getId()!=null) {
-
-			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
-			
-			if(pe == null) {
-                listaMensagens.add("Produto Edição inválido!");
-			}
-			
-		}
-		
-		return listaMensagens;
 	}
 	
 
@@ -585,14 +534,6 @@ public class ProdutoEdicaoController extends BaseController {
 				listaMensagens.add("Campo 'Data de Recolhimento Previsto' não está em um formato válido.(ex: '21/01/2001')");
 			}
 			
-			if(!FormaComercializacao.CONTA_FIRME.equals(dto.getFormaComercializacao())){
-				
-				if(dto.getDataRecolhimentoPrevisto() != null 
-				        && dto.getDataRecolhimentoPrevisto()!=null
-				        &&!validarDataLancamentoMenorRecolhimento(dto))
-	                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
-				
-			}
 			
 			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
                 listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
@@ -625,27 +566,18 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		if (modoTela != null && modoTela.equals(ModoTela.REDISTRIBUICAO)) {
-            
-            if (dto.getDataLancamentoPrevisto() == null) {
-                listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
-            }
 		
 			Date maiorDataLancamento =
 				this.lancamentoService.getMaiorDataLancamento(dto.getId());
 			
-            if (maiorDataLancamento != null && dto.getDataLancamentoPrevisto() != null
-					&& dto.getDataLancamentoPrevisto().compareTo(maiorDataLancamento) <= 0) {
+            if (maiorDataLancamento != null && dto.getDataLancamento() != null
+					&& dto.getDataLancamento().compareTo(maiorDataLancamento) <= 0) {
 				
-            	 listaMensagens.add("Já existe redistribuição cadastrada nessa data!");
+            	 listaMensagens.add("Data de redistribuição deve ser maior que ultima data de lançamento cadastrada!");
 			}
 		}
 		
 		return listaMensagens;
-	}
-	
-	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
-	    
-		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
 	                                                                                        /**

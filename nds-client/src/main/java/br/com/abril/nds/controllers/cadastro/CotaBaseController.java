@@ -33,6 +33,7 @@ import br.com.abril.nds.service.CotaBaseCotaService;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -76,6 +77,9 @@ public class CotaBaseController extends BaseController {
 	private SegmentoNaoRecebidoService segmentoNaoRecebidoService;
 	
 	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
 	private HttpSession session;
 	
 	@Autowired
@@ -110,7 +114,8 @@ public class CotaBaseController extends BaseController {
 		}
 		
 		if (existeCotaBase) {
-			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
+			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal(), 
+			        this.distribuidorService.obterDataOperacaoDistribuidor()));
 		}
 		else {
 			filtro.setDataInicial(null);
@@ -122,13 +127,13 @@ public class CotaBaseController extends BaseController {
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
 
-	private String calcularDiasRestantes(Date dataFinal) {		
+	private String calcularDiasRestantes(Date dataFinal, Date dataOperacao) {		
 		
 		Calendar dtFinal = Calendar.getInstance();
 		dtFinal.setTime(dataFinal);
 		
 		Calendar dtInicial = Calendar.getInstance();
-		dtInicial.setTime(new Date());
+		dtInicial.setTime(dataOperacao);
 		
 		long m1 = dtFinal.getTimeInMillis();
 		long m2 = dtInicial.getTimeInMillis();
@@ -191,21 +196,19 @@ public class CotaBaseController extends BaseController {
 	 */
 	private List<CotaBaseDTO> obterListaCotaBaseFormatada(CotaBaseDTO dto) {
 		
-		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
+		final List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
 		
 		if(!listaCotaBase.isEmpty()){
 			
-			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
+			final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			for(CotaBaseDTO cotaBase : listaCotaBase){
-				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
-				if(cotaBase.getDtFinal().after(new Date())){
+				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal(), dataOperacao));
+				if(cotaBase.getDtFinal().after(dataOperacao)){
 					cotaBase.setSituacao("Ativo");
 				}else{
 					cotaBase.setSituacao("Inativo");
 				}
-				
-				listaFormatada.add(cotaBase);
 			}
 			
 		}
@@ -299,6 +302,11 @@ public class CotaBaseController extends BaseController {
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
+		if (cota == null) {
+		    
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada");
+		}
+		
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
 		
 		validarCota(cota, cotaBase, null);
@@ -307,20 +315,20 @@ public class CotaBaseController extends BaseController {
 		
 		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);
 		
-		if(filtro == null){
+		if(filtro == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não pode ser adicionada!");
 		}
 		
-		else if(filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+		else if(filtro.getTpDistribCota() != null && filtro.getTpDistribCota().getDescTipoDistribuicaoCota() != null 
+				&& filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
 		}
 		
-		else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
+		else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + filtro.getNumeroCota() + "\" não pode ser adicionada!");
-		}else{
+		} else {
 			this.result.use(Results.json()).from(filtro, "result").recursive().serialize();			
 		}
-		
 		
 	}
 
@@ -333,7 +341,6 @@ public class CotaBaseController extends BaseController {
 		Cota cotaParaDesativar = this.cotaService.obterPorId(idCotaBase);
 		
 		cotaBaseCotaService.desativarCotaBase(cotaBase, cotaParaDesativar);			
-		
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota excluida com sucesso."), "result").recursive().serialize();
 		
@@ -423,10 +430,6 @@ public class CotaBaseController extends BaseController {
 				obterSegmentosNaoRecebidosCadastradosNaCota(cota);		
 		
 		listaSegmentosNaoRecebidos.addAll(this.segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosCotaBase(cota.getId()));
-		
-		if(listaSegmentosNaoRecebidos.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-		}
 		
 		TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>> tableModel =
 				new TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>>();

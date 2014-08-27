@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -8,15 +10,21 @@ import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -253,6 +261,98 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		query.setParameter("fimPeriodo", periodo.getAte());
 		
 		return query.list();
+	}
+	
+	@Override
+	public BigDecimal obterSaldoDeEntradaDoConsignadoDasCotasAusenteNoDistribuidor(final Date dataMovimentacao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:suplementarCotaAusente) ");
+		sql.append("				,movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA  ");
+		sql.append("				,movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA*-1)),0) as VALOR_COTA_AUSENTE ");
+				
+		sql.append(" from ");
+		sql.append("		MOVIMENTO_ESTOQUE movimentoEstoque ");
+		sql.append("		join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+		sql.append("		join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+		sql.append(" where ");
+		sql.append("	movimentoEstoque.DATA=:dataMovimento ");
+		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:suplementarCotaAusente,:reparteCotaAusente)");
+		sql.append("	and ");
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		sql.append("			select distinct produtoEdicao_.ID ");
+		sql.append("			from ");
+		sql.append("				EXPEDICAO expedicao ");
+		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID ");
+		sql.append("			inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");
+		sql.append("			inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
+		sql.append("			where lancamento.STATUS<>:statusFuro");
+		sql.append("                and lancamento.DATA_LCTO_DISTRIBUIDOR<:dataMovimento ");
+		sql.append("				and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado");
+		sql.append("		)");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimento", dataMovimentacao);
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
+		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
+		
+		query.addScalar("VALOR_COTA_AUSENTE",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(final Date dataMovimentacao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:suplementarCotaAusente)");
+		sql.append("			  ,movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA *-1");
+		sql.append("			  ,movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA)),0) as VALOR_COTA_AUSENTE");
+	    
+		sql.append(" from");
+		sql.append("	MOVIMENTO_ESTOQUE movimentoEstoque");
+		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+		sql.append("	join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+		sql.append(" where");
+		sql.append("	movimentoEstoque.DATA=:dataMovimento "); 
+		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentos)");
+		sql.append("	and ");
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		sql.append("			select distinct produtoEdicao_.ID ");
+		sql.append("			from ");
+		sql.append("				EXPEDICAO expedicao ");
+		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID ");
+		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID  ");
+		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID  ");
+		sql.append("			where lancamento.STATUS<>:statusFuro ");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR<:dataMovimento ");
+		sql.append("				and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado ");
+		sql.append("		) ");
+			
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataMovimento", dataMovimentacao);
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
+		query.setParameterList("grupoMovimentos", Arrays.asList(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name(),
+																 GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),
+																 GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name()));
+		
+		query.addScalar("VALOR_COTA_AUSENTE",StandardBasicTypes.BIG_DECIMAL);
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 	
 }

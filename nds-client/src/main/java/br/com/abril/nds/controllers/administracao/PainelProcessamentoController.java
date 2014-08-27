@@ -508,21 +508,13 @@ public class PainelProcessamentoController extends BaseController {
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
     public void executarInterface(final String idInterface) throws Exception {
         
-        if (interfaceExecucaoService.isInterfaceProdin(idInterface)) {
-            
-            interfaceExecucaoService.executarInterface(
-                    idInterface, getUsuarioLogado(), distribuidorService.codigoDistribuidorFC());
-            
-            interfaceExecucaoService.executarInterface(
-                    idInterface, getUsuarioLogado(), distribuidorService.codigoDistribuidorDinap());
-            
-        } else {
-            
-            interfaceExecucaoService.executarInterface(idInterface, getUsuarioLogado(), null);
-        }
+        interfaceExecucaoService.executarInterface(
+                idInterface, getUsuarioLogado(), distribuidorService.codigoDistribuidorFC());
         
-        result.use(Results.json())
-        .from(
+        interfaceExecucaoService.executarInterface(
+                idInterface, getUsuarioLogado(), distribuidorService.codigoDistribuidorDinap());
+            
+        result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
                 "result").recursive().serialize();
     }

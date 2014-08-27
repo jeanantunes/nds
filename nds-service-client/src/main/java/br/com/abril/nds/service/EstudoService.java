@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoGeradoPreAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 
 /**
@@ -23,6 +24,8 @@ import br.com.abril.nds.model.planejamento.EstudoPDV;
  *
  */
 public interface EstudoService {
+	
+	EstudoGeradoPreAnaliseDTO obterEstudoPreAnalise(Long id);
 	
 	EstudoGerado obterEstudo(Long id);
 	

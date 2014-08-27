@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -33,6 +35,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.util.QueryUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -805,6 +808,43 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         return (BigDecimal) query.uniqueResult();
     }
     
+    /**
+     * Obtem total de dividas vencidas em aberto da cota
+     * 
+     * @param idCota
+     * @param data
+     * @return BigDecimal
+     */
+    @Override
+    public BigDecimal obterTotalDividasVencidasCota(final Long idCota, Date data) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select sum(COALESCE(divida.valor,0)) ");
+        
+        hql.append(" from Divida divida ");
+        
+        hql.append(" inner join divida.cobranca cob ");
+        
+        hql.append(" inner join divida.cota cota ");
+        
+        hql.append(" where cob.dataVencimento <= :data ");
+        
+        hql.append(" and cota.id = :idCota ");
+        
+        hql.append(" and divida.status = :status ");
+        
+        final Query query = super.getSession().createQuery(hql.toString());
+        
+        query.setParameter("idCota", idCota);
+        
+        query.setParameter("status", StatusDivida.EM_ABERTO);
+        
+        query.setParameter("data", data);
+        
+        return (BigDecimal) query.uniqueResult();
+    }
+    
     @Override
     public BigDecimal obterValorDividasDataOperacao(final boolean dividaVencendo, final boolean dividaAcumulada) {
         
@@ -862,74 +902,119 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
     /**
      * {@inheritDoc}
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(final Date data) {
-        Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
-        return sumarizarDividas(data, TipoDivida.DIVIDA_A_RECEBER);
+        
+    	Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
+        
+        StringBuilder sql = new StringBuilder();
+        
+        sql.append(" select cobranca0_.TIPO_COBRANCA as tipoCobranca, ");
+        sql.append(" sum(cobranca0_.VALOR)  + ");
+        sql.append("	(select COALESCE(sum(cobranca_.VALOR),0) "); 
+        sql.append("		from COBRANCA cobranca_ join DIVIDA divida_ on divida_.ID = cobranca_.DIVIDA_ID "); 
+        sql.append("        join baixa_cobranca baixaCobranca on baixaCobranca.COBRANCA_ID = cobranca_.ID ");
+        sql.append("		where cobranca_.DT_VENCIMENTO < :dataFechamento ");
+        sql.append("		and baixaCobranca.DATA_BAIXA = :dataFechamento ");
+        sql.append("		and cobranca_.STATUS_COBRANCA=:statusPago ");
+        sql.append("		and cobranca_.TIPO_COBRANCA =  cobranca0_.TIPO_COBRANCA ");
+        sql.append("		and divida_.STATUS<> :pendenteInadimplente)  as total, ");	   	
+        sql.append("	  (select COALESCE(sum(cobranca_.VALOR),0) ");
+        sql.append("		from COBRANCA cobranca_ join DIVIDA divida_ on divida_.ID = cobranca_.DIVIDA_ID "); 
+        sql.append("        join baixa_cobranca baixaCobranca on baixaCobranca.COBRANCA_ID = cobranca_.ID ");
+        sql.append("		where cobranca_.DT_VENCIMENTO < :dataFechamento ");
+        sql.append("		and baixaCobranca.DATA_BAIXA = :dataFechamento ");
+        sql.append("		and cobranca_.STATUS_COBRANCA= :statusPago ");
+        sql.append("		and cobranca_.TIPO_COBRANCA =  cobranca0_.TIPO_COBRANCA ");
+        sql.append("		and divida_.STATUS<> :pendenteInadimplente )  as valorPago, ");
+		sql.append("  sum(cobranca0_.VALOR)  as inadimplencia ");
+		sql.append("  from ");
+		sql.append("        COBRANCA cobranca0_ join DIVIDA divida1_ on cobranca0_.DIVIDA_ID=divida1_.ID "); 
+		sql.append("  where ");
+		sql.append("       cobranca0_.DT_VENCIMENTO<:dataFechamento ");
+		sql.append("       and cobranca0_.STATUS_COBRANCA=:statusNaoPago ");
+		sql.append("       and divida1_.STATUS<> :pendenteInadimplente ");
+		sql.append("  group by cobranca0_.TIPO_COBRANCA ");
+        
+        SQLQuery query = getSession().createSQLQuery(sql.toString());
+        
+        query.addScalar("total",StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("valorPago",StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("inadimplencia",StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("tipoCobranca",QueryUtil.obterTypeEnum(TipoCobranca.class));
+        
+        query.setParameter("dataFechamento", data);
+        
+        query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO.name());
+        
+        query.setParameter("statusPago", StatusCobranca.PAGO.name());
+        
+        query.setParameter("pendenteInadimplente", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+        
+        query.setResultTransformer(Transformers.aliasToBean(SumarizacaoDividasDTO.class));
+        
+        return query.list();
     }
     
     /**
      * {@inheritDoc}
      */
-    @Override
-    public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(final Date data) {
-        Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
-        return sumarizarDividas(data, TipoDivida.DIVIDA_A_VENCER);
-    }
-    
-    /**
-     * Sumariza as dívidas de acordo com o tipo de dívida, para dívidas à
-     * receber são consideradas as dívidas com vencimento na data base, no caso
-     * de dívidas à vencer são consideradas as dívidas com vencimento após a
-     * data base
-     * 
-     * @param data data base para sumarização das dívidas
-     * @param tipoDivida tipo da dívida para sumarização
-     * @return Lista com as dívidas sumarizadas
-     */
     @SuppressWarnings("unchecked")
-    private List<SumarizacaoDividasDTO> sumarizarDividas(final Date data, final TipoDivida tipoDivida) {
+	@Override
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(final Date data) {
         
-        final StringBuilder hql = new StringBuilder("select new ");
+    	Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
         
-        hql.append(SumarizacaoDividasDTO.class.getCanonicalName())
-        .append("(cobranca.dataVencimento as data,")
-        .append(" cobranca.tipoCobranca as tipoCobranca, ")
-        .append(" sum(cobranca.valor) as total, ")
-        .append(" sum(case when cobranca.statusCobranca != :statusNaoPago then cobranca.valor else 0 end) as pago, ")
-        .append(" sum(cobranca.valor) -  ")
-        .append(" sum(case when cobranca.statusCobranca != :statusNaoPago then cobranca.valor else 0 end) as inadimplencia ");
-        
-        hql.append(")").append(" from Cobranca cobranca ");
-        
-        if (TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)) {
-            
-            hql.append(" where cobranca.dataVencimento > :data and cobranca.statusCobranca = :statusNaoPago   ");
-            
-        } else {
-            
-            hql.append(" where cobranca.dataVencimento <= :data  and cobranca.statusCobranca = :statusNaoPago ")
-            .append(" and cobranca.divida.status != :pendenteInadimplente ");
-        }
-        
-        final Query query = this.getSession().createQuery(hql.toString());
-        query.setParameter("data", data);
-        query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO);
-        
-        if (!TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)) {
-            query.setParameter("pendenteInadimplente", StatusDivida.PENDENTE_INADIMPLENCIA);
-        }
-        
-        final List<SumarizacaoDividasDTO> lista = query.list();
-        
-        if (lista != null && lista.size() == 1 && lista.get(0).getData() == null) {
-            
-            return new ArrayList<SumarizacaoDividasDTO>();
-        }
-        
-        return lista;
+    	StringBuilder sql = new StringBuilder();
+    	
+		sql.append(" select cobranca0_.TIPO_COBRANCA as tipoCobranca, ");
+		sql.append(" sum(cobranca0_.VALOR)  + ");
+		sql.append("	(select COALESCE(sum(cobranca_.VALOR),0) "); 
+		sql.append("		from COBRANCA cobranca_ join DIVIDA divida_ on divida_.ID = cobranca_.DIVIDA_ID "); 
+		sql.append("        join baixa_cobranca baixaCobranca on baixaCobranca.COBRANCA_ID = cobranca_.ID ");
+		sql.append("		where cobranca_.DT_VENCIMENTO >= :dataFechamento ");
+		sql.append("		and baixaCobranca.DATA_BAIXA = :dataFechamento ");
+		sql.append("		and cobranca_.STATUS_COBRANCA=:statusPago ");
+		sql.append("		and cobranca_.TIPO_COBRANCA =  cobranca0_.TIPO_COBRANCA ");
+		sql.append("		and divida_.STATUS<> :pendenteInadimplente)  as total, ");	   	
+		sql.append("	  (select COALESCE(sum(cobranca_.VALOR),0) ");
+		sql.append("		from COBRANCA cobranca_ join DIVIDA divida_ on divida_.ID = cobranca_.DIVIDA_ID "); 
+		sql.append("        join baixa_cobranca baixaCobranca on baixaCobranca.COBRANCA_ID = cobranca_.ID ");
+		sql.append("		where cobranca_.DT_VENCIMENTO >= :dataFechamento ");
+		sql.append("		and baixaCobranca.DATA_BAIXA = :dataFechamento ");
+		sql.append("		and cobranca_.STATUS_COBRANCA = :statusPago ");
+		sql.append("		and cobranca_.TIPO_COBRANCA =  cobranca0_.TIPO_COBRANCA ");
+		sql.append("		and divida_.STATUS<> :pendenteInadimplente )  as valorPago, ");
+ 		sql.append("  sum(cobranca0_.VALOR)  as inadimplencia ");
+ 		sql.append("  from ");
+ 		sql.append("        COBRANCA cobranca0_ join DIVIDA divida1_ on cobranca0_.DIVIDA_ID=divida1_.ID "); 
+ 		sql.append("  where ");
+ 		sql.append("       cobranca0_.DT_VENCIMENTO>=:dataFechamento ");
+ 		sql.append("       and cobranca0_.STATUS_COBRANCA=:statusNaoPago ");
+ 		sql.append("       and divida1_.STATUS<> :pendenteInadimplente ");
+	 	sql.append("  group by cobranca0_.TIPO_COBRANCA ");
+	    	 
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		 
+		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorPago", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("inadimplencia", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("tipoCobranca",QueryUtil.obterTypeEnum(TipoCobranca.class));
+
+		query.setParameter("dataFechamento", data);
+
+		query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO.name());
+
+		query.setParameter("statusPago", StatusCobranca.PAGO.name());
+
+		query.setParameter("pendenteInadimplente",StatusDivida.PENDENTE_INADIMPLENCIA.name());
+
+		query.setResultTransformer(Transformers.aliasToBean(SumarizacaoDividasDTO.class));
+
+		return query.list();
     }
-    
+     
     /**
      * {@inheritDoc}
      */
@@ -994,11 +1079,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         
         if (TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)) {
             
-            hql.append(" where cobranca.dataVencimento > :data and cobranca.statusCobranca = :statusNaoPago   ");
+            hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
             
         } else {
             
-            hql.append(" where cobranca.dataVencimento <= :data  and cobranca.statusCobranca = :statusNaoPago ")
+            hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ")
             .append("	and cobranca.divida.status != :pendenteInadimplente	");
         }
         

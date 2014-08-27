@@ -54,6 +54,8 @@ balanceamentoLancamento.inicializar();
 
 <body>
 
+<input id="bloquearBotoes" type="hidden" value="false">
+
 <form id="form-excluir-lancamento">
 	<div id="dialog-excluir-lancamento" title="Remover Lançamento" style="display:none">
 			
@@ -101,6 +103,14 @@ balanceamentoLancamento.inicializar();
 		    </p>
 		</div>
 		</form>
+		
+		<form id="form-bloqueio-matriz">
+			<div id="dialog-bloqueio-matriz" title="Balanceamento da Matriz de Lançamento" style="display:none;">
+	
+				<p>Deseja bloquear para outros usuários a Matriz de Lançamento para edição?</p>
+	
+			</div>
+		</form>
 
 <form id="form-alerta-lancamentos-produtos-cancelados">
 <div id="dialog-alerta-lancamentos-produtos-cancelados" title="Produtos com lançamentos cancelados" style="display:none">
@@ -117,22 +127,22 @@ balanceamentoLancamento.inicializar();
 			  		<div class="area">
 			  			<span class="bt_novos" style="display: none;">
 		        			<!-- Voltar Configuração Inicial -->
-		        			<a id="linkVoltarConfiguracaoInicial" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Voltar &agrave; Configuração Inicial N&atilde;o-Salva"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
+		        			<a id="linkVoltarConfiguracaoInicial" isEdicao="true" href="javascript:;" rel="tipsy" title="Voltar &agrave; Configuração Inicial N&atilde;o-Salva"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
 		        		</span>
 			  			
 			  			<span class="bt_novos" style="display: none;">
 			  				<!-- Reprogramar -->
-			  				<a id="linkReprogramar" href="javascript:;" isEdicao="true" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
+			  				<a id="linkReprogramar" href="javascript:;" isEdicao="true" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
 		                <span class="bt_novos" style="display: none;">
-							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Bloquear o Dia">
+							<a isEdicao="true" id="linkBloquearDia" isEdicao="true" href="javascript:;" title="Bloquear o Dia">
 								<img height="15" width="15" src="<c:url value='images/ico_bloqueado.gif'/>"  hspace="5" border="0" />
 							</a>
 						</span>
 						
 						<span class="bt_novos" style="display: none;">
-							<a id="linkMatrizFornecedor" isEdicao="true" title="Listar Todos Produtos Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
+							<a id="linkMatrizFornecedor" title="Listar Todos Produtos Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
 								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
 							</a>
 						</span>
@@ -154,19 +164,19 @@ balanceamentoLancamento.inicializar();
 						
 						<span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
 		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
+		                    <a id="linkConfirmar" isEdicao="true" href="javascript:;" rel="tipsy" title="Confirmar Balanceamento">
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
 		                    </a>
 		                </span>
 		                
 						<span class="bt_novos" style="display: none;">
-				            <a id="linkReabrirMatriz" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" rel="tipsy" title="Reabrir Matriz" >
+				            <a id="linkReabrirMatriz" isEdicao="true" href="javascript:;" rel="tipsy" title="Reabrir Matriz" >
 					             <img src="<c:url value='images/ico_reopen.gif'/>"  hspace="5" border="0" />
 				           </a> 
 			            </span>
 			            
 			            <span class="bt_novos" style="display: none;">
-							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvarMatriz();" title="Salvar">
+							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" title="Salvar">
 								<img height="15" width="15" src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
 							</a>
 						</span>
@@ -202,7 +212,7 @@ balanceamentoLancamento.inicializar();
 		   	        <td width="112">&nbsp;</td>
 		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
-						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlteradosPesquisar(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBloqueioMatrizLancamento();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 					</td>
 		          </tr>
 		        </table>

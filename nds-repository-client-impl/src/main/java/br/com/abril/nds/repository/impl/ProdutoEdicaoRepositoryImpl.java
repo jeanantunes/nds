@@ -339,7 +339,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		if (dataLancamento != null) {
 			
-			sql.append("  AND (l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte OR l.DATA_LCTO_PREVISTA between :dataLancamentoDe and :dataLancamentoAte) ");
+			sql.append("  AND (l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte) ");
 		}
 		
 		if (preco != null) {
@@ -446,37 +446,59 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			                             final String codigoDeBarras, 
 			                             final boolean brinde) {
 		
-		final StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT count(Q.lancamentoId) as total FROM ");
+		final StringBuilder sql = new StringBuilder();
 		
-		hql.append(" ( ");
+		sql.append(" SELECT count(Q.produtoEdicaoId) as total FROM ");
 		
-		hql.append("     SELECT distinct l.id as lancamentoId ");
+		sql.append(" ( ");
+
+		sql.append("   SELECT pe.id as produtoEdicaoId ");
 		
-		hql.append("     from PRODUTO_EDICAO pe ");
+		sql.append("   from PRODUTO_EDICAO pe ");
 		
-		hql.append("     inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
+		sql.append("   inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
 		
-		hql.append("     join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
+		sql.append("   left join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
 		
-		hql.append("     where pe.ATIVO = :indAtivo ");
+		sql.append("   left join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
 		
-		hql.append(      this.obterTuplasPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde));
+		sql.append("   left join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
 		
-        hql.append("     GROUP BY l.id ");
-			
-		hql.append("     ORDER BY l.id DESC ");
+		sql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		
-		hql.append(" ) AS Q ");
+		sql.append("   where pe.ATIVO = :indAtivo ");
 		
-		SQLQuery query = getSession().createSQLQuery(hql.toString());
+		sql.append("   and l.id=( ");
+		
+		sql.append("       select ");
+		
+		sql.append("           min(l.id) ");
+		
+		sql.append("       from ");
+		
+		sql.append("           LANCAMENTO l "); 
+		
+		sql.append("       where ");
+		
+		sql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
+		
+		sql.append("   ) ");
+		
+        sql.append(this.obterTuplasPesquisarEdicoes(codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde));
+		
+		sql.append(" GROUP BY pe.id ");
+		
+		sql.append(" ) AS Q ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
 
         query = this.setParametrosPerquisarEdicoes(query, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
-        
+		
         query.addScalar("total", StandardBasicTypes.INTEGER);
+        
+        return  (Integer) query.uniqueResult();
 
-		return  (Integer) query.uniqueResult();
 	}
 	
 	/**
@@ -528,7 +550,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append("       select ");
 		
-		hql.append("           max(l.id) ");
+		hql.append("           min(l.id) ");
 		
 		hql.append("       from ");
 		
@@ -1845,7 +1867,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			final Integer numeroCota, 
 			final Integer quantidadeRegisttros,
 			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel,
-			final Date dataOperacao) {
+			final Date dataOperacao,
+			final boolean indAceitaRecolhimentoParcialAtraso) {
 		
 		final StringBuilder hql = new StringBuilder(" select produtoEdicao ");
 		   
@@ -1873,7 +1896,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			if(dataOperacao!=null){
 				hql.append(" and ce.dataRecolhimento = :dataOperacao ");
 			} else {
-				carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel);
+				carregarHQLParametrosFornecedorDatasEncalhe(hql, null, mapaDataCEConferivel, indAceitaRecolhimentoParcialAtraso);
 			}
 		
 			hql.append(" group by produtoEdicao.id			")
@@ -1896,7 +1919,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if(dataOperacao!=null){
 			query.setParameter("dataOperacao", dataOperacao);
 		} else {
-			carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel);
+			carregarHQLParametrosFornecedorDatasEncalhe(null, query, mapaDataCEConferivel, indAceitaRecolhimentoParcialAtraso);
 		}
 		
 		query.setMaxResults(quantidadeRegisttros);
@@ -1908,7 +1931,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	private void carregarHQLParametrosFornecedorDatasEncalhe(
 			final StringBuilder hql,
 			final Query query,
-			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel) {
+			final Map<Long, DataCEConferivelDTO> mapaDataCEConferivel, 
+			final boolean indAceitaRecolhimentoParcialAtraso) {
 		
 		if(query == null) {
 
@@ -1934,14 +1958,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				boolean indOr = false;
 				
-				if(criaHqlParcial) {
+				
+				if(criaHqlParcial && !indAceitaRecolhimentoParcialAtraso) {
 					hql.append(" ((produtoEdicao.parcial = true and ce.dataRecolhimento in (:datasRecolhimentoParcial_"+idFornecedor+")))" );
 					indOr = true;
 				}
 				
 				if(criaHqlNaoParcial) {
+					
 					hql.append(indOr ? " or " : "");
-					hql.append(" ((produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
+					
+					if(indAceitaRecolhimentoParcialAtraso) {
+						hql.append(" ((ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
+					} else {
+						hql.append(" ((produtoEdicao.parcial = false and ce.dataRecolhimento in (:datasRecolhimentoNaoParcial_"+idFornecedor+")))" );
+					}
+					
 				}
 				
 				hql.append(" 	) ");
@@ -1965,7 +1997,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				final List<Date> listaDataConferivelProdutoParcial = entrada.getValue().getListaDataConferivelProdutoParcial();
 				final List<Date> listaDataConferivelProdutoNaoParcial = entrada.getValue().getListaDataConferivelProdutoNaoParcial();
 				
-				if(!listaDataConferivelProdutoParcial.isEmpty()) {
+				if(!listaDataConferivelProdutoParcial.isEmpty() && !indAceitaRecolhimentoParcialAtraso) {
 					query.setParameterList("datasRecolhimentoParcial_"+entrada.getKey(), listaDataConferivelProdutoParcial);
 				}
 

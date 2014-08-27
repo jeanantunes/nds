@@ -62,6 +62,21 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	                exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
 	            }
 	    );
+	    
+	    $.postJSON(
+	            pathTela + "/distribuicaoVendaMedia/existeBaseVeraneio", 
+	            null,
+	            function(result) {
+	            	if(result && result.boolean != undefined && !result.boolean) {
+	            		
+	            		exibirMensagem("WARNING", ["Não foram encontradas bases de veraneio."]);
+	            	}
+	            },
+	            function(){
+	                exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
+	            }
+	    );
+	    
 	};
 	
 	this.preencherGridBases = function(resultado){
@@ -75,7 +90,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.processarLinhaBases = function(index, row){
-		row.pesoInput = '<select name="select'+index+'" id="select'+index+'" onchange="distribuicaoVendaMedia.selecionarPesoProduto('+index+', this)" ><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>';
+		row.pesoInput = '<select name="select'+index+'" id="select'+index+'" onchange="distribuicaoVendaMedia.selecionarPesoProduto('+index+', this)" ><option value="1" '+ (row.indicePeso && row.indicePeso == 1 ? "selected":"") +' >1</option><option value="2" '+ (row.indicePeso && row.indicePeso == 2 ? "selected":"") +' >2</option><option value="3" '+ (row.indicePeso && row.indicePeso == 3 ? "selected":"") +' >3</option></select>';
 		row.peso = 1;
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBase(' + index + ', this)" type="checkbox" value=""/>';
 		
@@ -208,14 +223,18 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#selectClassificacao").val();
 		var idLancamento = $("#idLancamento").val();
+		var modoAnalise = $("#modoAnalise").val();
+		var idProdutoEdicao = $("#idProdutoEdicao").val();
 		
 		data.push({name:"filtro.codigo", value:codigo});
 		data.push({name:"filtro.nome", value:produto});
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
 		data.push({name:"filtro.idLancamento", value:idLancamento});
+		data.push({name:"modoAnalise", value:modoAnalise});
+		data.push({name:"idProdutoEdicao", value:idProdutoEdicao});
 		
-		$("#edicaoProdCadastradosGrid", this.workspace).flexOptions({
+		$("#edicaoProdCadastradosGrid-1", this.workspace).flexOptions({
 			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
 			params: data,
 			preProcess: function(result){
@@ -735,6 +754,23 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
 	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
 	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+	            
+	            
+	            $('#workspace').bind('tabsselect', function(event, ui) {
+	                // Objects available in the function context:
+	               console.log(ui.tab);     // anchor element of the selected (clicked) tab
+	               console.log(ui.panel);   // element, that contains the selected/clicked tab contents
+	               console.log(ui.index);   // zero-based index of the selected (clicked) tab
+	            
+	           });
+	            
+	            $('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+					if($(v).text() == 'Histograma Pré Análise') {
+						console.log(k +' - '+ $(v).text());
+						$("#workspace").tabs('option', 'selected', k); 
+						$("#workspace").tabs('load', k); 
+					} 
+				});
 	            
 	            $('#workspace').tabs({load : function(event, ui) {
 					

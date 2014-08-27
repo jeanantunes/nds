@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
+import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
@@ -92,10 +93,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 										
 				View view = couchDbClient.view("importacao/porTipoDocumento");
 								
-				view.key("EMS0128");
+				view.startKey(new Object[] {InterfaceEnum.EMS0128.name(), null});
+				view.endKey(InterfaceEnum.EMS0128.name(), "");
+				
 				view.includeDocs(true);
+
 				try { 
-					ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
+					ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, EMS0128Input.class);
 					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 						
 						EMS0128Input doc = (EMS0128Input) row.getDoc();

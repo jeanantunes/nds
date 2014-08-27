@@ -160,5 +160,12 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
 	
 	Long quantidadeChamadasEncalheParaCota(Long idCota, Date periodoInicial, Date periodoFinal);
+
+	/**
+	 * Remove Chamadas de Encalhe de Cota por lista de ID da chamada de encalhe
+	 * 
+	 * @param ids
+	 */
+	void removerChamadaEncalheCotaPorIdsChamadaEncalhe(List<Long> ids);
 	
 }

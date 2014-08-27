@@ -42,6 +42,8 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 	
 	private String numeroCotasStr = "";
 	
+	private Integer reparteToOrder;
+	
 	public HistogramaPosEstudoAnaliseFaixaReparteDTO() {
 		
 	}
@@ -189,6 +191,14 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 
 	public BigInteger getQtdCotaPossuemReparteMenorVenda() {
 		return qtdCotaPossuemReparteMenorVenda == null ? BigInteger.ZERO : qtdCotaPossuemReparteMenorVenda;
+	}
+
+	public Integer getReparteToOrder() {
+		return reparteToOrder;
+	}
+
+	public void setReparteToOrder(Integer reparteToOrder) {
+		this.reparteToOrder = reparteToOrder;		
 	}
 
 	public void consolidar(HistogramaPosEstudoAnaliseFaixaReparteDTO consolidar) {

@@ -381,6 +381,40 @@ public class DividaServiceImpl implements DividaService {
 		return this.dividaRepository.obterTotalDividasAbertoCota(idCota);
 	}
 
+	/**
+	 * Verifica se cota possui dividas vencidas em aberto
+	 * 
+	 * @param idCota
+	 * @return boolean
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public boolean cotaPossuiDividasVencidasEmAberto(Long idCota) {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		BigDecimal valorPendencias = this.dividaRepository.obterTotalDividasVencidasCota(idCota, dataOperacao);
+		
+		return (valorPendencias!=null && valorPendencias.compareTo(BigDecimal.ZERO) > 0);
+	}
+	
+	/**
+	 * Obtem valor total de dividas vencidas em aberto da cota
+	 * 
+	 * @param idCota
+	 * @return boolean
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public BigDecimal obterTotalDividasVencidasEmAberto(Long idCota) {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		BigDecimal valorPendencias = this.dividaRepository.obterTotalDividasVencidasCota(idCota, dataOperacao);
+		
+		return valorPendencias;
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public DividaComissaoDTO obterDadosDividaComissao(Long idDivida) {

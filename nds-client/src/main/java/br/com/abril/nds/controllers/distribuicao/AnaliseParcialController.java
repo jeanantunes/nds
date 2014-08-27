@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
-import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -107,10 +108,6 @@ public class AnaliseParcialController extends BaseController {
 
         EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
-        
-        ResumoEstudoHistogramaPosAnaliseDTO rehpaDTO = estudoService.obterResumoEstudo(id
-        		, Long.valueOf(estudoCota.getEstudo().getProdutoEdicao().getProduto().getCodigo())
-        		, estudoCota.getEstudo().getProdutoEdicao().getNumeroEdicao());
 
         this.clearEdicoesBaseSession();
         
@@ -131,8 +128,6 @@ public class AnaliseParcialController extends BaseController {
         result.include("reparteCopiado", reparteCopiado);
         result.include("dataLancamentoEdicao", dataLancamentoEdicao);
         result.include("classificacaoList", tipoClassificacaoProdutoService.obterTodos());
-        result.include("saldoSobraReparteDistribuido", (rehpaDTO.getQtdSobraEstudo() != null && rehpaDTO.getQtdSobraEstudo().longValue() != 0) 
-        		? rehpaDTO.getQtdSobraEstudo() : (rehpaDTO.getSaldo() != null && rehpaDTO.getSaldo().longValue() != 0) ? rehpaDTO.getSaldo() : 0);
 
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
@@ -188,7 +183,8 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
+                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, 
+                     String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao, Integer numeroParcial) {
 
         AnaliseParcialQueryDTO filtroQueryDTO = new AnaliseParcialQueryDTO();
         filtroQueryDTO.setSortName(sortname);
@@ -270,13 +266,17 @@ public class AnaliseParcialController extends BaseController {
     }
     
     @Path("/mudarReparte")
-    public void mudarReparte(Integer numeroCota, Long estudoId, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
+    public void mudarReparte(Integer numeroCota, Long estudoId, Long fixacaoMixID, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         
         if(ClassificacaoCota.ReparteFixado.getCodigo().equalsIgnoreCase(legendaCota) || 
-                ClassificacaoCota.CotaMix.getCodigo().equalsIgnoreCase(legendaCota)){
+                ClassificacaoCota.CotaMix.getCodigo().equalsIgnoreCase(legendaCota)) {
         	
-            analiseParcialService.atualizarFixacaoOuMix(estudoId, numeroCota, reparteDigitado, legendaCota);
+            analiseParcialService.atualizarFixacaoOuMix(
+            	new ReparteFixacaoMixWrapper(
+        			fixacaoMixID, legendaCota, numeroCota, new Date(), reparteDigitado.intValue()
+            	)
+        	);
         }
         
         result.nothing();

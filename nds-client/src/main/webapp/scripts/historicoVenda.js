@@ -175,14 +175,14 @@ var historicoVendaController = $.extend(true, {
 			    	  
 			    	  var qtdEdicoesSelecionadas = tm.rows.length;
 
-			    	  var tm_ordenada = historicoVendaController.obterTableModelOrdenado(tm);
+			    	  var tm_ordenado = obterTableModelOrdenado(tm, 'numeroEdicao');
 
-			    	  var size_tm_ordenada = tm_ordenada.rows.length;
+			    	  var size_tm_ordenado = tm_ordenado.rows.length;
 
 			    	  // carregando popUp_analiseHistoricoVenda
-			    	  for ( var int = 0; int < size_tm_ordenada; int++) {
+			    	  for ( var int = 0; int < size_tm_ordenado; int++) {
 			    		  
-			    		  row = tm_ordenada.rows[int];
+			    		  row = tm_ordenado.rows[int];
 			    		  
 			    	      $('#analiseHistoricoPopUpNomeProduto', historicoVendaController.workspace).append(
 			    	    		  '<td align="center" class="class_linha_1">'+row.cell.nomeProduto+'</td>');
@@ -200,10 +200,10 @@ var historicoVendaController = $.extend(true, {
 			    	    		  '<td align="center" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
 			    	  }		    
 			    	  
-			    	  size_tm_ordenada = 6 - tm_ordenada.rows.length; 
+			    	  size_tm_ordenado = 6 - tm_ordenado.rows.length; 
 
 			    	  // por estética de layout, insiro elementos td vazios
-			    	  for ( var int = 0; int < size_tm_ordenada; int++) {
+			    	  for ( var int = 0; int < size_tm_ordenado; int++) {
 			    		  $('#analiseHistoricoPopUpNomeProduto', historicoVendaController.workspace).append('<td class="class_linha_1"></td>');
 			    	      $('#analiseHistoricoPopUpNumeroEdicao', historicoVendaController.workspace).append('<td class="class_linha_1"></td>');
 			    	      $('#analiseHistoricoPopUpDatalancamento', historicoVendaController.workspace).append('<td width="130" align="center" class="class_linha_2"></td>');
@@ -469,52 +469,6 @@ var historicoVendaController = $.extend(true, {
 		});
 	},
 
-	obterTableModelOrdenado : function obterTableModelOrdenado(tableModel){
-		
-		var sizeTableModel = tableModel.rows.length;
-	
-        var rows_tm = tableModel.rows;
-  	  
-  	    var tm_ordenada = {
-  			                   rows : new Array()
- 	                      };
-  	  
-  	    while (tm_ordenada.rows.length < sizeTableModel){
-
-	        var size_tm = rows_tm.length;
-	    	  
-	    	var numeroEdicao = 0;
-
-	    	var i = 0;
-	    	  
-	    	var i_remove = -1;
-	    	  
-	    	while (i < size_tm) {
-	    		  
-	            row = rows_tm[i];
-	    		  
-	    		cell = row.cell;		
-	    		  
-	    		iremove = 0;
-
-	    		if (parseInt(cell.numeroEdicao) > numeroEdicao){
-	    			  
-	    	        numeroEdicao = parseInt(cell.numeroEdicao);
-
-	    			i_remove = i; 
-	    		}
-	    		  
-  			    i++;
-	    	}
-	    	  
-	    	tm_ordenada.rows.push(rows_tm[i_remove]);
-	    	  
-	        rows_tm.splice(i_remove,1);
-  	    }		
-  	    
-  	    return tm_ordenada;
-	},
-
 	limparGrids : function limparGrids(grid){
 		
 		var tamanhoGrid = grid.tableModel.rows.length;
@@ -670,9 +624,11 @@ var historicoVendaController = $.extend(true, {
 		
 		if (grids.EdicaoSelecionadaGrid.tableModel.rows) {
 			for ( var index in grids.EdicaoSelecionadaGrid.tableModel.rows) {
-				if(grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.numeroEdicao == row.cell.numeroEdicao){
+				if((grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.numeroEdicao == row.cell.numeroEdicao)
+						&& (grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.codigoProduto == row.cell.codigoProduto)){
 					containsElement.contain = true;
 					containsElement.rowId = grids.EdicaoSelecionadaGrid.tableModel.rows[index].id;
+					break;
 				}
 			}
 		}

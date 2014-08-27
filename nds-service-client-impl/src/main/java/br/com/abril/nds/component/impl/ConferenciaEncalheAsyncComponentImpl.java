@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.component.ConferenciaEncalheAsyncComponent;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -22,7 +23,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.job.AtualizaEstoqueJob;
 
 
 @Component
@@ -33,6 +33,7 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
+	
 	
 	@Override
 	@Async
@@ -85,6 +86,8 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 					usuario, 
 					indConferenciaContingencia);
 		
+			agendarAgoraAtualizacaoEstoqueProdutoConf();
+			
 			conferenciaEncalheService.sinalizarFimProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 
 		
@@ -97,19 +100,18 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 		} 
 		
 	}
-	
 
 	private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
-
-		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 		
-	    JobDetail job = newJob(AtualizaEstoqueJob.class).build();
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 	    
 	    Trigger trigger = newTrigger().startNow().build();
         
+	    JobDetail jobAtualizadorEstoque = newJob(AtualizaEstoqueJob.class).build();
+	    
 		try {
 			
-			scheduler.scheduleJob(job, trigger);
+			scheduler.scheduleJob(jobAtualizadorEstoque, trigger);
 		
 		} catch (SchedulerException e) {
         

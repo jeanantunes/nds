@@ -464,7 +464,7 @@ var MANTER_COTA = $.extend(true, {
 
         if(!er.exec($(idInput, this.workspace).val())) {
             $(idInput, this.workspace).focus();
-            exibirMensagemDialog("WARNING",["E-mail inv&aacutelido."],"");
+            exibirMensagemDialog("WARNING",["E-mail inválido."],"");
         }
     },
 
@@ -547,6 +547,7 @@ var MANTER_COTA = $.extend(true, {
                     if (MANTER_COTA.isModoTelaCadastroCota()) {
                         if (!MANTER_COTA.fecharModalCadastroCota && !confirmado) {
                             MANTER_COTA.cancelarCadastro();
+                            $('#emailNFCPF').removeAttr('onblur');
                         }
 
                         return MANTER_COTA.fecharModalCadastroCota || confirmado;
@@ -617,16 +618,18 @@ var MANTER_COTA = $.extend(true, {
                 "Confirmar": function() {
 
                     MANTER_COTA.fecharModalCadastroCota = true;
-
+                    
+                    $('#emailNFCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNFCPF\')');
                     $("#dialog-close", this.workspace).dialog("close");
                     $("#dialog-cancelar-cadastro-cota", this.workspace).dialog("close");
                     $("#dialog-cota", this.workspace).dialog("close");
                     if (acaoPosCancelar) {
                         acaoPosCancelar();
                     }
-
                 },
                 "Cancelar": function() {
+                	
+                	$('#emailNFCPF').attr('onblur','MANTER_COTA.validarEmail(\'#emailNFCPF\')');
                     MANTER_COTA.fecharModalCadastroCota = false;
                     $(this, this.workspace).dialog("close");
                 }
@@ -1491,6 +1494,7 @@ var COTA_CPF = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoCotaFinanceiro", value: $("#tipoCotaFinanceiro", this.workspace).val()});
         formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
 
         if (MANTER_COTA.numeroCota) {

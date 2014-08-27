@@ -88,12 +88,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
-	private HistoricoLancamentoRepository historicoLancamentoRepository;
-	
-	@Autowired
-	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
-	
-	@Autowired
 	protected ChamadaEncalheRepository chamadaEncalheRepository;
 		
 	@Autowired
@@ -113,9 +107,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
-	
-	@Autowired
-	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
@@ -389,7 +380,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			idsLancamento, usuario, mapaLancamentoRecolhimento,
 			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
 		
-		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
+		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana, usuario);
 		
 		return matrizConfirmada;
 	}
@@ -429,11 +420,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
 		comparatorChain.addComparator(new BeanComparator("nomeProduto"));
+		comparatorChain.addComparator(new BeanComparator("numeroEdicao"));
 		
 		Collections.sort(produtosRecolhimento, comparatorChain);
 	}
-	
-	    /**
+
+	/**
      * Método que atualiza as informações dos lançamentos.
      * 
      * @param idsLancamento - identificadores de lançamentos
@@ -478,10 +470,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
-				lancamento.setUsuario(usuario);
-
-				this.parciaisService.alterarRecolhimento(lancamento, novaData);
-
+				lancamento.setUsuario(usuario);		
+				
+				lancamento.setDataRecolhimentoDistribuidor(novaData);
+				
+				if (lancamento.getPeriodoLancamentoParcial() != null){
+				
+				    this.parciaisService.alterarRecolhimento(lancamento, novaData);
+				}
+				
 				this.lancamentoRepository.merge(lancamento);
 
 				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
@@ -543,15 +540,60 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		matrizConfirmada.put(novaData, produtosRecolhimento);
 	}
 	
-	    /**
+	/**
+	 * Processa lista de CotaReparteDTO de Lancamento
+	 * 
+	 * @param cotasReparte
+	 * @param idLancamento
+	 * @return List<CotaReparteDTO>
+	 */
+	private List<CotaReparteDTO> processaListaCotaReparteDTOLancamento(List<CotaReparteDTO> cotasReparte, Long idLancamento){
+		
+		List<CotaReparteDTO> cotasReparteLancamento = new ArrayList<CotaReparteDTO>();
+		
+		for (CotaReparteDTO item : cotasReparte){
+			
+			if (item.getIdLancamento().equals(idLancamento)){
+				
+				cotasReparteLancamento.add(item);
+			}
+		}
+		
+		return cotasReparteLancamento;
+	}
+	
+	/**
+	 * Processa lista de ChamadaEncalhe de ProdutoEdicao
+	 * 
+	 * @param listaChamadaEncalhe
+	 * @param idProdutoEdicao
+	 * @return List<ChamadaEncalhe>
+	 */
+	private List<ChamadaEncalhe> processaListaChamadaEncaleProdutoEdicao(List<ChamadaEncalhe> listaChamadaEncalhe, Long idProdutoEdicao){
+		
+		List<ChamadaEncalhe> chamadaEncalheProdutoEdicao = new ArrayList<ChamadaEncalhe>();
+		
+		for (ChamadaEncalhe item : listaChamadaEncalhe){
+			
+			if (item.getProdutoEdicao().getId().equals(idProdutoEdicao)){
+				
+				chamadaEncalheProdutoEdicao.add(item);
+			}
+		}
+		
+		return chamadaEncalheProdutoEdicao;
+	}
+	
+	/**
      * Gera as chamadas de encalhe para os produtos da matriz de balanceamento.
      * 
      * @param mapaDataRecolhimentoLancamentos - mapa de datas de recolhimento e
      *            identificadores de lancamentos.
      * @param numeroSemana - número da semana
+	     * @param usuario 
      */
 	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
-			 						  Integer numeroSemana) {
+			 						  Integer numeroSemana, Usuario usuario) {
 		
 		if (mapaDataRecolhimentoLancamentos == null || mapaDataRecolhimentoLancamentos.isEmpty()) {
 		
@@ -571,32 +613,35 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
 			
+			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento);
+
+			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository.obterChamadasEncalheLancamentos(idsLancamento, false);
+
 			for (Long idLancamento : idsLancamento) {
 
 				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
 				ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 				
-				List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idLancamento, produtoEdicao.getId());
+				List<CotaReparteDTO> cotasReparteLancamento = this.processaListaCotaReparteDTOLancamento(cotasReparte, idLancamento);
 
-				for (CotaReparteDTO cotaReparte : cotasReparte) {
+				List<ChamadaEncalhe> chamadasEncalheProdutoEdicao = this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId());
+
+				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
 
 					Cota cota = cotaReparte.getCota();
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
-					List<ChamadaEncalhe> chamadasEncalhe =
-						this.chamadaEncalheRepository.obterChamadasEncalhe(
-							produtoEdicao, null, false);
+					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalheProdutoEdicao);
 					
-					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalhe);
-					
-					ChamadaEncalhe chamadaEncalhe =
-				        this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe, dataRecolhimento);
+					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalheProdutoEdicao, dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
 						
 						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+					    
+					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -612,7 +657,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor());
+					this.criarChamadaEncalheCota(
+				        qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
 				}
 			}
 		}
@@ -661,10 +707,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * @param qtdPrevista - quantidade prevista
      * @param cota - cota
      * @param chamadaEncalhe chamada de encalhe
+	 * @param usuario 
      */
 	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe,
-										 Date dataLctoDistribuidor) {
+										 Date dataLctoDistribuidor,
+										 Usuario usuario) {
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
 			
@@ -695,6 +743,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		chamadaEncalheCota.setUsuario(usuario);
 		
 		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		
@@ -1562,6 +1611,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return idLancamentos.size() > 1;
 	}
 	
+	/**
+	 * Remove chamada de encalhe da cota e chamada de encalhe
+	 * 
+	 * @param listaIdChamadaEncalheRemover
+	 */
+	private void removerChamadaEncalheCotaEChamadaEncalhe(List<Long> listaIdChamadaEncalheRemover){
+		
+        this.chamadaEncalheCotaRepository.removerChamadaEncalheCotaPorIdsChamadaEncalhe(listaIdChamadaEncalheRemover);
+		
+        this.chamadaEncalheRepository.removerChamadaEncalhePorIds(listaIdChamadaEncalheRemover);
+	}
+	
 	@Transactional
 	public String reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario) {
 		
@@ -1569,10 +1630,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			datasConfirmadas, this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterRecolhimentosConfirmados(datasConfirmadas);
-		
+
+		List<Long> listaIdChamadaEncalheRemover = new ArrayList<Long>();
+
 		boolean recolhimento = false;
-		boolean reimpressao = false;
 		
+		boolean reimpressao = false;
+
 		for(Lancamento lancamento: lancamentos) {
 			
             if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
@@ -1588,13 +1652,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
 			
 			lancamento.setUsuario(usuario);
+
+			Set<ChamadaEncalhe> ces = lancamento.getChamadaEncalhe();
 			
+            for (ChamadaEncalhe ce : ces){
+			    
+				if(ce.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)){
+				    
+					listaIdChamadaEncalheRemover.add(ce.getId());
+				}
+			}
+
 			this.lancamentoRepository.alterar(lancamento);
-			
-			this.removerChamadaEncalhe(lancamento.getChamadaEncalhe());
-			
 		}
-		
+        
+        this.removerChamadaEncalheCotaEChamadaEncalhe(listaIdChamadaEncalheRemover);
+
 		if(recolhimento && reimpressao){
             return "Existem lançamentos que já se econtram em processo de recolhimento!  A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
 		}else if(recolhimento){
@@ -1650,16 +1723,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (!mensagens.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
-		}
-	}
-
-	private void removerChamadaEncalhe(Set<ChamadaEncalhe> chamadasEncalhe) {
-		
-		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
-			
-			if(chamadaEncalhe.getTipoChamadaEncalhe() == TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO){
-			  this.chamadaEncalheRepository.remover(chamadaEncalhe);
-			}
 		}
 	}
 	

@@ -168,7 +168,7 @@
 		<tr>
 			<td>Preço Desconto R$:</td>
 			<td>
-				<input isEdicao="true" type="text" style="width: 80px;" disabled="disabled" id="descontoNovoEncalhe" />
+				<input isEdicao="true" type="text" style="width: 80px;text-align: right;" disabled="disabled" id="descontoNovoEncalhe" />
 			</td>
 		</tr>
 		<tr>

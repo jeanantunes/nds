@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,6 +19,7 @@ import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -66,19 +69,21 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' ");
 		hql.append("		then ");
-		hql.append("			 COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, 0) ");
+		hql.append("			 COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(" ) ");
 		hql.append("		else	");	
 		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
-		hql.append("				- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
-		hql.append("					  	COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
-		hql.append("						 + COALESCE(ESTOQUE_PROD.QTDE,0) ");		
-		hql.append("				 )");
+		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
+		hql.append("			   )");
 		hql.append("			)");
 		hql.append("	end AS venda,");
 		
 		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
 		hql.append("		then");
-		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, 0) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO"); 
+		hql.append("			COALESCE(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(") * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO,0)"); 
 		hql.append("		else ");     		
 		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
@@ -147,6 +152,11 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		this.aplicarParametros(filtro, query);
 		
+		query.setParameter("inicioSemana", filtro.getPeriodoRecolhimento().getDe());
+		query.setParameter("fimSemana", filtro.getPeriodoRecolhimento().getAte());
+		query.setParameter("envioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		query.setParameter("recebimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
+		
 		if(filtro.getPaginacao()!=null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -159,6 +169,28 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		}
 			
 		return query.list();
+	}
+	
+	private String sqlVendaParcial(){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" (select COALESCE(sum(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE =:envioJornaleiro, movimento.QTDE, movimento.QTDE*-1)),0) ");
+		sql.append(" from movimento_estoque movimento ");
+		sql.append(" join tipo_movimento tipoMovimento on tipoMovimento.ID = movimento.TIPO_MOVIMENTO_ID ");
+		sql.append(" join produto_edicao pe on movimento.produto_edicao_id = pe.ID ");
+		sql.append(" where tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN(:envioJornaleiro,:recebimentoEncalhe) ");
+		sql.append(" and pe.ID = PROD_EDICAO.ID ");
+		sql.append(" and movimento.DATA between ( ");
+		sql.append("	select min(lancamento.DATA_LCTO_DISTRIBUIDOR) from lancamento lancamento "); 
+		sql.append("	join periodo_lancamento_parcial periodo on periodo.ID = lancamento.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append("	where ");
+		sql.append("	lancamento.DATA_REC_DISTRIB between :inicioSemana and :fimSemana ");
+		sql.append("	and lancamento.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" ) and :fimSemana ");
+		sql.append(" and pe.parcial = true)");
+		
+		return sql.toString();
 	}
 	
 	public BigInteger countItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -187,12 +219,14 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("sum(COALESCE( case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
 		hql.append("		then");
-		hql.append("			ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO ");
+		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(") * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO ");
 		hql.append("		else");
 		hql.append("		(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
-		hql.append("				COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
-		hql.append("				+ COALESCE(ESTOQUE_PROD.QTDE,0) ");		
+		hql.append("			COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
 		hql.append("			  )");
 		hql.append("		) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO ");
 	    
@@ -204,7 +238,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("				from desconto_logistica ");
 		hql.append("				where desconto_logistica.ID = COALESCE(PROD_EDICAO.DESCONTO_LOGISTICA_ID,PROD.DESCONTO_LOGISTICA_ID)");
 		hql.append("			),0)/100)*ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO)");
-		hql.append("			* ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA)");
+		hql.append("			* COALESCE( ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA,").append(this.sqlVendaParcial()).append("))");
 		hql.append("		else");
 		hql.append("			(((COALESCE((select desconto_logistica.PERCENTUAL_DESCONTO "); 
 		hql.append("				from desconto_logistica ");
@@ -212,8 +246,10 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("			),0)/100)*ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO)");
 		hql.append("			*(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
 		hql.append("				- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
-		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
-		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE,0) ");		
+		hql.append("				COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("				+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("				+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("				+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");			
 		hql.append("				)");
 		hql.append("			))");
 		hql.append("	end,0) ) as totalDesconto");
@@ -226,6 +262,11 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 						.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoConsolidadoDTO.class));
 		
 		this.aplicarParametros(filtro, query);
+		
+		query.setParameter("inicioSemana", filtro.getPeriodoRecolhimento().getDe());
+		query.setParameter("fimSemana", filtro.getPeriodoRecolhimento().getAte());
+		query.setParameter("envioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		query.setParameter("recebimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
 		
 		return (FechamentoCEIntegracaoConsolidadoDTO) query.uniqueResult();
 	}

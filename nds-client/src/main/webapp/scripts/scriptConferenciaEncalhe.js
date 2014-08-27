@@ -342,6 +342,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(document.body).unbind('keydown.salvarConferencia');
 		
 		$(document.body).unbind('keydown.finalizarConferencia');
+		
+		$(document.body).unbind('keydown.ordenarConferencia');
 
 	},
 
@@ -491,6 +493,18 @@ var ConferenciaEncalhe = $.extend(true, {
 					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.verificarCobrancaGerada);
 				}, 1000);
 				
+			}
+			
+		}));
+		
+		$(document.body).bind('keydown.ordenarConferencia', jwerty.event('F10',function() {
+			if (!ConferenciaEncalhe.modalAberta){
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+				setTimeout(function() {
+					ConferenciaEncalhe.ordenarItensPorSM();
+				}, 1000);
 			}
 			
 		}));
@@ -798,29 +812,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.setarValoresPesquisados();
 	},
 	
-	preProcessarConsultaConferenciaEncalhe : function(result, indNaoAlteraFoco) {
-		
-		if (result.mensagens){
-			
-			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-			
-			return;
-			
-		}
+	montarListaConferencia:function (listaConferencia,indDistribuidorAceitaJuramentado){
 		
 		var innerTable = '';
 		
-		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
-		
-		var indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
-		
-		var cotaAVista = result.cotaAVista;
-		
 		$("._dadosConfEncalhe", ConferenciaEncalhe.workspace).remove();
 		
-		if (modeloConferenciaEncalhe){
-		
-			$.each(modeloConferenciaEncalhe, 
+		$.each(listaConferencia,
 				function(index, value) {
 					
 					var parcialNaoFinal =  value.parcialNaoFinal;
@@ -917,6 +915,31 @@ var ConferenciaEncalhe = $.extend(true, {
 					innerTable = '';
 				}
 			);
+	},
+	
+	preProcessarConsultaConferenciaEncalhe : function(result, indNaoAlteraFoco) {
+		
+		if (result.mensagens){
+			
+			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+			
+			return;
+			
+		}
+		
+		var innerTable = '';
+		
+		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
+		
+		var indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
+		
+		var cotaAVista = result.cotaAVista;
+		
+		$("._dadosConfEncalhe", ConferenciaEncalhe.workspace).remove();
+		
+		if (modeloConferenciaEncalhe){
+		
+			ConferenciaEncalhe.montarListaConferencia(modeloConferenciaEncalhe,indDistribuidorAceitaJuramentado);
 			
 			if (!indDistribuidorAceitaJuramentado) {
 				
@@ -1701,15 +1724,17 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					confirmarPopup_logado();
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					$(this).dialog("close");
 					
@@ -2427,6 +2452,20 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 			}, null, true, "dialog-confirmar-regerar-cobranca"
 		);
+	},
+	
+	ordenarItensPorSM :function(){
+		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/ordenarListaPorSM", 
+				null, 
+				function(result){
+				
+					if(result.itensConferencia){
+						ConferenciaEncalhe.montarListaConferencia(result.itensConferencia,result.isDistribuidorAceitaJuramentado);
+					}
+
+				}, null, true, null
+			);
 	}
 
 }, BaseController);
