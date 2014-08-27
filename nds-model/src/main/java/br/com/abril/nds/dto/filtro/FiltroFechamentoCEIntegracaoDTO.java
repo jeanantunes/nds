@@ -37,7 +37,7 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		VENDA("venda"),
 		PRECO_CAPA("precoCapa"),
 		VALOR_VENDA("valorVenda"),
-		TIPO("tipo"),
+		TIPO("tipoFormatado"),
 		ENCALHE("encalhe"),
 		DIFERENCA("diferenca"),
 		ESTOQUE("estoque");
@@ -133,24 +133,8 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((idChamadaEncalheFornecedor == null) ? 0
-						: idChamadaEncalheFornecedor.hashCode());
 		result = prime * result
 				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
-		result = prime
-				* result
-				+ ((idItemChamadaEncalheFornecedor == null) ? 0
-						: idItemChamadaEncalheFornecedor.hashCode());
-		result = prime * result
-				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
-		result = prime * result
-				+ ((paginacao == null) ? 0 : paginacao.hashCode());
-		result = prime
-				* result
-				+ ((periodoRecolhimento == null) ? 0 : periodoRecolhimento
-						.hashCode());
 		result = prime * result + ((semana == null) ? 0 : semana.hashCode());
 		return result;
 	}
@@ -164,34 +148,10 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroFechamentoCEIntegracaoDTO other = (FiltroFechamentoCEIntegracaoDTO) obj;
-		if (idChamadaEncalheFornecedor == null) {
-			if (other.idChamadaEncalheFornecedor != null)
-				return false;
-		} else if (!idChamadaEncalheFornecedor
-				.equals(other.idChamadaEncalheFornecedor))
-			return false;
 		if (idFornecedor == null) {
 			if (other.idFornecedor != null)
 				return false;
 		} else if (!idFornecedor.equals(other.idFornecedor))
-			return false;
-		if (idItemChamadaEncalheFornecedor == null) {
-			if (other.idItemChamadaEncalheFornecedor != null)
-				return false;
-		} else if (!idItemChamadaEncalheFornecedor
-				.equals(other.idItemChamadaEncalheFornecedor))
-			return false;
-		if (ordenacaoColuna != other.ordenacaoColuna)
-			return false;
-		if (paginacao == null) {
-			if (other.paginacao != null)
-				return false;
-		} else if (!paginacao.equals(other.paginacao))
-			return false;
-		if (periodoRecolhimento == null) {
-			if (other.periodoRecolhimento != null)
-				return false;
-		} else if (!periodoRecolhimento.equals(other.periodoRecolhimento))
 			return false;
 		if (semana == null) {
 			if (other.semana != null)
@@ -200,7 +160,8 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	
 
+	
 }
