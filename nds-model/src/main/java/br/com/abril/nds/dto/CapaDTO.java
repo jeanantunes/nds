@@ -3,12 +3,12 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 
 public class CapaDTO implements Serializable {
-
+	
 	private static final long serialVersionUID = 3340074459202508991L;
-
+	
 	private Long id;
+	
 	private Integer sequenciaMatriz;
-
 	
 	/**
 	 * @return the id
@@ -31,5 +31,4 @@ public class CapaDTO implements Serializable {
 	public void setSequenciaMatriz(Integer sequenciaMatriz) {
 		this.sequenciaMatriz = sequenciaMatriz;
 	}
-	
 }

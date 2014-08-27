@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -745,5 +746,12 @@ public abstract class Util {
         info = new BigInteger(1, md.digest(bytesSenha)).toString(16);
         
         return info;
+    }
+    
+    public static URL obterDiretorioReports() {
+        
+        final URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+        
+        return urlDanfe;
     }
 }

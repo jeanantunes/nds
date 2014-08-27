@@ -85,8 +85,11 @@ public class NaturezaOperacao implements Serializable {
 	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA")
 	private boolean notaFiscalDevolucaoSimbolica;
 	
-	@Column(name = "GERAR_COTA_CONTRIBUINTE_EXIGE_NFE")
-	private boolean gerarCotaContribuinteExigeNFe;
+	@Column(name = "GERAR_COTA_CONTRIBUINTE_ICMS")
+	private boolean gerarCotaContribuinteICMS;
+	
+	@Column(name = "GERAR_COTA_EXIGE_NFE")
+	private boolean gerarCotaExigeNFe;
 	
 	@Column(name = "GERAR_COTA_NAO_EXIGE_NFE")
 	private boolean gerarCotaNaoExigeNFe;
@@ -197,12 +200,20 @@ public class NaturezaOperacao implements Serializable {
 		this.notaFiscalDevolucaoSimbolica = notaFiscalDevolucaoSimbolica;
 	}
 
-	public boolean isGerarCotaContribuinteExigeNFe() {
-		return gerarCotaContribuinteExigeNFe;
+	public boolean isGerarCotaContribuinteICMS() {
+		return gerarCotaContribuinteICMS;
 	}
 
-	public void setGerarCotaContribuinteExigeNFe(boolean gerarCotaContribuinteExigeNFe) {
-		this.gerarCotaContribuinteExigeNFe = gerarCotaContribuinteExigeNFe;
+	public void setGerarCotaContribuinteICMS(boolean gerarCotaContribuinteICMS) {
+		this.gerarCotaContribuinteICMS = gerarCotaContribuinteICMS;
+	}
+
+	public boolean isGerarCotaExigeNFe() {
+		return gerarCotaExigeNFe;
+	}
+
+	public void setGerarCotaExigeNFe(boolean gerarCotaExigeNFe) {
+		this.gerarCotaExigeNFe = gerarCotaExigeNFe;
 	}
 
 	public boolean isGerarCotaNaoExigeNFe() {
