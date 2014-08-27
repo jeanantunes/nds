@@ -355,10 +355,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	private void formatarLinhaExtraSupRedistCE(CotaEmissaoDTO cota, ProdutoEmissaoDTO produtoEmissaoDTO, List<CotaProdutoEmissaoCEDTO> produtosSupRedist) {
 		
 		for(CotaProdutoEmissaoCEDTO cpece : produtosSupRedist) {
-		
+			
 			if(produtoEmissaoDTO.getIdProdutoEdicao().equals(cpece.getIdProdutoEdicao()) && cota.getIdCota().equals(cpece.getIdCota())) {
 				
-				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exes. ("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
+				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exs("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
 				
 				if(produtoEmissaoDTO.getDescricaoNotaEnvio() != null) {
 					
@@ -741,11 +741,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());
 			
 			dto.setEmissorNome(distribuidor.getRazaoSocial());
-			dto.setCnpj(distribuidor.getCnpj());
+			dto.setEmissorCNPJ(distribuidor.getCnpj());
 			dto.setEmissorInscricaoEstadual(distribuidor.getInscricaoEstatual());
 			dto.setEmissorCEP(distribuidor.getCep());
 			dto.setEmissorMunicipio(distribuidor.getCidade());
-			dto.setEndereco(distribuidor.getEndereco());
+			dto.setEmissorUF(distribuidor.getUf());
+			dto.setEmissorLogradouro(distribuidor.getEndereco());
 			
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 
@@ -756,6 +757,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				dto.setCidade(endereco.getCidade());
 				dto.setUf(endereco.getUf());
 				dto.setCep(endereco.getCep());
+				
+				dto.setDestinatarioLogradouro(dto.getEndereco());
+				dto.setDestinatarioMunicipio(endereco.getCidade());
+				dto.setDestinatarioUF(endereco.getUf());
+				dto.setDestinatarioCEP(endereco.getCep());
 			}
 			
 			if(cota.getPessoa() instanceof PessoaJuridica) {
@@ -764,14 +770,20 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			dto.setNumeroNome(dto.getNumCota()+ " " + ((dto.getNomeCota()!= null)?dto.getNomeCota().toUpperCase():""));
 		
+			dto.setDestinatarioNome(dto.getNomeCota());
+			
 			if(cota.getPessoa() instanceof PessoaJuridica) {
 				dto.setCnpj(Util.adicionarMascaraCNPJ(cota.getPessoa().getDocumento()));
+				dto.setDestinatarioCNPJ(cota.getPessoa().getDocumento());
 			} else {
 				dto.setCnpj(Util.adicionarMascaraCPF(cota.getPessoa().getDocumento()));
-			}
-												
-			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
+				dto.setDestinatarioCNPJ(cota.getPessoa().getDocumento());
 
+			}
+			
+			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
+			dto.setDestinatarioNomeBox(dto.getBox().toString());
+			
 			String periodoRecolhimento;
 			
 			List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cota.getId(), dataOperacaoDistribuidor);
@@ -788,7 +800,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	                         
 			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
-			dto.setProdutos( obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
+			dto.setProdutos(this.obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
 			
 			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor, filtro, produtosSupRedist);
 			
