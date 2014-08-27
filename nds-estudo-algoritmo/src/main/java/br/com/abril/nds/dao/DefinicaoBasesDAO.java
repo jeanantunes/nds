@@ -25,8 +25,8 @@ public class DefinicaoBasesDAO {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
-	@Value("#{query_estudo.queryEdicoesLancamentos}")
-	private String queryEdicoesLancamentos;
+	@Value("#{query_estudo.queryEdicoesLancamentosBasesIcd}")
+	private String queryEdicoesLancamentosBasesIcd;
 
 	@Value("#{query_estudo.queryLancamentosAnosAnterioresMesmoMes}")
 	private String queryLancamentosAnosAnterioresMesmoMes;
@@ -43,7 +43,7 @@ public class DefinicaoBasesDAO {
 		Map<String, Object> params = new HashMap<>();
 		params.put("CODIGO_PRODUTO", edicao.getProduto().getCodigo());
 
-		List<ProdutoEdicaoEstudo> listaProdutoEdicao = jdbcTemplate.query(queryEdicoesLancamentos, params, new RowMapper<ProdutoEdicaoEstudo>() {
+		List<ProdutoEdicaoEstudo> listaProdutoEdicao = jdbcTemplate.query(queryEdicoesLancamentosBasesIcd, params, new RowMapper<ProdutoEdicaoEstudo>() {
 			@Override
 			public ProdutoEdicaoEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return produtoEdicaoMapper(rs);
