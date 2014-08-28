@@ -1304,7 +1304,7 @@ public class Distribuidor {
             List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
-
+	
 	public RegimeTributario getRegimeTributario() {
 		return regimeTributario;
 	}

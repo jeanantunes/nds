@@ -34,7 +34,12 @@ public class EmitenteDestinatarioBuilder {
 		documento.setDocumento(cota.getPessoa().getDocumento().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
+		StringBuilder logradouro = new StringBuilder(cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro())
+			.append(" ")
+			.append(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
+		
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(logradouro.toString());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(cota.getEnderecoPrincipal().getEndereco().getBairro());
@@ -75,7 +80,11 @@ public class EmitenteDestinatarioBuilder {
 		documento.setDocumento(fornecedor.getJuridica().getDocumento().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(fornecedor.getEnderecoPrincipal().getEndereco().getLogradouro());
+		StringBuilder logradouro = new StringBuilder(fornecedor.getEnderecoPrincipal().getEndereco().getTipoLogradouro())
+		.append(" ")
+		.append(fornecedor.getEnderecoPrincipal().getEndereco().getLogradouro());
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(logradouro.toString());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(fornecedor.getEnderecoPrincipal().getEndereco().getNumero());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(fornecedor.getEnderecoPrincipal().getEndereco().getComplemento());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(fornecedor.getEnderecoPrincipal().getEndereco().getBairro());
@@ -149,7 +158,14 @@ public class EmitenteDestinatarioBuilder {
 	}
 
 	private static void montarEndereco(NotaFiscal notaFiscal, Endereco endereco) {
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(endereco.getLogradouro());
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setTipoLogradouro(endereco.getTipoLogradouro());
+		
+		StringBuilder logradouro = new StringBuilder(endereco.getTipoLogradouro())
+		.append(" ")
+		.append(endereco.getLogradouro());
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(logradouro.toString());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(endereco.getNumero());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(endereco.getComplemento());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(endereco.getBairro());

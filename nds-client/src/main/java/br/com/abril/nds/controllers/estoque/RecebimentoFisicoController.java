@@ -42,6 +42,8 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusRecebimento;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -109,7 +111,7 @@ public class RecebimentoFisicoController extends BaseController {
     private ProdutoService produtoService;
     
     @Autowired
-    private NaturezaOperacaoService tipoNotaService;
+    private NaturezaOperacaoService naturezaOperacaoService;
     
     @Autowired
     private Validator validator;
@@ -1714,9 +1716,8 @@ public class RecebimentoFisicoController extends BaseController {
         
         notaFiscal.setFornecedor(fornecedor);
         
-        final long codigoTipoNotaFiscalRemessaMercadoriaConsignacao = 5L;
-        
-        notaFiscal.setNaturezaOperacao(tipoNotaService.obterPorId(codigoTipoNotaFiscalRemessaMercadoriaConsignacao));
+        notaFiscal.setNaturezaOperacao(naturezaOperacaoService.obterNaturezaOperacao(
+        		distribuidorService.obter().getTipoAtividade(), TipoEmitente.FORNECEDOR, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA));
         
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
         
