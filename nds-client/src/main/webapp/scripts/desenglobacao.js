@@ -384,8 +384,8 @@ var desenglobacaoController = $.extend(true, {
                 params : filtroPrincipalCota,
             });
         });
-
     },
+    
     popup: function popup(alterando) {
     	
     	$('#formInserirEnglobada').show();

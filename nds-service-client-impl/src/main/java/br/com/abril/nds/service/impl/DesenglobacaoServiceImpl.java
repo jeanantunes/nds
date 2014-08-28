@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DesenglobacaoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -100,6 +102,17 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 		try {
 		    if (desenglobaDTO.size() > 0) {
 			Cota cotaDesenglobada = cotaRepository.obterPorNumeroDaCota(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
+			
+			List<Desenglobacao> desenglobacoesExistentesParaCota = 
+				this.desenglobacaoRepository.obterDesenglobacaoPorCotaDesenglobada(cotaDesenglobada.getNumeroCota());
+			
+			if (!desenglobacoesExistentesParaCota.isEmpty()) {
+				
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+						"A cota [" + cotaDesenglobada.getNumeroCota() + "] já possui uma desenglobação.");		
+			}
+			
 			for (DesenglobacaoDTO origem : desenglobaDTO) {
 			    Desenglobacao destino = new Desenglobacao();
 			    BeanUtils.copyProperties(origem, destino);
@@ -111,6 +124,10 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 			}
 		    }
 		    desenglobacaoRepository.inserirCotasDesenglobadas(desenglobada);
+		} catch (ValidacaoException v) {
+			
+			throw v;
+			
 		} catch (Exception e) {
 		    LOGGER.error(e.getMessage(), e);
 		}
