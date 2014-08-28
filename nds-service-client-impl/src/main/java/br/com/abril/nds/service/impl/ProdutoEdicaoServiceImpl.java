@@ -772,8 +772,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         LancamentoParcial lancamentoParcial = new LancamentoParcial();
         lancamentoParcial.setProdutoEdicao(produtoEdicao);
         lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);
-        lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
-        lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
+        lancamentoParcial.setLancamentoInicial(dto.getDataLancamento());
+        lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoReal());
         
         lancamentoParcial = lancamentoParcialRepository.merge(lancamentoParcial);
         return lancamentoParcial;
