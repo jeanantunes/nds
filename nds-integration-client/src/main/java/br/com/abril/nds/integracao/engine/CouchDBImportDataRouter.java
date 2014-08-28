@@ -72,7 +72,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		
-		view.startKey(new Object[] {inputModel.getRouteInterface().getName()});
+		view.startKey(inputModel.getRouteInterface().getName(), null);
 		view.endKey(inputModel.getRouteInterface().getName(), "");
 
 		view.includeDocs(true);

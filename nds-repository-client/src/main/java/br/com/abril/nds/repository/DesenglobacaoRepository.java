@@ -15,4 +15,5 @@ public interface DesenglobacaoRepository extends Repository<Desenglobacao, Long>
 	public List<Desenglobacao> obterDesenglobacaoPorCotaDesenglobada(Integer numeroCota);
 
 	boolean removerPorCotaDesenglobada(Long idCota);
+	
 }

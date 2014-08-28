@@ -1144,23 +1144,23 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" 	, nei.nota_envio_id as numeroNotaEnvio")
 			.append(" 	, mec.QTDE as reparte ")
 			.append(" from chamada_encalhe ce ")
-			.append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
-			.append(" inner join cota c on c.id = cec.COTA_ID ")
-			.append(" inner join movimento_estoque_cota mec on mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and mec.COTA_ID = cec.COTA_ID ")
-			.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
-			.append(" inner join estudo e on e.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ")
-			.append(" inner join estudo_cota ec on ec.ESTUDO_ID = e.id and ec.COTA_ID = mec.COTA_ID ")
-			.append(" left join nota_envio_item nei on nei.PRODUTO_EDICAO_ID = e.PRODUTO_EDICAO_ID and nei.ESTUDO_COTA_ID = ec.id ")
-			.append(" inner join ( ")
+			.append(" 	inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
+			.append(" 	inner join cota c on c.id = cec.COTA_ID ")
+			.append(" 	inner join chamada_encalhe_lancamento cel on ce.id = cel.chamada_encalhe_id ")
+	        .append(" 	inner join lancamento l on l.id = cel.lancamento_id ")
+			.append(" 	inner join movimento_estoque_cota mec on mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and mec.COTA_ID = cec.COTA_ID ")
+			.append(" 	inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
+			.append(" 	left join estudo e on e.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ")
+			.append(" 	left join estudo_cota ec on ec.ESTUDO_ID = e.id and ec.COTA_ID = mec.COTA_ID ")
+			.append(" 	left join nota_envio_item nei on nei.PRODUTO_EDICAO_ID = e.PRODUTO_EDICAO_ID and nei.ESTUDO_COTA_ID = ec.id ")
+			.append(" 	inner join ( ")
 			.append(" 	select c.numero_cota, c.id, mec.PRODUTO_EDICAO_ID, min(data_aprovacao) as data_aprovacao ")
 			.append(" 	from chamada_encalhe ce ")
 			.append(" 	inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ")
 			.append(" 	inner join cota c on c.id = cec.COTA_ID ")
-			
-			.append("    inner join chamada_encalhe_lancamento cel on ce.id = cel.chamada_encalhe_id ")
+			.append("    left join chamada_encalhe_lancamento cel on ce.id = cel.chamada_encalhe_id ")
 	        .append("    inner join lancamento l on l.id = cel.lancamento_id ")
-            .append("    INNER JOIN movimento_estoque_cota mec ON mec.lancamento_id = l.ID ")
-			
+            .append("    INNER JOIN movimento_estoque_cota mec ON mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID ")
 			.append(" 	and mec.COTA_ID = cec.COTA_ID ")
 			.append(" 	inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
 			.append(" 	where 1 = 1 ");
@@ -1180,7 +1180,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			sql.append("and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte ");
 		}
 			
-		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte)) ");
+		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar)) ");
 		sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 		
 		/*	.append(" and mec.data_aprovacao not in ( ")
@@ -1200,7 +1200,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" 	group by mec.cota_id, mec.PRODUTO_EDICAO_ID ")
 			.append(" 	having count(0) > 1 ")
 			.append(" ) ")*/
-		sql	.append(" group by mec.ID ")
+		sql	.append(" group by mec.ID, mec.QTDE, mec.PRODUTO_EDICAO_ID, mec.DATA ")
 			.append(" union ")
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
@@ -1220,7 +1220,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		sql	.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoCompraSuplementar)) ")
-			.append(" group by mec.PRODUTO_EDICAO_ID ")
+			.append(" group by c.id, mec.PRODUTO_EDICAO_ID ")
 			/*.append(" union ")
 			.append(" select c.numero_cota as numeroCota ")
 			.append(" 	, c.id as idCota ")
