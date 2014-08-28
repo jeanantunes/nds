@@ -167,4 +167,7 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	List<Fornecedor> obterFornecedoresUnificados();
 
     Fornecedor obterFornecedorPorCodigoJoinJuridica(Integer codigo);
+
+	List<Fornecedor> obterFornecedoresFcDinap(String codigoDinap, String codigoFC);
+
 }

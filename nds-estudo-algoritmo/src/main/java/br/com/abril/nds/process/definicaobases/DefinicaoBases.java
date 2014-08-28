@@ -44,7 +44,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     	
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
         	
-        	if(estudo.isPracaVeraneio()) { 
+        	if(estudo.isPracaVeraneio() && !estudo.getProdutoEdicaoEstudo().isColecao()) { 
         		
         		baseParaVeraneio.executar(estudo);
         		
@@ -89,7 +89,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     
     private void excluiMaiorQueQuatroSeColecionavel(final List<ProdutoEdicaoEstudo> edicoesBase, final EstudoTransient estudo) {
         if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(1L) > 0) && edicoesBase.size() > QUATRO_COLECIONAVEIS && edicoesBase.get(0).isColecao()) {
-            edicoesBase.subList(QUATRO_COLECIONAVEIS + INDEX_CORRECTION, edicoesBase.size()).clear();
+            edicoesBase.subList(QUATRO_COLECIONAVEIS, edicoesBase.size()).clear();
         }
     }
     

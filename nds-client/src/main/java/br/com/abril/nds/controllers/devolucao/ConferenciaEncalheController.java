@@ -1462,7 +1462,12 @@ public class ConferenciaEncalheController extends BaseController {
 	public void verificarPermissaoSupervisor(final Long idConferencia, final String qtdExemplares, 
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
-	
+		
+		if (qtdExemplares == null){
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de exemplares.");
+		}
+		
 		boolean isVendaNegativaProduto = false; 
 		
 		if(qtdExemplares == null) {
@@ -2196,7 +2201,45 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto) throws EncalheRecolhimentoParcialException {
+	public void pesquisarProdutoPorCodigoNome(final String codigoNomeProduto){
+		
+		final Map<Long, DataCEConferivelDTO> mapaDataCEConferivelDTO = obterFromSessionMapaDatasEncalheConferiveis();
+		
+		final List<ProdutoEdicao> listaProdutoEdicao =
+			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
+				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS, mapaDataCEConferivelDTO);
+		
+		final List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProdutoEdicao != null && !listaProdutoEdicao.isEmpty()){
+			
+			for (final ProdutoEdicao produtoEdicao : listaProdutoEdicao){
+				
+				listaProdutos.add(
+						new ItemAutoComplete(
+								produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+								null,
+								new Object[]{produtoEdicao.getProduto().getCodigo(), produtoEdicao.getId()}));
+			}
+			
+			
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
+	
+	/**
+	 * Serializa as informações do produto edição 
+	 * se tiver sido encontrado apenas um unico 
+	 * produto edição de acordo com código e/ou nome
+	 * do produto informado.
+	 * 
+	 * 
+	 * @param codigoNomeProduto
+	 * @throws EncalheRecolhimentoParcialException
+	 */
+	@Post
+	public void autocompletarUnicoProdutoPorCodigoNome(final String codigoNomeProduto) throws EncalheRecolhimentoParcialException {
 
 		final List<ProdutoEdicao> listaProdutoEdicao = this.obterProduto(codigoNomeProduto);
 		

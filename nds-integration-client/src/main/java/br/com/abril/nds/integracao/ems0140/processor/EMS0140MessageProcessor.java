@@ -20,6 +20,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0140Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0140InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -81,7 +82,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 return;
             }
             
-            notafiscalEntrada = obterNotaFiscalPorNumeroNotaEnvio(input.getNumeroNotaEnvio());
+            notafiscalEntrada = obterNotaFiscalPorNumeroNotaEnvio(input.getNumeroNotaEnvio(), input.getCnpjEmissor());
             
             if (notafiscalEntrada != null) {
                 String chaveAcessoAntiga = notafiscalEntrada.getChaveAcesso();
@@ -309,11 +310,10 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
                 lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
                 
-    			try {
-    				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-    				lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
-    			} catch (Exception e) {
-    			}
+                Fornecedor fornecedor = produtoEdicao.getProduto().getFornecedor();
+                
+				lancamento.setDataLancamentoDistribuidor(
+			        lancamentoService.obterDataLancamentoValido(dataLancamento, (fornecedor != null) ? fornecedor.getId() : null));
     			
                 lancamento.setProdutoEdicao(produtoEdicao);
                 lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
@@ -438,15 +438,21 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
      * @param numeroNotaEnvio
      * @return
      */
-    private NotaFiscalEntradaFornecedor obterNotaFiscalPorNumeroNotaEnvio(String numeroNotaEnvio) {
+    private NotaFiscalEntradaFornecedor obterNotaFiscalPorNumeroNotaEnvio(String numeroNotaEnvio, String cnpjEmissor) {
         StringBuilder hql = new StringBuilder();
         
-        hql.append("from NotaFiscalEntradaFornecedor nf ").append("where nf.numeroNotaEnvio = :numeroNotaEnvio ");
+        hql.append("select nf ");
+        hql.append("from NotaFiscalEntradaFornecedor nf ");
+        hql.append("join nf.emitente emitente ");
+        hql.append("where nf.numeroNotaEnvio = :numeroNotaEnvio ");
+        hql.append("and emitente.cnpj = :cnpj ");
         
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
-        return (NotaFiscalEntradaFornecedor) query.uniqueResult();
         
+        query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
+        query.setParameter("cnpj", cnpjEmissor);
+        
+        return (NotaFiscalEntradaFornecedor) query.uniqueResult();
     }
     
     /**

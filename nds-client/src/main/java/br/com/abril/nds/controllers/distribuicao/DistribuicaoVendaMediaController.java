@@ -157,14 +157,17 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
 
 	Lancamento lancamento;
+	
 	if (lancamentoId == null) {
 	    lancamento = findLancamentoBalanceado(produtoEdicao);
 	} else {
 	    lancamento = lancamentoService.obterLancamentoNaMesmaSessao(lancamentoId);
 	}
+	
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = new ArrayList<>();
 	Estrategia estrategia = estrategiaService.buscarPorProdutoEdicao(produtoEdicao);
 	EstrategiaDTO estrat = new EstrategiaDTO();
+	
 	if (estrategia != null) {
 	    BeanUtils.copyProperties(estrategia, estrat);
 	    selecionados.clear();
@@ -214,7 +217,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    }
     		}
     		
-    		if(estudoTemp.isPracaVeraneio()) {
+    		if(estudoTemp.isPracaVeraneio() 
+    				&& estudoAlgoritmoService.validaPeriodoVeraneio(estudoTemp.getProdutoEdicaoEstudo().getDataLancamento())
+    				&& !estudoTemp.getProdutoEdicaoEstudo().isColecao()) {
+    			
 	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
 	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
 	        	
@@ -295,7 +301,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String modoAnalise, Long idProdutoEdicao, String sortorder, String sortname, int page, int rp) {
     	
     	filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
-    	filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroEdicaoBaseDistribuicaoVendaMedia.OrdemColuna.values(), sortname));	
+    	filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroEdicaoBaseDistribuicaoVendaMedia.OrdemColuna.values(), sortname));
 		
     	Long idProdutoEdicaoPesquisa = null;
     	

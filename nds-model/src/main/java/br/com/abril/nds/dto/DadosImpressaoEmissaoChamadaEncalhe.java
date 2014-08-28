@@ -3,14 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.List;
 
-
 public class DadosImpressaoEmissaoChamadaEncalhe implements Serializable {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	private List<CotaEmissaoDTO> cotasEmissao;
 	
 	private List<List<CapaDTO>> capasPaginadas;
