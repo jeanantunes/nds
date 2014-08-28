@@ -1091,6 +1091,10 @@ public class NFeServiceImpl implements NFeService {
 								&& (naturezaOperacao.isGerarCotaExigeNFe() 
 										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )))) {
 							cotasContribuinteEmitente.add(cota);
+						} else if(((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() ))) {
+							cotasContribuinteEmitente.add(cota);
 						}
 					}
 				} else if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
@@ -1113,10 +1117,14 @@ public class NFeServiceImpl implements NFeService {
 						} else if((naturezaOperacao.isGerarCotaContribuinteICMS()
 								&& ((cota.isContribuinteICMS() != null && cota.isContribuinteICMS())))) {
 							cotasContribuinteEmitente.add(cota);
-						}  else if((!naturezaOperacao.isGerarCotaContribuinteICMS()
+						} else if((!naturezaOperacao.isGerarCotaContribuinteICMS()
 								&& ((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
 								&& (naturezaOperacao.isGerarCotaExigeNFe() 
 										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() )))) {
+							cotasContribuinteEmitente.add(cota);
+						} else if(((cota.isContribuinteICMS() != null && !cota.isContribuinteICMS()))
+								&& (naturezaOperacao.isGerarCotaExigeNFe() 
+										|| (cota.isExigeNotaFiscalEletronica() != null && cota.isExigeNotaFiscalEletronica() ))) {
 							cotasContribuinteEmitente.add(cota);
 						}
 					}

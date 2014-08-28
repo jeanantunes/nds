@@ -57,6 +57,7 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
     private DesenglobacaoDTO copyToDTO(Desenglobacao desenglobacao) {
 		
     	DesenglobacaoDTO dto = new DesenglobacaoDTO();
+    	
 		dto.setNumeroCotaEnglobada(desenglobacao.getCotaEnglobada().getNumeroCota());
 		dto.setIdCotaEnglobada(desenglobacao.getCotaEnglobada().getId());
 		dto.setNomeCotaEnglobada(desenglobacao.getCotaEnglobada().getPessoa().getNome());
@@ -96,43 +97,76 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 		List<Desenglobacao> desenglobada = new ArrayList<Desenglobacao>();
 	
 		boolean isOk = verificaPorcentagemCota(desenglobaDTO);
+		
 		if (!isOk) {
 		    return false;
 		}
 	
 		try {
+			
 		    if (desenglobaDTO.size() > 0) {
-			Cota cotaDesenglobada = cotaRepository.obterPorNumeroDaCota(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
-			
-			List<Desenglobacao> desenglobacoesExistentesParaCota = 
-				this.desenglobacaoRepository.obterDesenglobacaoPorCotaDesenglobada(cotaDesenglobada.getNumeroCota());
-			
-			if (!desenglobacoesExistentesParaCota.isEmpty()) {
+		    	
+				Cota cotaDesenglobada = 
+					cotaRepository.obterPorNumeroDaCota(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
 				
-				throw new ValidacaoException(
-					TipoMensagem.WARNING, 
-						"A cota [" + cotaDesenglobada.getNumeroCota() + "] já possui uma desenglobação.");		
-			}
-			
-			for (DesenglobacaoDTO origem : desenglobaDTO) {
-			    Desenglobacao destino = new Desenglobacao();
-			    BeanUtils.copyProperties(origem, destino);
-			    Cota cotaEnglobada = cotaRepository.obterPorNumeroDaCota(origem.getNumeroCotaEnglobada());
-			    destino.setCotaEnglobada(cotaEnglobada);
-			    destino.setCotaDesenglobada(cotaDesenglobada);
-			    trataEnglobacao(destino, usuario);
-			    desenglobada.add(destino);
-			}
+				for (DesenglobacaoDTO origem : desenglobaDTO) {
+				    
+					Cota cotaEnglobada = cotaRepository.obterPorNumeroDaCota(origem.getNumeroCotaEnglobada());
+					
+					if (cotaDesenglobada.equals(cotaEnglobada)) {
+						
+						throw new ValidacaoException(
+							TipoMensagem.WARNING, 
+								"A cota [" + cotaEnglobada.getNumeroCota() 
+									+ "] não pode ser englobada na própria desenglobação.");
+					}
+					
+					Desenglobacao destino = new Desenglobacao();
+					
+				    BeanUtils.copyProperties(origem, destino);
+				    
+				    destino.setCotaEnglobada(cotaEnglobada);
+				    destino.setCotaDesenglobada(cotaDesenglobada);
+				    
+				    trataEnglobacao(destino, usuario);
+				    
+				    desenglobada.add(destino);
+				}
+				
+				desenglobacaoRepository.inserirCotasDesenglobadas(desenglobada);
 		    }
-		    desenglobacaoRepository.inserirCotasDesenglobadas(desenglobada);
 		} catch (ValidacaoException v) {
 			
 			throw v;
 			
 		} catch (Exception e) {
+			
 		    LOGGER.error(e.getMessage(), e);
 		}
-	return true;
+		
+		return true;
+    }
+    
+    @Transactional(readOnly = true)
+    public void verificarDesenglobacaoExistenteParaCota(List<DesenglobacaoDTO> desenglobaDTO) {
+    	
+    	if (desenglobaDTO == null 
+    			|| desenglobaDTO.isEmpty()) {
+    		
+    		return;
+    	}
+    	
+    	Integer numeroCotaDesenglobada = desenglobaDTO.get(0).getNumeroCotaDesenglobada();
+    	
+    	List<Desenglobacao> desenglobacoesExistentes =
+    		this.desenglobacaoRepository.obterDesenglobacaoPorCotaDesenglobada(numeroCotaDesenglobada);
+    	
+    	if (!desenglobacoesExistentes.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+					"A cota [" + numeroCotaDesenglobada + "] já possui uma desenglobação.");		
+		}
     }
 
     private void trataEnglobacao(Desenglobacao destino, Usuario usuario) {
@@ -176,7 +210,9 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 			    return false;
 			}
 	
-		boolean res = desenglobacaoRepository.removerPorCotaDesenglobada(Long.valueOf(desenglobaDTO.get(0).getNumeroCotaDesenglobada()));
+		Long numeroCotaDesenglobada = Long.valueOf(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
+			
+		boolean res = desenglobacaoRepository.removerPorCotaDesenglobada(numeroCotaDesenglobada);
 			if(res){
 			    res = inserirDesenglobacao(desenglobaDTO, usuarioLogado);
 			}

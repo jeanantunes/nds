@@ -1037,7 +1037,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		conferenciaEncalhe.setObservacao("");
 		
-		conferenciaEncalhe.setQtdeInformada(chamadaEncalheCota.getQtdePrevista());
+		conferenciaEncalhe.setQtdeInformada(BigInteger.ZERO);
 		
 		conferenciaEncalhe.setPrecoCapaInformado(movimentoEstoqueCota.getValoresAplicados().getPrecoVenda());
 		
