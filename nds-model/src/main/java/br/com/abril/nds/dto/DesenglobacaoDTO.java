@@ -12,7 +12,7 @@ import br.com.abril.nds.util.export.Exportable;
 public class DesenglobacaoDTO implements Serializable {
 
     private static final long serialVersionUID = -1222818279134713406L;
-
+    
     @Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
     private Integer numeroCotaEnglobada;
     private Long idCotaEnglobada;
@@ -119,4 +119,5 @@ public class DesenglobacaoDTO implements Serializable {
     public void setNomeCotaDesenglobada(String nomeCotaDesenglobada) {
         this.nomeCotaDesenglobada = nomeCotaDesenglobada;
     }
+
 }
