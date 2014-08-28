@@ -1304,7 +1304,7 @@ public class Distribuidor {
             List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
-
+	
 	public RegimeTributario getRegimeTributario() {
 		return regimeTributario;
 	}
@@ -1335,6 +1335,15 @@ public class Distribuidor {
 		result = prime * result + ((this.getCodigoDistribuidorDinap() == null) ? 0 : this.getCodigoDistribuidorDinap().hashCode());
 		result = prime * result + ((this.getCodigoDistribuidorFC() == null) ? 0 : this.getCodigoDistribuidorFC().hashCode());
 		return result;
+	}
+	
+	public boolean isAceitaRecolhimentoParcialAtraso() {
+		return aceitaRecolhimentoParcialAtraso;
+	}
+
+	public void setAceitaRecolhimentoParcialAtraso(
+			boolean aceitaRecolhimentoParcialAtraso) {
+		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
 	}
 
 	@Override
@@ -1461,14 +1470,4 @@ public class Distribuidor {
 				+ ", gridDistribuicao=" + gridDistribuicao
 				+ ", listPercentualExcedente=" + listPercentualExcedente + "]";
 	}
-
-	public boolean isAceitaRecolhimentoParcialAtraso() {
-		return aceitaRecolhimentoParcialAtraso;
-	}
-
-	public void setAceitaRecolhimentoParcialAtraso(
-			boolean aceitaRecolhimentoParcialAtraso) {
-		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
-	}
-	
 }
