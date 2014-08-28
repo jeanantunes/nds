@@ -892,7 +892,7 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		baixaFinanceiraController.acaoPesquisa = acaoTela;
 		
-		dataHolder.clearAction('baixaManual', baixaFinanceiraController.workspace);
+		dataHolder.clearAction('baixaManual');
 
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
 		
