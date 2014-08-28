@@ -91,7 +91,7 @@ public interface ParciaisService {
 	
 	void salvarRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
 	
-	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	void excluirLancamentoParcial(Long idLancamentoRedistribuicao);
 	
 	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
 	

@@ -493,7 +493,7 @@ public class ParciaisController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void excluirRedistribuicao(Long idLancamentoRedistribuicao){
 		
-		parciaisService.excluirRedistribuicaoParcial(idLancamentoRedistribuicao);
+		parciaisService.excluirLancamentoParcial(idLancamentoRedistribuicao);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();		
