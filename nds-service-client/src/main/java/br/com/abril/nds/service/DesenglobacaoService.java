@@ -16,4 +16,6 @@ public interface DesenglobacaoService {
 	boolean alterarDesenglobacao(List<DesenglobacaoDTO> desenglobacaoDTO, Usuario usuarioLogado);
 
 	void excluirDesenglobacao(Long idCota);
+	
+	void verificarDesenglobacaoExistenteParaCota(List<DesenglobacaoDTO> desenglobaDTO);
 }
