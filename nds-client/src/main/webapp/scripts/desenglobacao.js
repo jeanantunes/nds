@@ -297,13 +297,19 @@ var desenglobacaoController = $.extend(true, {
                         }, {
                             display : 'Tipo de PDV',
                             name : 'nomePDV',
-                            width : 220,
+                            width : 110,
                             sortable : true,
                             align : 'left'
                         }, {
                             display : '% da Cota',
                             name : 'porcentagemCota',
                             width : 63,
+                            sortable : true,
+                            align : 'left'
+                        }, {
+                            display : 'Desenglobada',
+                            name : 'numeroCotaDesenglobada',
+                            width : 80,
                             sortable : true,
                             align : 'left'
                         }, {
@@ -378,8 +384,8 @@ var desenglobacaoController = $.extend(true, {
                 params : filtroPrincipalCota,
             });
         });
-
     },
+    
     popup: function popup(alterando) {
     	
     	$('#formInserirEnglobada').show();
