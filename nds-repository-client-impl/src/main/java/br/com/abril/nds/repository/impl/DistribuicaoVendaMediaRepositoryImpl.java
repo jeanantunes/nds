@@ -229,7 +229,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
    			}
    		}
        
-   		if (filtro.getClassificacao() != null) {
+   		if ((filtro.getClassificacao() != null) && (filtro.getClassificacao() > 0)) {
    			sql.append("   and tcp.id = :classificacao ");
 		}
    		
@@ -249,7 +249,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
    			
    		}
    		
-   		if (filtro.getClassificacao()  != null) {
+   		if ((filtro.getClassificacao() != null) && (filtro.getClassificacao() > 0)) {
    		    query.setLong("classificacao", filtro.getClassificacao());
    		}
    		

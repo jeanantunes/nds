@@ -255,40 +255,42 @@ public class CotaDAO {
     }
 
     public Map<Long, CotaEstudo> getHistoricoCota(final ProdutoEdicaoEstudo edicao) {
-	Map<String, Object> params = new HashMap<>();
-	params.put("produto_edicao_id", edicao.getId());
-	if (edicao.isParcial()) {
-	    params.put("numero_periodo", edicao.getPeriodo());
-	    params.put("dtLancamento", edicao.getDataLancamento());
-	}
-	List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
-	    @Override
-	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
-		CotaEstudo cota = new CotaEstudo();
-		cota.setId(rs.getLong("cota_id"));
-		cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
-		ProdutoEdicaoEstudo pe = new ProdutoEdicaoEstudo();
-		pe.setVenda(rs.getBigDecimal("venda"));
-		pe.setReparte(rs.getBigDecimal("reparte"));
-		// copia dos atributos da edicao base
-		pe.setId(edicao.getId());
-		pe.setProduto(edicao.getProduto());
-		pe.setEdicaoAberta(edicao.isEdicaoAberta());
-		pe.setParcial(edicao.isParcial());
-		pe.setColecao(edicao.isColecao());
-		pe.setIndicePeso(edicao.getIndicePeso());
-		pe.setNumeroEdicao(edicao.getNumeroEdicao());
+		
+    	Map<String, Object> params = new HashMap<>();
+		params.put("produto_edicao_id", edicao.getId());
 
-		cota.getEdicoesRecebidas().add(pe);
-		return cota;
-	    }
-	});
-	Map<Long, CotaEstudo> retorno = new HashMap<>();
-	for (CotaEstudo cota : historicoCotas) {
-	    if (cota.getEdicoesRecebidas().size() > 0 && cota.getEdicoesRecebidas().get(0).getReparte().compareTo(BigDecimal.ZERO) > 0) {
-		retorno.put(cota.getId(), cota);
-	    }
-	}
+		List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
+		    
+			@Override
+		    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CotaEstudo cota = new CotaEstudo();
+				cota.setId(rs.getLong("cota_id"));
+				cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
+				ProdutoEdicaoEstudo pe = new ProdutoEdicaoEstudo();
+				pe.setVenda(rs.getBigDecimal("venda"));
+				pe.setReparte(rs.getBigDecimal("reparte"));
+				// copia dos atributos da edicao base
+				pe.setId(edicao.getId());
+				pe.setProduto(edicao.getProduto());
+				pe.setEdicaoAberta(edicao.isEdicaoAberta());
+				pe.setParcial(edicao.isParcial());
+				pe.setColecao(edicao.isColecao());
+				pe.setIndicePeso(edicao.getIndicePeso());
+				pe.setNumeroEdicao(edicao.getNumeroEdicao());
+		
+				cota.getEdicoesRecebidas().add(pe);
+			return cota;
+		    }
+		});
+		
+		Map<Long, CotaEstudo> retorno = new HashMap<>();
+		
+		for (CotaEstudo cota : historicoCotas) {
+		    if (cota.getEdicoesRecebidas().size() > 0 && cota.getEdicoesRecebidas().get(0).getReparte().compareTo(BigDecimal.ZERO) > 0) {
+		    	retorno.put(cota.getId(), cota);
+		    }
+		}
+		
 	return retorno;
     }
 
