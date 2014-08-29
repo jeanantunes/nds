@@ -1107,13 +1107,12 @@ var VENDA_PRODUTO = {
 	
 	imprimeSlipVendaEncalhe:function(){
 		
-		document.location.assign(contextPath + "/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe");
-		
+		$('#download-iframe-vendaEncalhe', VENDA_PRODUTO.workspace).attr('src', contextPath + '/devolucao/vendaEncalhe/imprimeSlipVendaEncalhe');
 	},
 	
 	imprimirSlipVenda:function(){
 		
-		document.location.assign(contextPath + "/devolucao/vendaEncalhe/imprimirSlipVenda");
+		$('#download-iframe-vendaEncalhe', VENDA_PRODUTO.workspace).attr('src', contextPath + '/devolucao/vendaEncalhe/imprimirSlipVenda');
 	},
 	
 	limparDadosModalVenda:function(){

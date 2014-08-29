@@ -803,12 +803,35 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final boolean postergado = false;
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		ChamadaEncalheCota chamadaEncalheCota = null;
-
-		chamadaEncalheCota =
-				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
+		
+		if(produtoEdicao.isParcial()) {
+			
+			Date dataEncalhe =
+					chamadaEncalheCotaRepository.obterDataChamadaEncalheCotaProximaDataOperacao(cota, 
 																		produtoEdicao.getId(), 
 																		postergado,
 																		dataOperacao);
+			
+			if(dataEncalhe == null) {
+				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+	                    " Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()
+	                        + "] da cota. " + " Este produto edição não possui CE. ");
+			}
+			
+			chamadaEncalheCota = chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(), postergado, dataEncalhe);
+			
+		
+		} else {
+			chamadaEncalheCota =
+					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
+																			produtoEdicao.getId(), 
+																			postergado,
+																			dataOperacao);
+		}
+		
+		
 		if(chamadaEncalheCota == null){
 			
 			throw new ValidacaoException(
