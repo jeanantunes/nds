@@ -25,6 +25,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 
@@ -33,146 +34,32 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ResumoReparteFecharDiaRepositoryImpl.class);
 	
-
 	@Override
-	public SumarizacaoReparteDTO obterSumarizacaoReparte(Date data,Date dataReparteHistoico) {
+	public SumarizacaoReparteDTO obterSumarizacaoReparte(Date data) {
 		
         Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
         
-	    //Sql que obtem o os produtos que foram expedidos
-        String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
-           .append(" join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
-           .append(" lancamento.status <> :statusFuro and lancamento.dataLancamentoDistribuidor =:data )").toString();
+        BigDecimal valorReparte = this.obterValorSumarizadoDoReparte(data);
         
-        // Sql que obtem as diferenças apontadas para o distribuidor
-        String templateHqlDiferenca =  new StringBuilder("(select  ")
-	        .append(" COALESCE( sum(CASE  ")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
-		    .append(" 		       ELSE 0 END),0) ")
-        	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:tipoDiferenca) ")
-	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
-       
-        // Sql que obtem as diferencas apontadas para distribuidor que estão
-        // pendentes de aprovação do GFS
-        String templateHqlDiferencaGFSPendenteDeAprovacao =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
-	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append(" where lancamentoDiferenca.movimentoEstoque.statusIntegracao in (:statusIntegracaoGFS) and  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
-	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
+        BigDecimal valorSobras = this.obterValorSumarizadoDeSobras(data);
         
-        // Sql que obtem as diferenças direcionadas apenas para as cotas
-        String templateHqlDiferencaRateioCota =  new StringBuilder("(select ")
-	        .append(" COALESCE( sum(CASE  ")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM_DIRECIONADA_COTA' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda * -1 )")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
-		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM_DIRECIONADA_COTA' THEN ( diferenca.qtde * diferenca.produtoEdicao.precoVenda )  ")
-		    .append(" 		       ELSE 0 END),0) ")
-        	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append(" where  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
-	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido)
-	        .append(" and diferenca.id in ( select distinct rateio.diferenca.id from RateioDiferenca rateio where rateio.dataMovimento =:data ) ").append(")").toString();
+        BigDecimal valorFaltas =  this.obterValorSumarizadoDeFaltas(data);
         
-        //Sql que obtem produtos com recebimento fisico
-        String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
-        	.append(" (select COALESCE(sum(me.qtde*produtoEdicaoME.precoVenda),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
-	        .append(" where me.dataAprovacao = :data ")
-	        .append(" and me.status = :statusAprovado ")
-	        .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
-	        .append(" and produtoEdicaoME.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
+        BigDecimal valorTransferencia =  this.obterValorSumarizadoDeTransferencia(data);
         
-        String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
-	        .append(" (select COALESCE(sum(me.qtde*me.produtoEdicao.precoVenda),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
-		       .append(" where me.dataAprovacao = :data ")
-		       .append(" and me.status = :statusAprovado ")
-		       .append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional )")
-		       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
+        BigDecimal valorDistribuido = this.obterValorSumarizadoReparteDistribuido(data).add(this.obterValorSumarizadoRateioCota(data));
         
-        StringBuilder hql = new StringBuilder(" select COALESCE(sum(hstEstoque.qtde * produtoEdicao.precoVenda),0)")
-        	.append(" + ").append(templateHqlRecebimentoEstoqueFisico).append(" + ").append(templateHqlDiferenca).append(" as totalReparte, ");
-                
-	    hql.append(String.format(templateHqlDiferencaGFSPendenteDeAprovacao,"tipoDiferencaSobras", "totalSobras")).append(",")
-	       .append(String.format(templateHqlDiferencaGFSPendenteDeAprovacao,"tipoDiferencaFaltas", "totalFaltas")).append(",");
-	    
-	    hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ")
-           .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
-           .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
-           .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida) ")
-           .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as totalTransferencias, ");
-	    
-        hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in ( :grupoMovimentoEnvioJornaleiro ) ")
-           .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
-           .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
-           .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) ")
-           .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") + ")
-           .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaRateioCota")).append(" as totalDistribuido ,");
+        BigDecimal valorPromocional =  this.obterValorSumarizadoRepartePromocional(data);
         
-        hql.append(templateHqlRecebimentoEstoqueFisicoPromocional).append(" as totalDiferenca ");
+        SumarizacaoReparteDTO retorno = 
+        		new SumarizacaoReparteDTO(valorReparte,valorSobras,valorFaltas,valorTransferencia,valorDistribuido,valorPromocional);
         
-        hql.append(" from Expedicao expedicao ")
-	        .append(" join expedicao.lancamentos lancamento " )
-	        .append(" join lancamento.produtoEdicao produtoEdicao ")
-	        .append(" join produtoEdicao.produto produto ")
-	        .append(" left join produtoEdicao.historicoEstoqueProduto hstEstoque ")
-	        .append(" where  ")
-	        .append(" (hstEstoque.data is null or hstEstoque.data =:dataConsultaHistorico ) ")
-	        .append("  and lancamento.status <> :statusFuro ")
-	        .append(" and lancamento.dataLancamentoDistribuidor =:data ) ");
-        
-        Query query = getSession().createQuery(hql.toString());
-        
-        query.setParameter("dataConsultaHistorico", dataReparteHistoico);
-        query.setParameter("data", data);
-        query.setParameter("statusFuro", StatusLancamento.FURO);
-        query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-        query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
-        query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
-        query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);  
-        query.setParameterList("grupoMovimentoRecebimentoFisicoPromocional",Arrays.asList(
-        		GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL,
-        		GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL));
-        this.atribuirGruposMovimentoEnvioJornaleiro(query, "grupoMovimentoEnvioJornaleiro");
-        this.atribuirGruposMovimentoEstornoEnvioJornaleiro(query, "grupoMovimentoEstornoEnvioJornaleiro");
-        this.atribuirStatusIntegracaoGFS(query, "statusIntegracaoGFS");
-        this.atribuirTipoDiferencaSobras(query, "tipoDiferencaSobras");
-        this.atribuirTipoDiferencaFalta(query,"tipoDiferencaFaltas");
-        this.atribuirTipoDiferenca(query,"tipoDiferenca");
-        this.atribuirTipoDiferencaRateioCota(query, "tipoDiferencaRateioCota");
-        
-        try {
-        	
-            Constructor<SumarizacaoReparteDTO> constructor = 
-            		SumarizacaoReparteDTO.class.getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class, 
-            				BigDecimal.class,BigDecimal.class,BigDecimal.class);
-            
-            query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
-        
-        } catch (NoSuchMethodException | SecurityException e) {
-            
-        	String msg = "Erro definindo result transformer para classe: " + SumarizacaoReparteDTO.class.getName();
-            
-        	LOGGER.error(msg, e);
-            
-            throw new RuntimeException(msg, e);
-        } 
-        
-	    return (SumarizacaoReparteDTO) query.uniqueResult();
+	    return retorno;
 	}
 	
 	@Override
 	public List<ReparteFecharDiaDTO> obterResumoReparte(Date data, Date dataReparteHistoico){
-	   return obterLancamentosExpedidos(data, null,dataReparteHistoico);
+	   return obterLancamentosExpedidos(data, null);
 	}
 
     /**
@@ -180,7 +67,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
      */
     @Override
     public List<ReparteFecharDiaDTO> obterResumoReparte(Date data, PaginacaoVO paginacao,Date dataReparteHistoico) {
-        return obterLancamentosExpedidos(data, paginacao,dataReparteHistoico);
+        return obterLancamentosExpedidos(data, paginacao);
     }
 
     @Override
@@ -208,7 +95,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 
     
     @SuppressWarnings("unchecked")
-    private List<ReparteFecharDiaDTO> obterLancamentosExpedidos(Date data, PaginacaoVO paginacao,Date dataReparteHistoico) {
+    private List<ReparteFecharDiaDTO> obterLancamentosExpedidos(Date data, PaginacaoVO paginacao) {
         Objects.requireNonNull(data, "Data para consulta ao resumo do reparte não deve ser nula!");
 
         Date dataInicio = DateUtil.removerTimestamp(data);
@@ -218,14 +105,14 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
            .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
-	       .append(" where me.dataAprovacao = :data ")
+	       .append(" where me.data <= :data ")
 	       .append(" and me.status = :statusAprovado ")
 	       .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
 	       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
         
         String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
 	        .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
-	        .append(" where me.dataAprovacao = :data ")
+	        .append(" where me.data <= :data ")
 	        .append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional) ")
 	        .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
         
@@ -233,7 +120,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 				      hql.append("produto.nome as nomeProduto, ");
 				      hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
 				      hql.append("produtoEdicao.precoVenda as precoVenda, ");
-				      hql.append("COALESCE( hstEstoque.qtde,0 ) + ").append(templateHqlRecebimentoEstoqueFisico).append(" as qtdeReparte, ");
+				      hql.append(templateHqlRecebimentoEstoqueFisico).append(" as qtdeReparte, ");
         
         // Diferenças, convertendo as qtde sempre para exemplares
         hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobraDe", "qtdeSobraDe")).append(",");
@@ -262,15 +149,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	         .append(" join produtoEdicao.produto produto ")
 	         .append(" left join produtoEdicao.historicoEstoqueProduto hstEstoque ")
 	         .append(" where  ")
-	         .append(" (hstEstoque.data is null or hstEstoque.data =:dataConsultaHistorico ) ")
-	         .append(" and lancamento.status <> :statusFuro ")
+	         .append(" lancamento.status <> :statusFuro ")
 	         .append(" and lancamento.dataLancamentoDistribuidor =:data ) ");
 	    	
         hql.append("order by produto.codigo asc");
     
         Query query = getSession().createQuery(hql.toString());
         
-        query.setParameter("dataConsultaHistorico", dataReparteHistoico);
         query.setParameter("data", dataInicio);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
         query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
@@ -329,61 +214,258 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         		GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR));
     }
     
-    private void atribuirTipoDiferencaRateioCota(final Query query, final String paramName) {
-		
-    	query.setParameterList(paramName, Arrays.asList(
-    			TipoDiferenca.SOBRA_EM,
-				TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
-				TipoDiferenca.GANHO_EM,
-				TipoDiferenca.FALTA_EM,
-				TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
-				TipoDiferenca.PERDA_EM));
-	}
-
-	private void atribuirTipoDiferencaFalta(final Query query, final String paramName) {
-		
-		query.setParameterList(paramName, Arrays.asList(
-				TipoDiferenca.FALTA_DE,
-				TipoDiferenca.FALTA_EM,
-				TipoDiferenca.PERDA_DE,
-				TipoDiferenca.PERDA_EM));
-	}
-
-	private void atribuirTipoDiferencaSobras(final Query query, final String paramName) {
-		
-		query.setParameterList(paramName, Arrays.asList(
-				TipoDiferenca.SOBRA_DE,
-				TipoDiferenca.SOBRA_EM,
-				TipoDiferenca.GANHO_DE,
-				TipoDiferenca.GANHO_EM));
-	}
-
-	private void atribuirStatusIntegracaoGFS(final Query query, final String paramName) {
-		
-		query.setParameterList(paramName, Arrays.asList(
-				StatusIntegracao.EM_PROCESSAMENTO,
-        		StatusIntegracao.EM_PROCESSO,
-        		StatusIntegracao.SOLICITADO,
-        		StatusIntegracao.NAO_INTEGRADO,
-        		StatusIntegracao.RE_INTEGRADO,
-        		StatusIntegracao.INTEGRADO,
-        		StatusIntegracao.AGUARDANDO_GFS));
-	}
-	
-	private void atribuirTipoDiferenca(final Query query, final String paramName) {
-			
-		query.setParameterList(paramName, Arrays.asList(
-				TipoDiferenca.FALTA_DE,
-				TipoDiferenca.FALTA_EM,
-				TipoDiferenca.PERDA_DE,
-				TipoDiferenca.PERDA_EM,
-				TipoDiferenca.SOBRA_DE,
-				TipoDiferenca.SOBRA_EM,
-				TipoDiferenca.GANHO_DE,
-				TipoDiferenca.GANHO_EM,
-				TipoDiferenca.FALTA_EM_DIRECIONADA_COTA,
-				TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA));
-	 }
-
+private BigDecimal obterValorSumarizadoDoReparte(Date dataFechamento){
+    	
+    	Query query = getSession().createSQLQuery(this.obterSqlDaSumarizacaoDoReparte());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+        
+        query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+        
+        query.setParameter("grupoReparte", GrupoMovimentoEstoque.RECEBIMENTO_FISICO.name());  
+        
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
     
+    private BigDecimal obterValorSumarizadoDeFaltas(Date dataFechamento){
+    	
+    	Query query = getSession().createSQLQuery(this.obterSqlDaSumarizacaoDasDiferencas());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+        
+        query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.FALTA_DE.name(),
+								TipoDiferenca.FALTA_EM.name(),
+								TipoDiferenca.PERDA_DE.name(),
+								TipoDiferenca.PERDA_EM.name()));
+        
+        query.setParameterList("tipoDiferencasGFS", Arrays.asList(
+								StatusIntegracao.EM_PROCESSAMENTO.name(),
+				        		StatusIntegracao.EM_PROCESSO.name(),
+				        		StatusIntegracao.SOLICITADO.name(),
+				        		StatusIntegracao.NAO_INTEGRADO.name(),
+				        		StatusIntegracao.RE_INTEGRADO.name(),
+				        		StatusIntegracao.INTEGRADO.name(),
+				        		StatusIntegracao.AGUARDANDO_GFS.name()));
+        
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
+    
+    private BigDecimal obterValorSumarizadoDeSobras(Date dataFechamento){
+    	
+    	Query query = getSession().createSQLQuery(this.obterSqlDaSumarizacaoDasDiferencas());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+        
+        query.setParameterList("tipoDiferenca", Arrays.asList(
+								TipoDiferenca.SOBRA_DE.name(),
+								TipoDiferenca.SOBRA_EM.name(),
+								TipoDiferenca.GANHO_DE.name(),
+								TipoDiferenca.GANHO_EM.name()));
+       
+        query.setParameterList("tipoDiferencasGFS", Arrays.asList(
+								StatusIntegracao.EM_PROCESSAMENTO.name(),
+				        		StatusIntegracao.EM_PROCESSO.name(),
+				        		StatusIntegracao.SOLICITADO.name(),
+				        		StatusIntegracao.NAO_INTEGRADO.name(),
+				        		StatusIntegracao.RE_INTEGRADO.name(),
+				        		StatusIntegracao.INTEGRADO.name(),
+				        		StatusIntegracao.AGUARDANDO_GFS.name()));
+        
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
+    
+    private BigDecimal obterValorSumarizadoDeTransferencia(Date dataFechamento){
+    	
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" SELECT COALESCE(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE= :grupoTransferenciaLancamentoEntrada,"); 
+    	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA, ");
+    	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA*-1 ),0) ");
+    	hql.append(" FROM MOVIMENTO_ESTOQUE movimentoEstoque ");
+    	hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento ON movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+    	hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+    	hql.append(" WHERE movimentoEstoque.DATA=:dataFechamento");
+    	hql.append(" AND movimentoEstoque.STATUS= :statusAprovado ");
+    	hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoTransferenciaLancamentoEntrada,:grupoTransferenciaLancamentoSaida) "); 
+    	hql.append(" AND movimentoEstoque.PRODUTO_EDICAO_ID IN ( ");
+    	hql.append("	SELECT DISTINCT produtoEdicaoExpedicao.ID ");
+    	hql.append("	FROM EXPEDICAO expedicaoProduto ");
+    	hql.append("	INNER JOIN LANCAMENTO lancamentoExpedicao ON expedicaoProduto.ID=lancamentoExpedicao.EXPEDICAO_ID ");
+    	hql.append("	INNER JOIN PRODUTO_EDICAO produtoEdicaoExpedicao ON lancamentoExpedicao.PRODUTO_EDICAO_ID=produtoEdicaoExpedicao.ID ");
+    	hql.append("	WHERE lancamentoExpedicao.STATUS<>:statusFuro "); 
+    	hql.append("	AND lancamentoExpedicao.DATA_LCTO_DISTRIBUIDOR=:dataFechamento) ");
+    	
+    	Query query = getSession().createSQLQuery(hql.toString());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+        
+    	query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+        
+    	query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO.name());
+        
+    	query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO.name());
+    	
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
+    
+    private BigDecimal obterValorSumarizadoReparteDistribuido(Date dataFechamento){
+
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" SELECT SUM(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoMovimentoEnvioJornaleiro), ");
+    	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA, ");  
+    	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA*-1)) ");
+    	hql.append(" FROM MOVIMENTO_ESTOQUE movimentoEstoque ");
+    	hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento ON movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID "); 
+    	hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+    	hql.append(" WHERE movimentoEstoque.DATA=:dataFechamento ");
+    	hql.append(" AND movimentoEstoque.STATUS=:statusAprovado "); 
+    	hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) "); 
+    	hql.append(" AND movimentoEstoque.PRODUTO_EDICAO_ID IN ( ");
+    	hql.append("	SELECT DISTINCT produtoEdicaoExpedicao.ID ");
+    	hql.append("	FROM EXPEDICAO expedicaoProduto ");
+    	hql.append("	INNER JOIN LANCAMENTO lancamentoExpedicao ON expedicaoProduto.ID=lancamentoExpedicao.EXPEDICAO_ID ");
+    	hql.append("	INNER JOIN PRODUTO_EDICAO produtoEdicaoExpedicao ON lancamentoExpedicao.PRODUTO_EDICAO_ID=produtoEdicaoExpedicao.ID ");
+    	hql.append("	WHERE lancamentoExpedicao.STATUS<>:statusFuro ");
+    	hql.append("	AND lancamentoExpedicao.DATA_LCTO_DISTRIBUIDOR=:dataFechamento ) ");
+    	
+    	Query query = getSession().createSQLQuery(hql.toString());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+        
+    	query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+        
+    	query.setParameterList("grupoMovimentoEnvioJornaleiro", Arrays.asList(
+				        		GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name(), 
+				        		GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(), 
+				        		GrupoMovimentoEstoque.VENDA_ENCALHE.name(), 
+				        		GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name()));
+    	
+    	
+    	query.setParameterList("grupoMovimentoEstornoEnvioJornaleiro", Arrays.asList(
+				        		GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO.name(), 
+				        		GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name(), 
+				        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO.name(),
+				        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS.name(),
+				        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO.name(),
+				        		GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR.name()));
+    	
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
+    
+    private BigDecimal obterValorSumarizadoRateioCota(Date dataFechamento){
+    	
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" SELECT COALESCE(SUM( ");
+    	sql.append("		if( diferencaProduto.TIPO_DIFERENCA IN (:tipoSobraDirecionadaCota) ");
+    	sql.append("			 ,diferencaProduto.QTDE*produtoEdicao.PRECO_VENDA ");
+    	sql.append("			 ,diferencaProduto.QTDE*produtoEdicao.PRECO_VENDA*-1 )), 0) ");
+    	sql.append(" FROM DIFERENCA diferencaProduto ");
+    	sql.append(" INNER JOIN LANCAMENTO_DIFERENCA lancamentoDiferenca ON diferencaProduto.LANCAMENTO_DIFERENCA_ID=lancamentoDiferenca.ID ");
+    	sql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON diferencaProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID  ");
+    	sql.append(" WHERE diferencaProduto.DATA_MOVIMENTACAO=:dataFechamento  ");
+    	sql.append(" AND diferencaProduto.TIPO_DIFERENCA IN (:tipoSobraDirecionadaCota,:tipoFaltaDirecionadaCota) ");
+    	sql.append(" AND diferencaProduto.PRODUTO_EDICAO_ID IN ( ");
+    	sql.append("	SELECT DISTINCT produtoExpedicao.ID ");
+    	sql.append("	FROM EXPEDICAO expedicaoProduto ");
+    	sql.append("	INNER JOIN LANCAMENTO lancamentoExpedicao ON expedicaoProduto.ID=lancamentoExpedicao.EXPEDICAO_ID ");
+    	sql.append("	INNER JOIN PRODUTO_EDICAO produtoExpedicao ON lancamentoExpedicao.PRODUTO_EDICAO_ID=produtoExpedicao.ID ");
+    	sql.append("	WHERE lancamentoExpedicao.STATUS<>:statusFuro ");
+    	sql.append("	AND lancamentoExpedicao.DATA_LCTO_DISTRIBUIDOR=:dataFechamento) "); 
+    	sql.append(" AND diferencaProduto.id IN ( ");
+    	sql.append("	SELECT DISTINCT rateioDiferencaCota.DIFERENCA_ID FROM RATEIO_DIFERENCA rateioDiferencaCota ");
+    	sql.append("	WHERE rateioDiferencaCota.DATA_MOVIMENTO=:dataFechamento)");
+	
+    	Query query = getSession().createSQLQuery(sql.toString());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+    	
+    	query.setParameterList("tipoSobraDirecionadaCota", Arrays.asList(
+				    			TipoDiferenca.SOBRA_EM.name(),
+								TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(), 
+								TipoDiferenca.GANHO_EM.name()));
+    	
+    	query.setParameterList("tipoFaltaDirecionadaCota", Arrays.asList(
+								TipoDiferenca.FALTA_EM.name(),
+								TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
+								TipoDiferenca.PERDA_EM.name()));
+    
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
+    
+    private BigDecimal obterValorSumarizadoRepartePromocional(Date dataFechamento){
+    	
+    	Query query = getSession().createSQLQuery(this.obterSqlDaSumarizacaoDoReparte());
+    	
+    	query.setParameter("dataFechamento", dataFechamento);
+        
+    	query.setParameter("statusFuro", StatusLancamento.FURO.name());
+        
+        query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+        
+        query.setParameterList("grupoReparte", Arrays.asList(
+        		GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL.name(),
+        		GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL.name()));  
+        
+    	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
+    }
+    
+    private String obterSqlDaSumarizacaoDasDiferencas(){
+    	
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" SELECT COALESCE(SUM(diferencaProduto.QTDE*produtoEdicaoDiferenca.PRECO_VENDA),0)");
+    	hql.append(" FROM DIFERENCA diferencaProduto ");
+    	hql.append(" INNER JOIN LANCAMENTO_DIFERENCA lancamentoDiferenca ON diferencaProduto.LANCAMENTO_DIFERENCA_ID=lancamentoDiferenca.ID "); 
+    	hql.append(" INNER JOIN MOVIMENTO_ESTOQUE movimentoEstoqueLancamento ON lancamentoDiferenca.MOVIMENTO_ESTOQUE_ID=movimentoEstoqueLancamento.ID ");
+    	hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicaoDiferenca ON diferencaProduto.PRODUTO_EDICAO_ID=produtoEdicaoDiferenca.ID ");
+    	hql.append(" WHERE diferencaProduto.DATA_MOVIMENTACAO=:dataFechamento ");
+    	hql.append(" AND movimentoEstoqueLancamento.STATUS_INTEGRACAO IN (:tipoDiferencasGFS)");
+    	hql.append(" AND diferencaProduto.TIPO_DIFERENCA IN (:tipoDiferenca) ");
+    	hql.append(" AND diferencaProduto.PRODUTO_EDICAO_ID IN ( ");
+    	hql.append("	SELECT DISTINCT produtoEdicaoExpedicao.ID ");
+    	hql.append("	FROM EXPEDICAO expedicaoProduto ");
+    	hql.append("	INNER JOIN LANCAMENTO lancamentoExpedicao ON expedicaoProduto.ID=lancamentoExpedicao.EXPEDICAO_ID ");
+    	hql.append("	INNER JOIN PRODUTO_EDICAO produtoEdicaoExpedicao ON lancamentoExpedicao.PRODUTO_EDICAO_ID=produtoEdicaoExpedicao.ID ");
+    	hql.append("	WHERE lancamentoExpedicao.STATUS<>:statusFuro ");
+    	hql.append("	AND lancamentoExpedicao.DATA_LCTO_DISTRIBUIDOR=:dataFechamento)");
+    	
+    	return hql.toString();
+    }
+    
+    private String obterSqlDaSumarizacaoDoReparte(){
+    	
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" SELECT COALESCE(SUM(movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA), 0) ");
+    	hql.append(" FROM MOVIMENTO_ESTOQUE movimentoEstoque ");
+    	hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+    	hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+    	hql.append(" WHERE movimentoEstoque.DATA<=:dataFechamento ");
+    	hql.append(" AND movimentoEstoque.STATUS=:statusAprovado ");
+    	hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoReparte) ");
+    	hql.append(" AND (produtoEdicao.ID IN ( ");
+    	hql.append(" SELECT DISTINCT produtoEdicaoExpedicao.ID ");
+    	hql.append(" 	FROM EXPEDICAO expedicao ");
+    	hql.append(" 	INNER JOIN LANCAMENTO lancamentoProduto ON expedicao.ID=lancamentoProduto.EXPEDICAO_ID ");
+    	hql.append(" 	INNER JOIN PRODUTO_EDICAO produtoEdicaoExpedicao ON lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicaoExpedicao.ID ");
+    	hql.append(" 	WHERE lancamentoProduto.STATUS<>:statusFuro ");
+    	hql.append(" 	AND lancamentoProduto.DATA_LCTO_DISTRIBUIDOR=:dataFechamento)) ");
+
+    	return hql.toString();
+    }
 }

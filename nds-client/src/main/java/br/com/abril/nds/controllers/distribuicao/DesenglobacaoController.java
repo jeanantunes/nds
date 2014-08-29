@@ -106,7 +106,10 @@ public class DesenglobacaoController extends BaseController {
         
         boolean isOk = false;
         if (StringUtils.isEmpty(alterando)) {
-            isOk = desenglobacaoService.inserirDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
+        	
+        	desenglobacaoService.verificarDesenglobacaoExistenteParaCota(desenglobaDTO);
+            
+        	isOk = desenglobacaoService.inserirDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
         } else {
             isOk = desenglobacaoService.alterarDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
         }

@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoFornecedorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
@@ -44,6 +45,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.validation.CobrancaFornecedorValidator;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -75,6 +77,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Autowired
 	private CobrancaFornecedorValidator cobrancaFornecedorValidator;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Transactional
 	public Fornecedor obterFornecedorUnico(String codigoProduto) {
@@ -815,6 +820,26 @@ public class FornecedorServiceImpl implements FornecedorService {
 		listaFornecedor.removeAll(listaFornecedorUnificados);
 		
 		return listaFornecedor;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<ItemDTO<Long, String>> obterFornecedoresFcDinap(){
+		
+		String codigoDinap = distribuidorRepository.codigoDistribuidorDinap();
+		
+		String codigoFC = distribuidorRepository.codigoDistribuidorFC();
+		
+		List<Fornecedor> listaFornecedor = fornecedorRepository.obterFornecedoresFcDinap(codigoDinap,codigoFC);
+		
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Fornecedor fornecedor : listaFornecedor) {
+			
+			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+		}
+		
+		return listaFornecedoresCombo;
 	}
 	
 }

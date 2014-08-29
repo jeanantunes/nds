@@ -16,7 +16,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Deprecated
 public interface ResumoReparteFecharDiaRepository {
 
-	SumarizacaoReparteDTO obterSumarizacaoReparte(Date data, Date dataReparteHistoico);
+	SumarizacaoReparteDTO obterSumarizacaoReparte(Date data);
 
 	List<ReparteFecharDiaDTO> obterResumoReparte(Date data,Date dataReparteHistoico);
 

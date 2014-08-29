@@ -95,12 +95,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		}
 		if (filtro.getCodigo() != null) {
             if (usarICD) {
-                sql.append("   and p.codigo_icd = :codigo_produto ");
+                sql.append("   and ((p.codigo_icd = :codigo_produto) ");
+                sql.append("   or p.codigo in (select p.codigo from produto p where p.codigo_icd = (select codigo_icd from produto p where p.codigo = :codigo_produto))) ");
             } else {
                 sql.append("   and p.codigo = :codigo_produto ");
             }
         }
-        if (filtro.getClassificacao() != null) {
+        if (filtro.getClassificacao() != null && filtro.getClassificacao() > 0) {
 			sql.append("   and tcp.id = :classificacao ");
 		}
 		
@@ -122,7 +123,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 			query.setString("codigo_produto", filtro.getCodigo());
 			
 		}
-		if (filtro.getClassificacao()  != null) {
+		if (filtro.getClassificacao() != null && filtro.getClassificacao() > 0) {
 		    query.setLong("classificacao", filtro.getClassificacao());
 		}
 		
