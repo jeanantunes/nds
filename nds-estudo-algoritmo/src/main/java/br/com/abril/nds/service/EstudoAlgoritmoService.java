@@ -549,8 +549,8 @@ public class EstudoAlgoritmoService {
                             continue;
                         }
                     }
-                    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) ||
-                            !base.isParcial()) {
+                    //if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) || !base.isParcial()) {
+                    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getProduto().getCodigoICD().equals(base.getProduto().getCodigoICD())) || !base.isParcial()) {
                         nova.add(base);
                     }
                 }

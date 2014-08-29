@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.service.PeriodoLancamentoParcialService;
 
@@ -65,6 +66,12 @@ public class PeriodoLancamentoParcialServiceImpl implements PeriodoLancamentoPar
 	@Transactional
 	public Integer totalObterPeriodosParciais(FiltroParciaisDTO filtro) {
 		return periodoLancamentoParcialRepository.totalObterPeriodosParciais(filtro);
+	}
+
+	@Transactional
+	@Override
+	public PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento) {
+		return periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 	}
 
 }
