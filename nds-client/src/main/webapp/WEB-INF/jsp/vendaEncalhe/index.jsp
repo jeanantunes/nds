@@ -160,6 +160,8 @@ $(function(){
 	          </table>
 	          
 	          <jsp:include page="gridVenda.jsp"/>
+	          
+	          <iframe src="" id="download-iframe-vendaEncalhe" style="display:none;"></iframe>
     
       </fieldset>
 </body>
