@@ -45,6 +45,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.validation.CobrancaFornecedorValidator;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service

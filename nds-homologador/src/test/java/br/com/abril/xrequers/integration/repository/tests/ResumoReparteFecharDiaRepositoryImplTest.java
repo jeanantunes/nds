@@ -27,7 +27,7 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractRepository
 		c.set(2014, Calendar.FEBRUARY, 18);
 		Date dataReparteHistoico = c.getTime();
 		
-		SumarizacaoReparteDTO sumarizacaoReparte = resumoReparteFecharDiaRepository.obterSumarizacaoReparte(data, dataReparteHistoico);
+		SumarizacaoReparteDTO sumarizacaoReparte = resumoReparteFecharDiaRepository.obterSumarizacaoReparte(data);
 		
 		assertNotNull(sumarizacaoReparte);
 		
