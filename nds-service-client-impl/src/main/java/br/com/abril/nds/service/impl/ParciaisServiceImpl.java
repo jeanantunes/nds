@@ -16,7 +16,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -34,7 +33,6 @@ import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -102,7 +100,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 
 		if (DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento não pode ser maior que a data de recolhimento final.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Essa alteração deve ser feita através da matriz de recolhimento.");
 		}
 		
 		if (DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataRecolhimento)) {
@@ -145,39 +143,55 @@ public class ParciaisServiceImpl implements ParciaisService{
 		List<Lancamento> lancamentos = 
 				this.periodoLancamentoParcialRepository.obterLancamentosParciais(lancamentoParcial.getId());
 
-		int ultimoPeriodo = lancamentos.size();
+		int ultimoPeriodo = lancamentos != null ? lancamentos.size() : 0;
 		
 		int numeroPeriodo = 1;
+		int numeroLancamento = 1;
 		
 		Date proximaDataLancamento = null;
 		
+		PeriodoLancamentoParcial periodo = null;
+		
 		for (Lancamento lancamento : lancamentos) {
 			
-			PeriodoLancamentoParcial periodo = lancamento.getPeriodoLancamentoParcial();
+			PeriodoLancamentoParcial periodoAtual = lancamento.getPeriodoLancamentoParcial();
+			
+			lancamento.setNumeroLancamento(numeroLancamento);
 
-			periodo.setNumeroPeriodo(numeroPeriodo);
-			
-			if (numeroPeriodo == ultimoPeriodo) {
+			if (!periodoAtual.equals(periodo)) {
 				
-				periodo.setTipo(TipoLancamentoParcial.FINAL);
-			
+				periodo = periodoAtual;
+
+				periodoAtual.setNumeroPeriodo(numeroPeriodo);
+				
+				if (numeroPeriodo == ultimoPeriodo) {
+					
+					periodoAtual.setTipo(TipoLancamentoParcial.FINAL);
+				
+				} else {
+					
+					periodoAtual.setTipo(TipoLancamentoParcial.PARCIAL);
+				}
+
+				numeroPeriodo++;
+
+				numeroLancamento = 1;
+
+				proximaDataLancamento = this.reajustarDatasLancamento(
+					lancamento, 
+					proximaDataLancamento, 
+					(int) (DateUtil.obterDiferencaDias(
+						periodoAtual.getLancamentoParcial().getLancamentoInicial(), 
+						periodoAtual.getLancamentoParcial().getRecolhimentoFinal()
+					) / ultimoPeriodo)
+				);
+
 			} else {
 				
-				periodo.setTipo(TipoLancamentoParcial.PARCIAL);
+				numeroLancamento++;				
 			}
 
-			numeroPeriodo++;
-
-			proximaDataLancamento = this.reajustarDatasLancamento(
-				lancamento, 
-				proximaDataLancamento, 
-				(int) (DateUtil.obterDiferencaDias(
-					periodo.getLancamentoParcial().getLancamentoInicial(), 
-					periodo.getLancamentoParcial().getRecolhimentoFinal()
-				) / ultimoPeriodo)
-			);
-
-			this.periodoLancamentoParcialRepository.merge(periodo);		
+			this.periodoLancamentoParcialRepository.merge(periodoAtual);		
 		}
 	}
 
@@ -658,7 +672,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(!redistribuicoesAnteriores.isEmpty()){
 
 			for(Lancamento item : redistribuicoesAnteriores){
-				excluirRedistribuicaoParcial(item.getId());
+				excluirLancamentoParcial(item.getId());
 			}
 		}
 		
@@ -774,17 +788,15 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 		this.atualizarRecolhimentosPeriodoAnterior(periodoAnterior, periodo.getUltimoLancamento().getDataRecolhimentoDistribuidor());
 
-		List<Lancamento> redistribuicoes = periodo.getRedistribuicoes();
-		
-		if(!redistribuicoes.isEmpty()) {
-			for(Lancamento item : redistribuicoes) {
-				excluirRedistribuicaoParcial(item.getId());
+		if(!periodo.getLancamentos().isEmpty()) {
+			for(Lancamento item : periodo.getLancamentos()) {
+				this.validarExclusaoRedistribuicaoParcial(item);
 			}
 		}
 		
-		periodoLancamentoParcialRepository.merge(periodoAnterior);
+		this.periodoLancamentoParcialRepository.merge(periodoAnterior);
 		
-		periodoLancamentoParcialRepository.remover(periodo);
+		this.periodoLancamentoParcialRepository.remover(periodo);
 	}
 
 	private void atualizarRecolhimentosPeriodoAnterior(PeriodoLancamentoParcial periodoAnterior, Date dataRecolhimento) {
@@ -894,7 +906,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	@Override
 	@Transactional
-	public void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao) {
+	public void excluirLancamentoParcial(Long idLancamentoRedistribuicao) {
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamentoRedistribuicao);
 		
@@ -919,6 +931,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"A data do lançamento deve ser maior do que a data de lançamento anterior!");
+		}
+		
+		if (this.lancamentoRepository.existemLancamentosConfirmados(redistribuicaoParcialDTO.getDataRecolhimento())) {
+		
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+					"Já existem lançamentos confirmados para esta data de recolhimento.");
 		}
 		
 		if (ultimoLancamento.getDataRecolhimentoDistribuidor()
@@ -966,6 +984,18 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"A data de lançamento deve ser menor que a data do lançamento posterior!");
+		}
+		
+		if (lancamento.getDataRecolhimentoDistribuidor().compareTo(dataLancamentoRedistribuicao) <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data do lançamento deve ser menor do que a data de recolhimento do período!");
+		}
+		
+		if (this.lancamentoRepository.existemLancamentosConfirmados(lancamento.getDataRecolhimentoDistribuidor())) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+					"Já existem lançamentos confirmados para esta data de recolhimento.");
 		}
 	}
 	

@@ -23,7 +23,7 @@ var dataHolder = {
 		);
 	},
 	
-	clearAction : function(actionKey) {
+	clearAction : function(actionKey, callback) {
 		
 		var data = [
 			{
@@ -33,7 +33,12 @@ var dataHolder = {
 		
 		$.postJSON(
 			contextPath + '/dataholder/clearAction', 
-			data
+			data,
+			function(){
+				if (callback){
+					callback();
+				}
+			}
 		);
 	},
 	
@@ -62,3 +67,5 @@ var dataHolder = {
 	}
 	
 }
+
+//@ sourceURL=data.holder.js
