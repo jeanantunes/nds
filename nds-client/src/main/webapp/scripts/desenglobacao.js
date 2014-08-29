@@ -137,7 +137,7 @@ var desenglobacaoController = $.extend(true, {
     			
     			if (e.keyCode == 13){
     				
-    				$('#filtroDesenglobaNomePessoa').focus();
+    				$('#inserirEnglobadaNumeroCota').focus();
     			}
     		}
         );
@@ -148,7 +148,7 @@ var desenglobacaoController = $.extend(true, {
     			
     			if (e.keyCode == 13){
     			    
-    				$('#inserirEnglobadaNomePessoa').focus();
+    				$('#inserirEnglobadaPorcentagemCota').focus();
     			}
     		}
         );
@@ -160,6 +160,17 @@ var desenglobacaoController = $.extend(true, {
     			if (e.keyCode == 13){
     			    
     				$('#inserirEnglobadaPorcentagemCota').focus();
+    			}
+    		}
+        );
+        
+        $('#inserirEnglobadaPorcentagemCota').keydown(
+        		
+    		function (e){
+    			
+    			if (e.keyCode == 13){
+    			    
+    				$('#inserirEnglobadaNumeroCota').focus();
     			}
     		}
         );
@@ -414,7 +425,7 @@ var desenglobacaoController = $.extend(true, {
         $('#tableCotasEnglobadas').empty();
         $('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa,#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa,#percentualDesengloba').val('');
 
-        $("#dialog-novo-desenglobacao", desenglobacaoController.workspace).dialog({
+        $("#dialog-novo-desenglobacao").dialog({
             resizable: false,
             height:500,
             width:650,
