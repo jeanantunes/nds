@@ -15,6 +15,7 @@
 		<org.springframework.version>4.0.6.RELEASE</org.springframework.version>
 		<org.springframework.security.version>3.2.5.RELEASE</org.springframework.security.version>
 		<br.com.caelum.vraptor.version>3.5.3</br.com.caelum.vraptor.version>
+		<org.hibernate.version>4.2.15.Final</org.hibernate.version>
 	</properties>
 
 	<dependencyManagement>
@@ -132,7 +133,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
-				<version>4.2.15.Final</version>
+				<version>${org.hibernate.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
