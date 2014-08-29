@@ -80,7 +80,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			final boolean isCodigoDistribuidorFc = ( distribuidor.getCodigoDistribuidorFC()!= null 
 					&&  distribuidor.getCodigoDistribuidorFC().equals(input.getCodigoDistribuidor()));
 			
-			if(!isCodigoDistribuidorDinap || !isCodigoDistribuidorFc) {
+			if(!isCodigoDistribuidorDinap && !isCodigoDistribuidorFc) {
 				
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
