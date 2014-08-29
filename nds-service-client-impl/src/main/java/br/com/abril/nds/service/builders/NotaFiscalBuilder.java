@@ -102,7 +102,11 @@ public class NotaFiscalBuilder implements Serializable {
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setDocumento(cnpj);
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		StringBuilder logradouro = new StringBuilder(distribuidor.getEnderecoDistribuidor().getEndereco().getTipoLogradouro())
+			.append(" ")
+			.append(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(logradouro.toString());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setNumero(distribuidor.getEnderecoDistribuidor().getEndereco().getNumero());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
@@ -181,7 +185,11 @@ public class NotaFiscalBuilder implements Serializable {
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setDocumento(cnpj);
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		StringBuilder logradouro = new StringBuilder(distribuidor.getEnderecoDistribuidor().getEndereco().getTipoLogradouro())
+			.append(" ")
+			.append(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(logradouro.toString());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setNumero(distribuidor.getEnderecoDistribuidor().getEndereco().getNumero());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
@@ -339,7 +347,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setBairro("Osasco");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep("08250000");
-		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setNumero("158");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setNumero("1678");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(3550308L);
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCidade("Sãp Paulo");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(30L);
