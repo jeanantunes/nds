@@ -71,5 +71,31 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 		
 		return query.list();		
 	}
+
+	@Override
+	public void atualizarMovimentosFechamentosFiscaisPorLancamento(long lancamentoId, boolean desobrigaEmissaoDevolucaoSimbolica, boolean desobrigaEmissaoVendaConsignado) {
+		
+		StringBuilder sql = new StringBuilder("update MOVIMENTO_FECHAMENTO_FISCAL_COTA mffc ")
+			.append(" inner join CHAMADA_ENCALHE_COTA cec on mffc.CHAMADA_ENCALHE_COTA_ID=cec.ID ")
+			.append(" inner join CHAMADA_ENCALHE ce on cec.CHAMADA_ENCALHE_ID=ce.ID ")
+			.append(" inner join CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
+			.append(" inner join LANCAMENTO l on l.id = cel.LANCAMENTO_ID ")
+			.append(" inner join COTA c on cec.COTA_ID=c.ID ") 
+			.append(" set mffc.NOTA_FISCAL_LIBERADA_EMISSAO = true ")
+			.append(" 	, mffc.DESOBRIGA_NOTA_FISCAL_DEVOLUCAO_SIMBOLICA = false ")
+			.append(" 	, mffc.NOTA_FISCAL_VENDA_EMITIDA = false ")
+			.append(" 	, mffc.DESOBRIGA_NOTA_FISCAL_VENDA = :desobrigaEmissaoVendaConsignado ")
+			.append(" 	, mffc.NOTA_FISCAL_DEVOLUCAO_SIMBOLICA_EMITIDA = case when (c.CONTRIBUINTE_ICMS = true) then true else :desobrigaEmissaoDevolucaoSimbolica end ")
+			.append(" where l.id = :lancamentoId ");
+	
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("lancamentoId", lancamentoId);
+		query.setParameter("desobrigaEmissaoDevolucaoSimbolica", desobrigaEmissaoDevolucaoSimbolica);
+		query.setParameter("desobrigaEmissaoVendaConsignado", desobrigaEmissaoVendaConsignado);
+		
+		query.executeUpdate();	
+		
+	}
     
 }

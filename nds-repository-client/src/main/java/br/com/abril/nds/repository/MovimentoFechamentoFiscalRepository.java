@@ -15,5 +15,7 @@ public interface MovimentoFechamentoFiscalRepository extends Repository<Moviment
 	MovimentoFechamentoFiscalFornecedor buscarPorProdutoEdicaoTipoMovimentoEstoque(ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimentoEstoque);
 
 	List<Long> obterMECIdsPelosMovFechamentosFiscaisCota(List<Long> idsMFFC);
+
+	void atualizarMovimentosFechamentosFiscaisPorLancamento(long lancamentoId, boolean desobrigaEmissaoDevolucaoSimbolica, boolean desobrigaEmissaoVendaConsignado);
 	
 }

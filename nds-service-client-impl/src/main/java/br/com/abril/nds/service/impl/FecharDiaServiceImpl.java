@@ -1911,43 +1911,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			this.lancamentoRepository.merge(lancamento);
 			
-			for(ChamadaEncalhe ce : lancamento.getChamadaEncalhe()) {
-				
-				List<ChamadaEncalheCotaDTO> chamadasEncalheCota = chamadaEncalheCotaRepository.buscarPorChamadaEncalhe(ce);
-				
-				for(ChamadaEncalheCotaDTO cec : chamadasEncalheCota ) { //ce.getChamadaEncalheCotas()) {
-					
-					List<MovimentoFechamentoFiscalCota> movimentosFechamentoFiscalCota = movimentoFechamentoFiscalRepository.buscarPorChamadaEncalheCota(cec.getId());
-					
-					if(movimentosFechamentoFiscalCota == null || movimentosFechamentoFiscalCota.isEmpty()) {
-						
-						continue;
-					} else {
-						
-						for(MovimentoFechamentoFiscalCota mffc : movimentosFechamentoFiscalCota) {
-							
-							mffc.setNotaFiscalLiberadaEmissao(true);
-							
-							if(cec.isExigeNFE() || cec.isContribuinteICMS()) {
-								
-								mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(true);
-								mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
-								mffc.setNotaFiscalVendaEmitida(false);
-								mffc.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
-							} else {
-								
-								mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(desobrigaEmissaoDevolucaoSimbolica);
-								mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
-								mffc.setNotaFiscalVendaEmitida(false);
-								mffc.setDesobrigaNotaFiscalVenda(desobrigaEmissaoVendaConsignado);
-							}
-							
-							movimentoFechamentoFiscalRepository.merge(mffc);
-						}
-					}
-				}
-				
-			}
+			movimentoFechamentoFiscalRepository.atualizarMovimentosFechamentosFiscaisPorLancamento(
+					lancamento.getId(), 
+					desobrigaEmissaoDevolucaoSimbolica, 
+					desobrigaEmissaoVendaConsignado);
 			
 		}
 	}
