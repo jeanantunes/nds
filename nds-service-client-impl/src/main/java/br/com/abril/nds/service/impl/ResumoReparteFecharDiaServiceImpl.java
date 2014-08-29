@@ -89,10 +89,9 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
         	reparteDTO = consolidadoReparteRepository.obterSumarizacaoReparte(data);
         }
         else{
+        
         	
-        	Date dataReparteHistoico = fechamentoDiarioRepository.obterDataUltimoFechamento(data);
-        	
-        	reparteDTO = resumoFecharDiaRepository.obterSumarizacaoReparte(data,dataReparteHistoico);
+        	reparteDTO = resumoFecharDiaRepository.obterSumarizacaoReparte(data);
         }
         
         return reparteDTO;
