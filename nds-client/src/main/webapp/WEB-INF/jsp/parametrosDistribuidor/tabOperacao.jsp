@@ -302,7 +302,7 @@
               </tr>
               
               <tr>
-	              <td colspan="11">Aceita recolhimento de produto parcial em atraso:</td>
+	              <td colspan="11">Parciais seguem os dias de recolhimento parametrizados:</td>
 	              <td>
 	                    <c:if test="${parametrosDistribuidor.aceitaRecolhimentoParcialAtraso}">
                           <input name="parametrosDistribuidor.aceitaRecolhimentoParcialAtraso" id="aceitaRecolhimentoParcialAtraso" type="checkbox" checked="checked" />
