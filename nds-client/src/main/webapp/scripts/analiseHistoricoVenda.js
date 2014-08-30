@@ -180,7 +180,6 @@ var analiseHistoricoVendaController = $.extend(true, {
 	
 	preProcessPopUpGrid : function preProcessPopUpGrid(response){
 		
-		analiseHistoricoVendaController.limparPopUpInformacoesCota();
 		analiseHistoricoVendaController.popularPopUpInformacoesCota(response.cotaDto);
 		
 		if (response.tableModel) {
@@ -292,7 +291,10 @@ var analiseHistoricoVendaController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 				}
-			}
+			},
+			beforeClose: function() {
+	        	analiseHistoricoVendaController.limparPopUpInformacoesCota();
+	        }
 		});
 	}
 	
