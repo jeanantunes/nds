@@ -36,7 +36,7 @@ public class PessoaCRPWSServiceImpl implements PessoaCRPWSService {
 	@Value("${codSistema:}")
 	private String codSistema;
 	
-	public PessoaDto obterDadosFiscais(String codSistema,Integer codTipoDoc,String numDoc){
+	public PessoaDto obterDadosFiscais(Integer codTipoDoc, String numDoc){
 		
 		ObterDadosFiscaisElementDocument odfEl = ObterDadosFiscaisElementDocument.Factory.newInstance();
 		

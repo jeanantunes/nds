@@ -216,7 +216,7 @@ public class FTFServiceImpl implements FTFService {
 		
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
 		
-		File f = new File(String.format("%s/%s",pathNFEExportacao.getValor(),regTipo00.getNomeArquivo()));
+		File f = new File(String.format("%s/%s", pathNFEExportacao.getValor(), regTipo00.getNomeArquivo()));
 		
 		BufferedWriter bw = null;
 		try {
@@ -311,9 +311,7 @@ public class FTFServiceImpl implements FTFService {
 //		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
 		
-		ParametroSistema pathFTF = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.SIGLA_SISTEMA_FTF);
-		
-		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(pathFTF.getValor(), getCodTipoDocFrom(cpfCnpj), cpfCnpj);
+		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
 		
 		if (pessoaCRP != null && !StringUtil.isEmpty(pessoaCRP.getNome())) {

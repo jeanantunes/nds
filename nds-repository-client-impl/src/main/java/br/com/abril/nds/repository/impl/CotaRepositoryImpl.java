@@ -2988,31 +2988,40 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @Override
     public HistoricoVendaPopUpCotaDto buscarCota(final Integer numero) {
-        final Map<String, Object> parameters = new HashMap<String, Object>();
         
-        final StringBuilder hql = new StringBuilder();
+        final StringBuilder sql = new StringBuilder();
         
-        hql.append(" SELECT ");
-        hql.append(" rankingFaturamento.id as rankId, ");
-        hql.append(" cota.numeroCota as numeroCota, ");
-        hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
-        hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
-        hql.append(" rankingFaturamento.faturamento as faturamento, ");
-        hql.append(" max(rankingFaturamento.dataGeracaoRank) as  dataGeracao ");
+        sql.append(" SELECT                                                                                  ")
+	       .append("     cota.NUMERO_COTA as numeroCota,                                                     ")
+	       .append("     coalesce(pessoa.NOME_FANTASIA, pessoa.RAZAO_SOCIAL, pessoa.NOME, '') as nomePessoa, ")
+	       .append("     cota.TIPO_DISTRIBUICAO_COTA as tipoDistribuicaoCota,                                ")
+	       .append("     rankingFaturamento.FATURAMENTO as faturamento,                                      ")
+	       .append("     max(rankingFaturamento.DATA_GERACAO_RANK) as  dataGeracao,                          ")
+	       .append("                                                                                         ")
+	       .append("       (SELECT T.rank                                                                    ")
+	       .append("         FROM (SELECT  rf.COTA_ID as cota,                                               ")
+	       .append("           @curRank /*'*/:=/*'*/ @curRank + 1 AS rank                                    ")
+	       .append("           FROM ranking_faturamento rf, (SELECT @curRank /*'*/:=/*'*/ 0) r               ")
+	       .append("           where rf.COTA_ID                                                              ")
+	       .append("           ORDER BY  rf.FATURAMENTO desc) T where  T.cota = cota.ID) as rankId           ")
+           .append("                                                                                         ")
+           .append(" FROM ranking_faturamento rankingFaturamento                                             ")
+           .append(" join cota ON rankingFaturamento.COTA_ID = cota.ID                                       ")
+           .append(" join pessoa ON cota.PESSOA_ID = pessoa.ID                                               ")
+           .append("                                                                                         ")
+           .append(" WHERE cota.NUMERO_COTA = :numeroCota                                                    ")
+           .append(" GROUP BY rankingFaturamento.COTA_ID                                                     ");
         
-        hql.append(" FROM RankingFaturamento rankingFaturamento ");
-        hql.append(" RIGHT JOIN rankingFaturamento.cota as cota ");
-        hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+        final SQLQuery query = super.getSession().createSQLQuery(sql.toString());
         
-        hql.append(" WHERE ");
-        hql.append(" cota.numeroCota = ");
-        hql.append(numero);
+        query.setParameter("numeroCota", numero);
         
-        hql.append(" GROUP BY rankingFaturamento.cota ");
-        
-        final Query query = super.getSession().createQuery(hql.toString());
-        
-        this.setParameters(query, parameters);
+        query.addScalar("nomePessoa", StandardBasicTypes.STRING);
+        query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+        query.addScalar("tipoDistribuicaoCota", StandardBasicTypes.STRING);
+        query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("dataGeracao", StandardBasicTypes.DATE);
+        query.addScalar("rankId", StandardBasicTypes.LONG);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(HistoricoVendaPopUpCotaDto.class));
         

@@ -25,9 +25,6 @@ public class DefinicaoBasesDAO {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
-	@Value("#{query_estudo.queryEdicoesLancamentos}")
-	private String queryEdicoesLancamentos;
-	
 	@Value("#{query_estudo.queryEdicoesLancamentosBasesIcd}")
 	private String queryEdicoesLancamentosBasesIcd;
 

@@ -478,13 +478,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	public void confirmarContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
 		
 		confirmarValoresContagemDevolucao(listaContagemDevolucao, usuario);
-		
-        // FIXME: ajustar função de confirmar para geração de notas ou impressão
-        // de CE de acordo com a obrigação fiscal.
-		gerarNotasFiscaisPorFornecedor(listaContagemDevolucao, usuario, false);
-		
 	}
-	
 	
 	private void confirmarValoresContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) {
 		
