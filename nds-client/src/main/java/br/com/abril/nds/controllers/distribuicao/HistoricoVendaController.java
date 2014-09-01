@@ -293,7 +293,7 @@ public class HistoricoVendaController extends BaseController {
 			
 			suma.setNumeroCota(suma.getNumeroCota() + (dto.getNumeroCota() == null ? 0 : 1));
 			suma.setQtdPdv(dto.getQtdPdv() + suma.getQtdPdv());
-			suma.setReparteMedio(dto.getReparteMedio() + suma.getReparteMedio());
+			suma.setReparteMedio((dto.getReparteMedio() != null ? dto.getReparteMedio() : 0d)  + suma.getReparteMedio());
 			
 			if (dto.getVendaMedia() != null){
 				suma.setVendaMedia(dto.getVendaMedia() + suma.getVendaMedia());
