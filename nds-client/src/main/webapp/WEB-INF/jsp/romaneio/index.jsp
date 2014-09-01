@@ -52,7 +52,7 @@
 	         			<tr>
 	         				<td width="54">Data:</td>
     						<td width="104">
-    							<input type="text" id="dataLancamento" style="width:70px;" value="${dataAtual}" 
+    							<input type="text" id="romaneio-dataLancamento" style="width:70px;" value="${dataAtual}" 
     								   onchange="romaneiosController.pesquisarProdutos();" />
     						</td>
 	              			<td width="24">Box:</td>

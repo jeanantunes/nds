@@ -66,7 +66,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
-		hql.append("	estudoPDV_.PDV_ID as idPDV, "); 
+		hql.append("	pdvs_.ID as idPDV, "); 
 		hql.append("	notaenvio_.NUMERO_COTA as numeroCota, ");
 		hql.append("    notaenvio_.NOME_DESTINATARIO as nome, ");
 		hql.append("    cota_.ID as idCota, ");
@@ -114,31 +114,22 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" from LANCAMENTO lancamento_ "); 
-
-		hql.append(" join ESTUDO estudo_ on estudo_.ID  = lancamento_.ESTUDO_ID ");
-		hql.append(" join ESTUDO_COTA estudo_cota_ on estudo_.ID  = estudo_cota_.ESTUDO_ID ");
-		
-		hql.append(" join COTA cota_ on cota_.ID=estudo_cota_.COTA_ID ");
-		hql.append(" left join BOX box_ on cota_.BOX_ID=box_.ID ");
-		hql.append(" join PDV pdvs_ on cota_.ID=pdvs_.COTA_ID ");
-		
-
-		hql.append(" join ESTUDO_GERADO estudoGerado_ on estudoGerado_.ID = estudo_.ID ");
-		hql.append(" join ESTUDO_PDV estudoPDV_ on estudoPDV_.ESTUDO_ID = estudoGerado_.ID and estudoPDV_.COTA_ID = cota_.ID ");
-		hql.append(" join ROTA_PDV rotas_ on estudoPDV_.PDV_ID=rotas_.PDV_ID ");
-		hql.append(" join ROTA rota_ on rotas_.ROTA_ID=rota_.ID ");
-		hql.append(" join ROTEIRO roteiro_ on rota_.ROTEIRO_ID=roteiro_.ID  ");
-		
-		hql.append(" join NOTA_ENVIO notaenvio_ on notaenvio_.NUMERO_COTA=cota_.NUMERO_COTA ");
-		hql.append(" join NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID ");
-		hql.append(" join ENDERECO_PDV enderecoPDV_ on enderecoPDV_.PDV_ID = estudoPDV_.PDV_ID ");
-		hql.append(" join ENDERECO endereco_ on endereco_.ID = enderecoPDV_.ENDERECO_ID ");
-		hql.append(" join PRODUTO_EDICAO produtoEdicao_ on produtoEdicao_.ID = lancamento_.PRODUTO_EDICAO_ID ");
-		
+		hql.append(" from LANCAMENTO lancamento_                                                                   ");
+		hql.append(" INNER join ESTUDO estudo_ on estudo_.ID = lancamento_.ESTUDO_ID                               ");
+		hql.append(" INNER join ESTUDO_COTA estudo_cota_ on estudo_.ID = estudo_cota_.ESTUDO_ID                    ");
+		hql.append(" INNER join COTA cota_ on cota_.ID=estudo_cota_.COTA_ID                                        ");
+		hql.append(" left outer join BOX box_ on cota_.BOX_ID=box_.ID                                              ");
+		hql.append(" INNER JOIN PDV pdvs_ on pdvs_.COTA_ID  = cota_.ID                                             ");
+		hql.append(" INNER JOIN ENDERECO_PDV epdv on epdv.PDV_ID = pdvs_.id                                        ");
+		hql.append(" INNER JOIN ENDERECO endereco_ on epdv.ENDERECO_ID = endereco_.ID                              ");
+		hql.append(" INNER JOIN ROTA_PDV rotas_ on pdvs_.ID=rotas_.PDV_ID                                          ");
+		hql.append(" INNER JOIN ROTA rota_ on rotas_.ROTA_ID=rota_.ID                                              ");
+		hql.append(" INNER join ROTEIRO roteiro_ on rota_.ROTEIRO_ID=roteiro_.ID                                   ");
+		hql.append(" INNER JOIN NOTA_ENVIO notaenvio_ on notaenvio_.NUMERO_COTA=cota_.NUMERO_COTA                      ");
+		hql.append(" INNER JOIN NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID   ");
 		hql.append(" where ");
 		hql.append(" cota_.NUMERO_COTA=notaenvio_.NUMERO_COTA ");
-		hql.append(" and enderecoPDV_.PRINCIPAL = :pontoPrincipal ");
+		// hql.append(" and enderecoPDV_.PRINCIPAL = :pontoPrincipal ");
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
 		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
@@ -146,7 +137,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if(filtro.getIdBox() == null) {
 			
-			hql.append(" and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
+			// hql.append(" and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
 			
 		} else {
 			
@@ -178,7 +169,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" and lancamento_.PRODUTO_EDICAO_ID in (:produtos) ");
 		}
 		
-		hql.append(" group by estudoPDV_.PDV_ID ");
+		hql.append(" group by pdvs_.ID, box_.ID, notaenvio_.NUMERO, notaenvio_.NUMERO_COTA, concat(endereco_.TIPO_LOGRADOURO,' ',endereco_.LOGRADOURO,', ',endereco_.NUMERO,', ',endereco_.BAIRRO,', ',endereco_.CIDADE,', ',endereco_.UF,' - ',endereco_.CEP) ");
 
 		return hql.toString();
 	}
@@ -257,7 +248,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO.name());
 		
-		query.setParameter("pontoPrincipal", true);
+		// query.setParameter("pontoPrincipal", true);
 		
 		query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO.name());
 	
@@ -320,8 +311,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		StringBuilder hql = new StringBuilder();
 			
-		hql.append("select count( count.pdvID ) from ");
-		hql.append(" (select estudoPDV_.PDV_ID as pdvID ");
+		hql.append("select count( count.idPDV ) from ");
+		hql.append(" (select pdvs_.ID as idPDV ");
 		hql.append(getSqlFromEWhereRomaneio(filtro));
 		hql.append(" ) as count ");
 			
@@ -359,7 +350,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
-		hql.append("	estudoPDV_.PDV_ID as idPDV, "); 
+		hql.append("	pdvs_.ID as idPDV, "); 
 		hql.append("	notaenvio_.NUMERO_COTA as numeroCota, ");
 		hql.append("    notaenvio_.NOME_DESTINATARIO as nome, ");
 		hql.append("    cota_.ID as idCota, ");

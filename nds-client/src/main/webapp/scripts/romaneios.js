@@ -30,7 +30,7 @@ var romaneiosController = $.extend(true, {
 				sortable : false,
 				align : 'left'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -40,14 +40,14 @@ var romaneiosController = $.extend(true, {
 			height : 150
 		});
 		
-		$( "#dataLancamento", romaneiosController.workspace ).datepicker({
+		$( "#romaneio-dataLancamento", romaneiosController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath +"/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true,
 			dateFormat : 'dd/mm/yy'
 		});
 		
-		$("#dataLancamento", romaneiosController.workspace).mask("99/99/9999");
+		$("#romaneio-dataLancamento", romaneiosController.workspace).mask("99/99/9999");
 		
 		$("#selectProdutos", romaneiosController.workspace).multiselect({
 			selectedList : 6
@@ -70,7 +70,7 @@ var romaneiosController = $.extend(true, {
 		
 		var params = [];
 		
-		params.push({name: 'filtro.data',      	value: $("#dataLancamento", romaneiosController.workspace).val()});
+		params.push({name: 'filtro.data',      	value: $("#romaneio-dataLancamento", romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idBox', 	value:$('#codigoBox', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idRoteiro', 	value:$('#idRoteiro', romaneiosController.workspace).val()});
 		params.push({name: 'filtro.idRota',    	value:$('#idRota', romaneiosController.workspace).val()});
@@ -147,7 +147,7 @@ var romaneiosController = $.extend(true, {
 	
 	pesquisarProdutos : function(){
 		
-		var data = $("#dataLancamento", romaneiosController.workspace).val();
+		var data = $("#romaneio-dataLancamento", romaneiosController.workspace).val();
 		
 		if (data){
 		
