@@ -115,6 +115,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" from LANCAMENTO lancamento_                                                                   ");
+		hql.append(" INNER join PRODUTO_EDICAO pe_ on lancamento_.PRODUTO_EDICAO_ID =  pe_.ID                      ");
 		hql.append(" INNER join ESTUDO estudo_ on estudo_.ID = lancamento_.ESTUDO_ID                               ");
 		hql.append(" INNER join ESTUDO_COTA estudo_cota_ on estudo_.ID = estudo_cota_.ESTUDO_ID                    ");
 		hql.append(" INNER join COTA cota_ on cota_.ID=estudo_cota_.COTA_ID                                        ");
@@ -125,7 +126,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" INNER JOIN ROTA_PDV rotas_ on pdvs_.ID=rotas_.PDV_ID                                          ");
 		hql.append(" INNER JOIN ROTA rota_ on rotas_.ROTA_ID=rota_.ID                                              ");
 		hql.append(" INNER join ROTEIRO roteiro_ on rota_.ROTEIRO_ID=roteiro_.ID                                   ");
-		hql.append(" INNER JOIN NOTA_ENVIO notaenvio_ on notaenvio_.NUMERO_COTA=cota_.NUMERO_COTA                      ");
+		hql.append(" INNER JOIN NOTA_ENVIO notaenvio_ on notaenvio_.NUMERO_COTA=cota_.NUMERO_COTA                  ");
 		hql.append(" INNER JOIN NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID   ");
 		hql.append(" where ");
 		hql.append(" cota_.NUMERO_COTA=notaenvio_.NUMERO_COTA ");
@@ -373,10 +374,10 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {
 		
 			if (filtro.getProdutos().size() == 1) {
-				
-				hql.append(",round(estudoPDV_.REPARTE/produtoEdicao_.PACOTE_PADRAO) as pacote ");
-				hql.append(",mod(estudoPDV_.REPARTE,produtoEdicao_.PACOTE_PADRAO) as quebra ");
-				hql.append(",estudoPDV_.REPARTE as reparteTotal ");
+				// 
+				hql.append(",round(estudo_cota_.REPARTE / pe_.PACOTE_PADRAO) as pacote ");
+				hql.append(",mod(estudo_cota_.REPARTE, pe_.PACOTE_PADRAO) as quebra ");
+				hql.append(",estudo_cota_.REPARTE as reparteTotal ");
 				
 			} else {
 				
