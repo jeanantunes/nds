@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
@@ -203,29 +204,29 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 
 	public void consolidar(HistogramaPosEstudoAnaliseFaixaReparteDTO consolidar) {
 		
+		this.setQtdCotas(
+				this.getQtdCotas().add(consolidar.getQtdCotas())
+			);
 		this.setReparteTotal(
 			this.getReparteTotal().add(consolidar.getReparteTotal())
 		);
 		this.setReparteMedio(
-			this.getReparteMedio().add(consolidar.getReparteMedio())
+			this.getReparteTotal().divide(BigDecimal.valueOf(this.getQtdCotas().intValue()), 4, RoundingMode.HALF_EVEN)
 		);
 		this.setVendaNominal(
 			this.getVendaNominal().add(consolidar.getVendaNominal())
 		);
 		this.setVendaMedia(
-			this.getVendaMedia().add(consolidar.getVendaMedia())
+			this.getVendaNominal().divide(BigDecimal.valueOf(this.getQtdCotas().doubleValue()), 4, RoundingMode.HALF_EVEN)
 		);
 		this.setVendaPercent(
-			this.getVendaPercent().add(consolidar.getVendaPercent())
+			this.getVendaNominal().divide(this.getReparteTotal(), 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100))
 		);
 		this.setEncalheMedio(
-			this.getEncalheMedio().add(consolidar.getEncalheMedio())
+			this.getReparteMedio().subtract(this.getVendaMedia())
 		);
 		this.setParticipacaoReparte(
 			this.getParticipacaoReparte().add(consolidar.getParticipacaoReparte())
-		);
-		this.setQtdCotas(
-			this.getQtdCotas().add(consolidar.getQtdCotas())
 		);
 		this.setQtdCotaPossuemReparteMenorVenda(
 			this.getQtdCotaPossuemReparteMenorVenda().add(consolidar.getQtdCotaPossuemReparteMenorVenda())
