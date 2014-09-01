@@ -16,7 +16,7 @@ public class IntegracaoCRPWebServiceTest  {
 		
 		//"NDS", 1, "68252618000182"
 		//"NDS", 2, "04113953864"
-		ftfService.obterDadosFiscais("NDS", 2, "04113953864");
+		ftfService.obterDadosFiscais(2, "04113953864");
 		
 	}
 }

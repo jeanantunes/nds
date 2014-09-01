@@ -19,7 +19,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.ParametroFTFGeracao;
@@ -70,6 +72,11 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 	public FTFEnvTipoRegistro00 obterRegistroTipo00(long idNaturezaOperacao) {
 		
 		FTFEnvTipoRegistro00 reg00 = popularRegistro00(idNaturezaOperacao);
+		
+		if(reg00 == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas na configuração da Natureza de Operação para o FTF.");
+		}
 		
 		reg00.setDataGeracao(DateUtil.formatarData(GregorianCalendar.getInstance().getTime(), Constantes.DATE_PATTERN_PT_BR));
 
@@ -494,7 +501,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" endereco.CIDADE as cidade, ")
 		.append(" cast(endereco.CODIGO_CIDADE_IBGE as char) as codigoIBGE, ")
 		.append(" endereco.UF as siglaEstado, ")
-		.append(" endereco.CEP as cep, ")
+		.append(" replace(endereco.CEP, '-', '') as cep, ")
 		.append(" '' as codigoPais, ")
 		.append(" '' as nomePais, ")
 		.append(" '' as codigoCGL, ")

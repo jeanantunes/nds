@@ -5,6 +5,6 @@ import v1.pessoadetalhe.ebo.abril.types.PessoaDto;
 
 public interface PessoaCRPWSService {
 
-	public PessoaDto obterDadosFiscais(String codSistema,Integer codTipoDoc,String numDoc);
+	public PessoaDto obterDadosFiscais(Integer codTipoDoc,String numDoc);
 	
 }
