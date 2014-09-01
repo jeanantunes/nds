@@ -177,16 +177,6 @@ var analiseHistoricoVendaController = $.extend(true, {
 		};
 	},
 	
-	popularPopUpInformacoesCota : function(cotaDto){
-		if(cotaDto){
-		       $('#popUpNumeroCota', analiseHistoricoVendaController.workspace).text(cotaDto.numeroCota);
-		       $('#popUpNomePessoa', analiseHistoricoVendaController.workspace).text(cotaDto.nomePessoa);
-		       $('#popUpTipoCota', analiseHistoricoVendaController.workspace).text(cotaDto.tipoDistribuicaoCota);
-		       $('#popUpRanking', analiseHistoricoVendaController.workspace).text(cotaDto.rankId);
-		       $('#popUpFaturamentoCota', analiseHistoricoVendaController.workspace).text(cotaDto.faturamentoFormatado);
-		       $('#popUpData', analiseHistoricoVendaController.workspace).text(cotaDto.dataGeracaoFormat);
-		  }
-	},
 	
 	preProcessPopUpGrid : function preProcessPopUpGrid(response){
 		
@@ -207,6 +197,26 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 		return response.tableModel;
 		
+	},
+
+	popularPopUpInformacoesCota : function(cotaDto){
+		if(cotaDto){
+			$('#popUpNumeroCota').text(cotaDto.numeroCota);
+			$('#popUpNomePessoa').text(cotaDto.nomePessoa);
+			$('#popUpTipoCota').text(cotaDto.tipoDistribuicaoCota);
+			$('#popUpRanking').text(cotaDto.rankId);
+			$('#popUpFaturamentoCota').text(cotaDto.faturamentoFormatado);
+			$('#popUpData').text(cotaDto.dataGeracaoFormat);
+		}
+	},
+	
+	limparPopUpInformacoesCota : function(cotaDto){
+		       $('#popUpNumeroCota').text('');
+		       $('#popUpNomePessoa').text('');
+		       $('#popUpTipoCota').text('');
+		       $('#popUpRanking').text('');
+		       $('#popUpFaturamentoCota').text('');
+		       $('#popUpData').text('');
 	},
 	
 	preProcessAnaliseGrid : function preProcessAnaliseGrid(result){
@@ -281,7 +291,10 @@ var analiseHistoricoVendaController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 				}
-			}
+			},
+			beforeClose: function() {
+	        	analiseHistoricoVendaController.limparPopUpInformacoesCota();
+	        }
 		});
 	}
 	

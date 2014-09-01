@@ -109,7 +109,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 				Long idBox = null;
 				
 				RomaneioModelo01DTO dto = null;
-				for (RomaneioDTO romaneio : lstRomaneioDTO){
+for (RomaneioDTO romaneio : lstRomaneioDTO){
 					
 					if (idBox != null && idBox.equals(romaneio.getIdBox())
 							&& idRoteiro.equals(romaneio.getIdRoteiro())

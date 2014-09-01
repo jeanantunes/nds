@@ -56,9 +56,8 @@ public class HistoricoVendaPopUpCotaDto {
 		return tipoDistribuicaoCota;
 	}
 
-	public void setTipoDistribuicaoCota(
-			TipoDistribuicaoCota tipoDistribuicaoCota) {
-		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = TipoDistribuicaoCota.valueOf(tipoDistribuicaoCota);
 	}
 
 	public Long getRankId() {
