@@ -35,6 +35,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     	
     	if((filtro.getIdLancamento()!=null) && (lancamentoRepository.isLancamentoParcial(filtro.getIdLancamento()))){
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(filtro, true);
+    		
     	}else{
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(filtro);
     	}
@@ -81,7 +82,6 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     	
     	return prodEdicaoParabaseEstudo;
     	
-//    	return distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
     }
 
 }

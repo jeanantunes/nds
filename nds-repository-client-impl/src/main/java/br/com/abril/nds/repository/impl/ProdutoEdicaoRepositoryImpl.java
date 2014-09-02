@@ -550,7 +550,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append("       select ");
 		
-		hql.append("           min(l.id) ");
+		hql.append("           MAX(l.id) ");
 		
 		hql.append("       from ");
 		

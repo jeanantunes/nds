@@ -9,6 +9,7 @@ public class EdicaoBaseEstudoDTO {
 	private BigInteger numeroEdicao;
 	private BigInteger peso;
 	private boolean isParcial;
+	private boolean isParcialConsolidado;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -48,6 +49,14 @@ public class EdicaoBaseEstudoDTO {
 
 	public void setParcial(boolean isParcial) {
 		this.isParcial = isParcial;
+	}
+
+	public boolean isParcialConsolidado() {
+		return isParcialConsolidado;
+	}
+
+	public void setParcialConsolidado(boolean isParcialConsolidado) {
+		this.isParcialConsolidado = false;
 	}
 
 }

@@ -401,10 +401,15 @@ public class EstudoAlgoritmoService {
                 ed.getProduto().setId(base.getIdProduto());
                 ed.setNumeroEdicao(base.getNumeroEdicao());
                 ed.setIndicePeso(new BigDecimal(base.getPeso()));
-                ed.setPeriodo(base.getPeriodo());
                 ed.setParcial(base.isParcial());
                 ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
                 ed.setDataLancamento(base.getDataLancamento());
+                ed.setParcialConsolidada(base.isParcialConsolidado());
+                
+                if(!base.isParcialConsolidado()){
+                	ed.setPeriodo(base.getPeriodo());
+                }
+                
                 edicoesBase.add(ed);
             }
             estudo.setEdicoesBase(edicoesBase);

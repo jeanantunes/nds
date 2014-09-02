@@ -56,6 +56,9 @@ public class CotaDAO {
 
     @Value("#{query_estudo.queryHistoricoCotaParcial}")
     private String queryHistoricoCotaParcial;
+    
+    @Value("#{query_estudo.queryHistoricoCotaParcialConsolidada}")
+    private String queryHistoricoCotaParcialConsolidada;
 
     @Value("#{query_estudo.queryComponentesCota}")
     private String queryComponentesCota;
@@ -259,7 +262,24 @@ public class CotaDAO {
     	Map<String, Object> params = new HashMap<>();
 		params.put("produto_edicao_id", edicao.getId());
 
-		List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
+		String query;
+		
+		if(edicao.isParcial()){
+			if(edicao.isParcialConsolidada()){
+				query = queryHistoricoCotaParcialConsolidada;
+			}else{
+				params.put("dtLancamento", edicao.getDataLancamento());
+				params.put("numero_periodo", edicao.getPeriodo());
+				query = queryHistoricoCotaParcial;
+			}
+		
+		}else{
+			query = queryHistoricoCota;
+		}
+		
+		List<CotaEstudo> historicoCotas = jdbcTemplate.query(query, params, new RowMapper<CotaEstudo>() {
+		
+		
 		    
 			@Override
 		    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {

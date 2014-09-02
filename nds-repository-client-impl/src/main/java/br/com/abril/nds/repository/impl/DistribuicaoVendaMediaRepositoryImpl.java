@@ -48,6 +48,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     p.id idProduto, ");
         sql.append("     p.codigo codigoProduto, ");
         sql.append("     p.nome nome, ");
+        sql.append("     l.id idLancamento, ");
         
         if (!filtro.isConsolidado()) {
             
@@ -90,7 +91,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
 
         sql.append(" where l.status in (:statusLancamento) ");
-        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento ");
+//        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento "); PSAN-139
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
@@ -144,7 +145,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                 Arrays.asList(
                         StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
         
-        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
+//        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
 		
 		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 		return query.list();
@@ -170,6 +171,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     	sql.append(" T.idClassificacao,                                                   ");
     	sql.append(" T.classificacao,                                                     ");
 //    	sql.append(" if(T.periodo>1, true, false) as consolidado,                         ");
+    	sql.append(" true as isParcialConsolidado,                  				       ");
     	sql.append(" SUM(T.REPARTE) as reparte,                                           ");
     	sql.append(" SUM(T.venda) as venda                                                ");
 		
@@ -277,6 +279,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		query.addScalar("nome", StandardBasicTypes.STRING);
 		query.addScalar("periodo", StandardBasicTypes.INTEGER);
 		query.addScalar("parcial", StandardBasicTypes.INTEGER);
+		query.addScalar("isParcialConsolidado", StandardBasicTypes.BOOLEAN);
 		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
 		query.addScalar("status", StandardBasicTypes.STRING);
 		query.addScalar("idClassificacao", StandardBasicTypes.BIG_INTEGER);

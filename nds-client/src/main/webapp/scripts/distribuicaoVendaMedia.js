@@ -601,6 +601,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].dataLancamento", value : produtoEdicao.dataLancamentoFormatada});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].status", value : produtoEdicao.status});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].parcialConsolidado", value : produtoEdicao.isParcialConsolidado});
+				
 			}
 		}
 		

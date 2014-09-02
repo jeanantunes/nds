@@ -125,7 +125,6 @@ public class HistogramaPosEstudoController extends BaseController{
 
 		String modoAnalise = "NORMAL";
 		if (estudo.isParcial()) {
-//			selecionado.setPeriodicidadeProduto(estudo.getPeriodicidade().getOrdem());
 			
 			selecionado.setPeriodicidadeProduto(periodoLancamentoParcialService.obterPeriodoPorIdLancamento(selecionado.getIdLancamento()).getNumeroPeriodo());
 			
