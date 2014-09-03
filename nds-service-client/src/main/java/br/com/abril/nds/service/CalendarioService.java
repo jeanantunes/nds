@@ -125,7 +125,7 @@ public interface CalendarioService {
 	public byte[] obterRelatorioCalendarioFeriado(FileType fileType,
 			TipoPesquisaFeriado tipoPesquisaFeriado, int mes, int ano,InputStream logoDistribuidor);
 
-	    /**
+	/**
      * Verifica se a data possui feriados que não operam
      * 
      * @param data
@@ -133,7 +133,15 @@ public interface CalendarioService {
      */
 	boolean isFeriadoSemOperacao(Date data);
 	
-	    /**
+	/**
+     * Verifica se a data possui feriados que operam
+     * 
+     * @param data
+     * @return
+     */
+	boolean isFeriadoComOperacao(Date data);
+	
+	/**
      * Verifica se a data possui feriados Municipais que não operam
      * 
      * @param data
@@ -155,4 +163,6 @@ public interface CalendarioService {
     public abstract boolean isDiaOperante(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor);
 
     public abstract Date adicionarDiasUteis(final Date data, final int numDias, String localidade);
+
+	boolean isFeriado(Date data);
 }

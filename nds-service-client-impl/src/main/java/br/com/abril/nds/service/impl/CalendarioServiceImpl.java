@@ -187,7 +187,6 @@ public class CalendarioServiceImpl implements CalendarioService {
         }
         
         return false;
-        
     }
     
     @Override
@@ -204,7 +203,23 @@ public class CalendarioServiceImpl implements CalendarioService {
         
         return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal, null));
     }
-    
+
+    @Override
+    @Transactional
+    public boolean isFeriado(final Date data) {
+        
+        if (data == null) {
+            
+            return false;
+        }
+        
+        final Calendar cal = Calendar.getInstance();
+        
+        cal.setTime(data);
+        
+        return isFeriado(cal, null);
+    }
+
     protected boolean isFeriado(final Calendar cal) {
         return isFeriado(cal, null);
     }
@@ -221,8 +236,6 @@ public class CalendarioServiceImpl implements CalendarioService {
         
         return false;
     }
-    
-    
     
     private void tratarTipoFeriado(final CalendarioFeriadoDTO calendarioFeriado) {
         
@@ -689,7 +702,6 @@ public class CalendarioServiceImpl implements CalendarioService {
     public List<String> obterListaLocalidadePdv() {
         
         return enderecoService.obterListaLocalidadePdv();
-        
     }
     
     @Override
@@ -702,6 +714,18 @@ public class CalendarioServiceImpl implements CalendarioService {
         }
         
         return feriadoRepository.isNaoOpera(data);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isFeriadoComOperacao(final Date data) {
+        
+        if (data == null) {
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
+        }
+        
+        return feriadoRepository.isOpera(data);
     }
     
     @Override
