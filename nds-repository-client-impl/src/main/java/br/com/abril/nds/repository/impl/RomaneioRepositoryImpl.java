@@ -121,6 +121,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" INNER join COTA cota_ on cota_.ID=estudo_cota_.COTA_ID                                        ");
 		hql.append(" left outer join BOX box_ on cota_.BOX_ID=box_.ID                                              ");
 		hql.append(" INNER JOIN PDV pdvs_ on pdvs_.COTA_ID  = cota_.ID                                             ");
+		hql.append(" left outer join ESTUDO_PDV estpdv_ on pdvs_.ID = estpdv_.PDV_ID and cota_.ID = estpdv_.cota_id and estpdv_.ESTUDO_ID = estudo_.ID                               ");
 		hql.append(" INNER JOIN ENDERECO_PDV epdv on epdv.PDV_ID = pdvs_.id                                        ");
 		hql.append(" INNER JOIN ENDERECO endereco_ on epdv.ENDERECO_ID = endereco_.ID                              ");
 		hql.append(" INNER JOIN ROTA_PDV rotas_ on pdvs_.ID=rotas_.PDV_ID                                          ");
@@ -377,7 +378,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				// 
 				hql.append(",round(estudo_cota_.REPARTE / pe_.PACOTE_PADRAO) as pacote ");
 				hql.append(",mod(estudo_cota_.REPARTE, pe_.PACOTE_PADRAO) as quebra ");
-				hql.append(",estudo_cota_.REPARTE as reparteTotal ");
+				hql.append(",COALESCE(estpdv_.REPARTE, estudo_cota_.REPARTE) as reparteTotal ");
 				
 			} else {
 				
