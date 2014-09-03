@@ -165,6 +165,8 @@ public class CotaEmissaoDTO implements Serializable{
 	
 	private List<ProdutoEmissaoDTO> produtos;
 	
+	private Long qtdGrupoCota;
+	
 	public String getDestinatarioCNPJ() {
 		return destinatarioCNPJ;
 	}
@@ -285,7 +287,6 @@ public class CotaEmissaoDTO implements Serializable{
 	public void setDestinatarioDescricaoRota(String destinatarioDescricaoRota) {
 		this.destinatarioDescricaoRota = destinatarioDescricaoRota;
 	}
-
 	public CotaEmissaoDTO() {
 		
 	}
@@ -872,4 +873,13 @@ public class CotaEmissaoDTO implements Serializable{
 	public void setDistribuidorDTO(DistribuidorDTO distribuidorDTO) {
 		this.distribuidorDTO = distribuidorDTO;
 	}
+	
+    public Long getQtdGrupoCota() {
+        return qtdGrupoCota;
+    }
+
+    public void setQtdGrupoCota(Long qtdGrupoCota) {
+        this.qtdGrupoCota = qtdGrupoCota;
+    }
+	
 }

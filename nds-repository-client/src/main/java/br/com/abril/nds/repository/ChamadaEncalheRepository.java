@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.BandeirasDTO;
@@ -36,11 +37,7 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 
 	List<CotaEmissaoDTO> obterDadosEmissaoImpressaoChamadasEncalhe(FiltroEmissaoCE filtro);
 
-	List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
-			FiltroEmissaoCE filtro, 
-			Long idCota, 
-			List<Date> datasControleFechamentoEncalhe, 
-			List<Date> datasControleConferenciaEncalheCotaFinalizada);
+	Map<Long, List<ProdutoEmissaoDTO>> obterProdutosEmissaoCE(FiltroEmissaoCE filtro);
 	
 	List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dataDe, Date dataAte);
 

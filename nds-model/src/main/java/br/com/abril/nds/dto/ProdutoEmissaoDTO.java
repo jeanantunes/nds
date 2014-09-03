@@ -61,6 +61,10 @@ public class ProdutoEmissaoDTO implements Serializable{
 	private Integer quantidadeReparte;
 	
 	private String TR;
+
+	private Long idCota;
+	
+	private Date dataRecolhimento;
 	
 	/**
 	 * A flag abaixo indica se a instância
@@ -381,4 +385,21 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setTR(String tR) {
 		TR = tR;
 	}
+    
+    public Long getIdCota() {
+        return idCota;
+    }
+    
+    public void setIdCota(Long idCota) {
+        this.idCota = idCota;
+    }
+
+    public Date getDataRecolhimento() {
+        return dataRecolhimento;
+    }
+
+    public void setDataRecolhimento(Date dataRecolhimento) {
+        this.dataRecolhimento = dataRecolhimento;
+    }
+    
 }
