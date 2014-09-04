@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -19,7 +20,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.DateType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -215,49 +215,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		query.setParameterList("idsLancamento", idsLancamento);
 		
 		return  query.list();
-	}
-
-	/**
-	 * SubHql que obtém a quantidade total prevista da chamada de encalhe ou  
-	 * o valor total da chamada de encalhe calculado pela somatória das qntidades 
-	 * previstas multiplicada pelo preco de venda do produto edição.
-	 * 
-	 * @param filtro
-	 * @param indValorTotalProdutos
-	 * 
-	 * @return String
-	 */
-	private String getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(FiltroEmissaoCE filtro, boolean indValorTotalProdutos) {
-		
-		StringBuffer hql = new StringBuffer();
-		
-		if(indValorTotalProdutos) {
-			
-			hql.append(" select sum( _chamEncCota.qtdePrevista * _produtoEdicao.precoVenda ) ");
-			
-		} else {
-			
-			hql.append(" select sum(_chamEncCota.qtdePrevista) 				");
-		}
-		
-		hql.append(" from ChamadaEncalheCota _chamEncCota 					")
-		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
-		.append(" join _chamEncCota.cota _cota 							")
-		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
-		.append(" where _cota.id = cota.id ")
-		.append(" and _chamEncCota.postergado = :isPostergado ");
-
-		if(filtro.getDtRecolhimentoDe() != null) {
-			
-			hql.append(" and _chamadaEncalhe.dataRecolhimento >=:dataDe ");
-		}
-		
-		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(" and _chamadaEncalhe.dataRecolhimento <=:dataAte ");
-		}
-		
-		return hql.toString();
-		
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -626,15 +583,15 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" select  						");
 		
 		hql.append("chamEncCota.id as idChamEncCota,	");
-		
+		hql.append("(select count(c.id) from GrupoCota gc join gc.cotas c where c.id=cota.id) as qtdGrupoCota, ");
 		hql.append(" cota.numeroCota as numCota, 							");
 		hql.append(" chamadaEncalhe.dataRecolhimento as dataRecolhimento, 	");
 		hql.append(" cota.id as idCota, 										");
 		hql.append(" case pessoa.class ");
 		hql.append("       when 'F' then pessoa.nome ");
 		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
-		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false)).append(" ) as qtdeExemplares, ");	
-		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true)).append(" ) as vlrTotalCe, ");	
+		hql.append(" sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");
+		hql.append(" sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");	
 		hql.append(" box.codigo as box, 						");
 		hql.append(" box.nome as nomeBox, 						");
 		hql.append(" cast (rota.id as string) as codigoRota, ");
@@ -709,7 +666,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" join _chamEncCota.cota _cota 							")
 		.append(" where _chamadaEncalhe.id = chamadaEncalhe.id ");
 
-		hql.append("and _cota.id =:idCota ");
+		hql.append("and _cota.id = cota.id ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
@@ -725,57 +682,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 	}
 	
-	
-	private StringBuffer obterCaseApresentaQuantidadeEncalhe(List<Date> datasControleFechamentoEncalhe, 
-			List<Date> datasControleConferenciaEncalheCotaFinalizada) {
-		
-		StringBuffer hql  = new StringBuffer();
-		
-		String operacaoDiferenciada = " case when (select count(c.id) from GrupoCota gc join gc.cotas c where c.id=cota.id) = 0 then %s "
-									+ " when chamadaEncalhe.dataRecolhimento between :dataDe AND :dataAte then true "
-									+ " else false end as apresentaQuantidadeEncalhe, ";
-
-		if(	datasControleFechamentoEncalhe!=null &&
-			!datasControleFechamentoEncalhe.isEmpty() && 
-			datasControleConferenciaEncalheCotaFinalizada!=null &&
-			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
-			
-			String caseFechamento = " case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe) "
-								  + " or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  "
-								  + " then true else false end ";
-			
-			return hql.append(String.format(operacaoDiferenciada,caseFechamento));
-				
-		}
-
-		if(	datasControleFechamentoEncalhe!=null &&
-			!datasControleFechamentoEncalhe.isEmpty()) {
-			
-			String caseFechamento = " case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  "
-								  + " then true else false end ";
-			
-			return hql.append(String.format(operacaoDiferenciada,caseFechamento));				
-		}
-		
-		if(	datasControleConferenciaEncalheCotaFinalizada!=null &&
-			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
-				
-			String caseFechamento = " case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) "
-								  + " then true else false end  ";
-				
-			return hql.append(String.format(operacaoDiferenciada,caseFechamento));
-					
-		}
-		
-		return hql;	
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
-			FiltroEmissaoCE filtro, Long idCota, 
-			List<Date> datasControleFechamentoEncalhe, 
-			List<Date> datasControleConferenciaEncalheCotaFinalizada) {
+	public Map<Long, List<ProdutoEmissaoDTO>> obterProdutosEmissaoCE(FiltroEmissaoCE filtro) {
 
 		
 		StringBuffer hqlQtdeEncalhe = new StringBuffer();
@@ -800,7 +709,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, 	");
+		hql.append(" select cota.id as idCota,                              ");
+		hql.append("        produtoEdicao.codigoDeBarras as codigoBarras, 	");
 		hql.append(" 	    produto.codigo as codigoProduto, 				");
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
@@ -810,15 +720,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("		produtoEdicao.precoVenda as precoVenda,    		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
+		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
 		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
 		
 		hql.append(" ( ");
 		hql.append(obterSubHqlQtdeReparte(filtro));
-		hql.append(" ) as reparte,	");	
-		
-		hql.append(
-		obterCaseApresentaQuantidadeEncalhe(datasControleFechamentoEncalhe, 
-				datasControleConferenciaEncalheCotaFinalizada).toString());
+		hql.append(" ) as reparte,	");
 
 		hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
 
@@ -827,19 +735,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("		chamadaEncalhe.sequencia as sequencia, ");
 		
 		
-		hql.append("(select min(notaEnvio.numero) ");
-		hql.append("from chamadaEncalhe subChamadaEncalhe ");
-		hql.append("join subChamadaEncalhe.lancamentos subLancamentos ");
-		hql.append("join subLancamentos.estudo subEstudo ");
-		hql.append("join subEstudo.estudoCotas subEstudoCotas ");
-		hql.append("join subEstudoCotas.itemNotaEnvios itensNotaEnvio ");
-		hql.append("join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio ");
-		hql.append("where subChamadaEncalhe.produtoEdicao.id = produtoEdicao.id ");
-		hql.append("and subEstudoCotas.cota.id = cota.id) as numeroNotaEnvio ");
-				
-		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
+		hql.append(" min(notaEnvio.numero) as numeroNotaEnvio ");
 		
-		hql.append(" group by chamadaEncalhe ");
+		gerarFromWhereProdutosCE(filtro, hql, param);
+		
+		hql.append(" group by chamadaEncalhe, cota.id ");
 		
 		hql.append(" order by chamadaEncalhe.dataRecolhimento, sequencia ");
 		
@@ -847,45 +747,56 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		setParameters(query, param);
 		
-		if(datasControleFechamentoEncalhe!=null && !datasControleFechamentoEncalhe.isEmpty()) {
-			query.setParameterList("datasControleFechamentoEncalhe", datasControleFechamentoEncalhe, DateType.INSTANCE);
-		}
-		
-		if(datasControleConferenciaEncalheCotaFinalizada!=null && !datasControleConferenciaEncalheCotaFinalizada.isEmpty()){
-			query.setParameterList("datasControleConferenciaEncalheCotaFinalizada", datasControleConferenciaEncalheCotaFinalizada, DateType.INSTANCE);
-		}
-		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEmissaoDTO.class));
 		
-		return query.list();
+		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = new HashMap<>(); 
+		
+		List<ProdutoEmissaoDTO> listaProdutoEmissaoCota = query.list();
+		
+		for (ProdutoEmissaoDTO produtoEmissaoDTO : listaProdutoEmissaoCota) {
+		    
+		    List<ProdutoEmissaoDTO> listaProdutoEmissao =
+	            mapProdutosEmissaoCota.get(produtoEmissaoDTO.getIdCota());
+		    
+		    if (listaProdutoEmissao == null) {
+		        
+		        listaProdutoEmissao = new ArrayList<ProdutoEmissaoDTO>();
+		    }
+		    
+		    listaProdutoEmissao.add(produtoEmissaoDTO);
+		    
+		    mapProdutosEmissaoCota.put(produtoEmissaoDTO.getIdCota(), listaProdutoEmissao);
+		}
+		
+		return mapProdutosEmissaoCota;
 	}
 
-	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
-			Long idCota) {
+	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
 		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" from ChamadaEncalheCota chamEncCota 					")
 		   .append(" join chamEncCota.chamadaEncalhe chamadaEncalhe 		")
-		   .append(" join chamEncCota.cota cota 							")
-		   .append(" join cota.pessoa pessoa 								")
+		   .append(" join chamEncCota.cota cota                             ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
 		   .append(" join produtoEdicao.produto produto 					")
 		   .append(" join produto.fornecedores fornecedores 				")
 		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
+		   
+		   .append("left join lancamentos.estudo estudo ")
+           
+		   .append("left join estudo.estudoCotas estudoCotas ")
+           .append("left join estudoCotas.itemNotaEnvios itensNotaEnvio ")
+           .append("left join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio ")
+		   
 		   .append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
 		   .append(" left join movimentoCota.tipoMovimento tipoMovimento         ")
-		   .append(" left join movimentoCota.cota cotaMov ")
-		   .append(" where cota.id=:idCota 									")
-		   .append(" and produtoEdicao.id = produtoEdicao.id  	")
-		   .append(" and (movimentoCota.id is null or ")
-		   .append(" 	  movimentoCota.cota.id = :idCota)	")
+		   .append(" where (movimentoCota.id is null or movimentoCota.cota = cota)	")
+		   .append(" and (estudoCotas.id is null or estudoCotas.cota = cota)  ")
 		   .append(" and chamEncCota.qtdePrevista>0  ")
 		   .append(" and chamEncCota.postergado = :isPostergado ");
 	
 		param.put("isPostergado", false);
-		
-		param.put("idCota", idCota);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			

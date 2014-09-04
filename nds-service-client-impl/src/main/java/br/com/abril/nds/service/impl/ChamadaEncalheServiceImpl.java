@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.ChamadaEncalheImpressaoWrapper;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
-import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
@@ -473,30 +472,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 	}
 	
-	private List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(FiltroEmissaoCE filtro, Long idCota) {
-		
-		List<Date> datasControleFechamentoEncalhe = 
-				fechamentoEncalheRepository.
-				obterDatasControleFechamentoEncalheRealizado(
-						filtro.getDtRecolhimentoDe(), 
-						filtro.getDtRecolhimentoAte());
-		
-		List<Date> datasControleConferenciaEncalheCotaFinalizada = 
-				controleConferenciaEncalheCotaRepository.
-				obterDatasControleConferenciaEncalheCotaFinalizada(idCota, 
-						filtro.getDtRecolhimentoDe(), 
-						filtro.getDtRecolhimentoAte());
-
-		
-		return chamadaEncalheRepository.obterProdutosEmissaoCE(
-				filtro,
-				idCota, 
-				datasControleFechamentoEncalhe, 
-				datasControleConferenciaEncalheCotaFinalizada);
-	
-	}
-	
-	
 	/**
 	 * Para apresentar (no relatório de Emissao CE - modelo 2)
 	 * a linha adicional abaixo dos produtos que possuem informaçoes 
@@ -549,6 +524,13 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<CotaProdutoEmissaoCEDTO> produtosSupRedist = chamadaEncalheRepository.obterDecomposicaoReparteSuplementarRedistribuicao(filtro);
 		
+		List<Date> datasControleFechamentoEncalhe =
+	        fechamentoEncalheRepository.obterDatasControleFechamentoEncalheRealizado(
+                filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		
+		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota =
+	        chamadaEncalheRepository.obterProdutosEmissaoCE(filtro);
+		
 		for(CotaEmissaoDTO dto : lista) {
 			
 			cota = cotaRepository.obterPorNumeroDaCota( dto.getNumCota());
@@ -595,7 +577,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	                         
 			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
-			dto.setProdutos( obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
+			List<ProdutoEmissaoDTO> produtosEmissao = mapProdutosEmissaoCota.get(dto.getIdCota());
+			
+			List<Date> datasControleConferenciaEncalheCotaFinalizada = 
+		        this.controleConferenciaEncalheCotaRepository.obterDatasControleConferenciaEncalheCotaFinalizada(
+	                dto.getIdCota(), filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+			
+			this.setApresentaQuantidadeEncalhe(
+		        datasControleFechamentoEncalhe, datasControleConferenciaEncalheCotaFinalizada,
+		        produtosEmissao, filtro, dto.getQtdGrupoCota());
+			
+			dto.setProdutos(produtosEmissao);
 			
 			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor, filtro, produtosSupRedist);
 			
@@ -632,6 +624,53 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		return dados;
 		
 	}
+	
+	private void setApresentaQuantidadeEncalhe(List<Date> datasControleFechamentoEncalhe,
+                                               List<Date> datasControleConferenciaEncalheCotaFinalizada,
+                                               List<ProdutoEmissaoDTO> produtosEmissao,
+                                               FiltroEmissaoCE filtro, Long qtdGrupoCota) {
+	 
+	    for (ProdutoEmissaoDTO produtoEmissao : produtosEmissao) {
+	        
+	        produtoEmissao.setApresentaQuantidadeEncalhe(
+                this.isApresentaQuantidadeEncalhe(
+                    datasControleFechamentoEncalhe, datasControleConferenciaEncalheCotaFinalizada, produtoEmissao, filtro, qtdGrupoCota));
+	    }
+	}
+	
+	private boolean isApresentaQuantidadeEncalhe(List<Date> datasControleFechamentoEncalhe,
+	                                             List<Date> datasControleConferenciaEncalheCotaFinalizada,
+	                                             ProdutoEmissaoDTO produtoEmissao,
+	                                             FiltroEmissaoCE filtro,
+	                                             Long qtdGrupoCota) {
+        
+        if (!qtdGrupoCota.equals(0L)) {
+            
+            if((this.existeData(datasControleFechamentoEncalhe)
+                    && datasControleFechamentoEncalhe.contains(produtoEmissao.getDataRecolhimento()))
+                    || (this.existeData(datasControleConferenciaEncalheCotaFinalizada)
+                    && datasControleConferenciaEncalheCotaFinalizada.contains(produtoEmissao.getDataRecolhimento()))) {
+                
+                    return true;
+            } else {
+                    
+                return false;
+            }
+        } else if (DateUtil.validarDataEntrePeriodo(produtoEmissao.getDataRecolhimento(),
+                                                    filtro.getDtRecolhimentoDe(),
+                                                    filtro.getDtRecolhimentoAte())) {
+            return true;
+        } else {
+            
+            return false;
+        }
+    }
+	
+	private boolean existeData(List<Date> datas) {
+	    
+	    return (datas != null && !datas.isEmpty());
+	}
+	
 
 	private static <T> List<List<T>> obterListaPaginada(List<T> listaTotal, final int qtdItensPorPagina){
 		
@@ -718,125 +757,125 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		return chamadaEncalheRepository.obterDadosFornecedoresParaImpressaoBandeira(periodoRecolhimento, fornecedor);
 	}
 
-	@Override
-	@Transactional
-	public byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException{
-		
-		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
-		
-		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
-		
-		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
-		
-		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
-		
-		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
-		
-		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
-		
-		List<CotaProdutoEmissaoCEDTO> produtosSupRedist = chamadaEncalheRepository.obterDecomposicaoReparteSuplementarRedistribuicao(filtro);
-		
-		for(CotaEmissaoDTO dto : lista) {
-			
-			Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());
-			
-			dto.setEmissorNome(distribuidor.getRazaoSocial());
-			dto.setEmissorCNPJ(distribuidor.getCnpj());
-			dto.setEmissorInscricaoEstadual(distribuidor.getInscricaoEstatual());
-			dto.setEmissorCEP(distribuidor.getCep());
-			dto.setEmissorMunicipio(distribuidor.getCidade());
-			dto.setEmissorUF(distribuidor.getUf());
-			dto.setEmissorLogradouro(distribuidor.getEndereco());
-			
-			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
-
-			if(endereco != null) {
-				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
-				dto.setUf(endereco.getUf());
-				dto.setCidade(endereco.getCidade());
-				dto.setUf(endereco.getUf());
-				dto.setCep(endereco.getCep());
-				
-				dto.setDestinatarioLogradouro(dto.getEndereco());
-				dto.setDestinatarioMunicipio(endereco.getCidade());
-				dto.setDestinatarioUF(endereco.getUf());
-				dto.setDestinatarioCEP(endereco.getCep());
-			}
-			
-			if(cota.getPessoa() instanceof PessoaJuridica) {
-				dto.setInscricaoEstadual(((PessoaJuridica) cota.getPessoa()).getInscricaoEstadual());
-			}
-			
-			dto.setNumeroNome(dto.getNumCota()+ " " + ((dto.getNomeCota()!= null)?dto.getNomeCota().toUpperCase():""));
-		
-			dto.setDestinatarioNome(dto.getNomeCota());
-			
-			if(cota.getPessoa() instanceof PessoaJuridica) {
-				dto.setCnpj(Util.adicionarMascaraCNPJ(cota.getPessoa().getDocumento()));
-				dto.setDestinatarioCNPJ(cota.getPessoa().getDocumento());
-			} else {
-				dto.setCnpj(Util.adicionarMascaraCPF(cota.getPessoa().getDocumento()));
-				dto.setDestinatarioCNPJ(cota.getPessoa().getDocumento());
-
-			}
-			
-			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
-			dto.setDestinatarioNomeBox(dto.getBox().toString());
-			
-			String periodoRecolhimento;
-			
-			List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cota.getId(), dataOperacaoDistribuidor);
-			
-			if (gps != null && !gps.isEmpty()){
-			
-			    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
-				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
-				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
-			} else{
-				
-				periodoRecolhimento = dto.getDataRecolhimento();
-			}
-	                         
-			dto.setPeriodoRecolhimento(periodoRecolhimento);
-			
-			dto.setProdutos(this.obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
-			
-			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor, filtro, produtosSupRedist);
-			
-			if(TipoImpressaoCE.MODELO_2.equals(filtro.getTipoImpressao())) {
-				
-				adicionarLinhasProdutoComInformacoesNotaEnvio(dto.getProdutos());
-				
-			}
-			
-			listaCEWrapper.add(new ChamadaEncalheImpressaoWrapper(dto));
-			
-		}
-		
-		// paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
-		
-		if(apresentaCapas) {
-			
-			if(apresentaCapasPersonalizadas) {
-				
-				paginarListaDeCapasPersonalizadas(lista, filtro.getQtdCapasPorPagina());
-			
-			} else {
-				
-				/*
-				dados.setCapasPaginadas( obterIdsCapasChamadaEncalhe(
-								filtro.getDtRecolhimentoDe(), 
-								filtro.getDtRecolhimentoAte(), 
-								filtro.getQtdCapasPorPagina()));
-				*/				
-			}
-			
-		}
-       
-		return this.gerarDocumentoEmissaoCE(listaCEWrapper);
-		
-	}
+//	@Override
+//	@Transactional
+//	public byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException{
+//		
+//		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+//		
+//		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
+//		
+//		DistribuidorDTO distribuidor = distribuidorService.obterDadosEmissao();
+//		
+//		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
+//		
+//		final List<ChamadaEncalheImpressaoWrapper> listaCEWrapper = new ArrayList<ChamadaEncalheImpressaoWrapper>();
+//		
+//		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
+//		
+//		List<CotaProdutoEmissaoCEDTO> produtosSupRedist = chamadaEncalheRepository.obterDecomposicaoReparteSuplementarRedistribuicao(filtro);
+//		
+//		for(CotaEmissaoDTO dto : lista) {
+//			
+//			Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());
+//			
+//			dto.setEmissorNome(distribuidor.getRazaoSocial());
+//			dto.setEmissorCNPJ(distribuidor.getCnpj());
+//			dto.setEmissorInscricaoEstadual(distribuidor.getInscricaoEstatual());
+//			dto.setEmissorCEP(distribuidor.getCep());
+//			dto.setEmissorMunicipio(distribuidor.getCidade());
+//			dto.setEmissorUF(distribuidor.getUf());
+//			dto.setEmissorLogradouro(distribuidor.getEndereco());
+//			
+//			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
+//
+//			if(endereco != null) {
+//				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
+//									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
+//				dto.setUf(endereco.getUf());
+//				dto.setCidade(endereco.getCidade());
+//				dto.setUf(endereco.getUf());
+//				dto.setCep(endereco.getCep());
+//				
+//				dto.setDestinatarioLogradouro(dto.getEndereco());
+//				dto.setDestinatarioMunicipio(endereco.getCidade());
+//				dto.setDestinatarioUF(endereco.getUf());
+//				dto.setDestinatarioCEP(endereco.getCep());
+//			}
+//			
+//			if(cota.getPessoa() instanceof PessoaJuridica) {
+//				dto.setInscricaoEstadual(((PessoaJuridica) cota.getPessoa()).getInscricaoEstadual());
+//			}
+//			
+//			dto.setNumeroNome(dto.getNumCota()+ " " + ((dto.getNomeCota()!= null)?dto.getNomeCota().toUpperCase():""));
+//		
+//			dto.setDestinatarioNome(dto.getNomeCota());
+//			
+//			if(cota.getPessoa() instanceof PessoaJuridica) {
+//				dto.setCnpj(Util.adicionarMascaraCNPJ(cota.getPessoa().getDocumento()));
+//				dto.setDestinatarioCNPJ(cota.getPessoa().getDocumento());
+//			} else {
+//				dto.setCnpj(Util.adicionarMascaraCPF(cota.getPessoa().getDocumento()));
+//				dto.setDestinatarioCNPJ(cota.getPessoa().getDocumento());
+//
+//			}
+//			
+//			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
+//			dto.setDestinatarioNomeBox(dto.getBox().toString());
+//			
+//			String periodoRecolhimento;
+//			
+//			List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cota.getId(), dataOperacaoDistribuidor);
+//			
+//			if (gps != null && !gps.isEmpty()){
+//			
+//			    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
+//				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
+//				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+//			} else{
+//				
+//				periodoRecolhimento = dto.getDataRecolhimento();
+//			}
+//	                         
+//			dto.setPeriodoRecolhimento(periodoRecolhimento);
+//			
+//			dto.setProdutos(this.obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
+//			
+//			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor, filtro, produtosSupRedist);
+//			
+//			if(TipoImpressaoCE.MODELO_2.equals(filtro.getTipoImpressao())) {
+//				
+//				adicionarLinhasProdutoComInformacoesNotaEnvio(dto.getProdutos());
+//				
+//			}
+//			
+//			listaCEWrapper.add(new ChamadaEncalheImpressaoWrapper(dto));
+//			
+//		}
+//		
+//		// paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
+//		
+//		if(apresentaCapas) {
+//			
+//			if(apresentaCapasPersonalizadas) {
+//				
+//				paginarListaDeCapasPersonalizadas(lista, filtro.getQtdCapasPorPagina());
+//			
+//			} else {
+//				
+//				/*
+//				dados.setCapasPaginadas( obterIdsCapasChamadaEncalhe(
+//								filtro.getDtRecolhimentoDe(), 
+//								filtro.getDtRecolhimentoAte(), 
+//								filtro.getQtdCapasPorPagina()));
+//				*/				
+//			}
+//			
+//		}
+//       
+//		return this.gerarDocumentoEmissaoCE(listaCEWrapper);
+//		
+//	}
 	
 	private byte[] gerarDocumentoEmissaoCE(final List<ChamadaEncalheImpressaoWrapper> list) throws JRException, URISyntaxException {
         

@@ -147,7 +147,6 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	         .append(" join expedicao.lancamentos lancamento " )
 	         .append(" join lancamento.produtoEdicao produtoEdicao ")
 	         .append(" join produtoEdicao.produto produto ")
-	         .append(" left join produtoEdicao.historicoEstoqueProduto hstEstoque ")
 	         .append(" where  ")
 	         .append(" lancamento.status <> :statusFuro ")
 	         .append(" and lancamento.dataLancamentoDistribuidor =:data ) ");
@@ -385,8 +384,7 @@ private BigDecimal obterValorSumarizadoDoReparte(Date dataFechamento){
     	sql.append("	WHERE lancamentoExpedicao.STATUS<>:statusFuro ");
     	sql.append("	AND lancamentoExpedicao.DATA_LCTO_DISTRIBUIDOR=:dataFechamento) "); 
     	sql.append(" AND diferencaProduto.id IN ( ");
-    	sql.append("	SELECT DISTINCT rateioDiferencaCota.DIFERENCA_ID FROM RATEIO_DIFERENCA rateioDiferencaCota ");
-    	sql.append("	WHERE rateioDiferencaCota.DATA_MOVIMENTO=:dataFechamento)");
+    	sql.append("	SELECT DISTINCT rateioDiferencaCota.DIFERENCA_ID FROM RATEIO_DIFERENCA rateioDiferencaCota )");
 	
     	Query query = getSession().createSQLQuery(sql.toString());
     	
@@ -396,11 +394,13 @@ private BigDecimal obterValorSumarizadoDoReparte(Date dataFechamento){
     	
     	query.setParameterList("tipoSobraDirecionadaCota", Arrays.asList(
 				    			TipoDiferenca.SOBRA_EM.name(),
+				    			TipoDiferenca.SOBRA_DE.name(),
 								TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.name(), 
 								TipoDiferenca.GANHO_EM.name()));
     	
     	query.setParameterList("tipoFaltaDirecionadaCota", Arrays.asList(
 								TipoDiferenca.FALTA_EM.name(),
+								TipoDiferenca.FALTA_DE.name(),
 								TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.name(),
 								TipoDiferenca.PERDA_EM.name()));
     
