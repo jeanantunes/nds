@@ -346,11 +346,12 @@ fieldset {
 											name="produtoEdicaoDTO.dataLancamentoPrevisto"
 											id="produtoEdicaoController-dataLancamentoPrevisto"
 											style="width: 70px;" /></td>
+											
 										<td width="30">Real:</td>
 										<td width="120"><input type="text"
 											class="produtoEdicaoCampoValidavel"
 											name="produtoEdicaoDTO.dataLancamento"
-											id="produtoEdicaoController-dataLancamento"
+											id="produtoEdicaoController-dataLancamento"										
 											style="width: 70px; text-align: center;" disabled="disabled" /></td>
 
 										<td width="50"><a id="idLinkMostrarPeriodos"
