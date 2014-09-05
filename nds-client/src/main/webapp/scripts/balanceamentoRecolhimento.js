@@ -1,11 +1,7 @@
 var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	balanceamento : null,
-	
-	selecionados : [],
-	
-	nonSelected : [],
-	
+
 	checkAllGrid : false,
 	
 	verificarBalanceamentosAlterados : function(funcao) {
@@ -69,6 +65,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
+		
 		
 		dataHolder.clearAction('matrizRecolhimentoDataHolder', 
 			function(){
@@ -344,30 +341,32 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
 		
-		balanceamentoRecolhimentoController.selecionados = [];
-		
-		balanceamentoRecolhimentoController.deselectCheckAll();
-		
-		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
-		
-		if (data == null) {
+		dataHolder.clearAction('matrizRecolhimentoDataHolder',function(){
 			
-			data = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
-		}
-		
-		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(data);
-		
-		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
-			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
-			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
-			onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
-			params: [
-		         {name:'dataFormatada', value: data}
-		    ],
-		    newp: 1,
+			balanceamentoRecolhimentoController.deselectCheckAll();
+			
+			$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
+			
+			if (data == null) {
+				
+				data = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
+			}
+			
+			$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(data);
+			
+			$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
+				url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
+				preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
+				onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
+				params: [
+			         {name:'dataFormatada', value: data}
+			    ],
+			    newp: 1,
+			});
+			
+			$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexReload();
+			
 		});
-		
-		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexReload();
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -549,62 +548,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		if (!checado) {
 			
-			var checkAllSelected = balanceamentoRecolhimentoController.verifyCheckAll();
-			
-			if (checkAllSelected) {
-				
-				balanceamentoRecolhimentoController.adicionarBalanceamentosSelecionados();
-				
-			}else{
-				
-				balanceamentoRecolhimentoController.nonSelected.push({idLancamento : idRow});
-				dataHolder.hold('matrizRecolhimentoDataHolder', idRow, 'checado', checado);
-			}
-			
-			balanceamentoRecolhimentoController.removerBalanceamentosSelecionados(idRow);
-			
 			balanceamentoRecolhimentoController.deselectCheckAll();
-			
-		} else {
-			
-			var idFornecedor = divNovaData.find("input[name='hiddenIdFornecedor']").val();
-	
-			balanceamentoRecolhimentoController.selecionados.push(
-				{idLancamento : idRow, idFornecedor : idFornecedor});
-		}
+		} 		
 		
 		balanceamentoRecolhimentoController.verificarBloqueioData(divNovaData);
-	},
-	
-	adicionarBalanceamentosSelecionados : function() {
-		
-		$("input[name='checkReprogramar']", balanceamentoRecolhimentoController.workspace).each(function(index, checkReprogramar) {
-			
-			var divNovaData2 = $("#divNovaData" + checkReprogramar.value, balanceamentoRecolhimentoController.workspace);
-			
-			var idFornecedor2 = divNovaData2.find("input[name='hiddenIdFornecedor']").val();
-			
-			balanceamentoRecolhimentoController.selecionados.push(
-				{idLancamento : checkReprogramar.value, idFornecedor : idFornecedor2});
-		});
-	},
-	
-	removerBalanceamentosSelecionados : function(idLancamento) {
-		
-		var indexRemover = null;
-		
-		$.each(balanceamentoRecolhimentoController.selecionados, function(index, value) {
-			
-			if (idLancamento == value.idLancamento) {
-				
-				indexRemover = index;
-			}
-		});
-		
-		if (indexRemover != null) {
-			
-			balanceamentoRecolhimentoController.selecionados.splice(indexRemover, 1);
-		}
 	},
 	
 	selecionarTodos : function(input) {
@@ -613,8 +560,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			dataHolder.clearAction('matrizRecolhimentoDataHolder');
 		}
 		
-		balanceamentoRecolhimentoController.selecionados = [];
-		
 		checkAll(input, "checkReprogramar");
 		
 		$("input[name='checkReprogramar']", balanceamentoRecolhimentoController.workspace).each(function() {
@@ -622,11 +567,23 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			var checado = this.checked;
 			
 			clickLineFlexigrid(this, checado);
-			
-			dataHolder.hold('matrizRecolhimentoDataHolder', this.value, 'checado', checado);
 		});
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
+		
+		if(input.checked == false)
+			return;
+		
+		var parametros = new Array();
+		
+		parametros.push({name:'fieldValue', value:"true"});
+		parametros.push({name:'actionKey', value:'matrizRecolhimentoDataHolder'});
+		parametros.push({name:'fieldKey', value:'checado'});
+		
+		$.postJSON(
+				contextPath + "/devolucao/balanceamentoMatriz/atribuirCheckedParaTodosItens",
+				parametros
+		);
 	},
 
 	obterParametrosPesquisa : function() {
@@ -1106,8 +1063,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
 		   		
 				balanceamentoRecolhimentoController.deselectCheckAll();
-				
-				balanceamentoRecolhimentoController.selecionados = [];
 			},
 			null,
 			true
@@ -1116,24 +1071,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	obterParametrosReprogramarSelecionados : function(novaData, dataAntiga) {
 		
-		var listaProdutoRecolhimento = new Array();
-		
 		var checkAllSelected = balanceamentoRecolhimentoController.verifyCheckAll();
-		
-		
-		
-		$.each(this.selecionados, function(index, value) {
-			
-			listaProdutoRecolhimento.push({idFornecedor : value.idFornecedor,
-										   idLancamento : value.idLancamento,
-										   novaData : novaData});
-		});
 		
 		var param = {selecionarTodos:checkAllSelected,
 				novaDataFormatada:novaData,
 				dataAntigaFormatada:dataAntiga};
-		
-		param = serializeArrayToPost("listaProdutoRecolhimento", listaProdutoRecolhimento, param);
 		
 		return param;
 	},
