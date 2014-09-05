@@ -640,8 +640,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						
 						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
-					    
-					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -657,6 +655,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 
+					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
+					    
+					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
+					}
+					
 					this.criarChamadaEncalheCota(
 				        qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
 				}
