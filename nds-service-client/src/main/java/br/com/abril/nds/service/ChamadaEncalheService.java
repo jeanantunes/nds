@@ -50,4 +50,7 @@ public interface ChamadaEncalheService {
 	 * @return
 	 */
 	Long countObterBandeirasDaSemana(Integer semana, Long fornecedor);
+
+//	byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException;
+	
 }

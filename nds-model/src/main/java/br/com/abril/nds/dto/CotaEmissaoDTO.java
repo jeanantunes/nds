@@ -16,18 +16,148 @@ import br.com.abril.nds.util.export.Exportable;
 public class CotaEmissaoDTO implements Serializable{
 
 	private static final long serialVersionUID = 3527246197853581250L;
-
+	
 	private Long idCota;
+	
 	@Export(label="Cota")
 	private Integer numCota;
+	
 	@Export(label="Nome")
 	private String nomeCota;
+	
 	@Export(label="Qtde. Exemplares")
 	private Integer qtdeExemplares;
+	
 	@Export(label="Valor Total CE R$")
 	private String vlrTotalCe;
 	
 	private Long idChamEncCota;
+	
+	private String naturezaOperacao;
+
+	private String formaPagamento;
+
+	private String serie;
+
+	private Long numeroNF;
+
+	private String dataLancamentoDeAte;
+
+	private Date dataSaida;
+
+	private String horaSaida;
+
+	private int tipoNF;
+
+	private String ambiente;
+
+	private String chave;
+	
+	private boolean quebraTotalizacaoUltimaPagina;
+	
+	private String numeroNome;
+	
+	private String cnpj;
+	
+	private String endereco;
+	
+	private String cidade;
+	
+	private String uf;
+	
+	private String cep;
+	
+	private String inscricaoEstadual;
+	
+	private String dataRecolhimento;
+	
+	private String dataEmissao;
+	
+	private Integer box;
+	
+	private String nomeBox;
+	
+	private String codigoRota;
+	
+	private String nomeRota;
+	
+	private String codigoRoteiro;
+	
+	private String nomeRoteiro;
+	
+	private String numDocumento;
+	
+	private String vlrReparte;	
+	
+	private String vlrComDesconto;	
+	
+	private String vlrReparteLiquido;	
+	
+	private String vlrEncalhe;	
+	
+	private String vlrTotalLiquido;
+	
+	private String periodoRecolhimento;
+	
+	private String destinatarioCNPJ;
+
+	private String destinatarioNome;
+
+	private String destinatarioInscricaoEstadual;
+
+	private String destinatarioLogradouro;
+
+	private String destinatarioNumero;
+
+	private String destinatarioComplemento;
+
+	private String destinatarioBairro;
+
+	private String destinatarioMunicipio;
+
+	private String destinatarioUF;
+
+	private String destinatarioCEP;
+
+	private String destinatarioTelefone;
+	
+	private Integer destinatarioCodigoBox;
+	
+	private String destinatarioNomeBox;
+	
+	private String destinatarioCodigoRota;
+	
+	private String destinatarioDescricaoRota;
+
+	private String emissorCNPJ;
+
+	private String emissorNome;
+
+	private String emissorFantasia;
+
+	private String emissorInscricaoEstadual;
+
+	private String emissorInscricaoEstadualSubstituto;
+
+	private String emissorInscricaoMunicipal;
+
+	private String emissorLogradouro;
+
+	private String emissorNumero;
+
+	private String emissorBairro;
+
+	private String emissorMunicipio;
+
+	private String emissorUF;
+
+	private String emissorCEP;
+
+	private String emissorTelefone;
+	
+	private boolean itensComFuroLancamento;
+
+	private DistribuidorDTO distribuidorDTO;
 	
 	private List<List<ProdutoEmissaoDTO>> paginasProduto;
 	
@@ -35,35 +165,128 @@ public class CotaEmissaoDTO implements Serializable{
 	
 	private List<ProdutoEmissaoDTO> produtos;
 	
-	private boolean quebraTotalizacaoUltimaPagina;
+	private Long qtdGrupoCota;
 	
-	private String numeroNome;
-	private String cnpj;
-	private String endereco;
-	private String cidade;
-	private String uf;
-	private String cep;
-	private String inscricaoEstadual;
-	private String dataRecolhimento;
-	private String dataEmissao;
-	private Integer box;
-	private String nomeBox;
-	private String codigoRota;
-	private String nomeRota;
-	private String codigoRoteiro;
-	private String nomeRoteiro;
-	
-	private String numDocumento;
-	
+	public String getDestinatarioCNPJ() {
+		return destinatarioCNPJ;
+	}
 
-	private String vlrReparte;	
-	private String vlrComDesconto;	
-	private String vlrReparteLiquido;	
-	private String vlrEncalhe;	
-	private String vlrTotalLiquido;
-	
-	private String periodoRecolhimento;
+	public void setDestinatarioCNPJ(String destinatarioCNPJ) {
+		this.destinatarioCNPJ = destinatarioCNPJ;
+	}
 
+	public String getDestinatarioNome() {
+		return destinatarioNome;
+	}
+
+	public void setDestinatarioNome(String destinatarioNome) {
+		this.destinatarioNome = destinatarioNome;
+	}
+
+	public String getDestinatarioInscricaoEstadual() {
+		return destinatarioInscricaoEstadual;
+	}
+
+	public void setDestinatarioInscricaoEstadual(
+			String destinatarioInscricaoEstadual) {
+		this.destinatarioInscricaoEstadual = destinatarioInscricaoEstadual;
+	}
+
+	public String getDestinatarioLogradouro() {
+		return destinatarioLogradouro;
+	}
+
+	public void setDestinatarioLogradouro(String destinatarioLogradouro) {
+		this.destinatarioLogradouro = destinatarioLogradouro;
+	}
+
+	public String getDestinatarioNumero() {
+		return destinatarioNumero;
+	}
+
+	public void setDestinatarioNumero(String destinatarioNumero) {
+		this.destinatarioNumero = destinatarioNumero;
+	}
+
+	public String getDestinatarioComplemento() {
+		return destinatarioComplemento;
+	}
+
+	public void setDestinatarioComplemento(String destinatarioComplemento) {
+		this.destinatarioComplemento = destinatarioComplemento;
+	}
+
+	public String getDestinatarioBairro() {
+		return destinatarioBairro;
+	}
+
+	public void setDestinatarioBairro(String destinatarioBairro) {
+		this.destinatarioBairro = destinatarioBairro;
+	}
+
+	public String getDestinatarioMunicipio() {
+		return destinatarioMunicipio;
+	}
+
+	public void setDestinatarioMunicipio(String destinatarioMunicipio) {
+		this.destinatarioMunicipio = destinatarioMunicipio;
+	}
+
+	public String getDestinatarioUF() {
+		return destinatarioUF;
+	}
+
+	public void setDestinatarioUF(String destinatarioUF) {
+		this.destinatarioUF = destinatarioUF;
+	}
+
+	public String getDestinatarioCEP() {
+		return destinatarioCEP;
+	}
+
+	public void setDestinatarioCEP(String destinatarioCEP) {
+		this.destinatarioCEP = destinatarioCEP;
+	}
+
+	public String getDestinatarioTelefone() {
+		return destinatarioTelefone;
+	}
+
+	public void setDestinatarioTelefone(String destinatarioTelefone) {
+		this.destinatarioTelefone = destinatarioTelefone;
+	}
+
+	public Integer getDestinatarioCodigoBox() {
+		return destinatarioCodigoBox;
+	}
+
+	public void setDestinatarioCodigoBox(Integer destinatarioCodigoBox) {
+		this.destinatarioCodigoBox = destinatarioCodigoBox;
+	}
+
+	public String getDestinatarioNomeBox() {
+		return destinatarioNomeBox;
+	}
+
+	public void setDestinatarioNomeBox(String destinatarioNomeBox) {
+		this.destinatarioNomeBox = destinatarioNomeBox;
+	}
+
+	public String getDestinatarioCodigoRota() {
+		return destinatarioCodigoRota;
+	}
+
+	public void setDestinatarioCodigoRota(String destinatarioCodigoRota) {
+		this.destinatarioCodigoRota = destinatarioCodigoRota;
+	}
+
+	public String getDestinatarioDescricaoRota() {
+		return destinatarioDescricaoRota;
+	}
+
+	public void setDestinatarioDescricaoRota(String destinatarioDescricaoRota) {
+		this.destinatarioDescricaoRota = destinatarioDescricaoRota;
+	}
 	public CotaEmissaoDTO() {
 		
 	}
@@ -449,4 +672,214 @@ public class CotaEmissaoDTO implements Serializable{
 	public void setPeriodoRecolhimento(String periodoRecolhimento) {
 		this.periodoRecolhimento = periodoRecolhimento;
 	}
+
+	public String getEmissorCNPJ() {
+		return emissorCNPJ;
+	}
+
+	public void setEmissorCNPJ(String emissorCNPJ) {
+		this.emissorCNPJ = emissorCNPJ;
+	}
+
+	public String getEmissorNome() {
+		return emissorNome;
+	}
+
+	public void setEmissorNome(String emissorNome) {
+		this.emissorNome = emissorNome;
+	}
+
+	public String getEmissorFantasia() {
+		return emissorFantasia;
+	}
+
+	public void setEmissorFantasia(String emissorFantasia) {
+		this.emissorFantasia = emissorFantasia;
+	}
+
+	public String getEmissorInscricaoEstadual() {
+		return emissorInscricaoEstadual;
+	}
+
+	public void setEmissorInscricaoEstadual(String emissorInscricaoEstadual) {
+		this.emissorInscricaoEstadual = emissorInscricaoEstadual;
+	}
+
+	public String getEmissorInscricaoEstadualSubstituto() {
+		return emissorInscricaoEstadualSubstituto;
+	}
+
+	public void setEmissorInscricaoEstadualSubstituto(
+			String emissorInscricaoEstadualSubstituto) {
+		this.emissorInscricaoEstadualSubstituto = emissorInscricaoEstadualSubstituto;
+	}
+
+	public String getEmissorInscricaoMunicipal() {
+		return emissorInscricaoMunicipal;
+	}
+
+	public void setEmissorInscricaoMunicipal(String emissorInscricaoMunicipal) {
+		this.emissorInscricaoMunicipal = emissorInscricaoMunicipal;
+	}
+
+	public String getEmissorLogradouro() {
+		return emissorLogradouro;
+	}
+
+	public void setEmissorLogradouro(String emissorLogradouro) {
+		this.emissorLogradouro = emissorLogradouro;
+	}
+
+	public String getEmissorNumero() {
+		return emissorNumero;
+	}
+
+	public void setEmissorNumero(String emissorNumero) {
+		this.emissorNumero = emissorNumero;
+	}
+
+	public String getEmissorBairro() {
+		return emissorBairro;
+	}
+
+	public void setEmissorBairro(String emissorBairro) {
+		this.emissorBairro = emissorBairro;
+	}
+
+	public String getEmissorMunicipio() {
+		return emissorMunicipio;
+	}
+
+	public void setEmissorMunicipio(String emissorMunicipio) {
+		this.emissorMunicipio = emissorMunicipio;
+	}
+
+	public String getEmissorUF() {
+		return emissorUF;
+	}
+
+	public void setEmissorUF(String emissorUF) {
+		this.emissorUF = emissorUF;
+	}
+
+	public String getEmissorCEP() {
+		return emissorCEP;
+	}
+
+	public void setEmissorCEP(String emissorCEP) {
+		this.emissorCEP = emissorCEP;
+	}
+
+	public String getEmissorTelefone() {
+		return emissorTelefone;
+	}
+
+	public void setEmissorTelefone(String emissorTelefone) {
+		this.emissorTelefone = emissorTelefone;
+	}
+
+	public String getNaturezaOperacao() {
+		return naturezaOperacao;
+	}
+
+	public void setNaturezaOperacao(String naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
+	}
+
+	public String getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(String formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public Long getNumeroNF() {
+		return numeroNF;
+	}
+
+	public void setNumeroNF(Long numeroNF) {
+		this.numeroNF = numeroNF;
+	}
+
+	public String getDataLancamentoDeAte() {
+		return dataLancamentoDeAte;
+	}
+
+	public void setDataLancamentoDeAte(String dataLancamentoDeAte) {
+		this.dataLancamentoDeAte = dataLancamentoDeAte;
+	}
+
+	public Date getDataSaida() {
+		return dataSaida;
+	}
+
+	public void setDataSaida(Date dataSaida) {
+		this.dataSaida = dataSaida;
+	}
+
+	public String getHoraSaida() {
+		return horaSaida;
+	}
+
+	public void setHoraSaida(String horaSaida) {
+		this.horaSaida = horaSaida;
+	}
+
+	public int getTipoNF() {
+		return tipoNF;
+	}
+
+	public void setTipoNF(int tipoNF) {
+		this.tipoNF = tipoNF;
+	}
+
+	public String getAmbiente() {
+		return ambiente;
+	}
+
+	public void setAmbiente(String ambiente) {
+		this.ambiente = ambiente;
+	}
+
+	public String getChave() {
+		return chave;
+	}
+
+	public void setChave(String chave) {
+		this.chave = chave;
+	}
+
+	public boolean isItensComFuroLancamento() {
+		return itensComFuroLancamento;
+	}
+
+	public void setItensComFuroLancamento(boolean itensComFuroLancamento) {
+		this.itensComFuroLancamento = itensComFuroLancamento;
+	}
+
+	public DistribuidorDTO getDistribuidorDTO() {
+		return distribuidorDTO;
+	}
+
+	public void setDistribuidorDTO(DistribuidorDTO distribuidorDTO) {
+		this.distribuidorDTO = distribuidorDTO;
+	}
+	
+    public Long getQtdGrupoCota() {
+        return qtdGrupoCota;
+    }
+
+    public void setQtdGrupoCota(Long qtdGrupoCota) {
+        this.qtdGrupoCota = qtdGrupoCota;
+    }
+	
 }

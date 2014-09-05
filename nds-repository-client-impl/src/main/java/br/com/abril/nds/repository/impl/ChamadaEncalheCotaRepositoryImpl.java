@@ -353,6 +353,66 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (Long) query.uniqueResult();
 		
 	}
+
+
+	
+	@Override
+	public Date obterDataChamadaEncalheCotaProximaDataOperacao(
+			Cota cota, Long idProdutoEdicao, boolean postergado,
+			Date dataOperacao) {
+
+		StringBuffer sqlCEAnteriorDataOperacao = new StringBuffer("");
+		
+		sqlCEAnteriorDataOperacao.append(" ( SELECT	");
+		sqlCEAnteriorDataOperacao.append(" MAX(CE.DATA_RECOLHIMENTO) AS DATAENCALHE	");
+		sqlCEAnteriorDataOperacao.append(" FROM CHAMADA_ENCALHE_COTA CEC            ");
+		sqlCEAnteriorDataOperacao.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)   ");
+		sqlCEAnteriorDataOperacao.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CE.PRODUTO_EDICAO_ID)      ");
+		sqlCEAnteriorDataOperacao.append(" INNER JOIN PRODUTO P ON (P.ID = PE.PRODUTO_ID) ");
+		sqlCEAnteriorDataOperacao.append(" WHERE ");
+		sqlCEAnteriorDataOperacao.append(" PE.ID = :idProdutoEdicao AND		");
+		sqlCEAnteriorDataOperacao.append(" CEC.COTA_ID = :idCota AND		");
+		sqlCEAnteriorDataOperacao.append(" CEC.POSTERGADO = :postergado AND			");
+		sqlCEAnteriorDataOperacao.append(" CE.DATA_RECOLHIMENTO <= :dataOperacao 	");
+		sqlCEAnteriorDataOperacao.append(" ORDER BY CE.DATA_RECOLHIMENTO DESC )		");
+		
+		StringBuffer sqlCEPosteriorDataOperacao = new StringBuffer("");
+		
+		sqlCEPosteriorDataOperacao.append(" ( SELECT ");
+		sqlCEPosteriorDataOperacao.append(" MIN(CE.DATA_RECOLHIMENTO) AS DATAENCALHE ");
+		sqlCEPosteriorDataOperacao.append(" FROM CHAMADA_ENCALHE_COTA CEC			 ");
+		sqlCEPosteriorDataOperacao.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)   ");
+		sqlCEPosteriorDataOperacao.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CE.PRODUTO_EDICAO_ID)      ");
+		sqlCEPosteriorDataOperacao.append(" INNER JOIN PRODUTO P ON (P.ID = PE.PRODUTO_ID) ");
+		sqlCEPosteriorDataOperacao.append(" WHERE ");
+		sqlCEPosteriorDataOperacao.append(" PE.ID = :idProdutoEdicao AND	");
+		sqlCEPosteriorDataOperacao.append(" CEC.COTA_ID = :idCota AND		");
+		sqlCEPosteriorDataOperacao.append(" CEC.POSTERGADO = :postergado AND		");
+		sqlCEPosteriorDataOperacao.append(" CE.DATA_RECOLHIMENTO > :dataOperacao	");
+		sqlCEPosteriorDataOperacao.append(" ORDER BY CE.DATA_RECOLHIMENTO DESC ) 	");
+		
+		StringBuffer sql = new StringBuffer("");
+		
+		sql.append("	SELECT MIN(DATAENCALHE) AS dataEncalhe	");
+		sql.append("	FROM	");
+		sql.append("	(	");
+		sql.append(sqlCEAnteriorDataOperacao);
+		sql.append("	UNION ALL	");
+		sql.append(sqlCEPosteriorDataOperacao);
+		sql.append("	) AS dataEncalheProximaDataOperacao ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery) query).addScalar("dataEncalhe",StandardBasicTypes.DATE);
+		
+		query.setParameter("idCota", cota.getId());
+		query.setParameter("postergado", postergado);
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+
+		return (Date) query.uniqueResult();
+		
+	}
 	
 	private ChamadaEncalheCota obterUltimaChamadaEncalheCota(Cota cota, Long idProdutoEdicao, boolean postergado,
 															 Date dataOperacao) {

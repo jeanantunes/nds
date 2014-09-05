@@ -43,7 +43,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
-import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -90,9 +89,6 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Autowired
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
-	
-	@Autowired
-	private CalendarioService calendarioService;
 	
 	@Autowired
 	private ProdutoService prodService;
@@ -155,7 +151,7 @@ public class ProdutoEdicaoController extends BaseController {
 	    
 		result.use(Results.json()).from(comboBrindes, "result").recursive().serialize();
 	}
-	
+
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		

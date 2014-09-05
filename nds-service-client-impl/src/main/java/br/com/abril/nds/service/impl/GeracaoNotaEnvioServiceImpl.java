@@ -47,9 +47,7 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.CotaAusenteRepository;
@@ -779,24 +777,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             this.atualizaMovimentosEstoqueItemNotaEnvio(notaEnvio, listaItemNotaEnvio);
             this.notaEnvioRepository.adicionar(notaEnvio);    
             
-            // FIXME refatorar o para gerar estudo de PDV na geração do  estudo...
-            
-            // this.processarEstudoPDV(cota, listaItemNotaEnvio);
         } else {
         	notasEnvio.remove(notaEnvio);
         }
-    }
-    
-    private void processarEstudoPDV(final Cota cota, final List<ItemNotaEnvio> itensNotaEnvio){
-    	
-    	for(ItemNotaEnvio item : itensNotaEnvio){
-    		
-    		Estudo estudo = item.getEstudoCota().getEstudo();
-    		
-    		EstudoGerado estudoGerado = estudoGeradoRepository.buscarPorId(estudo.getId());
-    		
-    	    estudoService.gerarEstudoPDV(estudoGerado, cota, item.getReparte());
-    	}
     }
         
     /* Retorna uma lista com os movimentos estoque cota filtrados, onde os

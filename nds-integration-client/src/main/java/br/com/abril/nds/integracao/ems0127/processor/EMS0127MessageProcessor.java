@@ -69,12 +69,22 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 			// Validar código do distribuidor:
 			Distribuidor distribuidor = this.distribuidorService.obter();
-			if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())
-					|| !distribuidor.getCodigoDistribuidorFC().equals(input.getCodigoDistribuidor())) {
+			
+			if(input.getCodigoDistribuidor()!= null){
+				input.setCodigoDistribuidor(input.getCodigoDistribuidor().trim()); 
+			}
+			
+			final boolean isCodigoDistribuidorDinap = (distribuidor.getCodigoDistribuidorDinap()!= null 
+					&& distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor()));
+			
+			final boolean isCodigoDistribuidorFc = ( distribuidor.getCodigoDistribuidorFC()!= null 
+					&&  distribuidor.getCodigoDistribuidorFC().equals(input.getCodigoDistribuidor()));
+			
+			if(!isCodigoDistribuidorDinap && !isCodigoDistribuidorFc) {
 				
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
-						"Código do distribuidor do arquivo não é o mesmo do Sistema.");
+						"Código do distribuidor [" + input.getCodigoDistribuidor() + "] do arquivo não é o mesmo do Sistema.");
 				return;
 				
 			}

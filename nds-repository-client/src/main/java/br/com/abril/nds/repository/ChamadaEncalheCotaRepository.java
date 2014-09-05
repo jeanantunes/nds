@@ -14,6 +14,25 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheCota,Long> {
 	
 	/**
+	 * Obtém a chamada de encalhe mais próxima data de operação,
+	 * Caso hajam chamadas de encalhe antes e depois da data de
+	 * operação, será retornada a CE menor ou igual a data 
+	 * de operação.
+	 * 
+	 * 
+	 * @param cota
+	 * @param idProdutoEdicao
+	 * @param postergado
+	 * @param dataOperacao
+	 * 
+	 * @return
+	 */
+	public Date obterDataChamadaEncalheCotaProximaDataOperacao(
+			Cota cota, Long idProdutoEdicao, boolean postergado,
+			Date dataOperacao);
+
+	
+	/**
 	 * Retorna o id do registro de ChamadaEncalheCota.
 	 * 
 	 * @param idCota
