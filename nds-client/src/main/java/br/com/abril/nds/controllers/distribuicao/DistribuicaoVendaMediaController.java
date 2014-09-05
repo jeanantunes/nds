@@ -196,11 +196,18 @@ public class DistribuicaoVendaMediaController extends BaseController {
         	
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
-    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, false);
     		    	
-    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
-    		    		pevm.setIndicePeso(base.getIndicePeso());
-    		    	}
+    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase;
+    		    	
+	    		    	if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1){
+	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, false);
+	    		    	}else{
+	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, base.isParcial());
+	    		    	}
+    		    	
+	    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
+	    		    		pevm.setIndicePeso(base.getIndicePeso());
+	    		    	}
     		    	
     		    	verifyExistAndAdd(selecionados, produtosBase);
     		    } else {
