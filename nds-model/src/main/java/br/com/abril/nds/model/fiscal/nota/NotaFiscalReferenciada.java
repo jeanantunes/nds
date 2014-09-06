@@ -48,7 +48,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	private String chaveAcessoCTe;
 
 	@Embedded
-	@XmlTransient
+	@XmlElement(name="refNF")
 	private NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE;
 	
 	public NotaFiscalReferenciada() {		

@@ -55,6 +55,8 @@ public class CotaExemplaresDTO implements Serializable {
 	
 	private boolean contribuinteICMS;
 	
+	private boolean contribuinteICMSExigeNFe;
+	
 	private boolean exigeNotaFiscalEletronica;
 	
 	private boolean notaFiscalConsolidada;
@@ -157,8 +159,16 @@ public class CotaExemplaresDTO implements Serializable {
 		return contribuinteICMS;
 	}
 
-	public void setContribuinteICMS(Boolean contribuinteICMS) {
+	public void setContribuinteICMS(boolean contribuinteICMS) {
 		this.contribuinteICMS = contribuinteICMS;
+	}
+
+	public boolean isContribuinteICMSExigeNFe() {
+		return contribuinteICMSExigeNFe;
+	}
+
+	public void setContribuinteICMSExigeNFe(boolean contribuinteICMSExigeNFe) {
+		this.contribuinteICMSExigeNFe = contribuinteICMSExigeNFe;
 	}
 
 	public Boolean isExigeNotaFiscalEletronica() {
@@ -174,6 +184,14 @@ public class CotaExemplaresDTO implements Serializable {
 	}
 
 	public void setNotaFiscalConsolidada(Boolean notaFiscalConsolidada) {
+		this.notaFiscalConsolidada = notaFiscalConsolidada;
+	}
+
+	public void setExigeNotaFiscalEletronica(boolean exigeNotaFiscalEletronica) {
+		this.exigeNotaFiscalEletronica = exigeNotaFiscalEletronica;
+	}
+
+	public void setNotaFiscalConsolidada(boolean notaFiscalConsolidada) {
 		this.notaFiscalConsolidada = notaFiscalConsolidada;
 	}
 	

@@ -329,7 +329,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto, "); 	
 		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica as exigeNotaFiscalEletronica, ");
-		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS, ");
+		hql.append(" mec.cotaContribuinteExigeNF as contribuinteICMSExigeNFe ");
 
 		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
 
@@ -373,8 +374,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mffc.valoresAplicados.precoComDesconto * mffc.qtde) as totalDesconto, "); 	
 		hql.append(" mffc.cota.situacaoCadastro as situacaoCadastro, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica as exigeNotaFiscalEletronica, ");
-		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS ");
-
+		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS, ");
+		hql.append(" chamadaEncalheCota.processoUtilizaNfe as contribuinteICMSExigeNFe ");
+		
 		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);
 
 		if(filtro.getPaginacaoVO()!=null) {
@@ -475,18 +477,20 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
-		.append(" AND mec.notaFiscalEmitida = false ")
+		.append(" AND mec.notaFiscalEmitida = :false ")
 		.append(" AND mec.qtde > 0 ");
 		
 		if(filtro.getNotaFiscalTipoEmissao() != null) {
 			if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
 				
-				hql.append(" AND (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true ")
-					.append("	OR cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = true)");
+				hql.append(" AND (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = :true ")
+					.append("	OR cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = :true) ");
 			} else if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
 				
-				hql.append(" AND (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = false ")
-					.append("	AND cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = false)");
+				hql.append(" AND ((cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = :false ")
+					.append("	AND (cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = :false ")
+					.append(" OR (cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = :true ")
+					.append("	AND mec.cotaContribuinteExigeNF = :false)))) ");
 			}
 		}
 
@@ -535,7 +539,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(!isGroup){
-			hql.append(" GROUP BY mec.cota.numeroCota ");
+			hql.append(" GROUP BY mec.cota.numeroCota, mec.cotaContribuinteExigeNF ");
 		} else {
 			hql.append(" GROUP BY mec ");
 		}
@@ -554,6 +558,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
 
+		if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)
+				|| filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+			query.setParameter("true", true);
+		}
+
+		query.setParameter("false", false);
+		
 		// Data Movimento:	...  Até   ...
 		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
 			query.setParameter("dataInicial", filtro.getDataInicial());
@@ -746,24 +757,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			
 			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
 		}
-		
-		/*
-		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalVendaConsignado()) {
-			
-			hql.append(" AND mffc.notaFiscalVendaEmitida = :true ");
-		} else if(filtro.getNotaFiscalDevolucaoSimbolica() != null && !filtro.getNotaFiscalVendaConsignado()) {
-			
-			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
-		}
-		
-		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica()) {
-			
-			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :true ");
-		} else {
-			
-			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
-		}
-		*/
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
@@ -808,7 +801,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(!isGroup){
-			hql.append(" GROUP BY mffc.cota.numeroCota ");
+			hql.append(" GROUP BY mffc.cota.numeroCota, chamadaEncalheCota.processoUtilizaNfe ");
 		} else {
 			hql.append(" GROUP BY mffc ");
 		}
@@ -833,7 +826,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if((filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado())
 				|| (filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica())) {
 			
-			query.setParameter("false", false);
+			query.setParameter("false", true);
 		}
 		
 		// Data Movimento:	...  Até   ...
