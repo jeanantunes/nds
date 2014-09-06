@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ContasAPagarConsultaProdutoVO;
 import br.com.abril.nds.client.vo.ContasAPagarGridPrincipalFornecedorVO;
+import br.com.abril.nds.client.vo.ContasApagarConsultaPorDistribuidorVO;
 import br.com.abril.nds.dto.ContasAPagarConsignadoDTO;
 import br.com.abril.nds.dto.ContasAPagarDistribDTO;
 import br.com.abril.nds.dto.ContasAPagarEncalheDTO;
@@ -156,12 +157,18 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		retorno.setTotalDesconto(
 		        CurrencyUtil.formatarValor(
 		                CurrencyUtil.arredondarValorParaDuasCasas(totalDesconto)));
+
+		List<ContasApagarConsultaPorDistribuidorVO> listaCPagar = retorno.getGrid();
 		
-		retorno.setSaldo(
-		        CurrencyUtil.formatarValor(
-		                CurrencyUtil.arredondarValorParaDuasCasas(
-		                        totalBruto.subtract(totalDesconto))));
+		BigDecimal saldo = BigDecimal.ZERO;
 		
+		for (ContasApagarConsultaPorDistribuidorVO item : listaCPagar){
+			
+			saldo = saldo.add(CurrencyUtil.converterValor(item.getSaldo()));
+		}
+
+		retorno.setSaldo(CurrencyUtil.formatarValor(CurrencyUtil.arredondarValorParaDuasCasas(saldo)));
+
 		return retorno;
 	}
 
