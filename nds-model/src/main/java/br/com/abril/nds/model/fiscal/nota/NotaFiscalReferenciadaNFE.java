@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.util.TipoSecao;
@@ -36,8 +38,11 @@ public class NotaFiscalReferenciadaNFE implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="DATA_EMISSAO", nullable=false)
 	@NFEExport(secao = TipoSecao.B14, posicao = 1, mascara="yyMM")
-	@XmlElement(name="cAAMMUF")
+	@XmlTransient
 	private Date dataEmissao;
+	
+	@XmlElement(name="AAMM")
+	private String dataEmissaoXML;
 	
 	/**
 	 * CNPJ
@@ -96,7 +101,9 @@ public class NotaFiscalReferenciadaNFE implements Serializable {
 	 * @param dataEmissao the dataEmissao to set
 	 */
 	public void setDataEmissao(Date dataEmissao) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMM");
 		this.dataEmissao = dataEmissao;
+		this.dataEmissaoXML = dataEmissao != null ? sdf.format(dataEmissao) : null;
 	}
 
 	/**
