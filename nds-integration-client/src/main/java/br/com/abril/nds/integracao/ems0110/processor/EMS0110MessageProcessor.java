@@ -202,7 +202,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private TipoClassificacaoProduto findTipoClassificacaoProdutoPorNome(String nome) {
 		
 		Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
-        criteria.add(Restrictions.like("descricao", nome));
+        criteria.add(Restrictions.eq("descricao", nome));
         
         //FIXME Romover assim que vier a descricao completa de segmento no arquivo . prd
         criteria.setMaxResults(1);
@@ -249,7 +249,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
        
         if(!Strings.isNullOrEmpty(nome)) {
             
-        	tipoClassificacaoProduto = findTipoClassificacaoProdutoPorNome(nome);
+        	tipoClassificacaoProduto = findTipoClassificacaoProdutoPorNome(nome.trim());
             
             if(tipoClassificacaoProduto == null) {
             	//FIXME
