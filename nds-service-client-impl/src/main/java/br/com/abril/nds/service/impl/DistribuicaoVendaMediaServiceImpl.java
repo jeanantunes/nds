@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.DistribuicaoVendaMediaService;
 
 @Service
@@ -18,6 +20,9 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     @Autowired
     private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
     
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
+    
     /**
      * @param filtro
      * @return
@@ -25,7 +30,17 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      */
     @Override
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
-        return distribuicaoVendaMediaRepository.pesquisar(filtro);
+        
+		List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo = new ArrayList<>();
+    	
+    	if((filtro.getIdLancamento()!=null) && (lancamentoRepository.isLancamentoParcial(filtro.getIdLancamento()))){
+    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(filtro, true);
+    		
+    	}else{
+    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(filtro);
+    	}
+    	
+    	return prodEdicaoParabaseEstudo;
     }
     
     /**
@@ -55,9 +70,18 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
      */
     @Override
     @Transactional(readOnly=true)
-    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao,
-            Long idClassificacao, boolean usarICD) {
-        return distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao, boolean usarICD, boolean isParcial) {
+
+    	List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo = new ArrayList<>();
+    	
+    	if(isParcial){
+    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisarEdicoesBasesParaLancamentoParcial(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao, 0L), usarICD);
+    	}else{
+    		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
+    	}
+    	
+    	return prodEdicaoParabaseEstudo;
+    	
     }
 
 }

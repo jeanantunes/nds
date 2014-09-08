@@ -26,6 +26,8 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
     private BigDecimal vendaCorrigida;
     private BigDecimal divisaoVendaCrescente;
     
+    private boolean parcialConsolidada;
+    
     public ProdutoEdicaoEstudo() {
     	indicePeso = BigDecimal.ONE;
     }
@@ -126,5 +128,14 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
 
 	public void setDivisaoVendaCrescente(BigDecimal divisaoVendaCrescente) {
 	    this.divisaoVendaCrescente = divisaoVendaCrescente;
-	}    
+	}
+
+	public boolean isParcialConsolidada() {
+		return parcialConsolidada;
+	}
+
+	public void setParcialConsolidada(boolean parcialConsolidada) {
+		this.parcialConsolidada = parcialConsolidada;
+	}
+	
 }

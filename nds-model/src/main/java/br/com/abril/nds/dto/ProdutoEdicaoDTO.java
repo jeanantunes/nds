@@ -171,6 +171,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	
 	private FormaComercializacao formaComercializacao;
 	
+	private boolean parcialConsolidado;
+	
 	public ProdutoEdicaoDTO() {};
 	
 	public ProdutoEdicaoDTO(
@@ -1071,4 +1073,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setPeriodoString(String periodoString) {
 		this.periodoString = periodoString;
 	}
+
+	public boolean isParcialConsolidado() {
+		return parcialConsolidado;
+	}
+
+	public void setParcialConsolidado(boolean parcialConsolidado) {
+		this.parcialConsolidado = parcialConsolidado;
+	}
+
 }

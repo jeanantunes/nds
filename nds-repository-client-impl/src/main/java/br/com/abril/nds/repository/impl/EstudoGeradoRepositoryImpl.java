@@ -311,4 +311,21 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		return (EstudoGerado) query.uniqueResult();
 	}
 	
+	@Override
+	public Long countEstudoGeradoParaLancamento(Long idLancamento, Date dataLancamento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(*) from estudo_gerado where LANCAMENTO_ID = :idLanc and DATA_LANCAMENTO = :dtLancamento ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idLanc", idLancamento);
+		query.setParameter("dtLancamento", dataLancamento);
+		
+		BigInteger count = (BigInteger) query.uniqueResult();
+		
+		return count.longValue();
+	}
+	
 }
