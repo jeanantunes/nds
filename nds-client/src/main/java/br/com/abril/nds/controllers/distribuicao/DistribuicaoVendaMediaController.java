@@ -466,7 +466,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento, String dataLancamento) throws Exception {
 	EstudoTransient estudo = null;
 	int qtdEdicoesAbertas = 0;
-
+	Long qtdEstudoParaLancamento = 0L;
+	
 	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
 
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode ter mais do que "
@@ -482,10 +483,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 
 	if (qtdEdicoesAbertas > 1) {
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não é possível utilizar mais que uma edição base aberta."));
+        throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
 	}
-    
+	
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 	produto.setNumeroEdicao(numeroEdicao);
 	produto.setIdLancamento(idLancamento);
@@ -494,6 +494,13 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
 	} catch (Exception e) {
             throw new Exception("Data de lançamento em formato incorreto.");
+	}
+	
+	
+	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(idLancamento, new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
+	
+	if(qtdEstudoParaLancamento >= 3){
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
 	}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
