@@ -261,8 +261,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell);
-			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
-			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
 				
 				
 			//arrumar formatacao campos bigdecimal para duas casas decimais
@@ -312,6 +312,38 @@ var mixCotaProdutoController = $.extend(true, {
 			  value : idMix
 			  });
 		 
+		 console.log("id "+$(input).attr('id'));
+		 
+		 if($(input).attr('id').indexOf('updInputRepMin_')  > -1 || $(input).attr('id').indexOf('updInputRepMax_')  > -1) {
+
+			 strIdMix = '';
+			 if($(input).attr('id').indexOf('updInputRepMin_')  > -1) {
+				 
+				 strIdMix = $(input).attr('id').split('_')[1];
+			 } else if($(input).attr('id').indexOf('updInputRepMax_')  > -1) {
+				 
+				 strIdMix = $(input).attr('id').split('_')[1];
+			 }
+			 
+		 }
+
+		 if($('#editar_'+ strIdMix).attr('id') == undefined) {
+			 
+			 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+					
+					if($("#radio").attr('checked') == 'checked'){
+						$(".mixCotasGrid").flexReload();
+					}
+					else{
+						$(".mixProdutosGrid").flexReload();
+					}
+					
+				}, function(){
+					input.value=lastValue;
+			});
+			 
+			 return;
+		 }
 		 
 		 $("#dialog-confirma-alteracao-reparte").dialog({
 				resizable: false,
@@ -352,7 +384,7 @@ var mixCotaProdutoController = $.extend(true, {
 		
 		components="";
 		
-		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ',' + cell.reparteMinimo + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoICD + '\')" ' +
+		imgAlteracao =  '<a href="javascript:;" id="editar_'+cell.id+'" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ',' + cell.reparteMinimo + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoICD + '\')" ' +
 		' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 		'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 		'</a>' ;
@@ -458,8 +490,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridProduto(data.rows[i].cell);
-			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
-			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
 		}
 		
 		$('.mixProdutosGrid').show();
@@ -475,7 +507,7 @@ var mixCotaProdutoController = $.extend(true, {
 	getActionsGridProduto: function (cell){
 	components="";
 		
-		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMinimo + ',' + cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoProduto + '\')" ' +
+		imgAlteracao =  '<a href="javascript:;" id="editar_'+cell.id+'" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMinimo + ',' + cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoProduto + '\')" ' +
 		' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 		'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 		'</a>' ;
