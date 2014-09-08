@@ -341,7 +341,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append(" left join prEd.descontoLogistica descLogPrEd")
 		   .append(" join prEd.produto pr ")
 		   .append(" left join pr.descontoLogistica descLogPr ")
-		   .append(" left join pr.fornecedores f ");
+		   .append(" left join pr.fornecedores f ");      
 		
 		hql.append(" where l.dataRecolhimentoDistribuidor between :inicio and :fim ")
 		   .append(" and l.status in (:statusLancamento) ")
@@ -690,15 +690,20 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("      else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
 		   .append("      end)) as precoComDesconto, ")
 		   .append(" 	me.qtde as reparteSugerido, ")
-		   .append(" 	me.qtde - coalesce(dif.qtde,0) as reparteFinal, ")
-		   .append(" 	sum(coalesce(dif.qtde,0)) as diferenca, ")
+		   .append(" 	me.qtde - (select sum(coalesce(dif.qtde,0)) from Diferenca dif join dif.produtoEdicao pe where pe.id = produtoEdicao.id) as reparteFinal, ")
+		   .append(" 	(select sum(coalesce(dif.qtde,0)) from Diferenca dif join dif.produtoEdicao pe where pe.id = produtoEdicao.id) as diferenca, ")
 		   .append(" 	coalesce(pessoa.razaoSocial, '') as fornecedor, ")
 		   .append(" 	coalesce(produtoEdicao.precoVenda,0) * (me.qtde) as valor, ")
-		   .append(" 	(coalesce(produtoEdicao.precoVenda,0) - (coalesce(produtoEdicao.precoVenda,0) * ( ")
-		   .append("      case when produtoEdicao.origem = :origemInterface ")
-           .append("      then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
-           .append("      else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
-           .append("      end))) * (me.qtde) as valorComDesconto ")
+
+           .append(" coalesce(");
+		    hql.append(" sum((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (")
+			   .append(" case when produtoEdicao.origem = :origemInterface ")
+			   .append(" then (coalesce(descLogPrEd.percentualDesconto, descLogPr.percentualDesconto, 0) / 100) ")
+			   .append(" else (coalesce(produtoEdicao.desconto, produto2.desconto, 0) / 100) ")
+			   .append(" end) ")
+			   .append(" ) ) * me.qtde) ");
+		    hql.append(",0) as valorComDesconto ")
+
 		   .append(" from ")
 		   .append(" 	Lancamento l ")
 		   .append(" 	join l.produtoEdicao produtoEdicao ")
@@ -709,8 +714,6 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("    left join produto2.descontoLogistica descLogPr ")
 		   .append("	left join produto2.fornecedores fo ")
 		   .append("	left join fo.juridica pessoa ")
-		   .append(" 	left join produtoEdicao.diferencas dif ")
-		   .append("    left join dif.lancamentoDiferenca ld ")
 		   .append(" where l.dataRecolhimentoDistribuidor = :data ")
 		   .append(" 	and l.status in (:statusLancamento) ")
 		   .append("    and (tpMov.grupoMovimentoEstoque = :grupoRecebFis or tpMov.grupoMovimentoEstoque is null) ");

@@ -383,8 +383,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			} else {
 				
 				// Exibir a quantidade de reparte de 'n' produtos:
-				qtdProdutos = Math.min(filtro.getProdutos().size(), 
-						QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
+				qtdProdutos = Math.min(filtro.getProdutos().size(), QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
 				for (int index = 0; index < qtdProdutos; index++) {
 	
 					hql.append(",coalesce((select estudoPDVSub.REPARTE ");
@@ -423,7 +422,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 					 .addScalar("reparteTotal",StandardBasicTypes.BIG_INTEGER);
 			}else{
 				
-				qtdProdutos = Math.min(filtro.getProdutos().size(),QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
+				qtdProdutos = Math.min(filtro.getProdutos().size(), QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
 				
 				for (int index = 0; index < qtdProdutos; index++) {
 					
