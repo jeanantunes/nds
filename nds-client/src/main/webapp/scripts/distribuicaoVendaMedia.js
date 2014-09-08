@@ -222,6 +222,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var produto = $("#produtoPesquisaBases").val();
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#selectClassificacao").val();
+		var idLancamento = $("#idLancamento").val();
 		var modoAnalise = $("#modoAnalise").val();
 		var idProdutoEdicao = $("#idProdutoEdicao").val();
 		
@@ -229,6 +230,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name:"filtro.nome", value:produto});
 		data.push({name:"filtro.edicao", value:edicao});
 		data.push({name:"filtro.classificacao", value:classificacao});
+		data.push({name:"filtro.idLancamento", value:idLancamento});
 		data.push({name:"modoAnalise", value:modoAnalise});
 		data.push({name:"idProdutoEdicao", value:idProdutoEdicao});
 		
@@ -599,6 +601,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].dataLancamento", value : produtoEdicao.dataLancamentoFormatada});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].status", value : produtoEdicao.status});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].parcialConsolidado", value : produtoEdicao.isParcialConsolidado});
+				
 			}
 		}
 		
