@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -41,6 +42,7 @@ public class NotaFiscalReferenciadaNFE implements Serializable {
 	@XmlTransient
 	private Date dataEmissao;
 	
+	@Transient
 	@XmlElement(name="AAMM")
 	private String dataEmissaoXML;
 	
