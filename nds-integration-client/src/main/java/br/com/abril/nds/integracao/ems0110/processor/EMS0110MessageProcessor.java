@@ -210,6 +210,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
         return (TipoClassificacaoProduto) criteria.uniqueResult();
 	}
 	
+	private TipoClassificacaoProduto findTipoClassificacaoProdutoPorId(Long id) {
+        Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
+        criteria.add(Restrictions.idEq(id));
+   
+        
+        return (TipoClassificacaoProduto) criteria.uniqueResult();
+	}
+	
 	private TipoSegmentoProduto findTipoSegmentoProdutoPorId(Long id) {
         Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
         criteria.add(Restrictions.idEq(id));
@@ -245,7 +253,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             
             if(tipoClassificacaoProduto == null) {
             	//FIXME
-            	tipoClassificacaoProduto = findTipoClassificacaoProdutoPorNome("NORMAL");
+            	//tipoClassificacaoProduto = findTipoClassificacaoProdutoPorNome("NORMAL");
+            	tipoClassificacaoProduto = findTipoClassificacaoProdutoPorId(new Long(16));
             }
         }
         return tipoClassificacaoProduto;
