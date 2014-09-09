@@ -86,7 +86,7 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.precoVenda = precoVenda;
-        this.qtdeReparte = qtdeReparte;
+        this.qtdeReparte = Util.nvl(qtdeReparte,BigInteger.ZERO);
         this.qtdeSobraDe = Util.nvl(qtdeSobraDe, BigInteger.ZERO);
         this.qtdeSobraEm = Util.nvl(qtdeSobraEm, BigInteger.ZERO);
         this.qtdeFaltaDe = Util.nvl(qtdeFaltaDe, BigInteger.ZERO);
@@ -99,11 +99,10 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.qtdeDistribuir = this.qtdeReparte.add(this.qtdeSobra).subtract(this.qtdeFalta).add(this.qtdeTransferencia).subtract(this.qtdeDiferenca);
         this.qtdeSobraDistribuicao = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
         this.qtdeDiferencaLogicoFisico = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
-        this.valorPrecoCapaFormatado = (precoVenda == null) ? CurrencyUtil.formatarValor(BigDecimal.ZERO) :  CurrencyUtil.formatarValor(precoVenda);
-        
+        this.valorPrecoCapaFormatado = (precoVenda == null) ? CurrencyUtil.formatarValor(BigDecimal.ZERO) :  CurrencyUtil.formatarValor(precoVenda); 
     }
-    
-    public String getValorPrecoCapaFormatado(){
+
+	public String getValorPrecoCapaFormatado(){
 		return valorPrecoCapaFormatado;
 	}
 
