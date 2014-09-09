@@ -413,6 +413,10 @@ function limparLstExcecao1(){
                             <td id="numeroEdicao">${ produtoEdicao.numeroEdicao }</td>
                           </tr>
                           <tr>
+                            <td>Período:</td>
+                            <td>${ lancamento.periodoLancamentoParcial.numeroPeriodo }</td>
+                          </tr>
+                          <tr>
                             <td>Preço R$</td>
                             <td> <fmt:formatNumber type="currency" minFractionDigits="2" currencySymbol="" value="${ produtoEdicao.precoVenda }" /> </td>
                           </tr>

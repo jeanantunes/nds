@@ -56,4 +56,6 @@ public interface EstudoService {
 	EstudoCotaGerado obterEstudoCotaGerado(Integer numeroCota, Long estudoId);
 
 	void criarRepartePorPDV(Long id);
+
+	Long countEstudosPorLancamento(Long idlancamento, Date dataLancamento);
 }

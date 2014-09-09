@@ -1526,11 +1526,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         final Lancamento uLancamento = lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());//TODO
         
+        TipoLancamento tipoLancamento = lService.isRedistribuicao(dto.getCodigoProduto(), produtoEdicao.getNumeroEdicao()) == true ? TipoLancamento.REDISTRIBUICAO : TipoLancamento.LANCAMENTO;
+        
         if (uLancamento != null) {
             
             dto.setNumeroLancamento(uLancamento.getNumeroLancamento());
             
-            dto.setTipoLancamento(uLancamento.getTipoLancamento());
+            dto.setTipoLancamento(tipoLancamento);
             
             Date dataLancamento = null;
             

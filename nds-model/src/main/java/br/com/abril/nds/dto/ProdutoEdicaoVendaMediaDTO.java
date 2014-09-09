@@ -18,12 +18,14 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
     private String nome;
     private Integer periodo;
     private boolean parcial;
+    private boolean isParcialConsolidado;
     private String dataLancamentoFormatada;
     private BigInteger reparte;
     private BigInteger venda;
     private String status;
     private String classificacao;
     private BigInteger idClassificacao;
+    private BigInteger idLancamento;
     
     private BigDecimal percentualVenda;
 
@@ -165,6 +167,26 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
 	public void setIndicePeso(BigDecimal indicePeso) {
 		this.indicePeso = indicePeso;
+	}
+
+	public boolean isParcialConsolidado() {
+		return isParcialConsolidado;
+	}
+
+	public void setParcialConsolidado(Boolean isParcialConsolidado) {
+		if (isParcialConsolidado == null || isParcialConsolidado == false) {
+			this.isParcialConsolidado = false;
+		} else {
+			this.isParcialConsolidado = isParcialConsolidado;
+		}
+	}
+
+	public BigInteger getIdLancamento() {
+		return idLancamento;
+	}
+
+	public void setIdLancamento(BigInteger idLancamento) {
+		this.idLancamento = idLancamento;
 	}
 	
 }

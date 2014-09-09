@@ -429,9 +429,15 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		hql.append("	inner join TIPO_MOVIMENTO TIPO_MOV ON ");
 		hql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoMovimentoEstoque )");
 		
-
+		hql.append("  inner join CHAMADA_ENCALHE_LANCAMENTO CEL ON ");
+        hql.append("    CEL.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID ");
+		
+        hql.append("  inner join LANCAMENTO L ON ");
+        hql.append("    L.ID = CEL.LANCAMENTO_ID ");
+        
 		hql.append("	WHERE   ");
 		
+		hql.append("    L.STATUS != :lancamentoFechado AND ");
 		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
 		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento) AND ");
 		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
@@ -480,6 +486,7 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 		((SQLQuery)query).addScalar("parcialNaoFinal", StandardBasicTypes.BOOLEAN);
 		((SQLQuery)query).addScalar("desconto");
 
+		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO.name());
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameterList("datasRecolhimento", datasRecolhimento);
 		query.setParameter("indFechado", indFechado);
