@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -363,14 +364,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					for (Long idLancamento : idsLancamentosAgrupados) {
 							
-						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
-							produtosRecolhimentoAgrupados, idLancamento);
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(produtosRecolhimentoAgrupados, idLancamento);
 						
 						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
 						
-						this.montarInformacoesConfirmarBalanceamento(
-							mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
-							idsLancamento, produtoRecolhimentoAgrupado, novaDataRecolhimento);
+						this.montarInformacoesConfirmarBalanceamento(mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos, idsLancamento, produtoRecolhimentoAgrupado, novaDataRecolhimento);
 					}
 				}
 			}
@@ -625,21 +623,21 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				List<CotaReparteDTO> cotasReparteLancamento = this.processaListaCotaReparteDTOLancamento(cotasReparte, idLancamento);
 
-				List<ChamadaEncalhe> chamadasEncalheProdutoEdicao = this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId());
+				Set<ChamadaEncalhe> chamadasEncalheProdutoEdicao = new HashSet<>(this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId()));
 
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
 
 					Cota cota = cotaReparte.getCota();
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
-					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalheProdutoEdicao);
+					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, new ArrayList<>(chamadasEncalheProdutoEdicao));
 					
-					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalheProdutoEdicao, dataRecolhimento);
+					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(new ArrayList<>(chamadasEncalheProdutoEdicao), dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
 						
-						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+					    listaChamadaEncalhe.add(chamadaEncalhe);
 					    
 					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
@@ -656,7 +654,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
-
+					
 					this.criarChamadaEncalheCota(
 				        qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
 				}
@@ -754,7 +752,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
 		
-		this.chamadaEncalheRepository.merge(chamadaEncalhe);
+		// this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe,
@@ -1517,8 +1515,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 
-			ProdutoRecolhimentoDTO produtoRecolhimentoMesmaEdicao =
-				this.obterProdutoRecolhimento(produtosRecolhimento, idLancamento);
+			ProdutoRecolhimentoDTO produtoRecolhimentoMesmaEdicao = this.obterProdutoRecolhimento(produtosRecolhimento, idLancamento);
 
 			ProdutoRecolhimentoDTO produtoRecolhimentoAntigo = null;
 			ProdutoRecolhimentoDTO produtoRecolhimentoNovo = null;
@@ -1577,8 +1574,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getValorTotal(), 
 								produtoRecolhimentoNovo.getValorTotal());
 		
-		Long peso =
-			produtoRecolhimentoAntigo.getPeso() + produtoRecolhimentoNovo.getPeso();
+		Long peso = produtoRecolhimentoAntigo.getPeso() + produtoRecolhimentoNovo.getPeso();
 		
 		produtoRecolhimento.setDataLancamento(produtoRecolhimentoAntigo.getDataLancamento());
 		produtoRecolhimento.setDataRecolhimentoPrevista(produtoRecolhimentoAntigo.getDataRecolhimentoPrevista());
