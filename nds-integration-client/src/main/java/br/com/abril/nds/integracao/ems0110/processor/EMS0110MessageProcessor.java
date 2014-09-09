@@ -692,7 +692,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		  
 			edicao.setTipoClassificacaoProduto(tpclassificacao);
 		
-		} else {
+		} else { 
 			
 			ndsiLoggerFactory.getLogger().logError(
 	                message,
