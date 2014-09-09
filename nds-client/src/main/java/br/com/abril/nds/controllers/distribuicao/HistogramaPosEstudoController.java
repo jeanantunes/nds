@@ -27,6 +27,7 @@ import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.PeriodoLancamentoParcialService;
 import br.com.abril.nds.service.ProdutoBaseSugeridaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -75,6 +76,9 @@ public class HistogramaPosEstudoController extends BaseController{
     private MatrizDistribuicaoService matrizDistribuicaoService;
     
     @Autowired
+    private PeriodoLancamentoParcialService periodoLancamentoParcialService;  
+    
+    @Autowired
 	private UsuarioService usuarioService;
     
     public static final String MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE = "mapa_analise_estudo";
@@ -121,10 +125,12 @@ public class HistogramaPosEstudoController extends BaseController{
 
 		String modoAnalise = "NORMAL";
 		if (estudo.isParcial()) {
-			selecionado.setPeriodicidadeProduto(estudo.getPeriodicidade().getOrdem());
+			
+			selecionado.setPeriodicidadeProduto(periodoLancamentoParcialService.obterPeriodoPorIdLancamento(selecionado.getIdLancamento()).getNumeroPeriodo());
+			
 			modoAnalise = "PARCIAL";
 		}
-
+     
 		if (estudo.getTipoSegmentoProduto() == null) {
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "É necessário cadastrar um segmento para o produto.");

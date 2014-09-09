@@ -2801,5 +2801,32 @@ public class LancamentoRepositoryImpl extends
 		BigInteger count = (BigInteger) query.uniqueResult();
 
 		return count != null && count.compareTo(BigInteger.ZERO) > 0;
-	}    
+	}
+	
+	@Override
+	public boolean isRedistribuicao(String codigoProduto, Long numeroEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" Select if(T.tipo>=1,true,false) from (select  ");
+		sql.append(" count(lct.TIPO_LANCAMENTO )tipo ");
+		sql.append(" from lancamento lct  ");
+		sql.append(" join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" join produto pd ON pe.PRODUTO_ID = pd.ID ");
+		sql.append(" where  ");
+		sql.append(" pd.CODIGO = :codProduto and  ");
+		sql.append(" pe.NUMERO_EDICAO = :numEdicao ");
+		sql.append(" and lct.TIPO_LANCAMENTO = 'REDISTRIBUICAO') T ");
+		
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("codProduto", codigoProduto);
+		query.setParameter("numEdicao", numeroEdicao);
+		
+		BigInteger count = (BigInteger) query.uniqueResult();
+
+		return count != null && count.compareTo(BigInteger.ZERO) > 0;
+
+	}
 }

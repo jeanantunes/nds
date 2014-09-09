@@ -706,4 +706,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		return lancamentoRepository.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
 	}
+	
+	@Override
+	@Transactional
+	public boolean isRedistribuicao(String codigoProduto, Long numeroEdicao){
+		return lancamentoRepository.isRedistribuicao(codigoProduto, numeroEdicao);
+	}
 }

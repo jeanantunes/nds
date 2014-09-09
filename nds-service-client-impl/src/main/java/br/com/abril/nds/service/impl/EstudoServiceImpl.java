@@ -584,5 +584,13 @@ public class EstudoServiceImpl implements EstudoService {
 		}
 		
 	}
+	
+	@Transactional
+	@Override
+	public Long countEstudosPorLancamento (Long idlancamento, Date dtLancamento){
+		
+		return estudoGeradoRepository.countEstudoGeradoParaLancamento(idlancamento, dtLancamento);
+		
+	}
 
 }

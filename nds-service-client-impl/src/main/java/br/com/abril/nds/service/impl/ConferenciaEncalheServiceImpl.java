@@ -95,6 +95,7 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -840,13 +841,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
                         + "] da cota. " + " Este produto edição não possui CE. ");
 		
 		} 
-			
+		
+		this.validarLancamentoFechado(produtoEdicao, chamadaEncalheCota);
 		
 		return chamadaEncalheCota;
-		
 	}
+
+	private void validarLancamentoFechado(final ProdutoEdicao produtoEdicao, final ChamadaEncalheCota chamadaEncalheCota) {
+        
+        Iterator<Lancamento> it = chamadaEncalheCota.getChamadaEncalhe().getLancamentos().iterator();
+        
+        Lancamento lancamento = it.next();
+        
+        if (lancamento.getStatus().equals(StatusLancamento.FECHADO)) {
+            
+            throw new ValidacaoException(
+                TipoMensagem.WARNING, 
+                "Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()
+                    + "] da cota. " + " Este produto já está fechado.");
+        }
+    }
 	
-	    /**
+	/**
      * Retorna a chamada de encalhe do produto edição parcial e cota em questão.
      * 
      * @param cota
