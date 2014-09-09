@@ -4,14 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.FormaCobrancaDTO;
-import br.com.abril.nds.dto.TipoDescontoCotaDTO;
-import br.com.abril.nds.dto.TipoDescontoDTO;
-import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
@@ -31,6 +30,8 @@ import br.com.abril.nds.service.ParametroCobrancaCotaService;
 @Component
 public class CobrancaFornecedorValidator {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CobrancaFornecedorValidator.class);
+	
     @Autowired
     private ParametroCobrancaCotaService parametroCobrancaCotaService;
     
@@ -79,9 +80,20 @@ public class CobrancaFornecedorValidator {
     		
     		filtro.setIdFornecedores(Arrays.asList(this.fornecedor.getId()));
     		
-    		List<TipoDescontoDTO> desconto = CobrancaFornecedorValidator.this.descontoDistribuidorRepository.buscarDescontos(filtro);
+    		//List<TipoDescontoDTO> desconto = CobrancaFornecedorValidator.this.descontoDistribuidorRepository.buscarDescontos(filtro);
+    		//return desconto != null && !desconto.isEmpty();
     		
-    		return desconto != null && !desconto.isEmpty();
+    		try {
+    			
+    			DescontoDTO desc = descontoService.obterDescontoPor(this.descontos, this.cota.getId(), this.fornecedor.getId(), null, null);
+    			return desc != null;
+    			
+			} catch (Exception e) {
+				
+				LOGGER.error("Erro ao obter desconto para validar Desconto Geral da Cota.");
+			}
+    		
+    		return false;
     	}
     	
     	private boolean hasDescontoPorCota() {
@@ -95,9 +107,20 @@ public class CobrancaFornecedorValidator {
     		
     		filtro.setIdCota(this.cota.getId());
     		
-    		List<TipoDescontoCotaDTO> desconto = CobrancaFornecedorValidator.this.descontoCotaRepository.obterDescontoCota(filtro);
+    		//List<TipoDescontoCotaDTO> desconto = CobrancaFornecedorValidator.this.descontoCotaRepository.obterDescontoCota(filtro);    		
+    		//return desconto != null && !desconto.isEmpty();
     		
-    		return desconto != null && !desconto.isEmpty();
+    		try {
+    			
+    			DescontoDTO desc = descontoService.obterDescontoPor(this.descontos, this.cota.getId(), this.fornecedor.getId(), null, null);
+    			return desc != null;
+    			
+			} catch (Exception e) {
+				
+				LOGGER.error("Erro ao obter desconto para validar Desconto da Cota.");
+			}
+    		
+    		return false;
     	}
     	
     	private boolean hasDescontoPorProduto() {
@@ -111,9 +134,20 @@ public class CobrancaFornecedorValidator {
     		
     		filtro.setCodigoProduto(this.produto.getCodigo());
     		
-    		List<TipoDescontoProdutoDTO> desconto = CobrancaFornecedorValidator.this.descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
+    		//List<TipoDescontoProdutoDTO> desconto = CobrancaFornecedorValidator.this.descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
+    		//return desconto != null && !desconto.isEmpty();
     		
-    		return desconto != null && !desconto.isEmpty();
+    		try {
+    			
+    			DescontoDTO desc = descontoService.obterDescontoPor(this.descontos, this.cota.getId(), this.fornecedor.getId(), this.produto.getId(), null);
+    			return desc != null;
+    			
+			} catch (Exception e) {
+				
+				LOGGER.error("Erro ao obter desconto para validar Desconto do Produto.");
+			}
+    		
+    		return false;
     	}
 
     	@Transactional
@@ -143,10 +177,16 @@ public class CobrancaFornecedorValidator {
 								break;
 							}
 						} catch (Exception e) {
-							e.printStackTrace();
+							
+							LOGGER.error("Erro ao obter desconto para validar Desconto do Produto.", e);
 						}
-           			} else {
+           			} 
+           			
+           			//else {
         			
+           				LOGGER.error("Erro ao obter desconto para validar Desconto do Produto/Cota/Fornecedor.");
+           				
+           				/*
            				if (this.hasDescontoGeral()) {
            					break;
            				} else if (this.hasDescontoPorCota()) {
@@ -154,12 +194,13 @@ public class CobrancaFornecedorValidator {
            				} else if (this.hasDescontoPorProduto()) {
            					break;
            				}
-           			}
+           				*/
+           			//}
 
         			throw new ValidacaoException(
         				TipoMensagem.WARNING, 
-        					String.format("Desconto não encontrado para o produto [Cod.: %s]", 
-        						this.produto.getCodigo()));
+        					String.format("Desconto não encontrado para o produto [Cod.: %s] / [Cota: %s]", 
+        						this.produto.getCodigo(), this.cota != null ? this.cota.getNumeroCota() : ""));
         		}
         	}
 

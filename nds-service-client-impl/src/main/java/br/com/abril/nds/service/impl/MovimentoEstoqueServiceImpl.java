@@ -42,7 +42,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -221,7 +220,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(lancamento.getIdProdutoEdicao());
         
-        tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, null, 
+        tratarIncrementoProximoLancamento(descontos, descontoProximosLancamentos, null, 
                 produtoEdicao.getProduto().getFornecedor().getId(), lancamento.getIdProdutoEdicao(), lancamento.getIdProduto());
         
         final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCotaComProdutoContaFirme = new ArrayList<>();
