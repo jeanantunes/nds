@@ -202,7 +202,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private TipoClassificacaoProduto findTipoClassificacaoProdutoPorNome(String nome) {
 		
 		Criteria criteria = this.getSession().createCriteria(TipoClassificacaoProduto.class);
-        criteria.add(Restrictions.like("descricao", nome));
+        criteria.add(Restrictions.eq("descricao", nome));
         
         //FIXME Romover assim que vier a descricao completa de segmento no arquivo . prd
         criteria.setMaxResults(1);
@@ -249,7 +249,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
        
         if(!Strings.isNullOrEmpty(nome)) {
             
-        	tipoClassificacaoProduto = findTipoClassificacaoProdutoPorNome(nome);
+        	tipoClassificacaoProduto = findTipoClassificacaoProdutoPorNome(nome.trim());
             
             if(tipoClassificacaoProduto == null) {
             	//FIXME
@@ -692,12 +692,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		  
 			edicao.setTipoClassificacaoProduto(tpclassificacao);
 		
-		} else {
+		} else { // ---
 			
 			ndsiLoggerFactory.getLogger().logError(
 	                message,
 	                EventoExecucaoEnum.HIERARQUIA,
-	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
+	                "Classificação Nula não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
 			
 			//FIXME Classificação não deveria vir como nula.
 			edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto("NORMAL"));
