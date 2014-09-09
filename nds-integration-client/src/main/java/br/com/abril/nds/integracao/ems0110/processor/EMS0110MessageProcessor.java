@@ -697,7 +697,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 	                message,
 	                EventoExecucaoEnum.HIERARQUIA,
-	                "Classificação ("+input.getClassificacao()+") não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
+	                "Classificação Nula não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
 			
 			//FIXME Classificação não deveria vir como nula.
 			edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto("NORMAL"));
