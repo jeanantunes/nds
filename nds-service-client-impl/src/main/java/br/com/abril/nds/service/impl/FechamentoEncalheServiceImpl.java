@@ -1043,7 +1043,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		conferenciaEncalhe.setPrecoComDesconto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 		
-		conferenciaEncalhe.setQtde(chamadaEncalheCota.getQtdePrevista());
+		conferenciaEncalhe.setQtde(BigInteger.ZERO);
 		
 		conferenciaEncalhe.setData(new Date());
 		
