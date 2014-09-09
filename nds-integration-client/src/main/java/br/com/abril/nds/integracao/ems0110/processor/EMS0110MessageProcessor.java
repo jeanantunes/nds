@@ -538,10 +538,21 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		Fornecedor fornecedor = this.obterFornecedor(message);
 		
-		DescontoLogistica descontoLogistica =
-		        this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt( input.getTipoDesconto()),
-                                                                            fornecedor.getId(),
-                                                                            DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
+		//FIXME
+		DescontoLogistica descontoLogistica;
+		
+		if(input.getTipoDesconto()==null || input.getTipoDesconto().trim().equals("")){
+			descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt("1"),
+                    fornecedor.getId(),
+                    DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
+		}else {
+			descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt( input.getTipoDesconto()),
+                    fornecedor.getId(),
+                    DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
+		}
+		
+		 
+		        
 
 
 		if (!Objects.equal(produto.getCodigoContexto(), input.getContextoProd())) {
@@ -559,7 +570,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		if (null != produto.getTipoProduto() ) {
 
-			if(null != produto.getTipoProduto().getCodigoNBM() && !input.getCodNBM().equals(ZEROS_NBM)){
+			if(null != produto.getTipoProduto().getCodigoNBM() && (input.getCodNBM()!=null && !input.getCodNBM().equals(ZEROS_NBM))){
 				
 				if(!produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())){
 					
