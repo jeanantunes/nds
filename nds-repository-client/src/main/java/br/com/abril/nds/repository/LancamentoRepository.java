@@ -434,4 +434,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	boolean existeLancamentoParaOsStatus(final Long idProdutoEdicao,final StatusLancamento ...statusLancamento );
 	
 	boolean existemLancamentosConfirmados(Date dataRecolhimento);
+
+	boolean isRedistribuicao(String codigoProduto, Long numeroEdicao);
 }

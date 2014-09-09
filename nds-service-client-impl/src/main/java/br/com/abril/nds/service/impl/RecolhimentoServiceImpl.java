@@ -654,9 +654,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
+
+					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
+					    
+					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
+					}
 					
-					this.criarChamadaEncalheCota(
-				        qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
 				}
 			}
 		}

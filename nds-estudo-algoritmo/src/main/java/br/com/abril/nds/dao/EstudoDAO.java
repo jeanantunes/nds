@@ -89,18 +89,18 @@ public class EstudoDAO {
     }
     
     public void gravarCotas(final List<CotaEstudo> cotas) {
-	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
-	jdbcTemplate.batchUpdate(insertEstudoCotas, batch);
+		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
+		jdbcTemplate.batchUpdate(insertEstudoCotas, batch);
     }
 
     public void gravarProdutoEdicao(List<ProdutoEdicaoEstudo> produtosEdicao) {
-	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicao.toArray());
-	jdbcTemplate.batchUpdate(insertProdutoEdicao, batch);
+		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicao.toArray());
+		jdbcTemplate.batchUpdate(insertProdutoEdicao, batch);
     }
 
     public void gravarProdutoEdicaoBase(List<ProdutoEdicaoEstudo> produtosEdicaoBase) {
-	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicaoBase.toArray());
-	jdbcTemplate.batchUpdate(insertProdutoEdicaoBase, batch);
+		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicaoBase.toArray());
+		jdbcTemplate.batchUpdate(insertProdutoEdicaoBase, batch);
     }
 
     public void carregarPercentuaisExcedente(EstudoTransient estudo) {
@@ -127,7 +127,7 @@ public class EstudoDAO {
 
 	while(rs.next()) {
 	    if (estudo.isComplementarAutomatico()) {
-		estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
+	    	estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
 	    }
 	    estudo.setGeracaoAutomatica(rs.getBoolean("GERACAO_AUTOMATICA_ESTUDO"));
 	    estudo.setPercentualMaximoFixacao(rs.getBigDecimal("PERCENTUAL_MAXIMO_FIXACAO"));

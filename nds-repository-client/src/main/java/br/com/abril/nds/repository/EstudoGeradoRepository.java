@@ -39,5 +39,7 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	BigDecimal reparteFisicoOuPrevistoLancamento(Long idEstudo);
 	
 	EstudoGerado obterParaAtualizar(Long id);
+
+	public abstract Long countEstudoGeradoParaLancamento(Long idLancamento, Date dtLancamento);
 	
 }
