@@ -614,7 +614,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Long idDinap = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorDinap())).getId();
-		Long idFc    = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
+		Long idFc;
+		
+		if(distribuidor.getCodigoDistribuidorFC()!=null && !distribuidor.getCodigoDistribuidorFC().trim().equals("")){
+			idFc= fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
+		}else {
+			idFc=new Long("0");
+		}
 		
 		if(idFornecedor==idDinap.intValue()){	
 		 
