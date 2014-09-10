@@ -468,16 +468,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					
 					var valorDiferenca = 0;
 					
-					colunaReparte =
-						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
-							((row.cell.reparte) ? row.cell.reparte : "") +
-						'</span>';
-					
 					if (isParcial) {
+						
+						colunaReparte =
+							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.reparte) ? (row.cell.reparte = "0") ? "***" : row.cell.reparte : "***") +
+							'</span>';
 						
 						colunaEncalhe =
 							'<span id="encalhe' + row.cell.idItemCeIntegracao + '">' +
-								((row.cell.encalhe) ? row.cell.encalhe : "") +
+								((row.cell.encalhe) ? (row.cell.encalhe = "0" ) ? "***" : row.cell.encalhe: "***") +
 							'</span>';
 						
 						colunaVenda =
@@ -490,6 +490,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.idItemCeIntegracao + ', this)"/>';
 						
 					} else {
+						
+						colunaReparte =
+							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.reparte) ? row.cell.reparte : "") +
+							'</span>';
 						
 						colunaEncalhe =
 							' <input isEdicao="true" type="text" name="inputEncalhe" ' +

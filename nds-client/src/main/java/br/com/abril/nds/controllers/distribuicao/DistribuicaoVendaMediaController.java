@@ -341,7 +341,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	filtro.setCodigo(produto.getCodigoICD());
     	
         List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
-	
+        
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
     }
