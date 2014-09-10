@@ -163,7 +163,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     	StringBuilder sql = new StringBuilder();
 
     	sql.append(" Select                                                               ");
-    	sql.append(" T.id, T.numeroEdicao, T.idProduto, T.codigoProduto, T.nome,  		  ");
+    	sql.append(" T.id, T.lancId as idLancamento, T.numeroEdicao, T.idProduto, T.codigoProduto, T.nome, ");
     	sql.append(" MAX(T.periodo) as periodo,										      ");
     	sql.append(" T.parcial,                                                           ");
     	sql.append(" MAX(T.dataLancamento) as dataLancamento,                             ");
@@ -177,6 +177,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		
     	sql.append(" FROM (SELECT ");
 		sql.append("     pe.id, ");
+		sql.append("     l.id lancId, ");
 		sql.append("     pe.numero_edicao numeroEdicao, ");
 		sql.append("     p.id idProduto, ");
 		sql.append("     p.codigo codigoProduto, ");
@@ -236,8 +237,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		}
    		
    		sql.append(" group by pe.numero_edicao, pe.id, plp.numero_periodo ");
-   		sql.append(ordenarConsulta(filtro));
    		sql.append(" ) T GROUP BY T.numeroEdicao ");
+   		sql.append(ordenarConsulta(filtro));
    		
    		SQLQuery query = getSession().createSQLQuery(sql.toString());
    		
@@ -281,6 +282,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		query.addScalar("parcial", StandardBasicTypes.INTEGER);
 		query.addScalar("isParcialConsolidado", StandardBasicTypes.BOOLEAN);
 		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("idLancamento", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("status", StandardBasicTypes.STRING);
 		query.addScalar("idClassificacao", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("classificacao", StandardBasicTypes.STRING);
@@ -330,7 +332,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                     break;
 
                 default:
-                    hql.append(" ORDER BY l.data_lcto_distribuidor desc ");
+                    hql.append(" ORDER BY dataLancamento desc ");
             }
 
             if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -338,7 +340,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
             }
 
         } else {
-            hql.append(" ORDER BY l.data_lcto_distribuidor desc ");
+            hql.append(" ORDER BY dataLancamento desc ");
         }
 
 		return hql.toString();
