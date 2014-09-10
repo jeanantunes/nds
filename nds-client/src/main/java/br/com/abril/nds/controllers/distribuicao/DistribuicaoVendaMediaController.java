@@ -342,23 +342,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	
         List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
         
-//        if(filtro.isConsolidado()){
-//           
-//        	Comparator<ProdutoEdicaoVendaMediaDTO> dataLancDesc = new Comparator<ProdutoEdicaoVendaMediaDTO>() {
-//				@Override
-//				public int compare(ProdutoEdicaoVendaMediaDTO prd1, ProdutoEdicaoVendaMediaDTO prd2) {
-//					//return prd1.getDataLancamentoFormatada().compareToIgnoreCase(prd2.getDataLancamentoFormatada());
-//					return prd1.getDataLancamento().compareTo(prd1.getDataLancamento());
-//				}
-//        		
-//			};
-//			
-////			PaginacaoUtil.ordenarEmMemoria(resultado, filtro.getPaginacao().getOrdenacao(), "dataLancamento")
-//
-//			Collections.sort(resultado, dataLancDesc);
-//
-//        }
-        
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
     }
