@@ -45,7 +45,6 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.validation.CobrancaFornecedorValidator;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -836,10 +835,17 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
 			
-			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia()));
 		}
 		
 		return listaFornecedoresCombo;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Integer obterCodigoInterfacePorID(Long idFornecedor) {
+		
+		return fornecedorRepository.obterCodigoInterface(idFornecedor);
 	}
 	
 }
