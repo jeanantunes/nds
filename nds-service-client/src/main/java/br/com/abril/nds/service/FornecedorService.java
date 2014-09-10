@@ -193,4 +193,6 @@ public interface FornecedorService {
 	List<Fornecedor> obterFornecedoresNaoUnificados();
 	
 	List<ItemDTO<Long, String>> obterFornecedoresFcDinap();
+
+	Integer obterCodigoInterfacePorID(Long idFornecedor);
 }
