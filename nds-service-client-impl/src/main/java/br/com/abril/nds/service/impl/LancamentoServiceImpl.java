@@ -614,7 +614,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 		Distribuidor distribuidor = distribuidorService.obter();
 		
 		Long idDinap = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorDinap())).getId();
-		Long idFc    = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
+		Long idFc;
+		
+		if(distribuidor.getCodigoDistribuidorFC()!=null && !distribuidor.getCodigoDistribuidorFC().trim().equals("")){
+			idFc= fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
+		}else {
+			idFc=new Long("0");
+		}
 		
 		if(idFornecedor==idDinap.intValue()){	
 		 
@@ -705,5 +711,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Integer obterRepartePromocionalEdicao(final Long codigoProduto,final Long numeroEdicao){
 		
 		return lancamentoRepository.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
+	}
+	
+	@Override
+	@Transactional
+	public boolean isRedistribuicao(String codigoProduto, Long numeroEdicao){
+		return lancamentoRepository.isRedistribuicao(codigoProduto, numeroEdicao);
 	}
 }

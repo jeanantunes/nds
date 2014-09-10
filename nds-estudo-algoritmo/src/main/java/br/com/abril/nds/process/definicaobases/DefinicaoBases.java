@@ -58,6 +58,10 @@ public class DefinicaoBases extends ProcessoAbstrato {
         			excluiEdicoesComMaisDeDoisAnos(edicoesBase);
         			excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
         			
+        			if(estudo.getProdutoEdicaoEstudo().getPeriodo() != null && estudo.getProdutoEdicaoEstudo().getPeriodo() >= 2){
+        				edicoesBase = filtarEdicoesParciais(edicoesBase, estudo);
+        			}
+        			
         			estudo.setEdicoesBase(edicoesBase);        			
         		}
         	}
@@ -74,6 +78,21 @@ public class DefinicaoBases extends ProcessoAbstrato {
             }
         }
         return listaFiltrada;
+    }
+    
+    private LinkedList<ProdutoEdicaoEstudo> filtarEdicoesParciais(LinkedList<ProdutoEdicaoEstudo> edicoesBase,  EstudoTransient estudo){
+    	
+    	LinkedList<ProdutoEdicaoEstudo> edicoesBasesMesmaEdicao = new LinkedList<>();
+    	
+    	for (ProdutoEdicaoEstudo base : edicoesBase) {
+    		if(estudo.getProdutoEdicaoEstudo().getNumeroEdicao().equals(base.getNumeroEdicao())){
+    			edicoesBasesMesmaEdicao.add(base);
+    		}
+			
+		}
+    	
+    	return edicoesBasesMesmaEdicao;
+    	
     }
     
     private void excluiEdicoesComMaisDeDoisAnos(final List<ProdutoEdicaoEstudo> edicoesBase) {
