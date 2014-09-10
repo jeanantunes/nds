@@ -75,6 +75,7 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -511,43 +512,47 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         carregarDescricaoEstoque(encalhe);
        
     }
-    
-    
+
     private void carregarDescricaoEstoque(FechamentoFisicoLogicoDTO encalhe) {
     	
     	if(encalhe.getFechado()) {
-    		
+
     		if(isEstoqueLancamento(encalhe)) {
-    			
+
                 encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-                
-    		} else if(encalhe.isMatrizRecolhimento()) {
-    			
+
+    		} else if(this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
+        						encalhe.getProdutoEdicao(), encalhe.getDataRecolhimento(), 
+        						Arrays.asList(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name()))) {
+
     			encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
     			
     		} else {
     			
     			encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
     		}
-    		
+
     	} else {
-    		
-            if ( encalhe.isChamadao() && !encalhe.isMatrizRecolhimento()) {
-        		
+
+            if ( this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
+            			encalhe.getProdutoEdicao(), encalhe.getDataRecolhimento(), 
+            			Arrays.asList(TipoChamadaEncalhe.CHAMADAO.name())) 
+
+            			&& !(this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
+                    			encalhe.getProdutoEdicao(), encalhe.getDataRecolhimento(), 
+                    			Arrays.asList(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name())))) {
+
             	encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
-            
+
             } else if (isEstoqueLancamento(encalhe)) {
-            	
+
             	encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-            
+
             } else {
-            
-            	encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
-            
-            }
-    		
-    	}
-    	
+
+            	encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());            
+            }    		
+    	}    	
     }
     
     /**
@@ -1253,13 +1258,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 if (item.getRecolhimento() != null && TipoLancamentoParcial.PARCIAL.name().equals(item.getRecolhimento())) {
                 	
                 	this.tratarEncalheProdutoEdicaoParcial(item, usuario, item.getFisico());
-                	
-                } else if(item.isChamadao() && item.isMatrizRecolhimento()){
-                	 
-                	movimentoEstoqueService.transferirEstoqueProdutoChamadaoParaRecolhimento(item.getProdutoEdicao(), usuario);
-                	
-                }
-                
+
+                } else if (this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
+                									item.getProdutoEdicao(), item.getDataRecolhimento(),
+                									Arrays.asList(
+                										TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name(), 
+                										TipoChamadaEncalhe.CHAMADAO.name()))) { 
+
+                	movimentoEstoqueService.transferirEstoqueProdutoChamadaoParaRecolhimento(item.getProdutoEdicao(), usuario);          	                	
+                }                
             }
         }
         

@@ -82,4 +82,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 
 	Boolean validarEncerramentoOperacaoEncalhe(Date data);
 	
+	boolean hasTipoChamadaEncalhe(Long idProdutoEdicao, Date dataRecolhimento, List<String> tiposChamadaEncalhe);
+	
 }
