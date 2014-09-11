@@ -63,6 +63,7 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -131,17 +132,26 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	@Autowired
 	private RecolhimentoService recolhimentoService;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
 
 	@Transactional(readOnly=true)
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
+		
 		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
 	}
 	
 	@Transactional
 	public byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca) {
 		
+		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
+		
 		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = 
 				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		
 		if(listaChamadaEncalheFornecedor == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar boleto.");
@@ -235,6 +245,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         
 		filtro.setPeriodoRecolhimento(
 		        this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+		
+		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		final List<ChamadaEncalheFornecedor> chamadasFornecedor = 
 		        chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
@@ -685,6 +697,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         
         filtro.setPeriodoRecolhimento(
                 this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+        
+        filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		final BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
 		
@@ -708,6 +722,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Override
 	@Transactional(readOnly=true)
 	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro, BigDecimal qntVenda) {
+		
+		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		ItemChamadaEncalheFornecedor item = itemChamadaEncalheFornecedorRepository.buscarPorId(filtro.getIdItemChamadaEncalheFornecedor());
 		
@@ -742,6 +758,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         
         filtro.setPeriodoRecolhimento(
                 this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+        
+        filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
 	}
@@ -749,6 +767,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Override
 	@Transactional
 	public String reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -831,6 +851,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     		
     		filtro.setIdFornecedor(fornecedores.get(0));
     		
+    		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
+    		
     		List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = 
         			chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
             
@@ -848,7 +870,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		for(Long item : fornecedores){
 			
-			filtro.setIdFornecedor(item);
+			filtro.setCodigoDistribuidorFornecdor(item.intValue());
 			
 			List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = 
 					chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
@@ -907,6 +929,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         
         filtroCE.setPeriodoRecolhimento(
                 this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtroCE.getSemana())));
+        
+        filtroCE.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtroCE));
 		
     	List<ItemFechamentoCEIntegracaoDTO> itensFechamento = 
     			fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracaoComDiferenca(filtroCE);
@@ -963,5 +987,15 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				((filteredCollection != null) 
 						? Lists.newArrayList(filteredCollection) 
 								: new ArrayList<>());
+	}
+	
+	private Integer getCodigoFornecedorInterface(FiltroFechamentoCEIntegracaoDTO filtro){
+		
+		if(filtro.getIdFornecedor()!= null){
+			
+			return fornecedorService.obterCodigoInterfacePorID(filtro.getIdFornecedor());
+		}
+		
+		return null;
 	}
 }

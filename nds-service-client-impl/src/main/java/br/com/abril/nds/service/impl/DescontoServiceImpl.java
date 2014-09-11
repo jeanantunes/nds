@@ -1280,13 +1280,18 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoId, Long produtoEdicaoId) throws Exception {
 		
-		                                                                                /**
+		/**
          * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
          * 
          * Para os itens abaixo prevalece a ordem de prioridade
          * 
-         * Prioridade | Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica 1 | X | X | X | X 2 | X | X | | X
-         * 3 | X | | | X 4 | X | X | X | 5 | X | X | | 6 | X | | |
+         * Prioridade 	| Produto 	| ProdutoEdicao | QuantidadeEdicoes | Cota Especifica 
+         * 1 			| X 		| X 			| X 				| X 
+         * 2 			| X 		| X 			| 					| X
+         * 3 			| X 		| 				| 					| X 
+         * 4 			| X 		| X				| X 				| 
+         * 5 			| X 		| X 			| 					| 
+         * 6 			| X 		| 				| 					|
          * 
          * LEGENDA: c : Cota f : Fornecedor pe: ProdutoEdicao p : Produto pl: Próximo Lançamento
          * 
