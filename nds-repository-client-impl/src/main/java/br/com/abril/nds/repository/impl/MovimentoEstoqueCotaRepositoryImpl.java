@@ -3688,7 +3688,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" and (mec.statusEstoqueFinanceiro is null or mec.statusEstoqueFinanceiro != :processado )" );
         
-        sql.append(" group by mec.cota.id, produtoEdicao.id ");
+        sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
         
         final Query query = this.getSession().createQuery(sql.toString());
         

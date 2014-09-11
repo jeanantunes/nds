@@ -289,7 +289,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		// setParametersFromDistribuidor(sqlBuilder);
 
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
-		sqlBuilder.append(" LPAD(nfn.NUMERO_DOCUMENTO_FISCAL, 8, '0') as numeroDocOrigem, ")
+		sqlBuilder.append(" LPAD(nfn.id, 8, '0') as numeroDocOrigem, ")
 		.append("  cast(nfps.SEQUENCIA as char) as numItemPedido, ")
 		.append("  '' as codSistemaOrigemPedido,  ") //TODO: -- Deve ser cadastrado no FTF, ver com a Edna.
 		.append("  nfps.CODIGO_PRODUTO as codProdutoOuServicoSistemaOrigem, ")
@@ -491,7 +491,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
 		concatenarTipoPedidoBy(idNotaFiscal, sb);
-		sb.append(" LPAD(nfn.NUMERO_DOCUMENTO_FISCAL, 8, '0') as numeroDocOrigem, ")
+		sb.append(" LPAD(nfn.id, 8, '0') as numeroDocOrigem, ")
 		.append(" COALESCE(pessoa.NOME,'') as nomeDoCliente, ")
 		.append(" '' as cpfOuCnpj, ")
 		.append(" endereco.LOGRADOURO as endereco, ")
