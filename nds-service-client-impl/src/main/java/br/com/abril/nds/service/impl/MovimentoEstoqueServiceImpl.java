@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -260,24 +261,24 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 continue;
             }
             
-            boolean valido = false;
+            boolean formaCobrancaValida = false;
             for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
             	
             	if(fcf.getIdCota() != null && fcf.getIdCota().equals(estudoCota.getIdCota()) 
             			&& fcf.getIdFornecedor() != null && fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
-            		valido = true;
+            		formaCobrancaValida = true;
             		break;
             	}
             	
-            	if(!valido) {
-            		if(fcf.getIdCota() == null && fcf.getIdFornecedor() == produtoEdicao.getProduto().getFornecedor().getId()) {
-            			valido = true;
+            	if(!formaCobrancaValida) {
+            		if(fcf.getIdCota() == null && fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
+            			formaCobrancaValida = true;
             			break;
             		}
             	}
             }
             
-            if(!valido) {
+            if(!formaCobrancaValida) {
             	Cota cota = this.cotaRepository.buscarPorId(estudoCota.getIdCota());
             	LOGGER.error("Erro ao obter Forma de Cobrança para Cota/Fornecedor.");
             	throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cota.getNumeroCota()));
@@ -358,6 +359,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         	LOGGER.error("Erro ao obter Forma de Cobrança para Cota/Fornecedor.");
         	StringBuilder cotasComProblemas = new StringBuilder();
         	List<Long> cotas = new ArrayList<>(cotasSemFormaCobranca);
+        	cotas.remove(null);
         	Collections.sort(cotas);
         	for(Long numCota : cotas) {
         		
@@ -371,33 +373,41 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	private void montarListaCotasComProblemasFormaCobranca(final List<EstudoCotaDTO> listaEstudoCota,
 			ProdutoEdicao produtoEdicao, List<FormaCobrancaFornecedorDTO> formasCobrancaCotaFornecedor,
 			Map<Long, List<Long>> mapaFornecedorCotas, Set<Long> cotasSemFormaCobranca) {
+		
+		Map<Long, Long> cotaIdsNumeroCota = new HashMap<>();
+		for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+			cotaIdsNumeroCota.put(fcf.getIdCota(), fcf.getNumeroCota());
+		}
+		
 		for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
         	
-        	boolean valido = false;
+			if(!fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
+				continue;
+			}
+			
+        	List<Long> fornecedorCotas = mapaFornecedorCotas.get(fcf.getIdFornecedor());
         	for (final EstudoCotaDTO estudoCota : listaEstudoCota) {
-        		
-        		if(!fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
-        			continue;
-        		}
-        		
-        		List<Long> fornecedorCotas = mapaFornecedorCotas.get(fcf.getIdFornecedor());
         		
         		if(fornecedorCotas.contains(estudoCota.getIdCota())) {
         			continue;
         		}
         		
-        		if(!valido) {
-        			
-        			if(fornecedorCotas.contains(null)) {
-        				continue;
+        		if(!fornecedorCotas.contains(estudoCota.getIdCota())) {
+        			for(Entry<Long, List<Long>> fornecedorId : mapaFornecedorCotas.entrySet()) {
+        				if(mapaFornecedorCotas.get(fornecedorId.getKey()) != null 
+        						&& mapaFornecedorCotas.get(fornecedorId.getKey()).contains(estudoCota.getIdCota())) {
+        					cotasSemFormaCobranca.add(cotaIdsNumeroCota.get(estudoCota.getIdCota()));
+        					continue;
+        				}
         			}
         		}
         		
-        		if(!valido) {
-        			if(fcf.getNumeroCota() == null) continue;
-        			cotasSemFormaCobranca.add(fcf.getNumeroCota());
-        			System.out.println(fcf.getIdFornecedor());
-        		}
+    			if(!fornecedorCotas.contains(estudoCota.getIdCota()) && fornecedorCotas.contains(null)) {
+    				continue;
+    			}
+        		
+    			if(fcf.getNumeroCota() == null) continue;
+    			cotasSemFormaCobranca.add(fcf.getNumeroCota());
         	}
         	
         }
