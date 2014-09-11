@@ -107,7 +107,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		sql.append(" COB.DT_PAGAMENTO as dataPagamento, ");	
 		
-		sql.append(" COB.ENCARGOS as encargos, ");	
+		sql.append(" (B.VALOR_MULTA+B.VALOR_JUROS) as encargos, ");
+		
+		// sql.append(" COB.ENCARGOS as encargos, ");	
 		
 		sql.append(" ROUND(COB.VALOR,2) as valor, ");	
 		
@@ -124,6 +126,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		sql.append(" FROM COBRANCA COB ");	
 		
 		sql.append(" INNER JOIN COTA C ON C.ID = COB.COTA_ID ");
+		
+		sql.append(" INNER JOIN BAIXA_COBRANCA B ON B.COBRANCA_ID = COB.ID ");
 		
 		sql.append(" INNER JOIN DIVIDA D ON D.ID = COB.DIVIDA_ID ");
 		
