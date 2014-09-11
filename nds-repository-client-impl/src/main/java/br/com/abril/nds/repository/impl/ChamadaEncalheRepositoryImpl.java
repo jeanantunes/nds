@@ -608,8 +608,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		setParameters(query, param);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				CotaEmissaoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaEmissaoDTO.class));
 		
 		return query.list();
 		
@@ -1128,22 +1127,20 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" mec.data as dataMovimento,                                                                                                   ")
 			.append(" null as numeroNotaEnvio,                                                                                                     ")
 			.append(" mec.QTDE as reparte                                                                                                          ")
-			.append(" FROM  chamada_encalhe ce                                                                                                     ")
-			.append(" INNER JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID                                                        ")                      
+			.append(" FROM chamada_encalhe ce                                                                                                      ")
+			.append(" INNER JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID                                                     ")                      
 			.append(" INNER join chamada_encalhe_lancamento cel on ce.id = cel.chamada_encalhe_id                                                  ")
-			.append(" INNER JOIN cota c on c.id = cec.COTA_ID                                                                                      ")                                      
-			.append(" INNER JOIN produto_edicao pe on pe.ID = ce.PRODUTO_EDICAO_ID                                                                 ")                                 
-			.append(" INNER JOIN lancamento l on l.PRODUTO_EDICAO_ID = pe.ID and l.id = cel.LANCAMENTO_ID                                          ")  
-			.append(" INNER join lancamento_parcial lp on lp.produto_edicao_id = pe.ID                                                             ")
-			.append(" INNER JOIN periodo_lancamento_parcial plr on plr.id = l.PERIODO_LANCAMENTO_PARCIAL_ID and plr.LANCAMENTO_PARCIAL_ID = lp.ID  ")                                                         
-			.append(" INNER JOIN movimento_estoque_cota mec ON mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and mec.COTA_ID = cec.COTA_ID          ")                                                                     
-			.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                                                ")
+			.append(" INNER JOIN cota c  on c.id = cec.COTA_ID                                                                                     ")                                      
+			.append(" INNER JOIN produto_edicao pe  on pe.ID = ce.PRODUTO_EDICAO_ID                                                                ")                                 
+			.append(" INNER JOIN lancamento l on l.PRODUTO_EDICAO_ID = pe.ID                                                                       ")  
+			.append(" INNER join lancamento_parcial lp  on lp.produto_edicao_id = pe.ID                                                            ")
+			.append(" INNER JOIN periodo_lancamento_parcial plr  on l.PERIODO_LANCAMENTO_PARCIAL_ID = plr.ID                                       ")                                                         
+			.append(" INNER JOIN movimento_estoque_cota mec  ON mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID  and mec.COTA_ID = cec.COTA_ID   and mec.LANCAMENTO_ID = l.ID          ")                                                                     
+			.append(" inner join tipo_movimento tm  on tm.id = mec.TIPO_MOVIMENTO_ID                                                               ")
 			.append(" where 1 = 1                                                                                                                  ")
-			.append(" and l.NUMERO_LANCAMENTO > 1                                                                                                  ")
+			.append(" and l.NUMERO_LANCAMENTO >= 1                                                                                                      ")
 			.append(" and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte                                                        ")
-			.append(" and l.DATA_REC_DISTRIB between :recolhimentoDe and :recolhimentoAte                                                          ")
-			.append(" and mec.TIPO_MOVIMENTO_ID in (select id from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte)) ")  
-			.append(" and pe.parcial = true                                                                                                       ")
+			.append(" and l.status not in ('RECOLHIDO', 'FECHADO', 'EM_RECOLHIMENTO') ")
 			.append(" group by numeroCota, idCota, idProdutoEdicao, dataMovimento, numeroNotaEnvio, reparte ")   
 			
 			.append(" order by dataMovimento ");

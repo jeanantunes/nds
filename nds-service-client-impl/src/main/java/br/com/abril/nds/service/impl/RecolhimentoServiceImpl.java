@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -53,15 +52,12 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
-import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -310,21 +306,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											Usuario usuario,
 											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 		
-		if (matrizRecolhimento == null
-				|| matrizRecolhimento.isEmpty()) {
+		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
 		}
 		
-		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento =
-			new TreeMap<Long, ProdutoRecolhimentoDTO>();
+		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento = new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
 		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada =
-			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada = new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		for (Date dataConfirmada : datasConfirmadas) {
 			
@@ -348,15 +341,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
-					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
-															  null, novaDataRecolhimento);
+					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento, null, novaDataRecolhimento);
 					
 					continue;
 				}
 				
-				this.montarInformacoesConfirmarBalanceamento(
-					mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
-					idsLancamento, produtoRecolhimento, novaDataRecolhimento);
+				this.montarInformacoesConfirmarBalanceamento(mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos, idsLancamento, produtoRecolhimento, novaDataRecolhimento);
 				
 				List<Long> idsLancamentosAgrupados = produtoRecolhimento.getIdsLancamentosAgrupados();
 			
@@ -374,9 +364,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		this.atualizarLancamentos(
-			idsLancamento, usuario, mapaLancamentoRecolhimento,
-			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
+		this.atualizarLancamentos(idsLancamento, usuario, mapaLancamentoRecolhimento, StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana, usuario);
 		
@@ -590,8 +578,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * @param numeroSemana - número da semana
 	     * @param usuario 
      */
-	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
-			 						  Integer numeroSemana, Usuario usuario) {
+	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos, Integer numeroSemana, Usuario usuario) {
 		
 		if (mapaDataRecolhimentoLancamentos == null || mapaDataRecolhimentoLancamentos.isEmpty()) {
 		
@@ -637,6 +624,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					if (chamadaEncalhe == null) {
 						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+					    this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
 					    listaChamadaEncalhe.add(chamadaEncalhe);
 					    
 					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
@@ -653,8 +641,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
-					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
-
 					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
 					    
 					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
