@@ -127,7 +127,7 @@
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="1704dee5-1e11-4e59-bdaa-4b65874a7efa" stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="40" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="40" height="14" backcolor="#999999" uuid="1704dee5-1e11-4e59-bdaa-4b65874a7efa"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -141,7 +141,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="033af370-f7d3-4294-8b88-e776af4fc3d0" stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="136" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="136" height="14" backcolor="#999999" uuid="033af370-f7d3-4294-8b88-e776af4fc3d0"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -155,7 +155,7 @@
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="346f8358-c928-45c6-8cb0-db9974ffb13e" stretchType="RelativeToBandHeight" mode="Opaque" x="216" y="0" width="205" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="216" y="0" width="205" height="14" backcolor="#999999" uuid="346f8358-c928-45c6-8cb0-db9974ffb13e"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -169,7 +169,7 @@
 				<text><![CDATA[Endereço]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="1191f2e7-a847-48a9-a4dc-def9707aaeca" stretchType="RelativeToBandHeight" mode="Opaque" x="421" y="0" width="42" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="421" y="0" width="42" height="14" backcolor="#999999" uuid="1191f2e7-a847-48a9-a4dc-def9707aaeca">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_0} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -184,7 +184,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_0}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="53a07423-a638-4ee3-9726-39935b1b7af8" stretchType="RelativeToBandHeight" mode="Opaque" x="463" y="0" width="42" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="463" y="0" width="42" height="14" backcolor="#999999" uuid="53a07423-a638-4ee3-9726-39935b1b7af8">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_1} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -199,7 +199,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_1}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="2de32515-70da-41dd-bea2-65584227f0b5" stretchType="RelativeToBandHeight" mode="Opaque" x="505" y="0" width="42" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="505" y="0" width="42" height="14" backcolor="#999999" uuid="2de32515-70da-41dd-bea2-65584227f0b5">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_2} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -214,7 +214,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_2}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="90906967-3997-42d1-a723-b6e2a166eca4" stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="42" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="42" height="14" backcolor="#999999" uuid="90906967-3997-42d1-a723-b6e2a166eca4">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_3} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -229,7 +229,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_3}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="206e4a04-03d2-475d-8215-470909efbfa2" stretchType="RelativeToBandHeight" mode="Opaque" x="589" y="0" width="42" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="589" y="0" width="42" height="14" backcolor="#999999" uuid="206e4a04-03d2-475d-8215-470909efbfa2">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_4} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -244,7 +244,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_4}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="312a88a2-6255-4f35-9385-05829ed7fe57" stretchType="RelativeToBandHeight" mode="Opaque" x="631" y="0" width="42" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="631" y="0" width="42" height="14" backcolor="#999999" uuid="312a88a2-6255-4f35-9385-05829ed7fe57">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_5} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -259,7 +259,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_5}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="9b5ec60e-e0b1-42b2-8d3b-ad3fd6698871" stretchType="RelativeToBandHeight" mode="Opaque" x="673" y="0" width="64" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="673" y="0" width="64" height="14" backcolor="#999999" uuid="9b5ec60e-e0b1-42b2-8d3b-ad3fd6698871">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -275,7 +275,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="de240d24-bbb0-405f-b0b2-c91e097ae629" stretchType="RelativeToBandHeight" mode="Opaque" x="631" y="0" width="85" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="631" y="0" width="85" height="14" backcolor="#999999" uuid="de240d24-bbb0-405f-b0b2-c91e097ae629">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -291,7 +291,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e2a3bdf5-4169-449c-8f9b-281c90df3cc3" stretchType="RelativeToBandHeight" mode="Opaque" x="589" y="0" width="106" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="589" y="0" width="106" height="14" backcolor="#999999" uuid="e2a3bdf5-4169-449c-8f9b-281c90df3cc3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -307,7 +307,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4" stretchType="RelativeToBandHeight" mode="Opaque" x="505" y="0" width="148" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="505" y="0" width="148" height="14" backcolor="#999999" uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -323,7 +323,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="6e7f9867-3d28-4a4b-b546-009599533ae3" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999" uuid="6e7f9867-3d28-4a4b-b546-009599533ae3"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -337,7 +337,7 @@
 				<text><![CDATA[ Nº NE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4" stretchType="RelativeToBandHeight" mode="Opaque" x="653" y="0" width="149" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="653" y="0" width="149" height="14" backcolor="#999999" uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -353,7 +353,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3" stretchType="RelativeToBandHeight" mode="Opaque" x="674" y="0" width="128" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="674" y="0" width="128" height="14" backcolor="#999999" uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -369,7 +369,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e2a3bdf5-4169-449c-8f9b-281c90df3cc3" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="107" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="107" height="14" backcolor="#999999" uuid="e2a3bdf5-4169-449c-8f9b-281c90df3cc3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -385,7 +385,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="de240d24-bbb0-405f-b0b2-c91e097ae629" stretchType="RelativeToBandHeight" mode="Opaque" x="716" y="0" width="86" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="716" y="0" width="86" height="14" backcolor="#999999" uuid="de240d24-bbb0-405f-b0b2-c91e097ae629">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -401,7 +401,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9b5ec60e-e0b1-42b2-8d3b-ad3fd6698871" stretchType="RelativeToBandHeight" mode="Opaque" x="737" y="0" width="65" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="737" y="0" width="65" height="14" backcolor="#999999" uuid="9b5ec60e-e0b1-42b2-8d3b-ad3fd6698871">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -417,7 +417,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3" stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="127" height="14" backcolor="#999999">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="127" height="14" backcolor="#999999" uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -437,7 +437,7 @@
 	<detail>
 		<band height="30" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="b6d26725-e2b1-4d8b-8fea-af3a913197cc" stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="30" uuid="b6d26725-e2b1-4d8b-8fea-af3a913197cc"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -450,7 +450,7 @@
 				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4a5362c4-1f6d-4fe8-a6e9-8ded65b88fc5" stretchType="RelativeToTallestObject" x="40" y="0" width="40" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="40" y="0" width="40" height="30" uuid="4a5362c4-1f6d-4fe8-a6e9-8ded65b88fc5"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -463,7 +463,7 @@
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="438a1643-db59-48e1-8955-80359caef2b1" stretchType="RelativeToTallestObject" x="80" y="0" width="136" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="136" height="30" uuid="438a1643-db59-48e1-8955-80359caef2b1"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -476,7 +476,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="414100e2-0876-46f4-a1f2-01af2b9f46ec" stretchType="RelativeToTallestObject" x="216" y="0" width="205" height="30"/>
+				<reportElement stretchType="RelativeToTallestObject" x="216" y="0" width="205" height="30" uuid="414100e2-0876-46f4-a1f2-01af2b9f46ec"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -489,7 +489,7 @@
 				<textFieldExpression><![CDATA[$F{endereco}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ba8cb4ca-c42e-42c7-a738-43f6368180fb" stretchType="RelativeToTallestObject" x="421" y="0" width="42" height="30">
+				<reportElement stretchType="RelativeToTallestObject" x="421" y="0" width="42" height="30" uuid="ba8cb4ca-c42e-42c7-a738-43f6368180fb">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_0} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -504,7 +504,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto0}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="adfc99d8-34a3-483d-a051-2797f1aaa62e" stretchType="RelativeToTallestObject" x="463" y="0" width="42" height="30">
+				<reportElement stretchType="RelativeToTallestObject" x="463" y="0" width="42" height="30" uuid="adfc99d8-34a3-483d-a051-2797f1aaa62e">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_1} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -519,7 +519,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="fe794d20-b53d-4f26-b2ce-c4a6579cbfd7" stretchType="RelativeToTallestObject" x="505" y="0" width="42" height="30">
+				<reportElement stretchType="RelativeToTallestObject" x="505" y="0" width="42" height="30" uuid="fe794d20-b53d-4f26-b2ce-c4a6579cbfd7">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_2} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -534,7 +534,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ac1cc779-3ccb-4dba-8844-b2513790b74c" stretchType="RelativeToTallestObject" x="547" y="0" width="42" height="30">
+				<reportElement stretchType="RelativeToTallestObject" x="547" y="0" width="42" height="30" uuid="ac1cc779-3ccb-4dba-8844-b2513790b74c">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_3} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -549,7 +549,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="756bb6b5-6ef6-4527-bf41-1451754721c9" stretchType="RelativeToTallestObject" x="589" y="0" width="42" height="30">
+				<reportElement stretchType="RelativeToTallestObject" x="589" y="0" width="42" height="30" uuid="756bb6b5-6ef6-4527-bf41-1451754721c9">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_4} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -564,7 +564,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto4}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="005536b1-4fba-4314-a758-b3be27ef7302" stretchType="RelativeToTallestObject" x="631" y="0" width="42" height="30">
+				<reportElement stretchType="RelativeToTallestObject" x="631" y="0" width="42" height="30" uuid="005536b1-4fba-4314-a758-b3be27ef7302">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_5} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -579,7 +579,7 @@
 				<textFieldExpression><![CDATA[$F{qtdProduto5}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="b50bcc91-dabe-4301-82b2-b1b5078dbf22" stretchType="RelativeToBandHeight" mode="Opaque" x="673" y="0" width="64" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="673" y="0" width="64" height="30" uuid="b50bcc91-dabe-4301-82b2-b1b5078dbf22">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -595,7 +595,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1e3ca7ad-9179-48b1-acb8-f4d206b3731c" stretchType="RelativeToBandHeight" mode="Opaque" x="631" y="0" width="85" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="631" y="0" width="85" height="30" uuid="1e3ca7ad-9179-48b1-acb8-f4d206b3731c">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -611,7 +611,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="03fbc8e7-2218-4d4c-ac3f-5374482f4fbf" stretchType="RelativeToBandHeight" mode="Opaque" x="589" y="0" width="106" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="589" y="0" width="106" height="30" uuid="03fbc8e7-2218-4d4c-ac3f-5374482f4fbf">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -627,7 +627,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c3886aa3-02a3-47d4-927b-c8e40f0c951c" stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="127" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="127" height="30" uuid="c3886aa3-02a3-47d4-927b-c8e40f0c951c">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -643,7 +643,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4f5c4bd2-948b-4257-9778-ae4417118961" stretchType="RelativeToTallestObject" mode="Opaque" x="505" y="0" width="148" height="30">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="505" y="0" width="148" height="30" uuid="4f5c4bd2-948b-4257-9778-ae4417118961">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -659,7 +659,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4f5c4bd2-948b-4257-9778-ae4417118961" stretchType="RelativeToTallestObject" mode="Opaque" x="653" y="0" width="149" height="30">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="653" y="0" width="149" height="30" uuid="4f5c4bd2-948b-4257-9778-ae4417118961">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -675,7 +675,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c3886aa3-02a3-47d4-927b-c8e40f0c951c" stretchType="RelativeToBandHeight" mode="Opaque" x="674" y="0" width="128" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="674" y="0" width="128" height="30" uuid="c3886aa3-02a3-47d4-927b-c8e40f0c951c">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -691,7 +691,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="03fbc8e7-2218-4d4c-ac3f-5374482f4fbf" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="107" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="107" height="30" uuid="03fbc8e7-2218-4d4c-ac3f-5374482f4fbf">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -707,7 +707,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1e3ca7ad-9179-48b1-acb8-f4d206b3731c" stretchType="RelativeToBandHeight" mode="Opaque" x="716" y="0" width="86" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="716" y="0" width="86" height="30" uuid="1e3ca7ad-9179-48b1-acb8-f4d206b3731c">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -723,7 +723,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b50bcc91-dabe-4301-82b2-b1b5078dbf22" stretchType="RelativeToBandHeight" mode="Opaque" x="737" y="0" width="65" height="30">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="737" y="0" width="65" height="30" uuid="b50bcc91-dabe-4301-82b2-b1b5078dbf22">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -743,7 +743,7 @@
 	<lastPageFooter>
 		<band height="29">
 			<textField>
-				<reportElement uuid="a61577a8-38d9-43b3-ab17-b4e27d1bde10" x="40" y="0" width="762" height="15"/>
+				<reportElement x="40" y="0" width="762" height="15" uuid="a61577a8-38d9-43b3-ab17-b4e27d1bde10"/>
 				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -754,7 +754,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="4d2e70fe-3846-4732-8af9-230b8a822562" x="0" y="0" width="40" height="15"/>
+				<reportElement x="0" y="0" width="40" height="15" uuid="4d2e70fe-3846-4732-8af9-230b8a822562"/>
 				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -767,32 +767,32 @@
 				<text><![CDATA[Total:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="ebbebf9b-e2f0-43d0-818b-c3c9edb2c6ca" x="423" y="0" width="40" height="20"/>
+				<reportElement x="423" y="0" width="40" height="20" uuid="ebbebf9b-e2f0-43d0-818b-c3c9edb2c6ca"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_PROD_1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="5b32ac12-a9c1-4b80-9dc8-d3343756e4b7" x="463" y="0" width="42" height="20"/>
+				<reportElement x="463" y="0" width="42" height="20" uuid="5b32ac12-a9c1-4b80-9dc8-d3343756e4b7"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_PROD_2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="5bb046f4-ede5-4a09-a5b4-a294fd1aae78" x="505" y="0" width="42" height="20"/>
+				<reportElement x="505" y="0" width="42" height="20" uuid="5bb046f4-ede5-4a09-a5b4-a294fd1aae78"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_PROD_3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="2fa6a15a-f7ff-4469-8e40-4193485a0188" x="547" y="0" width="42" height="20"/>
+				<reportElement x="547" y="0" width="42" height="20" uuid="2fa6a15a-f7ff-4469-8e40-4193485a0188"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_PROD_4}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="3a66cf87-ad17-4dee-b0af-b4a21b62793c" x="589" y="0" width="42" height="20"/>
+				<reportElement x="589" y="0" width="42" height="20" uuid="3a66cf87-ad17-4dee-b0af-b4a21b62793c"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_PROD_5}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="9b745d95-4f00-4b62-83c1-68975700c1f9" x="631" y="0" width="42" height="20"/>
+				<reportElement x="631" y="0" width="42" height="20" uuid="9b745d95-4f00-4b62-83c1-68975700c1f9"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$V{SUM_TOTAL_PROD_6}]]></textFieldExpression>
 			</textField>

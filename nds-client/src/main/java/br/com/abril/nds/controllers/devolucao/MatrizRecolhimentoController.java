@@ -285,8 +285,7 @@ public class MatrizRecolhimentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Ao menos uma data deve ser selecionada!");
         }
         
-        BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = (BalanceamentoRecolhimentoDTO) this.httpSession
-                .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+        BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = (BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
         
         validarDatasBalanceamentoMatriz(balanceamentoRecolhimento.getMatrizRecolhimento(), datasConfirmadas);
         
@@ -1836,13 +1835,11 @@ public class MatrizRecolhimentoController extends BaseController {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
         }
         
-        this.httpSession.setAttribute(ATRIBUTO_SESSAO_VALIDACAO, this.recolhimentoService.reabrirMatriz(
-                datasReabertura, getUsuarioLogado()));
+        this.httpSession.setAttribute(ATRIBUTO_SESSAO_VALIDACAO, this.recolhimentoService.reabrirMatriz(datasReabertura, getUsuarioLogado()));
         
         FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
         
-        obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(), filtro.getListaIdsFornecedores(),
-                TipoBalanceamentoRecolhimento.AUTOMATICO, false);
+        obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(), filtro.getListaIdsFornecedores(), TipoBalanceamentoRecolhimento.AUTOMATICO, false);
         
         this.result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive()

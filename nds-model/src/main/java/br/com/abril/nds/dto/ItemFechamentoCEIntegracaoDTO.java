@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -27,7 +28,6 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4, widthPercent=5)
 	private Long numeroEdicao;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private BigInteger reparte;
 
 	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 10 )
@@ -40,7 +40,6 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 
 	private BigDecimal valorVenda;
 
-	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8 )
 	private BigInteger encalhe;
 	
 	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 7)
@@ -63,6 +62,34 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	private StatusIntegracaoNFE statusIntegracaoNFE;
 	
 	private boolean integracaoNFEAprovado;
+	
+	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";
+	
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	public String getReparteFormatado(){
+		
+		if(REGIME_RECOLHIMENTO_PARCIAL.equals(this.tipoFormatado)){
+			
+			return (this.reparte != null 
+					&& this.reparte.compareTo(BigInteger.ZERO) == 0)
+					? "***" : this.reparte.toString();
+		}
+		
+		return Util.nvl(this.reparte,0).toString();
+	}
+	
+	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8 )
+	public String getEncalheFormatado(){
+		
+		if(REGIME_RECOLHIMENTO_PARCIAL.equals(this.tipoFormatado)){
+			
+			return (this.encalhe!= null
+					&& this.encalhe.compareTo(BigInteger.ZERO) == 0)
+					? "***" : this.encalhe.toString();
+		}
+		
+		return Util.nvl(this.encalhe,0).toString();
+	}
 	
     public boolean getIntegracaoNFEAprovado(){
     	integracaoNFEAprovado =  (statusIntegracaoNFE != null && StatusIntegracaoNFE.isAprovado(statusIntegracaoNFE));

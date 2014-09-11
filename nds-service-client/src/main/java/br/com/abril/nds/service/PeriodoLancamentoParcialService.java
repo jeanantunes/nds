@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 
 public interface PeriodoLancamentoParcialService {
 
@@ -21,5 +22,7 @@ public interface PeriodoLancamentoParcialService {
 	 * @return
 	 */
 	Integer totalObterPeriodosParciais(FiltroParciaisDTO filtro);
+	
+	PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento);
 
 }

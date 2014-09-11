@@ -52,6 +52,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -638,39 +639,43 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             
         } else {
             
-            
-            subSqlValoresDesconto.append("   CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
+        	
+            subSqlValoresDesconto.append("  CASE  ");
+            subSqlValoresDesconto.append("  WHEN PRODUTO_EDICAO.ORIGEM = :origemInterface THEN ( ");
+            subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - 		");
+            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) *  	");
+            subSqlValoresDesconto.append("   COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO,0) / 100)  	");
+            subSqlValoresDesconto.append("  ) ");
+            subSqlValoresDesconto.append("  ELSE ( ");
             subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * ");
-            subSqlValoresDesconto.append("   DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100)) ");
-            subSqlValoresDesconto.append("   WHEN DESCONTO.ID IS NOT NULL THEN  ( ");
-            subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * ");
-            subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
-            subSqlValoresDesconto.append("   WHEN PRODUTO_EDICAO.DESCONTO IS NOT NULL THEN ");
-            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * PRODUTO_EDICAO.DESCONTO/100)) ");
-            subSqlValoresDesconto.append("   ELSE 0");
-            subSqlValoresDesconto.append("   END AS precoComDesconto, ");
+            subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) * COALESCE(PRODUTO_EDICAO.DESCONTO, PRODUTO.DESCONTO, 0) / 100) ");
+            subSqlValoresDesconto.append("  ) END AS precoComDesconto, ");
+
+			subSqlValoresDesconto.append("  CASE  ");
+			subSqlValoresDesconto.append("  WHEN PRODUTO_EDICAO.ORIGEM = :origemInterface THEN (	");
+			subSqlValoresDesconto.append("  COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, 0)		");
+			subSqlValoresDesconto.append("  ) ");
+			subSqlValoresDesconto.append("  ELSE ( ");
+			subSqlValoresDesconto.append("  COALESCE(PRODUTO_EDICAO.DESCONTO, PRODUTO.DESCONTO, 0) ");
+			subSqlValoresDesconto.append("  ) END AS valorDesconto, ");
+
             
-            subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR,PRODUTO_EDICAO.DESCONTO, 0) as valorDesconto, ");
-            
-            subSqlValoresDesconto.append("  (CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
-            subSqlValoresDesconto.append("	COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("	(COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
-            subSqlValoresDesconto.append("  COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100, 1)))");
-            subSqlValoresDesconto.append("  WHEN DESCONTO.ID IS NOT NULL THEN  ( ");
-            subSqlValoresDesconto.append("	COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("	(COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
-            subSqlValoresDesconto.append("  COALESCE(DESCONTO.VALOR/100, 1)))");
-            
-            subSqlValoresDesconto.append("  WHEN PRODUTO_EDICAO.DESCONTO IS NOT NULL THEN  ( ");
-            subSqlValoresDesconto.append("	COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-            subSqlValoresDesconto.append("	(COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
-            subSqlValoresDesconto.append("  COALESCE(PRODUTO_EDICAO.DESCONTO/100, 1)))");
-            
-            subSqlValoresDesconto.append("  ELSE COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) END");
-            subSqlValoresDesconto.append("	) as valorComDesconto, ");
+			
+          subSqlValoresDesconto.append("  CASE  ");
+          subSqlValoresDesconto.append("  WHEN PRODUTO_EDICAO.ORIGEM = :origemInterface THEN ( ");
+
+          subSqlValoresDesconto.append("  COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+          subSqlValoresDesconto.append("  (COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) * " );
+          subSqlValoresDesconto.append("  COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, 0) / 100 )   ");
+          
+          subSqlValoresDesconto.append("  ) ");
+          subSqlValoresDesconto.append("  ELSE ( ");
+          
+          subSqlValoresDesconto.append("  COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+          subSqlValoresDesconto.append("  (COALESCE(( "+ qtdeInformadaEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) * " );
+          subSqlValoresDesconto.append("  COALESCE(PRODUTO_EDICAO.DESCONTO, PRODUTO.DESCONTO, 0) / 100 )   ");
+          
+          subSqlValoresDesconto.append("  ) END AS valorComDesconto, ");
         	
         }
         
@@ -754,7 +759,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdCota()!=null) {
             parameters.put("idCota", filtro.getIdCota());
-        } 
+        } else {
+        	parameters.put("origemInterface", Origem.INTERFACE.name());
+        }
         
         parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
         
@@ -861,7 +868,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdCota()!=null) {
             parameters.put("idCota", filtro.getIdCota());
-        } 
+        } else {
+            parameters.put("origemInterface", Origem.INTERFACE.name());
+        }
             
         parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
         
@@ -1068,11 +1077,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" LEFT JOIN DESCONTO_LOGISTICA ON (                                   ");
 			sql.append(" CASE WHEN PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID IS NOT NULL          ");
 			sql.append(" THEN (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID) ");
-			sql.append(" ELSE DESCONTO_LOGISTICA.ID = PRODUTO.DESCONTO_LOGISTICA_ID END)     ");
-			sql.append(" LEFT JOIN DESCONTO ON (                                             ");
-			sql.append(" 		DESCONTO.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR        ");
-			sql.append(" 		DESCONTO.ID = PRODUTO.DESCONTO_LOGISTICA_ID)                 ");
-			
+			sql.append(" ELSE DESCONTO_LOGISTICA.ID = PRODUTO.DESCONTO_LOGISTICA_ID END )    ");
+
 		}
 
 		sql.append(" INNER JOIN (  ");
@@ -1169,7 +1175,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdCota() != null) {
             parameters.put("idCota", filtro.getIdCota());
-        } 
+        } else {
+        	 parameters.put("origemInterface", Origem.INTERFACE.name());
+        }
         
         parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
         
@@ -1178,6 +1186,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
+       
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
@@ -3668,7 +3677,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" and (mec.statusEstoqueFinanceiro is null or mec.statusEstoqueFinanceiro != :processado )" );
         
-        sql.append(" group by mec.cota.id, produtoEdicao.id ");
+        sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
         
         final Query query = this.getSession().createQuery(sql.toString());
         

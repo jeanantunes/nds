@@ -192,10 +192,13 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Origem sem estoque cadastrado.");
 		}
 		
+		//FIXME: removido para fins de homologacao
+		/*
 		if (!produtoEdicaoDestino.isParcial()) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Destino deve ser Parcial.");
 		}
+		*/
 	}
 
 	private void validarParametrosTransferencia(String codigoProduto,
