@@ -3,10 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
+import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -533,4 +536,61 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         
         return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobrancaFornecedorDTO> obterFormasCobrancaDistribuidorFornecedor() {
+		
+		StringBuilder sql = new StringBuilder().append("")                                       
+		.append("select null as numeroCota, pcc.cota_id as idCota, f.id as idFornecedor                              ")
+		.append("from forma_cobranca fc                                                          ")
+		.append("left join parametro_cobranca_cota pcc on pcc.id = fc.PARAMETRO_COBRANCA_COTA_ID ")
+		.append("left join politica_cobranca pc on fc.id=pc.FORMA_COBRANCA_ID                    ")
+		.append("inner join forma_cobranca_fornecedor fcf on fcf.FORMA_COBRANCA_ID = fc.id       ")
+		.append("inner join fornecedor f on f.id = fcf.FORNECEDOR_ID                             ")
+		.append("where 1=1                                                                       ")
+		.append("and fc.ativa = :ativa                                                           ")
+		.append("and pcc.cota_id is null                                                         ");
+        
+		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
+		query.setParameter("ativa", true);
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("idFornecedor", StandardBasicTypes.LONG);
+				
+		query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaFornecedorDTO.class));
+
+		return query.list();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobrancaFornecedorDTO> obterFormasCobrancaCotaFornecedor() {
+		
+		StringBuilder sql = new StringBuilder().append("")                                       
+		.append("select c.numero_cota as numeroCota, pcc.cota_id as idCota, f.id as idFornecedor                              ")
+		.append("from forma_cobranca fc                                                          ")
+		.append("left join parametro_cobranca_cota pcc on pcc.id = fc.PARAMETRO_COBRANCA_COTA_ID ")
+		.append("left join politica_cobranca pc on fc.id=pc.FORMA_COBRANCA_ID                    ")
+		.append("left join cota c on c.id = pcc.cota_id                                          ")
+		.append("inner join forma_cobranca_fornecedor fcf on fcf.FORMA_COBRANCA_ID = fc.id       ")
+		.append("inner join fornecedor f on f.id = fcf.FORNECEDOR_ID                             ")
+		.append("where 1=1                                                                       ")
+		.append("and fc.ativa = :ativa                                                           ")
+		.append("and pcc.cota_id is not null                                                     ");
+        
+		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("ativa", true);
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("numeroCota", StandardBasicTypes.LONG);
+		query.addScalar("idFornecedor", StandardBasicTypes.LONG);
+				
+		query.setResultTransformer(Transformers.aliasToBean(FormaCobrancaFornecedorDTO.class));
+
+		return query.list();
+	}
+	
 }
