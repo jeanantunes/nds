@@ -130,7 +130,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
+                                + " *Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
                 }
                 
                 this.getSession().merge(notafiscalEntrada);
