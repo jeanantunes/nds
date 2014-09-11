@@ -107,7 +107,10 @@
 				
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>  				
 				<prop key="hibernate.show_sql">true</prop>
+<<<<<<< HEAD
 			    <prop key="hibernate.generate_statistics">true</prop>
+=======
+>>>>>>> e5570c7a940579b0a2377df341b5a04886177872
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.jdbc.batch_size">50</prop>
 				<!-- prop key="hibernate.hbm2ddl.auto">update</prop-->

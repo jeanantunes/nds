@@ -668,11 +668,25 @@ public class FornecedorRepositoryImpl extends
 	public List<Fornecedor> obterFornecedoresFcDinap(String codigoDinap,
 			String codigoFC) {
 		
+		final Integer codDinap = (codigoDinap!= null) ? Integer.parseInt(codigoDinap):null;
+		
+		final Integer codFC = (codigoFC!= null) ? Integer.parseInt(codigoFC):null;
+		
 		final Criteria criteria = getSession().createCriteria(Fornecedor.class);
 		
-		criteria.add(Restrictions.in("codigoInterface",Arrays.asList(Integer.parseInt(codigoDinap),Integer.parseInt(codigoFC))));
+		criteria.add(Restrictions.in("codigoInterface",Arrays.asList(codDinap,codFC)));
 		
 		return criteria.list();
+	}
+	
+	@Override
+	public Integer obterCodigoInterface(Long idFornecedor) {
+		
+		final Query query = super.getSession().createQuery(" select f.codigoInterface from Fornecedor f where f.id=:idFornecedor ");
+
+		query.setParameter("idFornecedor", idFornecedor);
+
+		return (Integer) query.uniqueResult();
 	}
 
 }
