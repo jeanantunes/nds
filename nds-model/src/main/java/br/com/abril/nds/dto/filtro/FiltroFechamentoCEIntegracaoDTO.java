@@ -15,6 +15,8 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
+	private Integer codigoDistribuidorFornecdor;
+	
 	private Long idItemChamadaEncalheFornecedor;
 	
 	private Long idChamadaEncalheFornecedor;
@@ -127,6 +129,14 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	public Integer getNumeroSemana(){
 	
 		return SemanaUtil.getSemana(semana);
+	}
+	
+	public Integer getCodigoDistribuidorFornecdor() {
+		return codigoDistribuidorFornecdor;
+	}
+
+	public void setCodigoDistribuidorFornecdor(Integer codigoDistribuidorFornecdor) {
+		this.codigoDistribuidorFornecdor = codigoDistribuidorFornecdor;
 	}
 
 	@Override

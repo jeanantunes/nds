@@ -344,6 +344,11 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 lancamento.setStatus(StatusLancamento.CONFIRMADO);
                 lancamento.setReparte(new BigInteger(inputItem.getQtdExemplar().toString()));
                 this.getSession().persist(lancamento);
+            }else{
+            	
+            	produtoEdicao.setPrecoPrevisto(inputItem.getPreco() == null ? BigDecimal.ZERO : new BigDecimal(inputItem.getPreco()));
+                produtoEdicao.setPrecoVenda(tratarValorNulo(produtoEdicao.getPrecoPrevisto()));
+                this.getSession().persist(produtoEdicao);
             }
             
             ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();

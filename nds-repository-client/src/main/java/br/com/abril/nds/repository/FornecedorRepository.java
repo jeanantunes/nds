@@ -169,4 +169,6 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	List<Fornecedor> obterFornecedoresFcDinap(String codigoDinap,
 			String codigoFC);
 
+	Integer obterCodigoInterface(Long idFornecedor);
+
 }
