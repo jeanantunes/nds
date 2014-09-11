@@ -610,7 +610,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
     }
     
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Fornecedor obterFornecedorPadrao() {
     	
     	return politicaCobrancaRepository.obterFornecedorPadrao();
