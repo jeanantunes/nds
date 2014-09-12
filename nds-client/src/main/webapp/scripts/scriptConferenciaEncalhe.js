@@ -782,7 +782,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				function(result) {
 					
 					if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe
-								&& result.nfeDigitada != undefined && !result.nfeDigitada) {
+								&& result.nfeDigitada != undefined && !result.nfeDigitada
+								&& result.isContribuinteICMS != undefined && result.isContribuinteICMS) {
 						ConferenciaEncalhe.processoUtilizaNfe = true;
 						ConferenciaEncalhe.popup_notaFiscal();
 					}
@@ -837,7 +838,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.setarValoresPesquisados();
 	},
 	
-	montarListaConferencia: function(modeloConferenciaEncalhe, indDistribuidorAceitaJuramentado) {
+	montarListaConferencia: function(listaConferencia, indDistribuidorAceitaJuramentado) {
 		
 		var innerTable = '';
 		

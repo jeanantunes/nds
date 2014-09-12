@@ -623,6 +623,15 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularValoresMonetarios(dados, false);
 		
 		final Cota cota = infoConfereciaEncalheCota.getCota();
+		if(cota.getPessoa() instanceof PessoaJuridica && 
+				cota.getParametrosCotaNotaFiscalEletronica() != null) {
+			
+			dados.put("isContribuinteICMS", cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS());
+		} else {
+			
+			dados.put("isContribuinteICMS", false); 
+		}
+		
 		this.session.setAttribute(COTA, cota);
 		
 		if (cota != null){
@@ -1469,10 +1478,6 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		boolean isVendaNegativaProduto = false; 
-		
-		if(qtdExemplares == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Favor informar o valor de encalhe!");
-		}
 		
         if (usuario != null) {
             

@@ -526,7 +526,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			function(result) {
 				
-				if(result.processoUtilizaNfe != undefined && result.processoUtilizaNfe && result.nfeDigitada != undefined && !result.nfeDigitada) {
+				if(result.processoUtilizaNfe != undefined 
+						&& result.processoUtilizaNfe && result.nfeDigitada != undefined && !result.nfeDigitada
+						&& result.isContribuinteICMS != undefined && result.isContribuinteICMS) {
 				
 					ConferenciaEncalheCont.processoUtilizaNfe = true;
 					ConferenciaEncalheCont.popup_notaFiscal();
