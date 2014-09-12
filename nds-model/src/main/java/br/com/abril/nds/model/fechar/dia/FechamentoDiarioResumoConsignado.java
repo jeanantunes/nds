@@ -25,6 +25,9 @@ public class FechamentoDiarioResumoConsignado extends FechamentoDiarioConsignado
 	
 	@Column(name="VALOR_OUTRAS_MOVIMENTACOES_SAIDA")
 	private BigDecimal valorOutrasMovimentacoesSaida;
+	
+	@Column(name="VALOR_OUTRAS_MOVIMENTACOES_A_VISTA")
+	private BigDecimal valorAVista;
 
 
 	public BigDecimal getValorCE() {
@@ -66,5 +69,15 @@ public class FechamentoDiarioResumoConsignado extends FechamentoDiarioConsignado
 	public void setValorOutrasMovimentacoesSaida(
 			BigDecimal valorOutrasMovimentacoesSaida) {
 		this.valorOutrasMovimentacoesSaida = valorOutrasMovimentacoesSaida;
+	}
+
+
+	public BigDecimal getValorAVista() {
+		return valorAVista;
+	}
+
+
+	public void setValorAVista(BigDecimal valorAVista) {
+		this.valorAVista = valorAVista;
 	}
 }
