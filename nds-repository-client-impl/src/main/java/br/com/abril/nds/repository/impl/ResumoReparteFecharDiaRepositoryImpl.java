@@ -116,7 +116,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
            .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
 	       .append(" where me.data = :data ")
 	       .append(" and me.status = :statusAprovado ")
-	       .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
+	       .append(" and me.tipoMovimento.grupoMovimentoEstoque in ( :grupoMovimentoRecebimentoFisico )")
 	       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
         
         String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
@@ -167,7 +167,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("data", dataInicio);
         query.setParameter("operacaoEntrada", OperacaoEstoque.ENTRADA);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-        query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+        query.setParameterList("grupoMovimentoRecebimentoFisico", Arrays.asList(
+        		GrupoMovimentoEstoque.RECEBIMENTO_FISICO,
+        		GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS));
         query.setParameterList("grupoMovimentoRecebimentoFisicoPromocional",Arrays.asList(
         		GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL,
         		GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL));
@@ -215,7 +217,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
         
-        query.setParameter("grupoReparte", GrupoMovimentoEstoque.RECEBIMENTO_FISICO.name());  
+        query.setParameter("grupoReparte",Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_FISICO.name(),
+        												GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS.name()));  
         
     	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
     }
@@ -510,8 +513,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	private List<String> getParametrosSaidaDistribuidor() {
 		
     	List<String> movimentosSaida = new ArrayList<>();
-    	
-    	movimentosSaida.add(GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL.name()); 
+    	 
     	movimentosSaida.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
     	movimentosSaida.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME.name());
     	movimentosSaida.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name());
@@ -527,6 +529,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     	movimentosSaida.add(GrupoMovimentoEstoque.VENDA_ENCALHE.name());
     	movimentosSaida.add(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name());
     	movimentosSaida.add(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE.name());
+    	movimentosSaida.add(GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_LANCAMENTO.name());
  
 		return movimentosSaida;
 	}
@@ -535,6 +538,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
     	List<String> movimentosEntrada = new ArrayList<>();
     	
+    	movimentosEntrada.add(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS.name());
     	movimentosEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_FISICO.name()); 
     	movimentosEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
     	movimentosEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.name());
@@ -600,7 +604,6 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     	query.setParameterList(paramName,Arrays.asList(
     	
     	//Saida
-		GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL, 
     	GrupoMovimentoEstoque.ENVIO_JORNALEIRO,
     	GrupoMovimentoEstoque.ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME,
     	GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO,
@@ -616,7 +619,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     	GrupoMovimentoEstoque.VENDA_ENCALHE,
     	GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR,
     	GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE,
+    	GrupoMovimentoEstoque.TRANSFERENCIA_PARCIAL_SAIDA_LANCAMENTO,
     	//Entrada
+    	GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS,
     	GrupoMovimentoEstoque.RECEBIMENTO_FISICO, 
     	GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE,
     	GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO,

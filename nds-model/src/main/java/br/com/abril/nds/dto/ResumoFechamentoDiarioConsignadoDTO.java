@@ -9,8 +9,6 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 
 	private ResumoConsignado resumoConsignado;
 	
-	private ResumoAVista resumoAVista;
-	
 	/**
 	 * Serial Version UID
 	 */
@@ -101,7 +99,6 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 			
 			return CurrencyUtil.formatarValor(this.valorSaidas);
 		}
-		
 	}
 	
 	public class ResumoConsignado extends Resumo {
@@ -113,6 +110,8 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		protected BigDecimal valorOutrosValoresSaidas;
 		
 		protected BigDecimal valorOutrosValoresEntrada;
+		
+		protected BigDecimal valorAVista;
 
 		public BigDecimal getValorCE() {
 			return valorCE;
@@ -161,9 +160,19 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		public String getValorExpedicaoFormatado() {
 			return CurrencyUtil.formatarValor(this.valorExpedicao);
 		}
+		
+		public String getValorAVistaFormatado() {
+			return CurrencyUtil.formatarValor(this.valorAVista);
+		}
+		
+		public BigDecimal getValorAVista() {
+			return valorAVista;
+		}
+
+		public void setValorAVista(BigDecimal valorAVista) {
+			this.valorAVista = valorAVista;
+		}
 	}
-	
-	public class ResumoAVista extends Resumo {}
 
 	/**
 	 * @return the resumoConsignado
@@ -178,19 +187,4 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 	public void setResumoConsignado(ResumoConsignado resumoConsignado) {
 		this.resumoConsignado = resumoConsignado;
 	}
-
-	/**
-	 * @return the resumoAVista
-	 */
-	public ResumoAVista getResumoAVista() {
-		return resumoAVista;
-	}
-
-	/**
-	 * @param resumoAVista the resumoAVista to set
-	 */
-	public void setResumoAVista(ResumoAVista resumoAVista) {
-		this.resumoAVista = resumoAVista;
-	}
-
 }
