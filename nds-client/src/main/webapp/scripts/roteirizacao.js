@@ -1448,7 +1448,9 @@ var roteirizacao = $.extend(true, {
                       {name:'bairro', value:bairro},
                       {name:'cep', value:cep},
                       {name:'boxID', value: roteirizacao.idBox},
-                      {name: 'pesquisaPorCota', value:pesquisaPorCota}
+                      {name: 'pesquisaPorCota', value:pesquisaPorCota},
+                      {name: 'idRoteiro', value:roteirizacao.idRoteiro},
+                      {name: 'idRota', value:roteirizacao.idRota}
                      ];
         
         $(".cotasDisponiveisGrid", this.workspace).flexOptions({

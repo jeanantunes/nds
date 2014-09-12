@@ -116,7 +116,7 @@
    <tr>
      <td>E-mail NF-e:</td>
       <td><input type="text" style="width:230px " maxlength="200" name="cotaDTO.emailNF" id="emailNFCPF" onblur="MANTER_COTA.validarEmail('#emailNFCPF')" /></td>
-      <td>&Eacute; contr. do ICMS?&nbsp; <input type="checkbox" name="cotaDTO.contribuinteICMS" id="contribuinteICMS" /></td>
+      <td></td>
       <td>Exige Nota fiscal?&nbsp; <input type="checkbox" name="cotaDTO.exigeNFE" id="exigeNFE" style="width:20px"/></td>
    </tr>
    <tr>

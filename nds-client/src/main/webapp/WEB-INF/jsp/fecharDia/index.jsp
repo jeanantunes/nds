@@ -369,6 +369,11 @@
         	<tr>
         		<td>Outras movimentações: <span id="consignaddo-saida-outrosValores"></span></td>
         	</tr>
+        	
+        	<tr>
+        		<td>A vista: <span id="consignaddo-saida-a-vista"></span></td>
+        	</tr>
+        	
         </table>
     </fieldset>
 </div>
