@@ -935,7 +935,7 @@ var roteirizacao = $.extend(true, {
 
             params.push({name: 'pdvs['+ index +']', value: value.value});
         });
-       
+        
         $.postJSON(contextPath + '/cadastro/roteirizacao/removerPdvs',
             params,
             function(result) {

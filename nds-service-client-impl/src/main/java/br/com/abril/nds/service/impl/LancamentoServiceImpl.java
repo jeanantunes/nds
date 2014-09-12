@@ -111,9 +111,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Value("${data_cabalistica}")
     private String dataCabalistica;
 	
-	LinkedList<Date> dinap = new LinkedList();
-	LinkedList<Date> fc = new LinkedList();
-	LinkedList<Date> dinapFC = new LinkedList();
+	LinkedList<Date> dinap = new LinkedList<Date>();
+	LinkedList<Date> fc = new LinkedList<Date>();
+	LinkedList<Date> dinapFC = new LinkedList<Date>();
     
     private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
             StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
@@ -219,7 +219,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(lancamento.getFormaComercializacaoProduto()));
 		
-		if(produtoContaFirme){
+		if(produtoContaFirme) {
 			
 			this.atribuirTiposMovimentoParaProdutoContaFirme(expedicaoDTO);
 			
@@ -227,8 +227,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.RECOLHIDO, expedicao);
 			
 			this.processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(expedicaoDTO,lancamento);
-		}
-		else{
+		} else {
 			
 			lancamentoRepository.alterarLancamento(
 					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.EXPEDIDO, expedicao);

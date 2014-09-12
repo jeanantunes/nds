@@ -52,15 +52,12 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
-import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
-import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -309,21 +306,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											Usuario usuario,
 											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 		
-		if (matrizRecolhimento == null
-				|| matrizRecolhimento.isEmpty()) {
+		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
 			
             throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
 		}
 		
-		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento =
-			new TreeMap<Long, ProdutoRecolhimentoDTO>();
+		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento = new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
 		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada =
-			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada = new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
 		for (Date dataConfirmada : datasConfirmadas) {
 			
@@ -347,15 +341,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
-					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
-															  null, novaDataRecolhimento);
+					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento, null, novaDataRecolhimento);
 					
 					continue;
 				}
 				
-				this.montarInformacoesConfirmarBalanceamento(
-					mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
-					idsLancamento, produtoRecolhimento, novaDataRecolhimento);
+				this.montarInformacoesConfirmarBalanceamento(mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos, idsLancamento, produtoRecolhimento, novaDataRecolhimento);
 				
 				List<Long> idsLancamentosAgrupados = produtoRecolhimento.getIdsLancamentosAgrupados();
 			
@@ -363,22 +354,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					for (Long idLancamento : idsLancamentosAgrupados) {
 							
-						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
-							produtosRecolhimentoAgrupados, idLancamento);
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(produtosRecolhimentoAgrupados, idLancamento);
 						
 						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
 						
-						this.montarInformacoesConfirmarBalanceamento(
-							mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
-							idsLancamento, produtoRecolhimentoAgrupado, novaDataRecolhimento);
+						this.montarInformacoesConfirmarBalanceamento(mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos, idsLancamento, produtoRecolhimentoAgrupado, novaDataRecolhimento);
 					}
 				}
 			}
 		}
 		
-		this.atualizarLancamentos(
-			idsLancamento, usuario, mapaLancamentoRecolhimento,
-			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
+		this.atualizarLancamentos(idsLancamento, usuario, mapaLancamentoRecolhimento, StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana, usuario);
 		
@@ -592,8 +578,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * @param numeroSemana - número da semana
 	     * @param usuario 
      */
-	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
-			 						  Integer numeroSemana, Usuario usuario) {
+	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos, Integer numeroSemana, Usuario usuario) {
 		
 		if (mapaDataRecolhimentoLancamentos == null || mapaDataRecolhimentoLancamentos.isEmpty()) {
 		
@@ -625,21 +610,24 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				List<CotaReparteDTO> cotasReparteLancamento = this.processaListaCotaReparteDTOLancamento(cotasReparte, idLancamento);
 
-				List<ChamadaEncalhe> chamadasEncalheProdutoEdicao = this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId());
+				Set<ChamadaEncalhe> chamadasEncalheProdutoEdicao = new HashSet<>(this.processaListaChamadaEncaleProdutoEdicao(listaChamadaEncalhe, produtoEdicao.getId()));
 
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
 
 					Cota cota = cotaReparte.getCota();
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
-					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, chamadasEncalheProdutoEdicao);
+					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, new ArrayList<>(chamadasEncalheProdutoEdicao));
 					
-					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(chamadasEncalheProdutoEdicao, dataRecolhimento);
+					ChamadaEncalhe chamadaEncalhe = this.getChamadaEncalheMatrizRecolhimento(new ArrayList<>(chamadasEncalheProdutoEdicao), dataRecolhimento);
 
 					if (chamadaEncalhe == null) {
 						
-						
 					    chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
+					    this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
+					    listaChamadaEncalhe.add(chamadaEncalhe);
+					    
+					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -653,15 +641,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
-					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
-
 					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
 					    
 					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 					
-					this.criarChamadaEncalheCota(
-				        qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
 				}
 			}
 		}
@@ -757,7 +742,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
 		
-		this.chamadaEncalheRepository.merge(chamadaEncalhe);
+		// this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe,
@@ -1520,8 +1505,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 
-			ProdutoRecolhimentoDTO produtoRecolhimentoMesmaEdicao =
-				this.obterProdutoRecolhimento(produtosRecolhimento, idLancamento);
+			ProdutoRecolhimentoDTO produtoRecolhimentoMesmaEdicao = this.obterProdutoRecolhimento(produtosRecolhimento, idLancamento);
 
 			ProdutoRecolhimentoDTO produtoRecolhimentoAntigo = null;
 			ProdutoRecolhimentoDTO produtoRecolhimentoNovo = null;
@@ -1580,8 +1564,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getValorTotal(), 
 								produtoRecolhimentoNovo.getValorTotal());
 		
-		Long peso =
-			produtoRecolhimentoAntigo.getPeso() + produtoRecolhimentoNovo.getPeso();
+		Long peso = produtoRecolhimentoAntigo.getPeso() + produtoRecolhimentoNovo.getPeso();
 		
 		produtoRecolhimento.setDataLancamento(produtoRecolhimentoAntigo.getDataLancamento());
 		produtoRecolhimento.setDataRecolhimentoPrevista(produtoRecolhimentoAntigo.getDataRecolhimentoPrevista());

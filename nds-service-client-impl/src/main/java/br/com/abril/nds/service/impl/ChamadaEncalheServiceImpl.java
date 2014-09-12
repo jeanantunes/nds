@@ -519,24 +519,22 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
+		
 		//verificar essa lista para ver a quantidade de exemplares
 		Cota cota = null;
 		
 		List<CotaProdutoEmissaoCEDTO> produtosSupRedist = chamadaEncalheRepository.obterDecomposicaoReparteSuplementarRedistribuicao(filtro);
 		
-		List<Date> datasControleFechamentoEncalhe =
-	        fechamentoEncalheRepository.obterDatasControleFechamentoEncalheRealizado(
-                filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		List<Date> datasControleFechamentoEncalhe = fechamentoEncalheRepository.obterDatasControleFechamentoEncalheRealizado(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 		
-		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota =
-	        chamadaEncalheRepository.obterProdutosEmissaoCE(filtro);
+		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = chamadaEncalheRepository.obterProdutosEmissaoCE(filtro);
 		
 		for(CotaEmissaoDTO dto : lista) {
 			
 			cota = cotaRepository.obterPorNumeroDaCota( dto.getNumCota());
-
+			
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
-
+			
 			if(endereco != null) {
 				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
 									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
