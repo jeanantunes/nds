@@ -21,7 +21,6 @@ import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
-import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoAVista;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
@@ -86,7 +85,6 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoSuplementar;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioMovimentoVendaEncalhe;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioMovimentoVendaSuplementar;
-import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoAvista;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsignado;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
@@ -124,7 +122,6 @@ import br.com.abril.nds.repository.FechamentoDiarioLancamentoSuplementarReposito
 import br.com.abril.nds.repository.FechamentoDiarioMovimentoVendaEncalheRepository;
 import br.com.abril.nds.repository.FechamentoDiarioMovimentoVendaSuplementarRepository;
 import br.com.abril.nds.repository.FechamentoDiarioRepository;
-import br.com.abril.nds.repository.FechamentoDiarioResumoAvistaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoConsignadoRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
@@ -243,9 +240,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FechamentoDiarioResumoConsignadoRepository fechamentoDiarioResumoConsignadoRepository;
-	
-	@Autowired
-	private FechamentoDiarioResumoAvistaRepository fechamentoDiarioResumoAvistaRepository;
 	
 	@Autowired
 	private FechamentoDiarioResumoEstoqueRepository fechamentoDiarioResumoEstoqueRepository;
@@ -676,12 +670,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         this.processarValoresConsignado(dataFechamento,
 				resumoFechamentoDiarioConsignado, resumoConsignado);
 
-        ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
-            resumoFechamentoDiarioConsignado.new ResumoAVista();
-
-        this.processarValoresConignadoAVista(dataFechamento,
-        		resumoFechamentoDiarioConsignado, resumoAVista);
-
         return resumoFechamentoDiarioConsignado;
 	}
 
@@ -723,6 +711,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         BigDecimal valorCotaAusenteSaida = Util.nvl(
         		cotaAusenteRepository.obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento),BigDecimal.ZERO);
         
+        BigDecimal valorSaidaAVista =  Util.nvl(
+        		this.movimentoEstoqueRepository.obterSaldoDistribuidor(dataFechamento, 
+        				OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME),BigDecimal.ZERO);
+        
+        resumoConsignado.setValorAVista(valorSaidaAVista);
+        
         resumoConsignado.setValorExpedicao(valorExpedido);
         
         resumoConsignado.setValorOutrosValoresSaidas(valorDiferencasSaida.add(valorCotaAusenteSaida));
@@ -736,32 +730,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 	}
 
-	private void processarValoresConignadoAVista(
-			Date dataFechamento,
-			ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado,
-			ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista) {
-
-        resumoAVista.setSaldoAnterior(
-                this.fechamentoDiarioResumoAvistaRepository.obterSaldoAVistaFechamentoDiarioAnterior(dataFechamento));
-
-        resumoAVista.setValorEntradas(
-            this.movimentoEstoqueRepository.obterSaldoDistribuidorEntrada(
-                dataFechamento, FormaComercializacao.CONTA_FIRME));
-
-        resumoAVista.setValorSaidas(
-            this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-                dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
-
-        if (resumoAVista.getSaldoAnterior()==null){resumoAVista.setSaldoAnterior(BigDecimal.ZERO);}
-        if (resumoAVista.getValorEntradas()==null){resumoAVista.setValorEntradas(BigDecimal.ZERO);}
-        if (resumoAVista.getValorSaidas()==null){resumoAVista.setValorSaidas(BigDecimal.ZERO);}
-        resumoAVista.setSaldoAtual(
-            resumoAVista.getSaldoAnterior().subtract(
-                resumoAVista.getValorEntradas()).add(resumoAVista.getValorSaidas()));
-
-        resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
-	}
-	
 	private ResumoFechamentoDiarioConsignadoDTO obterResumoConsignadoComFechamentoProcessado(Date dataFechamento){
 		
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
@@ -789,25 +757,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			resumoConsignado.setValorOutrosValoresSaidas(resumoConsignadoDia.getValorOutrasMovimentacoesSaida());
 			
+			resumoConsignado.setValorAVista(resumoConsignadoDia.getValorAVista());
+			
 			resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
-		}
-		
-		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = resumoFechamentoDiarioConsignado.new ResumoAVista();
-		
-		//A Vista
-		FechamentoDiarioResumoAvista resumoAvistaDia = fechamentoDiarioResumoAvistaRepository.obterResumoConsignado(dataFechamento);
-		
-		if(resumoAvistaDia!= null){
-			
-			resumoAVista.setSaldoAnterior(resumoAvistaDia.getSaldoAnterior());
-
-			resumoAVista.setValorEntradas(resumoAvistaDia.getValorEntradas());
-			
-			resumoAVista.setValorSaidas(resumoAvistaDia.getValorSaidas());
-			
-			resumoAVista.setSaldoAtual(resumoAvistaDia.getSaldoAtual());
-			
-			resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
 		}
 				
 		return resumoFechamentoDiarioConsignado;
@@ -1151,27 +1103,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		incluirResumoValorConsignado(fechamento, resumoConsignado);
 		
-		incluirResumoValorAvista(fechamento, resumoConsignado);
-		
 		return resumoConsignado;
-	}
-
-	private void incluirResumoValorAvista(FechamentoDiario fechamento,ResumoFechamentoDiarioConsignadoDTO resumoConsignado)
-										 throws FechamentoDiarioException {
-		
-		ResumoAVista resumoAvista = resumoConsignado.getResumoAVista();
-		
-        validarDadosFechamentoDiario(resumoAvista, "Erro na obtenção dos dados de Resumo Consignado!");
-		
-		FechamentoDiarioResumoAvista valorResumoAvista = new FechamentoDiarioResumoAvista();
-		
-		valorResumoAvista.setFechamentoDiario(fechamento);
-		valorResumoAvista.setSaldoAnterior(resumoAvista.getSaldoAnterior());
-		valorResumoAvista.setSaldoAtual(resumoAvista.getSaldoAtual());
-		valorResumoAvista.setValorEntradas(resumoAvista.getValorEntradas());
-		valorResumoAvista.setValorSaidas(resumoAvista.getValorSaidas());
-		
-		fechamentoDiarioResumoAvistaRepository.adicionar(valorResumoAvista);
 	}
 
 	private void incluirResumoValorConsignado(FechamentoDiario fechamento,ResumoFechamentoDiarioConsignadoDTO resumoConsignado)
@@ -1192,6 +1124,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		valorResumoConsignado.setValorExpedicao(rmConsignado.getValorExpedicao());
 		valorResumoConsignado.setValorOutrasMovimentacoesEntrada(rmConsignado.getValorOutrosValoresEntrada());
 		valorResumoConsignado.setValorOutrasMovimentacoesSaida(rmConsignado.getValorOutrosValoresSaidas());
+		valorResumoConsignado.setValorAVista(rmConsignado.getValorAVista());
 		
 		fechamentoDiarioResumoConsignadoRepository.adicionar(valorResumoConsignado);
 	}

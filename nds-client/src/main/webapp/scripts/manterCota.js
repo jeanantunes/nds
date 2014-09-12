@@ -359,10 +359,10 @@ var MANTER_COTA = $.extend(true, {
         MANTER_COTA.fecharModalCadastroCota = false;
 
         $.postJSON(contextPath + "/cadastro/cota/editar",
-            {idCota:idCota},
-            function(result){
+            {idCota: idCota},
+            function(result) {
 
-                if(result){
+                if(result) {
 
                     if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
                     	
@@ -373,8 +373,7 @@ var MANTER_COTA = $.extend(true, {
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
                         
                         COTA_CPF.editarCPF(result);
-                    }
-                    else {
+                    } else {
                     	
                     	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
                     	
@@ -455,7 +454,7 @@ var MANTER_COTA = $.extend(true, {
         );
     },
 
-    validarEmail : function (idInput)	{
+    validarEmail : function (idInput) {
         er = /^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}/;
 
         if($(idInput, this.workspace).val().length == 0){
@@ -466,6 +465,15 @@ var MANTER_COTA = $.extend(true, {
             $(idInput, this.workspace).focus();
             exibirMensagemDialog("WARNING",["E-mail inválido."],"");
         }
+    },
+    
+    validarCotaContribuinteICMS : function (idInput) {
+    	isCotaContribuinteICMS = $("#contribuinteICMS", this.workspace).attr("checked");
+    	if(isCotaContribuinteICMS && $("#inscricaoEstadual", this.workspace).val().trim() == '') {
+    		$("#contribuinteICMS", this.workspace).attr("checked", false);
+    		$("#inscricaoEstadual", this.workspace).focus();
+            exibirMensagemDialog("WARNING",["Inscrição Estadual inválida."],"");
+    	}
     },
 
     novoPopupCotaCPF: function () {

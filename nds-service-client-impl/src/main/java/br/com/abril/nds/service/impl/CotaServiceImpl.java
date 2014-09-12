@@ -1267,6 +1267,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
 		
 		if (cota.getTipoDistribuicaoCota() != null) {
 		    cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
