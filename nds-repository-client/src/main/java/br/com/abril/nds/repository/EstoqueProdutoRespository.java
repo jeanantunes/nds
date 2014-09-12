@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -36,5 +37,7 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	void atualizarEstoqueProduto(Long idProdutoEdicao, TipoEstoque tipoEstoque, BigInteger qtde);
 	
 	BigInteger buscarQtdeEstoqueParaTransferenciaParcial(Long idProdutoEdicao);
+	
+	BigDecimal obterValorTotalSuplementar();
 	
 }
