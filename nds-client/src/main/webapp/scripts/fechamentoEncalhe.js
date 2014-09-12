@@ -599,10 +599,7 @@ var fechamentoEncalheController = $.extend(true, {
 					fechamentoEncalheController.isFechamento = true;
 					
 					fechamentoEncalheController.popup_encerrarEncalhe(true);
-				}	
-				
-				fechamentoEncalheController.fechamentosManuais = [];
-				fechamentoEncalheController.nonSelected = [];
+				}
 			},
 		  	null,
 		   	false
@@ -678,9 +675,6 @@ var fechamentoEncalheController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			},
-			beforeClose: function() {
-				$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 			},
 			form: $("#dialog-confirm", this.workspace).parents("form")
 		});
