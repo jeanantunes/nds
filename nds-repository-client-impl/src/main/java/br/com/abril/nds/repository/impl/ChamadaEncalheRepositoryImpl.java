@@ -718,13 +718,20 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
 		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
 		
+		
+		// case when count(conferenci23_.ID)>0 then 1 else 0 end as  col_15_0_,
+		
 		hql.append(" ( ");
-		hql.append(obterSubHqlQtdeReparte(filtro));
+		hql.append(" sum(movimentoCota.qtde) ");
+		//hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 
-		hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
+		hql.append(" sum(conferenciaEncalhe.id) as quantidadeDevolvida,");
+		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
 
-		hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
+		
+		hql.append(" case when count(conferenciaEncalhe.id) > 0 then true else false end as confereciaRealizada,");
+		//hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
 				
 		hql.append("		chamadaEncalhe.sequencia as sequencia, ");
 		
@@ -769,22 +776,24 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 		//TODO Ajuste alterações PARCIAIS
 		
-		hql.append(" from ChamadaEncalheCota chamEncCota 					")
-		   .append(" join chamEncCota.chamadaEncalhe chamadaEncalhe 		")
-		   .append(" join chamEncCota.cota cota                             ")
-		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
-		   .append(" join produtoEdicao.produto produto 					")
-		   .append(" join produto.fornecedores fornecedores 				")
-		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
-		   .append(" left join lancamentos.periodoLancamentoParcial periodoLancParcial 			")
+		hql.append(" from ChamadaEncalheCota chamEncCota 					                         ")
+		   .append(" join chamEncCota.chamadaEncalhe chamadaEncalhe 		                         ")
+		   .append(" left join chamEncCota.conferenciasEncalhe conferenciaEncalhe 			         ")
+		   .append(" left join conferenciaEncalhe.controleConferenciaEncalheCota controleConfEncalhe ")
+		   .append(" join chamEncCota.cota cota                                                      ")
+		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		                         ")
+		   .append(" join produtoEdicao.produto produto 					                         ")
+		   .append(" join produto.fornecedores fornecedores 				                         ")
+		   .append(" INNER join chamadaEncalhe.lancamentos lancamentos 			                     ")
+		   .append(" left join lancamentos.periodoLancamentoParcial periodoLancParcial 	             ")
 		   .append(" left join lancamentos.estudo estudo ")
            
-		   .append("left join estudo.estudoCotas estudoCotas ")
-           .append("left join estudoCotas.itemNotaEnvios itensNotaEnvio ")
-           .append("left join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio ")
+		   .append(" left join estudo.estudoCotas estudoCotas ")
+           .append(" left join estudoCotas.itemNotaEnvios itensNotaEnvio ")
+           .append(" left join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio ")
 		   
-		   .append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
-		   .append(" left join movimentoCota.tipoMovimento tipoMovimento         ")
+		   .append(" INNER JOIN lancamentos.movimentoEstoqueCotas  movimentoCota 	")
+		   .append(" INNER JOIN movimentoCota.tipoMovimento tipoMovimento         ")
 		   .append(" where (movimentoCota.id is null or movimentoCota.cota = cota)	")
 		   .append(" and (estudoCotas.id is null or estudoCotas.cota = cota)  ")
 		   .append(" and chamEncCota.qtdePrevista>0  ")
