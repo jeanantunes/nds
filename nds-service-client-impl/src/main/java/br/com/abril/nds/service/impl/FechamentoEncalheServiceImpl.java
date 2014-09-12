@@ -75,7 +75,6 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -521,9 +520,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
                 encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
 
-    		} else if(this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
-        						encalhe.getProdutoEdicao(), encalhe.getDataRecolhimento(), 
-        						Arrays.asList(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name()))) {
+    		} else if(encalhe.isMatrizRecolhimento()) {
 
     			encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
     			
@@ -534,13 +531,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
     	} else {
 
-            if ( this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
-            			encalhe.getProdutoEdicao(), encalhe.getDataRecolhimento(), 
-            			Arrays.asList(TipoChamadaEncalhe.CHAMADAO.name())) 
-
-            			&& !(this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
-                    			encalhe.getProdutoEdicao(), encalhe.getDataRecolhimento(), 
-                    			Arrays.asList(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name())))) {
+            if (encalhe.isChamadao() && !encalhe.isMatrizRecolhimento()) {
 
             	encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
 
@@ -1259,11 +1250,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 	
                 	this.tratarEncalheProdutoEdicaoParcial(item, usuario, item.getFisico());
 
-                } else if (this.fechamentoEncalheRepository.hasTipoChamadaEncalhe(
-                									item.getProdutoEdicao(), item.getDataRecolhimento(),
-                									Arrays.asList(
-                										TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name(), 
-                										TipoChamadaEncalhe.CHAMADAO.name()))) { 
+                } else if (item.isChamadao() && item.isMatrizRecolhimento()) { 
 
                 	movimentoEstoqueService.transferirEstoqueProdutoChamadaoParaRecolhimento(item.getProdutoEdicao(), usuario);          	                	
                 }                

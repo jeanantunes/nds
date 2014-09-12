@@ -45,6 +45,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
@@ -139,12 +140,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         String queryString = this.getQueryFechamentoEncalhe(filtro, false);
         
-        queryString += " order by unionEncalhe.sequencia ";
+        queryString += " ORDER BY sequencia ";
         
         final Query query = getSession().createSQLQuery(queryString);
         
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
         query.setParameter("origemInterface", Origem.INTERFACE.name());
+        query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
+        query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
         
         if (filtro.getFornecedorId() != null) {
             
@@ -182,6 +185,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         ((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("recolhimento", StandardBasicTypes.STRING);
+        ((SQLQuery) query).addScalar("matrizRecolhimento", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadaEncalheId", StandardBasicTypes.LONG);
         
@@ -190,140 +195,140 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     
     private String getQueryFechamentoEncalhe(final FiltroFechamentoEncalheDTO filtro, final boolean count) {
         
-        final StringBuilder query = new StringBuilder();
+        final StringBuilder sql = new StringBuilder();
         
         if (count) {
             
-            query.append("select count(*) from ( select * from (select pe.ID as produtoEdicao ");
+            sql.append("select count(*) from ( ");
+        }
+        
 
-        } else {
+        sql.append(" SELECT ");
+
+        sql.append(" ENCALHE_INFO_EDICAO.* ");
+
+        
+        if(!count) {
+
+    		sql.append(", ( ");
+    		sql.append(" 	ENCALHE_INFO_EDICAO.PRECOCAPA - ( ENCALHE_INFO_EDICAO.PRECOCAPA * ");
+    		sql.append(" 	CASE ");
+    		sql.append(" 	WHEN ENCALHE_INFO_EDICAO.prodEdicaoOrigem = :origemInterface ");
+    		sql.append(" 	THEN (COALESCE(		");
+    		sql.append(" 			DLPE.PERCENTUAL_DESCONTO, ");
+    		sql.append(" 			DLP.PERCENTUAL_DESCONTO,  ");
+    		sql.append(" 			ENCALHE_INFO_EDICAO.PRODEDICAODESCONTO, ");
+    		sql.append(" 			ENCALHE_INFO_EDICAO.PRODDESCONTO, 0) / 100) ");
+    		sql.append(" 	ELSE (COALESCE(ENCALHE_INFO_EDICAO.PRODEDICAODESCONTO, ENCALHE_INFO_EDICAO.PRODDESCONTO, 0) / 100) END) ");
+    		sql.append(" ) AS precoCapaDesconto, 	");
+    		sql.append(" CASE WHEN (				");
+    		sql.append(" (SELECT CHEN.TIPO_CHAMADA_ENCALHE	");
+    		sql.append(" FROM CHAMADA_ENCALHE CHEN          ");
+    		sql.append(" WHERE CHEN.PRODUTO_EDICAO_ID = ENCALHE_INFO_EDICAO.PRODUTOEDICAO ");
+    		sql.append(" AND CHEN.DATA_RECOLHIMENTO <= :dataRecolhimento                  ");
+    		sql.append(" ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheChamadao) THEN TRUE ELSE FALSE END AS chamadao,    ");
+    		sql.append(" CASE WHEN (						");
+    		sql.append(" (SELECT CHEN.TIPO_CHAMADA_ENCALHE	");
+    		sql.append(" FROM CHAMADA_ENCALHE CHEN          ");
+    		sql.append(" WHERE CHEN.PRODUTO_EDICAO_ID = ENCALHE_INFO_EDICAO.PRODUTOEDICAO	");
+    		sql.append(" AND CHEN.DATA_RECOLHIMENTO <= :dataRecolhimento                    ");
+    		sql.append(" ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) THEN TRUE ELSE FALSE END AS matrizRecolhimento, ");
+			sql.append(" CASE WHEN PLP.TIPO IS NOT NULL THEN PLP.TIPO ELSE NULL END AS recolhimento ");
         	
-			query.append("select * from (");
-			query.append("	select pe.ID as produtoEdicao,");
-			query.append("			 coalesce(ce.SEQUENCIA, 0) as sequencia,");
-			query.append("			 p.NOME as produto, ");
-			query.append("			 p.CODIGO as codigo, ");
-			query.append("			 pe.NUMERO_EDICAO as edicao,");
-			query.append("			 pe.PARCIAL as parcial,");
-			query.append("			 ce.ID as chamadaEncalheId,");
-			query.append("			 pe.ORIGEM as origem, ");
-			query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
-			query.append("			 dlp.ID as produtoDescontoLogisticaId,");
-
-			query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
-			query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
-			query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, pe.DESCONTO, p.desconto, 0) / 100)");
-			query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
-			query.append("			 )) as precoCapaDesconto,");
-
-			query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
-			query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
-			query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento ");
         }
 
-        query.append("	from chamada_encalhe_cota cec");
-        query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
-        query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
-        query.append("	inner join produto p on (pe.PRODUTO_ID = p.ID)");
-        query.append("	inner join produto_fornecedor pf on (pf.PRODUTO_ID = p.ID)");
-        query.append("	left join desconto_logistica dlpe on (dlpe.ID = pe.DESCONTO_LOGISTICA_ID)");
-        query.append("	left join desconto_logistica dlp on (dlp.ID = p.DESCONTO_LOGISTICA_ID)");
-        
-        query.append("	left outer join lancamento_parcial lp on lp.produto_edicao_id = pe.id ");
-        query.append("	left outer join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = lp.id ");
-        
-        query.append("	where ce.DATA_RECOLHIMENTO = :dataRecolhimento");
-        query.append("	and cec.postergado = false ");
-        
-        if (filtro.getFornecedorId() != null) {
-            
-            query.append("	and pf.fornecedores_ID = :fornecedorId");
-        }
-        
-        query.append("	group by ce.PRODUTO_EDICAO_ID");
-        query.append("	union all");
-        
-		if (count) {
+		sql.append(" FROM (   ");
+		
+		sql.append(" SELECT   ");
+		sql.append(" PE.ID AS produtoEdicao,	");
+		sql.append(" PE.DESCONTO_LOGISTICA_ID AS produtoEdicaoDescontoLogisticaId, ");
+		sql.append(" P.DESCONTO_LOGISTICA_ID AS produtoDescontoLogisticaId ");
 
-			query.append(" select pe.ID as produtoEdicao ");
-
-		} else {
-
-			query.append("	select pe.ID as produtoEdicao, ");
-			query.append("			 ce.SEQUENCIA as sequencia,");
-			query.append("			 p.NOME as produto, ");
-			query.append("			 p.CODIGO as codigo, ");
-			query.append("			 pe.NUMERO_EDICAO as edicao,");
-			query.append("			 pe.PARCIAL as parcial,");
-			query.append("			 ce.ID as chamadaEncalheId,");
-			query.append("			 pe.ORIGEM as origem, ");
-			query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,");
-			query.append("			 dlp.ID as produtoDescontoLogisticaId,");
-
-			query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
-			query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
-			query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, pe.DESCONTO, p.desconto, 0) / 100)");
-			query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
-			query.append("			 )) as precoCapaDesconto,");
-
-			query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
-			query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
-			query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento ");
+		
+		if(!count) {
+			sql.append(" , PE.ORIGEM AS prodEdicaoOrigem,     ");
+			sql.append(" PE.DESCONTO AS prodEdicaoDesconto, ");
+			sql.append(" P.DESCONTO AS prodDesconto,        ");
+			sql.append(" COALESCE(CE.SEQUENCIA, 0) AS sequencia, ");
+			sql.append(" P.NOME AS produto,          ");
+			sql.append(" P.CODIGO AS codigo,         ");
+			sql.append(" PE.NUMERO_EDICAO AS edicao, ");
+			sql.append(" PE.PARCIAL AS parcial,      ");
+			sql.append(" CE.ID AS chamadaEncalheId,  ");
+			sql.append(" PE.ORIGEM AS origem,        ");
+			sql.append(" COALESCE(PE.PRECO_VENDA, 0) AS precoCapa, ");
+			sql.append(" CASE WHEN PE.PARCIAL = TRUE THEN 'P' ELSE 'N' END AS tipo ");
 		}
-        
-        query.append("	from chamada_encalhe_cota cec");
-        query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
-        query.append("	inner join conferencia_encalhe confenc on (confenc.CHAMADA_ENCALHE_COTA_ID = cec.ID)");
-        query.append("	inner join controle_conferencia_encalhe_cota ccec on (ccec.ID = confenc.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID)");
-        query.append("	inner join controle_conferencia_encalhe cce on (cce.ID = ccec.CTRL_CONF_ENCALHE_ID)");
-        query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
-        query.append("	inner join produto p on (pe.PRODUTO_ID = p.ID)");
-        query.append("	inner join produto_fornecedor pf on (pf.PRODUTO_ID = p.ID)");
-        query.append("	left join desconto_logistica dlpe on (dlpe.ID = pe.DESCONTO_LOGISTICA_ID)");
-        query.append("	left join desconto_logistica dlp on (dlp.ID = p.DESCONTO_LOGISTICA_ID)");
-        
-        query.append("	left outer join lancamento_parcial lp on lp.produto_edicao_id = pe.id ");
-        query.append("	left outer join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = lp.id ");
-        
-        query.append("	where cce.`DATA` = :dataRecolhimento");
-        query.append("	and cec.postergado = false ");
-        
-        if (filtro.getFornecedorId() != null) {
-            
-            query.append("	and pf.fornecedores_ID = :fornecedorId");
-        }
-        
-        query.append("	group by ce.PRODUTO_EDICAO_ID");
-        query.append(") as unionEncalhe");
-        query.append(" group by unionEncalhe.produtoEdicao");
+		
+		sql.append(" FROM CHAMADA_ENCALHE_COTA CEC                                      ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)  ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CE.PRODUTO_EDICAO_ID)     ");
+		sql.append(" INNER JOIN PRODUTO P ON (PE.PRODUTO_ID = P.ID)                     ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR PF ON (PF.PRODUTO_ID = P.ID)         ");
+		sql.append(" WHERE ");
+		sql.append(" CE.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		sql.append(" AND CEC.POSTERGADO = FALSE ");
+		
+		if(filtro.getFornecedorId()!=null) {
+			sql.append("	AND PF.FORNECEDORES_ID = :fornecedorId ");
+		}
+		
+		sql.append(" GROUP BY PE.ID ");
+		
+		sql.append(" UNION ALL      ");
+		
+		sql.append(" SELECT         ");
+		sql.append(" PE.ID AS produtoEdicao, ");
+		sql.append(" PE.DESCONTO_LOGISTICA_ID AS produtoEdicaoDescontoLogisticaId, ");
+		sql.append(" P.DESCONTO_LOGISTICA_ID AS produtoDescontoLogisticaId        ");
+		
+		if(!count) {
+			sql.append(" , PE.ORIGEM AS prodEdicaoOrigem,     ");
+			sql.append(" PE.DESCONTO AS prodEdicaoDesconto, ");
+			sql.append(" P.DESCONTO AS prodDesconto,        ");
+			sql.append(" COALESCE(CE.SEQUENCIA, 0) AS sequencia, ");
+			sql.append(" P.NOME AS produto,          ");
+			sql.append(" P.CODIGO AS codigo,         ");
+			sql.append(" PE.NUMERO_EDICAO AS edicao, ");
+			sql.append(" PE.PARCIAL AS parcial,      ");
+			sql.append(" CE.ID AS chamadaEncalheId,  ");
+			sql.append(" PE.ORIGEM AS origem,        ");
+			sql.append(" COALESCE(PE.PRECO_VENDA, 0) AS precoCapa, ");
+			sql.append(" CASE WHEN PE.PARCIAL = TRUE THEN 'P' ELSE 'N' END AS tipo ");
+		}
+		
+		sql.append(" FROM CONTROLE_CONFERENCIA_ENCALHE CCE                     ");
+		sql.append(" INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON (CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID)            ");
+		sql.append(" INNER JOIN CONFERENCIA_ENCALHE CONFENC ON (CONFENC.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)   ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE_COTA CEC ON (CEC.ID = CONFENC.CHAMADA_ENCALHE_COTA_ID)                    ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)   ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CONFENC.PRODUTO_EDICAO_ID) ");
+		sql.append(" INNER JOIN PRODUTO P ON (PE.PRODUTO_ID = P.ID) ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR PF ON (PF.PRODUTO_ID = P.ID) ");
+		sql.append(" WHERE ");
+		sql.append(" CCE.DATA = :dataRecolhimento	");
+		sql.append(" AND CEC.POSTERGADO = FALSE ");
+		
+		if(filtro.getFornecedorId()!=null) {
+			sql.append("	AND PF.FORNECEDORES_ID = :fornecedorId ");
+		}
+		
+		sql.append(" GROUP BY PE.ID ");
+		
+		sql.append(" ) AS ENCALHE_INFO_EDICAO ");
+		
+		sql.append(" LEFT JOIN DESCONTO_LOGISTICA DLPE ON (DLPE.ID = ENCALHE_INFO_EDICAO.produtoEdicaoDescontoLogisticaId)  ");
+		sql.append(" LEFT JOIN DESCONTO_LOGISTICA DLP ON (DLP.ID = ENCALHE_INFO_EDICAO.produtoDescontoLogisticaId)          ");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO_PARCIAL LP ON LP.PRODUTO_EDICAO_ID = ENCALHE_INFO_EDICAO.produtoEdicao    ");
+		sql.append(" LEFT OUTER JOIN PERIODO_LANCAMENTO_PARCIAL PLP ON PLP.LANCAMENTO_PARCIAL_ID = LP.ID                  ");
+		sql.append(" GROUP BY ENCALHE_INFO_EDICAO.produtoEdicao                                                           ");
         
         if (count) {
             
-            query.append(") as unionEncalheCount");
+            sql.append(") as unionEncalheCount");
         }
         
-        return query.toString();
-    }
-
-    public boolean hasTipoChamadaEncalhe(Long idProdutoEdicao, Date dataRecolhimento, List<String> tiposChamadaEncalhe) {
-    	
-    	final StringBuilder sql = new StringBuilder();
-
-    	sql.append(" SELECT count(distinct chEn.TIPO_CHAMADA_ENCALHE) ");
-    	sql.append(" FROM CHAMADA_ENCALHE chEn ");
-    	sql.append(" WHERE chEn.PRODUTO_EDICAO_ID = :idProdutoEdicao ");
-    	sql.append(" AND chEn.DATA_RECOLHIMENTO <= :dataRecolhimento ");
-    	sql.append(" AND chEn.TIPO_CHAMADA_ENCALHE in (:tiposChamadaEncalhe) ");
-
-    	Query query = this.getSession().createSQLQuery(sql.toString());
-
-    	query.setParameter("idProdutoEdicao", idProdutoEdicao);
-    	query.setParameter("dataRecolhimento", dataRecolhimento);
-    	query.setParameter("tiposChamadaEncalhe", tiposChamadaEncalhe);
-
-    	BigInteger count = (BigInteger) query.uniqueResult();
-    	
-    	return count == null ? false : count.intValue() == tiposChamadaEncalhe.size();
+        return sql.toString();
     }
     
     @SuppressWarnings("unchecked")
@@ -402,7 +407,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
         
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-
+        
         if (filtro.getFornecedorId() != null) {
             
             query.setLong("fornecedorId", filtro.getFornecedorId());
@@ -1469,7 +1474,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         final BigInteger qtde = (BigInteger) query.uniqueResult();
         
-        return qtde != null ? qtde.intValue() : 0;        
+        return qtde != null ? qtde.intValue() : 0;
+        
     }
     
     @Override
