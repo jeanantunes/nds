@@ -1040,11 +1040,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 						rota.setRoteiro(roteiro);
 						rota.setOrdem(rotaDTO.getOrdem());
 						
+						
 						if (rotaDTO.getPdvsExclusao() != null && !rotaDTO.getPdvsExclusao().isEmpty()) {
 							
 							rota.desassociarPDVs(rotaDTO.getPdvsExclusao());
 							
-		                	desassociarBoxCota(rotaDTO.getPdvsExclusao());
+							if(!rota.getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+								desassociarBoxCota(rotaDTO.getPdvsExclusao());
+							}
 						}
 					}
                 }
