@@ -168,7 +168,7 @@ function imprimir(){
               <td width="62" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.codigoProduto}</td>
               <td width="195" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.nomeProduto}</strong></font></td>
               <td width="43" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.edicao}</strong></font></td>
-              <td width="30" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
+              <td width="30" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.inicialTipoRecolhimento}</td>
               <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
               <td width="80" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
               	

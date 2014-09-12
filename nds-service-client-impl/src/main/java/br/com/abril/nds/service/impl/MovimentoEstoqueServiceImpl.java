@@ -1797,11 +1797,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 // FIXME Provisorio ate validação do Evaldo !
                 // final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
-<<<<<<< HEAD
                 /**
-=======
-				/**
->>>>>>> f98562f4c768bc5700b7359def424d61296e6d5c
                  * A busca dos descontos é feita diretamente no Map, por chave,
                  * agilizando o retorno do resultado
                  */

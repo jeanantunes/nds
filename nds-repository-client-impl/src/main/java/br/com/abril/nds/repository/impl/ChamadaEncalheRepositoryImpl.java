@@ -255,8 +255,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			}
 		};
 
-		List<CotaEmissaoDTO> lista = (List<CotaEmissaoDTO>) new JdbcTemplate(dataSource).query(sql.toString(), param.toArray(), 
-			cotaRowMapper);
+		List<CotaEmissaoDTO> lista = (List<CotaEmissaoDTO>) new JdbcTemplate(dataSource).query(sql.toString(), param.toArray(), cotaRowMapper);
 		
 		if(lista == null || lista.size() ==0)
 			return null;
@@ -279,10 +278,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" inner join ");
 		sql.append(" CHAMADA_ENCALHE chamadaenc2_ ");
 		sql.append(" on chamadaenc0_.CHAMADA_ENCALHE_ID=chamadaenc2_.ID ");
-		
-		sql.append(" left join CHAMADA_ENCALHE_LANCAMENTO cel on (cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID) ");
-		sql.append(" join LANCAMENTO l on (l.ID=cel.LANCAMENTO_ID) ");
-		sql.append(" join PRODUTO_EDICAO produtoedi5_ on (l.PRODUTO_EDICAO_ID=produtoedi5_.ID) ");
+		sql.append(" join PRODUTO_EDICAO produtoedi5_ on (chamadaenc2_.PRODUTO_EDICAO_ID=produtoedi5_.ID) ");
 				
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto6_ ");
@@ -314,8 +310,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" inner join ");
 		sql.append(" ROTEIRO roteiro13_ ");
 		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID ");
-		sql.append(" where ");
-		sql.append(" cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID "); 
+		sql.append(" where 1=1 ");
+		// sql.append(" cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID "); 
         
 		setParamsFilterSqlPostergado(filtro, sql, param);
 	}
@@ -589,7 +585,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" case pessoa.class ");
 		hql.append("       when 'F' then pessoa.nome ");
 		hql.append("       when 'J' then pessoa.razaoSocial end  as nomeCota,");
-		hql.append(" sum(chamEncCota.qtdePrevista) as qtdeExemplares, ");
+		hql.append(" chamEncCota.qtdePrevista as qtdeExemplares, ");
 		hql.append(" sum(chamEncCota.qtdePrevista * produtoEdicao.precoVenda) as vlrTotalCe, ");	
 		hql.append(" box.codigo as box, 						");
 		hql.append(" box.nome as nomeBox, 						");
@@ -716,7 +712,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 		hql.append(" 	    (movimentoCota.valoresAplicados.valorDesconto) as desconto, 	");
 		hql.append("		produtoEdicao.precoVenda as precoVenda,    		");
-		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
+		hql.append(" 	    periodoLancParcial.tipo as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
 		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
@@ -780,8 +776,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join produtoEdicao.produto produto 					")
 		   .append(" join produto.fornecedores fornecedores 				")
 		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
-		   
-		   .append("left join lancamentos.estudo estudo ")
+		   .append(" left join lancamentos.periodoLancamentoParcial periodoLancParcial 			")
+		   .append(" left join lancamentos.estudo estudo ")
            
 		   .append("left join estudo.estudoCotas estudoCotas ")
            .append("left join estudoCotas.itemNotaEnvios itensNotaEnvio ")
