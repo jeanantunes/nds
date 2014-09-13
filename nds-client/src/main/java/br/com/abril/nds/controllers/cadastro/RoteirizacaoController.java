@@ -965,15 +965,70 @@ public class RoteirizacaoController extends BaseController {
 	@Post
 	@Path("/obterPdvsDisponiveis")
 	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, boolean pesquisaPorCota, Long boxID, String sortname, String sortorder ){
+			String cep, boolean pesquisaPorCota, Long idRoteiro, Long idRota, Long boxID, String sortname, String sortorder){
         
 		List<PdvRoteirizacaoDTO> lista = 
 			this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
+		
+		verificarExistenciaPDVsRotaAtual(idRoteiro, idRota, lista);
 		
 		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
 		
 		result.use(FlexiGridJson.class).from(lista).total(lista.size()).page(1).serialize();
+	}
+
+	private void verificarExistenciaPDVsRotaAtual(Long idRoteiro, Long idRota, List<PdvRoteirizacaoDTO> lista) {
+		
+		RoteirizacaoDTO roteirizacao = (RoteirizacaoDTO) session.getAttribute(ROTEIRIZACAO_DTO_SESSION_KEY);
+		
+		if (roteirizacao != null) {
+			
+			List<RoteiroRoteirizacaoDTO> roteiros = roteirizacao.getRoteiros();
+			
+			if (roteiros != null && !roteiros.isEmpty()) {
+				
+				RoteiroRoteirizacaoDTO roteiroSelecionado = null;
+				
+				for (RoteiroRoteirizacaoDTO roteiro : roteiros) {
+					
+					if (roteiro.getId().equals(idRoteiro)) {
+						
+						roteiroSelecionado = roteiro;
+						break;
+					}
+				}
+				
+				if (roteiroSelecionado != null) {
+					
+					List<RotaRoteirizacaoDTO> rotas = roteiroSelecionado.getRotas();
+					
+					if (rotas != null && !rotas.isEmpty()) {
+						
+						RotaRoteirizacaoDTO rotaSelecionada = null;
+						
+						for (RotaRoteirizacaoDTO rota : rotas) {
+							
+							if (rota.getId().equals(idRota)) {
+								
+								rotaSelecionada = rota;
+								break;
+							}
+						}
+						
+						if (rotaSelecionada != null) {
+							
+							List<PdvRoteirizacaoDTO> pdvs = rotaSelecionada.getPdvs();
+							
+							if (pdvs != null) {
+								
+								lista.removeAll(pdvs);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	/**

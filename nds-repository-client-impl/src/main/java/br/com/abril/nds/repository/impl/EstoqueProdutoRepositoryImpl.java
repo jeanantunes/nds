@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -319,6 +320,19 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		return (BigInteger) query.uniqueResult();
+	}
+	
+	public BigDecimal obterValorTotalSuplementar(){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select sum(estoque.QTDE_SUPLEMENTAR * produtoEdicao.preco_venda) ") ;
+		hql.append("from estoque_produto estoque ") ;
+		hql.append("join produto_edicao produtoEdicao on produtoEdicao.ID = estoque.PRODUTO_EDICAO_ID ") ;
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		return (BigDecimal) query.uniqueResult();	
 	}
 	
 }
