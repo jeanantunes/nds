@@ -19,6 +19,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
@@ -239,6 +240,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 			.append("       and diferenca.DATA_MOVIMENTACAO= :data ")
 			.append("       and diferenca.TIPO_DIFERENCA in (:%s) ")
 			.append("       and movimentoEstoqueDiferenca.STATUS= :movimentoAprovado ")
+			.append("       and movimentoEstoqueDiferenca.STATUS_INTEGRACAO =:statusIntegracaoRecolhimento ")
 			.append("       and lancamentoDiferenca.STATUS in (:statusPerdaGanho) ")
 			.append("		 and diferenca.PRODUTO_EDICAO_ID in ( ").append(tempalteHqlProdutosEdicaoEncalhe).append(")")
 			.append("  ) as %s ").toString();
@@ -306,6 +308,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	       
         query.setParameter("data", data);
         query.setParameter("movimentoAprovado", StatusAprovacao.APROVADO.name());
+        query.setParameter("statusIntegracaoRecolhimento", StatusIntegracao.ENCALHE.name());
         query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO.name());
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE.name());
         query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME.name());
@@ -329,16 +332,15 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         
         ResumoEncalheFecharDiaDTO resultado  = (ResumoEncalheFecharDiaDTO) query.uniqueResult();
   		
-  		BigDecimal fisicoJuramentado = resultado.getTotalFisico().add(resultado.getTotalJuramentado());
         BigDecimal faltaSobras = resultado.getTotalSobras().subtract(resultado.getTotalFaltas());
-        
-        //Saldo = Lógico - (Físico + Lógico Juramentado) - Venda de Encalhe + Sobras - Faltas ;
-        BigDecimal saldo = resultado.getTotalLogico().subtract(fisicoJuramentado).subtract(resultado.getVenda()).add(faltaSobras);
-        
+          
         // FISICO + sobras - faltas
-       // BigDecimal valorFisico = resultado.getTotalFisico().add(faltaSobras);
+        BigDecimal valorFisico = resultado.getTotalFisico().subtract(resultado.getVenda());
   		
-  		resultado.setTotalFisico(resultado.getTotalFisico());
+        //Saldo = Lógico - (Físico - Venda de Encalhe + Sobras - Faltas ;
+        BigDecimal saldo = resultado.getTotalLogico().subtract(valorFisico).add(faltaSobras).subtract(resultado.getVenda());
+      
+  		resultado.setTotalFisico(valorFisico);
   		resultado.setSaldo(saldo);
   			
         return resultado;
