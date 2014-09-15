@@ -1140,15 +1140,16 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" INNER JOIN lancamento l on l.PRODUTO_EDICAO_ID = pe.ID                                                                       ")  
 			.append(" INNER join lancamento_parcial lp  on lp.produto_edicao_id = pe.ID                                                            ")
 			.append(" LEFT JOIN periodo_lancamento_parcial plr  on l.PERIODO_LANCAMENTO_PARCIAL_ID = plr.ID                                        ")                                                         
-			.append(" INNER JOIN movimento_estoque_cota mec  ON mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID  and mec.COTA_ID = cec.COTA_ID   and mec.LANCAMENTO_ID = l.ID          ")                                                                     
+			.append(" INNER JOIN movimento_estoque_cota mec  ON mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID  and mec.COTA_ID = cec.COTA_ID        ")            
+			.append(" and mec.LANCAMENTO_ID = l.ID and mec.LANCAMENTO_ID = cel.LANCAMENTO_ID                                                       ")
 			.append(" inner join tipo_movimento tm  on tm.id = mec.TIPO_MOVIMENTO_ID                                                               ")
 			.append(" where 1 = 1                                                                                                                  ")
-			.append(" and l.NUMERO_LANCAMENTO >= 1                                                                                                 ")
+			.append(" and l.NUMERO_LANCAMENTO > 1                                                                                                  ")
 			.append(" and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte                                                        ")
 			.append(" and l.status not in ('RECOLHIDO', 'FECHADO', 'EM_RECOLHIMENTO')                                                              ")
 			.append(" and pe.parcial = true                                                                                                        ")
-			.append(" group by numeroCota, idCota, idProdutoEdicao, dataMovimento, numeroNotaEnvio, reparte                                        ")   
-			
+			.append(" group by numeroCota, idCota, idProdutoEdicao, numeroNotaEnvio                                                                ")   
+			.append(" having count(0) > 1                                                                                                          ")
 			.append(" order by dataMovimento ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
