@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -24,6 +25,10 @@ public class StatusDividaDTO implements Serializable {
 	private Long idCobranca;
 	
 	private Long idNegociacao;
+	
+	private TipoCobranca tipoCobranca;
+	
+	private String descricaoTipoCobranca;
 	
 	private BigDecimal comissaoSaldoDivida;
 	
@@ -198,5 +203,29 @@ public class StatusDividaDTO implements Serializable {
 	public void setComissaoSaldoDivida(BigDecimal comissaoSaldoDivida) {
 		this.comissaoSaldoDivida = comissaoSaldoDivida;
 	}
+
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
+	}
+	
+	public String getDescricaoTipoCobranca() {
+		return descricaoTipoCobranca;
+	}
+
+	public void setNameTipoCobranca(String nameTipoCobranca) {
+		
+		if(nameTipoCobranca == null || nameTipoCobranca.trim().isEmpty()) {
+			this.tipoCobranca = null;
+		} else {
+			
+			this.tipoCobranca = TipoCobranca.valueOf(nameTipoCobranca);
+			
+			this.descricaoTipoCobranca = this.tipoCobranca.getDescricao();
+			
+		}
+		
+	}
+	
+	
 
 }

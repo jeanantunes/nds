@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao_detalhe" pageWidth="800" pageHeight="495" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="6be43037-702c-47e6-b961-dbc2c6dd6e76">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="207"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
 	</parameter>
@@ -55,16 +55,12 @@
 	<field name="resumoConsignado.resumoConsignado.valorEntradas" class="java.math.BigDecimal"/>
 	<field name="resumoConsignado.resumoConsignado.valorSaidas" class="java.math.BigDecimal"/>
 	<field name="resumoConsignado.resumoConsignado.saldoAtual" class="java.math.BigDecimal"/>
-	<field name="resumoConsignado.resumoAVista.saldoAnterior" class="java.math.BigDecimal"/>
-	<field name="resumoConsignado.resumoAVista.valorEntradas" class="java.math.BigDecimal"/>
-	<field name="resumoConsignado.resumoAVista.valorSaidas" class="java.math.BigDecimal"/>
-	<field name="resumoConsignado.resumoAVista.saldoAtual" class="java.math.BigDecimal"/>
 	<field name="resumoCotas.quantidadeAusentesExpedicaoReparte" class="java.lang.Long"/>
 	<field name="resumoCotas.quantidadeAusentesRecolhimentoEncalhe" class="java.lang.Long"/>
 	<field name="resumoCotas.quantidadeNovas" class="java.lang.Long"/>
 	<field name="resumoCotas.quantidadeInativas" class="java.lang.Long"/>
 	<detail>
-		<band height="495" splitType="Stretch">
+		<band height="493" splitType="Stretch">
 			<frame>
 				<reportElement uuid="e127aa35-4774-4866-9a09-bb37ac143b2d" stretchType="RelativeToBandHeight" x="3" y="161" width="790" height="66"/>
 				<box>
@@ -1332,72 +1328,6 @@
 							<font fontName="Arial"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAtual}]]></textFieldExpression>
-					</textField>
-					<staticText>
-						<reportElement uuid="c854ddc5-92c7-4d8f-85b4-7c4d351b1734" positionType="Float" stretchType="RelativeToTallestObject" x="9" y="60" width="155" height="15"/>
-						<box>
-							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-						</box>
-						<textElement verticalAlignment="Middle" markup="none">
-							<font fontName="Arial"/>
-						</textElement>
-						<text><![CDATA[A Vista]]></text>
-					</staticText>
-					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement uuid="695df163-cd92-42f9-98db-645ce7701e2d" positionType="Float" stretchType="RelativeToTallestObject" x="164" y="60" width="155" height="15"/>
-						<box rightPadding="5">
-							<pen lineStyle="Dashed"/>
-							<topPen lineStyle="Dashed"/>
-							<leftPen lineStyle="Dashed"/>
-							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-							<rightPen lineStyle="Dashed"/>
-						</box>
-						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-							<font fontName="Arial"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.saldoAnterior}]]></textFieldExpression>
-					</textField>
-					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement uuid="371dff10-00aa-47d5-9240-d190eae5675b" positionType="Float" stretchType="RelativeToTallestObject" x="474" y="60" width="155" height="15"/>
-						<box rightPadding="5">
-							<pen lineStyle="Dashed"/>
-							<topPen lineStyle="Dashed"/>
-							<leftPen lineStyle="Dashed"/>
-							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-							<rightPen lineStyle="Dashed"/>
-						</box>
-						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-							<font fontName="Arial"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.valorSaidas}]]></textFieldExpression>
-					</textField>
-					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement uuid="3b7c7a7f-85b9-4894-b365-8c4a572a8b66" positionType="Float" x="319" y="60" width="155" height="15"/>
-						<box rightPadding="5">
-							<pen lineStyle="Dashed"/>
-							<topPen lineStyle="Dashed"/>
-							<leftPen lineStyle="Dashed"/>
-							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-							<rightPen lineStyle="Dashed"/>
-						</box>
-						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-							<font fontName="Arial"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.valorEntradas}]]></textFieldExpression>
-					</textField>
-					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement uuid="cc55258a-9171-48d2-908d-5dd648e97f47" positionType="Float" x="629" y="60" width="155" height="15"/>
-						<box rightPadding="5">
-							<pen lineStyle="Dashed"/>
-							<topPen lineStyle="Dashed"/>
-							<leftPen lineStyle="Dashed"/>
-							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
-							<rightPen lineStyle="Dashed"/>
-						</box>
-						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-							<font fontName="Arial"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.saldoAtual}]]></textFieldExpression>
 					</textField>
 				</elementGroup>
 				<staticText>
