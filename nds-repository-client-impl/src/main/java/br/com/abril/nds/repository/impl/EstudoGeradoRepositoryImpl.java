@@ -131,8 +131,8 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   coalesce(eg.REPARTE_MINIMO, 0) as qtdReparteMinimoEstudo, ");
 		sql.append("   sum(ecg.REPARTE) * count(distinct ecg.ID)/count(ecg.ID)  as qtdReparteDistribuidoEstudo, ");
 		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		//sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end)*count(distinct c.ID) / count(c.ID) as qtdCotasAtivas, ");
-		sql.append("   (select count(*) from COTA where SITUACAO_CADASTRO='ATIVO') as qtdCotasAtivas, ");
+		sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end)*count(distinct c.ID) / count(c.ID) as qtdCotasAtivas, ");
+		//sql.append("   (select count(*) from COTA where SITUACAO_CADASTRO='ATIVO') as qtdCotasAtivas, ");
 		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
 		sql.append("   COUNT(DISTINCT (CASE WHEN epc.qtde_recebida - epc.qtde_devolvida > 0 THEN epc.cota_id ELSE NULL END)) as qtdCotasQueVenderam, ");
 				
