@@ -106,7 +106,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FTFEnvTipoRegistro01> obterResgistroTipo01(List<NotaFiscal> notas, long idTipoNotaFiscal) {
+	public List<FTFEnvTipoRegistro01> obterResgistroTipo01(List<NotaFiscal> notas, long idNaturezaOperacao) {
 
 		StringBuilder sqlBuilder = new StringBuilder();
 
@@ -117,19 +117,15 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ");
 		sqlBuilder.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
 		
-		// setParametersFromDistribuidor(sqlBuilder);
+		concatenarTipoPedidoBy(idNaturezaOperacao, sqlBuilder);
 
-		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
-
-		sqlBuilder.append(" cast(nfn.id as char) as numeroDocOrigem, ");
+		sqlBuilder.append(" LPAD(cast(nfn.id as char), 8, '0') as numeroDocOrigem, ");
 		sqlBuilder.append(" paramFtf.CODIGO_SOLICITANTE as codSolicitante,  "); 
 		sqlBuilder.append(" endereco.LOGRADOURO as  nomeLocalEntregaNf, ");
 		sqlBuilder.append(" DATE_FORMAT(nfn.DATA_EMISSAO,'%d/%m/%Y') as dataPedido, ");
 		sqlBuilder.append(" paramFtf.CENTRO_EMISSOR as codCentroEmissor, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjDestinatario, ");
 		sqlBuilder.append(" nfn.DOCUMENTO_DESTINATARIO as cpfCnpjEstabelecimentoEntrega, ");
-
-		adicionarCodDestinatarioSistemaOrigem(idTipoNotaFiscal, sqlBuilder);
 
 		sqlBuilder.append(" COALESCE(cast(nfn.CONDICAO as char),'') as codCondicaoPagamento, ");
 		sqlBuilder.append(" nfn.IE_EMITENTE as numInscricaoEstadual, ");
@@ -210,26 +206,24 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as nomeMunicipioServicoPrestado, ");
 		sqlBuilder.append(" '' as numNotaEmpenho, ");
 		sqlBuilder.append(" '' as codViagem, ");
-		sqlBuilder.append(" '' as codFaturaAssociada ");
+		sqlBuilder.append(" '' as codFaturaAssociada, ");
+		sqlBuilder.append(" nfp.TIPO_PESSOA as tipoPessoaDestinatario ");
 		sqlBuilder.append(" from nota_fiscal_novo nfn ");
 		sqlBuilder.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ");
 		sqlBuilder.append(" left join nota_fiscal_endereco endereco on endereco.ID = nfn.ENDERECO_ID_DESTINATARIO ");
+		sqlBuilder.append(" inner join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ");
 
-		adicionarJoinCota(idTipoNotaFiscal, sqlBuilder);
-
-		sqlBuilder.append(" where nfn.id in (:idsNotaFiscal) ");
-		sqlBuilder.append(" and no.id  = :idTipoNotaFiscal ");
+		sqlBuilder.append(" where 1 = 1 ");
+		sqlBuilder.append(" and nfn.id in (:idsNotasFiscais) ");
+		sqlBuilder.append(" and no.id = :idNaturezaOperacao ");
+		
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
 
-		query.setParameterList("idsNotaFiscal", obterIdsFrom(notas));
-		query.setParameter("idTipoNotaFiscal", idTipoNotaFiscal);
-
-		adicionarDistribuidorParametro(idTipoNotaFiscal, query);
+		query.setParameterList("idsNotasFiscais", obterIdsFrom(notas));
+		query.setParameter("idNaturezaOperacao", idNaturezaOperacao);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro01.class));
-
-		query.setMaxResults(2);
 
 		return query.list();
 	}
@@ -281,39 +275,53 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		StringBuilder sqlBuilder = new StringBuilder();
 
 		sqlBuilder.append(" select ")
-		.append("  '2' as tipoRegistro, ")
+		.append(" '2' as tipoRegistro, ")
 		.append(" paramFtf.CENTRO_EMISSOR as codigoCentroEmissor,  ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
 		
-		// setParametersFromDistribuidor(sqlBuilder);
-
 		concatenarTipoPedidoBy(idTipoNotaFiscal, sqlBuilder);
-		sqlBuilder.append(" LPAD(nfn.id, 8, '0') as numeroDocOrigem, ")
-		.append("  cast(nfps.SEQUENCIA as char) as numItemPedido, ")
-		.append("  '' as codSistemaOrigemPedido,  ") //TODO: -- Deve ser cadastrado no FTF, ver com a Edna.
-		.append("  nfps.CODIGO_PRODUTO as codProdutoOuServicoSistemaOrigem, ")
-		.append("  cast(nfps.quantidade_comercial as char) as qtdeProdutoOuServico, ")
-		.append("  replace(cast(nfps.VALOR_UNITARIO_COMERCIAL as char),'.','') as valorUnitario, ")
-		.append("  '' as valorBrutoTabela, ")
-		.append("  '' as valorPrecoSubstituicao, ")
-		.append("  replace(cast(round(valor_desconto,2) as char),'.','') as percentualDescontoItem, ")
-		.append("  '' as valorDescontoComercial, ")
-		.append("  '' as tipoUtilizacaoProduto, ")
-		.append("  cast(RIGHT(nfps.CFOP, 3) as char) as codTipoNaturecaOperacao, ")
-		.append("  '' as textoObservacoes, ")
-		.append("  '' as numEdicaoRevista, ")
-		.append("  '' as dataCompetencia, ")
-		.append("  cast(nfps.CODIGO_BARRAS as char) as codBarrasProduto, ")
-		.append("  '' as indicadorProdutoServicoMaterial, ") //TODO: -- aguardando resposta equipe de negócio
-		.append("  '' as codMaterialOuServicoCorporativo, ")
-		.append("  '' as novoCodigoTipoNaturezaOperacao, ")
-		.append("  nfps.DESCRICAO_PRODUTO as descricaoProduto, ")
-		.append("  '' as codEanProduto ")
+		
+		sqlBuilder.append(" LPAD(cast(nfn.id as char), 8, '0') as numeroDocOrigem, ")
+		.append(" cast(nfps.SEQUENCIA as char) as numItemPedido, ")
+		.append(" 'NDS' as codSistemaOrigemPedido, ")
+		.append(" nfps.CODIGO_PRODUTO as codProdutoOuServicoSistemaOrigem, ")
+		.append(" cast(nfps.quantidade_comercial as char) as qtdeProdutoOuServico, ")
+		.append(" replace(cast(nfps.VALOR_UNITARIO_COMERCIAL as char), '.', '') as valorUnitario, ")
+		.append(" '' as valorBrutoTabela, ")
+		.append(" '' as valorPrecoSubstituicao, ")
+		.append(" replace(cast(round(valor_desconto,2) as char), '.', '') as percentualDescontoItem, ")
+		.append(" '' as valorDescontoComercial, ")
+		.append(" '' as tipoUtilizacaoProduto, ")
+		.append(" cast(RIGHT(nfps.CFOP, 3) as char) as codTipoNaturecaOperacao, ")
+		.append(" '' as textoObservacoes, ")
+		.append(" '' as numEdicaoRevista, ")
+		.append(" '' as dataCompetencia, ")
+		.append(" cast(nfps.CODIGO_BARRAS as char) as codBarrasProduto, ")
+		.append(" '' as indicadorProdutoServicoMaterial, ") //TODO: -- aguardando resposta equipe de negócio
+		.append(" '' as codMaterialOuServicoCorporativo, ")
+		.append(" '' as novoCodigoTipoNaturezaOperacao, ")
+		.append(" nfps.DESCRICAO_PRODUTO as descricaoProduto, ")
+		.append(" '' as codEanProduto ")
 		.append(" from nota_fiscal_produto_servico nfps ")
 		.append(" inner join nota_fiscal_novo nfn ON nfn.id = nfps.NOTA_FISCAL_ID ")
 		.append(" left join natureza_operacao no ON no.ID = nfn.NATUREZA_OPERACAO_ID ")
+		
+		.append(" inner join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
+        .append(" inner join pessoa p on p.id = nfp.ID_PESSOA_ORIGINAL ")
+        .append(" left outer join cota c on c.PESSOA_ID = p.id and c.id = nfn.COTA_ID ")
+        .append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
+		.append(" 		and (CASE WHEN c.CONTRIBUINTE_ICMS = true THEN ")
+		.append(" 				(paramFtf.CNPJ_DESTINATARIO IS NULL OR paramFtf.CNPJ_DESTINATARIO = '') ") 
+		.append(" 			ELSE ")
+		.append(" 				(paramFtf.CNPJ_DESTINATARIO IS NOT NULL AND LENGTH(paramFtf.CNPJ_DESTINATARIO) > 1) ")
+		.append(" 			END) ")
+		/*
+		.append(" inner join nota_fiscal_pessoa nfp on nfp.ID = nfn.PESSOA_DESTINATARIO_ID_REFERENCIA ")
+		.append(" inner join pessoa p on p.id = nfp.ID_PESSOA_ORIGINAL ")
+		.append(" left outer join cota c on c.PESSOA_ID = p.id ")
 		.append(" join parametros_ftf_geracao paramFtf ON no.ID = paramftf.NATUREZA_OPERACAO_ID ")
+		*/
 		.append(" where nfps.NOTA_FISCAL_ID = :idNF ");
 
 		SQLQuery query = getSession().createSQLQuery(sqlBuilder.toString());
@@ -321,8 +329,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(FTFEnvTipoRegistro02.class));
 
-		List<FTFEnvTipoRegistro02> list = query.list();
-		return list;
+		return query.list();
 	}
 
 	@Override

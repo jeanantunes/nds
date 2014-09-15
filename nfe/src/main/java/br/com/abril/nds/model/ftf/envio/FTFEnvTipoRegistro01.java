@@ -16,6 +16,8 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	
 	private FTFEnvTipoRegistro06 regTipo06;
 	
+	private FTFEnvTipoRegistro08 regTipo08;
+	
 	@FTFfield(tamanho=1, tipo="char", ordem=1)
 	private String tipoRegistro = "1";
 	
@@ -309,6 +311,8 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	
 	@FTFfield(tamanho=60, tipo="char", ordem=97)
 	private String localDespacho;
+	
+	private String tipoPessoaDestinatario;
 	
 	public String getTipoRegistro() {
 		return tipoRegistro;
@@ -1110,6 +1114,14 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 		this.regTipo06 = regTipo06;
 	}
 
+	public FTFEnvTipoRegistro08 getRegTipo08() {
+		return regTipo08;
+	}
+
+	public void setRegTipo08(FTFEnvTipoRegistro08 regTipo08) {
+		this.regTipo08 = regTipo08;
+	}
+
 	public void setItemNFList(List<FTFEnvTipoRegistro02> itemNFList) {
 		this.itemNFList = itemNFList;
 	}
@@ -1121,4 +1133,13 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	public void setItemNFList03(List<FTFEnvTipoRegistro03> itemNFList03) {
 		this.itemNFList03 = itemNFList03;
 	}
+
+	public String getTipoPessoaDestinatario() {
+		return tipoPessoaDestinatario;
+	}
+
+	public void setTipoPessoaDestinatario(String tipoPessoaDestinatario) {
+		this.tipoPessoaDestinatario = tipoPessoaDestinatario;
+	}
+	
 }
