@@ -175,7 +175,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" produtoedi1_.PRECO_VENDA as precoVenda, ");
 	    sql.append(" coalesce(estoquepro0_.QTDE_SUPLEMENTAR, 0) as quantidadeContabil, ");
 	    
-	    sql.append(" coalesce(HISTORICO_ESTOQUE_PRODUTO.QTDE_SUPLEMENTAR, 0) as quantidadeLogico, ");
+	    sql.append(" coalesce(estoquepro0_.QTDE_SUPLEMENTAR, 0) as quantidadeLogico, ");
 	    
 	    sql.append(" ( select ");
 	    sql.append(" coalesce(sum(vendaprodu8_.QNT_PRODUTO), ");
@@ -237,21 +237,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" inner join ");
 	    sql.append(" PRODUTO produto2_ ");
 	    sql.append(" on produtoedi1_.PRODUTO_ID=produto2_.ID ");
-	    
-	    
-	    sql.append(" left join ");
-	    sql.append(" HISTORICO_ESTOQUE_PRODUTO on ");
-	    sql.append(" ( 		");
-	    
-	    sql.append(" HISTORICO_ESTOQUE_PRODUTO.PRODUTO_EDICAO_ID = produtoedi1_.ID AND	");
-	    sql.append(" HISTORICO_ESTOQUE_PRODUTO.DATA = ");
-	    
-	    sql.append(" ( select max(hist.data)  ");
-	    sql.append(" from historico_estoque_produto hist 	");
-	    sql.append(" where hist.produto_edicao_id = produtoedi1_.id	) ");
-	    
-	    sql.append(" ) 		");
-	    
+	       
    		sql.append(" group by estoquepro0_.id ");
    		sql.append(" having ((quantidadeContabil + quantidadeTransferenciaEntrada - quantidadeTransferenciaSaida - quantidadeVenda) <> 0) ");
    		sql.append(" order by idProdutoEdicao "); 

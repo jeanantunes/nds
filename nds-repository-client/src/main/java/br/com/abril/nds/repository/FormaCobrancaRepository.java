@@ -1,9 +1,9 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
+import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -92,4 +92,9 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	List<FormaCobranca> obterFormasCobrancaPorFornecedor(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana);
 
     FormaCobranca obterFormaCobrancaCompleto();
+
+	List<FormaCobrancaFornecedorDTO> obterFormasCobrancaDistribuidorFornecedor();
+
+	List<FormaCobrancaFornecedorDTO> obterFormasCobrancaCotaFornecedor();
+	
 }

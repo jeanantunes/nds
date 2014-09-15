@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,12 +21,12 @@ import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -280,15 +279,10 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" chmFornecedor.ANO_REFERENCIA = :anoReferencia  ");
 		
 		hql.append(" AND chmFornecedor.NUMERO_SEMANA = :numeroSemana ");
-		
-		//FILTRA FORNECEDORES UNIFICADOS
-		hql.append(" AND ( FORNEC.FORNECEDOR_UNIFICADOR_ID is not null OR exists  ");
-		
-		hql.append(" 	(SELECT FOR_UNI.ID FROM FORNECEDOR FOR_UNI WHERE FOR_UNI.FORNECEDOR_UNIFICADOR_ID = FORNEC.ID) ) ");
-		
-		if(filtro.getIdFornecedor() != null){
 			
-			hql.append(" AND FORNEC.ID = :idFornecedor ");
+		if(filtro.getCodigoDistribuidorFornecdor() != null){
+			
+			hql.append(" AND chmFornecedor.CODIGO_DISTRIBUIDOR = :codigoDistribuidorFornecedor ");
 		}
 		
 		if(filtro.getIdItemChamadaEncalheFornecedor() != null){
@@ -417,8 +411,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameter("numeroSemana",filtro.getNumeroSemana());
 		
-		if(filtro.getIdFornecedor() != null) {
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		if(filtro.getCodigoDistribuidorFornecdor() != null) {
+			query.setParameter("codigoDistribuidorFornecedor", filtro.getCodigoDistribuidorFornecdor());
 		}
 		
 		if(filtro.getIdItemChamadaEncalheFornecedor() != null) {
@@ -442,7 +436,9 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("anoReferencia", filtro.getAnoReferente());
 		query.setParameter("statusCeNDS", StatusCeNDS.FECHADO);
 		
-		return (query.uniqueResult() == null) ? false : true;
+		List<ChamadaEncalheFornecedor> resultado = query.list();
+		
+		return (resultado == null || resultado.isEmpty() ) ? false : true;
 	}
 	
 	public FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCEIntegracao(Long idChamadaEncalheForncecdor){
