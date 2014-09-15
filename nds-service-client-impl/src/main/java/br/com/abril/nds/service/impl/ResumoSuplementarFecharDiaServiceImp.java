@@ -13,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoSuplementarRepository;
 import br.com.abril.nds.repository.FechamentoDiarioLancamentoSuplementarRepository;
 import br.com.abril.nds.repository.FechamentoDiarioMovimentoVendaSuplementarRepository;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -39,11 +41,15 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	
 	@Autowired
 	private FechamentoDiarioMovimentoVendaSuplementarRepository movimentoVendaSuplementarRepository;
+	
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRespository;
 
 	@Override
 	@Transactional(readOnly=true)
 	public BigDecimal obterValorEstoqueLogico(Date dataOperacao) {
-		return this.resumoSuplementarFecharDiaRepository.obterValorEstoqueLogico(dataOperacao);
+		
+		return Util.nvl(estoqueProdutoRespository.obterValorTotalSuplementar(), BigDecimal.ZERO);
 	}
 
 	@Override
