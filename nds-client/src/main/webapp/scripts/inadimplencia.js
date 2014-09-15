@@ -175,7 +175,9 @@ var inadimplenciaController = $.extend(true, {
 			
 			if (!boletoAntecipado){
 			
-			    row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao);
+				var descricaoNegociacao = row.cell.descricaoTipoCobranca;
+				
+			    row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao, descricaoNegociacao);
 			}
 			else{
 				
@@ -189,15 +191,19 @@ var inadimplenciaController = $.extend(true, {
 		return grid;
 	},
 
-	gerarBotaoDetalhes : function(idDivida, numCota, nome, comissao) {
+	gerarBotaoDetalhes : function(idDivida, numCota, nome, comissao, descricaoNegociacao) {
+		
 		if(comissao) {
 			return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota(" + idDivida + ", " + numCota + ", '" + nome + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 		}
 		
-		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes(" + idDivida + ", " + numCota + ", '" + nome + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes(" + idDivida + ", " + numCota + ", '" + nome + "', '" + descricaoNegociacao + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 	},
 
-	getDetalhes : function(idDivida, numCota, nome) {
+	getDetalhes : function(idDivida, numCota, nome, descricaoNegociacao) {
+		
+		$("#dialog-detalhes", inadimplenciaController.workspace).attr('title', 'Detalhe da Dívida - ' + descricaoNegociacao);
+		
 		nomeCota = nome;
 		numeroCota = numCota;
 		
@@ -206,7 +212,7 @@ var inadimplenciaController = $.extend(true, {
 				inadimplenciaController.popupDetalhes);	
 	},
 	
-	getDetalhesComissaoCota : function(idDivida, numCota, nome) {
+	getDetalhesComissaoCota : function(idDivida, numCota, nome, titulo) {
 		nomeCota = nome;
 		numeroCota = numCota;
 		
