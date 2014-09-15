@@ -43,7 +43,7 @@
 				   cellpadding="2" cellspacing="1" style="display: inline-block;">
 				<tr>
 					<td style="font-weight: bold;" colspan="2" align="center" class="header_table"
-						class="linha_borda">Baixa Automática</td>
+						class="linha_borda">Baixa Banc&aacute;ria</td>
 				</tr>
 			    <tr>
 				    <td style="font-weight: bold;" align="left" class="linha_borda"><strong>Previsão:</strong></td>

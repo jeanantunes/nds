@@ -176,7 +176,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	public String getInicialTipoRecolhimento() {
 		
-		return ((this.tipoRecolhimento != null) ? (tipoRecolhimento.getDescricao().indexOf("P") > -1 ? "P": "F") : null);
+		return ((this.tipoRecolhimento != null) ? (tipoRecolhimento.getDescricao().indexOf("P") > -1 ? "P": "F") : "F");
 	}
 	
 	/**

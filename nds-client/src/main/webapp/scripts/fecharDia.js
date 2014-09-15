@@ -1513,6 +1513,8 @@ var fecharDiaController =  $.extend(true, {
 		
 		$("#consignaddo-saida-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado);
 		
+		$("#consignaddo-saida-a-vista",fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaFormatado);
+
 		var linhaResumo = "<tr>";
 		
 		var valorEntrada = "<a href=\"javascript:;\" onclick=\"fecharDiaController.popup_valorEntradaConsigando();\">" + resumo.resumoConsignado.valorEntradasFormatado +"</a>";
@@ -1524,16 +1526,6 @@ var fecharDiaController =  $.extend(true, {
 		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + valorEntrada + "</td>";
 		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + valorSaida + "</td>";
 		linhaResumo += "<td width=\"180\" align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoConsignado.saldoAtualFormatado + "</td>";
-		
-		linhaResumo += "</tr>";
-		
-		linhaResumo += "<tr>";
-		
-		linhaResumo += "<td style=\"border-bottom:1px solid #ccc;\">A Vista</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAnteriorFormatado + "</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorEntradasFormatado + "</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.valorSaidasFormatado + "</td>";
-		linhaResumo += "<td align=\"right\" style=\"border-bottom:1px solid #ccc;\">" + resumo.resumoAVista.saldoAtualFormatado + "</td>";
 		
 		linhaResumo += "</tr>";
 		
