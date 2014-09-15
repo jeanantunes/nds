@@ -188,7 +188,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 
 		if(filtro.getPaginacao()!=null && limitar){
 			
@@ -240,7 +240,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		if(addOutrasCotas) {
 			
-		    sql.append("        ((c.TIPO_COTA = :tipoCotaConsignado) AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
+		    sql.append("        ((c.TIPO_COTA = :tipoCotaAVista AND c.DEVOLVE_ENCALHE = TRUE) OR (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
 		}   
 
 		sql.append("    )");
@@ -277,11 +277,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 	
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
-		
-		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL ");
-       
-		sql.append(" OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusEstoqueFinanceiro) ");
-		
+
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		
 		if(filtro.getDataInicio() != null)
@@ -406,7 +402,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
 
 		return query;
 	}
@@ -513,7 +509,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
-		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
