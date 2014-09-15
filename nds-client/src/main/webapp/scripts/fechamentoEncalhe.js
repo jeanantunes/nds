@@ -648,6 +648,8 @@ var fechamentoEncalheController = $.extend(true, {
 								}
 								
 								fechamentoEncalheController.emitirBoletosFechamentoEncalhe();
+								
+								$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 
 								return;
 							}
@@ -663,7 +665,7 @@ var fechamentoEncalheController = $.extend(true, {
 								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							}
 	
-							fechamentoEncalheController.pesquisar();
+							$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 							
 							_this.dialog("close");
 						},
