@@ -172,13 +172,20 @@ var inadimplenciaController = $.extend(true, {
 			var negociada = row.cell.situacao == "Negociada";
 			var boletoAntecipado = row.cell.situacao == "Boleto em branco";
 			var comissao = (row.cell.comissaoSaldoDivida && row.cell.comissaoSaldoDivida > 0) && negociada; 
+
+			var descricaoNegociacao = '';
+			
+			if(row.cell.descricaoTipoCobranca) {
+				descricaoNegociacao = row.cell.descricaoTipoCobranca;
+			} else {
+				descricaoNegociacao = row.cell.situacao;
+			}
+			
 			
 			if (!boletoAntecipado){
-			
-			    row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao);
+			    row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao, descricaoNegociacao);
 			}
 			else{
-				
 				row.cell.detalhe = "<img src=\"" + contextPath + "/images/bt_financeiro.png\" border=\"0\" hspace=\"5\" title=\"Boleto em Branco\" />";
 			}
 	  	});
@@ -189,15 +196,23 @@ var inadimplenciaController = $.extend(true, {
 		return grid;
 	},
 
-	gerarBotaoDetalhes : function(idDivida, numCota, nome, comissao) {
+	gerarBotaoDetalhes : function(idDivida, numCota, nome, comissao, descricaoNegociacao) {
+		
 		if(comissao) {
 			return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota(" + idDivida + ", " + numCota + ", '" + nome + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 		}
 		
-		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes(" + idDivida + ", " + numCota + ", '" + nome + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes(" + idDivida + ", " + numCota + ", '" + nome + "', '" + descricaoNegociacao + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 	},
 
-	getDetalhes : function(idDivida, numCota, nome) {
+	getDetalhes : function(idDivida, numCota, nome, descricaoNegociacao) {
+		
+		if(descricaoNegociacao) {
+			$("#dialog-detalhes", inadimplenciaController.workspace).attr('title', 'Detalhe da Dívida - ' + descricaoNegociacao);
+		} else {
+			$("#dialog-detalhes", inadimplenciaController.workspace).attr('title', 'Detalhe da Dívida');
+		}
+		
 		nomeCota = nome;
 		numeroCota = numCota;
 		
@@ -206,7 +221,7 @@ var inadimplenciaController = $.extend(true, {
 				inadimplenciaController.popupDetalhes);	
 	},
 	
-	getDetalhesComissaoCota : function(idDivida, numCota, nome) {
+	getDetalhesComissaoCota : function(idDivida, numCota, nome, titulo) {
 		nomeCota = nome;
 		numeroCota = numCota;
 		
