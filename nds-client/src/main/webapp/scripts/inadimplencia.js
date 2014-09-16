@@ -172,15 +172,20 @@ var inadimplenciaController = $.extend(true, {
 			var negociada = row.cell.situacao == "Negociada";
 			var boletoAntecipado = row.cell.situacao == "Boleto em branco";
 			var comissao = (row.cell.comissaoSaldoDivida && row.cell.comissaoSaldoDivida > 0) && negociada; 
+
+			var descricaoNegociacao = '';
+			
+			if(row.cell.descricaoTipoCobranca) {
+				descricaoNegociacao = row.cell.descricaoTipoCobranca;
+			} else {
+				descricaoNegociacao = row.cell.situacao;
+			}
+			
 			
 			if (!boletoAntecipado){
-			
-				var descricaoNegociacao = row.cell.descricaoTipoCobranca;
-				
 			    row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao, descricaoNegociacao);
 			}
 			else{
-				
 				row.cell.detalhe = "<img src=\"" + contextPath + "/images/bt_financeiro.png\" border=\"0\" hspace=\"5\" title=\"Boleto em Branco\" />";
 			}
 	  	});
@@ -202,7 +207,11 @@ var inadimplenciaController = $.extend(true, {
 
 	getDetalhes : function(idDivida, numCota, nome, descricaoNegociacao) {
 		
-		$("#dialog-detalhes", inadimplenciaController.workspace).attr('title', 'Detalhe da Dívida - ' + descricaoNegociacao);
+		if(descricaoNegociacao) {
+			$("#dialog-detalhes", inadimplenciaController.workspace).attr('title', 'Detalhe da Dívida - ' + descricaoNegociacao);
+		} else {
+			$("#dialog-detalhes", inadimplenciaController.workspace).attr('title', 'Detalhe da Dívida');
+		}
 		
 		nomeCota = nome;
 		numeroCota = numCota;
@@ -225,8 +234,11 @@ var inadimplenciaController = $.extend(true, {
 		
 			inadimplenciaController.gerarTabelaDetalhes(result, numeroCota, nomeCota);
 		
+			var tituloDialogDetalhe = $("#dialog-detalhes", inadimplenciaController.workspace).attr('title');
+			
 			$( "#dialog-detalhes", inadimplenciaController.workspace ).dialog({
 				resizable: false,
+				title: tituloDialogDetalhe,
 				height:'auto',
 				width:380,
 				modal: true,

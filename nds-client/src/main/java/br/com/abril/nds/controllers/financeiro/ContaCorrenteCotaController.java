@@ -42,6 +42,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -366,19 +367,26 @@ public class ContaCorrenteCotaController extends BaseController {
      * 
      * @param listaItensContaCorrenteCota
      */
-    private void tratarValoresNegativos(List<ContaCorrenteCotaVO> listaItensContaCorrenteCota){
+    private void tratarValoresNegativosESaldo(List<ContaCorrenteCotaVO> listaItensContaCorrenteCota){
     	
     	for (ContaCorrenteCotaVO item : listaItensContaCorrenteCota){
     		
-    		item.setPendente(item.getPendente().abs());
+    		item.setEncalhe(item.getEncalhe().negate());
     		
-    		item.setEncargos(item.getEncargos().abs());
+    		item.setValorPostergado(item.getValorPostergado().negate());
     		
-    		item.setDebitoCredito(item.getDebitoCredito().abs());
+    		item.setDebitoCredito(item.getDebitoCredito().negate());
     		
-    		item.setValorPostergado(item.getValorPostergado().abs());
+    		item.setTotal(item.getTotal().negate());
     		
-    		item.setTotal(item.getTotal().abs());
+    		item.setSaldo(item.getSaldo().negate());
+    		
+    		if ((item.getStatusDivida()==null || !(item.getStatusDivida().equals(StatusDivida.NEGOCIADA) || item.getStatusDivida().equals(StatusDivida.POSTERGADA)))&&
+    		   (!item.isInadimplente())&&
+    		   (!item.getCobrado())){
+    			
+    			item.setSaldo(item.getTotal());
+    		}
     	}
     }
     
@@ -388,7 +396,7 @@ public class ContaCorrenteCotaController extends BaseController {
         
         List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService.obterContaCorrente(filtro);
         
-        this.tratarValoresNegativos(listaItensContaCorrenteCota);
+        this.tratarValoresNegativosESaldo(listaItensContaCorrenteCota);
         
         FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
                 listaItensContaCorrenteCota, ContaCorrenteCotaVO.class, this.httpServletResponse);
