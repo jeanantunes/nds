@@ -1942,29 +1942,33 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(final Intervalo<Date> periodo,
             final Long idCota,
-            final GrupoMovimentoEstoque... gruposMovimentoEstoque){
-        
+            final String... gruposMovimentoEstoque){
+       
         final StringBuilder hql = new StringBuilder();
         
-        hql.append(" select sum( case when (movimento.tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :operacaoEntrada) ");
+        hql.append(" SELECT "); 
+        hql.append("	SUM(CASE WHEN tipoMovimento.OPERACAO_ESTOQUE=:operacaoEntrada "); 
+        hql.append("		THEN movimentoEstoque.QTDE "); 
+        hql.append("		ELSE -movimentoEstoque.QTDE END) AS quantidade, "); 
+        hql.append("	produtoEdicao.ID AS produtoEdicao ");
+
+        hql.append(" FROM MOVIMENTO_ESTOQUE_COTA movimentoEstoque ");
+	
+        hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento ON movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID "); 
+	
+        hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+	
+        hql.append(" LEFT OUTER JOIN LANCAMENTO lancamento ON movimentoEstoque.LANCAMENTO_ID=lancamento.ID ");
+
+        hql.append(" WHERE  movimentoEstoque.COTA_ID= :idCota ");
+	    
+        hql.append(" AND (movimentoEstoque.DATA BETWEEN :inicio  AND :fim OR lancamento.DATA_LCTO_DISTRIBUIDOR BETWEEN :inicio  AND :fim ) "); 
+	    
+        hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimento) ");
         
-        hql.append(	" 			 then  movimento.qtde else - movimento.qtde end ) as quantidade, ");
-        
-        hql.append(" produtoEdicao.id as idProdutoEdicao ");
-        
-        hql.append(" from MovimentoEstoqueCota movimento join movimento.produtoEdicao produtoEdicao ");
-        
-        hql.append(" left join movimento.lancamento l ");
-        
-        hql.append(" where movimento.cota.id = :idCota ");
-        
-        hql.append(" and (movimento.data between :inicio and :fim  or l.dataLancamentoDistribuidor between :inicio and :fim) ");
-        
-        hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in (:gruposMovimento) ");
-        
-        hql.append(" group by produtoEdicao.id, movimento.qtde ");
-        
-        final Query query = getSession().createQuery(hql.toString());
+        hql.append(" GROUP BY produtoEdicao.ID, movimentoEstoque.QTDE ");
+ 
+        final Query query = getSession().createSQLQuery(hql.toString());
         
         query.setParameter("inicio", periodo.getDe());
         
@@ -1972,7 +1976,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         query.setParameter("idCota", idCota);
         
-        query.setParameter("operacaoEntrada", OperacaoEstoque.ENTRADA);
+        query.setParameter("operacaoEntrada", OperacaoEstoque.ENTRADA.name());
         
         query.setParameterList("gruposMovimento", gruposMovimentoEstoque);
         
@@ -3514,7 +3518,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     
     @Override
     @SuppressWarnings("unchecked")
-    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(final Long idCota, 
+    public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(final List<Long> idCota, 
     		final Intervalo<Date> periodo,
             final List<Long> listaIdFornecedores,
             final List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota) {
@@ -3537,7 +3541,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
         
         if(idCota != null) {
-            sql.append("  and mec.cota.id = :cotaID  ");
+            sql.append("  and mec.cota.id IN( :cotaID ) ");
         }
         
         if(periodo != null) {
@@ -3548,11 +3552,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(" and f.id in (:fornecedoresID) ");
         }
         
+        sql.append(" order by mec.cota.id ");
+        
         final Query query = this.getSession().createQuery(sql.toString());
         
         query.setParameterList("gruposMovimentosEstoque", listaGruposMovimentoEstoqueCota);
         
-        query.setParameter("cotaID", idCota);
+        query.setParameterList("cotaID", idCota);
         
         if (periodo != null) {
             query.setParameter("dataInicial", periodo.getDe());
