@@ -623,7 +623,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
             
-            if (fechamento.getFisico() == null) {
+            if (exemplaresDevolucao == null) {
             	
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
