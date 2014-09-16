@@ -234,8 +234,11 @@ var inadimplenciaController = $.extend(true, {
 		
 			inadimplenciaController.gerarTabelaDetalhes(result, numeroCota, nomeCota);
 		
+			var tituloDialogDetalhe = $("#dialog-detalhes", inadimplenciaController.workspace).attr('title');
+			
 			$( "#dialog-detalhes", inadimplenciaController.workspace ).dialog({
 				resizable: false,
+				title: tituloDialogDetalhe,
 				height:'auto',
 				width:380,
 				modal: true,
