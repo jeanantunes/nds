@@ -2252,63 +2252,66 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final String sortOrder = filtro.getPaginacao().getOrdenacao().name();
         final ColunaOrdenacao coluna = ColunaOrdenacao.getPorDescricao(filtro.getPaginacao().getSortColumn());
         
-        String nome = null;
+        if (coluna != null) {
         
-        switch(coluna) {
-        case BOX:
-            nome = " box.CODIGO ";
-            break;
-        case TOTAL_PRODUTO:
-            nome = " totalProduto ";
-            break;
-        case TOTAL_REPARTE:
-            nome = " totalReparte ";
-            break;
-        case TOTAL_BOX:
-            nome = " totalBox ";
-            break;
-        case CODIGO_COTA:
-            nome = " codigoCota ";
-            break;
-        case CODIGO_ROTA:
-            nome = " codigoRota ";
-            break;
-        case NOME_COTA:
-            nome = " nomeCota ";
-            break;
-        case CODIGO_PRODUTO:
-            nome = " codigoProduto ";
-            break;
-        case NOME_PRODTO:
-            nome = " nomeProduto ";
-            break;
-        case NUMERO_EDICAO:
-            nome = " numeroEdicao ";
-            break;
-        case REPARTE:
-            nome = " reparte ";
-            break;
-        case PROMOCIONAL:
-            nome = " materialPromocional ";
-            break;
-        case PRECO_CAPA:
-            nome = " precoCapa ";
-            break;
-        case TOTAL:
-            nome = " total ";
-            break;
-        case CODIGO_BOX:
-            nome = " codigoBox ";
-            break;
-        case NOME_EDICAO:
-            nome = " nomeProduto,numeroEdicao ";
-            break;
-        default:
-            nome = "";
-            break;
-            
+	        String nome = null;
+	        
+	        switch(coluna) {
+	        case BOX:
+	            nome = " box.CODIGO ";
+	            break;
+	        case TOTAL_PRODUTO:
+	            nome = " totalProduto ";
+	            break;
+	        case TOTAL_REPARTE:
+	            nome = " totalReparte ";
+	            break;
+	        case TOTAL_BOX:
+	            nome = " totalBox ";
+	            break;
+	        case CODIGO_COTA:
+	            nome = " codigoCota ";
+	            break;
+	        case CODIGO_ROTA:
+	            nome = " codigoRota ";
+	            break;
+	        case NOME_COTA:
+	            nome = " nomeCota ";
+	            break;
+	        case CODIGO_PRODUTO:
+	            nome = " codigoProduto ";
+	            break;
+	        case NOME_PRODTO:
+	            nome = " nomeProduto ";
+	            break;
+	        case NUMERO_EDICAO:
+	            nome = " numeroEdicao ";
+	            break;
+	        case REPARTE:
+	            nome = " reparte ";
+	            break;
+	        case PROMOCIONAL:
+	            nome = " materialPromocional ";
+	            break;
+	        case PRECO_CAPA:
+	            nome = " precoCapa ";
+	            break;
+	        case TOTAL:
+	            nome = " total ";
+	            break;
+	        case CODIGO_BOX:
+	            nome = " codigoBox ";
+	            break;
+	        case NOME_EDICAO:
+	            nome = " nomeProduto,numeroEdicao ";
+	            break;
+	        default:
+	            nome = "";
+	            break;
+	            
+	        }
+	        hql.append( " order by " + nome + sortOrder + " ");
         }
-        hql.append( " order by " + nome + sortOrder + " ");
     }
     
     
