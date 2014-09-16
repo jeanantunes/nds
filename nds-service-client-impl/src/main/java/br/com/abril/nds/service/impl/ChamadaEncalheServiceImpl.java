@@ -153,6 +153,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				if (ePdv.isPrincipal()){
 				    
 					enderecoPdv = ePdv;
+					break;
 				}
 			}
 		}
