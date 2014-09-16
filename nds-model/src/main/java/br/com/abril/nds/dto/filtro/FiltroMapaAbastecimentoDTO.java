@@ -76,7 +76,11 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		}
 		
 		public static ColunaOrdenacao getPorDescricao(String descricao) {
-			if(descricao.equalsIgnoreCase("")) {
+			if(descricao == null) {
+				return null;
+			}
+			
+			if (descricao.equalsIgnoreCase("")) {
 				return null;
 			}
 			
