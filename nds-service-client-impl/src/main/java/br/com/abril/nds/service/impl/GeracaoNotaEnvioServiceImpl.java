@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -70,10 +69,6 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.util.Intervalo;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 @Service
 public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
@@ -195,25 +190,25 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
      * @param idCota
      * @return Map<Long, BigInteger>
      */
-    @Transactional
+    @Transactional(readOnly=true)
     public Map<Long, BigInteger> obtemQuantidadeMovimentosPorProdutoAposExpedicao(final Intervalo<Date> periodo, final Long idCota){
         
-        final GrupoMovimentoEstoque[] gruposMovimentoEstoque   = {
-                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
-                GrupoMovimentoEstoque.FALTA_DE_COTA,
-                GrupoMovimentoEstoque.FALTA_EM_COTA,
-                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.SOBRA_DE_COTA,
-                GrupoMovimentoEstoque.SOBRA_EM_COTA,
-                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.FALTA_DE,
-                GrupoMovimentoEstoque.FALTA_EM,
-                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
-                GrupoMovimentoEstoque.SOBRA_DE,
-                GrupoMovimentoEstoque.SOBRA_EM,
-                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA
+        final String[] gruposMovimentoEstoque   = {
+                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name(),
+                GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+                GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+                GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.FALTA_DE.name(),
+                GrupoMovimentoEstoque.FALTA_EM.name(),
+                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name(),
+                GrupoMovimentoEstoque.SOBRA_DE.name(),
+                GrupoMovimentoEstoque.SOBRA_EM.name(),
+                GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA.name()
         };
         
         final Map<Long, BigInteger> mapProdutos =
@@ -557,6 +552,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         final EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository.obterEnderecoPrincipal();
         final TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository.obterTelefonePrincipal();
         
+        final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota = this.obterMapMovimentoEstoqueCota(listaIdCotas, filtro);
+        
         for (final Long idCota : listaIdCotas) {
             
             this.gerarNotaEnvioParaVisualizacao(pessoaEmitente,
@@ -565,7 +562,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                     notasEnvio,
                     null, null, null,
                     mapEstudosCota.get(idCota),
-                    descontos, enderecoDistribuidor, telefoneDistribuidor);
+                    descontos, enderecoDistribuidor, telefoneDistribuidor,mapMovimentoEstoqueCota);
         }
         
         return notasEnvio;
@@ -581,7 +578,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             final List<EstudoCota> listaEstudosCota,
             final Map<String, DescontoDTO> descontos,
             final EnderecoDistribuidor enderecoDistribuidor,
-            final TelefoneDistribuidor telefoneDistribuidor) {
+            final TelefoneDistribuidor telefoneDistribuidor,
+            final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota) {
         
         final Cota cota = cotaRepository.buscarPorId(idCota);
         
@@ -593,7 +591,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         final IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, filtro.getIdRota(), filtro.getIntervaloMovimento());
         
         final List<ItemNotaEnvio> listaItemNotaEnvio =
-                this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos);
+                this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos,mapMovimentoEstoqueCota);
         
         NotaEnvio notaEnvio = null;
         
@@ -715,8 +713,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                 }
                 
                 itemNotaEnvio.setSequenciaMatrizLancamento(seqMatrizlancamento);
-                
-               // itemNotaEnvioRepository.adicionar(itemNotaEnvio);
             }
         }
     }
@@ -725,11 +721,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
      * Gera Nota de envio da Cota
      * @param pessoaEmitente
      * @param idCota
-     * @param idRota
      * @param notasEnvio
-     * @param dataEmissao
-     * @param periodo
-     * @param listaIdFornecedores
      * @param chaveAcesso
      * @param codigoNaturezaOperacao
      * @param descricaoNaturezaOperacao
@@ -737,6 +729,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
      * @param descontos TODO
      * @param enderecoDistribuidor TODO
      * @param telefoneDistribuidor TODO
+     * @param mapMovimentoEstoqueCota TODO
+     * @param idRota
+     * @param dataEmissao
+     * @param periodo
+     * @param listaIdFornecedores
      */
     private void getNotaEnvioCota(final PessoaJuridica pessoaEmitente,
             final Long idCota,
@@ -748,7 +745,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             final List<EstudoCota> listaEstudosCota,
             final Map<String, DescontoDTO> descontos,
             final EnderecoDistribuidor enderecoDistribuidor,
-            final TelefoneDistribuidor telefoneDistribuidor) {
+            final TelefoneDistribuidor telefoneDistribuidor, 
+            final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota) {
         
         final Cota cota = cotaRepository.buscarPorId(idCota);
         
@@ -769,7 +767,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         notasEnvio.add(notaEnvio);
         
-        final List<ItemNotaEnvio> listaItemNotaEnvio = this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos);
+        final List<ItemNotaEnvio> listaItemNotaEnvio = 
+        		this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos,mapMovimentoEstoqueCota);
         
         if (listaItemNotaEnvio != null && !listaItemNotaEnvio.isEmpty()) {
             
@@ -782,33 +781,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         }
     }
         
-    /* Retorna uma lista com os movimentos estoque cota filtrados, onde os
-    * movimentos estoque cota não tiveram itens de nota de envio gerados
-    */
-   private List<MovimentoEstoqueCota> filtraItensSemItemNotaEnvioGerado(final List<MovimentoEstoqueCota> itens){
-       
-       if(itens == null || itens.isEmpty()){
-           return null;
-       }
-       
-       final Predicate<MovimentoEstoqueCota> movimentoEstoqueCotaPredicate = new Predicate<MovimentoEstoqueCota>() {
-           @Override
-           public boolean apply(final MovimentoEstoqueCota mvCota) {
-               return mvCota.getItemNotaEnvio() == null ;
-           }
-       };
-       
-       final Collection<MovimentoEstoqueCota> filteredCollection =
-               Collections2.filter(itens, movimentoEstoqueCotaPredicate);
-       
-       if (filteredCollection != null) {
-           return  Lists.newArrayList(filteredCollection);
-       } else {
-           return new ArrayList<>();
-       }
-   }
-    
-	                                                                /*
+                                                    /*
      * Efetua o processamento das notas de envio já geradas
      */
     private List<ItemNotaEnvio> processarNotasDeEnvioGeradas(final Cota cota,
@@ -816,22 +789,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             final List<NotaEnvio> notasEnvio,
             final List<EstudoCota> listaEstudosCota,
             final IdentificacaoDestinatario destinatarioAtualizado,
-            final Map<String, DescontoDTO> descontos) {
+            final Map<String, DescontoDTO> descontos,
+            final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota) {
         
-    	final List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota = new ArrayList<GrupoMovimentoEstoque>();
-        listaGruposMovimentoEstoqueCota.add(GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
-    	
-        List<MovimentoEstoqueCota> listaMovimentoEstoqueCotaSemEstudo = movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(
-                        cota.getId(), 
-                        filtro.getIntervaloMovimento(), 
-                        filtro.getIdFornecedores(),
-                        listaGruposMovimentoEstoqueCota);
-        
-        
-        
-        // remover codigo indevido - listaMovimentoEstoqueCota = this.filtraItensSemItemNotaEnvioGerado(listaMovimentoEstoqueCota);
-        
-        final List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCotaSemEstudo, filtro.getIntervaloMovimento(), descontos);
+        final List<ItemNotaEnvio> listaItemNotaEnvio = 
+        		this.gerarItensNotaEnvio(listaEstudosCota, cota, 
+        								 mapMovimentoEstoqueCota.get(cota.getId()), 
+        								 filtro.getIntervaloMovimento(), descontos);
         
         if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
             
@@ -844,13 +808,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     }
     
     private IdentificacaoDestinatario obterDestinatarioAtualizado(final Cota cota, Long idRota, final Intervalo<Date> periodo){
-
+    	
+    	final PDV pdvPrincipalCota = cota.getPDVPrincipal();
+    	
     	if (idRota == null) {
             
-            idRota = this.getIdRotaCota(cota.getPDVPrincipal(), cota);
+            idRota = this.getIdRotaCota(pdvPrincipalCota, cota);
         }
         
-        return this.carregaDestinatario(cota, idRota, cota.getPDVPrincipal(), periodo);
+        return this.carregaDestinatario(cota, idRota, pdvPrincipalCota, periodo);
     }
     
     /**
@@ -952,6 +918,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao();
         
+        final Map<Long, List<MovimentoEstoqueCota>> mapMovimentoEstoqueCota = this.obterMapMovimentoEstoqueCota(idCotas, filtro);
+        
         for (final Long idCota : idCotas) {
             
             this.getNotaEnvioCota(distribuidor.getJuridica(),
@@ -964,10 +932,44 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                     mapEstudosCota.get(idCota),
                     descontos,
                     distribuidor.getEnderecoDistribuidor(),
-                    telefoneDistribuidor);
+                    telefoneDistribuidor, mapMovimentoEstoqueCota);
         }
         
         return this.ordenarNotasEnvioPorRoteirizacao(notasEnvio);
+    }
+    
+    private Map<Long, List<MovimentoEstoqueCota>> obterMapMovimentoEstoqueCota(final List<Long> idCotas, 
+    		final FiltroConsultaNotaEnvioDTO filtro){
+    	
+    	List<MovimentoEstoqueCota> listaMovimentoEstoqueCotaSemEstudo = 
+    			movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(idCotas, 
+																	                 filtro.getIntervaloMovimento(), 
+																	                 filtro.getIdFornecedores(),
+																	                 Arrays.asList(GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE));
+    	
+    	if(listaMovimentoEstoqueCotaSemEstudo == null || listaMovimentoEstoqueCotaSemEstudo.isEmpty()){
+    		return new HashMap<>();
+    	}
+    	
+    	HashMap<Long, List<MovimentoEstoqueCota>> map = new HashMap<>();
+    	
+    	for(MovimentoEstoqueCota item : listaMovimentoEstoqueCotaSemEstudo){
+    		
+    		Long idCota = item.getCota().getId();
+    		
+    		List<MovimentoEstoqueCota> itensCota =  map.get(idCota);
+    		
+    		if(itensCota == null){
+    			
+    			itensCota = new ArrayList<>();	
+    		}
+    		
+    		itensCota.add(item);
+    		
+    		map.put(idCota, itensCota);
+    	}
+    	
+    	return map;
     }
     
     /**
@@ -1146,15 +1148,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
     	final List<EstudoCota> obterEstudoCota = estudoCotaRepository.obterEstudoCota(cota.getId(), periodo.getDe(), periodo.getAte());
         
-        final GrupoMovimentoEstoque[] gruposMovimentoEstoque   = {
-                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
-                GrupoMovimentoEstoque.FALTA_DE_COTA,
-                GrupoMovimentoEstoque.FALTA_EM_COTA,
-                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.SOBRA_DE_COTA,
-                GrupoMovimentoEstoque.SOBRA_EM_COTA,
-                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE
+        final String[] gruposMovimentoEstoque   = {
+                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name(),
+                GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+                GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+                GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+                GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+                GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
         };
         
         final Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento = movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo, cota.getId(), gruposMovimentoEstoque);
