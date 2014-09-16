@@ -379,6 +379,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         
         sql.append(" BOLETO_ANTECIPADO_.ID AS idCobranca, ");
         
+        sql.append(" null as nameTipoCobranca, ");
+        
         sql.append(" BOLETO_ANTECIPADO_.ID as idNegociacao, ");
         
         sql.append(" 0 as comissaoSaldoDivida, ");
@@ -512,7 +514,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(obterOrderByInadimplenciasCota(filtro));
         
         final Query query = getSession().createSQLQuery(sql.toString()).addScalar("idDivida", StandardBasicTypes.LONG)
-                .addScalar("idCota", StandardBasicTypes.LONG).addScalar("idCobranca", StandardBasicTypes.LONG)
+                .addScalar("idCota", StandardBasicTypes.LONG).addScalar("idCobranca", StandardBasicTypes.LONG).addScalar("nameTipoCobranca")
                 .addScalar("idNegociacao", StandardBasicTypes.LONG).addScalar("comissaoSaldoDivida").addScalar(
                         "numCota").addScalar("nome").addScalar("status").addScalar("consignado").addScalar(
                                 "dataVencimento").addScalar("dataPagamento").addScalar("situacao").addScalar("dividaAcumulada");
@@ -1118,7 +1120,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(" ON (NEGOCIACAO_COBRANCA_ORIGINARIA_.COBRANCA_ID = COBRANCA_.ID) ");
         sql.append(" LEFT JOIN NEGOCIACAO AS NEGOCIACAO_ ");
         sql.append(" ON (NEGOCIACAO_COBRANCA_ORIGINARIA_.NEGOCIACAO_ID=NEGOCIACAO_.ID) ");
+        sql.append(" LEFT JOIN FORMA_COBRANCA AS FORMA_COBRANCA_ ");
+        sql.append(" ON (FORMA_COBRANCA_.ID = NEGOCIACAO_.FORMA_COBRANCA_ID) ");
         sql.append(" JOIN POLITICA_COBRANCA POLITICA_COBRANCA_ ON (POLITICA_COBRANCA_.PRINCIPAL IS TRUE) ");
+        
         
         return sql.toString();
     }
@@ -1144,6 +1149,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append(" COTA_.ID AS idCota, ");
         
         sql.append(" COBRANCA_.ID AS idCobranca, ");
+        
+        sql.append(" FORMA_COBRANCA_.TIPO_COBRANCA nameTipoCobranca, ");
         
         sql.append(" NEGOCIACAO_.ID as idNegociacao, ");
         
