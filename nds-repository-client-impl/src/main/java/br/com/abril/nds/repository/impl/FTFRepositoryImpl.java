@@ -286,7 +286,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		.append(" cast(nfps.SEQUENCIA as char) as numItemPedido, ")
 		.append(" 'NDS' as codSistemaOrigemPedido, ")
 		.append(" nfps.CODIGO_PRODUTO as codProdutoOuServicoSistemaOrigem, ")
-		.append(" cast(nfps.quantidade_comercial as char) as qtdeProdutoOuServico, ")
+		.append(" replace(cast(nfps.quantidade_comercial as char), '.', '') as qtdeProdutoOuServico, ")
 		.append(" replace(cast(nfps.VALOR_UNITARIO_COMERCIAL as char), '.', '') as valorUnitario, ")
 		.append(" '' as valorBrutoTabela, ")
 		.append(" '' as valorPrecoSubstituicao, ")
