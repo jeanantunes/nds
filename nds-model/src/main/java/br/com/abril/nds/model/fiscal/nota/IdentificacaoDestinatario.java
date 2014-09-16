@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
@@ -45,6 +46,11 @@ public class IdentificacaoDestinatario implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name="TIPO_DESTINATARIO")
 	private TipoDestinatario tipoDestinatario;
+	
+	@XmlTransient
+	@JoinColumn(name="COTA_ID")
+	@OneToOne(optional=true, cascade=CascadeType.ALL)
+	private Cota cota;
 	
 	/**
 	 * CNPJ CPF
@@ -103,8 +109,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	@NFEExportType
 	private Telefone telefone;
 	
-	
-	
 	/**
 	 * Construtor padrão.
 	 */
@@ -125,6 +129,14 @@ public class IdentificacaoDestinatario implements Serializable {
 
 	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		this.tipoDestinatario = tipoDestinatario;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 
 	/**

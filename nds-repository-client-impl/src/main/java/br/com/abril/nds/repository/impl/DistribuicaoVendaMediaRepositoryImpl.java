@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 
@@ -196,7 +195,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
 		
-		sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - ( ");
+		sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - COALESCE(( ");
 		sql.append("        select sum(mecEncalhe.qtde) ");
 		sql.append("        from lancamento lanc ");
 		sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
@@ -205,9 +204,10 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
 		sql.append("        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
 		sql.append("        WHERE lanc.id = l.id ");
-		sql.append("     ) as unsigned int) ");
+		sql.append("     ),0) as unsigned int) ");
 		
-		sql.append(" else null end as venda ");
+		sql.append(" else CAST(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA',mecReparte.QTDE,0)) AS UNSIGNED INT) ");
+		sql.append(" end as venda ");
 		
 		sql.append(" FROM lancamento l ");
 		sql.append("     JOIN produto_edicao pe ON pe.id = l.produto_edicao_id ");
@@ -218,7 +218,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
 		
 		sql.append(" where l.status in (:statusLancamento) ");
-		sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento ");
    		
    		if (filtro.getEdicao() != null) {
    		    sql.append("   and pe.numero_edicao = :numero_edicao ");
@@ -268,8 +267,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
 		
-		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
-		    
 		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 		
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);

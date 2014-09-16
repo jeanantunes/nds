@@ -108,7 +108,8 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	}
 	@Override
 	public boolean sameObject(IntegracaoDocumentMaster<?> docM) {		
-		return (null == docM ? false : ( ((EMS0135Input)docM).getNotaFiscal().equals(this.notaFiscal)) && ((EMS0135Input)docM).getNumeroNotaEnvio().equals(this.numeroNotaEnvio));
+		return (null == docM || ((EMS0135Input)docM).getNotaFiscal() == null || ((EMS0135Input)docM).getNumeroNotaEnvio() == null
+				? false : ( ((EMS0135Input)docM).getNotaFiscal().equals(this.notaFiscal)) && ((EMS0135Input)docM).getNumeroNotaEnvio().equals(this.numeroNotaEnvio));
 	}
 	
 

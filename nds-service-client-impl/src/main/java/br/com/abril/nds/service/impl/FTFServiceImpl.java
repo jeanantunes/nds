@@ -50,117 +50,123 @@ import br.com.abril.nds.util.Util;
 public class FTFServiceImpl implements FTFService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FTFServiceImpl.class);
-	
+
 	@Autowired
 	private FTFRepository ftfRepository;
-	
+
 	@Autowired
 	private NotaFiscalRepository fiscalRepository;
-	
+
 	@Autowired
 	private PessoaCRPWSService pessoaCRPService;
-	
+
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
-	
+
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 
 	@Override
 	@Transactional(readOnly = true)
 	public FTFReportDTO gerarFtf(final List<NotaFiscal> notas) {
-		
+
 		if(notas == null || notas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma nota localizada.");
 		}
-		
+
 		long idNaturezaOperacao = verificarNaturezaOperacao(notas);
-		
+
 		List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
 		FTFReportDTO report = new FTFReportDTO();
-		
+
 		List<String> validacaoBeans = new ArrayList<String>();
-		
+
 		FTFEnvTipoRegistro00 regTipo00 = ftfRepository.obterRegistroTipo00(idNaturezaOperacao);
-		
-		List<FTFEnvTipoRegistro08> registrosTipo08 = carregarRegitrosTipo08(notas, validacaoBeans);
-				
+
 		FTFEnvTipoRegistro09 regTipo09 = ftfRepository.obterRegistroTipo09(idNaturezaOperacao);
-		
+
 		list.add(regTipo00);
 
 		List<FTFEnvTipoRegistro01> listTipoRegistro01 = this.carregarRegistro01(notas, idNaturezaOperacao, validacaoBeans, regTipo00, regTipo09);
-		
+
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = this.obterPessoasCadastradasCRP(report, listTipoRegistro01);
-		
+
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
-			
+
 			long idNF = Long.parseLong(ftfEnvTipoRegistro01.getNumeroDocOrigem());
-			
-			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = this.carregarRegistroTipo02(idNaturezaOperacao, validacaoBeans, idNF);
-			
+
+			List<FTFEnvTipoRegistro02> obterResgistroTipo02 = this.carregarRegistroTipo02(idNaturezaOperacao, validacaoBeans, idNF);			
 			ftfEnvTipoRegistro01.setItemNFList(obterResgistroTipo02);
-						
+
+			if("F".equals(ftfEnvTipoRegistro01.getTipoPessoaDestinatario())) {
+
+				FTFEnvTipoRegistro08 registroTipo08 = carregarRegitrosTipo08(validacaoBeans, idNF);
+				ftfEnvTipoRegistro01.setRegTipo08(registroTipo08);
+			}
+
 			if(ftfRepository.verificarRegistroVenda(idNaturezaOperacao)){				
 				List<FTFEnvTipoRegistro03> regTipo03 = carregarRegitrosTipo03(obterResgistroTipo02, validacaoBeans);
 				ftfEnvTipoRegistro01.setItemNFList03(regTipo03);
 			}
-			
+
 			this.carregarRegistroTipo06(validacaoBeans, ftfEnvTipoRegistro01, idNF);
-			
 		}
-		
+
 		this.setarRegistrosTipo06(list, listTipoRegistro01Cadastrados);
-		
+
 		this.logarErrosEncontrados(validacaoBeans);
-		
+
 		String totalPedidos = Integer.toString(listTipoRegistro01Cadastrados.size());
 		String totalRegistros = Integer.toString(list.size());
-		
+
 		regTipo00.setQtdePedidos(totalPedidos);
 		regTipo00.setQtdeRegistros(totalRegistros);
 
-		list.addAll(registrosTipo08);
-		
 		regTipo09.setQtdePedidos(totalPedidos);
 		regTipo09.setQtdeRegistros(totalRegistros);
 		list.add(regTipo09);
-		
+
 		return gerarArquivoFTF(notas, list, report, regTipo00, totalPedidos);
 	}
 
 	private List<FTFEnvTipoRegistro03> carregarRegitrosTipo03(List<FTFEnvTipoRegistro02> obterResgistroTipo02, List<String> validacaoBeans) {
-		
+
 		List<FTFEnvTipoRegistro03> listaEnvTipoRegistro03 = new ArrayList<>();
-		
+
 		for(FTFEnvTipoRegistro02 ftfTipoRegistro02 : obterResgistroTipo02){
 			FTFEnvTipoRegistro03 ftfEnvTipoRegistro03 = new FTFEnvTipoRegistro03();
-			
+
 			ftfEnvTipoRegistro03.setTipoRegistro("3");
 			ftfEnvTipoRegistro03.setCodigoCentroEmissor(ftfTipoRegistro02.getCodigoCentroEmissor());
 			ftfEnvTipoRegistro03.setCnpjEmpresaEmissora(ftfTipoRegistro02.getCnpjEmpresaEmissora());
 			ftfEnvTipoRegistro03.setCodLocal(ftfTipoRegistro02.getCodLocal());
 			ftfEnvTipoRegistro03.setNumeroDocOrigem(ftfTipoRegistro02.getNumeroDocOrigem());
 			ftfEnvTipoRegistro03.setTipoPedido(ftfTipoRegistro02.getTipoPedido());
-			
+
 			listaEnvTipoRegistro03.add(ftfEnvTipoRegistro03);
-			
+
 		}
-		
+
 		return listaEnvTipoRegistro03;
 	}
 
 	private void setarRegistrosTipo06(List<FTFBaseDTO> list, List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados) {
+
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01Cadastrados) {
+
 			list.add(ftfEnvTipoRegistro01);
 			list.addAll(ftfEnvTipoRegistro01.getItemNFList());
-			
+
 			if(ftfEnvTipoRegistro01.getItemNFList03() != null){				
 				list.addAll(ftfEnvTipoRegistro01.getItemNFList03());
 			}
-			
+
 			if(ftfEnvTipoRegistro01.getRegTipo06() != null){
 				list.add(ftfEnvTipoRegistro01.getRegTipo06());				
+			}
+
+			if(ftfEnvTipoRegistro01.getRegTipo08() != null){
+				list.add(ftfEnvTipoRegistro01.getRegTipo08());				
 			}
 		}
 	}
@@ -171,12 +177,12 @@ public class FTFServiceImpl implements FTFService {
 			for(String err : validacaoBeans) {
 				LOGGER.error(err);
 			}
-			
+
 		}
 	}
 
 	private void carregarRegistroTipo06(List<String> validacaoBeans, FTFEnvTipoRegistro01 ftfEnvTipoRegistro01, long idNF) {
-		
+
 		FTFEnvTipoRegistro06 regTipo06 = ftfRepository.obterRegistroTipo06(idNF);
 		if(regTipo06 != null) {
 			ftfEnvTipoRegistro01.setRegTipo06(regTipo06);
@@ -196,46 +202,45 @@ public class FTFServiceImpl implements FTFService {
 			final long idNaturezaOperacao, List<String> validacaoBeans,
 			final FTFEnvTipoRegistro00 regTipo00, 
 			final FTFEnvTipoRegistro09 regTipo09) {
-		
+
 		List<FTFEnvTipoRegistro01> listTipoRegistro01 = ftfRepository.obterResgistroTipo01(notas, idNaturezaOperacao);
-		
+
 		validacaoBeans.addAll(regTipo00.validateBean());
 		validacaoBeans.addAll(regTipo09.validateBean());
-		
-		
+
 		for(FTFEnvTipoRegistro01 ftfetr01 : listTipoRegistro01) {
 			validacaoBeans.addAll(ftfetr01.validateBean());
 		}
-		
+
 		return listTipoRegistro01;
 	}
 
 	private FTFReportDTO gerarArquivoFTF(final List<NotaFiscal> notas, List<FTFBaseDTO> list, FTFReportDTO report, FTFEnvTipoRegistro00 regTipo00, String totalPedidos) {
-		
+
 		ParametroSistema pathNFEExportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO_FTF);
-		
+
 		File diretorioExportacaoNFE = new File(pathNFEExportacao.getValor());
-		
+
 		File f = new File(String.format("%s/%s", pathNFEExportacao.getValor(), regTipo00.getNomeArquivo()));
-		
+
 		BufferedWriter bw = null;
 		try {
-			
+
 			if (!diretorioExportacaoNFE.isDirectory()) {
 				throw new FileNotFoundException("O diretório["+ pathNFEExportacao.getValor() +"] de exportação parametrizado não é válido!");
 			}
-			
+
 			bw = new BufferedWriter(new FileWriter(f));
 			FTFParser ftfParser = new FTFParser();
-			
+
 			for (FTFBaseDTO dto : list) {
 				ftfParser.parseFTF(dto, bw);
 				bw.newLine();
 			}
-			
+
 			bw.flush();
 			bw.close();
-			
+
 		} catch (FileNotFoundException e) {
 			LOGGER.error("Não foi possivel localizar o arquivo no diretorio especifico!", e);
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel localizar o arquivo no diretorio especifico!");
@@ -245,11 +250,11 @@ public class FTFServiceImpl implements FTFService {
 		} catch (Exception e) {
 			LOGGER.error("Erro ao gerar o arquivo!", e);
 		}
-		
+
 		report.setPedidosGerados(Integer.parseInt(totalPedidos));
-		
+
 		this.salvarNotas(notas);
-		
+
 		return report;
 	}
 
@@ -259,21 +264,17 @@ public class FTFServiceImpl implements FTFService {
 		}
 	}
 
-	private List<FTFEnvTipoRegistro08> carregarRegitrosTipo08(final List<NotaFiscal> notas, List<String> validacaoBeans) {
-		List<FTFEnvTipoRegistro08> registrosTipo08 = new ArrayList<>();
-		for(NotaFiscal nf : notas) {
-			
-			FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(nf.getId());
-			validacaoBeans.addAll(regTipo08.validateBean());
-			registrosTipo08.add(regTipo08);
-		}
-		return registrosTipo08;
+	private FTFEnvTipoRegistro08 carregarRegitrosTipo08(List<String> validacaoBeans, long idNF) {
+
+		FTFEnvTipoRegistro08 regTipo08 = ftfRepository.obterRegistroTipo08(idNF);
+		validacaoBeans.addAll(regTipo08.validateBean());
+		return regTipo08;
 	}
-	
+
 	private long verificarNaturezaOperacao(final List<NotaFiscal> notas) {
 		long idNaturezaOperacao = 0;
 		for(NotaFiscal nf : notas) {
-			
+
 			if(idNaturezaOperacao == 0) {
 				idNaturezaOperacao = nf.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId();
 			} else {
@@ -288,10 +289,10 @@ public class FTFServiceImpl implements FTFService {
 
 	private List<FTFEnvTipoRegistro01> obterPessoasCadastradasCRP(FTFReportDTO report, List<FTFEnvTipoRegistro01> listTipoRegistro01) {
 		List<FTFEnvTipoRegistro01> listTipoRegistro01Cadastrados = new ArrayList<>();
-		
+
 		for (FTFEnvTipoRegistro01 ftfEnvTipoRegistro01 : listTipoRegistro01) {
 			String cpfCnpjDestinatario = Util.removerMascaraCnpj(ftfEnvTipoRegistro01.getCpfCnpjDestinatario());
-			
+
 			if(!verificarPessoaWs(cpfCnpjDestinatario)){
 				report.getNaoCadastradosCRP().add(ftfEnvTipoRegistro01);
 			}else {
@@ -300,7 +301,7 @@ public class FTFServiceImpl implements FTFService {
 		}
 		return listTipoRegistro01Cadastrados;
 	}
-	
+
 	/**
 	 * 
 	 * @param type 1 CNPJ, 2 CPF
@@ -308,42 +309,41 @@ public class FTFServiceImpl implements FTFService {
 	 */
 	private boolean verificarPessoaWs(final String cpfCnpj) {
 		boolean valid = false;
-//		String testedCpnj = "68252618000182";
+		//		String testedCpnj = "68252618000182";
 		// validar as pessoas no CRP
-		
+
 		PessoaDto wsResponse = pessoaCRPService.obterDadosFiscais(getCodTipoDocFrom(cpfCnpj), cpfCnpj);
 		PessoaType pessoaCRP = wsResponse.getPessoa();
-		
+
 		if (pessoaCRP != null && !StringUtil.isEmpty(pessoaCRP.getNome())) {
 			valid = true;
 		}
-		
+
 		return valid;
 	}
-	
+
 	private int getCodTipoDocFrom(String cpfCnpj){
 		return cpfCnpj.length() == 14 ? 1 : 2;
 	}
-	
+
 	@SuppressWarnings("resource")
 	public List<FTFRetornoRET> processarArquivosRet(final File...files){
-		
+
 		List<FTFRetornoRET> l = new ArrayList<FTFRetornoRET>();
-		
+
 		for (File file : files) {
 			List<FTFBaseDTO> list = new ArrayList<FTFBaseDTO>();
-			
+
 			BufferedReader br;
 			try {
 				br = new BufferedReader(new FileReader(file));
 				while(br.ready()){
-					
+
 					String line = br.readLine();
 					FTFBaseDTO ftfdto = FTFParser.parseLinhaRetornoFTF(line);
 					list.add(ftfdto);
 				}
 
-				
 				FTFRetornoRET n = new FTFRetornoRET();
 				for (FTFBaseDTO dto : list) {
 					if(dto instanceof FTFRetTipoRegistro00){
@@ -354,9 +354,9 @@ public class FTFServiceImpl implements FTFService {
 						n.setTipo09((FTFRetTipoRegistro09)dto);
 					}
 				}
-				
+
 				l.add(n);
-				
+
 			} catch (FileNotFoundException e) {
 				LOGGER.error("Não foi possivel localizar o arquivo no diretorio especifico!", e);
 				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel localizar o arquivo no diretorio especifico!");
@@ -367,18 +367,15 @@ public class FTFServiceImpl implements FTFService {
 				LOGGER.error("Erro ao gerar o arquivo!", e);
 				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo!");
 			}
-			
+
 		}
-		
-		
-		
+
 		return l;
 	}
-	
+
 	public void atualizarRetornoFTF(final List<FTFRetTipoRegistro01> list){
-		
+
 		this.ftfRepository.atualizarRetornoFTF(list);
-		
 	}
-	
+
 }

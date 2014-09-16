@@ -614,8 +614,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             fechamento = listaFechamento.get(i);
             
-            final BigInteger exemplaresDevolucao = fechamento.getExemplaresDevolucao() == null ?
-            		BigInteger.ZERO : fechamento.getExemplaresDevolucao();
+            final BigInteger exemplaresDevolucao = fechamento.getFisico() == null ?
+            		BigInteger.ZERO : fechamento.getFisico();
             
             final BigInteger exemplaresDevolucaoJuramentado = fechamento.getExemplaresDevolucaoJuramentado() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresDevolucaoJuramentado();
@@ -623,19 +623,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
             
-            if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
-
-                qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
-
-            } else if (fechamento.getFisico() == null) {
+            if (fechamento.getFisico() == null) {
             	
-            	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");
-            	
-            } else {
-                
-                qtd = fechamento.getFisico();
+            	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
+            qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
+
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
             id.setDataEncalhe(filtro.getDataEncalhe());
             final ProdutoEdicao pe = new ProdutoEdicao();
@@ -1405,9 +1399,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
         
-        // TODO: Refatorar a parte de fechamento de encalhe para melhor
-        // desempenho
-        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null, null, null);
+        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null,null, null);
+
+        this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository.obterDataOperacaoDistribuidor());
         
         for (final FechamentoFisicoLogicoDTO itemSessao : listaEncalheSessao) {
             for (final FechamentoFisicoLogicoDTO itemFechamento : listaEncalhe) {
