@@ -2,8 +2,8 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 
 	init : function() {
 		
-		$("#pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexigrid({
-			preProcess: function(data){return caracteristicaDistribuicaoController.preProcessPesquisaDetalheGrid(data);},
+		$("#pesquisaDetalheGrid", caracteristicaDistribuicaoController.workspace).flexigrid({
+			preProcess: function(data) { return caracteristicaDistribuicaoController.preProcessPesquisaDetalheGrid(data); },
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -16,7 +16,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 				name : 'nomeProduto',
 				width : 110,
 				sortable : true,
-				align : 'center'
+				align : 'left'
 			},{
 				display : 'Editor',
 				name : 'nomeEditor',
@@ -456,12 +456,12 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	
 	pesquisar:function(){
 		
-		if(caracteristicaDistribuicaoController.isSimples()){
+		if(caracteristicaDistribuicaoController.isSimples()) {
+			
 			caracteristicaDistribuicaoController.pesquisarSimples();
-		
-		}else{
+		} else {
+			
 			caracteristicaDistribuicaoController.pesquisarDetalhe();
-		
 		}
 	},
 	
@@ -484,12 +484,15 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 	},
 	
-	pesquisarSimples:function(){
-		if(caracteristicaDistribuicaoController.camposVazios()){
+	pesquisarSimples: function() {
+		
+		if(caracteristicaDistribuicaoController.camposVazios()) {
+			
 			exibirMensagem("WARNING",["Preencha pelo menos um campo dos filtros para realizar a pesquisa!"]);
-		}else if (caracteristicaDistribuicaoController.validarCamposDeAte()){
+		} else if (caracteristicaDistribuicaoController.validarCamposDeAte()) {
+			
 			exibirMensagem("WARNING",["O campo 'De' não pode conter valores maiores que o campo 'Até'!"]);
-		}else{
+		} else {
 				caracteristicaDistribuicaoController.exibeGridSimples();
 				$(".pesquisaSimplesGrid",caracteristicaDistribuicaoController.workspace).flexOptions({
 					url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarSimples",
@@ -535,30 +538,30 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	},
 
 	
-	getDadosFiltroPesquisaDetalhe:function(){
-		var valDe=$("#faixaDe").val();
-		var valAte= $("#faixaAte").val();
+	getDadosFiltroPesquisaDetalhe:function() {
+		var valDe = $("#faixaDe", this.workspace).val();
+		var valAte = $("#faixaAte", this.workspace).val();
 		var data = [];
-		data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto").val()});
-		data.push({name:'filtro.nomeProduto', value: $("#nomeProduto").val()});
-		data.push({name:'filtro.nomeEditor',  value: $("#nomeEditor").val()});
+		data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto", this.workspace).val()});
+		data.push({name:'filtro.nomeProduto', value: $("#nomeProduto", this.workspace).val()});
+		data.push({name:'filtro.nomeEditor', value: $("#nomeEditor", this.workspace).val()});
 		data.push({name:'filtro.opcaoFiltroPublicacao', value:$('#checkPublicacaoExato').is(":checked")});
 		
-		data.push({name:'filtro.classificacaoProduto',  value: $("#classificacao option:selected").val()});
-		data.push({name:'filtro.segmento',  value: $("#segmento option:selected").val()});
-		data.push({name:'filtro.brinde',  value: $("#brinde option:selected").val()});
-		data.push({name:'filtro.chamadaCapa', value:$('#chamadaCapa').val()});
-		data.push({name:'filtro.faixaPrecoDe',  value: valDe.replace(",",".")});
-		data.push({name:'filtro.faixaPrecoAte',  value: valAte.replace(",",".")});
+		data.push({name:'filtro.classificacaoProduto', value: $("#classificacao option:selected", this.workspace).val()});
+		data.push({name:'filtro.segmento', value: $("#segmento option:selected", this.workspace).val()});
+		data.push({name:'filtro.brinde', value: $("#brinde option:selected", this.workspace).val()});
+		data.push({name:'filtro.chamadaCapa', value:$('#chamadaCapa', this.workspace).val()});
+		data.push({name:'filtro.faixaPrecoDe', value: valDe.replace(",",".")});
+		data.push({name:'filtro.faixaPrecoAte', value: valAte.replace(",",".")});
 		
 		return data;
 	},
 	
-	exibeGridSimples:function(){
+	exibeGridSimples:function() {
 		$('.divPesquisaSimplesGrid').show();
 		
 	},
-	escondeGridSimples:function(){
+	escondeGridSimples:function() {
 		$(".divPesquisaSimplesGrid").hide();
 		
 	},
