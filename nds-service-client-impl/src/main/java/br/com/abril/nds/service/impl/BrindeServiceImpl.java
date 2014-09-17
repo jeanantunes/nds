@@ -22,12 +22,11 @@ public class BrindeServiceImpl implements BrindeService {
 	@Autowired
 	private BrindeRepository brindeRepository;
 
-	@Transactional(readOnly = true)
 	@Override
+	@Transactional(readOnly = true)
 	public List<Brinde> obterBrindes() {
 		
 		return this.brindeRepository.buscarTodos();
 	}
-	
 	
 }
