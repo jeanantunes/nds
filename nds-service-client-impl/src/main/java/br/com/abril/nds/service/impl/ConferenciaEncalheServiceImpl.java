@@ -1480,7 +1480,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor(),
 						numeroCota));
 			
-			produtoEdicaoDTO.setContagemPacote( GrupoProduto.CROMO.equals(produtoEdicao.getGrupoProduto()) ? true : false );
+			GrupoProduto grupoProduto = produtoEdicao.getGrupoProduto()!=null?
+					produtoEdicao.getGrupoProduto():
+						produtoEdicao.getProduto().getTipoProduto()!=null?
+								produtoEdicao.getProduto().getTipoProduto().getGrupoProduto()
+								:null;
+			
+			produtoEdicaoDTO.setContagemPacote( GrupoProduto.CROMO.equals(grupoProduto) ? true : false );
 
 		}
 		
