@@ -576,8 +576,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             fechamento = listaFechamento.get(i);
             
-            final BigInteger exemplaresDevolucao = fechamento.getFisico() == null ?
-            		BigInteger.ZERO : fechamento.getFisico();
+            final BigInteger exemplaresDevolucao = fechamento.getFisico() != null ?
+            		fechamento.getFisico() : fechamento.getExemplaresDevolucao() == null ? BigInteger.ZERO : fechamento.getExemplaresDevolucao();
             
             final BigInteger exemplaresDevolucaoJuramentado = fechamento.getExemplaresDevolucaoJuramentado() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresDevolucaoJuramentado();
@@ -585,7 +585,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
             
-            if (fechamento.getFisico() == null) {
+            if (exemplaresDevolucao == null) {
             	
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }

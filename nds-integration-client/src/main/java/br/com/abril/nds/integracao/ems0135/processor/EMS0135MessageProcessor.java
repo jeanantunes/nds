@@ -299,7 +299,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 }
                 
                 produtoEdicao.setPacotePadrao(10);
-                produtoEdicao.setPeb(35);
+                produtoEdicao.setPeb(31);
                 produtoEdicao.setPeso(100L);
                 produtoEdicao.setPossuiBrinde(false);
                 produtoEdicao.setPermiteValeDesconto(false);
@@ -316,17 +316,29 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	                        message,
 	                        EventoExecucaoEnum.RELACIONAMENTO,
 	                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao());
-                
+	                
+	                
                 Date dataAtual = new Date();
+                Date dataOriginal = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
                 int numeroLancamentoNovo = 1;
                 
+                dataOriginal = inputItem.getDataLancamento();
                 dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
                 
                 try {
     				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
                 	dataLancamento =lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
-    			} catch (Exception e) {
+                	dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
+                	
+                	this.ndsiLoggerFactory.getLogger().logWarning(message,
+   				 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
+   						 "Alteração da Data Lcto Distribuidor"
+   								+ " de  " + DateUtil.formatarDataPTBR(dataOriginal)
+   								+ " para  " + DateUtil.formatarDataPTBR(dataLancamento)
+   								+ " Produto "+codigoProduto
+   								+ " Edição " + edicao);
+                } catch (Exception e) {
     			}
                 
                 Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
@@ -353,7 +365,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 this.ndsiLoggerFactory.getLogger().logInfo(
                         message,
                         EventoExecucaoEnum.RELACIONAMENTO,
-                        "*** Atualização dos Preços para "+tratarValorNulo(produtoEdicao.getPrecoPrevisto())+" Produto "+inputItem.getCodigoProduto()+" Edição "+inputItem.getEdicao());
+                        "Atualização dos Preços para "+tratarValorNulo(produtoEdicao.getPrecoPrevisto())+" Produto "+inputItem.getCodigoProduto()+" Edição "+inputItem.getEdicao());
             }
             
             ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
