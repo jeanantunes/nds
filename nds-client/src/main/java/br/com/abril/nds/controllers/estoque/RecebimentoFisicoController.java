@@ -1397,7 +1397,8 @@ public class RecebimentoFisicoController extends BaseController {
     	
     	} else {
     		
-    		this.result.use(Results.json()).from("").serialize();
+    		this.result.use(Results.json()).from("valido", Constantes.PARAM_MSGS).recursive().serialize();
+    		//this.result.use(Results.json()).from("").serialize();
     	}
     }
     

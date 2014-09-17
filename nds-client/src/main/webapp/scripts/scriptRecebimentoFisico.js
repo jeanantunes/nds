@@ -780,10 +780,12 @@ var recebimentoFisicoController = $.extend(true, {
 			params, 
 			function(result) {
 
-				if (result.mensagens) {
+				if (result.mensagens && result.mensagens!="valido") {
 					recebimentoFisicoController.popupDescontosDivergentes(result);
 				} else {
-					recebimentoFisicoController.confirmarRecebimentoFisico();
+					if(recebimentoFisicoController.validarPreenchimentoQuantidades()){
+					  recebimentoFisicoController.confirmarRecebimentoFisico();
+					}
 				}
 			}
 		);		
@@ -931,6 +933,7 @@ var recebimentoFisicoController = $.extend(true, {
 			buttons : {
 				
 				"Confirmar" : function() {
+					recebimentoFisicoController.confirmarRecebimentoFisico();
 					$(this).dialog("close");
 					return true;
 				},
