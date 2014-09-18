@@ -582,9 +582,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		        this.controleConferenciaEncalheCotaRepository.obterDatasControleConferenciaEncalheCotaFinalizada(
 	                dto.getIdCota(), filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 			
-			this.setApresentaQuantidadeEncalhe(
-		        datasControleFechamentoEncalhe, datasControleConferenciaEncalheCotaFinalizada,
-		        produtosEmissao, filtro, dto.getQtdGrupoCota());
+			this.setApresentaQuantidadeEncalhe(datasControleFechamentoEncalhe, datasControleConferenciaEncalheCotaFinalizada, produtosEmissao, filtro, dto.getQtdGrupoCota());
 			
 			dto.setProdutos(produtosEmissao);
 			
