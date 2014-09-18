@@ -14,6 +14,8 @@ public class EstudoComplementarVO {
     boolean multiplo;
     Long idCopia;
     
+    private String dataLancamento;
+    
 	public int getReparteCota() {
 		return reparteCota;
 	}
@@ -80,5 +82,12 @@ public class EstudoComplementarVO {
 	public void setIdCopia(Long idCopia) {
 		this.idCopia = idCopia;
 	}
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+	public void setDataLancamento(String dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+	
 	
 }
