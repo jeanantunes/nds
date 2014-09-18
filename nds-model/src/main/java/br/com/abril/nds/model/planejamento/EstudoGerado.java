@@ -120,6 +120,9 @@ public class EstudoGerado implements Serializable {
     
     @Column(name = "ABRANGENCIA")
     private BigDecimal abrangencia;
+    
+    @Column(name = "REPARTE_TOTAL")
+    private BigInteger reparteTotal;
 
     public BigInteger getQtdeReparte() {
 		return qtdeReparte;
@@ -311,5 +314,13 @@ public class EstudoGerado implements Serializable {
     public void setAbrangencia(BigDecimal abrangencia) {
         this.abrangencia = abrangencia;
     }
+
+	public BigInteger getReparteTotal() {
+		return reparteTotal;
+	}
+
+	public void setReparteTotal(BigInteger reparteTotal) {
+		this.reparteTotal = reparteTotal;
+	}
 	
 }

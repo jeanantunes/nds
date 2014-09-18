@@ -588,6 +588,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "distribuicaoVendaMedia.usarFixacao", value : $("#usarFixacao")[0].checked });
 		data.push({name : "distribuicaoVendaMedia.distribuicaoPorMultiplo", value : $("#distribuicaoPorMultiplo")[0].checked });
 		data.push({name : "distribuicaoVendaMedia.multiplo", value : $("#multiplo").val() });
+		data.push({name : "distribuicaoVendaMedia.reparteTotal", value : $("#reparteTotal").text() });
+		
 		
 		if(T.produtoEdicaoBases != undefined){
 			for(var i = 0; i < T.produtoEdicaoBases.length; i++){

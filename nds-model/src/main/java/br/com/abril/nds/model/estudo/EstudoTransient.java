@@ -57,6 +57,8 @@ public class EstudoTransient extends EstudoGerado {
 
     private String tipoGeracao;
     
+    private BigInteger reparteTotal;
+    
     public EstudoTransient() {
 	excedenteDistribuir = BigDecimal.ZERO;
 	usarFixacao = true;
@@ -309,6 +311,14 @@ public class EstudoTransient extends EstudoGerado {
         this.tipoGeracao = tipoGeracao;
     }
 
+    public BigInteger getReparteTotal() {
+    	return reparteTotal;
+    }
+    
+    public void setReparteTotal(BigInteger reparteTotal) {
+    	this.reparteTotal = reparteTotal;
+    }
+
     @Override
     public String toString() {
 	 String string =  "EstudoTransient [reparteDistribuirInicial="
@@ -334,5 +344,8 @@ public class EstudoTransient extends EstudoGerado {
 	 
 	 return string;
     }
+
+    
+    
 
 }
