@@ -42,7 +42,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -1730,6 +1729,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 grupoMovimentoEstoqueEstornoRecebimentoFisico);
         
         
+    }
+    
+    @Transactional(readOnly=true)
+    public BigDecimal obterValorConsignadoDeVendaSuplementar(final Date dataMovimentacao){
+    	
+    	return movimentoEstoqueRepository.obterValorConsignadoDeVendaEncalheSuplementar(dataMovimentacao);
     }
     
 }
