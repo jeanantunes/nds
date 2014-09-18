@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.model.DiaSemana;
@@ -48,4 +49,6 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	 * @return List<GrupoCota>
 	 */ 
 	List<GrupoCota> obterListaGrupoCotaPorNumeroCota(Integer numeroCota, Date dataOperacao);
+	
+	Map<Long, List<GrupoCota>> obterListaGrupoCotaPorDataOperacao(Date dataOperacao);
 }

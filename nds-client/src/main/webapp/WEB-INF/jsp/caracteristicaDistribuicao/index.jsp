@@ -85,14 +85,13 @@ $(function(){
 				<option></option>
 				<c:forEach var="brinde" items="${brindes}">
 					<c:if test="${brinde.descricao !=null && brinde.descricao !=''}">
-						<option value="<c:out value="${brinde.descricao}"/>
-						">
-						<c:out value="${brinde.descricao}"/>
-					</option>
-				</c:if>
-			</c:forEach>
-		</select>
-	</td>
+						<option value="<c:out value="${brinde.descricao}"/>">
+							<c:out value="${brinde.descricao}"/>
+						</option>
+					</c:if>
+				</c:forEach>
+			</select>
+		</td>
 </tr>
 <tr></tr>
 <tr>

@@ -147,7 +147,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		return venda;
 	}
 	public void setVenda(BigInteger venda) {
-		if(venda == null){
+		if(venda == null || venda.compareTo(BigInteger.ZERO) < 1){
 			this.venda = BigInteger.ZERO;	
 		}else{
 			this.venda = venda;

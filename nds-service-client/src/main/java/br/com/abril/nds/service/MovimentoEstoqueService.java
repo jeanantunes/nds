@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -138,5 +139,7 @@ public interface MovimentoEstoqueService {
 			Long idProdutoEdicao, 
 			GrupoMovimentoEstoque grupoMovimentoEstoqueRepartePromocional,
 			GrupoMovimentoEstoque grupoMovimentoEstoqueEstornoRecebimentoFisico);
+	
+	 BigDecimal obterValorConsignadoDeVendaSuplementar(final Date dataMovimentacao);
 	
 }

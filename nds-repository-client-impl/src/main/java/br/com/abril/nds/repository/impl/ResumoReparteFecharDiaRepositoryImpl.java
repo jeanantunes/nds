@@ -217,7 +217,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
         
-        query.setParameter("grupoReparte",Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_FISICO.name(),
+        query.setParameterList("grupoReparte",Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_FISICO.name(),
         												GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS.name()));  
         
     	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
