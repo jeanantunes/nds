@@ -153,7 +153,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, 
 													            Long idCota, 
-													            GrupoMovimentoEstoque... gruposMovimentoEstoque);
+													            String... gruposMovimentoEstoque);
 		
 	/**
 	 * Obtém o valor total do encalhe para a cota (caso específicada)
@@ -473,7 +473,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
-			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota);
+			List<Long> idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota);
 	
 	/**
 	 * 
@@ -519,4 +519,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
     List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento);
 	
     void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto);
+    
+    BigDecimal obterValorConsignadoCotaAVista(final Date dataMovimentacao);
 }

@@ -1,8 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
@@ -13,6 +16,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.collection.CollectionPropertyNames;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -263,6 +267,53 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		
 		return (List<GrupoCota>) query.list();
 	}	
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<Long, List<GrupoCota>> obterListaGrupoCotaPorDataOperacao(Date dataOperacao){
+		
+		StringBuilder hql = new StringBuilder("select g ");
+		hql.append(" from GrupoCota g ")
+		   .append(" left join g.municipios municipio ")
+		   .append(" left join g.cotas cota ")
+		   .append(" where ")
+		   .append(" ( municipio in (select e.cidade ")
+		   .append("                      from PDV pdv ")
+		   .append("                      join pdv.enderecos enderecoPdv   ")
+           .append("                      join enderecoPdv.endereco e   ")
+           .append("                      join pdv.cota c ")
+		   .append("                      where pdv.caracteristicas.pontoPrincipal is true ")
+		   .append("                     ) ")
+	       .append(" ) ")
+		   .append(" and ( g.dataInicioVigencia is null or g.dataInicioVigencia <= :dataOperacao ) ")
+		   .append(" and ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataOperacao ) ");
+		   
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		Map<Long, List<GrupoCota>> mapGrupoCotas = new HashMap<>(); 
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		List<GrupoCota> listaProdutoEmissaoCota = query.list();
+		
+		for (GrupoCota grupoCota : listaProdutoEmissaoCota) {
+		    
+		    List<GrupoCota> gruposCotas = mapGrupoCotas.get(grupoCota.getId());
+		    
+		    if (gruposCotas == null) {
+		        
+		        gruposCotas = new ArrayList<GrupoCota>();
+		    }
+		    
+		    gruposCotas.add(grupoCota);
+		    
+		    mapGrupoCotas.put(grupoCota.getId(), gruposCotas);
+		}
+		
+		return mapGrupoCotas;
+	}
+	
 	
 	/**
 	 * Obtém lista de GrupoCota(Operação diferenciada)
