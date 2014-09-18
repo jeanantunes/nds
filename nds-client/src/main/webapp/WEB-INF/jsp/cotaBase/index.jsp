@@ -54,7 +54,7 @@ $(function(){
     	<table class="pdvCotaGrid"></table>
         <table width="600" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td width="312"><span class="bt_novos" title="Excluir"><a href="javascript:;"><img src="../images/ico_excluir.gif" hspace="5" border="0" />Excluir</a></span>
+    <td width="312"><span class="bt_novos" title="Excluir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Excluir</a></span>
 </td>
     <td width="174">&nbsp;</td>
     <td width="71" align="center">999.999</td>
@@ -90,9 +90,9 @@ $(function(){
     <fieldset style="width:605px!important; margin-top:10px;">
    		<legend>Cota Base Cadastrada</legend>
     	<table class="novaEquivalenteGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 	</fieldset>
 
 </div>

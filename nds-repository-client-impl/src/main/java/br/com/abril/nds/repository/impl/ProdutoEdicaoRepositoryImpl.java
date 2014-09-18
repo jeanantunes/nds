@@ -1537,7 +1537,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		hql.append(" SELECT ");
 
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida) as reparte, ");
+		hql.append(" estoqueProdutoCota.qtdeRecebida as reparte, ");
 		hql.append(" case when l.status in (:statusLancFechadoRecolhido) then ");
 		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
 		hql.append(" else null end as qtdeVendas ");
