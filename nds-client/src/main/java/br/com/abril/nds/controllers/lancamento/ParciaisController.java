@@ -456,8 +456,7 @@ public class ParciaisController extends BaseController {
 
 		if ((lcto!=null) && (recto!=null) && (idProdutoEdicao!=null)){
 		    listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao, idPeriodo);
-		}//TODO
-		
+		}		
 		
 		if(listaParcialVenda.isEmpty()) {
 
