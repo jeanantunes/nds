@@ -4,6 +4,8 @@ package br.com.abril.nds.controllers.lancamento;
 import static br.com.caelum.vraptor.view.Results.json;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +21,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.controllers.distribuicao.MatrizDistribuicaoController;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
@@ -26,6 +30,7 @@ import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -100,7 +105,22 @@ public class EstudoComplementarController extends BaseController {
 
     @Path("/gerarEstudo")
     @Post
-    public void gerarEstudo(EstudoComplementarVO parametros) {
+    public void gerarEstudo(EstudoComplementarVO parametros) throws Exception {
+    	
+    	Long qtdEstudoParaLancamento = 0L;
+    	Date dataLanctoFormatada;
+    	
+    	try {
+    		dataLanctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(parametros.getDataLancamento());
+		} catch (ParseException e) {
+			 throw new Exception("Data de lançamento em formato incorreto.");
+		}
+
+    	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(parametros.getIdLancamento(), dataLanctoFormatada);
+    	
+    	if(qtdEstudoParaLancamento >= 3){
+    		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
+    	}
     	
     	Long idEstudo = this.estudoComplementarService.gerarEstudoComplementar(parametros);
     	

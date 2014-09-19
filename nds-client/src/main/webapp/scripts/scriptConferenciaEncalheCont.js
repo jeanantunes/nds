@@ -1054,6 +1054,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			return;
 		}
 		
+		//$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
 		var data = [{name: "produtoEdicaoId", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
 		            {name: "qtdExemplares", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
 		            {name: "juramentada", value:$('#checkboxJueramentadaNovoEncalhe', ConferenciaEncalheCont.workspace).attr('checked') == 'checked' },

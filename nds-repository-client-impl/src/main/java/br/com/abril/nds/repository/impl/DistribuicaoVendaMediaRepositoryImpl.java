@@ -225,7 +225,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
            
    		if (filtro.getCodigo() != null) {
    			if (isFindByICD) {
-   				sql.append("   and p.codigo_icd = :codigo_produto ");
+   				sql.append(" and ((p.codigo_icd = :codigo_produto) "); 
+		        sql.append("      or p.codigo in (select p.codigo from produto p where p.codigo_icd = (select codigo_icd from produto p where p.codigo = :codigo_produto))) ");
+   				
    			} else {
    				sql.append("   and p.codigo = :codigo_produto ");
    			}
@@ -235,8 +237,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
    			sql.append("   and tcp.id = :classificacao ");
 		}
    		
-   		sql.append(" group by pe.numero_edicao, pe.id, plp.numero_periodo ");
-   		sql.append(" ) T GROUP BY T.numeroEdicao ");
+   		sql.append(" group by pe.id, plp.numero_periodo ");
+   		sql.append(" ) T GROUP BY T.id ");
    		sql.append(ordenarConsulta(filtro));
    		
    		SQLQuery query = getSession().createSQLQuery(sql.toString());
