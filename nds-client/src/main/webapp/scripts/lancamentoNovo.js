@@ -429,6 +429,8 @@ var lancamentoNovoController = $.extend(true, {
 	
 	carregarEdicaoDirecionamentoEstoque:function(result){
 		
+		lancamentoNovoController.paraEstoque(true);
+		
 		lancamentoNovoController.carregarDiferencaProduto(result.diferenca);
 		
 		$("#checkboxLancCota", lancamentoNovoController.workspace).uncheck();
@@ -438,11 +440,10 @@ var lancamentoNovoController = $.extend(true, {
 		$("#ui-dialog-title-dialogNovasDiferencas", lancamentoNovoController.workspace).text("Lançamento Faltas e Sobras - Produto");
 		
 		$("#paraEstoque",lancamentoNovoController.workspace).check();
+		$('#paraCota', lancamentoNovoController.workspace).prop('disabled', true);
 		
 		var tipoEstoque = result.diferenca != null ? "(" + result.diferenca.descricaoTipoEstoque + ")" : "";
 		$("#nomeEstoqueSpan").html("Estoque " + tipoEstoque);
-
-		lancamentoNovoController.paraEstoque(true);
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque({
 			tipoDiferenca: result.diferenca.tipoDiferenca,
