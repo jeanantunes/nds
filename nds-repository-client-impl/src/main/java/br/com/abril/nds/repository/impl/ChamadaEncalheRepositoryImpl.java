@@ -1131,7 +1131,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" and l.status not in ('RECOLHIDO', 'FECHADO', 'EM_RECOLHIMENTO')                                                              ")
 			.append(" and pe.parcial = true                                                                                                        ")
 			.append(" group by numeroCota, idCota, idProdutoEdicao                                                                                 ")   
-			/// .append(" having count(0) > 1                                                                                                          ")
+			/// .append(" having count(0) > 1                                                                                                      ")
 			.append(" order by dataMovimento ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
