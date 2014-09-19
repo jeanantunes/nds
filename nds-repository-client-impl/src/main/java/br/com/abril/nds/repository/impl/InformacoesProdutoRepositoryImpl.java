@@ -59,11 +59,10 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" estudoG.tipoGeracaoEstudo AS algoritmo, ");
 		hql.append(" usuarioEstudo.nome AS nomeUsuario, ");
 		
-		hql.append(" (select coalesce(sum(case when (tipo.operacaoEstoque = 'ENTRADA') then -mec.qtde else mec.qtde end), 0)  ");
-		hql.append(" from MovimentoEstoqueCota mec ");
-		hql.append(" join mec.produtoEdicao pe ");
-		hql.append(" join mec.lancamento lanc ");
-		hql.append(" join mec.tipoMovimento tipo ");
+		hql.append(" (select coalesce(sum(case when (tipo.operacaoEstoque = 'SAIDA') then -me.qtde else me.qtde end), 0)  ");
+		hql.append(" from MovimentoEstoque me ");
+		hql.append(" join me.produtoEdicao pe ");
+		hql.append(" join me.tipoMovimento tipo ");
 		hql.append(" where pe.id = prodEdicao.id) AS venda ");
 
 		hql.append(" FROM Lancamento AS lancamento ");
