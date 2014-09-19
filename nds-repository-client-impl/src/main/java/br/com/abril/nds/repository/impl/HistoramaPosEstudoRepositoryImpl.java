@@ -97,11 +97,13 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
         
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  SELECT faixaReparte, ");
+		sql.append("  SELECT ");
 		
-		sql.append("       SUM(REPARTE) reparteTotal, ");
+		sql.append("  faixaReparte, ");
 		
-		sql.append("	   AVG(REPARTE) reparteMedio, ");
+		sql.append("  SUM(REPARTE) reparteTotal, ");
+		
+		sql.append("  AVG(REPARTE) reparteMedio, ");
 		
 		if (isEdicoesBaseEspecificas){
 		
@@ -110,9 +112,9 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		    sql.append("   SUM(VENDA_MEDIA) / COUNT(DISTINCT NUMERO_COTA) vendaMedia, ");
 		}
 		
-		sql.append("       COUNT(DISTINCT NUMERO_COTA) qtdCotas, ");
+		sql.append("  COUNT(DISTINCT NUMERO_COTA) qtdCotas, ");
 		
-		sql.append("	   SUM(RECEBIDO) qtdRecebida, ");
+		sql.append("  SUM(RECEBIDO) qtdRecebida, ");
 		
 		if (isEdicoesBaseEspecificas){
 		
@@ -123,58 +125,62 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		    sql.append("   COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
 		}
 		
-		sql.append("       (SUM(REPARTE) / (SELECT SUM(REPARTE) FROM estudo_cota_gerado WHERE ESTUDO_ID = :ESTUDO_ID) * 100) participacaoReparte, ");
+		sql.append("  (SUM(REPARTE) / (SELECT SUM(REPARTE) FROM estudo_cota_gerado WHERE ESTUDO_ID = :ESTUDO_ID) * 100) participacaoReparte, ");
 		
-		sql.append("  	   group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
+		sql.append("  group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
 		
-		sql.append("  FROM (SELECT REP.faixaReparte, REP.ID, ");
+		sql.append("  FROM (SELECT ");
 		
-		sql.append("               REP.NUMERO_COTA, ");
+		sql.append("        REP.faixaReparte, ");
 		
-		sql.append("               SUM(REP.REPARTE) REPARTE, ");
+		sql.append("        REP.ID, ");
 		
-		sql.append("               SUM(REP.RECEBIDO) AS RECEBIDO, ");
+		sql.append("        REP.NUMERO_COTA, ");
+		
+		sql.append("        SUM(REP.REPARTE) REPARTE, ");
+		
+		sql.append("        SUM(REP.RECEBIDO) AS RECEBIDO, ");
 		
 		if (isEdicoesBaseEspecificas){
 		    
-		    sql.append("           SUM(REP.VENDA_MEDIA) AS VENDA_MEDIA, ");
+		    sql.append("    SUM(REP.VENDA_MEDIA) AS VENDA_MEDIA, ");
 		}
 
-		sql.append("               (CASE WHEN SUM(REP.REPARTE) < SUM(VENDA_MEDIA) THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
+		sql.append("        (CASE WHEN SUM(REP.REPARTE) < SUM(VENDA_MEDIA) THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
 		
 		sql.append("        FROM (SELECT  						" );
 
-		sql.append(this.obterRestricaoCaseFaixaReparte(faixas));
+		sql.append(               this.obterRestricaoCaseFaixaReparte(faixas));
 		
-		sql.append(" AS faixaReparte, ");
+		sql.append("              AS faixaReparte, ");
 
-		sql.append("		 			 C.ID, 			");
+		sql.append("		 	  C.ID, 			");
 		
-		sql.append("                     C.NUMERO_COTA, ");
+		sql.append("              C.NUMERO_COTA, ");
 		
-		sql.append("                     EC.REPARTE, ");
+		sql.append("              EC.REPARTE, ");
 		
 		
-		sql.append("                     (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
+		sql.append("              (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
 		
-		sql.append("                      FROM estoque_produto_cota EPE "); 
+		sql.append("               FROM estoque_produto_cota EPE "); 
 		
-		sql.append("                      WHERE EPE.COTA_ID = C.ID ");
+		sql.append("               WHERE EPE.COTA_ID = C.ID ");
 		
-        sql.append(                       tuplaSqlEdicoesBase);
+        sql.append(                tuplaSqlEdicoesBase);
 		
-		sql.append("                     ) RECEBIDO,  ");
+		sql.append("              ) RECEBIDO,  ");
 		
 			
-	    sql.append("                     (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
+	    sql.append("              (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
 			
-		sql.append("                      FROM estoque_produto_cota EPE "); 
+		sql.append("               FROM estoque_produto_cota EPE "); 
 			
-		sql.append("                      WHERE EPE.COTA_ID = C.ID ");
+		sql.append("               WHERE EPE.COTA_ID = C.ID ");
 			
-	    sql.append(                       tuplaSqlEdicoesBase);
+	    sql.append(                tuplaSqlEdicoesBase);
 			
-		sql.append("                     ) VENDA_MEDIA  ");
+		sql.append("              ) VENDA_MEDIA  ");
 		
 		
 		sql.append("              FROM estudo_cota_gerado EC ");
@@ -190,7 +196,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 			sql.append(this.obterRestricaoWhereFaixaReparte(faixas));
 		}
 		
-		sql.append("	) REP ");
+		sql.append("	          ) REP ");
 
 		sql.append("        GROUP BY NUMERO_COTA) TES ");
 		
