@@ -48,6 +48,7 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.DateUtil;
 
 @Component
@@ -71,7 +72,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     
     @Autowired
 	private LancamentoService lancamentoService;
-       
+
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
         tempVar.set(new ArrayList<NotaFiscalEntradaFornecedor>());
@@ -107,6 +108,9 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 notafiscalEntrada.setNumero(input.getNotaFiscal());
                 notafiscalEntrada.setSerie(input.getSerieNotaFiscal());
                 
+                this.getSession().merge(notafiscalEntrada);
+                
+                this.atualizarValoresProdutoEdicao(input);
                 
                 if(chaveAcessoAntiga==null){
             
@@ -130,16 +134,15 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                         message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
                         String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio()
-                                + " *Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
+                                + " Atualizada com Nota Fiscal " + input.getNotaFiscal() + " Série "+input.getSerieNotaFiscal()));
                 }
                 
-                this.getSession().merge(notafiscalEntrada);
+                return;
             }
-        } else{
-        
-           notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal(), input.getSerieNotaFiscal(), input.getCnpjEmissor(),
-                input.getNumeroNotaEnvio());
         }
+        
+        notafiscalEntrada = obterNotaFiscal(input.getNotaFiscal(), input.getSerieNotaFiscal(), input.getCnpjEmissor(),
+                input.getNumeroNotaEnvio());
         
         if (notafiscalEntrada == null) {
             
@@ -154,6 +157,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 notafiscalEntrada = calcularValores(notafiscalEntrada);
                 
                 this.getSession().persist(notafiscalEntrada);
+                
+                this.atualizarValoresProdutoEdicao(input);
                 
                 this.ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO,
                         String.format("Nota Fiscal de Entrada %1$s"
@@ -312,10 +317,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 
                 this.getSession().persist(produtoEdicao);
                 
-	                this.ndsiLoggerFactory.getLogger().logError(
-	                        message,
-	                        EventoExecucaoEnum.RELACIONAMENTO,
-	                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao());
+                this.ndsiLoggerFactory.getLogger().logError(
+                        message,
+                        EventoExecucaoEnum.RELACIONAMENTO,
+                        "Classificação não Inserida para a o Produto "+produto.getCodigo()+" Edição "+inputItem.getEdicao());
                 
                 Date dataAtual = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
@@ -349,11 +354,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             	produtoEdicao.setPrecoPrevisto(inputItem.getPreco() == null ? BigDecimal.ZERO : new BigDecimal(inputItem.getPreco()));
                 produtoEdicao.setPrecoVenda(tratarValorNulo(produtoEdicao.getPrecoPrevisto()));
                 this.getSession().persist(produtoEdicao);
-                
-                this.ndsiLoggerFactory.getLogger().logInfo(
-                        message,
-                        EventoExecucaoEnum.RELACIONAMENTO,
-                        "*** Atualização dos Preços para "+tratarValorNulo(produtoEdicao.getPrecoPrevisto())+" Produto "+inputItem.getCodigoProduto()+" Edição "+inputItem.getEdicao());
             }
             
             ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
@@ -621,6 +621,62 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         criteria.add(Restrictions.eq("codigo", "5102"));
         
         return (CFOP) criteria.uniqueResult();
+    }
+    
+    private void atualizarValoresProdutoEdicao(final EMS0135Input input) {
+    	
+    	for (final EMS0135InputItem item : input.getItems()) {
+    		
+    		final ProdutoEdicao pe = this.obterProdutoEdicao(item.getCodigoProduto(), item.getEdicao());
+    		
+    		if (pe == null) {
+    			
+    			continue;
+    		}
+    		
+    		final BigDecimal precoNota = item.getPreco() == null ? BigDecimal.ZERO : new BigDecimal(item.getPreco());
+    		final BigDecimal valorDescontoNota = item.getDesconto() == null ? BigDecimal.ZERO : new BigDecimal(item.getDesconto());
+    		
+    		if (pe.getPrecoVenda() == null || BigDecimalUtil.eq(pe.getPrecoVenda(), BigDecimal.ZERO)) {
+    			
+    			pe.setPrecoVenda(precoNota);
+    		}
+    		
+    		if (pe.getPrecoCusto() == null || BigDecimalUtil.eq(pe.getPrecoCusto(), BigDecimal.ZERO)) {
+    			
+    			pe.setPrecoCusto(precoNota);
+    		}
+    		
+    		if (pe.getPrecoPrevisto() == null || BigDecimalUtil.eq(pe.getPrecoPrevisto(), BigDecimal.ZERO)) {
+    			
+    			pe.setPrecoPrevisto(precoNota);
+    		}
+    		
+    		if (Origem.INTERFACE.equals(pe.getOrigem())) {
+    			
+    			if (pe.getDescontoLogistica() == null) {
+    				
+    				pe.setOrigem(Origem.MANUAL);
+    				pe.setDesconto(valorDescontoNota);
+    				pe.setDescricaoDesconto("PROD CADASTRADO MANUALMENTE");
+    			
+    			} else if (pe.getDescontoLogistica().getPercentualDesconto() == null || 
+    					BigDecimalUtil.eq(pe.getDescontoLogistica().getPercentualDesconto(), BigDecimal.ZERO)) {
+    				
+    				pe.getDescontoLogistica().setPercentualDesconto(valorDescontoNota);
+    			}
+    		
+    		} else if (Origem.MANUAL.equals((pe.getOrigem())) || Origem.PRODUTO_SEM_CADASTRO.equals((pe.getOrigem()))) {
+    			
+    			if (pe.getDesconto() == null || BigDecimalUtil.eq(pe.getDesconto(), BigDecimal.ZERO)) {
+    				
+    				pe.setDesconto(valorDescontoNota);
+    				pe.setDescricaoDesconto("PROD CADASTRADO MANUALMENTE");
+    			}
+    		}
+    		
+        	this.getSession().merge(pe);
+    	}
     }
     
     private Fornecedor obterFornecedor(Message message) {

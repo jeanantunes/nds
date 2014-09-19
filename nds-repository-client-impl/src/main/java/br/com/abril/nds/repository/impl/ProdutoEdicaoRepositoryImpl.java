@@ -1538,16 +1538,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" SELECT ");
 
 		hql.append(" sum(estoqueProdutoCota.qtdeRecebida) as reparte, ");
-		hql.append(" case when l.status in (:statusLancFechadoRecolhido) then ");
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
-		hql.append(" else null end as qtdeVendas ");
+		hql.append(" sum(case when  ");
+		hql.append(" 	(select count(*) from Lancamento l where l.status in (:statusLancFechadoRecolhido) and l.produtoEdicao.id=produtoEdicao.id) > 0 ");
+		hql.append(" 		then (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) "); 
+		hql.append(" 	else 0 end ) as qtdeVendas ");
 
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" JOIN produtoEdicao.lancamentos l ");
 
 		hql.append(" WHERE ");
 		hql.append(" produto.codigo = :codigoProduto ");

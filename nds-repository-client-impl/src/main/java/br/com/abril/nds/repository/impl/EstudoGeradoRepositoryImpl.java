@@ -136,15 +136,10 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
 		sql.append("   COUNT(DISTINCT (CASE WHEN epc.qtde_recebida - epc.qtde_devolvida > 0 THEN epc.cota_id ELSE NULL END)) as qtdCotasQueVenderam, ");
 				
-		sql.append("   CASE WHEN (estp.QTDE IS NULL OR estp.QTDE=0) "); 
-		sql.append("   THEN CASE WHEN plp.NUMERO_PERIODO=1 "); 
-		sql.append("   THEN ((l.REPARTE)-l.REPARTE_PROMOCIONAL) "); 
-		sql.append("   ELSE CASE WHEN l.REPARTE=0 "); 
-		sql.append("   THEN eg.QTDE_REPARTE "); 
-		sql.append("   ELSE l.REPARTE "); 
-		sql.append("   END "); 
-		sql.append("   END ");
-		sql.append("   ELSE estp.qtde "); 
+		sql.append("   CASE  ");
+		sql.append("   WHEN (estp.QTDE IS NULL OR estp.QTDE=0)    THEN CASE "); 
+		sql.append("   WHEN plp.NUMERO_PERIODO=1 THEN ((l.REPARTE)-l.REPARTE_PROMOCIONAL) END ");    
+		sql.append("   ELSE l.REPARTE ");                   
 		sql.append("   END AS qtdReparteDistribuidor, ");
 
 		sql.append("   est.ABRANGENCIA AS abrangenciaSugerida, ");
