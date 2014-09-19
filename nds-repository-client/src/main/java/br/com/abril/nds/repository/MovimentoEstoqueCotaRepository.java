@@ -519,4 +519,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
     List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento);
 	
     void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto);
+    
+    BigDecimal obterValorConsignadoCotaAVista(final Date dataMovimentacao);
 }

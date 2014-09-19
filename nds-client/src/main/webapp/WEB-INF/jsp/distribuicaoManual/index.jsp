@@ -66,6 +66,7 @@
 			<input type="hidden" name="estudoDTO.reparteDistribuido" id="reparteDistribuidoXLS" value=""/>
 			<input type="hidden" name="estudoDTO.dataLancamento" id="dataLancamentoXLS" value=""/>
 			<input type="hidden" name="estudoDTO.lancamentoId" id="lancamentoIdXLS" value=""/>
+			<input type="hidden" name="estudoDTO.reparteTotal" id="reparteTotalXLS" value=""/>
 			
 		</div>		
 	  </form>
@@ -177,7 +178,7 @@
 				<span class="bt_novos">
 					<a href="javascript:;" id="distbManual_importacao" onclick="distribuicaoManual.add_lote();">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png"
-						alt="Confirmar" hspace="5" border="0" />Importar distribuição em lote -SANTOS-</a>
+						alt="Confirmar" hspace="5" border="0" />Importar distribuição em lote</a>
 				</span>
 			</fieldset>
 		</div>

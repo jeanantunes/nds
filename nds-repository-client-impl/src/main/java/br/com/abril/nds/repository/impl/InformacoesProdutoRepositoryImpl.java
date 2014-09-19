@@ -44,8 +44,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" estudoG.qtdeReparte AS reparteDistribuido, ");
 		hql.append(" estudoG.abrangencia AS percentualAbrangencia, ");
 		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=prodEdicao.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
-		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor AS datalanc, ");
+		hql.append(" lancamento.dataLancamentoPrevista AS datalanc, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 		hql.append(" CASE ");
 		hql.append(" WHEN estudoG.dataAlteracao = null THEN estudoG.dataCadastro ");
@@ -59,7 +59,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" estudoG.tipoGeracaoEstudo AS algoritmo, ");
 		hql.append(" usuarioEstudo.nome AS nomeUsuario, ");
 		
-		hql.append(" (select coalesce(sum(case when (tipo.operacaoEstoque = 'ENTRADA') then mec.qtde else (mec.qtde * -1) end), 0)  ");
+		hql.append(" (select coalesce(sum(case when (tipo.operacaoEstoque = 'ENTRADA') then -mec.qtde else mec.qtde end), 0)  ");
 		hql.append(" from MovimentoEstoqueCota mec ");
 		hql.append(" join mec.produtoEdicao pe ");
 		hql.append(" join mec.lancamento lanc ");
