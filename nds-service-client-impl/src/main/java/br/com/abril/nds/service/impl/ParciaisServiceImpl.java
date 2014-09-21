@@ -246,61 +246,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING,mensagens);
 		}
 	}
-	
-//	private PeriodoLancamentoParcial gerarPeriodoManual(LancamentoParcial lancamentoParcial, Date dataRecolhimento, Long idProdutoEdicao, Usuario usuario) {
-//
-//		PeriodoLancamentoParcial periodoPosterior = this.obterPeriodoPosterior(dataRecolhimento, idProdutoEdicao);
-//		
-//		PeriodoLancamentoParcial periodoAnterior = this.obterPeriodoAnterior(dataRecolhimento, idProdutoEdicao);
-//		
-//		TipoLancamentoParcial tipoLancamentoNovoPeriodo = TipoLancamentoParcial.PARCIAL;
-//
-//		Integer numeroPeriodo = null;
-//		
-//		Date dataLancamento = null;
-//		
-//		if (periodoAnterior == null) {
-//
-//			dataLancamento = lancamentoParcial.getLancamentoInicial();
-//			
-//			numeroPeriodo = BigInteger.ONE.intValue();
-//		
-//		} else {
-//
-//			Date dataRecolhimentoPeriodoAnterior = periodoAnterior.getUltimoLancamento().getDataRecolhimentoDistribuidor();
-//			
-//			dataLancamento = this.obterProximaDataComFatorRelancamentoParcialDistribuidor(dataRecolhimentoPeriodoAnterior);
-//
-//			numeroPeriodo = periodoAnterior.getNumeroPeriodo() + BigInteger.ONE.intValue();
-//		}
-//		
-//		if (periodoPosterior == null) {
-//
-//			tipoLancamentoNovoPeriodo = TipoLancamentoParcial.FINAL;		
-//		}
-//
-//		PeriodoLancamentoParcial novoPeriodo = this.gerarPeriodoParcial(lancamentoParcial, numeroPeriodo, tipoLancamentoNovoPeriodo);
-//
-//		for (Lancamento toCloneLancamento : periodoPosterior.getLancamentos()) {
-//			try {				
-//
-//				Date novaDataLancamento = this.obterProximaDataComFatorRelancamentoParcialDistribuidor(dataRecolhimento);
-//				
-//				toCloneLancamento.setDataLancamentoDistribuidor(novaDataLancamento);
-//				toCloneLancamento.setDataLancamentoPrevista(novaDataLancamento);
-//
-//				toCloneLancamento.setPeriodoLancamentoParcial(novoPeriodo);
-//			} catch (Exception e) {
-//				throw new ValidacaoException(TipoMensagem.WARNING, "teste");
-//			}
-//		}
-//		
-//		novoPeriodo.incrementarNumero();
-//		
-//		this.gerarLancamento(periodoPosterior, new ProdutoEdicao(idProdutoEdicao), dataLancamento, dataRecolhimento, usuario);
-//		
-//		return novoPeriodo;
-//	}
 
 	/**
 	 * {@inheritDoc}
@@ -832,8 +777,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
-			Date dataRecolhimento, Long idProdutoEdicao) {
-		return periodoLancamentoParcialRepository.obterDetalhesVenda(dataLancamento, dataRecolhimento, idProdutoEdicao);
+			Date dataRecolhimento, Long idProdutoEdicao, Long idPeriodo) {
+		return periodoLancamentoParcialRepository.obterDetalhesVenda(dataLancamento, dataRecolhimento, idProdutoEdicao, idPeriodo);
 	}
 
 	@Override

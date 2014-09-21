@@ -399,6 +399,7 @@ var ParciaisController = $.extend(true, {
 			row.cell.dataLancamento +'\', \''+
 			row.cell.dataRecolhimento +'\', \''+
 			row.cell.idProdutoEdicao +'\', \''+
+			row.cell.idPeriodo +'\', \''+
 			'\');">' + row.cell.vendas + '</a>';
 		}
 	
@@ -652,15 +653,15 @@ var ParciaisController = $.extend(true, {
 			'dialog-edit-lancamento-dia-util');	
 	},
 	
-	detalheVendas : function(dtLcto, dtRcto, idProdutoEdicao) {
+	detalheVendas : function(dtLcto, dtRcto, idProdutoEdicao, idPeriodo) {
 		
 		var data = [];
 		
 		data.push({name:'dtLcto',				value: dtLcto});
 		data.push({name:'dtRcto',				value: dtRcto});
+		data.push({name:'idPeriodo',			value: idPeriodo});
 		data.push({name:'idProdutoEdicao',		value: idProdutoEdicao});
-		
-		
+
 		$(".parciaisVendaGrid",ParciaisController.workspace).flexOptions({			
 			url : contextPath + "/parciais/pesquisarParciaisVenda",
 			dataType : 'json',
