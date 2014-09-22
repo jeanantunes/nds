@@ -695,8 +695,9 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipadaVO = 
 				getListaChamadaEncalheAntecipadaVO(infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe());
 		
+		
 		for (ChamadaEncalheAntecipadaVO chamadaEncalheAntecipadaVO : listaChamadaEncalheAntecipadaVO) {
-			chamadaEncalheAntecipadaVO.setReplicar(getCheckedFromDataHolder(chamadaEncalheAntecipadaVO.getNomeCota()));
+			chamadaEncalheAntecipadaVO.setReplicar(getCheckedFromDataHolder(chamadaEncalheAntecipadaVO.getNumeroCota()));
 		}
 		
 		TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>> tableModel = new TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>>();
@@ -707,7 +708,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		tableModel.setTotal(infoChamdaAntecipadaEncalheDTO.getTotalRegistros().intValue());
 		
-		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel,null,null);
+		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel, null, null);
 
 		return resultadoChamadaEncalheAntecipadaVO;
 	}
@@ -1071,7 +1072,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
     	
     	DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
     	
-    	if(dataHolder == null){
+    	if((dataHolder == null) || (dataHolder.getActionMap() == null)){
         	
         	dataHolder = new DataHolder();
         	
@@ -1090,7 +1091,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
 		
-		if (dataHolder != null) {
+		if ((dataHolder != null) && (dataHolder.getActionMap() != null)) {
 
 			return dataHolder.getData(DATA_HOLDER_ACTION_KEY, numeroCota, "checado");
 		}
