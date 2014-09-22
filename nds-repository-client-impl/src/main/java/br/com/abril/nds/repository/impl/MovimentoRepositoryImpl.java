@@ -306,7 +306,6 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		sql.append(" null as VALOR_DESCONTO, ");
 		sql.append(" null as COTA_ID, ");
 		sql.append(" null as ESTOQUE_PROD_COTA_ID, ");
-		sql.append(" null as ESTOQUE_PROD_COTA_JURAMENTADO_ID, ");
 		sql.append(" null as ESTUDO_COTA_ID, ");
 		sql.append(" null as NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ");
 		sql.append(" null as NOTA_ENVIO_ITEM_SEQUENCIA, ");
@@ -373,7 +372,6 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		sql.append(" VALOR_DESCONTO, ");
 		sql.append(" COTA_ID, ");
 		sql.append(" ESTOQUE_PROD_COTA_ID, ");
-		sql.append(" ESTOQUE_PROD_COTA_JURAMENTADO_ID, ");
 		sql.append(" ESTUDO_COTA_ID, ");
 		sql.append(" NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ");
 		sql.append(" NOTA_ENVIO_ITEM_SEQUENCIA, ");
@@ -440,7 +438,6 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		sql.append(" null as VALOR_DESCONTO, ");
 		sql.append(" COTA_ID, ");
 		sql.append(" null as ESTOQUE_PROD_COTA_ID, ");
-		sql.append(" null as ESTOQUE_PROD_COTA_JURAMENTADO_ID, ");
 		sql.append(" null as ESTUDO_COTA_ID, ");
 		sql.append(" null as NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ");
 		sql.append(" null as NOTA_ENVIO_ITEM_SEQUENCIA, ");

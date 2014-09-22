@@ -104,6 +104,22 @@ public class DistribuicaoManualController extends BaseController {
     @Post
     @Path("/gravarEstudo")
     public void gravarEstudo(EstudoDTO estudoDTO, List<EstudoCotaDTO> estudoCotasDTO) throws Exception {
+    	
+    	Long qtdEstudoParaLancamento = 0L;
+    	Date dataLanctoFormatada;
+    	
+    	try {
+    		dataLanctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento());
+		} catch (ParseException e) {
+			 throw new Exception("Data de lançamento em formato incorreto.");
+		}
+
+    	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(estudoDTO.getLancamentoId(), dataLanctoFormatada);
+    	
+    	if(qtdEstudoParaLancamento >= 3){
+    		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
+    	}
+    	
     	EstudoGerado estudo = new EstudoGerado();
 		estudo.setProdutoEdicao(new ProdutoEdicao(estudoDTO.getProdutoEdicaoId()));
 		estudo.setReparteDistribuir(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
@@ -113,12 +129,9 @@ public class DistribuicaoManualController extends BaseController {
 		estudo.setLiberado(false);
 		estudo.setUsuario(getUsuarioLogado());
 		estudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.MANUAL);
+		estudo.setReparteTotal(estudoDTO.getReparteTotal());
+		estudo.setDataLancamento(dataLanctoFormatada);
 		
-		try {
-		    estudo.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));
-		} catch (ParseException e) {
-		    throw new Exception("Data de lançamento em formato incorreto.");
-		}
 		
 		for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
 		    EstudoCotaGerado estudoCota = new EstudoCotaGerado();
@@ -143,7 +156,20 @@ public class DistribuicaoManualController extends BaseController {
     
     @Post
 	@Path("/uploadArquivoLoteDistbManual")
-	public void uploadArquivoEmLote(UploadedFile excelFileDistbManual, EstudoDTO estudoDTO) throws FileNotFoundException, IOException{
+	public void uploadArquivoEmLote(UploadedFile excelFileDistbManual, EstudoDTO estudoDTO) throws FileNotFoundException, IOException, Exception{
+    	
+    	Long qtdEstudoParaLancamento = 0L;
+
+    	try {
+    		qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(estudoDTO.getLancamentoId(), new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));
+		} catch (ParseException e) {
+			 throw new Exception("Data de lançamento em formato incorreto.");
+		}
+
+    	
+    	if(qtdEstudoParaLancamento >= 3){
+    		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
+    	}
     	
     	List<EstudoCotaDTO> cotasParaDistribuicao = XlsUploaderUtils.getBeanListFromXls(EstudoCotaDTO.class, excelFileDistbManual);
     	
