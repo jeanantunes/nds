@@ -726,6 +726,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             }
             
             T.produtoEdicaoBases = [];
+            T.bonificacaoSelecionados = [];
 
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		
