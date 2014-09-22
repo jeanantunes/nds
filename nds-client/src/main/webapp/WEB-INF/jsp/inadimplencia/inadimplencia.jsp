@@ -25,6 +25,7 @@ $(function(){
 <div id="dialog-detalhes" title="Detalhe da Divida">     
 </div>
 </form>
+
 <form id="form-detalhes-comissao">
 <div id="dialog-detalhes-comissao" title="Detalhe da Divida - Comiss&#259;o">     
 </div>

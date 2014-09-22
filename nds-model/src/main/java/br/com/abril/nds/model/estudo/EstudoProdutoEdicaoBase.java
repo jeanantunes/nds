@@ -51,7 +51,10 @@ public class EstudoProdutoEdicaoBase implements Serializable {
 	
 	@Column(name = "PERIODO_PARCIAL")
 	private Long periodoParcial;
-
+	
+	@Column(name = "isConsolidado")
+	private boolean isConsolidado = false;
+	
 	public Long getId() {
 		return id;
 	}
@@ -122,6 +125,14 @@ public class EstudoProdutoEdicaoBase implements Serializable {
 
 	public void setPeriodoParcial(Long periodoParcial) {
 		this.periodoParcial = periodoParcial;
+	}
+
+	public boolean isConsolidado() {
+		return isConsolidado;
+	}
+
+	public void setConsolidado(boolean isConsolidado) {
+		this.isConsolidado = isConsolidado;
 	}
 	
 }

@@ -51,6 +51,7 @@ import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
+import br.com.abril.nds.process.verificartotalfixacoes.SelecaoBancas;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -90,6 +91,9 @@ public class EstudoAlgoritmoService {
     
     @Autowired
     private VerificarTotalFixacoes verificarTotalFixacoes;
+    
+    @Autowired
+    private SelecaoBancas selecaoBancas; 
     
     @Autowired
     private AjusteReparte ajusteReparte;
@@ -365,6 +369,7 @@ public class EstudoAlgoritmoService {
         estudo.setReparteDistribuir(reparte);
         estudo.setReparteDistribuirInicial(reparte);
         estudo.setTipoGeracao(TipoGeracaoEstudo.VENDA_MEDIA.toString());
+        estudo.setReparteTotal(distribuicaoVendaMedia.getReparteTotal());
         
         estudo.setDistribuicaoPorMultiplos(0); // valor default
         estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor
@@ -397,10 +402,15 @@ public class EstudoAlgoritmoService {
                 ed.getProduto().setId(base.getIdProduto());
                 ed.setNumeroEdicao(base.getNumeroEdicao());
                 ed.setIndicePeso(new BigDecimal(base.getPeso()));
-                ed.setPeriodo(base.getPeriodo());
                 ed.setParcial(base.isParcial());
                 ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
                 ed.setDataLancamento(base.getDataLancamento());
+                ed.setParcialConsolidada(base.isParcialConsolidado());
+                
+                if(!base.isParcialConsolidado()){
+                	ed.setPeriodo(base.getPeriodo());
+                }
+                
                 edicoesBase.add(ed);
             }
             estudo.setEdicoesBase(edicoesBase);
@@ -428,6 +438,8 @@ public class EstudoAlgoritmoService {
         carregarParametros(estudo);
         
         definicaoBases.executar(estudo);
+        
+        selecaoBancas.executar(estudo);
         
         verificarTotalFixacoes.executar(estudo);
         
@@ -543,8 +555,8 @@ public class EstudoAlgoritmoService {
                             continue;
                         }
                     }
-                    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) ||
-                            !base.isParcial()) {
+                    //if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) || !base.isParcial()) {
+                    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getProduto().getCodigoICD().equals(base.getProduto().getCodigoICD())) || !base.isParcial()) {
                         nova.add(base);
                     }
                 }

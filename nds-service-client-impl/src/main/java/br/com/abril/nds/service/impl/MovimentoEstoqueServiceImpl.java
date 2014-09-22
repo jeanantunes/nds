@@ -3,10 +3,15 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
@@ -17,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
+import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueDTO;
@@ -61,6 +67,7 @@ import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -140,10 +147,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Autowired
     private EstoqueProdutoService estoqueProdutoService; 
-
     
     @Autowired
     private CobrancaFornecedorValidator cobrancaFornecedorValidator;
+    
+    @Autowired
+    private FormaCobrancaRepository formaCobrancaRepository;
 
     @Override
     @Transactional
@@ -220,12 +229,30 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(lancamento.getIdProdutoEdicao());
         
-        tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, null, 
+        tratarIncrementoProximoLancamento(descontos, descontoProximosLancamentos, null, 
                 produtoEdicao.getProduto().getFornecedor().getId(), lancamento.getIdProdutoEdicao(), lancamento.getIdProduto());
         
         final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCotaComProdutoContaFirme = new ArrayList<>();
         
         final boolean produtoContaFirme = (FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()));
+        
+        List<FormaCobrancaFornecedorDTO> formasCobrancaCotaFornecedor = formaCobrancaRepository.obterFormasCobrancaCotaFornecedor();
+        formasCobrancaCotaFornecedor.addAll(formaCobrancaRepository.obterFormasCobrancaDistribuidorFornecedor());
+        ordenarFormasCobrancaCotaFornecedor(formasCobrancaCotaFornecedor);
+        
+        Map<Long, List<Long>> mapaFornecedorCotas = new HashMap<>();
+        for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+        	if(mapaFornecedorCotas.get(fcf.getIdFornecedor()) == null) {
+        		mapaFornecedorCotas.put(fcf.getIdFornecedor(), new ArrayList<Long>());
+        	}
+        	
+        	mapaFornecedorCotas.get(fcf.getIdFornecedor()).add(fcf.getIdCota());
+        }
+        
+        Set<Long> cotasSemFormaCobranca = new HashSet<>();
+        montarListaCotasComProblemasFormaCobranca(listaEstudoCota, produtoEdicao, formasCobrancaCotaFornecedor, mapaFornecedorCotas, cotasSemFormaCobranca);
+        
+        validarListaCotasCompProblemasFormaCobranca(cotasSemFormaCobranca);
         
         for (final EstudoCotaDTO estudoCota : listaEstudoCota) {
             
@@ -234,13 +261,29 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 continue;
             }
             
-            this.cobrancaFornecedorValidator.filter(
-            	descontos,
-            	this.cotaRepository.buscarCotaPorID(estudoCota.getIdCota()), 
-            	produtoEdicao.getProduto().getFornecedor(), 
-            	produtoEdicao.getProduto()
-            ).validate();
-
+            boolean formaCobrancaValida = false;
+            for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+            	
+            	if(fcf.getIdCota() != null && fcf.getIdCota().equals(estudoCota.getIdCota()) 
+            			&& fcf.getIdFornecedor() != null && fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
+            		formaCobrancaValida = true;
+            		break;
+            	}
+            	
+            	if(!formaCobrancaValida) {
+            		if(fcf.getIdCota() == null && fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
+            			formaCobrancaValida = true;
+            			break;
+            		}
+            	}
+            }
+            
+            if(!formaCobrancaValida) {
+            	Cota cota = this.cotaRepository.buscarPorId(estudoCota.getIdCota());
+            	LOGGER.error("Erro ao obter Forma de Cobrança para Cota/Fornecedor.");
+            	throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cota.getNumeroCota()));
+            }
+            
             tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
                     produtoEdicao.getProduto().getFornecedor().getId(), lancamento.getIdProdutoEdicao(), lancamento.getIdProduto());
             
@@ -287,6 +330,88 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         return movimentosEstoqueCotaComProdutoContaFirme;
         
     }
+
+	private void ordenarFormasCobrancaCotaFornecedor(List<FormaCobrancaFornecedorDTO> formasCobrancaCotaFornecedor) {
+		Collections.sort(formasCobrancaCotaFornecedor, new Comparator<FormaCobrancaFornecedorDTO>() {
+
+			@Override
+			public int compare(FormaCobrancaFornecedorDTO o1, FormaCobrancaFornecedorDTO o2) {
+				
+				if(o1 == null && o2 == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Parâmetro Forma de Cobrança nulo ou incorreto.");
+				}
+				
+				if (o1.getIdFornecedor() == null || o2.getIdFornecedor() == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor nulo. Parâmetro Forma de Cobrança incorreto.");
+				}
+				
+				if(o1.getIdCota() == null) return -1;
+				if(o2.getIdCota() == null) return 1;
+				
+				return o1.getIdCota().compareTo(o2.getIdCota());
+			}
+		});
+	}
+
+	private void validarListaCotasCompProblemasFormaCobranca(Set<Long> cotasSemFormaCobranca) {
+		if(cotasSemFormaCobranca != null && !cotasSemFormaCobranca.isEmpty()) {
+        	
+        	LOGGER.error("Erro ao obter Forma de Cobrança para Cota/Fornecedor.");
+        	StringBuilder cotasComProblemas = new StringBuilder();
+        	List<Long> cotas = new ArrayList<>(cotasSemFormaCobranca);
+        	cotas.remove(null);
+        	Collections.sort(cotas);
+        	for(Long numCota : cotas) {
+        		
+        		cotasComProblemas.append(numCota).append(" / ");
+        	}
+        	cotasComProblemas.replace(cotasComProblemas.length()-3, cotasComProblemas.length(), "");
+        	throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cotasComProblemas.toString()));
+        }
+	}
+
+	private void montarListaCotasComProblemasFormaCobranca(final List<EstudoCotaDTO> listaEstudoCota,
+			ProdutoEdicao produtoEdicao, List<FormaCobrancaFornecedorDTO> formasCobrancaCotaFornecedor,
+			Map<Long, List<Long>> mapaFornecedorCotas, Set<Long> cotasSemFormaCobranca) {
+		
+		Map<Long, Long> cotaIdsNumeroCota = new HashMap<>();
+		for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+			cotaIdsNumeroCota.put(fcf.getIdCota(), fcf.getNumeroCota());
+		}
+		
+		for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+        	
+			if(!fcf.getIdFornecedor().equals(produtoEdicao.getProduto().getFornecedor().getId())) {
+				continue;
+			}
+			
+        	List<Long> fornecedorCotas = mapaFornecedorCotas.get(fcf.getIdFornecedor());
+        	for (final EstudoCotaDTO estudoCota : listaEstudoCota) {
+        		
+        		if(fornecedorCotas.contains(estudoCota.getIdCota())) {
+        			continue;
+        		}
+        		
+        		if(!fornecedorCotas.contains(estudoCota.getIdCota())) {
+        			for(Entry<Long, List<Long>> fornecedorId : mapaFornecedorCotas.entrySet()) {
+        				if(mapaFornecedorCotas.get(fornecedorId.getKey()) != null 
+        						&& mapaFornecedorCotas.get(fornecedorId.getKey()).contains(estudoCota.getIdCota())) {
+        					cotasSemFormaCobranca.add(cotaIdsNumeroCota.get(estudoCota.getIdCota()));
+        					continue;
+        				}
+        			}
+        		}
+        		
+    			if(!fornecedorCotas.contains(estudoCota.getIdCota()) && fornecedorCotas.contains(null)) {
+    				continue;
+    			}
+        		
+    			if(fcf.getNumeroCota() == null) continue;
+    			cotasSemFormaCobranca.add(fcf.getNumeroCota());
+        	}
+        	
+        }
+	}
 
 	private void tratarIncrementoProximoLancamento(Map<String, DescontoDTO>  descontos, 
 	        DescontoProximosLancamentos descontoProximosLancamentos, Long idCota, Long idFornecedor, Long idProduto, Long idEdicao) {
@@ -1657,16 +1782,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
-				                                                /**
+				/**
                  * A busca dos descontos é feita diretamente no Map, por chave,
                  * agilizando o retorno do resultado
                  */
                 DescontoDTO descontoDTO = null;
                 try {
                     descontoDTO = descontoService.obterDescontoPor(descontos, idCota, produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+                    if(descontoDTO == null) {
+                    	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
+                    	throw new Exception();
+                    }
                 } catch (final Exception e) {
-                    final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / "
-                            + produtoEdicao.getNumeroEdicao();
+                    final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
                     LOGGER.error(msg, e);
                     throw new ValidacaoException(TipoMensagem.ERROR, msg);
                 }

@@ -187,8 +187,10 @@ var consultaBoletosController = $.extend(true, {
 	},
 	
 	imprimirBoleto : function(result){
+		
 		if (result!=''){
-			document.location.assign(contextPath + "/financeiro/boletos/imprimeBoleto?nossoNumero="+ result);
+			
+			$('#download-iframe-boleto', consultaBoletosController.workspace).attr('src', contextPath + "/financeiro/boletos/imprimeBoleto?nossoNumero=" + result);
 		}
 	}
 

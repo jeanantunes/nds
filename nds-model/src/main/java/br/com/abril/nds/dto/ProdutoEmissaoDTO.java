@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
@@ -32,7 +33,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private String desconto;
 	
-	private String tipoRecolhimento;
+	private TipoLancamentoParcial tipoRecolhimento;
 	
 	private String dataLancamento;
 	
@@ -169,14 +170,22 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @return the tipoRecolhimento
 	 */
-	public String getTipoRecolhimento() {
+	public TipoLancamentoParcial getTipoRecolhimento() {
 		return tipoRecolhimento;
 	}
+	
+	public String getInicialTipoRecolhimento() {
+		
+		return ((this.tipoRecolhimento != null) ? (tipoRecolhimento.getDescricao().indexOf("P") > -1 ? "P": "F") : "F");
+	}
+	
 	/**
 	 * @param tipoRecolhimento the tipoRecolhimento to set
 	 */
-	public void setTipoRecolhimento(Boolean tipoRecolhimento) {
-		this.tipoRecolhimento = tipoRecolhimento ? "P":"F";
+	public void setTipoRecolhimento(TipoLancamentoParcial tipoRecolhimento) {
+		
+		this.tipoRecolhimento = tipoRecolhimento;
+		//this.tipoRecolhimento = tipoRecolhimento ? "P":"F";
 	}
 	/**
 	 * @return the dataLancamento

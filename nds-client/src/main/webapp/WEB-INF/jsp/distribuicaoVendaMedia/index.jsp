@@ -413,6 +413,10 @@ function limparLstExcecao1(){
                             <td id="numeroEdicao">${ produtoEdicao.numeroEdicao }</td>
                           </tr>
                           <tr>
+                            <td>Período:</td>
+                            <td>${ lancamento.periodoLancamentoParcial.numeroPeriodo }</td>
+                          </tr>
+                          <tr>
                             <td>Preço R$</td>
                             <td> <fmt:formatNumber type="currency" minFractionDigits="2" currencySymbol="" value="${ produtoEdicao.precoVenda }" /> </td>
                           </tr>
@@ -488,10 +492,12 @@ function limparLstExcecao1(){
                    	      <td width="56">${ produtoEdicao.codigoProduto }</td>
                    	      <td width="41">Produto:</td>
                    	      <td width="226">${ produtoEdicao.nomeProduto }</td>
-                          <td>Classificação:</td>
+                          <td>Classif.:</td>
                           <td width="156">${ produtoEdicao.classificacao }</td>
                    	      <td width="35">Edição:</td>
-                   	      <td width="83">${ produtoEdicao.numeroEdicao }</td>
+                   	      <td width="40">${ produtoEdicao.numeroEdicao }</td>
+                   	      <td width="35">Período:</td>
+                   	      <td width="30">${ lancamento.periodoLancamentoParcial.numeroPeriodo }</td>
                    	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();" style="margin-right: 1px;"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
                	        </tr>
                	    </table>

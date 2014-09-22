@@ -511,43 +511,39 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         carregarDescricaoEstoque(encalhe);
        
     }
-    
-    
+
     private void carregarDescricaoEstoque(FechamentoFisicoLogicoDTO encalhe) {
     	
     	if(encalhe.getFechado()) {
-    		
+
     		if(isEstoqueLancamento(encalhe)) {
-    			
+
                 encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-                
+
     		} else if(encalhe.isMatrizRecolhimento()) {
-    			
+
     			encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
     			
     		} else {
     			
     			encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
     		}
-    		
+
     	} else {
-    		
-            if ( encalhe.isChamadao() && !encalhe.isMatrizRecolhimento()) {
-        		
+
+            if (encalhe.isChamadao() && !encalhe.isMatrizRecolhimento()) {
+
             	encalhe.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
-            
+
             } else if (isEstoqueLancamento(encalhe)) {
-            	
+
             	encalhe.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-            
+
             } else {
-            
-            	encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());
-            
-            }
-    		
-    	}
-    	
+
+            	encalhe.setEstoque(TipoEstoque.DEVOLUCAO_ENCALHE.getDescricaoAbreviada());            
+            }    		
+    	}    	
     }
     
     /**
@@ -580,8 +576,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             fechamento = listaFechamento.get(i);
             
-            final BigInteger exemplaresDevolucao = fechamento.getExemplaresDevolucao() == null ?
-            		BigInteger.ZERO : fechamento.getExemplaresDevolucao();
+            final BigInteger exemplaresDevolucao = fechamento.getFisico() != null ?
+            		fechamento.getFisico() : fechamento.getExemplaresDevolucao() == null ? BigInteger.ZERO : fechamento.getExemplaresDevolucao();
             
             final BigInteger exemplaresDevolucaoJuramentado = fechamento.getExemplaresDevolucaoJuramentado() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresDevolucaoJuramentado();
@@ -589,19 +585,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
             		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
             
-            if (filtro.isCheckAll() || Boolean.valueOf(fechamento.getReplicar())) {
-
-                qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
-
-            } else if (fechamento.getFisico() == null) {
+            if (exemplaresDevolucao == null) {
             	
-            	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");
-            	
-            } else {
-                
-                qtd = fechamento.getFisico();
+            	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
+            qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
+
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
             id.setDataEncalhe(filtro.getDataEncalhe());
             final ProdutoEdicao pe = new ProdutoEdicao();
@@ -1214,33 +1204,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         // TODO: Refatorar a parte de fechamento de encalhe para melhor
         // desempenho
-        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null,
-                null, null);
-        for (final FechamentoFisicoLogicoDTO itemSessao : listaEncalheSessao) {
-            for (final FechamentoFisicoLogicoDTO itemFechamento : listaEncalhe) {
-                if (itemSessao.getCodigo().equals(itemFechamento.getCodigo())
-                        && itemSessao.getEdicao().equals(itemFechamento.getEdicao())) {
-                    
-                    if (itemSessao.getFisico() == null) {
-                        itemSessao.setFisico(itemFechamento.getExemplaresDevolucao());
-                    }
-                    
-                    itemFechamento.setFisico(itemSessao.getFisico());
-                    
-                    BigInteger exemplaresDevolucao = (itemSessao.getExemplaresDevolucao() == null) ? BigInteger.ZERO : itemSessao.getExemplaresDevolucao();
-                    BigInteger exemplaresDevolucaoJuramentado = (itemSessao.getExemplaresDevolucaoJuramentado() == null) ? BigInteger.ZERO : itemSessao.getExemplaresDevolucaoJuramentado();
-                    BigInteger exemplaresVendasEncalhe = (itemSessao.getExemplaresVendaEncalhe() == null) ? BigInteger.ZERO : itemSessao.getExemplaresVendaEncalhe();
+        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null,null, null);
 
-                    BigInteger qtdeDevolucaoFisico =
-                    exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendasEncalhe);
-
-                    BigInteger qtdeFisico = (itemSessao.getFisico() == null) ? BigInteger.ZERO : itemSessao.getFisico();
-
-                    itemFechamento.setDiferenca(qtdeFisico.subtract(qtdeDevolucaoFisico));
-                }
-            }
-        }
-        
         this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository
                 .obterDataOperacaoDistribuidor());
         
@@ -1253,13 +1218,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 if (item.getRecolhimento() != null && TipoLancamentoParcial.PARCIAL.name().equals(item.getRecolhimento())) {
                 	
                 	this.tratarEncalheProdutoEdicaoParcial(item, usuario, item.getFisico());
-                	
-                } else if(item.isChamadao() && item.isMatrizRecolhimento()){
-                	 
-                	movimentoEstoqueService.transferirEstoqueProdutoChamadaoParaRecolhimento(item.getProdutoEdicao(), usuario);
-                	
-                }
-                
+
+                } else if (item.isChamadao() && item.isMatrizRecolhimento()) { 
+
+                	movimentoEstoqueService.transferirEstoqueProdutoChamadaoParaRecolhimento(item.getProdutoEdicao(), usuario);          	                	
+                }                
             }
         }
         

@@ -153,6 +153,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				if (ePdv.isPrincipal()){
 				    
 					enderecoPdv = ePdv;
+					break;
 				}
 			}
 		}
@@ -519,31 +520,35 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
+		
 		//verificar essa lista para ver a quantidade de exemplares
 		Cota cota = null;
 		
 		List<CotaProdutoEmissaoCEDTO> produtosSupRedist = chamadaEncalheRepository.obterDecomposicaoReparteSuplementarRedistribuicao(filtro);
 		
-		List<Date> datasControleFechamentoEncalhe =
-	        fechamentoEncalheRepository.obterDatasControleFechamentoEncalheRealizado(
-                filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		List<Date> datasControleFechamentoEncalhe = fechamentoEncalheRepository.obterDatasControleFechamentoEncalheRealizado(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 		
-		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota =
-	        chamadaEncalheRepository.obterProdutosEmissaoCE(filtro);
+		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = chamadaEncalheRepository.obterProdutosEmissaoCE(filtro);
+		
+		// List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cota.getId(), dataOperacaoDistribuidor);
+		
+		Map<Long, List<GrupoCota>> mapGPS =  this.grupoRepository.obterListaGrupoCotaPorDataOperacao(dataOperacaoDistribuidor);
 		
 		for(CotaEmissaoDTO dto : lista) {
 			
-			cota = cotaRepository.obterPorNumeroDaCota( dto.getNumCota());
-
-			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
-
+			cota = cotaRepository.buscarPorId(dto.getIdCota());
+			
+			Endereco endereco = cota.getPDVPrincipal().getEnderecoPrincipal().getEndereco();
+			
 			if(endereco != null) {
-				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
+				dto.setEndereco((endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
 									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
 				dto.setUf(endereco.getUf());
 				dto.setCidade(endereco.getCidade());
 				dto.setUf(endereco.getUf());
 				dto.setCep(endereco.getCep());
+			} else {
+				endereco = cota.getEnderecoPrincipal().getEndereco();
 			}
 			
 			if(cota.getPessoa() instanceof PessoaJuridica) {
@@ -562,19 +567,21 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 
 			String periodoRecolhimento;
 			
-			List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cota.getId(), dataOperacaoDistribuidor);
-			
-			if (gps != null && !gps.isEmpty()){
-			
-			    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
-				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
-				                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
-			}
-			else{
-				
+			if(mapGPS != null && !mapGPS.isEmpty()) {
+				if (mapGPS.containsKey(dto.getIdCota())){
+					
+				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+				}
+				else{
+					
+					periodoRecolhimento = dto.getDataRecolhimento();
+				}	
+			} else {
 				periodoRecolhimento = dto.getDataRecolhimento();
 			}
-	                         
+			                 
 			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
 			List<ProdutoEmissaoDTO> produtosEmissao = mapProdutosEmissaoCota.get(dto.getIdCota());
@@ -583,9 +590,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		        this.controleConferenciaEncalheCotaRepository.obterDatasControleConferenciaEncalheCotaFinalizada(
 	                dto.getIdCota(), filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 			
-			this.setApresentaQuantidadeEncalhe(
-		        datasControleFechamentoEncalhe, datasControleConferenciaEncalheCotaFinalizada,
-		        produtosEmissao, filtro, dto.getQtdGrupoCota());
+			this.setApresentaQuantidadeEncalhe(datasControleFechamentoEncalhe, datasControleConferenciaEncalheCotaFinalizada, produtosEmissao, filtro, dto.getQtdGrupoCota());
 			
 			dto.setProdutos(produtosEmissao);
 			

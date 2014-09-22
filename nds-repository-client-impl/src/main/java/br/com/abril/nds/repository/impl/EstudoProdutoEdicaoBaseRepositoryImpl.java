@@ -31,6 +31,8 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		hql.append("         codigo as codigoProduto, ");
 		hql.append("         nome as nomeProduto, ");
 		hql.append("         numero_Edicao as numeroEdicao, ");
+		hql.append("         produto_edicao.parcial as isParcial, ");
+		hql.append("         estudo_produto_edicao_base.isConsolidado as isParcialConsolidado, ");
 		hql.append("         estudo_produto_edicao_base.peso as peso    ");
 		hql.append("     FROM ");
 		hql.append("         estudo_produto_edicao_base     ");

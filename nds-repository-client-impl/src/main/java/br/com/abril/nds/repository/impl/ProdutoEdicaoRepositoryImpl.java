@@ -550,7 +550,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append("       select ");
 		
-		hql.append("           min(l.id) ");
+		hql.append("           MAX(l.id) ");
 		
 		hql.append("       from ");
 		
@@ -1537,17 +1537,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		hql.append(" SELECT ");
 
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida) as reparte, ");
-		hql.append(" case when l.status in (:statusLancFechadoRecolhido) then ");
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
-		hql.append(" else null end as qtdeVendas ");
+		hql.append(" estoqueProdutoCota.qtdeRecebida as reparte, ");
+		hql.append(" sum(case when  ");
+		hql.append(" 	(select count(*) from Lancamento l where l.status in (:statusLancFechadoRecolhido) and l.produtoEdicao.id=produtoEdicao.id) > 0 ");
+		hql.append(" 		then (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) "); 
+		hql.append(" 	else 0 end ) as qtdeVendas ");
 
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" JOIN produtoEdicao.lancamentos l ");
 
 		hql.append(" WHERE ");
 		hql.append(" produto.codigo = :codigoProduto ");
@@ -1884,6 +1884,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 			hql.append(" cota.numeroCota = :numeroCota 				");
 			
+			hql.append(" and lancamentos.status != :lancamentoFechado ");
+			
 			if(codigoNomeProduto!=null && !codigoNomeProduto.trim().isEmpty()) {
 				hql.append(" and ( produto.nome like :nomeProduto 	 ");
 				hql.append(" or produto.codigo like :codigoProduto ) ");
@@ -1905,6 +1907,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		final Query query = this.getSession().createQuery(hql.toString());
 
+		
+		
 		if(codigoNomeProduto!=null && !codigoNomeProduto.trim().isEmpty()) {
 			query.setParameter("nomeProduto", "%"+codigoNomeProduto+"%" );
 			query.setParameter("codigoProduto", "%"+codigoNomeProduto+"%" );
@@ -1915,6 +1919,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO);
 		
 		if(dataOperacao!=null){
 			query.setParameter("dataOperacao", dataOperacao);

@@ -112,7 +112,7 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 				default:
 					break;
 			}
-			if (filtro.getPaginacao().getOrdenacao() != null) {
+			if (filtro.getPaginacao()!=null && filtro.getPaginacao().getOrdenacao() != null) {
 				hql.append(filtro.getPaginacao().getOrdenacao().toString());
 			}	
 		}

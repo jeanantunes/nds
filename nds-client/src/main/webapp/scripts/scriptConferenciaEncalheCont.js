@@ -209,7 +209,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 								
-								ConferenciaEncalheCont.numeroCotaEditavel(true);
+								ConferenciaEncalheCont.numeroCotaEditavel(false);
 							},
 							"Não" : function() {
 								
@@ -1054,6 +1054,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			return;
 		}
 		
+		//$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
 		var data = [{name: "produtoEdicaoId", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
 		            {name: "qtdExemplares", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
 		            {name: "juramentada", value:$('#checkboxJueramentadaNovoEncalhe', ConferenciaEncalheCont.workspace).attr('checked') == 'checked' },

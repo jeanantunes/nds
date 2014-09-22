@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -176,14 +177,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
                 selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProdutoEdicao().getProduto()
                         .getCodigo(), null, base.getProdutoEdicao().getNumeroEdicao(), base.getProdutoEdicao()
                         .getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto()
-                        .getId() : null, false));
+                        .getId() : null, false, false));
 	    }
     } else if (estudo != null) {
         List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudo.getId());
         for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
                 selecionados.addAll(distribuicaoVendaMediaService.pesquisar(edicaoBaseEstudoDTO.getCodigoProduto(),
-                        edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false));
-        }
+                        edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false, edicaoBaseEstudoDTO.isParcialConsolidado()));        
+                }
     } else {
         EstudoTransient estudoTemp = new EstudoTransient();
         estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(
@@ -196,17 +197,24 @@ public class DistribuicaoVendaMediaController extends BaseController {
         	
     		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
     		    if (base.isParcial()) {
-    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false);
     		    	
-    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
-    		    		pevm.setIndicePeso(base.getIndicePeso());
-    		    	}
+    		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase;
     		    	
-    		        selecionados.addAll(produtosBase);
+	    		    	if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1){
+	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, false);
+	    		    	}else{
+	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, base.isParcial());
+	    		    	}
+    		    	
+	    		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
+	    		    		pevm.setIndicePeso(base.getIndicePeso());
+	    		    	}
+    		    	
+    		    	verifyExistAndAdd(selecionados, produtosBase);
     		    } else {
     		    	
     		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), 
-                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false);
+                            base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false, base.isParcial());
     		    	
     		    	for(ProdutoEdicaoVendaMediaDTO pevm : produtosBase) {
     		    		pevm.setIndicePeso(base.getIndicePeso());
@@ -215,6 +223,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		        selecionados.addAll(produtosBase);
     		        
     		    }
+    		    
     		}
     		
     		if(estudoTemp.isPracaVeraneio() 
@@ -296,6 +305,23 @@ public class DistribuicaoVendaMediaController extends BaseController {
     result.include("modoAnalise", modoAnalise);
     }
 
+	private void verifyExistAndAdd(List<ProdutoEdicaoVendaMediaDTO> selecionados, List<ProdutoEdicaoVendaMediaDTO> produtosBase) {
+		
+		boolean contains = false;
+		
+		for (ProdutoEdicaoVendaMediaDTO prodBase : produtosBase) {
+		    for (ProdutoEdicaoVendaMediaDTO prodEdSelecionado : selecionados) {
+		    	if((prodEdSelecionado.getIdLancamento().equals(prodBase.getIdLancamento()))){
+		    		contains = true;	    		        			
+				}
+			}
+		   
+			if(!contains){
+		    	selecionados.add(prodBase);
+		    }
+		}
+	}
+
     @Path("pesquisarProdutosEdicao")
     @Post
     public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String modoAnalise, Long idProdutoEdicao, String sortorder, String sortname, int page, int rp) {
@@ -316,7 +342,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	filtro.setCodigo(produto.getCodigoICD());
     	
         List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
-	
+        
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
     }
@@ -342,16 +368,13 @@ public class DistribuicaoVendaMediaController extends BaseController {
 			dto.setStatusSituacao(lancamento.getStatus().getDescricao());
 		}else{
 			dto.setDataLancamentoFormatada("");
-			//dto.setDataRecolhimentoDistribuidorFormatada("");
 		}
 		
 		dto.setPrecoVenda(produtoEdicao.getPrecoVenda());
 		dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
 		if(produtoEdicao.getProduto().getTipoSegmentoProduto() != null){
-//			dto.setSegmentacao(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao());
 		}
 		if(produtoEdicao.getTipoClassificacaoProduto() != null){
-//			dto.setClassificacao(produtoEdicao.getTipoClassificacaoProduto().getDescricao());
 		}
 		
 		dto.setPrecoVenda(produtoEdicao.getPrecoVenda());
@@ -444,7 +467,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento, String dataLancamento) throws Exception {
 	EstudoTransient estudo = null;
 	int qtdEdicoesAbertas = 0;
-
+	Long qtdEstudoParaLancamento = 0L;
+	Date datalctoFormatada;
+	
 	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
 
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode ter mais do que "
@@ -460,19 +485,26 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 
 	if (qtdEdicoesAbertas > 1) {
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não é possível utilizar mais que uma edição base aberta."));
+        throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
 	}
-    
+	
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 	produto.setNumeroEdicao(numeroEdicao);
 	produto.setIdLancamento(idLancamento);
 	
 	try {
-		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
-		} catch (Exception e) {
-            throw new Exception("Data de lançamento em formato incorreto.");
-		}
+		datalctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento);
+	} catch (Exception e) {
+        throw new Exception("Data de lançamento em formato incorreto.");
+	}
+	
+	produto.setDataLancamento(datalctoFormatada);
+	
+	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(idLancamento, datalctoFormatada);
+	
+	if(qtdEstudoParaLancamento >= 3){
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
+	}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 	

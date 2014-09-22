@@ -599,10 +599,7 @@ var fechamentoEncalheController = $.extend(true, {
 					fechamentoEncalheController.isFechamento = true;
 					
 					fechamentoEncalheController.popup_encerrarEncalhe(true);
-				}	
-				
-				fechamentoEncalheController.fechamentosManuais = [];
-				fechamentoEncalheController.nonSelected = [];
+				}
 			},
 		  	null,
 		   	false
@@ -651,6 +648,8 @@ var fechamentoEncalheController = $.extend(true, {
 								}
 								
 								fechamentoEncalheController.emitirBoletosFechamentoEncalhe();
+								
+								$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 
 								return;
 							}
@@ -666,7 +665,7 @@ var fechamentoEncalheController = $.extend(true, {
 								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							}
 	
-							fechamentoEncalheController.pesquisar();
+							$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 							
 							_this.dialog("close");
 						},
@@ -678,9 +677,6 @@ var fechamentoEncalheController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			},
-			beforeClose: function() {
-				$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 			},
 			form: $("#dialog-confirm", this.workspace).parents("form")
 		});

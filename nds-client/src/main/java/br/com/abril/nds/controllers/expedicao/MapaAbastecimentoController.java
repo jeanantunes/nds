@@ -54,6 +54,7 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -422,6 +423,12 @@ public class MapaAbastecimentoController extends BaseController {
         
 		@SuppressWarnings("rawtypes")
         Collection dados = null;
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+		
+		paginacao.setOrdenacao(Ordenacao.ASC);
+		
+		filtro.setPaginacao(paginacao);
 
 		try {
 
@@ -454,6 +461,8 @@ public class MapaAbastecimentoController extends BaseController {
 				}
 			break;
 			case ROTA:
+				
+				filtro.getPaginacao().setSortColumn("codigoBox");
 				
 			    if (filtro.getQuebraPorCota()){
 			        
@@ -515,6 +524,8 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 			case PRODUTO_ESPECIFICO:
 				
+				filtro.getPaginacao().setSortColumn("codigoBox");
+				
 				dados = Arrays.asList(
 				        mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro));
 
@@ -524,6 +535,8 @@ public class MapaAbastecimentoController extends BaseController {
 
 			break;
 			case PRODUTO_X_COTA:
+				
+				filtro.getPaginacao().setSortColumn("codigoCota");
 				
 				dados = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 				

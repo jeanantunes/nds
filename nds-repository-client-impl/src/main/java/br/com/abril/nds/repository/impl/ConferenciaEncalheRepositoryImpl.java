@@ -306,7 +306,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 	public boolean isParcialNaoFinal(Long idProdutoEdicao) {
         
-        String sql = this.getQueryIsLancamentoParcialFinal(false);
+        String sql = this.getQueryIsLancamentoParcialFinal();
         
         Query query = this.getSession().createSQLQuery(sql);
         
@@ -325,7 +325,7 @@ public class ConferenciaEncalheRepositoryImpl extends
         return TipoLancamentoParcial.PARCIAL.name().equals(parcial) ? true : false;
     }
 	
-	private String getQueryIsLancamentoParcialFinal(boolean filtrarCromo) {
+	private String getQueryIsLancamentoParcialFinal() {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -335,10 +335,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		sql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		sql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		sql.append(" WHERE lanc.PRODUTO_EDICAO_ID = :idProdutoEdicao ");
-		
-		if (filtrarCromo) {
-		    sql.append(" AND pe.GRUPO_PRODUTO = :grupoProdutoCromo ");
-		}
 		
 		sql.append(" AND lanc.status in (:statusEmRecolhimento)  ");
 		sql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID ");
@@ -372,7 +368,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append(" 0 AS qtdExemplar, ");
 		
-		hql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO = :grupoProdutoCromo) THEN true ELSE false END as isContagemPacote, ");
+		hql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO in (:grupoProdutoCromo) OR TIPO_PRODUTO.GRUPO_PRODUTO in (:grupoProdutoCromo)) THEN true ELSE false END as isContagemPacote, ");
 		
 		hql.append(" CH_ENCALHE_COTA.QTDE_PREVISTA AS qtdReparte, ");
 		
@@ -420,15 +416,24 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("	inner join PRODUTO as PROD ON ");
 		hql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)	");
 		
+		hql.append("	inner join TIPO_PRODUTO ON ");
+		hql.append("	(TIPO_PRODUTO.ID = PROD.TIPO_PRODUTO_ID)	");
+		
 		hql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC ON ");
 		hql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
 		
 		hql.append("	inner join TIPO_MOVIMENTO TIPO_MOV ON ");
 		hql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoMovimentoEstoque )");
 		
-
+		hql.append("  inner join CHAMADA_ENCALHE_LANCAMENTO CEL ON ");
+        hql.append("    CEL.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID ");
+		
+        hql.append("  inner join LANCAMENTO L ON ");
+        hql.append("    L.ID = CEL.LANCAMENTO_ID ");
+        
 		hql.append("	WHERE   ");
 		
+		hql.append("    L.STATUS != :lancamentoFechado AND ");
 		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
 		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento) AND ");
 		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
@@ -475,6 +480,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("parcialNaoFinal", StandardBasicTypes.BOOLEAN);
 		((SQLQuery)query).addScalar("desconto");
 
+		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO.name());
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameterList("datasRecolhimento", datasRecolhimento);
 		query.setParameter("indFechado", indFechado);
@@ -486,7 +492,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 				StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(), 
 				StatusLancamento.EM_RECOLHIMENTO.name()));
 
-		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.name());
+		query.setParameterList("grupoProdutoCromo", Arrays.asList(GrupoProduto.CROMO.name(),GrupoProduto.CARDS.name()));
 		
 		
 		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
@@ -581,7 +587,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
 		
-		hql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO = :grupoProdutoCromo) THEN true ELSE false END as isContagemPacote, ");
+		hql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO in (:grupoProdutoCromo) OR TIPO_PRODUTO.GRUPO_PRODUTO in (:grupoProdutoCromo) ) THEN true ELSE false END as isContagemPacote, ");
 		
 		hql.append(" COALESCE(CH_ENCALHE_COTA.QTDE_PREVISTA, 0) AS qtdReparte, 				");
 		
@@ -636,6 +642,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA MOV_ESTOQUE_COTA ON (MOV_ESTOQUE_COTA.ID = CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID) ");
 		hql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( CONF_ENCALHE.PRODUTO_EDICAO_ID=PROD_EDICAO.ID )           						");
 		hql.append(" INNER JOIN PRODUTO PROD ON (PROD_EDICAO.PRODUTO_ID=PROD.ID)                         						");
+		hql.append(" INNER JOIN TIPO_PRODUTO ON (TIPO_PRODUTO.ID = PROD.TIPO_PRODUTO_ID ) ");
 		hql.append(" INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA ON (CONTROLE_CONF_ENC_COTA.ID = CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID)	");
 		hql.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (PROD.ID = PROD_FORNEC.PRODUTO_ID)	");
 		hql.append(" INNER JOIN FORNECEDOR FORNECEDOR_0 ON (FORNECEDOR_0.ID = PROD_FORNEC.FORNECEDORES_ID) 	");
@@ -685,7 +692,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 				StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(), 
 				StatusLancamento.EM_RECOLHIMENTO.name()));
 		
-		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.name());
+		query.setParameterList("grupoProdutoCromo", Arrays.asList(GrupoProduto.CROMO.name(), GrupoProduto.CARDS.name()));
 		
 		return query.list();
 		        		
