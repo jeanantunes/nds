@@ -278,7 +278,7 @@ public class ParciaisController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisarParciaisVenda(Date dtLcto, Date dtRcto, Long idProdutoEdicao) {
+	public void pesquisarParciaisVenda(Date dtLcto, Date dtRcto, Long idProdutoEdicao, Long idPeriodo) {
 	
 	
 		this.session.setAttribute(FILTRO_DATA_LANCAMENTO,dtLcto);
@@ -287,7 +287,7 @@ public class ParciaisController extends BaseController {
 		
 		this.session.setAttribute(FILTRO_ID_PRODUTO_EDICAO,idProdutoEdicao);
 		
-		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(dtLcto, dtRcto, idProdutoEdicao);
+		List<ParcialVendaDTO> listaParcialVenda = this.parciaisService.obterDetalhesVenda(dtLcto, dtRcto, idProdutoEdicao, idPeriodo);
 		
 		TableModel<CellModelKeyValue<ParcialVendaDTO>> tableModel = new TableModel<CellModelKeyValue<ParcialVendaDTO>>();
 		
@@ -443,7 +443,7 @@ public class ParciaisController extends BaseController {
 	 * @throws IOException Exceção de E/S
 	 */
 	@Get
-	public void exportarDetalhesVenda(FileType fileType) throws IOException {
+	public void exportarDetalhesVenda(FileType fileType, Long idPeriodo) throws IOException {
 		
 		List<ParcialVendaDTO> listaParcialVenda = new ArrayList<ParcialVendaDTO>();
 		
@@ -455,9 +455,8 @@ public class ParciaisController extends BaseController {
 		Long idProdutoEdicao = (Long) this.session.getAttribute(FILTRO_ID_PRODUTO_EDICAO);
 
 		if ((lcto!=null) && (recto!=null) && (idProdutoEdicao!=null)){
-		    listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao);
-		}
-		
+		    listaParcialVenda = this.parciaisService.obterDetalhesVenda(lcto, recto, idProdutoEdicao, idPeriodo);
+		}		
 		
 		if(listaParcialVenda.isEmpty()) {
 

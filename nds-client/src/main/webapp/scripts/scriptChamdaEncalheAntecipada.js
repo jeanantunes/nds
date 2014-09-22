@@ -101,7 +101,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				params: chamdaEncalheAnteipadaController.params(),newp: 1,
 				onSuccess:function(){
 					chamdaEncalheAnteipadaController.formatarCampos();
-					chamdaEncalheAnteipadaController.sumarizarCotasSelecionadas(chamdaEncalheAnteipadaController.nameGrid);
 					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();		
 					bloquearItensEdicao(chamdaEncalheAnteipadaController.workspace);
 				}
@@ -116,7 +115,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				url: contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisar",
 				params: chamdaEncalheAnteipadaController.params(),newp: 1,
 				onSuccess:function(){
-					chamdaEncalheAnteipadaController.sumarizarCotasSelecionadas(chamdaEncalheAnteipadaController.nameGrid);
 					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();
 					bloquearItensEdicao(chamdaEncalheAnteipadaController.workspace);
 				}
@@ -252,8 +250,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				if(input.checked == false){
 					
 					chamdaEncalheAnteipadaController.zerarTotais();
-				}
-				else {
+					dataHolder.clearAction('CE_AntecipadaDataHolder');
+					
+				} else {
 					
 					chamdaEncalheAnteipadaController.totalExemplares = $("input[id^='qntExemplares']",chamdaEncalheAnteipadaController.workspace).sum();
 					
@@ -262,16 +261,30 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				
 					chamdaEncalheAnteipadaController.atribuirValorQntCotas();
 					chamdaEncalheAnteipadaController.atribuirValorQntExemplares();
+
+					var parametros = new Array();
+					
+					parametros.push({name:'fieldValue', value:"true"});
+					parametros.push({name:'actionKey', value:'CE_AntecipadaDataHolder'});
+					parametros.push({name:'fieldKey', value:'checado'});
+					
+					$.postJSON(
+							contextPath + "/devolucao/chamadaEncalheAntecipada/atribuirCheckedParaTodosItens",
+							parametros
+					);
 				}
-			}
-			else{
+			
+			}else{	
 				
 				checkAll(input,chamdaEncalheAnteipadaController.groupNameCheck);
 				
 				if(input.checked == false){
+					
 					chamdaEncalheAnteipadaController.zerarTotais();
-				}
-				else {
+					dataHolder.clearAction('CE_AntecipadaDataHolder');
+					
+				}else{
+					
 					$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/obterTotalCotaExemplar",
 							   null, function (result){
 						
@@ -280,7 +293,19 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						
 						chamdaEncalheAnteipadaController.atribuirValorQntCotas();
 						chamdaEncalheAnteipadaController.atribuirValorQntExemplares();
-					});	
+					});
+
+					var parametros = new Array();
+					
+					parametros.push({name:'fieldValue', value:"true"});
+					parametros.push({name:'actionKey', value:'CE_AntecipadaDataHolder'});
+					parametros.push({name:'fieldKey', value:'checado'});
+					
+					$.postJSON(
+								contextPath + "/devolucao/chamadaEncalheAntecipada/atribuirCheckedParaTodosItens",
+								parametros
+					);
+
 				}
 			}
 		},
@@ -427,7 +452,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					
 				var parametroCheckbox = '\'#qntExemplar' + index + '\', this';
 				
-				var inputCheck = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="'+chamdaEncalheAnteipadaController.groupNameCheck+'" onclick="chamdaEncalheAnteipadaController.calcularTotalGridCota( '+parametroCheckbox +')" />';
+				var inputCheck = chamdaEncalheAnteipadaController.gerarCheckCEAntecipadaGrid(row, index, parametroCheckbox);
 				
 				var inputQuantidadeExemplares = 
 					'<input type="hidden" id="qntExemplar' + index + '" name="qntExemplares" value="'+ row.cell.qntExemplares +'"/>';
@@ -462,6 +487,35 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			chamdaEncalheAnteipadaController.tipoPesquisaSelecionado = "";
 			
 			return resultado.tableModel;
+		},
+		
+		gerarCheckCEAntecipadaGrid: function (row, index, parametroCheckbox){
+			
+			var retornoHTML;
+			
+			if(row.cell.replicar == 'true' || $("#sel", chamdaEncalheAnteipadaController.workspace).is(":checked")){
+				retornoHTML = chamdaEncalheAnteipadaController.getElementCheckedOrUnchecked(index, parametroCheckbox, row.cell.numeroCota, true);
+			}else{
+				retornoHTML = chamdaEncalheAnteipadaController.getElementCheckedOrUnchecked(index, parametroCheckbox, row.cell.numeroCota, false);
+			}
+
+			return retornoHTML;
+		},
+		
+		getElementCheckedOrUnchecked: function (index, parametroCheckbox, numCota, checked){
+			
+			var retornoHTML = '';
+			
+			if(checked){
+				retornoHTML = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="'+chamdaEncalheAnteipadaController.groupNameCheck
+							+'" onclick="chamdaEncalheAnteipadaController.calcularTotalGridCota( '+parametroCheckbox+','+numCota +')" checked />';
+			}else{
+				retornoHTML = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="'+chamdaEncalheAnteipadaController.groupNameCheck
+				+'" onclick="chamdaEncalheAnteipadaController.calcularTotalGridCota( '+parametroCheckbox+','+numCota+')" />';
+			}
+			
+			return retornoHTML;
+			
 		},
 		
 		pesquisarCotaErrorCallBack: function (idInputCkeck,idInputExemplares,idInputCota,indexLinha){
@@ -610,26 +664,17 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			return resultado;
 		},
 		
-		calcularTotalGridCota: function (idInputExemplares, inputCkeck){
+		calcularTotalGridCota: function (idInputExemplares, inputCkeck, numCota){
 			
-			var check  = document.getElementById("sel",chamdaEncalheAnteipadaController.workspace).checked ; 
+			var checkAllval  = document.getElementById("sel",chamdaEncalheAnteipadaController.workspace).checked ; 
 			
-			if(check){
-
-				var exemplares = eval( ($(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val()=="")?0:$(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val());
-				var checked = $("input[name=" + chamdaEncalheAnteipadaController.groupNameCheck + "]:checked",chamdaEncalheAnteipadaController.workspace).length;
-				
-				chamdaEncalheAnteipadaController.totalExemplares = ($("input[id^='qntExemplar']",chamdaEncalheAnteipadaController.workspace).sum() - exemplares);	
-				chamdaEncalheAnteipadaController.totalCota = eval(checked);
+			dataHolder.hold('CE_AntecipadaDataHolder', numCota , 'checado', inputCkeck.checked);
 			
-				chamdaEncalheAnteipadaController.atribuirValorQntCotas();
-				chamdaEncalheAnteipadaController.atribuirValorQntExemplares();		
-
+			if(checkAllval){
 				chamdaEncalheAnteipadaController.desmarcarCheckTodos();				
-				
-			}else{
-				chamdaEncalheAnteipadaController.calcularTotalCota(idInputExemplares, inputCkeck);
-			}	
+			}
+
+			chamdaEncalheAnteipadaController.calcularTotalCota(idInputExemplares, inputCkeck);
 		},
 		
 		calcularTotalCota: function(idExemplares,input){
@@ -796,37 +841,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				$("#rota",chamdaEncalheAnteipadaController.workspace).html(comboRotas);
 				$("#roteiro",chamdaEncalheAnteipadaController.workspace).html(comboRoteiros);
 			});
-		},
-		
-		sumarizarCotasSelecionadas:function(grid){
-			
-			var linhasDaGrid = $('#'+grid+' tr',chamdaEncalheAnteipadaController.workspace);
-			
-			var groupName = (chamdaEncalheAnteipadaController.nameGridPesquisaCota == grid)
-							? chamdaEncalheAnteipadaController.groupNameCheckGridCota
-									:chamdaEncalheAnteipadaController.groupNameCheck;
-			
-			$.each(linhasDaGrid, function(index, value) {
-
-				var linha = $(value);
-				
-				var colunaCheck = linha.find("td")[(chamdaEncalheAnteipadaController.nameGridPesquisaCota == grid)?3:4];
-				var colunaQntExemplares =  linha.find("td")[ (chamdaEncalheAnteipadaController.nameGridPesquisaCota == grid)?2:3];
-				
-				var qntExemplares =  $(colunaQntExemplares,chamdaEncalheAnteipadaController.workspace).find("div").find('input[name="qntExemplares"]').val();
-			
-				var inputCheck  = $(colunaCheck,chamdaEncalheAnteipadaController.workspace).find("div").find('input[name="'+groupName+'"]');
-				
-				var check  = inputCheck.attr('checked');
-				
-				if (typeof check != "undefined"){
-					chamdaEncalheAnteipadaController.totalCota += 1;
-					chamdaEncalheAnteipadaController.totalExemplares += eval(qntExemplares);
-				}
-			});
-			
-			chamdaEncalheAnteipadaController.atribuirValorQntCotas();
-			chamdaEncalheAnteipadaController.atribuirValorQntExemplares();
 		},
 		
 		cancelarProgramacaoAntecipacaoEncalhe:function(){

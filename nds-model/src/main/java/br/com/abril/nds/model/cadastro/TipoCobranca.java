@@ -3,10 +3,10 @@ package br.com.abril.nds.model.cadastro;
 public enum TipoCobranca {
 	
 	BOLETO("Boleto"), 
-	BOLETO_EM_BRANCO("Boleto em branco"), 
+	BOLETO_EM_BRANCO("Boleto em branco"),
 	CHEQUE("Cheque"), 
-	DEPOSITO("Depósito"), 
-	TRANSFERENCIA_BANCARIA("Transferência  Bancária "),
+	DEPOSITO("Deposito"), 
+	TRANSFERENCIA_BANCARIA("Transferencia Bancaria"),
 	DINHEIRO("Dinheiro"),
 	OUTROS("Outros");
 	

@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1716,6 +1718,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             if (!cotas.isEmpty()){
                 
+            	Collections.sort(lstPrDTO);
+            	
                 final List<AnaliseHistoricoDTO> historico =
                         cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null);
                 
