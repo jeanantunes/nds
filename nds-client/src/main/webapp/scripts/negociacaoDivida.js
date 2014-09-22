@@ -19,7 +19,7 @@ var negociacaoDividaController = $.extend(true, {
 		});
 
 		$("#checknegociacaoAvulsa").change(function() {
-			negociacaoDividaController.atualizarFormaCobranca($(this).is(":checked"));
+			negociacaoDividaController.atualizarFormaCobranca_popup($(this).is(":checked"));
 		});
 
 		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).numeric();
@@ -31,6 +31,39 @@ var negociacaoDividaController = $.extend(true, {
 		$("#negociacaoDivida_numCota", negociacaoDividaController.workspace).numeric();
 
 		this.situacaoCota = null;		
+	},
+	
+	atualizarFormaCobranca_popup : function(isNegociacaoAvulsa){
+		
+		//if (!$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")){
+			if(!isNegociacaoAvulsa){
+		
+			$("<div>Os valores negociados serão somados na cobrança do jornaleiro no dia do vencimento!</div>", this.workspace).dialog({
+				resizable: false,
+				height:130,
+				width:280,
+				title: 'Negociação Avulsa',
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$('#checknegociacaoAvulsa').prop('checked', false);																				
+						$( this ).dialog( "close" );		
+						negociacaoDividaController.atualizarFormaCobranca(false);		
+						
+					},
+					"Cancelar": function() {
+						$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).check();
+						//negociacaoDividaController.atualizarFormaCobranca(true);
+						$( this ).dialog( "close" );
+					}
+				},
+				//form: $("#dialog-detalhe", this.workspace).parents("form")
+			});
+			
+		// exibirMensagem("WARNING", ["Os valores negociados serão somados na cobrança do jornaleiro no dia do vencimento!"], "");
+		}else{
+			negociacaoDividaController.atualizarFormaCobranca(true);
+		}
 	},
 	
 	atualizarFormaCobranca: function(isNegociacaoAvulsa) {
@@ -118,7 +151,12 @@ var negociacaoDividaController = $.extend(true, {
 						$('#negociacaoDivida_statusCota').html(result.status);
 						$('#negociacaoDivida_nomeCota').html(result.nome);
 						self.situacaoCota =  result.situacaoCadastro;
-						negociacaoDividaController.atualizarFormaCobranca();
+						//if ($("#pagamentoEm", negociacaoDividaController.workspace).is(":checked")){
+						  //negociacaoDividaController.atualizarFormaCobranca_popup(true);
+						//} else{
+						  //$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).check();
+						  //negociacaoDividaController.atualizarFormaCobranca(true);
+						//}
 					},
 					function() {
 						$('#negociacaoDivida_statusCota').html('');
@@ -911,7 +949,9 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	mostraPgto : function() {
-		negociacaoDividaController.atualizarFormaCobranca();
+		
+		$('#checknegociacaoAvulsa', negociacaoDividaController.workspace).check();
+		negociacaoDividaController.atualizarFormaCobranca(true);
 		negociacaoDividaController.obterParcelasValorMinimo();
 		
 		$('.comissaoAtual', negociacaoDividaController.workspace).hide();

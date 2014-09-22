@@ -602,27 +602,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
     
     @Override
-    public Long obterQntCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
-        
-        final StringBuilder hql = new StringBuilder();
-        
-        /*
-         * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um
-         * PDV associado a mesma cota.
-         */
-        hql.append("SELECT DISTINCT count ( cota.id ) ");
-        
-        hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
-        
-        final Query query = this.getSession().createQuery(hql.toString());
-        
-        final Map<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
-        
-        setParameters(query, param);
-        return (Long) query.uniqueResult();
-    }
-    
-    @Override
     public BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
         
         final StringBuilder hql = new StringBuilder();
@@ -672,7 +651,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         if (filtro.getPaginacao() != null) {
             
-            if (filtro.getPaginacao().getPosicaoInicial() != null) {
+        	if (filtro.getPaginacao().getQtdResultadosTotal().equals(0)) {
+        		filtro.getPaginacao().setQtdResultadosTotal(query.list().size());
+    		}
+        	
+        	if (filtro.getPaginacao().getPosicaoInicial() != null) {
                 query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
             }
             

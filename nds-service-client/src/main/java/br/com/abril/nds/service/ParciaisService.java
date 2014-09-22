@@ -71,7 +71,7 @@ public interface ParciaisService {
 	 * @return List<ParcialVendaDTO>
 	 */
 	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
-			Date dataRecolhimento, Long idProdutoEdicao);
+			Date dataRecolhimento, Long idProdutoEdicao, Long idPeriodo);
 	
 	/**
 	 * Retorna a peb calculada de uma parcial referente a um produto edição

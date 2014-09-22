@@ -68,6 +68,8 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String hora;
 	
+	private BigInteger reparte;
+	private BigInteger encalhe;
 	private String datalanc;
 	private String dataRecb;
 	private String dataInser;
@@ -144,12 +146,15 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	}
 	
 	public BigInteger getVenda() {
-		return venda;
+		
+		return this.reparte.subtract(this.encalhe);
+		//return venda;
 	}
+	
 	public void setVenda(BigInteger venda) {
-		if(venda == null){
+		if(venda == null) {
 			this.venda = BigInteger.ZERO;	
-		}else{
+		} else {
 			this.venda = venda;
 		}
 	}
@@ -201,6 +206,23 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		this.dataAlteracao = DateUtil.formatarDataPTBR(data);
 		this.hora = DateUtil.formatarHoraMinuto(data);
 	}
+	
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	public BigInteger getEncalhe() {
+		return encalhe;
+	}
+
+	public void setEncalhe(BigInteger encalhe) {
+		this.encalhe = encalhe;
+	}
+
 	public String getDatalanc() {
 		return datalanc;
 	}

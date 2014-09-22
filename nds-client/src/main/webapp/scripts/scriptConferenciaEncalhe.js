@@ -1449,7 +1449,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		var data;
 		
 		if (index || index == 0){
-			
+
 			data = [
 	            {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalhe.workspace).val()},
 	            {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val()},

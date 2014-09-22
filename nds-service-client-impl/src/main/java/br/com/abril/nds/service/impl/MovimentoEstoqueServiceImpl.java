@@ -1873,4 +1873,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
     }
     
+    @Transactional(readOnly=true)
+    public BigDecimal obterValorConsignadoDeVendaSuplementar(final Date dataMovimentacao){
+    	
+    	return movimentoEstoqueRepository.obterValorConsignadoDeVendaEncalheSuplementar(dataMovimentacao);
+    }
+    
 }
