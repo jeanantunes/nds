@@ -2781,7 +2781,6 @@ public class CotaServiceImpl implements CotaService {
     @Override
     public List<AnaliseHistoricoDTO> buscarHistoricoCotas(final List<ProdutoEdicaoDTO> listProdutoEdicaoDto,
             final List<Integer> cotas, final String sortorder, final String sortname) {
-        Collections.sort(listProdutoEdicaoDto);
         
         final List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
         

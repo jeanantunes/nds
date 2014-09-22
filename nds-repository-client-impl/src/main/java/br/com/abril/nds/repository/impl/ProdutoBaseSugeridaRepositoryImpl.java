@@ -40,11 +40,11 @@ public class ProdutoBaseSugeridaRepositoryImpl extends AbstractRepositoryModel i
 		sql.append("         produto prod  ");
 		sql.append("             ON prodEd.produto_id = prod.id ");
 		sql.append("     where ");
-		sql.append("         estrat.produto_edicao_id in (select est.PRODUTO_EDICAO_ID from estudo est where id = ");
-		sql.append(estudoId);
-		sql.append(" ); ");
+		sql.append("         estrat.produto_edicao_id in (select est.PRODUTO_EDICAO_ID from estudo est where id = :estudoId) ");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", estudoId);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoBaseSugeridaDTO.class));
 		 

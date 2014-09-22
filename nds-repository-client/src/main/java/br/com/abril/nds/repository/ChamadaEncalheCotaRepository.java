@@ -115,17 +115,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	ChamadaEncalheCota buscarPorChamadaEncalheECota(Long idChamadaEncalhe,Long idCota);
 	
 	/**
-	 * 
-	 * Retorna quantidade de chamadas de encalhe cota que foram programadas para antecipação de recolhimento
-	 * em função dos parâmetros informados no FiltroChamadaAntecipadaEncalheDTO
-	 * 
-	 * @param filtro - filtro com os parâmetros de consulta
-	 * 
-	 * @return Long
-	 */
-	Long obterQntCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro);
-	
-	/**
 	 * Retorna uma lista de chamadas de encalhe cota que foram programadas para antecipação de recolhimento
 	 * em função dos parâmetros informados no FiltroChamadaAntecipadaEncalheDTO
 	 * 

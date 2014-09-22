@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -467,6 +468,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	EstudoTransient estudo = null;
 	int qtdEdicoesAbertas = 0;
 	Long qtdEstudoParaLancamento = 0L;
+	Date datalctoFormatada;
 	
 	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
 
@@ -491,13 +493,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	produto.setIdLancamento(idLancamento);
 	
 	try {
-		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
+		datalctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento);
 	} catch (Exception e) {
         throw new Exception("Data de lançamento em formato incorreto.");
 	}
 	
+	produto.setDataLancamento(datalctoFormatada);
 	
-	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(idLancamento, new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
+	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(idLancamento, datalctoFormatada);
 	
 	if(qtdEstudoParaLancamento >= 3){
 		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));

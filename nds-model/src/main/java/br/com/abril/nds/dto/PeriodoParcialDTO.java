@@ -186,9 +186,9 @@ public class PeriodoParcialDTO implements Serializable {
 	/**
 	 * @param origem the origem to set
 	 */
-	public void setOrigem(Origem origem) {
+	public void setOrigem(String origem) {
 		
-		this.origem = origem;
+		this.origem =  Origem.valueOf(origem);
 		
 		if(origem!=null && Origem.INTERFACE.equals(origem)) {
 			this.geradoPorInterface = true;

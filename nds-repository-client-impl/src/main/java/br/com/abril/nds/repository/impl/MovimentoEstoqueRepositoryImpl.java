@@ -26,6 +26,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -537,5 +538,49 @@ implements MovimentoEstoqueRepository {
 		.setParameter( "qtde", qtde )
 		.setParameter("id", id)
 		.executeUpdate();
+	}
+	
+	public BigDecimal obterValorConsignadoDeVendaEncalheSuplementar(final Date dataMovimentacao ){
+		
+		final StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" coalesce(sum(movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA),0) as VALOR_SUPLEMENTAR ");
+		sql.append(" from ");
+		sql.append("	MOVIMENTO_ESTOQUE movimentoEstoque ");
+		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
+		sql.append("	join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+		sql.append("	join venda_produto_movimento_estoque mVenda on mVenda.ID_MOVIMENTO_ESTOQUE = movimentoEstoque.id ");
+		sql.append("	join venda_produto venda on venda.ID = mVenda.ID_VENDA_PRODUTO ");
+		sql.append(" where ");
+		sql.append("	movimentoEstoque.DATA=:dataMovimentacao "); 
+		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :vendaEncalheSuplementar ");
+		sql.append("	and venda.TIPO_COMERCIALIZACAO_VENDA = :formaComercializacao ");
+		sql.append("	and venda.TIPO_VENDA_ENCALHE=:tipoVenda ");	
+		sql.append("	and ");
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
+		sql.append("			select distinct produtoEdicao_.ID "); 
+		sql.append("			from  ");
+		sql.append("				EXPEDICAO expedicao  ");
+		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID "); 
+		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");  
+		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");  
+		sql.append("			where lancamento.STATUS<>:statusFuro ");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR<:dataMovimentacao "); 
+		sql.append("				and produto_.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		sql.append("		) ");
+		
+		Query query = getSession().createSQLQuery(sql.toString())
+									 .addScalar("VALOR_SUPLEMENTAR",StandardBasicTypes.BIG_DECIMAL);
+		
+		query.setParameter("dataMovimentacao", dataMovimentacao);
+		query.setParameter("statusAprovado",StatusAprovacao.APROVADO.name() );
+		query.setParameter("vendaEncalheSuplementar", GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name());
+		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		query.setParameter("tipoVenda", TipoVendaEncalhe.SUPLEMENTAR.name());
+		query.setParameter("statusFuro",StatusLancamento.FURO.name());
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 }

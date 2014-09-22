@@ -326,20 +326,23 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	recuperarNumeroEstudo: function(numeroEstudo){
 
-        switch (matrizDistribuicao.tabSomarCopiarEstudos) {
-            case 'somar':
-                $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-                $('#somarEstudo-estudoPesquisa').val(numeroEstudo).change();
-                return;
-            case 'copiar':
-                $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-                $('#copiarEstudo-estudoPesquisa').val(numeroEstudo).change();
-                return;
-            case 'complementar':
-                $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-                $('#codigoEstudo').val(numeroEstudo).blur();
-                return;
-        }
+		if(typeof matrizDistribuicao != 'undefined') {
+			
+			switch (matrizDistribuicao.tabSomarCopiarEstudos) {
+			case 'somar':
+				$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+				$('#somarEstudo-estudoPesquisa').val(numeroEstudo).change();
+				return;
+			case 'copiar':
+				$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+				$('#copiarEstudo-estudoPesquisa').val(numeroEstudo).change();
+				return;
+			case 'complementar':
+				$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+				$('#codigoEstudo').val(numeroEstudo).blur();
+				return;
+			}
+		}
 
         var matriz = [],
             url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",

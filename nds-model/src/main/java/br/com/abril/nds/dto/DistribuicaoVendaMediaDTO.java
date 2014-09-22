@@ -17,6 +17,8 @@ public class DistribuicaoVendaMediaDTO {
 	private Boolean distribuicaoPorMultiplo;
 	private BigInteger multiplo;
 	
+	private BigInteger reparteTotal;
+	
 	private List<ProdutoEdicaoDTO> bases = new ArrayList<ProdutoEdicaoDTO>();
 	private List<BonificacaoDTO> bonificacoes = new ArrayList<BonificacaoDTO>();
 
@@ -183,4 +185,11 @@ public class DistribuicaoVendaMediaDTO {
     public void setBonificacoesVO(String bonificacoesVO) {
         this.bonificacoesVO = bonificacoesVO;
     }
+	public BigInteger getReparteTotal() {
+		return reparteTotal;
+	}
+	public void setReparteTotal(BigInteger reparteTotal) {
+		this.reparteTotal = reparteTotal;
+	}
+    
 }

@@ -128,6 +128,8 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static String ID_BOX_LOGADO_SESSION = "idBoxLogado";
 	
+	private static String QTD = "QTD";
+	
 	/*
      * Conferência de encalhe da cota que foi iniciada porém ainda não foi
      * salva.
@@ -1468,14 +1470,22 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@LogFuncional(value="Conferência de Encalhe [Verificar permissão supervisor]")
-	public void verificarPermissaoSupervisor(final Long idConferencia, final String qtdExemplares, 
+	public void verificarPermissaoSupervisor(final Long idConferencia, String qtdExemplares, 
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
 		
 		if (qtdExemplares == null){
 		
+			qtdExemplares = this.session.getAttribute(QTD).toString();
+			this.session.setAttribute(QTD,"");
+		}
+		
+		if (qtdExemplares == null){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de exemplares.");
 		}
+		
+		
 		
 		boolean isVendaNegativaProduto = false; 
 		
@@ -1585,6 +1595,8 @@ public class ConferenciaEncalheController extends BaseController {
 										        final ConferenciaEncalheDTO dto,
 										        boolean supervisor) {
 		
+    	this.session.setAttribute(QTD,qtdExemplares);
+    	
 		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares, dto);
 		
 		if (this.isEncalheExcedendoReparte(qtdeEncalhe, dto, indConferenciaContingencia)) {

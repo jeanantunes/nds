@@ -106,6 +106,15 @@
 			<groupId>br.com.caelum</groupId>
 			<artifactId>vraptor</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>br.com.caelum</groupId>
+			<artifactId>iogi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.vidageek</groupId>
+			<artifactId>mirror</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>

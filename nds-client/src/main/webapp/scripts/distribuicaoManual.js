@@ -10,6 +10,7 @@ var distribuicaoManual = $.extend(true, {
 	inputReparte : '<div><input type="text" class="inputGridCota" id="reparteGrid#index" name="reparteGrid" value="#valor" onkeypress="distribuicaoManual.keyupFunction(event, #index)" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
 	inputNumeroCota : '<div><input type="text" class="inputGridCota" id="numeroCotaGrid#index" name="numeroCotaGrid" value="#valor" onchange="distribuicaoManual.pesquisarCota(\'#numeroCotaGrid#index\', #index)" /></div>',
 	idLancamento : 0,
+	reparteTotal : 0,
 	isSolicitarSenhaReparte : true,
 	isSolicitarSenhaCotaSuspensa : true,
 	
@@ -46,6 +47,7 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.workspace.find('tbody').append(distribuicaoManual.construirLinhaVazia());
 		
 		distribuicaoManual.idLancamento = lancamentoSelecionado.idLancamento;
+		distribuicaoManual.reparteTotal = lancamentoSelecionado.lancto;
 		this.atualizarTotalDistribuido(0);
 		$('#repGeral').html($('#repDistribuir').text());
 		
@@ -531,6 +533,7 @@ var distribuicaoManual = $.extend(true, {
 			data.push({name: 'estudoDTO.reparteDistribuido', value: $('#totalDistribuido').text()});
 			data.push({name: 'estudoDTO.dataLancamento', value: $('#dataLancamento').html()});
 			data.push({name: 'estudoDTO.lancamentoId', value: distribuicaoManual.idLancamento});
+			data.push({name: 'estudoDTO.reparteTotal', value: distribuicaoManual.reparteTotal});
 			
 			for (var i = 0; i < distribuicaoManual.rowCount; i++) {
 				if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() && ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() > 0)) {
@@ -628,6 +631,7 @@ var distribuicaoManual = $.extend(true, {
 		$('#reparteDistribuidoXLS').val($('#totalDistribuido').text());
 		$('#dataLancamentoXLS').val($('#dataLancamento').html());
 		$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
+		$('#reparteTotalXLS').val(distribuicaoManual.reparteTotal);
 	  
 		$("#formUploadLoteDistbManual").ajaxSubmit({
 			
