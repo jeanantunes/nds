@@ -3,7 +3,11 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -119,6 +123,31 @@ public class InformacoesProdutoController extends BaseController {
 		if (produtos == null || produtos.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		Collections.min(produtos, new Comparator<InformacoesProdutoDTO>() {
+			
+			@Override
+			public int compare(InformacoesProdutoDTO o1, InformacoesProdutoDTO o2) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+				if(o1 != null && o2 != null) {
+					try {
+						if(sdf.parse(o1.getDataLcto()).compareTo(sdf.parse(o2.getDataLcto())) < 0) {
+							o2.setVenda(BigInteger.ZERO);
+							return -1;
+						} else {
+							return 1;
+						}
+					} catch (ParseException e) {
+					}
+				} else if(o1 != null && o2 == null) {
+					return 1;
+				} else if(o1 == null && o2 != null) {
+					return -1;
+				}
+				
+				return 0;
+			}
+		});
 
 		TableModel<CellModelKeyValue<InformacoesProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<InformacoesProdutoDTO>>();
 
