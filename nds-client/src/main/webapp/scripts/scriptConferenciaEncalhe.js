@@ -1428,7 +1428,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		var data;
 		
 		if (index || index == 0){
-			alert($("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val());
+
 			data = [
 	            {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalhe.workspace).val()},
 	            {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val()},
@@ -1436,8 +1436,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	            {name: 'indPesquisaProduto', value: false}
 			];
 		} else {
-			
-			alert($("#qtdeExemplar", ConferenciaEncalhe.workspace).val());
 			
 			data = [
 	            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()},
