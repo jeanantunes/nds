@@ -162,7 +162,7 @@ public class NegociacaoDividaController extends BaseController {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		String fonecedorCota = cota.getParametroCobranca().getFornecedorPadrao().getJuridica().getNomeFantasia().toUpperCase();
+		//String fonecedorCota = cota.getParametroCobranca().getFornecedorPadrao().getJuridica().getNomeFantasia().toUpperCase();
 	
 		PaginacaoVO paginacaoVO = new PaginacaoVO();
 		FiltroParametrosCobrancaDTO filtroAtual = new FiltroParametrosCobrancaDTO();
