@@ -5,7 +5,7 @@
 	<property name="ireport.y" value="9"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA["C:/Users/wrpaiva/Documents/evidencias/track-71-layout/"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>

@@ -313,13 +313,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
 				produtoDTO.setQuantidadeDevolvida(null);
+				produtoDTO.setQuantidadeDev(null);
+			} else {
+				produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
+				produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? 0 : produtoDTO.getQuantidadeDevolvida().intValue());
 			}
 			
 			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte() );
 			
-			produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
+			produtoDTO.setQuantidadeReparte((produtoDTO.getReparte()==null) ? 0 : produtoDTO.getReparte().intValue());
 			
-			produtoDTO.setQuantidadeDevolvida(  (produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
+			produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
 			
 			if(produtoDTO.getConfereciaRealizada() == true) { 
 				produtoDTO.setVendido(produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
