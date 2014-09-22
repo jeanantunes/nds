@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_chamada_encalhe1_direita" pageWidth="238" pageHeight="842" columnWidth="238" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ab498849-c463-4941-a85e-e6fe015fbadd">
-	<property name="ireport.zoom" value="3.0789487093842394"/>
+	<property name="ireport.zoom" value="5.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="221"/>
+	<property name="ireport.y" value="197"/>
 	<style name="campoPequeno" backcolor="#C0C0C0" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -43,15 +43,19 @@
 	<field name="sequencia" class="java.lang.Integer"/>
 	<field name="quantidadeDev" class="java.lang.Integer"/>
 	<field name="desconto" class="java.lang.String"/>
+	<field name="precoVenda" class="java.math.BigDecimal"/>
 	<variable name="SUM_VALOR_TOTAL_PRODUTO" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{vlrDesconto}]]></variableExpression>
+		<variableExpression><![CDATA[$F{precoVenda}.subtract($F{vlrPrecoComDesconto}).multiply(new BigDecimal($F{quantidadeReparte}.longValue()))]]></variableExpression>
 		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
 	</variable>
 	<variable name="SUM_VALOR_TOTAL_COM_DESCONTO" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{vlrPrecoComDesconto}]]></variableExpression>
+		<variableExpression><![CDATA[($F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
 	</variable>
 	<variable name="SUM_TOTAL_REPARTE" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{quantidadeReparte}]]></variableExpression>
+		<variableExpression><![CDATA[($F{precoVenda}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
+	</variable>
+	<variable name="SUM_VALOR_ENCALHE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeDev}))]]></variableExpression>
 	</variable>
 	<group name="CHAMADA_ENCALHE">
 		<groupExpression><![CDATA[$P{NUMERO_CHAMADA_ENCALHE}]]></groupExpression>
@@ -101,12 +105,12 @@
 					</textElement>
 					<text><![CDATA[Valor Reparte Líquido R$]]></text>
 				</staticText>
-				<textField pattern="#,##0.00;-#,##0.00">
+				<textField pattern="">
 					<reportElement x="140" y="51" width="96" height="14" uuid="9be4d358-0371-47a0-9453-72c2eef90419"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($V{SUM_VALOR_TOTAL_PRODUTO}.doubleValue() - $V{SUM_VALOR_TOTAL_COM_DESCONTO}.doubleValue())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}.doubleValue()]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="138" y="63" width="98" height="1" uuid="6df78610-ac26-42ff-8ba3-d5e9d22ab2a4"/>
@@ -118,18 +122,18 @@
 					</textElement>
 					<text><![CDATA[Valor Encalhe R$]]></text>
 				</staticText>
-				<textField pattern="#,##0.00;-#,##0.00">
+				<textField pattern="">
 					<reportElement x="140" y="69" width="96" height="14" uuid="af37e9ae-f208-4250-81b6-c46ab51b711a"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_VALOR_ENCALHE}]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="138" y="82" width="98" height="1" uuid="db256ce3-c479-4804-93d5-0f2fd9f481f8"/>
 				</line>
 				<staticText>
-					<reportElement x="0" y="0" width="114" height="17" uuid="252032c0-e74d-421b-80c5-a752e745acd3">
+					<reportElement x="0" y="0" width="112" height="17" uuid="252032c0-e74d-421b-80c5-a752e745acd3">
 						<printWhenExpression><![CDATA[$P{LANCAMENTO_COM_FURO} == true]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -147,6 +151,13 @@
 				<line>
 					<reportElement x="138" y="98" width="98" height="1" uuid="14db151e-6f25-490d-be85-9f5f797a8410"/>
 				</line>
+				<textField pattern="">
+					<reportElement x="139" y="85" width="96" height="14" uuid="d91e43c9-5d76-4b87-a99f-f84d80d44cca"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}.doubleValue()]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -161,7 +172,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Qtde Reparte]]></text>
 			</staticText>
@@ -188,7 +199,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Produto]]></text>
 			</staticText>
@@ -215,7 +226,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Seq]]></text>
 			</staticText>
@@ -256,16 +267,16 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Reparte]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="32">
+		<band height="31">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="55" y="16" width="49" height="16" uuid="25b607a8-13ef-40ba-83d0-1c0f2652e3e1"/>
+				<reportElement style="linha" mode="Opaque" x="55" y="15" width="49" height="16" uuid="25b607a8-13ef-40ba-83d0-1c0f2652e3e1"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -279,7 +290,7 @@
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="0" y="16" width="55" height="16" uuid="6b62f953-e2c5-45b6-8845-7f00457daf1c"/>
+				<reportElement style="linha" mode="Opaque" x="0" y="15" width="55" height="16" uuid="6b62f953-e2c5-45b6-8845-7f00457daf1c"/>
 				<box topPadding="0" bottomPadding="5">
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.25" lineStyle="Solid"/>
@@ -294,7 +305,7 @@
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="104" y="16" width="70" height="16" uuid="f120af9b-8d0a-4a66-a7d1-9e199af52613"/>
+				<reportElement style="linha" mode="Opaque" x="104" y="15" width="70" height="16" uuid="f120af9b-8d0a-4a66-a7d1-9e199af52613"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -361,7 +372,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="174" y="16" width="64" height="16" uuid="f29f1711-924d-4ec4-9eed-dff26fcfa35f"/>
+				<reportElement style="linha" mode="Opaque" x="174" y="15" width="64" height="16" uuid="f29f1711-924d-4ec4-9eed-dff26fcfa35f"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>

@@ -411,5 +411,5 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setQuantidadeDev(Integer quantidadeDev) {
 		this.quantidadeDev = quantidadeDev!=null? quantidadeDev : 0;
 	}
-    
+	
 }

@@ -54,17 +54,21 @@
 	<field name="vlrPrecoComDesconto" class="java.math.BigDecimal"/>
 	<field name="desconto" class="java.lang.String"/>
 	<field name="precoVenda" class="java.math.BigDecimal"/>
+	<field name="descricaoNotaEnvio" class="java.lang.String"/>
 	<variable name="SUM_TOTAL_REPARTE" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[($F{precoVenda}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
 	</variable>
 	<variable name="SUM_VALOR_TOTAL_PRODUTO" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{valorTotalProduto}]]></variableExpression>
+		<variableExpression><![CDATA[$F{precoVenda}.subtract($F{vlrPrecoComDesconto}).multiply(new BigDecimal($F{quantidadeReparte}.longValue()))]]></variableExpression>
 	</variable>
 	<variable name="SUM_VALOR_TOTAL_COM_DESCONTO" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[($F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
 	</variable>
 	<variable name="SUM_VALOR_TOTAL_DESCONTO" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{vlrDesconto}]]></variableExpression>
+		<variableExpression><![CDATA[($F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
+	</variable>
+	<variable name="SUM_VALOR_ENCALHE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeDev}))]]></variableExpression>
 	</variable>
 	<group name="CHAMADA_ENVCALHE">
 		<groupExpression><![CDATA[$P{NUMERO_CHAMADA_ENCALHE}]]></groupExpression>
@@ -106,12 +110,12 @@
 					</textElement>
 					<text><![CDATA[Valor Desconto R$]]></text>
 				</staticText>
-				<textField pattern="#,##0.00;-#,##0.00">
+				<textField pattern="">
 					<reportElement x="240" y="33" width="96" height="14" uuid="a0e2271d-5981-4ea4-8a7c-a24b170b9125"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_DESCONTO}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_PRODUTO}]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="236" y="46" width="100" height="1" uuid="6d2081da-f80c-4647-90ce-5eddcb2d023f"/>
@@ -145,7 +149,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_VALOR_ENCALHE}]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="236" y="82" width="100" height="1" uuid="807a5072-aeb6-467b-92a1-f63397257107"/>
@@ -200,7 +204,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="112" y="0" width="79" height="23" uuid="93072681-933d-4944-ba61-29552e690b6d"/>
+				<reportElement style="cabecalho" mode="Opaque" x="100" y="0" width="91" height="23" uuid="93072681-933d-4944-ba61-29552e690b6d"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -227,7 +231,7 @@
 				<text><![CDATA[Preço Desc R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="25" y="0" width="87" height="23" uuid="3e228258-78bc-4315-bdda-0f3ee170eb62"/>
+				<reportElement style="cabecalho" mode="Opaque" x="25" y="0" width="75" height="23" uuid="3e228258-78bc-4315-bdda-0f3ee170eb62"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -327,7 +331,7 @@ Lancto]]></text>
 				<textFieldExpression><![CDATA[$F{dataLancamento}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" isPrintRepeatedValues="false" mode="Opaque" x="25" y="0" width="87" height="16" uuid="6d997a91-5b24-4686-ac91-21dfe714b987"/>
+				<reportElement style="linha" isPrintRepeatedValues="false" mode="Opaque" x="25" y="0" width="75" height="16" uuid="6d997a91-5b24-4686-ac91-21dfe714b987"/>
 				<box topPadding="0" bottomPadding="5">
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.25" lineStyle="Solid"/>
@@ -356,7 +360,7 @@ Lancto]]></text>
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="112" y="0" width="79" height="16" uuid="a25d2915-d848-4c81-8a39-ccebeeef0c70"/>
+				<reportElement style="linha" mode="Opaque" x="100" y="0" width="91" height="16" uuid="a25d2915-d848-4c81-8a39-ccebeeef0c70"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -396,7 +400,7 @@ Lancto]]></text>
 				<textFieldExpression><![CDATA[$F{sequencia}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" positionType="Float" mode="Opaque" x="0" y="15" width="112" height="16" uuid="35009359-b9ff-4183-b4a2-33d7a145c15f"/>
+				<reportElement style="linha" positionType="Float" mode="Opaque" x="0" y="15" width="100" height="16" uuid="35009359-b9ff-4183-b4a2-33d7a145c15f"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -410,7 +414,7 @@ Lancto]]></text>
 				<textFieldExpression><![CDATA[$F{codigoBarras}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="112" y="15" width="233" height="16" uuid="d9822362-f7b0-48d6-abcc-17267c2f104c"/>
+				<reportElement style="linha" mode="Opaque" x="100" y="15" width="245" height="16" uuid="d9822362-f7b0-48d6-abcc-17267c2f104c"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -436,6 +440,20 @@ Lancto]]></text>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="linha" mode="Opaque" x="237" y="15" width="108" height="16" uuid="ad14f47f-737f-4a3a-b4f7-05aa00a17b72"/>
+				<box topPadding="0" bottomPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+					<paragraph lineSpacing="Fixed" leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descricaoNotaEnvio}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="linha" mode="Opaque" x="223" y="0" width="14" height="15" uuid="85d9be10-7c42-4343-8e59-1576b87c87a7"/>

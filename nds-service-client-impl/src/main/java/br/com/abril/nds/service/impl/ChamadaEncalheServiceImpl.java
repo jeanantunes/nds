@@ -546,12 +546,12 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			Endereco endereco = cota.getPDVPrincipal().getEnderecoPrincipal().getEndereco();
 			
 			if(endereco != null) {
-				dto.setEndereco((endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
-				dto.setUf(endereco.getUf());
-				dto.setCidade(endereco.getCidade());
-				dto.setUf(endereco.getUf());
-				dto.setCep(endereco.getCep());
+				dto.setEndereco((endereco.getTipoLogradouro().trim()!= null ? endereco.getTipoLogradouro().toUpperCase().trim() + ": " :"")
+									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + endereco.getNumero().trim());
+				dto.setUf(endereco.getUf().trim());
+				dto.setCidade(endereco.getCidade().trim());
+				dto.setUf(endereco.getUf().trim());
+				dto.setCep(endereco.getCep().trim());
 			} else {
 				endereco = cota.getEnderecoPrincipal().getEndereco();
 			}
@@ -789,9 +789,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = chamadaEncalheRepository.obterProdutosEmissaoCE(filtro);
 		
+		Map<Long, List<GrupoCota>> mapGPS =  this.grupoRepository.obterListaGrupoCotaPorDataOperacao(dataOperacaoDistribuidor);
+		
 		for(CotaEmissaoDTO dto : lista) {
 			
-			Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());
+			Cota cota = cotaRepository.buscarPorId(dto.getIdCota());
 			
 			dto.setEmissorNome(distribuidor.getRazaoSocial());
 			dto.setEmissorCNPJ(distribuidor.getCnpj());
@@ -799,17 +801,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			dto.setEmissorCEP(distribuidor.getCep());
 			dto.setEmissorMunicipio(distribuidor.getCidade());
 			dto.setEmissorUF(distribuidor.getUf());
-			dto.setEmissorLogradouro(distribuidor.getEndereco());
+			dto.setEmissorLogradouro(distribuidor.getEndereco().trim());
 			
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 
 			if(endereco != null) {
-				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
-				dto.setUf(endereco.getUf());
-				dto.setCidade(endereco.getCidade());
-				dto.setUf(endereco.getUf());
-				dto.setCep(endereco.getCep());
+				dto.setEndereco( (endereco.getTipoLogradouro() != null ? endereco.getTipoLogradouro().toUpperCase().trim() + ": " :"")
+									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + endereco.getNumero().trim());
+				dto.setUf(endereco.getUf().trim());
+				dto.setCidade(endereco.getCidade().trim());
+				dto.setUf(endereco.getUf().trim());
+				dto.setCep(endereco.getCep().trim());
 				
 				dto.setDestinatarioLogradouro(dto.getEndereco());
 				dto.setDestinatarioMunicipio(endereco.getCidade());
@@ -837,10 +839,24 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
 			dto.setDestinatarioNomeBox(dto.getBox().toString());
 			
-			String periodoRecolhimento;
+			String periodoRecolhimento = null;
 			
-			periodoRecolhimento = DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe());
-	                         
+			if(mapGPS != null && !mapGPS.isEmpty()) {
+				if (mapGPS.containsKey(dto.getIdCota())){
+					
+				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+				}
+				else{
+					
+					periodoRecolhimento = dto.getDataRecolhimento();
+				}	
+			} else {
+				periodoRecolhimento = dto.getDataRecolhimento();
+			}
+			
+			
 			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
 			List<ProdutoEmissaoDTO> produtosEmissao = mapProdutosEmissaoCota.get(dto.getIdCota());
