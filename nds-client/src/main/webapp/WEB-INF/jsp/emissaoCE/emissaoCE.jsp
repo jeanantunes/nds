@@ -56,11 +56,11 @@
 				</span>
 				
 				<!-- TODO IMPRESSAO CE 
+				-->
 				<span class="bt_novos">
 					<a a href="javascript:;" onclick="EmissaoCEController.imprimirCENovo();" id="imprimirCENovo" rel="tipsy" title="Imprimir CE PDF">
 					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
 				</span>
-				-->
 				
 				<span class="bt_arq">
 					<!-- ARQUIVO EXCEL -->

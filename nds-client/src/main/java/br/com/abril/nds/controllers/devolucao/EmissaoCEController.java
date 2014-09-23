@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,9 +40,11 @@ import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -339,39 +342,39 @@ public class EmissaoCEController extends BaseController {
 		}
 	}
 
-//    public void imprimirCENovo(FiltroEmissaoCE filtro) {
-//        
-//	    byte[] notasGeradas = null;
-//	    
-//	    try {
-//            
-//            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
-//    
-//            if (notasGeradas != null) {
-//    
-//                DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-//        
-//                this.httpResponse.setHeader("Content-Disposition", "attachment; filename=chamada-encalhe" + sdf.format(new Date()) + ".pdf");
-//        
-//                OutputStream output;
-//        
-//                output = this.httpResponse.getOutputStream();
-//        
-//                output.write(notasGeradas);
-//        
-//                httpResponse.getOutputStream().close();
-//        
-//                result.use(Results.nothing());
-//            }
-//        } catch (ValidacaoException e) {
-//            LOGGER.error("Erro de validação ao gerar arquivos de chamada de encalhe: " + e.getMessage(), e);
-//            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-//        } catch (Exception e) {
-//            LOGGER.error("Erro ao gerar arquivo(s) de chamada(s) de encalhe(s): " + e.getMessage(), e);
-//            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
-//        }
-//        
-//    }
+	public void imprimirCENovo(FiltroEmissaoCE filtro) {
+        
+	    byte[] notasGeradas = null;
+	    
+	    try {
+            
+            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
+    
+            if (notasGeradas != null) {
+    
+                DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+        
+                this.httpResponse.setHeader("Content-Disposition", "attachment; filename=chamada-encalhe" + sdf.format(new Date()) + ".pdf");
+       
+                OutputStream output;
+        
+                output = this.httpResponse.getOutputStream();
+        
+                output.write(notasGeradas);
+        
+                httpResponse.getOutputStream().close();
+        
+                result.use(Results.nothing());
+            }
+        } catch (ValidacaoException e) {
+            LOGGER.error("Erro de validação ao gerar arquivos de chamada de encalhe: " + e.getMessage(), e);
+            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+        } catch (Exception e) {
+            LOGGER.error("Erro ao gerar arquivo(s) de chamada(s) de encalhe(s): " + e.getMessage(), e);
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
+        }
+        
+    }
 	
 	public void modelo1() {
 				
