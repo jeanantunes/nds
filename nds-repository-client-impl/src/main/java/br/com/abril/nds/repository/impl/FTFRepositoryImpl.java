@@ -151,7 +151,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" '' as quantidadeVolumes, ");
 		sqlBuilder.append(" cast(COALESCE((select sum(produto_edicao.peso) from nota_fiscal_produto_servico nfps  ");
 		sqlBuilder.append(" left join produto_edicao on nfps.PRODUTO_EDICAO_ID = produto_edicao.PRODUTO_EDICAO_ID ");
-		sqlBuilder.append(" where nfps.NOTA_FISCAL_ID = nfn.ID ),0) as char) as pesoLiquido, ");
+		sqlBuilder.append(" where nfps.NOTA_FISCAL_ID = nfn.ID ), 0) as char) as pesoLiquido, ");
 		sqlBuilder.append(" '' as pesoBruto, ");
 		sqlBuilder.append(" '' as numContaBanco, ");
 		sqlBuilder.append(" COALESCE(DATE_FORMAT(nfn.data_saida_entrada,'%d/%m/%Y'),'')  as dataSaida, ");
