@@ -316,7 +316,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				produtoDTO.setQuantidadeDev(null);
 			} else {
 				produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
-				produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? 0 : produtoDTO.getQuantidadeDevolvida().intValue());
+				produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
 			}
 			
 			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte() );
@@ -919,8 +919,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 					break;
 
 				case MODELO_2:
-					path += "/chamada_encalhe_modelo1_wrapper.jasper";
-					// path += "/chamada_encalhe_modelo2_wrapper.jasper";
+					
+					path += "/chamada_encalhe_modelo2_wrapper.jasper";
 					break;
 	
 				default:

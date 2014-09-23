@@ -248,8 +248,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param quantidadeDevolvida the quantidadeDevolvida to set
 	 */
-	public void setQuantidadeDevolvida(BigInteger quantidadeDevolvida) {
-		this.quantidadeDevolvida = quantidadeDevolvida!=null? quantidadeDevolvida : BigInteger.ZERO;
+	public void setQuantidadeDevolvida(Number quantidadeDevolvida) {
+		this.quantidadeDevolvida = quantidadeDevolvida!=null? BigInteger.valueOf(quantidadeDevolvida.intValue()) : BigInteger.ZERO;
 	}
 	/**
 	 * @return the codigoBarras
