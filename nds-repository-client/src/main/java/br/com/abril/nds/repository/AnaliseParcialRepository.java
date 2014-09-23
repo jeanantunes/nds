@@ -22,10 +22,11 @@ public interface AnaliseParcialRepository {
 	List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId);
 	List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date);
-	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase);
+	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
     AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Integer numeroCota);
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
     void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal);
+    boolean verificarRedistribuicaoNoPeriodoParcial(final Long estudoId,final Integer numeroPeriodoBase);
 }
