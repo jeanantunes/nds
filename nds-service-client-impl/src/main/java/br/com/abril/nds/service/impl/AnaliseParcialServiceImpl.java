@@ -246,8 +246,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 }
                 
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
-                
-                //item.setUltimoReparte(this.getUltimoReparte(item.getEdicoesBase()));
             }
         }
 
