@@ -139,7 +139,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
     	    
-            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial()));
+    		final boolean parcialPossuiRedistribuicao = 
+    				analiseParcialRepository.verificarRedistribuicaoNoPeriodoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial());
+    		
+            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial(), parcialPossuiRedistribuicao));
             
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
@@ -171,6 +174,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 }
                 
                 item.setEdicoesBase(temp);
+                
+                item.setUltimoReparte(this.getUltimoReparte(temp));
             }
         } else {
             if (queryDTO.getEdicoesBase() == null) {
@@ -247,7 +252,17 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return lista;
     }
 
-    private void completarParciaisBase(List<EdicoesProdutosDTO> temp, int quantidadeParciaisBase) {
+    private BigInteger getUltimoReparte(List<EdicoesProdutosDTO> temp) {
+		
+    	if(temp!= null && !temp.isEmpty()){
+    		
+    		return temp.get(0).getReparte();
+    	}
+    	
+		return null;
+	}
+
+	private void completarParciaisBase(List<EdicoesProdutosDTO> temp, int quantidadeParciaisBase) {
         
         for (int i = temp.size(); i < quantidadeParciaisBase; i++) {
             

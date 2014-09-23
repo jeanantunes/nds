@@ -19,18 +19,24 @@ import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.FormaCobrancaDefaultVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
+import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
+import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -46,6 +52,7 @@ import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
+import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
@@ -106,6 +113,10 @@ public class NegociacaoDividaController extends BaseController {
 	@Autowired
 	private EmailService emailService;
 	
+	@Autowired
+	private PoliticaCobrancaService politicaCobrancaService;
+	
+	
 	public NegociacaoDividaController(Result result) {
 		super();
 		this.result = result;
@@ -146,21 +157,99 @@ public class NegociacaoDividaController extends BaseController {
 	private List<FormaCobrancaDefaultVO> obterFormaCobrancaNegociacao(Integer numeroCota, boolean isNegociacaoAvulsa) {
 		
 		List<FormaCobrancaDefaultVO> tiposCobranca = new ArrayList<FormaCobrancaDefaultVO>();
+		List<FormaCobrancaDTO> tiposCobrancaDTO = new ArrayList<FormaCobrancaDTO>();
+		List<ParametroCobrancaVO> parametrosCobrancaVO = new ArrayList<ParametroCobrancaVO>();
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		//String fonecedorCota = cota.getParametroCobranca().getFornecedorPadrao().getJuridica().getNomeFantasia().toUpperCase();
+	
+		PaginacaoVO paginacaoVO = new PaginacaoVO();
+		FiltroParametrosCobrancaDTO filtroAtual = new FiltroParametrosCobrancaDTO();
+		filtroAtual.setOrdenacaoColuna(OrdenacaoColunaParametrosCobranca.TIPO_COBRANCA);
+		filtroAtual.setPaginacao(paginacaoVO);
 		
 		if (isNegociacaoAvulsa) {
 			
-			tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+			//tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+			//tiposCobrancaDTO = parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(cota.getId());
+			
+			parametrosCobrancaVO =politicaCobrancaService.obterDadosPoliticasCobranca(filtroAtual);
 
 		} else {
 
 			tiposCobranca = this.parametroCobrancaCotaService.obterFormaCobrancaCotaDefault(numeroCota);
 			
 			if (tiposCobranca == null || tiposCobranca.isEmpty()){
-			    
-			    tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+			   
+
+				parametrosCobrancaVO =politicaCobrancaService.obterDadosPoliticasCobranca(filtroAtual);
+				
+			    //tiposCobranca = this.formaCobrancaService.obterFormaCobrancaDefault();
+				//tiposCobrancaDTO = parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(cota.getId());
 			}
 		}
-
+		
+		if (tiposCobranca == null || tiposCobranca.isEmpty()){
+			tiposCobranca = new ArrayList<FormaCobrancaDefaultVO>();
+		}
+		
+		
+		
+		/*
+		
+		FormaCobrancaDefaultVO formaCobrancaDefaultVO;
+		
+		if (tiposCobrancaDTO != null || !tiposCobrancaDTO.isEmpty()){
+		 for(FormaCobrancaDTO voDTO:tiposCobrancaDTO){
+			 
+			 if(fonecedorCota.equals(voDTO.getFornecedor().toUpperCase())){
+			 
+				 formaCobrancaDefaultVO= new FormaCobrancaDefaultVO();
+			 
+			     formaCobrancaDefaultVO = new FormaCobrancaDefaultVO();
+			     formaCobrancaDefaultVO.setIdBanco(voDTO.getIdBanco());
+			     formaCobrancaDefaultVO.setNomeBanco(voDTO.getNomeBanco());
+			     formaCobrancaDefaultVO.setTipoCobranca(TipoCobranca.valueOf(voDTO.getTipoPagto().toUpperCase()));
+			
+			     tiposCobranca.add(formaCobrancaDefaultVO);
+			 
+			 }
+		 }
+		}
+		*/
+		
+		FormaCobrancaDefaultVO formaCobrancaDefaultVO;
+		Banco banco;
+		String tipoCobrancaString;
+		
+		if (parametrosCobrancaVO != null || !parametrosCobrancaVO.isEmpty()){
+			 for(ParametroCobrancaVO voDTO:parametrosCobrancaVO){
+				 
+				 //if(fonecedorCota.equals(voDTO.getFornecedor().toUpperCase())){
+				 
+					 formaCobrancaDefaultVO= new FormaCobrancaDefaultVO();
+					 
+					 if(voDTO.getBanco()!=null && !voDTO.getBanco().trim().equals("")){
+					  banco = bancoService.obterbancoPorNome(voDTO.getBanco());
+				      formaCobrancaDefaultVO.setIdBanco(banco.getId());
+				      formaCobrancaDefaultVO.setNomeBanco(banco.getNome());
+					 }
+					 
+					 tipoCobrancaString = voDTO.getForma().replace(' ', '_').toUpperCase();
+				     formaCobrancaDefaultVO.setTipoCobranca(TipoCobranca.valueOf(tipoCobrancaString));
+				     
+				     if(formaCobrancaDefaultVO.getTipoCobranca()== null){
+				    	 if(tipoCobrancaString.equalsIgnoreCase(TipoCobranca.BOLETO_EM_BRANCO.name())){
+				    		 formaCobrancaDefaultVO.setTipoCobranca(TipoCobranca.BOLETO_EM_BRANCO); 
+				    	 } //BOLETO_EM_BRANCO
+				     }
+				     // BOLETO_EM_BRANCO
+				     tiposCobranca.add(formaCobrancaDefaultVO);
+				 
+				 //}
+			 }
+		}
 		return tiposCobranca;
 	}
 	
