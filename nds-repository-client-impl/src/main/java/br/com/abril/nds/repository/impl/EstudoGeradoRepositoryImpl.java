@@ -13,6 +13,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,13 +122,14 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   (qtdReparteDistribuidoEstudo / qtdCotasRecebemReparte) AS reparteMedioCota, ");
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   CAST(qtdReparteMinimoEstudo AS UNSIGNED INTEGER) AS qtdReparteMinimoEstudo, ");
-		sql.append("   (qtdCotasRecebemReparte / qtdCotasAtivasParaCalculo) * 100 AS abrangenciaEstudo , ");
+		sql.append("   abrangencia AS abrangenciaEstudo, ");
 		sql.append("   (qtdCotasQueVenderam / qtdCotasAtivasParaCalculo) * 100 AS abrangenciaDeVenda ");
        
 		sql.append("   from ( ");
 
 		sql.append("   select "); 
-		sql.append("   eg.QTDE_REPARTE as qtdReparteADistribuir, "); 
+		sql.append("   eg.QTDE_REPARTE as qtdReparteADistribuir, ");
+		sql.append("   eg.ABRANGENCIA as abrangencia, ");
 		sql.append("   coalesce(eg.REPARTE_MINIMO, 0) as qtdReparteMinimoEstudo, ");
 		sql.append("   sum(ecg.REPARTE) * count(distinct ecg.ID)/count(ecg.ID)  as qtdReparteDistribuidoEstudo, ");
 		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
@@ -136,16 +138,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
 		sql.append("   COUNT(DISTINCT (CASE WHEN epc.qtde_recebida - epc.qtde_devolvida > 0 THEN epc.cota_id ELSE NULL END)) as qtdCotasQueVenderam, ");
 				
-		sql.append("   CASE WHEN (estp.QTDE IS NULL OR estp.QTDE=0) "); 
-		sql.append("   THEN CASE WHEN plp.NUMERO_PERIODO=1 "); 
-		sql.append("   THEN ((l.REPARTE)-l.REPARTE_PROMOCIONAL) "); 
-		sql.append("   ELSE CASE WHEN l.REPARTE=0 "); 
-		sql.append("   THEN eg.QTDE_REPARTE "); 
-		sql.append("   ELSE l.REPARTE "); 
-		sql.append("   END "); 
-		sql.append("   END ");
-		sql.append("   ELSE estp.qtde "); 
-		sql.append("   END AS qtdReparteDistribuidor, ");
+		sql.append("   eg.REPARTE_TOTAL AS qtdReparteDistribuidor, ");
 
 		sql.append("   est.ABRANGENCIA AS abrangenciaSugerida, ");
 		sql.append("   est.REPARTE_MINIMO as qtdReparteMinimoSugerido ");
@@ -166,6 +159,20 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("estudoId", estudoId);
+		
+		query.addScalar("qtdReparteDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("qtdSobraEstudo", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("saldo", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("qtdReparteDistribuidoEstudo", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("qtdCotasAtivas", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("qtdCotasRecebemReparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("qtdCotasAdicionadasPelaComplementarAutomatica", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("qtdReparteMinimoSugerido", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("reparteMedioCota", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("abrangenciaSugerida", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("qtdReparteMinimoEstudo", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("abrangenciaEstudo", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("abrangenciaDeVenda", StandardBasicTypes.BIG_DECIMAL);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoEstudoHistogramaPosAnaliseDTO.class));
 		

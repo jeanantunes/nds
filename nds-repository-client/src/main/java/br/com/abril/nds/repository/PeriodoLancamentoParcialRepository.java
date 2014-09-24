@@ -46,7 +46,7 @@ public interface PeriodoLancamentoParcialRepository extends
 	 * @return List<ParcialVendaDTO>
 	 */
 	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
-			Date dataRecolhimento, Long idProdutoEdicao);
+			Date dataRecolhimento, Long idProdutoEdicao, Long idPeriodo);
 
 	/**
 	 * Obtém lançamento de periodo parcial anterior.

@@ -680,7 +680,6 @@ public class ProdutoEdicaoController extends BaseController {
 				numeroPeriodo = periodoLancamentoParcial.getNumeroPeriodo();
 			}
 			
-			
 			PeriodoLancamentosProdutoEdicaoVO periodoLancamento = new PeriodoLancamentosProdutoEdicaoVO();
 			
             periodoLancamento.setIdLancamento(lancamento.getId());

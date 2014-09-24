@@ -20,6 +20,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private String codigoProduto;
 	private Long codigoChamdaEncalhe;
 	private Long idLancamento;
+	private String replicar = "";
 	
 	@Export(label = "Box", exhibitionOrder = 1)
 	private String box;
@@ -144,7 +145,11 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	public void setQntExemplares(BigInteger qntExemplares) {
 		this.qntExemplares = qntExemplares;
 	}
-	
-	
+	public String getReplicar() {
+		return replicar;
+	}
+	public void setReplicar(String replicar) {
+		this.replicar = replicar;
+	}
 	
 }

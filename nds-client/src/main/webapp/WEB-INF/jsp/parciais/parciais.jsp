@@ -370,6 +370,10 @@
 	                       
 </fieldset>
 
-<jsp:include page="parciaisDeVenda.jsp" />
+<form id="form-parciais-venda">
+	<jsp:include page="parciaisDeVenda.jsp" />
+</form>
 
-<jsp:include page="redistribuicao.jsp" />
+<form id="form-parciais-redistribuicao">
+	<jsp:include page="redistribuicao.jsp" />
+</form>

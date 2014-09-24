@@ -150,17 +150,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
             FiltroChamadaAntecipadaEncalheDTO filtro);
     
     /**
-     * Obtem a quantidade de cotas sujeitas a antecipação de recolhimento de
-     * encalhe.
-     * 
-     * @param filtro - filtro coma as opções de consulta
-     * 
-     * @return Long
-     */
-    Long obterQntCotasSujeitasAntecipacoEncalhe(
-            FiltroChamadaAntecipadaEncalheDTO filtro);
-    
-    /**
      * Obtem a quantidade de exemplares de uma cota sujeita a antecipação de
      * recolhimento de encalhe.
      * 

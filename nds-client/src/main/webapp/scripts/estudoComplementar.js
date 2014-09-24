@@ -83,6 +83,7 @@ var estudoComplementarController =$.extend(true,  {
 	                  dados.push({name:"parametros.idProdutoEdicao",      value: $('#idProdutoEdicao').val()});
 	                  dados.push({name:"parametros.idCopia",      		  value: $('#idCopia').val()});
 	                  dados.push({name:"parametros.multiplo",             value: isMultiplo});
+	                  dados.push({name:"parametros.dataLancamento",             value: $('#publicacaoDataLncto').text()});
 	      					           
 		 $.ajax({
 			 url:  'lancamento/gerarEstudo',

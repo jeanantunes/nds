@@ -588,6 +588,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "distribuicaoVendaMedia.usarFixacao", value : $("#usarFixacao")[0].checked });
 		data.push({name : "distribuicaoVendaMedia.distribuicaoPorMultiplo", value : $("#distribuicaoPorMultiplo")[0].checked });
 		data.push({name : "distribuicaoVendaMedia.multiplo", value : $("#multiplo").val() });
+		data.push({name : "distribuicaoVendaMedia.reparteTotal", value : $("#reparteTotal").text() });
+		
 		
 		if(T.produtoEdicaoBases != undefined){
 			for(var i = 0; i < T.produtoEdicaoBases.length; i++){
@@ -606,7 +608,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			}
 		}
 		
-		if(T.bonificacaoSelecionados != undefined){
+		if(T.bonificacaoSelecionados != undefined) {
+			
             var doNotStringify = {
                 acao: true,
                 percBonificacaoInput: true,
@@ -614,7 +617,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
                 sel: true,
                 todasAsCotas: true,
                 checkBox: true
-            }
+            };
 
             data.push({name: "distribuicaoVendaMedia.bonificacoesVO", value: JSON.stringify(T.bonificacaoSelecionados, function(k,v){if(doNotStringify.hasOwnProperty(k))return undefined; return v;}) });
 
@@ -626,6 +629,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].todasAsCotas", value : T.bonificacaoSelecionados[i].todasAsCotas});
 			}
 		}
+		
 		data.push({name : "distribuicaoVendaMedia.todasAsCotas", value : $("#RDtodasAsCotas")[0].checked });
 		if($("#RDcomponente")[0].checked){
 			
@@ -722,6 +726,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             }
             
             T.produtoEdicaoBases = [];
+            T.bonificacaoSelecionados = [];
 
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		

@@ -711,9 +711,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		//hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 
-		hql.append(" sum(conferenciaEncalhe.id) as conversaoQtdeDevolvida, ");
+		hql.append(" coalesce(count(conferenciaEncalhe.id), 0)  as conversaoQtdeDevolvida, ");
 		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
-
+		
 		
 		hql.append(" case when count(conferenciaEncalhe.id) > 0 then true else false end as confereciaRealizada,");
 		//hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
@@ -734,9 +734,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEmissaoDTO.class));
 		
-		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = new HashMap<>(); 
-		
 		List<ProdutoEmissaoDTO> listaProdutoEmissaoCota = query.list();
+		
+		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = new HashMap<>(); 
 		
 		for (ProdutoEmissaoDTO produtoEmissaoDTO : listaProdutoEmissaoCota) {
 		    
@@ -770,18 +770,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join produto.fornecedores fornecedores 				                         ")
 		   .append(" INNER join chamadaEncalhe.lancamentos lancamentos 			                     ")
 		   .append(" left join lancamentos.periodoLancamentoParcial periodoLancParcial 	             ")
-		   .append(" left join lancamentos.estudo estudo ")
+		   .append(" left join lancamentos.estudo estudo                                             ")
            
-		   .append(" left join estudo.estudoCotas estudoCotas ")
-           .append(" left join estudoCotas.itemNotaEnvios itensNotaEnvio ")
-           .append(" left join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio ")
+		   .append(" left join estudo.estudoCotas estudoCotas                                        ")
+           .append(" left join estudoCotas.itemNotaEnvios itensNotaEnvio                             ")
+           .append(" left join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio                    ")
 		   
-		   .append(" INNER JOIN lancamentos.movimentoEstoqueCotas  movimentoCota 	")
-		   .append(" INNER JOIN movimentoCota.tipoMovimento tipoMovimento         ")
-		   .append(" where (movimentoCota.id is null or movimentoCota.cota = cota)	")
-		   .append(" and (estudoCotas.id is null or estudoCotas.cota = cota)  ")
-		   .append(" and chamEncCota.qtdePrevista>0  ")
-		   .append(" and chamEncCota.postergado = :isPostergado ");
+		   .append(" INNER JOIN lancamentos.movimentoEstoqueCotas  movimentoCota 	                 ")
+		   .append(" INNER JOIN movimentoCota.tipoMovimento tipoMovimento                            ")
+		   .append(" where (movimentoCota.id is null or movimentoCota.cota = cota)	                 ")
+		   .append(" and (estudoCotas.id is null or estudoCotas.cota = cota)                         ")
+		   .append(" and chamEncCota.postergado = :isPostergado                                      ");
+		   // .append(" and chamEncCota.qtdePrevista>0  ")
 	
 		param.put("isPostergado", false);
 		
@@ -1135,7 +1135,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" and l.status not in ('RECOLHIDO', 'FECHADO', 'EM_RECOLHIMENTO')                                                              ")
 			.append(" and pe.parcial = true                                                                                                        ")
 			.append(" group by numeroCota, idCota, idProdutoEdicao                                                                                 ")   
-			/// .append(" having count(0) > 1                                                                                                          ")
+			/// .append(" having count(0) > 1                                                                                                      ")
 			.append(" order by dataMovimento ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
