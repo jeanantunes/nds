@@ -101,6 +101,21 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Autowired
     protected ParametrosDistribuidorService parametrosDistribuidorService;
 	
+
+	@Override
+	@Transactional
+	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+		return grupoRepository.obterCotasComOperacaoDiferenciada(filtro);
+	}
+
+
+	@Override
+	@Transactional
+	public List<CotaEmissaoDTO> obterCotasSemOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+		return grupoRepository.obterCotasSemOperacaoDiferenciada(filtro);
+	}
+
+	
 	@Override
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {

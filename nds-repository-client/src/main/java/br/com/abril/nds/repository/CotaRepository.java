@@ -25,12 +25,12 @@ import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -50,7 +50,8 @@ import br.com.abril.nds.util.Intervalo;
  * 
  */
 public interface CotaRepository extends Repository<Cota, Long> {
-    
+	
+	
 	/**
 	 * Realiza um select for update no registro de cota
 	 * 
@@ -311,8 +312,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
     
     Cota buscarCotaPorID(Long id);
     
-    GrupoCota obterOperacaoVigenteCota(Long idCota, Date dataInicio, Date dataFim);
-	    /**
+	/**
      * 
      * Obtém todas as cotas que possuem a média de reparte dentro do range
      * inicial + final. Se for informado a lista de ProdutoEdicaoDTO, será
