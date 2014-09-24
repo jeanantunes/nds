@@ -27,17 +27,23 @@ import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
 public class EmitenteDestinatarioBuilder {
 
 	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal, Cota cota) {
-
+		
 		if(cota != null) {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setCota(cota);
 		}
-		DocumentoDestinatario documento = montarDadosPessoa(notaFiscal, cota.getPessoa());
 
+		DocumentoDestinatario documento = montarDadosPessoa(notaFiscal, cota.getPessoa());
+		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setTipoDestinatario(TipoDestinatario.COTA);
 		documento.setDocumento(cota.getPessoa().getDocumento().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 
-		StringBuilder logradouro = new StringBuilder(cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro())
+		String tipoLogradouro = "";
+		if(cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro() != null) {
+			tipoLogradouro = cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro();
+		}
+		
+		StringBuilder logradouro = new StringBuilder(tipoLogradouro)
 			.append(" ")
 			.append(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
 		
@@ -67,9 +73,9 @@ public class EmitenteDestinatarioBuilder {
 
 		for (TelefoneCota telefone : cota.getEnderecoPrincipal().getCota().getTelefones()) {
 			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
 
 			break;
 		}
