@@ -132,9 +132,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional(readOnly=true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
-        
+    	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
-        
+    	
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
     	    
     		final boolean parcialPossuiRedistribuicao = 
@@ -209,27 +209,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 Map<Integer, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
                 Integer ordemExibicaoHelper = 0;
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
+
                 if(idsProdutoEdicao.size() > 0) {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao);
                     edicoesComVenda.addAll(buscaHistoricoDeVendas);
-                		
-                    /*
-                    if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
-                        AnaliseParcialDTO buscarReparteDoEstudo = analiseParcialRepository.buscarReparteDoEstudo(queryDTO.getEstudoOrigem(), item.getCota());
 
-                        for (EdicoesProdutosDTO ed : edicoesComVenda) {
-                            if (ed.getProdutoEdicaoId().equals(queryDTO.getEdicoesBase().get(0).getProdutoEdicaoId())) {
-                                if(buscarReparteDoEstudo.getUltimoReparte()==null){
-                                    edicoesComVenda.get(0).setReparte(BigDecimal.ZERO);
-                                }else{
-                                    edicoesComVenda.get(0).setReparte(BigDecimal.valueOf(buscarReparteDoEstudo.getUltimoReparte().longValue()));
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    */
-                		
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                         for (EdicoesProdutosDTO ed : edicoesComVenda) {
                             if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {

@@ -706,9 +706,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		//hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 
-		hql.append(" sum(conferenciaEncalhe.id) as quantidadeDevolvida,");
+		hql.append(" coalesce(count(conferenciaEncalhe.id), 0) as quantidadeDevolvida,");
 		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
-
+		
 		
 		hql.append(" case when count(conferenciaEncalhe.id) > 0 then true else false end as confereciaRealizada,");
 		//hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
@@ -730,9 +730,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEmissaoDTO.class));
 		
-		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = new HashMap<>(); 
-		
 		List<ProdutoEmissaoDTO> listaProdutoEmissaoCota = query.list();
+		
+		Map<Long, List<ProdutoEmissaoDTO>> mapProdutosEmissaoCota = new HashMap<>(); 
 		
 		for (ProdutoEmissaoDTO produtoEmissaoDTO : listaProdutoEmissaoCota) {
 		    
@@ -1131,7 +1131,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" and l.status not in ('RECOLHIDO', 'FECHADO', 'EM_RECOLHIMENTO')                                                              ")
 			.append(" and pe.parcial = true                                                                                                        ")
 			.append(" group by numeroCota, idCota, idProdutoEdicao                                                                                 ")   
-			/// .append(" having count(0) > 1                                                                                                          ")
+			/// .append(" having count(0) > 1                                                                                                      ")
 			.append(" order by dataMovimento ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
