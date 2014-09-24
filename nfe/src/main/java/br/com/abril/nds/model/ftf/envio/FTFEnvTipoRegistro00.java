@@ -1,7 +1,5 @@
 package br.com.abril.nds.model.ftf.envio;
 
-import org.apache.commons.lang.StringUtils;
-
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -12,7 +10,7 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 	private String tipoRegistro="0";
 	
 	@FTFfield(tamanho=2, tipo="char", ordem=2)
-	private String codigoCentroEmissor;
+	private String codigoEstabelecimentoEmissor;
 
 	@FTFfield(tamanho=14, tipo="char", ordem=3)
 	private String cnpjEmpresaEmissora;
@@ -52,14 +50,12 @@ public class FTFEnvTipoRegistro00 extends FTFBaseDTO implements FTFCommons {
 		this.tipoRegistro = tipoRegistro;
 	}
 
-	public String getCodigoCentroEmissor() {
-		return codigoCentroEmissor;
+	public String getCodigoEstabelecimentoEmissor() {
+		return codigoEstabelecimentoEmissor;
 	}
 
-	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		
-		codigoCentroEmissor = StringUtils.leftPad(codigoCentroEmissor, 2, '0');
-		this.codigoCentroEmissor = codigoCentroEmissor;
+	public void setCodigoEstabelecimentoEmissor(String codigoEstabelecimentoEmissor) {
+		this.codigoEstabelecimentoEmissor = codigoEstabelecimentoEmissor;
 	}
 
 	public String getCnpjEmpresaEmissora() {

@@ -22,7 +22,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	private String tipoRegistro = "1";
 	
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
-	private String codigoCentroEmissor;
+	private String codigoEstabelecimentoEmissor;
 
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
 	private String cnpjEmpresaEmissora;
@@ -46,7 +46,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	private String dataPedido;
 	
 	@FTFfield(tamanho=3, tipo="char", ordem=10)
-	private String codCentroEmissor;
+	private String codigoCentroEmissor;
 	
 	@FTFfield(tamanho=14, tipo="char", ordem=11)
 	private String cpfCnpjDestinatario;
@@ -322,6 +322,14 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 		this.tipoRegistro = tipoRegistro;
 	}
 
+	public String getCodigoEstabelecimentoEmissor() {
+		return codigoEstabelecimentoEmissor;
+	}
+
+	public void setCodigoEstabelecimentoEmissor(String codigoEstabelecimentoEmissor) {
+		this.codigoEstabelecimentoEmissor = codigoEstabelecimentoEmissor;
+	}
+
 	public String getCodSolicitante() {
 		return codSolicitante;
 	}
@@ -344,14 +352,6 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public void setDataPedido(String dataPedido) {
 		this.dataPedido = dataPedido;
-	}
-
-	public String getCodCentroEmissor() {
-		return codCentroEmissor;
-	}
-
-	public void setCodCentroEmissor(String codCentroEmissor) {
-		this.codCentroEmissor = codCentroEmissor;
 	}
 
 	public String getCpfCnpjDestinatario() {
@@ -560,7 +560,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setPesoLiquido(String pesoLiquido) {
-		this.pesoLiquido = pesoLiquido;
+		this.pesoLiquido = (pesoLiquido != null && !"0".equals(pesoLiquido)) ? pesoLiquido : "" ;
 	}
 
 	public String getPesoBruto() {

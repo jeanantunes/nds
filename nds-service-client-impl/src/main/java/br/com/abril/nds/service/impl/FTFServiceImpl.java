@@ -138,7 +138,7 @@ public class FTFServiceImpl implements FTFService {
 			FTFEnvTipoRegistro03 ftfEnvTipoRegistro03 = new FTFEnvTipoRegistro03();
 
 			ftfEnvTipoRegistro03.setTipoRegistro("3");
-			ftfEnvTipoRegistro03.setCodigoCentroEmissor(ftfTipoRegistro02.getCodigoCentroEmissor());
+			ftfEnvTipoRegistro03.setCodigoEstabelecimentoEmissor(ftfTipoRegistro02.getCodigoEstabelecimentoEmissor());
 			ftfEnvTipoRegistro03.setCnpjEmpresaEmissora(ftfTipoRegistro02.getCnpjEmpresaEmissora());
 			ftfEnvTipoRegistro03.setCodLocal(ftfTipoRegistro02.getCodLocal());
 			ftfEnvTipoRegistro03.setNumeroDocOrigem(ftfTipoRegistro02.getNumeroDocOrigem());
