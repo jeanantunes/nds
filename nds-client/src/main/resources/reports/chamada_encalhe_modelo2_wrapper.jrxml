@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo2_wrapper" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ce3ab6d9-0865-485f-b3e6-e6fe35301751">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="10"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
+	<field name="emissaoCEImpressao" class="java.util.List"/>
+	<detail>
+		<band height="842" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="595" height="842" uuid="b432193b-fd81-4c47-aebe-1bdc50f338d7"/>
+				<subreportParameter name="IND_EMISSAO_DEPEC">
+					<subreportParameterExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FAT_VALOR1"/>
+				<subreportParameter name="FAT_VALOR2"/>
+				<subreportParameter name="FAT_VALOR3"/>
+				<subreportParameter name="Logo"/>
+				<subreportParameter name="FAT_VALOR4"/>
+				<subreportParameter name="FAT_VALOR5"/>
+				<subreportParameter name="FAT_VALOR6"/>
+				<subreportParameter name="FAT_VALOR7"/>
+				<subreportParameter name="FAT_VALOR8"/>
+				<subreportParameter name="FAT_VALOR9"/>
+				<subreportParameter name="FAT_VENCIMENTO10"/>
+				<subreportParameter name="FAT_VALOR10"/>
+				<subreportParameter name="FAT_VENCIMENTO1"/>
+				<subreportParameter name="FAT_NUMERO3"/>
+				<subreportParameter name="FAT_VENCIMENTO6"/>
+				<subreportParameter name="FAT_NUMERO2"/>
+				<subreportParameter name="FAT_VENCIMENTO7"/>
+				<subreportParameter name="FAT_NUMERO10"/>
+				<subreportParameter name="FAT_NUMERO5"/>
+				<subreportParameter name="FAT_VENCIMENTO8"/>
+				<subreportParameter name="FAT_VENCIMENTO9"/>
+				<subreportParameter name="FAT_NUMERO4"/>
+				<subreportParameter name="FAT_VENCIMENTO2"/>
+				<subreportParameter name="FAT_NUMERO7"/>
+				<subreportParameter name="FAT_VENCIMENTO3"/>
+				<subreportParameter name="FAT_NUMERO6"/>
+				<subreportParameter name="FAT_NUMERO9"/>
+				<subreportParameter name="FAT_VENCIMENTO4"/>
+				<subreportParameter name="FAT_VENCIMENTO5"/>
+				<subreportParameter name="FAT_NUMERO8"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FAT_NUMERO1"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{emissaoCEImpressao})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "chamada_encalhe_modelo2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

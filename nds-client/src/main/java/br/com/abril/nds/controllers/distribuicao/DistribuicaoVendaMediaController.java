@@ -226,20 +226,26 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    
     		}
     		
-    		if(estudoTemp.isPracaVeraneio() 
-    				&& estudoAlgoritmoService.validaPeriodoVeraneio(estudoTemp.getProdutoEdicaoEstudo().getDataLancamento())
-    				&& !estudoTemp.getProdutoEdicaoEstudo().isColecao()) {
-    			
-	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
-	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
-	        	
-	        	if((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
-	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())) {
-	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, true);
-	        	} else {
-	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
-	        	}
-	        }
+    		final boolean parcialComMaisDeUmPeriodo = 
+        			(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null &&estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1);
+        	
+    		if(!parcialComMaisDeUmPeriodo){
+        		
+        		if(estudoTemp.isPracaVeraneio() 
+        				&& estudoAlgoritmoService.validaPeriodoVeraneio(estudoTemp.getProdutoEdicaoEstudo().getDataLancamento())
+        				&& !estudoTemp.getProdutoEdicaoEstudo().isColecao()) {
+        			
+    	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
+    	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
+    	        	
+    	        	if((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
+    	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())) {
+    	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, true);
+    	        	} else {
+    	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
+    	        	}
+    	        }
+        	}
         }
 	}
 	

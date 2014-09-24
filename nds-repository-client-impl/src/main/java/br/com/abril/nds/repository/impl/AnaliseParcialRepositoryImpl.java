@@ -27,6 +27,7 @@ import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
+import br.com.abril.nds.util.Util;
 
 @Repository
 public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<EstudoCotaGerado, Long> implements AnaliseParcialRepository {
@@ -395,7 +396,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase) {
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao) {
 
         StringBuilder sql = new StringBuilder();
         
@@ -439,7 +440,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("   left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append("   left join movimento_estoque_cota mecReparte on mecReparte.lancamento_id = l.id and mecReparte.COTA_ID = c.ID");
         sql.append(" where eg.id = :estudoId ");
-        sql.append("   and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
+        sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
         sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
         sql.append(" order by l.data_lcto_distribuidor desc, ");
         sql.append("   pe.numero_edicao desc, ");
@@ -464,6 +465,32 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
         return query.list();
+    }
+    
+    public boolean verificarRedistribuicaoNoPeriodoParcial(final Long estudoId,final Integer numeroPeriodoBase){
+    	
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select  count(distinct plp.ID) as QUANTIDADE ");
+    	sql.append(" from estudo_gerado eg "); 
+    	sql.append(" join estudo_cota_gerado ecg on ecg.estudo_id = eg.id "); 
+    	sql.append(" join cota c on c.id = ecg.cota_id  ");
+    	sql.append(" join produto_edicao pe on pe.id = eg.produto_edicao_id "); 
+    	sql.append(" join produto p on p.id = pe.produto_id "); 
+    	sql.append(" join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID "); 
+    	sql.append(" join periodo_lancamento_parcial plp on plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID "); 
+    	sql.append(" where eg.id =:estudoId  ");
+    	sql.append(" and plp.NUMERO_PERIODO =:numeroPeriodoBase ");
+    	sql.append(" and l.NUMERO_LANCAMENTO > 1 ");
+    	
+    	Query query = getSession().createSQLQuery(sql.toString()).addScalar("QUANTIDADE", StandardBasicTypes.LONG);
+    	
+    	query.setParameter("estudoId", estudoId);
+        query.setParameter("numeroPeriodoBase", numeroPeriodoBase);
+    	
+        Long count = (Long) Util.nvl(query.uniqueResult(),0);
+        
+    	return (count > 0 );
     }
     
     @SuppressWarnings("unchecked")
