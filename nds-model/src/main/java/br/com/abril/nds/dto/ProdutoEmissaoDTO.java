@@ -308,6 +308,15 @@ public class ProdutoEmissaoDTO implements Serializable{
 		return idProdutoEdicao;
 	}
 
+	public void setConversaoQtdeDevolvida(Long qtdeDevolvida) {
+		
+		if(qtdeDevolvida == null) {
+			this.quantidadeDevolvida = BigInteger.ZERO;
+		} else {
+			this.quantidadeDevolvida = new BigInteger(qtdeDevolvida.toString());
+		}
+	}
+	
 	/**
 	 * @param idProdutoEdicao the idProdutoEdicao to set
 	 */

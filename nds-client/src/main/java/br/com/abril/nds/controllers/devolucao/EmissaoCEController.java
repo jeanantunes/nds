@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -263,22 +265,51 @@ public class EmissaoCEController extends BaseController {
 		return chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
 	}
 	
+	private String obterMsgCotasSemOperacaoDiferenciada(List<CotaEmissaoDTO> cotasSemOperacaoDiferenciada) {
+		
+		StringBuilder msg = new StringBuilder();
+
+		msg.append(" As cotas abaixo não possuem operação diferenciada: ");
+		
+		for(CotaEmissaoDTO cota : cotasSemOperacaoDiferenciada) {
+			
+			msg.append(cota.getNomeCota())
+			.append(" - ")
+			.append(cota.getNumCota())
+			.append(" <br/> ");
+			
+		}
+		
+		return msg.toString();
+		
+	}
+	
 	@Post
 	@Path("/obterDadosImpressaoBoletosEmBranco")
 	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) { 
 		
 		session.setAttribute(BOLETOS_EM_BRANCO, null);
 		
-		boolean existemBoletosEmBranco = false;
-		
 		FiltroEmissaoCE filtro = getFiltroSessao();
-
+		
 		boolean boletosEmitidosNoPeriodo = this.boletoService.existeBoletoAntecipadoPeriodoRecolhimentoECota(filtro.getNumCotaDe(),
 				                                                                                             filtro.getNumCotaAte(), 
 				                                                                                             filtro.getDtRecolhimentoDe(), 
 				                                                                                             filtro.getDtRecolhimentoAte());
 
+		Map<String, Object> resultados = new HashMap<>();
+		
 		if (!verificarReemissao || !boletosEmitidosNoPeriodo){
+			
+			List<Integer> cotasOperacaoDiferenciada = chamadaEncalheService.obterCotasComOperacaoDiferenciada(filtro);
+			
+			if(cotasOperacaoDiferenciada == null || cotasOperacaoDiferenciada.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota com operação diferenciada encontrada!");
+			}
+			
+			filtro.setCotasOperacaoDiferenciada(cotasOperacaoDiferenciada);
+			
+			List<CotaEmissaoDTO> cotasSemOperacaoDiferenciada = chamadaEncalheService.obterCotasSemOperacaoDiferenciada(filtro);
 			
 			DadosImpressaoEmissaoChamadaEncalhe dados = this.obterDadosImpressaoCE(filtro);
 			
@@ -295,18 +326,28 @@ public class EmissaoCEController extends BaseController {
 				
 				session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
 				
-				existemBoletosEmBranco = true;
-			}
-			else{
+			} else {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir o Boleto em Branco !");
+				
 			}
 			
-			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+			
+			
+			if(cotasSemOperacaoDiferenciada!=null && !cotasSemOperacaoDiferenciada.isEmpty()){
+				resultados.put("msgCotaSemOperacaoDiferenciada", obterMsgCotasSemOperacaoDiferenciada(cotasSemOperacaoDiferenciada));
+			}
+			
+			resultados.put("existemBoletosEmBranco", Boolean.TRUE);
+			
+			result.use(Results.json()).from(resultados,"result").recursive().serialize();
 	    }
 		else{
 			
-			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+			resultados.put("existemBoletosEmBranco", Boolean.FALSE);
+			
+			result.use(Results.json()).from(resultados,"result").recursive().serialize();
+			
 		}
 	}
 

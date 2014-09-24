@@ -24,6 +24,13 @@ public interface ChamadaEncalheService {
 			FiltroEmissaoCE filtro);
 
 	
+
+	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro);
+
+
+	public List<CotaEmissaoDTO> obterCotasSemOperacaoDiferenciada(FiltroEmissaoCE filtro);
+	
+	
 	/**
 	 * Obtem Produtos com Recolhimento na semana informada
 	 * 

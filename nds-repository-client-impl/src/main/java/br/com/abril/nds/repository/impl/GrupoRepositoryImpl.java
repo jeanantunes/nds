@@ -7,12 +7,17 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.collection.CollectionPropertyNames;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -35,6 +40,177 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		addDataVigencia(data, criteria);
 		
 		return criteria.list();
+	}
+	
+    public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+    	
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select cota.numero_cota as numeroCota ");
+    	sql.append(" from cota ");
+    	sql.append(" inner join (  ");
+    	sql.append(getSQLCotasOperacaoDiferenciadas());
+    	sql.append(" ) as cod on ( cod.idCota = cota.id ) ");
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataInicio", filtro.getDtRecolhimentoDe());
+		query.setParameter("dataFim", filtro.getDtRecolhimentoAte());
+		query.setParameter("numeroCotaInicio", filtro.getNumCotaDe());
+		query.setParameter("numeroCotaFim", filtro.getNumCotaAte());
+		
+		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		
+		return query.list();
+
+    }
+    
+
+    public List<CotaEmissaoDTO> obterCotasSemOperacaoDiferenciada(FiltroEmissaoCE filtro) {
+    	
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select cota.numero_cota as numCota, pessoa.razao_social as nomeCota ");
+    	
+    	sql.append(" from cota ");
+
+    	sql.append(" inner join pessoa on (pessoa.id = cota.pessoa_id) ");
+    	
+    	sql.append(" where ");
+    	
+    	sql.append(" cota.numero_cota between :numeroCotaInicio and :numeroCotaFim ");
+    	
+    	sql.append(" and cota.id not in  ( ");
+    	
+    	sql.append(getSQLCotasOperacaoDiferenciadas());
+    	
+    	sql.append(" ) ");
+		
+    	Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataInicio", filtro.getDtRecolhimentoDe());
+		query.setParameter("dataFim", filtro.getDtRecolhimentoAte());
+		query.setParameter("numeroCotaInicio", filtro.getNumCotaDe());
+		query.setParameter("numeroCotaFim", filtro.getNumCotaAte());
+		
+		((SQLQuery) query).addScalar("numCota", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("nomeCota", StandardBasicTypes.STRING);
+		
+		((SQLQuery) query).setResultTransformer(new AliasToBeanResultTransformer(CotaEmissaoDTO.class));
+
+		
+		return query.list();
+
+    }
+	
+	private StringBuilder getSQLCotasOperacaoDiferenciadas() {
+    	
+    	StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select operaDiferenciada.idCota ");
+    	
+		sql.append(" from ");
+    	
+		sql.append(" ( ");
+
+		sql.append(" select c.id as idCota ");
+		sql.append(" from cota c ");
+		sql.append(" inner join pdv on ( pdv.cota_id = c.id and pdv.ponto_principal = true ) ");
+		sql.append(" inner join endereco_pdv on ( endereco_pdv.pdv_id = pdv.id and endereco_pdv.principal = true ) 	");
+		sql.append(" inner join endereco on ( endereco.id = endereco_pdv.endereco_id )  		");
+		sql.append(" inner join ( select gm.localidade as localidade ");
+		sql.append(" from grupo_cota gc ");
+		sql.append(" inner join grupo_municipio as gm on (gm.grupo_cota_id = gc.id)	");
+		sql.append(" where ");
+		sql.append(" gc.data_vigencia_inicio <= :dataInicio and ");
+		sql.append(" ( gc.data_vigencia_fim is null or gc.data_vigencia_fim >= :dataFim ) ) as localidade_diferenciada ");
+		sql.append(" on (localidade_diferenciada.localidade = endereco.cidade ) ");
+		sql.append(" where ");
+		sql.append(" c.numero_cota between :numeroCotaInicio and :numeroCotaFim ");
+		sql.append(" group by c.id ");
+		
+		sql.append(" union ");
+		
+		sql.append(" select c.id as idCota ");
+		sql.append(" from grupo_cota gc ");
+		sql.append(" inner join cota_grupo as cg on (cg.grupo_cota_id = gc.id)		");
+		sql.append(" inner join cota as c on (c.id = cg.cota_id) 	");
+		sql.append(" where ");
+		sql.append(" c.numero_cota between :numeroCotaInicio and :numeroCotaFim and ");
+		sql.append(" gc.data_vigencia_inicio <= :dataInicio and ");
+		sql.append(" ( gc.data_vigencia_fim is null or gc.data_vigencia_fim >= :dataFim ) ");
+		sql.append(" group by c.id ");
+		
+		sql.append(" ) as operaDiferenciada ");
+		
+		sql.append(" group by operaDiferenciada.idCota ");
+		
+		return sql;
+    }
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DiaSemana> obterDiasRecolhimentoOperacaoDiferenciada(
+			final Integer numeroCota, 
+			final Date dataInicio, 
+			final Date dataFim) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select diaRecolhimento	");
+		
+		hql.append(" from GrupoCota g ");
+
+		hql.append(" inner join g.diasRecolhimento diaRecolhimento	");
+	
+		hql.append(" left join g.cotas cota ");
+		
+		hql.append(" left join g.municipios municipio ");
+		
+		hql.append(" where ");
+		
+		hql.append(" g.dataInicioVigencia <= :dataInicio and ");
+		
+		hql.append(" ( g.dataFimVigencia is null or g.dataFimVigencia >= :dataFim ) and ");
+		
+		hql.append(" ( ");
+	    
+		hql.append(" cota.numeroCota = :numeroCota ");
+		
+		hql.append(" or municipio = ");
+			
+		hql.append(" 	( ");
+		
+		hql.append(" 	select max(ender.cidade) from Cota cota "); 
+			
+		hql.append(" 	inner join cota.pdvs pdv ");
+			
+		hql.append(" 	inner join pdv.enderecos enderecoPDV ");
+		
+		hql.append("    inner join enderecoPDV.endereco ender  ");
+			
+		hql.append(" 	where cota.numeroCota = :numeroCota and ");
+		
+		hql.append("	pdv.caracteristicas.pontoPrincipal = true and	");
+		
+		hql.append(" 	enderecoPDV.principal = true ");
+		
+		hql.append(" 	) ");
+		
+		hql.append(" ) ");
+		
+		
+		hql.append(" group by diaRecolhimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataInicio", dataInicio);
+		
+		query.setParameter("dataFim", dataFim);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (List<DiaSemana>) query.list();
+		
 	}
 	
 	@SuppressWarnings("unchecked")

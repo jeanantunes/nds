@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -95,6 +96,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
@@ -217,6 +219,10 @@ public class BoletoServiceImpl implements BoletoService {
     
     @Autowired
     private CobrancaBoletoEmBrancoRepository cobrancaBoletoEmBrancoRepository;
+    
+    @Autowired
+    private GrupoRepository grupoRepository;
+    
 	                                        /**
      * Método responsável por obter boletos por numero da cota
      * 
@@ -2327,9 +2333,9 @@ public class BoletoServiceImpl implements BoletoService {
 
         final Integer fatorVencimento = this.obterFatorVencimentoFormaCobranca(fc);
         
-        GrupoCota grupoDaCota = this.cotaRepository.obterOperacaoVigenteCota(ceDTO.getIdCota(), dataRecolhimentoCEDe, dataRecolhimentoCEAte);
+        List<DiaSemana> diasRecolhimento = this.grupoRepository.obterDiasRecolhimentoOperacaoDiferenciada(ceDTO.getNumCota(), dataRecolhimentoCEDe, dataRecolhimentoCEAte);
 
-        final Date dataOperacao = this.obterDataParaCalculoVencimentoBoletoEmBranco(grupoDaCota.getDiasRecolhimento(),dataRecolhimentoCEDe);
+        final Date dataOperacao = this.obterDataParaCalculoVencimentoBoletoEmBranco(new HashSet<DiaSemana>(diasRecolhimento), dataRecolhimentoCEDe);
         
         final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataOperacao, fatorVencimento, null);
         
