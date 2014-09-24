@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.qos.logback.core.joran.action.ParamAction;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
@@ -33,6 +34,7 @@ import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
@@ -2317,14 +2319,14 @@ public class BoletoServiceImpl implements BoletoService {
         	return null;
         }
         
-        final Fornecedor fornecedor = paramtroCobrancaCotaService.obterFornecedorPadraoCota(ceDTO.getIdCota());
+        final ParametroCobrancaCotaDTO parametroCobrancaCota  = paramtroCobrancaCotaService.obterDadosParametroCobrancaPorCota(ceDTO.getIdCota());
         
-        if (fornecedor == null){
+        if (parametroCobrancaCota == null){
             
             return null;
         }
         
-        final FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), fornecedor.getId(), dataEmissao);
+        final FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), parametroCobrancaCota.getIdFornecedor(), dataEmissao);
         
         if (fc == null || !fc.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO)){
             
@@ -2340,7 +2342,7 @@ public class BoletoServiceImpl implements BoletoService {
         final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataOperacao, fatorVencimento, null);
         
         final BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
-                fornecedor.getId(),
+        		parametroCobrancaCota.getIdFornecedor(),
                 fc.getBanco()!=null?fc.getBanco().getNumeroBanco():null,
                         fc.getBanco()!=null?fc.getBanco().getAgencia():null,
                                 fc.getBanco()!=null?fc.getBanco().getConta():null,
