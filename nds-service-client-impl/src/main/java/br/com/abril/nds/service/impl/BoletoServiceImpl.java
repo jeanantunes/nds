@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.qos.logback.core.joran.action.ParamAction;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
@@ -32,6 +34,7 @@ import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
@@ -95,6 +98,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
@@ -217,6 +221,10 @@ public class BoletoServiceImpl implements BoletoService {
     
     @Autowired
     private CobrancaBoletoEmBrancoRepository cobrancaBoletoEmBrancoRepository;
+    
+    @Autowired
+    private GrupoRepository grupoRepository;
+    
 	                                        /**
      * Método responsável por obter boletos por numero da cota
      * 
@@ -2311,14 +2319,14 @@ public class BoletoServiceImpl implements BoletoService {
         	return null;
         }
         
-        final Fornecedor fornecedor = paramtroCobrancaCotaService.obterFornecedorPadraoCota(ceDTO.getIdCota());
+        final ParametroCobrancaCotaDTO parametroCobrancaCota  = paramtroCobrancaCotaService.obterDadosParametroCobrancaPorCota(ceDTO.getIdCota());
         
-        if (fornecedor == null){
+        if (parametroCobrancaCota == null){
             
             return null;
         }
         
-        final FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), fornecedor.getId(), dataEmissao);
+        final FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), parametroCobrancaCota.getIdFornecedor(), dataEmissao);
         
         if (fc == null || !fc.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO)){
             
@@ -2327,14 +2335,14 @@ public class BoletoServiceImpl implements BoletoService {
 
         final Integer fatorVencimento = this.obterFatorVencimentoFormaCobranca(fc);
         
-        GrupoCota grupoDaCota = this.cotaRepository.obterOperacaoVigenteCota(ceDTO.getIdCota(), dataRecolhimentoCEDe, dataRecolhimentoCEAte);
+        List<DiaSemana> diasRecolhimento = this.grupoRepository.obterDiasRecolhimentoOperacaoDiferenciada(ceDTO.getNumCota(), dataRecolhimentoCEDe, dataRecolhimentoCEAte);
 
-        final Date dataOperacao = this.obterDataParaCalculoVencimentoBoletoEmBranco(grupoDaCota.getDiasRecolhimento(),dataRecolhimentoCEDe);
+        final Date dataOperacao = this.obterDataParaCalculoVencimentoBoletoEmBranco(new HashSet<DiaSemana>(diasRecolhimento), dataRecolhimentoCEDe);
         
         final Date dataVencimento = gerarCobrancaService.obterDataVencimentoCobrancaCota(dataOperacao, fatorVencimento, null);
         
         final BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
-                fornecedor.getId(),
+        		parametroCobrancaCota.getIdFornecedor(),
                 fc.getBanco()!=null?fc.getBanco().getNumeroBanco():null,
                         fc.getBanco()!=null?fc.getBanco().getAgencia():null,
                                 fc.getBanco()!=null?fc.getBanco().getConta():null,

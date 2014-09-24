@@ -202,13 +202,6 @@ public interface ParametroCobrancaCotaService {
 	void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca);
 
 	/**
-	 * Obtem o fornecedor padrão da cota informada
-	 * @param idCota
-	 * @return Fornecedor
-	 */
-	Fornecedor obterFornecedorPadraoCota(Long idCota);
-
-	/**
 	 * Remove parametro de cobranca da cota e suas formas de cobranca
 	 * @param formaCobrancaId
 	 */

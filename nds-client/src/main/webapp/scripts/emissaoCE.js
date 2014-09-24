@@ -75,13 +75,16 @@ var EmissaoCEController = $.extend(true, {
 				contextPath + "/emissaoCE/obterDadosImpressaoBoletosEmBranco", data,
 				function(result) { 
 
-                    if (result && result.boolean == true){
+                    if (result && result.existemBoletosEmBranco == true){
 					    
+                    	exibirMensagem("WARNING", [result.msgCotaSemOperacaoDiferenciada]);
+                    	
 						_this.imprimirBoletoEmBranco();
+						
 					}
                     else{
                     	
-                    	if(result.boolean == false){
+                    	if(result.existemBoletosEmBranco == false){
                     	
                     	    _this.popupConfirmacaoReemissaoBoletosAntecipados();
                     	}
