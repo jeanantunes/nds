@@ -498,6 +498,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join roteirizacao.box box ")
 		   .append(" where cota.box.id = box.id ");
 		
+		if(filtro.getCotasOperacaoDiferenciada()!=null) {
+			hql.append(" and cota.numeroCota in (:cotasOperacaoDiferenciada) ");
+			param.put("cotasOperacaoDiferenciada", filtro.getCotasOperacaoDiferenciada());
+		}
+		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
@@ -706,7 +711,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		//hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 
-		hql.append(" coalesce(count(conferenciaEncalhe.id), 0) as quantidadeDevolvida,");
+		hql.append(" coalesce(count(conferenciaEncalhe.id), 0)  as conversaoQtdeDevolvida, ");
 		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
 		
 		
@@ -714,7 +719,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		//hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
 				
 		hql.append("		chamadaEncalhe.sequencia as sequencia, ");
-		
 		
 		hql.append(" min(notaEnvio.numero) as numeroNotaEnvio ");
 		
