@@ -33,7 +33,9 @@
 	<util:properties id="queries" location="classpath:/query.properties" />
 	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
 	
-	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/> 
+	<!-- 
+	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/>
+	 -->
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		
@@ -124,9 +126,7 @@
 				<prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</prop>
 				<prop key="hibernate.generate_statistics">false</prop>
 				 
-           
 				<!-- c3p0 -->
-				
 				<prop key="hibernate.c3p0.max_size">10</prop>
 			    <prop key="hibernate.c3p0.min_size">2</prop>
 			    <prop key="hibernate.c3p0.timeout">30000</prop>
@@ -144,8 +144,7 @@
     		<ref local="interceptor" />
   		</property> -->
 	</bean>
-
-
+	
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>

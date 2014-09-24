@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,7 +138,7 @@ public class FTFServiceImpl implements FTFService {
 			FTFEnvTipoRegistro03 ftfEnvTipoRegistro03 = new FTFEnvTipoRegistro03();
 
 			ftfEnvTipoRegistro03.setTipoRegistro("3");
-			ftfEnvTipoRegistro03.setCodigoCentroEmissor(ftfTipoRegistro02.getCodigoCentroEmissor());
+			ftfEnvTipoRegistro03.setCodigoEstabelecimentoEmissor(ftfTipoRegistro02.getCodigoEstabelecimentoEmissor());
 			ftfEnvTipoRegistro03.setCnpjEmpresaEmissora(ftfTipoRegistro02.getCnpjEmpresaEmissora());
 			ftfEnvTipoRegistro03.setCodLocal(ftfTipoRegistro02.getCodLocal());
 			ftfEnvTipoRegistro03.setNumeroDocOrigem(ftfTipoRegistro02.getNumeroDocOrigem());
@@ -230,7 +231,7 @@ public class FTFServiceImpl implements FTFService {
 				throw new FileNotFoundException("O diretório["+ pathNFEExportacao.getValor() +"] de exportação parametrizado não é válido!");
 			}
 
-			bw = new BufferedWriter(new FileWriter(f));
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), "ASCII"));
 			FTFParser ftfParser = new FTFParser();
 
 			for (FTFBaseDTO dto : list) {

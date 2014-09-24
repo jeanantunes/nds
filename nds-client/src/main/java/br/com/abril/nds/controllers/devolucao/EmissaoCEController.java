@@ -1,12 +1,15 @@
 package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -39,9 +42,11 @@ import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -263,22 +268,51 @@ public class EmissaoCEController extends BaseController {
 		return chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
 	}
 	
+	private String obterMsgCotasSemOperacaoDiferenciada(List<CotaEmissaoDTO> cotasSemOperacaoDiferenciada) {
+		
+		StringBuilder msg = new StringBuilder();
+
+		msg.append(" As cotas abaixo não possuem operação diferenciada: ");
+		
+		for(CotaEmissaoDTO cota : cotasSemOperacaoDiferenciada) {
+			
+			msg.append(cota.getNomeCota())
+			.append(" - ")
+			.append(cota.getNumCota())
+			.append(" <br/> ");
+			
+		}
+		
+		return msg.toString();
+		
+	}
+	
 	@Post
 	@Path("/obterDadosImpressaoBoletosEmBranco")
 	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) { 
 		
 		session.setAttribute(BOLETOS_EM_BRANCO, null);
 		
-		boolean existemBoletosEmBranco = false;
-		
 		FiltroEmissaoCE filtro = getFiltroSessao();
-
+		
 		boolean boletosEmitidosNoPeriodo = this.boletoService.existeBoletoAntecipadoPeriodoRecolhimentoECota(filtro.getNumCotaDe(),
 				                                                                                             filtro.getNumCotaAte(), 
 				                                                                                             filtro.getDtRecolhimentoDe(), 
 				                                                                                             filtro.getDtRecolhimentoAte());
 
+		Map<String, Object> resultados = new HashMap<>();
+		
 		if (!verificarReemissao || !boletosEmitidosNoPeriodo){
+			
+			List<Integer> cotasOperacaoDiferenciada = chamadaEncalheService.obterCotasComOperacaoDiferenciada(filtro);
+			
+			if(cotasOperacaoDiferenciada == null || cotasOperacaoDiferenciada.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota com operação diferenciada encontrada!");
+			}
+			
+			filtro.setCotasOperacaoDiferenciada(cotasOperacaoDiferenciada);
+			
+			List<CotaEmissaoDTO> cotasSemOperacaoDiferenciada = chamadaEncalheService.obterCotasSemOperacaoDiferenciada(filtro);
 			
 			DadosImpressaoEmissaoChamadaEncalhe dados = this.obterDadosImpressaoCE(filtro);
 			
@@ -295,18 +329,28 @@ public class EmissaoCEController extends BaseController {
 				
 				session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
 				
-				existemBoletosEmBranco = true;
-			}
-			else{
+			} else {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir o Boleto em Branco !");
+				
 			}
 			
-			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+			
+			
+			if(cotasSemOperacaoDiferenciada!=null && !cotasSemOperacaoDiferenciada.isEmpty()){
+				resultados.put("msgCotaSemOperacaoDiferenciada", obterMsgCotasSemOperacaoDiferenciada(cotasSemOperacaoDiferenciada));
+			}
+			
+			resultados.put("existemBoletosEmBranco", Boolean.TRUE);
+			
+			result.use(Results.json()).from(resultados,"result").recursive().serialize();
 	    }
 		else{
 			
-			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+			resultados.put("existemBoletosEmBranco", Boolean.FALSE);
+			
+			result.use(Results.json()).from(resultados,"result").recursive().serialize();
+			
 		}
 	}
 
@@ -339,39 +383,39 @@ public class EmissaoCEController extends BaseController {
 		}
 	}
 
-//    public void imprimirCENovo(FiltroEmissaoCE filtro) {
-//        
-//	    byte[] notasGeradas = null;
-//	    
-//	    try {
-//            
-//            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
-//    
-//            if (notasGeradas != null) {
-//    
-//                DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-//        
-//                this.httpResponse.setHeader("Content-Disposition", "attachment; filename=chamada-encalhe" + sdf.format(new Date()) + ".pdf");
-//        
-//                OutputStream output;
-//        
-//                output = this.httpResponse.getOutputStream();
-//        
-//                output.write(notasGeradas);
-//        
-//                httpResponse.getOutputStream().close();
-//        
-//                result.use(Results.nothing());
-//            }
-//        } catch (ValidacaoException e) {
-//            LOGGER.error("Erro de validação ao gerar arquivos de chamada de encalhe: " + e.getMessage(), e);
-//            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-//        } catch (Exception e) {
-//            LOGGER.error("Erro ao gerar arquivo(s) de chamada(s) de encalhe(s): " + e.getMessage(), e);
-//            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
-//        }
-//        
-//    }
+	public void imprimirCENovo(FiltroEmissaoCE filtro) {
+        
+	    byte[] notasGeradas = null;
+	    
+	    try {
+            
+            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
+    
+            if (notasGeradas != null) {
+    
+                DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+        
+                this.httpResponse.setHeader("Content-Disposition", "attachment; filename=chamada-encalhe" + sdf.format(new Date()) + ".pdf");
+       
+                OutputStream output;
+        
+                output = this.httpResponse.getOutputStream();
+        
+                output.write(notasGeradas);
+        
+                httpResponse.getOutputStream().close();
+        
+                result.use(Results.nothing());
+            }
+        } catch (ValidacaoException e) {
+            LOGGER.error("Erro de validação ao gerar arquivos de chamada de encalhe: " + e.getMessage(), e);
+            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+        } catch (Exception e) {
+            LOGGER.error("Erro ao gerar arquivo(s) de chamada(s) de encalhe(s): " + e.getMessage(), e);
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
+        }
+        
+    }
 	
 	public void modelo1() {
 				

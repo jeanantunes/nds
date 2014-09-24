@@ -5,6 +5,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -78,19 +80,26 @@ public final class FTFParser {
 				}
 			}
 		}
+		
 		if(delimiter != null) {
 			
-			parser.append(StringUtils.join(campos,delimiter));
+			parser.append(StringUtils.join(campos, delimiter));
 			
 		} else {
 			
-			for (String campo:campos) {
+			for (String campo : campos) {
 				
 				if (isTrace()) {
 					System.out.println(campo);
 				}
 				
 				if(campo != null) {
+				    
+					if(!Normalizer.isNormalized(campo, Form.NFD)) {
+						
+						campo = Normalizer.normalize(campo, Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+					}
+				    
 					parser.append(campo);
 				}
 			}

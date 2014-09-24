@@ -12,7 +12,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	private String tipoRegistro = "2";
 	
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
-	private String codigoCentroEmissor;
+	private String codigoEstabelecimentoEmissor;
 
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
 	private String cnpjEmpresaEmissora;
@@ -57,7 +57,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	private String tipoUtilizacaoProduto;
 	
 	@FTFfield(tamanho=3, tipo="numeric", ordem=17)
-	private String codTipoNaturecaOperacao;
+	private String codTipoNaturezaOperacao;
 	
 	@FTFfield(tamanho=130, tipo="char", ordem=18)
 	private String textoObservacoes;
@@ -107,12 +107,12 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 		this.tipoRegistro = tipoRegistro;
 	}
 
-	public String getCodigoCentroEmissor() {
-		return codigoCentroEmissor;
+	public String getCodigoEstabelecimentoEmissor() {
+		return codigoEstabelecimentoEmissor;
 	}
 
-	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, 2, '0');
+	public void setCodigoEstabelecimentoEmissor(String codigoEstabelecimentoEmissor) {
+		this.codigoEstabelecimentoEmissor = codigoEstabelecimentoEmissor;
 	}
 
 	public String getCnpjEmpresaEmissora() {
@@ -228,12 +228,12 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 		this.tipoUtilizacaoProduto = tipoUtilizacaoProduto;
 	}
 
-	public String getCodTipoNaturecaOperacao() {
-		return codTipoNaturecaOperacao;
+	public String getCodTipoNaturezaOperacao() {
+		return codTipoNaturezaOperacao;
 	}
 
-	public void setCodTipoNaturecaOperacao(String codTipoNaturecaOperacao) {
-		this.codTipoNaturecaOperacao = codTipoNaturecaOperacao;
+	public void setCodTipoNaturezaOperacao(String codTipoNaturezaOperacao) {
+		this.codTipoNaturezaOperacao = codTipoNaturezaOperacao;
 	}
 
 	public String getTextoObservacoes() {

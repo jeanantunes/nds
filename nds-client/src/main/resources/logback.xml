@@ -90,6 +90,10 @@
 		 <appender-ref ref="FILE_FUNCIONAL" />
 	</logger>
 	
+	<logger name="br.com.abril.nds.client.aop.profiler" level="DEBUG">
+		 <appender-ref ref="STDOUT" />
+	</logger>
+	
 	<logger name="br.com.abril.nds.controllers.administracao.FecharDiaController" level="INFO" additivity="false">
 		 <appender-ref ref="FILE_FECHAR_DIA" />
 	</logger>

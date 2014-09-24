@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1003,6 +1004,21 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					if (entregador != null) {
 						entregador.setRota(null);
 						this.entregadorRepository.merge(entregador);
+					}
+					
+
+					List listaPdvs = this.pdvRepository.obterPDVPorRota(idRotaDTO);
+					
+					Set <Long> setPdvsID = new HashSet<Long>();
+					
+					for(int i=0;i<listaPdvs.size();i++){
+						setPdvsID.add(((RotaPDV)listaPdvs.get(i)).getPdv().getId());
+					}
+				    
+					rota.desassociarPDVs(setPdvsID);
+						
+					if(!rota.getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+					  desassociarBoxCota(setPdvsID);
 					}
 				}
 				

@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface FTFCommons  {
 
-	public void setCodigoCentroEmissor(String codigoCentroEmissor);
+	public void setCodigoEstabelecimentoEmissor(String codigoCentroEmissor);
 
 	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora);
 

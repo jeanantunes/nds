@@ -55,6 +55,7 @@ import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.DiaSemana;
@@ -121,6 +122,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public CotaRepositoryImpl() {
         super(Cota.class);
     }
+    
     
     public Cota selectForUpdate(Long numeroCota) {
 		
@@ -2427,31 +2429,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("idCota", idCota);
         
         return (Cota) query.uniqueResult();
-    }
-    
-    @Override
-    public GrupoCota obterOperacaoVigenteCota(Long idCota, Date dataInicio, Date dataFim) {
-
-    	Criteria criteria = this.getSession().createCriteria(GrupoCota.class);
-    	
-    	criteria.createAlias("cotas", "cota");
-    	
-    	Criterion vigenciaRestriction = Restrictions.and(
-			Restrictions.ge("dataInicioVigencia", dataInicio),
-			Restrictions.or(
-				Restrictions.isNull("dataFimVigencia"),
-				Restrictions.le("dataFimVigencia", dataFim)
-			)
-		);
-    	
-    	criteria.add(Restrictions.eq("cota.id", idCota));
-    	criteria.add(vigenciaRestriction);
-
-    	criteria.addOrder(Order.asc("diasRecolhimento"));
-    	
-    	criteria.setMaxResults(1);
-    	
-    	return (GrupoCota) criteria.uniqueResult();
     }
     
     @SuppressWarnings("unchecked")

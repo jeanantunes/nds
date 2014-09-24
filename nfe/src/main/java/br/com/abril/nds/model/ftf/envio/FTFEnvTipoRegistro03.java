@@ -12,7 +12,7 @@ public class FTFEnvTipoRegistro03 extends FTFBaseDTO implements FTFCommons {
 	private String tipoRegistro = "3";
 	
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
-	private String codigoCentroEmissor;
+	private String codigoEstabelecimentoEmissor;
 
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
 	private String cnpjEmpresaEmissora;
@@ -68,9 +68,12 @@ public class FTFEnvTipoRegistro03 extends FTFBaseDTO implements FTFCommons {
 	@FTFfield(tamanho=10, tipo="char", ordem=20)
 	private String idCentroCustoCorporativo;
 
-	@Override
-	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad("", 2, '0');
+	public String getCodigoEstabelecimentoEmissor() {
+		return codigoEstabelecimentoEmissor;
+	}
+
+	public void setCodigoEstabelecimentoEmissor(String codigoEstabelecimentoEmissor) {
+		this.codigoEstabelecimentoEmissor = codigoEstabelecimentoEmissor;
 	}
 
 	@Override
@@ -211,10 +214,6 @@ public class FTFEnvTipoRegistro03 extends FTFBaseDTO implements FTFCommons {
 
 	public void setIdCentroCustoCorporativo(String idCentroCustoCorporativo) {
 		this.idCentroCustoCorporativo = idCentroCustoCorporativo;
-	}
-
-	public String getCodigoCentroEmissor() {
-		return codigoCentroEmissor;
 	}
 
 	public String getCnpjEmpresaEmissora() {
