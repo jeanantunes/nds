@@ -806,8 +806,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getNumCotaDe() != null || filtro.getNumCotaAte() != null) {
 			
 			hql.append(" and cota.numeroCota between :numeroCotaDe and :numeroCotaAte ");
-			param.put("numeroCotaDe", filtro.getDtRecolhimentoDe());
-			param.put("numeroCotaAte", filtro.getDtRecolhimentoAte());
+			param.put("numeroCotaDe", filtro.getNumCotaDe());
+			param.put("numeroCotaAte", filtro.getNumCotaAte());
 		}
 		
 	}
