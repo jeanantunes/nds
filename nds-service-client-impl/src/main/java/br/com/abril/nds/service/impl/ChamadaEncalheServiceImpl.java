@@ -326,13 +326,16 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			idsProdutoEdicao.add(produtoDTO.getIdProdutoEdicao());
 			
-			if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
-				produtoDTO.setQuantidadeDevolvida(null);
-				produtoDTO.setQuantidadeDev(null);
-			} else {
-				produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
-				produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
-			}
+			// if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
+				// produtoDTO.setQuantidadeDevolvida(null);
+				// produtoDTO.setQuantidadeDev(null);
+			// } else {
+				//produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
+				//produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
+			//}
+			
+			produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
+			produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
 			
 			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte() );
 			
