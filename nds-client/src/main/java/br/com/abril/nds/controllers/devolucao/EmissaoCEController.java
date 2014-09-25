@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
@@ -335,21 +336,19 @@ public class EmissaoCEController extends BaseController {
 				
 			}
 			
-			
-			
 			if(cotasSemOperacaoDiferenciada!=null && !cotasSemOperacaoDiferenciada.isEmpty()){
 				resultados.put("msgCotaSemOperacaoDiferenciada", obterMsgCotasSemOperacaoDiferenciada(cotasSemOperacaoDiferenciada));
 			}
 			
 			resultados.put("existemBoletosEmBranco", Boolean.TRUE);
 			
-			result.use(Results.json()).from(resultados,"result").recursive().serialize();
-	    }
-		else{
+			result.use(CustomJson.class).from(resultados).serialize();
+			
+	    } else {
 			
 			resultados.put("existemBoletosEmBranco", Boolean.FALSE);
 			
-			result.use(Results.json()).from(resultados,"result").recursive().serialize();
+			result.use(CustomJson.class).from(resultados).serialize();
 			
 		}
 	}
@@ -548,6 +547,10 @@ public class EmissaoCEController extends BaseController {
 		output.write(b);
 		
 		httpResponse.flushBuffer();
+		
+        httpResponse.getOutputStream().close();
+
+        result.use(Results.nothing());
 	}
 
 	private void setFiltroSessao(FiltroEmissaoCE filtro) {
