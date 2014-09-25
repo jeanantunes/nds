@@ -174,7 +174,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Qtde Reparte]]></text>
+				<text><![CDATA[Qtde Dev]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="3ae69c54-6a76-4c68-a007-73125dad6012" style="cabecalho" mode="Opaque" x="55" y="23" width="49" height="14"/>
@@ -284,7 +284,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sequencia}]]></textFieldExpression>
 			</textField>
@@ -297,7 +297,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 					<paragraph lineSpacing="Fixed" leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
@@ -311,7 +311,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="7" isBold="false" isUnderline="false" isStrikeThrough="false"/>
+					<font size="8" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
@@ -326,7 +326,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
@@ -340,7 +340,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vlrPrecoComDesconto}]]></textFieldExpression>
@@ -354,9 +354,9 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quantidadeDev}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{quantidadeDev} != null && $F{quantidadeDev} > 0) ? $F{quantidadeDev} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="f90d025c-4ebe-4b80-8ec6-cce0c036a955" style="linha" mode="Opaque" x="170" y="0" width="36" height="16"/>
@@ -367,7 +367,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
 			</textField>
