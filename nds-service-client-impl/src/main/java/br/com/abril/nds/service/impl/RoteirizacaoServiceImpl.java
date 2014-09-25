@@ -1101,6 +1101,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		for (Long idPDV : pdvsExclusao) {
 
 			Cota cota = this.pdvRepository.buscarPorId(idPDV).getCota();
+			 
+			if(cota==null || cota.getId()==null){
+			 cota = this.cotaRepository.obterPorPDV(idPDV);
+			}
+			 
 			cota.setBox(null);
 			
 			this.cotaRepository.merge(cota);
