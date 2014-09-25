@@ -962,7 +962,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"  ELSE null " +
 				"  END) venda, " +
 				
-				" 	lancamento2_.DATA_REC_DISTRIB as dataRecolhimento, " +
+				" 	coalesce(lp.RECOLHIMENTO_FINAL, lancamento2_.DATA_REC_DISTRIB) as dataRecolhimento, " +
 				" 	lancamento2_.DATA_LCTO_DISTRIBUIDOR as dataLancamento, " +
 				" 	estoqueProdutoCota.QTDE_RECEBIDA, " +
 				
@@ -981,7 +981,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"FROM " +
 				 " ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
 				 " inner join PRODUTO_EDICAO produtoedi1_ on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoedi1_.ID  " +
-				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +	
+				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +
+				 
+				 " left join PERIODO_LANCAMENTO_PARCIAL plp on lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID=plp.ID  " +
+				 " left join LANCAMENTO_PARCIAL lp on plp.LANCAMENTO_PARCIAL_ID=lp.ID  " +
+				 
 				 " inner join PRODUTO produto5_ on produtoedi1_.PRODUTO_ID=produto5_.ID  " +
 				 " left join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
 				 " left join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
