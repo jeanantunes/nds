@@ -195,6 +195,7 @@ public class Rota implements Serializable {
     public void desassociarPDVs(Collection<Long> pdvsExclusao) {
         Iterator<RotaPDV> iterator = rotaPDVs.iterator();
         RotaPDV rotaPDVRemover = null;
+        List<RotaPDV> listaRotaPDVRemover = new ArrayList<RotaPDV>();
         
         while (iterator.hasNext()) {
             RotaPDV rotaPDV = iterator.next();
@@ -209,11 +210,13 @@ public class Rota implements Serializable {
             	
             		pdv.getCota().setBox(null);
             	}
-            	
+            	listaRotaPDVRemover.add(rotaPDVRemover);
             	//iterator.remove();
             }
         }
-        rotaPDVs.remove(rotaPDVRemover);
+        for(RotaPDV rotaPDVRemoverAux:listaRotaPDVRemover){
+         rotaPDVs.remove(rotaPDVRemoverAux);
+        }
     }
 
     /**
