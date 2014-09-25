@@ -48,8 +48,8 @@
 	<field name="dataLancamento" class="java.lang.String">
 		<fieldDescription><![CDATA[dataLancamento]]></fieldDescription>
 	</field>
-	<field name="quantidadeDev" class="java.lang.Integer">
-		<fieldDescription><![CDATA[quantidadeDev]]></fieldDescription>
+	<field name="quantidadeDevolvida" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[quantidadeDevolvida]]></fieldDescription>
 	</field>
 	<field name="vlrPrecoComDesconto" class="java.math.BigDecimal"/>
 	<field name="desconto" class="java.lang.String"/>
@@ -69,7 +69,7 @@
 		<variableExpression><![CDATA[($F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeReparte})))]]></variableExpression>
 	</variable>
 	<variable name="SUM_VALOR_ENCALHE" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeDev}))]]></variableExpression>
+		<variableExpression><![CDATA[$F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{quantidadeDevolvida}))]]></variableExpression>
 	</variable>
 	<group name="CHAMADA_ENVCALHE">
 		<groupExpression><![CDATA[$P{NUMERO_CHAMADA_ENCALHE}]]></groupExpression>
@@ -384,7 +384,7 @@ Lancto]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{quantidadeDev} != null && $F{quantidadeDev} > 0) ? $F{quantidadeDev} : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{quantidadeDevolvida} != null && $F{quantidadeDevolvida}.intValue() > 0) ? $F{quantidadeDevolvida} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="d78c8616-98c6-4acb-9fc1-ee61aa734a76" style="linha" mode="Opaque" x="0" y="0" width="25" height="16"/>

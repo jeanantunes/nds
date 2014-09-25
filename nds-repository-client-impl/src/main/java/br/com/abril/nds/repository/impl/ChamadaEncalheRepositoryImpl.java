@@ -689,19 +689,20 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select cota.id as idCota,                              ");
-		hql.append("        produtoEdicao.codigoDeBarras as codigoBarras, 	");
-		hql.append(" 	    produto.codigo as codigoProduto, 				");
-		hql.append(" 	    produto.nome as nomeProduto, 					");
-		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
-		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
+		hql.append(" select cota.id as idCota,                                              ");
+		hql.append("        produtoEdicao.codigoDeBarras as codigoBarras, 	                ");
+		hql.append(" 	    produto.codigo as codigoProduto, 				                ");
+		hql.append(" 	    produto.nome as nomeProduto, 					                ");
+		hql.append(" 	    produto.nomeComercial as nomeComercial, 					    ");
+		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			                ");
+		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			                ");
 
 		hql.append(" 	    (movimentoCota.valoresAplicados.valorDesconto) as desconto, 	");
-		hql.append("		produtoEdicao.precoVenda as precoVenda,    		");
-		hql.append(" 	    periodoLancParcial.tipo as tipoRecolhimento, 		");
-		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
-		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,           ");
+		hql.append("		produtoEdicao.precoVenda as precoVenda,    		                ");
+		hql.append(" 	    periodoLancParcial.tipo as tipoRecolhimento, 		            ");
+		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento,       ");
+		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,            ");
+		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,            ");
 		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
 		
 		// case when count(conferenci23_.ID)>0 then 1 else 0 end as  col_15_0_,
@@ -711,7 +712,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		//hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 
-		hql.append(" coalesce(count(conferenciaEncalhe.id), 0)  as conversaoQtdeDevolvida, ");
+		hql.append(" coalesce(sum(conferenciaEncalhe.qtde), 0) as quantidadeDevolvida, ");
 		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
 		
 		
@@ -801,6 +802,14 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		    hql.append(" and fornecedores.id in (:fornec) ");
 		    param.put("fornec", filtro.getFornecedores());
 		}
+		
+		if(filtro.getNumCotaDe() != null || filtro.getNumCotaAte() != null) {
+			
+			hql.append(" and cota.numeroCota between :numeroCotaDe and :numeroCotaAte ");
+			param.put("numeroCotaDe", filtro.getNumCotaDe());
+			param.put("numeroCotaAte", filtro.getNumCotaAte());
+		}
+		
 	}
 
 	@Override
