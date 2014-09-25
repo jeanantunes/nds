@@ -1016,9 +1016,9 @@ public class RoteirizacaoController extends BaseController {
 								  rotaSelecionada = rota;
 								  break;
 								}
-							}else{
-								throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Rota id não enviado."));
-							}
+							}//else{
+								//throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Rota id não enviado."));
+							//}
 						}
 						
 						if (rotaSelecionada != null) {
