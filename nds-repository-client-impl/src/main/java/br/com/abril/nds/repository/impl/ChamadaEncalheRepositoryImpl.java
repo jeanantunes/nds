@@ -712,7 +712,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		//hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 
-		hql.append(" coalesce(sum(conferenciaEncalhe.qtde), 0)  as conversaoQtdeDevolvida, ");
+		hql.append(" coalesce(sum(conferenciaEncalhe.qtde), 0) as quantidadeDevolvida, ");
 		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
 		
 		
