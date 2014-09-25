@@ -846,6 +846,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         BeanUtils.copyProperties(filtro, f);
         f.setPaginacao(null);
+        f.setDesconsiderarCotaAVista(true);
         
         sql.append("select ");
 
@@ -1030,9 +1031,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlTblReparte.append(" SELECT	");
 		sqlTblReparte.append(" MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID, ");
-		sqlTblReparte.append(" SUM(	");
-		sqlTblReparte.append(" 	COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde*-1, MEC.qtde),0)                                    ");
-		sqlTblReparte.append(" ) AS REPARTE ");
+		
+		if(filtro.isDesconsiderarCotaAVista()){
+			
+			sqlTblReparte.append(" if(MEC.COTA_ID in (select cota_a_vista.ID from cota cota_a_vista where cota_a_vista.TIPO_COTA = 'A_VISTA'),0, SUM(	");
+			sqlTblReparte.append(" 	COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde*-1, MEC.qtde),0)                                    ");
+			sqlTblReparte.append(" )) AS REPARTE ");
+		}
+		else{
+			
+			sqlTblReparte.append(" SUM(	");
+			sqlTblReparte.append(" 	COALESCE(if(tm.OPERACAO_ESTOQUE = 'SAIDA', MEC.qtde*-1, MEC.qtde),0)                                    ");
+			sqlTblReparte.append(" ) AS REPARTE ");
+		}
+		
 		sqlTblReparte.append(" FROM  ");
 		sqlTblReparte.append(" MOVIMENTO_ESTOQUE_COTA MEC	");
 		sqlTblReparte.append(" INNER JOIN                   	");
@@ -1058,7 +1070,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
 		
 		sqlTblReparte.append(" AND MEC.LANCAMENTO_ID is not null ");
-		
+				
 		sqlTblReparte.append(" GROUP BY MEC.PRODUTO_EDICAO_ID                                                                           ");
 		
 		
