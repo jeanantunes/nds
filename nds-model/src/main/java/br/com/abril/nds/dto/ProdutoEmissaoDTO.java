@@ -313,8 +313,10 @@ public class ProdutoEmissaoDTO implements Serializable{
 		
 		if(qtdeDevolvida == null) {
 			this.quantidadeDevolvida = BigInteger.ZERO;
+			this.quantidadeDev = 0;
 		} else {
 			this.quantidadeDevolvida = new BigInteger(qtdeDevolvida.toString());
+			this.quantidadeDev = new Integer(qtdeDevolvida.toString());
 		}
 	}
 	
