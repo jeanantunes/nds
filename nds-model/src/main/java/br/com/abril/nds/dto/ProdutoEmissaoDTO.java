@@ -23,6 +23,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private String nomeProduto;
 	
+	private String nomeComercial;
+
 	private String notaEnvio;
 	
 	private Long numeroNotaEnvio;
@@ -422,5 +424,13 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setQuantidadeDev(Integer quantidadeDev) {
 		this.quantidadeDev = quantidadeDev!=null? quantidadeDev : 0;
 	}
-	
+
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
+	}
+
 }
