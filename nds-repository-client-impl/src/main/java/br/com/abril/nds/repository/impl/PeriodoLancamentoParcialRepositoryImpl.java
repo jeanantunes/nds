@@ -62,8 +62,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe15_ ON movimentoe10_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe15_.ID ");
 		hql.append(" WHERE produtoedi14_.ID=produtoedi3_.ID ");
 		hql.append(" AND periodolan13_.ID=periodolan0_.ID ");
-		hql.append(" AND lancamento12_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR ");
-		hql.append(" AND lancamento12_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB ");
+		hql.append(" AND (lancamento12_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR OR lancamento12_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB) ");
 		hql.append(" AND (tipomovime11_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueLancamento)) ");
 		hql.append(" AND (lancamento12_.TIPO_LANCAMENTO IN (:tipoLancamento)) ");
 		hql.append(" AND (movimentoe15_.ID IS NULL)) AS reparte, ");
@@ -77,8 +76,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe21_ ON movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe21_.ID ");
 		hql.append(" WHERE produtoedi20_.ID=produtoedi3_.ID ");
 		hql.append(" AND periodolan19_.ID=periodolan0_.ID ");
-		hql.append(" AND lancamento18_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR ");
-		hql.append(" AND lancamento18_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB ");
+		hql.append(" AND (lancamento18_.DATA_LCTO_DISTRIBUIDOR>=lancamento2_.DATA_LCTO_DISTRIBUIDOR OR lancamento18_.DATA_REC_DISTRIB<=lancamento2_.DATA_REC_DISTRIB) ");
 		hql.append(" AND (tipomovime17_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoqueLancamento)) ");
 		hql.append(" AND (lancamento18_.TIPO_LANCAMENTO IN (:tipoLancamentoRedistribuicao)) ");
 		hql.append(" AND (movimentoe21_.ID IS NULL)) AS suplementacao, ");
