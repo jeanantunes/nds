@@ -77,12 +77,14 @@ var EmissaoCEController = $.extend(true, {
 
                     if (result && result.existemBoletosEmBranco == true){
 					    
-                    	exibirMensagem("WARNING", [result.msgCotaSemOperacaoDiferenciada]);
+                    	if(result.msgCotaSemOperacaoDiferenciada) {
+                    		
+                    		exibirMensagem("WARNING", [result.msgCotaSemOperacaoDiferenciada]);
+                    	}
                     	
 						_this.imprimirBoletoEmBranco();
 						
-					}
-                    else{
+					} else {
                     	
                     	if(result.existemBoletosEmBranco == false){
                     	
@@ -113,9 +115,14 @@ var EmissaoCEController = $.extend(true, {
 	},
 	
 	
-	imprimirBoletoEmBranco : function(){
-			
-		document.location.assign(contextPath + "/emissaoCE/imprimeBoletoEmBranco");
+	imprimirBoletoEmBranco : function() {
+		
+		var path = contextPath + "/emissaoCE/imprimeBoletoEmBranco";
+		
+		$.fileDownload(path, {
+			httpMethod : "GET"
+		});
+		
 	},
 
 	cliquePesquisar : function() {
