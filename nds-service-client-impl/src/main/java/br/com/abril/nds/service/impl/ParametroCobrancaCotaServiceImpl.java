@@ -266,7 +266,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			
-			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
+			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():false);
 			
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
