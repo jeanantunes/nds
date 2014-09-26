@@ -744,6 +744,8 @@ var histogramaPosEstudoController = $.extend(true, {
 			);
 		}else{
 			$("#workspace").tabs("remove", indexAba);
+			$.postJSON(contextPath + "/distribuicao/analiseEstudo/desbloquear",null);
+			$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
 		}
 		
 	},
