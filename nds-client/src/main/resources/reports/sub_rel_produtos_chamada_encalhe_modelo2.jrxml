@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="591" pageHeight="842" columnWidth="591" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="7de11dee-12a2-456c-a4a4-c9817c298944">
-	<property name="ireport.zoom" value="3.2153832150000037"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="2.657341500000003"/>
+	<property name="ireport.x" value="670"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -26,7 +26,7 @@
 	<field name="inicialTipoRecolhimento" class="java.lang.String"/>
 	<field name="vlrPrecoComDesconto" class="java.math.BigDecimal"/>
 	<field name="dataLancamento" class="java.lang.String"/>
-	<field name="quantidadeDev" class="java.lang.Integer"/>
+	<field name="quantidadeDevolvida" class="java.math.BigInteger"/>
 	<field name="vendido" class="java.math.BigInteger"/>
 	<field name="numeroNotaEnvio" class="java.lang.Long"/>
 	<field name="descricaoNotaEnvio" class="java.lang.String"/>
@@ -425,7 +425,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{quantidadeDev}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{quantidadeDevolvida} != null && $F{quantidadeDevolvida}.intValue() > 0) ? $F{quantidadeDevolvida} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="3c35816e-3cec-4753-ad11-2667d52f9fed" x="448" y="0" width="34" height="20"/>
@@ -438,7 +438,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{vendido}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{vendido} != null && $F{vendido}.intValue() > 0) ? $F{vendido} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="96b6984a-b7bd-489a-a7bb-dc47bd5f1a95" x="482" y="0" width="41" height="20"/>
@@ -464,7 +464,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{vendido} != null && $F{vendido}.intValue() > 0) ? $F{vlrPrecoComDesconto}.multiply(new BigDecimal($F{vendido})) : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="2d372029-f426-4c3c-9283-6861aa7c4174" x="312" y="0" width="39" height="20"/>
