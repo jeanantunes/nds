@@ -1,7 +1,5 @@
 package br.com.abril.nds.model.ftf.envio;
 
-import org.apache.commons.lang.StringUtils;
-
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -12,7 +10,7 @@ public class FTFEnvTipoRegistro04 extends FTFBaseDTO implements FTFCommons {
 	private String tipoRegistro = "4";
 	
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
-	private String codigoCentroEmissor;
+	private String codigoEstabelecimentoEmissor;
 
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
 	private String cnpjEmpresaEmissora;
@@ -67,30 +65,165 @@ public class FTFEnvTipoRegistro04 extends FTFBaseDTO implements FTFCommons {
 	
 	@FTFfield(tamanho=10, tipo="char", ordem=20)
 	private String idCentroCustoCorporativo;
-	
-	@Override
-	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad("", 2, '0');
+
+	public String getTipoRegistro() {
+		return tipoRegistro;
 	}
 
-	@Override
+	public void setTipoRegistro(String tipoRegistro) {
+		this.tipoRegistro = tipoRegistro;
+	}
+
+	public String getCodigoEstabelecimentoEmissor() {
+		return codigoEstabelecimentoEmissor;
+	}
+
+	public void setCodigoEstabelecimentoEmissor(String codigoEstabelecimentoEmissor) {
+		this.codigoEstabelecimentoEmissor = codigoEstabelecimentoEmissor;
+	}
+
+	public String getCnpjEmpresaEmissora() {
+		return cnpjEmpresaEmissora;
+	}
+
 	public void setCnpjEmpresaEmissora(String cnpjEmpresaEmissora) {
-		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora != null ? cnpjEmpresaEmissora.replaceAll("\\D+","") : null;
+		this.cnpjEmpresaEmissora = cnpjEmpresaEmissora;
 	}
 
-	@Override
+	public String getCodLocal() {
+		return codLocal;
+	}
+
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal != null ? StringUtils.rightPad(codLocal, 11, ' ') : StringUtils.leftPad("", 11, ' ');
+		this.codLocal = codLocal;
 	}
 
-	@Override
+	public String getTipoPedido() {
+		return tipoPedido;
+	}
+
 	public void setTipoPedido(String tipoPedido) {
-		this.tipoPedido = tipoPedido != null ? StringUtils.leftPad(tipoPedido, 2, '0') : StringUtils.leftPad("", 2, '0');
+		this.tipoPedido = tipoPedido;
 	}
 
-	@Override
+	public String getNumeroDocOrigem() {
+		return numeroDocOrigem;
+	}
+
 	public void setNumeroDocOrigem(String numeroDocOrigem) {
 		this.numeroDocOrigem = numeroDocOrigem;
+	}
+
+	public String getNumItemPedido() {
+		return numItemPedido;
+	}
+
+	public void setNumItemPedido(String numItemPedido) {
+		this.numItemPedido = numItemPedido;
+	}
+
+	public String getCodSetorialCRP() {
+		return codSetorialCRP;
+	}
+
+	public void setCodSetorialCRP(String codSetorialCRP) {
+		this.codSetorialCRP = codSetorialCRP;
+	}
+
+	public String getPercentualRateio() {
+		return percentualRateio;
+	}
+
+	public void setPercentualRateio(String percentualRateio) {
+		this.percentualRateio = percentualRateio;
+	}
+
+	public String getCodEvento() {
+		return codEvento;
+	}
+
+	public void setCodEvento(String codEvento) {
+		this.codEvento = codEvento;
+	}
+
+	public String getCodPlanoFinanceiro() {
+		return codPlanoFinanceiro;
+	}
+
+	public void setCodPlanoFinanceiro(String codPlanoFinanceiro) {
+		this.codPlanoFinanceiro = codPlanoFinanceiro;
+	}
+
+	public String getIndicadorCirculacaoRevista() {
+		return indicadorCirculacaoRevista;
+	}
+
+	public void setIndicadorCirculacaoRevista(String indicadorCirculacaoRevista) {
+		this.indicadorCirculacaoRevista = indicadorCirculacaoRevista;
+	}
+
+	public String getCodUnidadeGerencialOuFiscal() {
+		return codUnidadeGerencialOuFiscal;
+	}
+
+	public void setCodUnidadeGerencialOuFiscal(String codUnidadeGerencialOuFiscal) {
+		this.codUnidadeGerencialOuFiscal = codUnidadeGerencialOuFiscal;
+	}
+
+	public String getCodAnalitica() {
+		return codAnalitica;
+	}
+
+	public void setCodAnalitica(String codAnalitica) {
+		this.codAnalitica = codAnalitica;
+	}
+
+	public String getValorRateio() {
+		return valorRateio;
+	}
+
+	public void setValorRateio(String valorRateio) {
+		this.valorRateio = valorRateio;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getSubTipo() {
+		return subTipo;
+	}
+
+	public void setSubTipo(String subTipo) {
+		this.subTipo = subTipo;
+	}
+
+	public String getCodEmpresaIQ() {
+		return codEmpresaIQ;
+	}
+
+	public void setCodEmpresaIQ(String codEmpresaIQ) {
+		this.codEmpresaIQ = codEmpresaIQ;
+	}
+
+	public String getCentroCustoAntigoIQ() {
+		return centroCustoAntigoIQ;
+	}
+
+	public void setCentroCustoAntigoIQ(String centroCustoAntigoIQ) {
+		this.centroCustoAntigoIQ = centroCustoAntigoIQ;
+	}
+
+	public String getIdCentroCustoCorporativo() {
+		return idCentroCustoCorporativo;
+	}
+
+	public void setIdCentroCustoCorporativo(String idCentroCustoCorporativo) {
+		this.idCentroCustoCorporativo = idCentroCustoCorporativo;
 	}
 	
 }
