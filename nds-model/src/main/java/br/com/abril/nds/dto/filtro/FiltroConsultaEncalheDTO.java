@@ -33,6 +33,8 @@ public class FiltroConsultaEncalheDTO {
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
+	
+	private boolean desconsiderarCotaAVista;
 
 	public FiltroConsultaEncalheDTO() {
 	    
@@ -248,6 +250,16 @@ public class FiltroConsultaEncalheDTO {
 
 	public void setUtilizaPrecoCapa(boolean utilizaPrecoCapa) {
 		this.utilizaPrecoCapa = utilizaPrecoCapa;
+	}
+	
+	
+
+	public boolean isDesconsiderarCotaAVista() {
+		return desconsiderarCotaAVista;
+	}
+
+	public void setDesconsiderarCotaAVista(boolean desconsiderarCotaAVista) {
+		this.desconsiderarCotaAVista = desconsiderarCotaAVista;
 	}
 
 	/**

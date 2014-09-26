@@ -23,6 +23,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private String nomeProduto;
 	
+	private String nomeComercial;
+
 	private String notaEnvio;
 	
 	private Long numeroNotaEnvio;
@@ -313,8 +315,10 @@ public class ProdutoEmissaoDTO implements Serializable{
 		
 		if(qtdeDevolvida == null) {
 			this.quantidadeDevolvida = BigInteger.ZERO;
+			this.quantidadeDev = 0;
 		} else {
 			this.quantidadeDevolvida = new BigInteger(qtdeDevolvida.toString());
+			this.quantidadeDev = new Integer(qtdeDevolvida.toString());
 		}
 	}
 	
@@ -420,5 +424,13 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setQuantidadeDev(Integer quantidadeDev) {
 		this.quantidadeDev = quantidadeDev!=null? quantidadeDev : 0;
 	}
-	
+
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
+	}
+
 }

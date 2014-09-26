@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo1_direita" pageWidth="245" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="241" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="24932483-073e-45bf-b3da-336da3e36812">
-	<property name="ireport.zoom" value="2.4793388429752263"/>
+	<property name="ireport.zoom" value="2.7272727272727506"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="27"/>
+	<property name="ireport.y" value="147"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -162,7 +162,7 @@
 	<field name="nomeRoteiro" class="java.lang.String"/>
 	<field name="dataRecolhimento" class="java.lang.String"/>
 	<pageHeader>
-		<band height="172">
+		<band height="175">
 			<frame>
 				<reportElement uuid="05b05f10-5e4f-4912-9094-fbd832f28c7a" stretchType="RelativeToBandHeight" x="-2" y="0" width="241" height="172"/>
 				<rectangle>
@@ -348,7 +348,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 	<detail>
 		<band height="28">
 			<subreport>
-				<reportElement uuid="b124f823-4dfb-413e-afbb-958962d65bb7" x="0" y="1" width="241" height="27"/>
+				<reportElement uuid="b124f823-4dfb-413e-afbb-958962d65bb7" x="0" y="0" width="241" height="27"/>
 				<subreportParameter name="LANCAMENTO_COM_FURO">
 					<subreportParameterExpression><![CDATA[$F{itensComFuroLancamento}]]></subreportParameterExpression>
 				</subreportParameter>
