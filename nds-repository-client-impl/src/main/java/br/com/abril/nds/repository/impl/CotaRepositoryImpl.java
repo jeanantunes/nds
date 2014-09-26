@@ -16,7 +16,6 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -55,7 +54,6 @@ import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
@@ -66,7 +64,6 @@ import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -603,6 +600,35 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
     
     @Override
+    public Long obterQntCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        /*
+         * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um
+         * PDV associado a mesma cota.
+         */
+        hql.append("SELECT count(cota.id) ");
+
+        hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
+
+        hql.append(" group by ")
+           .append(" box.id, ")
+		   .append(" cota.id, ")
+		   .append(" estoqueProdutoCota.id, ")
+		   .append(" produtoEdicao.id, ")
+		   .append(" lancamento ");
+        
+        final Query query = this.getSession().createQuery(hql.toString());
+        
+        final Map<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
+        
+        setParameters(query, param);
+
+        return ((Integer) query.list().size()).longValue();
+    }
+    
+    @Override
     public BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
         
         final StringBuilder hql = new StringBuilder();
@@ -652,11 +678,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         
         if (filtro.getPaginacao() != null) {
             
-        	if (filtro.getPaginacao().getQtdResultadosTotal().equals(0)) {
-        		filtro.getPaginacao().setQtdResultadosTotal(query.list().size());
-    		}
-        	
-        	if (filtro.getPaginacao().getPosicaoInicial() != null) {
+            if (filtro.getPaginacao().getPosicaoInicial() != null) {
                 query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
             }
             
