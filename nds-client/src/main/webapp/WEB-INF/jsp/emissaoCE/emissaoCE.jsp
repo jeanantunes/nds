@@ -50,7 +50,7 @@
 			<div class="area">
 				
 				<span class="bt_novos">
-					<a a href="javascript:;" onclick="EmissaoCEController.imprimirCENovo();" id="imprimirCENovo" rel="tipsy" title="Imprimir CE PDF">
+					<a a href="javascript:;" onclick="EmissaoCEController.imprimirCEPDF();" id="imprimirCEPDF" rel="tipsy" title="Imprimir CE">
 					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
 				</span>
 				
