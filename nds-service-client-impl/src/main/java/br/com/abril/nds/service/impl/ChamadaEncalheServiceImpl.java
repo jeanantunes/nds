@@ -154,34 +154,42 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
      * @param cota
      * @return Endereco
      */
-	private Endereco obterEnderecoImpressaoCE(Cota cota){
+	private Endereco obterEnderecoImpressaoCE(Cota cota) {
 		
 		Endereco endereco = null;
-		
-		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
 
-		EnderecoPDV enderecoPdv = pdvPrincipal!=null?pdvPrincipal.getEnderecoEntrega():null;
-		
-		if (enderecoPdv == null) {
-		
-			for (EnderecoPDV ePdv : pdvPrincipal.getEnderecos()){
-			    
-				if (ePdv.isPrincipal()){
-				    
-					enderecoPdv = ePdv;
-					break;
+		if(cota.getPDVPrincipal() != null 
+				&& cota.getPDVPrincipal().getEnderecoPrincipal() != null
+				&& cota.getPDVPrincipal().getEnderecoPrincipal().getEndereco() != null) {
+			
+			return cota.getPDVPrincipal().getEnderecoPrincipal().getEndereco();
+			
+		} else {
+			
+			PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
+			EnderecoPDV enderecoPdv = pdvPrincipal != null ? pdvPrincipal.getEnderecoEntrega() : null;
+			
+			if (enderecoPdv == null) {
+				
+				for (EnderecoPDV ePdv : pdvPrincipal.getEnderecos()) {
+					
+					if (ePdv.isPrincipal()){
+						
+						enderecoPdv = ePdv;
+						break;
+					}
 				}
 			}
-		}
-
-		if (enderecoPdv != null) {
 			
-			return enderecoPdv.getEndereco();
+			if (enderecoPdv != null) {
+				
+				return enderecoPdv.getEndereco();
+			}
 		}
 		
-		for(EnderecoCota enderecoCota : cota.getEnderecos()){
+		for(EnderecoCota enderecoCota : cota.getEnderecos()) {
 			
-			if (enderecoCota.isPrincipal()){
+			if (enderecoCota.isPrincipal()) {
 				
 				endereco = enderecoCota.getEndereco();
 				
