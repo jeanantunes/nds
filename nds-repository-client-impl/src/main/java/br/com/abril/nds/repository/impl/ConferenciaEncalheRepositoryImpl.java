@@ -454,7 +454,8 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 			
 		}
 		
-		hql.append("  	GROUP BY PROD_EDICAO.ID ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO, CH_ENCALHE.SEQUENCIA ");
+		hql.append("  	GROUP BY PROD_EDICAO.ID ");
+		hql.append("  	ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO, CH_ENCALHE.SEQUENCIA ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
