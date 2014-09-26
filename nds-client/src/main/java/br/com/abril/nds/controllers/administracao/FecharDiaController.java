@@ -495,10 +495,20 @@ public class FecharDiaController extends BaseController {
     }
     
     @Post
-    public void confirmar() {
+    public void confirmar(Date dataFechamento) {
         //Unlock na base de dados
         
         LOGGER.info("INICIO CONFIRMA FECHAMENTO DIA");
+        
+        if(this.verificarFechamentoDiario(dataFechamento)){
+        	
+        	LOGGER.info("FECHAMENTO DIA JA REALIZADO");
+        	
+        	LOGGER.info("FINALIZADO PROCESSAMENTO FECHAMENTO DIA");
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING,
+        			"Fechamento do Dia para data " + DateUtil.formatarDataPTBR(dataFechamento) + " já foi confirmado!" );
+        }
         
         fecharDiaService.setLockBancoDeDados(false);
         
@@ -709,7 +719,14 @@ public class FecharDiaController extends BaseController {
     @Post
     public void isDataOperacaoDistribuidor(final Date data){
         
-        boolean isDataOperacao = false;
+        boolean isDataOperacao = verificarFechamentoDiario(data);
+        
+        result.use(CustomMapJson.class).put("isDataOperacaoDistribuidor", isDataOperacao).serialize();
+    }
+
+	private boolean verificarFechamentoDiario(final Date data) {
+		
+		boolean isDataOperacao = false;
         
         if (data!= null){
             
@@ -717,7 +734,6 @@ public class FecharDiaController extends BaseController {
             
             isDataOperacao = (data.compareTo(dataOperacao)< 0);
         }
-        
-        result.use(CustomMapJson.class).put("isDataOperacaoDistribuidor", isDataOperacao).serialize();
-    }
+		return isDataOperacao;
+	}
 }
