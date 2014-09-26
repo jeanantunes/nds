@@ -3456,45 +3456,44 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public ValoresAplicados obterValoresAplicadosProdutoEdicao(final Integer numeroCota,
             final Long idProdutoEdicao, final Date dataOperacao) {
         
-        final StringBuilder hql = new StringBuilder();
-        
-        hql.append(" select mec.valoresAplicados ");
-        
-        hql.append(" from MovimentoEstoqueCota mec  ");
-        
-        hql.append(" where ");
-        
-        hql.append(" mec.cota.numeroCota = :numeroCota ");
-        
-        hql.append(" and mec.produtoEdicao.id = :idProdutoEdicao ");
-        
-        hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
-        
-        hql.append(" and mec.data <= :dataOperacao   ");
-        
-        hql.append(" order by mec.data desc ");
-        
-        final Query query = super.getSession().createQuery(hql.toString());
-        
+    	final StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" SELECT	");
+    	sql.append(" MEC.PRECO_COM_DESCONTO AS precoComDesconto, ");
+        sql.append(" MEC.PRECO_VENDA AS precoVenda,              ");
+        sql.append(" MEC.VALOR_DESCONTO AS valorDesconto         ");
+        sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC             ");
+		sql.append(" WHERE ");
+		sql.append(" MEC.COTA_ID = ( SELECT ID FROM COTA WHERE NUMERO_COTA = :numeroCota )	");
+		sql.append(" AND MEC.PRODUTO_EDICAO_ID= :idProdutoEdicao                            ");
+		sql.append(" AND MEC.TIPO_MOVIMENTO_ID IN (                                         ");
+		sql.append(" 		SELECT ID FROM TIPO_MOVIMENTO WHERE GRUPO_MOVIMENTO_ESTOQUE IN (:grupoMovimentoEstoque) ");
+		sql.append(" )	");
+    	sql.append(" AND MEC.DATA <= :dataOperacao ");
+    	sql.append(" ORDER BY MEC.DATA DESC LIMIT 1		");
+    	
+    	Query query = getSession().createSQLQuery(sql.toString());
+    	((SQLQuery) query).setResultTransformer(new AliasToBeanResultTransformer(ValoresAplicados.class));
+    	
         query.setParameter("numeroCota", numeroCota);
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
         
         query.setParameterList("grupoMovimentoEstoque", 
     		Arrays.asList(
-    			GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
-    			GrupoMovimentoEstoque.SOBRA_DE_COTA,
-    			GrupoMovimentoEstoque.SOBRA_EM_COTA,
-    			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
-    			GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE,
-    			GrupoMovimentoEstoque.COMPRA_ENCALHE,
-    			GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR
+    			GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
+    			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+    			GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+    			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+    			GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name(),
+    			GrupoMovimentoEstoque.COMPRA_ENCALHE.name(),
+    			GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name()
     		)
     	);
         
         query.setParameter("dataOperacao", dataOperacao);
         
-        return (ValoresAplicados) query.setMaxResults(1).uniqueResult();
+        return (ValoresAplicados) query.uniqueResult();
         
     }
     
@@ -3909,7 +3908,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	sql.append(" AND LCTO.STATUS NOT IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') "); 
     	sql.append(" AND c.TIPO_COTA = :tipoCota ");
     	sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:grupoEstornoReparteCotaFuro) "); 
-    	sql.append(" AND (((MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusFinanceiroNaoProcessado))) ");
+    	sql.append(" AND ((c.DEVOLVE_ENCALHE = TRUE OR ( MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusFinanceiroNaoProcessado)    )) ");
     	sql.append(" AND LCTO.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
     	sql.append(" GROUP BY PE.ID, C.ID ");
     	sql.append(" HAVING ");

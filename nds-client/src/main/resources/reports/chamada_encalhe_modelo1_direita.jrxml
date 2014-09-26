@@ -162,7 +162,7 @@
 	<field name="nomeRoteiro" class="java.lang.String"/>
 	<field name="dataRecolhimento" class="java.lang.String"/>
 	<pageHeader>
-		<band height="175">
+		<band height="172">
 			<frame>
 				<reportElement uuid="05b05f10-5e4f-4912-9094-fbd832f28c7a" stretchType="RelativeToBandHeight" x="-2" y="0" width="241" height="172"/>
 				<rectangle>

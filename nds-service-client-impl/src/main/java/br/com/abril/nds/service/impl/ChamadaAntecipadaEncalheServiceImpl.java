@@ -174,6 +174,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = 
 				cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
 		
+		lisAntecipadaEncalheDTOs.removeAll(filtro.getChamadasNaoSelecionadas());
+		
 		InfoChamdaAntecipadaEncalheDTO infoEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		
 		infoEncalheDTO.setChamadasAntecipadaEncalhe(lisAntecipadaEncalheDTOs);
@@ -310,12 +312,12 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		if(filtro.isProgramacaoCE()){
 			
 			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
-			antecipadaEncalheDTO.setTotalRegistros(filtro.getPaginacao().getQtdResultadosPorPagina().longValue());
+			antecipadaEncalheDTO.setTotalRegistros(chamadaEncalheCotaRepository.obterQntCotasProgramadaParaAntecipacoEncalhe(filtro));
 		}
 		else{
 			
 			list = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
-			antecipadaEncalheDTO.setTotalRegistros(filtro.getPaginacao().getQtdResultadosTotal().longValue());
+			antecipadaEncalheDTO.setTotalRegistros(cotaRepository.obterQntCotasSujeitasAntecipacoEncalhe(filtro));
 		}
 		
 		antecipadaEncalheDTO.setChamadasAntecipadaEncalhe(list);
