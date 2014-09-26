@@ -647,12 +647,15 @@ var analiseParcialController = $.extend(true, {
                     	cell['venda'+ (j + 1)] = '';
                     }
                     
-                    if( cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)]=== "0"){
-                    	 cell['reparte'+ (j + 1)] = "";
-                    }
-                    
-                    if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
-                    	cell['venda'+ (j + 1)] = "";
+                    if(cell.edicoesBase[j].edicaoAberta){
+                    	
+                        if( cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)]=== "0"){
+                        	 cell['reparte'+ (j + 1)] = "";
+                        }
+                        
+                        if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
+                        	cell['venda'+ (j + 1)] = "";
+                        }
                     }
                 }
             }
