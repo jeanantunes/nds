@@ -49,7 +49,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	@Transactional(readOnly=true)
 	public BigDecimal obterValorEstoqueLogico(Date dataOperacao) {
 		
-		return Util.nvl(estoqueProdutoRespository.obterValorTotalSuplementar(), BigDecimal.ZERO);
+		return this.resumoSuplementarFecharDiaRepository.obterValorEstoqueLogico(dataOperacao);
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 			
 			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional),BigDecimal.ZERO);
 			
-			dto.setTotalEstoqueLogico(totalEstoqueLogico.add(totalVenda));
+			dto.setTotalEstoqueLogico(totalEstoqueLogico.add(totalVenda).add(totalTransferencia));
 		
 			dto.setTotalTransferencia(totalTransferencia);		
 			
