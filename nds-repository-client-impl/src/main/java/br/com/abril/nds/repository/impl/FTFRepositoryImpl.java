@@ -466,7 +466,6 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sb.append(" select DISTINCT ")
 		.append(" '8' as tipoRegistro, ")
 		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR as codigoEstabelecimentoEmissor, ")
-		.append(" paramFtf.CODIGO_CENTRO_EMISSOR as codigoCentroEmissor, ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
 		concatenarTipoPedidoBy(idNotaFiscal, sb);
