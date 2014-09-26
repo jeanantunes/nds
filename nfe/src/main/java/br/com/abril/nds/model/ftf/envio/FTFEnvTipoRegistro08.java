@@ -12,7 +12,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	private String tipoRegistro = "8";
 	
 	@FTFfield(tamanho = 2, tipo = "char", ordem = 2)
-	private String codigoCentroEmissor;
+	private String codigoEstabelecimentoEmissor;
 	
 	@FTFfield(tamanho = 14, tipo = "char", ordem = 3)
 	private String cnpjEmpresaEmissora;
@@ -83,6 +83,14 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 
 	public void setTipoRegistro(String tipoRegistro) {
 		this.tipoRegistro = tipoRegistro;
+	}
+
+	public String getCodigoEstabelecimentoEmissor() {
+		return codigoEstabelecimentoEmissor;
+	}
+
+	public void setCodigoEstabelecimentoEmissor(String codigoEstabelecimentoEmissor) {
+		this.codigoEstabelecimentoEmissor = codigoEstabelecimentoEmissor;
 	}
 
 	public String getCpfOuCnpj() {
@@ -214,10 +222,6 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 		this.complementoTelefone = complementoTelefone;
 	}
 	
-	@Override
-	public void setCodigoCentroEmissor(String codigoCentroEmissor) {
-		this.codigoCentroEmissor = codigoCentroEmissor != null ? StringUtils.leftPad(codigoCentroEmissor, 2, '0') : StringUtils.leftPad(codigoCentroEmissor, ' ', '0');
-	}
 	
 	public String getCnpjEmpresaEmissora() {
 		return cnpjEmpresaEmissora;
@@ -240,10 +244,6 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	@Override
 	public void setNumeroDocOrigem(String numeroDocOrigem) {
 		this.numeroDocOrigem = numeroDocOrigem;
-	}
-
-	public String getCodigoCentroEmissor() {
-		return codigoCentroEmissor;
 	}
 
 	public String getCodLocal() {

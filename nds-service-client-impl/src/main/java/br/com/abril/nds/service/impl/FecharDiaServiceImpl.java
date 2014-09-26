@@ -1048,7 +1048,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		distribuidor.setDataOperacao(novaData);
 		
 		distribuidorRepository.alterar(distribuidor);
-	
+		
+		LOGGER.info("DATA DE OPERAÇÃO DO DISTRIBUIDRO ALTERADA");
+		
 		return novaData;
 	}
 	
