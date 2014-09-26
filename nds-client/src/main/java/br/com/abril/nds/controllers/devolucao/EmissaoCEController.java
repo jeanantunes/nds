@@ -382,7 +382,7 @@ public class EmissaoCEController extends BaseController {
 		}
 	}
 
-	public void imprimirCENovo(FiltroEmissaoCE filtro) {
+	public void imprimirCEPDF(FiltroEmissaoCE filtro) {
         
 	    byte[] notasGeradas = null;
 	    
