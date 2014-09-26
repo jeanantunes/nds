@@ -101,11 +101,11 @@ var EmissaoCEController = $.extend(true, {
 		doGet("emissaoCE/imprimirCE", null, "_blank");
 	},
 
-	imprimirCENovo : function() {
+	imprimirCEPDF : function() {
 		
 		var data = this.getFiltro();
 		
-		var path = contextPath + "/emissaoCE/imprimirCENovo";
+		var path = contextPath + "/emissaoCE/imprimirCEPDF";
 		
 		$.fileDownload(path, {
 			httpMethod : "POST",

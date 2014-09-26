@@ -414,7 +414,7 @@ Lancto]]></text>
 				<textFieldExpression><![CDATA[$F{codigoBarras}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="d9822362-f7b0-48d6-abcc-17267c2f104c" style="linha" mode="Opaque" x="95" y="15" width="245" height="16"/>
+				<reportElement uuid="d9822362-f7b0-48d6-abcc-17267c2f104c" style="linha" mode="Opaque" x="95" y="15" width="250" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -425,7 +425,7 @@ Lancto]]></text>
 					<font fontName="SansSerif" size="8" isBold="true"/>
 					<paragraph lineSpacing="Fixed" leftIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nomeComercial}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{descricaoNotaEnvio} != null && !"".equals($F{descricaoNotaEnvio}) ? $F{descricaoNotaEnvio} : $F{nomeComercial}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="328dc61e-1d00-462e-9412-1129f8c95935" style="linha" mode="Opaque" x="186" y="0" width="30" height="15"/>
@@ -440,20 +440,6 @@ Lancto]]></text>
 					<paragraph leftIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="ad14f47f-737f-4a3a-b4f7-05aa00a17b72" style="linha" mode="Opaque" x="237" y="15" width="108" height="16"/>
-				<box topPadding="0" bottomPadding="5">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="true"/>
-					<paragraph lineSpacing="Fixed" leftIndent="2"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{descricaoNotaEnvio}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="85d9be10-7c42-4343-8e59-1576b87c87a7" style="linha" mode="Opaque" x="216" y="0" width="14" height="15"/>
