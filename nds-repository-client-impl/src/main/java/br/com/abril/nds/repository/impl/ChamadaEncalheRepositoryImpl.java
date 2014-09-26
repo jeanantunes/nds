@@ -481,8 +481,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return null;
 	}
 
-	
-
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
 		hql.append(" from ChamadaEncalheCota chamEncCota ")

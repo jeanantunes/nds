@@ -508,8 +508,31 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (BigDecimal) query.uniqueResult();
 	}
 
+	@Override
+	public Long obterQntCotasProgramadaParaAntecipacoEncalhe(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		/*
+		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
+		 * PDV associado a mesma cota.
+		 */
+		hql.append("SELECT DISTINCT count ( cota.id ) ");
+
+		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
+
+		setParameters(query, param);
+		return (Long) query.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
-	public List<ChamadaAntecipadaEncalheDTO> obterCotasProgramadaParaAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
+	public List<ChamadaAntecipadaEncalheDTO> obterCotasProgramadaParaAntecipacoEncalhe(
+			FiltroChamadaAntecipadaEncalheDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -540,23 +563,20 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		setParameters(query, param);
 
 		if (filtro.getPaginacao() != null) {
-			
-			if (filtro.getPaginacao().getQtdResultadosTotal().equals(0)) {
-				filtro.getPaginacao().setQtdResultadosTotal(query.list().size());
-			}
-			
+
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 
 			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+				query.setMaxResults(filtro.getPaginacao()
+						.getQtdResultadosPorPagina());
 			}
 		}
-		
+
 		return query.list();
 	}
-	
+
 	private HashMap<String, Object> getParametrosCotasProgramadaParaAntecipacaoEncalhe(
 			FiltroChamadaAntecipadaEncalheDTO filtro) {
 

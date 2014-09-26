@@ -18,7 +18,6 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.vo.ChamadaEncalheAntecipadaPesCotaVO;
 import br.com.abril.nds.client.vo.ChamadaEncalheAntecipadaVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaEncalheAntecipadaVO;
@@ -75,9 +74,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	private static final String LISTA_PESQUISA_COTA = "listaPesquisaCotas";
 
-	private static final String DATA_HOLDER_ACTION_KEY = "CE_AntecipadaDataHolder";
-	
-
 	@Autowired
 	private Result result;
 	
@@ -110,7 +106,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	@Autowired
 	private EnderecoService enderecoService;
-	
 	
 	@Path("/")
 	public void index() {
@@ -191,9 +186,9 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,
-																						 fornecedor, rota,roteiro,programacaoRealizada,
-																						 municipio,tipoPontoPDV);
+		FiltroChamadaAntecipadaEncalheDTO filtro = 
+				new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,
+													  rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -247,8 +242,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 				filtro.getPaginacao().setQtdResultadosPorPagina(null);
 				filtro.setOrdenacaoColuna(null);
 			}
-		}else{
-			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro para a pesquisa não encontrado!");
 		}
 		
 		return filtro;
@@ -328,6 +321,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/gravarCotas")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+							List<ChamadaAntecipadaEncalheDTO> chamadasNaoSelecionadas,
 							String dataRecolhimento, String codigoProduto, 
 							Long numeroEdicao,String dataProgramada,String gravarTodos, 
 							boolean recolhimentoFinal) {
@@ -340,6 +334,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
 			filtro.setDataProgramada(dataProgramada);
 			filtro.setRecolhimentoFinal(recolhimentoFinal);
+			filtro.setChamadasNaoSelecionadas(chamadasNaoSelecionadas);
 			
 			chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(filtro);
 
@@ -694,12 +689,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipadaVO = 
 				getListaChamadaEncalheAntecipadaVO(infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe());
-		
-		
-		for (ChamadaEncalheAntecipadaVO chamadaEncalheAntecipadaVO : listaChamadaEncalheAntecipadaVO) {
-			chamadaEncalheAntecipadaVO.setReplicar(getCheckedFromDataHolder(chamadaEncalheAntecipadaVO.getNumeroCota()));
-		}
-		
+
 		TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>> tableModel = new TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaChamadaEncalheAntecipadaVO));
@@ -708,7 +698,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		tableModel.setTotal(infoChamdaAntecipadaEncalheDTO.getTotalRegistros().intValue());
 		
-		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel, null, null);
+		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel,null,null);
 
 		return resultadoChamadaEncalheAntecipadaVO;
 	}
@@ -730,6 +720,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			
 			chamadaEncalheAntecipadaVO =  new ChamadaEncalheAntecipadaVO();
 			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox() + " - " + dto.getNomeBox());
+			chamadaEncalheAntecipadaVO.setCodBox(dto.getCodBox());
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(dto.getQntExemplares());
@@ -831,7 +822,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		FiltroChamadaAntecipadaEncalheDTO filtro = this.obterFiltroExportacao();
 		filtro.setDataProgramada(dataProgaramada);
 		
-		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
+		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = 
+				chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
 		
 		if (infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe() == null 
 				|| infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe().isEmpty()){
@@ -1059,44 +1051,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		
 		result.use(CustomJson.class).from(mapa).serialize();
-	}
-	
-	@Post
-    public void atribuirCheckedParaTodosItens(String actionKey, String fieldKey, String fieldValue){
-    	
-    	FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
-    	
-    	InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
-    	
-    	List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipadaVO = getListaChamadaEncalheAntecipadaVO(infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe());
-    	
-    	DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
-    	
-    	if((dataHolder == null) || (dataHolder.getActionMap() == null)){
-        	
-        	dataHolder = new DataHolder();
-        	
-        	this.session.setAttribute(DataHolder.SESSION_ATTRIBUTE_NAME, dataHolder);
-        }
-        
-   	 	for (ChamadaEncalheAntecipadaVO item : listaChamadaEncalheAntecipadaVO) {
-            
-   	 		dataHolder.hold(actionKey, item.getNumeroCota(), fieldKey, fieldValue, dataHolder);
-        }
-   	 	
-   	 	result.nothing();
-    }
-	
-	private String getCheckedFromDataHolder(String numeroCota) {
-		
-		DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
-		
-		if ((dataHolder != null) && (dataHolder.getActionMap() != null)) {
-
-			return dataHolder.getData(DATA_HOLDER_ACTION_KEY, numeroCota, "checado");
-		}
-		
-		return "false";
 	}
 	
 	/**
