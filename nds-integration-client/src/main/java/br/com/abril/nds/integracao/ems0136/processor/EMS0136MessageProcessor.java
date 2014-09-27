@@ -95,7 +95,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return;
 		}
 
-		this.tratarDatasInput(input, produtoEdicao.getProduto().getFornecedor().getId());
+		this.tratarDatasInput(input, produtoEdicao,message);
 
 		LancamentoHelper helper = this.tratarLancamentosExistentes(produtoEdicao, input);
 		
@@ -282,10 +282,30 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return status;
 	}
 
-	private void tratarDatasInput(EMS0136Input input, Long idFornecedor) {
+	private void tratarDatasInput(EMS0136Input input, ProdutoEdicao produtoEdicao,Message message) {
 
-		Date dataLancamento = this.getProximaDataUtil(input.getDataLancamento(), idFornecedor, OperacaoDistribuidor.DISTRIBUICAO);
-		Date dataRecolhimento = this.getProximaDataUtil(input.getDataRecolhimento(), idFornecedor, OperacaoDistribuidor.RECOLHIMENTO);
+
+		Date dataOriginal = input.getDataLancamento();
+		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal,produtoEdicao.getProduto().getFornecedor().getId());
+		
+		
+		Date dataLancamento = this.getProximaDataUtil(dataSugerida, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.DISTRIBUICAO);
+		dataLancamento = lancamentoService.obterDataLancamentoValido(dataLancamento,produtoEdicao.getProduto().getFornecedor().getId());
+		
+		Date dataRecolhimento = this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO);
+		
+		if(dataOriginal.compareTo(dataLancamento)!=0){
+			
+			 this.ndsiLoggerFactory.getLogger().logWarning(message,
+			 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
+					 "Alteração da Data Lcto Distribuidor"
+							+ " de  " + DateUtil.formatarDataPTBR(dataOriginal)
+							+ " para  " + DateUtil.formatarDataPTBR(dataSugerida)
+							+ " Produto "+produtoEdicao.getProduto().getCodigo()
+							+ " Edição " + produtoEdicao.getNumeroEdicao());
+			
+			 
+		}
 		
 		input.setDataLancamento(dataLancamento);
 		input.setDataRecolhimento(dataRecolhimento);

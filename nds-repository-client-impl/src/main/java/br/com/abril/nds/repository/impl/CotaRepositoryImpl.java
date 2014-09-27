@@ -16,7 +16,6 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -65,7 +64,6 @@ import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -120,6 +118,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public CotaRepositoryImpl() {
         super(Cota.class);
     }
+    
     
     public Cota selectForUpdate(Long numeroCota) {
 		
@@ -609,16 +608,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
          * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um
          * PDV associado a mesma cota.
          */
-        hql.append("SELECT DISTINCT count ( cota.id ) ");
-        
+        hql.append("SELECT count(cota.id) ");
+
         hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
+
+        hql.append(" group by ")
+           .append(" box.id, ")
+		   .append(" cota.id, ")
+		   .append(" estoqueProdutoCota.id, ")
+		   .append(" produtoEdicao.id, ")
+		   .append(" lancamento ");
         
         final Query query = this.getSession().createQuery(hql.toString());
         
         final Map<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
         
         setParameters(query, param);
-        return (Long) query.uniqueResult();
+
+        return ((Integer) query.list().size()).longValue();
     }
     
     @Override
@@ -2443,31 +2450,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("idCota", idCota);
         
         return (Cota) query.uniqueResult();
-    }
-    
-    @Override
-    public GrupoCota obterOperacaoVigenteCota(Long idCota, Date dataInicio, Date dataFim) {
-
-    	Criteria criteria = this.getSession().createCriteria(GrupoCota.class);
-    	
-    	criteria.createAlias("cotas", "cota");
-    	
-    	Criterion vigenciaRestriction = Restrictions.and(
-			Restrictions.ge("dataInicioVigencia", dataInicio),
-			Restrictions.or(
-				Restrictions.isNull("dataFimVigencia"),
-				Restrictions.le("dataFimVigencia", dataFim)
-			)
-		);
-    	
-    	criteria.add(Restrictions.eq("cota.id", idCota));
-    	criteria.add(vigenciaRestriction);
-
-    	criteria.addOrder(Order.asc("diasRecolhimento"));
-    	
-    	criteria.setMaxResults(1);
-    	
-    	return (GrupoCota) criteria.uniqueResult();
     }
     
     @SuppressWarnings("unchecked")

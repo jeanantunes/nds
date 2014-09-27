@@ -232,17 +232,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	 * 
 	 * @return StringBuilder
 	 */
-	private StringBuilder getSqlTuplasCotaAVista(boolean addOutrasCotas){
+	private StringBuilder getSqlTuplasCotaAVista(){
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("AND (");
-
-		if(addOutrasCotas) {
-			
-		    sql.append("        ((c.TIPO_COTA = :tipoCotaAVista AND c.DEVOLVE_ENCALHE = TRUE) OR (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
-		}   
-
+	    sql.append("        ((c.TIPO_COTA = :tipoCotaAVista AND c.DEVOLVE_ENCALHE = TRUE) OR (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
 		sql.append("    )");
 		
 		return sql;
@@ -300,11 +295,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
 		}
 		
-		if(filtro.getAddCotaVista() == null || filtro.getAddOutrasCotas() == null)
-		    sql.append(this.getSqlTuplasCotaAVista(true));
-		else {
-		    sql.append(this.getSqlTuplasCotaAVista(filtro.getAddOutrasCotas()));
-		}
+		sql.append(this.getSqlTuplasCotaAVista());
+		
 	}
 	
 	/**
@@ -375,7 +367,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-		sql.append(this.getSqlTuplasCotaAVista(true));
+		sql.append(this.getSqlTuplasCotaAVista());
 
 		sql.append(" GROUP BY numeroCota, idFornecedor ");
 
@@ -581,7 +573,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-		sql.append(this.getSqlTuplasCotaAVista(true));
+		sql.append(this.getSqlTuplasCotaAVista());
 
 		sql.append(" GROUP BY forn.id ");
 		
@@ -640,7 +632,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-		sql.append(this.getSqlTuplasCotaAVista(true));
+		sql.append(this.getSqlTuplasCotaAVista());
 
 		sql.append(" GROUP BY forn.id ");
                 

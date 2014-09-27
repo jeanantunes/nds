@@ -44,7 +44,10 @@ public class DefinicaoBases extends ProcessoAbstrato {
     	
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
         	
-        	if(estudo.isPracaVeraneio() && !estudo.getProdutoEdicaoEstudo().isColecao()) { 
+        	final boolean parcialComMaisDeUmPeriodo = 
+        			(estudo.getProdutoEdicaoEstudo().getPeriodo() != null && estudo.getProdutoEdicaoEstudo().getPeriodo() > 1);
+        	
+        	if(!parcialComMaisDeUmPeriodo && estudo.isPracaVeraneio() && !estudo.getProdutoEdicaoEstudo().isColecao()) { 
         		
         		baseParaVeraneio.executar(estudo);
         		
@@ -58,7 +61,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
         			excluiEdicoesComMaisDeDoisAnos(edicoesBase);
         			excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
         			
-        			if(estudo.getProdutoEdicaoEstudo().getPeriodo() != null && estudo.getProdutoEdicaoEstudo().getPeriodo() >= 2){
+        			if(parcialComMaisDeUmPeriodo){
         				edicoesBase = filtarEdicoesParciais(edicoesBase, estudo);
         			}
         			

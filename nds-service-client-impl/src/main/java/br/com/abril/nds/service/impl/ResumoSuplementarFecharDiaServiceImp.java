@@ -49,7 +49,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	@Transactional(readOnly=true)
 	public BigDecimal obterValorEstoqueLogico(Date dataOperacao) {
 		
-		return Util.nvl(estoqueProdutoRespository.obterValorTotalSuplementar(), BigDecimal.ZERO);
+		return this.resumoSuplementarFecharDiaRepository.obterValorEstoqueLogico(dataOperacao);
 	}
 
 	@Override
@@ -96,16 +96,19 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 			
 		}else{
 
-			BigDecimal totalEstoqueLogico = this.obterValorEstoqueLogico(dataOperacional);
-			dto.setTotalEstoqueLogico(totalEstoqueLogico);
+			BigDecimal totalEstoqueLogico = Util.nvl(this.obterValorEstoqueLogico(dataOperacional),BigDecimal.ZERO);
 			
-			BigDecimal totalTransferencia = this.obterValorTransferencia(dataOperacional);
+			BigDecimal totalTransferencia = Util.nvl(this.obterValorTransferencia(dataOperacional),BigDecimal.ZERO);
+			
+			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional),BigDecimal.ZERO);
+			
+			dto.setTotalEstoqueLogico(totalEstoqueLogico.add(totalVenda).add(totalTransferencia));
+		
 			dto.setTotalTransferencia(totalTransferencia);		
 			
-			BigDecimal totalVenda = this.obterValorVenda(dataOperacional);
 			dto.setTotalVenda(totalVenda);
 			
-			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda));			
+			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia));			
 		}
 		
 		return dto;
@@ -139,13 +142,18 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 		}
 		
 		for(SuplementarFecharDiaDTO suplementar : listaSuplementar) {
-
-			BigInteger entrada = (suplementar.getQuantidadeTransferenciaEntrada() == null) ? BigInteger.ZERO : suplementar.getQuantidadeTransferenciaEntrada();
-			BigInteger saida = (suplementar.getQuantidadeTransferenciaSaida() == null) ? BigInteger.ZERO : suplementar.getQuantidadeTransferenciaSaida();
-			BigInteger logico = (suplementar.getQuantidadeContabil() == null) ? BigInteger.ZERO : suplementar.getQuantidadeContabil();
-			BigInteger venda = (suplementar.getQuantidadeVenda() == null) ? BigInteger.ZERO : suplementar.getQuantidadeVenda();
 			
-			BigInteger saldo = logico.add(entrada).subtract(saida).subtract(venda);
+			BigInteger entrada = Util.nvl(suplementar.getQuantidadeTransferenciaEntrada(),BigInteger.ZERO);
+			
+			BigInteger saida = Util.nvl(suplementar.getQuantidadeTransferenciaSaida(),BigInteger.ZERO);
+			
+			BigInteger logico = Util.nvl(suplementar.getQuantidadeLogico(),BigInteger.ZERO);
+			
+			BigInteger venda = Util.nvl(suplementar.getQuantidadeVenda(),BigInteger.ZERO);
+			
+			suplementar.setQuantidadeLogico(logico.add(venda));
+			
+			BigInteger saldo = logico.add(entrada).subtract(saida);
 			
 			suplementar.setSaldo(saldo);
 			

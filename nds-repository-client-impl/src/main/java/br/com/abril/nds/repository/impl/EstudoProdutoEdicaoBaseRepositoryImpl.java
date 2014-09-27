@@ -27,26 +27,21 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
-		hql.append("     distinct ");
-		hql.append("         codigo as codigoProduto, ");
-		hql.append("         nome as nomeProduto, ");
-		hql.append("         numero_Edicao as numeroEdicao, ");
-		hql.append("         produto_edicao.parcial as isParcial, ");
-		hql.append("         estudo_produto_edicao_base.isConsolidado as isParcialConsolidado, ");
-		hql.append("         estudo_produto_edicao_base.peso as peso    ");
-		hql.append("     FROM ");
-		hql.append("         estudo_produto_edicao_base     ");
-		hql.append("     INNER JOIN ");
-		hql.append("         produto_edicao  ");
-		hql.append("             ON produto_edicao.id = estudo_produto_edicao_base.PRODUTO_EDICAO_ID  ");
-		hql.append("     INNER JOIN  ");
-		hql.append("         produto  ");
-		hql.append("             ON produto_edicao.produto_id = produto.id ");
-		hql.append("     where ");
-		hql.append("        ESTUDO_ID = ");
-		hql.append(estudoId);
+		hql.append(" distinct ");
+		hql.append("     codigo as codigoProduto, ");
+		hql.append("     nome as nomeProduto, ");
+		hql.append("     numero_Edicao as numeroEdicao, ");
+		hql.append("     produto_edicao.parcial as isParcial, ");
+		hql.append("     estudo_produto_edicao_base.isConsolidado as isParcialConsolidado, ");
+		hql.append("     estudo_produto_edicao_base.peso as peso    ");
+		hql.append(" FROM estudo_produto_edicao_base     ");
+		hql.append(" INNER JOIN produto_edicao ON produto_edicao.id = estudo_produto_edicao_base.PRODUTO_EDICAO_ID  ");
+		hql.append(" INNER JOIN produto ON produto_edicao.produto_id = produto.id ");
+		hql.append(" where ESTUDO_ID = :estudoId");
 
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("estudoId", estudoId);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicaoBaseEstudoDTO.class));
 		 

@@ -285,6 +285,8 @@ public class MatrizRecolhimentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Ao menos uma data deve ser selecionada!");
         }
         
+        this.salvarMatrizRecolhimento();
+        
         BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = (BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
         
         validarDatasBalanceamentoMatriz(balanceamentoRecolhimento.getMatrizRecolhimento(), datasConfirmadas);
@@ -400,10 +402,10 @@ public class MatrizRecolhimentoController extends BaseController {
         // diferenciada
         for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
             
-            if ((produtoRecolhimentoDTO.getExpectativaEncalheSede() != null && produtoRecolhimentoDTO
-                    .getExpectativaEncalheSede().compareTo(BigDecimal.ZERO) != 0)
-                || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null && produtoRecolhimentoDTO
-                        .getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO) != 0)) {
+            if ((produtoRecolhimentoDTO.getExpectativaEncalheSede() != null 
+            		&& produtoRecolhimentoDTO.getExpectativaEncalheSede().compareTo(BigDecimal.ZERO) != 0)
+                || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null 
+                	&& produtoRecolhimentoDTO.getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO) != 0)) {
                 isDiferenciada = true;
                 break;
             }
@@ -467,7 +469,15 @@ public class MatrizRecolhimentoController extends BaseController {
     @Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void salvar() {
         
-        this.verificarBloqueioMatrizRecolhimento();
+        salvarMatrizRecolhimento();
+        
+        result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de recolhimento salvo com sucesso!"),
+                Constantes.PARAM_MSGS).recursive().serialize();
+    }
+
+	private void salvarMatrizRecolhimento() {
+		this.verificarBloqueioMatrizRecolhimento();
         
         verificarExecucaoInterfaces();
         
@@ -479,11 +489,7 @@ public class MatrizRecolhimentoController extends BaseController {
         recolhimentoService.salvarBalanceamentoRecolhimento(usuario, balanceamentoRecolhimento);
         
         removerAtributoAlteracaoSessao();
-        
-        result.use(Results.json()).from(
-                new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de recolhimento salvo com sucesso!"),
-                Constantes.PARAM_MSGS).recursive().serialize();
-    }
+	}
     
     @Post
     @Path("/exibirMatrizFornecedor")
@@ -941,6 +947,11 @@ public class MatrizRecolhimentoController extends BaseController {
                 
                 listaProdutoRecolhimentoSessao.addAll(entry.getValue());
             }
+        }
+        
+        if(listaProdutoRecolhimentoSessao == null) {
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Lançamentos não encontrados. Efetue a pesquisa novamente.");
         }
         
         for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {

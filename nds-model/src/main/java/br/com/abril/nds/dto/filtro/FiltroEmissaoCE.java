@@ -13,6 +13,8 @@ public class FiltroEmissaoCE implements Serializable {
 
 	private static final long serialVersionUID = -701275770998729277L;
 
+	private List<Integer> cotasOperacaoDiferenciada;
+	
 	private TipoImpressaoCE tipoImpressao;
 	
 	@Export(label="Dt. Recolhimento:")
@@ -301,6 +303,12 @@ public class FiltroEmissaoCE implements Serializable {
 		this.tipoImpressao = tipoImpressao;
 	}
 	
+	public List<Integer> getCotasOperacaoDiferenciada() {
+		return cotasOperacaoDiferenciada;
+	}
+	public void setCotasOperacaoDiferenciada(List<Integer> cotasOperacaoDiferenciada) {
+		this.cotasOperacaoDiferenciada = cotasOperacaoDiferenciada;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

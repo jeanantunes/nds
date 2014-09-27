@@ -27,7 +27,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		super(MovimentoEstoque.class);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
@@ -133,14 +133,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append("         ON produtoFornecedor.fornecedores_ID = fornecedor.ID ");
 		hql.append(" INNER JOIN ");
 		hql.append(" LANCAMENTO lancamento ");
-		hql.append("     ON lancamento.ID = ( ");
-		hql.append("     	CASE WHEN (produtoEdicao.PARCIAL) ");
-		hql.append(" 				THEN (SELECT ID FROM LANCAMENTO WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		hql.append(" 							ORDER BY ID ASC LIMIT 1) ");
-		hql.append(" 				ELSE (SELECT ID FROM LANCAMENTO WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		hql.append(" 							ORDER BY ID DESC LIMIT 1) ");
-		hql.append(" 			END ");
-		hql.append("   		) ");
+		hql.append("     ON lancamento.ID = ( SELECT ID FROM LANCAMENTO WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID ORDER BY ID ASC LIMIT 1 ) ");
 		hql.append(" LEFT JOIN ");
 		hql.append("  	  FECHAMENTO_ENCALHE fechamentoEncalhe ");
 		hql.append(" 			ON (fechamentoEncalhe.DATA_ENCALHE = lancamento.DATA_REC_DISTRIB ");
@@ -283,7 +276,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public List<LancamentoPorEdicaoDTO> buscarLancamentoPorEdicao(FiltroDetalheVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();

@@ -646,6 +646,17 @@ var analiseParcialController = $.extend(true, {
                     } else {
                     	cell['venda'+ (j + 1)] = '';
                     }
+                    
+                    if(cell.edicoesBase[j].edicaoAberta){
+                    	
+                        if( cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)]=== "0"){
+                        	 cell['reparte'+ (j + 1)] = "";
+                        }
+                        
+                        if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
+                        	cell['venda'+ (j + 1)] = "";
+                        }
+                    }
                 }
             }
         	
@@ -694,10 +705,11 @@ var analiseParcialController = $.extend(true, {
                 cell.juramento = '';
             }
             
-            if (!cell.ultimoReparte){
+            if (!cell.ultimoReparte || cell.ultimoReparte === 0 || cell.ultimoReparte === "0"){
             	cell.ultimoReparte = '';
             }
-
+            
+          
             totalSaldoReparte += parseInt(cell.quantidadeAjuste);
         }
 

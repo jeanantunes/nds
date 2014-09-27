@@ -83,48 +83,50 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Path("/")
 	@Rules(Permissao.ROLE_DISTRIBUICAO_CARACTERISTICA_DISTRIBUICAO)
 	public void index(){
-		result.include("classificacoes",caracteristicaDistribuicaoService.obterClassificacoesProduto());
-		result.include("segmentos",tipoSegmentoProdutoService.obterTipoSegmentoProduto());
-		result.include("brindes",brindeService.obterBrindes());
+		result.include("classificacoes", caracteristicaDistribuicaoService.obterClassificacoesProduto());
+		result.include("segmentos", tipoSegmentoProdutoService.obterTipoSegmentoProduto());
+		result.include("brindes", brindeService.obterBrindes());
 	}
 	
 	@Path("/pesquisarSimples")
 	@Post	   
-	public void pesquisarSimples(FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarSimples(FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro, String sortorder, String sortname, int page, int rp) {
+		
 		if(session.getAttribute(FILTRO_SIMPLES_SESSION_ATTRIBUTE)==null){
 			this.session.setAttribute(FILTRO_SIMPLES_SESSION_ATTRIBUTE, filtro);
 		}
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		tratarFiltroSimples(filtro);
 		List<CaracteristicaDistribuicaoSimplesDTO> resultado =caracteristicaDistribuicaoService.buscarComFiltroSimples(filtro);
 		
-		if(resultado.isEmpty()){
+		if(resultado.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
 	    }
 		   
-		   TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaSimples(filtro);
-			result.use(Results.json()).withoutRoot().from(tableModelPesquisaDetalhe).recursive().serialize();
+		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaSimples(filtro);
+		result.use(Results.json()).withoutRoot().from(tableModelPesquisaDetalhe).recursive().serialize();
 	}
-	
-	
 	
 	@Path("/pesquisarDetalhe")
 	@Post	   
-	public void pesquisarDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro, String sortorder, String sortname, int page, int rp) {
+		
 		if(session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE)==null){
 			this.session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtro);
 		}
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO.OrdemColuna.values(), sortname));
 		tratarFiltroDetalhe(filtro);
 		
-		if(StringUtils.isNotBlank(filtro.getCodigoProduto())){
+		if(StringUtils.isNotBlank(filtro.getCodigoProduto())) {
 			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 			filtro.setCodigoProduto(produto.getCodigoICD());
 		}
 		   
-	   TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaDetalhe(filtro);
-	   result.use(Results.json()).withoutRoot().from(tableModelPesquisaDetalhe).recursive().serialize();
+		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaDetalhe(filtro);
+		result.use(Results.json()).withoutRoot().from(tableModelPesquisaDetalhe).recursive().serialize();
 	}
 	  
 	private TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> montarTableModelPesquisaDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {

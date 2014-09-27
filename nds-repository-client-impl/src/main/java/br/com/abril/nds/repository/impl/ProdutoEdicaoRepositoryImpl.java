@@ -962,7 +962,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"  ELSE null " +
 				"  END) venda, " +
 				
-				" 	lancamento2_.DATA_REC_DISTRIB as dataRecolhimento, " +
+				" 	coalesce(lp.RECOLHIMENTO_FINAL, lancamento2_.DATA_REC_DISTRIB) as dataRecolhimento, " +
 				" 	lancamento2_.DATA_LCTO_DISTRIBUIDOR as dataLancamento, " +
 				" 	estoqueProdutoCota.QTDE_RECEBIDA, " +
 				
@@ -981,7 +981,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"FROM " +
 				 " ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
 				 " inner join PRODUTO_EDICAO produtoedi1_ on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoedi1_.ID  " +
-				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +	
+				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +
+				 
+				 " left join PERIODO_LANCAMENTO_PARCIAL plp on lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID=plp.ID  " +
+				 " left join LANCAMENTO_PARCIAL lp on plp.LANCAMENTO_PARCIAL_ID=lp.ID  " +
+				 
 				 " inner join PRODUTO produto5_ on produtoedi1_.PRODUTO_ID=produto5_.ID  " +
 				 " left join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
 				 " left join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
@@ -1537,17 +1541,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		hql.append(" SELECT ");
 
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida) as reparte, ");
-		hql.append(" case when l.status in (:statusLancFechadoRecolhido) then ");
-		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ");
-		hql.append(" else null end as qtdeVendas ");
+		hql.append(" estoqueProdutoCota.qtdeRecebida as reparte, ");
+		hql.append(" sum(case when  ");
+		hql.append(" 	(select count(*) from Lancamento l where l.status in (:statusLancFechadoRecolhido) and l.produtoEdicao.id=produtoEdicao.id) > 0 ");
+		hql.append(" 		then (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) "); 
+		hql.append(" 	else 0 end ) as qtdeVendas ");
 
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" JOIN produtoEdicao.lancamentos l ");
 
 		hql.append(" WHERE ");
 		hql.append(" produto.codigo = :codigoProduto ");

@@ -321,6 +321,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Path("/gravarCotas")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
+							List<ChamadaAntecipadaEncalheDTO> chamadasNaoSelecionadas,
 							String dataRecolhimento, String codigoProduto, 
 							Long numeroEdicao,String dataProgramada,String gravarTodos, 
 							boolean recolhimentoFinal) {
@@ -333,6 +334,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
 			filtro.setDataProgramada(dataProgramada);
 			filtro.setRecolhimentoFinal(recolhimentoFinal);
+			filtro.setChamadasNaoSelecionadas(chamadasNaoSelecionadas);
 			
 			chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(filtro);
 
@@ -718,6 +720,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			
 			chamadaEncalheAntecipadaVO =  new ChamadaEncalheAntecipadaVO();
 			chamadaEncalheAntecipadaVO.setBox(dto.getCodBox() + " - " + dto.getNomeBox());
+			chamadaEncalheAntecipadaVO.setCodBox(dto.getCodBox());
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(dto.getQntExemplares());

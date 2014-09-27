@@ -30,9 +30,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
-import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
@@ -134,12 +132,15 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional(readOnly=true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
-        
+    	
     	List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
-        
+    	
     	if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
     	    
-            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial()));
+    		final boolean parcialPossuiRedistribuicao = 
+    				analiseParcialRepository.verificarRedistribuicaoNoPeriodoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial());
+    		
+            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial(), parcialPossuiRedistribuicao));
             
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
@@ -171,6 +172,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 }
                 
                 item.setEdicoesBase(temp);
+                
+                item.setUltimoReparte(this.getUltimoReparte(temp));
             }
         } else {
             if (queryDTO.getEdicoesBase() == null) {
@@ -206,27 +209,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 Map<Integer, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
                 Integer ordemExibicaoHelper = 0;
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
+
                 if(idsProdutoEdicao.size() > 0) {
                 	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao);
                     edicoesComVenda.addAll(buscaHistoricoDeVendas);
-                		
-                    /*
-                    if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
-                        AnaliseParcialDTO buscarReparteDoEstudo = analiseParcialRepository.buscarReparteDoEstudo(queryDTO.getEstudoOrigem(), item.getCota());
 
-                        for (EdicoesProdutosDTO ed : edicoesComVenda) {
-                            if (ed.getProdutoEdicaoId().equals(queryDTO.getEdicoesBase().get(0).getProdutoEdicaoId())) {
-                                if(buscarReparteDoEstudo.getUltimoReparte()==null){
-                                    edicoesComVenda.get(0).setReparte(BigDecimal.ZERO);
-                                }else{
-                                    edicoesComVenda.get(0).setReparte(BigDecimal.valueOf(buscarReparteDoEstudo.getUltimoReparte().longValue()));
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    */
-                		
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                         for (EdicoesProdutosDTO ed : edicoesComVenda) {
                             if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
@@ -247,7 +234,17 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return lista;
     }
 
-    private void completarParciaisBase(List<EdicoesProdutosDTO> temp, int quantidadeParciaisBase) {
+    private BigInteger getUltimoReparte(List<EdicoesProdutosDTO> temp) {
+		
+    	if(temp!= null && !temp.isEmpty()){
+    		
+    		return temp.get(0).getReparte();
+    	}
+    	
+		return null;
+	}
+
+	private void completarParciaisBase(List<EdicoesProdutosDTO> temp, int quantidadeParciaisBase) {
         
         for (int i = temp.size(); i < quantidadeParciaisBase; i++) {
             

@@ -266,7 +266,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			
-			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():true);
+			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():false);
 			
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
@@ -1461,39 +1461,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobrancaRepository.adicionar(formaCobranca);
 	}
 	
-	/**
-	 * Obtem o fornecedor padrão da cota informada
-	 * @param idCota
-	 * @return Fornecedor
-	 */
-	@Override
-	@Transactional
-	public Fornecedor obterFornecedorPadraoCota(Long idCota) {
-
-		Cota cota = null;
-		
-		if (idCota != null) {
-
-			cota = this.cotaRepository.buscarPorId(idCota);
-		}
-
-		else{
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Informe o Id da cota para obter o fornecedor padrão.");
-		}
-		
-		if (cota == null ){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada para obtenção do Fornecedor Padrão.");
-		}
-		
-		if (cota.getParametroCobranca()==null){
-			
-			return null;
-		}
-		
-		return cota.getParametroCobranca().getFornecedorPadrao();
-	}
 
     /**
      * Método responsável pela validação dos dados da Forma de Cobranca.

@@ -1148,7 +1148,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         		" join c.cota cc " +
         		" join c.divida d " +
         		" where cc.id = cota.id " +
-        		" and c.dataEmissao = :dataEncalhe ";
+        		" and c.dataEmissao = :dataEncalhe " +
+        		" group by c.dataEmissao ";
         
         final StringBuilder hql = new StringBuilder();
         

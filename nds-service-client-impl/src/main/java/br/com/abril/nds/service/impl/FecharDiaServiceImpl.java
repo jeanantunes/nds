@@ -675,21 +675,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         valorExpedido = valorExpedido.add(Util.nvl(
                 diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
         
-        BigDecimal valorDiferencasSaida =  Util.nvl(
-        		diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        BigDecimal valorSaidaDoConsignadoAVista =  Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterValorConsignadoCotaAVista(dataFechamento),BigDecimal.ZERO);
         
-        BigDecimal valorCotaAusenteSaida = Util.nvl(
-        		cotaAusenteRepository.obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        resumoConsignado.setValorAVista(valorSaidaDoConsignadoAVista);
         
-        BigDecimal valorSaidaAVista =  Util.nvl(
-        		this.movimentoEstoqueRepository.obterSaldoDistribuidor(dataFechamento, 
-        				OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME),BigDecimal.ZERO);
+        resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaDoConsignadoAVista));
         
-        resumoConsignado.setValorAVista(valorSaidaAVista);
-        
-        resumoConsignado.setValorExpedicao(valorExpedido);
-        
-        resumoConsignado.setValorOutrosValoresSaidas(valorDiferencasSaida.add(valorCotaAusenteSaida));
+        resumoConsignado.setValorOutrosValoresSaidas(this.obterValorSaidaOutros(dataFechamento));
         
         resumoConsignado.setValorSaidas(valorExpedido.add(resumoConsignado.getValorOutrosValoresSaidas()));
        
@@ -698,6 +691,20 @@ public class FecharDiaServiceImpl implements FecharDiaService {
                         resumoConsignado.getValorEntradas()).add(resumoConsignado.getValorSaidas()));
         
         resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
+	}
+	
+	private BigDecimal obterValorSaidaOutros(final Date dataFechamento){
+		
+		BigDecimal valorDiferencasSaida =  Util.nvl(
+        		diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        
+        BigDecimal valorCotaAusenteSaida = Util.nvl(
+        		cotaAusenteRepository.obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        
+        BigDecimal valorVendaSuplementar = Util.nvl(
+        		movimentoEstoqueService.obterValorConsignadoDeVendaSuplementar(dataFechamento), BigDecimal.ZERO);
+        
+        return (valorDiferencasSaida.add(valorVendaSuplementar).add(valorCotaAusenteSaida));
 	}
 
 	private ResumoFechamentoDiarioConsignadoDTO obterResumoConsignadoComFechamentoProcessado(Date dataFechamento){
@@ -978,7 +985,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		distribuidor.setDataOperacao(novaData);
 		
 		distribuidorRepository.alterar(distribuidor);
-	
+		
+		LOGGER.info("DATA DE OPERAÇÃO DO DISTRIBUIDRO ALTERADA");
+		
 		return novaData;
 	}
 	
