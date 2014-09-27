@@ -3936,7 +3936,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	sql.append(" AND LCTO.STATUS NOT IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') "); 
     	sql.append(" AND c.TIPO_COTA = :tipoCota ");
     	sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:grupoEstornoReparteCotaFuro) "); 
-    	sql.append(" AND (((MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusFinanceiroNaoProcessado))) ");
+    	sql.append(" AND ((c.DEVOLVE_ENCALHE = TRUE OR ( MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusFinanceiroNaoProcessado)    )) ");
     	sql.append(" AND LCTO.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
     	sql.append(" GROUP BY PE.ID, C.ID ");
     	sql.append(" HAVING ");

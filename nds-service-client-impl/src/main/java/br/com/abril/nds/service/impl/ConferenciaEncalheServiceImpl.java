@@ -1360,7 +1360,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		
 	}
 	
 	

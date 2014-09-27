@@ -2081,8 +2081,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
 		query.setParameter("operacaoEstoqueEntrada", OperacaoEstoque.ENTRADA);
 		
-		query.setResultTransformer(Transformers
-				.aliasToBean(CotaOperacaoDiferenciadaDTO.class));
+		query.setResultTransformer(Transformers.aliasToBean(CotaOperacaoDiferenciadaDTO.class));
 
 		return query.list();
 	}

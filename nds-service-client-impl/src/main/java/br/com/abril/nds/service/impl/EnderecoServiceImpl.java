@@ -470,7 +470,6 @@ public class EnderecoServiceImpl implements EnderecoService {
 		return this.enderecoRepository.obterBairrosPDVBoxEspecial(uf, cidade);
 	}
 	
-	@Transactional
 	@Override
 	public List<ItemDTO<String, String>> buscarMunicipioAssociadasCota(){
 		return enderecoCotaRepository.buscarMunicipio();

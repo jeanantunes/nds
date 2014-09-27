@@ -178,4 +178,44 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	public void setQntExemplares(BigInteger qntExemplares) {
 		this.qntExemplares = qntExemplares;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codBox == null) ? 0 : codBox.hashCode());
+		result = prime * result
+				+ ((idLancamento == null) ? 0 : idLancamento.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChamadaAntecipadaEncalheDTO other = (ChamadaAntecipadaEncalheDTO) obj;
+		if (codBox == null) {
+			if (other.codBox != null)
+				return false;
+		} else if (!codBox.equals(other.codBox))
+			return false;
+		if (idLancamento == null) {
+			if (other.idLancamento != null)
+				return false;
+		} else if (!idLancamento.equals(other.idLancamento))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		return true;
+	}
+
 }
