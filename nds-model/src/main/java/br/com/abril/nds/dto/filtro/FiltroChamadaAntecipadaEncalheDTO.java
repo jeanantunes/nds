@@ -2,9 +2,11 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -80,6 +82,8 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	private Long codTipoPontoPDV;
 	
 	private boolean recolhimentoFinal;
+	
+	private List<ChamadaAntecipadaEncalheDTO> chamadasNaoSelecionadas;
 
 	/**
 	 * Construtor padrão.
@@ -244,7 +248,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	 * @return the codigoProduto
 	 */
 	public String getCodigoProduto() {
-		return codigoProduto;
+		return StringUtils.leftPad(codigoProduto, 8, '0');
 	}
 
 	/**
@@ -534,4 +538,12 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		this.recolhimentoFinal = recolhimentoFinal;
 	}
 
+	public List<ChamadaAntecipadaEncalheDTO> getChamadasNaoSelecionadas() {
+		return chamadasNaoSelecionadas;
+	}
+
+	public void setChamadasNaoSelecionadas(
+			List<ChamadaAntecipadaEncalheDTO> chamadasNaoSelecionadas) {
+		this.chamadasNaoSelecionadas = chamadasNaoSelecionadas;
+	}
 }

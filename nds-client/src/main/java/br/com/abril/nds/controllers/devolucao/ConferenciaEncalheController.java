@@ -679,7 +679,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		conferenciasContingencia = PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(conferenciasContingencia), 
 				Ordenacao.ASC, 
-				"codigoSM", "numeroEdicao");
+				"dataRecolhimento", "codigoSM", "numeroEdicao");
 		
 		Iterator<ConferenciaEncalheDTO> it = conferenciasContingencia.iterator();
 		
@@ -723,7 +723,7 @@ public class ConferenciaEncalheController extends BaseController {
 			Collection<ConferenciaEncalheDTO> listaConferenciaEncalhe = 
 					PaginacaoUtil.ordenarEmMemoria(new ArrayList<ConferenciaEncalheDTO>(lista), 
 					Ordenacao.ASC, 
-					"codigoSM", "numeroEdicao");
+					"dataRecolhimento", "codigoSM", "numeroEdicao");
 			
 			Integer qtde = listaConferenciaEncalhe.size();
 			
@@ -3029,7 +3029,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		lista.addAll(info.getListaConferenciaEncalhe());
 		
-		lista = (List<ConferenciaEncalheDTO>) PaginacaoUtil.ordenarEmMemoria(lista, Ordenacao.ASC, "codigoSM");
+		lista = (List<ConferenciaEncalheDTO>) PaginacaoUtil.ordenarEmMemoria(lista, Ordenacao.ASC, "dataRecolhimento", "codigoSM");
 		
 		final Map<String, Object> dados = new HashMap<String, Object>();
 		

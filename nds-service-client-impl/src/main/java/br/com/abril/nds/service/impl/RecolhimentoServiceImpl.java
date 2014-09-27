@@ -1255,6 +1255,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : produtosRecolhimento) {
 			
+			if(produtoRecolhimentoDTO.getIdsLancamentosAgrupados() != null
+					&& !produtoRecolhimentoDTO.getIdsLancamentosAgrupados().isEmpty()) {
+				
+				idsLancamento.addAll(produtoRecolhimentoDTO.getIdsLancamentosAgrupados());
+			}
 			idsLancamento.add(produtoRecolhimentoDTO.getIdLancamento());
 		}
 		
@@ -1327,12 +1332,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
-				this.obterCotasOperacaoDiferenciadaPorLancamento(
-					cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+			if(produtoRecolhimento.getIdsLancamentosAgrupados() != null
+					&& !produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty()) {
+				
+				for(Long idLancamento : produtoRecolhimento.getIdsLancamentosAgrupados()) {
+					
+					List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+							this.obterCotasOperacaoDiferenciadaPorLancamento(cotasOperacaoDiferenciada, idLancamento);
+						
+						this.atualizarEncalheSedeAtendida(produtoRecolhimento, cotasOperacaoDiferenciadaDoLancamento);
+				}
+			}
 			
-			this.atualizarEncalheSedeAtendida(
-				produtoRecolhimento, cotasOperacaoDiferenciadaDoLancamento);
+			List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+				this.obterCotasOperacaoDiferenciadaPorLancamento(cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+			
+			this.atualizarEncalheSedeAtendida(produtoRecolhimento, cotasOperacaoDiferenciadaDoLancamento);
 		}
 	}
 	
@@ -1345,14 +1360,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciadaDoLancamento) {
 			
-			expectativaEncalheAtendida = 
-				expectativaEncalheAtendida.add(cotaOperacaoDiferenciada.getExpectativaEncalhe());
+			expectativaEncalheAtendida = expectativaEncalheAtendida.add(cotaOperacaoDiferenciada.getExpectativaEncalhe());
 			
-			expectativaEncalheSede =
-				expectativaEncalheSede.subtract(cotaOperacaoDiferenciada.getExpectativaEncalhe());
+			expectativaEncalheSede = expectativaEncalheSede.subtract(cotaOperacaoDiferenciada.getExpectativaEncalhe());
 		}
 		
-		produtoRecolhimento.setExpectativaEncalheAtendida(expectativaEncalheAtendida);
+		if(produtoRecolhimento.getExpectativaEncalheAtendida() != null) {
+			
+			produtoRecolhimento.setExpectativaEncalheAtendida(produtoRecolhimento.getExpectativaEncalheAtendida().add(expectativaEncalheAtendida));
+		} else {
+			
+			produtoRecolhimento.setExpectativaEncalheAtendida(expectativaEncalheAtendida);
+		}
 		produtoRecolhimento.setExpectativaEncalheSede(expectativaEncalheSede);
 	}
 	
