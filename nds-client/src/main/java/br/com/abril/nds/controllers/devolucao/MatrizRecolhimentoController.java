@@ -402,10 +402,10 @@ public class MatrizRecolhimentoController extends BaseController {
         // diferenciada
         for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
             
-            if ((produtoRecolhimentoDTO.getExpectativaEncalheSede() != null && produtoRecolhimentoDTO
-                    .getExpectativaEncalheSede().compareTo(BigDecimal.ZERO) != 0)
-                || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null && produtoRecolhimentoDTO
-                        .getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO) != 0)) {
+            if ((produtoRecolhimentoDTO.getExpectativaEncalheSede() != null 
+            		&& produtoRecolhimentoDTO.getExpectativaEncalheSede().compareTo(BigDecimal.ZERO) != 0)
+                || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null 
+                	&& produtoRecolhimentoDTO.getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO) != 0)) {
                 isDiferenciada = true;
                 break;
             }
