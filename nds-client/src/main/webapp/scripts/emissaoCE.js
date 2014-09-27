@@ -75,13 +75,18 @@ var EmissaoCEController = $.extend(true, {
 				contextPath + "/emissaoCE/obterDadosImpressaoBoletosEmBranco", data,
 				function(result) { 
 
-                    if (result && result.boolean == true){
+                    if (result && result.existemBoletosEmBranco == true){
 					    
-						_this.imprimirBoletoEmBranco();
-					}
-                    else{
+                    	if(result.msgCotaSemOperacaoDiferenciada) {
+                    		
+                    		exibirMensagem("WARNING", [result.msgCotaSemOperacaoDiferenciada]);
+                    	}
                     	
-                    	if(result.boolean == false){
+						_this.imprimirBoletoEmBranco();
+						
+					} else {
+                    	
+                    	if(result.existemBoletosEmBranco == false){
                     	
                     	    _this.popupConfirmacaoReemissaoBoletosAntecipados();
                     	}
@@ -96,11 +101,11 @@ var EmissaoCEController = $.extend(true, {
 		doGet("emissaoCE/imprimirCE", null, "_blank");
 	},
 
-	imprimirCENovo : function() {
+	imprimirCEPDF : function() {
 		
 		var data = this.getFiltro();
 		
-		var path = contextPath + "/emissaoCE/imprimirCENovo";
+		var path = contextPath + "/emissaoCE/imprimirCEPDF";
 		
 		$.fileDownload(path, {
 			httpMethod : "POST",
@@ -110,9 +115,14 @@ var EmissaoCEController = $.extend(true, {
 	},
 	
 	
-	imprimirBoletoEmBranco : function(){
-			
-		document.location.assign(contextPath + "/emissaoCE/imprimeBoletoEmBranco");
+	imprimirBoletoEmBranco : function() {
+		
+		var path = contextPath + "/emissaoCE/imprimeBoletoEmBranco";
+		
+		$.fileDownload(path, {
+			httpMethod : "GET"
+		});
+		
 	},
 
 	cliquePesquisar : function() {

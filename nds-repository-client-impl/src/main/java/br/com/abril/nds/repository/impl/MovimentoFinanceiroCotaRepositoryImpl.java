@@ -1419,25 +1419,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	       .append("),0) as valorConsignado, ")
 	       
-
-	       .append(" coalesce((")
-	       
-	       .append("  select sum(mfc.valor) ")
-	      
-	       .append(this.getFromPendenteDebitoCota("c.id"))
-	       
-	       .append("),0) as valorPendenteDebito, ")
-	       
-	       
-	       .append(" coalesce((")
-	       
-	       .append("  select sum(mfc.valor) ")
-	      
-	       .append(this.getFromPendenteCreditoCota("c.id"))
-	       
-	       .append("),0) as valorPendenteCredito, ")
-	       
-
 	       .append(" coalesce((")
 	       
 	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
@@ -1523,34 +1504,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	          
 	           .append(this.getFromCreditoCota("c.id"))
 	           
-	           .append("),0) ")
+	           .append("),0) )")
 	
-	         .append(") + ")
+	         .append(") *(-1) as saldo  ")
 
-	         .append("(")
-	         
-	           .append(" coalesce(((")
-	           
-	           .append("  select sum(coalesce(mfc.valor,0)) ")
-	          
-	           .append(this.getFromPendenteDebitoCota("c.id"))
-	        
-	           .append(")*(-1)),0) + ")
-	           
-	    
-	           .append(" coalesce((")
-	           
-	           .append("  select sum(coalesce(mfc.valor,0)) ")
-	          
-	           .append(this.getFromPendenteCreditoCota("c.id"))
-	           
-	           .append("),0) ")
-	
-	         .append(") ")
-
-	       .append(")*(-1) as saldo ")
-	       
-	       
 	       .append(" from Cota c ")
 	       
 	       .append(" join c.pessoa p ")

@@ -1009,11 +1009,16 @@ public class RoteirizacaoController extends BaseController {
 						
 						for (RotaRoteirizacaoDTO rota : rotas) {
 							
-							if (rota.getId().equals(idRota)) {
+							if (idRota!=null && rota!=null && rota.getId()!=null) {
 								
-								rotaSelecionada = rota;
-								break;
-							}
+								if (rota.getId().equals(idRota)) {
+								
+								  rotaSelecionada = rota;
+								  break;
+								}
+							}//else{
+								//throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Rota id não enviado."));
+							//}
 						}
 						
 						if (rotaSelecionada != null) {

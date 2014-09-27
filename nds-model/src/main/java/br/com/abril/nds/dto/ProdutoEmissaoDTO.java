@@ -23,6 +23,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private String nomeProduto;
 	
+	private String nomeComercial;
+
 	private String notaEnvio;
 	
 	private Long numeroNotaEnvio;
@@ -61,7 +63,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private Integer quantidadeReparte;
 	
-	private String TR;
+	private Integer quantidadeDev;
 
 	private Long idCota;
 	
@@ -205,6 +207,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public String getPrecoComDesconto() {
 		return precoComDesconto;
 	}
+	
 	/**
 	 * @param precoComDesconto the precoComDesconto to set
 	 */
@@ -214,7 +217,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 			
 			this.vlrPrecoComDesconto= precoComDesconto; 
 			
-			this.precoComDesconto = CurrencyUtil.formatarValor(precoComDesconto);
+			this.precoComDesconto = CurrencyUtil.formatarValorQuatroCasas(precoComDesconto);
 		
 		} else {
 			
@@ -247,8 +250,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @param quantidadeDevolvida the quantidadeDevolvida to set
 	 */
-	public void setQuantidadeDevolvida(BigInteger quantidadeDevolvida) {
-		this.quantidadeDevolvida = quantidadeDevolvida!=null? quantidadeDevolvida : BigInteger.ZERO;
+	public void setQuantidadeDevolvida(Number quantidadeDevolvida) {
+		this.quantidadeDevolvida = quantidadeDevolvida!=null? BigInteger.valueOf(quantidadeDevolvida.intValue()) : BigInteger.ZERO;
 	}
 	/**
 	 * @return the codigoBarras
@@ -308,6 +311,17 @@ public class ProdutoEmissaoDTO implements Serializable{
 		return idProdutoEdicao;
 	}
 
+	public void setConversaoQtdeDevolvida(Long qtdeDevolvida) {
+		
+		if(qtdeDevolvida == null) {
+			this.quantidadeDevolvida = BigInteger.ZERO;
+			this.quantidadeDev = 0;
+		} else {
+			this.quantidadeDevolvida = new BigInteger(qtdeDevolvida.toString());
+			this.quantidadeDev = new Integer(qtdeDevolvida.toString());
+		}
+	}
+	
 	/**
 	 * @param idProdutoEdicao the idProdutoEdicao to set
 	 */
@@ -386,16 +400,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setValorTotalProduto(BigDecimal valorTotalProduto) {
 		this.valorTotalProduto = valorTotalProduto;
 	}
-
-	public String getTR() {
-		return TR;
-	}
-
-	public void setTR(String tR) {
-		TR = tR;
-	}
-    
-    public Long getIdCota() {
+	
+	public Long getIdCota() {
         return idCota;
     }
     
@@ -410,5 +416,21 @@ public class ProdutoEmissaoDTO implements Serializable{
     public void setDataRecolhimento(Date dataRecolhimento) {
         this.dataRecolhimento = dataRecolhimento;
     }
-    
+
+	public Integer getQuantidadeDev() {
+		return quantidadeDev;
+	}
+
+	public void setQuantidadeDev(Integer quantidadeDev) {
+		this.quantidadeDev = quantidadeDev!=null? quantidadeDev : 0;
+	}
+
+	public String getNomeComercial() {
+		return nomeComercial;
+	}
+
+	public void setNomeComercial(String nomeComercial) {
+		this.nomeComercial = nomeComercial;
+	}
+
 }

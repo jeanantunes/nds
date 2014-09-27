@@ -10,6 +10,8 @@ public class DadosImpressaoEmissaoChamadaEncalhe implements Serializable {
 	private List<CotaEmissaoDTO> cotasEmissao;
 	
 	private List<List<CapaDTO>> capasPaginadas;
+	
+	private List<Integer> cotasSemOperacaoDiferenciada;
 
 	public List<CotaEmissaoDTO> getCotasEmissao() {
 		return cotasEmissao;
@@ -25,6 +27,15 @@ public class DadosImpressaoEmissaoChamadaEncalhe implements Serializable {
 
 	public void setCapasPaginadas(List<List<CapaDTO>> capasPaginadas) {
 		this.capasPaginadas = capasPaginadas;
+	}
+
+	public List<Integer> getCotasSemOperacaoDiferenciada() {
+		return cotasSemOperacaoDiferenciada;
+	}
+
+	public void setCotasSemOperacaoDiferenciada(
+			List<Integer> cotasSemOperacaoDiferenciada) {
+		this.cotasSemOperacaoDiferenciada = cotasSemOperacaoDiferenciada;
 	}
 	
 }

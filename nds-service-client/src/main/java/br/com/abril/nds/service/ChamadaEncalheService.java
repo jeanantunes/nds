@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
+import net.sf.jasperreports.engine.JRException;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
@@ -23,6 +25,13 @@ public interface ChamadaEncalheService {
 	DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoEmissaoChamadasEncalhe(
 			FiltroEmissaoCE filtro);
 
+	
+
+	public List<Integer> obterCotasComOperacaoDiferenciada(FiltroEmissaoCE filtro);
+
+
+	public List<CotaEmissaoDTO> obterCotasSemOperacaoDiferenciada(FiltroEmissaoCE filtro);
+	
 	
 	/**
 	 * Obtem Produtos com Recolhimento na semana informada
@@ -51,6 +60,6 @@ public interface ChamadaEncalheService {
 	 */
 	Long countObterBandeirasDaSemana(Integer semana, Long fornecedor);
 
-//	byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException;
+	byte[] gerarEmissaoCE(FiltroEmissaoCE filtro) throws JRException, URISyntaxException;
 	
 }

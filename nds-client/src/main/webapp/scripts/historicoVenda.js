@@ -170,12 +170,8 @@ var historicoVendaController = $.extend(true, {
 			    	  $('#analiseHistoricoPopUpVenda', historicoVendaController.workspace).html('');
 			    	  $('#analiseHistoricoPopUpVenda', historicoVendaController.workspace).append(
 			    			  "<td class='class_linha_2' ><strong>Venda:</strong></td>");
-			    	  
-			    	  var tm = grids.EdicaoSelecionadaGrid.tableModel;
-			    	  
-			    	  var qtdEdicoesSelecionadas = tm.rows.length;
-
-			    	  var tm_ordenado = obterTableModelOrdenado(tm, 'numeroEdicao');
+			    	 
+			    	  var tm_ordenado = grids.EdicaoSelecionadaGrid.tableModel;
 
 			    	  var size_tm_ordenado = tm_ordenado.rows.length;
 
@@ -521,6 +517,7 @@ var historicoVendaController = $.extend(true, {
 		grids.PesqHistoricoGrid.reload({
 			url : url,
 			params : filtro,
+			workspace: historicoVendaController.workspace,
 			preProcess : function(response){
 				
 				if (response.mensagens) {

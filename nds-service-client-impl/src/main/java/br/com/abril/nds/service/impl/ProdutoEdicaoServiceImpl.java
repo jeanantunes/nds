@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1716,6 +1718,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             if (!cotas.isEmpty()){
                 
+            	Collections.sort(lstPrDTO);
+            	
                 final List<AnaliseHistoricoDTO> historico =
                         cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null);
                 
@@ -1784,7 +1788,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         for (final AnaliseHistogramaDTO aDto : list){
         	aDto.setPartReparte(aDto.getRepTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
-            aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getVdaTotal(), 2, RoundingMode.HALF_EVEN));
+        	if(totalizar.getVdaTotal().compareTo(BigDecimal.ZERO) > 0) {
+        		aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getVdaTotal(), 2, RoundingMode.HALF_EVEN));
+        	} else {
+        		aDto.setPartVenda(aDto.getVdaTotal().multiply(CEM).divide(totalizar.getRepTotal(), 2, RoundingMode.HALF_EVEN));
+        	}
             
             partReparte = partReparte.add(aDto.getPartReparte());
             partVenda = partVenda.add(aDto.getPartVenda());

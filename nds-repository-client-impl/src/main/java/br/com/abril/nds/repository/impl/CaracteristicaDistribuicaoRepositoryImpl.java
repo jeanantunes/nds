@@ -15,7 +15,6 @@ import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -59,10 +58,8 @@ CaracteristicaDistribuicaoRepository {
         }
     }
     
-    
-    
-    
-    @Override
+	@Override
+	@SuppressWarnings("unchecked")
     public List<CaracteristicaDistribuicaoDTO> obterCaracteristicaDistribuicaoDetalhe(
             final FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
         
@@ -76,35 +73,26 @@ CaracteristicaDistribuicaoRepository {
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
         
-		.append("   round((select sum(epc.qtde_recebida)                                ")
-		.append("        from estoque_produto_cota epc,                                 ")
-		.append("             produto_edicao prodedic                                   ")
-		.append("       where epc.produto_edicao_id = prodedic.id                       ")
-		.append("             and epc.produto_edicao_id = ped.id),0) as 'reparte',      ")
-		.append("  case                                                                 ")
-		.append("     when lan.status = 'fechado' or lan.status = 'recolhido'           ")
-		.append("     then                                                              ")
-		.append("        round((select sum(epc.qtde_recebida- epc.qtde_devolvida)       ")
-		.append("              from estoque_produto_cota epc,                           ")
-		.append("                   produto_edicao prodedic                             ")
-		.append("             where epc.produto_edicao_id = prodedic.id                 ")
-		.append("                   and epc.produto_edicao_id = ped.id),0)              ")
-		.append("     else                                                              ")
-		.append("        round((select sum(epc.qtde_recebida)                           ")
-		.append("              from estoque_produto_cota epc,                           ")
-		.append("                   produto_edicao prodedic                             ")
-		.append("             where epc.produto_edicao_id = prodedic.id                 ")
-		.append("                   and epc.produto_edicao_id = ped.id),0)              ")
-		.append("  end                                                                  ")
-		.append("     as 'venda',                                                       ")
+        .append(" (select sum(coalesce(cec.QTDE_PREVISTA, 0)) ")
+		.append(" from chamada_encalhe ce ")
+		.append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id ")
+		.append(" left join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.ID ")
+		.append(" inner join CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
+		.append(" where ce.PRODUTO_EDICAO_ID = ped.ID) as 'reparte', 			")
+
+		.append(" (select sum(coalesce(cec.QTDE_PREVISTA, 0)-coalesce(coe.QTDE, 0)) ")
+		.append(" from chamada_encalhe ce ")
+		.append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id ")
+		.append(" left join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.ID ")
+		.append(" inner join CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
+		.append(" where ce.PRODUTO_EDICAO_ID = ped.ID) as 'venda', ")
         
-        
-        .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', ")
-        .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', ")
-        .append(" tiposeg.DESCRICAO as 'segmento' ")
+        .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', 				")
+        .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', 					")
+        .append(" tiposeg.DESCRICAO as 'segmento' 								")
         
         .append(" from produto pro ")
-        .append("  join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
+        .append(" join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
         .append(" left join tipo_segmento_produto tiposeg ON tiposeg.ID = pro.TIPO_SEGMENTO_PRODUTO_ID ")
         .append(" left join tipo_classificacao_produto tipoclas ON tipoclas.ID = ped.tipo_classificacao_produto_id ")
         .append(" left join brinde bri ON bri.ID = ped.BRINDE_ID  ")
@@ -112,73 +100,124 @@ CaracteristicaDistribuicaoRepository {
         .append(" join pessoa pes2 on pes2.id = edi.JURIDICA_ID ")
         .append(" left join lancamento lan on lan.PRODUTO_EDICAO_ID = ped.ID  ")
         .append(" left join estoque_produto est on est.PRODUTO_EDICAO_ID = ped.ID  ")
-        .append(" where  1=1 ");
+        .append(" where 1=1 ");
         
-        if(filtro.getCodigoProduto() !=null && filtro.getCodigoProduto() != ""){
-            sql.append(" and pro.codigo_icd = " ).append(filtro.getCodigoProduto().trim());
+        if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != "") {
+            sql.append(" and pro.codigo_icd = :codigoProduto ");
         }
         
-        if(filtro.getClassificacaoProduto()!=null && filtro.getClassificacaoProduto()!=""){
-            sql.append(" and upper(tipoclas.descricao) = upper('").append(filtro.getClassificacaoProduto().trim()).append("')");
+        if(filtro.getClassificacaoProduto() != null && filtro.getClassificacaoProduto() != "") {
+            sql.append(" and upper(tipoclas.descricao) = upper(:classificacaoProduto) ");
         }
         
-        if(filtro.getSegmento()!=null && filtro.getSegmento()!=""){
-            sql.append(" and upper(tiposeg.DESCRICAO) = upper('").append(filtro.getSegmento().trim()).append("')");
+        if(filtro.getSegmento() != null && filtro.getSegmento() != "") {
+            sql.append(" and upper(tiposeg.DESCRICAO) = upper(:segmento) ");
         }
         
-        if(filtro.getBrinde()!=null && filtro.getBrinde()!=""){
-            sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper('").append(filtro.getBrinde().trim()).append("')");
+        if(filtro.getBrinde() != null && filtro.getBrinde() != "") {
+            sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper(:brinde) ");
         }
         
-        if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!=""){
-            sql.append(" and ped.PRECO_VENDA >=" ).append(filtro.getFaixaPrecoDe().trim()).append("");
+        if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!="") {
+            sql.append(" and ped.PRECO_VENDA >= :faixaPrecoDe ");
         }
         
-        if(filtro.getFaixaPrecoAte()!=null && filtro.getFaixaPrecoAte()!=""){
-            sql.append(" and ped.PRECO_VENDA <=" ).append(filtro.getFaixaPrecoAte().trim()).append("");
+        if(filtro.getFaixaPrecoAte()!=null && filtro.getFaixaPrecoAte()!="") {
+            sql.append(" and ped.PRECO_VENDA <= :faixaPrecoAte ");
         }
-        
         
         //tipo pesquisa publicacao
-        if(filtro.getNomeProduto() !=null && filtro.getNomeProduto().trim()!=""){
-            if(filtro.getOpcaoFiltroPublicacao()){
+        if(filtro.getNomeProduto() != null && filtro.getNomeProduto().trim() != "") {
+            if(filtro.getOpcaoFiltroPublicacao()) {
                 //exato
-                sql.append(" and upper(pro.nome) = ").append(" upper ('").append(filtro.getNomeProduto()).append("')");//exato
-            }else{
+                sql.append(" and upper(pro.nome) = upper(:nomeProduto) ");//exato
+            } else {
                 //contem
-                sql.append(" and upper(pro.nome) like ").append(" upper ('%").append(filtro.getNomeProduto()).append("%')");//contem
+                sql.append(" and upper(pro.nome) like upper(:nomeProduto) ");//contem
             }
-            
         }
         //tipo pesquisa editor
-        if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="")	{
-            if(filtro.getOpcaoFiltroPublicacao()){
+        if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="") {
+            if(filtro.getOpcaoFiltroPublicacao()) {
                 //exato
-                sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
-            }else{
+                sql.append(" and upper(pes2.NOME_FANTASIA) = upper(:nomeEditor) ");
+            } else {
                 //contem
-                sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('%").append(filtro.getNomeEditor()).append("%')");
+                sql.append(" and upper(pes2.NOME_FANTASIA) like upper(:nomeEditor) ");
             }
-            
         }
         
         //chamada de capa
-        if(filtro.getChamadaCapa()!=null && filtro.getChamadaCapa()!=""){
-            if(filtro.getOpcaoFiltroPublicacao()){
+        if(filtro.getChamadaCapa() != null && filtro.getChamadaCapa() != "") {
+            if(filtro.getOpcaoFiltroPublicacao()) {
                 //exato
-                sql.append(" and upper(ped.CHAMADA_CAPA) =").append(" upper('").append(filtro.getChamadaCapa()).append("')");
-            }else{
+                sql.append(" and upper(ped.CHAMADA_CAPA) = upper(:chamadaCapa) ");
+            } else {
                 //contem
-                sql.append(" and upper(ped.CHAMADA_CAPA) like").append(" upper('%").append(filtro.getChamadaCapa()).append("%')");
+                sql.append(" and upper(ped.CHAMADA_CAPA) like upper(:chamadaCapa) ");
             }
-            
         }
         
+        sql.append(" group by ped.id ");
         sql.append(this.ordenarConsultaCaracteristicaDistribuicaoDetalhe(filtro));
         
         final Query  query = getSession().createSQLQuery(sql.toString());
+        
+        if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != "") {
+            query.setParameter("codigoProduto", filtro.getCodigoProduto().trim());
+        }
+        
+        if(filtro.getClassificacaoProduto() != null && filtro.getClassificacaoProduto() != "") {
+        	query.setParameter("classificacaoProduto", filtro.getClassificacaoProduto().trim());
+        }
+        
+        if(filtro.getSegmento() != null && filtro.getSegmento() != "") {
+        	query.setParameter("segmento", filtro.getSegmento().trim());
+        }
+        
+        if(filtro.getBrinde() != null && filtro.getBrinde() != "") {
+        	query.setParameter("brinde", filtro.getBrinde().trim());
+        }
+        
+        if(filtro.getFaixaPrecoDe() != null && filtro.getFaixaPrecoDe() != "") {
+        	query.setParameter("faixaPrecoDe", filtro.getFaixaPrecoDe().trim());
+        }
+        
+        if(filtro.getFaixaPrecoAte() != null && filtro.getFaixaPrecoAte() != "") {
+        	query.setParameter("faixaPrecoAte", filtro.getFaixaPrecoAte().trim());
+        }
+        
+        //tipo pesquisa publicacao
+        if(filtro.getNomeProduto() != null && filtro.getNomeProduto().trim() != "") {
+        	if(filtro.getOpcaoFiltroPublicacao()) {
+                //exato
+        		query.setParameter("nomeProduto", filtro.getNomeProduto().trim());
+            } else {
+            	query.setParameter("nomeProduto", "%"+ filtro.getNomeProduto().trim() +"%");
+            }
+        }
+        //tipo pesquisa editor
+        if(filtro.getNomeEditor() != null && filtro.getNomeEditor() != "")	{
+        	if(filtro.getOpcaoFiltroPublicacao()) {
+                //exato
+        		query.setParameter("nomeEditor", filtro.getNomeEditor().trim());
+            } else {
+            	query.setParameter("nomeEditor", "%"+ filtro.getNomeEditor().trim() +"%");
+            }
+        }
+        
+        //chamada de capa
+        if(filtro.getChamadaCapa() != null && filtro.getChamadaCapa() != "") {
+        	if(filtro.getOpcaoFiltroPublicacao()) {
+                //exato
+        		query.setParameter("chamadaCapa", filtro.getChamadaCapa().trim());
+            } else {
+            	query.setParameter("chamadaCapa", "%"+ filtro.getChamadaCapa().trim() +"%");
+            }
+        }
+        
         query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
-        configurarPaginacaoPesquisaDetalhe(filtro,query);
+        configurarPaginacaoPesquisaDetalhe(filtro, query);
         
         return query.list();
     }
@@ -254,10 +293,12 @@ CaracteristicaDistribuicaoRepository {
         return sql.toString();
     }
     
-    private void configurarPaginacaoPesquisaDetalhe(final FiltroConsultaCaracteristicaDistribuicaoDetalheDTO dto,final Query query) {
+    private void configurarPaginacaoPesquisaDetalhe(final FiltroConsultaCaracteristicaDistribuicaoDetalheDTO dto, final Query query) {
+    	
         final PaginacaoVO paginacao = dto.getPaginacao();
         
-        if(paginacao!=null){
+        if(paginacao != null) {
+        	
             if (paginacao.getQtdResultadosTotal() == 0) {
                 paginacao.setQtdResultadosTotal(query.list().size());
             }
@@ -270,11 +311,7 @@ CaracteristicaDistribuicaoRepository {
                 query.setFirstResult(paginacao.getPosicaoInicial());
             }
         }
-        
     }
-    
-    
-    
     
     @Override
     public List<CaracteristicaDistribuicaoSimplesDTO> obterCaracteristicaDistribuicaoSimples(final FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro) {
