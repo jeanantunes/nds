@@ -433,7 +433,7 @@ public class ConferenciaEncalheRepositoryImpl extends
         
 		hql.append("	WHERE   ");
 		
-		hql.append("    L.STATUS != :lancamentoFechado AND ");
+		hql.append("    L.STATUS <> :lancamentoFechado AND ");
 		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
 		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento) AND ");
 		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
