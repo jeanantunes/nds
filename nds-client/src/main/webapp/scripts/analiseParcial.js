@@ -452,7 +452,7 @@ var analiseParcialController = $.extend(true, {
             			isAtualizarRepartePDV = result[1];
             			
             			if (!result[0]){
-            				
+            			
             				usuarioController.supervisor.verificarRoleSupervisao({
         		            	optionalDialogMessage: 'É necessario confirmar esta ação com senha.',
         		            	callbacks: {
@@ -467,11 +467,11 @@ var analiseParcialController = $.extend(true, {
         	    									input_reparte_element, numeroCota, reparteSubtraido, 
         	    									reparteDigitado, reparteAtual, saldoReparte, legenda_element);
         	    							
-        		    	                }else{
-        		    	                	analiseParcialController.atualizarReparteCota(
-        		    	                			input_reparte_element, numeroCota, reparteSubtraido, 
-        		    	                			reparteDigitado, reparteAtual, saldoReparte, legenda_element);
-        		    	                }
+        		    	                } //else{
+        		    	                	//analiseParcialController.atualizarReparteCota(
+        		    	                			//input_reparte_element, numeroCota, reparteSubtraido, 
+        		    	                			//reparteDigitado, reparteAtual, saldoReparte, legenda_element);
+        		    	                //}
         		    				},
         		    				usuarioNaoSupervisorCallback: function(){
         		    					analiseParcialController.resetReparteSugerido(input, numeroCota);
@@ -647,15 +647,12 @@ var analiseParcialController = $.extend(true, {
                     	cell['venda'+ (j + 1)] = '';
                     }
                     
-                    if(cell.edicoesBase[j].edicaoAberta){
-                    	
-                        if( cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)]=== "0"){
-                        	 cell['reparte'+ (j + 1)] = "";
-                        }
-                        
-                        if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
-                        	cell['venda'+ (j + 1)] = "";
-                        }
+                    if( cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)]=== "0"){
+                    	 cell['reparte'+ (j + 1)] = "";
+                    }
+                    
+                    if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
+                    	cell['venda'+ (j + 1)] = "";
                     }
                 }
             }
