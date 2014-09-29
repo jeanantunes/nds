@@ -699,9 +699,13 @@ var fecharDiaController =  $.extend(true, {
 	
 	confirmarFechamento:function(){
 		
+		var dataFechamento = $('#dataDaOperacao', fecharDiaController.workspace).val();
+		
+		var param = [{name:"dataFechamento", value:dataFechamento}];
+		
 		$.postJSON(
 				contextPath + "/administracao/fecharDia/confirmar",
-				null, 
+				param, 
 				function(){
 					fecharDiaController.atualizarDataOperacao();
 				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {

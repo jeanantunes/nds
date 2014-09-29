@@ -433,7 +433,7 @@ public class ConferenciaEncalheRepositoryImpl extends
         
 		hql.append("	WHERE   ");
 		
-		hql.append("    L.STATUS != :lancamentoFechado AND ");
+		hql.append("    L.STATUS <> :lancamentoFechado AND ");
 		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
 		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO IN (:datasRecolhimento) AND ");
 		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
@@ -451,7 +451,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 			
 		}
 		
-		hql.append("  	GROUP BY PROD_EDICAO.ID ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO, CH_ENCALHE.SEQUENCIA ");
+		hql.append("  	GROUP BY PROD_EDICAO.ID ");
+		hql.append("  	ORDER BY CH_ENCALHE.DATA_RECOLHIMENTO, CH_ENCALHE.SEQUENCIA ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
