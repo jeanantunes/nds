@@ -755,8 +755,17 @@ var histogramaPosEstudoController = $.extend(true, {
 		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
 		
-		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
-		$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
+		
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Análise de Estudos' || $(v).text() == 'Analise de Estudos') {
+				console.log(k +' - '+ $(v).text());
+				
+				histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
+				$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
+			} 
+		});
+		
+		
 		/*removeTabByTitle('Distribuição Venda Média');*/
 		selectTabTitle('Matriz Distribuição');
 		
