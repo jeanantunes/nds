@@ -239,19 +239,25 @@ public class MixCotaProdutoRepositoryImpl extends
 		l.add(" cota.tipo_distribuicao_cota = :tipoCota");
 		
 		sql.append(StringUtils.join(l," and "))
-		.append("  group by cota.numero_cota,mix_cota_produto.codigo_icd,mix_cota_produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
-		.append(" order by ");
+		.append("  group by cota.numero_cota,mix_cota_produto.codigo_icd,mix_cota_produto.TIPO_CLASSIFICACAO_PRODUTO_ID ");
 	
-		if (filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn().equals("data")) {
-            
-            sql.append(" dataHora ");
-            
-        } else {
-            
-            sql.append(filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn());
-        }
+		if (filtroConsultaMixProdutoDTO.getPaginacao() != null) {
+			sql.append(" order by ");
 		
-		sql.append(" " + filtroConsultaMixProdutoDTO.getPaginacao().getSortOrder());
+			if (filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn().equals("data")) {
+	            
+	            sql.append(" dataHora ");
+	            
+	        } else {
+	            
+	            sql.append(filtroConsultaMixProdutoDTO.getPaginacao().getSortColumn());
+	        }
+			
+			sql.append(" " + filtroConsultaMixProdutoDTO.getPaginacao().getSortOrder());
+		} else {
+			sql.append(" order by ");
+			sql.append(" dataHora ");
+		}
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -263,8 +269,10 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(MixProdutoDTO.class));
-		configurarPaginacao(filtroConsultaMixProdutoDTO, query);
 		
+		if (filtroConsultaMixProdutoDTO.getPaginacao() != null) {
+			configurarPaginacao(filtroConsultaMixProdutoDTO, query);
+		}
 		
 		//tratamento para popular reparteMedio, vendaMedia, ultimoReparte
 		List<MixProdutoDTO> list = (List<MixProdutoDTO>)query.list();
