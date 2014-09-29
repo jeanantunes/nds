@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
@@ -36,6 +37,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
@@ -100,6 +102,9 @@ public class AnaliseParcialController extends BaseController {
     
     @Autowired
     private RepartePdvService repartePdvService;
+    
+    @Autowired
+    private CotaService cotaService;
     
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
 
@@ -388,10 +393,19 @@ public class AnaliseParcialController extends BaseController {
 	public void verificarMaxMinCotaMix(final Integer numeroCota, 
 	        final String codigoProduto, final Long qtdDigitado, final Long tipoClassificacaoProduto){
 	    
-	    final Object[] ret = new Object[2];
-	    ret[0] = 
-	            this.mixCotaProdutoService.verificarReparteMinMaxCotaProdutoMix(
+		final Object[] ret = new Object[2];
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		 
+		 if(cota!=null && !cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)){
+		  
+			 ret[0] = false;
+		 }else {
+	    
+	         ret[0] = this.mixCotaProdutoService.verificarReparteMinMaxCotaProdutoMix(
 	                    numeroCota, codigoProduto, qtdDigitado, tipoClassificacaoProduto);
+		 }
+
 	    
 	    ret[1] = this.repartePdvService.verificarRepartePdv(numeroCota, codigoProduto);
 	    
