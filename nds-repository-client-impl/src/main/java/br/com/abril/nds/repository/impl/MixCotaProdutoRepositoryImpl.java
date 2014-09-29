@@ -95,28 +95,35 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		sql.append(" group by id ");
 		
-		if (filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equals("data")) {
-		    
-		    sql.append(" order by temp_mix.dataHora");
-		    
-		} else {
-		    
-			if(filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equalsIgnoreCase("codigoICD")){
-				sql.append(" order by lpad(temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn() + ", 6, '0')");    
-			}else{
-				sql.append(" order by temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn());
+		if (filtroConsultaMixCotaDTO.getPaginacao() != null ){
+			
+			if (filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equals("data")) {
+				
+				sql.append(" order by temp_mix.dataHora");
+				
+			} else {
+				
+				if(filtroConsultaMixCotaDTO.getPaginacao().getSortColumn().equalsIgnoreCase("codigoICD")){
+					sql.append(" order by lpad(temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn() + ", 6, '0')");    
+				}else{
+					sql.append(" order by temp_mix." + filtroConsultaMixCotaDTO.getPaginacao().getSortColumn());
+				}
+				
 			}
 			
+			sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
+		} else {
+			sql.append(" order by temp_mix.dataHora");
 		}
-		
-        sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		//query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
 		query.setParameter("cota", filtroConsultaMixCotaDTO.getCotaId());
 		query.setResultTransformer(new AliasToBeanResultTransformer(MixCotaDTO.class));
 		
-		configurarPaginacao(filtroConsultaMixCotaDTO, query);
+		if(filtroConsultaMixCotaDTO.getPaginacao() != null ){			
+			configurarPaginacao(filtroConsultaMixCotaDTO, query);
+		}
 		List<MixCotaDTO> list = (List<MixCotaDTO>)query.list();
 		for (MixCotaDTO mixCotaDTO : list) {
 			
