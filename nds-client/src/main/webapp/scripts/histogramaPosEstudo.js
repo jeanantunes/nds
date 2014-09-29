@@ -745,7 +745,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		}else{
 			$("#workspace").tabs("remove", indexAba);
 			$.postJSON(contextPath + "/distribuicao/analiseEstudo/desbloquear",null);
-			$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
+			
 		}
 		
 	},
@@ -756,7 +756,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
 		
 		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
-		
+		$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
 		/*removeTabByTitle('Distribuição Venda Média');*/
 		selectTabTitle('Matriz Distribuição');
 		
