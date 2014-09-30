@@ -70,7 +70,7 @@ $(function(){
       </a>
     </span>
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' title='Voltar' onclick="histogramaPosEstudoController.voltar();" id="botaoVoltarMatrizDistribuicao">
+      <a href="javascript:;" rel='tipsy' title='Voltar' onclick="histogramaPosEstudoController.voltar(true);" id="botaoVoltarMatrizDistribuicao">
         <img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />
 
       </a>
