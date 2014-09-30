@@ -77,7 +77,7 @@
 							<td class="atalhosCE" width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
 							<td class="atalhosCE" width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
 							<td class="atalhosCE" width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
-							<td class="atalhosCE" width="145" bgcolor="#F8F8F8"><strong>F10</strong>-Oredenar Conferência por SM</td>
+							<td class="atalhosCE" width="150" bgcolor="#F8F8F8"><strong>F10</strong>-Oredenar Conferência por SM</td>
 						</tr>
 					</table>
 				</fieldset>

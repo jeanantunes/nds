@@ -252,7 +252,7 @@
 													
 												} else if (indAbaAnaliseEstudo) {
 													
-													histogramaPosEstudoController.desbloquearAnaliseEstudo(index);
+													histogramaPosEstudoController.desbloquearAnaliseEstudo(index, true);
 													
 												} else {
 													

@@ -1017,7 +1017,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(" INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID ) ");
 		
 		sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoqueConsignado  ");
-		
+		sqlTblPrecoVenda.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(" GROUP BY MEC.PRODUTO_EDICAO_ID ");
 		sqlTblPrecoVenda.append(" ) AS PRECO_VENDA_DE_REPARTE ON (MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PRECO_VENDA_DE_REPARTE.PRODUTO_EDICAO_ID AND ");
 		sqlTblPrecoVenda.append(" 								MOVIMENTO_ESTOQUE_COTA.DATA = PRECO_VENDA_DE_REPARTE.DATA_REPARTE)                       ");

@@ -67,24 +67,21 @@ public class AnaliseEstudoController extends BaseController {
 		this.carregarComboClassificacao();
 	}
 	
-	private void carregarComboClassificacao(){
+	private void carregarComboClassificacao() {
 		
 		List<TipoClassificacaoProduto> classificacoes = classificacao.obterTodos();
 		result.include("listaClassificacao", classificacoes);
-		
 	}
-	
 	
 	@Post
 	@Path("/buscarEstudos")
-	public void buscarEstudos (FiltroAnaliseEstudoDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void buscarEstudos(FiltroAnaliseEstudoDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
 		tratarAtributosFiltro(filtro, sortorder, sortname, page, rp);
 		
 		TableModel<CellModelKeyValue<AnaliseEstudoDTO>> tableModel = efetuarConsultaEstudos(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
 	}
 	
 	private TableModel<CellModelKeyValue<AnaliseEstudoDTO>> efetuarConsultaEstudos(FiltroAnaliseEstudoDTO filtro) {

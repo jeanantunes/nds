@@ -218,22 +218,19 @@ public class MatrizRecolhimentoController extends BaseController {
                     "Não houve carga de informações para o período escolhido!");
         }
         
-        ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
-                .obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+        ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
         
         boolean utilizaSedeAtendida = grupoService.countTodosGrupos(dataPesquisa) > 0;
         
         resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
         
-		resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(
-	        balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
+		resultadoResumoBalanceamento.setProdutosRecolhimentoDeOutraSemana(balanceamentoRecolhimento.getProdutosRecolhimentoDeOutraSemana());
 		
         removerAtributoAlteracaoSessao();
         
         configurarFiltropesquisa(anoNumeroSemana, dataPesquisa, listaIdsFornecedores);
         
-        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(
-            balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
+        processarProdutosNaoBalanceadosAposConfirmacaoMatriz(balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
 
         this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
@@ -402,10 +399,10 @@ public class MatrizRecolhimentoController extends BaseController {
         // diferenciada
         for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
             
-            if ((produtoRecolhimentoDTO.getExpectativaEncalheSede() != null && produtoRecolhimentoDTO
-                    .getExpectativaEncalheSede().compareTo(BigDecimal.ZERO) != 0)
-                || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null && produtoRecolhimentoDTO
-                        .getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO) != 0)) {
+            if ((produtoRecolhimentoDTO.getExpectativaEncalheSede() != null 
+            		&& produtoRecolhimentoDTO.getExpectativaEncalheSede().compareTo(BigDecimal.ZERO) != 0)
+                || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida() != null 
+                	&& produtoRecolhimentoDTO.getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO) != 0)) {
                 isDiferenciada = true;
                 break;
             }
@@ -1203,11 +1200,9 @@ public class MatrizRecolhimentoController extends BaseController {
             
             produtoRecolhimentoDiferenciadoVO.setPrecoVenda(produtoRecolhimentoDTO.getPrecoVenda());
             
-            precoVenda = produtoRecolhimentoDTO.getPrecoVenda() != null ? produtoRecolhimentoDTO.getPrecoVenda()
-                    : BigDecimal.ZERO;
+            precoVenda = produtoRecolhimentoDTO.getPrecoVenda() != null ? produtoRecolhimentoDTO.getPrecoVenda() : BigDecimal.ZERO;
             
-            valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto()
-                    : BigDecimal.ZERO;
+            valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
             
             precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
             
@@ -1233,8 +1228,7 @@ public class MatrizRecolhimentoController extends BaseController {
             
             produtoRecolhimentoDiferenciadoVO.setEncalheSede(produtoRecolhimentoDTO.getExpectativaEncalheSede());
             
-            produtoRecolhimentoDiferenciadoVO
-                    .setEncalheAtendida(produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
+            produtoRecolhimentoDiferenciadoVO.setEncalheAtendida(produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
             
             produtoRecolhimentoDiferenciadoVO.setEncalhe(produtoRecolhimentoDTO.getExpectativaEncalhe());
             
@@ -1242,8 +1236,7 @@ public class MatrizRecolhimentoController extends BaseController {
             
             produtoRecolhimentoDiferenciadoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
             
-            produtoRecolhimentoDiferenciadoVO.setBloqueioAlteracaoBalanceamento(produtoRecolhimentoDTO
-                    .isBalanceamentoConfirmado());
+            produtoRecolhimentoDiferenciadoVO.setBloqueioAlteracaoBalanceamento(produtoRecolhimentoDTO.isBalanceamentoConfirmado());
             
             produtoRecolhimentoDiferenciadoVO.setPeb(produtoRecolhimentoDTO.getPeb());
             
@@ -1532,8 +1525,7 @@ public class MatrizRecolhimentoController extends BaseController {
         
         List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento = new ArrayList<ResumoPeriodoBalanceamentoVO>();
         
-        for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimento.getMatrizRecolhimento()
-                .entrySet()) {
+        for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
             
             Date dataRecolhimento = entry.getKey();
             
@@ -1556,8 +1548,7 @@ public class MatrizRecolhimentoController extends BaseController {
                     
                     BigDecimal expectativaEncalhe = produtoRecolhimento.getExpectativaEncalhe();
                     
-                    if (!itemResumoPeriodoBalanceamento.getIdsProdutoEdicao().contains(
-                            produtoRecolhimento.getIdProdutoEdicao())) {
+                    if (!itemResumoPeriodoBalanceamento.getIdsProdutoEdicao().contains(produtoRecolhimento.getIdProdutoEdicao())) {
                         
                         qtdeTitulos++;
                     }
