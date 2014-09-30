@@ -755,13 +755,30 @@ var histogramaPosEstudoController = $.extend(true, {
 		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
 		
+		var abaAnaliseEstudoAberta = false;
+		
 		if(desbloquearEstudo) {
+			$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+				if($(v).text() == 'Analise de Estudos') {
+					abaAnaliseEstudoAberta = true;
+				} 
+			});
 			
 			setTimeout(histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual), 10);
-			setTimeout($('#menu_principal ul a[href^="'+ contextPath +'/distribuicao/analiseEstudo"]').click(), 20);
+			
+			
+			// setTimeout($('#menu_principal ul a[href^="'+ contextPath +'/distribuicao/analiseEstudo"]').click(), 20);
 		} else {
 			
 			$('#menu_principal ul a[href="'+ contextPath +'/matrizDistribuicao"]').click();
+			selectTabTitle('Matriz Distribuição');
+		}
+		
+		if(abaAnaliseEstudoAberta){
+			// setTimeout($('#menu_principal ul a[href^="'+ contextPath +'/distribuicao/analiseEstudo"]').click(), 20);
+			setTimeout($('#workspace').tabs('addTab', 'Análise de Estudos', contextPath +'/distribuicao/analiseEstudo'), 25);
+		} else {
+			selectTabTitle('Matriz Distribuição');
 		}
 		
 	}
