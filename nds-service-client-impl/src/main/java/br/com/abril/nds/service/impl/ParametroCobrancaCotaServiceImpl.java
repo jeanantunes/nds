@@ -221,6 +221,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setTipoCota(cota.getTipoCota());
 			
+			parametroCobrancaDTO.setSituacaoCadastro(cota.getSituacaoCadastro().name());
+			
 			if(cota.getContratoCota() != null) {
 				
 				parametroCobrancaDTO.setInicioContrato(cota.getContratoCota().getDataInicio());
@@ -266,15 +268,14 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			
-			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe()!=null?cota.isDevolveEncalhe():false);
+			parametroCobrancaDTO.setDevolveEncalhe(cota.isDevolveEncalhe() != null ? cota.isDevolveEncalhe() : true);
 			
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
-			if (cota.isSugereSuspensaoDistribuidor()){
+			if (cota.isSugereSuspensaoDistribuidor()) {
 				
 				politicaSuspensao = distribuidor.getPoliticaSuspensao();	
-			}
-			else {
+			} else {
 				
 				if (cota.isSugereSuspensao()){
 						
