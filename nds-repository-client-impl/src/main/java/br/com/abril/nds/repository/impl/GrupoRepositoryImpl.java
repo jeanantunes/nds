@@ -303,23 +303,23 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		return ((Long)criteria.list().get(0)).intValue();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<GrupoCota> obterGruposAtivos(String sortname, String sortorder, boolean includeHistory) {
 		
 	    Criteria criteria = getSession().createCriteria(GrupoCota.class);
 	    
 	    if(!StringUtil.isEmpty(sortname) && !StringUtil.isEmpty(sortorder)) {
-	        if("asc".equals(sortorder)){
+	        if("asc".equals(sortorder)) {
 	            criteria.addOrder(Order.asc(sortname));
-	        }else{
+	        } else {
 	            criteria.addOrder(Order.desc(sortname));
 	        }
         }
 	    
-	    if(!includeHistory){
+	    if(!includeHistory) {
             criteria.add(Restrictions.isNull("dataFimVigencia"));
-        }else{
+        } else {
             criteria.addOrder(Order.asc("dataFimVigencia"));
         }
 	    
@@ -335,12 +335,11 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	    addDataVigencia(dataOperacao, criteria);
 	    
 	    criteria.add(Restrictions.eq("cota.id", idCota));
-	    if (idGrupoIgnorar != null){
+	    if (idGrupoIgnorar != null) {
             criteria.add(Restrictions.ne("id", idGrupoIgnorar));
         }
 		
 	    criteria.setProjection(Projections.property("nome"));
-        
         
         return (String) criteria.uniqueResult();
 	}
@@ -360,7 +359,6 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	    }
 	    
 	    criteria.setProjection(Projections.property("nome"));
-		
 		
 		return (String) criteria.uniqueResult();
 	}
