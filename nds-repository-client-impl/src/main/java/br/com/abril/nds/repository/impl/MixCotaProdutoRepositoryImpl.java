@@ -113,7 +113,7 @@ public class MixCotaProdutoRepositoryImpl extends
 			
 			sql.append(" " + filtroConsultaMixCotaDTO.getPaginacao().getSortOrder());
 		} else {
-			sql.append(" order by codigoProduto");
+			sql.append(" order by temp_mix.dataHora");
 		}
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -256,7 +256,7 @@ public class MixCotaProdutoRepositoryImpl extends
 			sql.append(" " + filtroConsultaMixProdutoDTO.getPaginacao().getSortOrder());
 		} else {
 			sql.append(" order by ");
-			sql.append(" cota.numero_cota ");
+			sql.append(" dataHora ");
 		}
 		
 		Query query = getSession().createSQLQuery(sql.toString());

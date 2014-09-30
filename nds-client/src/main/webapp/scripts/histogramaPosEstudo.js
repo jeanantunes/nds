@@ -743,27 +743,30 @@ var histogramaPosEstudoController = $.extend(true, {
 					}
 			);
 		}else{
-			// $("#workspace").tabs("remove", indexAba);
-			$.postJSON(contextPath + "/distribuicao/analiseEstudo/desbloquear", indexAba);
+			$("#workspace").tabs("remove", indexAba);
+			$.postJSON(contextPath + "/distribuicao/analiseEstudo/desbloquear",null);
+			
 		}
 		
 	},
 	
 	voltar : function() {
+		
 		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
-		histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
 		
-		$('#workspace').tabs({load : function(event, ui) {
-			$('#workspace').tabs({load : function(event, ui) {}});
-		}});
 		
-		$("#workspace").tabs("remove", indexAbaAtual);
+		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+			if($(v).text() == 'Análise de Estudos' || $(v).text() == 'Analise de Estudos') {
+				console.log(k +' - '+ $(v).text());
+				
+				histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
+				$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
+			} 
+		});
 		
-		$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
 		
-		// $('#menu_principal ul a[href="/nds-client/distribuicao/analiseEstudo//"]').click();
-		
+		/*removeTabByTitle('Distribuição Venda Média');*/
 		selectTabTitle('Matriz Distribuição');
 		
 	}
