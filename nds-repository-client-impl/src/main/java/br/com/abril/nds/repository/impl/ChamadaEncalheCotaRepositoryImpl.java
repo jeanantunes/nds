@@ -163,7 +163,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("     ( ");
 		
-		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN ");
+		sql.append("      CASE WHEN (COTA.TIPO_COTA = 'A_VISTA' AND COTA.DEVOLVE_ENCALHE = false) THEN ");
 		
         sql.append("      0 ELSE ");
 		
