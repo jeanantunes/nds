@@ -776,7 +776,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		
 		if(abaAnaliseEstudoAberta){
 			// setTimeout($('#menu_principal ul a[href^="'+ contextPath +'/distribuicao/analiseEstudo"]').click(), 20);
-			setTimeout($('#workspace').tabs('addTab', 'Análise de Estudos', contextPath +'/distribuicao/analiseEstudo'), 25);
+			setTimeout($('#workspace').tabs('addTab', 'Analise de Estudos', contextPath +'/distribuicao/analiseEstudo'), 25);
 		} else {
 			selectTabTitle('Matriz Distribuição');
 		}
