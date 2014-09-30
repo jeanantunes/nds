@@ -3717,24 +3717,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     
     @Override
 	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros,  String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro ){
-      	final StringBuilder sql =  new StringBuilder();
+      	
+    	final StringBuilder sql =  new StringBuilder();
     	sql.append("UPDATE MOVIMENTO_ESTOQUE_COTA AS estoque ");
-    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
-    	sql.append("movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID ");
-    	sql.append("join TIPO_MOVIMENTO tipo on ");
-    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
-    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
-    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID AND movi.COTA_ID = estoque.COTA_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
 
-    	sql.append("SET estoque.MOTIVO = :motivo ");
-    	sql.append(",estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota ");
-    	sql.append(",estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro ");
+    	sql.append("SET estoque.MOTIVO = :motivo, ");
+    	sql.append("estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota, ");
+    	sql.append("estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro ");
     	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
     	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)");
     	
-    	 this.getSession().createSQLQuery(sql.toString() )
-	        .setParameter( "motivo", motivo )
-	        .setParameter( "movimentoFinanceiroCota", movimentoFinanceiroCota )
+    	 this.getSession().createSQLQuery(sql.toString())
+	        .setParameter("motivo", motivo)
+	        .setParameter("movimentoFinanceiroCota", movimentoFinanceiroCota)
 	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro.name())
 	        .setParameter("idConsolidado", idConsolidado)
 	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
