@@ -330,38 +330,6 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 		this.chamadaEncalheId = chamadaEncalheId;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((produtoEdicao == null) ? 0 : produtoEdicao.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FechamentoFisicoLogicoDTO other = (FechamentoFisicoLogicoDTO) obj;
-		if (produtoEdicao == null) {
-			if (other.produtoEdicao != null)
-				return false;
-		} else if (!produtoEdicao.equals(other.produtoEdicao))
-			return false;
-		return true;
-	}
-
 	public boolean isMatrizRecolhimento() {
 		return matrizRecolhimento;
 	}
@@ -404,6 +372,32 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	 */
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		FechamentoFisicoLogicoDTO other = (FechamentoFisicoLogicoDTO) obj;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+			return false;
+		return true;
 	}
 	
 }
