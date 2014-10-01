@@ -689,7 +689,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         List<GrupoCota> gps = this.grupoRepository.obterListaGrupoCotaPorCotaId(cotaAusenteEncalheDTO.getIdCota(), dataOperacao);
 		
-		if (gps != null && !gps.isEmpty()) {
+		if (gps != null && !gps.isEmpty()){
 			
             cotaAusenteEncalheDTO.setAcao((cotaAusenteEncalheDTO.getAcao() == null || cotaAusenteEncalheDTO.getAcao().trim().isEmpty()) ? 
             		                       "Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao() + " / Operação Diferenciada");
@@ -785,17 +785,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Override
     @Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-    public void cobrarCota(final Date dataOperacao, final Usuario usuario, final Long idCota, Set<Long> idsCotasOperacaoDiferenciada) throws GerarCobrancaValidacaoException {
+    public void cobrarCota(final Date dataOperacao, final Usuario usuario, final Long idCota)
+            throws GerarCobrancaValidacaoException {
         
         final Cota cota = cotaRepository.buscarCotaPorID(idCota);
         
-        this.realizarCobrancaCotas(dataOperacao, usuario, null, cota, idsCotasOperacaoDiferenciada);
+        this.realizarCobrancaCotas(dataOperacao, usuario, null, cota);
     }
     
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = { GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class })
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = { GerarCobrancaValidacaoException.class,
+            AutenticacaoEmailException.class })
     public void realizarCobrancaCotas(final Date dataOperacao, final Usuario usuario,
-            List<CotaAusenteEncalheDTO> listaCotasAusentes, final Cota cotaAusente, Set<Long> idsCotasOperacaoDiferenciada) throws GerarCobrancaValidacaoException {
+            List<CotaAusenteEncalheDTO> listaCotasAusentes, final Cota cotaAusente)
+                    throws GerarCobrancaValidacaoException {
         
         final ValidacaoVO validacaoVO = new ValidacaoVO();
         
@@ -809,7 +812,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         for (final CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes) {
             
-            this.realizarCobrancaCota(dataOperacao, usuario, cotaAusenteEncalheDTO.getIdCota(), validacaoVO, idsCotasOperacaoDiferenciada);
+            this.realizarCobrancaCota(dataOperacao, usuario, cotaAusenteEncalheDTO.getIdCota(), validacaoVO);
         }
         
         // Se um dia precisar tratar as mensagens de erro de e-mail, elas estão
@@ -829,9 +832,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = { GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class })
-    public void realizarCobrancaCota(final Date dataOperacao, final Usuario usuario, final Long idCota
-    		, final ValidacaoVO validacaoVO, Set<Long> idsCotasOperacaoDiferenciada) {
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = { GerarCobrancaValidacaoException.class,
+            AutenticacaoEmailException.class })
+    public void realizarCobrancaCota(final Date dataOperacao, final Usuario usuario, final Long idCota,
+            final ValidacaoVO validacaoVO) {
         
         final Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
         
@@ -841,7 +845,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
         } 
         
-        BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(), Arrays.asList(dataOperacao), false, false);
+        BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(),
+                Arrays.asList(dataOperacao), false, false);
         
         reparte = reparte != null ? reparte : BigDecimal.ZERO;
         
@@ -853,17 +858,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
            
         	// se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
-			final boolean cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota()),
+			final boolean cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificada(
+					cota.getNumeroCota()),
 					
-			cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota());
+					cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificadora(
+							cota.getNumeroCota());
 			
 			if (!cotaUnificadora && !cotaUnificada) {
 
 	            try {
 	                
-	                final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacao);
+	                final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(
+	                        cota.getId(), dataOperacao);
 	                
-	                if (existeBoletoAntecipado && idsCotasOperacaoDiferenciada.contains(cota.getId())) {
+	                if (existeBoletoAntecipado) {
 	                    
 	                    gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
 	                } else {
