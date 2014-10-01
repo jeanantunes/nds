@@ -33,7 +33,7 @@ public interface FechamentoEncalheService {
 	
 	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao, List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe);
 
-	void cobrarCota(Date dataOperacao, Usuario usuario, Long idCota) throws GerarCobrancaValidacaoException;
+	void cobrarCota(Date dataOperacao, Usuario usuario, Long idCota, Set<Long> idsCotasOperacaoDiferenciada) throws GerarCobrancaValidacaoException;
 
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
@@ -84,7 +84,7 @@ public interface FechamentoEncalheService {
 	public abstract void realizarCobrancaCotas(Date dataOperacao, 
 			                                                   Usuario usuario,
 			                                                   List<CotaAusenteEncalheDTO> listaCotasAusentes, 
-			                                                   Cota cotaAusente) throws GerarCobrancaValidacaoException;
+			                                                   Cota cotaAusente, Set<Long> idsCotasOperacaoDiferenciada) throws GerarCobrancaValidacaoException;
 
 	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
 			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
@@ -94,7 +94,7 @@ public interface FechamentoEncalheService {
 	void realizarCobrancaCota(Date dataOperacao,
 			                  Usuario usuario, 
 			                  Long idCota,
-			                  ValidacaoVO validacaoVO);
+			                  ValidacaoVO validacaoVO, Set<Long> idsCotasOperacaoDiferenciada);
 	
 	Boolean validarEncerramentoOperacaoEncalhe(Date data);
 	
