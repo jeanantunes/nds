@@ -518,7 +518,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
 		 * PDV associado a mesma cota.
 		 */
-		hql.append("SELECT DISTINCT count ( cota.id ) ");
+		hql.append("SELECT  count (DISTINCT cota.id ) ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
 
