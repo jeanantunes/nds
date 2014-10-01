@@ -52,8 +52,10 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -105,6 +107,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
@@ -233,6 +236,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
     
+    @Autowired
+    private FormaCobrancaService formaCobrancaService;
     
     @Override
     @Transactional
@@ -864,7 +869,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	                
 	                final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacao);
 	                
-	                if (existeBoletoAntecipado) {
+	                FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(cota.getId(), null, dataOperacao);
+	                
+	                if (existeBoletoAntecipado 
+	                		|| (fc != null && fc.getTipoCobranca() != null && TipoCobranca.BOLETO_EM_BRANCO.equals(fc.getTipoCobranca()))) {
 	                    
 	                    gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
 	                } else {
