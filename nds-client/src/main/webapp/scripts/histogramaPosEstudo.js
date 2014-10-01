@@ -729,9 +729,9 @@ var histogramaPosEstudoController = $.extend(true, {
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
 	},
 	
-	desbloquearAnaliseEstudo : function(indexAba) {
+	desbloquearAnaliseEstudo : function(indexAba, closeTab) {
 		
-		if(typeof matrizDistribuicao != "undefined"){
+		if(typeof matrizDistribuicao != "undefined") {
 			$.postJSON(
 					contextPath + "/distribuicao/analiseEstudo/desbloquear",
 					null,
@@ -742,32 +742,45 @@ var histogramaPosEstudoController = $.extend(true, {
 						matrizDistribuicao.mostraTelaMatrizDistribuicao();
 					}
 			);
-		}else{
+		} else {
 			$("#workspace").tabs("remove", indexAba);
-			$.postJSON(contextPath + "/distribuicao/analiseEstudo/desbloquear",null);
 			
+			$.postJSON(contextPath + "/distribuicao/analiseEstudo/desbloquear", null);
 		}
 		
 	},
 	
-	voltar : function() {
+	voltar : function(desbloquearEstudo) {
 		
 		$("#botaoVoltarMatrizDistribuicao").tipsy('hide');
 		var indexAbaAtual =  $('#workspace').tabs('option', 'selected');
 		
+		var abaAnaliseEstudoAberta = false;
 		
-		$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
-			if($(v).text() == 'Análise de Estudos' || $(v).text() == 'Analise de Estudos') {
-				console.log(k +' - '+ $(v).text());
-				
-				histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual);
-				$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + "/distribuicao/analiseEstudo/");
-			} 
-		});
+		if(desbloquearEstudo) {
+			$('#workspace .ui-tabs-nav li a').each(function(k, v){ 
+				if($(v).text() == 'Analise de Estudos') {
+					abaAnaliseEstudoAberta = true;
+				} 
+			});
+			
+			setTimeout(histogramaPosEstudoController.desbloquearAnaliseEstudo(indexAbaAtual), 10);
+			
+			
+			// setTimeout($('#menu_principal ul a[href^="'+ contextPath +'/distribuicao/analiseEstudo"]').click(), 20);
+		} else {
+			
+			$('#menu_principal ul a[href="'+ contextPath +'/matrizDistribuicao"]').click();
+			selectTabTitle('Matriz Distribuição');
+		}
 		
-		
-		/*removeTabByTitle('Distribuição Venda Média');*/
-		selectTabTitle('Matriz Distribuição');
+		if(abaAnaliseEstudoAberta){
+			// setTimeout($('#menu_principal ul a[href^="'+ contextPath +'/distribuicao/analiseEstudo"]').click(), 20);
+			setTimeout($('#workspace').tabs('addTab', 'Analise de Estudos', contextPath +'/distribuicao/analiseEstudo'), 25);
+			
+		} else {
+			selectTabTitle('Matriz Distribuição');
+		}
 		
 	}
 
