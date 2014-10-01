@@ -1243,11 +1243,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return nossoNumeroCentralizacao;
     }
 
-    private void tratarEncalheProdutoEdicaoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario,
-            final BigInteger encalheFisico) {
+    private void tratarEncalheProdutoEdicaoParcial(final FechamentoFisicoLogicoDTO item, final Usuario usuario, final BigInteger encalheFisico) {
         
-       
-        movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
+    	if(item.isChamadao() && !item.isMatrizRecolhimento()) {
+    		return;
+    	}
+    	movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item
                 .getChamadaEncalheId());
