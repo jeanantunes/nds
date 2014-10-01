@@ -32,18 +32,14 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT ");
-		hql.append(" SUM( ");
-		hql.append(" 	hep.qtdeSuplementar * pe.precoVenda");
+		hql.append(" SUM(f.valorSaldo) ");
+		hql.append(" FROM FechamentoDiarioConsolidadoSuplementar f ");
+		hql.append(" JOIN f.fechamentoDiario as fd ");
+		hql.append(" WHERE fd.dataFechamento = ( ");
+		hql.append(" 	select max(fd1.dataFechamento) ");
+		hql.append(" 	from FechamentoDiario fd1 ");
 		hql.append(" ) ");
-		hql.append(" FROM HistoricoEstoqueProduto as hep ");
-		hql.append(" JOIN hep.produtoEdicao as pe ");
-		hql.append(" WHERE hep.data = ( ");
-		hql.append(" 	select ");
-		hql.append(" 	max(histo.data) ");
-		hql.append(" 	from ");
-		hql.append(" 	HistoricoEstoqueProduto histo ");
-		hql.append(" ) ");
-
+		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
