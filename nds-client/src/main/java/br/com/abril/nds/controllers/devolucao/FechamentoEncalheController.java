@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
-import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -52,7 +50,6 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -112,9 +109,6 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
-	
-	@Autowired
-	private GrupoService grupoService;
 	
 	@Autowired
 	protected HttpSession session;
@@ -485,20 +479,13 @@ public class FechamentoEncalheController extends BaseController {
 		int totalCotas = idsCotas.size();
 
 		try {
-			
-			List<GrupoCotaDTO> gruposCotas = grupoService.obterTodosGrupos("", "", false);
-    		Set<Long> idsCotasOperacaoDiferenciada = new HashSet<>();
-    		if (gruposCotas != null && !gruposCotas.isEmpty()) {
-    			idsCotasOperacaoDiferenciada = grupoService.obterCotasDoGrupo(gruposCotas.get(0).getIdGrupo());
-    		}
-			
 			for (Long idCota : idsCotas) {
 
 				String status =  "Cota " + statusCobrancaCota++ + " de " + totalCotas;
 				
 				this.setStatusCobrancaCotas(status);
 
-				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota, idsCotasOperacaoDiferenciada);
+				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
 
 			}	
 		} catch (GerarCobrancaValidacaoException e) {
@@ -534,13 +521,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
-			List<GrupoCotaDTO> gruposCotas = grupoService.obterTodosGrupos("", "", false);
-    		Set<Long> idsCotasOperacaoDiferenciada = new HashSet<>();
-    		if (gruposCotas != null && !gruposCotas.isEmpty()) {
-    			idsCotasOperacaoDiferenciada = grupoService.obterCotasDoGrupo(gruposCotas.get(0).getIdGrupo());
-    		}
-			
-			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes) {
+			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes){
 				
 				String status =  "Cota " + (++statusCobrancaCota) + " de " + totalCotas;
 				
@@ -549,7 +530,7 @@ public class FechamentoEncalheController extends BaseController {
 				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
 												                   getUsuarioLogado(), 
 												                   cotaAusenteEncalheDTO.getIdCota(),
-												                   validacaoVO, idsCotasOperacaoDiferenciada);					
+												                   validacaoVO);					
 			}
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
