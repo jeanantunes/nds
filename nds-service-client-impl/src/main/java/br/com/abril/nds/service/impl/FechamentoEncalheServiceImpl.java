@@ -832,10 +832,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = { GerarCobrancaValidacaoException.class,
-            AutenticacaoEmailException.class })
-    public void realizarCobrancaCota(final Date dataOperacao, final Usuario usuario, final Long idCota,
-            final ValidacaoVO validacaoVO) {
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = { GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class })
+    public void realizarCobrancaCota(final Date dataOperacao, final Usuario usuario, final Long idCota, final ValidacaoVO validacaoVO) {
         
         final Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
         
@@ -845,8 +843,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
         } 
         
-        BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(),
-                Arrays.asList(dataOperacao), false, false);
+        BigDecimal reparte = chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(), Arrays.asList(dataOperacao), false, false);
         
         reparte = reparte != null ? reparte : BigDecimal.ZERO;
         
@@ -856,20 +853,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)) {
            
-        	// se a cota for unificadora ou unificada não pode gerar cobrança
-            // nesse ponto
-			final boolean cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificada(
-					cota.getNumeroCota()),
-					
-					cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificadora(
-							cota.getNumeroCota());
+        	// se a cota for unificadora ou unificada não pode gerar cobrança nesse ponto
+			final boolean cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota()),
+
+			cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota());
 			
 			if (!cotaUnificadora && !cotaUnificada) {
 
 	            try {
 	                
-	                final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(
-	                        cota.getId(), dataOperacao);
+	                final boolean existeBoletoAntecipado = boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacao);
 	                
 	                if (existeBoletoAntecipado) {
 	                    
@@ -890,8 +883,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
         }
         
-        final List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository
-                .obterListChamadaEncalheCota(cota.getId(), dataOperacao);
+        final List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.obterListChamadaEncalheCota(cota.getId(), dataOperacao);
         
         for (final ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
             
