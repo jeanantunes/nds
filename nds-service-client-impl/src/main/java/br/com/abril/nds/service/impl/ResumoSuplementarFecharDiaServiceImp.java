@@ -102,7 +102,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 			
 			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional),BigDecimal.ZERO);
 			
-			dto.setTotalEstoqueLogico(totalEstoqueLogico.add(totalVenda).add(totalTransferencia));
+			dto.setTotalEstoqueLogico(totalEstoqueLogico);
 		
 			dto.setTotalTransferencia(totalTransferencia);		
 			
