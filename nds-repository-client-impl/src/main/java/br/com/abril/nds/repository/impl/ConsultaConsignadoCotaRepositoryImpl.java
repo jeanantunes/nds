@@ -89,8 +89,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
-			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		 
 		StringBuilder sql = new StringBuilder();
 		

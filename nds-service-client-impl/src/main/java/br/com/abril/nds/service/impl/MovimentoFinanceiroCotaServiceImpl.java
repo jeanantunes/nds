@@ -1542,12 +1542,10 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         if (isConferenciaRealizada) {
             
-            movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteAVista(cota.getId(),
-                    dataOperacao);
+            movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteAVista(cota.getId(), dataOperacao);
         } else {
             
-            movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosConsignadosPrevistoDiaEAVistaCotaAVista(cota
-                    .getId(), dataOperacao);
+            movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosConsignadosPrevistoDiaEAVistaCotaAVista(cota.getId(), dataOperacao);
         }
         
         // MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR
@@ -1567,8 +1565,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             // GERA MOVIMENTOS FINANCEIROS PARA A COTA A VISTA E PRODUTOS CONTA
             // FIRME
             this.gerarMovimentoFinanceiroCotaAVista(cota, fornecedor, movimentosReparteAgrupadosPorFornecedor
-                    .get(fornecedorId), movimentosEstornoAgrupadosPorFornecedor.get(fornecedorId), dataOperacao,
-                    usuario);
+                    .get(fornecedorId), movimentosEstornoAgrupadosPorFornecedor.get(fornecedorId), dataOperacao, usuario);
         }
     }
     
@@ -1594,8 +1591,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         if (idControleConferenciaEncalheCota != null) {
             
-            movimentosEncalheAgrupadosPorFornecedor = this.obterMovimentosEstoqueEncalhe(cota.getId(),
-                    idControleConferenciaEncalheCota);
+            movimentosEncalheAgrupadosPorFornecedor = this.obterMovimentosEstoqueEncalhe(cota.getId(), idControleConferenciaEncalheCota);
         } else {
             
             movimentosEncalheAgrupadosPorFornecedor = new HashMap<Long, List<MovimentosEstoqueEncalheDTO>>();
