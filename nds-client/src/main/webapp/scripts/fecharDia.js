@@ -1511,6 +1511,8 @@ var fecharDiaController =  $.extend(true, {
 		
 		$("#consignaddo-entrada-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresEntradaFormatado);
 		
+		$("#consignaddo-entrada-a-vista",fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaCEFormatado);
+		
 		$("#consignaddo-saida-valorExpedicaoDia",fecharDiaController.workspace).html(resumo.resumoConsignado.valorExpedicaoFormatado);
 		
 		$("#consignaddo-saida-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado);
