@@ -17,6 +17,7 @@ import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoSuplementarRepository;
 import br.com.abril.nds.repository.FechamentoDiarioLancamentoSuplementarRepository;
 import br.com.abril.nds.repository.FechamentoDiarioMovimentoVendaSuplementarRepository;
+import br.com.abril.nds.repository.FechamentoDiarioRepository;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
@@ -45,6 +46,9 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRespository;
 
+	@Autowired
+	private FechamentoDiarioRepository fechamentoDiarioRepository;
+	
 	@Override
 	@Transactional(readOnly=true)
 	public BigDecimal obterValorEstoqueLogico(Date dataOperacao) {
@@ -94,11 +98,13 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 			
 			dto = fechamentoDiarioConsolidadoSuplementarRepository.obterResumoGeralSuplementar(dataOperacional);
 			
-		}else{
+		} else {
 
-			BigDecimal totalEstoqueLogico = Util.nvl(this.obterValorEstoqueLogico(dataOperacional),BigDecimal.ZERO);
+			Date dataUltimoFechamento = fechamentoDiarioRepository.obterDataUltimoFechamento(dataOperacional);
 			
-			BigDecimal totalTransferencia = Util.nvl(this.obterValorTransferencia(dataOperacional),BigDecimal.ZERO);
+			BigDecimal totalEstoqueLogico = Util.nvl(this.obterValorEstoqueLogico(dataUltimoFechamento), BigDecimal.ZERO);
+			
+			BigDecimal totalTransferencia = Util.nvl(this.obterValorTransferencia(dataOperacional), BigDecimal.ZERO);
 			
 			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional),BigDecimal.ZERO);
 			
