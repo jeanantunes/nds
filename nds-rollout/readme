@@ -81,6 +81,7 @@
 ################################################################################
 
 - Executar via command "./rollout_main.sh <$DISTRIBUIDOR> <$yyyyMMdd>"
+         EX: sudo ./rollout_main.sh 12345678 20150101
 
 
 
