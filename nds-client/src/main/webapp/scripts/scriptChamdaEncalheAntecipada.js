@@ -63,22 +63,22 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					
 					return el.numeroCota 	=== item.numeroCota
 						&& el.codigoBox 	=== item.codigoBox
-						&& el.idLancamento  === item.idLancamento
-					    && el.qntExemplares === item.qntExemplares
-				        && el.nomeCota  === item.nomeCota
-				        && el.codigoChamdaEncalhe  === item.codigoChamdaEncalhe
-				        && el.id  === item.id;
+						&& el.idLancamento  === item.idLancamento;
+					    //&& el.qntExemplares === item.qntExemplares
+				        //&& el.nomeCota  === item.nomeCota
+				        //&& el.codigoChamdaEncalhe  === item.codigoChamdaEncalhe
+				        //&& el.id  === item.id;
 				}).length;
 				
 				var checked = this.checkedItems.filter(function(el) {
 
 					return el.numeroCota 	=== item.numeroCota
 						&& el.codigoBox 	=== item.codigoBox
-						&& el.idLancamento  === item.idLancamento
-					    && el.qntExemplares === item.qntExemplares
-				        && el.nomeCota  === item.nomeCota
-				        && el.codigoChamdaEncalhe === item.codigoChamdaEncalhe
-				        && el.id === item.id;
+						&& el.idLancamento  === item.idLancamento;
+					    //&& el.qntExemplares === item.qntExemplares
+				        //&& el.nomeCota  === item.nomeCota
+				        //&& el.codigoChamdaEncalhe === item.codigoChamdaEncalhe
+				        //&& el.id === item.id;
 				}).length;
 								
 
@@ -90,11 +90,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					
 					return el.numeroCota 	!== item.numeroCota 
 						&& el.codigoBox 	!== item.codigoBox
-						&& el.idLancamento  !== item.idLancamento
-						&& el.qntExemplares  !== item.qntExemplares
-					    && el.nomeCota  !== item.nomeCota
-					    && el.codigoChamdaEncalhe  !== item.codigoChamdaEncalhe
-					    && el.id  !== item.id;
+						&& el.idLancamento  !== item.idLancamento;
+						//&& el.qntExemplares  !== item.qntExemplares
+					    //&& el.nomeCota  !== item.nomeCota
+					    //&& el.codigoChamdaEncalhe  !== item.codigoChamdaEncalhe
+					    //&& el.id  !== item.id;
 					
 				});
 			},
@@ -841,6 +841,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		desmarcarCheckTodos: function (){
 			$('#sel',chamdaEncalheAnteipadaController.workspace).attr("checked",false);
+			checkedItems = new Array();
+			uncheckedItems= new Array();
 		},
 		
 		obterParametrosGridAux: function(checkedList){
