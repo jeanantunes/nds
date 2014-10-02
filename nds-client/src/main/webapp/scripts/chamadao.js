@@ -559,9 +559,9 @@ var chamadaoController = $.extend(true, {
 		
 		var isReprogramacao = (acao == "REPROGRAMAR")?true:false;
 		
-		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), 
-					chamarTodos:chamadaoController.verifyCheckAll(),
-					reprogramacao:isReprogramacao};
+		var param ={novaDataChamadaoFormatada: $("#novaDataChamadao").val(), 
+					chamarTodos: chamadaoController.verifyCheckAll(),
+					reprogramacao: isReprogramacao};
 		
 		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
 		
@@ -624,7 +624,7 @@ var chamadaoController = $.extend(true, {
 					var dataRecolhimento = $(colunaDataRecolhimento).find("div").html();
 					
 					
-					listaChamadao.push({codigoProduto:codProduto,numeroEdicao:numEdicao,idLancamento:lancamento,dataRecolhimento:dataRecolhimento});
+					listaChamadao.push({codigoProduto:codProduto, numeroEdicao:numEdicao, idLancamento:lancamento, dataRecolhimento:dataRecolhimento});
 				}
 			});
 		}
