@@ -52,6 +52,8 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -781,7 +783,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return qtde == null ? 0 : qtde;
     }
     
-    public BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento) {
+    public BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento, TipoCota tipoCota) {
     	
 	    final StringBuilder sql = new StringBuilder();
 	    
@@ -813,10 +815,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    sql.append(" WHERE ");
 	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento    			");
 	    sql.append("    AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe   	");
-	    sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = false         ");
 	    sql.append("	AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL      ");
 	    sql.append("	AND MEC.LANCAMENTO_ID IS NOT NULL                   ");
-	    sql.append("	AND COTA.TIPO_COTA <> :tipoCota                     ");
+	    
+	    if(tipoCota != null) {
+    		sql.append("	AND COTA.TIPO_COTA = :tipoCota                     ");
+	    }
+	    
 	    sql.append(" GROUP BY ");
 	    sql.append("	CHAMADA_ENCALHE.PRODUTO_EDICAO_ID,                  ");
 	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO                   ");
@@ -826,7 +831,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    
 	    query.setParameter("dataRecolhimento", dataRecolhimento);
 	    query.setParameter("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
-	    query.setParameter("tipoCota", TipoCota.A_VISTA.name());
+	    
+	    if(tipoCota != null) {
+    		query.setParameter("tipoCota", tipoCota.name());
+	    }
 	    
 	    ((SQLQuery) query).addScalar("totalReparte", StandardBasicTypes.BIG_DECIMAL);
 	    

@@ -55,6 +55,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -653,7 +654,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
         //Valores de Entrada no consignado do Distribuidor
         BigDecimal valorCE = Util.nvl(
-        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento), BigDecimal.ZERO);
+        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento, TipoCota.CONSIGNADO), BigDecimal.ZERO);
+        
+        BigDecimal valorCEAvista = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento, TipoCota.A_VISTA), BigDecimal.ZERO);
         
         BigDecimal valorDiferencasEntrada = Util.nvl(
         		diferencaRepository.obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
@@ -665,7 +669,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
         resumoConsignado.setValorOutrosValoresEntrada(valorDiferencasEntrada.add(valorCotaAusenteEntrada));
         
-        resumoConsignado.setValorEntradas(valorCE.add(resumoConsignado.getValorOutrosValoresEntrada()));
+        resumoConsignado.setValorEntradas(valorCE.add(valorCEAvista).add(resumoConsignado.getValorOutrosValoresEntrada()));
         
        //Valores de Saida no consignado do Distribuidor
         
@@ -679,6 +683,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         		this.movimentoEstoqueCotaRepository.obterValorConsignadoCotaAVista(dataFechamento),BigDecimal.ZERO);
         
         resumoConsignado.setValorAVista(valorSaidaDoConsignadoAVista);
+        
+        resumoConsignado.setValorAVistaCE(valorCEAvista);
         
         resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaDoConsignadoAVista));
         
