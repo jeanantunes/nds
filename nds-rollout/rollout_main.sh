@@ -10,6 +10,7 @@ NOME_ARQUIVO=`date +%m%d%`
 NOME_DIRETORIO=`date +%y+%m%d%`
 DIRBKP=/opt/rollout
 BASE=db_$1
+DIR=`pwd` 
 
 # **** Local ****
 #AMBIENTE=localhost
@@ -46,13 +47,13 @@ echo '4) CRIA A BASE '$BASE `date +%T`
 mysqladmin -h$AMBIENTE -u$DBUSER -p$DBPASS create $BASE
 echo
 echo '5) IMPORTA ESTRUTURA DA BASE.' `date +%T`
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < ./comum/carga_estrutura.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIRBKP/comum/carga_estrutura.sql
 echo
 echo '6) CARREGA DADOS INICIAIS.' `date +%T`
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < ./$1/carga_inicial.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/$1/carga_inicial.sql
 echo
 echo '7) CARREGA DADOS DE CARGA DE TIPOS.' `date +%T`
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < ./comum/carga_tipos.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_tipos.sql
 echo
 echo '8) COPIA ARQUIVOS PARA BASE.' `date +%T`
 echo "Copia os arquivos <s ou n>?"
@@ -72,20 +73,19 @@ find $DIRBKP/load_files -type f ! \( -iname "*_r" \) -exec rm {} \;
 ls $DIRBKP/load_files | sed 's/_r//g' | awk '{print "mv '$DIRBKP'/load_files/"$1"_r " "'$DIRBKP'/load_files/"$1| "sh"}'
 find $DIRBKP/load_files -type f \( -iname "*~" \) -exec rm {} \;
 
-ssh -i /home/dguerra/.ssh/kp-hom-distb.pem douglas@$AMBIENTE "sudo rm $DIRBKP/load_files/*"
-scp -i /home/dguerra/.ssh/kp-hom-distb.pem $DIRBKP/load_files/* douglas@$AMBIENTE:$DIRBKP/load_files
+ssh -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" douglas@$AMBIENTE "sudo rm $DIRBKP/load_files/*"
+scp -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" $DIRBKP/load_files/* douglas@$AMBIENTE:$DIRBKP/load_files
 
 fi
 echo
 echo '9) CARREGA PRODIN MDC.' `date +%T`
-#mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIRBKP/comum/carga_prodin_mdc.sql
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < ./comum/carga_prodin_mdc.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_prodin_mdc.sql
 echo
 echo '10) CARREGA MOVIMENTAÇÕES.' `date +%T`
 echo "Executar Movimentações <s ou n>?"
 read sn
 if [ $sn = "s" ] ; then
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < ./comum/carga_movimentos.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_movimentos.sql
 echo ''
 fi	
 echo
