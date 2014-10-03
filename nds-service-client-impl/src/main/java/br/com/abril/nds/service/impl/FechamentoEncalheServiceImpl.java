@@ -116,6 +116,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -201,7 +202,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     private EstudoService estudoService;
     
     @Autowired
-    GrupoRepository grupoRepository;
+    private GrupoRepository grupoRepository;
     
     @Autowired
     private EstudoCotaService estudoCotaService;
@@ -238,6 +239,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     @Autowired
     private FormaCobrancaService formaCobrancaService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
     
     @Override
     @Transactional
@@ -595,7 +599,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
-            if(fechamento.getFisico() != null){
+            if(!exemplaresVendaEncalhe.equals(BigInteger.ZERO)) {
             	qtd =  fechamento.getFisico();
             } else {
             	
@@ -1398,8 +1402,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                 cce.setChamadaEncalhe(chamadaEncalhe);
                 cce.setCota(chamadaEncalheCota.getCota());
                 cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
-                chamadaEncalheCotaRepository.adicionar(cce);
+                cce.setChamadaEncalheCotaPostergada(chamadaEncalheCota);
+                cce.setUsuario(usuarioService.getUsuarioLogado());
                 
+                chamadaEncalheCotaRepository.adicionar(cce);
             }
             
         }

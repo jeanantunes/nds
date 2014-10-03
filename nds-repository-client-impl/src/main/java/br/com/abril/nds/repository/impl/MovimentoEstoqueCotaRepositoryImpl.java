@@ -817,6 +817,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    sql.append("    AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe   	");
 	    sql.append("	AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL      ");
 	    sql.append("	AND MEC.LANCAMENTO_ID IS NOT NULL                   ");
+	    sql.append("	AND CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_COTA_POSTERGADA_ID IS NULL                   ");
 	    
 	    if(tipoCota != null) {
     		sql.append("	AND COTA.TIPO_COTA = :tipoCota                     ");

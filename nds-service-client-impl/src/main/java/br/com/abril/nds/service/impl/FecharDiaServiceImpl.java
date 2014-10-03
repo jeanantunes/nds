@@ -635,11 +635,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
 
-        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
-            resumoFechamentoDiarioConsignado.new ResumoConsignado();
+        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
-        this.processarValoresConsignado(dataFechamento,
-				resumoFechamentoDiarioConsignado, resumoConsignado);
+        this.processarValoresConsignado(dataFechamento, resumoFechamentoDiarioConsignado, resumoConsignado);
 
         return resumoFechamentoDiarioConsignado;
 	}
@@ -860,7 +858,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
     	
         validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
-    	
+        
     	FechamentoDiario fechamento = new FechamentoDiario();
     	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
     	
