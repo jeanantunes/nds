@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -53,6 +54,10 @@ public class ChamadaEncalheCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CHAMADA_ENCALHE_ID")
 	private ChamadaEncalhe chamadaEncalhe;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_POSTERGADA_ID")
+	private ChamadaEncalheCota chamadaEncalheCotaPostergada;
 
 	@OneToMany(mappedBy = "chamadaEncalheCota")
 	private Set<ConferenciaEncalhe> conferenciasEncalhe = new HashSet<ConferenciaEncalhe>();
@@ -115,6 +120,20 @@ public class ChamadaEncalheCota implements Serializable {
 		this.chamadaEncalhe = chamadaEncalhe;
 	}
 	
+	/**
+	 * @return
+	 */
+	public ChamadaEncalheCota getChamadaEncalheCotaPostergada() {
+		return chamadaEncalheCotaPostergada;
+	}
+
+	/**
+	 * @param chamadaEncalheCotaPostergada
+	 */
+	public void setChamadaEncalheCotaPostergada(ChamadaEncalheCota chamadaEncalheCotaPostergada) {
+		this.chamadaEncalheCotaPostergada = chamadaEncalheCotaPostergada;
+	}
+
 	/**
 	 * @return the fechado
 	 */

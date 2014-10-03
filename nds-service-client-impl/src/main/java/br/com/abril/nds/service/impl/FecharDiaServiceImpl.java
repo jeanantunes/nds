@@ -635,11 +635,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
 
-        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
-            resumoFechamentoDiarioConsignado.new ResumoConsignado();
+        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
-        this.processarValoresConsignado(dataFechamento,
-				resumoFechamentoDiarioConsignado, resumoConsignado);
+        this.processarValoresConsignado(dataFechamento, resumoFechamentoDiarioConsignado, resumoConsignado);
 
         return resumoFechamentoDiarioConsignado;
 	}
