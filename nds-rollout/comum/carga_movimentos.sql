@@ -36,7 +36,7 @@ DATA_RECOLHIMENTO_STR VARCHAR(10),
 STATUS CHAR(1),
 CONSIGNADO boolean,
 DEVOLVE_ENCALHE boolean
-) -- ENGINE=MEMORY
+) ENGINE=MEMORY
 ;
 
 LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\r\n';
@@ -291,7 +291,7 @@ DATA_PREVISTA_RECOLTO_RCPR varchar(10),
 DATA_REAL_RECOLTO_RCPR varchar(10),
 TIPO_STATUS_RECOLTO_RCPR varchar(45),
 PRIMARY KEY (id))
--- ENGINE=MEMORY
+ ENGINE=MEMORY
 ;
 
 LOAD DATA INFILE '/opt/rollout/load_files/CARGA_LANCAMENTO_MDC.CAR' INTO TABLE CARGA_LANCAMENTO_MDC COLUMNS TERMINATED BY ';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 LINES;
@@ -425,9 +425,10 @@ c.id,
 csv.produto_edicao_id
 from HVND csv,cota c
 where c.numero_cota = csv.COD_COTA_HVCT
-and csv.produto_edicao_id is not null);
+and csv.produto_edicao_id is not null
+group by c.id,csv.produto_edicao_id);
 
-select 'MOVIMENTO_FINANCEIRO_COTA: ',sysdate(); -- Log
+select 'ESTOQUE_PRODUTO_COTA: ',sysdate(); -- Log
 
 -- 
 -- ESTOQUE_PRODUTO (MEMORIA) FIXME **** CONFIRMAR SEMPRE QUAL OS NUMEROS DE BOX DO DISTRIBUIDOR
@@ -921,6 +922,28 @@ from movimento_estoque_memoria);
 drop table movimento_estoque_memoria;
 
 select 'MATERIALIZADO - MOVIMENTO_ESTOQUE: ',count(*) from movimento_estoque; -- Log
+
+ALTER TABLE HVND ENGINE=InnoDB;
+
+select 'MATERIALIZADO - HVND: ',count(*) from hvnd; -- Log
+
+ALTER TABLE ESTQBOX ENGINE=InnoDB;
+
+select 'MATERIALIZADO - ESTQBOX: ',count(*) from ESTQBOX; -- Log
+
+ALTER TABLE MOV_CRED ENGINE=InnoDB;
+
+select 'MATERIALIZADO - MOV_CRED: ',count(*) from MOV_CRED; -- Log
+
+ALTER TABLE MOV_DEB ENGINE=InnoDB;
+
+select 'MATERIALIZADO - MOV_DEB: ',count(*) from MOV_DEB; -- Log
+
+ALTER TABLE CARGA_LANCAMENTO_MDC ENGINE=InnoDB;
+
+select 'MATERIALIZADO - CARGA_LANCAMENTO_MDC: ',count(*) from CARGA_LANCAMENTO_MDC; -- Log
+
+
 
 select 'MATERIALIZACAO FIM: ',sysdate(); -- Log
 
