@@ -858,7 +858,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
     	
         validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
-    	
+        
     	FechamentoDiario fechamento = new FechamentoDiario();
     	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
     	

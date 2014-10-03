@@ -35,12 +35,11 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" SUM(f.valorSaldo) ");
 		hql.append(" FROM FechamentoDiarioConsolidadoSuplementar f ");
 		hql.append(" JOIN f.fechamentoDiario as fd ");
-		hql.append(" WHERE fd.dataFechamento = ( ");
-		hql.append(" 	select max(fd1.dataFechamento) ");
-		hql.append(" 	from FechamentoDiario fd1 ");
+		hql.append(" WHERE fd.dataFechamento = :dataOperacao");
 		hql.append(" ) ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("dataOperacao", dataOperacao);
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
