@@ -3897,7 +3897,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	query.executeUpdate();
     }
     
-    public BigDecimal obterValorConsignadoCotaAVista(final Date dataMovimentacao){
+    public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe){
     	
     	StringBuilder sql = new StringBuilder();
     	
@@ -3917,9 +3917,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
     	sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
     	sql.append(" AND LCTO.STATUS NOT IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') "); 
-    	sql.append(" AND c.TIPO_COTA = :tipoCota ");
-    	sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:grupoEstornoReparteCotaFuro) "); 
-    	sql.append(" AND ((c.DEVOLVE_ENCALHE = TRUE OR ( MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusFinanceiroNaoProcessado)    )) ");
+    	sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:grupoEstornoReparteCotaFuro) ");
+    	
+    	if(devolveEncalhe != null) {
+    		
+    		sql.append(" AND (");
+    		sql.append("        ((c.TIPO_COTA = :tipoCotaAVista ");
+    		
+    		if(devolveEncalhe) {
+    			sql.append(" AND c.DEVOLVE_ENCALHE = TRUE ");
+    		} else {
+    			sql.append(" AND c.DEVOLVE_ENCALHE = FALSE ");
+    		}
+    			   		
+    		sql.append(" )       	AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiroNaoProcessado)) ");
+    		sql.append("    )");
+    	} else {
+    		
+    		sql.append(" AND (");
+    		sql.append("        c.TIPO_COTA = :tipoCotaAVista AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiroNaoProcessado) ");
+    		sql.append("    )");
+    	}
+		
     	sql.append(" AND LCTO.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
     	sql.append(" GROUP BY PE.ID, C.ID ");
     	sql.append(" HAVING ");
@@ -3932,7 +3951,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	query.setParameter("opSaida", OperacaoEstoque.SAIDA.name());
     	
-    	query.setParameter("tipoCota", TipoCota.A_VISTA.name());
+    	query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
     	
     	query.setParameter("grupoEstornoReparteCotaFuro",GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name());
     	
