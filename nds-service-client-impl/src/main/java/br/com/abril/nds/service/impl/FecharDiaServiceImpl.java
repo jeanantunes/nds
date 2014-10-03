@@ -677,14 +677,20 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         valorExpedido = valorExpedido.add(Util.nvl(
                 diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
         
-        BigDecimal valorSaidaDoConsignadoAVista =  Util.nvl(
-        		this.movimentoEstoqueCotaRepository.obterValorConsignadoCotaAVista(dataFechamento),BigDecimal.ZERO);
+        BigDecimal valorSaidaExpedicaoAVistaDevolveEncalhe = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, true),BigDecimal.ZERO);
         
-        resumoConsignado.setValorAVista(valorSaidaDoConsignadoAVista);
+        BigDecimal valorSaidaExpedicaoAVistaNaoDevolveEncalhe = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, false),BigDecimal.ZERO);
+        
+        //Subtrai as vendas firmes
+        valorExpedido = valorExpedido.subtract(valorSaidaExpedicaoAVistaNaoDevolveEncalhe);
+        
+        resumoConsignado.setValorAVista(valorSaidaExpedicaoAVistaDevolveEncalhe);
         
         resumoConsignado.setValorAVistaCE(valorCEAvista);
         
-        resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaDoConsignadoAVista));
+        resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaExpedicaoAVistaDevolveEncalhe));
         
         resumoConsignado.setValorOutrosValoresSaidas(this.obterValorSaidaOutros(dataFechamento));
         
