@@ -1201,7 +1201,9 @@ where trim(LEADING '0' FROM cnpj) ='' ;
 -- pessoa FIXME * corrigir abaixo ASSIM QUE CORRIGIREM CNPJ/INSCRICAO ESTADUAL
 insert into pessoa (TIPO,CNPJ,INSC_ESTADUAL,RAZAO_SOCIAL,SOCIO_PRINCIPAL)
 select max('J') ,cnpj,max(inscricaoEstadual),trim(LEADING ' ' from nomeEditor),0
-from CARGA_PRODIN_EDI group by cnpj;
+from CARGA_PRODIN_EDI 
+where cnpj not in ('28322873000130','03555225000100','61438248000123') -- FIXME
+group by cnpj;
 
 select 'EDITOR - PESSOA:',count(*) from PESSOA; -- Log
 

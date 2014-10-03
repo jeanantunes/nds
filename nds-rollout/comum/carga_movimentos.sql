@@ -73,7 +73,7 @@ DROP DATA_RECOLHIMENTO_STR;
 
 
 -- ##################### FIXME    #######################
--- Remover issso
+-- Remover issso. Produtos lancados no Rio em 2010 e NAO RECOLHIDOS
 delete from hvnd where cod_produto = '28681001' and num_edicao = 1013;
 delete from hvnd where cod_produto = '27801001' and num_edicao = 192;
 -- #######################################################
