@@ -31,6 +31,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 
 				var item = chamdaEncalheAnteipadaController.parseGridLine(index);
 
+				//alert("index:"+index+" item"+item.numeroCota);
 				this.removeItemFromUncheckedArray(item);
 				this.checkedItems.push(item);
 
@@ -40,6 +41,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			uncheckItem: function(index) {
 
 				var item = chamdaEncalheAnteipadaController.parseGridLine(index);
+				
+				//alert("index:"+index+" item"+item.numeroCota);
 
 				this.uncheckedItems.push(item);
 				this.totalChecked--;
@@ -47,11 +50,24 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			},
 			keepChecked: function(item) {
 				
+				/*
+				alert(item.numeroCota);
+				alert(item.codigoBox);
+				alert(item.idLancamento);
+				alert(item.qntExemplares);
+				alert(item.codigoChamdaEncalhe);
+				alert(item.nomeCota);
+				alert(item.id);
+				*/
 				var unchecked = !this.uncheckedItems.filter(function(el) {
-
+					
 					return el.numeroCota 	=== item.numeroCota
 						&& el.codigoBox 	=== item.codigoBox
 						&& el.idLancamento  === item.idLancamento;
+					    //&& el.qntExemplares === item.qntExemplares
+				        //&& el.nomeCota  === item.nomeCota
+				        //&& el.codigoChamdaEncalhe  === item.codigoChamdaEncalhe
+				        //&& el.id  === item.id;
 				}).length;
 				
 				var checked = this.checkedItems.filter(function(el) {
@@ -59,6 +75,10 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					return el.numeroCota 	=== item.numeroCota
 						&& el.codigoBox 	=== item.codigoBox
 						&& el.idLancamento  === item.idLancamento;
+					    //&& el.qntExemplares === item.qntExemplares
+				        //&& el.nomeCota  === item.nomeCota
+				        //&& el.codigoChamdaEncalhe === item.codigoChamdaEncalhe
+				        //&& el.id === item.id;
 				}).length;
 								
 
@@ -67,10 +87,15 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			removeItemFromUncheckedArray: function(item) {
 
 				this.uncheckedItems = this.uncheckedItems.filter(function(el) {
-
+					
 					return el.numeroCota 	!== item.numeroCota 
 						&& el.codigoBox 	!== item.codigoBox
 						&& el.idLancamento  !== item.idLancamento;
+						//&& el.qntExemplares  !== item.qntExemplares
+					    //&& el.nomeCota  !== item.nomeCota
+					    //&& el.codigoChamdaEncalhe  !== item.codigoChamdaEncalhe
+					    //&& el.id  !== item.id;
+					
 				});
 			},
 			getTotalCotas: function() {
@@ -120,13 +145,20 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var numeroCota = $(gridLine).find("input[name='numCota']").val();
 			var codigoBox = $(gridLine).find("input[name='codBox']").val();
 			var idLancamento = $(gridLine).find("input[name='idLancamento']").val();
-			var exemplares = $(gridLine).find("input[name='qntExemplares']").val();
+			var exemplares = $(gridLine).find("input[name^='qntExemplares']").val();
+			var nomeCota = $(gridLine).find("input[name^='nomeCota']").val();
+			var codigoChamdaEncalhe = $(gridLine).find("input[name^='codigoChamdaEncalhe']").val();
+			var id = $(gridLine).find("input[name^='id']").val();
 			
 			return {
 				numeroCota: numeroCota,
 				codigoBox: codigoBox,
 				idLancamento: idLancamento, 
-				exemplares: exemplares
+				exemplares: exemplares,
+				nomeCota: nomeCota,
+				codigoChamdaEncalhe: codigoChamdaEncalhe,
+				id: id
+			
 			};
 		},
 
@@ -264,13 +296,19 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var checkTodos = params['gravarTodos'];
 				if(checkTodos == "undefined" || !checkTodos ){
 					
-					params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid),params);
+					//params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid),params);
+					params = serializeArrayToPost('listaChamadaEncalheAntecipada',  chamdaEncalheAnteipadaController.obterParametrosGridAux(chamdaEncalheAnteipadaController.gridSelectionHelper.checkedItems),params);
 				}
-			
+				
+				//.each(chamdaEncalheAnteipadaController.gridSelectionHelper.uncheckedItems, function(i, v) {
 				$.each(chamdaEncalheAnteipadaController.gridSelectionHelper.uncheckedItems, function(i, v) {
 					params['chamadasNaoSelecionadas[' + i + '].codBox'] 	  = v.codigoBox;
 					params['chamadasNaoSelecionadas[' + i + '].numeroCota']   = v.numeroCota;
 					params['chamadasNaoSelecionadas[' + i + '].idLancamento'] = v.idLancamento;
+					params['chamadasNaoSelecionadas[' + i + '].nomeCota'] = v.nomeCota;
+					params['chamadasNaoSelecionadas[' + i + '].qntExemplares'] = v.qntExemplares;
+					params['chamadasNaoSelecionadas[' + i + '].codigoChamdaEncalhe'] = v.codigoChamdaEncalhe;
+					params['chamadasNaoSelecionadas[' + i + '].id'] = v.id;
 				});
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotas",
@@ -288,7 +326,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 							$("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog("close");
 							 
 							chamdaEncalheAnteipadaController.desmarcarCheckTodos();
-							chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);ss
+							chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
 					 
 						}, null,true);
 			}
@@ -554,7 +592,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var keepChecked = chamdaEncalheAnteipadaController.gridSelectionHelper.keepChecked({
 					numeroCota: "" + row.cell.numeroCota,
 					codigoBox: "" + row.cell.codBox,
-					idLancamento: "" + row.cell.idLancamento 
+					idLancamento: "" + row.cell.idLancamento,
+					qntExemplares: "" + row.cell.qntExemplares,
+					nomeCota: "" + row.cell.nomeCota,
+					codigoChamdaEncalhe: "" + row.cell.codigoChamdaEncalhe,
+					id: "" + index
 				}) ? 'checked="checked"' : '';
 
 				var inputCheck = '<input ' + keepChecked + ' isEdicao="true" type="checkbox"  id="ch'+index+'" name="'+chamdaEncalheAnteipadaController.groupNameCheck
@@ -570,7 +612,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					'<input type="hidden" id="numCota' + index + '" name="numCota" value="'+ row.cell.numeroCota+'"/>';
 						
 				var inputHiddenCodigoChamadaEncalhe = 	
-					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+					'<input type="hidden" id="codigoChamdaEncalhe' + index + '" name="codigoChamdaEncalhe" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
 				
 				var inputHiddenIdLancamento= 	
 						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';
@@ -645,7 +687,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					function (result){
 				
 						$(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val(result.quantidade);
-						$("#codigoChamadaAntecipada" + indexLinha,chamdaEncalheAnteipadaController.workspace).val(result.idChamadaEncalhe);
+						$("#codigoChamdaEncalhe" + indexLinha,chamdaEncalheAnteipadaController.workspace).val(result.idChamadaEncalhe);
 						
 						var check  = document.getElementById("sel",chamdaEncalheAnteipadaController.workspace).checked ; 
 						
@@ -718,7 +760,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var inputCheck = '<input isEdicao="true" disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+chamdaEncalheAnteipadaController.groupNameCheckGridCota+'" onclick="chamdaEncalheAnteipadaController.calcularTotalCota( '+parametroCheckbox +')" />';	
 				
 				var inputHiddenCodigoChamadaEncalhe = 	
-					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
+					'<input type="hidden" id="codigoChamdaEncalhe' + index + '" name="codigoChamdaEncalhe" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
 					
 				var inputHiddenIdLancamento= 	
 						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';
@@ -799,8 +841,44 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		desmarcarCheckTodos: function (){
 			$('#sel',chamdaEncalheAnteipadaController.workspace).attr("checked",false);
+			checkedItems = new Array();
+			uncheckedItems= new Array();
 		},
 		
+		obterParametrosGridAux: function(checkedList){
+			
+			console.log(checkedList);
+			var listaChamadaEncalheAntecipada = new Array();
+			
+			
+			$.each(checkedList, function(index, value) {
+
+				
+				console.log(value.numeroCota);
+				console.log(value.codigoBox);
+				console.log(value.idLancamento);
+				console.log(value.exemplares);
+				console.log(value.codigoChamdaEncalhe);
+				console.log(value.nomeCota);
+				console.log(value.id);
+				
+				
+				var cotaSelecionada = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
+						'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
+						'numeroCota':value.numeroCota,
+						'nomeCota':value.nomeCota,
+						'id':value.id,
+						'qntExemplares':value.exemplares,
+						'codigoChamdaEncalhe':value.codigoChamdaEncalhe,
+						'idLancamento':value.idLancamento};
+			
+				listaChamadaEncalheAntecipada.push(cotaSelecionada);
+				
+			});
+			
+			return listaChamadaEncalheAntecipada;
+		},
+	
 		obterParametrosGrid: function(grid){
 			
 			var linhasDaGrid = $('#'+grid+' tr',chamdaEncalheAnteipadaController.workspace);
@@ -828,7 +906,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				
 				var qntExemplares =  $(colunaQntExemplares,chamdaEncalheAnteipadaController.workspace).find("div").find('input[name="qntExemplares"]').val();
 			
-				var codigoChamdaEncalhe = $(colunaCota,chamdaEncalheAnteipadaController.workspace).find("div").find('input[name="codigoChamadaAntecipada"]').val();
+				var codigoChamdaEncalhe = $(colunaCota,chamdaEncalheAnteipadaController.workspace).find("div").find('input[name="codigoChamdaEncalhe"]').val();
 				
 				var idLancamento = $(colunaCota,chamdaEncalheAnteipadaController.workspace).find("div").find('input[name="idLancamento"]').val();
 				

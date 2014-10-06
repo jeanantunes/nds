@@ -52,6 +52,8 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -781,7 +783,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return qtde == null ? 0 : qtde;
     }
     
-    public BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento) {
+    public BigDecimal obterSaldoEntradaNoConsignado(Date dataRecolhimento, TipoCota tipoCota) {
     	
 	    final StringBuilder sql = new StringBuilder();
 	    
@@ -813,10 +815,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    sql.append(" WHERE ");
 	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento    			");
 	    sql.append("    AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe   	");
-	    sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = false         ");
 	    sql.append("	AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL      ");
 	    sql.append("	AND MEC.LANCAMENTO_ID IS NOT NULL                   ");
-	    sql.append("	AND COTA.TIPO_COTA <> :tipoCota                     ");
+	    sql.append("	AND CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_COTA_POSTERGADA_ID IS NULL                   ");
+	    
+	    if(tipoCota != null) {
+    		sql.append("	AND COTA.TIPO_COTA = :tipoCota                     ");
+	    }
+	    
 	    sql.append(" GROUP BY ");
 	    sql.append("	CHAMADA_ENCALHE.PRODUTO_EDICAO_ID,                  ");
 	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO                   ");
@@ -826,7 +832,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    
 	    query.setParameter("dataRecolhimento", dataRecolhimento);
 	    query.setParameter("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
-	    query.setParameter("tipoCota", TipoCota.A_VISTA.name());
+	    
+	    if(tipoCota != null) {
+    		query.setParameter("tipoCota", tipoCota.name());
+	    }
 	    
 	    ((SQLQuery) query).addScalar("totalReparte", StandardBasicTypes.BIG_DECIMAL);
 	    
@@ -1017,7 +1026,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(" INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID ) ");
 		
 		sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoqueConsignado  ");
-		
+		sqlTblPrecoVenda.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(" GROUP BY MEC.PRODUTO_EDICAO_ID ");
 		sqlTblPrecoVenda.append(" ) AS PRECO_VENDA_DE_REPARTE ON (MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PRECO_VENDA_DE_REPARTE.PRODUTO_EDICAO_ID AND ");
 		sqlTblPrecoVenda.append(" 								MOVIMENTO_ESTOQUE_COTA.DATA = PRECO_VENDA_DE_REPARTE.DATA_REPARTE)                       ");
@@ -3707,7 +3716,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
         
-        sql.append(" and (mec.statusEstoqueFinanceiro is null or mec.statusEstoqueFinanceiro != :processado )" );
+        sql.append(" and (mec.statusEstoqueFinanceiro is null ");
+        
+        sql.append(" or (mec.statusEstoqueFinanceiro = :processado and cota.devolveEncalhe = true) ");
+        
+        sql.append(" or mec.statusEstoqueFinanceiro != :processado)" );
         
         sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
         
@@ -3729,24 +3742,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     
     @Override
 	public void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros,  String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro ){
-      	final StringBuilder sql =  new StringBuilder();
+      	
+    	final StringBuilder sql =  new StringBuilder();
     	sql.append("UPDATE MOVIMENTO_ESTOQUE_COTA AS estoque ");
-    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on ");
-    	sql.append("movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID ");
-    	sql.append("join TIPO_MOVIMENTO tipo on ");
-    	sql.append("movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
-    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on ");
-    	sql.append("con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
+    	sql.append("join MOVIMENTO_FINANCEIRO_COTA movi on movi.id = estoque.MOVIMENTO_FINANCEIRO_COTA_ID AND movi.COTA_ID = estoque.COTA_ID ");
+    	sql.append("join TIPO_MOVIMENTO tipo on movi.TIPO_MOVIMENTO_ID = tipo.id and tipo.tipo = 'FINANCEIRO' ");
+    	sql.append("join CONSOLIDADO_MVTO_FINANCEIRO_COTA con on con.MVTO_FINANCEIRO_COTA_ID = movi.id ");
 
-    	sql.append("SET estoque.MOTIVO = :motivo ");
-    	sql.append(",estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota ");
-    	sql.append(",estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro ");
+    	sql.append("SET estoque.MOTIVO = :motivo, ");
+    	sql.append("estoque.MOVIMENTO_FINANCEIRO_COTA_ID = :movimentoFinanceiroCota, ");
+    	sql.append("estoque.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro ");
     	sql.append("where con.CONSOLIDADO_FINANCEIRO_ID = :idConsolidado ");
     	sql.append("and tipo.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinaceiros)");
     	
-    	 this.getSession().createSQLQuery(sql.toString() )
-	        .setParameter( "motivo", motivo )
-	        .setParameter( "movimentoFinanceiroCota", movimentoFinanceiroCota )
+    	 this.getSession().createSQLQuery(sql.toString())
+	        .setParameter("motivo", motivo)
+	        .setParameter("movimentoFinanceiroCota", movimentoFinanceiroCota)
 	        .setParameter("statusEstoqueFinanceiro", statusEstoqueFinanceiro.name())
 	        .setParameter("idConsolidado", idConsolidado)
 	        .setParameterList("grupoMovimentoFinaceiros", grupoMovimentoFinaceiros)
@@ -3914,7 +3925,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	return query.list();
 	}
     
-    public BigDecimal obterValorConsignadoCotaAVista(final Date dataMovimentacao){
+    public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe){
     	
     	StringBuilder sql = new StringBuilder();
     	
@@ -3934,9 +3945,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
     	sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
     	sql.append(" AND LCTO.STATUS NOT IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') "); 
-    	sql.append(" AND c.TIPO_COTA = :tipoCota ");
-    	sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:grupoEstornoReparteCotaFuro) "); 
-    	sql.append(" AND ((c.DEVOLVE_ENCALHE = TRUE OR ( MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO =:statusFinanceiroNaoProcessado)    )) ");
+    	sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:grupoEstornoReparteCotaFuro) ");
+    	
+    	if(devolveEncalhe != null) {
+    		
+    		sql.append(" AND (");
+    		sql.append("        ((c.TIPO_COTA = :tipoCotaAVista ");
+    		
+    		if(devolveEncalhe) {
+    			sql.append(" AND c.DEVOLVE_ENCALHE = TRUE ");
+    		} else {
+    			sql.append(" AND c.DEVOLVE_ENCALHE = FALSE ");
+    		}
+    			   		
+    		sql.append(" )       	AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiroNaoProcessado)) ");
+    		sql.append("    )");
+    	} else {
+    		
+    		sql.append(" AND (");
+    		sql.append("        c.TIPO_COTA = :tipoCotaAVista AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiroNaoProcessado) ");
+    		sql.append("    )");
+    	}
+		
     	sql.append(" AND LCTO.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
     	sql.append(" GROUP BY PE.ID, C.ID ");
     	sql.append(" HAVING ");
@@ -3949,7 +3979,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	query.setParameter("opSaida", OperacaoEstoque.SAIDA.name());
     	
-    	query.setParameter("tipoCota", TipoCota.A_VISTA.name());
+    	query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
     	
     	query.setParameter("grupoEstornoReparteCotaFuro",GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name());
     	

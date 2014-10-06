@@ -396,22 +396,19 @@ public class MixCotaProdutoController extends BaseController {
 
 	
 	@Get
-	public void exportarGridCota(FileType fileType, String tipoExportacao)
-			throws IOException {
+	public void exportarGridCota(FileType fileType, String tipoExportacao) throws IOException {
 
-		FiltroConsultaMixPorCotaDTO filtroPorCota = (FiltroConsultaMixPorCotaDTO) session
-				.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE);
+		FiltroConsultaMixPorCotaDTO filtroPorCota = (FiltroConsultaMixPorCotaDTO) session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE);
 
-		List<MixCotaDTO> resultadoPesquisa = mixCotaProdutoService
-				.pesquisarPorCota(filtroPorCota);
+		filtroPorCota.setPaginacao(null);
+		
+		List<MixCotaDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorCota(filtroPorCota);
 		if (resultadoPesquisa.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"A última pesquisa realizada não obteve resultado.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		} else {
 
-			FileExporter.to("mix", fileType).inHTTPResponse(
-					this.getNDSFileHeader(), filtroPorCota, null,
-					resultadoPesquisa, MixCotaDTO.class, this.httpResponse);
+			FileExporter.to("mix", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroPorCota, null, resultadoPesquisa, MixCotaDTO.class, this.httpResponse);
+		
 		}
 
 		result.nothing();
@@ -421,14 +418,14 @@ public class MixCotaProdutoController extends BaseController {
 	public void exportarGridProduto(FileType fileType, String tipoExportacao)
 			throws IOException {
 
-		FiltroConsultaMixPorProdutoDTO filtroPorProduto = (FiltroConsultaMixPorProdutoDTO) session
-				.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE);
+		FiltroConsultaMixPorProdutoDTO filtroPorProduto = (FiltroConsultaMixPorProdutoDTO) session.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE);
 
-		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService
-				.pesquisarPorProduto(filtroPorProduto);
+		filtroPorProduto.setPaginacao(null);
+		
+		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtroPorProduto);
+		
 		if (resultadoPesquisa.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"A última pesquisa realizada não obteve resultado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		} else {
 
 			FileExporter.to("mix", fileType).inHTTPResponse(
@@ -441,8 +438,7 @@ public class MixCotaProdutoController extends BaseController {
 
 	private void tratarFiltroPorCota(FiltroConsultaMixPorCotaDTO filtroAtual) {
 
-		FiltroConsultaMixPorCotaDTO filtroSession = (FiltroConsultaMixPorCotaDTO) session
-				.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE);
+		FiltroConsultaMixPorCotaDTO filtroSession = (FiltroConsultaMixPorCotaDTO) session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE);
 
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 
@@ -452,11 +448,9 @@ public class MixCotaProdutoController extends BaseController {
 		session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
-	private void tratarFiltroPorProduto(
-			FiltroConsultaMixPorProdutoDTO filtroAtual) {
+	private void tratarFiltroPorProduto(FiltroConsultaMixPorProdutoDTO filtroAtual) {
 
-		FiltroConsultaMixPorProdutoDTO filtroSession = (FiltroConsultaMixPorProdutoDTO) session
-				.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE);
+		FiltroConsultaMixPorProdutoDTO filtroSession = (FiltroConsultaMixPorProdutoDTO) session.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE);
 
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 

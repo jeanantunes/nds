@@ -112,6 +112,8 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		protected BigDecimal valorOutrosValoresEntrada;
 		
 		protected BigDecimal valorAVista;
+		
+		protected BigDecimal valorAVistaCE;
 
 		public BigDecimal getValorCE() {
 			return valorCE;
@@ -165,6 +167,10 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 			return CurrencyUtil.formatarValor(this.valorAVista);
 		}
 		
+		public String getValorAVistaCEFormatado() {
+			return CurrencyUtil.formatarValor(this.valorAVistaCE);
+		}
+		
 		public BigDecimal getValorAVista() {
 			return valorAVista;
 		}
@@ -172,6 +178,15 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		public void setValorAVista(BigDecimal valorAVista) {
 			this.valorAVista = valorAVista;
 		}
+
+		public BigDecimal getValorAVistaCE() {
+			return valorAVistaCE;
+		}
+
+		public void setValorAVistaCE(BigDecimal valorAVistaCE) {
+			this.valorAVistaCE = valorAVistaCE;
+		}
+		
 	}
 
 	/**

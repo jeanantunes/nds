@@ -166,7 +166,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("     ( ");
 		
-		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN ");
+		sql.append("      CASE WHEN (COTA.TIPO_COTA = 'A_VISTA' AND COTA.DEVOLVE_ENCALHE = false) THEN ");
 		
         sql.append("      0 ELSE ");
 		
@@ -521,7 +521,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
 		 * PDV associado a mesma cota.
 		 */
-		hql.append("SELECT DISTINCT count ( cota.id ) ");
+		hql.append("SELECT  count (DISTINCT cota.id ) ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
 

@@ -43,6 +43,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -139,6 +140,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -308,6 +310,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	@Autowired
 	private SlipRepository slipRepository;
+	
+	@Autowired
+    private FormaCobrancaService formaCobrancaService;
 	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
@@ -2176,7 +2181,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if (!cotaUnificadora && !cotaUnificada){
 			
-				if (existeBoletoAntecipado){
+				
+				FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(controleConferenciaEncalheCota.getCota().getId()
+										, null, controleConferenciaEncalheCota.getDataOperacao());
+                
+                if (existeBoletoAntecipado 
+                		|| (fc != null && fc.getTipoCobranca() != null && TipoCobranca.BOLETO_EM_BRANCO.equals(fc.getTipoCobranca()))) {
 					
 					gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
 													           controleConferenciaEncalheCota.getUsuario().getId());
