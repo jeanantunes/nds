@@ -1,0 +1,1051 @@
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+-- ######################################################################################################################################################################################
+
+--
+-- FORNECEDOR
+--
+
+LOCK TABLES `fornecedor` WRITE;
+/*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
+INSERT INTO `fornecedor` VALUES 
+(1,9795816,'dinap@dinap.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp Dinap','ATIVO',NULL,NULL,1,1,NULL,NULL,'BANCAS',16),
+(2,8684862,'fc@fc.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp FC','ATIVO',NULL,NULL,2,2,NULL,NULL,'BANCAS',16),
+(16,16,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp Treelog','ATIVO',NULL,NULL,16,3,NULL,NULL,'BANCAS',NULL);
+/*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- distribuidor_grid_distribuicao
+--
+
+LOCK TABLES `distribuidor_grid_distribuicao` WRITE;
+/*!40000 ALTER TABLE `distribuidor_grid_distribuicao` DISABLE KEYS */;
+INSERT INTO `distribuidor_grid_distribuicao` VALUES (1,1,1,30,1,1,1);
+/*!40000 ALTER TABLE `distribuidor_grid_distribuicao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- interface_execucao
+--
+
+LOCK TABLES `interface_execucao` WRITE;
+/*!40000 ALTER TABLE `interface_execucao` DISABLE KEYS */;
+INSERT INTO `interface_execucao` VALUES 
+(106,'EMS0106',NULL,'MDC > NDS : 06 : Estudo','.NEW'),
+(107,'EMS0107',NULL,'MDC > NDS : 07 : Estudo cota','.NEW'),
+(108,'EMS0108',NULL,'MDC > NDS : 04 : Matriz lançamento/recohimento','.NEW'),
+(109,'EMS0109',NULL,'Prodin > NDS : 03 : Produto','.PUB'),
+(110,'EMS0110',NULL,'Prodin > NDS : 04 : Edição','.PRD'),
+(111,'EMS0111',NULL,'Prodin > NDS : 05 : Lançamentos programados','.LAN'),
+(112,'EMS0112',NULL,'Prodin > NDS : 02 : Editor','.EDI'),
+(113,'EMS0113',NULL,'Prodin > NDS : 01 : Desconto distribuidor','.DSF'),
+(114,'EMS0114',NULL,'Prodin > NDS : 06 : Recolhimentos programados','.REC'),
+(116,'EMS0116',NULL,'MDC > NDS : 03 : Banca (PDV)','.NEW'),
+(117,'EMS0117',NULL,'MDC > NDS : 02 : Cota','.NEW'),
+(118,'EMS0118',NULL,'MDC > NDS : 05 : Preço','.NEW'),
+(119,'EMS0119',NULL,'MDC > NDS : 01 : Produto','.NEW'),
+(120,'EMS0120',NULL,'NDS > MDC : 01 : Reparte','.NEW'),
+(121,'EMS0121',NULL,'NDS > MDC : 02 : Encalhe','.NEW'),
+(122,'EMS0122',NULL,'NDS > MDC : 03 : Suplementar','.NEW'),
+(123,'EMS0123',NULL,'NDS > MDC : 04 : Encalhe antecipado','.NEW'),
+(124,'EMS0124',NULL,'NDS > MDC : 05 : Nivelamento','.NEW'),
+(125,'EMS0125',NULL,'Prodin > NDS : 07 : Chamada de capa','.CHC'),
+(126,'EMS0126',NULL,'Prodin > NDS : 08 : Código de barras','.CDB'),
+(127,'EMS0127',NULL,'Chamada Encalhe','BANCO'),(128,'EMS0128',NULL,'GFS','BANCO'),
+(129,'EMS0129',NULL,'NDS > MDC : 06 : Picking led','.TXT'),
+(130,'EMS0130',NULL,'NDS > MDC : 07 : Retorno banca','.NEW'),
+(131,'EMS0131',NULL,'NDS > MDC : 08 : Retorno cota','.NEW'),
+(132,'EMS0132',NULL,'NDS > MDC : 09 : Retorno Matriz lancamento','.NEW'),
+(133,'EMS0133',NULL,'NDS > MDC : 10 : Retorno Matriz recolhimento','.NEW'),
+(135,'EMS0135',NULL,'Prodin > NDS : 09 : NF-e','.NRE'),
+(136,'EMS0136',NULL,'Prodin > NDS : 10 : Parciais','.PAR'),
+(137,'EMS0137',NULL,'Estrategia',NULL),
+(140,'EMS0140',NULL,'Prodin > NDS : Nota Varejo','.NEV'),
+(185,'EMS0185',NULL,'Correios','BANCO'),
+(197,'EMS0197',NULL,'NDS > MDC : 11 : Nota Envio Jornaleiro (externo)','.TXT'),
+(198,'EMS0198',NULL,'NDS > MDC : 12 : CE Jornaleiro (externo)','.TXT');
+/*!40000 ALTER TABLE `interface_execucao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- USUARIO
+--
+
+LOCK TABLES `usuario` WRITE;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES 
+(1,NULL,NULL,1,NULL,'admin@abril.com.br',NULL,'1234','admin','Administrador',NULL,'81dc9bdb52d04dc20036dbd8313ed055',NULL,NULL,NULL,0,1);
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- distribuidor_classificacao_cota
+--
+
+LOCK TABLES `distribuidor_classificacao_cota` WRITE;
+/*!40000 ALTER TABLE `distribuidor_classificacao_cota` DISABLE KEYS */;
+INSERT INTO `distribuidor_classificacao_cota` VALUES 
+(1,'AA',999999.99,4000.00,1),
+(2,'A',999999.99,4000.00,1),
+(3,'B',3999.99,2000.00,1),
+(4,'C',1999.99,1000.00,1),
+(5,'D',999.99,0.00,1);
+/*!40000 ALTER TABLE `distribuidor_classificacao_cota` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- distribuidor_percentual_excedente
+--
+
+LOCK TABLES `distribuidor_percentual_excedente` WRITE;
+/*!40000 ALTER TABLE `distribuidor_percentual_excedente` DISABLE KEYS */;
+INSERT INTO `distribuidor_percentual_excedente` VALUES 
+(1,'DE_60_100',10,90,1),
+(2,'DE_30_60',10,90,1),
+(3,'DE_0_30',10,90,1);
+/*!40000 ALTER TABLE `distribuidor_percentual_excedente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- grupo_permissao
+--
+
+LOCK TABLES `grupo_permissao` WRITE;
+/*!40000 ALTER TABLE `grupo_permissao` DISABLE KEYS */;
+INSERT INTO `grupo_permissao` VALUES 
+(1,'ADMINISTRADOR');
+/*!40000 ALTER TABLE `grupo_permissao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- grupo_permissao_permissao
+--
+
+LOCK TABLES `grupo_permissao_permissao` WRITE;
+/*!40000 ALTER TABLE `grupo_permissao_permissao` DISABLE KEYS */;
+INSERT INTO `grupo_permissao_permissao` VALUES 
+(1,'ROLE_ADMINISTRACAO_CONTROLE_APROVACAO'),
+(1,'ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_PARCIAIS_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO'),
+(1,'ROLE_MOVIMENTO_FINANCEIRO_COTA'),
+(1,'ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO'),
+(1,'ROLE_ESTOQUE_VISAO_DO_ESTOQUE'),
+(1,'ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA'),
+(1,'ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ'),
+(1,'ROLE_LANCAMENTO_FURO_PRODUTO'),
+(1,'ROLE_NFE'),
+(1,'ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA'),
+(1,'ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO'),
+(1,'ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS'),
+(1,'ROLE_NFE_ENTRADA_NFE_TERCEIROS_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_VENDA_PRODUTO_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_TIPO_NOTA_ALTERACAO'),
+(1,'ROLE_NFE_RETORNO_NFE_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO'),
+(1,'ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO'),
+(1,'ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_IMPRESSAO_BOLETOS'),
+(1,'ROLE_CADASTRO_BOX_ALTERACAO'),
+(1,'ROLE_CADASTRO_BANCO_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_DESENGLOBACAO'),
+(1,'ROLE_NFE_IMPRESSAO_NFE_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_GRUPOS_ACESSO'),
+(1,'ROLE_CADASTRO'),
+(1,'ROLE_RECOLHIMENTO_VENDA_ENCALHE'),
+(1,'ROLE_CADASTRO_HELP_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO'),
+(1,'ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO_ALTERACAO'),
+(1,'ROLE_CADASTRO_FORNECEDOR'),
+(1,'ROLE_RECOLHIMENTO_CHAMADAO_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE'),
+(1,'ROLE_FINANCEIRO_P3'),
+(1,'ROLE_FINANCEIRO_P3_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_HELP_ALTERACAO'),
+(1,'ROLE_CADASTRO_ROTEIRIZACAO'),
+(1,'ROLE_DISTRIBUICAO_FIXACAO_REPARTE_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_PARAMETROS_COBRANCA'),
+(1,'ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA'),
+(1,'ROLE_FINANCEIRO_BAIXA_BANCARIA'),
+(1,'ROLE_RECOLHIMENTO_HELP'),
+(1,'ROLE_ADMINISTRACAO'),
+(1,'ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO'),
+(1,'ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO'),
+(1,'ROLE_CADASTRO_TRANSPORTADOR'),
+(1,'ROLE_ESTOQUE_CONSULTA_NOTAS'),
+(1,'ROLE_FINANCEIRO'),
+(1,'ROLE_EXPEDICAO_RESUMO_EXPEDICAO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO'),
+(1,'ROLE_DISTRIBUICAO_REGIAO_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_FECHAR_DIA'),
+(1,'ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_HELP_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_HELP'),
+(1,'ROLE_DISTRIBUICAO_REGIAO'),
+(1,'ROLE_DISTRIBUICAO_HISTORICO_VENDA_ALTERACAO'),
+(1,'ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO'),
+(1,'ROLE_CADASTRO_PRODUTO'),
+(1,'ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA'),
+(1,'ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO'),
+(1,'ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_EMISSAO_BANDEIRA'),
+(1,'ROLE_EXPEDICAO_RESUMO_EXPEDICAO'),
+(1,'ROLE_CADASTRO_HELP'),
+(1,'ROLE_RECOLHIMENTO'),
+(1,'ROLE_LANCAMENTO_VENDA_PRODUTO'),
+(1,'ROLE_LANCAMENTO_HELP_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_RELATORIO_SERVICO_ENTREGA'),
+(1,'ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_INTEGRACAO_FISCAL_P7'),
+(1,'ROLE_EXPEDICAO_HELP_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA'),
+(1,'ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE'),
+(1,'ROLE_ESTOQUE_HELP'),
+(1,'ROLE_EXPEDICAO_COTA_AUSENTE_ALTERACAO'),
+(1,'ROLE_CADASTRO_ALTERACAO_COTA_ALTERACAO'),
+(1,'ROLE_NFE_GERACAO_NFE'),
+(1,'ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ'),
+(1,'ROLE_NFE_RETORNO_NFE'),
+(1,'ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_VISAO_DO_ESTOQUE_ALTERACAO'),
+(1,'ROLE_NFE_PAINEL_MONITOR_NFE'),
+(1,'ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO'),
+(1,'ROLE_ESTOQUE_RECEBIMENTO_FISICO'),
+(1,'ROLE_RECOLHIMENTO_HELP_ALTERACAO'),
+(1,'ROLE_CADASTRO_ENTREGADOR_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA_ALTERACAO'),
+(1,'ROLE_CADASTRO_ROTEIRIZACAO_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS'),
+(1,'ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO'),
+(1,'ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO'),
+(1,'ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA'),
+(1,'ROLE_FINANCEIRO_SUSPENSAO_COTA_ALTERACAO'),
+(1,'ROLE_ESTOQUE_HELP_ALTERACAO'),
+(1,'ROLE_CADASTRO_BOX'),
+(1,'ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO'),
+(1,'ROLE_CADASTRO_FIADOR'),
+(1,'ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO'),
+(1,'ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO'),
+(1,'ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO'),
+(1,'ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_CALENDARIO'),
+(1,'ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_EMISSAO_BANDEIRA_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_FECHAR_DIA_ALTERACAO'),
+(1,'ROLE_CADASTRO_PRODUTO_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_CONTAS_A_PAGAR'),
+(1,'ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO'),
+(1,'ROLE_DISTRIBUICAO_DESENGLOBACAO_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR'),
+(1,'ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO'),
+(1,'ROLE_CADASTRO_EDICAO_ALTERACAO'),
+(1,'ROLE_CADASTRO_COTA_BASE'),
+(1,'ROLE_DISTRIBUICAO_HISTORICO_VENDA'),
+(1,'ROLE_RECOLHIMENTO_SEMAFORO_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_GERACAO_ARQUIVO'),
+(1,'ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_CONSULTA_NOTAS_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO'),
+(1,'ROLE_CADASTRO_COTA_BASE_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO'),
+(1,'ROLE_ESTOQUE'),
+(1,'ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_TIPO_DESCONTO_COTA'),
+(1,'ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO'),
+(1,'ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO'),(1,'ROLE_CADASTRO_COTA'),
+(1,'ROLE_FINANCEIRO_CONSIGNADO_COTA'),
+(1,'ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL'),
+(1,'ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS'),
+(1,'ROLE_RECOLHIMENTO_EMISSAO_CE_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS'),
+(1,'ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_SUSPENSAO_COTA'),
+(1,'ROLE_ESTOQUE_CONSULTA_FALTAS_SOBRAS_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_RELATORIO_VENDAS'),
+(1,'ROLE_DISTRIBUICAO_FIXACAO_REPARTE'),
+(1,'ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO'),
+(1,'ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO'),
+(1,'ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO'),
+(1,'ROLE_CADASTRO_COTA_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA'),
+(1,'ROLE_EXPEDICAO_ROMANEIOS_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_EMISSAO_CE'),
+(1,'ROLE_ESTOQUE_EXTRATO_EDICAO_ALTERACAO'),
+(1,'ROLE_NFE_IMPRESSAO_NFE'),
+(1,'ROLE_CADASTRO_FORNECEDOR_ALTERACAO'),
+(1,'ROLE_CADASTRO_EDICAO'),
+(1,'ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS'),
+(1,'ROLE_ADMINISTRACAO_RELATORIO_SERVICO_ENTREGA_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_RELATORIO_VENDAS_ALTERACAO'),
+(1,'ROLE_LANCAMENTO_PARCIAIS'),(1,'ROLE_CADASTRO_BANCO'),
+(1,'ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO_ALTERACAO'),
+(1,'ROLE_EXPEDICAO_MAPA_ABASTECIMENTO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_TRANSFERENCIA_PARCIAL_ALTERACAO'),
+(1,'ROLE_ADMINISTRACAO_HELP'),
+(1,'ROLE_NFE_ENTRADA_NFE_TERCEIROS'),
+(1,'ROLE_EXPEDICAO_ROMANEIOS'),
+(1,'ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA'),
+(1,'ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO'),
+(1,'ROLE_EXPEDICAO_COTA_AUSENTE'),
+(1,'ROLE_CADASTRO_ENTREGADOR'),
+(1,'ROLE_NFE_GERACAO_NFE_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA'),
+(1,'ROLE_EXPEDICAO'),
+(1,'ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE'),
+(1,'ROLE_ADMINISTRACAO_CONTROLE_APROVACAO_ALTERACAO'),
+(1,'ROLE_ESTOQUE_CONSULTA_FALTAS_SOBRAS'),
+(1,'ROLE_ADMINISTRACAO_TIPO_NOTA'),
+(1,'ROLE_FINANCEIRO_HELP'),
+(1,'ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_CONTA_CORRENTE'),
+(1,'ROLE_EXPEDICAO_MAPA_ABASTECIMENTO'),
+(1,'ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO_ALTERACAO'),
+(1,'ROLE_FINANCEIRO_CONTAS_A_PAGAR_ALTERACAO'),
+(1,'ROLE_LANCAMENTO'),
+(1,'ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA'),
+(1,'ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO'),
+(1,'ROLE_RECOLHIMENTO_CHAMADAO'),
+(1,'ROLE_FINANCEIRO_CONSIGNADO_COTA_ALTERACAO'),
+(1,'ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS'),
+(1,'ROLE_FINANCEIRO_CONTA_CORRENTE_ALTERACAO'),(1,'ROLE_DISTRIBUICAO_CARACTERISTICA_DISTRIBUICAO'),(1,'ROLE_CADASTRO_FIADOR_ALTERACAO'),(1,'ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA_ALTERACAO'),(1,'ROLE_FINANCEIRO_INTEGRACAO_FISCAL_P7_ALTERACAO'),(1,'ROLE_RECOLHIMENTO_SEMAFORO'),(1,'ROLE_EXPEDICAO_HELP'),(1,'ROLE_ESTOQUE_EXTRATO_EDICAO'),(1,'ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO'),(1,'ROLE_CADASTRO_ALTERACAO_COTA'),(1,'ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO');
+/*!40000 ALTER TABLE `grupo_permissao_permissao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- CFOP
+--
+
+LOCK TABLES `cfop` WRITE;
+/*!40000 ALTER TABLE `cfop` DISABLE KEYS */;
+INSERT INTO `cfop` VALUES 
+(1,'5917','Outra saída de mercadoria ou prestação de serviço não especificado'),
+(2,'6917','Remessa de mercadoria em consignação mercantil ou industrial'),
+(3,'1918','Devolução de mercadoria recebida em consignação mercantil ou industrial'),
+(4,'2918','Devolução de mercadoria remetida em consignação mercantil ou industrial'),
+(5,'1919','Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial'),
+(6,'2919','Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial'),
+(7,'5114','Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil'),
+(8,'6114','Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil'),
+(9,'5949','Outra saída de mercadoria ou prestação de serviço não especificado'),
+(10,'6949','Outra saída de mercadoria ou prestação de serviço não especificado'),
+(11,'1949','Outra entrada de mercadoria ou prestação de serviço não especificada'),
+(12,'2949','Outra entrada de mercadoria ou prestação de serviço não especificado'),
+(13,'5115','Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil'),
+(14,'6115','Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil'),
+(15,'5918','Devolução de Mercadoria Recebida em Consignação'),(16,'6918','Devolução de Mercadoria Recebida em Consignação'),
+(17,'5919','Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação'),
+(18,'6919','Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação'),
+(19,'5102','Venda de mercadoria adquirida ou recebida de terceiros'),
+(20,'1209','Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência dentro do estado'),
+(21,'1210','Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência fora do estado');
+/*!40000 ALTER TABLE `cfop` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- usuario_grupo_permissao
+--
+
+LOCK TABLES `usuario_grupo_permissao` WRITE;
+/*!40000 ALTER TABLE `usuario_grupo_permissao` DISABLE KEYS */;
+INSERT INTO `usuario_grupo_permissao` VALUES 
+(1,1),
+(16,1),
+(17,1),
+(18,1),
+(19,1),
+(20,1),
+(21,1);
+/*!40000 ALTER TABLE `usuario_grupo_permissao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- evento_execucao
+--
+
+LOCK TABLES `evento_execucao` WRITE;
+/*!40000 ALTER TABLE `evento_execucao` DISABLE KEYS */;
+INSERT INTO `evento_execucao` VALUES 
+(0,'Erro de infraestrutura','Erro Infra'),
+(1,'Sem Domínio','Dominio'),
+(2,'Hierarquia Corrompida','Hierarquia'),
+(3,'Relacionamento Não Encontrado','Relacionamento'),
+(4,'Geração de Arquivo','Arquivo'),
+(5,'Informação de dado Alterado','Alteração Dado'),
+(6,'Registro já existente','Registro já existente');
+/*!40000 ALTER TABLE `evento_execucao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- ncm
+--
+
+LOCK TABLES `ncm` WRITE;
+/*!40000 ALTER TABLE `ncm` DISABLE KEYS */;
+INSERT INTO `ncm` VALUES 
+(1,49029000,'REVISTAS','KG'),
+(2,49019100,'FASCICULO','KG'),
+(3,49019000,'LIVROS','KG'),
+(4,48205000,'CROMO','KG'),
+(5,49030000,'LIVRO ILUSTRADO','KG'),
+(6,85243100,'CD','KG'),
+(7,49111090,'CARTAZ','KG'),
+(8,22029000,'OUTRAS BEBIDAS','L');
+/*!40000 ALTER TABLE `ncm` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_estabelecimento_associacao_pdv
+--
+
+LOCK TABLES `tipo_estabelecimento_associacao_pdv` WRITE;
+/*!40000 ALTER TABLE `tipo_estabelecimento_associacao_pdv` DISABLE KEYS */;
+INSERT INTO `tipo_estabelecimento_associacao_pdv` VALUES 
+(1,1,'Aeroporto'),
+(2,2,'Clube'),
+(3,3,'Colégio'),
+(4,4,'Condomí­nio'),
+(5,5,'Empresa'),
+(6,6,'Estacionamento'),
+(7,7,'Faculdade'),
+(8,8,'Hiper/Super'),
+(9,9,'Hospital'),
+(10,10,'Metrô´'),
+(11,11,'Outros'),
+(12,12,'Parque'),
+(13,13,'Posto'),
+(14,14,'Repartição Pública'),
+(15,15,'Rodoviária'),
+(16,16,'Shopping'),
+(17,17,'Terminal de Ônibus');
+/*!40000 ALTER TABLE `tipo_estabelecimento_associacao_pdv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_produto_editor
+--
+
+LOCK TABLES `tipo_produto_editor` WRITE;
+/*!40000 ALTER TABLE `tipo_produto_editor` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tipo_produto_editor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_ponto_pdv
+--
+
+LOCK TABLES `tipo_ponto_pdv` WRITE;
+/*!40000 ALTER TABLE `tipo_ponto_pdv` DISABLE KEYS */;
+INSERT INTO `tipo_ponto_pdv` VALUES 
+(1,1,'BANCA'),
+(2,2,'REVISTARIA'),
+(3,3,'QUIOSQUE'),
+(4,4,'OUTROS'),
+(10,10,'SUPERMERCADO'),
+(11,11,'COOPERATIVA SINDICATO'),
+(12,12,'POSTO DE GASOLINA'),
+(13,13,'BAZAR/PAPELARIA'),
+(14,14,'TABACARIA'),
+(15,15,'FARMACIA'),
+(16,16,'VIDEO LOCADORA'),
+(17,17,'LOJA DE MUSICA'),
+(18,18,'ESCOLA/FACULDADE'),
+(19,19,'PADARIA/BAR'),
+(20,20,'HOTEL'),
+(21,21,'BOUTIQUE'),
+(22,22,'ACADEMIA'),
+(23,23,'LOJA DE CONVENIENCIA'),
+(24,24,'OUTRO ALTERNATIVO'),
+(26,26,'HOSPITAL'),
+(27,27,'LIVRARIA'),
+(28,28,'ARMARINHO'),
+(29,29,'CABELEIREIRO'),
+(30,30,'CENTRO EMPRESARIAL/ESCRITORIOS'),
+(31,31,'COFFEE-SHOP'),
+(32,32,'COLEGIO'),
+(33,33,'CORREIO'),
+(34,34,'CURSINHO'),
+(35,35,'EMPORIO'),
+(36,36,'ESTACIONAMENTOVALUES (NO GUICHE)'),
+(37,37,'EMPRESA/GREMIO'),
+(38,38,'ESCOLA DE IDIOMAS'),
+(39,39,'ESCOLA DE ARTE'),
+(40,40,'ESCOLA DE MUSICA'),
+(41,41,'HELIPORTO'),
+(42,42,'HOMECENTER'),
+(43,43,'LAN HOUSE/CIBER CAFE'),
+(44,44,'LOJA DE BEBES'),
+(45,45,'LOJA DE BRINQUEDOS'),
+(46,46,'LOJA DE DECORACAO'),
+(47,47,'LOJA DE INFORMATICA'),
+(48,48,'LOJA DE MATERIAL ESPORTIVO'),
+(49,49,'LOJA DE MATERIAL DE CONSTRUCAO'),
+(50,50,'LOJA DE 1,99'),(51,51,'MERCADO'),
+(52,52,'PET SHOP'),(53,53,'RESTAURANTE'),
+(54,54,'TERMINAL DE TRANSPORTE'),
+(55,55,'VAREJAO/SACOLAO'),
+(56,56,'EXPORTADOR'),
+(57,57,'LOTERICA');
+/*!40000 ALTER TABLE `tipo_ponto_pdv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_segmento_produto
+--
+
+LOCK TABLES `tipo_segmento_produto` WRITE;
+/*!40000 ALTER TABLE `tipo_segmento_produto` DISABLE KEYS */;
+INSERT INTO `tipo_segmento_produto` VALUES 
+(1,'NEGOCIOS/ECONOMIA/POLITICA'),
+(2,'IMPORTADAS'),
+(3,'SEMANAIS DE INFORMACAO'),
+(4,'AUTOMOBILISMO'),
+(5,'INFANTIS DE INTERESSE GERAL'),
+(6,'SAUDE'),
+(7,'CULINARIA/GASTRONOMIA'),
+(8,'EDUCACAO/CURSO/OR.PROF.'),
+(9,'OUTROS'),
+(10,'DECORACAO'),
+(11,'QUADRINHOS JOVENS'),
+(12,'CRUZADAS/PASSATEMPOS'),
+(13,'MANGA/ANIME QUADRINHOS'),
+(14,'COMPORTAMENTO LGBT'),
+(15,'PORNOGRAFIA/ORIENT.SEXUAL'),
+(16,'FUTEBOL/CLUBES'),
+(17,'CR. AMBOS OS SEXOS'),
+(18,'CR.FUTEBOL'),
+(19,'BEM ESTAR'),
+(20,'CIENCIA, CULTURA E INTER.GERAL'),
+(21,'COL.AMBOS OS SEXOS'),
+(22,'VIDEO, SOM E FOTO'),
+(23,'TELEVISAO'),
+(25,'HISTOR/MITOLOG/GEOGRAF/FILOSOF'),
+(26,'ASTROLOGIA/PREVISAO'),
+(27,'COL.FEMININA'),
+(28,'ATIVIDADES INFANTIS'),
+(29,'COL.INFANTIL/JUVENIL'),
+(31,'COL.MASCULINA'),
+(32,'MODA'),
+(33,'MUSICA/CINEMA'),
+(35,'PUERICULTURA/FAMILIA'),
+(37,'LIV.FICCAO'),
+(38,'ESTETICA/BELEZA'),
+(39,'TRABALHOS MANUAIS'),
+(40,'FEMININAS TWEENS'),
+(41,'HUMORISMO'),
+(43,'MOTOCICLISMO'),
+(44,'NOIVAS E DEBUTANTES'),
+(45,'GUIA R'),
+(46,'CLASSIFICADOS/AUTO SERVICO'),
+(47,'GUIAS DE TURISMO'),
+(48,'AGRO NEGOCIO/ANIMAIS/CACAPESCA'),
+(49,'LIV.OUTROS'),
+(50,'LIV.ROMANCES'),
+(51,'AVIACAO/NAUTICA/TRANSPORTE'),
+(54,'QUADRINHOS ADULTOS'),
+(55,'QUADRINHOS INFANTIS'),
+(57,'ESPORTES OUTROS'),
+(58,'ARQUITETURA/CONSTRUCAO'),
+(59,'CORPO E DIETA'),
+(60,'CR.MASCULINO'),
+(62,'INFORMATICA/TECNOLOGIA'),
+(63,'CR.FEMININO'),
+(64,'GAMES'),
+(65,'ESOTERISMO/ESPIRITUALIDADE/REL'),
+(68,'GUIA RODOVIARIO/MAPAS'),
+(69,'VIAGEM E TURISMO'),
+(70,'CR.CINEMA'),
+(75,'LIV.LITERATURA INFANTIL'),
+(76,'CR.PRE ESCOLA'),
+(79,'LIV.AUTO AJUDA'),
+(80,'ATLETISMO/CICLISMO/TRIATHLON'),
+(81,'CULTURA DIGITAL'),
+(82,'ADMINISTRACAO PESSOAL'),
+(83,'LIV.BIOGRAFIA'),
+(84,'LIV.CULINARIA'),
+(85,'LIV.ESPIRITUALIDADE'),
+(86,'FEMININAS TEENS'),
+(87,'FEMININAS ADULTAS'),
+(88,'FEMININAS POPULARES'),
+(89,'COMPORTAMENTO MASCULINO'),
+(90,'CELEBRIDADES'),
+(94,'LIV.LITERATURA JUVENIL'),
+(95,'LIV.NEGOCIOS/CARREIRA'),
+(96,'QUADRINHOS INFANTIS'),
+(99,'CET');
+/*!40000 ALTER TABLE `tipo_segmento_produto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- box
+--
+
+LOCK TABLES `box` WRITE;
+/*!40000 ALTER TABLE `box` DISABLE KEYS */;
+INSERT INTO `box` VALUES 
+(99,99,'CARGA','ENCALHE');
+/*!40000 ALTER TABLE `box` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_fornecedor
+--
+
+LOCK TABLES `tipo_fornecedor` WRITE;
+/*!40000 ALTER TABLE `tipo_fornecedor` DISABLE KEYS */;
+INSERT INTO `tipo_fornecedor` VALUES 
+(1,'Jornais','PUBLICACAO'),
+(2,'Livros','PUBLICACAO'),
+(3,'Revistas','PUBLICACAO'),
+(4,'Outros','OUTROS');
+/*!40000 ALTER TABLE `tipo_fornecedor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_classificacao_produto
+--
+
+LOCK TABLES `tipo_classificacao_produto` WRITE;
+/*!40000 ALTER TABLE `tipo_classificacao_produto` DISABLE KEYS */;
+INSERT INTO `tipo_classificacao_produto` VALUES 
+(16,'NORMAL'),
+(17,'RELANCAMENTO'),
+(18,'ESPECIAL'),
+(19,'ESPECIAL RL'),
+(20,'REEDICAO'),
+(21,'REEDICAO RL'),
+(22,'ENCADERNADO'),
+(23,'ENCAD. PST'),
+(24,'ENCAD. RL'),
+(25,'PROMOCAO'),
+(26,'PROMOCAO RL'),
+(27,'SACOLA'),
+(28,'CAPA FICH'),
+(29,'CAPA FICH RL'),
+(30,'PAC OFERTA'),
+(31,'CAPA/FICH/BOX'),
+(32,'CAPA/FICH/BOX RL'),
+(33,'EXTRA'),
+(34,'EXTRA RL'),
+(35,'TESTE/ PAC PADRAO'),
+(36,'VEJA AVULSA'),
+(37,'VEJA PROMOCAO'),
+(38,'ATUAL');
+/*!40000 ALTER TABLE `tipo_classificacao_produto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_movimento
+--
+
+LOCK TABLES `tipo_movimento` WRITE;
+/*!40000 ALTER TABLE `tipo_movimento` DISABLE KEYS */;
+INSERT INTO `tipo_movimento` VALUES 
+('ESTOQUE',1,1,'Venda Encalhe','VENDA_ENCALHE',1,0,'SAIDA',NULL,NULL),
+('FINANCEIRO',2,1,'Compra do Encalhe ou Compra Suplementar',NULL,NULL,NULL,NULL,'COMPRA_ENCALHE_SUPLEMENTAR','DEBITO'),
+('ESTOQUE',3,1,'Estorno Venda Encalhe','ESTORNO_VENDA_ENCALHE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',4,1,'Venda Encalhe Suplementar','VENDA_ENCALHE_SUPLEMENTAR',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',5,1,'Estorno Venda Encalhe Suplementar','ESTORNO_VENDA_ENCALHE_SUPLEMENTAR',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',6,1,'Compra Suplementar','COMPRA_SUPLEMENTAR',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',7,1,'Estorno Compra Suplementar','ESTORNO_COMPRA_SUPLEMENTAR',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',8,1,'Encalhe Antecipado','ENCALHE_ANTECIPADO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',9,1,'Compra Encalhe','COMPRA_ENCALHE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',10,1,'Estorno Compra Encalhe','ESTORNO_COMPRA_ENCALHE',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',11,1,'Reparte cota ausente','REPARTE_COTA_AUSENTE',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',12,1,'Restauracao Reparte cota ausente','RESTAURACAO_REPARTE_COTA_AUSENTE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',13,1,'Envio a Jornaleiro','ENVIO_JORNALEIRO',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',14,1,'Estorno Cota Ausente','ESTORNO_REPARTE_COTA_AUSENTE',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',15,1,'Falta EM','FALTA_EM',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',16,1,'Falta DE','FALTA_DE',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',17,1,'Suplementar Cota Ausente','SUPLEMENTAR_COTA_AUSENTE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',18,1,'Sobra EM','SOBRA_EM',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',19,1,'Sobra DE','SOBRA_DE',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',20,1,'Recebimento de Mercadoria','RECEBIMENTO_FISICO',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',21,1,'Recebimento Reparte','RECEBIMENTO_REPARTE',1,0,'ENTRADA',NULL,NULL),
+('FINANCEIRO',22,1,'Crédito',NULL,NULL,NULL,NULL,'CREDITO','CREDITO'),
+('FINANCEIRO',23,1,'Débito',NULL,NULL,NULL,NULL,'DEBITO','DEBITO'),
+('FINANCEIRO',24,1,'NA',NULL,NULL,NULL,NULL,'DEBITO','DEBITO'),
+('FINANCEIRO',25,1,'Débito (Faturamento)',NULL,NULL,NULL,NULL,'DEBITO_SOBRE_FATURAMENTO','DEBITO'),
+('ESTOQUE',26,1,'Envio Encalhe - Estoque','ENVIO_ENCALHE',1,0,'SAIDA',NULL,NULL),
+('FINANCEIRO',27,1,'Recebimento Reparte',NULL,NULL,NULL,NULL,'RECEBIMENTO_REPARTE','DEBITO'),
+('FINANCEIRO',28,1,'Juros',NULL,NULL,NULL,NULL,'JUROS','DEBITO'),
+('FINANCEIRO',29,1,'Multa',NULL,NULL,NULL,NULL,'MULTA','DEBITO'),
+('FINANCEIRO',30,1,'Envio Encalhe - Financeiro',NULL,NULL,NULL,NULL,'ENVIO_ENCALHE','CREDITO'),
+('ESTOQUE',31,1,'Recebimento Encalhe','RECEBIMENTO_ENCALHE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',32,1,'Recebimento Encalhe Juramentado','RECEBIMENTO_ENCALHE_JURAMENTADO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',33,1,'Suplementar Envio de Encalhe Anterior Programacao','SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',34,1,'Entrada de mercadorias das NFs canceladas para o estoque do distribuidor','CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_CONSIGNADO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',35,1,'Saida de mercadorias das NFs canceladas para o estoque da Cota','CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',36,1,'Entrada por transferência de estoque do tipo Lançamento, do distribuidor','TRANSFERENCIA_ENTRADA_LANCAMENTO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',37,1,'Saída por transferência de estoque do tipo Lançamento, do distribuidor','TRANSFERENCIA_SAIDA_LANCAMENTO',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',38,1,'Entrada por transferência de estoque do tipo Suplementar, do distribuidor','TRANSFERENCIA_ENTRADA_SUPLEMENTAR',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',39,1,'Saída por transferência de estoque do tipo Suplementar, do distribuidor','TRANSFERENCIA_SAIDA_SUPLEMENTAR',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',40,1,'Entrada por transferência de estoque do tipo Recolhimento, do distribuidor','TRANSFERENCIA_ENTRADA_RECOLHIMENTO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',41,1,'Saída por transferência de estoque do tipo Recolhimento, do distribuidor','TRANSFERENCIA_SAIDA_RECOLHIMENTO',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',42,1,'Entrada por transferência de estoque do tipo \'Produtos danificados\', do distribuidor','TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',43,1,'Saída por transferência de estoque do tipo \'Produtos danificados\', do distribuidor','TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',44,1,'Estorno reparte cota por furo de publicação','ESTORNO_REPARTE_COTA_FURO_PUBLICACAO',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',45,1,'Estorno reparte por furo de publicação','ESTORNO_REPARTE_FURO_PUBLICACAO',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',66,1,'Devolução de encalhe ao fornecedor','DEVOLUCAO_ENCALHE',1,0,'SAIDA',NULL,NULL),
+('FINANCEIRO',68,1,'Postergado Debito',NULL,NULL,NULL,NULL,'POSTERGADO_DEBITO','DEBITO'),
+('FINANCEIRO',69,1,'Postergado Credito',NULL,NULL,NULL,NULL,'POSTERGADO_CREDITO','CREDITO'),
+('FINANCEIRO',70,1,'Geração de divida de venda total',NULL,NULL,NULL,NULL,'VENDA_TOTAL','DEBITO'),
+('FINANCEIRO',71,1,'Negociação Dívida',NULL,NULL,NULL,NULL,'POSTERGADO_NEGOCIACAO','DEBITO'),
+('FINANCEIRO',72,1,'Crédito (Faturamento)',NULL,NULL,NULL,NULL,'CREDITO_SOBRE_FATURAMENTO','CREDITO'),
+('ESTOQUE',73,1,'Rateio de Reparte de Cota Ausente','RATEIO_REPARTE_COTA_AUSENTE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',74,1,'Rateio de Reparte de Cota Ausente','RATEIO_REPARTE_COTA_AUSENTE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',81,1,'Perda EM','PERDA_EM',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',91,1,'Ganho EM','GANHO_EM',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',101,1,'Sobra DE (Cota)','SOBRA_DE_COTA',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',111,1,'Sobra EM (Cota)','SOBRA_EM_COTA',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',121,1,'Falta DE (Cota)','FALTA_DE_COTA',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',131,1,'Falta EM (Cota)','FALTA_EM_COTA',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',141,1,'Entrada por transferência de estoque do tipo Devolução Encalhe, do distribuidor','TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_ENCALHE',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',151,1,'Saída por transferência de estoque do tipo Devolução Encalhe, do distribuidor','TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE',1,0,'SAIDA',NULL,NULL),
+('ESTOQUE',161,1,'Perda DE','PERDA_DE',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',171,1,'Ganho DE','GANHO_DE',0,0,'ENTRADA',NULL,NULL),
+('FINANCEIRO',172,1,'Pendente',NULL,1,0,NULL,'PENDENTE','DEBITO'),
+('ESTOQUE',181,1,'Saida Material Promocional','GRUPO_MATERIAL_PROMOCIONAL',0,NULL,'SAIDA',NULL,NULL),
+('ESTOQUE',191,1,'Entrada Estoque Suplementar','ENTRADA_ESTOQUE_SUPLEMENTAR',0,NULL,'ENTRADA',NULL,NULL),
+('FINANCEIRO',192,1,'Lancamento de Caucao Liquida','',0,0,'','LANCAMENTO_CAUCAO_LIQUIDA','DEBITO'),
+('FINANCEIRO',193,1,'Resgate de Caucao Liquida','',0,0,'','RESGATE_CAUCAO_LIQUIDA','CREDITO'),
+('ESTOQUE',194,1,'Sobra DE direcionada para Cota','SOBRA_DE_DIRECIONADA_PARA_COTA',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',195,1,'Sobra EM direcionada para Cota','SOBRA_EM_DIRECIONADA_PARA_COTA',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',196,1,'Estorno de Recebimento de Mercadoria','ESTORNO_RECEBIMENTO_FISICO',0,0,'SAIDA',NULL,NULL),
+('FINANCEIRO',197,1,'Negociação por Comissão',NULL,0,0,NULL,'NEGOCIACAO_COMISSAO','DEBITO'),
+('ESTOQUE',198,1,'Estorno de Reparte Promocional','ESTORNO_REPARTE_PROMOCIONAL',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',199,1,'Alteração de Reparte da Cota','ALTERACAO_REPARTE_COTA',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',200,1,'Alteração de Reparte da Cota para Lançamento','ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',201,1,'Alteração de Reparte da Cota para Recolhimento','ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',202,1,'Alteração de Reparte da Cota para Suplementar','ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',203,1,'Alteração de Reparte da Cota para Produtos Danificados','ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',204,1,'Envio de mercadoria juramentada ao Jornaleiro','ENVIO_JORNALEIRO_JURAMENTADO',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',207,1,'Sobra envio para Cota','SOBRA_ENVIO_PARA_COTA',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',208,1,'Recebimento Jornaleiro Juramentado','RECEBIMENTO_JORNALEIRO_JURAMENTADO',1,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',210,1,'Estorno Devolução Chamada Encalhe Fornecedor','ESTORNO_DEVOLUCAO_ENCALHE_FORNECEDOR',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',211,1,'Perda EM Devolução Chamada Encalhe Fornecedor','PERDA_EM_DEVOLUCAO',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',212,1,'Sobra EM Devolução Chamada Encalhe Fornecedor','SOBRA_EM_DEVOLUCAO',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',213,1,'Ajuste de falta para Cota','AJUSTE_REPARTE_FALTA_COTA',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',214,1,'Falta EM direcionada para Cota','FALTA_EM_DIRECIONADA_PARA_COTA',0,0,'SAIDA',NULL,NULL),
+('FINANCEIRO',215,1,'Débito Taxa de Entrega - Transportador',NULL,NULL,NULL,NULL,'DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR','DEBITO'),
+('FINANCEIRO',216,1,'Débito Taxa de Entrega - Entregador',NULL,NULL,NULL,NULL,'DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR','DEBITO'),
+('ESTOQUE',217,1,'Recebimento Reparte Conta Firme','RECEBIMENTO_REPARTE_CONTA_FIRME',0,0,'ENTRADA',NULL,NULL),
+('ESTOQUE',218,1,'Envio a Jornaleiro de Produto Conta Firme','ENVIO_JORNALEIRO_PRODUTO_CONTA_FIRME',0,0,'SAIDA',NULL,NULL),
+('ESTOQUE',219,1,'Entrada por transferência de estoque de  Parciais\', do distribuidor','TRANSFERENCIA_ENTRADA_ESTOQUE_PARCIAIS',1,0,'ENTRADA',NULL,NULL);
+/*!40000 ALTER TABLE `tipo_movimento` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- material_promocional
+--
+
+LOCK TABLES `material_promocional` WRITE;
+/*!40000 ALTER TABLE `material_promocional` DISABLE KEYS */;
+INSERT INTO `material_promocional` VALUES 
+(1,1,'Adesivo'),
+(2,2,'Bandeirola'),
+(3,3,'Banner'),
+(4,4,'Cartaz Grande'),
+(5,5,'Display Acrílico / PVC de Ba'),
+(6,6,'Display Aramado de Chão'),
+(7,7,'Display de Papelão de Chão'),
+(8,8,'Faixa de Banca'),
+(9,9,'Móbile'),
+(10,10,'Reprint Capa'),
+(11,11,'Sapateira'),
+(12,12,'Totem');
+/*!40000 ALTER TABLE `material_promocional` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_gerador_fluxo_pdv
+--
+
+LOCK TABLES `tipo_gerador_fluxo_pdv` WRITE;
+/*!40000 ALTER TABLE `tipo_gerador_fluxo_pdv` DISABLE KEYS */;
+INSERT INTO `tipo_gerador_fluxo_pdv` VALUES 
+(1,1,'Pre-Escola'),
+(2,2,'Escola 1 e 2 Grau Particular'),
+(3,3,'Escola 1 e 2 Grau Publica'),
+(4,4,'Cursinho'),
+(5,5,'Superior'),
+(6,6,'Curso de Lingua'),
+(7,7,'Curso de Informatica'),
+(8,8,'Escola de Arte'),
+(9,9,'Faculdades/Universidades'),
+(10,10,'Estação de Metro'),
+(11,11,'Ferroviaria'),
+(12,12,'Rodoviaria'),
+(13,13,'Pontos de Onibus'),
+(14,14,'Terminais de Onibus'),
+(15,15,'Corredores de Transito'),
+(16,16,'Padarias'),
+(17,17,'Lanchonete e Bares'),
+(18,18,'Restaurantes'),
+(19,19,'Shopping Center'),
+(20,20,'Centro Comercial'),
+(21,21,'Supermercado e Hipermercado'),
+(22,22,'Loja de Convivencia'),
+(23,23,'Feira Livre'),
+(24,24,'Mercado Municipal'),
+(25,25,'Varejão/Sacola'),
+(26,26,'Parques'),
+(27,27,'Praia'),
+(28,28,'Estadio'),
+(29,29,'Biblioteca'),
+(30,30,'Clube'),
+(31,31,'Livraria'),
+(32,32,'Teatro'),
+(35,35,'Motel'),
+(36,36,'Centro de Convenções'),
+(37,37,'Hotel'),
+(38,38,'Agencia de Turismo'),
+(39,39,'Aeroporto'),
+(40,40,'Banco'),
+(41,41,'Repartição Publica'),
+(42,42,'Posto de Gasolina'),
+(43,43,'Igreja'),
+(44,44,'Empresa/Industria/Escritorio'),
+(45,45,'Loja de Material Esportivo'),
+(46,46,'Academia de Ginastica/Esportes'),
+(47,47,'Loja de Decoração'),
+(48,48,'Loja de Material de Construção'),
+(49,49,'Bazares'),
+(50,50,'Loja de Armarinhos'),
+(51,51,'Farmacias e Drogarias'),
+(52,52,'Lab. Clinicos/Consultorios'),
+(53,53,'Hospital'),
+(54,54,'Loja p/ Materias de Jardinagem'),
+(55,55,'Loja de Plantas/Floriculturas'),
+(56,56,'Lojas de Animais'),
+(57,57,'Clinica Veterinaria'),
+(58,58,'Loja de Disco'),
+(59,59,'Loja de Instrumentos Musicais'),
+(60,60,'Escola de Musica'),
+(61,61,'Casas, Aptos e Condominios');
+/*!40000 ALTER TABLE `tipo_gerador_fluxo_pdv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_cluster_pdv
+--
+
+LOCK TABLES `tipo_cluster_pdv` WRITE;
+/*!40000 ALTER TABLE `tipo_cluster_pdv` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tipo_cluster_pdv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_entrega
+--
+
+LOCK TABLES `tipo_entrega` WRITE;
+/*!40000 ALTER TABLE `tipo_entrega` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tipo_entrega` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- area_influencia_pdv
+--
+
+LOCK TABLES `area_influencia_pdv` WRITE;
+/*!40000 ALTER TABLE `area_influencia_pdv` DISABLE KEYS */;
+INSERT INTO `area_influencia_pdv` VALUES 
+(1,1,'AREA COMERCIAL A/B'),
+(2,2,'AREA COMERCIAL C/D'),
+(3,3,'COMERCIAL'),
+(4,4,'CONVENIENCIA VIAGEM'),
+(5,5,'ESCRITORIO A/B'),
+(6,6,'ESCRITORIO E FABRICA C/D'),
+(7,7,'RESIDENCIAL A/B'),
+(8,8,'RESIDENCIAL C/D');
+/*!40000 ALTER TABLE `area_influencia_pdv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_garantia_aceita
+--
+
+LOCK TABLES `tipo_garantia_aceita` WRITE;
+/*!40000 ALTER TABLE `tipo_garantia_aceita` DISABLE KEYS */;
+INSERT INTO `tipo_garantia_aceita` VALUES 
+(50,'ANTECEDENCIA_VALIDADE',1,1);
+/*!40000 ALTER TABLE `tipo_garantia_aceita` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_nota_fiscal
+--
+
+LOCK TABLES `tipo_nota_fiscal` WRITE;
+/*!40000 ALTER TABLE `tipo_nota_fiscal` DISABLE KEYS */;
+INSERT INTO `tipo_nota_fiscal` VALUES 
+(1,0,'NF-e Entrada em Devolução de Remessa em Consignação ','COTA','DISTRIBUIDOR','NF_DEVOLUCAO_REMESSA_CONSIGNACAO',0,'NF-e Entrada em Devolução de Remessa em Consignação ',1,'PRESTADOR_SERVICO','ENTRADA',3,4),(2,0,'Entrada de Devolução Simbólica de Mercadoria Vendida Remetida anteriormente em consignação','COTA','DISTRIBUIDOR','NF_DEVOLUCAO_SIMBOLICA',0,'Entrada de Devolução Simbólica de Mercadoria Vendida Remetida anteriormente em consignação',2,'PRESTADOR_SERVICO','ENTRADA',5,6),(3,0,'Venda de Mercadoria remetida anteriormente em Consignação','COTA','DISTRIBUIDOR','NF_VENDA',0,'Venda de Mercadoria remetida anteriormente em Consignação',3,'PRESTADOR_SERVICO','SAIDA',7,8),(4,0,'Venda de Mercadoria remetida anteriormente em Consignação','DISTRIBUIDOR','TREELOG','NF_VENDA',0,'Venda de Mercadoria remetida anteriormente em Consignação',4,'PRESTADOR_SERVICO','SAIDA',7,8),(5,0,'Remessa de Mercadoria em Consignação','DISTRIBUIDOR','TREELOG','NF_REMESSA_MERCADORIA_CONSIGNACAO',0,'Remessa de Mercadoria em Consignação',5,'PRESTADOR_SERVICO','SAIDA',1,2),(6,0,'Remessa de Mercadoria em Consignação','COTA','DISTRIBUIDOR','NF_REMESSA_MERCADORIA_CONSIGNACAO',0,'Remessa de Mercadoria em Consignação',6,'PRESTADOR_SERVICO','SAIDA',1,2),(7,0,'Devolução de Mercadoria Recebida em Consignação','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO',0,'Devolução de Mercadoria Recebida em Consignação',7,'PRESTADOR_SERVICO','SAIDA',15,16),(8,0,'Devolução de Mercadoria Recebida em Consignação','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO',0,'Devolução de Mercadoria Recebida em Consignação',8,'PRESTADOR_SERVICO','SAIDA',15,16),(9,0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_SIMBOLICA',0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação',9,'PRESTADOR_SERVICO','ENTRADA',17,18),(10,0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_SIMBOLICA',0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação',10,'PRESTADOR_SERVICO','ENTRADA',17,18),(11,0,'Venda de Mercadoria recebida anteriormente em Consignação','COTA','TREELOG','NF_VENDA',0,'Venda de Mercadoria recebida anteriormente em Consignação',12,'PRESTADOR_SERVICO','SAIDA',13,14),(12,0,'NF-e de Entrada de Retorno de Remessa para Distribuição','COTA','DISTRIBUIDOR','NF_ENTRADA_RETORNO_REMESSA_DISTRIBUICAO',0,'NF-e de Entrada de Retorno de Remessa para Distribuição',11,'PRESTADOR_SERVICO','ENTRADA',11,12),(13,0,'NF-e de Devolução de Remessa para Distribuição','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',12,'PRESTADOR_SERVICO','SAIDA',9,10),(14,0,'NF-e de Devolução de Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',12,'PRESTADOR_SERVICO','SAIDA',9,10),(15,0,'NF-E Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_REMESSA_DISTRIBUICAO',0,'NF-E Remessa para Distribuição',17,'PRESTADOR_SERVICO','SAIDA',9,10),(16,0,'NF-E Remessa para Distribuição','COTA','DISTRIBUIDOR','NF_REMESSA_DISTRIBUICAO',0,'NF-E Remessa para Distribuição',17,'PRESTADOR_SERVICO','SAIDA',9,10),(17,0,'NF-E Remessa para Distribuição','DISTRIBUIDOR','TREELOG','NF_REMESSA_DISTRIBUICAO',0,'NF-E Remessa para Distribuição',17,'PRESTADOR_SERVICO','SAIDA',9,10),(18,1,'NF-E Transferência de Remessa para Distribuição','DISTRIBUIDOR','TREELOG','NF_REMESSA_CONSIGNACAO',0,'NF-E Transferência de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(19,1,'NF-E Transferência de Remessa para Distribuição','COTA','DISTRIBUIDOR','NF_REMESSA_CONSIGNACAO',0,'NF-E Transferência de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(20,1,'NF-e Retorno de Distribuição','DISTRIBUIDOR','COTA','NF_RETORNO_REMESSA_DISTRIBUICAO',0,'NF-e Retorno de Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(21,1,'NF-e Retorno de Distribuição','TREELOG','DISTRIBUIDOR','NF_RETORNO_REMESSA_DISTRIBUICAO',0,'NF-e Retorno de Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(22,1,'NF-e de Remessa para Distribuição (NECA / Danfe)','COTA','DISTRIBUIDOR','NF_REMESSA_DISTRIBUICAO',0,'NF-e de Remessa para Distribuição (NECA / Danfe)',1,'PRESTADOR_FILIAL','SAIDA',9,10),(23,1,'NF-e de Remessa para Distribuição (NECA / Danfe)','DISTRIBUIDOR','TREELOG','NF_REMESSA_DISTRIBUICAO',0,'NF-e de Remessa para Distribuição (NECA / Danfe)',1,'PRESTADOR_FILIAL','SAIDA',9,10),(24,1,'NF-e de Devolução de Remessa para Distribuição','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(25,1,'NF-e de Devolução de Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(26,1,'NF-e de Entrada de Retorno de Remessa para Distribuição','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_ENCALHE',0,'NF-e de Entrada de Retorno de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',11,12),(27,1,'NF-e de Entrada de Retorno de Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_ENCALHE',0,'NF-e de Entrada de Retorno de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',11,12),(28,1,'Venda de Mercadoria recebida anteriormente em Consignação','COTA','DISTRIBUIDOR','NF_VENDA',0,'Venda de Mercadoria recebida anteriormente em Consignação',1,'PRESTADOR_FILIAL','SAIDA',13,14),(29,1,'Venda de Mercadoria recebida anteriormente em Consignação','DISTRIBUIDOR','TREELOG','NF_VENDA',0,'Venda de Mercadoria recebida anteriormente em Consignação',1,'PRESTADOR_FILIAL','SAIDA',13,14);
+/*!40000 ALTER TABLE `tipo_nota_fiscal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- endereco_distribuidor
+--
+
+LOCK TABLES `endereco_distribuidor` WRITE;
+/*!40000 ALTER TABLE `endereco_distribuidor` DISABLE KEYS */;
+INSERT INTO `endereco_distribuidor` VALUES 
+(1,1,'COMERCIAL',1,1);
+/*!40000 ALTER TABLE `endereco_distribuidor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_licenca_municipal
+--
+
+LOCK TABLES `tipo_licenca_municipal` WRITE;
+/*!40000 ALTER TABLE `tipo_licenca_municipal` DISABLE KEYS */;
+INSERT INTO `tipo_licenca_municipal` VALUES 
+(1,1,'TPU'),
+(2,2,'CCM PS JURIDICA'),
+(3,3,'CCM PESSOA FISICA'),
+(4,4,'PROCESSO'),
+(5,5,'O');
+/*!40000 ALTER TABLE `tipo_licenca_municipal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- log_faixa_uf
+--
+
+LOCK TABLES `log_faixa_uf` WRITE;
+/*!40000 ALTER TABLE `log_faixa_uf` DISABLE KEYS */;
+INSERT INTO `log_faixa_uf` VALUES 
+('AC',NULL,NULL),
+('AL',NULL,NULL),
+('AM',NULL,NULL),
+('AP',NULL,NULL),
+('BA',NULL,NULL),
+('CE',NULL,NULL),
+('DF',NULL,NULL),
+('ES',NULL,NULL),
+('GO',NULL,NULL),
+('MA',NULL,NULL),
+('MG',NULL,NULL),
+('MS',NULL,NULL),
+('MT',NULL,NULL),
+('PA',NULL,NULL),
+('PB',NULL,NULL),
+('PE',NULL,NULL),
+('PI',NULL,NULL),
+('PR',NULL,NULL),
+('RJ',NULL,NULL),
+('RN',NULL,NULL),
+('RO',NULL,NULL),
+('RR',NULL,NULL),
+('RS',NULL,NULL),
+('SC',NULL,NULL),
+('SE',NULL,NULL),
+('SP',NULL,NULL),
+('TO',NULL,NULL);
+/*!40000 ALTER TABLE `log_faixa_uf` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- tipo_produto
+--
+
+LOCK TABLES `tipo_produto` WRITE;
+/*!40000 ALTER TABLE `tipo_produto` DISABLE KEYS */;
+INSERT INTO `tipo_produto` VALUES 
+(1,1,'0049029000','Revistas','REVISTA',1),
+(2,2,'0049019900','Fasciculos','COLECIONAVEL',2),
+(3,3,'0049030000','Livro','LIVRO',3),
+(4,4,'0049011000','Cromos','CROMO',4),
+(5,5,'048205000','Cards/Similares','CROMO',4),
+(6,6,'0049029000','Album','ALBUM',5),
+(7,7,'0049029000','Guia','GUIA',3),
+(8,8,'004902900','Quadrinhos','REVISTA',1),
+(9,9,'004902900','Atividades','REVISTA',1),
+(10,10,'004902900','Passa Tempo','REVISTA',1),
+(11,11,'085243100','Videos','OUTROS',6),
+(12,12,'0049029000','CD-ROM','OUTROS',6),
+(13,13,'0049011000','Poster','OUTROS',7),
+(14,14,'004902100','Jornal','JORNAL',1),
+(15,15,'004902900','Tabloide','JORNAL',1),
+(16,16,'0049029000','Outros','OUTROS',1),
+(17,17,'004902900','Capa Dura','OUTROS',3),
+(18,18,'0049019900','Revista Digital','REVISTA',1),
+(19,19,'0049029000','DVD','OUTROS',6),
+(20,20,'004902900','Livro Ilustrado','ALBUM',5),
+(21,40,'002202100','Refrigerante','OUTROS',8),
+(22,98,'004902900','Revistas Carga','REVISTA',1),
+(23,36,'0049011000','Livro Ilustrado.','ALBUM',5);
+/*!40000 ALTER TABLE `tipo_produto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- parametros_distribuidor_emissao_documentos
+--
+
+LOCK TABLES `parametros_distribuidor_emissao_documentos` WRITE;
+/*!40000 ALTER TABLE `parametros_distribuidor_emissao_documentos` DISABLE KEYS */;
+INSERT INTO `parametros_distribuidor_emissao_documentos` VALUES 
+('BOLETO',0,0,1),
+('BOLETO_SLIP',0,1,1),
+('CHAMADA_ENCALHE',0,1,1),
+('NOTA_ENVIO',0,1,1),
+('RECIBO',0,0,1),
+('SLIP',0,0,1);
+/*!40000 ALTER TABLE `parametros_distribuidor_emissao_documentos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `feriado` WRITE;
+/*!40000 ALTER TABLE `feriado` DISABLE KEYS */;
+INSERT INTO `feriado` VALUES 
+(1,'2014-04-18','Sexta Feira Santa',0,0,0,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(2,'2014-04-21','Tiradentes',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(3,'2014-05-01','Dia do Trabalho',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(4,'2014-06-19','Corpus Christi',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(5,'2014-09-07','Independência do Brasil',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(6,'2014-10-12','Aparecida',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(7,'2014-11-02','Finados',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(8,'2014-11-15','Proclamação da República',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(9,'2014-12-25','Natal',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
+(10,'2014-01-01','Confraternização Universal',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL);
+
+/*!40000 ALTER TABLE `feriado` ENABLE KEYS */;
+UNLOCK TABLES;
+-- ######################################################################################################################################################################################
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+

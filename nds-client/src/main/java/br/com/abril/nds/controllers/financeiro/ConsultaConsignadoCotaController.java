@@ -220,11 +220,9 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = 
-				this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
+		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
 		
-		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = 
-				new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
+		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsignadoCota));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());

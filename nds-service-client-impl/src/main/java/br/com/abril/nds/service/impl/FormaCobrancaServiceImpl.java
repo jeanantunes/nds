@@ -396,9 +396,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 
-		FormaCobranca formaCobranca = this.formaCobrancaRepository
-				.obterFormaCobranca(idCota, idFornecedor, diaDoMes,
-						diaDaSemana);
+		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(idCota, idFornecedor, diaDoMes, diaDaSemana);
 
 		return formaCobranca;
 	}

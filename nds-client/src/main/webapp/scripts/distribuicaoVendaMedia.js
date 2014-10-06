@@ -746,7 +746,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
         var matriz = [],
         	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
         	dadosResumo = {},
-        	numeroEstudo = $('#idEstudo').text();
+        	numeroEstudo = $('#idEstudo', this.workspace).text();
         
         $.postJSON(url,
                 [{name : "id" , value : numeroEstudo}],
@@ -761,15 +761,6 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
 	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
 	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
-	            
-	            
-	            $('#workspace').bind('tabsselect', function(event, ui) {
-	                // Objects available in the function context:
-	               console.log(ui.tab);     // anchor element of the selected (clicked) tab
-	               console.log(ui.panel);   // element, that contains the selected/clicked tab contents
-	               console.log(ui.index);   // zero-based index of the selected (clicked) tab
-	            
-	           });
 	            
 	            $('#workspace .ui-tabs-nav li a').each(function(k, v){ 
 					if($(v).text() == 'Histograma Pré Análise') {
