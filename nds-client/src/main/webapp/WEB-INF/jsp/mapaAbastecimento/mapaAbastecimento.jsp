@@ -47,7 +47,7 @@
     <div class="areaBts">
 	    <div class="area">
 			<span class="bt_arq">
-			    <a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" rel="tipsy" title="Imprimir" target="_blank">
+			    <a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" rel="tipsy" title="Imprimir">
 				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>

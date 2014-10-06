@@ -80,6 +80,8 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -509,9 +511,18 @@ public class CotaController extends BaseController {
      */
 	@Post
 	@Path("/obterDadosCNPJ")
-	public void obterDadosCNPJ(String numeroCnpj){
+	public void obterDadosCNPJ(String numeroCnpj) {
 		
-		if(numeroCnpj!= null){
+		CNPJValidator cnpjValidator = new CNPJValidator(true);
+		try {
+			
+			cnpjValidator.assertValid(numeroCnpj);
+		} catch(Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "CNPJ inválido: "+ numeroCnpj);
+		}
+		
+		if(numeroCnpj!= null) {
 			
 			numeroCnpj = numeroCnpj.replace(".", "").replace("-", "").replace("/", "");
 			
@@ -544,7 +555,16 @@ public class CotaController extends BaseController {
 	@Path("/obterDadosCPF")
 	public void obterDadosCPF(String numeroCPF){
 		
-		if(numeroCPF!= null){
+		CPFValidator cpfValidator = new CPFValidator(true);
+		try {
+			
+			cpfValidator.assertValid(numeroCPF);
+		} catch(Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "CPF inválido: "+ numeroCPF);
+		}
+		
+		if(numeroCPF!= null) {
 			
 			numeroCPF = numeroCPF.replace(".", "").replace("-", "");
 			
