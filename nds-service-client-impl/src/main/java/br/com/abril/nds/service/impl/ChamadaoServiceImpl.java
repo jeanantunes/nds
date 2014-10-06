@@ -119,8 +119,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		ConsultaChamadaoDTO consultaChamadaoDTO = new ConsultaChamadaoDTO();
 		
-		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(
-			this.chamadaoRepository.obterConsignadosComChamadao(filtro));
+		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(this.chamadaoRepository.obterConsignadosComChamadao(filtro));
 		
 		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoChamadaEncalhe(filtro));
 		
