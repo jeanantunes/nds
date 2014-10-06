@@ -55,6 +55,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -634,11 +635,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = new ResumoFechamentoDiarioConsignadoDTO();
 
-        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
-            resumoFechamentoDiarioConsignado.new ResumoConsignado();
+        ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
-        this.processarValoresConsignado(dataFechamento,
-				resumoFechamentoDiarioConsignado, resumoConsignado);
+        this.processarValoresConsignado(dataFechamento, resumoFechamentoDiarioConsignado, resumoConsignado);
 
         return resumoFechamentoDiarioConsignado;
 	}
@@ -653,7 +652,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
         //Valores de Entrada no consignado do Distribuidor
         BigDecimal valorCE = Util.nvl(
-        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento), BigDecimal.ZERO);
+        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento, TipoCota.CONSIGNADO), BigDecimal.ZERO);
+        
+        BigDecimal valorCEAvista = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterSaldoEntradaNoConsignado(dataFechamento, TipoCota.A_VISTA), BigDecimal.ZERO);
         
         BigDecimal valorDiferencasEntrada = Util.nvl(
         		diferencaRepository.obterSaldoDaDiferencaDeEntradaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
@@ -665,7 +667,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
         resumoConsignado.setValorOutrosValoresEntrada(valorDiferencasEntrada.add(valorCotaAusenteEntrada));
         
-        resumoConsignado.setValorEntradas(valorCE.add(resumoConsignado.getValorOutrosValoresEntrada()));
+        resumoConsignado.setValorEntradas(valorCE.add(valorCEAvista).add(resumoConsignado.getValorOutrosValoresEntrada()));
         
        //Valores de Saida no consignado do Distribuidor
         
@@ -675,12 +677,20 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         valorExpedido = valorExpedido.add(Util.nvl(
                 diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
         
-        BigDecimal valorSaidaDoConsignadoAVista =  Util.nvl(
-        		this.movimentoEstoqueCotaRepository.obterValorConsignadoCotaAVista(dataFechamento),BigDecimal.ZERO);
+        BigDecimal valorSaidaExpedicaoAVistaDevolveEncalhe = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, true),BigDecimal.ZERO);
         
-        resumoConsignado.setValorAVista(valorSaidaDoConsignadoAVista);
+        BigDecimal valorSaidaExpedicaoAVistaNaoDevolveEncalhe = Util.nvl(
+        		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, false),BigDecimal.ZERO);
         
-        resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaDoConsignadoAVista));
+        //Subtrai as vendas firmes
+        valorExpedido = valorExpedido.subtract(valorSaidaExpedicaoAVistaNaoDevolveEncalhe);
+        
+        resumoConsignado.setValorAVista(valorSaidaExpedicaoAVistaDevolveEncalhe);
+        
+        resumoConsignado.setValorAVistaCE(valorCEAvista);
+        
+        resumoConsignado.setValorExpedicao(valorExpedido.subtract(valorSaidaExpedicaoAVistaDevolveEncalhe));
         
         resumoConsignado.setValorOutrosValoresSaidas(this.obterValorSaidaOutros(dataFechamento));
         
@@ -854,7 +864,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
     	
         validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
-    	
+        
     	FechamentoDiario fechamento = new FechamentoDiario();
     	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
     	

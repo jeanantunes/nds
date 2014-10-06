@@ -49,7 +49,7 @@ public class ConsultasConsignadoFecharDiaTest extends AbstractRepositoryTest {
         diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
 
 	    BigDecimal valorSaidaDoConsignadoAVista =  Util.nvl(
-		this.movimentoEstoqueCotaRepository.obterValorConsignadoCotaAVista(dataFechamento),BigDecimal.ZERO);
+		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, true),BigDecimal.ZERO);
 
 		resumoConsignado.setValorAVista(valorSaidaDoConsignadoAVista);
 		

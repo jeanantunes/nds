@@ -36,4 +36,5 @@ nds-integration-client/src/main/resources/ndsi-database.properties
 nds-integration-client/src/main/resources/couchdb.properties
 *.classpath
 nfe/
-
+nds-rollout/*.log
+nds-rollout/logs/*.log

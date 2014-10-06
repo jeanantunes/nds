@@ -436,7 +436,7 @@ public class MapaAbastecimentoController extends BaseController {
 			case BOX:
 				
 			    if (filtro.getQuebraPorCota()){
-				    
+			        paginacao.setSortColumn("nomeProduto");
 				    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxQuebraPorCota(filtro).entrySet();
 			        
 			        parameters.put("DATA", filtro.getDataLancamento());
@@ -446,7 +446,7 @@ public class MapaAbastecimentoController extends BaseController {
 			        path += "rel_box_por_quebra_cota_principal.jasper";
 			        
 				} else {
-				    
+				    paginacao.setSortColumn("nomeProduto");
 				    final Map<String, ProdutoMapaDTO> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 				    
 				    for (String key : mapa.keySet()){
@@ -475,7 +475,7 @@ public class MapaAbastecimentoController extends BaseController {
                     path += "rel_rota_quebra_principal.jasper";
 			        
 			    } else {
-			        
+			        filtro.getPaginacao().setSortColumn("codigoBox");
 			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = 
 			                mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
                     
@@ -493,7 +493,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			break;
 			case COTA:
-				
+			    paginacao.setSortColumn("cota");
 			    dados = Arrays.asList(
 				        mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro));
                 
@@ -503,7 +503,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			break;
 			case PRODUTO:
-			    
+			    paginacao.setSortColumn("nomeProduto");
 			    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro).getProdutos().entrySet();
 			    
 			    nomeRelatorio = "Mapa de Abastecimento por Produto";

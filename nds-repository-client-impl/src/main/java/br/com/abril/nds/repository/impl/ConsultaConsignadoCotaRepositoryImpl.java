@@ -89,8 +89,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
-			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
+	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		 
 		StringBuilder sql = new StringBuilder();
 		
@@ -237,7 +236,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("AND (");
-	    sql.append("        ((c.TIPO_COTA = :tipoCotaAVista AND c.DEVOLVE_ENCALHE = TRUE) OR (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro)) ");
+	    sql.append("        ((c.TIPO_COTA = :tipoCotaAVista AND c.DEVOLVE_ENCALHE = TRUE) ");
+	    sql.append("        	OR (c.TIPO_COTA <> :tipoCotaAVista AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro))) ");
 		sql.append("    )");
 		
 		return sql;

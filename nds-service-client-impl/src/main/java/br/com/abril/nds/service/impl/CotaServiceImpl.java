@@ -152,6 +152,8 @@ import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.ListUtils;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -1704,6 +1706,14 @@ public class CotaServiceImpl implements CotaService {
                 mensagensValidacao.add("O preenchimento do campo [CNPJ] é obrigatório!");
             }
             
+            CNPJValidator cnpjValidator = new CNPJValidator(true);
+            try {
+            	
+            	cnpjValidator.assertValid(cotaDto.getNumeroCnpj());
+            } catch(Exception e) {
+            	mensagensValidacao.add("CNPJ inválido: "+ cotaDto.getNumeroCnpj());
+            }
+            
             if(cotaDto.getInscricaoEstadual() == null || cotaDto.getInscricaoEstadual().isEmpty() ){
                 mensagensValidacao.add("O preenchimento do campo [Inscrição Estadual] é obrigatório!");
             }
@@ -1717,6 +1727,14 @@ public class CotaServiceImpl implements CotaService {
             
             if(cotaDto.getNumeroCPF() == null || cotaDto.getNumeroCPF().isEmpty()){
                 mensagensValidacao.add("O preenchimento do campo [CPF] é obrigatório!");
+            }
+            
+            CPFValidator cpfValidator = new CPFValidator(true);
+            try {
+            	
+            	cpfValidator.assertValid(cotaDto.getNumeroCPF());
+            } catch(Exception e) {
+            	mensagensValidacao.add("CPF inválido: "+ cotaDto.getNumeroCPF());
             }
             
             if(cotaDto.getNumeroRG() == null || cotaDto.getNumeroRG().isEmpty()){

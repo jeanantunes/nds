@@ -158,9 +158,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																 boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
-			this.obterDadosRecolhimento(
-				anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
-				forcarBalanceamento);
+			this.obterDadosRecolhimento(anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento, forcarBalanceamento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -873,9 +871,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
 		
-		produtosRecolhimento =
-			this.tratarAgrupamentoLancamentosComMesmaEdicao(
-				produtosRecolhimento, produtosRecolhimentoAgrupados);
+		produtosRecolhimento = this.tratarAgrupamentoLancamentosComMesmaEdicao(produtosRecolhimento, produtosRecolhimentoAgrupados);
 		
 		dadosRecolhimento.setProdutosRecolhimentoAgrupados(produtosRecolhimentoAgrupados);
 		
@@ -883,22 +879,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(
-				this.distribuidorRepository.capacidadeRecolhimento());
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(this.distribuidorRepository.capacidadeRecolhimento());
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 	
-		dadosRecolhimento.setPeriodoRecolhimentoSemanaAnterior(
-		        this.getPeriodoSemanaAnterior(periodoRecolhimento.getDe()));
+		dadosRecolhimento.setPeriodoRecolhimentoSemanaAnterior(this.getPeriodoSemanaAnterior(periodoRecolhimento.getDe()));
 		
 		if (!produtosRecolhimento.isEmpty()) {
 		
-			this.obterCotasOperacaoDiferenciada(
-				periodoRecolhimento, produtosRecolhimento, dadosRecolhimento);
+			this.obterCotasOperacaoDiferenciada(periodoRecolhimento, produtosRecolhimento, dadosRecolhimento);
 		}
 		
-		this.atualizarEncalheSedeAtendidaDosProdutos(
-			produtosRecolhimento, dadosRecolhimento.getCotasOperacaoDiferenciada());
+		this.atualizarEncalheSedeAtendidaDosProdutos(produtosRecolhimento, dadosRecolhimento.getCotasOperacaoDiferenciada());
 		
 		return dadosRecolhimento;
 	}
@@ -1302,15 +1294,28 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
+				if(produtoRecolhimento.isProdutoAgrupado()) {
+					
+					for(Long idLancamento : produtoRecolhimento.getIdsLancamentosAgrupados()) {
+						
+						List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+								this.obterCotasOperacaoDiferenciadaPorLancamento(cotasOperacaoDiferenciada, idLancamento);
+						
+						if (!cotasOperacaoDiferenciadaDoLancamento.isEmpty()) {
+							
+							this.montarMapsOperacaoDiferenciada(
+								cotasOperacaoDiferenciadaDoLancamento, mapOperacaoDifAdicionar, mapOperacaoDifRemover, dataRecolhimento);
+						}
+					}
+				}
+				
 				List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
-					this.obterCotasOperacaoDiferenciadaPorLancamento(
-						cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+					this.obterCotasOperacaoDiferenciadaPorLancamento(cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
 				
 				if (!cotasOperacaoDiferenciadaDoLancamento.isEmpty()) {
 					
 					this.montarMapsOperacaoDiferenciada(
-						cotasOperacaoDiferenciadaDoLancamento, mapOperacaoDifAdicionar,
-						mapOperacaoDifRemover, dataRecolhimento);
+						cotasOperacaoDiferenciadaDoLancamento, mapOperacaoDifAdicionar, mapOperacaoDifRemover, dataRecolhimento);
 				}
 			}
 		}
@@ -1467,16 +1472,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 
-			List<Long> idLancamentos =
-				mapProdutoEdicaoLancamento.get(produtoRecolhimento.getIdProdutoEdicao());
+			List<Long> idLancamentos = mapProdutoEdicaoLancamento.get(produtoRecolhimento.getIdProdutoEdicao());
 
 			if (this.existeMaisDeUmLancamento(idLancamentos)) {
 
 				produtosRecolhimentoAgrupados.add(produtoRecolhimento);
 				
-				this.agruparProdutosRecolhimento(
-					produtoRecolhimento, idLancamentos,
-					produtosRecolhimento, produtosRecolhimentoAgrupados);
+				this.agruparProdutosRecolhimento(produtoRecolhimento, idLancamentos, produtosRecolhimento, produtosRecolhimentoAgrupados);
 			}
 
 			produtosRecolhimentoRetorno.add(produtoRecolhimento);
@@ -1540,9 +1542,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				produtoRecolhimentoNovo = produtoRecolhimento;
 			}
 
-			this.efetivarAgrupamento(
-				produtoRecolhimento, produtoRecolhimentoAntigo,
-				produtoRecolhimentoNovo,idLancamento);
+			this.efetivarAgrupamento(produtoRecolhimento, produtoRecolhimentoAntigo, produtoRecolhimentoNovo, idLancamento);
 			
 			produtosRecolhimentosAgrupados.add(produtoRecolhimentoMesmaEdicao);
 		}

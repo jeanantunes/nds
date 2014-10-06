@@ -49,6 +49,7 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private Boolean parametroDistribuidor;
 	
+	private String situacaoCadastro;	
 	
 	public Long getIdParametroCobranca() {
 		return idParametroCobranca;
@@ -242,6 +243,14 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 
 	
+	public String getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
+
+	public void setSituacaoCadastro(String situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
+	}
+
 	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */

@@ -196,7 +196,7 @@ $(function(){
 
 				<td id="tituloDevolveEncalhe">Devolve Encalhe?</td>
 				<td id="selectDevolveEncalhe"><select name="devolveEncalhe" id="devolveEncalhe">
-						<option value="0">Sim</option>
+						<option value="0" selected="selected">Sim</option>
 						<option value="1">Não</option>
 				</select></td>
 				
