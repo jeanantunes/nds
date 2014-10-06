@@ -330,6 +330,27 @@
 					p.total = +$('rows total', data).text();
 				} else {
 					p.total = data.total;
+					
+					$.each($('select option', this.pDiv), function(k, v) {
+						if(v.value > 50) {
+							$(this).remove();
+						}
+					});
+					
+					if(data.total > 50) {
+						
+						if(data.total < 1500) {
+							
+							$('select', this.pDiv).append('<option value="'+ data.total +'">'+ data.total +'</option>');
+						} else {
+							
+							$('select', this.pDiv).append('<option value="'+ 250 +'">'+ 250 +'</option>');
+							$('select', this.pDiv).append('<option value="'+ 500 +'">'+ 500 +'</option>');
+							$('select', this.pDiv).append('<option value="'+ 1000 +'">'+ 1000 +'</option>');
+							$('select', this.pDiv).append('<option value="'+ 2000 +'">'+ 2000 +'</option>');
+							$('select', this.pDiv).append('<option value="'+ 3000 +'">'+ 3000 +'</option>');
+						}
+					}
 				}
 				if (p.total == 0) {
 					$('tr, a, td, div', t).unbind();
