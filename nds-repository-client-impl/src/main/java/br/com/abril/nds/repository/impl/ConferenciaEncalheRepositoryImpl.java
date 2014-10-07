@@ -380,7 +380,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, 0) AS precoComDesconto, ");
 
 		hql.append(" CASE WHEN ");
-		hql.append(" (SELECT plp.TIPO ");
+		hql.append(" (SELECT DISTINCT plp.TIPO ");
         hql.append(" FROM LANCAMENTO lanc  ");
         hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
         hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
