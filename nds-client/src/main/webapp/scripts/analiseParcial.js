@@ -1502,6 +1502,7 @@ var analiseParcialController = $.extend(true, {
         } else {
             $(".label").hide();
             $("#label_"+ opcao).show();
+            $("#labelAte_"+ opcao).show();
             $("#opcoesOrdenarPor").show();
         }
     },
@@ -1515,19 +1516,21 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPor : function(estudo) {
-        var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        
+    	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        var elemento = $("#elementos :selected").val();
+
         switch (valueFiltroOrdenarPor) {
             case 'numero_cota':
-                analiseParcialController.filtrarCotas();
+                analiseParcialController.filtrarCotas(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             case 'percentual_de_venda':
-                analiseParcialController.filtrarOrdenarPercentualVenda();
+                analiseParcialController.filtrarOrdenarPercentualVenda(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             case 'reducao_de_reparte':
-                analiseParcialController.filtrarOrdenarReducaoReparte();
+                analiseParcialController.filtrarOrdenarReducaoReparte(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             default:
-                var elemento = $("#elementos :selected").val();
 
                 $("#baseEstudoGridParcial").flexOptions({
                     params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
@@ -1542,11 +1545,27 @@ var analiseParcialController = $.extend(true, {
         }
         return false;
     },
+    
+    filtroDefault: function (estudo, valueFiltroOrdenarPor, elemento) {
 
-    filtrarCotas: function () {
+        $("#baseEstudoGridParcial").flexOptions({
+            params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
+                {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
+                {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
+                {name:'id',             value: estudo},
+                {name:'elemento',       value: elemento}]
+        }).flexReload();
+
+    },
+
+    filtrarCotas: function (estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' && $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+
+        	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
+            
+        	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+        	
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;
@@ -1601,10 +1620,14 @@ var analiseParcialController = $.extend(true, {
             });
     },
 
-    filtrarOrdenarPercentualVenda : function() {
+    filtrarOrdenarPercentualVenda : function(estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+            
+        	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
+            
+        	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+            
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;
@@ -1638,10 +1661,14 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.somarTotais();
     },
 
-    filtrarOrdenarReducaoReparte : function() {
+    filtrarOrdenarReducaoReparte : function(estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+            
+        	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
+            
+            analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+            
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;

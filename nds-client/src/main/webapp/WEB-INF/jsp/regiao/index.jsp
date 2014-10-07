@@ -66,7 +66,7 @@ function removeProdutoEscohido(idx){
 		<div class="grids" style="display:none;">
 			<span class="bt_novos">
 				<a href="javascript:;" isEdicao="true" onclick="regiaoController.addCotasRegAutomatica();" rel="tipsy" title="Região Automática">
-					<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
+					<img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" />
 				</a>
 			</span>
 
