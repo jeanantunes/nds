@@ -174,7 +174,10 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = 
 				cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
 		
-		lisAntecipadaEncalheDTOs.removeAll(filtro.getChamadasNaoSelecionadas());
+		if(filtro.getChamadasNaoSelecionadas() != null ){			
+			lisAntecipadaEncalheDTOs.removeAll(filtro.getChamadasNaoSelecionadas());
+		}
+		
 		
 		InfoChamdaAntecipadaEncalheDTO infoEncalheDTO = new InfoChamdaAntecipadaEncalheDTO();
 		

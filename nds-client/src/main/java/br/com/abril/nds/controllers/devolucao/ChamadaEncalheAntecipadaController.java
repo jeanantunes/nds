@@ -180,15 +180,13 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor, 
-										 Long rota,Long roteiro,boolean programacaoRealizada,String municipio,Long tipoPontoPDV,
+	public void pesquisarCotasPorProduto(String codigoProduto, Long numeroEdicao, Long box, Long fornecedor, 
+										 Long rota, Long roteiro, boolean programacaoRealizada, String municipio, Long tipoPontoPDV,
 										 String sortorder, String sortname, int page, int rp){
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
-		FiltroChamadaAntecipadaEncalheDTO filtro = 
-				new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor,
-													  rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
+		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO(codigoProduto,numeroEdicao,box,fornecedor, rota,roteiro,programacaoRealizada, municipio,tipoPontoPDV);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -678,8 +676,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	private ResultadoChamadaEncalheAntecipadaVO efetuarConsulta(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
-		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = 
-				chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
+		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
 		
 		if (infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe() == null 
 				|| infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe().isEmpty()){
