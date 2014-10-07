@@ -1,3 +1,4 @@
+<jsp:useBean id="random" class="java.util.Random" scope="application" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -24,7 +25,7 @@
 <script language="javascript" type="text/javascript" src="scripts/tooltip/jquery.tipsy.js"></script>
 
 <script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js?random=${random.nextInt()}"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>'
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
@@ -37,7 +38,6 @@
 <script type="text/javascript" src="scripts/jquery.dateFormat-1.0.js"></script>
 
 <script type="text/javascript" src="scripts/jshashtable-2.1.js"></script>
-
 
 <script type="text/javascript" src="scripts/commonsbehaviour.js"></script>
 
