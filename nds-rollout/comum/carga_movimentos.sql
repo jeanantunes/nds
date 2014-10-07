@@ -1020,7 +1020,6 @@ where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
 truncate table HVND_AUX;
 
-
 -- F = FECHADO
 insert into HVND_AUX
 select distinct produto_edicao_id from HVND where status = 'F';
@@ -1028,6 +1027,10 @@ select distinct produto_edicao_id from HVND where status = 'F';
 update lancamento
 set status = 'FECHADO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+
+update lancamento l
+set status = 'EM_RECOLHIMENTO'
+where l.data_rec_distrib between date_add(l.data_rec_distrib, interval -5 day) and date(now()) and status = 'FECHADO';
 
 DROP TABLE HVND_AUX;
 
