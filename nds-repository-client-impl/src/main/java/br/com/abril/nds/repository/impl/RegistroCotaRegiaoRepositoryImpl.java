@@ -204,8 +204,23 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" produto.codigoICD AS codigo_icd, ");
 				hql.append(" produto.nome AS nomeProduto, ");
 				hql.append(" prodEdicao.tipoClassificacaoProduto.descricao AS descricaoClassificacao, ");
-				hql.append(" lancam.dataLancamentoPrevista AS dataLcto, ");
-				hql.append(" lancam.status AS status ");
+				hql.append(" lancam.dataLancamentoDistribuidor AS dataLcto, ");
+				hql.append(" lancam.dataRecolhimentoDistribuidor AS dataRcto, ");
+				hql.append(" lancam.status AS status, ");
+
+				hql.append("  round((SELECT sum(estqProdCota.qtdeRecebida) ");
+				hql.append("          FROM EstoqueProdutoCota estqProdCota ");
+				hql.append("          WHERE estqProdCota.produtoEdicao = prodEdicao.id),0) as reparte, ");
+				
+				hql.append(" (CASE   ");
+				hql.append("  	WHEN lancam.status='FECHADO' OR lancam.status='RECOLHIDO' ");
+				hql.append("  THEN ");
+				hql.append("  	  round((SELECT sum(estqProdCota.qtdeRecebida - estqProdCota.qtdeDevolvida) ");
+				hql.append("          FROM EstoqueProdutoCota estqProdCota ");
+				hql.append("          WHERE estqProdCota.produtoEdicao = prodEdicao.id),0) ");
+				hql.append("  ELSE ");
+				hql.append("      null ");
+				hql.append("  END) as venda ");
 				
 				hql.append(" FROM Lancamento AS lancam ");
 				
