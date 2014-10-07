@@ -186,12 +186,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 
                 sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.uf = :distrito ");
             }
-            if (queryDTO.elementoIsCotasAVista()) {
-            	
-                sql.append(" join parametro_cobranca_cota pcc on pcc.cota_id = c.id ");
-                
-                sql.append(" and pcc.tipo_cota = upper(:cotasAVista) ");
-            }
         }   
 
         sql.append("  where ec.ESTUDO_ID = :estudoId ");
@@ -220,7 +214,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             
             if (queryDTO.elementoTipoDistribuicaoCota()) {
             	
-            	sql.append(" and c.TIPO_DISTRIBUICAO_COTA = :valorElemento ");
+            	sql.append(" and c.TIPO_DISTRIBUICAO_COTA = :tipoDistribuicaoCota ");
+            }
+            
+            if (queryDTO.elementoIsCotasAVista()) {
+            	
+                sql.append(" and c.tipo_cota = upper(:cotasAVista) ");
             }
         }
 
@@ -241,12 +240,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append(" group by c.ID ");
 
-        if (queryDTO.possuiOrdenacaoNMaiores() || queryDTO.possuiOrdenacaoRanking()) {
+        if (queryDTO.possuiOrdenacaoNMaiores()) {
         	
             sql.append(" order by ").append(" ranking.qtde desc ").append(" limit ").append(queryDTO.getFilterSortFrom().intValue()>0?queryDTO.getFilterSortFrom().intValue() - 1:0)
             
                .append(" , ").append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()) + 1);
             
+        } else if (queryDTO.possuiOrdenacaoRanking()) {
+        	
+        	 sql.append(" order by ").append(" ranking.qtde desc ");
+        	 
         } else if (queryDTO.possuiOrderBy()) {
         	
             sql.append(" order by ").append(queryDTO.getSortName()).append(" ").append(queryDTO.getSortOrder());
