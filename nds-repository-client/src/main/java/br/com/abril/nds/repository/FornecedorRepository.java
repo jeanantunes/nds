@@ -112,7 +112,7 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @param codigo
 	 * @return Fornecedor
 	 */
-	Fornecedor obterFornecedorPorCodigo(Integer codigo);
+	Fornecedor obterFornecedorPorCodigoInterface(Integer codigo);
 	
 	/**
 	 * Obtem o maior codigo de interface.

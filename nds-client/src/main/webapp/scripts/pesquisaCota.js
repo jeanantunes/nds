@@ -156,7 +156,6 @@ function PesquisaCota(workspace) {
 	//Pesquisar por nome da cota
 	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
 		
-		console.log("pesquisarPorNomeCota:: "+checkValidateResult);
 		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
 		
 		pesquisaCota.intervalo = $().interval(function() {

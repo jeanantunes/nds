@@ -298,20 +298,17 @@ public class ChamadaoController extends BaseController {
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
 		FiltroChamadaoDTO filtro  = 
-			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor, idEditor,
-										chamadaEncalhe, sortorder, sortname, page, rp);
+			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor, idEditor, chamadaEncalhe, sortorder, sortname, page, rp);
 		
 		ConsultaChamadaoDTO consultaChamadaoDTO = null;
 		
 		if (filtro.isChamadaEncalhe()) {
 		
-			consultaChamadaoDTO = 
-				this.chamadaoService.obterConsignadosComChamadao(filtro);
+			consultaChamadaoDTO = this.chamadaoService.obterConsignadosComChamadao(filtro);
 			
 		} else {
 		
-			consultaChamadaoDTO = 
-				this.chamadaoService.obterConsignados(filtro);
+			consultaChamadaoDTO = this.chamadaoService.obterConsignados(filtro);
 		}
 		
 		

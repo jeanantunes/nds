@@ -7,6 +7,7 @@ import java.util.Date;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -52,6 +53,7 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	private String hora;
 	
 	private Pessoa pessoa;
+	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -77,7 +79,7 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 		if (tipoPDV == null){
 			this.tipoPDV = " ";
 		}else{
-		this.tipoPDV = tipoPDV;
+			this.tipoPDV = tipoPDV;
 		}
 	}
 	
@@ -161,4 +163,14 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	public void setCotaId(Long cotaId) {
 		this.cotaId = cotaId;
 	}
+
+	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+		this.tipoPDV = tipoDistribuicaoCota.toString();
+	}
+	
 }

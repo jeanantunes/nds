@@ -434,7 +434,7 @@ public class FornecedorRepositoryImpl extends
 	 * @return Fornecedor
 	 */
 	@Override
-	public Fornecedor obterFornecedorPorCodigo(final Integer codigo) {
+	public Fornecedor obterFornecedorPorCodigoInterface(final Integer codigo) {
         final Criteria criteria = getSession().createCriteria(Fornecedor.class);
 		
 		criteria.add(Restrictions.eq("codigoInterface", codigo));
