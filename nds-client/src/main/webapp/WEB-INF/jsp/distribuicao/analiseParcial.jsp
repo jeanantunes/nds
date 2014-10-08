@@ -210,7 +210,7 @@ table.dadosTab { margin-left: 370px;}
 					</td>
 					<td>Elemento:</td>
 					<td><select id="elementos" name="elementos" style="width: 170px;"
-						onchange="analiseParcialController.filtrarOrdenarPor(${estudo.id})">
+						onchange="analiseParcialController.filtrarOrdenarPorElemento(${estudo.id})">
 							<option value="" selected="selected">Selecione...</option>
 					</select></td>
 					<td>
