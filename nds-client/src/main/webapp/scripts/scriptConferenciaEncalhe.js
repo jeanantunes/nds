@@ -812,7 +812,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.setarValoresPesquisados();
 	},
 	
-	montarListaConferencia:function (listaConferencia,indDistribuidorAceitaJuramentado){
+	montarListaConferencia:function (listaConferencia, indDistribuidorAceitaJuramentado, cotaAVista) {
 		
 		var innerTable = '';
 		
@@ -886,7 +886,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					if (indDistribuidorAceitaJuramentado == true) {
 					
-						if(parcialNaoFinal == true && !cotaAVista) {
+						if(parcialNaoFinal == true && ((typeof cotaAVista != "undefined") && !cotaAVista)) {
 							
 							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 							+ ' onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue; ConferenciaEncalhe.validarValorZero('+ 
@@ -939,7 +939,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		if (modeloConferenciaEncalhe){
 		
-			ConferenciaEncalhe.montarListaConferencia(modeloConferenciaEncalhe,indDistribuidorAceitaJuramentado);
+			ConferenciaEncalhe.montarListaConferencia(modeloConferenciaEncalhe, indDistribuidorAceitaJuramentado, cotaAVista);
 			
 			if (!indDistribuidorAceitaJuramentado) {
 				

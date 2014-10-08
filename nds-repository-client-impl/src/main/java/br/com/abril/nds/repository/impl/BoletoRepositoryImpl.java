@@ -127,7 +127,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		sql.append(" INNER JOIN COTA C ON C.ID = COB.COTA_ID ");
 		
-		sql.append(" INNER JOIN BAIXA_COBRANCA B ON B.COBRANCA_ID = COB.ID ");
+		sql.append(" LEFT JOIN BAIXA_COBRANCA B ON B.COBRANCA_ID = COB.ID ");
 		
 		sql.append(" INNER JOIN DIVIDA D ON D.ID = COB.DIVIDA_ID ");
 		
