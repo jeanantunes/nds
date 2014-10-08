@@ -612,7 +612,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapa, ");
 		
 		hql.append(" CASE WHEN ");
-        hql.append(" (SELECT plp.TIPO ");
+        hql.append(" (SELECT DISTINCT plp.TIPO ");
         hql.append(" FROM LANCAMENTO lanc  ");
         hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
         hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
