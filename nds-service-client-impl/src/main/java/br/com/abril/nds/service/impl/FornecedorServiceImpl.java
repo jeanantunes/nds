@@ -729,7 +729,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Transactional(readOnly=true)
 	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface) {
 		
-		return fornecedorRepository.obterFornecedorPorCodigo(codigoInterface);
+		return fornecedorRepository.obterFornecedorPorCodigoInterface(codigoInterface);
 		
 	}
 	

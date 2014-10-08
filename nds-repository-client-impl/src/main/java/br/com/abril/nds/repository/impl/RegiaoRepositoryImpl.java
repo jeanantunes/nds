@@ -56,15 +56,13 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,");
-		hql.append(" tipoPontoPDV.descricao as tipoPDV, ");
+		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
 		hql.append(" cota.situacaoCadastro as tipoStatus ");
 		
 		hql.append(" FROM RankingSegmento as ranking ");
 		hql.append(" LEFT JOIN ranking.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
-		hql.append(" LEFT JOIN pdv.segmentacao as segmentacao ");
-		hql.append(" LEFT JOIN segmentacao.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" LEFT JOIN ranking.tipoSegmentoProduto as segmento ");
 
 		hql.append(" WHERE segmento.id = :idSegmento ");
