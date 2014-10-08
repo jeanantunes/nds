@@ -523,7 +523,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 
 	List<MovimentoEstoqueCota> obterMovimentosEstoqueCotaPorIds(List<Long> idsMEC);
 	
-    BigDecimal obterValorConsignadoCotaAVista(final Date dataMovimentacao);
-
     BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe);
+    
 }
