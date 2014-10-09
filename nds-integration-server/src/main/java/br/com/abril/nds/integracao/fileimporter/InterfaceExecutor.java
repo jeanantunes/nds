@@ -571,6 +571,8 @@ public class InterfaceExecutor {
 				
 //		FileReader in = new FileReader(arquivo);
 //		Scanner scanner = new Scanner(in);
+//		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? StandardCharsets.ISO_8859_1.toString() : StandardCharsets.UTF_8.toString());
+		
 		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? "iso-8859-1" : "utf-8");
 		
 		int linhaArquivo = 0;
