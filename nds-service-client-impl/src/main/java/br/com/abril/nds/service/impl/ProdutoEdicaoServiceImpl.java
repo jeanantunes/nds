@@ -496,9 +496,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
     	final boolean feriado = this.calendarioService.isFeriado(data);
     	
-    	if (!dataOperante){
+    	if (dataOperante){
     		
-    		return false;
+    		return true;
     	}
     	
     	if (!feriado){
@@ -510,7 +510,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		final boolean feriadoSemOperacao = this.calendarioService.isFeriadoSemOperacao(data);
 		
-        if (feriadoComOperacao) {
+        if (!feriadoComOperacao) {
         	
             return true;            
 		}
@@ -567,7 +567,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
             	boolean dataValida = this.dataLancamentoValida(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor());
 
-	            if (!dataValida){
+	            if (dataValida){
 	            	
 	            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
 	            }
@@ -593,7 +593,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	            	boolean dataValida = this.dataLancamentoValida(dto.getDataLancamento(), dto.getIdFornecedor());
 
-		            if (!dataValida){
+		            if (dataValida){
 		            	
 		            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
 		            }
@@ -610,7 +610,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			if(dataRecDistribuidor!=null) {
 				
-	            if (!this.calendarioService.isDiaOperante(dataRecDistribuidor, dto.getIdFornecedor(), OperacaoDistribuidor.RECOLHIMENTO)) {
+	            if (this.calendarioService.isDiaOperante(dataRecDistribuidor, dto.getIdFornecedor(), OperacaoDistribuidor.RECOLHIMENTO)) {
 	            	
 	                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
 				}

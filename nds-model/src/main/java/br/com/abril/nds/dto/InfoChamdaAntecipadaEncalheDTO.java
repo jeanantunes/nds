@@ -5,9 +5,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class InfoChamdaAntecipadaEncalheDTO implements Serializable {
@@ -36,6 +37,10 @@ public class InfoChamdaAntecipadaEncalheDTO implements Serializable {
 	private Date dataProgramada;
 	
 	private boolean recolhimentoFinal;
+
+	private Date dataRecolhimentoPrevista;
+	
+	private TipoChamadaEncalhe tipoChamadaEncalhe;
 	
 	/**
 	 * @return the totalRegistros
@@ -157,6 +162,21 @@ public class InfoChamdaAntecipadaEncalheDTO implements Serializable {
 	public void setRecolhimentoFinal(boolean recolhimentoFinal) {
 		this.recolhimentoFinal = recolhimentoFinal;
 	}
-	
+
+	public Date getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
+	}
+
+	public void setDataRecolhimentoPrevista(Date dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
+	}
+
+	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
 	
 }

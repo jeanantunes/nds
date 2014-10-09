@@ -2,12 +2,13 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class ResultadoChamadaEncalheAntecipadaVO implements Serializable {
@@ -24,6 +25,12 @@ public class ResultadoChamadaEncalheAntecipadaVO implements Serializable {
 	
 	@Export(label = "Exemplares", alignWithHeader = "Qtde.Exemplares", alignment = Alignment.CENTER)
 	private BigDecimal qntTotalExemplares;
+	
+	private boolean recolhimentoFinal;
+	
+	private String dataRecolhimentoPrevista;
+	
+	private String tipoChamadaEncalhe;
 	
 	/**
 	 * Construtor padrão.
@@ -88,5 +95,28 @@ public class ResultadoChamadaEncalheAntecipadaVO implements Serializable {
 		this.qntTotalExemplares = qntTotalExemplares;
 	}
 
-	
+	public boolean isRecolhimentoFinal() {
+		return recolhimentoFinal;
+	}
+
+	public void setRecolhimentoFinal(boolean recolhimentoFinal) {
+		this.recolhimentoFinal = recolhimentoFinal;
+	}
+
+	public String getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
+	}
+
+	public void setDataRecolhimentoPrevista(String dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
+	}
+
+	public String getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+
+	public void setTipoChamadaEncalhe(String tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+		
 }

@@ -650,8 +650,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(
-            final FiltroChamadaAntecipadaEncalheDTO filtro) {
+    public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
         
         final StringBuilder hql = new StringBuilder();
         
@@ -661,10 +660,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
          */
         hql.append("SELECT DISTINCT new ")
         .append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
-        .append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
-        .append(" lancamento.id ,").append(" case when (pessoa.nome is not null) then ( pessoa.nome )").append(
-                " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
-                .append(" ) ");
+        .append(" ( box.codigo,")
+        .append(" box.nome,")
+        .append(" cota.numeroCota, ")
+        .append(" estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida,")
+        .append(" lancamento.id ,")
+        .append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+        .append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
+        .append(" ) ");
         
         hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
         
