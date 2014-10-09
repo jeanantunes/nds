@@ -178,17 +178,21 @@ public class CotaDAO {
     }
 
     public List<CotaEstudo> getCotas(final EstudoTransient estudo) {
-	Map<String, Object> params = new HashMap<>();
-	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getTipoSegmentoProduto().getId());
-	params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
-	params.put("data_lcto", estudo.getProdutoEdicaoEstudo().getDataLancamento());
-	params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
+	
+    	Map<String, Object> params = new HashMap<>();
+		params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getTipoSegmentoProduto().getId());
+		params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
+		params.put("data_lcto", estudo.getProdutoEdicaoEstudo().getDataLancamento());
+		params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
+	
 	List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
-		CotaEstudo cota = new CotaEstudo();
-		cota.setId(rs.getLong("COTA_ID"));
+		
+	    CotaEstudo cota = new CotaEstudo();
+		
+	    cota.setId(rs.getLong("COTA_ID"));
 		cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
 		cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
 		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
@@ -204,52 +208,65 @@ public class CotaDAO {
 		cota.setRecebeParcial(rs.getBoolean("RECEBE_RECOLHE_PARCIAIS"));
 		cota.setExcecaoParcial(rs.getBoolean("COTA_EXCECAO_PARCIAL"));
 		traduzAjusteReparte(rs, cota);
+		
 		if (rs.getBigDecimal("QTDE_RANKING_SEGMENTO") != null) {
 		    cota.setQtdeRankingSegmento(rs.getBigDecimal("QTDE_RANKING_SEGMENTO").toBigInteger());
 		}
+		
 		if (rs.getBigDecimal("QTDE_RANKING_FATURAMENTO") != null) {
 		    cota.setQtdeRankingFaturamento(rs.getBigDecimal("QTDE_RANKING_FATURAMENTO"));
 		}
+		
 		if (rs.getBigDecimal("REPARTE_MAX") != null) {
 		    cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
 		}
+		
 		if (rs.getBigDecimal("REPARTE_MIN") != null) {
 		    cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
 		}
+		
 		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {
 		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
 		}
+		
 		if (rs.getLong("COTA_BASE_ID") != 0) {
 		    cota.setNova(true);
 		}
+		
 		if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
 		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-			if (cota.isNova()) {
-			    cota.setClassificacao(ClassificacaoCota.CotaNova);
-			}
+				if (cota.isNova()) {
+				    cota.setClassificacao(ClassificacaoCota.CotaNova);
+				}
 		    }
 		}
+		
 		if (cota.isMix()) {
 		    cota.setClassificacao(ClassificacaoCota.CotaMix);
 		}
-		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+		
+		if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+			cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
+		}
+		
+		if (rs.getBoolean("COTA_NAO_RECEBE_FORNECEDOR")) {
+			cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor);
+		}
+		
+		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
+			cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
+		}
+		
+		if ((cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) && (cota.getClassificacao().getCodigo().equalsIgnoreCase(""))) {
 		    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 		} else {
-		    if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
-			cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
-		    }
 		    if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
-			cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
+		    	cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
 		    }
+		    
 		    if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
-			cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
+		    	cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
 		    }
-		    if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
-			cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
-		    }
-            if (rs.getBoolean("COTA_NAO_RECEBE_FORNECEDOR")) {
-                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor);
-            }
         }
 		return cota;
 	    }

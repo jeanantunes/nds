@@ -54,6 +54,7 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		
 		//where pdvs2_.PONTO_PRINCIPAL in(true)
 		
+		hql.append(" GROUP BY cota.numeroCota ");
 		hql.append(" ORDER BY numeroCota ");
 		
 
