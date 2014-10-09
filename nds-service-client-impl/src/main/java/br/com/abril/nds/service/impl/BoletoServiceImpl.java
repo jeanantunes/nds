@@ -2065,8 +2065,8 @@ public class BoletoServiceImpl implements BoletoService {
         
         CobrancaVO cobrancaVO = null;
         
-        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,true);
-        if (boleto!=null){
+        final Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero, null, true);
+        if (boleto!=null) {
             cobrancaVO = cobrancaService.obterDadosCobranca(boleto.getId(), dataPagamento);
         }
         
