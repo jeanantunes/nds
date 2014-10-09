@@ -358,11 +358,14 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
 		
-		if (dividaAcumulada != null || apneasBoletoPagavel) {
+		if (apneasBoletoPagavel) {
 			
 			criteria.createAlias("divida", "divida");
-			
-			criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+
+			if(dividaAcumulada != null) {
+				
+				criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+			}
 		}
 		
 		if (apneasBoletoPagavel){
