@@ -3,11 +3,11 @@ package br.com.abril.nds.integracao.fileimporter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -311,10 +311,10 @@ public class InterfaceExecutor {
 		 
 			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
-			if (arquivos == null || arquivos.isEmpty()) {
+			if(arquivos == null || arquivos.isEmpty()) {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
-			}else{
+			} else {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, HA_ARQUIVOS);
 			}
 			
@@ -568,8 +568,13 @@ public class InterfaceExecutor {
 			String nomeUsuario,
 			InterfaceExecucao interfaceExecucao) throws Exception {
 
-		FileReader in = new FileReader(arquivo);
-		Scanner scanner = new Scanner(in);
+				
+//		FileReader in = new FileReader(arquivo);
+//		Scanner scanner = new Scanner(in);
+//		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? StandardCharsets.ISO_8859_1.toString() : StandardCharsets.UTF_8.toString());
+		
+		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? "iso-8859-1" : "utf-8");
+		
 		int linhaArquivo = 0;
 		IntegracaoDocumentMaster<?> docM = null;
 		
@@ -588,6 +593,7 @@ public class InterfaceExecutor {
 			try{
 				
 				if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
+					
 					IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
 					
 					doc.setTipoDocumento(interfaceEnum.name());
@@ -620,7 +626,7 @@ public class InterfaceExecutor {
 					}
 				}
 				
-			}catch(IllegalArgumentException | com.ancientprogramming.fixedformat4j.format.ParseException pe){
+			} catch(IllegalArgumentException | com.ancientprogramming.fixedformat4j.format.ParseException pe) {
 				
 				String mensagemErro = "ERRO: Ocorreu um erro na leitura do arquivo %s na linha número %d, porém o arquivo foi processado!";
 				
@@ -633,7 +639,7 @@ public class InterfaceExecutor {
 			couchDbClient.save(docM);							
 		}
 		
-		in.close();
+//		in.close();
 		scanner.close();
 	}
 

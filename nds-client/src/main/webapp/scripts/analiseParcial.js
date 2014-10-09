@@ -201,13 +201,21 @@ var analiseParcialController = $.extend(true, {
                     $fixacao = $dialog.find('#dados-fixacao');
                 $mix.hide();
                 $fixacao.hide();
+                
+                var dateFormatada = '';
+                
+                if(result.dataGeracaoRank != undefined && result.dataGeracaoRank != ""){
+               	
+                	var dateFormatada = result.dataGeracaoRank.$.slice(3)
 
+                }
+                
                 $dialog.find('#numeroCotaD').text(result.numeroCota || '');
                 $dialog.find('#nomeCotaD').text(result.nomePessoa || '');
                 $dialog.find('#tipoCotaD').text(result.tipoCota || '');
                 $dialog.find('#rankingCotaD').text(result.qtdeRankingSegmento || '');
-                $dialog.find('#faturamentoCotaD').text(result.faturamento || '');
-                $dialog.find('#mesAnoCotaD').text(result.dataGeracaoRank ? result.dataGeracaoRank.$ : '');
+                $dialog.find('#faturamentoCotaD').text(result.faturamento != undefined ? "R$ "+floatToPrice(result.faturamento) : '');
+                $dialog.find('#mesAnoCotaD').text(dateFormatada);
 
                 if (result.mixDataAlteracao) {
                     $dialog.find('#mixRepMin').text(result.mixRepMin || '');
@@ -1531,19 +1539,30 @@ var analiseParcialController = $.extend(true, {
                 analiseParcialController.filtrarOrdenarReducaoReparte(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             default:
-
-                $("#baseEstudoGridParcial").flexOptions({
-                    params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
-                        {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
-                        {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
-                        {name:'id',             value: estudo},
-                        {name:'elemento',       value: elemento}]
-                }).flexReload();
+            	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
         }
         if (event) {
             event.preventDefault();
         }
         return false;
+    },
+    
+    filtrarOrdenarPorElemento : function(estudo) {
+    	
+    	$('#filtroOrdenarPor option:eq(0)').prop('selected', true).parent().change();
+        
+    	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        var elemento = $("#elementos :selected").val();
+
+    	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+    
+    	if (event) {
+            event.preventDefault();
+        }
+    	
+    	$('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
+        
+    	return false;
     },
     
     filtroDefault: function (estudo, valueFiltroOrdenarPor, elemento) {

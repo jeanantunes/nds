@@ -85,7 +85,7 @@ var regiaoController = $.extend(true, {
 			preProcess : regiaoController.executarPreProcessLstProdutosGrid,
 			dataType : 'json',
 			colModel : [{
-				display : 'add',
+				display : 'sel.',
 				name : 'sel',
 				width : 30,
 				sortable : true,

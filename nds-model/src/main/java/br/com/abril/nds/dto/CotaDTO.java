@@ -75,7 +75,7 @@ public class CotaDTO implements Serializable {
     private String tipoCota;
     private TipoCota tipoCotaFinanceiro;
     private BigDecimal percentualCotaBase = BigDecimal.ZERO;
-    private BigDecimal qtdeRankingSegmento;
+    private Integer qtdeRankingSegmento;
     private BigDecimal faturamento;
     private Date dataGeracaoRank;
     private Date mixDataAlteracao;
@@ -659,15 +659,15 @@ public class CotaDTO implements Serializable {
         this.recebeComplementar = recebeComplementar;
     }
 
-    public BigDecimal getQtdeRankingSegmento() {
-        return qtdeRankingSegmento;
-    }
+	public Integer getQtdeRankingSegmento() {
+		return qtdeRankingSegmento;
+	}
 
-    public void setQtdeRankingSegmento(BigDecimal qtdeRankingSegmento) {
-        this.qtdeRankingSegmento = qtdeRankingSegmento;
-    }
+	public void setQtdeRankingSegmento(Integer qtdeRankingSegmento) {
+		this.qtdeRankingSegmento = qtdeRankingSegmento;
+	}
 
-    public BigDecimal getFaturamento() {
+	public BigDecimal getFaturamento() {
         return faturamento;
     }
 

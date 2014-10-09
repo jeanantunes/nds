@@ -110,7 +110,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		    messageAux.setTempVar(tempVar);
 		}
 		
-		  ndsiLoggerFactory.getLogger().logInfo(messageAux, EventoExecucaoEnum.INF_DADO_ALTERADO,
+		ndsiLoggerFactory.getLogger().logInfo(messageAux, EventoExecucaoEnum.INF_DADO_ALTERADO,
 				  "Qtd documentos a processar : "+result.getRows().size());
 
 		do {	
@@ -152,9 +152,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 						}
 					});
 				} catch(Exception e) {
-                    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+					
+					if(e.getMessage() != null)
+						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
                     LOGGER.error("",e);
-
 				}
 				
 				String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
