@@ -78,6 +78,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	public void cancelarChamadaAntecipadaCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
+		validarSeExisteMatrizRecolhimento(filtro);
+		
 		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		List<ChamadaAntecipadaEncalheDTO> chamadasEncalheCota = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
@@ -142,6 +144,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public void reprogramarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro){
 		
+		validarSeExisteMatrizRecolhimento(filtro);
+		
 		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro); 
 
 		cancelarChamadaAntecipadaCota(filtro);
@@ -171,8 +175,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public void gravarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro){
 		
-		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = 
-				cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
+		validarSeExisteMatrizRecolhimento(filtro);
+		
+		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
 		
 		if(filtro.getChamadasNaoSelecionadas() != null ){			
 			lisAntecipadaEncalheDTOs.removeAll(filtro.getChamadasNaoSelecionadas());
@@ -209,8 +214,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			throw new IllegalArgumentException("Parâmetros inválido para gravar chamada antecipada de encalhe");
 		}
 		
-		if(infoEncalheDTO.getChamadasAntecipadaEncalhe() == null 
-				|| infoEncalheDTO.getChamadasAntecipadaEncalhe().isEmpty() ){
+		if(infoEncalheDTO.getChamadasAntecipadaEncalhe() == null || infoEncalheDTO.getChamadasAntecipadaEncalhe().isEmpty() ){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado cotas para antecipação de recolhimento de encalhe");
 		}
@@ -337,7 +341,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			
 			ChamadaAntecipadaEncalheDTO chamadaAntecipada = list.iterator().next();
 			 
-			if (chamadaAntecipada.getDataRecolhimentoPrevista() != null) {				
+			if (chamadaAntecipada.getDataRecolhimentoPrevista() != null) {
+				antecipadaEncalheDTO.setTipoChamadaEncalhe(chamadaAntecipada.getTipoChamadaEncalhe());
 				antecipadaEncalheDTO.setDataRecolhimentoPrevista(chamadaAntecipada.getDataRecolhimentoPrevista());
 			} 
 		}
@@ -471,5 +476,29 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	public Date obterProximaDataEncalhe(Date base) {
 		return chamadaEncalheRepository.obterProximaDataEncalhe(base);
 	}
+
+	private void validarSeExisteMatrizRecolhimento(FiltroChamadaAntecipadaEncalheDTO filtro) {
+		
+		ChamadaEncalhe chamadaEncalhe = chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(null, filtro.getDataAntecipacao(), TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+
+		if(chamadaEncalhe != null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possivel realizar a antecipação. O produto está na matriz recolhimento fechada.");
+		}
+	}
 	
+	private void obterDataPrevistaLancamento(FiltroChamadaAntecipadaEncalheDTO filtro) {
+		
+		ChamadaEncalhe chamadaEncalhe = chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(null, DateUtil.parseDataPTBR(filtro.getDataProgramada()), TipoChamadaEncalhe.ANTECIPADA);
+
+		if(chamadaEncalhe != null) {
+			if(chamadaEncalhe.getLancamentos() != null && !chamadaEncalhe.getLancamentos().isEmpty()) {
+				Lancamento lancamento = chamadaEncalhe.getLancamentos().iterator().next();
+				
+				if(lancamento != null) {
+					filtro.setDataAntecipacao(lancamento.getDataRecolhimentoPrevista());
+				}
+			}
+		}
+	}
 }

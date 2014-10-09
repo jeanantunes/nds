@@ -551,6 +551,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
 				.append(" else null end,")
 				.append(" chamadaEncalheCota.id,")
+				.append(" chamadaEncalhe.tipoChamadaEncalhe, ")
 				.append(" chamadaEncalhe.dataRecolhimento, ")
 				.append(" lancamento.dataRecolhimentoDistribuidor, ")
 				.append(" lancamento.dataRecolhimentoPrevista ")

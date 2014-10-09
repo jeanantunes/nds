@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+
 public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
 	/**
@@ -31,9 +33,11 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	
 	private Date dataRecolhimentoPrevista;
 
+	private TipoChamadaEncalhe tipoChamadaEncalhe;
+	
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota, BigInteger qntExemplares,Long idLancamento,String nomeCota, Long codigoChamadaEncalhe, Date dataRecolhimentoDistribuidor, Date dataRecolhimento, Date dataRecolhimentoPrevista) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota, BigInteger qntExemplares,Long idLancamento,String nomeCota, Long codigoChamadaEncalhe, TipoChamadaEncalhe tipoChamadaEncalhe, Date dataRecolhimentoDistribuidor, Date dataRecolhimento, Date dataRecolhimentoPrevista) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -42,6 +46,7 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.nomeBox = nomeBox;
 		this.idLancamento = idLancamento;
 		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
 		this.dataRecolhimento = dataRecolhimento;
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
 		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
@@ -226,6 +231,14 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
 	}
 	
+	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

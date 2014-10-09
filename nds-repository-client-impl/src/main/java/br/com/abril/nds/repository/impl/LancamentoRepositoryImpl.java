@@ -459,8 +459,7 @@ public class LancamentoRepositoryImpl extends
 		return (Lancamento) query.uniqueResult();
 	}
 
-	public Date obterDataRecolhimentoDistribuidor(String codigoProduto,
-			Long numeroEdicao) {
+	public Date obterDataRecolhimentoDistribuidor(String codigoProduto, Long numeroEdicao) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -479,9 +478,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("numeroEdicao", numeroEdicao);
 		query.setParameter("codigoProduto", codigoProduto);
 		
-		query.setParameterList("statusLancamento", 
-			Arrays.asList(StatusLancamento.EXPEDIDO, 
-				StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.EXPEDIDO, StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO));
 		
 		query.setMaxResults(1);
 

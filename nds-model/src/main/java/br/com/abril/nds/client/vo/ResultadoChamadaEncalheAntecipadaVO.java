@@ -30,6 +30,8 @@ public class ResultadoChamadaEncalheAntecipadaVO implements Serializable {
 	
 	private String dataRecolhimentoPrevista;
 	
+	private String tipoChamadaEncalhe;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -108,4 +110,13 @@ public class ResultadoChamadaEncalheAntecipadaVO implements Serializable {
 	public void setDataRecolhimentoPrevista(String dataRecolhimentoPrevista) {
 		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
 	}
+
+	public String getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+
+	public void setTipoChamadaEncalhe(String tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+		
 }
