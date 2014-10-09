@@ -148,7 +148,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
             
             notafiscalEntrada = new NotaFiscalEntradaFornecedor();
             
-            notafiscalEntrada = populaNotaFiscalEntrada(notafiscalEntrada, input);
+            notafiscalEntrada = populaNotaFiscalEntrada(notafiscalEntrada, input, message);
             
             notafiscalEntrada = populaItemNotaFiscalEntrada(notafiscalEntrada, input, message);
             
@@ -190,7 +190,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     }
     
     private NotaFiscalEntradaFornecedor populaNotaFiscalEntrada(NotaFiscalEntradaFornecedor notafiscalEntrada,
-            EMS0135Input input) {
+            EMS0135Input input, Message message) {
         
         notafiscalEntrada.setDataEmissao(input.getDataEmissao());
         
@@ -218,6 +218,13 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         notafiscalEntrada.setValorDesconto(BigDecimal.ZERO);
         
         PessoaJuridica emitente = this.obterPessoaJuridica(input.getCnpjEmissor());
+        
+        if(emitente == null) {
+        	this.ndsiLoggerFactory.getLogger().logError(
+                    message,
+                    EventoExecucaoEnum.RELACIONAMENTO,
+                    String.format("CNPJ do Fornecedor inválido: %s.", input.getCnpjEmissor()));
+        }
         
         notafiscalEntrada.setEmitente(emitente);
         
@@ -700,7 +707,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         String codigoDistribuidor = 
                 message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
-		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(codigoDistribuidor));
+		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigoInterface(Integer.parseInt(codigoDistribuidor));
         return fornecedor;
     }
     

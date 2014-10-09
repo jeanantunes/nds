@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
@@ -15,10 +16,13 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	private String nomeProduto;
 	private Long numeroEdicao;
 	private String dataLcto;
+	private String dataRcto;
 	private StatusLancamento status;
 	private Long classificacao;
 	private String descricaoClassificacao;
 	private String codigo_icd;
+	private BigInteger reparte;
+	private BigInteger venda;
 
 	public String getCodProduto() {
 		return codProduto;
@@ -50,6 +54,12 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	public void setDataLcto(Date dataLcto) {
 		this.dataLcto = DateUtil.formatarDataPTBR(dataLcto);
 	}
+	public String getDataRcto() {
+		return dataRcto;
+	}
+	public void setDataRcto(Date dataRcto) {
+		this.dataRcto = DateUtil.formatarDataPTBR(dataRcto);
+	}
 	public Long getClassificacao() {
 		return classificacao;
 	}
@@ -68,4 +78,17 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	public void setCodigo_icd(String codigo_icd) {
 		this.codigo_icd = codigo_icd;
 	}
+	public BigInteger getReparte() {
+		return reparte;
+	}
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+	public BigInteger getVenda() {
+		return venda;
+	}
+	public void setVenda(BigInteger venda) {
+		this.venda = venda;
+	}
+	
 }

@@ -990,8 +990,15 @@ public class RecebimentoFisicoController extends BaseController {
             final boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
             
             if (cnpj == null || cnpj.isEmpty()){
-                if (notaFiscal instanceof NotaFiscalEntradaFornecedor){
-                    cnpj = ((NotaFiscalEntradaFornecedor) notaFiscal).getEmitente().getCnpj();
+                if (notaFiscal instanceof NotaFiscalEntradaFornecedor) {
+                	if(((NotaFiscalEntradaFornecedor) notaFiscal) != null
+                			&& ((NotaFiscalEntradaFornecedor) notaFiscal).getEmitente() != null
+                			&& ((NotaFiscalEntradaFornecedor) notaFiscal).getEmitente().getCnpj() != null) {
+                		
+                		cnpj = ((NotaFiscalEntradaFornecedor) notaFiscal).getEmitente().getCnpj();
+                	} else {
+                		throw new ValidacaoException(TipoMensagem.ERROR, "Problemas no cadastro da Nota Fiscal. CNPJ inválido.");
+                	}
                 }
             }
             

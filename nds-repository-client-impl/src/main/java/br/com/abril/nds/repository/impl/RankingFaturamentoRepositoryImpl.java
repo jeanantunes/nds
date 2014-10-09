@@ -54,10 +54,10 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	public void gerarRankingFaturamentoParaCotasSemRanking() {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO) ");
+		sql.append(" INSERT INTO ranking_faturamento (COTA_ID, FATURAMENTO, DATA_GERACAO_RANK) ");
 		sql.append(" select ");
 		sql.append("     c.ID, ");
-		sql.append("     0 ");
+		sql.append("     0, SYSDATE() ");
 		sql.append(" from ");
 		sql.append("     cota c, ");
 		sql.append("     lancamento l ");

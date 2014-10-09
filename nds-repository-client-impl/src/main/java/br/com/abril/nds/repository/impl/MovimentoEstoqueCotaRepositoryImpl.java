@@ -52,8 +52,6 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -686,10 +684,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         subSqlIndObservacao.append(" SELECT count(*) > 0 ");
         subSqlIndObservacao.append(" 	FROM CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_0 ");
+        
+        if (filtro.getIdCota() != null) {
+        	subSqlIndObservacao.append(" 	INNER JOIN CHAMADA_ENCALHE_COTA on CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id ");
+        }
+        
         subSqlIndObservacao.append(" 	WHERE CONFERENCIA_ENCALHE_0.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
         
         if (filtro.getIdCota() != null) {
-            subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID = :idCota ");
+            subSqlIndObservacao.append(" 	and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota ");
         }
         
         subSqlIndObservacao.append(" 	and (CONFERENCIA_ENCALHE_0.OBSERVACAO is not null OR CONFERENCIA_ENCALHE_0.JURAMENTADA = 1) ");
@@ -699,7 +702,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         if(counting) {
             
             sql.append("	select CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID, CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO ");
-            
             
         } else {
             
@@ -733,7 +735,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             sql.append(" (" + subSqlIndObservacao + ") AS indObservacaoConferenciaEncalhe, ");
             
             sql.append(" coalesce(CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO,1) AS diaRecolhimento ");
-            
             
         }
 
@@ -859,9 +860,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append("select ");
 
-        sql.append(" sum( ");
+        sql.append(" sum(case when diaRecolhimento = 1 then ");
         sql.append(indUtilizaPrecoCapa ? " a.precoVenda " : " a.precoComDesconto ");
-        sql.append(" * a.reparte ) as totalReparte, ");
+        sql.append(" * a.reparte else 0 end ) as totalReparte, ");
         
         sql.append(" sum( ");
         sql.append(indUtilizaPrecoCapa ? "  a.precoVenda " : " a.precoComDesconto ");
@@ -871,7 +872,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(obterQueryListaConsultaEncalhe(f, false));
         
-        sql.append(" ) a ");
+        sql.append(") a ");
         
         final Map<String, Object> parameters = new HashMap<String, Object>();
         final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -1195,19 +1196,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         
         if(filtro.getIdCota() != null) {
-            parameters.put("idCota", filtro.getIdCota());
+        	parameters.put("idCota", filtro.getIdCota());
         } else {
-        	 parameters.put("origemInterface", Origem.INTERFACE.name());
+        	parameters.put("origemInterface", Origem.INTERFACE.name());
         }
         
         parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-        
         
         if(filtro.getIdFornecedor() != null) {
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
-       
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
         parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
