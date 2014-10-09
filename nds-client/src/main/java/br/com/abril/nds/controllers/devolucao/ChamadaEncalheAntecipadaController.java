@@ -381,7 +381,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		}
 		else{
 		
-			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
+			reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada, dataRecolhimento, codigoProduto, numeroEdicao, dataProgramada, recolhimentoFinal);
 			
 		}	
 	}
@@ -678,17 +678,16 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = chamadaAntecipadaEncalheService.obterInfoChamdaAntecipadaEncalhe(filtro);
 		
-		if (infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe() == null 
-				|| infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe().isEmpty()){
+		if (infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe() == null || infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe().isEmpty()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			
 		}
 		
-		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipadaVO = 
-				getListaChamadaEncalheAntecipadaVO(infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe());
-
+		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipadaVO = getListaChamadaEncalheAntecipadaVO(infoChamdaAntecipadaEncalheDTO.getChamadasAntecipadaEncalhe());
+		
 		TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>> tableModel = new TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>>();
-
+		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaChamadaEncalheAntecipadaVO));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
@@ -696,7 +695,13 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		tableModel.setTotal(infoChamdaAntecipadaEncalheDTO.getTotalRegistros().intValue());
 		
 		ResultadoChamadaEncalheAntecipadaVO resultadoChamadaEncalheAntecipadaVO = new ResultadoChamadaEncalheAntecipadaVO(tableModel,null,null);
-
+		resultadoChamadaEncalheAntecipadaVO.setRecolhimentoFinal(infoChamdaAntecipadaEncalheDTO.isRecolhimentoFinal());
+				
+		if(infoChamdaAntecipadaEncalheDTO.getDataRecolhimentoPrevista() != null) {
+		    String dataPrevistaFormatada = DateUtil.formatarDataPTBR(infoChamdaAntecipadaEncalheDTO.getDataRecolhimentoPrevista());
+		    resultadoChamadaEncalheAntecipadaVO.setDataRecolhimentoPrevista(dataPrevistaFormatada.toString());
+		}
+		
 		return resultadoChamadaEncalheAntecipadaVO;
 	}
 	
@@ -723,7 +728,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			chamadaEncalheAntecipadaVO.setQntExemplares(dto.getQntExemplares());
 			chamadaEncalheAntecipadaVO.setCodigoChamdaEncalhe(dto.getCodigoChamadaEncalhe());
 			chamadaEncalheAntecipadaVO.setIdLancamento(dto.getIdLancamento());
-			
 			listaChamadaEncalheAntecipadaVO.add(chamadaEncalheAntecipadaVO);
 		}
 		

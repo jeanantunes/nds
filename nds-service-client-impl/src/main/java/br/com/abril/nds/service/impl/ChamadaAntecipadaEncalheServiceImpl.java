@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -141,8 +142,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public void reprogramarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro){
 		
-		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = 
-				chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro); 
+		List<ChamadaAntecipadaEncalheDTO> lisAntecipadaEncalheDTOs = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro); 
 
 		cancelarChamadaAntecipadaCota(filtro);
 		
@@ -217,7 +217,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		Date dataAntecipacao = infoEncalheDTO.getDataAntecipacao();
 		
-		if(dataAntecipacao.compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0){
+		if(dataAntecipacao.compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
 		}
@@ -253,8 +253,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			for (Lancamento lancamento : lancamentos) {
 				
 				lancamento.setDataRecolhimentoDistribuidor(dataAntecipacao);
-				
+				lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
 				this.lancamentoRepository.alterar(lancamento);
+				
 			}
 		}
 		
@@ -310,18 +311,37 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		List<ChamadaAntecipadaEncalheDTO> list = null; 
 		
-		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		Date dataDistribuidor = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		filtro.setDataOperacao(dataDistribuidor);
 
 		if(filtro.isProgramacaoCE()){
 			
 			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
 			antecipadaEncalheDTO.setTotalRegistros(chamadaEncalheCotaRepository.obterQntCotasProgramadaParaAntecipacoEncalhe(filtro));
-		}
-		else{
+
+			if(list != null && !list.isEmpty()) {
+				
+				ChamadaAntecipadaEncalheDTO chamadaAntecipada = list.iterator().next();
+				
+				antecipadaEncalheDTO.setRecolhimentoFinal(chamadaAntecipada.getDataRecolhimento().equals(chamadaAntecipada.getDataRecolhimentoDistribuidor())); 
+			}
+			
+		} else{
 			
 			list = cotaRepository.obterCotasSujeitasAntecipacoEncalhe(filtro);
 			antecipadaEncalheDTO.setTotalRegistros(cotaRepository.obterQntCotasSujeitasAntecipacoEncalhe(filtro));
 		}
+		
+		if(list != null && !list.isEmpty()) {
+			
+			ChamadaAntecipadaEncalheDTO chamadaAntecipada = list.iterator().next();
+			 
+			if (chamadaAntecipada.getDataRecolhimentoPrevista() != null) {				
+				antecipadaEncalheDTO.setDataRecolhimentoPrevista(chamadaAntecipada.getDataRecolhimentoPrevista());
+			} 
+		}
+		
 		
 		antecipadaEncalheDTO.setChamadasAntecipadaEncalhe(list);
 		antecipadaEncalheDTO.setTotalExemplares(sumarizarExemplares(list));

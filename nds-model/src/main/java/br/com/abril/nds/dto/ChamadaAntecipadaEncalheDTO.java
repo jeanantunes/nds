@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Date;
 
 public class ChamadaAntecipadaEncalheDTO implements Serializable {
 
@@ -24,9 +25,15 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 	
 	private Long idLancamento;
 
+	private Date dataRecolhimentoDistribuidor;
+	
+	private Date dataRecolhimento;
+	
+	private Date dataRecolhimentoPrevista;
+
 	public ChamadaAntecipadaEncalheDTO() {}
 
-	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota,BigInteger qntExemplares,Long idLancamento,String nomeCota) {
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota, BigInteger qntExemplares,Long idLancamento,String nomeCota, Long codigoChamadaEncalhe, Date dataRecolhimentoDistribuidor, Date dataRecolhimento, Date dataRecolhimentoPrevista) {
 		
 		this.codBox = codBox;
 		this.numeroCota = numeroCota;
@@ -34,6 +41,22 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.qntExemplares = qntExemplares;
 		this.nomeBox = nomeBox;
 		this.idLancamento = idLancamento;
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
+		this.dataRecolhimento = dataRecolhimento;
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
+		
+	}
+	
+	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox ,Integer numeroCota, BigInteger qntExemplares,Long idLancamento,String nomeCota) {
+		
+		this.codBox = codBox;
+		this.numeroCota = numeroCota;
+		this.nomeCota = nomeCota;
+		this.qntExemplares = qntExemplares;
+		this.nomeBox = nomeBox;
+		this.idLancamento = idLancamento;
+		
 	}
 	
 	public ChamadaAntecipadaEncalheDTO(Integer codBox,String nomeBox, Integer numeroCota,BigInteger qntExemplares,String nomeCota, Long codigoChamadaEncalhe) {
@@ -179,6 +202,30 @@ public class ChamadaAntecipadaEncalheDTO implements Serializable {
 		this.qntExemplares = qntExemplares;
 	}
 
+	public Date getDataRecolhimentoDistribuidor() {
+		return dataRecolhimentoDistribuidor;
+	}
+
+	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
+		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+	}
+	
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
+	}
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	public Date getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
+	}
+
+	public void setDataRecolhimentoPrevista(Date dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
