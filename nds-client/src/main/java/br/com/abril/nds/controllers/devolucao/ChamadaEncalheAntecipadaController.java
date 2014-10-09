@@ -382,7 +382,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			FiltroChamadaAntecipadaEncalheDTO filtro = getFiltroSessionSemPaginacao();
 			filtro.setDataAntecipacao(DateUtil.parseDataPTBR(dataRecolhimento));
 			filtro.setDataProgramada(dataProgramada);
-			
+			filtro.setRecolhimentoFinal(recolhimentoFinal);
 			chamadaAntecipadaEncalheService.reprogramarChamadaAntecipacaoEncalheProduto(filtro);
 			
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
@@ -410,6 +410,10 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		} else {
 			
+		    if(listaChamadaEncalheAntecipada == null) {
+	            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item foi selecionado para cancelar!");
+	        }
+		    
 			InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
 																								  numeroEdicao, dataProgramada, recolhimentoFinal);
@@ -427,6 +431,11 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	public void cancelarChamdaEncalheCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												   String codigoProduto,Long numeroEdicao, String dataProgramada, boolean recolhimentoFinal){
 		
+
+        if(listaChamadaEncalheAntecipada == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item foi selecionado para cancelar!");
+        }
+	    
 		InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO = getInfoChamadaEncalhe(listaChamadaEncalheAntecipada,
 																								  null,codigoProduto,
 																								  numeroEdicao, dataProgramada, recolhimentoFinal);
@@ -536,8 +545,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		infoEncalheDTO.setDataProgramada( (dataProgramada== null)?null:DateUtil.parseDataPTBR(dataProgramada));
 		infoEncalheDTO.setRecolhimentoFinal(recolhimentoFinal);
 		
-		List<ChamadaAntecipadaEncalheDTO> listaChamadaAntecipadaEncalheDTOs = 
-				new ArrayList<ChamadaAntecipadaEncalheDTO>();
+		List<ChamadaAntecipadaEncalheDTO> listaChamadaAntecipadaEncalheDTOs = new ArrayList<ChamadaAntecipadaEncalheDTO>();
 		
 		for(ChamadaEncalheAntecipadaVO vo : listaChamadaEncalheAntecipada){
 			listaChamadaAntecipadaEncalheDTOs.add(

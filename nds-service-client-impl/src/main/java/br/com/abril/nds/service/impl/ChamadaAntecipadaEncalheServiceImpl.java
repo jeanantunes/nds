@@ -157,7 +157,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		infoEncalheDTO.setDataAntecipacao(filtro.getDataAntecipacao());
 		infoEncalheDTO.setNumeroEdicao(filtro.getNumeroEdicao());
 		infoEncalheDTO.setDataProgramada(DateUtil.parseDataPTBR(filtro.getDataProgramada()));
-		
+		infoEncalheDTO.setRecolhimentoFinal(filtro.isRecolhimentoFinal());
 		gravar(infoEncalheDTO);
 		
 	}

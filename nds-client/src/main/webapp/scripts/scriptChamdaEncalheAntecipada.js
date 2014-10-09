@@ -1211,6 +1211,12 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					
 					chamdaEncalheAnteipadaController.zerarTotais();
 					
+					if(flagRecolhimento){								
+						
+						$("#dataProgramada", chamdaEncalheAnteipadaController.workspace).val($("#dataAntecipacao").val());
+						
+					}
+					
 					chamdaEncalheAnteipadaController.desmarcarCheckTodos();
 					chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
 			 
