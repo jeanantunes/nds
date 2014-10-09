@@ -201,13 +201,22 @@ var analiseParcialController = $.extend(true, {
                     $fixacao = $dialog.find('#dados-fixacao');
                 $mix.hide();
                 $fixacao.hide();
+                
+                var faturamentoFormatado = '';
+                
+                if(result.faturamento != undefined && result.faturamento != ""){
+               	
+                	var mediaFaturamento = ((result.faturamento)/3);
+                	faturamentoFormatado = floatToPrice(mediaFaturamento);
 
+                }
+                
                 $dialog.find('#numeroCotaD').text(result.numeroCota || '');
                 $dialog.find('#nomeCotaD').text(result.nomePessoa || '');
                 $dialog.find('#tipoCotaD').text(result.tipoCota || '');
                 $dialog.find('#rankingCotaD').text(result.qtdeRankingSegmento || '');
-                $dialog.find('#faturamentoCotaD').text(result.faturamento || '');
-                $dialog.find('#mesAnoCotaD').text(result.dataGeracaoRank ? result.dataGeracaoRank.$ : '');
+                $dialog.find('#faturamentoCotaD').text(faturamentoFormatado != '' ? "R$ "+faturamentoFormatado : '');
+                $dialog.find('#mesAnoCotaD').text("Últimos 3 meses.");
 
                 if (result.mixDataAlteracao) {
                     $dialog.find('#mixRepMin').text(result.mixRepMin || '');
@@ -1502,6 +1511,7 @@ var analiseParcialController = $.extend(true, {
         } else {
             $(".label").hide();
             $("#label_"+ opcao).show();
+            $("#labelAte_"+ opcao).show();
             $("#opcoesOrdenarPor").show();
         }
     },
@@ -1515,38 +1525,67 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPor : function(estudo) {
-        var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        
+    	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        var elemento = $("#elementos :selected").val();
+
         switch (valueFiltroOrdenarPor) {
             case 'numero_cota':
-                analiseParcialController.filtrarCotas();
+                analiseParcialController.filtrarCotas(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             case 'percentual_de_venda':
-                analiseParcialController.filtrarOrdenarPercentualVenda();
+                analiseParcialController.filtrarOrdenarPercentualVenda(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             case 'reducao_de_reparte':
-                analiseParcialController.filtrarOrdenarReducaoReparte();
+                analiseParcialController.filtrarOrdenarReducaoReparte(estudo, valueFiltroOrdenarPor, elemento);
                 break;
             default:
-                var elemento = $("#elementos :selected").val();
-
-                $("#baseEstudoGridParcial").flexOptions({
-                    params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
-                        {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
-                        {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
-                        {name:'id',             value: estudo},
-                        {name:'elemento',       value: elemento}]
-                }).flexReload();
+            	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
         }
         if (event) {
             event.preventDefault();
         }
         return false;
     },
+    
+    filtrarOrdenarPorElemento : function(estudo) {
+    	
+    	$('#filtroOrdenarPor option:eq(0)').prop('selected', true).parent().change();
+        
+    	var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        var elemento = $("#elementos :selected").val();
 
-    filtrarCotas: function () {
+    	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+    
+    	if (event) {
+            event.preventDefault();
+        }
+    	
+    	$('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
+        
+    	return false;
+    },
+    
+    filtroDefault: function (estudo, valueFiltroOrdenarPor, elemento) {
+
+        $("#baseEstudoGridParcial").flexOptions({
+            params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
+                {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
+                {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
+                {name:'id',             value: estudo},
+                {name:'elemento',       value: elemento}]
+        }).flexReload();
+
+    },
+
+    filtrarCotas: function (estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' && $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+
+        	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
+            
+        	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+        	
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;
@@ -1601,10 +1640,14 @@ var analiseParcialController = $.extend(true, {
             });
     },
 
-    filtrarOrdenarPercentualVenda : function() {
+    filtrarOrdenarPercentualVenda : function(estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+            
+        	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
+            
+        	analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+            
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;
@@ -1638,10 +1681,14 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.somarTotais();
     },
 
-    filtrarOrdenarReducaoReparte : function() {
+    filtrarOrdenarReducaoReparte : function(estudo, valueFiltroOrdenarPor, elemento) {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+            
+        	$('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
+            
+            analiseParcialController.filtroDefault(estudo, valueFiltroOrdenarPor, elemento);
+            
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;

@@ -746,7 +746,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<CapaDTO> capasChamadaEncalhe = chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
 		
-		return obterListaPaginada(capasChamadaEncalhe, qtdCapasPorPagina);
+		return obterListaPaginada(capasChamadaEncalhe, 30);
 		
 	}
 	
@@ -911,12 +911,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 			} else {
 				
-				/*
-				dados.setCapasPaginadas( obterIdsCapasChamadaEncalhe(
-								filtro.getDtRecolhimentoDe(), 
-								filtro.getDtRecolhimentoAte(), 
-								filtro.getQtdCapasPorPagina()));
-				*/				
+				
+				obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte(), filtro.getQtdCapasPorPagina());
+								
 			}
 			
 		}

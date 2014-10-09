@@ -149,11 +149,14 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 			return;
 		}
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-			this.tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+		TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
 			
-		this.movimentoEstoqueService.gerarMovimentoEstoque(
-			idProdutoEdicaoOrigem, idUsuario, qtde, tipoMovimentoEstoque);
+		if(tipoMovimentoEstoque == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento não encontrado.");
+		}
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicaoOrigem, idUsuario, qtde, tipoMovimentoEstoque);
 	}
 
 	private void fecharLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {

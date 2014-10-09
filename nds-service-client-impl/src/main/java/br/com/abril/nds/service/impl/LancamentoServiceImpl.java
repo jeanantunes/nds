@@ -28,6 +28,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -615,43 +616,51 @@ public class LancamentoServiceImpl implements LancamentoService {
 		Long idDinap = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorDinap())).getId();
 		Long idFc;
 		
-		if(distribuidor.getCodigoDistribuidorFC()!=null && !distribuidor.getCodigoDistribuidorFC().trim().equals("")){
-			idFc= fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorFC())).getId();
-		}else {
-			idFc=new Long("0");
+		if(distribuidor.getCodigoDistribuidorFC() != null && !distribuidor.getCodigoDistribuidorFC().trim().equals("")) {
+			
+			Fornecedor f = fornecedorService.obterFornecedorPorCodigoInterface(Integer.valueOf(distribuidor.getCodigoDistribuidorFC()));
+			if(f != null) {
+				
+				idFc = f.getId();
+			} else {
+				
+				idFc = new Long("0");
+			}
+		} else {
+			
+			idFc = new Long("0");
 		}
 		
-		if(idFornecedor==idDinap.intValue()){	
+		if(idFornecedor == idDinap.intValue()) {	
 		 
-		 lista.add(new Long(1));
+			 lista.add(new Long(1));
+			 
+			 if(dinap.isEmpty()) {
+				 dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+			 }
+			 
+			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
 		 
-		 if(dinap.isEmpty()){
-		  dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
-		 }
-		 
-		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
-		 
-		}else if (idFornecedor==idFc.intValue()){
+		} else if(idFornecedor == idFc.intValue()) {
 		
-		 lista.add(new Long(2));
+			 lista.add(new Long(2));
+			 
+			 if(fc.isEmpty()){
+				 fc.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+			 }
+			 
+			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
 		 
-		 if(fc.isEmpty()){
-		  fc.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
-		 }
-		 
-		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
-		 
-		}else {
+		} else {
 			
-		 lista.add(new Long(1));
-		 lista.add(new Long(2));
-			 
-		 if(dinapFC.isEmpty()){
-			dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
-		 }
-			 
-		 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinapFC);
-			 
+			 lista.add(new Long(1));
+			 lista.add(new Long(2));
+				 
+			 if(dinapFC.isEmpty()) {
+				dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+			 }
+				 
+			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinapFC);
 		}
 		
 		return dataLancamento;

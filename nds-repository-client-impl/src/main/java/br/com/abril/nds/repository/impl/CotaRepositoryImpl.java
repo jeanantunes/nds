@@ -650,8 +650,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(
-            final FiltroChamadaAntecipadaEncalheDTO filtro) {
+    public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
         
         final StringBuilder hql = new StringBuilder();
         
@@ -661,10 +660,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
          */
         hql.append("SELECT DISTINCT new ")
         .append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
-        .append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
-        .append(" lancamento.id ,").append(" case when (pessoa.nome is not null) then ( pessoa.nome )").append(
-                " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
-                .append(" ) ");
+        .append(" ( box.codigo,")
+        .append(" box.nome,")
+        .append(" cota.numeroCota, ")
+        .append(" estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida,")
+        .append(" lancamento.id ,")
+        .append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+        .append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
+        .append(" ) ");
         
         hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
         
@@ -3316,7 +3319,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append("  cota.numero_cota numeroCota, ");
         sql.append("  coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomePessoa, ");
         sql.append("  cota.tipo_distribuicao_cota tipoCota, ");
-        sql.append("  rks.qtde qtdeRankingSegmento, ");
+//        sql.append("  rks.qtde qtdeRankingSegmento, "); Trocar para posição do ranking FATURAMENTO
+        
+        sql.append("                                                                                         ");
+	    sql.append("       (SELECT CAST(T.rank AS UNSIGNED INTEGER)                                          ");
+	    sql.append("         FROM (SELECT  rf.COTA_ID as cota,                                               ");
+	    sql.append("           @curRank /*'*/:=/*'*/ @curRank + 1 AS rank                                    ");
+	    sql.append("           FROM ranking_faturamento rf, (SELECT @curRank /*'*/:=/*'*/ 0) r               ");
+	    sql.append("           where rf.COTA_ID                                                              ");
+	    sql.append("           ORDER BY  rf.FATURAMENTO desc) T where T.cota = cota.ID) as qtdeRankingSegmento, ");
+        sql.append("                                                                                         ");
+        
         sql.append("  rkf.faturamento faturamento, ");
         sql.append("  rkf.data_geracao_rank dataGeracaoRank, ");
         sql.append("  mix.reparte_min mixRepMin, ");
@@ -3345,6 +3358,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("codigoProduto", codigoProduto);
         query.setParameter("numeroCota", numeroCota);
         query.setParameter("idClassificacao", idClassifProdEdicao);
+        
+        query.addScalar("numeroCota",StandardBasicTypes.INTEGER)
+        .addScalar("nomePessoa",StandardBasicTypes.STRING)
+        .addScalar("tipoCota",StandardBasicTypes.STRING)
+        .addScalar("qtdeRankingSegmento",StandardBasicTypes.INTEGER)
+        .addScalar("faturamento",StandardBasicTypes.BIG_DECIMAL)
+        .addScalar("dataGeracaoRank",StandardBasicTypes.DATE)
+        .addScalar("mixRepMin",StandardBasicTypes.BIG_INTEGER)
+        .addScalar("mixRepMax",StandardBasicTypes.BIG_INTEGER)
+        .addScalar("nomeUsuario",StandardBasicTypes.STRING)
+        .addScalar("mixDataAlteracao",StandardBasicTypes.DATE)
+        .addScalar("fxDataAlteracao",StandardBasicTypes.DATE)
+        .addScalar("fxEdicaoInicial",StandardBasicTypes.INTEGER)
+        .addScalar("fxEdicaoFinal",StandardBasicTypes.INTEGER)
+        .addScalar("fxEdicoesAtendidas",StandardBasicTypes.INTEGER)
+        .addScalar("fxQuantidadeEdicoes",StandardBasicTypes.INTEGER)
+        .addScalar("fxQuantidadeExemplares",StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         return (CotaDTO) query.uniqueResult();

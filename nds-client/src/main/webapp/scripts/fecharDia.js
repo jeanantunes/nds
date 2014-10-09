@@ -1375,17 +1375,17 @@ var fecharDiaController =  $.extend(true, {
     
     processarResumoEstoque : function(resumo) {
     	
-    	$("#produtolancamento",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeLancamento);
-    	$("#produtoJuramentado",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeJuramentado);
-    	$("#produtoSuplenetar",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeSuplementar);
-    	$("#produtoRecolhimento",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeRecolhimento);
-    	$("#produtoDanificados",fecharDiaController.workspace).html(resumo.resumoEstoqueProduto.quantidadeDanificados);
+    	$("#produtolancamento",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueProduto.quantidadeLancamento));
+    	$("#produtoJuramentado",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueProduto.quantidadeJuramentado));
+    	$("#produtoSuplenetar",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueProduto.quantidadeSuplementar));
+    	$("#produtoRecolhimento",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueProduto.quantidadeRecolhimento));
+    	$("#produtoDanificados",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueProduto.quantidadeDanificados));
     	
-    	$("#exemplarlancamento",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeLancamento);
-    	$("#exemplarJuramentado",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeJuramentado);
-    	$("#exemplarSuplenetar",fecharDiaController.workspacer).html(resumo.resumoEstoqueExemplar.quantidadeSuplementar);
-    	$("#exemplarRecolhimento",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeRecolhimento);
-    	$("#exemplarDanificados",fecharDiaController.workspace).html(resumo.resumoEstoqueExemplar.quantidadeDanificados);
+    	$("#exemplarlancamento",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueExemplar.quantidadeLancamento));
+    	$("#exemplarJuramentado",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueExemplar.quantidadeJuramentado));
+    	$("#exemplarSuplenetar",fecharDiaController.workspacer).html(formatarMilhar(resumo.resumoEstoqueExemplar.quantidadeSuplementar));
+    	$("#exemplarRecolhimento",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueExemplar.quantidadeRecolhimento));
+    	$("#exemplarDanificados",fecharDiaController.workspace).html(formatarMilhar(resumo.resumoEstoqueExemplar.quantidadeDanificados));
     	
     	$("#valorlancamento",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorLancamentoFormatado);
     	$("#valorJuramentado",fecharDiaController.workspace).html(resumo.valorResumoEstoque.valorJuramentadoFormatado);

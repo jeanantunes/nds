@@ -85,33 +85,57 @@ var regiaoController = $.extend(true, {
 			preProcess : regiaoController.executarPreProcessLstProdutosGrid,
 			dataType : 'json',
 			colModel : [{
+				display : 'sel.',
+				name : 'sel',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Código',
 				name : 'codProduto',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'left',
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 50,
 				sortable : true,
 				align : 'left',
 			}, {
-				display : 'Data de Lançamento',
+				display : 'Classificação',
+				name : 'descricaoClassificacao',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Venda',
+				name : 'venda',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Data Lanc.',
 				name : 'dataLcto',
-				width : 130,
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Data Rec.',
+				name : 'dataRcto',
+				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Classificação',
-				name : 'descricaoClassificacao',
-				width : 120,
+				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -120,13 +144,7 @@ var regiaoController = $.extend(true, {
 				width : 40,
 				sortable : true,
 				align : 'center'
-			}, {
-				display : 'add',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			} ],
+			}],
 			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
@@ -599,6 +617,14 @@ var regiaoController = $.extend(true, {
 				checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" unchecked value='+index+'>';
 			}
 			
+			if(row.cell.reparte == undefined){
+				row.cell.reparte = '';
+			}
+			
+			if(row.cell.venda == undefined){
+				row.cell.venda = '';
+			}
+			
 			row.cell.sel = checkAll;
 			
 			var capa = '<a href="javascript:;" onmouseover="regiaoController.popUpCapaOpen('+codProduto+','+row.cell.numeroEdicao+', event);" onmouseout="regiaoController.popUpCapaClose(event);" style="cursor:pointer">'+ 
@@ -990,7 +1016,7 @@ var regiaoController = $.extend(true, {
 		$("#lstProdutosGrid").flexOptions({
 			url: contextPath + "/distribuicao/regiao/buscarProduto",
 			dataType : 'json',
-			params : regiaoController.obterFiltroProdNMaiores()
+			params : regiaoController.obterFiltroProdNMaiores(), newp: 1
 		});
 		
 		$("#lstProdutosGrid").flexReload();
@@ -1135,10 +1161,19 @@ var regiaoController = $.extend(true, {
 				           
 					}
 					}
+					
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 				}
+			},
+			beforeClose: function() {
+				clearData = {
+				        total: 0,
+				        page:1,
+				        rows: []
+				};
+				$("#lstProdutosGrid").flexAddData(clearData);
 			}
 		});
 

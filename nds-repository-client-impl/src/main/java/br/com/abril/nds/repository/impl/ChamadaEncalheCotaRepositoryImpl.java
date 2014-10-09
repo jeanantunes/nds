@@ -549,7 +549,12 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 				.append(" lancamento.id, ")
 				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
-				.append(" else null end ,").append(" chamadaEncalheCota.id ")
+				.append(" else null end,")
+				.append(" chamadaEncalheCota.id,")
+				.append(" chamadaEncalhe.tipoChamadaEncalhe, ")
+				.append(" chamadaEncalhe.dataRecolhimento, ")
+				.append(" lancamento.dataRecolhimentoDistribuidor, ")
+				.append(" lancamento.dataRecolhimentoPrevista ")
 				.append(" ) ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));

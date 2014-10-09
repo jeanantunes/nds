@@ -2,7 +2,9 @@ var chamadaoController = $.extend(true, {
 	
 	checkAll: false,
 	
-	nonSelected: [],
+	nonSelectedLanc: [],
+	
+	selectedLanc: [],
 	
 	parciais: {
 		
@@ -266,7 +268,9 @@ var chamadaoController = $.extend(true, {
 		
 		dataHolder.clearAction('chamadaoHolder');
 		
-		chamadaoController.nonSelected = [];
+		chamadaoController.nonSelectedLanc = [];
+		
+		chamadaoController.selectedLanc = [];
 		
 		chamadaoController.zerarCamposParciais();
 		
@@ -274,9 +278,9 @@ var chamadaoController = $.extend(true, {
 		
 		var numeroCota;
 		var dataChamadaoFormatada;
-		var idFornecedor;
-		var idEditor;
-		var comChamadaEncalhe;
+		var idFornecedor = -1;
+		var idEditor = -1;
+		var comChamadaEncalhe = false;
 		
 		if(followUp != '') {
 			numeroCota = $("#numeroCotaFollowUp", chamadaoController.workspace).val();
@@ -311,7 +315,7 @@ var chamadaoController = $.extend(true, {
 						
 						var idLancamento = eval($(this).closest("tr").find('.lancamentoHidden').val());
 
-						var checked = !($.inArray(idLancamento, chamadaoController.nonSelected) >= 0);
+						var checked = !($.inArray(idLancamento, chamadaoController.nonSelectedLanc) >= 0);
 						
 						this.checked = checked;
 					});
@@ -367,8 +371,14 @@ var chamadaoController = $.extend(true, {
 						+ row.cell.valorTotalDesconto + "</span>";
 			
 			var idLancamento = (row.cell.idLancamento) ? row.cell.idLancamento : "";
-
-			var inputCheck = chamadaoController.getInputCheckBox(idLancamento, row.id, row.cell.checked);
+			var codigoProduto = (row.cell.codigo) ? row.cell.codigo : "";
+			var numeroEdicao = (row.cell.edicao) ? row.cell.edicao : "";
+			var dataRecolhimento = (row.cell.dataRecolhimento) ? row.cell.dataRecolhimento : "";
+			
+			params = [];
+			params.push({'codigoProduto': codigoProduto, 'numeroEdicao': numeroEdicao, 'idLancamento': idLancamento, 'dataRecolhimento': dataRecolhimento});
+			
+			var inputCheck = chamadaoController.getInputCheckBox(idLancamento, row.id, row.cell.checked, params);
 			
 			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="' + idLancamento + '"/>';
 						   
@@ -396,28 +406,49 @@ var chamadaoController = $.extend(true, {
 		return resultado.tableModel;
 	},
 	
-	getInputCheckBox : function(idLancamento, rowId, checked) {
+	getInputCheckBox : function(idLancamento, rowId, checked, params) {
 
-		var inputCheck = '<input type="checkbox" id="ch' + rowId + '"'
-						   + ' name="checkConsignado"'
-						   + ' value="' + rowId + '"';
+		var inputCheck = '<input type="checkbox" id="ch' + rowId + '"'+
+						 ' name="checkConsignado"'+
+						 ' value="' + params[0]['idLancamento'] + '"';
 		
 		inputCheck = inputCheck.concat(checked ? ' checked="checked"' : '');
 		
-		inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial(this)" '
-						+ ' onchange="chamadaoController.selecionarLinha(' + idLancamento + ', this.checked);" />');
+		inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial(this, '+ rowId +')" '+
+						' onchange="chamadaoController.selecionarLinha(this, '+ rowId +
+						', \''+ params[0]['codigoProduto'] +'\''+
+						', '+ params[0]['numeroEdicao'] +
+						', '+ params[0]['idLancamento'] +
+						', \''+ params[0]['dataRecolhimento'] +'\');"'+
+						'/>');
 		
 		return inputCheck;
 	},
 	
-	selecionarLinha : function(idLancamento, checked) {
+	selecionarLinha : function(el, rowId, codigoProduto, numeroEdicao, idLancamento, dataRecolhimento) {
 		
-		if (!checked && chamadaoController.checkAll) {
+		if (!el.checked && chamadaoController.checkAll) {
 		
-			chamadaoController.nonSelected.push(idLancamento);
+			chamadaoController.nonSelectedLanc.push(idLancamento);
+		} else if(el.checked && !chamadaoController.checkAll) {
+			
+			chamadaoController.selectedLanc.push({'codigoProduto': codigoProduto, 'numeroEdicao': numeroEdicao, 'idLancamento': idLancamento, 'dataRecolhimento': dataRecolhimento});
+		} else if(!el.checked && !chamadaoController.checkAll) {
+			
+			var elNdx = -1;
+			$.each(chamadaoController.selectedLanc, function(i, v) {
+		        if (v['idLancamento'] == idLancamento) {
+		        	elNdx = i;
+		        	return false;
+		        }
+		    });
+			
+			if (elNdx > -1) {
+				chamadaoController.selectedLanc.splice(elNdx, 1);
+			}
 		}
 		
-		dataHolder.hold('chamadaoHolder', idLancamento, 'checado', checked);
+		dataHolder.hold('chamadaoHolder', idLancamento, 'checado', el.checked);
 	},
 
 	selecionarTodos : function(input) {
@@ -440,26 +471,26 @@ var chamadaoController = $.extend(true, {
 			chamadaoController.zerarCamposParciais();
 		}
 		
-		chamadaoController.nonSelected = [];
+		chamadaoController.nonSelectedLanc = [];
 		
 		this.checkAll = input.checked;
 	},
 	
-	calcularParcial : function(input) {
-
+	calcularParcial : function(input, rowId) {
+return;
 		var checado = input.checked;
 		
-		clickLineFlexigrid(input, checado);
+//		clickLineFlexigrid(input, checado);
 		
 		if (checado) {
 			
 			chamadaoController.parciais.qtdProdutosParcial += 1;
 			
-			var reparte = $("#reparte" + input.value).html();
+			var reparte = $("#reparte" + rowId).html();
 			reparte = removeMascaraPriceFormat(reparte);
 			chamadaoController.parciais.qtdExemplaresParcial += intValue(reparte);
 			
-			var valor = $("#valorTotal" + input.value).html();
+			var valor = $("#valorTotal" + rowId).html();
 			
 			valor = priceToFloat(valor);
 			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) + parseFloat(valor);
@@ -557,15 +588,15 @@ var chamadaoController = $.extend(true, {
 	
 	realizarChamadao : function(acao) {
 		
-		var isReprogramacao = (acao == "REPROGRAMAR")?true:false;
+		var isReprogramacao = (acao == "REPROGRAMAR") ? true : false;
 		
-		var param ={novaDataChamadaoFormatada: $("#novaDataChamadao").val(), 
-					chamarTodos: chamadaoController.verifyCheckAll(),
-					reprogramacao: isReprogramacao};
+		var param = { novaDataChamadaoFormatada: $("#novaDataChamadao").val(), 
+						chamarTodos: chamadaoController.verifyCheckAll(),
+						reprogramacao: isReprogramacao};
 		
 		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
 		
-		param.idsIgnorados = chamadaoController.nonSelected;
+		param.idsIgnorados = chamadaoController.nonSelectedLanc;
 		
 		$.postJSON(contextPath + "/devolucao/chamadao/confirmarChamadao",param,
 				   function(result) {
@@ -593,11 +624,22 @@ var chamadaoController = $.extend(true, {
 	
 	getListaChamadao : function() {
 		
-		var linhasDaGrid = $('.chamadaoGrid tr', chamadaoController.workspace);
-		
 		var listaChamadao = new Array();
-		
+
 		var checkAllSelected = chamadaoController.verifyCheckAll();
+		
+		if (!checkAllSelected) {
+			$.each(chamadaoController.selectedLanc, function(index, value) {
+				
+				listaChamadao.push( { 'codigoProduto': value['codigoProduto']
+									, 'numeroEdicao': value['numeroEdicao']
+									, 'idLancamento': value['idLancamento']
+									, 'dataRecolhimento': value['dataRecolhimento']});
+			});
+		}
+		
+		/*
+		var linhasDaGrid = $('.chamadaoGrid tr', chamadaoController.workspace);
 		
 		if (!checkAllSelected) {
 			
@@ -627,7 +669,8 @@ var chamadaoController = $.extend(true, {
 					listaChamadao.push({codigoProduto:codProduto, numeroEdicao:numEdicao, idLancamento:lancamento, dataRecolhimento:dataRecolhimento});
 				}
 			});
-		}
+			
+		}*/
 		
 		return listaChamadao;
 	},
@@ -662,4 +705,3 @@ var chamadaoController = $.extend(true, {
 }, BaseController);
 
 //@ sourceURL=chamadao.js
-
