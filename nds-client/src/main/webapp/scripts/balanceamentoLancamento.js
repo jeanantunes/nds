@@ -22,7 +22,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("#resumoPeriodo", _workspace).show();
 		
-		var dataLancamento = $("#datepickerDe", _workspace).val();
+		var dataLancamento = $("#matrizLancamento-datepickerDe", _workspace).val();
 		
 		var data = [];
 		
@@ -1015,20 +1015,20 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.carregarGrid = function(dataLancamento, iniciarGrid) {
 		
 		if (dataLancamento!=null){
-		 $("#datepickerDe", _workspace).val(dataLancamento);
+		 $("#matrizLancamento-datepickerDe", _workspace).val(dataLancamento);
 		 $.each($('.labelDataLancamento'), function(k, v) {
 			 $(v).css('font-size', '11px').css('color', '#01649E');
 		 });
 		 $("#labelData"+ dataLancamento.replace(/\//g, ""), _workspace).css("font-size", "11px");
 		 $("#labelData"+ dataLancamento.replace(/\//g, ""), _workspace).css("color", "red");
 		} else {
-			if($("#datepickerDe", _workspace).val()) {
-				$("#labelData"+ $("#datepickerDe", _workspace).val().replace(/\//g, ""), _workspace).css("font-size", "11px");
-				$("#labelData"+ $("#datepickerDe", _workspace).val().replace(/\//g, ""), _workspace).css("color", "red");
+			if($("#matrizLancamento-datepickerDe", _workspace).val()) {
+				$("#labelData"+ $("#matrizLancamento-datepickerDe", _workspace).val().replace(/\//g, ""), _workspace).css("font-size", "11px");
+				$("#labelData"+ $("#matrizLancamento-datepickerDe", _workspace).val().replace(/\//g, ""), _workspace).css("color", "red");
 			}
 		}
 		
-		if($("#datepickerDe", _workspace).val()) {
+		if($("#matrizLancamento-datepickerDe", _workspace).val()) {
 			
 			T.linhasDestacadas = [];		
 			lancamentosSelecionados = [];	
@@ -1360,21 +1360,21 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			disableSelect : true
 			});
 
-		$( "#datepickerDe", _workspace ).datepicker({
+		$( "#matrizLancamento-datepickerDe", _workspace ).datepicker({
 			showOn: "button",
 			dateFormat: 'dd/mm/yy',
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#datepickerDe_1", _workspace ).datepicker({
+		$( "#matrizLancamento-datepickerDe_1", _workspace ).datepicker({
 			showOn: "button",
 			dateFormat: 'dd/mm/yy',
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$("#datepickerDe", _workspace).mask("99/99/9999");
-		$("#datepickerDe_1", _workspace).mask("99/99/9999");
+		$("#matrizLancamento-datepickerDe", _workspace).mask("99/99/9999");
+		$("#matrizLancamento-datepickerDe_1", _workspace).mask("99/99/9999");
 		
 		
 		$( "#novaDataLancamento", _workspace ).datepicker({
@@ -1390,7 +1390,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$(document).ready(function(){
 			
-			focusSelectRefField($("#datepickerDe"));
+			focusSelectRefField($("#matrizLancamento-datepickerDe"));
 			
 			$('#linkPesquisarMatrizLancamento').keydown(function(e) {
 				
@@ -1509,7 +1509,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.salvar = function() {
 		
 		
-        var dataLancamento = $("#datepickerDe", _workspace).val();
+        var dataLancamento = $("#matrizLancamento-datepickerDe", _workspace).val();
 		
 		var data = [];
 		
@@ -1542,7 +1542,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.salvarMatriz = function() {
 		
 		
-        var dataLancamento = $("#datepickerDe", _workspace).val();
+        var dataLancamento = $("#matrizLancamento-datepickerDe", _workspace).val();
 		
 		var data = [];
 		
@@ -1654,7 +1654,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			params.push({name: 'datasReabertura['+index+']', value: value.value});
 		});
 		
-		var dataLancamento = $("#datepickerDe", _workspace).val();
+		var dataLancamento = $("#matrizLancamento-datepickerDe", _workspace).val();
 		
 		params.push({name:'dataLancamento', value: dataLancamento});
 		
