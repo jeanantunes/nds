@@ -78,6 +78,10 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	public void cancelarChamadaAntecipadaCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
+		if(!filtro.isRecolhimentoFinal()) {
+			obterDataChamadaEncalheAntecipada(filtro);
+		}
+		
 		validarSeExisteMatrizRecolhimento(filtro);
 		
 		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
@@ -144,6 +148,12 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public void reprogramarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro){
 		
+
+		if(filtro.getDataAntecipacao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
+		}
+		
 		if(!filtro.isRecolhimentoFinal()) {
 			obterDataChamadaEncalheAntecipada(filtro);
 		}
@@ -170,11 +180,17 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public void reprogramarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO) {
 		
+		if(infoEncalheDTO.getDataAntecipacao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
+		}
+		
 		validarSeExisteMatrizRecolhimento(infoEncalheDTO);
+		
+		// cancelarChamadaAntecipadaCota(infoEncalheDTO);
 		
 		gravarChamadaAntecipacaoEncalheProduto(infoEncalheDTO);
 		
-		cancelarChamadaAntecipadaCota(infoEncalheDTO);
 	}
 	
 	@Transactional

@@ -462,6 +462,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		validarDataRecolhimento(dataRecolhimento);
 		
+		
+		
 		validarCotasDuplicadas(listaChamadaEncalheAntecipada,"Existem cotas duplicadas para reprogramação de chamda antecipada de encalhe!");
 		
 		reprogramarChamadaEncalheAnteicipada(listaChamadaEncalheAntecipada,dataRecolhimento,codigoProduto,numeroEdicao,dataProgramada,recolhimentoFinal);
@@ -552,7 +554,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 					new ChamadaAntecipadaEncalheDTO(
 							Integer.parseInt(vo.getNumeroCota()),
 							vo.getQntExemplares(),
-							vo.getCodigoChamdaEncalhe(),
+							vo.getCodigoChamadaEncalhe(),
 							vo.getIdLancamento()));
 		}
 		
@@ -750,7 +752,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			chamadaEncalheAntecipadaVO.setNomeCota(dto.getNomeCota());
 			chamadaEncalheAntecipadaVO.setNumeroCota( String.valueOf(dto.getNumeroCota()));
 			chamadaEncalheAntecipadaVO.setQntExemplares(dto.getQntExemplares());
-			chamadaEncalheAntecipadaVO.setCodigoChamdaEncalhe(dto.getCodigoChamadaEncalhe());
+			chamadaEncalheAntecipadaVO.setCodigoChamadaEncalhe(dto.getCodigoChamadaEncalhe());
 			chamadaEncalheAntecipadaVO.setIdLancamento(dto.getIdLancamento());
 			listaChamadaEncalheAntecipadaVO.add(chamadaEncalheAntecipadaVO);
 		}

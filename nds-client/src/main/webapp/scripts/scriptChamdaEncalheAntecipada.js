@@ -648,7 +648,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					idLancamento: "" + row.cell.idLancamento,
 					qntExemplares: "" + row.cell.qntExemplares,
 					nomeCota: "" + row.cell.nomeCota,
-					codigoChamadaEncalhe: "" + row.cell.codigoChamadaEncalhe,
+					codigoChamadaEncalhe: "" + row.cell.codigoChamdaEncalhe,
 					id: "" + index
 				}) ? 'checked="checked"' : '';
 
@@ -803,7 +803,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					idLancamento: "" + row.cell.idLancamento,
 					qntExemplares: "" + row.cell.qntExemplares,
 					nomeCota: "" + row.cell.nomeCota,
-					codigoChamadaEncalhe: "" + row.cell.codigoChamadaEncalhe,
+					codigoChamadaEncalhe: "" + row.cell.codigoChamdaEncalhe,
 					id: "" + index
 				}) ? 'checked="checked"' : '';
 				
@@ -831,7 +831,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var inputCheck = '<input isEdicao="true" disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+chamdaEncalheAnteipadaController.groupNameCheckGridCota+'" onclick="chamdaEncalheAnteipadaController.calcularTotalCota( '+parametroCheckbox +')" />';	
 				
 				var inputHiddenCodigoChamadaEncalhe = 	
-					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamadaEncalhe+'"/>';
+					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
 					
 				var inputHiddenIdLancamento= 	
 						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';
