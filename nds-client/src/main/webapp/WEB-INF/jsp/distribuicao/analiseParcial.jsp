@@ -498,7 +498,7 @@ table.dadosTab { margin-left: 370px;}
 				<tr>
 					<td width="50"><strong>Cota:</strong></td>
 					<td width="43"><span id="numeroCotaD"></span></td>
-					<td width="78"><strong>Nome:</strong></td>
+					<td width="117"><strong>Nome:</strong></td>
 					<td width="289"><span id="nomeCotaD"></span></td>
 					<td width="58"><strong>Tipo:</strong></td>
 					<td width="137"><span id="tipoCotaD"></span></td>
@@ -506,9 +506,9 @@ table.dadosTab { margin-left: 370px;}
 				<tr>
 					<td><strong>Ranking:</strong></td>
 					<td><span id="rankingCotaD"></span></td>
-					<td><strong>Faturamento:</strong></td>
+					<td><strong>Fat. médio mensal:</strong></td>
 					<td><span id="faturamentoCotaD"></span></td>
-					<td><strong>Mês/Ano:</strong></td>
+					<td><strong>Período:</strong></td>
 					<td><span id="mesAnoCotaD"></span></td>
 				</tr>
 			</table>
