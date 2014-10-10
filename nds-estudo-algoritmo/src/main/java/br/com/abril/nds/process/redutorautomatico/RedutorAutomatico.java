@@ -2,6 +2,8 @@ package br.com.abril.nds.process.redutorautomatico;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -31,14 +33,28 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     }
 
     public void calcularRedutorAutomatico(EstudoTransient estudo) {
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getVendaEdicaoMaisRecenteFechada() != null) {
-		if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigInteger.ZERO) == 0)) {
-		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
-		    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
-		}
-	    }
-	}
+	
+    	List<CotaEstudo> cotasForRemove = new ArrayList<>();
+    	
+    	for (CotaEstudo cota : estudo.getCotas()) {
+    		
+    		if (cota.getVendaEdicaoMaisRecenteFechada() != null) {
+			
+    			if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigInteger.ZERO) == 0)) {
+				    cota.setReparteCalculado(BigInteger.ZERO, estudo);
+	//			    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
+				    cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+				    
+				    cotasForRemove.add(cota);
+				    
+				    estudo.getCotasExcluidas().add(cota);
+			    
+				}
+	    	}
+    	}
+    	
+    	estudo.getCotas().removeAll(cotasForRemove);
+    	
     }
 
     public void calcularMenorVenda(EstudoTransient estudo) {
