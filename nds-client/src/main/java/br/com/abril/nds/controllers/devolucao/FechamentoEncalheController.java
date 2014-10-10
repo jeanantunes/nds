@@ -408,7 +408,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void veificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
+	public void verificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
 		
 		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
 

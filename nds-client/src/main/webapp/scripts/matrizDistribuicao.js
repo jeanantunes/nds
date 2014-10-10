@@ -457,17 +457,19 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 	},
 	
-	this.dividirEstudo=function(){
-		if($("input[type='checkbox'][name='checkgroup']:checked").length>1){
+	this.dividirEstudo = function() {
+		
+		this.hideMenuOpcoesEstudos();
+		
+		if($("input[type='checkbox'][name='checkgroup']:checked").length > 1) {
 			exibirMensagemDialog("WARNING",["Escolha somente 1 estudo para ser dividido."],"");
 			return;
-		}else if($("input[type='checkbox'][name='checkgroup']:checked").length==0){
+		} else if($("input[type='checkbox'][name='checkgroup']:checked").length==0) {
 			exibirMensagemDialog("WARNING",["Não há um estudo selecionado para ser dividido."],"");
 			return;
-		}
-		else{
+		} else {
 			var id= parseInt($("input[type='checkbox'][name='checkgroup']:checked").attr("id").replace("checkDistribuicao",""));
-			if(T.lancamentos[id].estudo==""){
+			if(T.lancamentos[id].estudo == "") {
 				exibirMensagemDialog("WARNING",["Estudo não foi gerado."],"");				
 				return;
 			}
@@ -995,6 +997,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 
 	this.somarEstudos = function() {
 		
+		this.hideMenuOpcoesEstudos();
+		
 		T.esconderOpcoes();
 		
 		if (!T.validarMarcacaoUnicoItem()) {
@@ -1024,6 +1028,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 
 	this.copiarProporcionalDeEstudo = function() {
+		
+		this.hideMenuOpcoesEstudos();
 		
 		T.esconderOpcoes();
 		
@@ -1529,6 +1535,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}	
 		
+		this.hideMenuOpcoesEstudos();
+		
+	},
+	
+	this.hideMenuOpcoesEstudos = function() {
 		opcoesAberto = !opcoesAberto;
 		$( '.opcoesEstudos' ).toggle(opcoesAberto);		
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
@@ -1555,6 +1566,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 
 	this.estudoComplementarShow = function() {
 
+		this.hideMenuOpcoesEstudos();
+		
 	    var selecionado = null;
 	    var maisDeUm = false;
 	    $.each(T.lancamentos, function(index, lancamento) {
@@ -1776,8 +1789,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	},
 
 	this.gerarEstudoManual = function() {
+		
+		this.hideMenuOpcoesEstudos();
+		
 		var selecionado = null;
 		var maisDeUm = false;
+
 		$.each(T.lancamentos, function(index, lancamento) {
 			if (lancamento.selecionado) {
 				if (selecionado != null) {
@@ -1831,8 +1848,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	};
 		
 	this.distribuicaoVendaMedia = function() {
+		
+		this.hideMenuOpcoesEstudos();
+		
 		var selecionado = null;
 		var maisDeUm = false;
+		
 		$.each(T.lancamentos, function(index, lancamento) {
 			if (lancamento.selecionado) {
 				if (selecionado != null) {

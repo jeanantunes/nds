@@ -202,11 +202,12 @@ var analiseParcialController = $.extend(true, {
                 $mix.hide();
                 $fixacao.hide();
                 
-                var dateFormatada = '';
+                var faturamentoFormatado = '';
                 
-                if(result.dataGeracaoRank != undefined && result.dataGeracaoRank != ""){
+                if(result.faturamento != undefined && result.faturamento != ""){
                	
-                	var dateFormatada = result.dataGeracaoRank.$.slice(3)
+                	var mediaFaturamento = ((result.faturamento)/3);
+                	faturamentoFormatado = floatToPrice(mediaFaturamento);
 
                 }
                 
@@ -214,8 +215,8 @@ var analiseParcialController = $.extend(true, {
                 $dialog.find('#nomeCotaD').text(result.nomePessoa || '');
                 $dialog.find('#tipoCotaD').text(result.tipoCota || '');
                 $dialog.find('#rankingCotaD').text(result.qtdeRankingSegmento || '');
-                $dialog.find('#faturamentoCotaD').text(result.faturamento != undefined ? "R$ "+floatToPrice(result.faturamento) : '');
-                $dialog.find('#mesAnoCotaD').text(dateFormatada);
+                $dialog.find('#faturamentoCotaD').text(faturamentoFormatado != '' ? "R$ "+faturamentoFormatado : '');
+                $dialog.find('#mesAnoCotaD').text("Últimos 3 meses.");
 
                 if (result.mixDataAlteracao) {
                     $dialog.find('#mixRepMin').text(result.mixRepMin || '');
