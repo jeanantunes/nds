@@ -34,8 +34,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			checkItem: function(index) {
 
-				console.log(index);
-				
 				var item = chamdaEncalheAnteipadaController.parseGridLine(index);
 				
 				this.checkedItems.push(item);
@@ -55,18 +53,32 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			keepChecked: function(item) {
 				
-				var unchecked = !this.uncheckedItems.filter(function(el) {
+				if(this.isCheckedAll) {
 					
-					return el.numeroCota 	=== item.numeroCota
+					var unchecked = !this.uncheckedItems.filter(function(el) {
+						
+						return el.numeroCota 	=== item.numeroCota
 						&& el.codigoBox 	=== item.codigoBox
 						&& el.idLancamento  === item.idLancamento
-					    && el.qntExemplares === item.qntExemplares
-				        && el.nomeCota  === item.nomeCota
-				        && el.codigoChamadaAntecipada  === item.codigoChamadaAntecipada
-				        && el.id  === item.id;
-				}).length;
-				
-				return (this.isCheckedAll && unchecked);
+						&& el.exemplares === item.qntExemplares;
+						
+					}).length;
+					
+					return (this.isCheckedAll && unchecked);
+				} else {
+					
+					var checked = this.checkedItems.filter(function(el) {
+						
+						return el.numeroCota 	=== item.numeroCota
+							&& el.codigoBox 	=== item.codigoBox
+							&& el.idLancamento  === item.idLancamento
+							&& el.exemplares === item.qntExemplares;
+
+						
+					}).length;
+					
+					return (!this.isCheckedAll && checked);
+				}
 			},
 			
 			removeItemFromUncheckedArray: function(item) {
@@ -76,7 +88,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					return el.numeroCota 	!== item.numeroCota 
 						&& el.codigoBox 	!== item.codigoBox
 						&& el.idLancamento  !== item.idLancamento
-						&& el.qntExemplares  !== item.qntExemplares
+						&& el.exemplares  !== item.qntExemplares
 					    && el.nomeCota  !== item.nomeCota
 					    && el.codigoChamadaAntecipada  !== item.codigoChamadaAntecipada
 					    && el.id  !== item.id;
@@ -497,7 +509,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 								? chamdaEncalheAnteipadaController.groupNameCheckGridCota
 									: chamdaEncalheAnteipadaController.groupNameCheck;
 
-			if(!verifyAtLeastOneChecked(groupName)){
+			if(!verifyAtLeastOneChecked(groupName) && chamdaEncalheAnteipadaController.gridSelectionHelper.getTotalCotas() < 1) {
 				var mensagens = new Array('Selecione um item para realizar a operação!') ;
 				exibirMensagem('WARNING',mensagens);
 				return false;
@@ -648,7 +660,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					idLancamento: "" + row.cell.idLancamento,
 					qntExemplares: "" + row.cell.qntExemplares,
 					nomeCota: "" + row.cell.nomeCota,
-					codigoChamadaEncalhe: "" + row.cell.codigoChamdaEncalhe,
+					codigoChamadaEncalhe: "" + row.cell.codigoChamadaEncalhe,
 					id: "" + index
 				}) ? 'checked="checked"' : '';
 
