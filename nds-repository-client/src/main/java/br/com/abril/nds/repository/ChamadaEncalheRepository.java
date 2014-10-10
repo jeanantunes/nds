@@ -79,4 +79,6 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	 */
 	void removerChamadaEncalhePorIds(List<Long> ids);
 	
+	
+	ChamadaEncalhe obterPorEdicaoTipoChamadaEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe);
 }
