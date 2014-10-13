@@ -204,7 +204,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 				MOVIMENTO_ESTOQUE_COTA MEC                                                                           ");
 		sql.append(" 		INNER JOIN (	SELECT                                                                                       ");
 		sql.append(" 							MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,                                              ");
-		sql.append(" 							MAX(MEC.DATA) AS DATA                                                                    ");
+		sql.append(" 							MEC.COTA_ID, MAX(MEC.DATA) AS DATA                                                       ");
 		sql.append(" 						FROM                                                                                         ");
 		sql.append(" 							CHAMADA_ENCALHE_COTA                                                                     ");
 		sql.append(" 						INNER JOIN CHAMADA_ENCALHE ON (CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID) ");
@@ -225,7 +225,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 					) AS MOVCOTA                                                                                     ");
 		sql.append(" 		ON (                                                                                                         ");
 		sql.append(" 			MEC.PRODUTO_EDICAO_ID = MOVCOTA.PRODUTO_EDICAO_ID AND                                                    ");
-		sql.append(" 			MEC.DATA = MOVCOTA.DATA ");
+		sql.append(" 			MEC.DATA = MOVCOTA.DATA AND MEC.COTA_ID = MOVCOTA.COTA_ID ");
 		sql.append(" 		)                                                                                                            ");
 		sql.append(" 		INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID AND ");
 		sql.append(" 		TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioReparte ) ");
