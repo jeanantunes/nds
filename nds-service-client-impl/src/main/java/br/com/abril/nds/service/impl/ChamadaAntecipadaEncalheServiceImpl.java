@@ -19,6 +19,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -32,6 +33,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -64,6 +66,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private CalendarioService calendario;
 	
 	@Transactional
 	@Override
@@ -154,6 +159,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada é maior que a data atual!");
 		}
 		
+		validarDiaOperante(filtro.getCodigoProduto(), filtro.getNumeroEdicao(), filtro.getDataAntecipacao());
+		
 		// if(!filtro.isRecolhimentoFinal()) {
 			// obterDataChamadaEncalheAntecipada(filtro);
 		//}
@@ -179,6 +186,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	@Override
 	public void reprogramarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO) {
+		
+		validarDiaOperante(infoEncalheDTO.getCodigoProduto(), infoEncalheDTO.getNumeroEdicao(), infoEncalheDTO.getDataAntecipacao());
 		
 		if(infoEncalheDTO.getDataAntecipacao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0) {
 			
@@ -223,6 +232,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	@Override
 	public void gravarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO){
+		
+		validarDiaOperante(infoEncalheDTO.getCodigoProduto(), infoEncalheDTO.getNumeroEdicao(), infoEncalheDTO.getDataAntecipacao());
 		
 		validarSeExisteMatrizRecolhimento(infoEncalheDTO);
 		
@@ -538,10 +549,11 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	
 	private void validarDiaOperante(String codigoProduto, Long numeroEdicao, Date dataAntecipacao) {
 		
-		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
-		//produtoEdicao.getProduto().getFornecedor().getId(), dataAntecipacao; 
+		if(!calendario.isDiaOperante(dataAntecipacao, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data selecionada não é uma Data de Operação.");
+		} 
 		
 	}
 }

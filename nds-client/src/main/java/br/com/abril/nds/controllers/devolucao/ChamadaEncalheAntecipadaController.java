@@ -343,9 +343,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			
 			chamadaAntecipadaEncalheService.gravarChamadaAntecipacaoEncalheProduto(filtro);
 
-			result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
-					"result").recursive().serialize();
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
 		
 		} else{
 			
