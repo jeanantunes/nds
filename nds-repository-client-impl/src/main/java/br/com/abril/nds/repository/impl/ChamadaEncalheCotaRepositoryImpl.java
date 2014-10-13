@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -617,7 +618,15 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		}
 
 		if (filtro.getCodTipoPontoPDV() != null) {
-			param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+			
+			if (filtro.getCodTipoPontoPDV() != null) {
+	        	
+	        	if(filtro.getCodTipoPontoPDV().equals("ALTERNATIVO")) {
+	        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.ALTERNATIVO);
+	        	} else {
+	        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.CONVENCIONAL);
+	        	}
+	        }
 		}
 
 		return param;
@@ -723,7 +732,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){
-			hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
+			hql.append(" AND cota.tipoDistribuicaoCota =:codigoTipoPontoPDV ");
 		}
 		
 		return hql;

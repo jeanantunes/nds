@@ -72,7 +72,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						return el.numeroCota 	=== item.numeroCota
 							&& el.codigoBox 	=== item.codigoBox
 							&& el.idLancamento  === item.idLancamento
-							&& el.exemplares === item.qntExemplares;
+							&& el.exemplares    === item.qntExemplares;
 
 						
 					}).length;
@@ -113,11 +113,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				this.isCheckedAll= false;
 				chamdaEncalheAnteipadaController.isCheckedAll=false;
 				chamdaEncalheAnteipadaController.gridSelectionHelper.isCheckedAll = false;
-				this.uncheckedItems= [];
 				$('#sel',chamdaEncalheAnteipadaController.workspace).attr("checked", false);
 				$('#checkRecolhimentoFinal',chamdaEncalheAnteipadaController.workspace).attr("checked", false);
 				$('#checkRecolhimentoFinal').attr('disabled', 'disabled');
 				this.checkedItems = [];
+				this.uncheckedItems= [];
 				checkedItems = new Array();
 				uncheckedItems= new Array();
 				$("#idTotalCotas",chamdaEncalheAnteipadaController.workspace).val(0);
@@ -159,9 +159,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var codigoBox = $(gridLine).find("input[name='codBox']").val();
 			var idLancamento = $(gridLine).find("input[name='idLancamento']").val();
 			var exemplares = $(gridLine).find("input[name^='qntExemplares']").val();
-			var nomeCota = $(gridLine).find("input[name^='nomeCota']").val();
-			var codigoChamadaAntecipada = $(gridLine).find("input[name^='codigoChamadaAntecipada']").val();
-			var id = $(gridLine).find("input[name^='id']").val();
 			
 			return {
 				numeroCota: numeroCota,
@@ -425,6 +422,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		checkAll: function(input){
+			
+			chamdaEncalheAnteipadaController.gridSelectionHelper.checkedItems = [];
+			chamdaEncalheAnteipadaController.gridSelectionHelper.uncheckedItems = [];
 			
 			chamdaEncalheAnteipadaController.gridSelectionHelper.isCheckedAll = input.checked; 
 			
@@ -1209,6 +1209,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					
 					chamdaEncalheAnteipadaController.tratarErroPesquisaCota,true);	
 				
+					if(flagRecolhimento){								
+						
+						$("#dataProgramada", chamdaEncalheAnteipadaController.workspace).val($("#dataAntecipacao").val());
+						
+					}
 			} else {
 				
 				var checkTodos = params['gravarTodos'];
@@ -1238,6 +1243,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 
 					chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
 					
+					if(flagRecolhimento){								
+						
+						$("#dataProgramada", chamdaEncalheAnteipadaController.workspace).val($("#dataAntecipacao").val());
+						
+					}
 					
 				}, null,true);
 			}
