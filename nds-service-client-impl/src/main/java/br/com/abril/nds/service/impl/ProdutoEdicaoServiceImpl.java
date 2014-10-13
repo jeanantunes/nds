@@ -567,7 +567,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
             	boolean dataValida = this.dataLancamentoValida(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor());
 
-	            if (dataValida){
+	            if (!dataValida){
 	            	
 	            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
 	            }
@@ -593,7 +593,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	            	boolean dataValida = this.dataLancamentoValida(dto.getDataLancamento(), dto.getIdFornecedor());
 
-		            if (dataValida){
+		            if (!dataValida){
 		            	
 		            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
 		            }
