@@ -569,7 +569,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	            if (!dataValida){
 	            	
-	            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+	            	// listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+	            	
+	            	throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento previsto deve ser dia útil e operante!");
 	            }
 			}      
 		}
@@ -595,7 +597,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		            if (!dataValida){
 		            	
-		            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+		            	// listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+		            	
+		            	throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento previsto deve ser dia útil e operante!");
 		            }
 				}       
 			}
