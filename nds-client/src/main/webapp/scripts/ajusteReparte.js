@@ -422,21 +422,6 @@ init : function() {
 	
 	editarAjuste : function(idAjusteReparte) {
 		
-		$.postJSON(contextPath + "/distribuicao/ajusteReparte/buscarAjustePorId", 
-				{id:idAjusteReparte},
-				function(result){
-					
-					if (result.formaAjuste == "AJUSTE_SEGMENTO"){
-						$('#formaAjusteAjusteSegmento_editar').attr('checked', true);
-						ajusteReparteController.popularPopUpEditarSegmento(result);
-						ajusteReparteController.filtroPorSegmentoEditar();
-					}else{
-						ajusteReparteController.limparPopUpEditar();
-						ajusteReparteController.popularPopUpEditar(result);
-					}
-		});
-
-		
 		$( "#dialog-editar" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -444,6 +429,20 @@ init : function() {
 			modal: true,
 			open: function (){
 				$("#tableSegmentosEditar").hide();
+				
+				$.postJSON(contextPath + "/distribuicao/ajusteReparte/buscarAjustePorId", 
+						{id:idAjusteReparte},
+						function(result){
+							
+							if (result.formaAjuste == "AJUSTE_SEGMENTO"){
+								$('#formaAjusteAjusteSegmento_editar').attr('checked', true);
+								ajusteReparteController.popularPopUpEditarSegmento(result);
+								ajusteReparteController.filtroPorSegmentoEditar();
+							}else{
+								ajusteReparteController.limparPopUpEditar();
+								ajusteReparteController.popularPopUpEditar(result);
+							}
+				});
 			},
 			
 			buttons: {

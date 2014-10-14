@@ -324,7 +324,7 @@ public class FeriadoRepositoryImpl extends
 	}
 	
 	@Override
-    public boolean isFeriado(Date data, String localidade){
+    public boolean isFeriado(Date data, String localidade) {
 	    StringBuilder hql = new StringBuilder("select ");
         hql.append(" count(f.ID) from FERIADO f ")
            .append(" where (f.DATA = :data ")
@@ -342,29 +342,33 @@ public class FeriadoRepositoryImpl extends
     
     @Override
     public boolean isNaoOpera(Date data) {
-       return this.isOpera(data, false, null);
+       return this.isFeriadoAnualComOperacao(data, false, null);
     }
+    
     @Override
     public boolean isNaoOpera(Date data, String localidade) {
-        return this.isOpera(data, false, localidade);
-     }
-    
-    @Override
-    public boolean isOpera(Date data){
-        return this.isOpera(data, true, null);
+        return this.isFeriadoAnualComOperacao(data, false, localidade);
     }
     
     @Override
-    public boolean isOpera(Date data, String localidade){
-        return this.isOpera(data, true, localidade);
+    public boolean isOpera(Date data) {
+        return this.isFeriadoAnualComOperacao(data, true, null);
     }
     
-    private boolean isOpera(Date data, boolean opera, String localidade){
-        StringBuilder hql = new StringBuilder("select ");
-        hql.append(" count(f.ID) from FERIADO f ").append(" where (f.DATA = :data")
-                .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) and f.IND_REPETE_ANUALMENTE = :repeteAnual")
-                .append(" )) and f.IND_OPERA = :indOpera and f.TIPO_FERIADO in (:tipoFeriado)");
-        if(StringUtils.isNotEmpty(localidade)){
+    @Override
+    public boolean isFeriadoComOperacao(Date data, String localidade) {
+        return this.isFeriadoAnualComOperacao(data, true, localidade);
+    }
+    
+    private boolean isFeriadoAnualComOperacao(Date data, boolean opera, String localidade) {
+        
+    	StringBuilder hql = new StringBuilder("select ");
+        hql.append(" count(f.ID) from FERIADO f ")
+        	.append(" where (f.DATA = :data")
+            .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) and f.IND_REPETE_ANUALMENTE = :repeteAnual")
+            .append(" )) and f.IND_OPERA = :indOpera and f.TIPO_FERIADO in (:tipoFeriado)");
+        
+        if(StringUtils.isNotEmpty(localidade)) {
             hql.append(" and (f.LOCALIDADE = :localidade or f.LOCALIDADE is null)");
         }
         
@@ -373,12 +377,14 @@ public class FeriadoRepositoryImpl extends
         
         query.setParameter("indOpera", opera);
         query.setParameter("repeteAnual", true);
-        if(StringUtils.isNotEmpty(localidade)){
+        
+        if(StringUtils.isNotEmpty(localidade)) {
             query.setParameter("localidade", localidade);
             query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.MUNICIPAL.name()));
-        }else{
+        } else {
             query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.ESTADUAL.name(), TipoFeriado.FEDERAL.name()));
         }
+        
         return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
     }
 }

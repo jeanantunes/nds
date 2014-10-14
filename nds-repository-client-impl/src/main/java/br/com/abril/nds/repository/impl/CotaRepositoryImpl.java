@@ -736,7 +736,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if (filtro.getCodTipoPontoPDV() != null) {
-            param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+        	
+        	if(filtro.getCodTipoPontoPDV().equals("ALTERNATIVO")) {
+        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.ALTERNATIVO);
+        	} else {
+        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.CONVENCIONAL);
+        	}
         }
         
         return param;
@@ -801,7 +806,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if (filtro.getCodTipoPontoPDV() != null) {
-            hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
+        	hql.append(" AND cota.tipoDistribuicaoCota =:codigoTipoPontoPDV ");
         }
         
         return hql.toString();

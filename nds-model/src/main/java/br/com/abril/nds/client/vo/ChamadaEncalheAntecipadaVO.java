@@ -18,7 +18,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private Long id;
 	private Long numeroEdicao;
 	private String codigoProduto;
-	private Long codigoChamdaEncalhe;
+	private Long codigoChamadaEncalhe;
 	private Long idLancamento;
 	private Integer codBox;
 	
@@ -51,14 +51,14 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	/**
 	 * @return the codigoChamdaEncalhe
 	 */
-	public Long getCodigoChamdaEncalhe() {
-		return codigoChamdaEncalhe;
+	public Long getCodigoChamadaEncalhe() {
+		return codigoChamadaEncalhe;
 	}
 	/**
 	 * @param codigoChamdaEncalhe the codigoChamdaEncalhe to set
 	 */
-	public void setCodigoChamdaEncalhe(Long codigoChamdaEncalhe) {
-		this.codigoChamdaEncalhe = codigoChamdaEncalhe;
+	public void setCodigoChamadaEncalhe(Long codigoChamadaEncalhe) {
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
 	}
 	/**
 	 * @return the numeroEdicao
