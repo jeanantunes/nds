@@ -194,9 +194,8 @@
 				<td>
 					<select class="campoDePesquisa" name="tipoPonto" id="tipoPontoPDV" style="width:150px;">
 			      		<option selected="selected" value="">Todos</option>
-			      		<c:forEach var="tpPonto" items="${listaTipoPonto}">
-								<option value="${tpPonto.key}">${tpPonto.value}</option>
-						</c:forEach>
+	        			<option value="ALTERNATIVO">Alternativo</option>
+	        			<option value="CONVENCIONAL">Convencional</option>
 			    	</select>
 					
 				</td>		  	

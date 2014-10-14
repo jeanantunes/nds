@@ -19,6 +19,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -32,6 +33,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -65,6 +67,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
+	@Autowired
+	private CalendarioService calendario;
+	
 	@Transactional
 	@Override
 	public void cancelarChamadaAntecipadaCota(InfoChamdaAntecipadaEncalheDTO infoChamdaAntecipadaEncalheDTO){
@@ -78,9 +83,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	public void cancelarChamadaAntecipadaCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
-		if(!filtro.isRecolhimentoFinal()) {
-			obterDataChamadaEncalheAntecipada(filtro);
-		}
+		//if(!filtro.isRecolhimentoFinal()) {
+			//obterDataChamadaEncalheAntecipada(filtro);
+		//}
 		
 		validarSeExisteMatrizRecolhimento(filtro);
 		
@@ -151,12 +156,14 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 
 		if(filtro.getDataAntecipacao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada é maior que a data atual!");
 		}
 		
-		if(!filtro.isRecolhimentoFinal()) {
-			obterDataChamadaEncalheAntecipada(filtro);
-		}
+		validarDiaOperante(filtro.getCodigoProduto(), filtro.getNumeroEdicao(), filtro.getDataAntecipacao());
+		
+		// if(!filtro.isRecolhimentoFinal()) {
+			// obterDataChamadaEncalheAntecipada(filtro);
+		//}
 		
 		validarSeExisteMatrizRecolhimento(filtro);
 		
@@ -180,6 +187,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public void reprogramarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO) {
 		
+		validarDiaOperante(infoEncalheDTO.getCodigoProduto(), infoEncalheDTO.getNumeroEdicao(), infoEncalheDTO.getDataAntecipacao());
+		
 		if(infoEncalheDTO.getDataAntecipacao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
@@ -187,7 +196,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		validarSeExisteMatrizRecolhimento(infoEncalheDTO);
 		
-		// cancelarChamadaAntecipadaCota(infoEncalheDTO);
+		cancelarChamadaAntecipadaCota(infoEncalheDTO);
 		
 		gravarChamadaAntecipacaoEncalheProduto(infoEncalheDTO);
 		
@@ -196,6 +205,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	@Override
 	public void gravarChamadaAntecipacaoEncalheProduto(FiltroChamadaAntecipadaEncalheDTO filtro){
+		
+		validarDiaOperante(filtro.getCodigoProduto(), filtro.getNumeroEdicao(), filtro.getDataAntecipacao());
 		
 		validarSeExisteMatrizRecolhimento(filtro);
 		
@@ -221,6 +232,8 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	@Override
 	public void gravarChamadaAntecipacaoEncalheProduto(InfoChamdaAntecipadaEncalheDTO infoEncalheDTO){
+		
+		validarDiaOperante(infoEncalheDTO.getCodigoProduto(), infoEncalheDTO.getNumeroEdicao(), infoEncalheDTO.getDataAntecipacao());
 		
 		validarSeExisteMatrizRecolhimento(infoEncalheDTO);
 		
@@ -255,8 +268,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser menor que a Data Programada!");
 		}
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository
-				.obterProdutoEdicaoPorCodProdutoNumEdicao(infoEncalheDTO.getCodigoProduto(), 
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(infoEncalheDTO.getCodigoProduto(), 
 														  infoEncalheDTO.getNumeroEdicao());
 	
 		ChamadaEncalhe chamadaEncalhe = 
@@ -533,5 +545,15 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possivel realizar a antecipação. Pois existe matriz recolhimento confirmada.");
 		}
+	}
+	
+	private void validarDiaOperante(String codigoProduto, Long numeroEdicao, Date dataAntecipacao) {
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+		
+		if(!calendario.isDiaOperante(dataAntecipacao, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data selecionada não é uma Data de Operação Válida.");
+		} 
+		
 	}
 }
