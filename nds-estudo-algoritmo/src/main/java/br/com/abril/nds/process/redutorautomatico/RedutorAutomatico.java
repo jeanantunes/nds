@@ -42,12 +42,12 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 			
     			if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigInteger.ZERO) == 0)) {
 				    cota.setReparteCalculado(BigInteger.ZERO, estudo);
-	//			    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
-				    cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+				    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
+//				    cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
 				    
 				    cotasForRemove.add(cota);
 				    
-				    estudo.getCotasExcluidas().add(cota);
+				    estudo.getCotasComReparteJaCalculado().add(cota);
 			    
 				}
 	    	}
