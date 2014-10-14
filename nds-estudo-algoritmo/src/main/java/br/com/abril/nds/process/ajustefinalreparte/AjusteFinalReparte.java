@@ -69,7 +69,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
 				    (cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) == 0) &&
 				    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
-					    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+					    ClassificacaoCota.BancaForaDaRegiaoDistribuicao, ClassificacaoCota.RedutorAutomatico)) {
 			    	setReparteCota(cota, estudo);
 			    }
 			}
@@ -98,7 +98,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			    	break;
 			    }
 			    if (estudo.getReservaAjuste().compareTo(reparte) >= 0 &&
-				    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix)) {
+				    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.CotaMix)) {
 			    	setReparteCota(cota, estudo);
 			    }
 			}

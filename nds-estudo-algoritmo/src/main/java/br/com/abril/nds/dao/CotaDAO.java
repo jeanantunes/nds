@@ -170,7 +170,7 @@ public class CotaDAO {
 	    }
 	    cota.setClassificacao(ClassificacaoCota.Ajuste);
 	}
-	if (cota.getAjusteReparte() == null || cota.getAjusteReparte().compareTo(BigDecimal.ONE) == -1) {
+	if (cota.getAjusteReparte() == null || cota.getAjusteReparte().compareTo(BigDecimal.ZERO) == -1) {
 	    cota.setIndiceAjusteCota(BigDecimal.ONE);
 	} else {
 	    cota.setIndiceAjusteCota(cota.getAjusteReparte());

@@ -89,7 +89,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		if (ordenarConsulta) {
 			
-			hql.append(getOrderBy(filtro, filtro.getIsImpressao()));
+			hql.append(getOrderBy(filtro, true));
 		}
 		
 		Query query =  getSession().createSQLQuery(hql.toString())
@@ -138,8 +138,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and estudo_cota_.TIPO_ESTUDO != :juramentado ");
 		
 		if(filtro.getIdBox() == null) {
-			
-			// hql.append(" and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
+			hql.append(" and box_.ID is not null ");
+			hql.append(" and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
 			
 		} else {
 			
