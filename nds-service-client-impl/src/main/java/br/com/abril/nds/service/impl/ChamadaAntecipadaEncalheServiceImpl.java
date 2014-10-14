@@ -552,7 +552,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
 		if(!calendario.isDiaOperante(dataAntecipacao, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "A data selecionada não é uma Data de Operação.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data selecionada não é uma Data de Operação Válida.");
 		} 
 		
 	}
