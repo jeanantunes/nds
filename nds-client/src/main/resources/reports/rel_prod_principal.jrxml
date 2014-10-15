@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" columnCount="2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.815000000000003"/>
-	<property name="ireport.x" value="6"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -35,7 +35,7 @@
 	<title>
 		<band height="77">
 			<subreport isUsingCache="false">
-				<reportElement uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="555" height="77" uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3"/>
 				<subreportParameter name="IMAGEM">
 					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -52,7 +52,7 @@
 	<columnHeader>
 		<band height="20">
 			<staticText>
-				<reportElement uuid="1d67848b-7540-4118-b013-ec3ea45a5ab0" style="rel_stext_centralizado" mode="Opaque" x="130" y="0" width="35" height="20" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="130" y="0" width="35" height="20" backcolor="#D3D3D3" uuid="1d67848b-7540-4118-b013-ec3ea45a5ab0"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -63,7 +63,7 @@
 				<text><![CDATA[SM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="24fbdd64-ffcf-46d8-ab33-4103afd38128" style="rel_stext_centralizado" mode="Opaque" x="205" y="0" width="70" height="20" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="205" y="0" width="73" height="20" backcolor="#D3D3D3" uuid="24fbdd64-ffcf-46d8-ab33-4103afd38128"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -74,7 +74,7 @@
 				<text><![CDATA[Promocional]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="80ae92f7-0d69-4b36-a0de-d55d0799f422" style="rel_stext_centralizado" mode="Opaque" x="165" y="0" width="40" height="20" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="165" y="0" width="40" height="20" backcolor="#D3D3D3" uuid="80ae92f7-0d69-4b36-a0de-d55d0799f422"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -85,7 +85,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="ae673374-1790-4d86-a973-fb3b2a8eae93" style="rel_stext_centralizado" mode="Opaque" x="90" y="0" width="40" height="20" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="90" y="0" width="40" height="20" backcolor="#D3D3D3" uuid="ae673374-1790-4d86-a973-fb3b2a8eae93"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -96,7 +96,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="8a6502dc-9995-4160-aeb6-148eb9a0bcc7" style="rel_stext" mode="Opaque" x="0" y="0" width="90" height="20" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext" mode="Opaque" x="0" y="0" width="90" height="20" backcolor="#D3D3D3" uuid="8a6502dc-9995-4160-aeb6-148eb9a0bcc7"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -111,7 +111,7 @@
 	<detail>
 		<band height="20" splitType="Immediate">
 			<textField>
-				<reportElement uuid="181b0298-ab85-4ec1-a8d9-bff7df9d828a" style="Estilo Zebrado" x="0" y="0" width="90" height="20"/>
+				<reportElement style="Estilo Zebrado" x="0" y="0" width="90" height="20" uuid="181b0298-ab85-4ec1-a8d9-bff7df9d828a"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -124,7 +124,7 @@
 				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getNomeProduto()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="0e23e0e6-5c5b-4585-a3e6-c00cb77778f4" style="Estilo Zebrado_centralizado" x="90" y="0" width="40" height="20"/>
+				<reportElement style="Estilo Zebrado_centralizado" x="90" y="0" width="40" height="20" uuid="0e23e0e6-5c5b-4585-a3e6-c00cb77778f4"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -135,18 +135,7 @@
 				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getNumeroEdicao()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="d003b5ea-73ce-4390-aa3f-f9e070e18507" style="Estilo Zebrado_centralizado" x="165" y="0" width="40" height="20"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getTotal()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="923056d4-303b-4c15-98c7-bf2e88b97dc7" style="Estilo Zebrado_centralizado" x="130" y="0" width="35" height="20"/>
+				<reportElement style="Estilo Zebrado_centralizado" x="130" y="0" width="35" height="20" uuid="923056d4-303b-4c15-98c7-bf2e88b97dc7"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -159,7 +148,7 @@
 				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getSm()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="e5256df5-0480-4583-8247-effffaa375bf" style="Estilo Zebrado_centralizado" mode="Opaque" x="205" y="0" width="70" height="20" backcolor="#D3D3D3"/>
+				<reportElement style="Estilo Zebrado_centralizado" mode="Opaque" x="165" y="0" width="40" height="20" backcolor="#D3D3D3" uuid="d003b5ea-73ce-4390-aa3f-f9e070e18507"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -168,6 +157,19 @@
 				</box>
 				<textElement verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getTotal()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Estilo Zebrado_centralizado" mode="Transparent" x="205" y="0" width="73" height="20" backcolor="#FFFFFF" uuid="e5256df5-0480-4583-8247-effffaa375bf"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[((br.com.abril.nds.dto.ProdutoMapaCotaDTO)$F{value}).getMaterialPromocional()]]></textFieldExpression>
 			</textField>
