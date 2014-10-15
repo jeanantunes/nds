@@ -495,7 +495,9 @@ public class CotaBaseController extends BaseController {
 		
 		List<CotaBaseDTO> listaFinal = new ArrayList<CotaBaseDTO>();
 		
-		listaFinal.add(listaAuxiliar.get(0));
+		if((listaAuxiliar != null) && (!listaAuxiliar.isEmpty())){
+			listaFinal.add(listaAuxiliar.get(0));
+		}
 		
 		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel = new TableModel<CellModelKeyValue<CotaBaseDTO>>();
 
