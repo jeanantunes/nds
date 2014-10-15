@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -44,7 +42,6 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
-import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
@@ -110,6 +107,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao
 import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
+import br.com.abril.nds.repository.CotaBaseRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
@@ -230,6 +228,8 @@ public class CotaServiceImpl implements CotaService {
     @Autowired
     private EnderecoPDVRepository enderecoPDVRepository;
     
+    @Autowired
+    private CotaBaseRepository cotaBaseRepository;
     
     @Autowired
     private ParametroSistemaRepository parametroSistemaRepository;
@@ -1374,9 +1374,6 @@ public class CotaServiceImpl implements CotaService {
             return;
         }
         
-//        cotaDTO.setInicioPeriodo(baseReferenciaCota.getInicioPeriodo());
-//        cotaDTO.setFimPeriodo(baseReferenciaCota.getFinalPeriodo());
-        
         if(baseReferenciaCota.getReferenciasCota()!= null && !baseReferenciaCota.getReferenciasCota().isEmpty()){
             
             final List<ReferenciaCota> referenicasCota = new ArrayList<ReferenciaCota>();
@@ -1399,12 +1396,15 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
+    @Transactional
     private void atribuirInicioEFimPeriodoCota(CotaDTO cotaDTO, Long idCota){
     	
-    	HistoricoSituacaoCota historicoMaisRecente = cotaRepository.obterSituacaoCota(idCota);
+    	CotaBase cotaBase = cotaBaseRepository.obterSituacaoCota(idCota);
     	
-    	cotaDTO.setInicioPeriodo(historicoMaisRecente.getDataInicioValidade());
-    	cotaDTO.setFimPeriodo(historicoMaisRecente.getDataFimValidade());
+    	if(cotaBase != null){
+    		cotaDTO.setInicioPeriodo(cotaBase.getDataInicio());
+    		cotaDTO.setFimPeriodo(cotaBase.getDataFim());
+    	}
     }
     
     @Override
