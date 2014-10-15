@@ -131,13 +131,15 @@ var EmissaoCEController = $.extend(true, {
 				}			
 			},
             failCallback: function(result) {
-				if (result.mensagens) {
 	
+        		res = $.parseJSON($(result).text());
+        		if (res.mensagens) {
+        			
 					exibirMensagem(
-							result.mensagens.tipoMensagem, 
-							result.mensagens.listaMensagens
+							res.mensagens.tipoMensagem, 
+							res.mensagens.listaMensagens
 					);
-				}			
+				}	
 			}
 		});
 		

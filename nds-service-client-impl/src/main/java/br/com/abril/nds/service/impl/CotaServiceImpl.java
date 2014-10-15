@@ -1403,8 +1403,11 @@ public class CotaServiceImpl implements CotaService {
     	
     	HistoricoSituacaoCota historicoMaisRecente = cotaRepository.obterSituacaoCota(idCota);
     	
-    	cotaDTO.setInicioPeriodo(historicoMaisRecente.getDataInicioValidade());
-    	cotaDTO.setFimPeriodo(historicoMaisRecente.getDataFimValidade());
+    	if(historicoMaisRecente != null) {
+    		
+    		cotaDTO.setInicioPeriodo(historicoMaisRecente.getDataInicioValidade());
+    		cotaDTO.setFimPeriodo(historicoMaisRecente.getDataFimValidade());
+    	}
     }
     
     @Override
