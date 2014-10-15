@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -42,6 +44,7 @@ import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
+import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroDistribuicaoEntregaCotaDTO;
@@ -1251,6 +1254,7 @@ public class CotaServiceImpl implements CotaService {
             cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
         }
         
+        this.atribuirInicioEFimPeriodoCota(cotaDTO, cota.getId());
         this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
         this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
         
@@ -1370,8 +1374,8 @@ public class CotaServiceImpl implements CotaService {
             return;
         }
         
-        cotaDTO.setInicioPeriodo(baseReferenciaCota.getInicioPeriodo());
-        cotaDTO.setFimPeriodo(baseReferenciaCota.getFinalPeriodo());
+//        cotaDTO.setInicioPeriodo(baseReferenciaCota.getInicioPeriodo());
+//        cotaDTO.setFimPeriodo(baseReferenciaCota.getFinalPeriodo());
         
         if(baseReferenciaCota.getReferenciasCota()!= null && !baseReferenciaCota.getReferenciasCota().isEmpty()){
             
@@ -1393,6 +1397,14 @@ public class CotaServiceImpl implements CotaService {
                 cotaDTO.setHistoricoTerceiraPorcentagem(referenicasCota.get(2).getPercentual());
             }
         }
+    }
+    
+    private void atribuirInicioEFimPeriodoCota(CotaDTO cotaDTO, Long idCota){
+    	
+    	HistoricoSituacaoCota historicoMaisRecente = cotaRepository.obterSituacaoCota(idCota);
+    	
+    	cotaDTO.setInicioPeriodo(historicoMaisRecente.getDataInicioValidade());
+    	cotaDTO.setFimPeriodo(historicoMaisRecente.getDataFimValidade());
     }
     
     @Override
