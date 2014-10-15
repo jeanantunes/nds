@@ -30,7 +30,7 @@ var romaneiosController = $.extend(true, {
 				sortable : false,
 				align : 'left'
 			}],
-			sortname : "numeroCota",
+			sortname : "cota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

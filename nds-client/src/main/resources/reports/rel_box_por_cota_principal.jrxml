@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" columnCount="2" pageWidth="594" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.9965000000000062"/>
-	<property name="ireport.x" value="149"/>
-	<property name="ireport.y" value="49"/>
+	<property name="ireport.x" value="560"/>
+	<property name="ireport.y" value="17"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
 	</style>
@@ -42,7 +42,7 @@
 	<title>
 		<band height="77">
 			<subreport isUsingCache="false">
-				<reportElement uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="555" height="77" uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3"/>
 				<subreportParameter name="IMAGEM">
 					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -55,18 +55,18 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_header.jasper"]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement uuid="52c8f9a3-71b6-4eb4-8e89-a297b78cefd6" x="375" y="52" width="180" height="15"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[" - "+$F{nomeCota}]]></textFieldExpression>
+				<reportElement x="353" y="52" width="201" height="15" uuid="52c8f9a3-71b6-4eb4-8e89-a297b78cefd6"/>
+				<textFieldExpression><![CDATA[$F{nomeCota}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="94fead64-bc88-46fb-b2fc-84b0749882f0" x="355" y="52" width="20" height="15"/>
-				<textElement/>
-				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
+				<reportElement x="315" y="52" width="38" height="15" uuid="94fead64-bc88-46fb-b2fc-84b0749882f0"/>
+				<textFieldExpression><![CDATA[$F{numeroCota}+" - "]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="0f85bce7-e454-4cee-953d-a1591f3e1b3c" style="rel_stext" x="322" y="52" width="32" height="15"/>
-				<textElement/>
+				<reportElement style="rel_stext" x="278" y="52" width="38" height="15" uuid="0f85bce7-e454-4cee-953d-a1591f3e1b3c"/>
+				<textElement>
+					<paragraph leftIndent="1"/>
+				</textElement>
 				<text><![CDATA[Cota:]]></text>
 			</staticText>
 		</band>
@@ -74,7 +74,7 @@
 	<columnHeader>
 		<band height="30">
 			<staticText>
-				<reportElement uuid="b9216452-0056-40f0-82f9-b5e8a68d0c44" style="rel_stext_centralizado" mode="Opaque" x="167" y="0" width="71" height="30" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="167" y="0" width="71" height="30" backcolor="#D3D3D3" uuid="b9216452-0056-40f0-82f9-b5e8a68d0c44"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -88,7 +88,7 @@
 				<text><![CDATA[Preço Capa R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="cb2c0d92-3b8f-4751-b2ad-65208cf408b7" style="rel_stext_centralizado" mode="Opaque" x="238" y="0" width="39" height="30" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="238" y="0" width="39" height="30" backcolor="#D3D3D3" uuid="cb2c0d92-3b8f-4751-b2ad-65208cf408b7"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -101,7 +101,7 @@
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4fa243e8-1c11-47fd-8c02-6c3b1366e354" style="rel_stext_centralizado" mode="Opaque" x="100" y="0" width="42" height="30" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="100" y="0" width="42" height="30" backcolor="#D3D3D3" uuid="4fa243e8-1c11-47fd-8c02-6c3b1366e354"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -114,7 +114,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b7b2e4e2-2fce-497d-a806-8c2b536a88d0" style="rel_stext" mode="Opaque" x="0" y="15" width="100" height="15" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext" mode="Opaque" x="0" y="15" width="100" height="15" backcolor="#D3D3D3" uuid="b7b2e4e2-2fce-497d-a806-8c2b536a88d0"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -127,7 +127,7 @@
 				<text><![CDATA[Código de Barras]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c5e7a58b-64b6-4fd7-98e7-206a13426f20" style="rel_stext" mode="Opaque" x="0" y="0" width="100" height="15" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext" mode="Opaque" x="0" y="0" width="100" height="15" backcolor="#D3D3D3" uuid="c5e7a58b-64b6-4fd7-98e7-206a13426f20"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -140,7 +140,7 @@
 				<text><![CDATA[Publicação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="dbd0ac8c-bc57-4d12-aaf8-86ca143647bf" style="rel_stext_centralizado" mode="Opaque" x="142" y="0" width="25" height="30" backcolor="#D3D3D3"/>
+				<reportElement style="rel_stext_centralizado" mode="Opaque" x="142" y="0" width="25" height="30" backcolor="#D3D3D3" uuid="dbd0ac8c-bc57-4d12-aaf8-86ca143647bf"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -157,7 +157,7 @@
 	<detail>
 		<band height="100" splitType="Immediate">
 			<subreport>
-				<reportElement uuid="cd7c149f-8b3c-40f3-aae8-fc54dde2d604" positionType="Float" x="0" y="0" width="277" height="100"/>
+				<reportElement positionType="Float" x="0" y="0" width="277" height="100" uuid="cd7c149f-8b3c-40f3-aae8-fc54dde2d604"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
     ((java.util.LinkedHashMap)$F{produtos}).values()
 )]]></dataSourceExpression>
