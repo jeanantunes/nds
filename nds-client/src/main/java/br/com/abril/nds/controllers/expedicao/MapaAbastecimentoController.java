@@ -263,6 +263,10 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 		case ENTREGADOR:
 			this.popularGridPorEntregador(filtro);
+		case BOX_X_COTA:
+		    this.popularGridBoxCota(filtro);
+		    
+            break;	
 		default:
 			break;
 		}
@@ -357,6 +361,10 @@ public class MapaAbastecimentoController extends BaseController {
 		case ENTREGADOR:
 			
 			break;
+			
+		case BOX_X_COTA:
+            
+            break;	
 		default:
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 		}
@@ -555,6 +563,19 @@ public class MapaAbastecimentoController extends BaseController {
                 path += "rel_entregador_principal.jasper";
                 
 			break;
+			case BOX_X_COTA:
+                
+			    filtro.getPaginacao().setSortColumn("nomeEdicao");
+			    
+                dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota(filtro).entrySet();
+                
+                parameters.put("DATA", filtro.getDataLancamento());
+                
+                nomeRelatorio = "Mapa de Abastecimento por Rota Quebra Cota";
+                
+                path += "rel_rota_quebra_principal.jasper";
+                
+            break;
 			default:
 				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 			}
@@ -652,6 +673,19 @@ public class MapaAbastecimentoController extends BaseController {
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
 
+	private void popularGridBoxCota(FiltroMapaAbastecimentoDTO filtro) {
+
+        List<AbastecimentoDTO> lista = this.mapaAbastecimentoService.obterDadosAbastecimentoBoxCota(filtro);
+
+        if (lista == null || lista.isEmpty()) {
+            mostrarMensagemListaVazia();
+        }
+
+        Long totalRegistros = this.mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
+
+        result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+    }
+	
 	private void popularGridPorCota(FiltroMapaAbastecimentoDTO filtro) {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);

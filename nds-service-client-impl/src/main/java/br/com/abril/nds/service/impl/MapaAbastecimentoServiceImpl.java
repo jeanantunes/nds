@@ -52,14 +52,24 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional
-	public List<AbastecimentoDTO> obterDadosAbastecimento(
-		FiltroMapaAbastecimentoDTO filtro) {
+	public List<AbastecimentoDTO> obterDadosAbastecimento(FiltroMapaAbastecimentoDTO filtro) {
 		
 		Intervalo<Date> intervaloDataLancamento = new Intervalo<Date>(filtro.getDataDate(), filtro.getDataDate());
 		
 		this.cotaService.verificarCotasSemRoteirizacao(null, intervaloDataLancamento, null);
 		
 		return movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);
+	}
+	
+	@Override
+	@Transactional
+	public List<AbastecimentoDTO> obterDadosAbastecimentoBoxCota(FiltroMapaAbastecimentoDTO filtro) {
+		
+		Intervalo<Date> intervaloDataLancamento = new Intervalo<Date>(filtro.getDataDate(), filtro.getDataDate());
+		
+		this.cotaService.verificarCotasSemRoteirizacao(null, intervaloDataLancamento, null);
+		
+		return movimentoEstoqueCotaRepository.obterDadosAbastecimentoBoxCota(filtro);
 	}
 	
 	@Override

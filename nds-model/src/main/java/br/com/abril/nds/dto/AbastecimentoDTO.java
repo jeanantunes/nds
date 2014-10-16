@@ -14,6 +14,8 @@ public class AbastecimentoDTO implements Serializable {
 	private Long idBox;
 	private String box;
 	private Integer codigoCota;
+	private Integer codigoBox;
+	private String nomeBox;
 	private String nomeCota;
 	private Integer totalProduto;
 	private Integer totalReparte;
@@ -149,7 +151,20 @@ public class AbastecimentoDTO implements Serializable {
 	public void setTotalBox(BigDecimal totalBox) {
 		this.totalBox = CurrencyUtil.formatarValor(totalBox);
 	}
-	
-	
-	
+
+	public Integer getCodigoBox() {
+		return codigoBox;
+	}
+
+	public void setCodigoBox(Integer codigoBox) {
+		this.codigoBox = codigoBox;
+	}
+
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
 }

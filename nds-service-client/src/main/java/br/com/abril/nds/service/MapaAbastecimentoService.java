@@ -185,4 +185,6 @@ public interface MapaAbastecimentoService {
 
 	Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> obterMapaDeImpressaoPorBoxQuebraPorCota(
 	        FiltroMapaAbastecimentoDTO filtro);
+	
+	List<AbastecimentoDTO> obterDadosAbastecimentoBoxCota(FiltroMapaAbastecimentoDTO filtro);
 }

@@ -3960,4 +3960,63 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	return (BigDecimal) query.uniqueResult();
     }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<AbastecimentoDTO> obterDadosAbastecimentoBoxCota(FiltroMapaAbastecimentoDTO filtro) {
+		
+        final Map<String, Object> param = new HashMap<String, Object>();
+        
+        final List<String> statusLancamento = new ArrayList<String>();
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        hql.append(" select box.ID as idBox, ");
+        hql.append(" 		concat(box.CODIGO, '-', box.NOME) as box, ");
+        hql.append(" 		box.CODIGO as codigoBox, ");
+        hql.append(" 		box.NOME as nomeBox, ");
+        hql.append(" 		cota.NUMERO_COTA as codigoCota, ");
+        hql.append("        coalesce(pessoa.NOME, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
+        hql.append(" 		count(distinct  produtoEdicao.ID) as totalProduto, ");
+        hql.append(" 		sum(estudoCota.QTDE_EFETIVA) as totalReparte, ");
+        hql.append(" 		sum(estudoCota.QTDE_EFETIVA * produtoEdicao.PRECO_VENDA) as totalBox ");
+        
+        gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
+        
+        hql.append(" group by box.ID ");
+        
+        if (filtro.getQuebraPorCota()) {
+            hql.append(" , cota.ID ");
+        }
+        
+        gerarOrdenacaoDadosAbastecimento(filtro, hql);
+        
+        final SQLQuery query =  getSession().createSQLQuery(hql.toString());
+        
+        setParameters(query, param);
+        
+        query.setParameterList("status", statusLancamento);
+        
+        query.addScalar("idBox", StandardBasicTypes.LONG);
+        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeBox", StandardBasicTypes.STRING);
+        query.addScalar("box", StandardBasicTypes.STRING);
+        query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
+        query.addScalar("nomeCota", StandardBasicTypes.STRING);
+        query.addScalar("totalProduto", StandardBasicTypes.LONG);
+        query.addScalar("totalReparte", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(AbastecimentoDTO.class));
+        
+        if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) {
+            query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+        }
+        
+        if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+            query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+        }
+        
+        return  query.list();
+	}
 }
