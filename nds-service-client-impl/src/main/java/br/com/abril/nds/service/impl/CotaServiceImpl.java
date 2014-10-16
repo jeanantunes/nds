@@ -1401,7 +1401,7 @@ public class CotaServiceImpl implements CotaService {
     	
     	CotaBase cotaBase = cotaBaseRepository.obterSituacaoCota(idCota);
     	
-    	if(cotaBase != null){
+    	if(cotaBase != null) {
     		cotaDTO.setInicioPeriodo(cotaBase.getDataInicio());
     		cotaDTO.setFimPeriodo(cotaBase.getDataFim());
     	}

@@ -171,6 +171,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if (enderecoPdv == null) {
 				
+				if(pdvPrincipal == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem o PDV Principal", cota.getNumeroCota()));
+				}
+				
 				for (EnderecoPDV ePdv : pdvPrincipal.getEnderecos()) {
 					
 					if (ePdv.isPrincipal()){
