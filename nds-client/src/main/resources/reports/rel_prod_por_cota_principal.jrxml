@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.5000000000000024"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -54,7 +54,7 @@
 	<title>
 		<band height="77">
 			<subreport isUsingCache="false">
-				<reportElement uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="555" height="77" uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3"/>
 				<subreportParameter name="IMAGEM">
 					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -69,71 +69,71 @@
 		</band>
 	</title>
 	<detail>
-		<band height="100" splitType="Stretch">
+		<band height="79" splitType="Stretch">
 			<elementGroup>
 				<subreport>
-					<reportElement uuid="04a11bf5-3304-4943-8416-6968e835370e" positionType="Float" x="0" y="80" width="555" height="20"/>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
-    ((java.util.LinkedHashMap)$F{boxQtdes}).entrySet()
-)]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_prod_por_cota_subqtds.jasper"]]></subreportExpression>
-				</subreport>
-				<subreport>
-					<reportElement uuid="cd7c149f-8b3c-40f3-aae8-fc54dde2d604" positionType="Float" x="0" y="45" width="555" height="20"/>
+					<reportElement positionType="Float" x="0" y="45" width="555" height="20" uuid="cd7c149f-8b3c-40f3-aae8-fc54dde2d604"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
     ((java.util.LinkedHashMap)$F{cotasQtdes}).entrySet()
 )]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_prod_por_cota_subcota.jasper"]]></subreportExpression>
 				</subreport>
 				<rectangle>
-					<reportElement uuid="2acf6631-e715-465e-aae8-ebeb5957955e" x="0" y="0" width="555" height="35" backcolor="#D3D3D3"/>
+					<reportElement x="0" y="0" width="555" height="35" backcolor="#D3D3D3" uuid="2acf6631-e715-465e-aae8-ebeb5957955e"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="b6db7fee-cb35-4f46-91cb-29f81d88b27d" style="rel_stext" x="3" y="2" width="60" height="15"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="3" y="2" width="60" height="15" uuid="b6db7fee-cb35-4f46-91cb-29f81d88b27d"/>
 					<text><![CDATA[Produto:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="6ac246d2-173c-4dc7-ad59-def54d6c5aeb" style="rel_ftext" x="63" y="2" width="100" height="15"/>
+					<reportElement style="rel_ftext" x="63" y="2" width="100" height="15" uuid="6ac246d2-173c-4dc7-ad59-def54d6c5aeb"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="09a83196-82e1-487b-89ed-75155121060d" style="rel_stext" x="3" y="18" width="60" height="15"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="3" y="18" width="60" height="15" uuid="09a83196-82e1-487b-89ed-75155121060d"/>
 					<text><![CDATA[Edição:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="18a240a2-fced-4d7d-af5a-b7be45bc73ce" style="rel_ftext" x="63" y="18" width="100" height="15"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="63" y="18" width="100" height="15" uuid="18a240a2-fced-4d7d-af5a-b7be45bc73ce"/>
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="1ca3dc2f-2992-49b9-a661-2d6d72b56a8e" style="rel_stext" x="304" y="2" width="105" height="15"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="304" y="2" width="105" height="15" uuid="1ca3dc2f-2992-49b9-a661-2d6d72b56a8e"/>
 					<text><![CDATA[Código de Barras:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="2541733d-e109-493a-99d2-e1ee7438d2ee" style="rel_ftext" x="409" y="2" width="118" height="15"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="409" y="2" width="118" height="15" uuid="2541733d-e109-493a-99d2-e1ee7438d2ee"/>
 					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="c12ef533-07d5-4d5c-8366-f1ac149549fe" style="rel_stext" x="304" y="18" width="105" height="15"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="304" y="18" width="105" height="15" uuid="c12ef533-07d5-4d5c-8366-f1ac149549fe"/>
 					<text><![CDATA[Preço Capa R$:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="4719e452-f44a-4456-bf8e-3fe0fb6b2774" style="rel_ftext" x="409" y="18" width="100" height="15"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="409" y="18" width="100" height="15" uuid="4719e452-f44a-4456-bf8e-3fe0fb6b2774"/>
 					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
 			<break>
-				<reportElement uuid="d8452fb3-6e2e-4115-add4-8f8a1379cf51" x="0" y="99" width="100" height="1"/>
+				<reportElement x="0" y="65" width="100" height="1" isPrintWhenDetailOverflows="true" uuid="d8452fb3-6e2e-4115-add4-8f8a1379cf51"/>
 			</break>
 		</band>
 	</detail>
+	<lastPageFooter>
+		<band splitType="Stretch"/>
+	</lastPageFooter>
+	<summary>
+		<band height="20">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="20" uuid="04a11bf5-3304-4943-8416-6968e835370e"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
+    ((java.util.LinkedHashMap)$F{boxQtdes}).entrySet()
+)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_prod_por_cota_subqtds.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
 </jasperReport>
