@@ -64,6 +64,7 @@ import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -735,7 +736,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if (filtro.getCodTipoPontoPDV() != null) {
-            param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+        	
+        	if(filtro.getCodTipoPontoPDV().equals("ALTERNATIVO")) {
+        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.ALTERNATIVO);
+        	} else {
+        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.CONVENCIONAL);
+        	}
         }
         
         return param;
@@ -800,7 +806,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if (filtro.getCodTipoPontoPDV() != null) {
-            hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
+        	hql.append(" AND cota.tipoDistribuicaoCota =:codigoTipoPontoPDV ");
         }
         
         return hql.toString();
@@ -3646,5 +3652,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		
 		return query.list();
+	}
+	
+	@Override
+	public HistoricoSituacaoCota obterSituacaoCota(Long idCota){
+		
+		final Criteria criteria = super.getSession().createCriteria(HistoricoSituacaoCota.class);
+        
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+        criteria.addOrder(Order.desc("dataFimValidade"));
+        criteria.setMaxResults(1);
+        
+        return (HistoricoSituacaoCota) criteria.uniqueResult();
+		
 	}
 }

@@ -47,7 +47,7 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * 
 	 * @return {@link Boleto}
 	 */
-	Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apneasBoletoPagavel);
+	Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apenasBoletoPagavel);
 	
 	/**
 	 * Obtém um boleto de acordo com o nosso número completo.

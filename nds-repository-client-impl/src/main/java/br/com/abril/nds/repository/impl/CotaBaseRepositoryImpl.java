@@ -2,7 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -419,6 +422,20 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		query.setParameter("idCota", idCota);
 		
 		return (Long)query.uniqueResult() > 0;
+	}
+	
+	@Override
+	public CotaBase obterSituacaoCota(Long idCota){
+		
+		final Criteria criteria = super.getSession().createCriteria(CotaBase.class);
+        
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+        criteria.addOrder(Order.desc("dataFim"));
+        criteria.setMaxResults(1);
+        
+        return (CotaBase)criteria.uniqueResult();
+		
 	}
 
 }

@@ -34,8 +34,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			checkItem: function(index) {
 
-				console.log(index);
-				
 				var item = chamdaEncalheAnteipadaController.parseGridLine(index);
 				
 				this.checkedItems.push(item);
@@ -55,18 +53,32 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			keepChecked: function(item) {
 				
-				var unchecked = !this.uncheckedItems.filter(function(el) {
+				if(this.isCheckedAll) {
 					
-					return el.numeroCota 	=== item.numeroCota
+					var unchecked = !this.uncheckedItems.filter(function(el) {
+						
+						return el.numeroCota 	=== item.numeroCota
 						&& el.codigoBox 	=== item.codigoBox
 						&& el.idLancamento  === item.idLancamento
-					    && el.qntExemplares === item.qntExemplares
-				        && el.nomeCota  === item.nomeCota
-				        && el.codigoChamadaAntecipada  === item.codigoChamadaAntecipada
-				        && el.id  === item.id;
-				}).length;
-				
-				return (this.isCheckedAll && unchecked);
+						&& el.exemplares === item.qntExemplares;
+						
+					}).length;
+					
+					return (this.isCheckedAll && unchecked);
+				} else {
+					
+					var checked = this.checkedItems.filter(function(el) {
+						
+						return el.numeroCota 	=== item.numeroCota
+							&& el.codigoBox 	=== item.codigoBox
+							&& el.idLancamento  === item.idLancamento
+							&& el.exemplares    === item.qntExemplares;
+
+						
+					}).length;
+					
+					return (!this.isCheckedAll && checked);
+				}
 			},
 			
 			removeItemFromUncheckedArray: function(item) {
@@ -76,7 +88,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					return el.numeroCota 	!== item.numeroCota 
 						&& el.codigoBox 	!== item.codigoBox
 						&& el.idLancamento  !== item.idLancamento
-						&& el.qntExemplares  !== item.qntExemplares
+						&& el.exemplares  !== item.qntExemplares
 					    && el.nomeCota  !== item.nomeCota
 					    && el.codigoChamadaAntecipada  !== item.codigoChamadaAntecipada
 					    && el.id  !== item.id;
@@ -101,11 +113,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				this.isCheckedAll= false;
 				chamdaEncalheAnteipadaController.isCheckedAll=false;
 				chamdaEncalheAnteipadaController.gridSelectionHelper.isCheckedAll = false;
-				this.uncheckedItems= [];
 				$('#sel',chamdaEncalheAnteipadaController.workspace).attr("checked", false);
 				$('#checkRecolhimentoFinal',chamdaEncalheAnteipadaController.workspace).attr("checked", false);
 				$('#checkRecolhimentoFinal').attr('disabled', 'disabled');
 				this.checkedItems = [];
+				this.uncheckedItems= [];
 				checkedItems = new Array();
 				uncheckedItems= new Array();
 				$("#idTotalCotas",chamdaEncalheAnteipadaController.workspace).val(0);
@@ -147,9 +159,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var codigoBox = $(gridLine).find("input[name='codBox']").val();
 			var idLancamento = $(gridLine).find("input[name='idLancamento']").val();
 			var exemplares = $(gridLine).find("input[name^='qntExemplares']").val();
-			var nomeCota = $(gridLine).find("input[name^='nomeCota']").val();
-			var codigoChamadaAntecipada = $(gridLine).find("input[name^='codigoChamadaAntecipada']").val();
-			var id = $(gridLine).find("input[name^='id']").val();
 			
 			return {
 				numeroCota: numeroCota,
@@ -358,7 +367,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var listaMensagens = result.listaMensagens;
 			if (tipoMensagem && listaMensagens) {
 				exibirMensagem(tipoMensagem, listaMensagens);
-			 }
+			}
 		},
 		
 		validarItensSelecionados:function(group){
@@ -413,6 +422,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		checkAll: function(input){
+			
+			chamdaEncalheAnteipadaController.gridSelectionHelper.checkedItems = [];
+			chamdaEncalheAnteipadaController.gridSelectionHelper.uncheckedItems = [];
 			
 			chamdaEncalheAnteipadaController.gridSelectionHelper.isCheckedAll = input.checked; 
 			
@@ -497,7 +509,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 								? chamdaEncalheAnteipadaController.groupNameCheckGridCota
 									: chamdaEncalheAnteipadaController.groupNameCheck;
 
-			if(!verifyAtLeastOneChecked(groupName)){
+			if(!verifyAtLeastOneChecked(groupName) && chamdaEncalheAnteipadaController.gridSelectionHelper.getTotalCotas() < 1) {
 				var mensagens = new Array('Selecione um item para realizar a operação!') ;
 				exibirMensagem('WARNING',mensagens);
 				return false;
@@ -507,9 +519,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 	
 		exibirDialogData:function(tipoOperacao){
 			
-			// if(!chamdaEncalheAnteipadaController.isItensSelecionados()){
-				// return;
-			// }
+			if(!chamdaEncalheAnteipadaController.isItensSelecionados()){
+				return;
+			}
 		
 			$("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog({
 				resizable: false,
@@ -530,14 +542,19 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			        		  
 			        		   	flagRecolhimento = $("#checkRecolhimentoFinal").is(':checked');
 							  
-			        		   	$("#checkRecolhimentoFinal", chamdaEncalheAnteipadaController.workspace).attr("checked", false);
+			        		   	// $("#checkRecolhimentoFinal", chamdaEncalheAnteipadaController.workspace).attr("checked", false);
 			        		  
 			        	  	}
 				         },
 			        	{id:"btn_cancelar_antecipacao_ce",text:"Cancelar",
 				         click:function(){
 				        	 $( this ).dialog( "close" );
-							 $("#dataAntecipacao", chamdaEncalheAnteipadaController.workspace).val("");
+					        	 if(flagRecolhimento){								
+					 				
+					 				$("#checkRecolhimentoFinal", chamdaEncalheAnteipadaController.workspace).attr("checked", true);
+					 				
+					 			}
+					        	$("#dataAntecipacao", chamdaEncalheAnteipadaController.workspace).val("");
 			        		}  
 			        	}  
 				],
@@ -558,7 +575,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			chamdaEncalheAnteipadaController.pesquisarBox(chamdaEncalheAnteipadaController.getCodigoProdutoPesquisa());
 			chamdaEncalheAnteipadaController.pesquisarFornecedor(chamdaEncalheAnteipadaController.getCodigoProdutoPesquisa());
 			
-			$("#dataProgramada",chamdaEncalheAnteipadaController.workspace).val("");
+			// $("#dataProgramada",chamdaEncalheAnteipadaController.workspace).val("");
 		},
 		
 		montarComboFornecedores:function(result) {
@@ -604,7 +621,13 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		validarEdicaoErrorCallBack: function(){
-			 $("#dataProgramada",chamdaEncalheAnteipadaController.workspace).val("");
+			 // $("#dataProgramada",chamdaEncalheAnteipadaController.workspace).val("");
+			
+			if(flagRecolhimento){								
+				
+				$("#dataProgramada", chamdaEncalheAnteipadaController.workspace).val($("#dataAntecipacao").val());
+				
+			}
 		},
 		
 		executarPreProcessamentoCota: function (resultado){
@@ -792,7 +815,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					idLancamento: "" + row.cell.idLancamento,
 					qntExemplares: "" + row.cell.qntExemplares,
 					nomeCota: "" + row.cell.nomeCota,
-					codigoChamadaEncalhe: "" + row.cell.codigoChamadaEncalhe,
+					codigoChamadaEncalhe: "" + row.cell.codigoChamdaEncalhe,
 					id: "" + index
 				}) ? 'checked="checked"' : '';
 				
@@ -820,7 +843,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var inputCheck = '<input isEdicao="true" disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+chamdaEncalheAnteipadaController.groupNameCheckGridCota+'" onclick="chamdaEncalheAnteipadaController.calcularTotalCota( '+parametroCheckbox +')" />';	
 				
 				var inputHiddenCodigoChamadaEncalhe = 	
-					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamadaEncalhe+'"/>';
+					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';
 					
 				var inputHiddenIdLancamento= 	
 						'<input type="hidden" id="idLancamento' + index + '" name="idLancamento" value="'+ row.cell.idLancamento+'"/>';
@@ -1172,21 +1195,26 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				params = serializeArrayToPost('listaChamadaEncalheAntecipada',chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGridPesquisaCota),params);
 								
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/reprogramarCotasPesquisa",
-						params, 
-						 function (result){
-					 
-							 chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
-							 chamdaEncalheAnteipadaController.zerarTotais();
-							 
-							 $("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog("close");
-							 
-							 chamdaEncalheAnteipadaController.desmarcarCheckTodos();
-							 chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
-						},
-						chamdaEncalheAnteipadaController.tratarErroPesquisaCota,true);	
+					params, 
+					function (result){
 				 
-			}
-			else {
+						 chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
+						 chamdaEncalheAnteipadaController.zerarTotais();
+						 
+						 $("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog("close");
+						 
+						 chamdaEncalheAnteipadaController.desmarcarCheckTodos();
+						 chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
+					},
+					
+					chamdaEncalheAnteipadaController.tratarErroPesquisaCota,true);	
+				
+					if(flagRecolhimento){								
+						
+						$("#dataProgramada", chamdaEncalheAnteipadaController.workspace).val($("#dataAntecipacao").val());
+						
+					}
+			} else {
 				
 				var checkTodos = params['gravarTodos'];
 				if(checkTodos == "undefined" || !checkTodos ) {
@@ -1207,9 +1235,13 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						
 					}
 					
-					 $("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog("close");
+					$("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog("close");
 					
 					chamdaEncalheAnteipadaController.zerarTotais();
+					
+					chamdaEncalheAnteipadaController.desmarcarCheckTodos();
+
+					chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
 					
 					if(flagRecolhimento){								
 						
@@ -1217,9 +1249,6 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						
 					}
 					
-					chamdaEncalheAnteipadaController.desmarcarCheckTodos();
-					chamdaEncalheAnteipadaController.exibirMensagemSucesso(result);
-			 
 				}, null,true);
 			}
 		},
@@ -1240,9 +1269,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		exibirDialogCancelamentoCE:function(){
 			
-			// if(!chamdaEncalheAnteipadaController.isItensSelecionados()){
-				// return;
-			// }
+			if(!chamdaEncalheAnteipadaController.isItensSelecionados()){
+				return;
+			}
 			
 			$("#dialog-cancelamentoCE" ,chamdaEncalheAnteipadaController.workspace).dialog({
 				resizable: false,

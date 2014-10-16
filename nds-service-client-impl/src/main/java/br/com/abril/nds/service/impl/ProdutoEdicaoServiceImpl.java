@@ -492,35 +492,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
      */
     private boolean dataLancamentoValida(Date data, Long idFornecedor){
     	
-    	final boolean dataOperante = this.calendarioService.isDiaOperante(data, idFornecedor, OperacaoDistribuidor.DISTRIBUICAO);
-		
-    	final boolean feriado = this.calendarioService.isFeriado(data);
-    	
-    	if (dataOperante){
-    		
-    		return true;
-    	}
-    	
-    	if (!feriado){
-    		
-    		return true;
-    	}
-    	
-		final boolean feriadoComOperacao = this.calendarioService.isFeriadoComOperacao(data);
-		
-		final boolean feriadoSemOperacao = this.calendarioService.isFeriadoSemOperacao(data);
-		
-        if (!feriadoComOperacao) {
-        	
-            return true;            
-		}
-        
-        if (feriadoSemOperacao) {
-        	
-            return false;                 
-		}
-        
-        return false;
+    	return this.calendarioService.isDiaOperante(data, idFornecedor, OperacaoDistribuidor.DISTRIBUICAO);
     }
 
     @Transactional(readOnly=true)
@@ -567,9 +539,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
             	boolean dataValida = this.dataLancamentoValida(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor());
 
-	            if (dataValida){
+	            if (!dataValida){
 	            	
-	            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+	            	throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento previsto deve ser dia útil e operante!");
 	            }
 			}      
 		}
@@ -593,9 +565,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	            	boolean dataValida = this.dataLancamentoValida(dto.getDataLancamento(), dto.getIdFornecedor());
 
-		            if (dataValida){
+		            if (!dataValida){
 		            	
-		            	listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+		            	// listaMensagens.add("A data de lançamento previsto deve ser dia útil e operante!");
+		            	
+		            	throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento previsto deve ser dia útil e operante!");
 		            }
 				}       
 			}
@@ -610,7 +584,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			if(dataRecDistribuidor!=null) {
 				
-	            if (this.calendarioService.isDiaOperante(dataRecDistribuidor, dto.getIdFornecedor(), OperacaoDistribuidor.RECOLHIMENTO)) {
+	            if (!this.calendarioService.isDiaOperante(dataRecDistribuidor, dto.getIdFornecedor(), OperacaoDistribuidor.RECOLHIMENTO)) {
 	            	
 	                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
 				}
