@@ -661,7 +661,10 @@ var analiseParcialController = $.extend(true, {
                     }
                     
                     if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
-                    	cell['venda'+ (j + 1)] = "";
+                    	
+                    	if(cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)] == ""){
+                    		cell['venda'+ (j + 1)] = "";
+                    	}
                     }
                 }
             }

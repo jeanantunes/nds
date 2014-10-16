@@ -462,7 +462,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 			case ROTA:
 				
-				filtro.getPaginacao().setSortColumn("codigoBox");
+				filtro.getPaginacao().setSortColumn("nomeEdicao");
 				
 			    if (filtro.getQuebraPorCota()){
 			        
@@ -475,9 +475,8 @@ public class MapaAbastecimentoController extends BaseController {
                     path += "rel_rota_quebra_principal.jasper";
 			        
 			    } else {
-			        filtro.getPaginacao().setSortColumn("codigoBox");
-			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = 
-			                mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+			        filtro.getPaginacao().setSortColumn("nomeEdicao");
+			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
                     
 			        for (String key : mapa.keySet()) {
 			            completaTabelaMapaRota(mapa.get(key), key);
@@ -493,7 +492,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			break;
 			case COTA:
-			    paginacao.setSortColumn("cota");
+			    paginacao.setSortColumn("nomeEdicao");
 			    dados = Arrays.asList(
 				        mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro));
                 
@@ -515,6 +514,8 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			    filtro.setPorRepartePromocional(true);
 				
+			    filtro.getPaginacao().setSortColumn("nomeEdicao");
+			    
 			    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro).getProdutos().values();
                 
                 nomeRelatorio = "Mapa de Abastecimento por Reparte Promocional";

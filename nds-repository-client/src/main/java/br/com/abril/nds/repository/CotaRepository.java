@@ -31,6 +31,7 @@ import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
@@ -441,4 +442,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Boolean validarNumeroCota(Integer numCota, TipoDistribuicaoCota tipoDistribuicaoCota);
 	
 	List<ItemDTO<String, String>> obterCotasSemRoterizacao(List<Long> listaIdCotas);
+
+	HistoricoSituacaoCota obterSituacaoCota(Long idCota);
 }
