@@ -244,6 +244,18 @@ public class TipoDescontoCotaController extends BaseController {
 
 		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
 	}
+	
+	private void exportarDescontoEditor(FileType fileType) throws IOException{
+
+		throw new ValidacaoException(TipoMensagem.ERROR, "exportarDescontoEditor Não implementado ainda");
+		/*
+		FiltroTipoDescontoProdutoDTO filtroSessao = (FiltroTipoDescontoProdutoDTO) obterFiltroParaExportacao(FiltroTipoDescontoProdutoDTO.class);
+
+		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtroSessao);
+
+		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
+		*/
+	}
 
 	@Get
 	public void exportar(FileType fileType, TipoDesconto tipoDesconto) throws IOException {
@@ -253,15 +265,18 @@ public class TipoDescontoCotaController extends BaseController {
 		}
 
 		switch (tipoDesconto) {
-		case ESPECIFICO:
-			exportarDescontoEspecifico(fileType);
-			break;
-		case GERAL:
-			exportarDescontoGeral(fileType);		
-			break;
-		case PRODUTO:
-			exportarDescontoProduto(fileType);
-			break;
+			case ESPECIFICO:
+				exportarDescontoEspecifico(fileType);
+				break;
+			case GERAL:
+				exportarDescontoGeral(fileType);		
+				break;
+			case PRODUTO:
+				exportarDescontoProduto(fileType);
+				break;
+			case EDITOR:
+				exportarDescontoEditor(fileType);
+				break;
 		}	
 
 		result.nothing();
@@ -447,17 +462,36 @@ public class TipoDescontoCotaController extends BaseController {
 
 		List<ItemDTO<Long, String>> itensFornecedor = new ArrayList<ItemDTO<Long,String>>();
 
-		for(Fornecedor fornecedor : fornecedores){
+		for(Fornecedor fornecedor : fornecedores) {
 
 			itensFornecedor.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
 		}
 
 		return itensFornecedor;
 	}
+	
+	/**
+	 * Retorna uma lista de fornecedores para exibição na tela
+	 * 
+	 * @param fornecedores - lista de fornecedores
+	 * 
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	private List<ItemDTO<Long, String>> getCotasParaExibicao(List<Cota> cotas){
+
+		List<ItemDTO<Long, String>> itensCota = new ArrayList<ItemDTO<Long,String>>();
+
+		for(Cota cota : cotas) {
+
+			itensCota.add(new ItemDTO<Long, String>(cota.getId(), cota.getPessoa().getNome()));
+		}
+
+		return itensCota;
+	}
 
 	@Post
 	@Path("/obterFornecedoresAssociadosDesconto")
-	public void obterFornecedoresAssociadosDesconto(Long idDesconto, TipoDesconto tipoDesconto,String sortorder, String sortname){
+	public void obterFornecedoresAssociadosDesconto(Long idDesconto, TipoDesconto tipoDesconto,String sortorder, String sortname) {
 
 		List<Fornecedor> fornecedores = descontoService.buscarFornecedoresAssociadosADesconto(idDesconto, tipoDesconto);
 
@@ -468,6 +502,21 @@ public class TipoDescontoCotaController extends BaseController {
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
 
 		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
+	}
+	
+	@Post
+	@Path("/obterCotasAssociadasAoDescontoEditor")
+	public void obterCotasAssociadasAoDescontoEditor(Long idDesconto, TipoDesconto tipoDesconto,String sortorder, String sortname) {
+
+		List<Cota> cotas = descontoService.buscarCotasAssociadasAoDescontoEditor(idDesconto, tipoDesconto);
+
+		List<ItemDTO<Long, String>> lista = getCotasParaExibicao(cotas);
+
+		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
+
+		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
+
+		result.use(FlexiGridJson.class).from(lista).total(cotas.size()).page(1).serialize();
 	}
 
 }

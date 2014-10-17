@@ -9,10 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoRepository;
 
@@ -155,7 +154,6 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		hql.append("	where desconto.id = :idDesconto		");
 		hql.append(" 	group by pe.id						");
 		
-		
 		Query q = getSession().createQuery(hql.toString());
 		
 		q.setParameter("idDesconto", desconto.getId());
@@ -272,8 +270,7 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> buscarProximosLancamentosQueUsamDescontoProduto(
-			Desconto desconto) {
+	public List<Long> buscarProximosLancamentosQueUsamDescontoProduto(Desconto desconto) {
 		
 		if(desconto == null || desconto.getId() == null) {
 			return null;
@@ -292,5 +289,47 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		
 		return q.list();
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> buscarCotasQueUsamDescontoEditor(Desconto desconto) {
+		
+		if(desconto == null || desconto.getId() == null) {
+			return null;
+		}
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("	select c ");
+		hql.append("	from DescontoCotaProdutoExcessao dcpe ");
+		hql.append(" 	inner join dcpe.cota c	");
+		hql.append("	inner join dcpe.desconto desconto	");
+		hql.append("	where desconto.id = :idDesconto		");
+		hql.append(" 	group by c.id						");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return q.list();
+	}
+
+	@Override
+	public Editor buscarEditorUsaDescontoEditor(Desconto desconto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select e ");
+		hql.append("from Editor e  ");
+		hql.append("where 1 = 1 ");
+		hql.append("and e.desconto.id = :idDesconto ");
+		hql.append("order by e.desconto.dataAlteracao desc ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return (Editor) q.uniqueResult();
 	}
 }

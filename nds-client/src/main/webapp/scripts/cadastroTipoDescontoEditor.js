@@ -75,7 +75,7 @@ var descontoEditorController = $.extend(true,{
 		
 		var data = descontoEditorController.obterParametrosNovoDescontoEditor();
 
-		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoEditor",
+		$.postJSON(contextPath +"/financeiro/tipoDescontoCota/novoDescontoEditor",
 				   data,
 				   function(result) {
 
@@ -87,14 +87,15 @@ var descontoEditorController = $.extend(true,{
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
 					   
-					   tipoDescontoController.pesquisarDescontoProduto();
+					   tipoDescontoController.pesquisarDescontoEditor();
 	               },
 				   null,
 				   true);
 		
 		descontoEditorController.clearModalDescontoEditor();
 		
-		$(".tiposDescEditorGrid",this.workspace).flexReload();
+//		$(".tiposDescEditorGrid",this.workspace).flexReload();
+		console.log('desconto editor cadastrado');
 	},
 	
 	obterParametrosNovoDescontoEditor: function() {
@@ -121,8 +122,6 @@ var descontoEditorController = $.extend(true,{
 	},
 	
 	pesquisarEditorSuccessCallBack:function() {
-		
-		
 		
 	},
 

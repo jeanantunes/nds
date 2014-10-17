@@ -201,7 +201,7 @@ var tipoDescontoController = $.extend(true,  {
 				if(row.cell.qtdCotas == 0) {
 					row.cell.qtdCotas = '*';
 				} else {
-					var linkCotas = '<a href="javascript:;" onclick="tipoDescontoController.carregarCotasAssociadosADescontoEditor('+ row.cell.idTipoDesconto +');">Diversas</a>';
+					var linkCotas = '<a href="javascript:;" onclick="tipoDescontoController.carregarCotasAssociadasAoDescontoEditor('+ row.cell.descontoId +');">Diversas</a>';
 					
 					row.cell.qtdCotas = linkCotas; 
 				}
@@ -209,7 +209,7 @@ var tipoDescontoController = $.extend(true,  {
 			} else {
 				
 				if(row.cell.fornecedor=="Diversos") {
-					var linkFornecedores = '<a href="javascript:;" onclick="tipoDescontoController.carregarFornecedoresAssociadosADesconto('+ row.cell.idTipoDesconto +');">Diversos</a>';
+					var linkFornecedores = '<a href="javascript:;" onclick="tipoDescontoController.carregarFornecedoresAssociadosADesconto('+ row.cell.descontoId +');">Diversos</a>';
 						
 					row.cell.fornecedor = linkFornecedores; 
 				}
@@ -221,7 +221,7 @@ var tipoDescontoController = $.extend(true,  {
 			
 			if(row.cell.numeroEdicao == null) row.cell.numeroEdicao = '*';
 			
-			var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="tipoDescontoController.exibirDialogExclusao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="tipoDescontoController.exibirDialogExclusao(' + row.cell.descontoId + ');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -291,9 +291,9 @@ var tipoDescontoController = $.extend(true,  {
 		);
 	},
 	
-	carregarFornecedoresAssociadosADesconto:function(idDesconto){
+	carregarFornecedoresAssociadosADesconto:function(idDesconto) {
 		
-		var param = [{name:"idDesconto",value:idDesconto},{name:"tipoDesconto", value:tipoDescontoController.tipoDescontoSelecionado}];
+		var param = [{name:"idDesconto", value:idDesconto},{name:"tipoDesconto", value:tipoDescontoController.tipoDescontoSelecionado}];
 		
 		$(".lstFornecedoresGrid",this.workspace).flexOptions({
 			url: contextPath +"/financeiro/tipoDescontoCota/obterFornecedoresAssociadosDesconto",
@@ -307,20 +307,36 @@ var tipoDescontoController = $.extend(true,  {
 		tipoDescontoController.popup_lista_fornecedores();
 	},
 	
-	popup_lista_fornecedores:function() {
+	carregarCotasAssociadasAoDescontoEditor: function(idDesconto){
 		
-		$( "#dialog-fornecedores",this.workspace ).dialog({
+		var param = [{name:"idDesconto", value:idDesconto}, {name:"tipoDesconto", value:tipoDescontoController.tipoDescontoSelecionado}];
+		
+		$(".lstCotasEditorGrid",this.workspace).flexOptions({
+			url: contextPath +"/financeiro/tipoDescontoCota/obterCotasAssociadasAoDescontoEditor",
+			params: param,
+		    newp: 1,
+		    sortorder:'asc'
+		});
+		
+		$(".lstCotasEditorGrid",this.workspace).flexReload();
+		
+		tipoDescontoController.popupListaCotas();
+	},
+	
+	popupListaCotas: function() {
+		
+		$( "#dialog-cotas-editor",this.workspace ).dialog({
 			resizable: false,
 			height:'auto',
 			width:400,
 			modal: true,
-			buttons:[ {id:"btn_close_fornecedor",
+			buttons:[ {id:"btn_close_cota",
 					   text:"Fechar",
 					   click: function() {
 							$( this ).dialog( "close" );
 						},
 					}],
-			form: $("#dialog-fornecedores", this.workspace).parents("form")
+			form: $("#dialog-cotas-editor", this.workspace).parents("form")
 		});	      
 	},
 	
@@ -336,9 +352,8 @@ var tipoDescontoController = $.extend(true,  {
 	},
 	
 	init: function() {
-		$("#produto",this.workspace).autocomplete({source: ""});		
 		
-			$(".lstFornecedoresGrid",this.workspace).flexigrid({
+			$(".lstCotasEditorGrid",this.workspace).flexigrid({
 				dataType : 'json',
 				colModel : [ {
 					display : 'Nome',

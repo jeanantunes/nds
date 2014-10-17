@@ -54,59 +54,50 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			TipoDesconto tipoDesconto,
 			Desconto desconto,
 			Fornecedor fornecedor,
+			Editor editor, 
 			Cota cota, 
-			Long idProduto, 
-			Long idProdutoEdicao) {
+			Long idProduto, Long idProdutoEdicao) {
 		
-		boolean indWhere = false;
 		StringBuilder hql = new StringBuilder("select d ");
-		hql.append(" from DescontoCotaProdutoExcessao d ");
+		hql.append(" from DescontoCotaProdutoExcessao d ")
+			.append(" where 1 = 1 ");
 		
 		if (fornecedor != null) {
 			
-			hql.append(" where d.fornecedor = :fornecedor ");
-			indWhere = true;
+			hql.append(" and d.fornecedor = :fornecedor ");
+		}
+		
+		if (editor != null) {
+			
+			hql.append(" and d.editor = :editor ");
 		}
 
 		if (cota != null) {
-			
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.cota = :cota ");
-			indWhere = true;
+	
+		   hql.append(" and d.cota = :cota ");
 		}
 
 		if (idProdutoEdicao != null) {
 			
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.produtoEdicao.id = :idProdutoEdicao ");
-			indWhere = true;
+			hql.append(" and d.produtoEdicao.id = :idProdutoEdicao ");
 		} else {
 			
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.produtoEdicao is null ");
-			indWhere = true;
-			
+			hql.append(" and d.produtoEdicao is null ");
 		}
 	
 		if (idProduto != null) {
 			
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.produto.id = :idProduto ");
-			indWhere = true;
+			hql.append(" and d.produto.id = :idProduto ");
 		}		
 		
 		if (tipoDesconto != null) {
 			
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.tipoDesconto = :tipoDesconto ");
-			indWhere = true;
+			hql.append(" and d.tipoDesconto = :tipoDesconto ");
 		}
 		
 		if (desconto != null) {
 			
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.desconto = :desconto ");
-			indWhere = true;
+			hql.append(" and d.desconto = :desconto ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -114,6 +105,11 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		if (fornecedor != null) {
 			
 			query.setParameter("fornecedor", fornecedor);
+		}
+		
+		if (editor != null) {
+			
+			query.setParameter("editor", editor);
 		}
 
 		if (cota != null) {
@@ -152,7 +148,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, fornecedor, null, null,null);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, fornecedor, null, null, null);
 	}
 	
 	/**
@@ -223,11 +219,9 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
 		
-		
 		if(desconto != null) {
 			
 			criteria.add(Restrictions.eq("desconto", desconto));
-			
 		}
 		
 		if (fornecedor != null) {
@@ -336,6 +330,8 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			.append(" e.CODIGO as codigoEditor, ")
 			.append(" coalesce(p.nome_fantasia, p.razao_social, p.nome, '') as nomeEditor, ")
 			.append(" dados.USUARIO_ID as usuarioId, ")
+			.append(" u.NOME as nomeUsuario, ")
+			.append(" d.DATA_ALTERACAO as dataAlteracao, ")
 			.append(" coalesce(count(COTA_ID), -1) as qtdCotas ");
 		
 		queryFromTipoDescontoEditor(hql);

@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -167,12 +168,13 @@ public interface DescontoService {
 	 * @param descontos
 	 * @param cotaId
 	 * @param fornecedorId
+	 * @param editorId TODO
 	 * @param produtoId
 	 * @param produtoEdicaoId
 	 * @return
 	 * @throws Exception
 	 */
-	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoId, Long produtoEdicaoId) throws Exception;
+	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long editorId, Long produtoId, Long produtoEdicaoId) throws Exception;
 
 	DescontoDTO obterDescontoProximosLancamentosPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoEdicaoId, Long produtoId);
 
@@ -188,5 +190,7 @@ public interface DescontoService {
 	Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
 
 	void incluirDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas, Usuario usuarioLogado);
+
+	List<Cota> buscarCotasAssociadasAoDescontoEditor(Long idDesconto, TipoDesconto tipoDesconto);
 
 }

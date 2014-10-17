@@ -84,6 +84,15 @@
 			</fieldset>
 		</div>
 	</form>
+	
+	<form action="" id="dialog-cotas-editor_form">
+		<div id="dialog-cotas-editor" title="Cotas" style="display: none;">
+			<fieldset style="width: 350px !important;">
+				<legend>Cotas</legend>
+				<table class="lstCotasEditorGrid"></table>
+			</fieldset>
+		</div>
+	</form>
 
 	<form action="/administracao/cadastroTipoNota"
 		id="dialog_consulta_tipo_desconto_form">

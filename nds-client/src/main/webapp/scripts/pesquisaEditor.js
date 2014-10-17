@@ -139,12 +139,12 @@ function PesquisaEditor(workspace) {
 				pesquisaEditor.descricaoAtribuida = true;
 				
 				if (ui.item){
-					pesquisaEditor.codigoEditorSelecionado = ui.item.chave.numero;
+					pesquisaEditor.codigoEditorSelecionado = ui.item.chave.codigo;
 				}
 			},
 			select : function(event, ui) {
 				pesquisaEditor.descricaoAtribuida = true;
-				pesquisaEditor.codigoEditorSelecionado = ui.item.chave.numero;
+				pesquisaEditor.codigoEditorSelecionado = ui.item.chave.codigo;
 			},
 			minLength: tamanhoInicial,
 			delay : 0,
@@ -167,7 +167,7 @@ function PesquisaEditor(workspace) {
 					return;
 				}
 				
-				pesquisaEditor.pesquisarPorNomeEditorAposIntervalo(idCampocodigoEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack,checkValidateResult);
+				pesquisaEditor.pesquisarPorNomeEditorAposIntervalo(idCampocodigoEditor, idCampoNomeEditor, isFromModal, successCallBack, errorCallBack, checkValidateResult);
 			}
 			
 		}, 100);

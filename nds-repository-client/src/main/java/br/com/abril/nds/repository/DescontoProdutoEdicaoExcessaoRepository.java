@@ -50,12 +50,13 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * Obtém o desconto de um produto edição.
 	 * @param desconto TODO
 	 * @param fornecedor - fornecedor
+	 * @param editor TODO
 	 * @param cota - cota
 	 * @param produto TODO
 	 * @param produtoEdicao - produto
 	 * @return {@link DescontoCotaProdutoExcessao}
 	 */
-	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota, Long idProduto, Long idProdutoEdicao);
+	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Editor editor, Cota cota, Long idProduto, Long idProdutoEdicao);
 	
 	DescontoCotaProdutoExcessao buscarDescontoCotaEditorExcessao(TipoDesconto tipoDesconto, Desconto desconto, Cota cota, Editor editor);
 	

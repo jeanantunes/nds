@@ -227,7 +227,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			lancamentoRepository.alterarLancamento(
 					expedicaoDTO.getIdLancamento(), expedicaoDTO.getDataOperacao(), StatusLancamento.RECOLHIDO, expedicao);
 			
-			this.processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(expedicaoDTO,lancamento);
+			this.processarMovimentosDeEstoqueEFinanceiroParaProdutoContaFirme(expedicaoDTO, lancamento);
 		} else {
 			
 			lancamentoRepository.alterarLancamento(
