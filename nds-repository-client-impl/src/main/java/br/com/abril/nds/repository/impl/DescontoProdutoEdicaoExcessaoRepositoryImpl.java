@@ -371,9 +371,10 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		hql.append("FROM ")
 			.append(" ( ")
-			.append("	SELECT DESCONTO_ID, EDITOR_ID, hdcpe.USUARIO_ID, COTA_ID ")
+			.append("	SELECT hdcpe.DESCONTO_ID, hdcpe.EDITOR_ID, hdcpe.USUARIO_ID, hdcpe.COTA_ID ")
 			.append("	FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe ")	 
-			.append("	where editor_id is not null ")
+			.append("	inner join DESCONTO_COTA_PRODUTO_EXCESSOES dcpe on dcpe.DESCONTO_ID = hdcpe.DESCONTO_ID ")
+			.append("	where hdcpe.editor_id is not null ")
 			.append(" UNION ")
 			.append(" 	SELECT DESCONTO_ID, e.ID as EDITOR_ID, 1 as USUARIO_ID, null as COTA_ID ")
 			.append(" 	from editor e ")
