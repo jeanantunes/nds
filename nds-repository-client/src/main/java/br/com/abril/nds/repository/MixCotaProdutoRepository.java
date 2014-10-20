@@ -41,4 +41,6 @@ public interface MixCotaProdutoRepository extends
     boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, Long qtd, Long tipoClassificacaoProduto);
     
     void atualizarReparte(boolean isPDVUnico, Long mixID, Long reparte, Usuario usuario, Date data);
+
+	boolean verificarMixDefinidoPorPDV(Long idMix);
 }

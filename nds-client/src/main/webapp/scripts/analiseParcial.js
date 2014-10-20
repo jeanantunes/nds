@@ -476,11 +476,11 @@ var analiseParcialController = $.extend(true, {
         	    									input_reparte_element, numeroCota, reparteSubtraido, 
         	    									reparteDigitado, reparteAtual, saldoReparte, legenda_element);
         	    							
-        		    	                } //else{
-        		    	                	//analiseParcialController.atualizarReparteCota(
-        		    	                			//input_reparte_element, numeroCota, reparteSubtraido, 
-        		    	                			//reparteDigitado, reparteAtual, saldoReparte, legenda_element);
-        		    	                //}
+        		    	                }else{
+        		    	                	analiseParcialController.atualizarReparteCota(
+        		    	                			input_reparte_element, numeroCota, reparteSubtraido, 
+        		    	                			reparteDigitado, reparteAtual, saldoReparte, legenda_element);
+        		    	                }
         		    				},
         		    				usuarioNaoSupervisorCallback: function(){
         		    					analiseParcialController.resetReparteSugerido(input, numeroCota);
