@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro.desconto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -16,28 +15,21 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES")
-@SequenceGenerator(name="HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES_SEQ", initialValue = 1, allocationSize = 1)
-public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
+@Table(name = "HISTORICO_DESCONTOS_EDITORES")
+@SequenceGenerator(name="HISTORICO_DESCONTO_EDITORES_SEQ", initialValue = 1, allocationSize = 1)
+public class HistoricoDescontoEditor implements Serializable {
 
 	private static final long serialVersionUID = 3028451605686762672L;
 
 	@Id
-	@GeneratedValue(generator = "HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES_SEQ")
+	@GeneratedValue(generator = "HISTORICO_DESCONTO_EDITORES_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
-	@Column(name = "VALOR", nullable=false, precision=18, scale=4)
-	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALTERACAO")
@@ -47,33 +39,18 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+	@ManyToOne(optional=false, cascade=CascadeType.ALL)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "EDITOR_ID")
 	private Editor editor;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "PRODUTO_ID")
-	private Produto produto;
-	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID")
-	private ProdutoEdicao produtoEdicao;
-	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "FORNECEDOR_ID")
-	private Fornecedor fornecedor;
-	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
-	@ManyToOne(optional=false, cascade=CascadeType.PERSIST)
-	@JoinColumn(name = "DESCONTO_ID")
-	private Desconto desconto;
 
 	/**
 	 * @return the id
@@ -89,12 +66,12 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 		this.id = id;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
+	public Desconto getDesconto() {
+		return desconto;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setDesconto(Desconto desconto) {
+		this.desconto = desconto;
 	}
 
 	/**
@@ -125,36 +102,18 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 		this.usuario = usuario;
 	}
 
-	public Cota getCota() {
-		return cota;
-	}
-
-	public void setCota(Cota cota) {
-		this.cota = cota;
-	}
-
+	/**
+	 * @return
+	 */
 	public Editor getEditor() {
 		return editor;
 	}
 
+	/**
+	 * @param editor
+	 */
 	public void setEditor(Editor editor) {
 		this.editor = editor;
-	}
-
-	public Produto getProduto() {
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
-	}
-
-	public ProdutoEdicao getProdutoEdicao() {
-		return produtoEdicao;
-	}
-
-	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		this.produtoEdicao = produtoEdicao;
 	}
 
 	/**
@@ -169,22 +128,6 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	 */
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
-	}
-
-	public Desconto getDesconto() {
-		return desconto;
-	}
-
-	public void setDesconto(Desconto desconto) {
-		this.desconto = desconto;
 	}
 
 }

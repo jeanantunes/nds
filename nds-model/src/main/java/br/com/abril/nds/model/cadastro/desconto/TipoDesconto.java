@@ -4,6 +4,7 @@ public enum TipoDesconto {
 	
     GERAL("Geral"),
 	ESPECIFICO("Específico"),
+	EDITOR("Editor"),
 	PRODUTO("Produto");
 	
 	private String descricao;

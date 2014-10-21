@@ -63,4 +63,16 @@ public class EditorServiceImpl implements EditorService {
         return editorRepository.merge(editor).getId();
     }
 
+	@Override
+	public List<Editor> obterEditoresPorNomePessoa(String nomeEditor) {
+		
+		return editorRepository.obterEditoresPorNomePessoa(nomeEditor);
+	}
+
+	@Override
+	public Editor obterEditorPorCodigo(Long codigoEditor) {
+		
+		return editorRepository.obterPorCodigo(codigoEditor);
+	}
+
 }
