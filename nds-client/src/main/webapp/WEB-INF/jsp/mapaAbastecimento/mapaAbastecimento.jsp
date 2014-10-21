@@ -109,6 +109,7 @@
       <option value="PRODUTO">Produto</option>
       <option value="ENTREGADOR">Entregador</option>
       <option value="PROMOCIONAL">Reparte Promocional</option>
+      <option value="BOX_X_COTA">Box X Cota</option>
 </select>
 			  
 			  </td>
@@ -243,6 +244,9 @@
 			</div>
 			<div id="gridBoxQuebraCota" style="display:none;">
 				<table class="mapaAbastecimentoGridQuebraCota"></table>
+			</div>
+			<div id="gridBoxCotaQuebraCota" style="display:none;">
+				<table class="mapaAbastecimentoBoxCotaGridQuebraCota"></table>				
 			</div>
 			<div id="gridRotaQuebraCota" style="display:none;">
 				<table class="mapaAbastecimentoRotaGridQuebraCota"></table>				

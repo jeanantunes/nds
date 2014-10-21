@@ -36,6 +36,7 @@ public class EstudoTransient extends EstudoGerado {
     private List<BonificacaoDTO> bonificacoes;
     private Usuario usuario;
     private boolean usarFixacao;
+    private boolean usarMix;
 
     private boolean complementarAutomatico;
     private boolean pracaVeraneio;
@@ -319,7 +320,15 @@ public class EstudoTransient extends EstudoGerado {
     	this.reparteTotal = reparteTotal;
     }
 
-    @Override
+    public boolean isUsarMix() {
+		return usarMix;
+	}
+
+	public void setUsarMix(boolean usarMix) {
+		this.usarMix = usarMix;
+	}
+
+	@Override
     public String toString() {
 	 String string =  "EstudoTransient [reparteDistribuirInicial="
 		+ reparteDistribuirInicial + ", produtoEdicaoEstudo="

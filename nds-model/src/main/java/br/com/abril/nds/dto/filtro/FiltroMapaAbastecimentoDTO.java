@@ -43,7 +43,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		PRODUTO_ESPECIFICO,
 		PRODUTO_X_COTA,
 		ENTREGADOR,
-		PROMOCIONAL;
+		PROMOCIONAL,
+		BOX_X_COTA;
 	}
 	
 	public enum ColunaOrdenacao {
