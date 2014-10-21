@@ -1201,7 +1201,7 @@ $(function() {
 		dataType : 'json',
 		colModel: [{
 			display : 'Box',
-			name : 'box',
+			name : 'nomeBox',
 			width : 130,
 			sortable : true,
 			align : 'left'
@@ -1242,7 +1242,7 @@ $(function() {
 			sortable : false,
 			align : 'center'
 		}],
-		sortname : "box",
+		sortname : "nomeBox",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,

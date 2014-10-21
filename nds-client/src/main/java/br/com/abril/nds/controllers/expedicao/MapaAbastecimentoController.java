@@ -264,8 +264,7 @@ public class MapaAbastecimentoController extends BaseController {
 		case ENTREGADOR:
 			this.popularGridPorEntregador(filtro);
 		case BOX_X_COTA:
-		    this.popularGridBoxCota(filtro);
-		    
+		    this.popularGridBoxVersusCota(filtro);
             break;	
 		default:
 			break;
@@ -535,8 +534,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 				filtro.getPaginacao().setSortColumn("codigoBox");
 				
-				dados = Arrays.asList(
-				        mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro));
+				dados = Arrays.asList(mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro));
 
 				nomeRelatorio = "Mapa de Abastecimento por Produto Específico";
 				
@@ -567,13 +565,13 @@ public class MapaAbastecimentoController extends BaseController {
                 
 			    filtro.getPaginacao().setSortColumn("nomeEdicao");
 			    
-                dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota(filtro).entrySet();
+                dados = Arrays.asList(this.mapaAbastecimentoService.obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(filtro, parameters));
                 
                 parameters.put("DATA", filtro.getDataLancamento());
                 
-                nomeRelatorio = "Mapa de Abastecimento por Rota Quebra Cota";
+                nomeRelatorio = "Mapa de Abastecimento por Box X Cota";
                 
-                path += "rel_rota_quebra_principal.jasper";
+                path += "rel_box_versus_cota_principal.jasper";
                 
             break;
 			default:
@@ -589,7 +587,7 @@ public class MapaAbastecimentoController extends BaseController {
 		final byte[] mapa = JasperRunManager.runReportToPdf(path, parameters, new JRBeanCollectionDataSource(dados));
         
         this.response.setContentType("application/pdf");
-        this.response.setHeader("Content-Disposition", "attachment; filename=mapa_abastecimento.pdf");
+        this.response.setHeader("Content-Disposition", "attachment; filename=mapa_abastecimento_box_versus_cota.pdf");
         
         this.response.getOutputStream().write(mapa);
         
@@ -672,19 +670,6 @@ public class MapaAbastecimentoController extends BaseController {
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
-
-	private void popularGridBoxCota(FiltroMapaAbastecimentoDTO filtro) {
-
-        List<AbastecimentoDTO> lista = this.mapaAbastecimentoService.obterDadosAbastecimentoBoxCota(filtro);
-
-        if (lista == null || lista.isEmpty()) {
-            mostrarMensagemListaVazia();
-        }
-
-        Long totalRegistros = this.mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
-
-        result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
-    }
 	
 	private void popularGridPorCota(FiltroMapaAbastecimentoDTO filtro) {
 
@@ -801,4 +786,16 @@ public class MapaAbastecimentoController extends BaseController {
 
 	}
 
+    private void popularGridBoxVersusCota(FiltroMapaAbastecimentoDTO filtro) {
+
+        List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterDadosAbastecimentoBoxVersusCota(filtro);
+
+        if (lista == null || lista.isEmpty()) {
+            mostrarMensagemListaVazia();
+        }
+
+        Long totalRegistros = this.mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
+
+        result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+    }
 }
