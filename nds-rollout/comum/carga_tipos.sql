@@ -18,10 +18,33 @@
 LOCK TABLES `fornecedor` WRITE;
 /*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
 INSERT INTO `fornecedor` VALUES 
-(1,9795816,'dinap@dinap.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp Dinap','ATIVO',NULL,NULL,1,1,NULL,NULL,'BANCAS',16),
-(2,8684862,'fc@fc.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp FC','ATIVO',NULL,NULL,2,2,NULL,NULL,'BANCAS',16),
+(3,NULL,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0, 'Resp Treelog', 'ATIVO',NULL,NULL,3,3,NULL,NULL,'BANCAS','16'),
+(4,NULL,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0, 'Resp Treelog', 'ATIVO',NULL,NULL,4,3,NULL,NULL,'BANCAS','16'),
 (16,16,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp Treelog','ATIVO',NULL,NULL,16,3,NULL,NULL,'BANCAS',NULL);
 /*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `endereco` WRITE;
+/*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
+INSERT INTO `endereco` VALUES 
+('1', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '1', 'Rua', 'SP', NULL),
+('2', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '2', 'Rua', 'SP', NULL),
+('3', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '3', 'Rua', 'SP', NULL),
+('4', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '4', 'Rua', 'SP', NULL),
+('16', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '1', 'Rua', 'SP', NULL);
+/*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `endereco_fornecedor` WRITE;
+/*!40000 ALTER TABLE `endereco_fornecedor` DISABLE KEYS */;
+INSERT INTO `endereco_fornecedor` VALUES 
+# ID, PRINCIPAL, TIPO_ENDERECO, ENDERECO_ID, FORNECEDOR_ID
+(1,0,'COMERCIAL',1,1),
+(2,0,'COMERCIAL',2,2),
+(3,0,'COMERCIAL',3,3),
+(4,0,'COMERCIAL',4,4),
+(5,1,'COMERCIAL',16,16);
+/*!40000 ALTER TABLE `endereco_fornecedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

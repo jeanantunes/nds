@@ -1,0 +1,657 @@
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+-- ######################################################################################################################################################################################
+
+--
+-- PESSOA
+--
+
+LOCK TABLES `pessoa` WRITE;
+/*!40000 ALTER TABLE `pessoa` DISABLE KEYS */;
+INSERT INTO `pessoa` VALUES 
+('J' ,1,'sys.discover@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'03555225000100','492522011117','99.999-9','Dinap','DINAP DISTRIBUIDORA NACIONAL DE PUBLICAÇÕES LTDA',NULL),
+('J' ,2,'sys.discover@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'28322873000130','492390417112','99.999-9','FC','FC COMERCIAL E DISTRIBUIDORA LTDA',NULL),
+('J' ,3,'sys.discover@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'61438248002762',   '027942171','99.999-9','TREELOG S.A. - LOGISTICA E DISTRIBUICAO', 'TREELOG S.A. - LOGISTICA E DISTRIBUICAO',NULL),
+('J' ,4,'sys.discover@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'61438248002924','010095410031','99.999-9','TREELOG S.A. - LOGISTICA E DISTRIBUICAO', 'TREELOG S.A. - LOGISTICA E DISTRIBUICAO',NULL),
+('J' ,5,'sys.discover@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'07348198000148','244989941114','01116304','DMCAMP DISTRIB. REV. LTDA. EPP','DMCAMP DISTRIB. REV. LTDA. EPP',NULL),
+('J' ,6,'roselene.oller@escala',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'67526301000710','241085581114',NULL,'ESCALA EDITORIAL','EDITORA E DISTRIBUIDORA EDIPRESS LTDA',NULL),
+('J',16,'sys.discover@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'61438248000123','492127567118','99.999-9','Treelog','TREELOG S.A. - LOGISTICA E DISTRIBUICAO',NULL);
+
+/*!40000 ALTER TABLE `pessoa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- ENDERECO_DISTRIBUIDOR
+--
+
+LOCK TABLES `endereco` WRITE;
+/*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
+INSERT INTO `endereco` VALUES 
+('5', 'Vila João Jorge', '13041-302', 'Campinas', NULL, NULL, NULL, 'próximo a','Artur Ramos', '215', 'Rua', 'SP', 5),
+('6', 'Parque Empresarial', '07750-000', 'Cajamar', NULL, NULL, NULL, NULL,'Osasco', '782', 'Rua', 'SP', 6);
+/*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- DISTRIBUICAO
+--
+
+LOCK TABLES `distribuidor` WRITE;
+/*!40000 ALTER TABLE `distribuidor` DISABLE KEYS */;
+INSERT INTO `distribuidor` VALUES 
+(1,0,50000.0000,50000.0000,1,'6248116',7359227,49941,'2014-07-10',5.0000,0,0.0000,3,0,NULL,'SEGUNDA_FEIRA','QUARTA_FEIRA',10,0,'COTA_TOTAL',NULL,NULL,NULL,NULL,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,15,0.0000,2,NULL,0,0,0,60,NULL,0,0,0,0,0,1,1,'PRESTADOR_SERVICO',NULL,'MODELO_1','MODELO_1','PICKING1.TXT','PICKING2.TXT','PICKING3.TXT','MODELO_1',0,0,0,1,9999999.0000,17,NULL,1,1,0,'Boleto - Treelog','<p>Caro jornaleiro,</p><p><br></p><p>segue sua cobrança para pagamento conforme data de vencimento estipulada.</p><p><br></p><p>Att.</p><p>Filial Campinas</p>',NULL,0,0,NULL,NULL,0,0,5);
+/*!40000 ALTER TABLE `distribuidor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `fornecedor` WRITE;
+/*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
+INSERT INTO `fornecedor` VALUES 
+(1,6248116,'dinap@dinap.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp Dinap','ATIVO',NULL,NULL,1,3,NULL,NULL,'BANCAS',16),
+(2,7359227,'fc@fc.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp FC','ATIVO',NULL,NULL,2,3,NULL,NULL,'BANCAS',16),
+(6,6,'roselene.oller@escala.com.br','2014-03-10',10.0000,'MANUAL',0,'Rose','ATIVO',NULL,NULL,6,3,NULL,NULL,'BANCAS',NULL);
+/*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `endereco_fornecedor` WRITE;
+/*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
+INSERT INTO `endereco_fornecedor` VALUES 
+(6,0,'COMERCIAL',6,6);
+/*!40000 ALTER TABLE `endereco_fornecedor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- BANCO
+--
+
+LOCK TABLES `banco` WRITE;
+/*!40000 ALTER TABLE `banco` DISABLE KEYS */;
+INSERT INTO `banco` VALUES 
+(1,'49','Treelog'   ,1, 175, '8378', 8378, '0', '5', 'Pagável em qualquer banco até o vencimento', 1.0000, 2.0000, 'Banco Itaú', '341', NULL),
+(2,'50','DMCamp'    ,1, 6,   '98971', 98971, '7', '1', 'Pagável em qualquer banco até o vencimento.', '1.0000', '2.0000', 'Banco Bradesco', '237', NULL),
+(3,'51','Treelog_1' ,1, 0,   '3775631', 16, '0', '46', 'Pagável em qualquer banco até a data de vencimento', '1.0000', '2.0000', 'Banco HSBC', '399', NULL),
+(4,'52','CEF'       ,1, 9,   '10', '8879', 1, '9', NULL, '1.0000', '2.0000', 'Caixa Econômica Federal', '144', NULL),
+(5,'53','BB'        ,1, 18,  '10', '3324', 8, '1', NULL, '1.0000', '3.0000', 'Banco do Brasil', '1', NULL),
+(6,'54','Santander' ,1, 23,  '32', '1827', 1, '8', NULL, '2.0000', '2.0000', 'Santander', '399', NULL);
+/*!40000 ALTER TABLE `banco` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
+--
+-- FERIADO
+--
+
+-- LOCK TABLES `feriado` WRITE;
+-- !40000 ALTER TABLE `feriado` DISABLE KEYS */;
+-- INSERT INTO `feriado` VALUES 
+-- (11,'2014-04-18','Sexta Feira Santa',0,0,0,'MANUAL','MUNICIPAL',NULL,NULL,NULL),
+
+-- !40000 ALTER TABLE `feriado` ENABLE KEYS */;
+-- UNLOCK TABLES;
+
+--
+-- COTA DESCONTO DIFERENCIADO
+--
+
+DROP TABLE IF EXISTS CARGA_MDC_COTA_DIFERENCIADA;
+
+CREATE TABLE CARGA_MDC_COTA_DIFERENCIADA (NUMERO_COTA INT,DESCONTO FLOAT);
+
+LOCK TABLES `CARGA_MDC_COTA_DIFERENCIADA` WRITE;
+/*!40000 ALTER TABLE `CARGA_MDC_COTA_DIFERENCIADA` DISABLE KEYS */;
+insert into CARGA_MDC_COTA_DIFERENCIADA VALUES
+(1,23),
+(2,23),
+(3,23),
+(4,23),
+(5,23),
+(6,23),
+(7,23),
+(8,23),
+(9,23),
+(10,23),
+(11,23),
+(12,23),
+(13,23),
+(14,23),
+(15,23),
+(16,23),
+(17,23),
+(18,23),
+(19,23),
+(20,23),
+(21,23),
+(22,23),
+(23,23),
+(24,23),
+(25,23),
+(26,23),
+(27,23),
+(28,23),
+(29,23),
+(30,23),
+(31,23),
+(32,23),
+(33,23),
+(34,23),
+(35,23),
+(36,23),
+(37,23),
+(38,23),
+(39,23),
+(40,23),
+(41,23),
+(42,23),
+(43,23),
+(44,23),
+(45,23),
+(46,23),
+(47,23),
+(48,23),
+(50,23),
+(51,23),
+(53,23),
+(56,23),
+(58,23),
+(59,23),
+(61,23),
+(62,23),
+(63,23),
+(64,23),
+(65,23),
+(66,23),
+(67,23),
+(68,23),
+(69,23),
+(70,23),
+(72,23),
+(73,23),
+(74,23),
+(75,23),
+(76,23),
+(77,23),
+(78,23),
+(79,23),
+(80,23),
+(82,23),
+(83,23),
+(84,23),
+(85,23),
+(86,23),
+(87,23),
+(88,23),
+(90,23),
+(91,23),
+(92,23),
+(93,23),
+(94,23),
+(95,23),
+(96,23),
+(97,23),
+(98,23),
+(99,23),
+(100,23),
+(101,23),
+(102,23),
+(103,23),
+(104,23),
+(105,23),
+(106,23),
+(107,23),
+(108,23),
+(109,23),
+(110,23),
+(111,23),
+(112,23),
+(113,23),
+(114,23),
+(115,23),
+(116,23),
+(117,23),
+(118,23),
+(119,23),
+(120,23),
+(121,23),
+(122,23),
+(123,23),
+(124,23),
+(125,23),
+(126,23),
+(127,23),
+(128,23),
+(129,23),
+(130,23),
+(131,23),
+(132,23),
+(134,23),
+(135,23),
+(136,23),
+(137,23),
+(139,23),
+(140,23),
+(141,23),
+(142,23),
+(143,23),
+(144,23),
+(145,23),
+(146,23),
+(147,23),
+(148,23),
+(149,23),
+(150,23),
+(151,23),
+(152,23),
+(153,23),
+(155,23),
+(156,23),
+(157,23),
+(158,23),
+(159,23),
+(160,23),
+(161,23),
+(162,23),
+(163,23),
+(164,23),
+(166,23),
+(167,23),
+(168,23),
+(169,23),
+(171,23),
+(172,23),
+(173,23),
+(174,23),
+(175,23),
+(176,23),
+(177,23),
+(178,23),
+(179,23),
+(180,23),
+(181,23),
+(182,23),
+(183,23),
+(184,23),
+(185,23),
+(186,23),
+(188,23),
+(189,23),
+(190,23),
+(191,23),
+(192,23),
+(193,23),
+(194,23),
+(195,23),
+(196,23),
+(197,23),
+(198,23),
+(199,23),
+(200,23),
+(201,23),
+(202,23),
+(203,23),
+(204,23),
+(205,23),
+(206,23),
+(207,23),
+(208,23),
+(209,23),
+(210,23),
+(211,23),
+(212,23),
+(213,23),
+(214,23),
+(215,23),
+(216,23),
+(217,23),
+(218,23),
+(219,23),
+(220,23),
+(221,23),
+(222,23),
+(223,23),
+(225,23),
+(226,23),
+(227,23),
+(228,23),
+(229,23),
+(230,23),
+(231,23),
+(232,23),
+(233,23),
+(235,23),
+(236,23),
+(237,23),
+(238,23),
+(239,23),
+(240,23),
+(241,23),
+(242,23),
+(243,23),
+(244,23),
+(245,23),
+(246,23),
+(248,23),
+(249,23),
+(250,23),
+(251,23),
+(252,23),
+(253,23),
+(254,23),
+(256,23),
+(257,23),
+(258,23),
+(259,23),
+(260,23),
+(262,23),
+(263,23),
+(265,23),
+(266,23),
+(267,23),
+(268,23),
+(269,23),
+(270,23),
+(271,23),
+(273,23),
+(274,23),
+(275,23),
+(276,23),
+(277,23),
+(278,23),
+(280,23),
+(281,23),
+(282,23),
+(283,23),
+(284,23),
+(286,23),
+(287,23),
+(288,23),
+(289,23),
+(290,23),
+(291,23),
+(293,23),
+(295,23),
+(296,23),
+(297,23),
+(298,23),
+(299,23),
+(301,23),
+(304,23),
+(305,23),
+(306,23),
+(307,23),
+(308,23),
+(309,23),
+(310,23),
+(311,23),
+(312,23),
+(313,23),
+(314,23),
+(315,23),
+(316,23),
+(317,23),
+(318,23),
+(320,23),
+(321,23),
+(322,23),
+(323,23),
+(324,23),
+(325,23),
+(328,23),
+(329,23),
+(330,23),
+(331,23),
+(332,23),
+(333,23),
+(334,23),
+(335,23),
+(336,23),
+(337,23),
+(338,23),
+(342,23),
+(343,23),
+(344,23),
+(346,23),
+(347,23),
+(348,23),
+(350,23),
+(351,18),
+(352,18),
+(353,18),
+(354,18),
+(355,18),
+(356,18),
+(357,18),
+(358,18),
+(359,18),
+(360,18),
+(361,18),
+(362,18),
+(363,18),
+(364,18),
+(365,18),
+(366,18),
+(367,18),
+(368,18),
+(369,18),
+(370,23),
+(371,18),
+(372,18),
+(373,18),
+(374,18),
+(375,18),
+(376,18),
+(377,18),
+(378,18),
+(379,18),
+(380,18),
+(381,18),
+(382,15),
+(383,15),
+(384,15),
+(385,18),
+(386,18),
+(387,18),
+(388,18),
+(389,18),
+(390,18),
+(500,23),
+(501,23),
+(502,23),
+(503,23),
+(504,23),
+(505,23),
+(506,23),
+(507,23),
+(508,23),
+(509,23),
+(511,23),
+(512,23),
+(513,23),
+(514,23),
+(515,23),
+(516,23),
+(518,23),
+(519,23),
+(520,23),
+(521,23),
+(522,23),
+(523,23),
+(524,23),
+(525,18),
+(526,23),
+(527,23),
+(528,23),
+(529,23),
+(530,23),
+(531,23),
+(532,23),
+(533,23),
+(534,23),
+(535,23),
+(536,23),
+(537,23),
+(538,23),
+(539,23),
+(544,23),
+(549,23),
+(550,23),
+(551,23),
+(557,23),
+(558,23),
+(700,23),
+(701,23),
+(702,23),
+(703,23),
+(704,23),
+(705,23),
+(900,23),
+(901,23),
+(902,23),
+(903,23),
+(904,23),
+(905,23),
+(907,23),
+(908,23),
+(909,23),
+(911,23),
+(912,23),
+(913,23),
+(914,23),
+(919,23),
+(920,23);
+/*!40000 ALTER TABLE `CARGA_MDC_COTA_DIFERENCIADA` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- COTAS ALTERNATIVAS	
+--
+
+DROP TABLE IF EXISTS CARGA_MDC_COTA_ALTERNATIVAS;
+
+CREATE TABLE CARGA_MDC_COTA_ALTERNATIVAS (NUMERO_COTA INT);
+
+LOCK TABLES `CARGA_MDC_COTA_ALTERNATIVAS` WRITE;
+/*!40000 ALTER TABLE `CARGA_MDC_COTA_ALTERNATIVAS` DISABLE KEYS */;
+
+insert into CARGA_MDC_COTA_ALTERNATIVAS VALUES
+(1),
+(13),
+(16),
+(25),
+(33),
+(61),
+(162),
+(166),
+(332),
+(337),
+(348),
+(350),
+(352),
+(353),
+(354),
+(355),
+(356),
+(357),
+(358),
+(359),
+(360),
+(361),
+(362),
+(363),
+(364),
+(365),
+(366),
+(367),
+(369),
+(371),
+(372),
+(373),
+(374),
+(375),
+(376),
+(377),
+(378),
+(379),
+(381),
+(383),
+(385),
+(386),
+(387),
+(388),
+(389),
+(390),
+(515),
+(519),
+(525),
+(536);
+/*!40000 ALTER TABLE `CARGA_MDC_COTA_ALTERNATIVAS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- PARAMETRO_SISTEMA
+--
+
+LOCK TABLES `parametro_sistema` WRITE;
+/*!40000 ALTER TABLE `parametro_sistema` DISABLE KEYS */;
+INSERT INTO `parametro_sistema` VALUES 
+(1,'EMAIL_HOST','email-smtp.us-east-1.amazonaws.com'),
+(2,'EMAIL_PROTOCOLO','smtp'),
+(3,'EMAIL_USUARIO','AKIAJVAT5NPPIIAPVOKQ'),
+(4,'EMAIL_SENHA','AmC/cO/I8X9nqgq2P2e4oN+fcghN9fd0BZDa1lqeGRrr'),
+(5,'EMAIL_PORTA','465'),
+(6,'PATH_ARQUIVOS_DISTRIBUICAO_COTA','/opt/tomcat7/webapps/nds-client/distribuicao/'),
+(7,'PATH_IMAGENS_CAPA','/opt/tomcat7/webapps/nds-client/capas/'),
+(8,'PATH_IMAGENS_PDV','/images/pdv/'),
+(9,'PATH_TERMO_ADESAO','\\termo_adesao\\'),
+(10,'PATH_PROCURACAO','\\procuracao\\'),
+(11,'PATH_GERACAO_ARQUIVO_COBRANCA','/opt/parametros_nds/arquivo_cobranca/'),
+(12,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_DE','7'),
+(13,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_FALTA_EM','7'),
+(14,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM','7'),
+(15,'NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE','7'),
+(16,'PATH_INTERFACE_NFE_IMPORTACAO','/opt/parametros_nds/notas'),
+(17,'PATH_INTERFACE_NFE_EXPORTACAO','/opt/parametros_nds/notas/'),
+(18,'PATH_IMPORTACAO_CONTRATO','C:\\contratos\\'),
+(19,'PATH_INTERFACE_MDC_IMPORTACAO','/opt/interface_client/mdc/NDS/importacao'),
+(20,'PATH_INTERFACE_MDC_EXPORTACAO','/opt/interface_client/mdc/NDS/exportacao'),
+(21,'PATH_INTERFACE_MDC_BACKUP','/opt/interface_client/mdc/NDS/bkp'),
+(22,'NDSI_EMS0106_IN_FILEMASK','(?i:DEAPR19.NEW)'),
+(23,'NDSI_EMS0107_IN_FILEMASK','(?i:DEAJO19.NEW)'),
+(24,'NDSI_EMS0107_OUT_FILEMASK','DEAPR19.NEW'),
+(25,'NDSI_EMS0108_IN_FILEMASK','(?i:MATRIZ.NEW)'),
+(26,'NDSI_EMS0110_IN_FILEMASK','([0-9]{8}).prd'),
+(27,'NDSI_EMS0112_IN_FILEMASK','(?i:[0-9]{8}.edi)'),
+(28,'NDSI_EMS0114_IN_FILEMASK','([0-9]{8}).rec'),
+(29,'NDSI_EMS0116_IN_FILEMASK','(?i:BANCA.NEW)'),
+(30,'NDSI_EMS0117_IN_FILEMASK','COTA.NEW'),
+(31,'NDSI_EMS0118_IN_FILEMASK','(?i:PRECO.NEW)'),
+(32,'NDSI_EMS0119_IN_FILEMASK','(?i:PRODUTO.NEW)'),
+(33,'NDSI_EMS0129_OUT_FILEMASK','PICKING1.NEW'),
+(34,'OUTBOUND_FOLDER','/opt/interface/'),
+(35,'CODIGO_DISTRIBUIDOR_DINAP','6248116'),
+(36,'CNPJ_PJ_IMPORTACAO_NRE','73.481.980/0014-8'),
+(41,'NFE_DPEC','FALSE'),(42,'EMAIL_REMETENTE','novodistrib@dgb.com.br'),
+(43,'EMAIL_AUTENTICAR','TRUE'),
+(44,'PATH_INTERFACE_PICKING_EXPORTACAO','/opt/parametros_nds/picking'),
+(45,'PATH_INTERFACE_BANCAS_EXPORTACAO','/opt/parametros_nds/bancas');
+/*!40000 ALTER TABLE `parametro_sistema` ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- ######################################################################################################################################################################################
+
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

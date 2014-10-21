@@ -74,8 +74,8 @@ DROP DATA_RECOLHIMENTO_STR;
 
 -- ##################### FIXME    #######################
 -- Remover issso. Produtos lancados no Rio em 2010 e NAO RECOLHIDOS
-delete from hvnd where cod_produto = '28681001' and num_edicao = 1013;
-delete from hvnd where cod_produto = '27801001' and num_edicao = 192;
+-- delete from hvnd where cod_produto = '28681001' and num_edicao = 1013;
+-- delete from hvnd where cod_produto = '27801001' and num_edicao = 192;
 -- #######################################################
 
 update HVND h,produto_edicao pe, produto p 
@@ -94,7 +94,7 @@ and STATUS = 'F';
 update HVND set cota_id = (select c.id from cota c where c.numero_cota = HVND.COD_COTA_HVCT);
 
 select '*** HVND Cotas nulas:';
-select GROUP_CONCAT(COD_COTA_HVCT) from HVND where cota_id is null;
+select GROUP_CONCAT(COD_COTA_HVCT  SEPARATOR ',') from HVND where cota_id is null;
 
 ALTER TABLE `HVND` ADD INDEX `hvnd_cota_id` (`COD_COTA_HVCT` ASC, `cod_produto` ASC, `num_edicao` ASC, `produto_edicao_id` ASC) ;
 
@@ -121,10 +121,10 @@ on (h.cod_produto = ppe.codigo and h.num_edicao = ppe.numero_edicao)
 where (ppe.codigo is null or ppe.numero_edicao is null);
 
 select '*** HVND produto_edicao_id nulos: ';
--- select * from HVND where produto_edicao_id is null;
+select count(*) from HVND where produto_edicao_id is null;
 
 select 'CONSIGNADO: ',sum(preco*qtde_reparte_hvct) from HVND ; -- where status = 'A';
-select 'BALANCEADO: ',sum(preco*qtde_reparte_hvct) from HVND where data_recolhimento <> '0000-00-00' and status = 'A';
+select 'BALANCEADO: ',sum(preco*qtde_reparte_hvct) from HVND where data_recolhimento <> '0000-00-00' and status = 'A'; 
 select 'EXPEDIDO  : ',sum(preco*qtde_reparte_hvct) from HVND where data_recolhimento = '0000-00-00' and status = 'A';
 select 'FECHADO   : ',sum(preco* (qtde_reparte_hvct-qtde_encalhe_hvct)) from HVND where status = 'F';
 
@@ -161,12 +161,12 @@ and p.codigo = produto
 and pe.numero_edicao = edicao;
 
 select '*** ESTQBOX Cotas nulas:';
--- select GROUP_CONCAT(cota_id) from ESTQBOX where cota_id is null;
+select GROUP_CONCAT(produto_edicao_id  SEPARATOR ',') from ESTQBOX where produto_edicao_id is null;
 
 select 'ESTQBOX: ',sysdate(); -- Log 
 
 
-/*
+
 -- 
 -- ESTQMOV
 --
@@ -192,15 +192,15 @@ FLAG_ESTORNO varchar(1)) ENGINE=MEMORY;
 ALTER TABLE ESTQMOV
 ADD COLUMN produto_edicao_id bigint AFTER FLAG_ESTORNO;
 
-LOAD DATA LOCAL INFILE '/opt/rollout/load_files/ESTQMOV.NEW' INTO TABLE estqmov COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/ESTQMOV.NEW' INTO TABLE estqmov COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
--- update estqmov set produto_edicao_id = (select pe.id from produto_edicao pe, produto p 
--- where p.id = pe.produto_id 
--- and p.codigo = produto 
--- and pe.numero_edicao = edicao);
+update estqmov set produto_edicao_id = (select pe.id from produto_edicao pe, produto p 
+where p.id = pe.produto_id 
+and p.codigo = produto 
+and pe.numero_edicao = edicao);
 
 select 'ESTQMOV: ',sysdate(); -- Log
-*/
+
 
 -- 
 -- MOV_CRED
@@ -275,7 +275,7 @@ select 'MOV_DEB: ',sysdate(); -- Log
 DROP TABLE IF EXISTS CARGA_LANCAMENTO_MDC;
 
 CREATE TABLE CARGA_LANCAMENTO_MDC (
-id int(11) NOT NULL,
+-- id int(11) NOT NULL,	
 COD_AGENTE_LANP varchar(7),
 COD_PRODUTO_LANP varchar(14),
 COD_PRODIN varchar(8),
@@ -289,8 +289,9 @@ COD_PRODUTO_RCPR varchar(12),
 NUM_RECOLTO_RCPR varchar(11),
 DATA_PREVISTA_RECOLTO_RCPR varchar(10),
 DATA_REAL_RECOLTO_RCPR varchar(10),
-TIPO_STATUS_RECOLTO_RCPR varchar(45),
-PRIMARY KEY (id))
+TIPO_STATUS_RECOLTO_RCPR varchar(45) -- ,
+-- PRIMARY KEY (id)
+)
  ENGINE=MEMORY
 ;
 
@@ -456,17 +457,17 @@ DEFAULT CHARSET=utf8;
 -- Insere estoque do distribuidor baseado no arquivo ESTQBOX.NEW
 insert into estoque_produto_memoria (QTDE, QTDE_DEVOLUCAO_ENCALHE, QTDE_SUPLEMENTAR, PRODUTO_EDICAO_ID)
 select 
-sum(case when box=150 then quantidade else 0 end) as QTDE, 
-sum(case when box=181 then quantidade else 0 end) as QTDE_DEVOLUCAO_ENCALHE,
-sum(case when box in(140,142) then quantidade else 0 end) as QTDE_SUPLEMENTAR, 
+sum(case when box=60 then quantidade else 0 end) as QTDE,  -- 150 Rio, 60 Canpinas 
+sum(case when box=70 then quantidade else 0 end) as QTDE_DEVOLUCAO_ENCALHE, -- 181 Rio, 70 Campinas
+sum(case when box in(80) then quantidade else 0 end) as QTDE_SUPLEMENTAR, -- (140,142) Rio, 80 Campinas
 produto_edicao_id 
 from ESTQBOX 
-where box not in (190,191) -- 191=Rio,Santos / 92=Campinas 
+where box not in (92) -- 191=Rio,Santos / 92=Campinas 
 group by 4;
 
 -- insere estoque de produto do fornecedor baseado nos tipos A.R.PROM. do arquivo ESTQBOX
 insert into estoque_produto_memoria (produto_edicao_id)
-(select distinct produto_edicao_id from ESTQBOX where box = 191 -- 92 FIXME Alterar para o box correspondente
+(select distinct produto_edicao_id from ESTQBOX where box = 92 -- Rio 191, Campinas 92 FIXME Alterar para o box correspondente
 and produto_edicao_id not in (select produto_edicao_id from estoque_produto_memoria));
 
 select 'ESTOQUE_PRODUTO: ',sysdate(); -- Log
@@ -675,7 +676,7 @@ min(h.data_lancamento),
  pe.id
  from ESTQBOX eb,estoque_produto_memoria pe, HVND h
  where h.produto_edicao_id = pe.produto_edicao_id
- and eb.box = 191 -- 191=Rio,Santos / 92=Campinas 
+ and eb.box = 92 -- 191=Rio,Santos / 92=Campinas 
  and pe.produto_edicao_id = eb.produto_edicao_id
 group by 2,3,4,5);
 
@@ -693,7 +694,7 @@ insert into movimento_estoque_memoria
  pe.id
  from ESTQBOX eb,estoque_produto_memoria pe, HVND h
  where h.produto_edicao_id = pe.produto_edicao_id
- and eb.box = 191 -- 191=Rio,Santos / 92=Campinas 
+ and eb.box = 92 -- 191=Rio,Santos / 92=Campinas 
  and pe.produto_edicao_id = eb.produto_edicao_id
 group by 2,3,4,5);
 
@@ -943,9 +944,102 @@ ALTER TABLE CARGA_LANCAMENTO_MDC ENGINE=InnoDB;
 
 select 'MATERIALIZADO - CARGA_LANCAMENTO_MDC: ',count(*) from CARGA_LANCAMENTO_MDC; -- Log
 
-
-
 select 'MATERIALIZACAO FIM: ',sysdate(); -- Log
+
+
+--
+-- ESTQMOV
+--
+
+DROP TABLE IF EXISTS temp_mvto_estq_sem_12;
+
+create table temp_mvto_estq_sem_12 as (
+select a.data, c.id as estoque_produto_id, f.nome_box,a.produto_edicao_id,d.nome,d.codigo,e.numero_edicao,
+round(a.qtde) me,round(c.qtde_devolucao_encalhe) pe, round(sum(b.qtde)) mec
+from movimento_estoque   a, movimento_estoque_cota b, estoque_produto   c,produto     d, 
+produto_edicao   e, estqbox    f
+where (a.tipo_movimento_id = 31 or b.tipo_movimento_id = 26 )
+and a.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = c.produto_edicao_id
+and c.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = e.id
+and b.produto_edicao_id = e.id
+and c.produto_edicao_id = e.id
+and e.produto_id        = d.id
+and a.produto_edicao_id = f.produto_edicao_id
+and b.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = e.id
+-- and f.nome_box = 'ENCALHE'
+and a.qtde  <> c.qtde_devolucao_encalhe  -- somente para 31 X 26
+and   f.produto_edicao_id   not in (select produto_edicao_id from estqmov where tipo_movto = 12)
+group by 1,2,3,4
+limit 1000000);
+
+-- inserir movimento em estoque tipo 18, atribuir o valor ao atributo qtde o resultado da subtração de pe - me
+INSERT INTO movimento_estoque
+(APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
+USUARIO_ID, QTDE, PRODUTO_EDICAO_ID, ESTOQUE_PRODUTO_ID, ITEM_REC_FISICO_ID, DATA_INTEGRACAO, STATUS_INTEGRACAO,
+COD_ORIGEM_MOTIVO, DAT_EMISSAO_DOC_ACERTO, NUM_DOC_ACERTO, ORIGEM)
+(select true,	date(sysdate()),	'CARGA',	'APROVADO',	m.data,	date(sysdate()),	null,	18,	1,	(m.pe - m.me),
+m.PRODUTO_EDICAO_ID,	m.estoque_produto_id, 	null, 	null,	null, 	null, 	null,	null,	'CARGA_INICIAL'
+from temp_mvto_estq_sem_12 m
+where pe > me);
+
+-- inserir movimento em estoque tipo 15, atribuir o valor ao atributo qtde da tabela movimento_estoque o resultado 
+-- da subtração de me - pe
+INSERT INTO movimento_estoque
+(APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
+USUARIO_ID, QTDE, PRODUTO_EDICAO_ID, ESTOQUE_PRODUTO_ID, ITEM_REC_FISICO_ID, DATA_INTEGRACAO, STATUS_INTEGRACAO,
+COD_ORIGEM_MOTIVO, DAT_EMISSAO_DOC_ACERTO, NUM_DOC_ACERTO, ORIGEM)
+(select true,	date(sysdate()),	'CARGA',	'APROVADO',	m.data,	date(sysdate()),	null,	15,	1,	(m.me - m.pe),
+m.PRODUTO_EDICAO_ID,	m.estoque_produto_id, 	null, 	null,	null, 	null, 	null,	null,	'CARGA_INICIAL'
+from temp_mvto_estq_sem_12 m
+where pe < me);
+
+
+-- Excluir os movimentos tipo 66 da movimento_estoque dos 47 registros da temp.
+delete from movimento_estoque 
+where PRODUTO_EDICAO_ID in (select t.PRODUTO_EDICAO_ID from temp_mvto_estq_sem_12 t 
+where t.PRODUTO_EDICAO_ID = movimento_estoque.PRODUTO_EDICAO_ID)
+and tipo_movimento_id = 66;
+
+DROP TABLE IF EXISTS temp_mvto_estq_sem_12;
+DROP TABLE IF EXISTS temp_mvto_estq_qtde_igual;
+
+create table temp_mvto_estq_qtde_igual(
+select a.data, c.id as estoque_produto_id, f.nome_box,a.produto_edicao_id,d.nome,d.codigo,e.numero_edicao,
+round(a.qtde) me,round(c.qtde_devolucao_encalhe) pe, round(sum(b.qtde)) mec
+from movimento_estoque   a, 
+     movimento_estoque_cota b, 
+     estoque_produto   c,
+  produto     d, 
+  produto_edicao   e,
+  estqbox    f
+where a.tipo_movimento_id = 31 and b.tipo_movimento_id = 26
+and a.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = c.produto_edicao_id
+and c.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = e.id
+and b.produto_edicao_id = e.id
+and c.produto_edicao_id = e.id
+and e.produto_id        = d.id
+and a.produto_edicao_id = f.produto_edicao_id
+and b.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = e.id
+-- and f.nome_box = 'ENCALHE'
+and a.qtde  = c.qtde_devolucao_encalhe  -- somente para 31 X 26
+and   f.produto_edicao_id   not in (select produto_edicao_id from estqmov where tipo_movto = 12)
+group by 1,2,3,4
+limit 1000000);
+
+delete from movimento_estoque 
+where PRODUTO_EDICAO_ID in (select t.PRODUTO_EDICAO_ID from temp_mvto_estq_qtde_igual t 
+where t.PRODUTO_EDICAO_ID = movimento_estoque.PRODUTO_EDICAO_ID)
+and tipo_movimento_id = 66;
+
+select 'ESTQMOV: ',sysdate(); -- Log
 
 -- 
 -- CONFERENCIA_ENCALHE
@@ -998,7 +1092,7 @@ select 'FECHAMENTO_ENCALHE_BOX: ',sysdate(); -- Log
 -- FIXME Remover quando possivel
 update lancamento set data_lcto_distribuidor = '0001-01-01' where data_lcto_distribuidor = '0000-00-00';
 
-CREATE TABLE HVND_AUX (produto_edicao_id INT(6));
+CREATE TABLE HVND_AUX (produto_edicao_id INT(6)) ENGINE=MEMORY;
 
 -- A = ABERTO
 insert into HVND_AUX
@@ -1020,10 +1114,33 @@ where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
 truncate table HVND_AUX;
 
+-- F = FECHADO (EM_RECOLHIMENTO)
+insert into HVND_AUX
+select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento >= DATE_SUB(sysdate(),INTERVAL 7 DAY);
+
+update lancamento
+set status = 'EM_RECOLHIMENTO'
+where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+
+truncate table HVND_AUX;
 
 -- F = FECHADO
 insert into HVND_AUX
-select distinct produto_edicao_id from HVND where status = 'F';
+select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento < DATE_SUB(sysdate(),INTERVAL 7 DAY);
+
+update lancamento
+set status = 'FECHADO'
+where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+
+truncate table HVND_AUX;
+
+insert into HVND_AUX
+select distinct l.produto_edicao_id
+from lancamento l
+where l.status = 'CONFIRMADO'
+and l.produto_edicao_id not in (select distinct produto_edicao_id from hvnd)
+and l.DATA_REC_PREVISTA <> '0000-00-00'
+and l.DATA_REC_PREVISTA < '2014-10-10'
 
 update lancamento
 set status = 'FECHADO'
@@ -1032,10 +1149,14 @@ where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 DROP TABLE HVND_AUX;
 
 update lancamento
+set status = 'FECHADO'
+where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+
+update lancamento
 set DATA_REC_PREVISTA = (select adddate(DATA_LCTO_DISTRIBUIDOR, peb)
 from produto_edicao
-where produto_edicao.id = lancamento.produto_edicao_id
-limit 1) WHERE   DATA_REC_DISTRIB = '0001-01-01'
+where produto_edicao.id = lancamento.produto_edicao_id limit 1) 
+WHERE   DATA_REC_DISTRIB = '0001-01-01'
 or    DATA_REC_PREVISTA = '0001-01-01'
 and status = 'CONFIRMADO';
 
@@ -1059,6 +1180,119 @@ select max(id) from (
 ) rs1) WHERE sequence_name = 'Movimento';
 
 select 'SEQ_GENERATOR: ',sysdate(); -- Log
+
+-- CESAR
+
+INSERT INTO fechamento_diario 
+(`ID`, `DATA_FECHAMENTO`, `USUARIO_ID`, `DATA_CRIACAO`) VALUES 
+('1', DATE(sysdate()), '1', DATE(sysdate()));
+
+INSERT INTO fechamento_diario_resumo_consignado 
+(`TIPO_RESUMO`, `ID`, `SALDO_ANTERIOR`, `SALDO_ATUAL`, `VALOR_ENTRADA`, `VALOR_SAIDA`, 
+`FECHAMENTO_DIARIO_ID`, `VALOR_CE`, `VALOR_OUTRAS_MOVIMENTACOES_ENTRADA`, 
+`VALOR_EXPEDICAO`, `VALOR_OUTRAS_MOVIMENTACOES_SAIDA`, `VALOR_OUTRAS_MOVIMENTACOES_A_VISTA`) VALUES 
+('CONSIGNADO', '1', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0');
+
+INSERT INTO fechamento_diario_consolidado_suplementar 
+(`ID`, `VALOR_ESTOQUE_LOGICO`, `VALOR_SALDO`, `VALOR_TRANSFERENCIA`, `VALOR_VENDAS`, `FECHAMENTO_DIARIO_ID`) VALUES 
+('1', '0', '0', '0', '0', '1');
+
+--
+-- Cesar ***** FIXME SOMENTE PARA CAMPINAS, PRODUTOS SCALA
+--
+
+update produto_fornecedor
+set fornecedores_id = 6
+where produto_id in (select id from produto
+where codigo in
+(224300,457935,460447,875100,569412,568477,100842,459496,453852,699600,
+699601,69727,450714,69734,800623,800626,800630,800633,444614,460034,
+461468,458833,465343,569641,460096,456778,451828,448476,451827,467705,
+452053,645900,645901,454738,451605,451606,458239,466494,450745,456402,
+419700,451803,200612,461277,446137,450455,600825,600818,49400,955300,
+300552,494004,465763,454880,459847,458543,444089,389009,450684,900271,
+300801,455900,569870,450929,600411,459069,452139,452091,700211,458970,
+453241,452169,452176,459380,300904,459748,81574,468016,200646,200640,
+200645,200651,734200,452312,455351,566992,460140,800803,432017,459731,
+441606,100305,344540,1000401,440654,459724,900207,69741,900934,49500,
+855400,459540,800118,457447,457478,452169,122146,800228,800224,460591,
+49800,900645,618001,49200,455559,901327,100249,800442,700749,800342,
+900856,461314,465374,75650,865800,980003,64700,456426,456427,52077,
+457874,466777,466432,458550,459533,455382,450943,458123,800150,200529,
+200548,700019,870501,21001,456358,462502,459861,460270,459862,462458,
+211008,80903,81575,52381,51094,900188,459595,456457,466395,800221,
+438460,451964,900498,458499,451582,461376,86900,900025,462236,457850,
+443136,667600,456440,443068,440951,461925,465770,458321,458321,455566,
+100104,700891,455603,459151,300818,840600,462724,462519,465237,569627,
+353089,467514,462366,466760,454545,901570,901600,466340,459960,456624,
+600501,568712,448629,453586,455207,458246,456549,465244,700501,60002,
+600001,456754,462335,620000,200023,53920,455870,449923,800944,350378,
+350378,351030,352495,350941,350583,458963,461581,462281,635452,784007,
+442955,459168,69827,500766,506500,506501,500759,500758,69733,449206,
+466555,454569,344951,637000,451797,634508,456464,917800,344954,454262,
+634558,460010,456761,456846,452916,69730,461888,451391,524700,700725,
+300143,344932,457744,448599,449312,450509,600822,958800,800748,51902,
+455917,454644,450530,454385,454682,79080,455221,69166,465145,460546,
+452590,52343,684700,418900,462243,453593,452022,900047,354123,459427,
+454118,69728,636009,901273,900835,900843,467927,900823,456860,467941,
+800837,457614,77876,461567,459465,459335,346074,460799,467330,467323,
+467194,467231,467279,467347,459403,467200,467224,467217,467354,467248,
+460713,467378,459434,461321,467170,460768,346074,460720,460782,7000359,
+7000367,462113,345014,200423,353010,467781,79281,700411,461680,461758,
+453920,454699,454255,458161,453210,453211,454491,460706,328340,340303,
+458796,400748,800501,466692,925100,460430,459670,456488,467927,69824,
+344922,150600,600347,344957,450226,700053,458758,452107,457379,457378,
+456433,700346,700349));
+ 
+select 'Atualizar codigos fornecedor terceiro:'; -- Log
+-- Atualizar codigos fornecedor terceiro
+
+update produto
+set codigo = lpad(codigo,10,10)
+where codigo in
+(224300,457935,460447,875100,569412,568477,100842,459496,453852,699600,
+699601,69727,450714,69734,800623,800626,800630,800633,444614,460034,
+461468,458833,465343,569641,460096,456778,451828,448476,451827,467705,
+452053,645900,645901,454738,451605,451606,458239,466494,450745,456402,
+419700,451803,200612,461277,446137,450455,600825,600818,49400,955300,
+300552,494004,465763,454880,459847,458543,444089,389009,450684,900271,
+300801,455900,569870,450929,600411,459069,452139,452091,700211,458970,
+453241,452169,452176,459380,300904,459748,81574,468016,200646,200640,
+200645,200651,734200,452312,455351,566992,460140,800803,432017,459731,
+441606,100305,344540,1000401,440654,459724,900207,69741,900934,49500,
+855400,459540,800118,457447,457478,452169,122146,800228,800224,460591,
+49800,900645,618001,49200,455559,901327,100249,800442,700749,800342,
+900856,461314,465374,75650,865800,980003,64700,456426,456427,52077,
+457874,466777,466432,458550,459533,455382,450943,458123,800150,200529,
+200548,700019,870501,21001,456358,462502,459861,460270,459862,462458,
+211008,80903,81575,52381,51094,900188,459595,456457,466395,800221,
+438460,451964,900498,458499,451582,461376,86900,900025,462236,457850,
+443136,667600,456440,443068,440951,461925,465770,458321,458321,455566,
+100104,700891,455603,459151,300818,840600,462724,462519,465237,569627,
+353089,467514,462366,466760,454545,901570,901600,466340,459960,456624,
+600501,568712,448629,453586,455207,458246,456549,465244,700501,60002,
+600001,456754,462335,620000,200023,53920,455870,449923,800944,350378,
+350378,351030,352495,350941,350583,458963,461581,462281,635452,784007,
+442955,459168,69827,500766,506500,506501,500759,500758,69733,449206,
+466555,454569,344951,637000,451797,634508,456464,917800,344954,454262,
+634558,460010,456761,456846,452916,69730,461888,451391,524700,700725,
+300143,344932,457744,448599,449312,450509,600822,958800,800748,51902,
+455917,454644,450530,454385,454682,79080,455221,69166,465145,460546,
+452590,52343,684700,418900,462243,453593,452022,900047,354123,459427,
+454118,69728,636009,901273,900835,900843,467927,900823,456860,467941,
+800837,457614,77876,461567,459465,459335,346074,460799,467330,467323,
+467194,467231,467279,467347,459403,467200,467224,467217,467354,467248,
+460713,467378,459434,461321,467170,460768,346074,460720,460782,7000359,
+7000367,462113,345014,200423,353010,467781,79281,700411,461680,461758,
+453920,454699,454255,458161,453210,453211,454491,460706,328340,340303,
+458796,400748,800501,466692,925100,460430,459670,456488,467927,69824,
+344922,150600,600347,344957,450226,700053,458758,452107,457379,457378,
+456433,700346,700349);
+--
+-- ****************************************************************
+--
+
+
 select 'FIM: ',sysdate(); -- Log
 
 
