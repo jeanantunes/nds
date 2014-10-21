@@ -382,7 +382,7 @@ public class TipoDescontoCotaController extends BaseController {
 		filtro.setIdEditor(idEditor);
 		filtro.setNomeEditor(nomeEditor);
 
-		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
 
 		filtro.setPaginacao(paginacao);
 
@@ -483,7 +483,7 @@ public class TipoDescontoCotaController extends BaseController {
 
 		for(Cota cota : cotas) {
 
-			itensCota.add(new ItemDTO<Long, String>(cota.getId(), cota.getPessoa().getNome()));
+			itensCota.add(new ItemDTO<Long, String>(Long.valueOf(cota.getNumeroCota()), cota.getPessoa().getNome()));
 		}
 
 		return itensCota;

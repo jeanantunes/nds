@@ -28,12 +28,12 @@ var tipoDescontoController = $.extend(true,  {
 		$(".tiposDescGeralGrid",this.workspace).flexReload();
 	},
 	
-	pesquisarDescontoEspecifico:function(){
+	pesquisarDescontoEspecifico: function() {
 		 
 		var cotaEspecifica = $("#numCotaPesquisa",this.workspace).val();
 		var nomeEspecifico = $("#descricaoCotaPesquisa",this.workspace).val();
 		
-		$(".tiposDescEspecificoGrid",this.workspace).flexOptions({
+		$(".tiposDescEspecificoGrid", this.workspace).flexOptions({
 			url: contextPath + "/financeiro/tipoDescontoCota/pesquisarDescontoEspecifico",
 			params: [
 					 {name:'cotaEspecifica', value:cotaEspecifica},
@@ -42,15 +42,15 @@ var tipoDescontoController = $.extend(true,  {
 		    newp: 1,
 		});
 		
-		$(".tiposDescEspecificoGrid",this.workspace).flexReload();
+		$(".tiposDescEspecificoGrid", this.workspace).flexReload();
 	},
 	
 	pesquisarDescontoEditor: function() {
 		 
-		var codigoEditor = $("#numEditorPesquisa",this.workspace).val();
-		var nomeEditor = $("#descricaoEditorPesquisa",this.workspace).val();
+		var codigoEditor = $("#numEditorPesquisa", this.workspace).val();
+		var nomeEditor = $("#descricaoEditorPesquisa", this.workspace).val();
 		
-		$(".tiposDescEditorGrid",this.workspace).flexOptions({
+		$(".tiposDescEditorGrid", this.workspace).flexOptions({
 			url: contextPath + "/financeiro/tipoDescontoCota/pesquisarDescontoEditor",
 			params: [
 					 {name:'codigoEditor', value:codigoEditor},
@@ -59,14 +59,14 @@ var tipoDescontoController = $.extend(true,  {
 		    newp: 1,
 		});
 		
-		$(".tiposDescEditorGrid",this.workspace).flexReload();
+		$(".tiposDescEditorGrid", this.workspace).flexReload();
 	},
 	
-	pesquisarDescontoProduto:function(){
-		var codigo = $("#codigoPesquisa",this.workspace).val();
-		var produto = $("#produtoPesquisa",this.workspace).val();
+	pesquisarDescontoProduto:function() {
+		var codigo = $("#codigoPesquisa", this.workspace).val();
+		var produto = $("#produtoPesquisa", this.workspace).val();
 		
-		$(".tiposDescProdutoGrid",this.workspace).flexOptions({
+		$(".tiposDescProdutoGrid", this.workspace).flexOptions({
 			url: contextPath +"/financeiro/tipoDescontoCota/pesquisarDescontoProduto",
 			params: [
 					 {name:'codigo', value:codigo},
@@ -75,50 +75,50 @@ var tipoDescontoController = $.extend(true,  {
 		    newp: 1,
 		});
 		
-		$(".tiposDescProdutoGrid",this.workspace).flexReload();
+		$(".tiposDescProdutoGrid", this.workspace).flexReload();
 	},
 			
-	mostra_geral:function(){
+	mostra_geral:function() {
 		this.preMostra("GERAL");
-		$( '.especifico' ,this.workspace).hide();
-		$( '.editor' ,this.workspace).hide();
-		$( '.produto' ,this.workspace).hide();
+		$('.especifico', this.workspace).hide();
+		$('.editor', this.workspace).hide();
+		$('.produto', this.workspace).hide();
 		
 		tipoDescontoController.exibirExportacao(false);
-		$(".grids",this.workspace).show();
+		$(".grids", this.workspace).show();
 	},
 	
-	mostra_especifico:function(){
+	mostra_especifico:function() {
 		this.preMostra("ESPECIFICO");
-		$( '.especifico' ,this.workspace).show();
-		$( '.produto' ,this.workspace).hide();
-		$( '.editor' ,this.workspace).hide();
+		$('.especifico', this.workspace).show();
+		$('.produto', this.workspace).hide();
+		$('.editor', this.workspace).hide();
 		
 		tipoDescontoController.exibirExportacao(false);		
-		$(".grids",this.workspace).show();
+		$(".grids", this.workspace).show();
 	},
 	
-	mostra_editor:function(){
+	mostra_editor:function() {
 		this.preMostra("EDITOR");
-		$( '.editor' ,this.workspace).show();
-		$( '.produto' ,this.workspace).hide();
-		$( '.especifico' ,this.workspace).hide();
+		$('.editor', this.workspace).show();
+		$('.produto', this.workspace).hide();
+		$('.especifico', this.workspace).hide();
 		
 		tipoDescontoController.exibirExportacao(false);		
-		$(".grids",this.workspace).show();
+		$(".grids", this.workspace).show();
 	},
 	
-	mostra_produto:function(){
+	mostra_produto:function() {
 		this.preMostra("PRODUTO");
-		$( '.especifico' ,this.workspace).hide();
-		$( '.editor' ,this.workspace).hide();
-		$( '.produto' ,this.workspace).show();
+		$('.especifico' ,this.workspace).hide();
+		$('.editor', this.workspace).hide();
+		$('.produto', this.workspace).show();
 		
 		tipoDescontoController.exibirExportacao(false);
-		$(".grids",this.workspace).show();
+		$(".grids", this.workspace).show();
 	},
 	
-	preMostra:function(tipo){
+	preMostra:function(tipo) {
 		tipoDescontoController.exibirExportacao(false);
 		tipoDescontoController.exibirNovo(false);
 		tipoDescontoController.exibirTipoGrid(false);
@@ -126,35 +126,35 @@ var tipoDescontoController = $.extend(true,  {
 		tipoDescontoController.exibirNovo(true);
 	},
 	
-	exibirExportacao:function(isExibir){
+	exibirExportacao:function(isExibir) {
 		
-			if(isExibir == true){
+			if(isExibir == true) {
 				$("#idExportacao" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
-			}else{
+			} else {
 				$("#idExportacao" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
 			}
 			
 	},
-	exibirTipoGrid:function(isExibir){
+	exibirTipoGrid:function(isExibir) {
 		
-		if(isExibir == true){
+		if(isExibir == true) {
 			$("#tpo" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
-		}else{
+		} else {
 			$("#tpo" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
 		}
 		
 	},
-	exibirNovo:function(isExibir){
+	exibirNovo:function(isExibir) {
 		
-		if(isExibir == true){
+		if(isExibir == true) {
 			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
-		}else{
+		} else {
 			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
 		}
 		
-},
+	},
 	
-	executarPreProcessamento:function(resultado) {				
+	executarPreProcessamento: function(resultado) {				
 		
 		if (resultado.mensagens) {
 
@@ -221,7 +221,7 @@ var tipoDescontoController = $.extend(true,  {
 			
 			if(row.cell.numeroEdicao == null) row.cell.numeroEdicao = '*';
 			
-			var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="tipoDescontoController.exibirDialogExclusao(' + row.cell.descontoId + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="tipoDescontoController.exibirDialogExclusao('+ row.cell.descontoId +');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			
@@ -236,7 +236,7 @@ var tipoDescontoController = $.extend(true,  {
 		return resultado;
 	},
 
-	exibirDialogExclusao:function(idDesconto){		
+	exibirDialogExclusao:function(idDesconto) {		
 		$("#dialog-excluirCota" ,this.workspace).dialog({
 			resizable: false,
 			height:'auto',
@@ -304,7 +304,7 @@ var tipoDescontoController = $.extend(true,  {
 		
 		$(".lstFornecedoresGrid",this.workspace).flexReload();
 		
-		tipoDescontoController.popup_lista_fornecedores();
+		tipoDescontoController.popupListaFornecedores();
 	},
 	
 	carregarCotasAssociadasAoDescontoEditor: function(idDesconto){
@@ -341,32 +341,70 @@ var tipoDescontoController = $.extend(true,  {
 	},
 	
 	mostrarGridCota:function() {
-		$('.especificaCota',this.workspace).show();
+		$('.especificaCota', this.workspace).show();
 	},
 
 	esconderGridCota:function() {
 		
-		$('.especificaCota',this.workspace).hide();
+		$('.especificaCota', this.workspace).hide();
 		
 		descontoProdutoController.resetGridCota();
 	},
 	
+	popupListaFornecedores:function() {
+		
+		$( "#dialog-fornecedores",this.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons:[ {id:"btn_close_fornecedor",
+					   text:"Fechar",
+					   click: function() {
+							$( this ).dialog( "close" );
+						},
+					}],
+			form: $("#dialog-fornecedores", this.workspace).parents("form")
+		});	      
+	},
+	
 	init: function() {
 		
-			$(".lstCotasEditorGrid",this.workspace).flexigrid({
-				dataType : 'json',
-				colModel : [ {
-					display : 'Nome',
-					name : 'value',
-					width : 315,
-					sortable : true,
-					align : 'left'
-				}],
-				width : 350,
-				height : 155,
-				sortname : "value",
-				sortorder : "asc",
-			});
+		$(".lstFornecedoresGrid",this.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Nome',
+				name : 'value',
+				width : 315,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 350,
+			height : 155,
+			sortname : "value",
+			sortorder : "asc",
+		});
+		
+		$(".lstCotasEditorGrid", this.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'key',
+				width : 45,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Nome',
+				name : 'value',
+				width : 275,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 350,
+			height : 155,
+			sortname : "value",
+			sortorder : "asc",
+		});
 	}
 }, BaseController);
 

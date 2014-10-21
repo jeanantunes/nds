@@ -336,6 +336,10 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		
 		queryFromTipoDescontoEditor(hql);
 		
+		if(filtro.getPaginacao() != null) {
+			hql.append("order by "+ filtro.getPaginacao().getSortColumn() +" "+ filtro.getPaginacao().getSortOrder()); 
+		}
+		
 		Query q = getSession().createSQLQuery(hql.toString());
 
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {

@@ -4,15 +4,15 @@ var descontoEditorController = $.extend(true,{
 	
 	popup_editor: function() {		
 		 
-		$("#selectFornecedorSelecionado_option_editor",this.workspace).clear();
-		$("#selectFornecedor_option_editor",this.workspace).clear();
+		$("#selectFornecedorSelecionado_option_editor", this.workspace).clear();
+		$("#selectFornecedor_option_editor", this.workspace).clear();
 		
-		$("#codigoEditor",this.workspace).val("");
-		$("#descontoEditor",this.workspace).val("");
-		$("#descontoEditor",this.workspace).justPercent("floatValue");
-		$("#descricaoEditor",this.workspace).val("");
+		$("#codigoEditor", this.workspace).val("");
+		$("#descontoEditor", this.workspace).val("");
+		$("#descontoEditor", this.workspace).justPercent("floatValue");
+		$("#descricaoEditor", this.workspace).val("");
 		
-		$( "#dialog-editor",this.workspace ).dialog({
+		$( "#dialog-editor", this.workspace).dialog({
 			resizable: false,
 			height:400,
 			width:560,
@@ -87,6 +87,9 @@ var descontoEditorController = $.extend(true,{
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
 					   
+					   $("#radioEditorCotasEspecificas", this.workspace).prop('checked', false);
+					   $("#radioEditorTodasCotas", this.workspace).prop('checked', false);
+					   
 					   tipoDescontoController.pesquisarDescontoEditor();
 	               },
 				   null,
@@ -94,25 +97,23 @@ var descontoEditorController = $.extend(true,{
 		
 		descontoEditorController.clearModalDescontoEditor();
 		
-//		$(".tiposDescEditorGrid",this.workspace).flexReload();
-		console.log('desconto editor cadastrado');
 	},
 	
 	obterParametrosNovoDescontoEditor: function() {
 		
 		var data = new Array();
 		
-		var codigoEditor = $("#codigoEditor",this.workspace).val();
-		var descontoEditor = $("#descontoEditor",this.workspace).justPercent("stringValue");
-		var hasCotaEspecifica = document.getElementById("radioEditorCotasEspecificas",this.workspace).checked;
-		var isTodasCotas = document.getElementById("radioEditorTodasCotas",this.workspace).checked;
+		var codigoEditor = $("#codigoEditor", this.workspace).val();
+		var descontoEditor = $("#descontoEditor", this.workspace).justPercent("stringValue");
+		var hasCotaEspecifica = document.getElementById("radioEditorCotasEspecificas", this.workspace).checked;
+		var isTodasCotas = document.getElementById("radioEditorTodasCotas", this.workspace).checked;
 		
 		data.push({name:'descontoDTO.codigoEditor' , value: codigoEditor});
 		data.push({name:'descontoDTO.valorDesconto' , value: descontoEditor});
 		data.push({name:'descontoDTO.hasCotaEspecifica' , value: hasCotaEspecifica});
 		data.push({name:'descontoDTO.isTodasCotas' , value: isTodasCotas});
 		
-		$("input[id^=cotaEditorInput]",this.workspace).each(function(index, value) {
+		$("input[id^=cotaEditorInput]", this.workspace).each(function(index, value) {
 			if ($(this).val()) {
 				data.push({name:'descontoDTO.cotas' , value: $(this).val()});
 			}
@@ -134,11 +135,11 @@ var descontoEditorController = $.extend(true,{
 					if(result) {
 						var comboClassificacao = montarComboBox(result, false);
 						
-						$(idComboFornecedores,this.workspace).html(comboClassificacao);
+						$(idComboFornecedores, this.workspace).html(comboClassificacao);
 					}
 				},function(result){
 					
-					$("#selectFornecedor_option_editor",this.workspace).clear();
+					$("#selectFornecedor_option_editor", this.workspace).clear();
 					
 				},true,"idModalDescontoEditor"
 		);
@@ -153,12 +154,12 @@ var descontoEditorController = $.extend(true,{
 	},
 	
 	mostrarGridCota:function(){
-		$('.especificaCota',this.workspace).show();
+		$('.especificaCota', this.workspace).show();
 	},
 
 	esconderGridCota: function() {
 		
-		$('.especificaCota',this.workspace).hide();
+		$('.especificaCota', this.workspace).hide();
 		
 		descontoEditorController.resetGridCota();
 	},

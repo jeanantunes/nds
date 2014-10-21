@@ -46,21 +46,21 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 				
-		hql.append(" SELECT dados.DESCONTO_ID as idTipoDesconto,p.CODIGO as codigoProduto, p.NOME as nomeProduto, "
+		hql.append(" SELECT dados.DESCONTO_ID as descontoId, p.CODIGO as codigoProduto, p.NOME as nomeProduto, "
 				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, u.NOME as nomeUsuario, "
-				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmtAtual,dados.QTDE_PROX_LANCAMENTOS_ORIGINAL as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas");
+				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmtAtual, "
+				+"		dados.QTDE_PROX_LANCAMENTOS_ORIGINAL as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas ");
 		
 		addQueryTipoDescontoProduto(hql);
 		
-		if(filtro.getCodigoProduto()!=null)
+		if(filtro.getCodigoProduto() != null)
 			hql.append("WHERE p.CODIGO = :codigoProduto ");
 		
 		addOrderByrTipoDescontoProduto(hql, filtro);
 		
-		
 		Query q = getSession().createSQLQuery(hql.toString());
 
-		if(filtro.getCodigoProduto()!=null)
+		if(filtro.getCodigoProduto() != null)
 			q.setParameter("codigoProduto", filtro.getCodigoProduto());
 
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {

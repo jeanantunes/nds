@@ -176,7 +176,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		for(TipoDescontoProdutoDTO tdp : historicoDesconto) {
 			
-			Desconto desconto = descontoRepository.buscarPorId(tdp.getIdTipoDesconto());
+			Desconto desconto = descontoRepository.buscarPorId(tdp.getDescontoId());
 			
 			Calendar c1 = Calendar.getInstance();
 			
@@ -1123,7 +1123,7 @@ public class DescontoServiceImpl implements DescontoService {
      * Excluir um desconto da cota e atualiza os descontos dos produtos edição.
      * @param idDesconto - identificador do desconto a ser removido
      */
-	private void excluirDescontoProduto(Long idDesconto){
+	private void excluirDescontoProduto(Long idDesconto) {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
