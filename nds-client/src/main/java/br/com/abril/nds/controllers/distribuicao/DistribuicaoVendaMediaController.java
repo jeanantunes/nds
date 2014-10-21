@@ -471,68 +471,69 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Path("gerarEstudo")
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento, String dataLancamento) throws Exception {
-	EstudoTransient estudo = null;
-	int qtdEdicoesAbertas = 0;
-	Long qtdEstudoParaLancamento = 0L;
-	Date datalctoFormatada;
 	
-	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
-
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode ter mais do que "
-                + QTD_MAX_PRODUTO_EDICAO + " bases."));
-	}
-
-	for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
-	    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
-
-	    if ((!produtoEdicaoDTO.getStatus().equalsIgnoreCase("FECHADO")) && (!produtoEdicaoDTO.getStatus().equalsIgnoreCase("RECOLHIDO")) ) {
-	    	qtdEdicoesAbertas++;
-	    }
-	}
-
-	if (qtdEdicoesAbertas > 1) {
-        throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
-	}
+		EstudoTransient estudo = null;
+		int qtdEdicoesAbertas = 0;
+		Long qtdEstudoParaLancamento = 0L;
+		Date datalctoFormatada;
+		
+		if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
 	
-	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
-	produto.setNumeroEdicao(numeroEdicao);
-	produto.setIdLancamento(idLancamento);
+	            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode ter mais do que "
+	                + QTD_MAX_PRODUTO_EDICAO + " bases."));
+		}
 	
-	try {
-		datalctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento);
-	} catch (Exception e) {
-        throw new Exception("Data de lançamento em formato incorreto.");
-	}
+		for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
+		    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
 	
-	produto.setDataLancamento(datalctoFormatada);
+		    if ((!produtoEdicaoDTO.getStatus().equalsIgnoreCase("FECHADO")) && (!produtoEdicaoDTO.getStatus().equalsIgnoreCase("RECOLHIDO")) ) {
+		    	qtdEdicoesAbertas++;
+		    }
+		}
 	
-	qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(idLancamento, datalctoFormatada);
+		if (qtdEdicoesAbertas > 1) {
+	        throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
+		}
+		
+		ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
+		produto.setNumeroEdicao(numeroEdicao);
+		produto.setIdLancamento(idLancamento);
+		
+		try {
+			datalctoFormatada = new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento);
+		} catch (Exception e) {
+	        throw new Exception("Data de lançamento em formato incorreto.");
+		}
+		
+		produto.setDataLancamento(datalctoFormatada);
+		
+		qtdEstudoParaLancamento = estudoService.countEstudosPorLancamento(idLancamento, datalctoFormatada);
+		
+		if(qtdEstudoParaLancamento >= 3){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
+		}
+		
+		estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
+		
+		this.matrizDistribuicaoService.atualizarPercentualAbrangencia(estudo.getId());
+		
+	    estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
+	        
+	    estudoService.criarRepartePorPDV(estudo.getId());
+	        
+		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 	
-	if(qtdEstudoParaLancamento >= 3){
-		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este lançamento já possui o máximo de 3 estudos gerados."));
-	}
+		List<Object> response = new ArrayList<>();
+		response.add(htmlEstudo);
+		response.add(estudo.getId());
+		response.add(estudo.isLiberado() == null ? false : true);
+		
+		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
+		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
+		
+		result.use(Results.json()).from(response).recursive().serialize();
 	
-	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
-	
-	this.matrizDistribuicaoService.atualizarPercentualAbrangencia(estudo.getId());
-	
-    estudoService.gravarDadosVendaMedia(estudo.getId(), distribuicaoVendaMedia);
-        
-    estudoService.criarRepartePorPDV(estudo.getId());
-        
-	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
-
-	List<Object> response = new ArrayList<>();
-	response.add(htmlEstudo);
-	response.add(estudo.getId());
-	response.add(estudo.isLiberado() == null ? false : true);
-	
-	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
-	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
-	
-	result.use(Results.json()).from(response).recursive().serialize();
-
-	removeItensDuplicadosMatrizDistribuicao();
+		removeItensDuplicadosMatrizDistribuicao();
 
     }
 

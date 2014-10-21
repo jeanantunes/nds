@@ -43,6 +43,10 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
 	    		&& cota.getReparteCalculado() != null && cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
 	    	cota.setReparteCalculado(null);
 	    }
+	    
+	    if(cota.getClassificacao().in(ClassificacaoCota.CotaMixSemMinMax)){
+	    	cota.setClassificacao(ClassificacaoCota.CotaMix);
+	    }
 	}
 	
 	estudo.setDataLancamento(estudo.getProdutoEdicaoEstudo().getDataLancamento());

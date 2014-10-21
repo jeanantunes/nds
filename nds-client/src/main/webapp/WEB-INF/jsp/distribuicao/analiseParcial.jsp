@@ -137,6 +137,7 @@ table.dadosTab { margin-left: 370px;}
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
 			<input type="hidden" id="produtoEdicaoId" value="${estudo.produtoEdicao.id}" />
+			<input type="hidden" id="usedMinMaxMix" value="${estudo.minMaxMix}" />
 			<input type="hidden" id="faixaDe" value="${faixaDe}" />
 			<input type="hidden" id="faixaAte" value="${faixaAte}" />
 			<input type="hidden" id="reparteCopiado" value="${reparteCopiado}" />
