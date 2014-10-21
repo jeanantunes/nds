@@ -263,6 +263,9 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 		case ENTREGADOR:
 			this.popularGridPorEntregador(filtro);
+		case BOX_X_COTA:
+		    this.popularGridBoxVersusCota(filtro);
+            break;	
 		default:
 			break;
 		}
@@ -357,6 +360,10 @@ public class MapaAbastecimentoController extends BaseController {
 		case ENTREGADOR:
 			
 			break;
+			
+		case BOX_X_COTA:
+            
+            break;	
 		default:
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 		}
@@ -462,7 +469,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 			case ROTA:
 				
-				filtro.getPaginacao().setSortColumn("codigoBox");
+				filtro.getPaginacao().setSortColumn("nomeEdicao");
 				
 			    if (filtro.getQuebraPorCota()){
 			        
@@ -475,9 +482,8 @@ public class MapaAbastecimentoController extends BaseController {
                     path += "rel_rota_quebra_principal.jasper";
 			        
 			    } else {
-			        filtro.getPaginacao().setSortColumn("codigoBox");
-			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = 
-			                mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+			        filtro.getPaginacao().setSortColumn("nomeEdicao");
+			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
                     
 			        for (String key : mapa.keySet()) {
 			            completaTabelaMapaRota(mapa.get(key), key);
@@ -493,7 +499,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			break;
 			case COTA:
-			    paginacao.setSortColumn("cota");
+			    paginacao.setSortColumn("nomeEdicao");
 			    dados = Arrays.asList(
 				        mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro));
                 
@@ -515,6 +521,8 @@ public class MapaAbastecimentoController extends BaseController {
 				
 			    filtro.setPorRepartePromocional(true);
 				
+			    filtro.getPaginacao().setSortColumn("nomeEdicao");
+			    
 			    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro).getProdutos().values();
                 
                 nomeRelatorio = "Mapa de Abastecimento por Reparte Promocional";
@@ -526,8 +534,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
 				filtro.getPaginacao().setSortColumn("codigoBox");
 				
-				dados = Arrays.asList(
-				        mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro));
+				dados = Arrays.asList(mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro));
 
 				nomeRelatorio = "Mapa de Abastecimento por Produto Específico";
 				
@@ -554,6 +561,19 @@ public class MapaAbastecimentoController extends BaseController {
                 path += "rel_entregador_principal.jasper";
                 
 			break;
+			case BOX_X_COTA:
+                
+			    filtro.getPaginacao().setSortColumn("nomeEdicao");
+			    
+                dados = Arrays.asList(this.mapaAbastecimentoService.obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(filtro, parameters));
+                
+                parameters.put("DATA", filtro.getDataLancamento());
+                
+                nomeRelatorio = "Mapa de Abastecimento por Box X Cota";
+                
+                path += "rel_box_versus_cota_principal.jasper";
+                
+            break;
 			default:
 				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
 			}
@@ -567,7 +587,7 @@ public class MapaAbastecimentoController extends BaseController {
 		final byte[] mapa = JasperRunManager.runReportToPdf(path, parameters, new JRBeanCollectionDataSource(dados));
         
         this.response.setContentType("application/pdf");
-        this.response.setHeader("Content-Disposition", "attachment; filename=mapa_abastecimento.pdf");
+        this.response.setHeader("Content-Disposition", "attachment; filename=mapa_abastecimento_box_versus_cota.pdf");
         
         this.response.getOutputStream().write(mapa);
         
@@ -650,7 +670,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
-
+	
 	private void popularGridPorCota(FiltroMapaAbastecimentoDTO filtro) {
 
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
@@ -766,4 +786,16 @@ public class MapaAbastecimentoController extends BaseController {
 
 	}
 
+    private void popularGridBoxVersusCota(FiltroMapaAbastecimentoDTO filtro) {
+
+        List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterDadosAbastecimentoBoxVersusCota(filtro);
+
+        if (lista == null || lista.isEmpty()) {
+            mostrarMensagemListaVazia();
+        }
+
+        Long totalRegistros = this.mapaAbastecimentoService.countObterDadosAbastecimento(filtro);
+
+        result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+    }
 }

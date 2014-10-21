@@ -16,4 +16,7 @@ public interface EditorRepository extends Repository<Editor, Long> {
 	public List<Editor> obterEditoresDesc();
 
     public Editor obterEditorPorFornecedor(Long idFornecedor);
+
+	public List<Editor> obterEditoresPorNomePessoa(String nomeEditor);
+	
 }

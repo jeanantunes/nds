@@ -171,6 +171,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			if (enderecoPdv == null) {
 				
+				if(pdvPrincipal == null) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem o PDV Principal", cota.getNumeroCota()));
+				}
+				
 				for (EnderecoPDV ePdv : pdvPrincipal.getEnderecos()) {
 					
 					if (ePdv.isPrincipal()){
@@ -746,7 +751,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<CapaDTO> capasChamadaEncalhe = chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
 		
-		return obterListaPaginada(capasChamadaEncalhe, qtdCapasPorPagina);
+		return obterListaPaginada(capasChamadaEncalhe, 30);
 		
 	}
 	
@@ -911,12 +916,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 			} else {
 				
-				/*
-				dados.setCapasPaginadas( obterIdsCapasChamadaEncalhe(
-								filtro.getDtRecolhimentoDe(), 
-								filtro.getDtRecolhimentoAte(), 
-								filtro.getQtdCapasPorPagina()));
-				*/				
+				
+				obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte(), filtro.getQtdCapasPorPagina());
+								
 			}
 			
 		}

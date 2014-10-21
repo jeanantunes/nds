@@ -173,8 +173,7 @@ public class CalendarioServiceImpl implements CalendarioService {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
-        final List<Integer> dias = distribuicaoFornecedorService
-                .obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor);
+        final List<Integer> dias = distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor);
         
         final int codigoDiaCorrente = cal.get(Calendar.DAY_OF_WEEK);
         
@@ -182,8 +181,17 @@ public class CalendarioServiceImpl implements CalendarioService {
         
         	final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
             
-        	return !feriadoRepository.isNaoOpera(data, localidadeDistribuidor);
+        	boolean isFeriado = feriadoRepository.isFeriado(data, null);
+        	boolean isFeriadoMunicipal = feriadoRepository.isFeriado(data, localidadeDistribuidor);
         	
+        	if(isFeriado || isFeriadoMunicipal) {
+        		
+        		boolean isFeriadoComOperacao = feriadoRepository.isFeriadoComOperacao(data, null);
+        		
+        		return (isFeriadoComOperacao) ? isFeriadoComOperacao : feriadoRepository.isFeriadoComOperacao(data, localidadeDistribuidor);
+        	}
+        	
+        	return true;        	
         }
         
         return false;
@@ -713,7 +721,9 @@ public class CalendarioServiceImpl implements CalendarioService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        return feriadoRepository.isNaoOpera(data);
+        final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
+        
+        return feriadoRepository.isNaoOpera(data, localidadeDistribuidor);
     }
     
     @Override

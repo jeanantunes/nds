@@ -414,8 +414,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public String cidadeDistribuidor() {
 		
-		return (String) this.getSession().createQuery(
-				"select d.enderecoDistribuidor.endereco.cidade from Distribuidor d").setCacheable(true).uniqueResult();
+		return (String) this.getSession().createQuery("select d.enderecoDistribuidor.endereco.cidade from Distribuidor d").uniqueResult();
 	}
 
 	@Override

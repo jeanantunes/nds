@@ -6,18 +6,22 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
+import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
+import br.com.abril.nds.dto.TipoDescontoEditorDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -164,12 +168,13 @@ public interface DescontoService {
 	 * @param descontos
 	 * @param cotaId
 	 * @param fornecedorId
+	 * @param editorId TODO
 	 * @param produtoId
 	 * @param produtoEdicaoId
 	 * @return
 	 * @throws Exception
 	 */
-	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoId, Long produtoEdicaoId) throws Exception;
+	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long editorId, Long produtoId, Long produtoEdicaoId) throws Exception;
 
 	DescontoDTO obterDescontoProximosLancamentosPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoEdicaoId, Long produtoId);
 
@@ -179,5 +184,13 @@ public interface DescontoService {
             Long produtoEdicaoId, Long produtoId);
 
     Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao();
+
+	List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
+
+	Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
+
+	void incluirDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas, Usuario usuarioLogado);
+
+	List<Cota> buscarCotasAssociadasAoDescontoEditor(Long idDesconto, TipoDesconto tipoDesconto);
 
 }

@@ -956,6 +956,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				for (Fornecedor itemFornecedor:fornecedores){
 					formaCobranca.addFornecedor(new Fornecedor(itemFornecedor.getId(), itemFornecedor.getJuridica().getNomeFantasia()));
 				}
+				formaCobranca.getFornecedores().size();
 			}
 			
 			formasCobrancaDTO.add(formaCobranca);

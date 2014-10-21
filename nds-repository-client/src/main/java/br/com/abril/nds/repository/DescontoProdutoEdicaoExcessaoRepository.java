@@ -3,7 +3,10 @@ package br.com.abril.nds.repository;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.TipoDescontoEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
@@ -47,13 +50,16 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * Obtém o desconto de um produto edição.
 	 * @param desconto TODO
 	 * @param fornecedor - fornecedor
+	 * @param editor TODO
 	 * @param cota - cota
 	 * @param produto TODO
 	 * @param produtoEdicao - produto
 	 * @return {@link DescontoCotaProdutoExcessao}
 	 */
-	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota, Long idProduto, Long idProdutoEdicao);
-
+	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Editor editor, Cota cota, Long idProduto, Long idProdutoEdicao);
+	
+	DescontoCotaProdutoExcessao buscarDescontoCotaEditorExcessao(TipoDesconto tipoDesconto, Desconto desconto, Cota cota, Editor editor);
+	
 	/**
 	 * Obtém descontos de produtos edição de um fornecedor.
 	 * 
@@ -124,9 +130,35 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao);
 		
 	/**
+	 * 
+	 * Obtém descontos de produtos edição de editor, cota e tipo de desconto.
+	 * 
+	 * @param tipoDesconto - tipo de desconto
+	 * 
+	 * @param desconto - desconto
+	 * 
+	 * @param editor - editor
+	 * 
+	 * @param cota - cota
+	 * 
+	 * @param produtoEdicao - produto edição
+	 * 
+	 * @return {@link Set} {@link DescontoCotaProdutoExcessao}
+	 */
+	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Editor editor, Cota cota);
+	
+	/**
 	 * Salva uma lista de descontosProdutoEdicao
 	 * @param lista
 	 */
 	public void salvarListaDescontoProdutoEdicaoExcessao(List<DescontoCotaProdutoExcessao> lista);
-	
+
+	/**
+	 * @param filtro
+	 * @return
+	 */
+	List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
+
+	Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro);
+
 }

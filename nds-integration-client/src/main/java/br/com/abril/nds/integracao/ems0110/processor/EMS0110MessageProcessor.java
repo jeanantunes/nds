@@ -347,24 +347,28 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		                                                                    fornecedor.getId(),
 		                                                                    DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
 		
-		if(descontoLogistica==null){
+		if(descontoLogistica == null) {
 			
-			if(input.getTipoDesconto()!=null && !input.getTipoDesconto().trim().equals("") && !input.getTipoDesconto().trim().equals("0")&& !input.getTipoDesconto().trim().equals("00")){
-            this.ndsiLoggerFactory.getLogger().logError(
+			if(input.getTipoDesconto()!=null && !input.getTipoDesconto().trim().equals("") 
+					&& !input.getTipoDesconto().trim().equals("0")
+					&& !input.getTipoDesconto().trim().equals("00")) {
+				
+				this.ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.ERRO_INFRA,
 					"Desconto Logística não encontrado. "+Integer.parseInt( input.getTipoDesconto())
 					+ " Produto "+produto.getCodigo());
 			}
 			 
-		}else{
+		} else {
+			
 			produto.setDescontoLogistica(descontoLogistica);
 			
             this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Desconto Logística"
-					+" de "+ produto.getDescontoLogistica()
+					+" de "+ produto.getDescontoLogistica().getTipoDesconto()
 					+" para "+ descontoLogistica.getTipoDesconto().intValue()
 					+ " Produto "+produto.getCodigo());
 		}
@@ -391,7 +395,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				
 		this.ndsiLoggerFactory.getLogger().logError(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
-				"Publicação Cadastrada atravéz do Produto Edição, Código ICD não será Preenchido. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
+				"Publicação Cadastrada através do Produto Edição, Código ICD não será Preenchido. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
 
 		
 		produto.setTipoProduto(tipoProduto);
@@ -466,7 +470,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
         String codigoDistribuidor = 
                 message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
-		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.parseInt(codigoDistribuidor));
+		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigoInterface(Integer.parseInt(codigoDistribuidor));
         return fornecedor;
     }
 
@@ -518,8 +522,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		return (Produto) query.uniqueResult();
 	}
 	
-	
-	
 	private ProdutoEdicao criarProdutoEdicaoConformeInput(Produto produto, Message message) {
 		
 		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
@@ -541,20 +543,16 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		//FIXME
 		DescontoLogistica descontoLogistica;
 		
-		if(input.getTipoDesconto()==null || input.getTipoDesconto().trim().equals("")){
+		if(input.getTipoDesconto()==null || input.getTipoDesconto().trim().equals("")) {
 			descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt("1"),
                     fornecedor.getId(),
                     DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
-		}else {
+		} else {
 			descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt( input.getTipoDesconto()),
                     fornecedor.getId(),
                     DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
 		}
 		
-		 
-		        
-
-
 		if (!Objects.equal(produto.getCodigoContexto(), input.getContextoProd())) {
 
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -568,11 +566,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			produto.setCodigoContexto(input.getContextoProd());
 		}
-		if (null != produto.getTipoProduto() ) {
+		
+		if (null != produto.getTipoProduto()) {
 
-			if(null != produto.getTipoProduto().getCodigoNBM() && (input.getCodNBM()!=null && !input.getCodNBM().equals(ZEROS_NBM))){
+			if(null != produto.getTipoProduto().getCodigoNBM() && (input.getCodNBM() != null && !input.getCodNBM().equals(ZEROS_NBM))) {
 				
-				if(!produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())){
+				if(!produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())) {
 					
 				  this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -583,7 +582,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 						+" Edição "+ input.getEdicaoProd());
 				}
 				
-			}else{
+			} else {
 				
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -595,14 +594,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				
 			}
 			
-			
-			
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 		}
 
-		if (input.getNomeComercial()!=null && !input.getNomeComercial().trim().equals("") && !Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
+		if (input.getNomeComercial()!=null && !input.getNomeComercial().trim().equals("") 
+				&& !Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
 		        && !input.getNomeComercial().isEmpty()) {
-
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,
@@ -621,21 +618,23 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
                 (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
                         tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
-        	if(produto!=null && produto.getTipoSegmentoProduto()!=null && produto.getTipoSegmentoProduto().getDescricao()!=null){
+        	if(produto != null && produto.getTipoSegmentoProduto() != null 
+        			&& produto.getTipoSegmentoProduto().getDescricao() != null) {
         		
-        	if((produto.getTipoSegmentoProduto().getId()==0 || produto.getTipoSegmentoProduto().getId()==9 ) &&
-        		(new Long(input.getSegmento()).intValue()!=0 && new Long(input.getSegmento()).intValue()!=9)){
-            this.ndsiLoggerFactory.getLogger().logInfo(message,
-                    EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Alteração do Tipo de Segmento"
-                    +" de " + produto.getTipoSegmentoProduto().getDescricao()
-                    +" para " + getTipoSegmento(new Long(input.getSegmento())).getDescricao()
-                    +" Produto "+ input.getCodProd()
-					+" Edição "+ input.getEdicaoProd());
-            
-               produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
-        	}
-        	}else{
+	        	if((produto.getTipoSegmentoProduto().getId()==0 || produto.getTipoSegmentoProduto().getId()==9 ) &&
+	        		(new Long(input.getSegmento()).intValue()!=0 && new Long(input.getSegmento()).intValue()!=9)) {
+	        		
+	        		this.ndsiLoggerFactory.getLogger().logInfo(message,
+	                    EventoExecucaoEnum.INF_DADO_ALTERADO,
+	                    "Alteração do Tipo de Segmento"
+	                    +" de " + produto.getTipoSegmentoProduto().getDescricao()
+	                    +" para " + getTipoSegmento(new Long(input.getSegmento())).getDescricao()
+	                    +" Produto "+ input.getCodProd()
+						+" Edição "+ input.getEdicaoProd());
+	            
+	               produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+	        	}
+        	} else {
         		
         		this.ndsiLoggerFactory.getLogger().logInfo(message,
                         EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -683,7 +682,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		String codigoDeBarras = input.getCodBarra();
 		boolean validarCodigoBarras = validarCodigoBarras(produto.getCodigo(), input.getEdicaoProd(), message, codigoDeBarras);
-		if(validarCodigoBarras){
+		if(validarCodigoBarras) {
 			edicao.setCodigoDeBarras(codigoDeBarras);
 		}
 		
@@ -841,9 +840,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.setNomeComercial(input.getNomeComercial());
 		}
 		
-		if ( null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() && !produto.getTipoProduto().getCodigoNBM()
-				.equals(input.getCodNBM()) && !input.getCodNBM().equals(ZEROS_NBM)) {
-
+		if ( null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() 
+				&& !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM()) 
+				&& !input.getCodNBM().equals(ZEROS_NBM)) {
 			
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -859,9 +858,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         
-        if ((tipoSegmentoProduto == null && input.getSegmento() != null && !input.getSegmento().trim().equals("")) || 
-                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
-                        tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
+        if ((tipoSegmentoProduto == null && input.getSegmento() != null && !input.getSegmento().trim().equals("")) 
+        		|| (input.getSegmento() != null && !input.getSegmento().trim().equals("") 
+                	&& !Objects.equal(tipoSegmentoProduto.getId(), Long.valueOf(input.getSegmento())))) {
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -872,7 +871,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					+" Edição "+ input.getEdicaoProd());
             
             produto.setTipoSegmentoProduto(getTipoSegmento(new Long (input.getSegmento())));
-        } else{
+        } else if(tipoSegmentoProduto == null) {
         	
         	this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -1022,6 +1021,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
         	
         	edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto("NORMAL"));
         }
+        
 		if (edicao.isPossuiBrinde() != input.isContemBrinde()) {
 
 			this.ndsiLoggerFactory.getLogger()
@@ -1042,17 +1042,21 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			String codigoDeBarras = input.getCodBarra();
 			boolean validarCodigoBarras = validarCodigoBarras(produto.getCodigo(), edicao.getNumeroEdicao(), message, codigoDeBarras);
 			
-			if(validarCodigoBarras){
+			if(validarCodigoBarras) {
 				
-				if(edicao!=null && edicao.getCodigoDeBarras()!=null && input.getCodBarra()!=null && new Long(edicao.getCodigoDeBarras()).longValue()!=new Long(input.getCodBarra()).longValue())
-				this.ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteração do Código de Barras"
-						+" de " + edicao.getCodigoDeBarras()
-						+" para " + input.getCodBarra()
-						+" Produto "+ input.getCodProd()
-						+" Edição "+ input.getEdicaoProd());
+				if(edicao != null && edicao.getCodigoDeBarras() != null 
+						&& input.getCodBarra() != null 
+						&& new Long(edicao.getCodigoDeBarras()).longValue() != new Long(input.getCodBarra()).longValue()) {
+					
+					this.ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Alteração do Código de Barras"
+									+" de " + edicao.getCodigoDeBarras()
+									+" para " + input.getCodBarra()
+									+" Produto "+ input.getCodProd()
+									+" Edição "+ input.getEdicaoProd());
+				}
 				
 				edicao.setCodigoDeBarras(codigoDeBarras);
 			}
@@ -1131,26 +1135,30 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 				Integer.parseInt( input.getTipoDesconto()),idFornecedor,
 		        DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
 		
-		if(descontoLogistica==null){
+		if(descontoLogistica == null) {
 			
-			if(input.getTipoDesconto()!=null && !input.getTipoDesconto().trim().equals("") && !input.getTipoDesconto().trim().equals("0")&& !input.getTipoDesconto().trim().equals("00")){
+			if(input.getTipoDesconto() != null && !input.getTipoDesconto().trim().equals("") 
+					&& !input.getTipoDesconto().trim().equals("0") && !input.getTipoDesconto().trim().equals("00")) {
+				
             this.ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.ERRO_INFRA,
 					"Desconto Logística não encontrado. "+Integer.parseInt( input.getTipoDesconto()));
 			}
 			 
-		}else{
+		} else if(produto.getDescontoLogistica() != null 
+				&& !produto.getDescontoLogistica().getTipoDesconto().equals(descontoLogistica.getTipoDesconto())) {
+			
 			edicao.setDescontoLogistica(descontoLogistica);
 			
-            this.ndsiLoggerFactory.getLogger().logInfo(
+            this.ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Desconto Logística"
-					+" de "+ produto.getDescontoLogistica()
+					+" de "+ produto.getDescontoLogistica().getTipoDesconto()
 					+" para "+ descontoLogistica.getTipoDesconto().intValue()
-					+ " Produto "+produto.getCodigo()
-					+ " Edição "+input.getEdicaoProd());
+					+" Produto "+ produto.getCodigo()
+					+" Edição "+ input.getEdicaoProd());
 		}
 		
 		//this.getSession().merge(produto);

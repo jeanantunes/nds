@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -204,7 +205,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 				MOVIMENTO_ESTOQUE_COTA MEC                                                                           ");
 		sql.append(" 		INNER JOIN (	SELECT                                                                                       ");
 		sql.append(" 							MEC.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID,                                              ");
-		sql.append(" 							MAX(MEC.DATA) AS DATA                                                                    ");
+		sql.append(" 							MEC.COTA_ID, MAX(MEC.DATA) AS DATA                                                       ");
 		sql.append(" 						FROM                                                                                         ");
 		sql.append(" 							CHAMADA_ENCALHE_COTA                                                                     ");
 		sql.append(" 						INNER JOIN CHAMADA_ENCALHE ON (CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID) ");
@@ -225,7 +226,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 					) AS MOVCOTA                                                                                     ");
 		sql.append(" 		ON (                                                                                                         ");
 		sql.append(" 			MEC.PRODUTO_EDICAO_ID = MOVCOTA.PRODUTO_EDICAO_ID AND                                                    ");
-		sql.append(" 			MEC.DATA = MOVCOTA.DATA ");
+		sql.append(" 			MEC.DATA = MOVCOTA.DATA AND MEC.COTA_ID = MOVCOTA.COTA_ID ");
 		sql.append(" 		)                                                                                                            ");
 		sql.append(" 		INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID AND ");
 		sql.append(" 		TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioReparte ) ");
@@ -549,7 +550,12 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 				.append(" lancamento.id, ")
 				.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 				.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
-				.append(" else null end ,").append(" chamadaEncalheCota.id ")
+				.append(" else null end,")
+				.append(" chamadaEncalheCota.id,")
+				.append(" chamadaEncalhe.tipoChamadaEncalhe, ")
+				.append(" chamadaEncalhe.dataRecolhimento, ")
+				.append(" lancamento.dataRecolhimentoDistribuidor, ")
+				.append(" lancamento.dataRecolhimentoPrevista ")
 				.append(" ) ");
 
 		hql.append(getSqlFromEWhereCotasProgramadaParaAntecipacaoEncalhe(filtro));
@@ -612,7 +618,15 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		}
 
 		if (filtro.getCodTipoPontoPDV() != null) {
-			param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+			
+			if (filtro.getCodTipoPontoPDV() != null) {
+	        	
+	        	if(filtro.getCodTipoPontoPDV().equals("ALTERNATIVO")) {
+	        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.ALTERNATIVO);
+	        	} else {
+	        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.CONVENCIONAL);
+	        	}
+	        }
 		}
 
 		return param;
@@ -718,7 +732,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){
-			hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
+			hql.append(" AND cota.tipoDistribuicaoCota =:codigoTipoPontoPDV ");
 		}
 		
 		return hql;

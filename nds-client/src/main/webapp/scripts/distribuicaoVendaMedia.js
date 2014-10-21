@@ -9,6 +9,17 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
                 $('#sobra').text(($('#reparteTotal').text()*1) - ($('#reparteDistribuir').val()*1));
             }
 	    
+	    var numLanc = $('#numeroLancamentoDvm').val();
+	    var numPeriodo = $('#periodoDvm').text();
+	    
+	    if((numLanc != undefined) && (numLanc > 1) || (numPeriodo != undefined) && (numPeriodo > 1)){
+	    	$("#usarFixacao").prop('checked', false);
+	    	$("#usarMix").prop('checked', false);
+	    }else{
+	    	$("#usarFixacao").prop('checked', true);
+	    	$("#usarMix").prop('checked', true);
+	    }
+	    
 	    $('#reparteDistribuir').blur(function() {
 	        if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
 	            $('#sobra').text(($('#reparteTotal').text()*1) - ($('#reparteDistribuir').val()*1));
@@ -586,6 +597,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "distribuicaoVendaMedia.reparteDistribuir", value : $("#reparteDistribuir").val() });
 		data.push({name : "distribuicaoVendaMedia.reparteMinimo", value : $("#reparteMinimo").val() });
 		data.push({name : "distribuicaoVendaMedia.usarFixacao", value : $("#usarFixacao")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.usarMix", value : $("#usarMix")[0].checked });
 		data.push({name : "distribuicaoVendaMedia.distribuicaoPorMultiplo", value : $("#distribuicaoPorMultiplo")[0].checked });
 		data.push({name : "distribuicaoVendaMedia.multiplo", value : $("#multiplo").val() });
 		data.push({name : "distribuicaoVendaMedia.reparteTotal", value : $("#reparteTotal").text() });

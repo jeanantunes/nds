@@ -79,7 +79,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	@Export(label = "Com CE")
 	private String descComCE;
 	
-	private Long codTipoPontoPDV;
+	private String codTipoPontoPDV;
 	
 	private boolean recolhimentoFinal;
 	
@@ -90,7 +90,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	 */
 	public FiltroChamadaAntecipadaEncalheDTO(String codigoProduto,Long numeroEdicao,
 											Long box, Long fornecedor, Long roteiro, Long rota,
-											boolean programacaoCE, String municipio, Long codTipoPontoPDV) {
+											boolean programacaoCE, String municipio, String tipoPontoPDV) {
 		
 		this.codigoProduto = codigoProduto;
 		this.numeroEdicao = numeroEdicao;
@@ -99,7 +99,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		this.rota = rota;
 		this.roteiro = roteiro;
 		this.programacaoCE = programacaoCE;
-		this.codTipoPontoPDV = codTipoPontoPDV;
+		this.codTipoPontoPDV = tipoPontoPDV;
 		this.descMunicipio = municipio;
 	}
 	
@@ -393,15 +393,15 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	/**
 	 * @return the codTipoPontoPDV
 	 */
-	public Long getCodTipoPontoPDV() {
+	public String getCodTipoPontoPDV() {
 		return codTipoPontoPDV;
 	}
 
 	/**
 	 * @param codTipoPontoPDV the codTipoPontoPDV to set
 	 */
-	public void setCodTipoPontoPDV(Long codTipoPontoPDV) {
-		this.codTipoPontoPDV = codTipoPontoPDV;
+	public void setCodTipoPontoPDV(String tipoPontoPDV) {
+		this.codTipoPontoPDV = tipoPontoPDV;
 	}
 
 	/**

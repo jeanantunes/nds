@@ -66,7 +66,7 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	    String codigoDistribuidor = 
                 message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
         
-        Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigo(Integer.valueOf(codigoDistribuidor));
+        Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigoInterface(Integer.valueOf(codigoDistribuidor));
 	    
         if (fornecedor == null) {
             

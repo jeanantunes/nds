@@ -72,7 +72,7 @@ var fechamentoEncalheController = $.extend(true, {
 			sizeNomeProduto = 465;
 		}
 		
-		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
+		$("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -276,7 +276,7 @@ var fechamentoEncalheController = $.extend(true, {
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
 			params : [{
 				name : "dataEncalhe",
-				value : $('#datepickerDe', fechamentoEncalheController.workspace).val()
+				value : $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val()
 			}, {
 				name : "fornecedorId",
 				value : $('#selectFornecedor', fechamentoEncalheController.workspace).val()
@@ -295,7 +295,7 @@ var fechamentoEncalheController = $.extend(true, {
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 		$(".grids", fechamentoEncalheController.workspace).show();
 		
-		fechamentoEncalheController.vDataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
+		fechamentoEncalheController.vDataEncalhe = $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val();
 		fechamentoEncalheController.vFornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
 		fechamentoEncalheController.vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
 		
@@ -545,7 +545,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	popup_encerrarEncalhe : function(isSomenteCotasSemAcao) {
 
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		var dataEncalhe = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$(".cotasGrid", fechamentoEncalheController.workspace).flexOptions({
 			url: contextPath + "/devolucao/fechamentoEncalhe/cotasAusentes",
@@ -559,7 +559,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	verificarEncerrarOperacaoEncalhe : function() {
 
-		var dataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
+		var dataEncalhe = $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val();
 
 		var params = [
 			{name:"dataEncalhe", value:dataEncalhe}, 
@@ -608,7 +608,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	popup_encerrar : function() {
 		
-		$("#dataConfirma", fechamentoEncalheController.workspace).html($("#datepickerDe", fechamentoEncalheController.workspace).val());
+		$("#dataConfirma", fechamentoEncalheController.workspace).html($("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val());
 		
 		$( "#dialog-confirm", fechamentoEncalheController.workspace ).dialog({
 			resizable: false,
@@ -619,7 +619,7 @@ var fechamentoEncalheController = $.extend(true, {
 				"Confirmar": function() {
 
 					var params = [
-					      {name: 'dataEncalhe', value: $('#datepickerDe', fechamentoEncalheController.workspace).val()}, 
+					      {name: 'dataEncalhe', value: $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val()}, 
 					      {name: 'operacao', value: 'CONFIRMACAO'}
 					];
 					
@@ -690,7 +690,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$.postJSON(
 			contextPath + "/devolucao/fechamentoEncalhe/encerrarFechamento",
-			{ 'dataEncalhe' : $('#datepickerDe', fechamentoEncalheController.workspace).val() },
+			{ 'dataEncalhe' : $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val() },
 			function (result) {
 				
 			},
@@ -789,7 +789,7 @@ var fechamentoEncalheController = $.extend(true, {
 				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
 					return;
 				
-				cotaBloqueadaController.verificaBloqueioCotaEncalhe(fechamentoEncalheController.veificarCobrancaGerada, function(){return;});
+				cotaBloqueadaController.verificaBloqueioCotaEncalhe(fechamentoEncalheController.verificarCobrancaGerada, function(){return;});
 			},
 			"Cancelar": function() {
 				
@@ -939,7 +939,7 @@ var fechamentoEncalheController = $.extend(true, {
 					"Confirmar": function() {
 						
 						var dataPostergacao = $("#dtPostergada", fechamentoEncalheController.workspace).val();
-						var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+						var dataEncalhe = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
 						
 						$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/postergarCotas",
 									{ 'dataPostergacao' : dataPostergacao, 
@@ -1011,7 +1011,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	postergarCotas : function() {
 		
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		var dataEncalhe = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/carregarDataPostergacao",
 				{'dataEncalhe' : dataEncalhe},
@@ -1040,13 +1040,13 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	
-	veificarCobrancaGerada: function(){
+	verificarCobrancaGerada: function(){
 		
 		var cobrarTodas  = $("#checkTodasCotas", fechamentoEncalheController.workspace).attr("checked") == "checked";
 
 		var idsCotas = fechamentoEncalheController.obterCotasMarcadas();
 
-		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/veificarCobrancaGerada',
+		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/verificarCobrancaGerada',
 				{
 					'idsCotas' : idsCotas,
 					'cobrarTodasCotas': cobrarTodas
@@ -1089,7 +1089,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	cobrarCotas : function() {
 
-		var dataOperacao = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		var dataOperacao = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
 		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
 
 		var idsCotas = fechamentoEncalheController.arrayCotasAusentesSession;
@@ -1136,7 +1136,7 @@ var fechamentoEncalheController = $.extend(true, {
 
 	gerarArquivoCotasAusentes : function(fileType) {
 
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		var dataEncalhe = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		window.location = 
 			contextPath + 
@@ -1153,7 +1153,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	imprimirArquivo : function(fileType) {
 
-		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
+		var dataEncalhe = $("#fechamentoEncalhe-datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivo?"
 			+ "dataEncalhe=" + fechamentoEncalheController.vDataEncalhe
@@ -1172,7 +1172,7 @@ var fechamentoEncalheController = $.extend(true, {
 		$.postJSON(
 			contextPath + "/devolucao/fechamentoEncalhe/verificarMensagemConsistenciaDados",
 			{ 
-			    'dataEncalhe' : $('#datepickerDe', fechamentoEncalheController.workspace).val(),
+			    'dataEncalhe' : $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val(),
 			    'fornecedorId' : $('#selectFornecedor', fechamentoEncalheController.workspace).val(),
 				'boxId' :  $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()
 		    },
@@ -1249,7 +1249,7 @@ var fechamentoEncalheController = $.extend(true, {
 
 		 data.push({name:"boxId", value: idBox});
 
-		 data.push({name:"dataEncalhe", value: $('#datepickerDe', fechamentoEncalheController.workspace).val()});
+		 data.push({name:"dataEncalhe", value: $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val()});
 		 data.push({name:"fornecedorId", value: $('#selectFornecedor', fechamentoEncalheController.workspace).val()});
 		 
 		 if (fechamentoEncalheController.nonSelected) {

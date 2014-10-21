@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
@@ -64,6 +65,7 @@ import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ModalidadeCobranca;
 import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -650,8 +652,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(
-            final FiltroChamadaAntecipadaEncalheDTO filtro) {
+    public List<ChamadaAntecipadaEncalheDTO> obterCotasSujeitasAntecipacoEncalhe(final FiltroChamadaAntecipadaEncalheDTO filtro) {
         
         final StringBuilder hql = new StringBuilder();
         
@@ -661,10 +662,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
          */
         hql.append("SELECT DISTINCT new ")
         .append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
-        .append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
-        .append(" lancamento.id ,").append(" case when (pessoa.nome is not null) then ( pessoa.nome )").append(
-                " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
-                .append(" ) ");
+        .append(" ( box.codigo,")
+        .append(" box.nome,")
+        .append(" cota.numeroCota, ")
+        .append(" estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida,")
+        .append(" lancamento.id ,")
+        .append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+        .append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
+        .append(" ) ");
         
         hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
         
@@ -732,7 +737,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if (filtro.getCodTipoPontoPDV() != null) {
-            param.put("codigoTipoPontoPDV", filtro.getCodTipoPontoPDV());
+        	
+        	if(filtro.getCodTipoPontoPDV().equals("ALTERNATIVO")) {
+        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.ALTERNATIVO);
+        	} else {
+        		param.put("codigoTipoPontoPDV", TipoDistribuicaoCota.CONVENCIONAL);
+        	}
         }
         
         return param;
@@ -797,7 +807,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         }
         
         if (filtro.getCodTipoPontoPDV() != null) {
-            hql.append(" AND pdv.segmentacao.tipoPontoPDV.codigo =:codigoTipoPontoPDV ");
+        	hql.append(" AND cota.tipoDistribuicaoCota =:codigoTipoPontoPDV ");
         }
         
         return hql.toString();
@@ -2016,8 +2026,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	
     	if (isCount) {
             sql.append(" select cota_.ID ");
-    	}
-    	else{
+    	} else {
     		
     		sql.append(" select lancamento_.STATUS AS status, ");	 
     		sql.append(" cota_.ID AS idCota, ");	 
@@ -3316,7 +3325,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append("  cota.numero_cota numeroCota, ");
         sql.append("  coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomePessoa, ");
         sql.append("  cota.tipo_distribuicao_cota tipoCota, ");
-        sql.append("  rks.qtde qtdeRankingSegmento, ");
+//        sql.append("  rks.qtde qtdeRankingSegmento, "); Trocar para posição do ranking FATURAMENTO
+        
+        sql.append("                                                                                         ");
+	    sql.append("       (SELECT CAST(T.rank AS UNSIGNED INTEGER)                                          ");
+	    sql.append("         FROM (SELECT  rf.COTA_ID as cota,                                               ");
+	    sql.append("           @curRank /*'*/:=/*'*/ @curRank + 1 AS rank                                    ");
+	    sql.append("           FROM ranking_faturamento rf, (SELECT @curRank /*'*/:=/*'*/ 0) r               ");
+	    sql.append("           where rf.COTA_ID                                                              ");
+	    sql.append("           ORDER BY  rf.FATURAMENTO desc) T where T.cota = cota.ID) as qtdeRankingSegmento, ");
+        sql.append("                                                                                         ");
+        
         sql.append("  rkf.faturamento faturamento, ");
         sql.append("  rkf.data_geracao_rank dataGeracaoRank, ");
         sql.append("  mix.reparte_min mixRepMin, ");
@@ -3345,6 +3364,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         query.setParameter("codigoProduto", codigoProduto);
         query.setParameter("numeroCota", numeroCota);
         query.setParameter("idClassificacao", idClassifProdEdicao);
+        
+        query.addScalar("numeroCota",StandardBasicTypes.INTEGER)
+        .addScalar("nomePessoa",StandardBasicTypes.STRING)
+        .addScalar("tipoCota",StandardBasicTypes.STRING)
+        .addScalar("qtdeRankingSegmento",StandardBasicTypes.INTEGER)
+        .addScalar("faturamento",StandardBasicTypes.BIG_DECIMAL)
+        .addScalar("dataGeracaoRank",StandardBasicTypes.DATE)
+        .addScalar("mixRepMin",StandardBasicTypes.BIG_INTEGER)
+        .addScalar("mixRepMax",StandardBasicTypes.BIG_INTEGER)
+        .addScalar("nomeUsuario",StandardBasicTypes.STRING)
+        .addScalar("mixDataAlteracao",StandardBasicTypes.DATE)
+        .addScalar("fxDataAlteracao",StandardBasicTypes.DATE)
+        .addScalar("fxEdicaoInicial",StandardBasicTypes.INTEGER)
+        .addScalar("fxEdicaoFinal",StandardBasicTypes.INTEGER)
+        .addScalar("fxEdicoesAtendidas",StandardBasicTypes.INTEGER)
+        .addScalar("fxQuantidadeEdicoes",StandardBasicTypes.INTEGER)
+        .addScalar("fxQuantidadeExemplares",StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         return (CotaDTO) query.uniqueResult();
@@ -3617,4 +3653,74 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
+	
+	@Override
+	public HistoricoSituacaoCota obterSituacaoCota(Long idCota){
+		
+		final Criteria criteria = super.getSession().createCriteria(HistoricoSituacaoCota.class);
+        
+		criteria.add(Restrictions.eq("cota.id", idCota));
+		
+        criteria.addOrder(Order.desc("dataFimValidade"));
+        criteria.setMaxResults(1);
+        
+        return (HistoricoSituacaoCota) criteria.uniqueResult();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(final Intervalo<Date> intervaloDataLancamento) {
+        
+		StringBuilder sql = new StringBuilder();
+		
+        sql.append(" select pe_.ID as idProdutoEdicao, "); 
+        sql.append(" pe_.NUMERO_EDICAO as numeroEdicao, ");
+        sql.append(" cota_.NUMERO_COTA as numeroCota, ");
+        sql.append(" p_.NOME as nomeProduto, ");
+        sql.append(" p_.CODIGO as codigoProduto, ");
+        sql.append(" sum(COALESCE(ec_.REPARTE, mec.QTDE, 0)) as reparte" );
+        sql.append(" FROM COTA cota_ ");
+        sql.append(" LEFT  JOIN  BOX box1_ ON cota_.BOX_ID=box1_.ID ");
+        sql.append(" INNER JOIN  ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
+        sql.append(" INNER JOIN  ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
+        sql.append(" INNER JOIN  LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
+        sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
+        sql.append(" LEFT  JOIN  TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
+        sql.append(" INNER JOIN  PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
+        sql.append(" INNER JOIN  PRODUTO p_ ON pe_.PRODUTO_ID=p_.ID ");
+        sql.append(" INNER JOIN  PRODUTO_FORNECEDOR pf_ ON p_.ID=pf_.PRODUTO_ID ");
+        sql.append(" INNER JOIN  FORNECEDOR f_ ON pf_.fornecedores_ID=f_.ID ");
+        sql.append(" INNER JOIN  PDV pdv_ ON cota_.ID=pdv_.COTA_ID ");
+        sql.append(" LEFT  JOIN  ROTA_PDV rota_pdv_ ON pdv_.ID=rota_pdv_.PDV_ID ");
+        sql.append(" LEFT  JOIN  ROTA rota_ ON rota_pdv_.rota_ID=rota_.ID ");
+        sql.append(" LEFT  JOIN  ROTEIRO roteiro_ ON rota_.ROTEIRO_ID=roteiro_.ID ");
+        sql.append(" INNER JOIN  PESSOA pessoa_cota_ ON cota_.PESSOA_ID=pessoa_cota_.ID ");
+        sql.append(" LEFT  JOIN  NOTA_ENVIO_ITEM nei on nei.ESTUDO_COTA_ID = ec_ .ID  ");
+        sql.append(" WHERE lancamento_.STATUS NOT IN (:statusNaoEmitiveis)"); 
+        sql.append(" AND pdv_.ponto_principal = true "); 
+        sql.append(" AND nei.ESTUDO_COTA_ID is null ");
+        
+        if (intervaloDataLancamento != null && intervaloDataLancamento.getDe() != null) {
+            sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+            sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
+        }
+        
+        sql.append(" group by cota_.ID");
+        
+        sql.append(" order by cota_.NUMERO_COTA ");
+		
+        Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataDe", intervaloDataLancamento.getDe());
+		
+		query.setParameter("dataAte", intervaloDataLancamento.getDe());
+		
+		query.setParameterList("statusNaoEmitiveis", new String[] {StatusLancamento.PLANEJADO.name(),
+                StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(),
+                StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name() });
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AbastecimentoBoxCotaDTO.class));
+		
+		return query.list();
+    }
 }

@@ -1114,6 +1114,7 @@ where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
 truncate table HVND_AUX;
 
+<<<<<<< HEAD
 -- F = FECHADO (EM_RECOLHIMENTO)
 insert into HVND_AUX
 select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento >= DATE_SUB(sysdate(),INTERVAL 7 DAY);
@@ -1124,6 +1125,8 @@ where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
 truncate table HVND_AUX;
 
+=======
+>>>>>>> DGBti/master
 -- F = FECHADO
 insert into HVND_AUX
 select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento < DATE_SUB(sysdate(),INTERVAL 7 DAY);
@@ -1145,6 +1148,10 @@ and l.DATA_REC_PREVISTA < '2014-10-10'
 update lancamento
 set status = 'FECHADO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+
+update lancamento l
+set status = 'EM_RECOLHIMENTO'
+where l.data_rec_distrib between date_add(l.data_rec_distrib, interval -5 day) and date(now()) and status = 'FECHADO';
 
 DROP TABLE HVND_AUX;
 

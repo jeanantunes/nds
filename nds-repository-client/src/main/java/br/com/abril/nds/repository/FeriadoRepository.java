@@ -95,7 +95,7 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 
     public abstract boolean isOpera(Date data);
 
-    public abstract boolean isOpera(Date data, String localidade);
+    public abstract boolean isFeriadoComOperacao(Date data, String localidade);
 
     public abstract boolean isNaoOpera(Date data, String localidade);
 }

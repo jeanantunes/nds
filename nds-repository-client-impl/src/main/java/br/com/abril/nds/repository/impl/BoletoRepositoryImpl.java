@@ -127,7 +127,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		sql.append(" INNER JOIN COTA C ON C.ID = COB.COTA_ID ");
 		
-		sql.append(" INNER JOIN BAIXA_COBRANCA B ON B.COBRANCA_ID = COB.ID ");
+		sql.append(" LEFT JOIN BAIXA_COBRANCA B ON B.COBRANCA_ID = COB.ID ");
 		
 		sql.append(" INNER JOIN DIVIDA D ON D.ID = COB.DIVIDA_ID ");
 		
@@ -352,20 +352,23 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
      * @param dividaAcumulada
      */
 	@Override
-	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apneasBoletoPagavel) {
+	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada, boolean apenasBoletoPagavel) {
 		
 		Criteria criteria = super.getSession().createCriteria(Boleto.class);
 		
 		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
 		
-		if (dividaAcumulada != null || apneasBoletoPagavel) {
+		if (apenasBoletoPagavel) {
 			
 			criteria.createAlias("divida", "divida");
-			
-			criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+
+			if(dividaAcumulada != null) {
+				
+				criteria.add(Restrictions.eq("divida.acumulada", dividaAcumulada));
+			}
 		}
 		
-		if (apneasBoletoPagavel){
+		if (apenasBoletoPagavel){
 		    
 		    criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
 		    criteria.add(Restrictions.isNull("dataPagamento"));

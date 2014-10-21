@@ -70,7 +70,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
         
         hql.append("	select	");
         
-        hql.append("	desconto.id as idTipoDesconto,				");
+        hql.append("	desconto.id as descontoId,				");
 		hql.append("	usuario.nome as nomeUsuario,				");
 		hql.append("	desconto.valor as desconto,					");
 		hql.append("	desconto.dataAlteracao as dataAlteracao,	");

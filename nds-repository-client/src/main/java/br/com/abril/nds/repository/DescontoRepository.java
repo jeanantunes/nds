@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
@@ -33,5 +34,9 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(Cota cota,String sortorder, String sortname);
 
 	BigDecimal obterMediaDescontosFornecedoresCota(Integer numeroCota);
+
+	List<Cota> buscarCotasQueUsamDescontoEditor(Desconto desconto);
+
+	Editor buscarEditorUsaDescontoEditor(Desconto desconto);
 	
 }

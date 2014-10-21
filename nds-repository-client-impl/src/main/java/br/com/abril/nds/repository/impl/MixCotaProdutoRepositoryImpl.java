@@ -70,7 +70,8 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" mix_cota_produto.ID id,  ")
 		.append(" produto.codigo as codigoProduto, ")
 		.append(" produto.CODIGO_ICD as codigoICD, ")
-		.append(" produto.nome as nomeProduto, ")
+//		.append(" produto.nome as nomeProduto, ")
+		.append(" (select pd.NOME from produto pd where pd.codigo_icd = produto.CODIGO_ICD and pd.NOME is not null order by pd.CODIGO asc limit 1) as nomeProduto, ")
 		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%d/%c/%Y') as data, ")
 		.append(" DATE_FORMAT(mix_cota_produto.DATAHORA, '%H:%i') as hora, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
@@ -532,13 +533,15 @@ public class MixCotaProdutoRepositoryImpl extends
 				 .append(" set datahora = :data, ");
 		
 		if (isPDVUnico) {
-		
-			statement.append(" reparte_min = (case when :reparte < reparte_min then :reparte else reparte_min end), ")
-					 .append(" reparte_max = (case when :reparte > reparte_max then :reparte else reparte_max end), ");
-		} else {
 
 			statement.append(" reparte_min = :reparte, ")
-			 		 .append(" reparte_max = :reparte, ");
+					 .append(" reparte_max = :reparte, ");
+		
+		} else {
+			
+			statement.append(" reparte_min = (case when :reparte < reparte_min then :reparte else reparte_min end), ")
+					 .append(" reparte_max = (case when :reparte > reparte_max then :reparte else reparte_max end), ");
+
 		}
 
 		statement.append(" id_usuario = :idUsuario ")
@@ -553,4 +556,18 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		query.executeUpdate();
 	}
+	
+	@Override
+	public boolean verificarMixDefinidoPorPDV(Long idMix){
+	    
+	    final String Sql = " SELECT count(*) FROM reparte_pdv WHERE MIX_COTA_PRODUTO_ID = :id ";
+	    
+	    final Query query = this.getSession().createSQLQuery(Sql);
+	    query.setParameter("id", idMix);
+	    
+	    final int qtde = ((BigInteger) query.uniqueResult()).intValue();
+	    
+	    return qtde > 0 ? true : false;
+	}
+	
 }

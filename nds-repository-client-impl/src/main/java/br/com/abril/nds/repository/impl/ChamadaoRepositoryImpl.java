@@ -196,6 +196,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select distinct ")
+			.append("mec.lancamento.id as idLancamento, ")
 			.append("produto.codigo as codigoProduto, ")
 			.append("produto.nome as nomeProduto, ")
 			.append("produtoEdicao.numeroEdicao as numeroEdicao, ")
@@ -334,42 +335,26 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" FROM ");
-		hql.append("     LANCAMENTO lancamento ");
-		hql.append(" INNER JOIN ");
-		hql.append("     PRODUTO_EDICAO produtoEdicao ");  
-		hql.append("         ON lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");		
-		hql.append(" INNER JOIN ");
-		hql.append("     PRODUTO produto ");  
-		hql.append("         ON produtoEdicao.PRODUTO_ID = produto.ID ");
-		hql.append(" INNER JOIN ");
-		hql.append("     MOVIMENTO_ESTOQUE_COTA mec "); 
-		hql.append("         ON mec.LANCAMENTO_ID = lancamento.ID ");
-		hql.append(" INNER JOIN ");
-		hql.append("     TIPO_MOVIMENTO tipo "); 
-		hql.append("         ON mec.TIPO_MOVIMENTO_ID = TIPO.ID ");
-		hql.append(" INNER JOIN ");
-		hql.append("  	 COTA cota ");
-		hql.append("  		 ON cota.id = mec.COTA_ID ");
-		hql.append(" INNER JOIN ");
-		hql.append("     ESTOQUE_PRODUTO_COTA estoqueProdCota ");
-		hql.append("         ON (produtoEdicao.ID = estoqueProdCota.PRODUTO_EDICAO_ID ");
-		hql.append(" 				and cota.id = estoqueProdCota.COTA_ID) ");
-		hql.append(" INNER JOIN ");
-		hql.append("  	 PRODUTO_FORNECEDOR produtoFornecedor ");
-		hql.append("  	  	 ON produtoFornecedor.PRODUTO_ID = produto.ID ");
-		hql.append(" INNER JOIN ");
-		hql.append("  	 FORNECEDOR fornecedor ");
-		hql.append("  	  	 ON produtoFornecedor.fornecedores_ID = fornecedor.ID ");
-		hql.append(" INNER JOIN ");
-		hql.append(" 	 PESSOA pessoa ");
-		hql.append(" 	  	 ON fornecedor.JURIDICA_ID = pessoa.ID ");
+		hql.append(" FROM LANCAMENTO lancamento ");
+		hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");		
+		hql.append(" INNER JOIN PRODUTO produto ON produtoEdicao.PRODUTO_ID = produto.ID ");
+		hql.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID = lancamento.ID ");
+		hql.append(" INNER JOIN TIPO_MOVIMENTO tipo ON mec.TIPO_MOVIMENTO_ID = TIPO.ID ");
+		hql.append(" INNER JOIN COTA cota ON cota.id = mec.COTA_ID ");
+		hql.append(" INNER JOIN ESTOQUE_PRODUTO_COTA estoqueProdCota ");
+		hql.append("         ON (produtoEdicao.ID = estoqueProdCota.PRODUTO_EDICAO_ID and cota.id = estoqueProdCota.COTA_ID) ");
+		hql.append(" INNER JOIN PRODUTO_FORNECEDOR produtoFornecedor ON produtoFornecedor.PRODUTO_ID = produto.ID ");
+		hql.append(" INNER JOIN FORNECEDOR fornecedor ON produtoFornecedor.fornecedores_ID = fornecedor.ID ");
+		hql.append(" INNER JOIN PESSOA pessoa ON fornecedor.JURIDICA_ID = pessoa.ID ");
 		
 		hql.append(" WHERE tipo.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovRecebimentoReparte ");
 		
-		hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
+		hql.append(" AND lancamento.STATUS IN (:statusLancamento) ");
 		
-		hql.append("      AND lancamento.DATA_REC_DISTRIB >= :dataRecolhimento ");
+		if (filtro.getDataChamadao() != null) {
+			
+			hql.append("      AND lancamento.DATA_REC_DISTRIB >= :dataRecolhimento ");
+		}
 		
 		hql.append("      AND mec.status_estoque_financeiro = :statusEstoqueFinanceiro ");
 		

@@ -20,6 +20,8 @@ public class DescontoDTO implements Serializable {
 	
 	private Long fornecedorId;
 	
+	private Long editorId;
+	
 	private BigDecimal valor;
 	
 	private boolean proximoLancamento;
@@ -62,6 +64,14 @@ public class DescontoDTO implements Serializable {
 
 	public void setFornecedorId(Long fornecedorId) {
 		this.fornecedorId = fornecedorId;
+	}
+
+	public Long getEditorId() {
+		return editorId;
+	}
+
+	public void setEditorId(Long editorId) {
+		this.editorId = editorId;
 	}
 
 	public BigDecimal getValor() {

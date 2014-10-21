@@ -1149,7 +1149,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         return conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(dataOperacao);
     }
     
-    
     private void agendarAgoraAtualizacaoEstoqueProdutoConf() {
 
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
@@ -1191,7 +1190,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	}
     	
     }
-    
     
     @Override
     @Transactional

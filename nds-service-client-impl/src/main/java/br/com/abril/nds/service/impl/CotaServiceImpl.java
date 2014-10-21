@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -107,6 +108,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao
 import br.com.abril.nds.repository.AssociacaoVeiculoMotoristaRotaRepository;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
+import br.com.abril.nds.repository.CotaBaseRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
@@ -227,6 +229,8 @@ public class CotaServiceImpl implements CotaService {
     @Autowired
     private EnderecoPDVRepository enderecoPDVRepository;
     
+    @Autowired
+    private CotaBaseRepository cotaBaseRepository;
     
     @Autowired
     private ParametroSistemaRepository parametroSistemaRepository;
@@ -1251,6 +1255,7 @@ public class CotaServiceImpl implements CotaService {
             cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
         }
         
+        this.atribuirInicioEFimPeriodoCota(cotaDTO, cota.getId());
         this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
         this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
         
@@ -1370,9 +1375,6 @@ public class CotaServiceImpl implements CotaService {
             return;
         }
         
-        cotaDTO.setInicioPeriodo(baseReferenciaCota.getInicioPeriodo());
-        cotaDTO.setFimPeriodo(baseReferenciaCota.getFinalPeriodo());
-        
         if(baseReferenciaCota.getReferenciasCota()!= null && !baseReferenciaCota.getReferenciasCota().isEmpty()){
             
             final List<ReferenciaCota> referenicasCota = new ArrayList<ReferenciaCota>();
@@ -1393,6 +1395,17 @@ public class CotaServiceImpl implements CotaService {
                 cotaDTO.setHistoricoTerceiraPorcentagem(referenicasCota.get(2).getPercentual());
             }
         }
+    }
+    
+    @Transactional
+    private void atribuirInicioEFimPeriodoCota(CotaDTO cotaDTO, Long idCota){
+    	
+    	CotaBase cotaBase = cotaBaseRepository.obterSituacaoCota(idCota);
+    	
+    	if(cotaBase != null) {
+    		cotaDTO.setInicioPeriodo(cotaBase.getDataInicio());
+    		cotaDTO.setFimPeriodo(cotaBase.getDataFim());
+    	}
     }
     
     @Override
@@ -2984,8 +2997,7 @@ public class CotaServiceImpl implements CotaService {
     public void verificarCotasSemRoteirizacao(final Intervalo<Integer> intervaloCota, final Intervalo<Date> intervaloDataLancamento,
             final Intervalo<Date> intervaloDataRecolhimento){
         
-        final List<CotaDTO> cotasSemRoteirizacao = cotaRepository.obterCotasSemRoteirizacao(intervaloCota,
-                intervaloDataLancamento, intervaloDataRecolhimento);
+        final List<CotaDTO> cotasSemRoteirizacao = cotaRepository.obterCotasSemRoteirizacao(intervaloCota, intervaloDataLancamento, intervaloDataRecolhimento);
         
         if (cotasSemRoteirizacao != null && !cotasSemRoteirizacao.isEmpty()) {
             
@@ -3191,4 +3203,10 @@ public class CotaServiceImpl implements CotaService {
     public Boolean validarNumeroCota(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota){
     	return cotaRepository.validarNumeroCota(numeroCota, tipoDistribuicaoCota);
     }
+
+	@Override
+	@Transactional
+	public List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloData) {
+		return cotaRepository.obterCotasExpedicao(intervaloData);
+	}
 }

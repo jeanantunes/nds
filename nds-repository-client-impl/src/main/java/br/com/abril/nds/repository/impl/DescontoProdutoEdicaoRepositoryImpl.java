@@ -500,15 +500,20 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	public List<DescontoDTO> obterDescontosProdutoEdicao() {
 
 		StringBuilder hql = new StringBuilder("")
-			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor ")
+			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, editor_id AS editorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor ")
 			.append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, null AS fornecedorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor ")
+			.append(" SELECT null AS cotaId, null AS fornecedorId, null AS editorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor ")
 			.append(" FROM view_desconto_produtos_edicoes ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS produtoEdicaoId, null AS produtoId, valor ")
+			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS editorId, null AS produtoEdicaoId, null AS produtoId, valor ")
 			.append(" FROM FORNECEDOR f ")
-			.append(" INNER JOIN desconto d ON d.id = f.desconto_id ");
+			.append(" INNER JOIN desconto d ON d.id = f.desconto_id ")
+			.append(" UNION ")
+			.append(" SELECT null AS cotaId, null AS fornecedorId, e.id AS editorId, null AS produtoEdicaoId, null AS produtoId, valor ")
+			.append(" FROM EDITOR e ")
+			.append(" INNER JOIN desconto d ON d.id = e.desconto_id ")
+			;
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoDTO.class));
@@ -517,6 +522,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		query.addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
 		query.addScalar("produtoId", StandardBasicTypes.LONG);
 		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
+		query.addScalar("editorId", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 
 		return query.list();

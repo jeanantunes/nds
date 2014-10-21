@@ -122,7 +122,7 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="datepickerDe" type="text" id="datepickerDe" style="width:80px;" value="${dataOperacao}" onchange="fechamentoEncalheController.limpaGridPesquisa()" /></td>
+				<td width="114"><input name="fechamentoEncalhe-datepickerDe" type="text" id="fechamentoEncalhe-datepickerDe" style="width:80px;" value="${dataOperacao}" onchange="fechamentoEncalheController.limpaGridPesquisa()" /></td>
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="selectFornecedor" id="selectFornecedor" style="width:200px;" onchange="fechamentoEncalheController.limpaGridPesquisa()">

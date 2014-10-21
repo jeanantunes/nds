@@ -98,7 +98,18 @@ var EmissaoCEController = $.extend(true, {
 
 	imprimirCE : function() {
 		
-		doGet("emissaoCE/imprimirCE", null, "_blank");
+		doGet("emissaoCE/imprimirCE",
+				function(result) {
+					if (result.mensagens) {
+		
+						exibirMensagem(
+								result.mensagens.tipoMensagem, 
+								result.mensagens.listaMensagens
+						);
+					}			
+				},
+				"_blank"
+			);
 	},
 
 	imprimirCEPDF : function() {
@@ -109,7 +120,27 @@ var EmissaoCEController = $.extend(true, {
 		
 		$.fileDownload(path, {
 			httpMethod : "POST",
-			data : data
+			data : data,
+			successCallback: function(result) {
+				if (result.mensagens) {
+	
+					exibirMensagem(
+							result.mensagens.tipoMensagem, 
+							result.mensagens.listaMensagens
+					);
+				}			
+			},
+            failCallback: function(result) {
+	
+        		res = $.parseJSON($(result).text());
+        		if (res.mensagens) {
+        			
+					exibirMensagem(
+							res.mensagens.tipoMensagem, 
+							res.mensagens.listaMensagens
+					);
+				}	
+			}
 		});
 		
 	},

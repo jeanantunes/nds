@@ -13,6 +13,7 @@ public class DistribuicaoVendaMediaDTO {
 	private BigInteger reparteDistribuir;
 	private BigInteger reparteMinimo;
 	private boolean usarFixacao;
+	private boolean usarMix;
 	private Boolean distribuicaoPorMultiplo;
 	private BigInteger multiplo;
 	
@@ -190,5 +191,10 @@ public class DistribuicaoVendaMediaDTO {
 	public void setReparteTotal(BigInteger reparteTotal) {
 		this.reparteTotal = reparteTotal;
 	}
-    
+	public boolean isUsarMix() {
+		return usarMix;
+	}
+	public void setUsarMix(boolean usarMix) {
+		this.usarMix = usarMix;
+	}
 }

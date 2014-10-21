@@ -874,7 +874,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		//BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		DescontoDTO descontoDTO = null;
 		try {
-			descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId()) ;
+			descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId()
+					, produtoEdicao.getProduto().getFornecedor().getId()
+					, produtoEdicao.getProduto().getEditor().getId()
+					, produtoEdicao.getProduto().getId(), produtoEdicao.getId()) ;
 		} catch (Exception e) {
 			
 		}
@@ -1448,7 +1451,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			//BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 			DescontoDTO descontoDTO = null;
 			try {
-				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId()
+						, produtoEdicao.getProduto().getFornecedor().getId()
+						, produtoEdicao.getProduto().getEditor().getId()
+						, produtoEdicao.getProduto().getId(), produtoEdicao.getId());
 			} catch (Exception e) {
 
 			}

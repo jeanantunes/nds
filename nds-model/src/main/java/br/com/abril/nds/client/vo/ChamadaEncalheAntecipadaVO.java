@@ -18,7 +18,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	private Long id;
 	private Long numeroEdicao;
 	private String codigoProduto;
-	private Long codigoChamdaEncalhe;
+	private Long codigoChamadaEncalhe;
 	private Long idLancamento;
 	private Integer codBox;
 	
@@ -34,7 +34,7 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	@Export(label = "Qtde.Exemplares",alignment = Alignment.CENTER, exhibitionOrder = 4)
 	private BigInteger qntExemplares;
 	
-	
+	private boolean recolhimentoFinal;
 	
 	/**
 	 * @return the idLancamento
@@ -51,14 +51,14 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	/**
 	 * @return the codigoChamdaEncalhe
 	 */
-	public Long getCodigoChamdaEncalhe() {
-		return codigoChamdaEncalhe;
+	public Long getCodigoChamadaEncalhe() {
+		return codigoChamadaEncalhe;
 	}
 	/**
 	 * @param codigoChamdaEncalhe the codigoChamdaEncalhe to set
 	 */
-	public void setCodigoChamdaEncalhe(Long codigoChamdaEncalhe) {
-		this.codigoChamdaEncalhe = codigoChamdaEncalhe;
+	public void setCodigoChamadaEncalhe(Long codigoChamadaEncalhe) {
+		this.codigoChamadaEncalhe = codigoChamadaEncalhe;
 	}
 	/**
 	 * @return the numeroEdicao
@@ -103,52 +103,69 @@ public class ChamadaEncalheAntecipadaVO implements Serializable {
 	public String getBox() {
 		return box;
 	}
+	
 	/**
 	 * @param box the box to set
 	 */
 	public void setBox(String box) {
 		this.box = box;
 	}
+	
 	/**
 	 * @return the numeroCota
 	 */
 	public String getNumeroCota() {
 		return numeroCota;
 	}
+	
 	/**
 	 * @param numeroCota the numeroCota to set
 	 */
 	public void setNumeroCota(String numeroCota) {
 		this.numeroCota = numeroCota;
 	}
+	
 	/**
 	 * @return the nomeCota
 	 */
 	public String getNomeCota() {
 		return nomeCota;
 	}
+	
 	/**
 	 * @param nomeCota the nomeCota to set
 	 */
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
+	
 	/**
 	 * @return the qntExemplares
 	 */
 	public BigInteger getQntExemplares() {
 		return qntExemplares;
 	}
+	
 	/**
 	 * @param qntExemplares the qntExemplares to set
 	 */
 	public void setQntExemplares(BigInteger qntExemplares) {
 		this.qntExemplares = qntExemplares;
 	}
+	
 	public Integer getCodBox() {
 		return codBox;
 	}
+	
 	public void setCodBox(Integer codBox) {
 		this.codBox = codBox;
+	}
+	
+	public boolean isRecolhimentoFinal() {
+		return recolhimentoFinal;
+	}
+	
+	public void setRecolhimentoFinal(boolean recolhimentoFinal) {
+		this.recolhimentoFinal = recolhimentoFinal;
 	}
 }

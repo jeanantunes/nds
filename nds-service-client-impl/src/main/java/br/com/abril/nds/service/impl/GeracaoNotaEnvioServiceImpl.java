@@ -269,7 +269,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             DescontoDTO descontoDTO = null;
             try {
-                descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+                descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId()
+                		, produtoEdicao.getProduto().getFornecedor().getId()
+                		, produtoEdicao.getProduto().getEditor().getId()
+                		, produtoEdicao.getProduto().getId(), produtoEdicao.getId());
             } catch (final Exception e) {
                 final String msg = "Erro ao obter desconto: Cota: " + cota.getNumeroCota() + " / Produto: "
                         + produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getNumeroEdicao();
@@ -378,7 +381,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             DescontoDTO descontoDTO = null;
             try {
                 
-                descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+                descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId()
+                		, produtoEdicao.getProduto().getFornecedor().getId()
+                		, produtoEdicao.getProduto().getEditor().getId()
+                		, produtoEdicao.getProduto().getId(), produtoEdicao.getId());
             } catch (final Exception e) {
                 final String msg = "Erro ao obter desconto: Cota: " + cota.getNumeroCota() + " / Produto: "
                         + produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getNumeroEdicao();
