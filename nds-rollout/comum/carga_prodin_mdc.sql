@@ -369,14 +369,14 @@ grupoEditorial=SUBSTR(@linha,254,3),
 subGrupoEditorial=SUBSTR(@linha,257,3),
 codigoICD=SUBSTR(@linha,260,6),
 segmento=SUBSTR(@linha,266,30),
-fornecedorId=1; -- FIXME somente para o Rio, trocar para 2
+fornecedorId=2; 
 
 select 'CARGA_PRODIN_PUB:',count(*) from CARGA_PRODIN_PUB; -- Log 
 
 --  CARGA_PRODIN_PRD
 DROP TABLE IF EXISTS CARGA_PRODIN_PRD;
 
-/* -- ********* Se MATRIZ
+-- ********* Se MATRIZ
 
 create table CARGA_PRODIN_PRD (
 codDistrib VARCHAR(7),
@@ -499,7 +499,7 @@ codPublicacao=SUBSTR(@linha,612,8),
 campoObscuro=SUBSTR(@linha,620,6),
 nomeComercial=SUBSTR(@linha,626,45),
 classificacao=SUBSTR(@linha,671,30),
-segmento=SUBSTR(@linha,581,2),
+segmento=SUBSTR(@linha,563,2),
 fornecedorId=1;
 
 LOAD DATA INFILE '/opt/rollout/load_files/00000002.prd' INTO TABLE CARGA_PRODIN_PRD CHARACTER SET UTF8
@@ -560,11 +560,10 @@ codPublicacao=SUBSTR(@linha,612,8),
 campoObscuro=SUBSTR(@linha,620,6),
 nomeComercial=SUBSTR(@linha,626,45),
 classificacao=SUBSTR(@linha,671,30),
-segmento=SUBSTR(@linha,581,2),
+segmento=SUBSTR(@linha,563,2),
 fornecedorId=2;
-*/
 
--- ********* FILIAL
+/*-- ********* FILIAL
 create table CARGA_PRODIN_PRD (
 codDistrib VARCHAR(7),
 dataGeracaoArquivo VARCHAR(8),
@@ -749,7 +748,7 @@ nomeComercial=SUBSTR(@linha,644,45),
 classificacao=SUBSTR(@linha,689,30),
 segmento=SUBSTR(@linha,581,2),
 fornecedorId=1; -- FIXME -trocar para 2
-
+*/
 select 'CARGA_PRODIN_PRD:',count(*) from CARGA_PRODIN_PRD; -- Log
 
 --  CARGA_PRODIN_LAN
@@ -1177,7 +1176,7 @@ PERCENTUAL_PRESTACAO_SERVICO,
 TIPO_DESCONTO,
 FORNECEDOR_ID)
 SELECT distinct
-str_to_date(dataGeracaoArquivo,'%Y%m%d'),
+DATE_SUB(str_to_date(dataGeracaoArquivo,'%Y%m%d'), INTERVAL 10 DAY ),
 NULL,
 CAST(CONCAT(SUBSTRING(percentualDesconto,1,3),'.',SUBSTRING(percentualDesconto,4,4)) as DECIMAL(7,4)),
 CAST(CONCAT(SUBSTRING(percentualPrestacao_servico,1,3),'.',SUBSTRING(percentualPrestacao_servico,4,4)) as DECIMAL(7,4)),
@@ -1194,24 +1193,25 @@ select 'DESCONTO_LOGISTICA:',count(*) from DESCONTO_LOGISTICA; -- Log
 
 
 -- FIXME * Remover ASSIM QUE CORRIGIREM CNPJ/INSCRICAO ESTADUAL
-update CARGA_PRODIN_EDI 
-set cnpj = codigoEditor
-where trim(LEADING '0' FROM cnpj) ='' ;
+-- update CARGA_PRODIN_EDI 
+-- set cnpj = codigoEditor
+-- where trim(LEADING '0' FROM cnpj) ='' ;
 
 -- pessoa FIXME * corrigir abaixo ASSIM QUE CORRIGIREM CNPJ/INSCRICAO ESTADUAL
 insert into pessoa (TIPO,CNPJ,INSC_ESTADUAL,RAZAO_SOCIAL,SOCIO_PRINCIPAL)
 select max('J') ,cnpj,max(inscricaoEstadual),trim(LEADING ' ' from nomeEditor),0
-from CARGA_PRODIN_EDI group by cnpj;
+from CARGA_PRODIN_EDI 
+where cnpj not in ('28322873000130','03555225000100','61438248000123') -- FIXME
+group by cnpj;
 
 select 'EDITOR - PESSOA:',count(*) from PESSOA; -- Log
 
 -- editor
 insert into editor (ATIVO,CODIGO,NOME_CONTATO,ORIGEM_INTERFACE,JURIDICA_ID)
 select IF(status ='S',1,0),CAST(codigoEditor AS UNSIGNED),
-trim(LEADING ' ' FROM nomeContato),null,p.id
+trim(nomeContato),null,p.id
 from CARGA_PRODIN_EDI c,pessoa p
-where p.cnpj = c.cnpj
-group by p.cnpj;
+where p.cnpj = c.cnpj;
 
 select 'EDITOR:',count(*) from EDITOR; -- Log
 
@@ -1224,9 +1224,9 @@ cepEditor,
 cidadeEditor,
 null,
 1,
-21, -- FIXME corrigir ufEditor,
+11, -- FIXME corrigir ufEditor,
 complementoEditor,
-logradouroEditor,
+trim(logradouroEditor),
 numeroEditor,
 tipoLogradouroEditor,
 ufEditor,
@@ -1245,9 +1245,9 @@ cepEntrega,
 cidadeEntrega,
 null,
 2,
-21,-- FIXME corrigir ufEntrega,
+11,-- FIXME corrigir ufEntrega,
 complementoEntrega,
-logradouroEntrega,
+trim(logradouroEntrega),
 numeroEntrega,
 tipoLogradouroEntrega,
 ufEntrega,
@@ -1356,8 +1356,8 @@ IF(largura = '00000',null,CAST(largura AS DECIMAL(6,2))),
 NULL,
 IF(formaComercializacao ='CON','CONSIGNADO','CONTA_FIRME'),
 NULL,
-nome,
-nome,
+trim(nome),
+trim(nome),
 NULL,
 'INTERFACE',
 CAST(pacotePadrao AS UNSIGNED),
@@ -1402,7 +1402,7 @@ IF((select id from tipo_segmento_produto tz where trim(tz.descricao) = trim(segm
 NULL,
 codigoICD, 
 grupoEditorial, 
-IF(lancamentoImediato ='N',0,1),
+0, -- IF(lancamentoImediato ='N',0,1),
 NULL, 
 subGrupoEditorial 
 from CARGA_PRODIN_PUB group by codigoProduto;
@@ -1432,12 +1432,12 @@ NULL, -- IF(largura = '00000',null,CAST(largura AS DECIMAL(6,2))),
 NULL,
 'CONSIGNADO', -- IF(formaComercializacao ='CON','CONSIGNADO','CONTA_FIRME'),
 NULL,
-IF(nome = '',nomeComercial,nome),
-IF(nomeComercial = '',nome,nomeComercial),
+IF(nome = '',trim(nomeComercial),trim(nome)),
+IF(nomeComercial = '',trim(nome),trim(nomeComercial)),
 NULL,
-'INTERFACE',
+'MANUAL',
 CAST(pacotePadrao AS UNSIGNED),
-1, -- CAST(peb AS UNSIGNED),
+31, -- CAST(peb AS UNSIGNED),
 NULL, -- CAST(porcentagemAbrangencia AS UNSIGNED),
 NULL, -- CAST(percentualLimiteCotasFixadas AS UNSIGNED),
 NULL, -- CAST(percentualLimiteFixacaoReparte AS UNSIGNED),
@@ -1481,7 +1481,7 @@ NULL,
 NULL,
 substring(codigoProduto,1,6), 
 NULL, -- grupoEditorial, 
-NULL, -- CAST(lancamentoImediato AS UNSIGNED),
+0, -- CAST(lancamentoImediato AS UNSIGNED),
 NULL, 
 NULL -- subGrupoEditorial 
 from CARGA_MDC_PRODUTO
@@ -1513,8 +1513,8 @@ IF(largura = '00000',null,CAST(largura AS DECIMAL(6,2))),
 NULL,
 IF(formaComercializacao ='CON','CONSIGNADO','CONTA_FIRME'),
 NULL,
-IF(nome = '',nomeComercial,nome),
-IF(nomeComercial = '',nome,nomeComercial),
+IF(nome = '',trim(nomeComercial),trim(nome)),
+IF(nomeComercial = '',trim(nome),trim(nomeComercial)),
 NULL,
 'INTERFACE',
 CAST(pacotePadrao AS UNSIGNED),
@@ -1555,11 +1555,11 @@ NULL, -- (select id from algoritmo tz where codigo =  tz.algoritmo),
 (select id from editor tz where codigoEditor =  tz.codigo limit 1), -- FIXME Remover o limit 1 assim que corrigir
 IF((select id from tipo_produto tz where CAST(tz.codigo AS UNSIGNED) =  CAST(categoria AS UNSIGNED)) is NULL,16,(select id from tipo_produto tz where CAST(tz.codigo AS UNSIGNED) =  CAST(categoria AS UNSIGNED))) ,
 NULL,
-IF(segmento= '00',9,CAST(segmento AS UNSIGNED)), -- (select id from tipo_segmento_produto tz where tz.descricao like segmento limit 1), 
+IF(segmento not in (select lpad(id,2,'0') from tipo_segmento_produto),9,CAST(segmento AS UNSIGNED)), -- (select id from tipo_segmento_produto tz where tz.descricao like segmento limit 1),  
 NULL,
 substring(codigoProduto,1,6),-- codigoICD, 
 NULL, -- grupoEditorial, 
-NULL, -- CAST(lancamentoImediato AS UNSIGNED),
+0, -- NULL, CAST(lancamentoImediato AS UNSIGNED),
 NULL, 
 NULL -- subGrupoEditorial 
 from CARGA_PRODIN_PRD
@@ -1596,7 +1596,7 @@ NULL,
 NULL,
 'INTERFACE',
 1, -- CAST(pacotePadrao AS UNSIGNED),
-1, -- CAST(peb AS UNSIGNED),
+31, -- CAST(peb AS UNSIGNED),
 CAST(porcentagemAbrangencia AS UNSIGNED),
 NULL, -- CAST(percentualLimiteCotasFixadas AS UNSIGNED),
 NULL, -- CAST(percentualLimiteFixacaoReparte AS UNSIGNED),
@@ -1643,7 +1643,7 @@ NULL,
 NULL,
 substring(codigoProduto,1,6),-- codigoICD, 
 NULL, -- grupoEditorial, 
-NULL, -- CAST(lancamentoImediato AS UNSIGNED),
+0, -- NULL, CAST(lancamentoImediato AS UNSIGNED),
 NULL, 
 NULL -- subGrupoEditorial 
 from CARGA_PRODIN_LAN
@@ -1678,7 +1678,7 @@ NULL,
 ' ',
 ' ',
 NULL,
-'INTERFACE',
+'MANUAL',
 CAST(pacotePadrao AS UNSIGNED),
 CAST(peb AS UNSIGNED),
 NULL, -- CAST(porcentagemAbrangencia AS UNSIGNED),
@@ -1705,7 +1705,7 @@ NULL,
 NULL,
 NULL,
 NULL, -- CAST(tributacaoFiscal AS UNSIGNED),
-slogan,
+trim(slogan),
 CASE
 WHEN tributacaoFiscal = 0 then 'TRIBUTADO'
 WHEN tributacaoFiscal = 2 then 'ISENTO'
@@ -1721,7 +1721,7 @@ NULL,
 NULL,
 substring(codigoProduto,1,6), 
 NULL, -- grupoEditorial, 
-NULL, -- CAST(lancamentoImediato AS UNSIGNED),
+0, -- NULL,CAST(lancamentoImediato AS UNSIGNED),
 NULL, 
 NULL 
 from CARGA_MDC_MATRIZ
@@ -1744,7 +1744,7 @@ and trim(c.codContexto) <>'';
 -- SEGMENTO
 update produto p, carga_prodin_prd cpp
 set p.tipo_segmento_produto_id  = 
-IF(cpp.segmento in (00,24,30,34,36,42,52,53,56,61,66,67,71,72,73,74,77,78,91,92,93,97,98),9,CAST(cpp.segmento AS UNSIGNED)) -- ERRO FIXME * Remover essa linha e descomentar a de baixo assim que arrumarem os segmentos
+IF(cpp.segmento not in (select lpad(id,2,'0') from tipo_segmento_produto),9,CAST(cpp.segmento AS UNSIGNED)) -- ERRO FIXME * Remover essa linha e descomentar a de baixo assim que arrumarem os segmentos
 -- CAST(cpp.segmento AS UNSIGNED)
 where p.codigo = cpp.codigoProduto;
 
@@ -1752,7 +1752,7 @@ select 'PRODUTO - SEGMENTO(OUTROS)',count(*) from PRODUTO where tipo_segmento_pr
 
 -- DESCONTO FIXME * Ajustar com o valor de desconto correto
 update produto
-set desconto = 30.00
+set desconto = 25.00
 where origem = 'MANUAL';
 
 select 'PRODUTO - DESCONTO:',count(*) from PRODUTO; -- Log
@@ -1760,8 +1760,14 @@ select 'PRODUTO - DESCONTO:',count(*) from PRODUTO; -- Log
 --
 -- PRODUTO_FORNECEDOR FIXME * Reformular a query abaixo
 --
+
 insert into produto_fornecedor
-select id,1 from produto; -- FIXME * reconstruir essa query com fornecedor correto
+select p.id,f.id from produto p , carga_prodin_pub c, fornecedor f
+where p.codigo = c.codigoProduto
+and f.cod_interface = c.codigoDistribuidor;
+
+insert into produto_fornecedor
+select id,1 from produto where id not in (select distinct produto_id from produto_fornecedor); -- FIXME * reconstruir essa query com fornecedor correto
 
 select 'PRODUTO_FORNECEDOR:',count(*) from PRODUTO_FORNECEDOR; -- Log
 
@@ -1782,7 +1788,7 @@ select
 TIPO,ATIVO,BOLETIM_INFORMATIVO,DESCRICAO_BRINDE,VENDE_BRINDE_SEPARADO,CHAMADA_CAPA, -- 6
 TRIM(CODIGO_DE_BARRAS_CORPORATIVO),TRIM(CODIGO_DE_BARRAS),DATA_DESATIVACAO,COMPRIMENTO,ESPESSURA,LARGURA, -- 6
 EXPECTATIVA_VENDA,NOME_COMERCIAL,NUMERO_EDICAO,ORIGEM,PACOTE_PADRAO,PARCIAL,PEB,PERMITE_VALE_DESCONTO, -- 8
-PESO,POSSUI_BRINDE,max(PRECO_CUSTO),max(PRECO_PREVISTO),max(PRECO_VENDA),REPARTE_DISTRIBUIDO,DESCONTO_LOGISTICA_ID, -- 7
+PESO,POSSUI_BRINDE,PRECO_CUSTO,PRECO_PREVISTO,PRECO_VENDA,REPARTE_DISTRIBUIDO,DESCONTO_LOGISTICA_ID, -- 7
 PRODUTO_ID,PRODUTO_EDICAO_ID,BRINDE_ID,CLASSE_SOCIAL,FAIXA_ETARIA,FORMATO_PRODUTO,SEXO, -- 7
 TEMA_PRINCIPAL,TEMA_SECUNDARIO,TIPO_LANCAMENTO,CARACTERISTICA_PRODUTO,DESCONTO,DESCRICAO_DESCONTO,GRUPO_PRODUTO, -- 7
 DESCONTO_ID,FORMA_FISICA,TIPO_CLASSIFICACAO_PRODUTO_ID,HISTORICO,VINCULAR_RECOLHIMENTO
@@ -1801,7 +1807,7 @@ IF(comprimento = '00000',null,CAST(comprimento AS DECIMAL(6,2))) as COMPRIMENTO,
 IF(espessura = '00000',null,CAST(espessura AS DECIMAL(6,2))) as ESPESSURA,
 IF(largura = '00000',null,CAST(largura AS DECIMAL(6,2))) as LARGURA,
 NULL as EXPECTATIVA_VENDA,
-nomeComercial as NOME_COMERCIAL,
+trim(nomeComercial) as NOME_COMERCIAL,
 CAST(codigoEdicao AS UNSIGNED) as NUMERO_EDICAO, -- CAST(IF(codigoEdicao ='0000',lancamento,codigoEdicao) AS UNSIGNED),
 'INTERFACE' as ORIGEM,
 CAST(pacotePadrao AS UNSIGNED) as PACOTE_PADRAO,
@@ -1810,9 +1816,9 @@ IF(CAST(peb AS UNSIGNED) = 0,31,CAST(peb AS UNSIGNED)) as PEB,
 0 as PERMITE_VALE_DESCONTO,
 CAST(peso AS UNSIGNED) PESO,
 IF(contemBrinde ='S',1,0) as POSSUI_BRINDE,
-(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = codigoProduto and cpl.codigoEdicao = codigoEdicao) as PRECO_CUSTO,-- 0, --
-(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = codigoProduto and cpl.codigoEdicao = codigoEdicao) as PRECO_PREVISTO,-- 0, --
-(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = codigoProduto and cpl.codigoEdicao = codigoEdicao) as PRECO_VENDA,-- 0, --
+(select cast(max(precoPrevisto) as unsigned)/100 from carga_prodin_lan cpl where cpl.codigoProduto = c.codigoProduto and cpl.codigoEdicao = c.codigoEdicao) as PRECO_CUSTO,-- 0, --
+(select cast(max(precoPrevisto) as unsigned)/100 from carga_prodin_lan cpl where cpl.codigoProduto = c.codigoProduto and cpl.codigoEdicao = c.codigoEdicao) as PRECO_PREVISTO,-- 0, --
+(select cast(max(precoPrevisto) as unsigned)/100 from carga_prodin_lan cpl where cpl.codigoProduto = c.codigoProduto and cpl.codigoEdicao = c.codigoEdicao) as PRECO_VENDA,-- 0, --
 NULL as REPARTE_DISTRIBUIDO,
 IF(tipoDesconto = '00',1,(select id from desconto_logistica tz where tz.tipo_desconto  = tipoDesconto and fornecedorId = tz.fornecedor_id limit 1)) as DESCONTO_LOGISTICA_ID,
 IF((select id from produto tz where tz.codigo = codigoProduto limit 1) = null,1,(select id from produto tz where tz.codigo = codigoProduto limit 1)) as PRODUTO_ID,
@@ -1834,7 +1840,7 @@ NULL as FORMA_FISICA,
 IF(classificacao = '00',16,(select id from tipo_classificacao_produto tcp where tcp.descricao = classificacao limit 1)) as TIPO_CLASSIFICACAO_PRODUTO_ID,
 NULL as HISTORICO,
 NULL as VINCULAR_RECOLHIMENTO
-from CARGA_PRODIN_PRD
+from CARGA_PRODIN_PRD c
 group by codigoProduto,codigoEdicao
 
 UNION ALL
@@ -1855,16 +1861,16 @@ NULL as LARGURA, -- IF(largura = '00000',null,CAST(largura AS DECIMAL(6,2))),
 NULL as NOME,
 NULL as NOME_COMERCIAL, -- nomeComercial,
 CAST(IF(codigoEdicao ='0000',lancamento,codigoEdicao) AS UNSIGNED) as NUMERO_EDICAO,
-'INTERFACE' as ORIGEM,
+'MANUAL' as ORIGEM,
 CAST(pacotePadrao AS UNSIGNED) as PACOTE_PADRAO,
 IF(tipoRecolhimento ='P',1,0) as PARCIAL,
 IF(CAST(peb AS UNSIGNED) = 0,31,CAST(peb AS UNSIGNED)) as PEB,
 0 as PERMITE_VALE_DESCONTO,
 CAST(peso AS UNSIGNED) as PESO,
 0 as POSSUI_BRINDE,-- CAST(contemBrinde AS UNSIGNED),
-(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = codigoProduto and cpl.codigoEdicao = codigoEdicao) as PRECO_CUSTO,-- 0, --
-(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = codigoProduto and cpl.codigoEdicao = codigoEdicao) as PRECO_PREVISTO,-- 0, --
-(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = codigoProduto and cpl.codigoEdicao = codigoEdicao) as PRECO_VENDA,-- 0, --
+(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = c.codigoProduto and cpl.codigoEdicao = c.codigoEdicao) as PRECO_CUSTO,-- 0, --
+(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = c.codigoProduto and cpl.codigoEdicao = c.codigoEdicao) as PRECO_PREVISTO,-- 0, --
+(select (max(precoPrevisto) * 1) / 10000 from carga_prodin_lan cpl where cpl.codigoProduto = c.codigoProduto and cpl.codigoEdicao = c.codigoEdicao) as PRECO_VENDA,-- 0, --
 NULL as REPARTE_DISTRIBUIDO,
 1 as DESCONTO_LOGISTICA_ID, -- IF((tipoDesconto = '00' or tipoDesconto =NULL),1,(select id from desconto_logistica tz where tz.tipo_desconto  = tipoDesconto and fornecedorId = tz.fornecedor_id)),
 IF((select id from produto tz where tz.codigo = codigoProduto limit 1) = null,1,(select id from produto tz where tz.codigo = codigoProduto limit 1))  as PRODUTO_ID,
@@ -1886,7 +1892,7 @@ NULL as FORMA_FISICA,
 16  as TIPO_CLASSIFICACAO_PRODUTO_ID, -- IF(classificacao = '00',16,classificacao),
 NULL as HISTORICO,
 NULL as VINCULAR_RECOLHIMENTO
-from CARGA_MDC_MATRIZ
+from CARGA_MDC_MATRIZ c
 group by codigoProduto,CAST(IF(codigoEdicao ='0000',lancamento,codigoEdicao) AS UNSIGNED )) uni 
 group by uni.PRODUTO_ID,NUMERO_EDICAO;
 
@@ -1897,12 +1903,11 @@ from produto_edicao
 group by produto_id,numero_edicao) a
 where a.qtdes >1;
 
-
 select 'PRODUTO_EDICAO:',count(*) from PRODUTO_EDICAO; -- Log
 
 -- Atualizar Descontos Produtos
 update produto_edicao
-set desconto = 30.00
+set desconto = 25.00 -- Rio 30, Campinas 25
 where origem = 'MANUAL';
 
 -- preco_previsto * FIXME Isso está sendo feito devido a interface 118 não atualizar preço_previsto e deixa o atributo com zero
@@ -2013,7 +2018,7 @@ set pe.CODIGO_DE_BARRAS = TRIM(c.codigoBarras)
 where p.id = pe.produto_id
 and p.codigo = c.codigoProduto
 and pe.numero_edicao = c.codigoEdicao
-and trim(LEADING '0' FROM c.codigoBarras) <> '';
+and trim(c.codigoBarras) <> '';
 
 --
 -- PRODUTO EDICAO PRECO 
@@ -2036,7 +2041,14 @@ and trim(LEADING '0' FROM c.preco) <> '.';
 select 'PESSOA:',count(*) from pessoa; -- Log
 
 insert into pessoa (TIPO,CNPJ,INSC_ESTADUAL,INSC_MUNICIPAL,RAZAO_SOCIAL,NOME,SOCIO_PRINCIPAL)
-select distinct tipoPessoa,cnpj,inscrEstadual,inscrMunicipal,nomeJornaleiro,nomeJornaleiro,0
+select distinct 
+tipoPessoa,
+cnpj,
+inscrEstadual,
+inscrMunicipal,
+trim(nomeJornaleiro),
+trim(nomeJornaleiro),
+0
 from CARGA_MDC_COTA 
 where tipoPessoa ='J'
 and cnpj not in (select distinct cnpj from pessoa where tipo = 'J')
@@ -2102,7 +2114,21 @@ where codigoCota not in (select numero_cota from cota);
 
 select 'COTA + BANCA:',count(*) from COTA; -- Log
 
-select 'ENDERECO:',count(*) from ENDERECO; -- Log
+insert into COTA_FORNECEDOR
+SELECT c.id, f.id FROM COTA c, FORNECEDOR f
+where f.id in (1,2,16) ;
+
+select 'COTA_FORNECEDOR:',count(*) from COTA_FORNECEDOR; -- Log
+
+insert into historico_situacao_cota
+(DATA_EDICAO, TIPO_EDICAO, RESTAURADO, PROCESSADO, DATA_FIM_VALIDADE,DATA_INICIO_VALIDADE,
+DESCRICAO,MOTIVO,NOVA_SITUACAO,SITUACAO_ANTERIOR,USUARIO_ID,COTA_ID)
+select now(),
+'ALTERACAO', null, 1, null, DATE(sysdate()), 'CARGA', 'OUTROS', situacao_cadastro, situacao_cadastro, 1, id
+from cota a
+where id not in (select cota_id from historico_situacao_cota);
+
+select 'historico_situacao_cota:',count(*) from historico_situacao_cota; -- Log
 
 -- Atualiza para cotas ALTERNATIVO as cotas vindas da carga inicial.
 update cota set tipo_distribuicao_cota = 'ALTERNATIVO'
@@ -2116,16 +2142,16 @@ COMPLEMENTO,LOGRADOURO,NUMERO,TIPO_LOGRADOURO,UF,PESSOA_ID)
 select 
 '',
 cep,
-municipio,
+trim(municipio),
 codBairro,
 codCidadeIbge,
 21,-- ufEditor,
 NULL,
-endereco,
+trim(endereco),
 numLogradouro,
 NULL,
 siglaUf,
-(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota)
+(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota limit 1)
 from carga_mdc_cota;
 
 select 'ENDERECO (COTA):',count(*) from ENDERECO; -- Log
@@ -2136,7 +2162,7 @@ select
 1,
 'COMERCIAL',
 (select ed.id from cota ct,endereco ed where ct.numero_cota = codigoCota and ct.pessoa_id = ed.pessoa_id limit 1),
-(select ct.id from cota ct where ct.numero_cota = codigoCota)
+(select ct.id from cota ct where ct.numero_cota = codigoCota limit 1)
 from carga_mdc_cota;
 
 select 'ENDERECO_COTA:',count(*) from ENDERECO_COTA; -- Log
@@ -2176,20 +2202,25 @@ PORCENTAGEM_FATURAMENTO,POSSUI_SISTEMA_IPV,QTDE_FUNCIONARIOS,STATUS_PDV,COTA_ID,
 select 
 0,
 0,
-1,
+0, 
 0,
 0,
 0,
 0,
-(select nome from pessoa where id = (select pessoa_id from cota where numero_cota = codigoCota)),
+(select nome from pessoa where id = (select pessoa_id from cota where numero_cota = codigoCota limit 1)),
 pontoReferencia,
 0,
 0,
 0,
 'ATIVO',
-(select id from cota where numero_cota = codigoCota),
+(select id from cota where numero_cota = codigoCota limit 1),
 CAST(tipoPontoVenda AS UNSIGNED)
 from CARGA_MDC_BANCA;
+
+update pdv pdv,
+(select min(id) as id from pdv group by cota_id) pr
+set pdv.ponto_principal = 1 
+where pdv.id =pr.id;
 
 select 'BANCA|PDV:',count(*) from PDV; -- Log
 
@@ -2199,16 +2230,16 @@ COMPLEMENTO,LOGRADOURO,NUMERO,TIPO_LOGRADOURO,UF,PESSOA_ID)
 select 
 '',
 cep,
-nomeMunicipio,
+trim(nomeMunicipio),
 codBairro,
 NULL,
 21,-- ufEditor,
 NULL,
-endereco,
+trim(endereco),
 NULL, -- FIXME
 NULL,
 siglaUf,
-(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota)
+(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota limit 1)
 from carga_mdc_banca;
 
 -- Endereco PDV
@@ -2217,7 +2248,7 @@ select
 1,
 'COMERCIAL',
 (select ed.id from cota ct,endereco ed where ct.numero_cota = codigoCota and ct.pessoa_id = ed.pessoa_id limit 1),
-(select pdv.id from pdv where pdv.cota_id = (select ct.id from cota ct where ct.numero_cota = codigoCota) limit 1)
+(select pdv.id from pdv where pdv.cota_id = (select ct.id from cota ct where ct.numero_cota = codigoCota limit 1) limit 1)
 from carga_mdc_banca;
 
 -- Telefone
