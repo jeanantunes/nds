@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_box_versus_cota" columnCount="2" pageWidth="594" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="76"/>
+	<property name="ireport.y" value="50"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
 	</style>
@@ -31,9 +31,11 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="field1" class="java.lang.String"/>
-	<field name="field1" class="java.lang.String"/>
-	<field name="repartes" class="java.util.Collection"/>
+	<field name="produtos" class="java.util.Collection"/>
+	<field name="cotas" class="java.util.Collection"/>
+	<field name="repartes" class="java.util.List">
+		<fieldDescription><![CDATA[repartes]]></fieldDescription>
+	</field>
 	<title>
 		<band height="77">
 			<subreport isUsingCache="false">
