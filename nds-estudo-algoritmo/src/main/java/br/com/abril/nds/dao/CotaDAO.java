@@ -242,7 +242,11 @@ public class CotaDAO {
 		}
 		
 		if (cota.isMix()) {
-		    cota.setClassificacao(ClassificacaoCota.CotaMix);
+			if(estudo.isUsarMix()){
+				cota.setClassificacao(ClassificacaoCota.CotaMix);
+			}else{
+				cota.setClassificacao(ClassificacaoCota.CotaMixSemMinMax);
+			}
 		}
 		
 		if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {

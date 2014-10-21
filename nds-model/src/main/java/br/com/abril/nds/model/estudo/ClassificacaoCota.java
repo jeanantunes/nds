@@ -71,6 +71,12 @@ public enum ClassificacaoCota {
 	 * MX
 	 */
 	CotaMix("MX", "Cota de Mix"),
+	
+	/**
+	 * MX - Desconsiderando Min e Max
+	 */
+	CotaMixSemMinMax("MS", "Cota de Mix sem Min e Max"),
+	
 	/**
 	 * CP
 	 */
