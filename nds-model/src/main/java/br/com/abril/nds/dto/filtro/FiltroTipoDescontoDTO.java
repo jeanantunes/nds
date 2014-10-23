@@ -18,6 +18,8 @@ public class FiltroTipoDescontoDTO extends FiltroDTO implements Serializable {
 	
 	private List<Long> idFornecedores;
 	
+	private List<Long> idsEditores;
+	
 	public enum OrdenacaoColunaConsulta {
 		
 		SEQUENCIAL("sequencial"),
@@ -56,6 +58,14 @@ public class FiltroTipoDescontoDTO extends FiltroDTO implements Serializable {
 	 */
 	public void setIdFornecedores(List<Long> idFornecedores) {
 		this.idFornecedores = idFornecedores;
+	}
+
+	public List<Long> getIdsEditores() {
+		return idsEditores;
+	}
+
+	public void setIdsEditores(List<Long> idsEditores) {
+		this.idsEditores = idsEditores;
 	}
 
 	/**
@@ -114,5 +124,5 @@ public class FiltroTipoDescontoDTO extends FiltroDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }

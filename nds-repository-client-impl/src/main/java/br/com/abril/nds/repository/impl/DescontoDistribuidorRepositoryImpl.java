@@ -33,7 +33,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select hdf.id as sequencial ");
-		hql.append(", hdf.desconto.id as idTipoDesconto ");
+		hql.append(", hdf.desconto.id as descontoId ");
 		hql.append(", hdf.usuario.nome as usuario ");
 		hql.append(", hdf.desconto.valor as desconto ");
 		hql.append(", hdf.desconto.dataAlteracao as dataAlteracao ");
