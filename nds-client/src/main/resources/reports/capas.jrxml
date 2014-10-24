@@ -11,7 +11,7 @@
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="46" backcolor="#CCCCCC" uuid="438b4853-09c3-48f3-98a5-d1301eaee7b4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="24"/>
+					<font fontName="DejaVu Sans" size="24"/>
 				</textElement>
 				<text><![CDATA[Capas]]></text>
 			</staticText>
@@ -21,7 +21,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="143" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
