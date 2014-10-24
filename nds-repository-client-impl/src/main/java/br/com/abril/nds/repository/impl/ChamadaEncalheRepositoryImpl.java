@@ -787,7 +787,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" INNER JOIN movimentoCota.tipoMovimento tipoMovimento                            ")
 		   .append(" where (movimentoCota.id is null or movimentoCota.cota = cota)	                 ")
 		   .append(" and (estudoCotas.id is null or estudoCotas.cota = cota)                         ")
-		   .append(" and chamEncCota.postergado = :isPostergado                                      ");
+		   .append(" and chamEncCota.postergado = :isPostergado                                      ")
+		   .append(" and movimentoCota.movimentoEstoqueCotaFuro is null                              ");
 		   // .append(" and chamEncCota.qtdePrevista>0  ")
 	
 		param.put("isPostergado", false);
@@ -1191,6 +1192,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" 	where 1=1 ")
 		.append("	and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte ")
 		.append(" 	and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")
+		.append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
 		.append(" 	group by c.id, ce.DATA_RECOLHIMENTO, mec.PRODUTO_EDICAO_ID ")
 		.append(" 	having count(0) > 1 ")
 		.append(" ) rs1 on rs1.pedId = mec.PRODUTO_EDICAO_ID and c.id = rs1.cId ");
@@ -1199,7 +1201,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			
 			sql.append(" and c.numero_cota between :numeroCotaDe and :numeroCotaAte ");
 		}
+		
 		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ");
+		sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
 		
