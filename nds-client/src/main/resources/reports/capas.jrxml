@@ -7,15 +7,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="46" splitType="Stretch">
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="46" backcolor="#CCCCCC" uuid="438b4853-09c3-48f3-98a5-d1301eaee7b4"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="24"/>
-				</textElement>
-				<text><![CDATA[Capas]]></text>
-			</staticText>
-		</band>
+		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
