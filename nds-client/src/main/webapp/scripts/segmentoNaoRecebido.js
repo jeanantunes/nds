@@ -46,13 +46,13 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								display : 'Hora',
 								name : 'horaAlteracaoFormatada',
 								width : 80,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							},  {
 								display : 'Ação',
 								name : 'acao',
 								width : 30,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}],
 							sortname : "nomeSegmento",
@@ -72,19 +72,19 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								display : 'Cota',
 								name : 'cota',
 								width : 110,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							}, {
 								display : 'Nome',
 								name : 'Nome',
 								width : 400,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							},  {
 								display : '',
 								name : 'sel',
 								width : 30,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}],
 							sortname : "cota",
@@ -105,13 +105,13 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								display : 'Segmento',
 								name : 'descricao',
 								width : 225,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							},  {
 								display : '',
 								name : 'sel',
 								width : 30,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}],
 							width : 300,
@@ -126,19 +126,19 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								display : 'Cota',
 								name : 'numeroCota',
 								width : 50,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							}, {
 								display : 'Nome',
 								name : 'nomePessoa',
 								width : 160,
-								sortable : true,
+								sortable : false,
 								align : 'left'
 							},  {
 								display : '',
 								name : 'sel',
 								width : 30,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}],
 							sortname : "numeroCota",
@@ -185,13 +185,13 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								display : 'Hora',
 								name : 'horaAlteracaoFormatada',
 								width : 60,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							},  {
 								display : 'Ação',
 								name : 'acao',
 								width : 30,
-								sortable : true,
+								sortable : false,
 								align : 'center'
 							}],
 							sortname : "cota",

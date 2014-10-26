@@ -19,7 +19,7 @@ public class CotaQueNaoRecebeClassificacaoDTO extends UsuarioLogDTO {
 
 	@Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String nomePessoa;
-
+	
 	public Long getIdClassificacaoNaoRecebida() {
 		return idClassificacaoNaoRecebida;
 	}

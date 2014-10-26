@@ -353,10 +353,10 @@ CaracteristicaDistribuicaoRepository {
         if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="")	{
             if(filtro.isOpcaoFiltroPublicacao()){
                 //exato
-                sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
+                sql.append(" and upper(pes2.RAZAO_SOCIAL) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
             }else{
                 //contem
-                sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('%").append(filtro.getNomeEditor()).append("%')");
+                sql.append(" and upper(pes2.RAZAO_SOCIAL) like").append(" upper('%").append(filtro.getNomeEditor()).append("%')");
             }
             
         }
