@@ -279,7 +279,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "produtoFixado",
+			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

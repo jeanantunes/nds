@@ -89,7 +89,13 @@ var histogramaVendasController = $.extend(true, {
 				
 				return data;
 			},
-			colModel : [ {
+			colModel : [{
+				display : 'Sel',
+				name : 'sel',
+				width : 20,
+				sortable : true,
+				align : 'center'
+			},{
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 60,
@@ -148,12 +154,6 @@ var histogramaVendasController = $.extend(true, {
 				display : 'Capa',
 				name : 'capa',
 				width : 30,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
 				sortable : true,
 				align : 'center'
 			}],

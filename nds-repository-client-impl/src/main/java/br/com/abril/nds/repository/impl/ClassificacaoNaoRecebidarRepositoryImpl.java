@@ -108,8 +108,24 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
 		
-		hql.append(" order by numeroCota, nomePessoa");
-		
+        if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+          	
+         	if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO")){
+        		hql.append(" order by numeroCota, nomePessoa");
+        	}else{
+        		
+        		if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+    	  			filtro.getPaginacao().setSortColumn("dataAlteracao");
+    	  		}
+        		
+        		hql.append(" ORDER BY ");
+        		hql.append(" " + filtro.getPaginacao().getSortColumn());
+        	}
+        	hql.append(" " + filtro.getPaginacao().getSortOrder());
+        }else{
+        	hql.append(" order by numeroCota, nomePessoa");
+        }
+        
 		Query query = getSession().createQuery(hql.toString());
 		
 		setParameters(query, parameters);
@@ -131,7 +147,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		hql.append(" classificacaoNaoRecebida.id as idClassificacaoNaoRecebida, "); 
 		hql.append(" tipoClassificacaoProduto.descricao as nomeClassificacao, "); 
 		hql.append(" usuario.nome as nomeUsuario, ");
-		hql.append(" classificacaoNaoRecebida.dataAlteracao as dataAlteracao "); 	
+		hql.append(" classificacaoNaoRecebida.dataAlteracao as dataAlteracao ");
 		
 		hql.append(" FROM ClassificacaoNaoRecebida as classificacaoNaoRecebida ");
 		hql.append(" INNER JOIN classificacaoNaoRecebida.usuario as usuario ");
@@ -152,6 +168,22 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 			}
 		}
 		
+	  if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+		  
+		  if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO")){
+        		hql.append(" order by tipoClassificacaoProduto.descricao");
+        	}else{
+
+        		if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+    	  			filtro.getPaginacao().setSortColumn("dataAlteracao");
+    	  		}
+        		
+        		hql.append(" ORDER BY ");
+        		hql.append(" " + filtro.getPaginacao().getSortColumn());
+        	}
+        	hql.append(" " + filtro.getPaginacao().getSortOrder());
+        }
+	
 		hql.append(" order by tipoClassificacaoProduto.descricao");
 		
 		Query query = getSession().createQuery(hql.toString());
