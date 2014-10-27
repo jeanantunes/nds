@@ -71,7 +71,7 @@ public class AjusteReparteController extends BaseController {
 	@Post
 	@Path("/novoAjuste")
     @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
-	public void salvarAjuste (AjusteReparteDTO ajusteDTO){
+	public void salvarAjuste(AjusteReparteDTO ajusteDTO){
 		
 		AjusteReparte ajuste = DTOParaModel(ajusteDTO);
 		
@@ -127,7 +127,7 @@ public class AjusteReparteController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<AjusteReparteDTO>> montarCotasEmAjuste (AjusteReparteDTO dto) {
+	private TableModel<CellModelKeyValue<AjusteReparteDTO>> montarCotasEmAjuste(AjusteReparteDTO dto) {
 		
 		List<AjusteReparteDTO> cotasEmAjuste = ajusteService.buscarCotasEmAjuste(dto);
 		
