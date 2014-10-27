@@ -597,7 +597,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
-        	qtd =  fechamento.getFisico() == null ? BigInteger.ZERO : fechamento.getFisico();
+            if(filtro.isCheckAll()) {
+            	
+            	qtd = BigInteger.valueOf(exemplaresDevolucao.intValue() - exemplaresDevolucaoJuramentado.intValue() - exemplaresVendaEncalhe.intValue());
+            	
+            } else {
+            	
+            	qtd =  fechamento.getFisico() == null ? BigInteger.ZERO : fechamento.getFisico();
+            }
+            
 
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
             id.setDataEncalhe(filtro.getDataEncalhe());
