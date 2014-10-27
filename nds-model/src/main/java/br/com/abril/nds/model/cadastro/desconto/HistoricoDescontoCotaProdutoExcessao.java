@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +18,7 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -49,6 +51,10 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "EDITOR_ID")
+	private Editor editor;
+	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PRODUTO_ID")
 	private Produto produto;
@@ -65,7 +71,7 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
-	@ManyToOne(optional=false)
+	@ManyToOne(optional=false, cascade=CascadeType.PERSIST)
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto desconto;
 
@@ -125,6 +131,14 @@ public class HistoricoDescontoCotaProdutoExcessao implements Serializable {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
+	}
+
+	public Editor getEditor() {
+		return editor;
+	}
+
+	public void setEditor(Editor editor) {
+		this.editor = editor;
 	}
 
 	public Produto getProduto() {

@@ -109,6 +109,9 @@ public class EstudoGerado implements Serializable {
     @Column(name = "LIBERADO")
 	private Boolean liberado;
 
+    @Column(name = "USED_MIN_MAX_MIX")
+	private Boolean minMaxMix;
+    
     @Column(name = "DADOS_VENDA_MEDIA")
     @Type(type = "text")
     private String dadosVendaMedia;
@@ -349,6 +352,14 @@ public class EstudoGerado implements Serializable {
 			return false;
 		
 		return true;
+	}
+
+	public Boolean getMinMaxMix() {
+		return minMaxMix;
+	}
+
+	public void setMinMaxMix(Boolean minMaxMix) {
+		this.minMaxMix = minMaxMix;
 	}
 	
 }

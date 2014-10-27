@@ -64,7 +64,6 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 		hql.append(" excecaoProdutoCota.tipoClassificacaoProduto.descricao as classificacaoProduto ");
 
 		hql.append(" FROM ExcecaoProdutoCota as excecaoProdutoCota ");
-		// hql.append(" INNER JOIN excecaoProdutoCota.produto as produto  ");
 
 		hql.append(" INNER JOIN excecaoProdutoCota.usuario as usuario ");
 		hql.append(" INNER JOIN excecaoProdutoCota.cota as cota ");
@@ -95,8 +94,22 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 		}
 
 		hql.append(" group by produto.codigoICD ,excecaoProdutoCota.tipoClassificacaoProduto.descricao  ");
-		hql.append(" order by excecaoProdutoCota.dataAlteracao");
-
+		
+		
+		// Sortable - Columns
+		if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+	      	
+			if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+	  			filtro.getPaginacao().setSortColumn("dataAlteracao");
+	  		}
+			
+			hql.append(" ORDER BY ");
+			hql.append(" " + filtro.getPaginacao().getSortColumn());
+	    	hql.append(" " + filtro.getPaginacao().getSortOrder());
+	    }else{
+	    	hql.append(" ORDER BY excecaoProdutoCota.dataAlteracao");
+	    }
+		
 		Query query = getSession().createQuery(hql.toString());
 
 		setParameters(query, parameters);
@@ -305,8 +318,20 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 					.getIdClassificacaoProduto());
 		}
 
-		hql.append(" order by numeroCota, nomePessoa");
-
+		// Sortable - Columns
+		if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+	      	
+			if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+	  			filtro.getPaginacao().setSortColumn("dataAlteracao");
+	  		}
+			
+			hql.append(" ORDER BY ");
+			hql.append(" " + filtro.getPaginacao().getSortColumn());
+	    	hql.append(" " + filtro.getPaginacao().getSortOrder());
+	    }else{
+			hql.append(" order by numeroCota, nomePessoa");
+	    }
+		
 		Query query = getSession().createQuery(hql.toString());
 		setParameters(query, parameters);
 		query.setResultTransformer(new AliasToBeanResultTransformer(

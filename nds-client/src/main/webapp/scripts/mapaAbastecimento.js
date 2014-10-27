@@ -143,7 +143,8 @@
 		$("#gridProdutoEspecifico", _workspace).hide();
 		$("#gridProdutoCota", _workspace).hide();
 		$("#gridEntregador", _workspace).hide();
-
+		$("#gridBoxCotaQuebraCota", _workspace).hide();
+		
 		switch (tipoConsulta) {
 
 		case 'BOX':
@@ -248,8 +249,22 @@
 				params
 			);
 
-			break;
+		break;
+		
+		case 'BOX_X_COTA':
 			
+			var quebraPorCota = true;
+			
+			T.preencherGrid(
+				quebraPorCota ? ".mapaAbastecimentoBoxCotaGridQuebraCota" : ".mapaAbastecimentoGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processaRetornoPesquisa, 
+				quebraPorCota ? "#gridBoxCotaQuebraCota" : "#gridBox",
+				params
+			);
+			
+		break;
+		
 		default:
 			exibirMensagem("WARNING", ["É necessario selecionar o Tipo de Consulta a ser realizada!"]);
 			break;
@@ -521,7 +536,15 @@
 			T.displayEntregador(true);
 			T.bloquearLinkProdutos();
 			T.desbloquearLinkProdutos();
-			break;			
+			break;
+		case 'BOX_X_COTA':
+			T.atualizarBoxRota();
+			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','codigoCota','nomeCota');
+			$('#quebraPorCota').attr("checked", true);
+			T.bloquearLinkProdutos();
+			T.displayEntregador(false);
+			T.limparProdutosSelecionados();
+			break;	
 		default:
 			T.bloquearCampos('box','rota', 'roteiro', 'codigoProduto','nomeProduto','codigoCota','nomeCota','quebraPorCota');
 			break;
@@ -1174,5 +1197,60 @@ $(function() {
 		height : 255
 	});
 
+	$(".mapaAbastecimentoBoxCotaGridQuebraCota", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel: [{
+			display : 'Box',
+			name : 'nomeBox',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Cota',
+			name : 'codigoCota',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 280,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Total de Produtos',
+			name : 'totalProduto',
+			width : 110,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 100,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Total R$',
+			name : 'totalBox',
+			width : 100,
+			sortable : true,
+			align : 'right'
+		},{
+			display : 'Ação',
+			name : 'acao',
+			width : 30,
+			sortable : false,
+			align : 'center'
+		}],
+		sortname : "nomeBox",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	})); 
+	
 });
 //@ sourceURL=mapaAbastecimento.js

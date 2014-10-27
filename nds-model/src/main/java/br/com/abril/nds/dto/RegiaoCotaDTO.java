@@ -54,6 +54,7 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	
 	private Pessoa pessoa;
 	private TipoDistribuicaoCota tipoDistribuicaoCota;
+	private BigDecimal faturamentoParaOrdenacao;
 	
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -116,6 +117,7 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	}
 	
 	public void setFaturamento(BigDecimal faturamento) {
+		this.faturamentoParaOrdenacao = faturamento;
 		this.faturamento = CurrencyUtil.formatarValor(faturamento);
 	}
 	
@@ -138,6 +140,10 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	
 	public String getHora() {
 		return hora;
+	}
+	
+	public void setHora(Date hora) {
+		this.hora = DateUtil.formatarHoraMinuto(hora);
 	}
 
 	public Pessoa getPessoa() {
@@ -171,6 +177,14 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 		this.tipoPDV = tipoDistribuicaoCota.toString();
+	}
+
+	public BigDecimal getFaturamentoParaOrdenacao() {
+		return faturamentoParaOrdenacao;
+	}
+
+	public void setFaturamentoParaOrdenacao(BigDecimal faturamentoParaOrdenacao) {
+		this.faturamentoParaOrdenacao = faturamentoParaOrdenacao;
 	}
 	
 }

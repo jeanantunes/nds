@@ -394,6 +394,7 @@ function limparLstExcecao1(){
                     	<legend>Dados da Distribuição</legend>
                         <input type="hidden" id="idLancamento" value="${lancamento.id}"/>
                         <input type="hidden" id="idProdutoEdicao" value="${lancamento.produtoEdicao.id}"/>
+                        <input type="hidden" id="numeroLancamentoDvm" value="${lancamento.numeroLancamento}"/>
                         <input type="hidden" id="modoAnalise" value="${modoAnalise}"/>
                     	<table width="280" border="0" cellspacing="2" cellpadding="2">
                           <tr>
@@ -414,7 +415,7 @@ function limparLstExcecao1(){
                           </tr>
                           <tr>
                             <td>Período:</td>
-                            <td>${ lancamento.periodoLancamentoParcial.numeroPeriodo }</td>
+                            <td id='periodoDvm'>${ lancamento.periodoLancamentoParcial.numeroPeriodo }</td>
                           </tr>
                           <tr>
                             <td>Preço R$</td>
@@ -470,6 +471,10 @@ function limparLstExcecao1(){
                    	    <tr>
                    	      <td align="right"><input name="checkbox2" type="checkbox" id="usarFixacao" checked="checked" /></td>
                    	      <td colspan="2">Usar Fixação</td>
+               	        </tr>
+               	        <tr>
+                   	      <td align="right"><input name="checkbox2" type="checkbox" id="usarMix" checked="checked" /></td>
+                   	      <td colspan="2">Usar MIX (Rep. Min e Rep. Max)</td>
                	        </tr>
                    	    <tr>
                    	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle(); $('#multiplo').val($('#pctPadrao').text());" /></td>

@@ -39,6 +39,7 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		hql.append(" ajuste.motivo as motivoAjusteAplicado, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
 		hql.append(" ajuste.dataAlteracao as dataAlteracao, ");
+		hql.append(" TIME(ajuste.dataAlteracao) as hora, ");
 		hql.append(" tipoSegmento.id as idSegmento ");
 		
 		hql.append(" FROM AjusteReparte AS ajuste ");
@@ -51,16 +52,27 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		
 		hql.append(" WHERE caracteristicasPdv.pontoPrincipal in (true) ");
 		
-		//where pdvs2_.PONTO_PRINCIPAL in(true)
-		
 		hql.append(" GROUP BY cota.numeroCota ");
-		hql.append(" ORDER BY numeroCota ");
+		
+		if ((dto.getPaginacao() != null) && (dto.getPaginacao().getSortColumn() != null)) {
+			
+			if(dto.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO")){
+				hql.append(" ORDER BY numeroCota ");
+			}else{
+				hql.append(" ORDER BY ");
+				hql.append(" "+dto.getPaginacao().getSortColumn());
+			}
+			
+			hql.append(" "+dto.getPaginacao().getSortOrder());
+			
+		} else {
+			hql.append(" ORDER BY numeroCota ");
+		}
 		
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				AjusteReparteDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(AjusteReparteDTO.class));
 		
 		if (dto != null){
 			configurarPaginacao(dto, query);

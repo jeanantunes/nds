@@ -279,13 +279,13 @@
 							display : 'Hora',
 							name : 'horaAlteracaoFormatada',
 							width : 80,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}, {
 							display : 'Ação',
 							name : 'acao',
 							width : 30,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}],
 						sortname : "cota",
@@ -339,19 +339,19 @@
 							display : 'Cota',
 							name : 'numeroCota',
 							width : 60,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						}, {
 							display : 'Nome',
 							name : 'nomePessoa',
 							width : 150,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						},  {
 							display : '',
 							name : 'sel',
 							width : 30,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}],
 						width : 300,
@@ -424,13 +424,13 @@
 							display : 'Hora',
 							name : 'horaAlteracaoFormatada',
 							width : 80,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						},  {
 							display : 'Ação',
 							name : 'acao',
 							width : 30,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}],
 						sortname : "cota",

@@ -689,7 +689,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  left join endereco e on e.id = ep.endereco_id ");
         sql.append("  left join tipo_ponto_pdv t on t.id = pdv.tipo_ponto_pdv_id ");
         sql.append("  left join estudo_pdv est on est.pdv_id = pdv.id and est.estudo_id = :idEstudo ");
-        sql.append(" where c.numero_cota = :numeroCota ");
+        sql.append(" where c.numero_cota = :numeroCota GROUP BY pdv.id ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("id", StandardBasicTypes.LONG)

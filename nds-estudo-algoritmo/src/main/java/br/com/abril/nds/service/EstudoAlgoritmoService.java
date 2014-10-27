@@ -370,6 +370,7 @@ public class EstudoAlgoritmoService {
         estudo.setReparteDistribuirInicial(reparte);
         estudo.setTipoGeracao(TipoGeracaoEstudo.VENDA_MEDIA.toString());
         estudo.setReparteTotal(distribuicaoVendaMedia.getReparteTotal());
+        estudo.setUsarMix(distribuicaoVendaMedia.isUsarMix());
         
         estudo.setDistribuicaoPorMultiplos(0); // valor default
         estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor

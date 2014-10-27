@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -3059,8 +3060,7 @@ public class CotaServiceImpl implements CotaService {
     public void verificarCotasSemRoteirizacao(final Intervalo<Integer> intervaloCota, final Intervalo<Date> intervaloDataLancamento,
             final Intervalo<Date> intervaloDataRecolhimento){
         
-        final List<CotaDTO> cotasSemRoteirizacao = cotaRepository.obterCotasSemRoteirizacao(intervaloCota,
-                intervaloDataLancamento, intervaloDataRecolhimento);
+        final List<CotaDTO> cotasSemRoteirizacao = cotaRepository.obterCotasSemRoteirizacao(intervaloCota, intervaloDataLancamento, intervaloDataRecolhimento);
         
         if (cotasSemRoteirizacao != null && !cotasSemRoteirizacao.isEmpty()) {
             
@@ -3266,4 +3266,10 @@ public class CotaServiceImpl implements CotaService {
     public Boolean validarNumeroCota(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota){
     	return cotaRepository.validarNumeroCota(numeroCota, tipoDistribuicaoCota);
     }
+
+	@Override
+	@Transactional
+	public List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloData) {
+		return cotaRepository.obterCotasExpedicao(intervaloData);
+	}
 }

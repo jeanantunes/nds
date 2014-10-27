@@ -28,6 +28,9 @@ public enum Permissao {
 	ROLE_CADASTRO_COTA_ALTERACAO("Cota", 													   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_COTA("Cota", 																		  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_COTA_ALTERACAO, true, null),
 	
+	ROLE_CADASTRO_EDITOR_ALTERACAO("Editor",												   				Permissao.ROLE_CADASTRO, true),
+	ROLE_CADASTRO_EDITOR("Editor", 																	  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_EDITOR_ALTERACAO, true, null),
+	
 	ROLE_CADASTRO_COTA_BASE_ALTERACAO("Cota Base",											   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_COTA_BASE("Cota Base",															  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_COTA_BASE_ALTERACAO, true, null),
 	
@@ -311,6 +314,9 @@ public enum Permissao {
 	
 	ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO("Tipo de Desconto Cota",								  	Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_TIPO_DESCONTO_COTA("Tipo de Desconto Cota",								  		   	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO, true, null),
+	
+	ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR_ALTERACAO("Tipo de Desconto Editor",							  	Permissao.ROLE_FINANCEIRO, true),
+	ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR("Tipo de Desconto Editor",							  		   	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR_ALTERACAO, true, null),
 	
 	ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS_ALTERACAO("Relatório de Garantias",								Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS("Relatório de Garantias",									   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS_ALTERACAO, true, null),

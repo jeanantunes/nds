@@ -67,7 +67,8 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.id as id, ")
         .append(" f.qtdeExemplares as qtdeExemplares,")
         .append(" f.qtdeEdicoes as qtdeEdicoes,")
-        .append(" f.dataHora as dataHora,")
+        .append(" f.dataHora as data,")
+        .append(" TIME(f.dataHora) as hora,")
         .append(" f.edicaoInicial as edicaoInicial,")
         .append(" f.edicaoFinal as edicaoFinal, ")
         .append(" f.edicoesAtendidas as edicoesAtendidas, ")
@@ -97,7 +98,21 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         sql.append(	" and f.codigoICD = :codigoICD ");
         
         sql.append(" GROUP BY f.id ");
-        sql.append(" order by f.cotaFixada.numeroCota asc ");
+        
+		if ((produto.getPaginacao() != null) && (produto.getPaginacao().getSortColumn() != null)) {
+			
+			if(produto.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO")){
+				sql.append(" ORDER BY cotaFixada ");
+			}else{
+				sql.append(" ORDER BY ");
+				sql.append(" "+produto.getPaginacao().getSortColumn());
+			}
+			
+			sql.append(" "+produto.getPaginacao().getSortOrder());
+			
+		} else {
+			sql.append(" ORDER BY cotaFixada ");
+		}
         
         final Query query = getSession().createQuery(sql.toString());
         query.setParameter("codigoICD", produto.getCodigoProduto());
@@ -128,7 +143,8 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         .append(" f.edicoesAtendidas as edicoesAtendidas, ")
         .append(" f.edicaoInicial as edicaoInicial, ")
         .append(" f.edicaoFinal as edicaoFinal, ")
-        .append(" f.dataHora as dataHora , ")
+        .append(" f.dataHora as data, ")
+        .append(" TIME(f.dataHora) as hora , ")
         .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas, ")
         .append(" f.cotaFixada.numeroCota as cotaFixada, ")
         .append(" f.cotaFixada.id as cotaFixadaId, ")
@@ -161,7 +177,26 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
         }
         
         sql.append(" GROUP BY f.id ");
-        sql.append(" order by nomeProduto asc ");
+        
+        if((cota.getPaginacao()!=null) && (cota.getPaginacao().getSortColumn()!=null)){
+        	
+        	if(cota.getPaginacao().getSortColumn().equalsIgnoreCase("CODIGOPRODUTO")){
+				sql.append(" ORDER BY CAST(f.codigoICD as int) ");
+        	}else{
+	        	if((cota.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO"))){
+	        		sql.append(" ORDER BY nomeProduto ");
+	        	}else{
+	        		sql.append(" ORDER BY ");
+	        		sql.append(" "+cota.getPaginacao().getSortColumn());
+	        	}
+        	}
+        	
+        	sql.append(" "+cota.getPaginacao().getSortOrder());
+        	
+        }else{
+        	sql.append(" ORDER BY nomeProduto ");
+        }
+        
         
         final Query query = getSession().createQuery(sql.toString());
         

@@ -13,6 +13,8 @@ public class TipoDescontoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	private Long descontoId;
+	
 	@Export(label="", exhibitionOrder = 1, alignment=Alignment.CENTER)
 	private Long sequencial;
 	
@@ -31,6 +33,14 @@ public class TipoDescontoDTO implements Serializable {
 	private String descTipoDesconto;
 	
 	private Long idTipoDesconto;
+
+	public Long getDescontoId() {
+		return descontoId;
+	}
+
+	public void setDescontoId(Long descontoId) {
+		this.descontoId = descontoId;
+	}
 
 	/**
 	 * @return the sequencial

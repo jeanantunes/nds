@@ -28,16 +28,22 @@ public class MinimoMaximo extends ProcessoAbstrato {
 
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getIntervaloMinimo() != null) && (cota.getIntervaloMaximo() != null)) {
-		if (cota.getIntervaloMinimo().compareTo(cota.getIntervaloMaximo()) > 0) {
-		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId())));
-		}
-		if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
-		    cota.setReparteCalculado(cota.getIntervaloMinimo(), estudo);
-		    preencheClassificacao(cota);
-		} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
-		    cota.setReparteCalculado(cota.getIntervaloMaximo(), estudo);
-		    preencheClassificacao(cota);
-		}
+			
+	    	if (cota.getIntervaloMinimo().compareTo(cota.getIntervaloMaximo()) > 0) {
+			    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId())));
+			}
+			
+	    	if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+			    if(!cota.getClassificacao().equals(ClassificacaoCota.CotaMixSemMinMax)){
+			    	cota.setReparteCalculado(cota.getIntervaloMinimo(), estudo);
+			    }
+			    preencheClassificacao(cota);
+			} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+				if(!cota.getClassificacao().equals(ClassificacaoCota.CotaMixSemMinMax)){
+			    	cota.setReparteCalculado(cota.getIntervaloMaximo(), estudo);
+			    }
+			    preencheClassificacao(cota);
+			}
 	    }
 	}
     }

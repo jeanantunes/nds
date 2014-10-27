@@ -326,22 +326,18 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	public void setCotasSemRoteirizacao(List<String> cotasSemRoteirizacao) {
 		this.cotasSemRoteirizacao = cotasSemRoteirizacao;
 	}
-
     
     public String getDescRoteiro() {
         return descRoteiro;
     }
-
     
     public void setDescRoteiro(String descRoteiro) {
         this.descRoteiro = descRoteiro;
     }
-
     
     public Long getIdEntregador() {
         return idEntregador;
     }
-
     
     public void setIdEntregador(Long idEntregador) {
         this.idEntregador = idEntregador;
@@ -351,7 +347,6 @@ public class ProdutoAbastecimentoDTO implements Serializable{
     public String getNomeEntregador() {
         return nomeEntregador;
     }
-
     
     public void setNomeEntregador(String nomeEntregador) {
         this.nomeEntregador = nomeEntregador;
@@ -366,4 +361,35 @@ public class ProdutoAbastecimentoDTO implements Serializable{
     public void setDescRota(String descRota) {
         this.descRota = descRota;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codigoCota == null) ? 0 : codigoCota.hashCode());
+		result = prime * result + ((idProdutoEdicao == null) ? 0 : idProdutoEdicao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoAbastecimentoDTO other = (ProdutoAbastecimentoDTO) obj;
+		if (codigoCota == null) {
+			if (other.codigoCota != null)
+				return false;
+		} else if (!codigoCota.equals(other.codigoCota))
+			return false;
+		if (idProdutoEdicao == null) {
+			if (other.idProdutoEdicao != null)
+				return false;
+		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
+			return false;
+		return true;
+	}
 }
