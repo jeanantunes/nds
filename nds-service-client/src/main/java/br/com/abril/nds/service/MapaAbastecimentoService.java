@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
@@ -185,4 +186,9 @@ public interface MapaAbastecimentoService {
 
 	Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> obterMapaDeImpressaoPorBoxQuebraPorCota(
 	        FiltroMapaAbastecimentoDTO filtro);
+	
+	List<ProdutoAbastecimentoDTO> obterDadosAbastecimentoBoxVersusCota(FiltroMapaAbastecimentoDTO filtro);
+	
+	public AbastecimentoBoxCotaDTO obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);
+	
 }

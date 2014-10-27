@@ -54,6 +54,8 @@ public class MixProdutoDTO implements Serializable {
 	private String codigoProduto;
 	private String codigoICD;
 	
+	private BigInteger somaPdv;
+	
 	private String classificacaoProduto;
 	private BigInteger classificacaoProdutoID;
 	private PaginacaoVO paginacaoVO;
@@ -229,8 +231,14 @@ public class MixProdutoDTO implements Serializable {
 	public void setClassificacaoProdutoID(BigInteger classificacaoProdutoID) {
 		this.classificacaoProdutoID = classificacaoProdutoID;
 	}
+
+	public BigInteger getSomaPdv() {
+		return somaPdv;
+	}
 	
-	
+	public void setSomaPdv(Number somaPdv) {
+		this.somaPdv = somaPdv != null ? BigInteger.valueOf(somaPdv.intValue()) : null;
+	}
 
 }
 

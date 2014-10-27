@@ -35,6 +35,7 @@ import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -77,7 +78,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
     @Path("/")
 	public void index(){
 		// POPULANDO FILTROS
-		List<TipoSegmentoProduto> listaTipoSegmentoProduto = tipoSegmentoProdutoService.obterTipoSegmentoProduto();
+		List<TipoSegmentoProduto> listaTipoSegmentoProduto = tipoSegmentoProdutoService.obterTipoSegmentoProdutoOrdenados(Ordenacao.ASC);
 		this.carregarComboSegmento(listaTipoSegmentoProduto, "listaTipoSegmentoProduto");
 		
 		session.removeAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO);

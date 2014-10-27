@@ -1750,7 +1750,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setTipoMovimentoId(tipoMovimentoEstoque.getId());
         movimentoEstoqueCota.setIdCota(idCota);
         
-        movimentoEstoqueCota.setData(dataMovimento==null? dataOperacao : dataMovimento);
+        movimentoEstoqueCota.setData(dataMovimento==null ? dataOperacao : dataMovimento);
         
         movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
         
@@ -1788,7 +1788,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                  */
                 DescontoDTO descontoDTO = null;
                 try {
-                    descontoDTO = descontoService.obterDescontoPor(descontos, idCota, produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+                    descontoDTO = descontoService.obterDescontoPor(descontos, idCota
+                    		, produtoEdicao.getProduto().getFornecedor().getId()
+                    		, produtoEdicao.getProduto().getEditor().getId()
+                    		, produtoEdicao.getProduto().getId()
+                    		, produtoEdicao.getId());
+                    
                     if(descontoDTO == null) {
                     	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
                     	throw new Exception();

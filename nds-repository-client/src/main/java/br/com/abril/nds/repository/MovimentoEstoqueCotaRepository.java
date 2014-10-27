@@ -314,8 +314,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param filtro
 	 * @return
 	 */
-	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
-			FiltroMapaAbastecimentoDTO filtro);
+	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 
 	/**
 	 * Obtem quantidade de registros retornados pelo filtro de "obterMapaDeImpressaoPorProdutoQuebrandoPorCota"
@@ -522,4 +521,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
     void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto);
     
     BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe);
+    
+	List<ProdutoAbastecimentoDTO> obterDadosAbastecimentoBoxVersusCota(FiltroMapaAbastecimentoDTO filtro);
+	
+	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 }

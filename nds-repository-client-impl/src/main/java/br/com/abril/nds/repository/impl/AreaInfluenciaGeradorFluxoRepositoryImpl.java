@@ -42,12 +42,23 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		// Group by na query
 		setGroupBy(hql);
 		
+		if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+	      	
+			if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("faturamentoFormatado")){
+	  			filtro.getPaginacao().setSortColumn("faturamento");
+	  		}
+			
+			hql.append(" ORDER BY ");
+			hql.append(" " + filtro.getPaginacao().getSortColumn());
+	    	hql.append(" " + filtro.getPaginacao().getSortOrder());
+	    }else{
+	    	hql.append(" ORDER BY cota.numeroCota asc");
+	    }
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
 		// Adicionando os valores dos parametros na query
 		super.setParameters(query,parameters);
-		
-		hql.append("ORDER BY cota.numeroCota asc");
 		
 		/* Transforma o resultado da query a partir dos alias
 		 * onde cada alias é igual ao nome do atributo no DTO 
@@ -90,7 +101,18 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		// Group by
 		setGroupBy(hql);
 		
-		hql.append("ORDER BY cota.numeroCota asc");
+		if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+	      	
+			if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("faturamentoFormatado")){
+	  			filtro.getPaginacao().setSortColumn("faturamento");
+	  		}
+			
+			hql.append(" ORDER BY ");
+			hql.append(" " + filtro.getPaginacao().getSortColumn());
+	    	hql.append(" " + filtro.getPaginacao().getSortOrder());
+	    }else{
+	    	hql.append(" ORDER BY cota.numeroCota asc");
+	    }
 		
 		Query query =  getSession().createQuery(hql.toString());
 		

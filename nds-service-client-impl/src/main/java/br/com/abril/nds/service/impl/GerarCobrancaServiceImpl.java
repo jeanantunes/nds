@@ -1241,7 +1241,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 	    // insere postergado pois não encontrou forma de cobrança ou parametros
         // do método exigem postergação
-		if (formaCobrancaPrincipal == null || postergarDividas==true){
+		if (formaCobrancaPrincipal == null || postergarDividas==true 
+				|| (formaCobrancaPrincipal != null && TipoCobranca.BOLETO_EM_BRANCO.equals(formaCobrancaPrincipal.getTipoCobranca()))) {
 			
 			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
 					                                               qtdDiasNovaCobranca, 

@@ -5,6 +5,7 @@ public class FiltroConsultaHistoricoDescontoDTO {
 	private Long idDesconto; 
 	private Long idCota; 
 	private Long idFornecedor;
+	private Long idEditor;
 	private Long idProduto;
 	private Long idProdutoEdicao;
 	
@@ -25,6 +26,12 @@ public class FiltroConsultaHistoricoDescontoDTO {
 	}
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
+	}
+	public Long getIdEditor() {
+		return idEditor;
+	}
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
 	}
 	public Long getIdProduto() {
 		return idProduto;

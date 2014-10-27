@@ -364,35 +364,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         
     	List<PdvDTO> lista = analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
     	
-//    	EstudoCotaGerado estCotaGerado = estudoService.obterEstudoCotaGerado(numeroCota, idEstudo);
-//    	
-//    	if(estCotaGerado.getClassificacao().equalsIgnoreCase("FX")){
-//
-////    		FixacaoReparte fixacaoReparte = fixacaoReparteService.buscarPorProdutoCotaClassificacao(estCotaGerado.getCota(), estCotaGerado.getEstudo().getProdutoEdicao().getProduto().getCodigoICD(), estCotaGerado.getEstudo().getProdutoEdicao().getTipoClassificacaoProduto());
-//    		
-////    		for (FixacaoRepartePdv fixPdv : fixacaoReparte.getRepartesPDV()) {
-//			
-//    		for (PdvDTO pdv : lista) {
-//				pdv.setRepartePDV(fixPdv.getRepartePdv());
-//			}
-//
-////			}
-//    		
-//    	}else{
-//    		if(estCotaGerado.getClassificacao().equalsIgnoreCase("MX")){
-//
-//    			MixCotaProduto mixCotaProduto = mixCotaService.obterMixPorCotaProduto(estCotaGerado.getCota().getId(), estCotaGerado.getEstudo().getProdutoEdicao().getTipoClassificacaoProduto().getId(), estCotaGerado.getEstudo().getProdutoEdicao().getProduto().getCodigoICD());	
-//				
-//    			for (RepartePDV mixPdv : mixCotaProduto.getRepartesPDV()) {
-//    				for (PdvDTO pdv : lista) {
-//    					if(pdv.getId().equals(mixPdv.getPdv().getId())){
-//    						pdv.setRepartePDV(mixPdv.getReparte());
-//    					}
-//    				}
-//    			}
-//    		}
-//    	}
-    	
     	return lista;
     }
 
@@ -548,7 +519,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
         } else if (wrapper.isMix()) {
         	
-        	boolean isPDVUnico = this.pdvService.obterQtdPdvPorCota(wrapper.getNumeroCota()) == 1;
+        	boolean isPDVUnico = mixCotaProdutoRepository.verificarMixDefinidoPorPDV(wrapper.getId());
 
         	this.mixCotaProdutoRepository.atualizarReparte(
     			isPDVUnico,

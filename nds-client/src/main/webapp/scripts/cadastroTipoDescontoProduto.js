@@ -52,6 +52,16 @@ var descontoProdutoController = $.extend(true,{
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
 					   
+					   $("#pCodigoProduto", this.workspace).val('');
+					   $("#pNomeProduto", this.workspace).val('');
+					   $("#descontoProduto", this.workspace).val('');
+					   $("#edicaoProduto", this.workspace).val('');
+					   $("#quantidadeEdicoes", this.workspace).val('');
+					   
+					   $("#mostrarEdicao", this.workspace).prop('checked', false);
+					   $("#radioCotasEspecificas", this.workspace).prop('checked', false);
+					   $("#radioTodasCotas", this.workspace).prop('checked', false);
+					   
 					   tipoDescontoController.pesquisarDescontoProduto();
 	               },
 				   null,

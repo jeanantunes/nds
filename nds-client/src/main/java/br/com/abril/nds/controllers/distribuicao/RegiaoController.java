@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -188,9 +190,22 @@ public class RegiaoController extends BaseController {
 		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
 		
 		setFaturamentoCota(listaCotasRegiaoDTO);
-
-//		removeRegiosInconsistentes(listaCotasRegiaoDTO, filtro);
 		
+		if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("FATURAMENTO")){
+			
+			Collections.sort(listaCotasRegiaoDTO, new Comparator<RegiaoCotaDTO>() {
+				@Override
+				public int compare(RegiaoCotaDTO o1, RegiaoCotaDTO o2) {
+					return o1.getFaturamentoParaOrdenacao().compareTo(o2.getFaturamentoParaOrdenacao());
+				}
+			});
+			
+			if(filtro.getPaginacao().getSortOrder().equalsIgnoreCase("DESC")){
+				Collections.reverse(listaCotasRegiaoDTO);
+			}
+			
+		}
+
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoCotaDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasRegiaoDTO));
@@ -229,26 +244,6 @@ public class RegiaoController extends BaseController {
 		
 	}
 	
-//	private void removeRegiosInconsistentes(List<RegiaoCotaDTO> listaCotasRegiaoDTO, FiltroCotasRegiaoDTO filtro) {
-//		
-//		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(filtro.getId());
-//		
-//		List<RegiaoCotaDTO> listaCotasRegiaoDTOToRemove = new ArrayList<RegiaoCotaDTO>();
-//		
-//		for (Integer cota:cotasCadas) {
-//			
-//			for (RegiaoCotaDTO regiaoCotaDTO:listaCotasRegiaoDTO) {
-//				
-//                if (regiaoCotaDTO.getCotaId() != null && regiaoCotaDTO.getCotaId() == cota.longValue()) {
-//					
-//					listaCotasRegiaoDTOToRemove.add(regiaoCotaDTO);
-//				}
-//			}
-//		}
-//		
-//		listaCotasRegiaoDTO.removeAll(listaCotasRegiaoDTOToRemove);
-//	}
-
 	@Post
 	@Path("/carregarRegiao")
 	public void carregarRegiao (String sortorder, String sortname, int page, int rp){

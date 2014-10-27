@@ -1776,5 +1776,4 @@ public class CotaController extends BaseController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	
 }

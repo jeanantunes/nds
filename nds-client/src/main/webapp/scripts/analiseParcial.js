@@ -446,9 +446,16 @@ var analiseParcialController = $.extend(true, {
         
         if (reparteAtual != reparteDigitado) {
             var legendaText = legenda_element.text();
+            
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
             	
             	var codProd = $("#codigoProduto", analiseParcialController.workspace).text() || $("#codigoProduto", analiseParcialController.workspace).val();
+            	var usedMix = $('#usedMinMaxMix', analiseParcialController.workspace).val();
+            	
+            	if((legendaText.indexOf('MX') > -1) && (usedMix == "false")){
+            		analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element, idRowGrid);
+            		return;
+            	}
             	
             	$.postJSON(
             		analiseParcialController.path + '/distribuicao/analise/parcial/verificarMaxMinCotaMix',
@@ -476,11 +483,11 @@ var analiseParcialController = $.extend(true, {
         	    									input_reparte_element, numeroCota, reparteSubtraido, 
         	    									reparteDigitado, reparteAtual, saldoReparte, legenda_element);
         	    							
-        		    	                } //else{
-        		    	                	//analiseParcialController.atualizarReparteCota(
-        		    	                			//input_reparte_element, numeroCota, reparteSubtraido, 
-        		    	                			//reparteDigitado, reparteAtual, saldoReparte, legenda_element);
-        		    	                //}
+        		    	                }else{
+        		    	                	analiseParcialController.atualizarReparteCota(
+        		    	                			input_reparte_element, numeroCota, reparteSubtraido, 
+        		    	                			reparteDigitado, reparteAtual, saldoReparte, legenda_element);
+        		    	                }
         		    				},
         		    				usuarioNaoSupervisorCallback: function(){
         		    					analiseParcialController.resetReparteSugerido(input, numeroCota);
@@ -507,6 +514,12 @@ var analiseParcialController = $.extend(true, {
 
     	var mixID 	  = legenda_element.find("span").html() === 'MX' ? legenda_element.find("span").attr("mixID") : '';
     	var fixacaoID = legenda_element.find("span").html() === 'FX' ? legenda_element.find("span").attr("fixacaoID") : '';
+    	
+    	var usedMix = $('#usedMinMaxMix', analiseParcialController.workspace).val();
+    	
+    	if(usedMix == "false"){
+    		legendaCota = "";
+    	}
     	
     	$.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
             data: {
@@ -661,7 +674,10 @@ var analiseParcialController = $.extend(true, {
                     }
                     
                     if(cell['venda'+ (j + 1)] === 0 || cell['venda'+ (j + 1)] === "0"){
-                    	cell['venda'+ (j + 1)] = "";
+                    	
+                    	if(cell['reparte'+ (j + 1)] === 0 ||  cell['reparte'+ (j + 1)] == ""){
+                    		cell['venda'+ (j + 1)] = "";
+                    	}
                     }
                 }
             }
