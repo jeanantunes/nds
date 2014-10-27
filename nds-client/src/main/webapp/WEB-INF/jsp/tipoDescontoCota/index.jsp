@@ -5,6 +5,8 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/pesquisaEditor.js"></script>	
+<script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script language="javascript" type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/jquery.multiselects-0.3.js"></script>
@@ -19,19 +21,22 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoCota.js"></script>
 <script type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoEditor.js"></script>	
+<script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/cadastroTipoDescontoProduto.js"></script>
 
 <script language="javascript" type="text/javascript">
-	var pesquisaCotaTipoDescontoCota = new PesquisaCota(
-			tipoDescontoController.workspace);
+	var pesquisaCotaTipoDescontoCota = new PesquisaCota(tipoDescontoController.workspace);
+	
+	var pesquisaEditorTipoDescontoCota = new PesquisaEditor(tipoDescontoController.workspace);
 
-	var pesquisaProdutoTipoDescontoCota = new PesquisaProduto(
-			tipoDescontoController.workspace);
+	var pesquisaProdutoTipoDescontoCota = new PesquisaProduto(tipoDescontoController.workspace);
 
 	$(function() {
 		tipoDescontoController.init();
 		descontoDistribuidorController.init();
 		descontoCotaController.init();
+		descontoEditorController.init(pesquisaCotaTipoDescontoCota);
 		descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
 		bloquearItensEdicao(tipoDescontoController.workspace);
 	});
@@ -58,6 +63,12 @@
 		id="dialog-especifico_form">
 		<jsp:include page="novoDescontoEspecifico.jsp" />
 	</form>
+	
+	<!-- Modal de inclusão de novo desconto Especifico  -->
+	<form action="/administracao/cadastroTipoNota"
+		id="dialog-editor_form">
+		<jsp:include page="novoDescontoEditor.jsp" />
+	</form>
 
 	<!-- Modal de inclusão de novo desconto Produto  -->
 	<jsp:include page="novoDescontoProduto.jsp" />
@@ -73,15 +84,43 @@
 			</fieldset>
 		</div>
 	</form>
+	
+	<form action="" id="dialog-cotas-editor_form">
+		<div id="dialog-cotas-editor" title="Cotas" style="display: none;">
+			<fieldset style="width: 350px !important;">
+				<legend>Cotas</legend>
+				<table class="lstCotasEditorGrid"></table>
+			</fieldset>
+		</div>
+	</form>
 
 	<form action="/administracao/naturezaOperacao"
 		id="dialog_consulta_tipo_desconto_form">
 		<div class="areaBts">
 			<div class="area">
+				<div id="panelBtsGERAL" style="display: none;">
+					<span class="bt_novos"> <a isEdicao="true"
+						href="javascript:;"
+						onclick="descontoDistribuidorController.popup_geral();"
+						rel="tipsy" title="Incluir Novo"> <img
+							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
+							hspace="5" border="0" />
+					</a>
+					</span>
+				</div>
 				<div id="panelBtsESPECIFICO" style="display: none;">
 					<span class="bt_novos"> <a isEdicao="true"
 						href="javascript:;"
 						onclick="descontoCotaController.popup_especifico();"
+						rel="tipsy" title="Incluir Novo"> <img
+							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
+							hspace="5" border="0" />
+					</a>
+				</div>
+				<div id="panelBtsEDITOR" style="display: none;">
+					<span class="bt_novos"> <a isEdicao="true"
+						href="javascript:;"
+						onclick="descontoEditorController.popup_editor();"
 						rel="tipsy" title="Incluir Novo"> <img
 							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 							hspace="5" border="0" />
@@ -97,18 +136,6 @@
 					</a>
 					</span>
 				</div>
-				<div id="panelBtsGERAL" style="display: none;">
-					<span class="bt_novos"> <a isEdicao="true"
-						href="javascript:;"
-						onclick="descontoDistribuidorController.popup_geral();"
-						rel="tipsy" title="Incluir Novo"> <img
-							src="${pageContext.request.contextPath}/images/ico_salvar.gif"
-							hspace="5" border="0" />
-					</a>
-					</span>
-				</div>
-				
-				
 				
 				<div id="idExportacaoESPECIFICO" style="display: none;">
 					</span> <span class="bt_arq"> <a
@@ -173,6 +200,10 @@
 						onclick="tipoDescontoController.mostra_geral();" /></td>
 					<td width="47">Geral</td>
 					<td width="20"><input type="radio" name="radio"
+						id="radioEditor" value="radio"
+						onclick="tipoDescontoController.mostra_editor();" /></td>
+					<td width="65">Editor</td>
+					<td width="20"><input type="radio" name="radio"
 						id="radioEspecifico" value="radio"
 						onclick="tipoDescontoController.mostra_especifico();" /></td>
 					<td width="65">Específico</td>
@@ -194,7 +225,26 @@
 								type="text" class="nome_jornaleiro" maxlength="255"
 								style="width: 200px; float: left;"
 								onkeyup="pesquisaCotaTipoDescontoCota.autoCompletarPorNome('#descricaoCotaPesquisa');"
-								onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa',false,
+								onblur="pesquisaCotaTipoDescontoCota.pesquisarPorNomeCota('#numCotaPesquisa', '#descricaoCotaPesquisa', false,
+													      			null,
+													      			null);" />
+
+						</div>
+						
+						<div class="editor" style="display: none">
+
+							<label style="width: auto !important;">Editor:</label> <input
+								name="codigoEditorPesquisa" id="codigoEditorPesquisa" type="text"
+								maxlength="11" style="width: 70px; float: left;"
+								onchange="pesquisaEditorTipoDescontoCota.pesquisarPorCodigoEditor('#codigoEditorPesquisa', '#descricaoEditorPesquisa', false,
+			           	  											null, 
+			           	  											null);" />
+							<label style="width: auto !important;">Nome:</label> <input
+								name="descricaoEditorPesquisa" id="descricaoEditorPesquisa"
+								type="text" class="nome_jornaleiro" maxlength="255"
+								style="width: 200px; float: left;"
+								onkeyup="pesquisaEditorTipoDescontoCota.autoCompletarPorNome('#descricaoEditorPesquisa');"
+								onblur="pesquisaEditorTipoDescontoCota.pesquisarPorNomeEditor('#codigoEditorPesquisa', '#descricaoEditorPesquisa', false,
 													      			null,
 													      			null);" />
 
@@ -238,6 +288,12 @@
 				<legend>Tipos de Desconto Específico</legend>
 				<div id="gridEspecifico">
 					<table class="tiposDescEspecificoGrid"></table>
+				</div>
+			</fieldset>
+			<fieldset class="fieldGrid" id="tpoEDITOR" style="display: none;">
+				<legend>Tipos de Desconto Editor</legend>
+				<div id="gridEditor">
+					<table class="tiposDescEditorGrid"></table>
 				</div>
 			</fieldset>
 			<fieldset class="fieldGrid" id="tpoPRODUTO" style="display: none;">

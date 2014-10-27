@@ -18,18 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.component.DescontoComponent;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
+import br.com.abril.nds.dto.DescontoEditorDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
+import br.com.abril.nds.dto.TipoDescontoEditorDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaHistoricoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -37,6 +41,7 @@ import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoEditor;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProdutoEdicao;
@@ -53,8 +58,10 @@ import br.com.abril.nds.repository.DescontoProdutoRepository;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.DescontoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoDescontoCotaProdutoRepository;
+import br.com.abril.nds.repository.HistoricoDescontoEditorRepository;
 import br.com.abril.nds.repository.HistoricoDescontoFornecedorRepository;
 import br.com.abril.nds.repository.HistoricoDescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.HistoricoDescontoProdutoRepository;
@@ -75,6 +82,9 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Autowired
 	private HistoricoDescontoFornecedorRepository historicoDescontoFornecedorRepository;
+	
+	@Autowired
+	private HistoricoDescontoEditorRepository historicoDescontoEditorRepository;
 	
 	@Autowired
 	private HistoricoDescontoCotaProdutoRepository historicoDescontoCotaProdutoRepository;
@@ -102,6 +112,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private EditorRepository editorRepository;
 
 	@Autowired
 	private DescontoComponent descontoComponent;
@@ -163,7 +176,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		for(TipoDescontoProdutoDTO tdp : historicoDesconto) {
 			
-			Desconto desconto = descontoRepository.buscarPorId(tdp.getIdTipoDesconto());
+			Desconto desconto = descontoRepository.buscarPorId(tdp.getDescontoId());
 			
 			Calendar c1 = Calendar.getInstance();
 			
@@ -227,6 +240,12 @@ public class DescontoServiceImpl implements DescontoService {
 		case PRODUTO:
 
 			this.excluirDescontoProduto(idDesconto);
+
+			break;
+			
+		case EDITOR:
+
+			this.excluirDescontoEditor(idDesconto);
 
 			break;
 
@@ -317,7 +336,7 @@ public class DescontoServiceImpl implements DescontoService {
              * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
              */
 			DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-					TipoDesconto.ESPECIFICO, null, fornecedor, cota, null, null);
+					TipoDesconto.ESPECIFICO, null, fornecedor, null, cota, null, null);
 			
 			if(dpe == null) {
 				
@@ -480,7 +499,7 @@ public class DescontoServiceImpl implements DescontoService {
 					Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
 					
 					DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-							TipoDesconto.PRODUTO, null, null, cota, produto.getId(), null);
+							TipoDesconto.PRODUTO, null, null, null, cota, produto.getId(), null);
 					if(dcpe != null) {
 						dcpe.setDesconto(desconto);
 						dcpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
@@ -549,7 +568,7 @@ public class DescontoServiceImpl implements DescontoService {
 					Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
 					
 					DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-							TipoDesconto.PRODUTO, null, null, cota, produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+							TipoDesconto.PRODUTO, null, null, null, cota, produtoEdicao.getProduto().getId(), produtoEdicao.getId());
 					if(dpe != null) {
 						dpe.setDesconto(desconto);
 						dpe.setDescontoPredominante(descontoDTO.isDescontoPredominante());
@@ -702,7 +721,15 @@ public class DescontoServiceImpl implements DescontoService {
 		return listaFornecedores;
 	}
 
+	@Override
+	public List<Cota> buscarCotasAssociadasAoDescontoEditor(Long idDesconto, TipoDesconto tipoDesconto) {
+		
+		List<Cota> listaCotas = new ArrayList<Cota>();
 
+		listaCotas = descontoRepository.buscarCotasQueUsamDescontoEditor(descontoRepository.buscarPorId(idDesconto));
+
+		return listaCotas;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -845,7 +872,7 @@ public class DescontoServiceImpl implements DescontoService {
 			
 	}
 
-	                                        /*
+	/*
      * Valida a entrada de dados para inclusão de desconto por produto.
      * @param desconto - dados do desconto de produto
      */
@@ -919,7 +946,7 @@ public class DescontoServiceImpl implements DescontoService {
 		return cotas;
 	}
 
-	                                        /*
+	/*
      * Excluir um desconto do distribuidor e atualiza os descontos dos produtos edição
      * @param idDesconto - identificador do desconto a ser removido
      */
@@ -946,6 +973,86 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 
 	}
+	
+	/*
+     * Excluir um desconto do editor 
+     * @param idDesconto - identificador do desconto a ser removido
+     */
+	private void excluirDescontoEditor(Long idDesconto){
+
+		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
+
+		validarExclusaoDesconto(desconto);
+		
+		List<Cota> cotas = descontoRepository.buscarCotasQueUsamDescontoEspecifico(desconto);
+		
+		Editor editor = null;
+		
+		if(cotas == null || cotas.isEmpty()) {
+			
+			DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(TipoDesconto.EDITOR, desconto, null, null, null, null, null);
+			
+			if(dcpe == null) {
+				
+				editor = descontoRepository.buscarEditorUsaDescontoEditor(desconto);
+
+				HistoricoDescontoEditor hde = historicoDescontoEditorRepository.buscarHistoricoDescontoEditorPor(desconto, editor);
+				
+				if(hde != null)
+					historicoDescontoEditorRepository.remover(hde);	
+				
+				HistoricoDescontoEditor ultimoValido  = historicoDescontoEditorRepository.buscarUltimoDescontoValido(editor);
+							
+				editor.setDesconto(ultimoValido==null ? null : ultimoValido.getDesconto());
+				editorRepository.merge(editor);			
+				
+			} else {
+				
+				editor = dcpe.getEditor();
+				
+				FiltroConsultaHistoricoDescontoDTO filtro = new FiltroConsultaHistoricoDescontoDTO();
+				filtro.setIdDesconto(desconto.getId());
+				filtro.setIdEditor(editor.getId());
+				
+				HistoricoDescontoCotaProdutoExcessao hdcpe = historicoDescontoCotaProdutoRepository.buscarUltimoDescontoValido(filtro);
+				
+				if(dcpe != null)
+					descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
+				
+				if(hdcpe != null)
+					historicoDescontoCotaProdutoRepository.remover(hdcpe);
+			}
+			
+		}
+		
+		for(Cota cota : cotas) {
+			
+			DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(TipoDesconto.EDITOR, desconto, null, null, cota, null, null);
+			
+			if(editor == null && dcpe != null) {
+				editor = dcpe.getEditor();
+			} if(editor != null && dcpe != null) {
+				editor = dcpe.getEditor();
+			}else {
+				continue;
+			}
+				
+			FiltroConsultaHistoricoDescontoDTO filtro = new FiltroConsultaHistoricoDescontoDTO();
+			filtro.setIdDesconto(desconto.getId());
+			filtro.setIdCota(cota.getId());
+			filtro.setIdEditor(editor.getId());
+			
+			HistoricoDescontoCotaProdutoExcessao hdcpe = historicoDescontoCotaProdutoRepository.buscarUltimoDescontoValido(filtro);
+			
+			if(dcpe != null)
+				descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
+			
+			if(hdcpe != null)
+				historicoDescontoCotaProdutoRepository.remover(hdcpe);
+			
+		}
+
+	}
 
 	/*
 	 * 
@@ -964,7 +1071,7 @@ public class DescontoServiceImpl implements DescontoService {
 		for(Cota cota : cotas) {
 			Set<Fornecedor> fornecedores = cota.getFornecedores();
 			for(Fornecedor fornecedor : fornecedores) {
-				DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(TipoDesconto.ESPECIFICO, desconto, fornecedor, cota, null, null);
+				DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(TipoDesconto.ESPECIFICO, desconto, fornecedor, null, cota, null, null);
 				
 				FiltroConsultaHistoricoDescontoDTO filtro = new FiltroConsultaHistoricoDescontoDTO();
 				filtro.setIdDesconto(desconto.getId());
@@ -979,9 +1086,7 @@ public class DescontoServiceImpl implements DescontoService {
 				if(hdcpe != null)
 					historicoDescontoCotaProdutoRepository.remover(hdcpe);
 			}
-			
 		}
-
 	}
 
 	private void cleanFiltroConsultaHistoricoDescontoDTO(FiltroConsultaHistoricoDescontoDTO filtroConsultaHistorico) {
@@ -1018,7 +1123,7 @@ public class DescontoServiceImpl implements DescontoService {
      * Excluir um desconto da cota e atualiza os descontos dos produtos edição.
      * @param idDesconto - identificador do desconto a ser removido
      */
-	private void excluirDescontoProduto(Long idDesconto){
+	private void excluirDescontoProduto(Long idDesconto) {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
@@ -1073,7 +1178,7 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				DescontoCotaProdutoExcessao dcpe = 
 					descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-							TipoDesconto.PRODUTO, desconto, null, null, null, idProdutoEdicao);
+							TipoDesconto.PRODUTO, desconto, null, null, null, null, idProdutoEdicao);
 				
 				if(dcpe!=null) {
 					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
@@ -1098,7 +1203,7 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				DescontoCotaProdutoExcessao dcpe = 
 						descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-								TipoDesconto.PRODUTO, desconto, null, null, idProduto, null);
+								TipoDesconto.PRODUTO, desconto, null, null, null, idProduto, null);
 				if(dcpe!=null) {
 					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
 				}
@@ -1153,7 +1258,7 @@ public class DescontoServiceImpl implements DescontoService {
             
             if (produtoEdicao != null) {
             	
-            produtoEdicaoSemDesconto += " / Edição: " + produtoEdicao.getNumeroEdicao();
+            	produtoEdicaoSemDesconto += " / Edição: " + produtoEdicao.getNumeroEdicao();
             }
         	
         	ValidacaoVO validacaoVO = 
@@ -1203,7 +1308,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		DescontoCotaProdutoExcessao desconto = 
 				this.descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-				TipoDesconto.ESPECIFICO, null, null, this.cotaRepository.obterPorNumeroDaCota(numeroCota) , null, null);
+				TipoDesconto.ESPECIFICO, null, null, null , this.cotaRepository.obterPorNumeroDaCota(numeroCota), null, null);
 		
 		if (desconto != null){
 			
@@ -1246,6 +1351,8 @@ public class DescontoServiceImpl implements DescontoService {
 			String key = new StringBuilder()
 				.append(desc.getCotaId() != null ? "c" : "")
 				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
+				.append(desc.getEditorId() != null ? "e" : "")
+				.append(desc.getEditorId() != null ? desc.getEditorId() : "")
 				.append(desc.getFornecedorId() != null ? "f" : "")
 				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
 				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
@@ -1270,7 +1377,7 @@ public class DescontoServiceImpl implements DescontoService {
 		return descontosMap;
 	}
 	
-	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long produtoId, Long produtoEdicaoId) throws Exception {
+	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, Long cotaId, Long fornecedorId, Long editorId, Long produtoId, Long produtoEdicaoId) throws Exception {
 		
 		/**
          * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
@@ -1402,6 +1509,34 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 		
 		/**
+		 * Desconto Especifico da Cota
+		 */
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)
+			.append("e")
+			.append(editorId);
+		
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		/**
+		 * Desconto Geral (Fornecedor)
+		 */
+		key = new StringBuilder()
+			.append("e")
+			.append(editorId);
+	
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		/**
 		 * Desconto Geral (Fornecedor)
 		 */
 		key = new StringBuilder()
@@ -1439,8 +1574,8 @@ public class DescontoServiceImpl implements DescontoService {
 	    return  obterDescontoPor(descontos, 
 	            c  == null ? null : c.getId(), 
 	            pe == null ? null : p.getFornecedor().getId(), 
-	            p  == null ? null : p.getId(), 
-	            pe == null ? null : pe.getId());
+	            null, 
+	            p  == null ? null : p.getId(), pe == null ? null : pe.getId());
 	}
 
 	@Override
@@ -1491,5 +1626,142 @@ public class DescontoServiceImpl implements DescontoService {
         
         return descontoDTO;
     }
+
+	@Override
+	@Transactional
+	public List<TipoDescontoEditorDTO> buscarTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
+		
+		List<TipoDescontoEditorDTO> historicoDesconto = descontoProdutoEdicaoExcessaoRepository.buscarTipoDescontoEditor(filtro);
+		
+		return historicoDesconto;
+		
+	}
+
+	@Override
+	@Transactional
+	public Integer buscarQuantidadeTipoDescontoEditor(FiltroTipoDescontoEditorDTO filtro) {
+		
+		return descontoProdutoEdicaoExcessaoRepository.buscarQuantidadeTipoDescontoEditor(filtro);
+		
+	}
+
+	@Override
+	@Transactional
+	public void incluirDescontoEditor(DescontoEditorDTO descontoDTO, List<Long> cotas, Usuario usuario) {
+		
+		validarDescontoEditor(descontoDTO);
+
+		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		/*
+		 * Cria um desconto a ser utilizado em um ou mais fornecedores
+		 */
+		Desconto desconto =  new Desconto();
+		desconto.setDataAlteracao(dataAtual);
+		desconto.setUsado(false);
+		desconto.setUsuario(usuario);
+		desconto.setValor(descontoDTO.getValorDesconto());
+		desconto.setTipoDesconto(TipoDesconto.EDITOR);
+		
+		descontoRepository.adicionar(desconto);
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+
+		Editor editor = editorRepository.obterPorCodigo(descontoDTO.getCodigoEditor());
+
+		if(descontoDTO.getHasCotaEspecifica() != null && descontoDTO.getHasCotaEspecifica()) {
+			
+			/*
+			 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+			 */
+			for(Integer numeroCota : descontoDTO.getCotas()) {
+				
+				Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
+				
+				DescontoCotaProdutoExcessao dcpe = 
+						descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaEditorExcessao(TipoDesconto.EDITOR, null, cota, editor);
+				
+				if(dcpe != null) {
+					
+					dcpe.setDesconto(desconto);
+				} else {
+					
+					dcpe = new DescontoCotaProdutoExcessao();
+					dcpe.setDistribuidor(distribuidor);
+					dcpe.setCota(cota);
+					dcpe.setEditor(editor);
+					dcpe.setUsuario(usuario);
+					dcpe.setDesconto(desconto);
+				}
+				
+				dcpe.setTipoDesconto(TipoDesconto.EDITOR);
+				descontoProdutoEdicaoExcessaoRepository.merge(dcpe);	
+				
+				HistoricoDescontoCotaProdutoExcessao hdcp = new HistoricoDescontoCotaProdutoExcessao();
+				hdcp.setDataAlteracao(new Date());
+				hdcp.setDesconto(desconto);
+				hdcp.setDistribuidor(distribuidor);
+				hdcp.setCota(cota);
+				hdcp.setEditor(editor);
+				hdcp.setUsuario(usuario);
+				hdcp.setValor(desconto.getValor());
+				
+				historicoDescontoCotaProdutoRepository.merge(hdcp);
+			}
+			
+		} else {
+			
+				
+			/*
+			 * Atualiza o historico do desconto para o editor
+			 */
+			HistoricoDescontoEditor historicoDesconto = new HistoricoDescontoEditor();
+			historicoDesconto.setDesconto(desconto);
+			historicoDesconto.setUsuario(usuario);
+			historicoDesconto.setDataAlteracao(new Date());
+			historicoDesconto.setEditor(editor);
+			historicoDesconto.setDistribuidor(distribuidor);
+			
+			historicoDescontoEditorRepository.adicionar(historicoDesconto);
+			
+			editor.setDesconto(desconto);
+			editorRepository.merge(editor);
+		}
+		
+	}
+	
+	/*
+     * Valida a entrada de dados para inclusão de desconto por produto.
+     * @param desconto - dados do desconto de produto
+     */
+	private void validarDescontoEditor(DescontoEditorDTO desconto) {
+
+		List<String> mensagens = new ArrayList<String>();
+
+		if (desconto.getCodigoEditor() == null || desconto.getCodigoEditor().equals("")) {
+			
+            mensagens.add("O campo Código deve ser preenchido!");
+		}
+
+		if (desconto.getValorDesconto() == null || desconto.getValorDesconto().intValue() <= 0) {
+
+			mensagens.add("O campo Desconto deve ser preenchido!");
+		}
+
+		if (!desconto.getHasCotaEspecifica() && !desconto.getIsTodasCotas()) {
+
+			mensagens.add("O campo de cotas deve ser preenchido!");
+		}
+
+		if (desconto.getHasCotaEspecifica() && desconto.getCotas() == null) {
+
+			mensagens.add("Ao menos uma cota deve ser selecionada!");
+		}
+
+		if (!mensagens.isEmpty()) {
+
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+	}
 
 }

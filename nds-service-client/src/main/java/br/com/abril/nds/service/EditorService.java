@@ -16,10 +16,15 @@ import br.com.abril.nds.model.cadastro.Editor;
 public interface EditorService {
 	
 	public Editor obterEditorPorId(Long idEditor);
+	
+	public Editor obterEditorPorCodigo(Long codigoEditor);
 
 	public List<Editor> obterEditoresDesc();
 
     public Editor obterEditorPorFornecedor(Long idFornecedor);
 
     public Long criarEditorFornecedor(Long codigoFornecedor);
+
+	public List<Editor> obterEditoresPorNomePessoa(String nomeEditor);
+	
 }

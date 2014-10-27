@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
@@ -25,7 +26,6 @@ import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -444,4 +444,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<ItemDTO<String, String>> obterCotasSemRoterizacao(List<Long> listaIdCotas);
 
 	HistoricoSituacaoCota obterSituacaoCota(Long idCota);
+	
+	public List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloDataLancamento);
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaResumoDTO;
@@ -447,4 +448,6 @@ public interface CotaService {
 	void validarTipoEntrega(Integer numeroCota, DescricaoTipoEntrega tipoEntrega);
 
 	Boolean validarNumeroCota(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota);
+
+	List<AbastecimentoBoxCotaDTO> obterCotasExpedicao(Intervalo<Date> intervaloData);
 }

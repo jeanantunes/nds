@@ -13,6 +13,8 @@ public class TipoDescontoCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = -792066273850207153L;
 	
+	private Long descontoId;
+	
 	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private Integer numeroCota;
 	
@@ -45,7 +47,15 @@ public class TipoDescontoCotaDTO implements Serializable {
         this.descTipoDesconto = descTipoDesconto;
     }
 
-    /**
+    public Long getDescontoId() {
+		return descontoId;
+	}
+
+	public void setDescontoId(Long descontoId) {
+		this.descontoId = descontoId;
+	}
+
+	/**
 	 * @return the numeroCota
 	 */
 	public Integer getNumeroCota() {

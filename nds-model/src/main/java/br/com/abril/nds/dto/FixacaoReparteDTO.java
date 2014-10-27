@@ -226,11 +226,11 @@ public class FixacaoReparteDTO implements Serializable {
 	}
 
 	//FIXME
-	public void setData(String data) {
+	public void setData(Date data) {
 		if (data == null) {
 			this.data = "";
 		} else {
-			this.data = DateUtil.formatarData(this.getDataHora(),"dd/MM/yyyy");			
+			this.data = DateUtil.formatarDataPTBR(data);			
 		}
 	}
 
@@ -240,8 +240,8 @@ public class FixacaoReparteDTO implements Serializable {
 	}
 
 	//FIXME
-	public void setHora(String hora) {
-		this.hora = DateUtil.formatarHoraMinuto(this.getDataHora());
+	public void setHora(Date hora) {
+		this.hora = DateUtil.formatarHoraMinuto(hora);
 	}
 
 	public Long getId() {
@@ -324,8 +324,6 @@ public class FixacaoReparteDTO implements Serializable {
 
 	public void setDataHora(Date dataHora) {
 		this.dataHora = dataHora;
-		this.setData(DateUtil.formatarData(dataHora, "dd/MM"));
-		this.setHora(DateUtil.formatarHoraMinuto(dataHora));
 	}
 
 	public Long getQtdPdv() {

@@ -261,8 +261,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell);
-			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
-			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+", "+ (data.rows[i].cell["somaPdv"] > 0) +")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+", "+ (data.rows[i].cell["somaPdv"] > 0) +")' />";
 				
 				
 			//arrumar formatacao campos bigdecimal para duas casas decimais
@@ -280,7 +280,7 @@ var mixCotaProdutoController = $.extend(true, {
 		return data;
 	},	
 	
-	updateReparteMinMax:function(input, tipoCampo, idMix, lastValue){
+	updateReparteMinMax:function(input, tipoCampo, idMix, lastValue, exibirDialogConfReparte){
 		
 			
 		var listaNovoReparte = new Array();
@@ -345,39 +345,52 @@ var mixCotaProdutoController = $.extend(true, {
 			 return;
 		 }
 		 
-		 $("#dialog-confirma-alteracao-reparte").dialog({
-				resizable: false,
-				height:'auto',
-				width:300,
-				modal: true,
-				buttons: {
-					"Confirmar": function() {
+		 if(exibirDialogConfReparte){
+			 $("#dialog-confirma-alteracao-reparte").dialog({
+					resizable: false,
+					height:'auto',
+					width:300,
+					modal: true,
+					buttons: {
+						"Confirmar": function() {
 
-						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+							$.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+								
+								if($("#radio").attr('checked') == 'checked'){
+									$(".mixCotasGrid").flexReload();
+								}
+								else{
+									$(".mixProdutosGrid").flexReload();
+								}
+								
+							}, function(){
+								input.value=lastValue;
+							});
 							
-							if($("#radio").attr('checked') == 'checked'){
-								$(".mixCotasGrid").flexReload();
-							}
-							else{
-								$(".mixProdutosGrid").flexReload();
-							}
-							
-						}, function(){
+							$(this).dialog("close");
+						},
+						"Cancelar": function() {
 							input.value=lastValue;
-						});
-						
-						$(this).dialog("close");
+							$(this).dialog("close");
+						}
 					},
-					"Cancelar": function() {
-						input.value=lastValue;
-						$(this).dialog("close");
-					}
-				},
 			});
+			 
+		 } else {
+
+			 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/updateReparteMixCotaProduto', listaNovoReparte  , function(){
+					
+				if($("#radio").attr('checked') == 'checked'){
+					$(".mixCotasGrid").flexReload();
+				}
+				else{
+					$(".mixProdutosGrid").flexReload();
+				}
+			
+			});
+		 }
 		 
 		 
-		
-		
 	},
 	//retorna acoes de edicao e exclusao de fixacao por cota
 	getActionsGridCota: function (cell){
@@ -490,8 +503,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridProduto(data.rows[i].cell);
-			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
-			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' id='updInputRepMin_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+", "+ (data.rows[i].cell["somaPdv"] > 0) +")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' id='updInputRepMax_"+data.rows[i].cell["id"]+"' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+", "+ (data.rows[i].cell["somaPdv"] > 0) +")' />";
 		}
 		
 		$('.mixProdutosGrid').show();

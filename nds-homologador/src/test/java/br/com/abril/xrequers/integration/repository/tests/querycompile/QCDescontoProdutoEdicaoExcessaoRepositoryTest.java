@@ -18,7 +18,7 @@ public class QCDescontoProdutoEdicaoExcessaoRepositoryTest extends AbstractRepos
 		
 		descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 				TipoDesconto.ESPECIFICO, 
-				null, null, null, 1L, 1L);
+				null, null, null, null, 1L, 1L);
 		
 		
 	}

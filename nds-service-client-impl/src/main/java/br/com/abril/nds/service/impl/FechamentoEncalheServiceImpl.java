@@ -318,10 +318,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         final List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository
                 .buscarMovimentoEstoqueCota(filtro, listaDeIdsProdutoEdicao);
         
-        carregarQtdLogicoNaListaEncalheFisicoLogico(filtro, 
-        		listaEncalhe,
-				listaMovimentoEstoqueCota,
-				listaDeIdsProdutoEdicao);
+        carregarQtdLogicoNaListaEncalheFisicoLogico(filtro, listaEncalhe, listaMovimentoEstoqueCota, listaDeIdsProdutoEdicao);
         
         carregarQtdFisicoNaListaEncalheFisicoLogico(filtro, fechado, listaEncalhe);
         
@@ -638,7 +635,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
-            if(!exemplaresVendaEncalhe.equals(BigInteger.ZERO)) {
+            if((exemplaresVendaEncalhe != null && exemplaresVendaEncalhe.equals(BigInteger.ZERO)) 
+            		&& (exemplaresDevolucaoJuramentado != null && exemplaresDevolucaoJuramentado.equals(BigInteger.ZERO))) {
             	qtd =  fechamento.getFisico();
             } else {
             	

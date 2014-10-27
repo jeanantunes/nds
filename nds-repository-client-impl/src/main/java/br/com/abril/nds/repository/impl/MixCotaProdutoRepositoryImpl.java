@@ -208,13 +208,22 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" (select count(pdv.id) from pdv where cota.id = pdv.cota_id) as qtdPdv, ") 
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
-		.append(" tipo_classificacao_produto.id as classificacaoProdutoID ")
+		.append(" tipo_classificacao_produto.id as classificacaoProdutoID, ")
+		
+		.append(" coalesce((select sum(repartepdv0_.REPARTE) as REPARTE604_") 
+		.append(" from REPARTE_PDV repartepdv0_  where repartepdv0_.PRODUTO_ID=produto.ID ") 
+		.append(" and repartepdv0_.MIX_COTA_PRODUTO_ID = mix_cota_produto.ID ")
+		.append(" group by repartepdv0_.MIX_COTA_PRODUTO_ID), 0) as somaPdv ")         
+		
+		// .append(" sum(reparte_pdv.reparte) as somaPdv ")
 //		.append(" round(coalesce(avg(epc.qtde_recebida),0), 0) as reparteMedio, ")
 //		.append(" round(coalesce(avg(epc.qtde_recebida - epc.qtde_devolvida),0), 0) as vendaMedia, ")
 //		.append(" coalesce((select round(lc.reparte,0) from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM mix_cota_produto ") 
 //		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
+		
+		.append(" LEFT JOIN reparte_pdv on reparte_pdv.MIX_COTA_PRODUTO_ID =  mix_cota_produto.ID_PRODUTO ")
 //		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
 //		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
 //		.append(" LEFT join estoque_produto_cota epc on epc.cota_id = cota.id ")
@@ -533,13 +542,15 @@ public class MixCotaProdutoRepositoryImpl extends
 				 .append(" set datahora = :data, ");
 		
 		if (isPDVUnico) {
-		
-			statement.append(" reparte_min = (case when :reparte < reparte_min then :reparte else reparte_min end), ")
-					 .append(" reparte_max = (case when :reparte > reparte_max then :reparte else reparte_max end), ");
-		} else {
 
 			statement.append(" reparte_min = :reparte, ")
-			 		 .append(" reparte_max = :reparte, ");
+					 .append(" reparte_max = :reparte, ");
+		
+		} else {
+			
+			statement.append(" reparte_min = (case when :reparte < reparte_min then :reparte else reparte_min end), ")
+					 .append(" reparte_max = (case when :reparte > reparte_max then :reparte else reparte_max end), ");
+
 		}
 
 		statement.append(" id_usuario = :idUsuario ")
@@ -554,4 +565,18 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		query.executeUpdate();
 	}
+	
+	@Override
+	public boolean verificarMixDefinidoPorPDV(Long idMix){
+	    
+	    final String Sql = " SELECT count(*) FROM reparte_pdv WHERE MIX_COTA_PRODUTO_ID = :id ";
+	    
+	    final Query query = this.getSession().createSQLQuery(Sql);
+	    query.setParameter("id", idMix);
+	    
+	    final int qtde = ((BigInteger) query.uniqueResult()).intValue();
+	    
+	    return qtde > 0 ? true : false;
+	}
+	
 }

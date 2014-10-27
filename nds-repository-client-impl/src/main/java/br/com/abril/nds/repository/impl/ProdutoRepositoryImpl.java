@@ -234,7 +234,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		if (editor != null && !editor.isEmpty()) {
 			
 			hql.append(auxHql);
-			hql.append(" lower( editorProd.pessoaJuridica.nomeFantasia ) like :nomeEditor ");
+			hql.append(" lower( editorProd.pessoaJuridica.razaoSocial ) like :nomeEditor ");
 			auxHql = " and ";
 		}
 		

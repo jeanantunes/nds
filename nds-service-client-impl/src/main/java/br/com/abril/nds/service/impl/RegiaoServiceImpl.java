@@ -26,6 +26,7 @@ import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class RegiaoServiceImpl implements RegiaoService  {
@@ -102,7 +103,7 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	@Override
 	@Transactional
 	public List<TipoSegmentoProduto> carregarSegmentos() {
-		return segmentoRepository.buscarTodos();
+		return segmentoRepository.obterTipoSegmentoProdutoOrdenados(Ordenacao.ASC);
 	}
 
 
