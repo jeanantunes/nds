@@ -1979,6 +1979,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" WHERE lancamento_.STATUS NOT IN (:statusNaoEmitiveis)"); 
         sql.append(" AND pdv_.ponto_principal = true "); 
         sql.append(" AND nei.ESTUDO_COTA_ID is null ");
+        sql.append(" AND mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+        
         
         if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
             sql.append("and ( f_.ID is null or f_.ID in (:idFornecedores) ) ");
@@ -2062,6 +2064,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	sql.append(" WHERE pdv_.ponto_principal = true ");
         sql.append(" AND nei.ESTUDO_COTA_ID is null");
         sql.append(" AND lancamento_.STATUS NOT IN (:statusNaoEmitiveis) ");
+        
         
     	if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
             sql.append(" and ( f_.ID is null  or f_.ID in (:idFornecedores) )  ");

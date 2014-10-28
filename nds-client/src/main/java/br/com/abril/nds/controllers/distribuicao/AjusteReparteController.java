@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class AjusteReparteController extends BaseController {
 	@Post
 	@Path("/novoAjuste")
     @Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE_ALTERACAO)
-	public void salvarAjuste (AjusteReparteDTO ajusteDTO){
+	public void salvarAjuste(AjusteReparteDTO ajusteDTO){
 		
 		AjusteReparte ajuste = DTOParaModel(ajusteDTO);
 		
@@ -127,7 +129,7 @@ public class AjusteReparteController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<AjusteReparteDTO>> montarCotasEmAjuste (AjusteReparteDTO dto) {
+	private TableModel<CellModelKeyValue<AjusteReparteDTO>> montarCotasEmAjuste(AjusteReparteDTO dto) {
 		
 		List<AjusteReparteDTO> cotasEmAjuste = ajusteService.buscarCotasEmAjuste(dto);
 		
@@ -332,8 +334,17 @@ public class AjusteReparteController extends BaseController {
 	}
 	
 	private void carregarComboSegmento() {
-		List<TipoSegmentoProduto> ListaSegmentos = ajusteService.buscarTodosSegmentos();
-		result.include("listaSegmentos", ListaSegmentos);
+		List<TipoSegmentoProduto> listaSegmentos = ajusteService.buscarTodosSegmentos();
+		Collections.sort(listaSegmentos, new Comparator<TipoSegmentoProduto>() {
+			@Override
+			public int compare(TipoSegmentoProduto o1, TipoSegmentoProduto o2) {
+				if(o1 == null && o2 != null) return 1;
+				if(o1 != null && o2 == null) return -1;
+				return o1.getDescricao().compareTo(o2.getDescricao());
+			}
+			
+		});
+		result.include("listaSegmentos", listaSegmentos);
 	}
 	
 	private void carregarComboMotivoStatusCota() {
@@ -353,7 +364,7 @@ public class AjusteReparteController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		List<AjusteReparteDTO> listaAjustes = ajusteService.buscarCotasEmAjuste (null);
+		List<AjusteReparteDTO> listaAjustes = ajusteService.buscarCotasEmAjuste(null);
 			
 			if(listaAjustes.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
