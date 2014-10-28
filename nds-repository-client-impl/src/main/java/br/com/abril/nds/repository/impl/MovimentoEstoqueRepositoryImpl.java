@@ -262,21 +262,22 @@ implements MovimentoEstoqueRepository {
 		sql.append("		join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		
 		sql.append(" where ");
-		sql.append("	movimentoEstoque.DATA=:dataMovimento ");
-		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
-		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEnvioAoJornaleiro)");
+		sql.append("	movimentoEstoque.DATA = :dataMovimento ");
+		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
+		sql.append("	and (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioJornaleiroJuramentado");
+		sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioAoJornaleiro");
 		sql.append("	and ");
 		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
 		sql.append("			select distinct produtoEdicao_.ID ");
 		sql.append("			from ");
 		sql.append("				EXPEDICAO expedicao ");
 		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID ");
-		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");
+		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");
 		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
-		sql.append("			where lancamento.STATUS<>:statusFuro");
-		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR=:dataMovimento");
-		sql.append("		        and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado");
-		sql.append("		) ");
+		sql.append("			where lancamento.STATUS <> :statusFuro");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento");
+		sql.append("		        and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado");
+		sql.append("		))) ");
 
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
@@ -285,6 +286,7 @@ implements MovimentoEstoqueRepository {
 		query.setParameter("statusFuro", StatusLancamento.FURO.name());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
 		query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		query.setParameter("grupoMovimentoEnvioJornaleiroJuramentado", GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name());
 		
 		query.addScalar("VALOR_EXPEDIDO",StandardBasicTypes.BIG_DECIMAL);
 		
