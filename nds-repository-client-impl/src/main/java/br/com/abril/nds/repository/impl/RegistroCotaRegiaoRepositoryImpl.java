@@ -54,6 +54,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" endereco.bairro as bairro, ");
 		hql.append(" endereco.cidade as cidade, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
+		hql.append(" TIME(registroCotaRegiao.dataAlteracao) as hora, ");
 		hql.append(" registroCotaRegiao.dataAlteracao as data ");
 
 		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao ");
@@ -70,7 +71,22 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" WHERE ");
 		hql.append(" registroCotaRegiao.regiao.id = :ID_REGIAO ");
 		hql.append(" group by cota.id ");
-		hql.append(" order by cota.numeroCota ");
+		
+		hql.append(" order by ");
+
+		if (filtro.getPaginacao() != null) {
+		
+        	if((filtro.getPaginacao().getSortColumn().equalsIgnoreCase("FATURAMENTO")) || (filtro.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO"))){
+        		hql.append(" cota.numeroCota ");
+        	}else{
+        		hql.append(filtro.getPaginacao().getSortColumn());
+        	}
+
+        	hql.append(" "+filtro.getPaginacao().getSortOrder());
+			
+		} else {
+			hql.append(" cota.numeroCota ");
+		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

@@ -338,31 +338,31 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						display : 'Código',
 						name : 'codigoProduto',
 						width : 60,
-						sortable : true,
+						sortable : false,
 						align : 'left'
 					},{
 						display : 'Produto',
 						name : 'nomeProduto',
 						width : 90,
-						sortable : true,
+						sortable : false,
 						align : 'left'
 					},{
 						display : 'Segmento',
 						name : 'nomeSegmento',
 						width : 115,
-						sortable : true,
+						sortable : false,
 						align : 'left'
 					},{
 						display : 'Fornecedor',
 						name : 'nomeFornecedor',
 						width : 60,
-						sortable : true,
+						sortable : false,
 						align : 'left'
 					},  {
 						display : 'Add',
 						name : 'sel',
 						width : 20,
-						sortable : true,
+						sortable : false,
 						align : 'center'
 					}],
 					height : 235
@@ -418,7 +418,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							display : 'Ação',
 							name : 'acao',
 							width : 30,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						},
 						{
@@ -458,7 +458,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							display : 'Hora',
 							name : 'horaAlteracaoFormatada',
 							width : 60,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}],
 						sortname : "codigoProduto",
@@ -551,13 +551,13 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							display : 'Hora',
 							name : 'horaAlteracaoFormatada',
 							width : 60,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						},  {
 							display : 'Ação',
 							name : 'acao',
 							width : 30,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}],
 						sortname : "nomePessoa",
@@ -666,25 +666,25 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							display : 'Cota',
 							name : 'numeroCota',
 							width : 50,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						},{
 							display : 'Status',
 							name : 'statusCota',
 							width : 60,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						}, {
 							display : 'Nome',
 							name : 'nomePessoa',
 							width : 130,
-							sortable : true,
+							sortable : false,
 							align : 'left'
 						},  {
 							display : 'Add',
 							name : 'sel',
 							width : 20,
-							sortable : true,
+							sortable : false,
 							align : 'center'
 						}],
 						height : 235

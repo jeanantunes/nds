@@ -580,14 +580,6 @@ public class RoteirizacaoController extends BaseController {
 		
 		filtro.setOrdenacaoColuna((Util.getEnumByStringValue(FiltroConsultaRoteirizacaoDTO.OrdenacaoColunaConsulta.values(), sortname)));
 		
-		FiltroConsultaRoteirizacaoDTO filtroSessao = (FiltroConsultaRoteirizacaoDTO) 
-				this.session.getAttribute(FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE);
-
-		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
-			
-			filtro.getPaginacao().setPaginaAtual(1);
-		}
-				
 		session.setAttribute(FILTRO_PESQUISA_ROTEIRIZACAO_SESSION_ATTRIBUTE, filtro);
 		
 		return filtro;

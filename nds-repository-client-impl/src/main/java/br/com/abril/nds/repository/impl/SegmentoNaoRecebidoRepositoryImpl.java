@@ -65,8 +65,19 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	    parameters.put("statusCota", SituacaoCadastro.ATIVO);
 	}
 
-	hql.append(" order by numeroCota");
-
+	if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+      	
+		if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+  			filtro.getPaginacao().setSortColumn("dataAlteracao");
+  		}
+		
+		hql.append(" ORDER BY ");
+		hql.append(" " + filtro.getPaginacao().getSortColumn());
+    	hql.append(" " + filtro.getPaginacao().getSortOrder());
+    }else{
+    	hql.append(" order by numeroCota");
+    }
+	
 	Query query = getSession().createQuery(hql.toString());
 
 	setParameters(query, parameters);
@@ -118,8 +129,19 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	    hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa )");
 	    parameters.put("nomePessoa", filtro.getNomeCota());
 	}
-
-	hql.append(" order by nomeSegmento, nomeUsuario");
+	
+	if((filtro.getPaginacao() != null) && (filtro.getPaginacao().getSortColumn() != null)){
+      	
+		if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+  			filtro.getPaginacao().setSortColumn("dataAlteracao");
+  		}
+		
+		hql.append(" ORDER BY ");
+		hql.append(" " + filtro.getPaginacao().getSortColumn());
+    	hql.append(" " + filtro.getPaginacao().getSortOrder());
+    }else{
+    	hql.append(" order by nomeSegmento, nomeUsuario");
+    }
 
 	Query query = getSession().createQuery(hql.toString());
 

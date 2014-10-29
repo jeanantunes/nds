@@ -315,9 +315,6 @@ public enum Permissao {
 	ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO("Tipo de Desconto Cota",								  	Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_TIPO_DESCONTO_COTA("Tipo de Desconto Cota",								  		   	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO, true, null),
 	
-	ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR_ALTERACAO("Tipo de Desconto Editor",							  	Permissao.ROLE_FINANCEIRO, true),
-	ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR("Tipo de Desconto Editor",							  		   	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_TIPO_DESCONTO_EDITOR_ALTERACAO, true, null),
-	
 	ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS_ALTERACAO("Relatório de Garantias",								Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS("Relatório de Garantias",									   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS_ALTERACAO, true, null),
 	

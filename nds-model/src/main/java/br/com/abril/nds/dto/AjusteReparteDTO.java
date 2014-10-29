@@ -89,6 +89,9 @@ public class AjusteReparteDTO implements Serializable {
 	public String getHora() {
 		return hora;
 	}
+	public void setHora(Date date){
+		this.hora = DateUtil.formatarHoraMinuto(date);
+	}
 	public Date getDataFimCadastro() {
 		return dataFimCadastro;
 	}

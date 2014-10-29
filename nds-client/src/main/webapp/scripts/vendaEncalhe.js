@@ -489,7 +489,7 @@ var VENDA_PRODUTO = {
 			row.cell.qntSolicitada = VENDA_PRODUTO.getInputQntdeSolicitada(index,row.cell);
 			row.cell.total = VENDA_PRODUTO.getInputTotal(index,row.cell) + inputHiddenTotal;
 			row.cell.tipoVendaEncalhe = VENDA_PRODUTO.getInputTipoVenda(index,row.cell) + inputHiddenTipoVenda;
-			row.cell.formaVenda = VENDA_PRODUTO.getInputFormaVenda(result.tipoVenda, index, row.cell.formaComercializacao, result.formaVenda) + inputHiddenTipoComercailizacao;
+			row.cell.formaVenda = VENDA_PRODUTO.getInputFormaVenda(result.tipoVenda, index, row.cell.formaComercializacao, row.cell.formaComercializacao == 'CONTA_FIRME') + inputHiddenTipoComercailizacao;
 		
 		});
 		
@@ -602,7 +602,7 @@ var VENDA_PRODUTO = {
 		return '<input type="text" id="tipoVenda'+index+'" name="tipoVenda" value="'+valor+'" disabled="disabled" />';
 	},
 	
-	getInputFormaVenda:function(tipoVenda, index, formaDefault, descFormaDefault,isProdutoContaFirme){
+	getInputFormaVenda: function(tipoVenda, index, formaDefault, descFormaDefault, isProdutoContaFirme) {
 		
 		if (tipoVenda == 'SUPLEMENTAR'){
 			
@@ -723,7 +723,7 @@ var VENDA_PRODUTO = {
 		$("#span_total_geral_venda", VENDA_PRODUTO.workspace).text($.formatNumber(valorTotal, {format:"#,##0.0000", locale:"br"}));
 	},
 	
-	obterDadosProduto:function(codigoProduto, edicaoProduto,index) {
+	obterDadosProduto: function(codigoProduto, edicaoProduto,index) {
 		
 		var data = [
 			{name:"codigoProduto",value:codigoProduto},
@@ -746,7 +746,7 @@ var VENDA_PRODUTO = {
 				
 				var parent = $("#formaVenda"+index, VENDA_PRODUTO.workspace).parent();
 				$("#formaVenda"+index, VENDA_PRODUTO.workspace).remove();
-				parent.append(VENDA_PRODUTO.getInputFormaVenda(resultado.tipoVenda, index, resultado.formaComercializacao, resultado.formaVenda,resultado.produtoContaFirme));
+				parent.append(VENDA_PRODUTO.getInputFormaVenda(resultado.tipoVenda, index, resultado.formaComercializacao, resultado.formaVenda, resultado.formaComercializacao == 'CONTA_FIRME'));
 				
 				$("#numEdicao"+index, VENDA_PRODUTO.workspace).attr("disabled",null);
 				$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("disabled",null);

@@ -2163,7 +2163,7 @@ var roteirizacao = $.extend(true, {
                 rp : 15,
                 showTableToggleBtn : true,
                 width : 960,
-                height : 'auto',
+                height : 300,
                 singleSelect : true
 
             });
@@ -2643,6 +2643,7 @@ var roteirizacao = $.extend(true, {
 			
 			focusSelectRefField($("#boxPesquisa"));
 			
+			/*
 			$(document.body).keydown(function(e) {
 				
 				if(keyEventEnterAux(e)){
@@ -2651,6 +2652,7 @@ var roteirizacao = $.extend(true, {
 				
 				return true;
 			});
+			*/
 		});
     },
     
