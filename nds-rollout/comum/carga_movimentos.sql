@@ -185,7 +185,7 @@ ORIGEM int,
 DESTINO int,
 QUANTIDADE int,
 PRECO_CAPA decimal(18,2),
-PERC_DESCTO decimal(18,2),
+PERC_DESCTO decimal(18,4),
 DOCTO_ORIGEM int,
 FLAG_ESTORNO varchar(1)) ENGINE=MEMORY;
 
@@ -278,6 +278,7 @@ CREATE TABLE CARGA_LANCAMENTO_MDC (
 -- id int(11) NOT NULL,	
 COD_AGENTE_LANP varchar(7),
 COD_PRODUTO_LANP varchar(14),
+-- COD_PRODIN2 varchar(12), -- FIXME Observar se Vem no arquivo essa coluna 
 COD_PRODIN varchar(8),
 NUM_EDICAO int(11),
 DATA_PREVISTA_LANCAMENTO_LANP varchar(10),
@@ -717,6 +718,20 @@ and mec.produto_edicao_id = p.produto_edicao_id
 and p.qtde_devolucao_encalhe > 0 
 ) group by 2,3,4,5);
 
+INSERT INTO movimento_estoque_memoria 
+(DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID)
+(select 
+e.data,
+66,
+sum(e.quantidade),
+e.produto_edicao_id,
+ep.id
+from estqmov e,estoque_produto_memoria ep
+where ep.produto_edicao_id = e.produto_edicao_id
+and e.tipo_movto = 12
+and e.produto_edicao_id not in(select produto_edicao_id from movimento_estoque_memoria where tipo_movimento_id = 66) 
+group by 1,2,4,5);
+
 update movimento_estoque_memoria set qtde = 0 where qtde is null;
 
 select 'MOVIMENTO_ESTOQUE: ',sysdate(); -- Log
@@ -759,8 +774,9 @@ and TIPO_MOVIMENTO_ID = 26;
 
 update movimento_estoque_memoria set data = 
 (select min(l.DATA_REC_DISTRIB) from lancamento l where l.produto_edicao_id = movimento_estoque_memoria.produto_edicao_id)
-where data = '0000-00-00'
+and data = '0000-00-00'
 and TIPO_MOVIMENTO_ID = 31;
+
 
 select 'ATUALIZACAO 2: ',sysdate(); -- Log 
 -- 
@@ -875,7 +891,7 @@ set epc.valor_Desconto = car.DESCONTO
 where car.NUMERO_COTA = c.NUMERO_COTA
   and epc.cota_id = c.id;
 
-update movimento_estoque_cota_memoria set valor_Desconto = 30 where valor_Desconto is null; -- 25 = Campinas,Santos / 30 = Rio
+update movimento_estoque_cota_memoria set valor_Desconto = 25 where valor_Desconto is null; -- 25 = Campinas,Santos / 30 = Rio
 update movimento_estoque_cota_memoria set preco_com_Desconto = preco_venda - (preco_venda * valor_desconto/100);
 
 select 'MOVIMENTO_ESTOQUE_COTA (PRECOS): ',sysdate(); -- Log
@@ -946,100 +962,6 @@ select 'MATERIALIZADO - CARGA_LANCAMENTO_MDC: ',count(*) from CARGA_LANCAMENTO_M
 
 select 'MATERIALIZACAO FIM: ',sysdate(); -- Log
 
-
---
--- ESTQMOV
---
-
-DROP TABLE IF EXISTS temp_mvto_estq_sem_12;
-
-create table temp_mvto_estq_sem_12 as (
-select a.data, c.id as estoque_produto_id, f.nome_box,a.produto_edicao_id,d.nome,d.codigo,e.numero_edicao,
-round(a.qtde) me,round(c.qtde_devolucao_encalhe) pe, round(sum(b.qtde)) mec
-from movimento_estoque   a, movimento_estoque_cota b, estoque_produto   c,produto     d, 
-produto_edicao   e, estqbox    f
-where (a.tipo_movimento_id = 31 or b.tipo_movimento_id = 26 )
-and a.produto_edicao_id = b.produto_edicao_id
-and a.produto_edicao_id = c.produto_edicao_id
-and c.produto_edicao_id = b.produto_edicao_id
-and a.produto_edicao_id = e.id
-and b.produto_edicao_id = e.id
-and c.produto_edicao_id = e.id
-and e.produto_id        = d.id
-and a.produto_edicao_id = f.produto_edicao_id
-and b.produto_edicao_id = f.produto_edicao_id
-and c.produto_edicao_id = f.produto_edicao_id
-and c.produto_edicao_id = e.id
--- and f.nome_box = 'ENCALHE'
-and a.qtde  <> c.qtde_devolucao_encalhe  -- somente para 31 X 26
-and   f.produto_edicao_id   not in (select produto_edicao_id from estqmov where tipo_movto = 12)
-group by 1,2,3,4
-limit 1000000);
-
--- inserir movimento em estoque tipo 18, atribuir o valor ao atributo qtde o resultado da subtração de pe - me
-INSERT INTO movimento_estoque
-(APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
-USUARIO_ID, QTDE, PRODUTO_EDICAO_ID, ESTOQUE_PRODUTO_ID, ITEM_REC_FISICO_ID, DATA_INTEGRACAO, STATUS_INTEGRACAO,
-COD_ORIGEM_MOTIVO, DAT_EMISSAO_DOC_ACERTO, NUM_DOC_ACERTO, ORIGEM)
-(select true,	date(sysdate()),	'CARGA',	'APROVADO',	m.data,	date(sysdate()),	null,	18,	1,	(m.pe - m.me),
-m.PRODUTO_EDICAO_ID,	m.estoque_produto_id, 	null, 	null,	null, 	null, 	null,	null,	'CARGA_INICIAL'
-from temp_mvto_estq_sem_12 m
-where pe > me);
-
--- inserir movimento em estoque tipo 15, atribuir o valor ao atributo qtde da tabela movimento_estoque o resultado 
--- da subtração de me - pe
-INSERT INTO movimento_estoque
-(APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
-USUARIO_ID, QTDE, PRODUTO_EDICAO_ID, ESTOQUE_PRODUTO_ID, ITEM_REC_FISICO_ID, DATA_INTEGRACAO, STATUS_INTEGRACAO,
-COD_ORIGEM_MOTIVO, DAT_EMISSAO_DOC_ACERTO, NUM_DOC_ACERTO, ORIGEM)
-(select true,	date(sysdate()),	'CARGA',	'APROVADO',	m.data,	date(sysdate()),	null,	15,	1,	(m.me - m.pe),
-m.PRODUTO_EDICAO_ID,	m.estoque_produto_id, 	null, 	null,	null, 	null, 	null,	null,	'CARGA_INICIAL'
-from temp_mvto_estq_sem_12 m
-where pe < me);
-
-
--- Excluir os movimentos tipo 66 da movimento_estoque dos 47 registros da temp.
-delete from movimento_estoque 
-where PRODUTO_EDICAO_ID in (select t.PRODUTO_EDICAO_ID from temp_mvto_estq_sem_12 t 
-where t.PRODUTO_EDICAO_ID = movimento_estoque.PRODUTO_EDICAO_ID)
-and tipo_movimento_id = 66;
-
-DROP TABLE IF EXISTS temp_mvto_estq_sem_12;
-DROP TABLE IF EXISTS temp_mvto_estq_qtde_igual;
-
-create table temp_mvto_estq_qtde_igual(
-select a.data, c.id as estoque_produto_id, f.nome_box,a.produto_edicao_id,d.nome,d.codigo,e.numero_edicao,
-round(a.qtde) me,round(c.qtde_devolucao_encalhe) pe, round(sum(b.qtde)) mec
-from movimento_estoque   a, 
-     movimento_estoque_cota b, 
-     estoque_produto   c,
-  produto     d, 
-  produto_edicao   e,
-  estqbox    f
-where a.tipo_movimento_id = 31 and b.tipo_movimento_id = 26
-and a.produto_edicao_id = b.produto_edicao_id
-and a.produto_edicao_id = c.produto_edicao_id
-and c.produto_edicao_id = b.produto_edicao_id
-and a.produto_edicao_id = e.id
-and b.produto_edicao_id = e.id
-and c.produto_edicao_id = e.id
-and e.produto_id        = d.id
-and a.produto_edicao_id = f.produto_edicao_id
-and b.produto_edicao_id = f.produto_edicao_id
-and c.produto_edicao_id = f.produto_edicao_id
-and c.produto_edicao_id = e.id
--- and f.nome_box = 'ENCALHE'
-and a.qtde  = c.qtde_devolucao_encalhe  -- somente para 31 X 26
-and   f.produto_edicao_id   not in (select produto_edicao_id from estqmov where tipo_movto = 12)
-group by 1,2,3,4
-limit 1000000);
-
-delete from movimento_estoque 
-where PRODUTO_EDICAO_ID in (select t.PRODUTO_EDICAO_ID from temp_mvto_estq_qtde_igual t 
-where t.PRODUTO_EDICAO_ID = movimento_estoque.PRODUTO_EDICAO_ID)
-and tipo_movimento_id = 66;
-
-select 'ESTQMOV: ',sysdate(); -- Log
 
 -- 
 -- CONFERENCIA_ENCALHE
@@ -1132,26 +1054,6 @@ update lancamento
 set status = 'FECHADO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
-truncate table HVND_AUX;
-
-insert into HVND_AUX
-select distinct l.produto_edicao_id
-from lancamento l
-where l.status = 'CONFIRMADO'
-and l.produto_edicao_id not in (select distinct produto_edicao_id from hvnd)
-and l.DATA_REC_PREVISTA <> '0000-00-00'
-and l.DATA_REC_PREVISTA < '2014-10-10'
-
-update lancamento
-set status = 'FECHADO'
-where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
-
-DROP TABLE HVND_AUX;
-
-update lancamento
-set status = 'FECHADO'
-where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
-
 update lancamento
 set DATA_REC_PREVISTA = (select adddate(DATA_LCTO_DISTRIBUIDOR, peb)
 from produto_edicao
@@ -1159,6 +1061,30 @@ where produto_edicao.id = lancamento.produto_edicao_id limit 1)
 WHERE   DATA_REC_DISTRIB = '0001-01-01'
 or    DATA_REC_PREVISTA = '0001-01-01'
 and status = 'CONFIRMADO';
+
+truncate table HVND_AUX;
+
+CREATE TABLE HVND_AUX2 (produto_edicao_id INT(6)) ENGINE=MEMORY;
+
+insert into HVND_AUX2
+select distinct produto_edicao_id from hvnd;
+
+truncate table HVND_AUX;
+
+insert into HVND_AUX
+select distinct l.produto_edicao_id
+from lancamento l
+where l.status = 'CONFIRMADO'
+and l.produto_edicao_id not in (select distinct produto_edicao_id from HVND_AUX2)
+and l.DATA_REC_PREVISTA <> '0000-00-00'
+and l.DATA_REC_PREVISTA < '2014-10-10';
+
+update lancamento
+set status = 'FECHADO'
+where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
+
+DROP TABLE HVND_AUX;
+DROP TABLE HVND_AUX2;
 
 update lancamento
 set DATA_REC_DISTRIB = DATA_REC_PREVISTA
@@ -1197,97 +1123,19 @@ INSERT INTO fechamento_diario_consolidado_suplementar
 (`ID`, `VALOR_ESTOQUE_LOGICO`, `VALOR_SALDO`, `VALOR_TRANSFERENCIA`, `VALOR_VENDAS`, `FECHAMENTO_DIARIO_ID`) VALUES 
 ('1', '0', '0', '0', '0', '1');
 
---
--- Cesar ***** FIXME SOMENTE PARA CAMPINAS, PRODUTOS SCALA
---
 
-update produto_fornecedor
-set fornecedores_id = 6
-where produto_id in (select id from produto
-where codigo in
-(224300,457935,460447,875100,569412,568477,100842,459496,453852,699600,
-699601,69727,450714,69734,800623,800626,800630,800633,444614,460034,
-461468,458833,465343,569641,460096,456778,451828,448476,451827,467705,
-452053,645900,645901,454738,451605,451606,458239,466494,450745,456402,
-419700,451803,200612,461277,446137,450455,600825,600818,49400,955300,
-300552,494004,465763,454880,459847,458543,444089,389009,450684,900271,
-300801,455900,569870,450929,600411,459069,452139,452091,700211,458970,
-453241,452169,452176,459380,300904,459748,81574,468016,200646,200640,
-200645,200651,734200,452312,455351,566992,460140,800803,432017,459731,
-441606,100305,344540,1000401,440654,459724,900207,69741,900934,49500,
-855400,459540,800118,457447,457478,452169,122146,800228,800224,460591,
-49800,900645,618001,49200,455559,901327,100249,800442,700749,800342,
-900856,461314,465374,75650,865800,980003,64700,456426,456427,52077,
-457874,466777,466432,458550,459533,455382,450943,458123,800150,200529,
-200548,700019,870501,21001,456358,462502,459861,460270,459862,462458,
-211008,80903,81575,52381,51094,900188,459595,456457,466395,800221,
-438460,451964,900498,458499,451582,461376,86900,900025,462236,457850,
-443136,667600,456440,443068,440951,461925,465770,458321,458321,455566,
-100104,700891,455603,459151,300818,840600,462724,462519,465237,569627,
-353089,467514,462366,466760,454545,901570,901600,466340,459960,456624,
-600501,568712,448629,453586,455207,458246,456549,465244,700501,60002,
-600001,456754,462335,620000,200023,53920,455870,449923,800944,350378,
-350378,351030,352495,350941,350583,458963,461581,462281,635452,784007,
-442955,459168,69827,500766,506500,506501,500759,500758,69733,449206,
-466555,454569,344951,637000,451797,634508,456464,917800,344954,454262,
-634558,460010,456761,456846,452916,69730,461888,451391,524700,700725,
-300143,344932,457744,448599,449312,450509,600822,958800,800748,51902,
-455917,454644,450530,454385,454682,79080,455221,69166,465145,460546,
-452590,52343,684700,418900,462243,453593,452022,900047,354123,459427,
-454118,69728,636009,901273,900835,900843,467927,900823,456860,467941,
-800837,457614,77876,461567,459465,459335,346074,460799,467330,467323,
-467194,467231,467279,467347,459403,467200,467224,467217,467354,467248,
-460713,467378,459434,461321,467170,460768,346074,460720,460782,7000359,
-7000367,462113,345014,200423,353010,467781,79281,700411,461680,461758,
-453920,454699,454255,458161,453210,453211,454491,460706,328340,340303,
-458796,400748,800501,466692,925100,460430,459670,456488,467927,69824,
-344922,150600,600347,344957,450226,700053,458758,452107,457379,457378,
-456433,700346,700349));
- 
-select 'Atualizar codigos fornecedor terceiro:'; -- Log
--- Atualizar codigos fornecedor terceiro
+update lancamento set status= 'FECHADO'
+where status in ('CONFIRMADO','PLANEJADO')
+and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 20 DAY)
+and DATA_REC_DISTRIB <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
 
-update produto
-set codigo = lpad(codigo,10,10)
-where codigo in
-(224300,457935,460447,875100,569412,568477,100842,459496,453852,699600,
-699601,69727,450714,69734,800623,800626,800630,800633,444614,460034,
-461468,458833,465343,569641,460096,456778,451828,448476,451827,467705,
-452053,645900,645901,454738,451605,451606,458239,466494,450745,456402,
-419700,451803,200612,461277,446137,450455,600825,600818,49400,955300,
-300552,494004,465763,454880,459847,458543,444089,389009,450684,900271,
-300801,455900,569870,450929,600411,459069,452139,452091,700211,458970,
-453241,452169,452176,459380,300904,459748,81574,468016,200646,200640,
-200645,200651,734200,452312,455351,566992,460140,800803,432017,459731,
-441606,100305,344540,1000401,440654,459724,900207,69741,900934,49500,
-855400,459540,800118,457447,457478,452169,122146,800228,800224,460591,
-49800,900645,618001,49200,455559,901327,100249,800442,700749,800342,
-900856,461314,465374,75650,865800,980003,64700,456426,456427,52077,
-457874,466777,466432,458550,459533,455382,450943,458123,800150,200529,
-200548,700019,870501,21001,456358,462502,459861,460270,459862,462458,
-211008,80903,81575,52381,51094,900188,459595,456457,466395,800221,
-438460,451964,900498,458499,451582,461376,86900,900025,462236,457850,
-443136,667600,456440,443068,440951,461925,465770,458321,458321,455566,
-100104,700891,455603,459151,300818,840600,462724,462519,465237,569627,
-353089,467514,462366,466760,454545,901570,901600,466340,459960,456624,
-600501,568712,448629,453586,455207,458246,456549,465244,700501,60002,
-600001,456754,462335,620000,200023,53920,455870,449923,800944,350378,
-350378,351030,352495,350941,350583,458963,461581,462281,635452,784007,
-442955,459168,69827,500766,506500,506501,500759,500758,69733,449206,
-466555,454569,344951,637000,451797,634508,456464,917800,344954,454262,
-634558,460010,456761,456846,452916,69730,461888,451391,524700,700725,
-300143,344932,457744,448599,449312,450509,600822,958800,800748,51902,
-455917,454644,450530,454385,454682,79080,455221,69166,465145,460546,
-452590,52343,684700,418900,462243,453593,452022,900047,354123,459427,
-454118,69728,636009,901273,900835,900843,467927,900823,456860,467941,
-800837,457614,77876,461567,459465,459335,346074,460799,467330,467323,
-467194,467231,467279,467347,459403,467200,467224,467217,467354,467248,
-460713,467378,459434,461321,467170,460768,346074,460720,460782,7000359,
-7000367,462113,345014,200423,353010,467781,79281,700411,461680,461758,
-453920,454699,454255,458161,453210,453211,454491,460706,328340,340303,
-458796,400748,800501,466692,925100,460430,459670,456488,467927,69824,
-344922,150600,600347,344957,450226,700053,458758,452107,457379,457378,
-456433,700346,700349);
+ -- ----------- --
+update lancamento set DATA_LCTO_DISTRIBUIDOR= '3000-01-01'
+where status in ('CONFIRMADO','PLANEJADO')
+and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
+
+
+
 --
 -- ****************************************************************
 --
