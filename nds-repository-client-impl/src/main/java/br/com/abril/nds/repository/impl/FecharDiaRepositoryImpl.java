@@ -170,32 +170,39 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder sql = new StringBuilder(" select SUM(qtde) from ( " );
 			    
 		sql.append(" 	select count(ID) as qtde from MOVIMENTO_ESTOQUE ");       
-		sql.append(" 	where DATA_CRIACAO=:dataOperacao ");
-		sql.append(" 	and STATUS=:statusAprovacao ");
-		sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+		sql.append(" 	where DATA_CRIACAO = :dataOperacao ");
+		sql.append(" 	and STATUS = :statusAprovacao ");
+		
+		if (tiposMovimentoVerificaAprovacao != null && !tiposMovimentoVerificaAprovacao.isEmpty()) {
+			sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+		}
 		
 		sql.append("	union ");
 		sql.append(" 	select count(ID) as qtde from MOVIMENTO_ESTOQUE_COTA ");        
-		sql.append("    where DATA_CRIACAO=:dataOperacao "); 
-		sql.append(" 	and STATUS=:statusAprovacao "); 
-		sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+		sql.append("    where DATA_CRIACAO = :dataOperacao "); 
+		sql.append(" 	and STATUS = :statusAprovacao "); 
+		
+		if (tiposMovimentoVerificaAprovacao != null && !tiposMovimentoVerificaAprovacao.isEmpty()) {
+			sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+		}
 
 		sql.append(" 	union ");
 		sql.append(" 	select count(ID) as qtde from MOVIMENTO_FINANCEIRO_COTA  ");       
-		sql.append(" 	where DATA_CRIACAO=:dataOperacao "); 
-		sql.append(" 	and STATUS=:statusAprovacao  ");
-		sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
-		sql.append(" ) as soma ");
+		sql.append(" 	where DATA_CRIACAO = :dataOperacao "); 
+		sql.append(" 	and STATUS = :statusAprovacao  ");
 
+		if (tiposMovimentoVerificaAprovacao != null && !tiposMovimentoVerificaAprovacao.isEmpty()) {
+			sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+		}
 		
+		sql.append(" ) as soma ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("statusAprovacao", statusAprovacao.name());
 		
-		if (tiposMovimentoVerificaAprovacao != null &&
-				!tiposMovimentoVerificaAprovacao.isEmpty()){
+		if (tiposMovimentoVerificaAprovacao != null && !tiposMovimentoVerificaAprovacao.isEmpty()) {
 			
 			List<Long> ids = new ArrayList<Long>();
 			
