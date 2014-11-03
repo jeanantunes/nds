@@ -281,9 +281,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     	
     	StringBuilder hql = new StringBuilder();
     	
-    	hql.append(" SELECT COALESCE(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE= :grupoTransferenciaLancamentoEntrada,"); 
+    	hql.append(" SELECT sum(COALESCE(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE= :grupoTransferenciaLancamentoEntrada,"); 
     	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA, ");
-    	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA*-1 ),0) ");
+    	hql.append("		movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA*-1 ),0)) ");
     	hql.append(" FROM MOVIMENTO_ESTOQUE movimentoEstoque ");
     	hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento ON movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
     	hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
