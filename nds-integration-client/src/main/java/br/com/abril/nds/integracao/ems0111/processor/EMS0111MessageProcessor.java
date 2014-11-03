@@ -121,6 +121,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 							+ " Edição " + edicao);
 			
 			produtoEdicao.setPrecoPrevisto(precoPrevistoCorrente);
+			produtoEdicao.setPrecoCusto(precoPrevistoCorrente);
 			produtoEdicao.setPrecoVenda(precoPrevistoCorrente);
 			this.getSession().merge(produtoEdicao);
 		}
