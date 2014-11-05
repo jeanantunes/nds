@@ -54,7 +54,7 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		
 		hql.append(" GROUP BY cota.numeroCota ");
 		
-		if ((dto.getPaginacao() != null) && (dto.getPaginacao().getSortColumn() != null)) {
+		if ((dto!=null) && (dto.getPaginacao() != null) && (dto.getPaginacao().getSortColumn() != null)) {
 			
 			if(dto.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO")){
 				hql.append(" ORDER BY numeroCota ");

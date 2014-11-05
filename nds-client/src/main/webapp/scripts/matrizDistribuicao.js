@@ -14,9 +14,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.parametrosDePesquisa = null;
 	var estudoAserCopiado = null;
 	
-	this.definirAcaoPesquisaTeclaEnter = function() {
-		definirAcaoPesquisaTeclaEnter();
-	},
+//	this.definirAcaoPesquisaTeclaEnter = function() {
+//		definirAcaoPesquisaTeclaEnter();
+//	},
 	
 	this.exibirMensagemSucesso = function() {
 		exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
@@ -1001,6 +1001,20 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.esconderOpcoes();
 		
+		$("#somarEstudo-estudoPesquisa", _workspace).bind("keydown", function(event) {
+			  var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
+		      if (keycode == 13) {
+		    	  var estudo = $("#somarEstudo-estudoPesquisa", _workspace).val();
+		    	  
+		    	  if((estudo != '') && (estudo != undefined)){
+		    		  matrizDistribuicao.carregarProdutoPorEstudoParaSoma();
+		    		  setTimeout(function(){$("#somarEstudo-gerarEstudo", _workspace).focus();},100);
+		    	  }else{
+		    		  matrizDistribuicao.pesquisarProdutos(); 
+		    	  }
+		      } 
+		});
+		
 		if (!T.validarMarcacaoUnicoItem()) {
 			return;
 		}
@@ -1033,7 +1047,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.esconderOpcoes();
 		
-		$(".areaBts", _workspace).hide();
+//		$(".areaBts", _workspace).hide();
 		
 		if (!T.validarMarcacaoUnicoItem()) {
 			return;
@@ -1173,18 +1187,21 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					exibirMensagem("WARNING", ["Estudo não encontrado"]);
 					return;
 				}
-					var msgArray = validarEstudoAserSomado(result);
-					if(msgArray && msgArray.length>0){
-						T.cancelarSomarEstudos();
-						exibirMensagem("WARNING", msgArray);
-						return 
-					}
+					
 					$("#somarEstudo-somado-codigoProduto").text(result.codigoProduto);
 					$("#somarEstudo-somado-edicao").text(result.numeroEdicao);
 					$("#somarEstudo-somado-nomeProduto").text(result.nomeProduto);
 					$("#somarEstudo-somado-classificacao").text(result.classificacao);
 					$("#somarEstudo-somado-dataLancto").text(result.dataLancto);
 					$("#somarEstudo-somado-reparte").text(result.qtdeReparteEstudo);
+			  },
+			  function(result){
+				  var msgArray = validarEstudoAserSomado(result);
+					if(msgArray && msgArray.length>0){
+						T.cancelarSomarEstudos();
+						exibirMensagem("WARNING", msgArray);
+						return 
+					}
 			  }
 			);
 		},
@@ -1229,7 +1246,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.cancelarSomarEstudos = function() {
 		
-		$("#somarEstudo-estudoPesquisa").val("");
+//		$("#somarEstudo-estudoPesquisa").val("");
 		$("#somarEstudo-somado-codigoProduto," +
 				"#somarEstudo-somado-edicao," +
 				"#somarEstudo-somado-edicao," +
@@ -1237,7 +1254,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				"#somarEstudo-somado-nomeProduto," +
 				"#somarEstudo-somado-classificacao," +
 				"#somarEstudo-somado-dataLancto," +
-				"#somarEstudo-somado-reparte").text("");
+				"#somarEstudo-somado-reparte", _workspace).text("");
 		
 		$("#somarEstudo-somado-estudoPesquisa").removeAttr("disabled");
 	},
@@ -1373,7 +1390,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.mostraTelaMatrizDistribuicao();
 		
-		T.definirAcaoPesquisaTeclaEnter();
+//		T.definirAcaoPesquisaTeclaEnter();
 		
 		$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexigrid({
 			colModel : [  {
