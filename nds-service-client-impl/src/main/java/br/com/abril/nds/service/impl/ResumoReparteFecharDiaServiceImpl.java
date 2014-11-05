@@ -87,9 +87,7 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
         if(fecharDiaService.isDiaComFechamentoRealizado(data)){
         	
         	reparteDTO = consolidadoReparteRepository.obterSumarizacaoReparte(data);
-        }
-        else{
-        
+        } else {
         	
         	reparteDTO = resumoFecharDiaRepository.obterSumarizacaoReparte(data);
         }

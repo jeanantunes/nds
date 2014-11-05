@@ -2,6 +2,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoEncalhe.js"></script>
 	

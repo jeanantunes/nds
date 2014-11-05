@@ -133,7 +133,7 @@ var EmissaoCEController = $.extend(true, {
             failCallback: function(result) {
 	
         		res = $.parseJSON($(result).text());
-        		if (res.mensagens) {
+        		if ((typeof res != "undefined") && (typeof res.mensagens != "undefined")) {
         			
 					exibirMensagem(
 							res.mensagens.tipoMensagem, 

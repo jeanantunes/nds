@@ -312,7 +312,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     .buscarFechamentoEncalhe(filtro.getDataEncalhe());
             
             for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
-                
                 this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado);
                 
                 for (final FechamentoEncalhe fechamento : listaFechamento) {
@@ -324,6 +323,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     }
                 }
             }
+            // throw new ValidacaoException(TipoMensagem.ERROR, "xxxxxxxxxxxx");
             
         } else {
         	
@@ -495,12 +495,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	BigInteger exemplaresDevolucao = (conferencia.getExemplaresDevolucao() == null) ? BigInteger.ZERO : conferencia.getExemplaresDevolucao();
     	BigInteger exemplaresDevolucaoJuramentado = (conferencia.getExemplaresDevolucaoJuramentado() == null) ? BigInteger.ZERO : conferencia.getExemplaresDevolucaoJuramentado();
     	BigInteger exemplaresVendasEncalhe = (conferencia.getExemplaresVendaEncalhe() == null) ? BigInteger.ZERO : conferencia.getExemplaresVendaEncalhe();
-
-    	BigInteger qtdeDevolucaoFisico = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendasEncalhe);
-
-    	BigInteger qtdeFisico = (conferencia.getFisico() == null) ? BigInteger.ZERO : conferencia.getFisico();
-
-    	return qtdeFisico.subtract(qtdeDevolucaoFisico);  
+    	
+    	BigInteger qtdeDevolucaoFisico = BigInteger.ZERO;
+    	
+    	if(conferencia.getFisico().intValue() > 0 ){    		
+    		qtdeDevolucaoFisico = conferencia.getFisico().subtract(exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendasEncalhe));
+    		
+    		// BigInteger.valueOf(exemplaresDevolucao.intValue() - exemplaresDevolucaoJuramentado.intValue() - exemplaresVendaEncalhe.intValue());
+    	}
+    	
+    	// BigInteger qtdeFisico = (conferencia.getFisico() == null) ? BigInteger.ZERO : conferencia.getFisico();
+    	
+    	return qtdeDevolucaoFisico;  
     }
     
     private void setarInfoComumFechamentoFisicoLogicoDTO(
@@ -582,27 +588,31 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             
             fechamento = listaFechamento.get(i);
             
-            final BigInteger exemplaresDevolucao = fechamento.getFisico() != null ?
-            		fechamento.getFisico() : fechamento.getExemplaresDevolucao() == null ? BigInteger.ZERO : fechamento.getExemplaresDevolucao();
+            final BigInteger exemplaresDevolucao = fechamento.getExemplaresDevolucao() == null ? BigInteger.ZERO : fechamento.getExemplaresDevolucao();
             
-            final BigInteger exemplaresDevolucaoJuramentado = fechamento.getExemplaresDevolucaoJuramentado() == null ? 
-            		BigInteger.ZERO : fechamento.getExemplaresDevolucaoJuramentado();
+            final BigInteger exemplaresDevolucaoJuramentado = fechamento.getExemplaresDevolucaoJuramentado() == null ?  BigInteger.ZERO : fechamento.getExemplaresDevolucaoJuramentado();
 
-            final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? 
-            		BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
+            final BigInteger exemplaresVendaEncalhe = fechamento.getExemplaresVendaEncalhe() == null ? BigInteger.ZERO : fechamento.getExemplaresVendaEncalhe();
+            
+            if(fechamento.getFisico() == null){
+            	fechamento.setFisico(BigInteger.ZERO);
+            }
             
             if (exemplaresDevolucao == null) {
             	
             	throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, indique valor de físico para todos os produtos.");            	
             }
             
-            if((exemplaresVendaEncalhe != null && exemplaresVendaEncalhe.equals(BigInteger.ZERO)) 
-            		&& (exemplaresDevolucaoJuramentado != null && exemplaresDevolucaoJuramentado.equals(BigInteger.ZERO))) {
-            	qtd =  fechamento.getFisico();
+            if(fechamento.getFisico().compareTo(BigInteger.ZERO) > 0) {
+            	
+            	qtd =  fechamento.getFisico() == null ? BigInteger.ZERO : fechamento.getFisico();
+            	
             } else {
             	
-            	qtd = exemplaresDevolucao.subtract(exemplaresDevolucaoJuramentado).subtract(exemplaresVendaEncalhe);
+            	qtd = BigInteger.valueOf(exemplaresDevolucao.intValue() - exemplaresDevolucaoJuramentado.intValue() - exemplaresVendaEncalhe.intValue());
+            	
             }
+            
 
             final FechamentoEncalhePK id = new FechamentoEncalhePK();
             id.setDataEncalhe(filtro.getDataEncalhe());
@@ -623,13 +633,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             } else {
                
                 fechamentoEncalhe.setQuantidade(qtd);
-                fechamentoEncalheRepository.alterar(fechamentoEncalhe);
+                fechamentoEncalheRepository.merge(fechamentoEncalhe);
             }
             
             fechamento.setFisico(qtd); // retorna valor pra tela
         }
         
         fechamentoEncalheRepository.flush();
+        
+        // throw new ValidacaoException(TipoMensagem.ERROR, "não gravar !!!");
     }
     
     private Integer obterDiaRecolhimento(final Date dataRecolhimento) {
@@ -1289,10 +1301,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         final ProdutoEdicao produtoEdicao = edicaoRepository.buscarPorId(item.getProdutoEdicao());
         
         final Diferenca diferenca = new Diferenca();
-        
         diferenca.setQtde(qntDiferenca.abs());
         diferenca.setResponsavel(usuarioLogado);
         diferenca.setProdutoEdicao(produtoEdicao);
+        
         
         if (qntDiferenca.compareTo(BigInteger.ZERO) < 0) {
             

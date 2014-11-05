@@ -66,9 +66,8 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		var sizeNomeProduto = 110;
 		var toggleColunaJuramentado = $("#toggleColunaJuramentado").val()==="true";
-
 		
-		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true") {
 			sizeNomeProduto = 465;
 		}
 		
@@ -323,17 +322,20 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var fisicoDigitado = fechamentoEncalheController.fechamentosManuais[row.cell.produtoEdicao];
 			
-			var valorFisico = fisicoDigitado ? fisicoDigitado : row.cell.fisico == null ? '' : row.cell.fisico;
+			var valorFisico = ((typeof fisicoDigitado != "undefined") && fisicoDigitado > 0) ? fisicoDigitado : row.cell.fisico == null ? '' : row.cell.fisico;
 
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			
-			if (fisicoDigitado) {
+			if (((typeof fisicoDigitado != "undefined") && fisicoDigitado > 0) || valorFisico > 0) {
 				
-				row.cell.diferenca = valorFisico - row.cell.exemplaresDevolucao; 
+				// calcular a diferença da linha após o fechamento.
+				row.cell.diferenca = valorFisico - (row.cell.exemplaresDevolucao - row.cell.exemplaresDevolucaoJuramentado - row.cell.exemplaresVendaEncalhe);
+				// row.cell.diferenca = row.cell.exemplaresDevolucao -  valorFisico; 
 			}
-
-			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
-
+			
+			// row.cell.fisico = '<input tabindex="'+ index + '" class="numericInput" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
+			row.cell.fisico = '<input tabindex="'+ index + '" class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeyup="this.value = this.value.replace(/[^0-9]*/gi, \'\')" onkeydown="fechamentoEncalheController.nextInputExemplares(this, '+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'" name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + ' maxlength="6" />';
+			
 			if((row.cell.replicar == 'true' || (!fechamentoEncalheController.modoBox.ativo && fechamentoEncalheController.checkAllGrid)) 
 					&& ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
 				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index +', this, ' + row.cell.produtoEdicao + ');"' + fechado+ ' checked />';
@@ -516,7 +518,7 @@ var fechamentoEncalheController = $.extend(true, {
 
 		$.postJSON(
 			contextPath + "/devolucao/fechamentoEncalhe/salvar",
-			fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
+			fechamentoEncalheController.populaParametrosFechamentoEncalheInformados(),
 			function (result) {
 
 				var tipoMensagem = result.tipoMensagem;
@@ -1223,7 +1225,7 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 	},
 	
-	 populaParamentrosFechamentoEncalheInformados : function(){
+	 populaParametrosFechamentoEncalheInformados : function(){
 		 
 		linhasTabela = [];
 		$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
@@ -1313,7 +1315,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$.postJSON(
 			contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
-			fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
+			fechamentoEncalheController.populaParametrosFechamentoEncalheInformados(),
 			function (result) {
 				
 				var tipoMensagem = result.tipoMensagem;
