@@ -277,14 +277,15 @@ public class AnaliseParcialController extends BaseController {
         if(ClassificacaoCota.ReparteFixado.getCodigo().equalsIgnoreCase(legendaCota) || 
                 ClassificacaoCota.CotaMix.getCodigo().equalsIgnoreCase(legendaCota)) {
         	
-            analiseParcialService.atualizarFixacaoOuMix(
-            	new ReparteFixacaoMixWrapper(
-        			fixacaoMixID, legendaCota, numeroCota, new Date(), reparteDigitado.intValue()
+            analiseParcialService.atualizarFixacaoOuMix(new ReparteFixacaoMixWrapper(
+            		fixacaoMixID, legendaCota, numeroCota, new Date(), reparteDigitado.intValue()
             	)
         	);
         }
         
-        result.nothing();
+        BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
+        
+        result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
     }
 
     @Post("/mudarReparteLote")

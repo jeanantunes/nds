@@ -203,13 +203,7 @@ function removeProdutoEscohido(idx){
 			<fieldset
 			style="width: 680px !important; margin-top: 10px !important;">
 				<legend>Produtos</legend>
-
 				<table id="lstProdutosGrid"></table>
-				<span class="bt_sellAll" style="float: right;">
-					<label for="sel">Selecionar Todos</label>
-					<input type="checkbox" id="selTodosProdutos" name="Todos" onclick="regiaoController.checkAllNMaiores();"
-				style="float: left; margin-right: 25px;"/>
-				</span>
 			</fieldset>
 
 		</div>
@@ -411,29 +405,29 @@ function removeProdutoEscohido(idx){
 		<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
 			<fieldset style="width: 300px;">
 				<legend>Adicionar em Lote</legend>
-				<table width="200" border="0" cellspacing="2" cellpadding="2">
-					<tr>
-						<p>
-							Utilize o modelo de exemplo para fazer upload para o sistema:
-						</p>
-						<p >
-							<span class="bt_novos" title="Download Modelo">
-								<a href="${pageContext.request.contextPath}/modelos/modelo_regiao.xls">
-									<img align="center" src="images/ico_excel.png" hspace="5" border="0" />
-									Modelo de exemplo
-								</a>
-							</span>
-						</p>
-						<br>
-						<br>
-						<br>
-						<hr>
-						<p>Selecione um arquivo para upload:</p>
-						<form name="arquivoUpLoad" id="arquivoUpLoad" method="post" enctype="multipart/form-data">
-							<input type="file" id="xls" name="xls" />
-						</form>
-					</tr>
-				</table>
+				<form name="arquivoUpLoad" id="arquivoUpLoad" method="post" enctype="multipart/form-data">
+					<table width="200" border="0" cellspacing="2" cellpadding="2">
+						<tr>
+							<p>
+								Utilize o modelo de exemplo para fazer upload para o sistema:
+							</p>
+							<p >
+								<span class="bt_novos" title="Download Modelo">
+									<a href="${pageContext.request.contextPath}/modelos/modelo_regiao.xls">
+										<img align="center" src="images/ico_excel.png" hspace="5" border="0" />
+										Modelo de exemplo
+									</a>
+								</span>
+							</p>
+							<br>
+							<br>
+							<br>
+							<hr>
+							<p>Selecione um arquivo para upload:</p>
+								<input type="file" id="xls" name="xls" />
+						</tr>
+					</table>
+				</form>
 				<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
 			</fieldset>
 		</div>

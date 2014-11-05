@@ -44,58 +44,75 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
                     // %Abrangência =
                     // (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) /
                     // TotalCotasAtivas) * 100
-		    int contadorAtivas = 0;
+		    
+			int contadorAtivas = 0;
+		    
 		    for (CotaEstudo cota : estudo.getCotas()) {
-			if (!cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
-			    contadorAtivas++;
-			}
+				if (!cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
+				    contadorAtivas++;
+				}
 		    }
+		    
 		    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-			if (!cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
-			    contadorAtivas++;
-			}
+				if (!cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
+				    contadorAtivas++;
+				}
 		    }
+		    
 		    BigDecimal percentualAbrangencia = BigDecimal.valueOf(estudo.getCotas().size()).divide(BigDecimal.valueOf(contadorAtivas), 2, BigDecimal.ROUND_HALF_UP);
+		    
 		    percentualAbrangencia = percentualAbrangencia.multiply(BigDecimal.valueOf(100));
+		    
 		    BigDecimal excedenteAMais = estudo.getExcedente().subtract(estudo.getSomatoriaVendaMedia());
 
-                    // Calculo1 = ExcedenteAmais * (1 – (((0,6 * %Abrangência) +
-                    // 40) / 100))
+            // Calculo1 = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))
 		    BigDecimal calculo1 = BigDecimal.valueOf(0.6).multiply(percentualAbrangencia).add(BigDecimal.valueOf(40));
+		    
 		    calculo1 = excedenteAMais.multiply(BigDecimal.ONE.subtract(calculo1.divide(BigDecimal.valueOf(100), 3, BigDecimal.ROUND_HALF_UP)));
+		    
 		    // Calculo2 = 2% do Excedente
 		    BigDecimal calculo2 = estudo.getExcedente().multiply(BigDecimal.valueOf(0.02));
+		    
 		    BigDecimal calculo3 = BigDecimal.ZERO;
 		    BigDecimal calculo4 = BigDecimal.ZERO;
+		    
 		    // Calculo3 = pacote padrao
 		    if (estudo.isDistribuicaoPorMultiplos() &&
 			    (new BigDecimal(estudo.getPacotePadrao()).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.valueOf(0.1)) < 0)) {
-			calculo3 = new BigDecimal(estudo.getPacotePadrao());
+		    	calculo3 = new BigDecimal(estudo.getPacotePadrao());
 		    }
+		    
 		    // Calculo4 = 2 exemplares
 		    if (BigDecimal.valueOf(2).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.valueOf(0.1)) < 0) {
-			calculo4 = BigDecimal.valueOf(2);
+		    	calculo4 = BigDecimal.valueOf(2);
 		    }
+		    
 		    estudo.setReparteComplementar(calculo1.max(calculo2).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo4).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+		
 		} else if (estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.6)) > 0) {
-		    // Calculo1 = 2% do Excedente
+		
+			// Calculo1 = 2% do Excedente
 		    BigDecimal calculo1 = estudo.getExcedente().multiply(BigDecimal.valueOf(0.02));
 		    BigDecimal calculo2 = BigDecimal.ZERO;
 		    BigDecimal calculo3 = BigDecimal.ZERO;
+		    
 		    // Calculo2 = pacote padrao
 		    if (estudo.isDistribuicaoPorMultiplos() &&
 			    (new BigDecimal(estudo.getPacotePadrao()).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.valueOf(0.1)) < 0)) {
-			calculo2 = new BigDecimal(estudo.getPacotePadrao());
+		    	calculo2 = new BigDecimal(estudo.getPacotePadrao());
 		    }
+
 		    // Calculo3 = 2 exemplares
 		    if (BigDecimal.valueOf(2).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.valueOf(10)) < 0) {
-			calculo3 = BigDecimal.valueOf(2);
+		    	calculo3 = BigDecimal.valueOf(2);
 		    }
+		    
 		    estudo.setReparteComplementar(calculo1.max(calculo2).toBigInteger());
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).toBigInteger());
 		}
+
 		// se for distribuicao por multiplos, faz arredondamento para o pacote padrao
 		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(estudo.getReparteComplementar())));
 

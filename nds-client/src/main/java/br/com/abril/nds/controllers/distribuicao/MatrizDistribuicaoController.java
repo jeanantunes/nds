@@ -123,7 +123,9 @@ public class MatrizDistribuicaoController extends BaseController {
         session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 
         List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
-        String data = DateUtil.formatarDataPTBR(new Date());
+        
+        String data = DateUtil.formatarDataPTBR(calendarioService.adicionarDiasUteis(new Date(), 2));
+        
         result.include("data", data);
         result.include("fornecedores", fornecedores);
     }
