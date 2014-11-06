@@ -1998,9 +1998,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         for (final Object[] item : listaResultados) {
             
-            final BigInteger quantidade = (BigInteger) item[0];
+            final BigInteger quantidade = BigInteger.valueOf(((Number) item[0]).intValue());
             
-            final Long id = (Long) item[1];
+            final Long id = Long.valueOf(item[1].toString());
             
             mapResult.put(id,quantidade);
         }
