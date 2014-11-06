@@ -38,7 +38,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
     	List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
@@ -353,7 +353,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date) {
 
         StringBuilder sql = new StringBuilder();
@@ -398,7 +398,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao) {
 
         StringBuilder sql = new StringBuilder();
@@ -498,7 +498,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId) {
 
         StringBuilder sql = new StringBuilder();
@@ -534,7 +534,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId) {
         StringBuilder sql = new StringBuilder();
         sql.append("select epc.produto_edicao_id produtoEdicaoId, ");
@@ -557,7 +557,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setParameterList("produtoEdicaoId", listProdutoEdicaoId);
         query.setParameterList("statusLanc", 
                 Arrays.asList(
-                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
+                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
@@ -566,7 +566,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo) {
         StringBuilder sql = new StringBuilder();
         sql.append("select pe.id produtoEdicaoId, ");
@@ -608,8 +608,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
 
+//    @Transactional
     @Override
-    @Transactional
     public void atualizaReparteCota(Long estudoId, Integer numeroCota, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
@@ -629,7 +629,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
 
         StringBuilder sql = new StringBuilder();
@@ -647,8 +647,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.executeUpdate();
     }
 
+//    @Transactional
     @Override
-    @Transactional
     public void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
@@ -663,7 +663,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void liberar(Long id) {
         SQLQuery query = getSession().createSQLQuery("update estudo_gerado set liberado = 1 where id = ? ");
         query.setLong(0, id);
@@ -672,7 +672,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
        
     	StringBuilder sql = new StringBuilder();
@@ -708,7 +708,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
@@ -853,8 +853,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return listNumeroCota.toArray(new Integer[listNumeroCota.size()-1]);
     }
 
+//    @Transactional
     @Override
-    @Transactional
     public void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo_gerado ");
