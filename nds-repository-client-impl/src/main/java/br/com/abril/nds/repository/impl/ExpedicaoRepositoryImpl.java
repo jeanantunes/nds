@@ -576,10 +576,14 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append("( SELECT ");
 		
 		if(calcularValorFaturado){
-			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE *-1) else (mec_st.QTDE) end) * precoCapa,0)");
+			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE in ( ")
+				.append(" 'SUPLEMENTAR_COTA_AUSENTE', 'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', 'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO' ")
+				.append(" , 'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', 'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')) then (mec_st.QTDE *-1) else (mec_st.QTDE) end) * precoCapa,0)");
 		}
 		else{
-			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE = 'SUPLEMENTAR_COTA_AUSENTE') then (mec_st.QTDE *-1) else (mec_st.QTDE) end),0)");
+			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE in ( ")
+				.append(" 'SUPLEMENTAR_COTA_AUSENTE', 'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', 'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO' ")
+				.append(" , 'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', 'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')) then (mec_st.QTDE *-1) else (mec_st.QTDE) end),0)");
 		}
 		
 		sql.append("  FROM ");
