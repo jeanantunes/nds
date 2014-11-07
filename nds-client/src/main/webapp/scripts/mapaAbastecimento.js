@@ -489,6 +489,7 @@
 			T.desbloquearCampos('box','quebraPorCota');
 			T.bloquearLinkProdutos();
 			T.displayEntregador(false);
+			$('#quebraPorCota').attr("checked", false);
 			T.limparProdutosSelecionados();
 			break;
 		case 'ROTA':
@@ -496,6 +497,7 @@
 			T.bloquearCampos('codigoProduto','nomeProduto','codigoCota','nomeCota');
 			T.desbloquearCampos('box','rota','roteiro','quebraPorCota');
 			T.displayEntregador(false);
+			$('#quebraPorCota').attr("checked", false);
 			T.bloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
@@ -504,16 +506,19 @@
 			T.desbloquearCampos('codigoCota','nomeCota');
 			T.displayEntregador(false);
 			T.bloquearLinkProdutos();
+			$('#quebraPorCota').attr("checked", false);
 			T.limparProdutosSelecionados();
 			break;
 		case 'PRODUTO_X_COTA' :
 			T.bloquearCampos('box','rota','roteiro','quebraPorCota');
 			T.desbloquearCampos('codigoCota','nomeCota', 'codigoProduto','nomeProduto');
+			$('#quebraPorCota').attr("checked", false);
 			T.desbloquearLinkProdutos();
 			T.displayEntregador(false);
 			break;
 		case 'PRODUTO':
 			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
+			$('#quebraPorCota').attr("checked", false);
 			T.desbloquearCampos('codigoProduto','nomeProduto');
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
@@ -526,12 +531,14 @@
 			break;
 		case 'PRODUTO_ESPECIFICO':
 			T.bloquearCampos('box','rota','roteiro','codigoCota','nomeCota','quebraPorCota');
+			$('#quebraPorCota').attr("checked", false);
 			T.desbloquearCampos('codigoProduto','nomeProduto');
 			T.desbloquearLinkProdutos();
 			break;
 		case 'ENTREGADOR':
 			T.atualizarBoxRota();
 			T.bloquearCampos('quebraPorCota');
+			$('#quebraPorCota').attr("checked", false);
 			T.desbloquearCampos('box','rota','roteiro', 'codigoProduto','nomeProduto','codigoCota','nomeCota');
 			T.displayEntregador(true);
 			T.bloquearLinkProdutos();
