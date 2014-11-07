@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_mapa_header" pageWidth="555" pageHeight="80" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7c5c7996-1687-46f4-a031-fd58fc653d65">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_mapa_header" pageWidth="802" pageHeight="80" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7c5c7996-1687-46f4-a031-fd58fc653d65">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -27,27 +27,35 @@
 	<style name="rel_nome" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial Black" fontSize="12" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<parameter name="IMAGEM" class="java.io.InputStream"/>
 	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
-	<parameter name="NOME_RELATORIO" class="java.lang.String"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Mapa Abastecimento Cota por BOX"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="nome_rel" class="java.lang.String"/>
 	<field name="nome-distrib" class="java.lang.String"/>
 	<title>
-		<band height="67" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<rectangle>
-				<reportElement mode="Transparent" x="0" y="0" width="555" height="67" uuid="8d737bdd-4813-48c5-9e3a-7685e0cd84bd"/>
+				<reportElement mode="Transparent" x="0" y="0" width="802" height="80" uuid="8d737bdd-4813-48c5-9e3a-7685e0cd84bd"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
 			</rectangle>
 			<image>
-				<reportElement x="5" y="5" width="65" height="57" uuid="3c6bed92-4d86-4471-b233-e4b48e951378"/>
+				<reportElement x="5" y="3" width="84" height="75" uuid="3c6bed92-4d86-4471-b233-e4b48e951378"/>
 				<imageExpression><![CDATA[$P{IMAGEM}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement style="rel_nome_distrib" x="100" y="0" width="150" height="67" uuid="4b9b7645-4b1f-48a6-9205-af224915f0de"/>
+				<reportElement style="rel_nome_distrib" x="100" y="0" width="187" height="78" uuid="4b9b7645-4b1f-48a6-9205-af224915f0de"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="rel_nome" x="250" y="0" width="295" height="67" uuid="7a8ce304-5a0d-4c8a-a7c9-2d8417b4d4c0"/>
+				<reportElement style="rel_nome" x="287" y="3" width="515" height="75" uuid="7a8ce304-5a0d-4c8a-a7c9-2d8417b4d4c0"/>
 				<textElement markup="html">
-					<font size="15" isBold="true" isStrikeThrough="false"/>
+					<font fontName="SansSerif" size="12" isBold="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NOME_RELATORIO}]]></textFieldExpression>
 			</textField>
