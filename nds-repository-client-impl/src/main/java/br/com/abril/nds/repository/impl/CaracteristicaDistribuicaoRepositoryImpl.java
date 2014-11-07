@@ -67,25 +67,31 @@ CaracteristicaDistribuicaoRepository {
         sql.append(" select distinct ")
         .append(" pro.codigo as 'codigoProduto', ")
         .append(" pro.nome as 'nomeProduto', ")
-        .append(" pes2.NOME_FANTASIA as 'nomeEditor', ")
+        .append(" pes2.RAZAO_SOCIAL as 'nomeEditor', ")
         .append(" ped.CHAMADA_CAPA as 'chamadaCapa', ")
         .append(" ped.NUMERO_EDICAO as 'numeroEdicao', ")
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
         
-        .append(" (select sum(coalesce(cec.QTDE_PREVISTA, 0)) ")
-		.append(" from chamada_encalhe ce ")
-		.append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id ")
-		.append(" left join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.ID ")
-		.append(" inner join CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
-		.append(" where ce.PRODUTO_EDICAO_ID = ped.ID) as 'reparte', 			")
-
-		.append(" (select sum(coalesce(cec.QTDE_PREVISTA, 0)-coalesce(coe.QTDE, 0)) ")
-		.append(" from chamada_encalhe ce ")
-		.append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id ")
-		.append(" left join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.ID ")
-		.append(" inner join CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
-		.append(" where ce.PRODUTO_EDICAO_ID = ped.ID) as 'venda', ")
+       .append(" cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte,             ")
+       .append("                                                                                                              ")
+       .append("     case when lan.STATUS IN ('FECHADO',                                                                      ")
+       .append("                             'RECOLHIDO',                                                                     ")
+       .append("                             'EM_RECOLHIMENTO') then                                                          ")
+       .append("                                                                                                              ")
+       .append("       cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - (                                ")
+       .append("           select sum(mecEncalhe.qtde)                                                                        ")
+       .append("           from lancamento lanc                                                                               ")
+       .append("           LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID                            ")
+       .append("           LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID                                     ")
+       .append("           LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID                               ")
+       .append("           LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID                  ")
+       .append("           LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID   ")
+       .append("           WHERE lanc.id = lan.id                                                                             ")
+       .append("       ) as unsigned int)                                                                                     ")
+       .append("                                                                                                              ")
+       .append("     else null end as venda, ")
+        
         
         .append(" lan.DATA_LCTO_DISTRIBUIDOR  as 'dataLancamento', 				")
         .append(" lan.DATA_REC_DISTRIB as 'dataRecolhimento', 					")
@@ -95,12 +101,15 @@ CaracteristicaDistribuicaoRepository {
         .append(" join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
         .append(" left join tipo_segmento_produto tiposeg ON tiposeg.ID = pro.TIPO_SEGMENTO_PRODUTO_ID ")
         .append(" left join tipo_classificacao_produto tipoclas ON tipoclas.ID = ped.tipo_classificacao_produto_id ")
-        .append(" left join brinde bri ON bri.ID = ped.BRINDE_ID  ")
         .append(" left join editor edi on edi.id = pro.editor_id ")
         .append(" join pessoa pes2 on pes2.id = edi.JURIDICA_ID ")
         .append(" left join lancamento lan on lan.PRODUTO_EDICAO_ID = ped.ID  ")
         .append(" left join estoque_produto est on est.PRODUTO_EDICAO_ID = ped.ID  ")
-        .append(" where 1=1 ");
+        .append(" left join movimento_estoque_cota mecReparte ON mecReparte.LANCAMENTO_ID = lan.ID ")
+        .append(" left join tipo_movimento tipo ON mecReparte.TIPO_MOVIMENTO_ID = tipo.ID  ")
+        
+        .append(" where lan.DATA_LCTO_DISTRIBUIDOR <> '3000-01-01' ")
+        .append(" and lan.STATUS not in ('CONFIRMADO', 'PLANEJADO', 'FURO', 'BALANCEADO', 'EM_BALANCEAMENTO') ");
         
         if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != "") {
             sql.append(" and pro.codigo_icd = :codigoProduto ");
@@ -114,8 +123,10 @@ CaracteristicaDistribuicaoRepository {
             sql.append(" and upper(tiposeg.DESCRICAO) = upper(:segmento) ");
         }
         
-        if(filtro.getBrinde() != null && filtro.getBrinde() != "") {
-            sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper(:brinde) ");
+        if(filtro.isBrinde()) {
+            sql.append(" and ped.POSSUI_BRINDE is true ");
+        }else{
+        	sql.append(" and ped.POSSUI_BRINDE is false ");
         }
         
         if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!="") {
@@ -140,10 +151,10 @@ CaracteristicaDistribuicaoRepository {
         if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="") {
             if(filtro.getOpcaoFiltroPublicacao()) {
                 //exato
-                sql.append(" and upper(pes2.NOME_FANTASIA) = upper(:nomeEditor) ");
+                sql.append(" and upper(pes2.RAZAO_SOCIAL) = upper(:nomeEditor) ");
             } else {
                 //contem
-                sql.append(" and upper(pes2.NOME_FANTASIA) like upper(:nomeEditor) ");
+                sql.append(" and upper(pes2.RAZAO_SOCIAL) like upper(:nomeEditor) ");
             }
         }
         
@@ -173,10 +184,6 @@ CaracteristicaDistribuicaoRepository {
         
         if(filtro.getSegmento() != null && filtro.getSegmento() != "") {
         	query.setParameter("segmento", filtro.getSegmento().trim());
-        }
-        
-        if(filtro.getBrinde() != null && filtro.getBrinde() != "") {
-        	query.setParameter("brinde", filtro.getBrinde().trim());
         }
         
         if(filtro.getFaixaPrecoDe() != null && filtro.getFaixaPrecoDe() != "") {
