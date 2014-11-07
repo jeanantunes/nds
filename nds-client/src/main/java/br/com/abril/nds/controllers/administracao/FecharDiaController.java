@@ -201,8 +201,7 @@ public class FecharDiaController extends BaseController {
     @Path("/obterLancamentoFaltaESobra")
     public void obterLancamentoFaltaESobra(){
         
-        final List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> listaLancamentoFaltaESobra =
-                fecharDiaService.obterLancamentoFaltasESobras(dataOperacao);
+        final List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> listaLancamentoFaltaESobra = fecharDiaService.obterLancamentoFaltasESobras(dataOperacao);
         
         final TableModel<CellModelKeyValue<ValidacaoLancamentoFaltaESobraFecharDiaDTO>> tableModel =
                 new TableModel<CellModelKeyValue<ValidacaoLancamentoFaltaESobraFecharDiaDTO>>();
