@@ -80,17 +80,8 @@ $(function(){
 			</select>
 		</td>
 		<td width="48">Brinde:</td>
-		<td width="206">
-			<select id="brinde" class="inputField" style="width:100px;">
-				<option></option>
-				<c:forEach var="brinde" items="${brindes}">
-					<c:if test="${brinde.descricao !=null && brinde.descricao !=''}">
-						<option value="<c:out value="${brinde.descricao}"/>">
-							<c:out value="${brinde.descricao}"/>
-						</option>
-					</c:if>
-				</c:forEach>
-			</select>
+		<td width="70">
+		<input type="checkbox" name="checkBrinde" id="checkIsBrinde" style="margin-right:0px;"/>
 		</td>
 </tr>
 <tr></tr>
