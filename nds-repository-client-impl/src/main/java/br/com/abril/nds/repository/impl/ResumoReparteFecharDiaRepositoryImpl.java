@@ -106,24 +106,24 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         	.append("where diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDirecionamento =:tipoDirecionamentoDiferenca and diferenca.tipoDiferenca in (:%s) ) as %s ").toString();
         
         String templateHqlRecebimentoEstoqueEntradaSaida = new StringBuilder()
-           .append(" (select COALESCE(sum(case when me_.tipoMovimento.operacaoEstoque =:operacaoEntrada then me_.qtde else (me_.qtde*-1)end),0) from MovimentoEstoque me_ join me_.produtoEdicao produtoEdicaoME_ ")
-	       .append(" where me_.data < :data ")
-	       .append(" and me_.status = :statusAprovado ")
-	       .append(" and me_.tipoMovimento.grupoMovimentoEstoque IN(:grupoMovimentoRecebimentoEntradaSaida) ")
-	       .append(" and produtoEdicaoME_.id = produtoEdicao.id )").toString();
+		    .append(" (select COALESCE(sum(case when me_.tipoMovimento.operacaoEstoque =:operacaoEntrada then me_.qtde else (me_.qtde*-1)end),0) from MovimentoEstoque me_ join me_.produtoEdicao produtoEdicaoME_ ")
+		    .append(" where me_.data < :data ")
+		    .append(" and me_.status = :statusAprovado ")
+		    .append(" and me_.tipoMovimento.grupoMovimentoEstoque IN(:grupoMovimentoRecebimentoEntradaSaida) ")
+		    .append(" and produtoEdicaoME_.id = produtoEdicao.id )").toString();
         
         String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
-           .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
-	       .append(" where me.data = :data ")
-	       .append(" and me.status = :statusAprovado ")
-	       .append(" and me.tipoMovimento.grupoMovimentoEstoque in ( :grupoMovimentoRecebimentoFisico )")
-	       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
+           	.append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+	       	.append(" where me.data = :data ")
+	       	.append(" and me.status = :statusAprovado ")
+	       	.append(" and me.tipoMovimento.grupoMovimentoEstoque in ( :grupoMovimentoRecebimentoFisico )")
+	       	.append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
         
         String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
-	        .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
-	        .append(" where me.data <= :data ")
-	        .append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional) ")
-	        .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
+			.append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+			.append(" where me.data <= :data ")
+			.append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional) ")
+			.append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
         
         StringBuilder hql = new StringBuilder("select distinct produtoEdicao.id as idProdutoEdicao, produto.codigo as codigo, ");
 				      hql.append("produto.nome as nomeProduto, ");
@@ -140,9 +140,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         // Quantidade efetiva distribuída, considerando movimento de envio de
         // reparte, como também o estorno, em caso de furo
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoEnvioJornaleiro )");
-        hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
+        hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) ");
+        hql.append("from MovimentoEstoque movimentoEstoque ");
+        hql.append("where movimentoEstoque.data = :data ");
+        hql.append("and movimentoEstoque.produtoEdicao.id = lancamento.produtoEdicao.id ");
         hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
-        hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro)) as qtdeDistribuido, ");
+        hql.append("and (movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiroFaltasESobras, :grupoMovimentoEstornoEnvioJornaleiro) ");
+        hql.append(")) as qtdeDistribuido, ");
         
         // Transferências de estoque de lançamento, entrada e saída
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ");
@@ -181,10 +185,10 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameterList("tipoDiferencaFaltaDe", Arrays.asList(TipoDiferenca.FALTA_DE,TipoDiferenca.PERDA_DE));
         query.setParameterList("tipoDiferencaFaltaEm", Arrays.asList(TipoDiferenca.FALTA_EM,TipoDiferenca.PERDA_EM));
         query.setParameter("tipoDirecionamentoDiferenca", TipoDirecionamentoDiferenca.ESTOQUE);
-        this.atribuirGruposMovimentoRecebimentoEntradaSaida(query,"grupoMovimentoRecebimentoEntradaSaida");
+        this.atribuirGruposMovimentoRecebimentoEntradaSaida(query, "grupoMovimentoRecebimentoEntradaSaida");
         this.atribuirGruposMovimentoEnvioJornaleiro(query, "grupoMovimentoEnvioJornaleiro");
         this.atribuirGruposMovimentoEstornoEnvioJornaleiro(query, "grupoMovimentoEstornoEnvioJornaleiro");
-        
+        this.atribuirGruposMovimentoEnvioJornaleiroFaltasESobras(query, "grupoMovimentoEnvioJornaleiroFaltasESobras");
         
         if (paginacao != null) {
             query.setFirstResult(paginacao.getPosicaoInicial());
@@ -574,6 +578,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		tipoDiferencasGFS.add(StatusIntegracao.RE_INTEGRADO.name());
 		tipoDiferencasGFS.add(StatusIntegracao.INTEGRADO.name());
 		tipoDiferencasGFS.add(StatusIntegracao.AGUARDANDO_GFS.name());
+		tipoDiferencasGFS.add(StatusIntegracao.NAO_INTEGRAR.name());
+		tipoDiferencasGFS.add(StatusIntegracao.FORA_DO_PRAZO.name());
+		tipoDiferencasGFS.add(StatusIntegracao.ENCALHE.name());
 		
 		return tipoDiferencasGFS;
 	}
@@ -595,9 +602,18 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         		GrupoMovimentoEstoque.ENVIO_JORNALEIRO, 
         		GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE, 
         		GrupoMovimentoEstoque.VENDA_ENCALHE, 
-        		GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR));
+        		GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR,
+        		GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA));
     }
     
+    private void atribuirGruposMovimentoEnvioJornaleiroFaltasESobras(final Query query, final String paramName){
+    	query.setParameterList(paramName, Arrays.asList(
+    			GrupoMovimentoEstoque.ENVIO_JORNALEIRO, 
+        		GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE, 
+        		GrupoMovimentoEstoque.VENDA_ENCALHE, 
+        		GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR,
+    			GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA));
+    }
     
     private void atribuirGruposMovimentoRecebimentoEntradaSaida(final Query query, final String paramName){
     	
