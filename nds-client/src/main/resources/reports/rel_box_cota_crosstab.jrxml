@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_box_cota_crosstab" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="74e3087a-648d-46f7-a1bc-49952a2a0eac">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="zebrado" mode="Opaque" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" fontSize="8">
+		<pen lineWidth="0.25"/>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{ROW_COUNT}.intValue() % 2 == 1)]]></conditionExpression>
+			<style mode="Opaque" forecolor="#000000" backcolor="#C0C0C0" fill="Solid"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\wrpaiva\\Documents\\Relatorio\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATA" class="java.lang.String"/>
+	<parameter name="IMAGEM" class="java.io.InputStream"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
+	<parameter name="NOME_RELATORIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Mapa Abastecimento Cota por BOX"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
+	</field>
+	<field name="numeroEdicao" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[numeroEdicao]]></fieldDescription>
+	</field>
+	<field name="reparte" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[reparte]]></fieldDescription>
+	</field>
+	<field name="codigoCota" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[codigoCota]]></fieldDescription>
+	</field>
+	<variable name="row_count " class="java.lang.Integer" resetType="None" calculation="DistinctCount"/>
+	<background>
+		<band splitType="Stretch">
+			<printWhenExpression><![CDATA[]]></printWhenExpression>
+		</band>
+	</background>
+	<title>
+		<band height="71">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="71" uuid="08f67be0-2f76-4c27-9606-7500f9845ab6"/>
+				<subreportParameter name="IMAGEM">
+					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="NOME_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_RELATORIO"/>
+				<subreportParameter name="DATA">
+					<subreportParameterExpression><![CDATA[$P{DATA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rel_box_cota_header.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="300" splitType="Stretch">
+			<crosstab columnBreakOffset="14">
+				<reportElement x="0" y="19" width="802" height="280" uuid="6ee485ca-86f5-4b7d-9140-82e660948171"/>
+				<crosstabParameter name="nomeProduto">
+					<parameterValueExpression><![CDATA[$F{nomeProduto}]]></parameterValueExpression>
+				</crosstabParameter>
+				<crosstabParameter name="numeroEdicao"/>
+				<crosstabParameter name="reparte"/>
+				<crosstabParameter name="codigoCota"/>
+				<crosstabHeaderCell>
+					<cellContents backcolor="#CCCCCC">
+						<staticText>
+							<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="94" height="30" forecolor="#000000" backcolor="#CCCCCC" uuid="3dbf5201-680d-451e-ad73-d5b8bcaa9bbc"/>
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Left" verticalAlignment="Middle">
+								<font size="8" isBold="true" isItalic="false"/>
+								<paragraph leftIndent="2"/>
+							</textElement>
+							<text><![CDATA[Publicação]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="Crosstab Data Text" mode="Opaque" x="94" y="0" width="45" height="30" forecolor="#000000" backcolor="#CCCCCC" uuid="5813145d-5ae3-4177-8658-8089049ac93f"/>
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font size="8" isBold="true" isItalic="false"/>
+							</textElement>
+							<text><![CDATA[Edição]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="nomeProduto" width="94">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{nomeProduto}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<rectangle>
+								<reportElement style="zebrado" mode="Transparent" x="0" y="0" width="94" height="25" backcolor="#FFFFFF" uuid="86817658-364b-43c2-9eab-9c45565b53b9"/>
+							</rectangle>
+							<textField isBlankWhenNull="true">
+								<reportElement style="zebrado" mode="Opaque" x="0" y="0" width="94" height="25" uuid="b9925f2a-97df-4d1c-ab02-c2abf5ced432"/>
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+									<paragraph leftIndent="2"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{nomeProduto}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Opaque"/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="numeroEdicao" width="45">
+					<bucket class="java.math.BigInteger">
+						<bucketExpression><![CDATA[$F{numeroEdicao}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<rectangle>
+								<reportElement style="zebrado" x="0" y="0" width="45" height="25" uuid="28a14ca2-65fd-4d55-9e8a-a8d03514df97"/>
+							</rectangle>
+							<textField>
+								<reportElement style="zebrado" mode="Transparent" x="0" y="0" width="45" height="25" backcolor="#FFFFFF" uuid="c4632dbc-2f87-4c31-8c45-9ae308c55ae3"/>
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+									<paragraph leftIndent="2"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{numeroEdicao}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="codigoCota" height="30" totalPosition="End">
+					<bucket class="java.math.BigInteger">
+						<bucketExpression><![CDATA[$F{codigoCota}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<textField>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="30" height="30" backcolor="#CCCCCC" uuid="438510ca-1268-4b55-92e9-69bf11156129"/>
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{codigoCota}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#CCCCCC" mode="Opaque">
+							<staticText>
+								<reportElement x="0" y="0" width="35" height="30" uuid="22824fa9-358d-437a-baaa-32aa1f0abef0"/>
+								<box>
+									<topPen lineWidth="0.25"/>
+									<leftPen lineWidth="0.25"/>
+									<bottomPen lineWidth="0.25"/>
+									<rightPen lineWidth="0.25"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[Total]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="reparteMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{reparte}]]></measureExpression>
+				</measure>
+				<crosstabCell width="30" height="25">
+					<cellContents>
+						<rectangle>
+							<reportElement style="zebrado" mode="Opaque" x="0" y="0" width="30" height="25" uuid="5be0dd45-bd05-41fd-9a68-a51999ec532f"/>
+						</rectangle>
+						<textField pattern="###0;-###0">
+							<reportElement style="zebrado" mode="Transparent" x="0" y="0" width="30" height="25" backcolor="#FFFFFF" uuid="34c5ffba-cefd-409d-a03c-fbb5203c0057"/>
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{reparteMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="nomeProduto">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="8be8fab2-1d3a-42c0-872a-2739e79e5225"/>
+							<textFieldExpression><![CDATA[$V{reparteMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="35" height="25" columnTotalGroup="codigoCota">
+					<cellContents backcolor="#FFFFFF" mode="Opaque" style="zebrado">
+						<rectangle>
+							<reportElement style="zebrado" mode="Opaque" x="0" y="0" width="35" height="25" uuid="3a4ee1b4-0956-435c-8353-98f6e56f7ba6"/>
+						</rectangle>
+						<textField pattern="###0;-###0">
+							<reportElement style="zebrado" x="0" y="0" width="35" height="25" uuid="fd8cf28f-f717-4979-b48e-88756e8e4879"/>
+							<box>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{reparteMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="nomeProduto" columnTotalGroup="codigoCota">
+					<cellContents backcolor="#FFFFFF" mode="Opaque" style="zebrado">
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="a3cf5606-c909-40ec-aa06-a89e0e69bea6"/>
+							<textFieldExpression><![CDATA[$V{reparteMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="numeroEdicao">
+					<cellContents/>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="numeroEdicao" columnTotalGroup="codigoCota">
+					<cellContents/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>
