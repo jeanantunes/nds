@@ -263,6 +263,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 		case ENTREGADOR:
 			this.popularGridPorEntregador(filtro);
+			break;
 		case BOX_X_COTA:
 		    this.popularGridBoxVersusCota(filtro);
             break;	
