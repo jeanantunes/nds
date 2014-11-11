@@ -3988,7 +3988,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         gerarFromWhereDadosAbastecimentoVersusBoxCota(filtro, hql, param, statusLancamento);
         
         // hql.append(" group by produtoEdicao.ID, cota.ID ");
-        hql.append(" group by box.ID, rota.ID ");
+        hql.append(" group by box.ID, cota.ID  ");
         
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
@@ -4038,9 +4038,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" select cota.NUMERO_COTA as codigoCota, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-        hql.append(" 		sum(estudoCota.REPARTE) as reparte ");
+        hql.append(" 		estudoCota.REPARTE as reparte ");
         
-        gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
+        gerarFromWhereDadosAbastecimentoVersusBoxCota(filtro, hql, param, statusLancamento);
         
         hql.append(" group by ");
         
@@ -4049,9 +4049,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             hql.append(" estudoCota.ID, produtoEdicao.ID ");
         } else {
             
-            hql.append(" cota.ID ");
+            hql.append(" cota.ID, produtoEdicao.ID ");
         }
-        
+              
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
         final SQLQuery query =  getSession().createSQLQuery(hql.toString());
