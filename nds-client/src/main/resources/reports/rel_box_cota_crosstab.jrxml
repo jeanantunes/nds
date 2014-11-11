@@ -8,7 +8,7 @@
 		<pen lineWidth="0.25"/>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{ROW_COUNT}.intValue() % 2 == 1)]]></conditionExpression>
-			<style mode="Opaque" forecolor="#000000" backcolor="#C0C0C0" fill="Solid"/>
+			<style mode="Opaque" forecolor="#000000" backcolor="#E2E2E2" fill="Solid"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -78,7 +78,7 @@
 	</pageFooter>
 	<summary>
 		<band height="300" splitType="Stretch">
-			<crosstab columnBreakOffset="14">
+			<crosstab columnBreakOffset="1000" ignoreWidth="false">
 				<reportElement x="0" y="19" width="802" height="280" uuid="6ee485ca-86f5-4b7d-9140-82e660948171"/>
 				<crosstabParameter name="nomeProduto">
 					<parameterValueExpression><![CDATA[$F{nomeProduto}]]></parameterValueExpression>
@@ -163,7 +163,7 @@
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="8"/>
-									<paragraph leftIndent="2"/>
+									<paragraph leftIndent="2" rightIndent="2"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{numeroEdicao}]]></textFieldExpression>
 							</textField>
@@ -180,7 +180,7 @@
 					<crosstabColumnHeader>
 						<cellContents backcolor="#FFFFFF" mode="Opaque">
 							<textField>
-								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="30" height="30" backcolor="#CCCCCC" uuid="438510ca-1268-4b55-92e9-69bf11156129"/>
+								<reportElement style="Crosstab Data Text" mode="Opaque" x="0" y="0" width="38" height="30" backcolor="#CCCCCC" uuid="438510ca-1268-4b55-92e9-69bf11156129"/>
 								<box>
 									<topPen lineWidth="0.25"/>
 									<leftPen lineWidth="0.25"/>
@@ -215,13 +215,15 @@
 				<measure name="reparteMeasure" class="java.math.BigDecimal" calculation="Sum">
 					<measureExpression><![CDATA[$F{reparte}]]></measureExpression>
 				</measure>
-				<crosstabCell width="30" height="25">
+				<crosstabCell width="38" height="25">
 					<cellContents>
 						<rectangle>
-							<reportElement style="zebrado" mode="Opaque" x="0" y="0" width="30" height="25" uuid="5be0dd45-bd05-41fd-9a68-a51999ec532f"/>
+							<reportElement style="zebrado" mode="Opaque" x="0" y="0" width="38" height="25" uuid="5be0dd45-bd05-41fd-9a68-a51999ec532f"/>
 						</rectangle>
 						<textField pattern="###0;-###0">
-							<reportElement style="zebrado" mode="Transparent" x="0" y="0" width="30" height="25" backcolor="#FFFFFF" uuid="34c5ffba-cefd-409d-a03c-fbb5203c0057"/>
+							<reportElement style="zebrado" positionType="Float" mode="Transparent" x="0" y="0" width="38" height="25" backcolor="#FFFFFF" uuid="34c5ffba-cefd-409d-a03c-fbb5203c0057">
+								<printWhenExpression><![CDATA[!$V{reparteMeasure}.equals(new java.math.BigDecimal(0))]]></printWhenExpression>
+							</reportElement>
 							<box>
 								<topPen lineWidth="0.25"/>
 								<leftPen lineWidth="0.25"/>
@@ -230,6 +232,7 @@
 							</box>
 							<textElement textAlignment="Center" verticalAlignment="Middle">
 								<font size="8"/>
+								<paragraph leftIndent="1"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$V{reparteMeasure}]]></textFieldExpression>
 						</textField>
