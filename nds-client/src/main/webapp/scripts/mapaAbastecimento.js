@@ -249,7 +249,7 @@
 				params
 			);
 
-		break;
+			break;
 		
 		case 'BOX_X_COTA':
 			
@@ -263,7 +263,7 @@
 				params
 			);
 			
-		break;
+			break;
 		
 		default:
 			exibirMensagem("WARNING", ["É necessario selecionar o Tipo de Consulta a ser realizada!"]);
