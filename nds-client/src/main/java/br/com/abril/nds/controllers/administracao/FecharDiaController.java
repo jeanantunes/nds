@@ -542,18 +542,16 @@ public class FecharDiaController extends BaseController {
                 
                 result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
                         Constantes.PARAM_MSGS).recursive().serialize();
-            }
-            else{
+                
+            } else {
                 
                 //Lock novamente na base de dados.
                 fecharDiaService.setLockBancoDeDados(true);
                 result.use(Results.json()).from(
                         new ValidacaoVO(
                                 TipoMensagem.WARNING,
- "Fechamento do Dia não pode ser confirmado! "
-                            + "Existem pendências em aberto para a data de operação: "
-                                        +
-                                        new SimpleDateFormat("dd/MM/yyyy").format(_dataOperacao) + "!"),
+                                		String.format("Fechamento do Dia não pode ser confirmado! Existem pendências em aberto para a data de operação: %s!"
+                                				, new SimpleDateFormat("dd/MM/yyyy").format(_dataOperacao))),
                                         Constantes.PARAM_MSGS).recursive().serialize();
                 
             }

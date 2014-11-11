@@ -1507,17 +1507,19 @@ var fecharDiaController =  $.extend(true, {
 	
 	gerarLinhaResumoConsignado : function(resumo) {
 		
-		$("#consignaddo-entrada-valorCE",fecharDiaController.workspace).html(resumo.resumoConsignado.valorCEFormatado);
+		$("#consignaddo-entrada-valorCE", fecharDiaController.workspace).html(resumo.resumoConsignado.valorCEFormatado);
 		
-		$("#consignaddo-entrada-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresEntradaFormatado);
+		$("#consignaddo-entrada-outrosValores", fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresEntradaFormatado);
 		
-		$("#consignaddo-entrada-a-vista",fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaCEFormatado);
+		$("#consignaddo-entrada-a-vista", fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaCEFormatado);
 		
-		$("#consignaddo-saida-valorExpedicaoDia",fecharDiaController.workspace).html(resumo.resumoConsignado.valorExpedicaoFormatado);
+		$("#consignaddo-saida-valorExpedicaoDia", fecharDiaController.workspace).html(resumo.resumoConsignado.valorExpedicaoFormatado);
 		
-		$("#consignaddo-saida-outrosValores",fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado);
+		$("#consignaddo-saida-outrosValores", fecharDiaController.workspace).html(resumo.resumoConsignado.valorOutrosValoresSaidasFormatado);
 		
-		$("#consignaddo-saida-a-vista",fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaFormatado);
+		$("#consignaddo-saida-a-vista", fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaFormatado);
+		
+		$("#consignaddo-alteracao-de-preco", fecharDiaController.workspace).html(resumo.resumoConsignado.altracaoPrecoFormatado);
 
 		var linhaResumo = "<tr>";
 		

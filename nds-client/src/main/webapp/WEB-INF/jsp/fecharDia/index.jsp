@@ -375,6 +375,9 @@
         	<tr>
         		<td>A vista: <span id="consignaddo-saida-a-vista"></span></td>
         	</tr>
+        	<tr>
+        		<td>Alteração de preço: <span id="consignaddo-alteracao-de-preco"></span></td>
+        	</tr>
         </table>
     </fieldset>
 </div>

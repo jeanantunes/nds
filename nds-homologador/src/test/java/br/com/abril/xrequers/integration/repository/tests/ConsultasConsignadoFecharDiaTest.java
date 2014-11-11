@@ -43,13 +43,13 @@ public class ConsultasConsignadoFecharDiaTest extends AbstractRepositoryTest {
 		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = resumoFechamentoDiarioConsignado.new ResumoConsignado();
 		
 	    BigDecimal valorExpedido = Util.nvl(
-		movimentoEstoqueRepository.obterSaldoDeReparteExpedido(dataFechamento),BigDecimal.ZERO);
+		movimentoEstoqueRepository.obterSaldoDeReparteExpedido(dataFechamento, false), BigDecimal.ZERO);
 
 	    valorExpedido = valorExpedido.add(Util.nvl(
-        diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento),BigDecimal.ZERO));
+        diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento, false), BigDecimal.ZERO));
 
 	    BigDecimal valorSaidaDoConsignadoAVista =  Util.nvl(
-		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, true),BigDecimal.ZERO);
+		this.movimentoEstoqueCotaRepository.obterValorExpedicaoCotaAVista(dataFechamento, true, false), BigDecimal.ZERO);
 
 		resumoConsignado.setValorAVista(valorSaidaDoConsignadoAVista);
 		
@@ -70,10 +70,10 @@ public class ConsultasConsignadoFecharDiaTest extends AbstractRepositoryTest {
 	private BigDecimal obterValorSaidaOutros(final Date dataFechamento){
 		
 		BigDecimal valorDiferencasSaida =  Util.nvl(
-        		diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        		diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidor(dataFechamento), BigDecimal.ZERO);
         
         BigDecimal valorCotaAusenteSaida = Util.nvl(
-        		cotaAusenteRepository.obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento),BigDecimal.ZERO);
+        		cotaAusenteRepository.obterSaldoDeSaidaDoConsignadoDasCotasAusenteNoDistribuidor(dataFechamento), BigDecimal.ZERO);
         
         BigDecimal valorVendaSuplementar = Util.nvl(
         		movimentoEstoqueService.obterValorConsignadoDeVendaSuplementar(dataFechamento), BigDecimal.ZERO);

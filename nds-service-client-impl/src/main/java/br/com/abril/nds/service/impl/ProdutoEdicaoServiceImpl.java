@@ -39,6 +39,7 @@ import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.HistoricoAlteracaoPrecoVenda;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -67,6 +68,7 @@ import br.com.abril.nds.repository.BrindeRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
+import br.com.abril.nds.repository.HistoricoAlteracaoPrecoVendaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -181,6 +183,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Autowired
     private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
+    
+    @Autowired
+    HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -1955,29 +1960,37 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     @Override
     @Transactional
-    public void executarAlteracaoPrecoCapa(final String codigo,final Long numeroEdicao,final BigDecimal precoProduto) {
+    public void executarAlteracaoPrecoCapa(final String codigo, final Long numeroEdicao, final BigDecimal precoProduto) {
     	
-    	if((codigo == null || codigo.isEmpty()) || numeroEdicao == null){
+    	if((codigo == null || codigo.isEmpty()) || numeroEdicao == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe uma publicação para alteração."));
 		}
 		
-		if(precoProduto == null){
+		if(precoProduto == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe um valor para o campo [Novo Preço]."));
 		}
 		
-		ProdutoEdicao produtoEdicao = 
-				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo,numeroEdicao);
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, numeroEdicao);
 	
-		if(produtoEdicao == null ){
+		if(produtoEdicao == null ) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe uma publicação existente para alteração."));
 		}
 		
 		this.validarLancamentoParaAlteracaoPreco(produtoEdicao.getId());
 		
+		BigDecimal valorAntigo = produtoEdicao.getPrecoVenda();
 		produtoEdicao.setPrecoVenda(precoProduto);
 		produtoEdicaoRepository.merge(produtoEdicao);
 		
-		movimentoEstoqueCotaService.atualizarPrecoProdutoExpedido(produtoEdicao.getId(),precoProduto);
+		movimentoEstoqueCotaService.atualizarPrecoProdutoExpedido(produtoEdicao.getId(), precoProduto);
+		
+		HistoricoAlteracaoPrecoVenda hapc = new HistoricoAlteracaoPrecoVenda();
+		hapc.setDataOperacao(distribuidorService.obterDataOperacaoDistribuidor());
+		hapc.setUsuario(usuarioService.getUsuarioLogado());
+		hapc.setProdutoEdicao(produtoEdicao);
+		hapc.setValorAntigo(valorAntigo);
+		hapc.setValorAtual(precoProduto);
+		historicoAlteracaoPrecoVendaRepository.adicionar(hapc);
     }
 
 	private void validarLancamentoParaAlteracaoPreco(final Long idProdutoEdicao) {

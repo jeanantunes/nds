@@ -3896,7 +3896,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	query.executeUpdate();
     }
     
-    public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe){
+    public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe, boolean precoCapaHistoricoAlteracao){
     	
     	StringBuilder sql = new StringBuilder();
     	
