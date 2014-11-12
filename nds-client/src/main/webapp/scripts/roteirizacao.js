@@ -2643,6 +2643,7 @@ var roteirizacao = $.extend(true, {
 			
 			focusSelectRefField($("#boxPesquisa"));
 			
+			/*
 			$(document.body).keydown(function(e) {
 				
 				if(keyEventEnterAux(e)){
@@ -2651,6 +2652,7 @@ var roteirizacao = $.extend(true, {
 				
 				return true;
 			});
+			*/
 		});
     },
     

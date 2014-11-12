@@ -35,6 +35,9 @@ public class FechamentoDiarioConsolidadoSuplementar implements Serializable{
 	@Column(name = "VALOR_VENDAS")	
 	private BigDecimal valorVendas;
 	
+	@Column(name = "VALOR_ALTERACAO_PRECO")	
+	private BigDecimal valorAlteracaoPreco;
+	
 	@Column(name = "VALOR_SALDO")
 	private BigDecimal valorSaldo;
 	
@@ -80,6 +83,14 @@ public class FechamentoDiarioConsolidadoSuplementar implements Serializable{
 		this.valorVendas = valorVendas;
 	}
 	
+	public BigDecimal getValorAlteracaoPreco() {
+		return valorAlteracaoPreco;
+	}
+
+	public void setValorAlteracaoPreco(BigDecimal valorAlteracaoPreco) {
+		this.valorAlteracaoPreco = valorAlteracaoPreco;
+	}
+
 	public BigDecimal getValorSaldo() {
 		return valorSaldo;
 	}

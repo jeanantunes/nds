@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
@@ -522,10 +523,9 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 
 	List<MovimentoEstoqueCota> obterMovimentosEstoqueCotaPorIds(List<Long> idsMEC);
 	
-    BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe);
+    BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe, boolean precoCapaHistoricoAlteracao);
     
 	List<ProdutoAbastecimentoDTO> obterDadosAbastecimentoBoxVersusCota(FiltroMapaAbastecimentoDTO filtro);
 	
-	public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
-	
+	public List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro);
 }

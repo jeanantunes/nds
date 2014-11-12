@@ -31,4 +31,6 @@ public interface ResumoSuplementarFecharDiaService {
 	
     Long contarVendasSuplementar(Date data);
 
+	BigDecimal obterValorAlteracaoPreco(Date dataOperacao);
+
 }

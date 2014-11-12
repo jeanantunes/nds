@@ -25,6 +25,10 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            $('#sobra').text(($('#reparteTotal').text()*1) - ($('#reparteDistribuir').val()*1));
 	        }
 	    });
+	    
+	    $('#botaoPesquisarAddNovaBase').click(function(){
+	    	T.pesquisarBases();
+	    });
 	};
 	
 	this.removerDuplicados = function eliminateDuplicates(arr) {
@@ -246,8 +250,10 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name:"modoAnalise", value:modoAnalise});
 		data.push({name:"idProdutoEdicao", value:idProdutoEdicao});
 		
-		$("#edicaoProdCadastradosGrid-1", this.workspace).flexOptions({
-			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
+		var urlPesquisa = contextPath+"/distribuicaoVendaMedia/pesquisarProdutosEdicao";
+		
+		$("#edicaoProdCadastradosGrid-1").flexOptions({
+			url: urlPesquisa,
 			params: data,
 			preProcess: function(result){
 				T.produtoEdicaoPesquisaBases = result;

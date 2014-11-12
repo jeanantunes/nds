@@ -111,6 +111,8 @@ $(document).ready(function() {
 					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
 				}
 				return true;
+		    }else{
+		    	return false;
 		    }
 		} else {
 			

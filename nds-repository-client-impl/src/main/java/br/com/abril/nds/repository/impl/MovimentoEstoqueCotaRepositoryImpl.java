@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
@@ -2008,9 +2009,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         for (final Object[] item : listaResultados) {
             
-            final BigInteger quantidade = (BigInteger) item[0];
+            final BigInteger quantidade = BigInteger.valueOf(((Number) item[0]).intValue());
             
-            final Long id = (Long) item[1];
+            final Long id = Long.valueOf(item[1].toString());
             
             mapResult.put(id,quantidade);
         }
@@ -3922,7 +3923,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	return query.list();
 	}
     
-    public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe){
+    public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe, boolean precoCapaHistoricoAlteracao){
     	
     	StringBuilder sql = new StringBuilder();
     	
@@ -4014,7 +4015,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         gerarFromWhereDadosAbastecimentoVersusBoxCota(filtro, hql, param, statusLancamento);
         
         // hql.append(" group by produtoEdicao.ID, cota.ID ");
-        hql.append(" group by box.ID, rota.ID ");
+        hql.append(" group by box.ID, cota.ID  ");
         
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
@@ -4053,7 +4054,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	@SuppressWarnings("unchecked")
     @Override
-    public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
+    public List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
         
         final Map<String, Object> param = new HashMap<String, Object>();
         
@@ -4061,20 +4062,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final StringBuilder hql = new StringBuilder();
         
-        hql.append(" select box.CODIGO as codigoBox, ");
-        hql.append("  		box.NOME as nomeBox, ");
-        hql.append("  		cota.NUMERO_COTA as codigoCota, ");
-        hql.append(" 		coalesce(pessoa.RAZAO_SOCIAL, pessoa.NOME) as nomeCota,");
-        hql.append(" 		produto.CODIGO as codigoProduto, ");
+        hql.append(" select cota.NUMERO_COTA as codigoCota, ");
         hql.append(" 		produto.NOME as nomeProduto, ");
-        hql.append(" 		produtoEdicao.id as idProdutoEdicao, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-        hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
-        hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
-        hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
-        hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa ");
+        hql.append(" 		estudoCota.REPARTE as reparte ");
         
-        gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
+        gerarFromWhereDadosAbastecimentoVersusBoxCota(filtro, hql, param, statusLancamento);
         
         hql.append(" group by ");
         
@@ -4083,9 +4076,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             hql.append(" estudoCota.ID, produtoEdicao.ID ");
         } else {
             
-            hql.append(" cota.ID ");
+            hql.append(" cota.ID, produtoEdicao.ID ");
         }
-        
+              
         gerarOrdenacaoDadosAbastecimento(filtro, hql);
         
         final SQLQuery query =  getSession().createSQLQuery(hql.toString());
@@ -4094,20 +4087,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         query.setParameterList("status", statusLancamento);
         
-        query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
-        query.addScalar("nomeBox", StandardBasicTypes.STRING);
-        query.addScalar("codigoCota", StandardBasicTypes.INTEGER);
-        query.addScalar("nomeCota", StandardBasicTypes.STRING);
-        query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
-        query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+        query.addScalar("codigoCota", StandardBasicTypes.BIG_INTEGER);
         query.addScalar("nomeProduto", StandardBasicTypes.STRING);
-        query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
-        query.addScalar("codigoBarra", StandardBasicTypes.STRING);
-        query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
-        query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
-        query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("numeroEdicao", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("reparte", StandardBasicTypes.BIG_DECIMAL);
         
-        query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+        query.setResultTransformer(new AliasToBeanResultTransformer(AbastecimentoBoxCotaDTO.class));
         
         if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) {
             query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());

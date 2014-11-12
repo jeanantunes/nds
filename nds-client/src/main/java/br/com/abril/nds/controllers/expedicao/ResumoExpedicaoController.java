@@ -426,8 +426,7 @@ public class ResumoExpedicaoController extends BaseController {
 		
 		Long quantidadeRegistros = expedicaoService.obterQuantidadeResumoExpedicaoPorProduto(filtro);
 		
-		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = 
-			new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
+		TableModel<CellModelKeyValue<ResumoExpedicaoVO>> tableModel = new TableModel<CellModelKeyValue<ResumoExpedicaoVO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentosExpedidos));
 

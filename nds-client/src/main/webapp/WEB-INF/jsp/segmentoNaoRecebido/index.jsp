@@ -194,7 +194,7 @@
       
       <div class="porCota" id="segmentoNaoRecebido_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
-       	  <legend>Segmentos que Não Recebem Cota</legend>
+       	  <legend>Segmentos que a Cota não Recebe</legend>
         
         	<table class="segmentoCotaGrid"></table>
             

@@ -37,6 +37,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -85,7 +86,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Rules(Permissao.ROLE_DISTRIBUICAO_CARACTERISTICA_DISTRIBUICAO)
 	public void index(){
 		result.include("classificacoes", caracteristicaDistribuicaoService.obterClassificacoesProduto());
-		result.include("segmentos", tipoSegmentoProdutoService.obterTipoSegmentoProduto());
+		result.include("segmentos", tipoSegmentoProdutoService.obterTipoSegmentoProdutoOrdenados(Ordenacao.ASC));
 		result.include("brindes", brindeService.obterBrindes());
 	}
 	

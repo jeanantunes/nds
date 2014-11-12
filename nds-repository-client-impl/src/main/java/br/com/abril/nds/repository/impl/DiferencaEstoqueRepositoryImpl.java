@@ -930,16 +930,39 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 	}
 	
 	@Override
-	public BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(final Date dataFechamento) {
+	public BigDecimal obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(final Date dataFechamento, boolean precoCapaHistoricoAlteracao) {
 		
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
 		
-		sql.append(" coalesce(sum( if(diferenca_.TIPO_DIFERENCA IN ('SOBRA_EM','SOBRA_EM_DIRECIONADA_COTA','GANHO_EM') ");
-		sql.append(" 				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA ");
-		sql.append(" 				,diferenca_.QTDE*produtoEdicao_.PRECO_VENDA*-1) ");  
-		sql.append(" 		  ),0) as valor  ");
+		if(precoCapaHistoricoAlteracao) {
+			
+			sql.append(" coalesce(sum( if(diferenca_.TIPO_DIFERENCA IN ('SOBRA_EM','SOBRA_EM_DIRECIONADA_COTA','GANHO_EM') ");
+			sql.append(" 				, diferenca_.QTDE * (coalesce((select valor_atual ");
+			sql.append("		from historico_alteracao_preco_venda ");
+			sql.append("		where id = (select max(id) ");
+			sql.append("					from historico_alteracao_preco_venda hapv ");
+			sql.append("					where hapv.PRODUTO_EDICAO_ID = produtoEdicao_.ID ");
+			sql.append("					and diferenca_.DATA_MOVIMENTACAO <> hapv.data_operacao ");
+			sql.append("					)), produtoEdicao_.PRECO_VENDA)) ");
+			sql.append(" 				, diferenca_.QTDE * (coalesce((select valor_atual ");
+			sql.append("		from historico_alteracao_preco_venda ");
+			sql.append("		where id = (select max(id) ");
+			sql.append("					from historico_alteracao_preco_venda hapv ");
+			sql.append("					where hapv.PRODUTO_EDICAO_ID = produtoEdicao_.ID");
+			sql.append("					and diferenca_.DATA_MOVIMENTACAO <> hapv.data_operacao ");
+			sql.append("					)), produtoEdicao_.PRECO_VENDA))*-1) ");  
+			sql.append(" 		  ),0) as valor  ");
+			
+		} else {
+			
+			sql.append(" coalesce(sum( if(diferenca_.TIPO_DIFERENCA IN ('SOBRA_EM','SOBRA_EM_DIRECIONADA_COTA','GANHO_EM') ");
+			sql.append(" 				,diferenca_.QTDE * produtoEdicao_.PRECO_VENDA ");
+			sql.append(" 				,diferenca_.QTDE * produtoEdicao_.PRECO_VENDA*-1) ");  
+			sql.append(" 		  ),0) as valor  ");
+		}
+		
 		
 		sql.append(" from DIFERENCA diferenca_ ");
 		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
