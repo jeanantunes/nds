@@ -548,6 +548,7 @@
 			T.atualizarBoxRota();
 			T.bloquearCampos('rota','roteiro','codigoProduto','nomeProduto','codigoCota','nomeCota');
 			$('#quebraPorCota').attr("checked", true);
+			T.desbloquearCampos('rota','roteiro');
 			T.bloquearLinkProdutos();
 			T.displayEntregador(false);
 			T.limparProdutosSelecionados();
