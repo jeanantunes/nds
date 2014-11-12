@@ -18,10 +18,8 @@ public class FechamentoDiarioResumoConsignado extends FechamentoDiarioConsignado
 	@Column(name="VALOR_OUTRAS_MOVIMENTACOES_ENTRADA")
 	private BigDecimal valorOutrasMovimentacoesEntrada;
 	
-	
 	@Column(name="VALOR_EXPEDICAO")
 	private BigDecimal valorExpedicao;
-	
 	
 	@Column(name="VALOR_OUTRAS_MOVIMENTACOES_SAIDA")
 	private BigDecimal valorOutrasMovimentacoesSaida;
@@ -29,6 +27,8 @@ public class FechamentoDiarioResumoConsignado extends FechamentoDiarioConsignado
 	@Column(name="VALOR_OUTRAS_MOVIMENTACOES_A_VISTA")
 	private BigDecimal valorAVista;
 
+	@Column(name="VALOR_ALTERACAO_PRECO")
+	private BigDecimal valorAlteracaoPreco;
 
 	public BigDecimal getValorCE() {
 		return valorCE;
@@ -80,4 +80,15 @@ public class FechamentoDiarioResumoConsignado extends FechamentoDiarioConsignado
 	public void setValorAVista(BigDecimal valorAVista) {
 		this.valorAVista = valorAVista;
 	}
+
+
+	public BigDecimal getValorAlteracaoPreco() {
+		return valorAlteracaoPreco;
+	}
+
+
+	public void setValorAlteracaoPreco(BigDecimal valorAlteracaoPreco) {
+		this.valorAlteracaoPreco = valorAlteracaoPreco;
+	}
+	
 }

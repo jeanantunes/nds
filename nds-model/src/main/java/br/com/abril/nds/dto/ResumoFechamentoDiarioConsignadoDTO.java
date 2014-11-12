@@ -23,6 +23,8 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		protected BigDecimal valorSaidas;
 		
 		protected BigDecimal saldoAtual;
+		
+		protected BigDecimal valorAlteracaoPreco;
 
 		/**
 		 * @return the saldoAnterior
@@ -99,6 +101,15 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 			
 			return CurrencyUtil.formatarValor(this.valorSaidas);
 		}
+
+		public BigDecimal getValorAlteracaoPreco() {
+			return valorAlteracaoPreco;
+		}
+
+		public void setValorAlteracaoPreco(BigDecimal valorAlteracaoPreco) {
+			this.valorAlteracaoPreco = valorAlteracaoPreco;
+		}
+		
 	}
 	
 	public class ResumoConsignado extends Resumo {
@@ -114,7 +125,7 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		protected BigDecimal valorAVista;
 		
 		protected BigDecimal valorAVistaCE;
-
+		
 		public BigDecimal getValorCE() {
 			return valorCE;
 		}
@@ -186,7 +197,7 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		public void setValorAVistaCE(BigDecimal valorAVistaCE) {
 			this.valorAVistaCE = valorAVistaCE;
 		}
-		
+
 	}
 
 	/**

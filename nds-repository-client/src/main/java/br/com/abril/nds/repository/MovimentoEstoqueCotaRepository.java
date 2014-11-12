@@ -521,7 +521,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
     void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto);
     
-    BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe);
+    BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe, boolean precoCapaHistoricoAlteracao);
     
 	List<ProdutoAbastecimentoDTO> obterDadosAbastecimentoBoxVersusCota(FiltroMapaAbastecimentoDTO filtro);
 	
