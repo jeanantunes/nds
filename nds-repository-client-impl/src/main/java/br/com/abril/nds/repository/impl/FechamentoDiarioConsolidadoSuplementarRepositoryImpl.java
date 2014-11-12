@@ -22,12 +22,13 @@ public class FechamentoDiarioConsolidadoSuplementarRepositoryImpl extends Abstra
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select COALESCE(f.valorEstoqueLogico,0) as totalEstoqueLogico, ")
-			.append(" COALESCE(f.valorSaldo,0) as saldo, ")
-			.append(" COALESCE(f.valorTransferencia,0) as totalTransferencia, ")
-			.append(" COALESCE(f.valorVendas,0) as totalVenda ")
+		hql.append(" select COALESCE(f.valorEstoqueLogico, 0) as totalEstoqueLogico, ")
+			.append(" COALESCE(f.valorSaldo, 0) as saldo, ")
+			.append(" COALESCE(f.valorTransferencia, 0) as totalTransferencia, ")
+			.append(" COALESCE(f.valorAlteracaoPreco, 0) as totalAlteracaoPreco, ")
+			.append(" COALESCE(f.valorVendas, 0) as totalVenda ")
 			.append(" from FechamentoDiarioConsolidadoSuplementar f  ")
-			.append(" where f.fechamentoDiario.dataFechamento=:dataFechamento ");
+			.append(" where f.fechamentoDiario.dataFechamento = :dataFechamento ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
