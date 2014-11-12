@@ -17,6 +17,8 @@ public class ResumoSuplementarFecharDiaDTO implements Serializable {
 	
 	private BigDecimal totalVenda;
 	
+	private BigDecimal totalAlteracaoPreco;
+	
 	private BigDecimal saldo;
 
 	
@@ -44,6 +46,14 @@ public class ResumoSuplementarFecharDiaDTO implements Serializable {
 		this.totalVenda = totalVenda;
 	}
 
+	public BigDecimal getTotalAlteracaoPreco() {
+		return totalAlteracaoPreco;
+	}
+
+	public void setTotalAlteracaoPreco(BigDecimal totalAlteracaoPreco) {
+		this.totalAlteracaoPreco = totalAlteracaoPreco;
+	}
+
 	public BigDecimal getSaldo() {
 		return saldo;
 	}
@@ -66,6 +76,10 @@ public class ResumoSuplementarFecharDiaDTO implements Serializable {
 
 	public String getSaldoFormatado() {
 		return CurrencyUtil.formatarValor(saldo);
+	}
+	
+	public String getTotalAlteracaoPrecoFormatado() {
+		return CurrencyUtil.formatarValor(totalAlteracaoPreco);
 	}
 
 }

@@ -1,6 +1,16 @@
  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
  <!-- distribuicaoVendaMedia -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/autoCompleteCampos.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoVendaMedia.js"></script>
+
 <script language="javascript">
+
+var distribuicaoVendaMedia = new DistribuicaoVendaMedia('${pageContext.request.contextPath}', this.workspace);
+
+var autoComplete = new AutoCompleteCampos();
+
+
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
 		distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
@@ -16,7 +26,7 @@ $(function() {
 	});
 
 function popup_novo() {
-	$("#edicaoProdCadastradosGrid-1", distribuicaoVendaMedia.workspace).flexAddData({
+	$("#edicaoProdCadastradosGrid-1").flexAddData({
 			rows : [],
 			page : 1,
 			total : 1
@@ -28,7 +38,7 @@ function popup_novo() {
 	
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
 	
-	$( "#dialog-edicoes-base", distribuicaoVendaMedia.workspace ).dialog({
+	$("#dialog-edicoes-base").dialog({
 	    escondeHeader: false,
 		resizable: false,
 		height:450,
@@ -43,7 +53,6 @@ function popup_novo() {
 				$( this ).dialog( "close" );
 			}
 		},
-		form: $( "#dialog-edicoes-base", distribuicaoVendaMedia.workspace ).parents("form")
 	});
 };
 function popup_cancelar() {
@@ -315,7 +324,6 @@ function limparLstExcecao1(){
     </fieldset>
 </div>
 
-<form id="formEdicoesBase">
 <div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px; width: 650px ">  
 <fieldset style="width:560px!important;">
     <legend>Pesquisar Produto</legend>
@@ -325,14 +333,13 @@ function limparLstExcecao1(){
             <td width="43">Código:</td>
             <td width="78">
             	<input type="text" name="textfield1" id="codigoPesquisaBases" style="width:60px;"
-            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"/>
+            	 	onchange="autoComplete.pesquisarPorCodigo('/produto/pesquisarPorCodigoProduto','#codigoPesquisaBases', '#produtoPesquisaBases');"/>
             </td>
             
             <td width="48">Produto:</td>
             <td width="184">
-            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" 
-            		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
-                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"/>
+            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
+                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);" /> 
             </td>
             
             <td width="42">Edição:</td>
@@ -351,9 +358,16 @@ function limparLstExcecao1(){
 		        </select>
 		        </td>
 	          	<td>
-	          		<span class="classPesquisar">
-	          			<a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}')">&nbsp;</a>
+					<span class="bt_novos">
+						<a href="javascript:distribuicaoVendaMedia.pesquisarBases();" rel="tipsy" title="Pesquisar">
+							<img src="images/ico_pesquisar.png" hspace="5" border="0" />
+						</a>
+					</span>
+	          	<!-- 
+	          		<span class="bt_pesquisar">
+	          			<a onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}');">&nbsp;</a>
 	          		</span>
+	          	 -->
 	          	</td>
           	</tr>
         </table>
@@ -366,10 +380,6 @@ function limparLstExcecao1(){
         <table class="edicaoProdCadastradosGrid-1" id="edicaoProdCadastradosGrid-1"></table>
      </fieldset>
 </div>
-</form>
-
-
-
 
 <div>
   

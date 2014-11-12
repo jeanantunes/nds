@@ -1058,32 +1058,44 @@ var regiaoController = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					$(this).dialog("close");
 					
-					$("#arquivoUpLoad").ajaxSubmit({
-						beforeSubmit: function(arr, formData, options) {
-						},
-						success: function(responseText, statusText, xhr, $form)  { 
-							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-							var tipoMensagem = mensagens.tipoMensagem;
-							var listaMensagens = mensagens.listaMensagens;
-
-							if (tipoMensagem && listaMensagens) {
-								
-								if (tipoMensagem != 'SUCCESS') {
-									
-									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-								}
-								$("#dialog-lote").dialog( "close" );
-								regiaoController.cotasDaRegiao();
-								exibirMensagem(tipoMensagem, listaMensagens);	
-							}
-						}, 
-						url:  contextPath + '/distribuicao/regiao/addLote',
-						type: 'POST',
-						dataType: 'json',
-						data: { idRegiao : idRegiaoSelecionada }
-					});
+					var fileName = $("#xls").val();
+				      
+					var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+				       
+						if(ext!="xls" & ext!="xlsx"){
+							exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+							$(this).val('');
+							return;
+						}else{
+					
+							$(this).dialog("close");
+							
+							$("#arquivoUpLoad").ajaxSubmit({
+								beforeSubmit: function(arr, formData, options) {
+								},
+								success: function(responseText, statusText, xhr, $form)  { 
+									var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+									var tipoMensagem = mensagens.tipoMensagem;
+									var listaMensagens = mensagens.listaMensagens;
+		
+									if (tipoMensagem && listaMensagens) {
+										
+										if (tipoMensagem != 'SUCCESS') {
+											
+											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+										}
+										$("#dialog-lote").dialog( "close" );
+										regiaoController.cotasDaRegiao();
+										exibirMensagem(tipoMensagem, listaMensagens);	
+									}
+								}, 
+								url:  contextPath + '/distribuicao/regiao/addLote',
+								type: 'POST',
+								dataType: 'json',
+								data: { idRegiao : idRegiaoSelecionada }
+							});
+				       }
 					
 				},
 				"Cancelar" : function() {
@@ -1964,11 +1976,6 @@ var regiaoController = $.extend(true, {
 	checkAllSegmento : function() {
 		var valor = $("#todosSegmento").is(":checked");
 		$("input[type=checkbox][name='cotaSegmentoSelected']").attr("checked", valor);
-	},
-	
-	checkAllNMaiores : function() {
-		var valor = $("#selTodosProdutos").is(":checked");
-		$("input[type=checkbox][name='prodNMaioresSelected']").attr("checked", valor);
 	},
 	
 	checkAllRankingNMaiores : function() {

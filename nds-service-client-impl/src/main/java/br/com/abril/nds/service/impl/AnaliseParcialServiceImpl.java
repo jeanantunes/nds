@@ -391,6 +391,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         		cotaQueNaoEntrouNoEstudoDTO.setMotivo("SH");
         	}
         	
+        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo().equalsIgnoreCase("MX")){
+        		cotaQueNaoEntrouNoEstudoDTO.setMotivo("SM");
+        	}
+        	
             cotaQueNaoEntrouNoEstudoDTO.setSiglaMotivo(cotaQueNaoEntrouNoEstudoDTO.getMotivo());
             cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
         }

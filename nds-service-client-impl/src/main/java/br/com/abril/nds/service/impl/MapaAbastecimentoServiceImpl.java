@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,8 +28,6 @@ import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -778,59 +775,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public AbastecimentoBoxCotaDTO obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters) {
-	
-		AbastecimentoBoxCotaDTO boxCota = new AbastecimentoBoxCotaDTO();
-		
-		Intervalo<Date> intervaloData = new Intervalo<Date>(filtro.getDataDate(), filtro.getDataDate());
-		
-		List<AbastecimentoBoxCotaDTO> cotas = this.cotaService.obterCotasExpedicao(intervaloData);
+	public List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters) {
 
-		Set produtos = new HashSet<String>();
-		
-		Set produtoEdicao = new HashSet<Integer>();
-		
-		Set numerosCotas = new HashSet<Integer>();
-		
-		List<Integer> repartes = new ArrayList<Integer>();
-		
-		for (AbastecimentoBoxCotaDTO abastecimentoBoxCotaDTO : cotas) {
-			produtos.add(abastecimentoBoxCotaDTO.getCodigoProduto() + " " + abastecimentoBoxCotaDTO.getNomeProduto() +  " " + abastecimentoBoxCotaDTO.getNumeroEdicao());
-			produtoEdicao.add(abastecimentoBoxCotaDTO.getIdProdutoEdicao());
-			numerosCotas.add(abastecimentoBoxCotaDTO.getNumeroCota());
-		}
-		
-		List<ProdutoAbastecimentoDTO> produtosBoxCota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(filtro);
-		
-		for(final Object idProdutoEdicao : produtoEdicao) {
-			for (final Object numeroCota : numerosCotas) {
-				if(produtosBoxCota == null || produtosBoxCota.isEmpty()) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter cota e reparte para o mapa de abastecimento.");
-				
-				} else {
-					
-					WeakReference<ProdutoAbastecimentoDTO> weakProdutoAbastecimento = new WeakReference<ProdutoAbastecimentoDTO>(new ProdutoAbastecimentoDTO());
-					
-					weakProdutoAbastecimento.get().setIdProdutoEdicao(Long.valueOf(idProdutoEdicao.toString()));
-					weakProdutoAbastecimento.get().setCodigoCota(Integer.valueOf(numeroCota.toString()));
-					
-					int ndx = produtosBoxCota.indexOf(weakProdutoAbastecimento.get());
-					if(ndx > -1) {						
-						repartes.add(produtosBoxCota.get(ndx).getReparte());
-					} else {
-						repartes.add(Integer.valueOf(0));
-					}
-					
-				}
-			}
-		}
-		
-		boxCota.setProdutos(produtos);
-		boxCota.setCotas(numerosCotas);
-		boxCota.setRepartes(repartes);
-		
-		return boxCota;
+		List<AbastecimentoBoxCotaDTO> produtosBoxCota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(filtro);
+
+		return produtosBoxCota;
 	}
 }

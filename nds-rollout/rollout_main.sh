@@ -26,7 +26,7 @@ DBPASS=abril@123
 # **** Producao ****
 #AMBIENTE=rds-mql-prd-prv-distb-01.c4gu9vovwusc.sa-east-1.rds.amazonaws.com
 #DBUSER=awsuser
-#DBPASS=pdgbdistb01mgr
+#DBPASS=dgbdistb01mgr
 
 clear
 echo
@@ -37,7 +37,7 @@ echo "Extrai Estrutura atualizada <s ou n>?"
 read sn
 if [ $sn = "s" ] ; then
 rm $DIRBKP/comum/carga_estrutura.sql
-mysqldump -h$AMBIENTE -u$DBUSER -p$DBPASS --no-data 'db_05318019' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+mysqldump -h$AMBIENTE -u$DBUSER -p$DBPASS --no-data 'db_06248116' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
 fi
 echo
 echo '3) EXCLUI A BASE '$BASE `date +%T`
@@ -56,7 +56,7 @@ echo '7) CARREGA DADOS DE CARGA DE TIPOS.' `date +%T`
 mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_tipos.sql
 echo
 echo '8) COPIA ARQUIVOS PARA BASE.' `date +%T`
-echo "Copia os arquivos <s ou n>?"
+echo "Copia os arquivos ? <s ou n>"
 read sn
 if [ $sn = "s" ] ; then
 
@@ -78,16 +78,30 @@ scp -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" $DIRBKP
 
 fi
 echo
-echo '9) CARREGA PRODIN MDC.' `date +%T`
+echo '9) TIPO DISTRIBUIDOR.' `date +%T`
+echo "Tipo do Distribuidor: Agência ou Praça ? <a ou p>"
+read td
+if [ $td = "a" ] ; then
+echo 'CARREGA PRODIN AGENCIA' `date +%T`
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_prodin_prd_agencia.sql
+else
+echo 'CARREGA PRODIN PRACA' `date +%T`
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_prodin_prd_praca.sql
+fi
+echo
+echo '10) CARREGA PRODIN MDC.' `date +%T`
 mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_prodin_mdc.sql
 echo
-echo '10) CARREGA MOVIMENTAÇÕES.' `date +%T`
-echo "Executar Movimentações <s ou n>?"
+echo '11) CARREGA MOVIMENTAÇÕES.' `date +%T`
+echo "Executar Movimentações ? <s ou n>"
 read sn
 if [ $sn = "s" ] ; then
 mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/comum/carga_movimentos.sql
 echo ''
 fi	
+echo
+echo '11) CARREGA PRODIN MDC.' `date +%T`
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS db_$1 < $DIR/$1/carga_ajustes.sql
 echo
 echo 'Fim.' `date`
 

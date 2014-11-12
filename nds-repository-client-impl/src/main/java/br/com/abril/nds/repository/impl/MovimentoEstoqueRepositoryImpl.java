@@ -32,8 +32,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 
 @Repository
-public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> 
-implements MovimentoEstoqueRepository {
+public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> implements MovimentoEstoqueRepository {
 	
 	/**
 	 * Construtor padrão.
@@ -249,25 +248,50 @@ implements MovimentoEstoqueRepository {
         return (BigDecimal) query.uniqueResult();
 	}
 	
-	public BigDecimal obterSaldoDeReparteExpedido(final Date dataMovimento){
+	public BigDecimal obterSaldoDeReparteExpedido(final Date dataMovimento, boolean precoCapaHistoricoAlteracao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append(" coalesce(sum(movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA),0) as VALOR_EXPEDIDO ");
+		if(precoCapaHistoricoAlteracao) {
+			
+			sql.append("coalesce(sum(movimentoEstoque.QTDE * coalesce((select (valor_atual - valor_antigo)");
+			sql.append("		from historico_alteracao_preco_venda ");
+			sql.append("		where id = (select max(id) "); 
+			sql.append("					from historico_alteracao_preco_venda hapv "); 
+			sql.append("					where hapv.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+			sql.append("					and movimentoEstoque.DATA <> hapv.data_operacao ");
+			sql.append("					and movimentoEstoque.DATA <= :dataMovimento ");
+			sql.append("					)), produtoEdicao.PRECO_VENDA)), 0) as VALOR_EXPEDIDO ");
+		} else {
+			
+			sql.append(" coalesce(sum(movimentoEstoque.QTDE * produtoEdicao.PRECO_VENDA), 0) as VALOR_EXPEDIDO ");
+		}
 				
 		sql.append(" from ");
 		sql.append("		MOVIMENTO_ESTOQUE movimentoEstoque ");
 		sql.append("		join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
 		sql.append("		join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		
+		if(precoCapaHistoricoAlteracao) {
+			sql.append("	join historico_alteracao_preco_venda ha on ha.PRODUTO_EDICAO_ID=produtoEdicao.ID and movimentoEstoque.DATA < ha.data_operacao ");
+		}
+		
 		sql.append(" where ");
-		sql.append("	movimentoEstoque.DATA = :dataMovimento ");
+		if(precoCapaHistoricoAlteracao) {
+			sql.append("	movimentoEstoque.DATA <= :dataMovimento ");
+		} else {
+			sql.append("	movimentoEstoque.DATA = :dataMovimento ");
+		}
 		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
 		sql.append("	and (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioJornaleiroJuramentado");
 		sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioAoJornaleiro");
 		sql.append("	and ");
-		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		if(precoCapaHistoricoAlteracao) {
+			sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		} else {
+			sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		}
 		sql.append("			select distinct produtoEdicao_.ID ");
 		sql.append("			from ");
 		sql.append("				EXPEDICAO expedicao ");
@@ -275,7 +299,11 @@ implements MovimentoEstoqueRepository {
 		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID ");
 		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
 		sql.append("			where lancamento.STATUS <> :statusFuro");
-		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento");
+		if(precoCapaHistoricoAlteracao) {
+			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR <= :dataMovimento");
+		} else {
+			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento");
+		}
 		sql.append("		        and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado");
 		sql.append("		))) ");
 

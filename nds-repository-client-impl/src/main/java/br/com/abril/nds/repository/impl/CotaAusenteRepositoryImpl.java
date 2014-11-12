@@ -323,20 +323,19 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
 		sql.append("	join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		sql.append(" where");
-		sql.append("	movimentoEstoque.DATA=:dataMovimento "); 
+		sql.append("	movimentoEstoque.DATA = :dataMovimento "); 
 		sql.append("	and movimentoEstoque.STATUS=:statusAprovado ");
 		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentos)");
-		sql.append("	and ");
-		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+		sql.append("	and movimentoEstoque.PRODUTO_EDICAO_ID in (");
 		sql.append("			select distinct produtoEdicao_.ID ");
 		sql.append("			from ");
 		sql.append("				EXPEDICAO expedicao ");
-		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID ");
-		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_  on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID  ");
-		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID  ");
-		sql.append("			where lancamento.STATUS<>:statusFuro ");
-		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR<:dataMovimento ");
-		sql.append("				and produto_.FORMA_COMERCIALIZACAO=:formaComercializacaoConsignado ");
+		sql.append("				inner join LANCAMENTO lancamento on expedicao.ID = lancamento.EXPEDICAO_ID ");
+		sql.append("				inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID = produtoEdicao_.ID  ");
+		sql.append("				inner join PRODUTO produto_ on produtoEdicao_.PRODUTO_ID = produto_.ID  ");
+		sql.append("			where lancamento.STATUS <> :statusFuro ");
+		sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento ");
+		sql.append("				and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado ");
 		sql.append("		) ");
 			
 		SQLQuery query = getSession().createSQLQuery(sql.toString());

@@ -511,13 +511,13 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		var produtoVazio = $("#nomeProduto").val() =="" ;
 		var nomeEditorVazio = $("#nomeEditor").val() =="";
 		var segmentoVazio =  $("#segmento").val()=="";
-		var brindeVazio = $("#brinde").val()=="";
+//		var brindeVazio = $("#brinde").val()=="";
 		var classificacaoVazio =  $("#classificacao").val()=="";
 		var chamadaCapaVazio = $("#chamadaCapa").val()==""; 
 		var faixaDeVazio=$("#faixaDe").val()=="";
 		var faixaAteVazio=$("#faixaAte").val()=="";
 		
-		return (codigoVazio && produtoVazio && classificacaoVazio && nomeEditorVazio &&  segmentoVazio && brindeVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio);
+		return (codigoVazio && produtoVazio && classificacaoVazio && nomeEditorVazio &&  segmentoVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio);
 	},
 	
 	
@@ -526,13 +526,13 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		var produtoPreenchido = $("#nomeProduto").val().length>0;
 		var nomeEditorPreenchido = $("#nomeEditor").val().length>0;
 		var segmentoVazio =  $("#segmento").val()=="";
-		var brindeVazio = $("#brinde").val()=="";
+//		var brindeVazio = $("#brinde").val()=="";
 		var classificacaoVazio =  $("#classificacao").val()=="";
 		var chamadaCapaVazio = $("#chamadaCapa").val()==""; 
 		var faixaDeVazio=$("#faixaDe").val()=="";
 		var faixaAteVazio=$("#faixaAte").val()=="";
 		
-		var outrosCamposVazios =classificacaoVazio  &&  segmentoVazio && brindeVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio;
+		var outrosCamposVazios =classificacaoVazio  &&  segmentoVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio;
 		
 		return (outrosCamposVazios &&(codigoPreenchido || produtoPreenchido ||nomeEditorPreenchido) );
 	},
@@ -549,7 +549,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 		data.push({name:'filtro.classificacaoProduto', value: $("#classificacao option:selected", this.workspace).val()});
 		data.push({name:'filtro.segmento', value: $("#segmento option:selected", this.workspace).val()});
-		data.push({name:'filtro.brinde', value: $("#brinde option:selected", this.workspace).val()});
+		data.push({name:'filtro.brinde', value:$('#checkIsBrinde').is(":checked")});
 		data.push({name:'filtro.chamadaCapa', value:$('#chamadaCapa', this.workspace).val()});
 		data.push({name:'filtro.faixaPrecoDe', value: valDe.replace(",",".")});
 		data.push({name:'filtro.faixaPrecoAte', value: valAte.replace(",",".")});

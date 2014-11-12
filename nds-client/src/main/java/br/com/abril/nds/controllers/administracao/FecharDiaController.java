@@ -201,8 +201,7 @@ public class FecharDiaController extends BaseController {
     @Path("/obterLancamentoFaltaESobra")
     public void obterLancamentoFaltaESobra(){
         
-        final List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> listaLancamentoFaltaESobra =
-                fecharDiaService.obterLancamentoFaltasESobras(dataOperacao);
+        final List<ValidacaoLancamentoFaltaESobraFecharDiaDTO> listaLancamentoFaltaESobra = fecharDiaService.obterLancamentoFaltasESobras(dataOperacao);
         
         final TableModel<CellModelKeyValue<ValidacaoLancamentoFaltaESobraFecharDiaDTO>> tableModel =
                 new TableModel<CellModelKeyValue<ValidacaoLancamentoFaltaESobraFecharDiaDTO>>();
@@ -235,8 +234,7 @@ public class FecharDiaController extends BaseController {
     @Path("obterResumoQuadroEncalhe")
     public void obterResumoQuadroEncalhe(){
         
-        final ResumoEncalheFecharDiaDTO dto =
-                resumoEncalheFecharDiaService.obterResumoGeralEncalhe(dataOperacao);
+        final ResumoEncalheFecharDiaDTO dto = resumoEncalheFecharDiaService.obterResumoGeralEncalhe(dataOperacao);
         
         result.use(CustomMapJson.class).put("result", dto).serialize();
     }
@@ -245,8 +243,7 @@ public class FecharDiaController extends BaseController {
     @Path("obterResumoQuadroSuplementar")
     public void obterResumoQuadroSuplementar(){
         
-        final ResumoSuplementarFecharDiaDTO dto =
-                resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(dataOperacao);
+        final ResumoSuplementarFecharDiaDTO dto = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(dataOperacao);
         
         result.use(CustomMapJson.class).put("result", dto).serialize();
     }
@@ -543,18 +540,16 @@ public class FecharDiaController extends BaseController {
                 
                 result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
                         Constantes.PARAM_MSGS).recursive().serialize();
-            }
-            else{
+                
+            } else {
                 
                 //Lock novamente na base de dados.
                 fecharDiaService.setLockBancoDeDados(true);
                 result.use(Results.json()).from(
                         new ValidacaoVO(
                                 TipoMensagem.WARNING,
- "Fechamento do Dia não pode ser confirmado! "
-                            + "Existem pendências em aberto para a data de operação: "
-                                        +
-                                        new SimpleDateFormat("dd/MM/yyyy").format(_dataOperacao) + "!"),
+                                		String.format("Fechamento do Dia não pode ser confirmado! Existem pendências em aberto para a data de operação: %s!"
+                                				, new SimpleDateFormat("dd/MM/yyyy").format(_dataOperacao))),
                                         Constantes.PARAM_MSGS).recursive().serialize();
                 
             }

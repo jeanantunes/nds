@@ -107,12 +107,32 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		return total != null ? total : BigDecimal.ZERO ;
 	}
+	
+	@Override
+	public BigDecimal obterValorAlteracaoPreco(Date dataOperacao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select sum(coalesce(ep.QTDE_SUPLEMENTAR, 0) * coalesce((select (valor_atual - valor_antigo) ")
+		.append(" from historico_alteracao_preco_venda ")   
+		.append(" where id = (select max(id) ")     
+		.append("     from historico_alteracao_preco_venda hapv ")
+		.append("     where hapv.PRODUTO_EDICAO_ID = pe.ID)), pe.PRECO_VENDA) - coalesce(ep.QTDE_SUPLEMENTAR, 0) * pe.PRECO_VENDA) ")
+		.append(" from estoque_produto ep ")
+		.append(" join PRODUTO_EDICAO pe on ep.PRODUTO_EDICAO_ID=pe.ID ");
+	
+		Query query = super.getSession().createSQLQuery(sql.toString());
+		
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		
+		return total != null ? total : BigDecimal.ZERO ;
+	}
 
 	@Override
 	public BigDecimal obterValorFisico(Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT SUM(ep.qtdeSuplementar*pe.precoVenda) ");
+		hql.append(" SELECT SUM(ep.qtdeSuplementar * pe.precoVenda) ");
 		hql.append(" FROM EstoqueProduto as ep ");
 		hql.append(" JOIN ep.produtoEdicao pe ");
 	

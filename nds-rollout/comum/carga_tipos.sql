@@ -15,23 +15,25 @@
 -- FORNECEDOR
 --
 
-LOCK TABLES `fornecedor` WRITE;
+-- LOCK TABLES `fornecedor` WRITE;
 /*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
+/*
 INSERT INTO `fornecedor` VALUES 
 (3,NULL,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0, 'Resp Treelog', 'ATIVO',NULL,NULL,3,3,NULL,NULL,'BANCAS','16'),
 (4,NULL,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0, 'Resp Treelog', 'ATIVO',NULL,NULL,4,3,NULL,NULL,'BANCAS','16'),
 (16,16,'treelog@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0,'Resp Treelog','ATIVO',NULL,NULL,16,3,NULL,NULL,'BANCAS',NULL);
+*/
 /*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
-UNLOCK TABLES;
+-- UNLOCK TABLES;
 
 LOCK TABLES `endereco` WRITE;
-/*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
+/*!40000 ALTER TABLE `endereco` DISABLE KEYS */;   -- select * from endereco
 INSERT INTO `endereco` VALUES 
-('1', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '1', 'Rua', 'SP', NULL),
-('2', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '2', 'Rua', 'SP', NULL),
-('3', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '3', 'Rua', 'SP', NULL),
-('4', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '4', 'Rua', 'SP', NULL),
-('16', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '1', 'Rua', 'SP', NULL);
+('1', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 1),
+('2', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 2),
+-- ('3', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '3', 'Rua', 'SP', 3),
+-- ('4', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '4', 'Rua', 'SP', 4),
+('16', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 16);
 /*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -39,11 +41,12 @@ LOCK TABLES `endereco_fornecedor` WRITE;
 /*!40000 ALTER TABLE `endereco_fornecedor` DISABLE KEYS */;
 INSERT INTO `endereco_fornecedor` VALUES 
 # ID, PRINCIPAL, TIPO_ENDERECO, ENDERECO_ID, FORNECEDOR_ID
-(1,0,'COMERCIAL',1,1),
-(2,0,'COMERCIAL',2,2),
-(3,0,'COMERCIAL',3,3),
-(4,0,'COMERCIAL',4,4),
-(5,1,'COMERCIAL',16,16);
+(1,1,'COMERCIAL',1,1),
+(2,1,'COMERCIAL',2,2),
+-- (3,0,'COMERCIAL',3,3),
+-- (4,0,'COMERCIAL',4,4),
+-- (5,1,'COMERCIAL',5,5),
+(16,1,'COMERCIAL',16,16);
 /*!40000 ALTER TABLE `endereco_fornecedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -942,7 +945,7 @@ UNLOCK TABLES;
 LOCK TABLES `endereco_distribuidor` WRITE;
 /*!40000 ALTER TABLE `endereco_distribuidor` DISABLE KEYS */;
 INSERT INTO `endereco_distribuidor` VALUES 
-(1,1,'COMERCIAL',1,1);
+(1,1,'COMERCIAL',5,1);
 /*!40000 ALTER TABLE `endereco_distribuidor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1060,9 +1063,42 @@ INSERT INTO `feriado` VALUES
 (8,'2014-11-15','Proclamação da República',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
 (9,'2014-12-25','Natal',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL),
 (10,'2014-01-01','Confraternização Universal',0,0,1,'MANUAL','FEDERAL',NULL,NULL,NULL);
-
 /*!40000 ALTER TABLE `feriado` ENABLE KEYS */;
 UNLOCK TABLES;
+
+LOCK TABLES `CARGA_ESTQMOV_TIPO_MOVIMENTO` WRITE;
+/*!40000 ALTER TABLE `CARGA_ESTQMOV_TIPO_MOVIMENTO` DISABLE KEYS */;
+insert into CARGA_ESTQMOV_TIPO_MOVIMENTO values
+(1,'reparte n. f.',0),        
+(2,'reparte sugerido',0),      
+(3,'sobra de',0),              
+(4,'falta de',0),              
+(5,'sobra em',0),              
+(6,'falta em',0),              
+(7,'encalhe físico',0),        
+(8,'transferência',0),         
+(9,'suplementar físico',0),    
+(10,'sobra de distribuição',0), 
+(11,'venda de encalhe',0),      
+(12,'devolução',0),             
+(13,'reparte promocional',0),   
+(14,'venda de suplementar',0),  
+(15,'encalhe antecipado',0),  
+(16,'encalhe suplementar',0),   
+(99,'estorno',0);
+/*!40000 ALTER TABLE `CARGA_ESTQMOV_TIPO_MOVIMENTO` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `CARGA_ESTQMOV_ORIGEM_DESTINO` WRITE;
+/*!40000 ALTER TABLE `CARGA_ESTQMOV_ORIGEM_DESTINO` DISABLE KEYS */;
+insert into CARGA_ESTQMOV_ORIGEM_DESTINO values
+('99999','Dinap'),     
+('99998','Outros'),     
+('99997','Jornaleiro'), 
+('99996','Digitação');
+/*!40000 ALTER TABLE `CARGA_ESTQMOV_ORIGEM_DESTINO` ENABLE KEYS */;
+UNLOCK TABLES;
+
 -- ######################################################################################################################################################################################
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

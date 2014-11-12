@@ -324,10 +324,8 @@ var lancamentosSelecionados = [];
 			    <jsp:include page="copiarEstudo.jsp" />
 			</div>
 		</form>
-				
-		<form id="form-somar-estudo">
+
 		<div id="dialog-somar-estudo" title="Somar Estudos" style="display:none;">
 		    <jsp:include page="somarEstudo.jsp" />
 		</div>
-		</form>
 </div>

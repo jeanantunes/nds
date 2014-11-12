@@ -43,15 +43,15 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
 		
 		 List<ReparteFecharDiaDTO> reparteFecharDiaDTOs = null;
 		
-		if(fecharDiaService.isDiaComFechamentoRealizado(dataOperacao)){
+		if(fecharDiaService.isDiaComFechamentoRealizado(dataOperacao)) {
 			
 			reparteFecharDiaDTOs = fechamentoDiarioLancamentoReparteRepository.obterLancametosReparte(dataOperacao, paginacao);
 			
-		}else{
+		} else {
 			
 			Date dataReparteHistoico = fechamentoDiarioRepository.obterDataUltimoFechamento(dataOperacao);
 			
-			reparteFecharDiaDTOs = this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao,dataReparteHistoico);
+			reparteFecharDiaDTOs = this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao, dataReparteHistoico);
 		}
 	
 		return reparteFecharDiaDTOs;
@@ -87,9 +87,7 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
         if(fecharDiaService.isDiaComFechamentoRealizado(data)){
         	
         	reparteDTO = consolidadoReparteRepository.obterSumarizacaoReparte(data);
-        }
-        else{
-        
+        } else {
         	
         	reparteDTO = resumoFecharDiaRepository.obterSumarizacaoReparte(data);
         }
