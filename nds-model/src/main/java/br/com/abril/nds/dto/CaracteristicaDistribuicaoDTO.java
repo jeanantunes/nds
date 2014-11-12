@@ -50,8 +50,8 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	@Export(label="Venda",exhibitionOrder=12)
 	private String vendaString;
 	
-	private BigDecimal reparte;
-	private BigDecimal venda;
+	private BigInteger reparte;
+	private BigInteger venda;
 	private Date dataLancamento;
 	private Date dataRecolhimento;
 	private BigInteger idProdEd;
@@ -129,27 +129,28 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 		this.dataRecolhimento = dataRecolhimento;
 		this.dataRecolhimentoString =DateUtil.formatarData(dataRecolhimento, "dd/MM/yyyy");
 	}
-	public BigDecimal getReparte() {
-		return reparte;
-	}
-	public void setReparte(BigDecimal repartePraca) {
+	
+	public void setReparte(BigInteger repartePraca) {
 		this.reparte = repartePraca;
 		if(repartePraca!=null){
-			this.reparteString=repartePraca.setScale(0, BigDecimal.ROUND_FLOOR).toString();
+			this.reparteString=repartePraca.toString();
 		}else{
 			this.reparteString="";
 		}
 	}
-	public BigDecimal getVenda() {
-		return venda;
-	}
-	public void setVenda(BigDecimal vendaPraca) {
+	public void setVenda(BigInteger vendaPraca) {
 		this.venda = vendaPraca;
 		if(vendaPraca!=null){
-			this.vendaString = vendaPraca.setScale(0, BigDecimal.ROUND_FLOOR).toString();
+			this.vendaString = vendaPraca.toString();
 		}else{
 			this.vendaString="";
 		}
+	}
+	public BigInteger getReparte() {
+		return reparte;
+	}
+	public BigInteger getVenda() {
+		return venda;
 	}
 	public BigInteger getNumeroEdicao() {
 		return numeroEdicao;

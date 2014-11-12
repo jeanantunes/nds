@@ -263,6 +263,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 		case ENTREGADOR:
 			this.popularGridPorEntregador(filtro);
+			break;
 		case BOX_X_COTA:
 		    this.popularGridBoxVersusCota(filtro);
             break;	
@@ -565,13 +566,13 @@ public class MapaAbastecimentoController extends BaseController {
                 
 			    filtro.getPaginacao().setSortColumn("nomeEdicao");
 			    
-                dados = Arrays.asList(this.mapaAbastecimentoService.obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(filtro, parameters));
+                dados = this.mapaAbastecimentoService.obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(filtro, parameters);
                 
                 parameters.put("DATA", filtro.getDataLancamento());
                 
                 nomeRelatorio = "Mapa de Abastecimento por Box X Cota";
                 
-                path += "rel_box_versus_cota_principal.jasper";
+                path += "rel_box_cota_crosstab.jasper";
                 
             break;
 			default:

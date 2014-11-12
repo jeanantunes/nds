@@ -335,7 +335,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         BigDecimal faltaSobras = resultado.getTotalSobras().subtract(resultado.getTotalFaltas());
           
         // FISICO + sobras - faltas
-        BigDecimal valorFisico = resultado.getTotalFisico().subtract(resultado.getVenda());
+        BigDecimal valorFisico = resultado.getTotalFisico();
   		
         //Saldo = Lógico - (Físico - Venda de Encalhe + Sobras - Faltas ;
         BigDecimal saldo = resultado.getTotalLogico().subtract(valorFisico).add(faltaSobras).subtract(resultado.getVenda());

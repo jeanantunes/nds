@@ -34,13 +34,13 @@ public class ManutencaoPublicacaoController {
 	public void index() {}
 	
 	@Path("/pesquisarProduto")
-	public void pesquisar(String codigo, Long numeroEdicao){
+	public void pesquisar(String codigo, Long numeroEdicao) {
 		
 		this.validarProdutoEdicao(codigo, numeroEdicao);
 		
 		BigDecimal precoProduto = produtoEdicaoService.obterPrecoEdicaoParaAlteracao(codigo, numeroEdicao);
 		
-		if(precoProduto == null){
+		if(precoProduto == null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Publicação não encontrada."));
 		}
 		
@@ -51,17 +51,16 @@ public class ManutencaoPublicacaoController {
 	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_PUBLICACAO_ALTERACAO)
 	public void confirmar(String codigo, Long numeroEdicao, BigDecimal precoProduto){
 		
-		produtoEdicaoService.executarAlteracaoPrecoCapa(codigo,numeroEdicao,precoProduto);
+		produtoEdicaoService.executarAlteracaoPrecoCapa(codigo, numeroEdicao, precoProduto);
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Alteração efetuada com Sucesso."), "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Alteração efetuada com Sucesso."), "result").recursive().serialize();
 	}
 	
 	private void validarProdutoEdicao(final String codigo, final Long numeroEdicao) {
 		
 		List<String> mensagens = new ArrayList<>();
 		
-		if(codigo == null || codigo.isEmpty()){
+		if(codigo == null || codigo.isEmpty()) {
 			mensagens.add("Informe um valor para o campo [Código]");
 		}
 		
@@ -73,6 +72,5 @@ public class ManutencaoPublicacaoController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,mensagens));
 		}
 	}
-	
 	
 }

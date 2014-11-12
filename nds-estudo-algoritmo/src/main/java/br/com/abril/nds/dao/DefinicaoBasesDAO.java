@@ -40,6 +40,7 @@ public class DefinicaoBasesDAO {
 	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 	private static final String STATUS_FECHADO = "FECHADO";
 	private static final String STATUS_RECOLHIDO = "RECOLHIDO";
+	private static final String STATUS_EM_RECOLHIMENTO = "EM_RECOLHIMENTO";
 
 	public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(ProdutoEdicaoEstudo edicao) {
 
@@ -125,7 +126,7 @@ public class DefinicaoBasesDAO {
 	}
 
 	public boolean traduzStatus(String status) {
-		if (status != null && ((status.equalsIgnoreCase(STATUS_FECHADO)) || (status.equalsIgnoreCase(STATUS_RECOLHIDO)))) {
+		if (status != null && ((status.equalsIgnoreCase(STATUS_FECHADO)) || (status.equalsIgnoreCase(STATUS_RECOLHIDO) || (status.equalsIgnoreCase(STATUS_EM_RECOLHIMENTO))))) {
 			return false;
 		}
 		return true;

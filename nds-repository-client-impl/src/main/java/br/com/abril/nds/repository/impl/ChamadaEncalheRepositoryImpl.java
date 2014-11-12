@@ -1205,6 +1205,68 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ");
 		sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 		
+		sql.append(" union ")
+
+		.append(" select c.numero_cota as numeroCota ")
+		.append(" 	, c.id as idCota ")
+		.append(" 	, mec.PRODUTO_EDICAO_ID as idProdutoEdicao ")
+		.append(" 	, mec.DATA as dataMovimento")
+		.append(" 	, null as numeroNotaEnvio")
+		.append(" 	, mec.QTDE as reparte ")
+	    .append(" from movimento_estoque_cota mec ")
+		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
+		.append(" inner join cota c on c.id = mec.cota_id ")
+		.append(" inner join lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and l.id = mec.LANCAMENTO_ID ")
+		.append(" inner join                                                                         ")
+	    .append("     (                                                                              ")
+	    .append("         select                                                                     ")
+	    .append("             distinct c.id cId,                                                     ")
+	    .append("             ce.DATA_RECOLHIMENTO,                                                  ")
+	    .append("             mec.PRODUTO_EDICAO_ID as pedId                                         ")
+	    .append("         from                                                                       ")
+	    .append("             lancamento l                                                           ")
+	    .append("         inner join                                                                 ")
+	    .append("             chamada_encalhe_lancamento cel                                         ")
+	    .append("                 on cel.LANCAMENTO_ID = l.id                                        ")
+	    .append("         inner join                                                                 ")
+	    .append("             chamada_encalhe ce                                                     ")
+	    .append("                 on ce.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID                      ")
+	    .append("                 and cel.CHAMADA_ENCALHE_ID = ce.id                                 ")
+	    .append("         inner join                                                                 ")
+	    .append("             movimento_estoque_cota mec                                             ")
+	    .append("                 on mec.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID                     ")
+	    .append("                 and mec.LANCAMENTO_ID = l.id                                       ")
+	    .append("         inner join                                                                 ")
+	    .append("             tipo_movimento tm                                                      ")
+	    .append("                 on tm.id = mec.TIPO_MOVIMENTO_ID                                   ")
+	    .append("         inner join                                                                 ")
+	    .append("             cota c                                                                 ")
+	    .append("                 on c.id = mec.cota_id                                              ")
+	    .append("         where                                                                      ")
+	    .append("             1=1                                                                    ")
+	    .append("             and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte  ")
+	    .append("             and tm.GRUPO_MOVIMENTO_ESTOQUE in (                                    ")
+	    .append("             		:movimentoRecebimentoReparte, :movimentoCompraSuplementar		 ")
+	    .append("             )                                                                      ")
+	    .append("             and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL                         ")
+	    .append("         group by                                                                   ")
+	    .append("             c.id,                                                                  ")
+	    .append("             ce.DATA_RECOLHIMENTO,                                                  ")
+	    .append("             mec.PRODUTO_EDICAO_ID                                                  ")
+	    .append("         having                                                                     ")
+	    .append("             count(0) > 1                                                           ")
+	    .append("     ) rs1                                                                          ")
+	    .append("         on rs1.pedId = mec.PRODUTO_EDICAO_ID                                       ")
+	    .append("         and c.id = rs1.cId                                                         ");
+	            
+		if(filtro != null && filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null) {
+			
+			sql.append(" and c.numero_cota between :numeroCotaDe and :numeroCotaAte ");
+		}
+
+		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoCompraSuplementar) ")  
+		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("numeroCota", StandardBasicTypes.LONG);

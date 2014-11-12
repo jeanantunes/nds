@@ -142,7 +142,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         query.setParameterList(
                 "statusLancFechadoRecolhido", 
                 Arrays.asList(
-                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
+                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
 //        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
 		
@@ -267,7 +267,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	        
 		query.setParameterList("statusLancamento", statusLancamento);
 		
-		query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name()));
+		query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
 		
 		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 		

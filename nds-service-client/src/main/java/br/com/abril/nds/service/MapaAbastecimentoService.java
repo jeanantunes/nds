@@ -189,6 +189,7 @@ public interface MapaAbastecimentoService {
 	
 	List<ProdutoAbastecimentoDTO> obterDadosAbastecimentoBoxVersusCota(FiltroMapaAbastecimentoDTO filtro);
 	
-	public AbastecimentoBoxCotaDTO obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);
+	// AbastecimentoBoxCotaDTO obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);
 	
+	List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);	
 }

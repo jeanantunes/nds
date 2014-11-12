@@ -86,7 +86,7 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.precoVenda = precoVenda;
-        this.qtdeReparte = Util.nvl(qtdeReparte,BigInteger.ZERO);
+        this.qtdeReparte = Util.nvl(qtdeReparte, BigInteger.ZERO);
         this.qtdeSobraDe = Util.nvl(qtdeSobraDe, BigInteger.ZERO);
         this.qtdeSobraEm = Util.nvl(qtdeSobraEm, BigInteger.ZERO);
         this.qtdeFaltaDe = Util.nvl(qtdeFaltaDe, BigInteger.ZERO);
