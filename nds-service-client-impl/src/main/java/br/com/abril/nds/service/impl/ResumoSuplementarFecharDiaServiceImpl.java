@@ -25,8 +25,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
-public class ResumoSuplementarFecharDiaServiceImp implements
-		ResumoSuplementarFecharDiaService {
+public class ResumoSuplementarFecharDiaServiceImpl implements ResumoSuplementarFecharDiaService {
 	
 	@Autowired
 	private ResumoSuplementarFecharDiaRepository resumoSuplementarFecharDiaRepository;
@@ -67,6 +66,12 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	public BigDecimal obterValorVenda(Date dataOperacao) {		 
 		return this.resumoSuplementarFecharDiaRepository.obterValorVenda(dataOperacao);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public BigDecimal obterValorAlteracaoPreco(Date dataOperacao) {		 
+		return this.resumoSuplementarFecharDiaRepository.obterValorAlteracaoPreco(dataOperacao);
+	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -106,13 +111,17 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 			
 			BigDecimal totalTransferencia = Util.nvl(this.obterValorTransferencia(dataOperacional), BigDecimal.ZERO);
 			
-			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional),BigDecimal.ZERO);
+			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional), BigDecimal.ZERO);
+			
+			BigDecimal totalAlteracaoPreco = Util.nvl(this.obterValorAlteracaoPreco(dataOperacional), BigDecimal.ZERO);
 			
 			dto.setTotalEstoqueLogico(totalEstoqueLogico);
 		
 			dto.setTotalTransferencia(totalTransferencia);		
 			
 			dto.setTotalVenda(totalVenda);
+			
+			dto.setTotalAlteracaoPreco(totalAlteracaoPreco);
 			
 			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda));			
 		}

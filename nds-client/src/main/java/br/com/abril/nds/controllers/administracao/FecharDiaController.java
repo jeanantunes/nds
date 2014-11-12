@@ -234,8 +234,7 @@ public class FecharDiaController extends BaseController {
     @Path("obterResumoQuadroEncalhe")
     public void obterResumoQuadroEncalhe(){
         
-        final ResumoEncalheFecharDiaDTO dto =
-                resumoEncalheFecharDiaService.obterResumoGeralEncalhe(dataOperacao);
+        final ResumoEncalheFecharDiaDTO dto = resumoEncalheFecharDiaService.obterResumoGeralEncalhe(dataOperacao);
         
         result.use(CustomMapJson.class).put("result", dto).serialize();
     }
@@ -244,8 +243,7 @@ public class FecharDiaController extends BaseController {
     @Path("obterResumoQuadroSuplementar")
     public void obterResumoQuadroSuplementar(){
         
-        final ResumoSuplementarFecharDiaDTO dto =
-                resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(dataOperacao);
+        final ResumoSuplementarFecharDiaDTO dto = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(dataOperacao);
         
         result.use(CustomMapJson.class).put("result", dto).serialize();
     }

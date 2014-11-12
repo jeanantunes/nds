@@ -1288,11 +1288,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		consolidadoSuplementar.setValorSaldo(resumoSuplementar.getSaldo());
 		consolidadoSuplementar.setValorTransferencia(resumoSuplementar.getTotalTransferencia());
 		consolidadoSuplementar.setValorVendas(resumoSuplementar.getTotalVenda());
+		consolidadoSuplementar.setValorAlteracaoPreco(resumoSuplementar.getTotalAlteracaoPreco());
 		consolidadoSuplementar.setFechamentoDiario(fechamento);
 		
 		consolidadoSuplementar = fechamentoDiarioConsolidadoSuplementarRepository.merge(consolidadoSuplementar);
 		
-		validarDadosFechamentoDiario(consolidadoSuplementar,null);
+		validarDadosFechamentoDiario(consolidadoSuplementar, null);
 		
 		List<SuplementarFecharDiaDTO> lancamentosSuplementar = incluirLancamentosSuplementar(consolidadoSuplementar);
 		builder.suplementar(lancamentosSuplementar);

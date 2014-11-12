@@ -540,6 +540,10 @@
         <td align="right" style="border-bottom:1px solid #ccc;"><a href="javascript:;" onclick="fecharDiaController.popup_vendasTot('suplementar');"><div id="totalSuplementarVenda"></div></a></td>
         </tr>
       <tr>
+        <td align="left" style="border-bottom:1px solid #ccc;">Alteração de preço</td>
+        <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalValorAlteracaoPreco"></div></td>
+        </tr>
+      <tr>
         <td align="left" style="border-bottom:1px solid #ccc;">Saldo</td>
         <td align="right" style="border-bottom:1px solid #ccc;"><div id="totalSuplementarSaldo"></div></td>
         </tr>

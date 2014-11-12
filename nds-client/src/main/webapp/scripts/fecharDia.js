@@ -1270,6 +1270,7 @@ var fecharDiaController =  $.extend(true, {
 					$("#totalSuplementarEstoqueLogico", fecharDiaController.workspace).html(result.totalEstoqueLogicoFormatado);
 					$("#totalSuplementarTransferencia", fecharDiaController.workspace).html(result.totalTransferenciaFormatado);
 					$("#totalSuplementarVenda", fecharDiaController.workspace).html(result.totalVendaFormatado);
+					$("#totalValorAlteracaoPreco", fecharDiaController.workspace).html(result.totalAlteracaoPrecoFormatado);
 					$("#totalSuplementarSaldo", fecharDiaController.workspace).html(result.saldoFormatado);
 				}
 			);
