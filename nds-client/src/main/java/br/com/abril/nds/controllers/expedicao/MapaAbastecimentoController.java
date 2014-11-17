@@ -470,7 +470,7 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 			case ROTA:
 				
-				filtro.getPaginacao().setSortColumn("nomeEdicao");
+				// filtro.getPaginacao().setSortColumn("nomeEdicao");
 				
 			    if (filtro.getQuebraPorCota()){
 			        
@@ -483,7 +483,8 @@ public class MapaAbastecimentoController extends BaseController {
                     path += "rel_rota_quebra_principal.jasper";
 			        
 			    } else {
-			        filtro.getPaginacao().setSortColumn("nomeEdicao");
+			        
+			    	filtro.getPaginacao().setSortColumn("nomeEdicao");
 			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
                     
 			        for (String key : mapa.keySet()) {
@@ -571,6 +572,8 @@ public class MapaAbastecimentoController extends BaseController {
                 parameters.put("DATA", filtro.getDataLancamento());
                 
                 nomeRelatorio = "Mapa de Abastecimento por Box X Cota";
+                
+                parameters.put("NOME_ROTA", "Rota: Shitão de Jah");
                 
                 path += "rel_box_cota_crosstab.jasper";
                 

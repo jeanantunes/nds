@@ -181,7 +181,41 @@ public class PaginacaoVO implements Serializable {
 	public void setOrdenacao(Ordenacao ordenacao) {
 		this.ordenacao = ordenacao;
 	}
+	
+	public String getSortOrder() {
+		return sortOrder;
+	}
 
+	public void setSortOrder(String sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	/**
+	 * @return the sortColumn
+	 */
+	public String getSortColumn() {
+		return sortColumn;
+	}
+
+	/**
+	 * @param sortColumn the sortColumn to set
+	 */
+	public void setSortColumn(String sortColumn) {
+		this.sortColumn = sortColumn;
+	}
+
+	public Integer getQtdResultadosTotal() {
+		return qtdResultadosTotal;
+	}
+
+	public void setQtdResultadosTotal(Integer qtdResultadosTotal) {
+		this.qtdResultadosTotal = qtdResultadosTotal;
+	}
+	
+	public String getOrderByClause() {
+		return this.sortColumn + " " + this.sortOrder;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -220,38 +254,4 @@ public class PaginacaoVO implements Serializable {
 		return true;
 	}
 
-	public String getSortOrder() {
-		return sortOrder;
-	}
-
-	public void setSortOrder(String sortOrder) {
-		this.sortOrder = sortOrder;
-	}
-
-	/**
-	 * @return the sortColumn
-	 */
-	public String getSortColumn() {
-		return sortColumn;
-	}
-
-	/**
-	 * @param sortColumn the sortColumn to set
-	 */
-	public void setSortColumn(String sortColumn) {
-		this.sortColumn = sortColumn;
-	}
-
-	public Integer getQtdResultadosTotal() {
-		return qtdResultadosTotal;
-	}
-
-	public void setQtdResultadosTotal(Integer qtdResultadosTotal) {
-		this.qtdResultadosTotal = qtdResultadosTotal;
-	}
-	
-	public String getOrderByClause() {
-		return this.sortColumn + " " + this.sortOrder;
-	}
-	
 }
