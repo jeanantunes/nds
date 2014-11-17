@@ -49,6 +49,9 @@ public class Desconto implements Serializable {
 	@Column(name = "USADO", nullable=false)
 	private boolean usado;
 	
+	@Column(name = "PREDOMINANTE", nullable=false)
+	private boolean predominante;
+	
 	/**
 	 * @return the id
 	 */
@@ -119,6 +122,14 @@ public class Desconto implements Serializable {
 
 	public void setUsado(boolean usado) {
 		this.usado = usado;
+	}
+	
+	public boolean isPredominante() {
+		return predominante;
+	}
+
+	public void setPredominante(boolean predominante) {
+		this.predominante = predominante;
 	}
 
 }

@@ -47,7 +47,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" SELECT dados.DESCONTO_ID as descontoId, p.CODIGO as codigoProduto, p.NOME as nomeProduto, "
-				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, u.NOME as nomeUsuario, "
+				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, d.PREDOMINANTE as predominante, u.NOME as nomeUsuario, "
 				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmtAtual, "
 				+"		dados.QTDE_PROX_LANCAMENTOS_ORIGINAL as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas ");
 		
