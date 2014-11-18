@@ -42,12 +42,19 @@ public class Desconto implements Serializable {
 	@Column(name="DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="DATA_OPERACAO")
+	private Date dataOperacao;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
 	@Column(name = "USADO", nullable=false)
 	private boolean usado;
+	
+	@Column(name = "PREDOMINANTE", nullable=false)
+	private boolean predominante;
 	
 	/**
 	 * @return the id
@@ -92,6 +99,20 @@ public class Desconto implements Serializable {
 	}
 
 	/**
+	 * @return
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	/**
+	 * @param dataOperacao
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
+	}
+
+	/**
 	 * @return the usuario
 	 */
 	public Usuario getUsuario() {
@@ -119,6 +140,14 @@ public class Desconto implements Serializable {
 
 	public void setUsado(boolean usado) {
 		this.usado = usado;
+	}
+	
+	public boolean isPredominante() {
+		return predominante;
+	}
+
+	public void setPredominante(boolean predominante) {
+		this.predominante = predominante;
 	}
 
 }

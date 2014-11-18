@@ -500,17 +500,17 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	public List<DescontoDTO> obterDescontosProdutoEdicao() {
 
 		StringBuilder hql = new StringBuilder("")
-			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, editor_id AS editorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor ")
+			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, editor_id AS editorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor, predominante ")
 			.append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, null AS fornecedorId, null AS editorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor ")
+			.append(" SELECT null AS cotaId, null AS fornecedorId, null AS editorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor, predominante ")
 			.append(" FROM view_desconto_produtos_edicoes ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS editorId, null AS produtoEdicaoId, null AS produtoId, valor ")
+			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS editorId, null AS produtoEdicaoId, null AS produtoId, valor, predominante ")
 			.append(" FROM FORNECEDOR f ")
 			.append(" INNER JOIN desconto d ON d.id = f.desconto_id ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, null AS fornecedorId, e.id AS editorId, null AS produtoEdicaoId, null AS produtoId, valor ")
+			.append(" SELECT null AS cotaId, null AS fornecedorId, e.id AS editorId, null AS produtoEdicaoId, null AS produtoId, valor, predominante ")
 			.append(" FROM EDITOR e ")
 			.append(" INNER JOIN desconto d ON d.id = e.desconto_id ")
 			;
@@ -524,6 +524,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
 		query.addScalar("editorId", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("predominante", StandardBasicTypes.BOOLEAN);
 
 		return query.list();
 	}

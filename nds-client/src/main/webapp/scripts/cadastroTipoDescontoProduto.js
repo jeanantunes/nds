@@ -18,7 +18,7 @@ var descontoProdutoController = $.extend(true,{
 		$( "#dialog-produto",this.workspace ).dialog({
 			resizable: false,
 			height:550,
-			width:450,
+			width:500,
 			modal: true,
 			buttons:[{
 						id:"id_confirmar_produto",text:"Confirmar",
