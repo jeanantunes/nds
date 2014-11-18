@@ -42,6 +42,10 @@ public class Desconto implements Serializable {
 	@Column(name="DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="DATA_OPERACAO")
+	private Date dataOperacao;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
@@ -92,6 +96,20 @@ public class Desconto implements Serializable {
 	 */
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
+	}
+
+	/**
+	 * @return
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	/**
+	 * @param dataOperacao
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 
 	/**

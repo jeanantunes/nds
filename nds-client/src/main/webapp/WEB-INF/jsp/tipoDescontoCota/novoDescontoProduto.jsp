@@ -73,6 +73,11 @@
 	              </tr>
 	            </table></td>
 	          </tr>
+	          <tr>
+	            <td colspan="2"><strong>Este desconto predomina sobre os demais (Geral / Editor / Específico)?</strong>
+					<input type="checkbox" name="descontoPredominante" id="descontoPredominante" /></td>
+	          </tr>
+	          
 	    </table>       
 
 
@@ -103,7 +108,5 @@
 				</fieldset>
 			</div>  
 			
-			<strong>Este desconto predomina sobre os demais (Geral / Editor / Específico)?</strong>
-			<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
 	</div>
 </form>

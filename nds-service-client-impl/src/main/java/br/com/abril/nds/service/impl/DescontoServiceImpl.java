@@ -441,7 +441,7 @@ public class DescontoServiceImpl implements DescontoService {
 		 * Cria um desconto a ser utilizado em um ou mais fornecedores
 		 */
 		Desconto desconto =  new Desconto();
-		desconto.setDataAlteracao(dataAtual);
+		desconto.setDataOperacao(dataAtual);
 		desconto.setUsado(false);
 		desconto.setPredominante(descontoDTO.isDescontoPredominante());
 		desconto.setUsuario(usuario);
@@ -1356,10 +1356,10 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(desc.getEditorId() != null ? desc.getEditorId() : "")
 				.append(desc.getFornecedorId() != null ? "f" : "")
 				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
-				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
-				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
 				.append(desc.getProdutoId() != null ? "p" : "")
 				.append(desc.getProdutoId() != null ? desc.getProdutoId() : "")
+				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
+				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
 				.append(desc.isPredominante() ? "pd" : "")
 				.toString();
 			descontosMap.put(key, desc);
