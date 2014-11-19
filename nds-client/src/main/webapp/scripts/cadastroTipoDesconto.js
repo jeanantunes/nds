@@ -188,7 +188,7 @@ var tipoDescontoController = $.extend(true,  {
 				
 				if(qtdeCotas) {
 					
-					row.cell.nomeProduto = '<a href="javascript:;"  onclick="descontoProdutoController.exibirDialogCotasProdutoEdicao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer" '
+					row.cell.nomeProduto = '<a href="javascript:;"  onclick="descontoProdutoController.exibirDialogCotasProdutoEdicao(' + row.cell.descontoId + ');" style="cursor:pointer" '
 									+ ' title="Desconto aplicado para ' + qtdeCotas +' cota(s)" > ' +
 								    row.cell.nomeProduto +
 								    '</a>';
