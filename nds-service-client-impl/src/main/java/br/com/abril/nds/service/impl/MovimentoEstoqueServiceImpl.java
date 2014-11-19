@@ -284,7 +284,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             	throw new ValidacaoException(TipoMensagem.ERROR, String.format("Erro ao obter Forma de Cobrança para Cota/Fornecedor: %s", cota.getNumeroCota()));
             }
             
-            tratarIncrementoProximoLancamento(descontos,descontoProximosLancamentos, estudoCota.getIdCota(), 
+            tratarIncrementoProximoLancamento(descontos, descontoProximosLancamentos, estudoCota.getIdCota(), 
                     produtoEdicao.getProduto().getFornecedor().getId(), lancamento.getIdProdutoEdicao(), lancamento.getIdProduto());
             
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
@@ -294,14 +294,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             mec.setIdFornecedor(estudoCota.getIdFornecedorPadraoCota());
             
-            if(produtoContaFirme){
+            if(produtoContaFirme) {
             	
             	mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO.name());
             	
             	movimentosEstoqueCotaComProdutoContaFirme.add(mec);
             }
             
-            if(TipoEstudoCota.NORMAL.equals(estudoCota.getTipoEstudo())){
+            if(TipoEstudoCota.NORMAL.equals(estudoCota.getTipoEstudo())) {
                 
                 total = total.add(estudoCota.getQtdeEfetiva());
             }
@@ -1788,18 +1788,31 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                  */
                 DescontoDTO descontoDTO = null;
                 try {
+                	
+                	if( produtoEdicao.getProduto().getFornecedor() == null) {
+                		throw new Exception("Produto sem Fornecedor cadastrado!");
+                	}
+                	
+                	if( produtoEdicao.getProduto().getEditor() == null) {
+                		throw new Exception("Produto sem Editor cadastrado!");
+                	}
+                	
                     descontoDTO = descontoService.obterDescontoPor(descontos, idCota
                     		, produtoEdicao.getProduto().getFornecedor().getId()
                     		, produtoEdicao.getProduto().getEditor().getId()
                     		, produtoEdicao.getProduto().getId()
                     		, produtoEdicao.getId());
-                    
+
                     if(descontoDTO == null) {
                     	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
-                    	throw new Exception();
+                    	throw new ValidacaoException();
                     }
-                } catch (final Exception e) {
+                } catch (final ValidacaoException e) {
                     final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
+                    LOGGER.error(msg, e);
+                    throw new ValidacaoException(TipoMensagem.ERROR, msg);
+                } catch (final Exception e) {
+                    final String msg = e.getMessage();
                     LOGGER.error(msg, e);
                     throw new ValidacaoException(TipoMensagem.ERROR, msg);
                 }

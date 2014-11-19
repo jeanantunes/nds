@@ -204,13 +204,13 @@
 						onclick="tipoDescontoController.mostra_editor();" /></td>
 					<td width="65">Editor</td>
 					<td width="20"><input type="radio" name="radio"
-						id="radioEspecifico" value="radio"
-						onclick="tipoDescontoController.mostra_especifico();" /></td>
-					<td width="65">Específico</td>
-					<td width="20"><input type="radio" name="radio"
 						id="radioProduto" value="radio"
 						onclick="tipoDescontoController.mostra_produto();" /></td>
 					<td width="48">Produto</td>
+					<td width="20"><input type="radio" name="radio"
+						id="radioEspecifico" value="radio"
+						onclick="tipoDescontoController.mostra_especifico();" /></td>
+					<td width="65">Específico</td>
 					<td width="585">
 						<div class="especifico" style="display: none">
 
