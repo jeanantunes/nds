@@ -90,6 +90,75 @@ public final class FTFParser {
 		}
 	}
 	
+	@SuppressWarnings("all")
+	public String parseArquivo(FTFBaseDTO ftfBaseDTO) throws Exception {
+		
+		StringBuilder retorno = new StringBuilder();
+		
+		Class<? extends FTFBaseDTO> c = ftfBaseDTO.getClass();
+		
+		Field []fields = c.getDeclaredFields();
+		
+		String delimiter=null;
+		for (Annotation a : c.getAnnotations()) {
+			if(a instanceof Delimiter){
+				delimiter = ((Delimiter) a).value();
+				break;
+			}
+		}
+		Method getter = null;
+		
+		String campos[] = new String[fields.length];
+		
+		for (Field field:fields) {
+			
+			Annotation[] annotations = field.getDeclaredAnnotations();
+			
+			getter = getMethodGetter(c, field);
+			
+			for (Annotation annot: annotations) {
+				
+				if (annot instanceof FTFfield) {
+					
+					Object obj = getter.invoke(ftfBaseDTO, null);
+					
+					String value = (String) ((obj == null) ? "" : obj);
+					
+					FTFfield campo = (FTFfield)annot;
+					if (value.length() > campo.tamanho()) {
+						
+						value = value.substring(0,campo.tamanho());
+					}
+					else if (value.length() < campo.tamanho()) {
+						
+						value = (campo.tipo().equals("numeric")) ? StringUtils.leftPad(value, campo.tamanho(), '0'):
+							completaComEspaco(value, campo.tamanho());
+					}
+					
+					campos[campo.ordem()-1] = value;
+					
+				}
+			}
+		}
+		if(delimiter!=null){
+			
+			retorno.append(StringUtils.join(campos,delimiter));
+			
+		}else{
+			for (String campo:campos) {
+				
+				if (isTrace()) {
+					
+					System.out.println(campo);
+				}
+				
+				retorno.append(campo);
+			}
+		}
+
+		return retorno.toString();
+	}
+	
 	private String completaComEspaco(String value, int tamanho) {
 		
 		StringBuilder espaco = new StringBuilder(value);
