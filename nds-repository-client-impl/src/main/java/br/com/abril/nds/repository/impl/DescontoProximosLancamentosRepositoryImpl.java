@@ -55,8 +55,9 @@ implements DescontoProximosLancamentosRepository{
 			.append(" 		, null AS fornecedorId ")
 			.append(" 		, null AS produtoEdicaoId ")
 			.append(" 		, produto_id AS produtoId ")
-			.append(" 		, valor ")
+			.append(" 		, d.valor ")
 			.append("		, true as proximoLancamento ")
+			.append("		, d.predominante ")
 			.append(" FROM desconto_proximos_lancamentos AS dpl ")
 			.append(" INNER JOIN desconto d ON d.id = dpl.desconto_id ")
 			.append(" LEFT OUTER JOIN desconto_lancamento_cota dlc ON dlc.DESCONTO_LANCAMENTO_ID = dpl.ID ")
@@ -75,6 +76,7 @@ implements DescontoProximosLancamentosRepository{
 		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("proximoLancamento", StandardBasicTypes.BOOLEAN);
+		query.addScalar("predominante", StandardBasicTypes.BOOLEAN);
 		
 		return query.list();
 	}

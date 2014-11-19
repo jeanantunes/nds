@@ -526,53 +526,51 @@ public class ConferenciaEncalheRepositoryImpl extends AbstractRepositoryModel<Co
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras) {
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras, final Date dataOperacao) {
 		
-		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select	 ");
-		
-		sql.append(" PRODUTO_EDICAO.ID as chave,	");
-		sql.append(" PRODUTO_EDICAO.CODIGO_DE_BARRAS as value, ");
-		sql.append(" CONCAT(PRODUTO_EDICAO.CODIGO_DE_BARRAS, ' - ', PRODUTO.NOME,' - Ed.:', PRODUTO_EDICAO.NUMERO_EDICAO) as label ");
-		
-		sql.append("    FROM COTA, MOVIMENTO_ESTOQUE_COTA, TIPO_MOVIMENTO, PRODUTO_EDICAO ");
-		
-		sql.append("	inner join PRODUTO ON ");
-		sql.append("	(PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID)	");
-		
-		sql.append("	WHERE   ");
+		final StringBuilder hql = new StringBuilder(" select produtoEdicao.id as chave, ");
+		hql.append(" produtoEdicao.codigoDeBarras as value, ");
+		hql.append(" CONCAT(produtoEdicao.codigoDeBarras, ' - ', produto.nome,' - Ed.:', produtoEdicao.numeroEdicao) as label ");
+		   
+		hql.append(" from ChamadaEncalheCota cec		")
+			.append(" inner join cec.chamadaEncalhe ce	")
+			.append(" inner join cec.cota cota					 		")
+			.append(" inner join ce.produtoEdicao produtoEdicao 		")
+			.append(" inner join produtoEdicao.produto produto			")
+			.append(" inner join produto.fornecedores fornecedor  		")
+			.append(" inner join produtoEdicao.lancamentos lancamentos 	")
+			
+			.append(" where ");
 
-		sql.append("	MOVIMENTO_ESTOQUE_COTA.COTA_ID = COTA.ID AND  							");
+			hql.append(" cota.numeroCota = :numeroCota 				");
+			
+			hql.append(" and lancamentos.status != :lancamentoFechado ");
+			
+			hql.append(" and upper(produtoEdicao.codigoDeBarras) like upper(:codigoBarras) ");
+			
+			hql.append(" and ce.dataRecolhimento = :dataOperacao ");
+			
+			hql.append(" group by produtoEdicao.id			")
+			   .append(" order by produto.nome asc,			")
+			   .append(" produtoEdicao.numeroEdicao desc	");
 		
-		sql.append("	MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID AND		");
-
-		sql.append("	MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID = TIPO_MOVIMENTO.ID AND  		");
+		final Query query = this.getSession().createQuery(hql.toString());
 		
-		sql.append("	TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque  AND	");
+		if(codigoBarras!=null && !codigoBarras.trim().isEmpty()) {
+			
+			query.setParameter("codigoBarras", codigoBarras + "%" );
+			
+		}
 		
-		sql.append("	UPPER(PRODUTO_EDICAO.CODIGO_DE_BARRAS) like :codigoBarras AND			");
-
-		sql.append("	COTA.NUMERO_COTA = :numeroCota ");
-
-		sql.append(" GROUP BY PRODUTO_EDICAO.ID ");
-		
-		sql.append(" ORDER BY label ");
-		
-		Query query =  this.getSession().createSQLQuery(sql.toString());
-
-		((SQLQuery) query).addScalar("chave", StandardBasicTypes.LONG);
-		((SQLQuery) query).addScalar("value", StandardBasicTypes.STRING);
-		((SQLQuery) query).addScalar("label", StandardBasicTypes.STRING);
-		
-		
-		query.setParameter("codigoBarras", codigoBarras.toUpperCase() + "%");
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		query.setParameter("numeroCota", numeroCota);
-
+		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO);
+		query.setParameter("dataOperacao", dataOperacao);
+		
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		
 		return query.list();
+		
 	}
 	
 	

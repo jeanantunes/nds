@@ -3594,7 +3594,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly=true)
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras) {
 
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao);
 	}
 	
     /**

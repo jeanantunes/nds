@@ -54,16 +54,18 @@ public class ConfirmacaoExpedicaoController extends BaseController{
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
 
-
 	@Autowired
 	private final Result result;
+	
 	@Autowired
 	private final HttpSession session;
-		
+
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
 	@Autowired
 	private LancamentoService lancamentoService;
 	
@@ -97,7 +99,6 @@ public class ConfirmacaoExpedicaoController extends BaseController{
     // = "Há matriz de lançamento confirmada.";
 		
 	protected static final String STATUS_EXPEDICAO = "statusExpedicao";
-		
 		/**
 		 * Construtor
 		 * 
