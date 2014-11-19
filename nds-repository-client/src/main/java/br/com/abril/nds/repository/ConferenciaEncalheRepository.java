@@ -127,7 +127,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	
 	public BigInteger obterReparteConferencia(Long idCota, Long idControleConferenciaEncCota, Long produtoEdicaoId);
 	
-	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras, final Date dataOperacao);
 	
 	boolean isParcialNaoFinal(Long idProdutoEdicao);
 	

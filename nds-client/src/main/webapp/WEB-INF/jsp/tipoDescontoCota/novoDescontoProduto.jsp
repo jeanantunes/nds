@@ -13,7 +13,7 @@
 
 	<jsp:include page="../messagesDialog.jsp" />    
 
-	  <table width="394" border="0" cellpadding="2" cellspacing="1" class="filtro" style="font-size:8pt">
+	  <table width="450" border="0" cellpadding="2" cellspacing="1" class="filtro" style="font-size:8pt">
 	          <tr>
 	            <td width="100">Código:</td>
 	            <td width="100">
@@ -73,6 +73,11 @@
 	              </tr>
 	            </table></td>
 	          </tr>
+	          <tr>
+	            <td colspan="2"><strong>Este desconto predomina sobre os demais (Geral / Editor / Específico)?</strong>
+					<input type="checkbox" name="descontoPredominante" id="descontoPredominante" /></td>
+	          </tr>
+	          
 	    </table>       
 
 
@@ -102,6 +107,6 @@
 					</div>
 				</fieldset>
 			</div>  
-
+			
 	</div>
 </form>
