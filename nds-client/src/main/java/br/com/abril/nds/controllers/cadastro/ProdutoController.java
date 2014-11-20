@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -496,37 +498,37 @@ public class ProdutoController extends BaseController {
 		for(ClasseSocial item:ClasseSocial.values()){
 			listaClasseSocial.add(new ItemDTO<ClasseSocial,String>(item,item.getDescClasseSocial()));
 		}
-		result.include("listaClasseSocial",listaClasseSocial);
+		result.include("listaClasseSocial", listaClasseSocial);
 		
 		final List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
 		for(Sexo item:Sexo.values()){
 			listaSexo.add(new ItemDTO<Sexo,String>(item,item.name()));
 		}
-		result.include("listaSexo",listaSexo);	
+		result.include("listaSexo", listaSexo);	
 		
 		final List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
 		for(FaixaEtaria item:FaixaEtaria.values()){
 			listaFaixaEtaria.add(new ItemDTO<FaixaEtaria,String>(item,item.getDescFaixaEtaria()));
 		}
-		result.include("listaFaixaEtaria",listaFaixaEtaria);	
+		result.include("listaFaixaEtaria", listaFaixaEtaria);	
 
 		final List<ItemDTO<FormatoProduto,String>> listaFormatoProduto =  new ArrayList<ItemDTO<FormatoProduto,String>>();
 		for(FormatoProduto item:FormatoProduto.values()){
 			listaFormatoProduto.add(new ItemDTO<FormatoProduto,String>(item,item.getDescFormatoProduto()));
 		}
-		result.include("listaFormatoProduto",listaFormatoProduto);	
+		result.include("listaFormatoProduto", listaFormatoProduto);	
 		
 		final List<ItemDTO<FormaFisica,String>> listaFormaFisica =  new ArrayList<ItemDTO<FormaFisica,String>>();
 		for(FormaFisica item:FormaFisica.values()){
 			listaFormaFisica.add(new ItemDTO<FormaFisica,String>(item,item.getDescFormaFisica()));
 		}
-		result.include("listaFormaFisica",listaFormaFisica);
+		result.include("listaFormaFisica", listaFormaFisica);
 		
 		final List<ItemDTO<PeriodicidadeProduto,String>> listaPeriodicidade =  new ArrayList<ItemDTO<PeriodicidadeProduto,String>>();
 		for(PeriodicidadeProduto item:PeriodicidadeProduto.values()){
 			listaPeriodicidade.add(new ItemDTO<PeriodicidadeProduto,String>(item,item.toString()));
 		}
-		result.include("listaPeriodicidade",listaPeriodicidade);
+		result.include("listaPeriodicidade", listaPeriodicidade);
 		
 		this.carregarComboSegmento();
 		
@@ -585,8 +587,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
             throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
 		}
 		
-		Produto produto =
-			this.produtoService.obterProdutoPorID(id);
+		Produto produto = this.produtoService.obterProdutoPorID(id);
 		
 		if (produto == null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
@@ -882,12 +883,22 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 		List<ItemDTO<Long,String>> comboSegmento =  new ArrayList<ItemDTO<Long,String>>();
 
 		List<TipoSegmentoProduto> segmentos = produtoService.carregarSegmentos();
+		Collections.sort(segmentos, new Comparator<TipoSegmentoProduto>() {
+			@Override
+			public int compare(TipoSegmentoProduto o1, TipoSegmentoProduto o2) {
+				if(o1 != null && o2 == null) return -1;
+				if(o1 == null && o2 != null) return 1;
+				if(o1.getDescricao() != null && o2.getDescricao() == null) return -1;
+				if(o1.getDescricao() != null && o2.getDescricao() == null) return 1;
+				return o1.getDescricao().compareTo(o2.getDescricao());
+			}
+		});
 
 		for (TipoSegmentoProduto itemSegmento : segmentos) {
 			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
 		}
 
-		result.include("listaSegmentoProduto",comboSegmento );
+		result.include("listaSegmentoProduto", comboSegmento);
 	}
 	
 	
