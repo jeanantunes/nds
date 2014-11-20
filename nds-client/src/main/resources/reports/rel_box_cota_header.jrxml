@@ -54,14 +54,52 @@
 				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="rel_nome" x="287" y="1" width="515" height="75" uuid="7a8ce304-5a0d-4c8a-a7c9-2d8417b4d4c0"/>
+				<reportElement style="rel_nome" x="287" y="0" width="515" height="57" uuid="7a8ce304-5a0d-4c8a-a7c9-2d8417b4d4c0"/>
 				<textElement markup="html">
 					<font fontName="SansSerif" size="12" isBold="true" isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NOME_RELATORIO}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="100" y="58" width="187" height="20" uuid="182417a0-5252-4969-999f-175be8d6206a"/>
+				<reportElement x="129" y="58" width="56" height="20" uuid="182417a0-5252-4969-999f-175be8d6206a"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_ROTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="58" width="29" height="20" uuid="47bb6190-37ee-457d-b7b9-82081c5d9179"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Box:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="58" width="29" height="20" uuid="f11bc115-4914-4991-8fcb-833b748cb101"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Rota:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="58" width="40" height="20" uuid="5fb1cf8a-f313-40bc-977c-86db63ee5754"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Roteiro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="214" y="58" width="56" height="20" uuid="9a48cedb-a17a-4a36-a003-c9c6b249515d"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_ROTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="58" width="56" height="20" uuid="9c196dd2-d15b-44b8-959e-4c50f6c30389"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="2"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{NOME_ROTA}]]></textFieldExpression>
 			</textField>
 		</band>

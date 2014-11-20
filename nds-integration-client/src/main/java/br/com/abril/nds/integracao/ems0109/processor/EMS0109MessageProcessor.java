@@ -384,14 +384,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		DescontoLogistica descontoLogistica =
 		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,fornecedor.getId(),input.getDataGeracaoArquivo());
 		
-        if(descontoLogistica==null){
+        if(descontoLogistica == null) {
 			
             this.ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.ERRO_INFRA,
 					"Desconto Logística não encontrado. "+tipoDescontoInt);
 			 
-		}else{
+		} else {
 			produto.setDescontoLogistica(descontoLogistica);
 			
             this.ndsiLoggerFactory.getLogger().logInfo(

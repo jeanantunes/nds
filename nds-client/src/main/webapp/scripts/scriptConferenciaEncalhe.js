@@ -144,6 +144,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }
 		});
 		                                           
+		$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+		
 		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericPacotePadrao();
 		
 		$("#vlrCE", this.workspace).maskMoney({
@@ -281,6 +283,7 @@ var ConferenciaEncalhe = $.extend(true, {
 
 		
 		ConferenciaEncalhe.removerAtalhos();
+		ConferenciaEncalhe.atribuirAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
 		
 		ConferenciaEncalhe.popup_logado();
@@ -466,6 +469,8 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	atribuirAtalhos: function() {
 
+		$(document.body).unbind();
+		
 		$(document.body).bind('keydown.popUpNotaFiscal', jwerty.event('F6',function() {
 			
 			if (!ConferenciaEncalhe.modalAberta && ConferenciaEncalhe.processoUtilizaNfe) {
