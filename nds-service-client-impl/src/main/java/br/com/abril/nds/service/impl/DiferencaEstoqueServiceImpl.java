@@ -45,6 +45,8 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -1224,7 +1226,30 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
         StatusIntegracao statusIntegracao = null;
         
-        if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+        Distribuidor distribuidor = distribuidorService.obter();
+        Fornecedor fornecedorProduto = diferenca.getProdutoEdicao().getProduto().getFornecedor();
+        boolean origemProdutoManual = false;
+        
+        if(fornecedorProduto != null && fornecedorProduto.getCodigoInterface() != null
+        		&& (fornecedorProduto.getCodigoInterface().toString().equals(distribuidor.getCodigoDistribuidorDinap())
+        			|| fornecedorProduto.getCodigoInterface().toString().equals(distribuidor.getCodigoDistribuidorFC()))) {
+        	
+        	origemProdutoManual = false;
+        } else if(fornecedorProduto != null && !fornecedorProduto.getFornecedoresUnificados().isEmpty()) {
+        	for(Fornecedor f : fornecedorProduto.getFornecedoresUnificados()) {
+        		if(f.getCodigoInterface().equals(distribuidor.getCodigoDistribuidorDinap()) 
+        				|| f.getCodigoInterface().equals(distribuidor.getCodigoDistribuidorFC())) {
+        			origemProdutoManual = false;
+        		} else {
+        			origemProdutoManual = true;
+        		}
+        	}
+        } else {
+        	
+        	origemProdutoManual = true;
+        }
+        
+        if(!origemProdutoManual) {
         	
         	if (tipoDiferenca.isAlteracaoReparte()) {
                 

@@ -164,11 +164,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select editor from Editor editor ");
-		sql.append(" where editor.codigo = :codigoEditor ");
+		sql.append("where editor.codigo = :codigoEditor ");
+		sql.append("where editor.ativo = :true ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 
 		query.setParameter("codigoEditor", codigoEditor);
+		query.setParameter("true", true);
 
 		return (Editor) query.uniqueResult();		
 	}
@@ -1156,6 +1158,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Alteração do Desconto Logística"
 					+" de "+ produto.getDescontoLogistica().getTipoDesconto()
+					+" para "+ descontoLogistica.getTipoDesconto().intValue()
+					+" Produto "+ produto.getCodigo()
+					+" Edição "+ input.getEdicaoProd());
+		} else if(produto.getDescontoLogistica() == null) {
+			
+			edicao.setDescontoLogistica(descontoLogistica);
+			
+            this.ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Desconto Logística"
+					+" de nulo/vazio"
 					+" para "+ descontoLogistica.getTipoDesconto().intValue()
 					+" Produto "+ produto.getCodigo()
 					+" Edição "+ input.getEdicaoProd());
