@@ -160,11 +160,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> obterMapaDeImpressaoPorBoxQuebraPorCota(
 	        FiltroMapaAbastecimentoDTO filtro) {
 	    
-	    List<ProdutoAbastecimentoDTO> produtosPorBox = 
-	            movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+	    List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 	    
-	    Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> ret = 
-	            new LinkedHashMap<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>>();
+	    Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> ret = new LinkedHashMap<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>>();
 	    
 	    for (ProdutoAbastecimentoDTO dto : produtosPorBox){
             
@@ -183,6 +181,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
                     dto.getCodigoBarra(),
                     dto.getNumeroEdicao(),
                     dto.getPrecoCapa());
+            
             //produto -> cota
             if (!ret.get(dto.getCodigoBox()).containsKey(p)){
                 
@@ -295,7 +294,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	        FiltroMapaAbastecimentoDTO filtro){
 	    
 	    Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> ret = 
-	            new LinkedHashMap<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>>();
+	    		new LinkedHashMap<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>>();
 	    
 	    List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRota(filtro);
 	    
@@ -334,6 +333,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	                dto.getCodigoBarra(),
 	                dto.getNumeroEdicao(),
 	                dto.getPrecoCapa());
+	        
 	        //produto -> cota
 	        if (!ret.get(dto.getCodigoBox()).get(dto.getDescRoteiro()).get(dto.getCodigoRota()).containsKey(p)){
 	            

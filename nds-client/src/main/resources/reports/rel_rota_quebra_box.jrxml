@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
@@ -29,68 +29,221 @@
 	</queryString>
 	<field name="value" class="java.util.Map"/>
 	<field name="key" class="java.lang.Object"/>
-	<columnHeader>
-		<band height="23"/>
-	</columnHeader>
+	<variable name="V_QTDE_EXMS" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[$V{V_QTDE_EXMS}]]></variableExpression>
+	</variable>
+	<group name="PRODUTO">
+		<groupExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
 	<detail>
-		<band height="69" splitType="Stretch">
+		<band height="83" splitType="Stretch">
 			<elementGroup>
 				<rectangle>
 					<reportElement uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5" x="0" y="0" width="550" height="20" backcolor="#D3D3D3"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38" style="rel_stext" x="5" y="0" width="57" height="20"/>
-					<textElement/>
+					<reportElement uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38" style="rel_stext" x="0" y="0" width="50" height="20"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
 					<text><![CDATA[Produto:]]></text>
 				</staticText>
+				<textField>
+					<reportElement uuid="c459a7e1-73b4-465b-a9e8-82292c56a977" style="rel_ftext" x="47" y="0" width="80" height="20"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></textFieldExpression>
+				</textField>
 				<staticText>
-					<reportElement uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b" style="rel_stext" x="153" y="0" width="52" height="20"/>
-					<textElement/>
+					<reportElement uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b" style="rel_stext" x="126" y="0" width="43" height="20"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
 					<text><![CDATA[Edição:]]></text>
 				</staticText>
+				<textField>
+					<reportElement uuid="efb2c31b-d78c-4083-a052-6ba0333a2273" style="rel_ftext" x="168" y="0" width="35" height="20"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getEdicao()]]></textFieldExpression>
+				</textField>
 				<staticText>
-					<reportElement uuid="27743b19-d786-4934-b862-aa25d6bb8a58" style="rel_stext" x="233" y="0" width="103" height="20"/>
-					<textElement/>
+					<reportElement uuid="27743b19-d786-4934-b862-aa25d6bb8a58" style="rel_stext" x="203" y="0" width="112" height="20"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
 					<text><![CDATA[Código de Barras:]]></text>
 				</staticText>
-				<staticText>
-					<reportElement uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0" style="rel_stext" x="432" y="0" width="70" height="20"/>
+				<textField>
+					<reportElement uuid="56126155-a767-4406-a9bf-89bfdefb4a60" style="rel_ftext" x="311" y="0" width="88" height="20"/>
 					<textElement/>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getCodigoBarras()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0" style="rel_stext" x="399" y="0" width="95" height="20"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
 					<text><![CDATA[Preço Capa R$:]]></text>
 				</staticText>
+				<textField>
+					<reportElement uuid="697e1b29-83c8-4862-948e-323e2eb91863" style="rel_ftext" x="494" y="0" width="45" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getPrecoCapaFormatado()]]></textFieldExpression>
+				</textField>
 			</elementGroup>
 			<elementGroup>
 				<subreport>
-					<reportElement uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c" key="" isPrintRepeatedValues="false" x="0" y="24" width="550" height="40"/>
+					<reportElement uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c" key="" isPrintRepeatedValues="false" x="0" y="43" width="550" height="40"/>
 					<subreportParameter name="SUBREPORT_DIR">
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRODUTO">
+						<subreportParameterExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
     ((java.util.Map<String, Integer>)$F{value}).entrySet()
 )]]></dataSourceExpression>
+					<returnValue subreportVariable="V_QTDE_EXMS" toVariable="V_QTDE_EXMS"/>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_rota_quebra_cota.jasper"]]></subreportExpression>
 				</subreport>
 			</elementGroup>
-			<textField>
-				<reportElement uuid="c459a7e1-73b4-465b-a9e8-82292c56a977" style="rel_ftext" x="52" y="0" width="101" height="20"/>
+			<staticText>
+				<reportElement uuid="9199e4c9-b561-47ab-a9c9-a5eb3f1a5bbb" style="rel_stext_centralizado" mode="Opaque" x="55" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="efb2c31b-d78c-4083-a052-6ba0333a2273" style="rel_ftext" x="198" y="0" width="48" height="20"/>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="60b86bf6-ccb6-4f0e-a152-1f7a322d5c3f" style="rel_stext" mode="Opaque" x="0" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getEdicao()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="56126155-a767-4406-a9bf-89bfdefb4a60" style="rel_ftext" x="331" y="0" width="89" height="20"/>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ab62c7ff-27bf-430d-a2a9-196838c32369" style="rel_stext_centralizado" mode="Opaque" x="165" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getCodigoBarras()]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement uuid="697e1b29-83c8-4862-948e-323e2eb91863" style="rel_ftext" x="498" y="0" width="52" height="20"/>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="028ee0af-5901-40dc-b7f8-ff09a7040c9d" style="rel_stext" mode="Opaque" x="110" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getPrecoCapaFormatado()]]></textFieldExpression>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ab86f095-bba6-43fd-b108-6d82d908e5bc" style="rel_stext_centralizado" mode="Opaque" x="275" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c65ae8ed-1e81-4b28-8114-d83c7b7736d8" style="rel_stext" mode="Opaque" x="220" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e3d59c8f-79aa-471d-b5f5-5987f9e81916" style="rel_stext_centralizado" mode="Opaque" x="385" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fe15b51a-4a80-473e-8fc5-1714fbe0e263" style="rel_stext" mode="Opaque" x="330" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5a0934e8-ab8c-414f-8677-fb89501a45fe" style="rel_stext_centralizado" mode="Opaque" x="495" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d053064c-d636-438a-a47b-db4f527c6bf6" style="rel_stext" mode="Opaque" x="440" y="22" width="55" height="20" backcolor="#D3D3D3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+		</band>
+		<band height="30">
+			<textField>
+				<reportElement uuid="d5d1beb1-8471-4d42-8c9a-7139f169ae47" x="488" y="0" width="61" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{V_QTDE_EXMS}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement uuid="4663b2c7-2a64-410a-8f7f-9d3d98d22789" x="444" y="0" width="43" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Arial Black" size="9" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="f80b1814-7296-4314-a34e-1dce46be263e" x="1" y="20" width="549" height="1"/>
+			</line>
 		</band>
 	</detail>
 </jasperReport>

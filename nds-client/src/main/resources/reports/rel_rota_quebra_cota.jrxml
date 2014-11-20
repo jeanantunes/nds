@@ -25,54 +25,54 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="PRODUTO" class="java.lang.String"/>
 	<field name="key" class="java.lang.String"/>
 	<field name="value" class="java.lang.Integer"/>
+	<variable name="V_QTDE_EXMS" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{value}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+	<group name="G_PRODUTO">
+		<groupExpression><![CDATA[$P{PRODUTO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
 	<detail>
-		<band height="40" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement uuid="f1ab1c2d-2100-4128-9cba-9156a453614d" style="Estilo Zebrado" mode="Opaque" x="0" y="20" width="55" height="20" backcolor="#E6E6E6"/>
+				<reportElement uuid="f1ab1c2d-2100-4128-9cba-9156a453614d" mode="Opaque" x="0" y="0" width="55" height="20" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="22e8192e-86dc-47cc-875f-06354876678a" style="Estilo Zebrado_centralizado" mode="Opaque" x="55" y="20" width="55" height="20" backcolor="#E6E6E6"/>
+				<reportElement uuid="22e8192e-86dc-47cc-875f-06354876678a" mode="Opaque" x="55" y="0" width="55" height="20" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement uuid="e0e17b20-6156-4554-95f9-6259d10efefa" style="rel_stext_centralizado" mode="Opaque" x="55" y="0" width="55" height="20" backcolor="#D3D3D3"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement/>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="1fb3955c-f02b-4080-b1c9-9aed2d5842bf" style="rel_stext" mode="Opaque" x="0" y="0" width="55" height="20" backcolor="#D3D3D3"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement/>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
 		</band>
 	</detail>
+	<pageFooter>
+		<band/>
+	</pageFooter>
 </jasperReport>
