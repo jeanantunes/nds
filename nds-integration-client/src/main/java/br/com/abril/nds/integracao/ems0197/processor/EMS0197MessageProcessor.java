@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.DetalhesPickingDTO;
-import br.com.abril.nds.dto.IPV_lancamentoDTO;
+import br.com.abril.nds.dto.IpvLancamentoDTO;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
@@ -69,9 +69,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 					message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
 					+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
 			
-			List<IPV_lancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
+			List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
 			
-			for (IPV_lancamentoDTO dto : listDetalhes) {
+			for (IpvLancamentoDTO dto : listDetalhes) {
 				
 				EMS0197Detalhe outDetalhe = createDetalhes(dto);
 
@@ -156,7 +156,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * @param movimentoEstoqueCota
 	 * @return
 	 */
-	private EMS0197Detalhe createDetalhes(IPV_lancamentoDTO dto) {
+	private EMS0197Detalhe createDetalhes(IpvLancamentoDTO dto) {
 		
 		EMS0197Detalhe outDetalhe = new EMS0197Detalhe();
 		
@@ -300,7 +300,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<IPV_lancamentoDTO> getDetalhesPickingLancamento(Long idCota, Date data) {
+	public List<IpvLancamentoDTO> getDetalhesPickingLancamento(Long idCota, Date data) {
 		
 		StringBuilder sql = new StringBuilder();
 
@@ -371,9 +371,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(IPV_lancamentoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(IpvLancamentoDTO.class));
 
-		return (List<IPV_lancamentoDTO>) query.list();
+		return (List<IpvLancamentoDTO>) query.list();
 	}
 						
 	@Override

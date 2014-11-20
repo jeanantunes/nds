@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.dto.IPV_recolhimentoDTO;
+import br.com.abril.nds.dto.IpvRecolhimentoDTO;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.ftfutil.FTFParser;
@@ -73,11 +73,11 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		for (EMS198HeaderDTO cotaDTO : cotasRecolhimento) {
 			
-			List<IPV_recolhimentoDTO> cecs = listRecolhimento(message, cotaDTO.getCotaId());
+			List<IpvRecolhimentoDTO> cecs = listRecolhimento(message, cotaDTO.getCotaId());
 			
 			PrintWriter print = geraArquivo(message, cotaDTO.getCodDistribuidor(), cotaDTO.getNumCota(), cotaDTO.getDataRecolhimento());
 			
-			for (IPV_recolhimentoDTO cec : cecs) {
+			for (IpvRecolhimentoDTO cec : cecs) {
 				
 				EMS0198Detalhe outDetalhe = createDetalhes(cec);
 				
@@ -143,7 +143,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 
 	@SuppressWarnings("unchecked")
-	private List<IPV_recolhimentoDTO> listRecolhimento(Message message, String idCota){
+	private List<IpvRecolhimentoDTO> listRecolhimento(Message message, String idCota){
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -206,9 +206,9 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(IPV_recolhimentoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(IpvRecolhimentoDTO.class));
 		
-		List<IPV_recolhimentoDTO> encalhes = (List<IPV_recolhimentoDTO>) query.list();
+		List<IpvRecolhimentoDTO> encalhes = (List<IpvRecolhimentoDTO>) query.list();
 
 		if (encalhes.isEmpty()) {
 
@@ -288,7 +288,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 						
 	}
 	
-	private EMS0198Detalhe createDetalhes(IPV_recolhimentoDTO dto) {
+	private EMS0198Detalhe createDetalhes(IpvRecolhimentoDTO dto) {
 		
 		EMS0198Detalhe outDetalhe = new EMS0198Detalhe();
 		
