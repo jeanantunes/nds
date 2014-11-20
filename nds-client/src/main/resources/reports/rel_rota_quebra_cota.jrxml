@@ -28,8 +28,9 @@
 	<parameter name="PRODUTO" class="java.lang.String"/>
 	<field name="key" class="java.lang.String"/>
 	<field name="value" class="java.lang.Integer"/>
-	<variable name="V_QTDE_EXMS" class="java.lang.Integer" resetType="Group" resetGroup="G_PRODUTO" calculation="Sum">
-		<variableExpression><![CDATA[new Integer($F{value})]]></variableExpression>
+	<variable name="V_QTDE_EXMS" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{value}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
 	</variable>
 	<group name="G_PRODUTO">
 		<groupExpression><![CDATA[$P{PRODUTO}]]></groupExpression>
@@ -43,7 +44,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement mode="Opaque" x="0" y="0" width="55" height="20" backcolor="#FFFFFF" uuid="f1ab1c2d-2100-4128-9cba-9156a453614d"/>
+				<reportElement uuid="f1ab1c2d-2100-4128-9cba-9156a453614d" mode="Opaque" x="0" y="0" width="55" height="20" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -57,7 +58,7 @@
 				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="55" y="0" width="55" height="20" backcolor="#FFFFFF" uuid="22e8192e-86dc-47cc-875f-06354876678a"/>
+				<reportElement uuid="22e8192e-86dc-47cc-875f-06354876678a" mode="Opaque" x="55" y="0" width="55" height="20" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
