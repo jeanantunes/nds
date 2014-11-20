@@ -20,6 +20,7 @@ public class EMS0197Header implements Serializable {
 	private String nomePDV;
 	private Date dataLctoDistrib;
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+	private String codDistribuidor;
 	
 	/**
 	 * 
@@ -71,6 +72,12 @@ public class EMS0197Header implements Serializable {
 	
 	public String getFormatedDate() {
 		return sdf.format(this.dataLctoDistrib);
+	}
+	public String getCodDistribuidor() {
+		return codDistribuidor;
+	}
+	public void setCodDistribuidor(String codDistribuidor) {
+		this.codDistribuidor = codDistribuidor;
 	}
 	
 }
