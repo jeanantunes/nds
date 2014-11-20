@@ -243,9 +243,7 @@
 
 										<tr>
 											<td><strong>Segmento:</strong></td>
-											<td><select class="habilitarCampoInterfaceSegmentacao"
-												name="comboTipoSegmento" id="comboTipoSegmento"
-												style="width: 150px;">
+											<td><select name="comboTipoSegmento" id="comboTipoSegmento" style="width: 150px;">
 													<option value="">Selecione</option>
 													<c:forEach varStatus="counter" var="itemSegmento"
 														items="${listaSegmentoProduto}">
