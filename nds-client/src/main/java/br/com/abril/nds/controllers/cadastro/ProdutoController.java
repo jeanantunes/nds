@@ -562,19 +562,15 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, 
 			Long codigoTipoProduto) {
 		
-		this.validarProduto(
-			produto, codigoEditor, codigoFornecedor, 
-			idDesconto, codigoTipoProduto);
+		this.validarProduto(produto, codigoEditor, codigoFornecedor, idDesconto, codigoTipoProduto);
 		
-		if(codigoEditor == -1L)
+		if(codigoEditor == -1L) {
             codigoEditor = editorService.criarEditorFornecedor(codigoFornecedor);
+		}
         
-		this.produtoService.salvarProduto(
-			produto, codigoEditor, codigoFornecedor, 
-			idDesconto, codigoTipoProduto);
+		this.produtoService.salvarProduto(produto, codigoEditor, codigoFornecedor, idDesconto, codigoTipoProduto);
 		
-		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
 	}
 	
 	    /**
