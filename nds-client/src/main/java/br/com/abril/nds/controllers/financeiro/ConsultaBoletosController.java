@@ -138,10 +138,7 @@ public class ConsultaBoletosController extends BaseController {
 								){
 		
 		//VALIDACOES
-		validar(numCota,
-                dataDe,
-                dataAte,
-                status);
+		validar(numCota, dataDe, dataAte, status);
 		
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaBoletosCotaDTO filtroAtual = new FiltroConsultaBoletosCotaDTO(numCota,
@@ -160,8 +157,6 @@ public class ConsultaBoletosController extends BaseController {
 		}
 		
 		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
-		
-		
 		
 		//BUSCA BOLETOS
 		List<BoletoCotaDTO> boletosDTO = this.boletoService.obterBoletosPorCota(filtroAtual);
@@ -358,11 +353,13 @@ public class ConsultaBoletosController extends BaseController {
 			throw new ValidacaoException(validacao);
 		}
 		
-		if (numCota==null || numCota<=0){
+		if (numCota==null || numCota<=0) {
+			this.httpSession.removeAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 			throw new ValidacaoException(TipoMensagem.WARNING, "É obrigatório informar a [Cota].");
 		}
 		
-		if ( (dataDe!=null) && (dataAte!=null) ){
+		if ( (dataDe!=null) && (dataAte!=null) ) {
+			this.httpSession.removeAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		    if ( DateUtil.isDataInicialMaiorDataFinal( DateUtil.parseDataPTBR(DateUtil.formatarData(dataDe,"dd/MM/yyyy")) ,DateUtil.parseDataPTBR(DateUtil.formatarData(dataAte,"dd/MM/yyyy")) ) ) {
 			    throw new ValidacaoException(TipoMensagem.WARNING, "A data inicial deve ser menor do que a data final.");
 		    }
@@ -403,6 +400,11 @@ public class ConsultaBoletosController extends BaseController {
 		
 		FiltroConsultaBoletosCotaDTO filtro = this.obterFiltroExportacao();
 		
+		if(filtro == null) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Filtro inválido."),Constantes.PARAM_MSGS).recursive().serialize();
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
+		}
+		
 		List<BoletoCotaDTO> boletosDTO = this.boletoService.obterBoletosPorCota(filtro);
 		
 		List<BoletoVO> listaBoletos = new ArrayList<BoletoVO>();
@@ -436,8 +438,7 @@ public class ConsultaBoletosController extends BaseController {
 	 */
 	private FiltroConsultaBoletosCotaDTO obterFiltroExportacao() {
 		
-		FiltroConsultaBoletosCotaDTO filtro = 
-			(FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+		FiltroConsultaBoletosCotaDTO filtro = (FiltroConsultaBoletosCotaDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		
 		if (filtro != null) {
 			
@@ -449,8 +450,7 @@ public class ConsultaBoletosController extends BaseController {
 			
 			if (filtro.getNumeroCota() != null) {
 				
-				Cota cota =
-					this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
+				Cota cota = this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
 				
 				if (cota != null) {
 					

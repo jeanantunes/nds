@@ -4,6 +4,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/consultaBoletos.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 
 <script type="text/javascript">
 
@@ -23,16 +24,16 @@
         <div class="areaBts">
                 <div class="area">
                         <span class="bt_arq">
-                                <a href="${pageContext.request.contextPath}/financeiro/boletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-                                        <img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
-                                </a>
-                        </span>
-                        
-                        <span class="bt_arq">
-                                <a href="${pageContext.request.contextPath}/financeiro/boletos/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-                                        <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
-                                </a>
-                        </span>
+								<a href="javascript:void(0);" id="linkConsultaBoletoXLS" rel="tipsy" title="Gerar Arquivo">
+										<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
+								</a>
+						</span>
+						
+						<span class="bt_arq">
+								<a href="javascript:void(0);" id="linkConsultaBoletoPDF" rel="tipsy" title="Imprimir">
+										<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
+								</a>
+						</span>
                 </div>
         </div>
         <div class="linha_separa_fields">&nbsp;</div>

@@ -932,7 +932,7 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-chamadaCapa", bloquearRedistribuicao);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peso", bloquearRedistribuicao);
 		
-		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
+//		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
 		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
 		
 		//Segmentação
