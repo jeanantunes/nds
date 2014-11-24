@@ -25,14 +25,14 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
-	<parameter name="PRODUTO" class="java.lang.String"/>
-	<field name="key" class="java.lang.String"/>
+	<parameter name="itensCotas" class="java.util.Collection"/>
+	<field name="key" class="java.lang.Integer"/>
 	<field name="value" class="java.lang.Integer"/>
-	<variable name="V_QTDE_EXMS" class="java.lang.Integer" resetType="Group" resetGroup="G_PRODUTO" calculation="Sum">
+	<variable name="V_QTDE_EXMS" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[new Integer($F{value})]]></variableExpression>
 	</variable>
 	<group name="G_PRODUTO">
-		<groupExpression><![CDATA[$P{PRODUTO}]]></groupExpression>
+		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
 			<band/>
 		</groupHeader>

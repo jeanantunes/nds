@@ -24,16 +24,33 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="itensCotas" class="java.util.Collection"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="value" class="java.util.Map"/>
-	<field name="key" class="java.lang.Object"/>
+	<field name="itensCotas" class="java.util.Collection">
+		<fieldDescription><![CDATA[itensCotas]]></fieldDescription>
+	</field>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
+	</field>
+	<field name="numeroEdicao" class="java.lang.Long">
+		<fieldDescription><![CDATA[numeroEdicao]]></fieldDescription>
+	</field>
+	<field name="codigoDeBarras" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoDeBarras]]></fieldDescription>
+	</field>
+	<field name="precoCapa" class="java.lang.String">
+		<fieldDescription><![CDATA[precoCapa]]></fieldDescription>
+	</field>
+	<field name="qtdeExms" class="java.lang.Integer">
+		<fieldDescription><![CDATA[qtdeExms]]></fieldDescription>
+	</field>
 	<variable name="V_QTDE_EXMS" class="java.lang.Integer" resetType="None" calculation="System">
 		<variableExpression><![CDATA[]]></variableExpression>
 	</variable>
 	<group name="PRODUTO">
-		<groupExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></groupExpression>
+		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
 			<band/>
 		</groupHeader>
@@ -48,60 +65,60 @@
 		<band height="83" splitType="Stretch">
 			<elementGroup>
 				<rectangle>
-					<reportElement x="0" y="0" width="550" height="20" backcolor="#D3D3D3" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
+					<reportElement x="0" y="0" width="550" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="rel_stext" x="0" y="0" width="50" height="20" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+					<reportElement style="rel_stext" x="0" y="0" width="50" height="20" isPrintWhenDetailOverflows="true" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
 					<textElement>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<text><![CDATA[Produto:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_ftext" x="47" y="0" width="80" height="20" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
+					<reportElement style="rel_ftext" x="47" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
 					<textElement>
 						<paragraph leftIndent="2"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_stext" x="126" y="0" width="43" height="20" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+					<reportElement style="rel_stext" x="126" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
 					<textElement>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<text><![CDATA[Edição:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_ftext" x="168" y="0" width="35" height="20" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
+					<reportElement style="rel_ftext" x="168" y="0" width="35" height="20" isPrintWhenDetailOverflows="true" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
 					<textElement>
 						<paragraph leftIndent="2"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getEdicao()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_stext" x="203" y="0" width="112" height="20" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
+					<reportElement style="rel_stext" x="203" y="0" width="110" height="20" isPrintWhenDetailOverflows="true" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
 					<textElement>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<text><![CDATA[Código de Barras:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_ftext" x="301" y="0" width="80" height="20" uuid="56126155-a767-4406-a9bf-89bfdefb4a60"/>
-					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getCodigoBarras()]]></textFieldExpression>
+					<reportElement style="rel_ftext" x="301" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="56126155-a767-4406-a9bf-89bfdefb4a60"/>
+					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_stext" x="379" y="0" width="65" height="20" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
+					<reportElement style="rel_stext" x="380" y="0" width="73" height="20" isPrintWhenDetailOverflows="true" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
 					<textElement>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<text><![CDATA[Preço Capa R$:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_ftext" x="443" y="0" width="45" height="20" uuid="697e1b29-83c8-4862-948e-323e2eb91863"/>
-					<textFieldExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getPrecoCapaFormatado()]]></textFieldExpression>
+					<reportElement style="rel_ftext" x="443" y="0" width="45" height="20" isPrintWhenDetailOverflows="true" uuid="697e1b29-83c8-4862-948e-323e2eb91863"/>
+					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="487" y="0" width="34" height="20" uuid="b76b6452-f2bc-48e6-a44b-91804ed54163"/>
+					<reportElement x="489" y="0" width="34" height="20" isPrintWhenDetailOverflows="true" uuid="b76b6452-f2bc-48e6-a44b-91804ed54163"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial Black" size="9" isBold="true"/>
 						<paragraph leftIndent="2"/>
@@ -109,127 +126,126 @@
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="520" y="1" width="29" height="20" uuid="f276bf21-5846-4400-8118-ff14eb0df79d"/>
+					<reportElement x="520" y="1" width="30" height="20" isPrintWhenDetailOverflows="true" uuid="f276bf21-5846-4400-8118-ff14eb0df79d"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$V{V_QTDE_EXMS}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{qtdeExms}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
+			<elementGroup/>
 			<elementGroup>
+				<staticText>
+					<reportElement style="rel_stext" mode="Opaque" x="0" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="60b86bf6-ccb6-4f0e-a152-1f7a322d5c3f"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Cota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext_centralizado" mode="Opaque" x="55" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="9199e4c9-b561-47ab-a9c9-a5eb3f1a5bbb"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext" mode="Opaque" x="110" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="028ee0af-5901-40dc-b7f8-ff09a7040c9d"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Cota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext_centralizado" mode="Opaque" x="165" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="ab62c7ff-27bf-430d-a2a9-196838c32369"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext" mode="Opaque" x="220" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="c65ae8ed-1e81-4b28-8114-d83c7b7736d8"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Cota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext_centralizado" mode="Opaque" x="275" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="ab86f095-bba6-43fd-b108-6d82d908e5bc"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext" mode="Opaque" x="330" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="fe15b51a-4a80-473e-8fc5-1714fbe0e263"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Cota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext_centralizado" mode="Opaque" x="385" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="e3d59c8f-79aa-471d-b5f5-5987f9e81916"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext" mode="Opaque" x="440" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="d053064c-d636-438a-a47b-db4f527c6bf6"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Cota]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="rel_stext_centralizado" mode="Opaque" x="495" y="21" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#D3D3D3" uuid="5a0934e8-ab8c-414f-8677-fb89501a45fe"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[Qtde]]></text>
+				</staticText>
 				<subreport>
-					<reportElement key="" isPrintRepeatedValues="false" x="0" y="43" width="550" height="40" uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c"/>
+					<reportElement key="" x="0" y="42" width="550" height="40" uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c"/>
 					<subreportParameter name="SUBREPORT_DIR">
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="PRODUTO">
-						<subreportParameterExpression><![CDATA[((br.com.abril.nds.vo.ProdutoEdicaoVO)$F{key}).getNome()]]></subreportParameterExpression>
+					<subreportParameter name="itensCotas">
+						<subreportParameterExpression><![CDATA[$F{itensCotas}]]></subreportParameterExpression>
 					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
-    ((java.util.Map<String, Integer>)$F{value}).entrySet()
-)]]></dataSourceExpression>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensCotas})]]></dataSourceExpression>
 					<returnValue subreportVariable="V_QTDE_EXMS" toVariable="V_QTDE_EXMS" calculation="Sum"/>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_rota_quebra_cota.jasper"]]></subreportExpression>
 				</subreport>
 			</elementGroup>
-			<staticText>
-				<reportElement style="rel_stext_centralizado" mode="Opaque" x="55" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="9199e4c9-b561-47ab-a9c9-a5eb3f1a5bbb"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" mode="Opaque" x="0" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="60b86bf6-ccb6-4f0e-a152-1f7a322d5c3f"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext_centralizado" mode="Opaque" x="165" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="ab62c7ff-27bf-430d-a2a9-196838c32369"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" mode="Opaque" x="110" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="028ee0af-5901-40dc-b7f8-ff09a7040c9d"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext_centralizado" mode="Opaque" x="275" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="ab86f095-bba6-43fd-b108-6d82d908e5bc"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" mode="Opaque" x="220" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="c65ae8ed-1e81-4b28-8114-d83c7b7736d8"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext_centralizado" mode="Opaque" x="385" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="e3d59c8f-79aa-471d-b5f5-5987f9e81916"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" mode="Opaque" x="330" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="fe15b51a-4a80-473e-8fc5-1714fbe0e263"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext_centralizado" mode="Opaque" x="495" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="5a0934e8-ab8c-414f-8677-fb89501a45fe"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" mode="Opaque" x="440" y="22" width="55" height="20" backcolor="#D3D3D3" uuid="d053064c-d636-438a-a47b-db4f527c6bf6"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[Cota]]></text>
-			</staticText>
 		</band>
 	</detail>
 </jasperReport>
