@@ -35,6 +35,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
+import br.com.abril.nds.dto.BoxRoterioRotaDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
@@ -2328,7 +2329,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	            nome = " codigoBox ";
 	            break;
 	        case NOME_EDICAO:
-	            nome = " nomeProduto,numeroEdicao ";
+	            nome = " nomeProduto, numeroEdicao ";
+	            break;
+	        case PRODUTO_COTA:
+	            nome = " nomeProduto, codigoCota ";
 	            break;
 	        default:
 	            nome = "";
@@ -4151,6 +4155,5 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         statusLancamento.add(StatusLancamento.BALANCEADO.name());
         statusLancamento.add(StatusLancamento.EXPEDIDO.name());
         
-    }
-	
+    }	
 }
