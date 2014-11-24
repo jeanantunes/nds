@@ -1529,6 +1529,21 @@ public class DescontoServiceImpl implements DescontoService {
 		key = new StringBuilder()
 			.append("c")
 			.append(cotaId)
+			.append("f")
+			.append(fornecedorId);
+		
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		/**
+		 * Desconto Especifico da Cota
+		 */
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)
 			.append("e")
 			.append(editorId);
 		
@@ -1545,21 +1560,6 @@ public class DescontoServiceImpl implements DescontoService {
 			.append("e")
 			.append(editorId);
 	
-		descontoDTO = descontos.get(key.toString());
-		
-		if(descontoDTO != null) {
-			return descontoDTO;
-		}
-		
-		/**
-		 * Desconto Especifico da Cota
-		 */
-		key = new StringBuilder()
-			.append("c")
-			.append(cotaId)
-			.append("f")
-			.append(fornecedorId);
-		
 		descontoDTO = descontos.get(key.toString());
 		
 		if(descontoDTO != null) {

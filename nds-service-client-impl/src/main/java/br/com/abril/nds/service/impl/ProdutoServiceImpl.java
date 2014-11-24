@@ -226,9 +226,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarProduto(Produto produto, Long codigoEditor,
-			Long codigoFornecedor, Long idDesconto,
-			Long codigoTipoProduto) {
+	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, Long codigoTipoProduto) {
 
 			Editor editor =	this.editorRepository.buscarPorId(codigoEditor);
 			Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(codigoFornecedor);
@@ -236,7 +234,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 			
 			Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 			
-			if(produto.getId()!=null) {
+			if(produto.getId() != null) {
 				
 				Produto produtoExistente = produtoRepository.buscarPorId(produto.getId());
 				
@@ -251,6 +249,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 				}
 				
 				produtoExistente.setCodigo(produto.getCodigo());
+				produtoExistente.setCodigoICD(produto.getCodigoICD());
+				produtoExistente.setNome(produto.getNome());
+				produtoExistente.setNomeComercial(produto.getNomeComercial());
 				produtoExistente.setSlogan(produto.getSlogan());
 				produtoExistente.setPeb(produto.getPeb());
 				produtoExistente.setFormaComercializacao(produto.getFormaComercializacao());
@@ -295,8 +296,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 				
 				if (idDesconto != null){
 					
-					produto.setDescontoLogistica(
-					        obterDescontoLogistica(idDesconto, fornecedor.getId(), dataOperacao));
+					produto.setDescontoLogistica(obterDescontoLogistica(idDesconto, fornecedor.getId(), dataOperacao));
 				}
 				
 				this.produtoRepository.adicionar(produto);

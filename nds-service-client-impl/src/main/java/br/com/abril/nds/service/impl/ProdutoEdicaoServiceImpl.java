@@ -969,11 +969,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         // 02) Campos a serem persistidos e/ou alterados:
         
-        final BigInteger repartePrevisto = (dto.getRepartePrevisto() == null)
-                ? BigInteger.ZERO : dto.getRepartePrevisto();
+        final BigInteger repartePrevisto = (dto.getRepartePrevisto() == null) ? BigInteger.ZERO : dto.getRepartePrevisto();
         
-        final BigInteger repartePromocional = (dto.getRepartePromocional() == null)
-                ? BigInteger.ZERO : dto.getRepartePromocional();
+        final BigInteger repartePromocional = (dto.getRepartePromocional() == null) ? BigInteger.ZERO : dto.getRepartePromocional();
         produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
         
         if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
@@ -981,7 +979,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             // Identificação:
             produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
-            produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
             produtoEdicao.setCaracteristicaProduto(dto.getCaracteristicaProduto());
             produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
             produtoEdicao.setPeb(dto.getPeb());
@@ -996,8 +993,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
             
             // Outros:
-            
-            produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
             
             // Característica Física:
             produtoEdicao.setPeso(dto.getPeso());
@@ -1030,6 +1025,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             produtoEdicao.setSegmentacao(segm);
         }
+        
+        produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
+        
+        // Regime de Recolhimento;
+        produtoEdicao.setParcial(dto.isParcial());	
         
         // Campos editáveis, independente da Origem
         produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto() == null || dto.getTipoClassificacaoProduto().getId() == null ? null : dto.getTipoClassificacaoProduto());

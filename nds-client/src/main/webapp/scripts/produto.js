@@ -369,7 +369,6 @@ var produtoController = $.extend(true, {
 		);
 		
 		$("#codigoProdutoCadastro", this.workspace).disable();
-		$("#codigoProdutoICDCadastro", this.workspace).disable();
 	},
 	
 	atualizarValorComboGeraAutomatica : function(){
