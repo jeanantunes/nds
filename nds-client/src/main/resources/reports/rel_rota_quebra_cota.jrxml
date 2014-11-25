@@ -72,6 +72,6 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band/>
+		<band height="10"/>
 	</pageFooter>
 </jasperReport>
