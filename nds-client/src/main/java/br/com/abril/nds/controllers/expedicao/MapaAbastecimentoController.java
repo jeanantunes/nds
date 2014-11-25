@@ -470,12 +470,12 @@ public class MapaAbastecimentoController extends BaseController {
 			break;
 			case ROTA:
 				
-				// filtro.getPaginacao().setSortColumn("nomeEdicao");
-				
 			    if (filtro.getQuebraPorCota()){
+			    	filtro.getPaginacao().setSortColumn("produtoCota");
 			        
-			        dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota(filtro).entrySet();
-			        
+			        // dados = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota(filtro).entrySet();
+			    	dados = this.mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRotaQuebraCota2(filtro);
+			    	
 			        parameters.put("DATA", filtro.getDataLancamento());
                     
                     nomeRelatorio = "Mapa de Abastecimento por Rota Quebra Cota";

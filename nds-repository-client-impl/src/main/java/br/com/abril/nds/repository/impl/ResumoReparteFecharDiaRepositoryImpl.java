@@ -239,6 +239,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         query.setParameterList("grupoReparteSaida", this.getParametrosSaidaDistribuidor());
         query.setParameterList("grupoReparteEntrada", this.getParametrosEntradaDistribuidor());
+        query.setParameterList("grupoEstorno", new ArrayList<String>(Arrays.asList(GrupoMovimentoEstoque.ESTORNO_RECEBIMENTO_FISICO.name())));
         
     	return (BigDecimal) Util.nvl(query.uniqueResult(),BigDecimal.ZERO);
     }
@@ -500,9 +501,10 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     	hql.append(" FROM MOVIMENTO_ESTOQUE movimentoEstoque ");
     	hql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON movimentoEstoque.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
     	hql.append(" INNER JOIN TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID=tipoMovimento.ID ");
-    	hql.append(" WHERE movimentoEstoque.DATA<:dataFechamento ");
-    	hql.append(" AND movimentoEstoque.STATUS=:statusAprovado ");
-    	hql.append(" AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoReparteSaida, :grupoReparteEntrada) ");
+    	hql.append(" WHERE 1 = 1 ");
+    	hql.append(" AND movimentoEstoque.STATUS = :statusAprovado ");
+    	hql.append(" AND ((movimentoEstoque.DATA < :dataFechamento AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoReparteSaida, :grupoReparteEntrada)) ");
+    	hql.append(" OR (movimentoEstoque.DATA = :dataFechamento AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:grupoEstorno))) ");
     	hql.append(" AND (produtoEdicao.ID IN ( ");
     	hql.append(" SELECT DISTINCT produtoEdicaoExpedicao.ID ");
     	hql.append(" 	FROM EXPEDICAO expedicao ");
