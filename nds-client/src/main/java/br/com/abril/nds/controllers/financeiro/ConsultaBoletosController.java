@@ -109,14 +109,13 @@ public class ConsultaBoletosController extends BaseController {
 	@Get
 	@Path("/")
 	public void consulta(){ 
+		
+		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
+		
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pagos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.NAO_PAGO,"Não Pagos"));
-		
-		result.include("dataDe", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
-		
-		result.include("dataAte", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		result.include("listaStatusCombo",listaStatusCombo);
 	}
