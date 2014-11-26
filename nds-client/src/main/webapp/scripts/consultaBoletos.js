@@ -3,97 +3,28 @@ var consultaBoletosController = $.extend({
 	path : contextPath + '/financeiro/boletos/',
 	
 	init : function() {
-
-		$(".boletosCotaGrid", consultaBoletosController.workspace).flexigrid({
-			onSuccess: function() {bloquearItensEdicao(consultaBoletosController.workspace);},
-		    preProcess: consultaBoletosController.getDataFromResult,
-		    dataType : 'json',
-			colModel : [ {
-				display : 'Nosso Número',
-				name : 'nossoNumero',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data Emissão',
-				name : 'dtEmissao',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Vencimento',
-				name : 'dtVencimento',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Pagamento',
-				name : 'dtPagto',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Encargos',
-				name : 'encargos',
-				width : 65,
-				sortable : true,
-				align : 'right',
-			}, {
-				display : 'Valor R$',
-				name : 'valor',
-				width : 80,
-				sortable : true,
-				align : 'right',
-			}, {
-				display : 'Tipo Baixa',
-				name : 'tipoBaixa',
-				width : 95,
-				sortable : true,
-				align : 'center',
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 145,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : false,
-				align : 'left',
-			}],
-			sortname : "dtVencimento",
-			sortorder : "desc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
-
-		$( "#dataDe", consultaBoletosController.workspace ).datepicker({
-			showOn : "button",
-			buttonImage: contextPath + "/images/calendar.gif",
-			buttonImageOnly : true,
-			dateFormat: 'dd/mm/yy',
-			defaultDate: new Date()
+		
+		$("#boleto-dataDe", this.workspace).mask("99/99/9999");
+		
+		$( "#boleto-dataDe" , this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
 		});
 		
-		$( "#dataAte", consultaBoletosController.workspace ).datepicker({
-			showOn : "button",
-			buttonImage: contextPath + "/images/calendar.gif",
-			buttonImageOnly : true,
-			dateFormat: 'dd/mm/yy',
-			defaultDate: new Date()
+		$("#boleto-dataAte", this.workspace).mask("99/99/9999");
+		
+		$("#boleto-dataAte" , this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
 		});
 		
-		$("#numCota", consultaBoletosController.workspace).numeric();
-		$("#dataDe", consultaBoletosController.workspace).mask("99/99/9999");
-		$("#dataAte", consultaBoletosController.workspace).mask("99/99/9999");
+		$("#boleto-numCota", consultaBoletosController.workspace).numeric();
 		
-		$("#descricaoCota", consultaBoletosController.workspace).autocomplete({source: ""});
+		$("#boleto-descricaoCota", consultaBoletosController.workspace).autocomplete({source: ""});
+		
+		consultaBoletosController.initGridBoleto();
 		
 		$('#linkConsultaBoletoXLS', consultaBoletosController.workspace).click(function() {
 			var params = {"fileType": 'XLS'};
@@ -152,11 +83,11 @@ var consultaBoletosController = $.extend({
 			/*METODO QUE RECEBERA OS PARAMETROS*/
 			url: contextPath + "/financeiro/boletos/consultaBoletos",
 			params: [
-			         {name:'numCota', value:$("#numCota", consultaBoletosController.workspace).val()},
-			         {name:'descricaoCota', value:$("#descricaoCota", consultaBoletosController.workspace).val()},
-			         {name:'dataDe', value:$("#dataDe", consultaBoletosController.workspace).val()},
-			         {name:'dataAte', value:$("#dataAte", consultaBoletosController.workspace).val()},
-			         {name:'status', value:$("#status", consultaBoletosController.workspace).val()}
+			         {name:'numCota', value:$("#boleto-numCota", consultaBoletosController.workspace).val()},
+			         {name:'descricaoCota', value:$("#boleto-descricaoCota", consultaBoletosController.workspace).val()},
+			         {name:'dataDe', value:$("#boleto-dataDe", consultaBoletosController.workspace).val()},
+			         {name:'dataAte', value:$("#boleto-dataAte", consultaBoletosController.workspace).val()},
+			         {name:'status', value:$("#boleto-status", consultaBoletosController.workspace).val()}
 			        ] ,
 			        newp: 1
 		});
@@ -242,7 +173,79 @@ var consultaBoletosController = $.extend({
 			
 			$('#download-iframe-boleto', consultaBoletosController.workspace).attr('src', contextPath + "/financeiro/boletos/imprimeBoleto?nossoNumero=" + result);
 		}
-	}
+	},
 
+	initGridBoleto : function () {
+
+		$(".boletosCotaGrid", consultaBoletosController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(consultaBoletosController.workspace);},
+		    preProcess: consultaBoletosController.getDataFromResult,
+		    dataType : 'json',
+			colModel : [ {
+				display : 'Nosso Número',
+				name : 'nossoNumero',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Data Emissão',
+				name : 'dtEmissao',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Data Vencimento',
+				name : 'dtVencimento',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Data Pagamento',
+				name : 'dtPagto',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Encargos',
+				name : 'encargos',
+				width : 65,
+				sortable : true,
+				align : 'right',
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 80,
+				sortable : true,
+				align : 'right',
+			}, {
+				display : 'Tipo Baixa',
+				name : 'tipoBaixa',
+				width : 95,
+				sortable : true,
+				align : 'center',
+			}, {
+				display : 'Status',
+				name : 'status',
+				width : 145,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : 'Ação',
+				name : 'acao',
+				width : 60,
+				sortable : false,
+				align : 'left',
+			}],
+			sortname : "dtVencimento",
+			sortorder : "desc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180
+		});
+	}
+	
 }, BaseController);
 //@ sourceURL=consultaBoletos.js
