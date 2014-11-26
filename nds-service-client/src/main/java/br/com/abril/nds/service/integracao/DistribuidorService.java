@@ -143,7 +143,7 @@ public interface DistribuidorService {
 	 * @param numeroCota
 	 * @param idProdutoEdicao
 	 * @param idFornecedores
-	 * 
+	 * @param isCotaOperacaoDiferenciada TODO
 	 * @return Integer
 	 */
 	Integer obterDiaDeRecolhimentoDaData(
@@ -151,7 +151,7 @@ public interface DistribuidorService {
 			Date dataRecolhimento, 
 			Integer numeroCota, 
 			Long idProdutoEdicao,
-			List<Long> idFornecedores);
+			List<Long> idFornecedores, Boolean isCotaOperacaoDiferenciada);
 	
 	/**
 	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz

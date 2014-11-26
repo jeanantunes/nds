@@ -509,7 +509,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private void carregarMapaDatasEncalheConferiveis(final Integer numeroCota) {
 		
 		session.setAttribute(DATAS_ENCALHE_CONFERIVEIS, conferenciaEncalheService.obterDatasChamadaEncalheConferiveis(numeroCota));
-		
 	}
 	
 	
@@ -2821,7 +2820,7 @@ public class ConferenciaEncalheController extends BaseController {
 		final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(),
 				                                                            numeroCota,
-				                                                            produtoEdicao.getId(), null);
+				                                                            produtoEdicao.getId(), null, null);
 				
 		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento : null);
 		

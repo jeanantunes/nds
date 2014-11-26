@@ -16,6 +16,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.cache.annotation.Cacheable;
 
 import br.com.abril.nds.model.Origem;
 
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.Origem;
 		"DATA", "LOCALIDADE", "UFE_SG", "TIPO_FERIADO" }) })
 @SequenceGenerator(name = "FERIADO_SEQ", initialValue = 1, allocationSize = 1)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cacheable(value="feriado", key="#id")
 public class Feriado {
 
 	@Id
