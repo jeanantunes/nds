@@ -5,6 +5,7 @@ import java.util.Map;
 
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
+import br.com.abril.nds.dto.BoxRoterioRotaDTO;
 import br.com.abril.nds.dto.EntregadorDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
@@ -181,8 +182,7 @@ public interface MapaAbastecimentoService {
 	Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregador(
 			FiltroMapaAbastecimentoDTO filtro);
 	
-	Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(
-            FiltroMapaAbastecimentoDTO filtro);
+	Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(FiltroMapaAbastecimentoDTO filtro);
 
 	Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> obterMapaDeImpressaoPorBoxQuebraPorCota(
 	        FiltroMapaAbastecimentoDTO filtro);
@@ -191,5 +191,7 @@ public interface MapaAbastecimentoService {
 	
 	// AbastecimentoBoxCotaDTO obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);
 	
-	List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);	
+	List<AbastecimentoBoxCotaDTO> obterMapaDeImpressaoPorBoxVersusCotaQuebrandoPorCota(FiltroMapaAbastecimentoDTO filtro, final Map<String, Object> parameters);
+	
+	List<BoxRoterioRotaDTO> obterMapaDeImpressaoPorBoxRotaQuebraCota2(FiltroMapaAbastecimentoDTO filtro);
 }

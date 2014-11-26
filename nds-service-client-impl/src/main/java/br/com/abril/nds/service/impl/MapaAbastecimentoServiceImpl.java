@@ -19,10 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.AbastecimentoBoxCotaDTO;
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.BoxRotasDTO;
+import br.com.abril.nds.dto.BoxRoterioRotaDTO;
 import br.com.abril.nds.dto.EntregadorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
@@ -160,11 +163,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> obterMapaDeImpressaoPorBoxQuebraPorCota(
 	        FiltroMapaAbastecimentoDTO filtro) {
 	    
-	    List<ProdutoAbastecimentoDTO> produtosPorBox = 
-	            movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
+	    List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 	    
-	    Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> ret = 
-	            new LinkedHashMap<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>>();
+	    Map<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>> ret = new LinkedHashMap<Integer, Map<ProdutoEdicaoVO, Map<String, Integer>>>();
 	    
 	    for (ProdutoAbastecimentoDTO dto : produtosPorBox){
             
@@ -183,6 +184,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
                     dto.getCodigoBarra(),
                     dto.getNumeroEdicao(),
                     dto.getPrecoCapa());
+            
             //produto -> cota
             if (!ret.get(dto.getCodigoBox()).containsKey(p)){
                 
@@ -291,11 +293,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional(readOnly=true)
-	public Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(
-	        FiltroMapaAbastecimentoDTO filtro){
+	public Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> obterMapaDeImpressaoPorBoxRotaQuebraCota(FiltroMapaAbastecimentoDTO filtro){
 	    
 	    Map<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>> ret = 
-	            new LinkedHashMap<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>>();
+	    		new LinkedHashMap<Integer, Map<String, Map<String, Map<ProdutoEdicaoVO, Map<String, Integer>>>>>();
 	    
 	    List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRota(filtro);
 	    
@@ -334,6 +335,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	                dto.getCodigoBarra(),
 	                dto.getNumeroEdicao(),
 	                dto.getPrecoCapa());
+	        
 	        //produto -> cota
 	        if (!ret.get(dto.getCodigoBox()).get(dto.getDescRoteiro()).get(dto.getCodigoRota()).containsKey(p)){
 	            
@@ -349,13 +351,96 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
             }
 	        
 	        //adiciona qtd produto
-	        int qtd = dto.getReparte() + 
-	                ret.get(dto.getCodigoBox()).get(dto.getDescRoteiro()).get(dto.getCodigoRota()).get(p).get(dto.getCodigoCota().toString());
+	        int qtd = dto.getReparte() + ret.get(dto.getCodigoBox()).get(dto.getDescRoteiro()).get(dto.getCodigoRota()).get(p).get(dto.getCodigoCota().toString());
 	        
 	        ret.get(dto.getCodigoBox()).get(dto.getDescRoteiro()).get(dto.getCodigoRota()).get(p).put(dto.getCodigoCota().toString(), qtd);
 	    }
 	    
 	    return ret;
+	}
+	
+	@Override
+	@Transactional
+	public List<BoxRoterioRotaDTO> obterMapaDeImpressaoPorBoxRotaQuebraCota2(FiltroMapaAbastecimentoDTO filtro) {
+				
+		List<BoxRoterioRotaDTO> roteirizacao = new ArrayList<>();
+		
+		List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRota(filtro);
+		
+		for (ProdutoAbastecimentoDTO dto : boxProdutoRota) {
+			
+			BoxRoterioRotaDTO rot = new BoxRoterioRotaDTO();
+			BoxRoterioRotaDTO rotAux = new BoxRoterioRotaDTO();
+			rotAux.setCodigoBox(dto.getCodigoBox());
+			rotAux.setCodigoRota(dto.getCodigoRota());
+			rotAux.setNomeRota(dto.getDescRota());
+			rotAux.setRoteiro(dto.getDescRoteiro());
+			
+			if(!roteirizacao.contains(rotAux)) {
+				rotAux.setProdutos(new ArrayList<ProdutoEdicaoAbastecimentoDTO>());
+				roteirizacao.add(rotAux);
+				int ndx = roteirizacao.indexOf(rotAux);
+				rot = roteirizacao.get(ndx);
+			} else {
+				int ndx = roteirizacao.indexOf(rotAux);
+				rot = roteirizacao.get(ndx);
+			}
+			
+			ProdutoEdicaoAbastecimentoDTO produto = new ProdutoEdicaoAbastecimentoDTO();
+			ProdutoEdicaoAbastecimentoDTO produtoAux = new ProdutoEdicaoAbastecimentoDTO();
+			produtoAux.setCodigoProduto(dto.getCodigoProduto());
+			produtoAux.setCodigoDeBarras(dto.getCodigoBarra());
+			produtoAux.setNomeProduto(dto.getNomeProduto());
+			produtoAux.setNumeroEdicao(dto.getNumeroEdicao());
+			produtoAux.setPrecoCapa(dto.getPrecoCapa());
+			
+			if(!rot.getProdutos().contains(produtoAux)) {
+				produtoAux.setQtdeExms(dto.getReparte());
+				produtoAux.setItensCotas(new ArrayList<ItemDTO<Integer, Integer>>());
+				rot.getProdutos().add(produtoAux);
+				int ndx = rot.getProdutos().indexOf(produtoAux);
+				produto = rot.getProdutos().get(ndx);
+			} else {
+				int ndx = rot.getProdutos().indexOf(produtoAux);
+				produto = rot.getProdutos().get(ndx);
+				produto.setQtdeExms(produto.getQtdeExms() + dto.getReparte());
+			}
+			
+			ItemDTO<Integer, Integer> reparteCota = new ItemDTO<Integer, Integer>(dto.getCodigoCota(), dto.getReparte());
+			produto.getItensCotas().add(reparteCota);
+			
+			
+			/*
+			 
+			Map<String, List<ProdutoEdicaoAbastecimentoDTO>> mapProduto = new HashMap<String, List<ProdutoEdicaoAbastecimentoDTO>>();
+		
+			Map<String, Set<ItemDTO<Integer, Integer>>> mapaCotasProduto = new HashMap<String, Set<ItemDTO<Integer, Integer>>>();
+
+			 
+			if(mapaCotasProduto.get(dto.getCodigoProduto() +"-"+ dto.getNumeroEdicao()) == null){
+				mapaCotasProduto.put(dto.getCodigoProduto() +"-"+ dto.getNumeroEdicao(), new HashSet<ItemDTO<Integer, Integer>>());
+			}
+			
+			ItemDTO<Integer, Integer> reparteCota = new ItemDTO<Integer, Integer>(dto.getCodigoCota(), dto.getReparte());
+			mapaCotasProduto.get(dto.getCodigoProduto() +"-"+ dto.getNumeroEdicao()).add(reparteCota);
+			
+			if(mapProduto.get(dto.getCodigoBox() +"-"+ dto.getCodigoRota()) == null){
+				mapProduto.put(dto.getCodigoProduto() +"-"+ dto.getNumeroEdicao(), new ArrayList<ProdutoEdicaoAbastecimentoDTO>());
+			}
+			
+			if(!mapProduto.get(dto.getCodigoBox() +"-"+ dto.getCodigoRota()).contains(produtoAux)) {
+				produtoAux.setQtdeExms(dto.getReparte());
+				mapProduto.get(dto.getCodigoBox() +"-"+ dto.getCodigoRota()).add(produtoAux);
+			} else {
+				int ndx = mapProduto.get(dto.getCodigoBox() +"-"+ dto.getCodigoRota()).indexOf(produtoAux);
+				mapProduto.get(dto.getCodigoBox() +"-"+ dto.getCodigoRota()).get(ndx).setQtdeExms(
+						mapProduto.get(dto.getCodigoBox() +"-"+ dto.getCodigoRota()).get(ndx).getQtdeExms() + dto.getReparte());
+			}
+			*/
+			
+	    }
+		
+		return roteirizacao;
 	}
 	
 	@Override

@@ -273,7 +273,7 @@ public class DescontoServiceImpl implements DescontoService {
             Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 
 			Desconto desconto =  new Desconto();
-			desconto.setDataAlteracao(dataAtual);
+			desconto.setDataOperacao(dataAtual);
 			desconto.setTipoDesconto(TipoDesconto.GERAL);
 			desconto.setUsado(false);
 			desconto.setUsuario(usuario);
@@ -409,13 +409,12 @@ public class DescontoServiceImpl implements DescontoService {
 		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Desconto descontoNew =  new Desconto();
-		descontoNew.setDataAlteracao(dataAtual);
+		descontoNew.setDataOperacao(dataAtual);
 		descontoNew.setTipoDesconto(TipoDesconto.ESPECIFICO);
 		descontoNew.setUsado(false);
 		descontoNew.setUsuario(usuario);
 		descontoNew.setValor(valorDesconto);
-		Long idDesconto = descontoRepository.adicionar(descontoNew);
-		descontoNew = descontoRepository.buscarPorId(idDesconto);
+		descontoRepository.adicionar(descontoNew);
 		
 		return descontoNew;
 		
@@ -1529,6 +1528,21 @@ public class DescontoServiceImpl implements DescontoService {
 		key = new StringBuilder()
 			.append("c")
 			.append(cotaId)
+			.append("f")
+			.append(fornecedorId);
+		
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		/**
+		 * Desconto Especifico da Cota
+		 */
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)
 			.append("e")
 			.append(editorId);
 		
@@ -1545,21 +1559,6 @@ public class DescontoServiceImpl implements DescontoService {
 			.append("e")
 			.append(editorId);
 	
-		descontoDTO = descontos.get(key.toString());
-		
-		if(descontoDTO != null) {
-			return descontoDTO;
-		}
-		
-		/**
-		 * Desconto Especifico da Cota
-		 */
-		key = new StringBuilder()
-			.append("c")
-			.append(cotaId)
-			.append("f")
-			.append(fornecedorId);
-		
 		descontoDTO = descontos.get(key.toString());
 		
 		if(descontoDTO != null) {
@@ -1687,7 +1686,7 @@ public class DescontoServiceImpl implements DescontoService {
 		 * Cria um desconto a ser utilizado em um ou mais fornecedores
 		 */
 		Desconto desconto =  new Desconto();
-		desconto.setDataAlteracao(dataAtual);
+		desconto.setDataOperacao(dataAtual);
 		desconto.setUsado(false);
 		desconto.setUsuario(usuario);
 		desconto.setValor(descontoDTO.getValorDesconto());

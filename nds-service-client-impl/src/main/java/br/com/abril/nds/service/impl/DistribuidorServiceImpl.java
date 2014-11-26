@@ -21,6 +21,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
@@ -35,6 +36,7 @@ import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
@@ -64,6 +66,8 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Autowired
 	private CotaService cotaService;
 	
+	@Autowired
+	FeriadoRepository feriadoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -482,7 +486,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		final List<Date> datas = new ArrayList<>();
 		
-		final Map<Integer,Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
+		final Map<Integer, Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
 		
 		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
 			
@@ -515,10 +519,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	/**
 	 * Obtem o dia de recolhimento do distribuidor para a data de 
 	 * Conferencia divergente da data de Recolhimento prevista
-	 * 
-	 * @param dataOperacaoConferencia
 	 * @param dataRecolhimento
 	 * @param numeroCota
+	 * @param dataOperacaoConferencia
 	 * @param produtoEdicaoId
 	 */
 	@Override
@@ -528,9 +531,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			final Date dataRecolhimento, 
 			final Integer numeroCota, 
 			final Long produtoEdicaoId,
-			final List<Long> idFornecedores){
+			final List<Long> idFornecedores,
+			Boolean isCotaOperacaoDiferenciada) {
 		
-		boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacaoConferencia);
+		boolean indCotaOperacaoDiferenciada = isCotaOperacaoDiferenciada != null ? isCotaOperacaoDiferenciada : cotaService.isCotaOperacaoDiferenciada(numeroCota, dataOperacaoConferencia);
 		
 		Date dataPrimeiroDiaRecolhimento = null;
 		
@@ -539,8 +543,6 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		} else {
 			dataPrimeiroDiaRecolhimento = dataRecolhimento;
 		}
-		
-		
 		
 		if(!indCotaOperacaoDiferenciada) {
 
@@ -610,15 +612,16 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		int diasRecolhimento = 1;
 		
-		while(diasRecolhimento  <= 5){
+		List<Feriado> feriados = feriadoRepository.buscarTodos();
+		
+		while(diasRecolhimento <= 5) {
 			
-			if(diasRecolhimento > 1){
+			if(diasRecolhimento > 1) {
 				
-				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(mapDataRecolhimentoValida.get(diasRecolhimento-1),1),diasSemanaDistribuidorOpera, true);
+				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(mapDataRecolhimentoValida.get(diasRecolhimento-1),1), diasSemanaDistribuidorOpera, true, feriados);
 				
 				mapDataRecolhimentoValida.put(diasRecolhimento, dataRecolhimentoValida);
-			}
-			else{
+			} else {
 				
 				// A data de recolhimento referente ao primeiro dia
 				// equivale a própria data de recolhimento planejada
@@ -628,21 +631,21 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 				mapDataRecolhimentoValida.put(diasRecolhimento, dataRecolhimentoValida);
 			}
 			
-			diasRecolhimento ++ ;
+			diasRecolhimento++ ;
 		}
 		
 		return mapDataRecolhimentoValida;
 	}
 	
-	private Date processarDataRecolhimento (final Date novaData, final List<Integer> diasSemanaDistribuidorOpera, final boolean adicionaDias){
+	private Date processarDataRecolhimento(final Date novaData, final List<Integer> diasSemanaDistribuidorOpera, final boolean adicionaDias, List<Feriado> feriados) {
 		
-		Date dataAProcessar = obterDataValidaParaRecolhimento(novaData,diasSemanaDistribuidorOpera);
+		Date dataAProcessar = obterDataValidaParaRecolhimento(novaData, diasSemanaDistribuidorOpera, feriados);
 		
 		final int qtdDias = adicionaDias ? 1 : -1;
 		
 		if(dataAProcessar == null){
 			
-			dataAProcessar = processarDataRecolhimento(DateUtil.adicionarDias(novaData,qtdDias),diasSemanaDistribuidorOpera, adicionaDias);
+			dataAProcessar = processarDataRecolhimento(DateUtil.adicionarDias(novaData, qtdDias), diasSemanaDistribuidorOpera, adicionaDias, feriados);
 		}
 		
 		return dataAProcessar;
@@ -659,18 +662,16 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * @return List - Date
 	 */
 	@Override
-	public List<Date> obterListaDataOperacional(
-			Date dataAtual, 
-			int qtndDiasUteis, 
-			final List<Integer> diasSemanaDistribuidorOpera,
-			final boolean posterior) {
+	public List<Date> obterListaDataOperacional(Date dataAtual, int qtndDiasUteis, final List<Integer> diasSemanaDistribuidorOpera, final boolean posterior) {
 		
 		final List<Date> listaDatasRecolhimento = new ArrayList<>();
 
 		final int qtdDias =  posterior ? 1 : -1;
 		
+		List<Feriado> feriados = feriadoRepository.buscarTodos();
+		
 		do {
-			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, posterior);
+			dataAtual = processarDataRecolhimento(DateUtil.adicionarDias(dataAtual, qtdDias), diasSemanaDistribuidorOpera, posterior, feriados);
 			listaDatasRecolhimento.add(dataAtual);
 		} while(--qtndDiasUteis> 0);
 		
@@ -678,13 +679,13 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 	}
 	
-	private Date obterDataValidaParaRecolhimento(final Date novaData,final List<Integer> diasSemanaDistribuidorOpera){
+	private Date obterDataValidaParaRecolhimento(final Date novaData, final List<Integer> diasSemanaDistribuidorOpera, List<Feriado> feriados) {
 		
 		final int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
 		
 		if( diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) &&
-				!calendarioService.isFeriadoSemOperacao(novaData) &&
-				!calendarioService.isFeriadoMunicipalSemOperacao(novaData) ){
+				!calendarioService.isFeriadoSemOperacao(feriados, novaData) &&
+				!calendarioService.isFeriadoMunicipalSemOperacao(feriados, novaData) ){
 			
 			return novaData;
 		}

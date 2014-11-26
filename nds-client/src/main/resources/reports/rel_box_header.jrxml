@@ -34,19 +34,18 @@
 	<title>
 		<band height="67" splitType="Stretch">
 			<rectangle>
-				<reportElement uuid="8d737bdd-4813-48c5-9e3a-7685e0cd84bd" mode="Transparent" x="0" y="0" width="555" height="67"/>
+				<reportElement mode="Transparent" x="0" y="0" width="550" height="67" uuid="8d737bdd-4813-48c5-9e3a-7685e0cd84bd"/>
 			</rectangle>
 			<image>
-				<reportElement uuid="3c6bed92-4d86-4471-b233-e4b48e951378" x="5" y="5" width="65" height="57"/>
+				<reportElement x="5" y="5" width="65" height="57" uuid="3c6bed92-4d86-4471-b233-e4b48e951378"/>
 				<imageExpression><![CDATA[$P{IMAGEM}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement uuid="4b9b7645-4b1f-48a6-9205-af224915f0de" style="rel_nome_distrib" x="100" y="0" width="150" height="67"/>
-				<textElement/>
+				<reportElement style="rel_nome_distrib" x="100" y="0" width="150" height="67" uuid="4b9b7645-4b1f-48a6-9205-af224915f0de"/>
 				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7a8ce304-5a0d-4c8a-a7c9-2d8417b4d4c0" style="rel_nome" x="250" y="0" width="295" height="67"/>
+				<reportElement style="rel_nome" x="250" y="0" width="295" height="67" uuid="7a8ce304-5a0d-4c8a-a7c9-2d8417b4d4c0"/>
 				<textElement markup="html">
 					<font size="15" isBold="true" isStrikeThrough="false"/>
 				</textElement>
