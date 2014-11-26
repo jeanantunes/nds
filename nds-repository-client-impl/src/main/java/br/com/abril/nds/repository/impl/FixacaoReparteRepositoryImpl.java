@@ -443,7 +443,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		sql.append(" from lancamento lc  ");
 		sql.append(" 	join produto_edicao pe on lc.PRODUTO_EDICAO_ID = pe.ID  ");
 		sql.append(" 	join produto pd on pe.PRODUTO_ID = pd.ID  ");
-		sql.append(" 	left join fixacao_reparte fr on fr.codigo_icd = pd.codigo_icd  ");
+		sql.append(" 	join fixacao_reparte fr on fr.codigo_icd = pd.codigo_icd  ");
 		sql.append(" where lc.ID in (:lancamentosDoDia)  ");
 		sql.append(" and lc.STATUS in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO') ");
 		sql.append(" group by lc.ID ");
@@ -465,7 +465,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 
 			hql.append(" select fixacao ")
 					.append(" from FixacaoReparte fixacao ")
-					.append(" where fixacao.codigoICD in (:listaCodICD) ");
+					.append(" where fixacao.codigoICD in (:listaCodICD) order by edicaoFinal, edicoesAtendidas ");
 
 			Query query = getSession().createQuery(hql.toString());
 

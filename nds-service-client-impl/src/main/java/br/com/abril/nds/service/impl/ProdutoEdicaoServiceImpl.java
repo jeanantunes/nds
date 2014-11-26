@@ -979,7 +979,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             // Identificação:
             produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
-            produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
             produtoEdicao.setCaracteristicaProduto(dto.getCaracteristicaProduto());
             produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
             produtoEdicao.setPeb(dto.getPeb());
@@ -1026,6 +1025,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
             produtoEdicao.setSegmentacao(segm);
         }
+        
+        produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
         
         // Regime de Recolhimento;
         produtoEdicao.setParcial(dto.isParcial());	

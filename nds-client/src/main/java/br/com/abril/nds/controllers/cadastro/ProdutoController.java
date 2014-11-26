@@ -561,8 +561,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 	 */
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
-	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, 
-			Long codigoTipoProduto) {
+	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long idDesconto, Long codigoTipoProduto) {
 		
 		this.validarProduto(produto, codigoEditor, codigoFornecedor, idDesconto, codigoTipoProduto);
 		

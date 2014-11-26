@@ -453,7 +453,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		List<verificadorFixacaoDTO> lcmtsDosProdutosQuePossueFixacao = fixacaoReparteRepository.obterLcmtsDosProdutosQuePossueFixacao(lancamentosDoDia);
 		
-		List<Long> idExcluidos = new ArrayList<>();
+		List<FixacaoReparte> fixacaoParaExclusao = new ArrayList<>();
 		
 		if(lcmtsDosProdutosQuePossueFixacao != null && !lcmtsDosProdutosQuePossueFixacao.isEmpty()){
 			
@@ -480,7 +480,10 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 									BigInteger numeroEdicaoPeloLancamentoID = fixacaoReparteRepository.obterNumeroEdicaoPeloLancamentoID(verificadorLcmtXFixacao.getIdLancamento().longValue());
 
 									if((numeroEdicaoPeloLancamentoID.intValue() == fixacao.getEdicaoFinal().longValue()) && (!fixacao.isManterFixa())){
-										this.removerFixacaoReparte(fixacao);
+										if(!fixacaoParaExclusao.contains(fixacao)){
+											fixacaoParaExclusao.add(fixacao);
+										}
+										
 									}else{
 
 										BigInteger qtdEdicoesAtendidas = fixacaoReparteRepository.obterQtdDeEdicoesNoRanger(verificadorLcmtXFixacao.getCodICDFixacao(), fixacao.getEdicaoInicial(), fixacao.getEdicaoFinal());
@@ -500,18 +503,22 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 									}else{
 										if(!fixacao.isManterFixa()){
 	
-											if(!idExcluidos.contains(fixacao.getId())){
-												fixacaoReparteRepository.remover(fixacao);
-												idExcluidos.add(fixacao.getId());
+											if(!fixacaoParaExclusao.contains(fixacao)){
+												fixacaoParaExclusao.add(fixacao);
 											}
 											
 										}else{
 											fixacao.setEdicoesAtendidas(fixacao.getQtdeEdicoes());
+											fixacaoReparteRepository.alterar(fixacao);
 										}
 									}
 								}
 							}
 						}
+					}
+					
+					for (FixacaoReparte fixacaoReparte : fixacaoParaExclusao) {
+						fixacaoReparteRepository.remover(fixacaoReparte);
 					}
 				}
 			}
