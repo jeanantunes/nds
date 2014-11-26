@@ -104,6 +104,7 @@ import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.FeriadoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
@@ -123,6 +124,7 @@ import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.impl.FeriadoRepositoryImpl;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -292,6 +294,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
     private FormaCobrancaService formaCobrancaService;
 	
+	@Autowired
+	FeriadoRepository feriadoRepository;
+	
 	private final int PRIMEIRO_DIA_RECOLHIMENTO = 1;
 	
 	private final int QUANTIDADE_DIAS_UTEIS = 5;
@@ -322,12 +327,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			final DataCEConferivelDTO dataCEConferivel = new DataCEConferivelDTO();
 			
-			carregarObjetoDataCEConferivel(
-					dataCEConferivel,
-					numeroCota,
-					idFornecedor,
-					dataOperacao,
-					indCotaOperacaoDiferenciada);
+			carregarObjetoDataCEConferivel(dataCEConferivel, numeroCota, idFornecedor, dataOperacao, indCotaOperacaoDiferenciada);
 			
 			if( !dataCEConferivel.getListaDataConferivelProdutoNaoParcial().isEmpty() ||
 				!dataCEConferivel.getListaDataConferivelProdutoParcial().isEmpty() ){
@@ -356,6 +356,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param dataCE
 	 * @param numeroCota
 	 * @param listaIdFornecedor
+	 * @param isCotaOperacaoDiferenciada TODO
 	 */
 	private void carregarDatasConferiveis(
 			final DataCEConferivelDTO dataCEConferivel,
@@ -363,9 +364,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Date dataOperacao, 
 			final Date dataCE, 
 			final Integer numeroCota, 
-			final List<Long> listaIdFornecedor) {
+			final List<Long> listaIdFornecedor,
+			boolean isCotaOperacaoDiferenciada) {
 		
-		final int dia = distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, dataCE, numeroCota, null, listaIdFornecedor);
+		final int dia = distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, dataCE, numeroCota, null, listaIdFornecedor, isCotaOperacaoDiferenciada);
 		
 		if(listaDiasRecolheAtrasado.contains(dia)) {
 			
@@ -401,21 +403,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final List<Integer> listaDiasRecolheAtrasado = distribuidorService.getListaDiaOrdinalAceitaRecolhimento();
 		
-		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor);
+		carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataOperacao, numeroCota, listaIdFornecedor, indCotaOperacaoDiferenciada);
 		
 		if(diasSemanaDistribuidorOpera.isEmpty()){
 		    throw new ValidacaoException(TipoMensagem.ERROR, "Existe fornecedor com dia de recolhimento não cadastrado.");
 		}
 		
-		final List<Date> datasAnteriores = distribuidorService.obterListaDataOperacional(
-				dataOperacao, 
-				QUANTIDADE_DIAS_UTEIS, 
-				diasSemanaDistribuidorOpera, 
-				false);
+		final List<Date> datasAnteriores = distribuidorService.obterListaDataOperacional(dataOperacao, QUANTIDADE_DIAS_UTEIS, diasSemanaDistribuidorOpera, false);
 		
 		if(datasAnteriores!=null && !datasAnteriores.isEmpty()) {
 			for(final Date dataAnterior : datasAnteriores) {
-				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataAnterior, numeroCota, listaIdFornecedor);
+				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataAnterior, numeroCota, listaIdFornecedor, false);
 			}
 		}
 
@@ -433,7 +431,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(datasPosteriores!=null && !datasPosteriores.isEmpty()) {
 			
 			for(final Date dataPosterior : datasPosteriores) {
-				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataPosterior, numeroCota, listaIdFornecedor);
+				carregarDatasConferiveis(dataCEConferivel, listaDiasRecolheAtrasado, dataOperacao, dataPosterior, numeroCota, listaIdFornecedor, false);
 			}
 			
 		}
@@ -1086,7 +1084,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
 					conferencia.getDataRecolhimento(),
                     numeroCota,
-                    conferencia.getIdProdutoEdicao(), null);
+                    conferencia.getIdProdutoEdicao(), null, null);
 			
 			conferencia.setDia(diaRecolhimento);
 			
@@ -1347,7 +1345,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					conf.getDataRecolhimento(),
 	                numeroCota,
 	                conf.getIdProdutoEdicao(), 
-	                null);
+	                null, null);
 			
 			conf.setDia(diaRecolhimento);
 			
@@ -3059,7 +3057,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
                 conferenciaEncalheDTO.getDataRecolhimento(),
                 numeroCota,
                 conferenciaEncalheDTO.getIdProdutoEdicao(), 
-                null);
+                null, null);
 		
 		final boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
