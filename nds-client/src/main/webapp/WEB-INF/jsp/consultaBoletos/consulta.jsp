@@ -44,38 +44,42 @@
             
               <td width="28">Cota:</td>
               <td width="76">
-                      <input name="numCota" 
-                                 id="numCota" 
-                                 type="text"
-                                 maxlength="11"
-                                 style="width:70px; 
-                                 float:left; margin-right:5px;"
-                                 onchange="pesquisaCotaConsultaBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota');" />
-                          </td>
+              	  <input name="boleto-numCota" 
+                         id="boleto-numCota" 
+                         type="text"
+                         maxlength="11"
+                         style="width:70px; 
+                         float:left; margin-right:5px;"
+                         onchange="pesquisaCotaConsultaBoletos.pesquisarPorNumeroCota('#boleto-numCota', '#boleto-descricaoCota');" />
+              </td>
                                 
                           
-              <td width="30">Nome:</td>              <td width="189">
-                              <input name="descricaoCota" 
-                                               id="descricaoCota" 
-                                               type="text" 
-                                               class="nome_jornaleiro" 
-                                               maxlength="255"
-                                               style="width:180px;"
-                                               onkeyup="pesquisaCotaConsultaBoletos.autoCompletarPorNome('#descricaoCota');" 
-                                               onblur="pesquisaCotaConsultaBoletos.pesquisarPorNomeCota('#numCota', '#descricaoCota');" />
-                          </td>
-              
+              <td width="30">Nome:</td>
+              <td width="189">
+              	  <input name="boleto-descricaoCota" 
+	                     id="boleto-descricaoCota" 
+	                     type="text" 
+	                     class="nome_jornaleiro" 
+	                     maxlength="255"
+	                     style="width:180px;"
+	                     onkeyup="pesquisaCotaConsultaBoletos.autoCompletarPorNome('#boleto-descricaoCota');" 
+	                     onblur="pesquisaCotaConsultaBoletos.pesquisarPorNomeCota('#boleto-numCota', '#boleto-descricaoCota');" />
+              </td>
 
               <td width="114">Data de Vencimento:</td>
-              <td width="113"><input name="dataDe" id="dataDe" type="text" style="width:80px; float:left; margin-right:5px;" /></td>
+              <td width="113">
+              	<input name="boleto-dataDe" id="boleto-dataDe" value="${data}" type="text" style="width:80px; float:left; margin-right:5px;" />
+              </td>
               <td width="26">Até:</td>
-              <td width="113"><input name="dataAte" id="dataAte" type="text" style="width:80px; float:left; margin-right:5px;" /></td>
+              <td width="113">
+              	<input name="boleto-dataAte" id="boleto-dataAte" value="${data}" type="text" style="width:80px; float:left; margin-right:5px;" />
+              </td>
               <td width="44">Status:</td>
               <td width="128">
-                 <select name="status" id="status" style="width:100px;">
+                 <select name="boleto-status" id="boleto-status" style="width:100px;">
                     <c:forEach varStatus="counter" var="status" items="${listaStatusCombo}">
-                                       <option value="${status.key}">${status.value}</option>
-                                    </c:forEach>
+                       <option value="${status.key}">${status.value}</option>
+                    </c:forEach>
                  </select>
               </td>
               
