@@ -7,19 +7,19 @@
     <td width="140"><span class="dadosFiltro" id="span_data_venda" style="display: inline;"></span></td>
     <td width="39">Cota:</td>
     <td width="109">
-    	<input name="numCotaVenda" 
-               id="numCotaVenda" 
+    	<input name="vend-suplementar-numCotaVenda" 
+               id="vend-suplementar-numCotaVenda" 
                type="text"
                maxlength="11"
                style="width:70px; 
                float:left; margin-right:5px;"
-               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#numCotaVenda', '#descricaoCotaVenda',true,
+               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#vend-suplementar-numCotaVenda', '#vend-suplementar-descricaoCotaVenda',true,
               	  									 VENDA_PRODUTO.pesquisarCotaVendaSuccessCallBack, 
               	  									 VENDA_PRODUTO.pesquisarCotaVendaErrorCallBack);"/>
 				              	  									 	
     </td>
     <td width="350">Nome:
-    		<input type="hidden" name="descricaoCotaVenda" id="descricaoCotaVenda"/>
+    		<input type="hidden" name="vend-suplementar-descricaoCotaVenda" id="vend-suplementar-descricaoCotaVenda"/>
 			<span class="dadosFiltro" id="span_nome_cota_venda" style="display: inline;"></span>  
     </td>
     <td width="10">&nbsp;</td>
@@ -38,10 +38,10 @@
   	<td width="100"><strong>Data Vencimento:</strong></td>
   	<td>
   		<div style="display: none;" id="div_data_inclusao">
-			<input type="text" style="width:80px;" name="dataVencimento" id="dataVencimento" />
+			<input type="text" style="width:80px;" name="vend-suplementar-dataVencimento" id="vend-suplementar-dataVencimento" />
 		</div>
 		<div style="display: none;" id="div_data_edicao">
-			<input disabled="disabled" type="text" style="width:80px;" name="dataVencimentoEdicao" id="dataVencimentoEdicao" />
+			<input disabled="disabled" type="text" style="width:80px;" name="vend-suplementar-dataVencimentoEdicao" id="vend-suplementar-dataVencimentoEdicao" />
 		</div>
   	</td>
 	<td vAlign="bottom" width="254" align="right"><strong>Venda Encalhe:</strong></td>
