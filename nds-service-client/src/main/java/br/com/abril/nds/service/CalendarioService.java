@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.CalendarioFeriadoDTO;
+import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
@@ -134,6 +135,14 @@ public interface CalendarioService {
 	boolean isFeriadoSemOperacao(Date data);
 	
 	/**
+     * Verifica se a data possui feriados que não operam
+     * 
+     * @param data
+     * @return
+     */
+	boolean isFeriadoSemOperacao(List<Feriado> feriados, Date data);
+	
+	/**
      * Verifica se a data possui feriados que operam
      * 
      * @param data
@@ -142,12 +151,28 @@ public interface CalendarioService {
 	boolean isFeriadoComOperacao(Date data);
 	
 	/**
+     * Verifica se a data possui feriados que operam
+     * 
+     * @param data
+     * @return
+     */
+	boolean isFeriadoComOperacao(List<Feriado> feriados, Date data);
+	
+	/**
      * Verifica se a data possui feriados Municipais que não operam
      * 
      * @param data
      * @return
      */
 	boolean isFeriadoMunicipalSemOperacao(Date data);
+	
+	/**
+     * Verifica se a data possui feriados Municipais que não operam
+     * 
+     * @param data
+     * @return
+     */
+	boolean isFeriadoMunicipalSemOperacao(List<Feriado> feriados, Date data);
 	
 	public enum TipoPesquisaFeriado {
 		FERIADO_MENSAL, FERIADO_ANUAL;
