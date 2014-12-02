@@ -479,8 +479,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private boolean verificarDistribuidor(Message message) {
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
-		String codigoDistribuidorSistema = message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.toString()).toString();
+		String codigoDistribuidorSistema = message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.toString()).toString();
 		
 		String codigoDistribuidorArquivo = input.getCodDistrib();
 
@@ -569,6 +568,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.setCodigoContexto(input.getContextoProd());
 		}
 		
+		/*
 		if (null != produto.getTipoProduto()) {
 
 			if(null != produto.getTipoProduto().getCodigoNBM() && (input.getCodNBM() != null && !input.getCodNBM().equals(ZEROS_NBM))) {
@@ -598,6 +598,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 		}
+		*/
 
 		if (input.getNomeComercial()!=null && !input.getNomeComercial().trim().equals("") 
 				&& !Objects.equal(produto.getNomeComercial(), input.getNomeComercial()) 
@@ -724,7 +725,31 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setParcial(isParcial);
 		
 		edicao.setCodigoDeBarraCorporativo(input.getCodigoBarrasCorporativo());
-
+		
+		if(null != edicao.getCodigoNBM() && (input.getCodNBM() != null && !input.getCodNBM().equals(ZEROS_NBM))) {
+				
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Código NBM"
+					+" de "+ edicao.getCodigoNBM()
+					+" para "+ input.getCodNBM()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
+			
+		} else {
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Código NBM"
+					+" de Nulo "
+					+" para "+ input.getCodNBM()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
+			
+		}
+		
+		edicao.setCodigoNBM(input.getCodNBM());
+		
 		this.getSession().persist(edicao);
 		
 		//inserirDescontoProdutoEdicao(edicao, produto);
@@ -842,6 +867,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.setNomeComercial(input.getNomeComercial());
 		}
 		
+		/*
 		if ( null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() 
 				&& !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM()) 
 				&& !input.getCodNBM().equals(ZEROS_NBM)) {
@@ -856,7 +882,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 		}
-
+		*/
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
         
@@ -1173,6 +1199,19 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					+" para "+ descontoLogistica.getTipoDesconto().intValue()
 					+" Produto "+ produto.getCodigo()
 					+" Edição "+ input.getEdicaoProd());
+		}
+		
+		if ( null != edicao.getCodigoNBM() && !edicao.getCodigoNBM().equals(input.getCodNBM()) && !input.getCodNBM().equals(ZEROS_NBM)) {
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteração do Código NBM"
+					+" de " + edicao.getCodigoNBM()
+					+" para " + input.getCodNBM()
+					+" Produto "+ input.getCodProd()
+					+" Edição "+ input.getEdicaoProd());
+			
+			edicao.setCodigoNBM(input.getCodNBM());
 		}
 		
 		//this.getSession().merge(produto);
