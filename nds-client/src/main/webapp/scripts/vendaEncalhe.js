@@ -198,10 +198,10 @@ var VENDA_PRODUTO = {
 		
 	params:function(){
 		
-		var numeroCota = $("#numCota", VENDA_PRODUTO.workspace).val();
-		var tipoVenda = $("#selectTipoVenda", VENDA_PRODUTO.workspace).val();
-		var periodoInicial = $("#periodoDe", VENDA_PRODUTO.workspace).val();
-		var periodoFinal = $("#periodoAte", VENDA_PRODUTO.workspace).val();
+		var numeroCota = $("#vend-suplementar-numCota", VENDA_PRODUTO.workspace).val();
+		var tipoVenda = $("#vend-suplementar-selectTipoVenda", VENDA_PRODUTO.workspace).val();
+		var periodoInicial = $("#vend-suplementar-periodoDe", VENDA_PRODUTO.workspace).val();
+		var periodoFinal = $("#vend-suplementar-periodoAte", VENDA_PRODUTO.workspace).val();
 		
 		var param = [];
 		
@@ -225,7 +225,7 @@ var VENDA_PRODUTO = {
 	},	
 		
 	pesquisarCotaSuccessCallBack:function(){
-		$("#span_nome_cota", VENDA_PRODUTO.workspace).html($("#descricaoCota", VENDA_PRODUTO.workspace).val());
+		$("#span_nome_cota", VENDA_PRODUTO.workspace).html($("#vend-suplementar-descricaoCota", VENDA_PRODUTO.workspace).val());
 	},
 	
 	pesquisarCotaErrorCallBack:function(){
@@ -234,10 +234,10 @@ var VENDA_PRODUTO = {
 	
 	pesquisarCotaVendaSuccessCallBack:function(){
 		
-		$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html($("#descricaoCotaVenda", VENDA_PRODUTO.workspace).val());
+		$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html($("vend-suplementar-#descricaoCotaVenda", VENDA_PRODUTO.workspace).val());
 		
 		$.postJSON(contextPath + "/devolucao/vendaEncalhe/obterBoxCota", 
-					{numeroCota:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()},
+					{numeroCota:$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val()},
 					function(result) {
 			 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(result);			
 					},null,true);
@@ -268,11 +268,11 @@ var VENDA_PRODUTO = {
 			 $("#labelTotalGeral", VENDA_PRODUTO.workspace).show();
 			 $("#totalGeral", VENDA_PRODUTO.workspace).show();
 			 
-			 if($("#selectTipoVenda", VENDA_PRODUTO.workspace).val() == "ENCALHE"){
+			 if($("#vend-suplementar-selectTipoVenda", VENDA_PRODUTO.workspace).val() == "ENCALHE"){
 				$("#divImprimirEncalhe", VENDA_PRODUTO.workspace).show();
 				$("#divImprimirSuplementar", VENDA_PRODUTO.workspace).hide();
 			 }
-			 else if ($("#selectTipoVenda", VENDA_PRODUTO.workspace).val() == "SUPLEMENTAR"){
+			 else if ($("#vend-suplementar-selectTipoVenda", VENDA_PRODUTO.workspace).val() == "SUPLEMENTAR"){
 				 $("#divImprimirEncalhe", VENDA_PRODUTO.workspace).hide();
 				 $("#divImprimirSuplementar", VENDA_PRODUTO.workspace).show(); 
 			 }
@@ -321,8 +321,8 @@ var VENDA_PRODUTO = {
 					null,
 					function(resultado) {
 						 $("#span_data_venda", VENDA_PRODUTO.workspace).html(resultado.data);
-						 $("#dataVencimento", VENDA_PRODUTO.workspace).val(resultado.dataVencimentoDebito);
-						 $("#dataVencimentoEdicao", VENDA_PRODUTO.workspace).val(resultado.dataVencimentoDebito);
+						 $("#vend-suplementar-dataVencimento", VENDA_PRODUTO.workspace).val(resultado.dataVencimentoDebito);
+						 $("#vend-suplementar-dataVencimentoEdicao", VENDA_PRODUTO.workspace).val(resultado.dataVencimentoDebito);
 						 VENDA_PRODUTO.processarVisualizacaoDataVencimento();
 					},null,true);
 		
@@ -433,14 +433,14 @@ var VENDA_PRODUTO = {
 			row.cell.formaVenda = inputFormaVenda + inputHiddenTipoComercailizacao;
 			
 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(row.cell.codBox);
-			$("#dataVencimento", VENDA_PRODUTO.workspace).val(row.cell.dataVencimentoDebito);
-			$("#dataVencimentoEdicao", VENDA_PRODUTO.workspace).val(row.cell.dataVencimentoDebito);
+			$("#vend-suplementar-dataVencimento", VENDA_PRODUTO.workspace).val(row.cell.dataVencimentoDebito);
+			$("#vend-suplementar-dataVencimentoEdicao", VENDA_PRODUTO.workspace).val(row.cell.dataVencimentoDebito);
 			$("#span_data_venda", VENDA_PRODUTO.workspace).html(row.cell.dataVenda);
 			$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html(row.cell.nomeCota);
-			$("#numCotaVenda", VENDA_PRODUTO.workspace).val(row.cell.numeroCota);
+			$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val(row.cell.numeroCota);
 		});
 		
-		$("#numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled","disabled");
+		$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled","disabled");
 		$("#qntSolicitada0", VENDA_PRODUTO.workspace).focus();
 		
 		VENDA_PRODUTO.tipoVenda = tipoVenda;
@@ -493,7 +493,7 @@ var VENDA_PRODUTO = {
 		
 		});
 		
-		$("#numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled",null);
+		$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).attr("disabled",null);
 		
 		VENDA_PRODUTO.tipoVenda="";
 		if(VENDA_PRODUTO.tipoVenda == 'SUPLEMENTAR'){
@@ -728,7 +728,7 @@ var VENDA_PRODUTO = {
 		var data = [
 			{name:"codigoProduto",value:codigoProduto},
 			{name:"numeroEdicao",value:edicaoProduto},
-			{name:"numeroCota",value: $("#numCotaVenda", VENDA_PRODUTO.workspace).val()}
+			{name:"numeroCota",value: $("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val()}
 		];
 		
 		 $.postJSON(
@@ -1071,8 +1071,8 @@ var VENDA_PRODUTO = {
 		var metodo = (VENDA_PRODUTO.vendaNova == true)?"confirmaNovaVenda":"confirmaEdicaoVenda";
 		
 		var data = VENDA_PRODUTO.getListaProduto();
-		data.push({name:"numeroCota",value:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()});	
-		data.push({name:"dataDebito", value:$("#dataVencimento", VENDA_PRODUTO.workspace).val()});		   
+		data.push({name:"numeroCota",value:$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val()});	
+		data.push({name:"dataDebito", value:$("#vend-suplementar-dataVencimento", VENDA_PRODUTO.workspace).val()});		   
      
 		 $.postJSON(
 			contextPath + "/devolucao/vendaEncalhe/"+metodo, 
@@ -1095,10 +1095,10 @@ var VENDA_PRODUTO = {
 	
 	validarParametrosConsulta:function(){
 		
-		if( $("#selectTipoVenda", VENDA_PRODUTO.workspace).val().length > 0
-				|| $("#numCota", VENDA_PRODUTO.workspace).val().length > 0 
-				|| ( $("#periodoDe", VENDA_PRODUTO.workspace).val().length > 0
-						&& $("#periodoAte", VENDA_PRODUTO.workspace).val().length > 0)){
+		if( $("#vend-suplementar-selectTipoVenda", VENDA_PRODUTO.workspace).val().length > 0
+				|| $("#vend-suplementar-numCota", VENDA_PRODUTO.workspace).val().length > 0 
+				|| ( $("#vend-suplementar-periodoDe", VENDA_PRODUTO.workspace).val().length > 0
+						&& $("#vend-suplementar-periodoAte", VENDA_PRODUTO.workspace).val().length > 0)){
 			
 			return true;
 		}
@@ -1117,8 +1117,8 @@ var VENDA_PRODUTO = {
 	
 	limparDadosModalVenda:function(){
 		
-		$("#numCotaVenda", VENDA_PRODUTO.workspace).val("");
-		$("#dataVencimento", VENDA_PRODUTO.workspace).val("");
+		$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val("");
+		$("#vend-suplementar-dataVencimento", VENDA_PRODUTO.workspace).val("");
 		$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).text("");
 		$("#span_nome_box_venda", VENDA_PRODUTO.workspace).text("");
 		$("#span_total_disponivel_venda", VENDA_PRODUTO.workspace).text("0");
@@ -1132,7 +1132,7 @@ var VENDA_PRODUTO = {
 	
 	recalcularPrecoVendaItens:function(){
 		
-		if( $("#numCotaVenda", VENDA_PRODUTO.workspace).val() == ""){
+		if( $("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val() == ""){
 			return;
 		}
 		
@@ -1192,7 +1192,7 @@ var VENDA_PRODUTO = {
 	
 		if(listaVendas.length > 0){
 			
-			listaVendas.push({name:"numeroCota",value:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()});
+			listaVendas.push({name:"numeroCota",value:$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val()});
 			
 			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 				url: contextPath + "/devolucao/vendaEncalhe/recalcularValorDescontoItensVenda",
@@ -1208,22 +1208,22 @@ var VENDA_PRODUTO = {
 
 $(function() {
 
-	$("input[name='numCota']", VENDA_PRODUTO.workspace).numeric();
+	$("input[name='vend-suplementar-numCota']", VENDA_PRODUTO.workspace).numeric();
 	
-	$("input[name='numCotaVenda']", VENDA_PRODUTO.workspace).numeric();
+	$("input[name='vend-suplementar-numCotaVenda']", VENDA_PRODUTO.workspace).numeric();
 	
-	$('input[id^="periodo"]', VENDA_PRODUTO.workspace).mask("99/99/9999");
+	$('input[id^="vend-suplementar-periodo"]', VENDA_PRODUTO.workspace).mask("99/99/9999");
 	
-	$('input[id^="dataVencimento"]', VENDA_PRODUTO.workspace).mask("99/99/9999");
+	$('input[id^="vend-suplementar-dataVencimento"]', VENDA_PRODUTO.workspace).mask("99/99/9999");
 
-	$('input[id^="periodo"]', VENDA_PRODUTO.workspace).datepicker({
+	$('input[id^="vend-suplementar-periodo"]', VENDA_PRODUTO.workspace).datepicker({
 		showOn: "button",
 		buttonImage: contextPath+"/images/calendar.gif",
 		buttonImageOnly: true,
 		dateFormat: "dd/mm/yy"
 	});
 	
-	$('input[id="dataVencimento"]', VENDA_PRODUTO.workspace).datepicker({
+	$('input[id="vend-suplementar-dataVencimento"]', VENDA_PRODUTO.workspace).datepicker({
 		showOn: "button",
 		buttonImage: contextPath+"/images/calendar.gif",
 		buttonImageOnly: true,

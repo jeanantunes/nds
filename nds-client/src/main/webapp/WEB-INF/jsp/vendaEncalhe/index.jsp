@@ -81,10 +81,7 @@ $(function(){
 				    
 				    <td width="125">
 				    	
-				    	<input name="numCota" 
-				               id="numCota" 
-				               type="text"
-				               maxlength="11"
+				    	<input name="suplementar-numCota" id="suplementar-numCota" type="text" maxlength="11"
 				               style="width:70px; 
 				               float:left; margin-right:5px;"
 				               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
@@ -95,14 +92,14 @@ $(function(){
 				    <td width="46">Nome:</td>
 				    
 				    <td width="320">
-				    	<input type="hidden" name="descricaoCota" id="descricaoCota"/>
+				    	<input type="hidden" name="suplementar-descricaoCota" id="suplementar-descricaoCota"/>
 				    	<span class="dadosFiltro" id="span_nome_cota" style="display: inline;"></span>     
 				    </td>
 				    
 				    <td width="86">Tipo de Venda:</td>
 				    
 				    <td width="180">
-				    	<select id="selectTipoVenda" name="tipoVendaSelecionado">
+				    	<select id="suplementar-selectTipoVenda" name="suplementar-tipoVendaSelecionado">
 				      		<option value="">Todas</option>
 				      		<option value="ENCALHE">Venda de Encalhe</option>
 				      		<option value="SUPLEMENTAR">Venda de Suplementar</option>
