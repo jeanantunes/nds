@@ -649,7 +649,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
 			
 		if (FormaComercializacao.CONSIGNADO.equals(vnd.getFormaVenda())) {
-
+			
 			return criarVendaSuplementarConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
 		} else {
@@ -1431,8 +1431,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				for(Lancamento l : lancamentos) {
 					if(l.getDataRecolhimentoDistribuidor().getTime() >= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
-						if(statusLancamentos.contains(l.getStatus())) {
+						if(!statusLancamentos.contains(l.getStatus())) {
 							vendaBloqueada = true;
+							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não podeser efetivada.");
 						}
 					}
 				}

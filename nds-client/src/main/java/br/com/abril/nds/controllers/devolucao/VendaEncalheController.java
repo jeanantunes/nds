@@ -173,9 +173,11 @@ public class VendaEncalheController extends BaseController {
 		if(novaVenda) {
 
 			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas, numeroCota, dataDebito, getUsuarioLogado());
+			
 		} else {
 			
 			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0), dataDebito, getUsuarioLogado());
+			
 		}
 		
 		session.setAttribute("COMPROVANTE_VENDA",comprovanteVenda);
