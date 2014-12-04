@@ -164,9 +164,9 @@ public class VendaEncalheController extends BaseController {
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.FALSE);
 	}
 	
-	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito,boolean novaVenda){
+	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito, boolean novaVenda){
 		
-		validarParametrosVenda(listaVendas,numeroCota, dataDebito,novaVenda);
+		validarParametrosVenda(listaVendas, numeroCota, dataDebito, novaVenda);
 		
 		byte[] comprovanteVenda = null;
 		
