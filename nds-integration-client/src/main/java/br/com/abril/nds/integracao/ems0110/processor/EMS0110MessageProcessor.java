@@ -164,8 +164,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select editor from Editor editor ");
-		sql.append("where editor.codigo = :codigoEditor ");
-		sql.append("where editor.ativo = :true ");
+		sql.append(" where editor.codigo = :codigoEditor ");
+		sql.append(" and editor.ativo = :true ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 
