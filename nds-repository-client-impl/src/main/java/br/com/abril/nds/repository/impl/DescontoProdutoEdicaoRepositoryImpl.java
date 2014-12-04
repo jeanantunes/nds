@@ -215,8 +215,8 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
      * {@inheritDoc}
      */
 	@Override
-    public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
-            Long idCota, ProdutoEdicao produtoEdicao) {
+	@Deprecated
+    public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Long idCota, ProdutoEdicao produtoEdicao) {
         
 		//TODO: Implementar a prioridade de desconto predominante 
 		Query query = null;
@@ -240,6 +240,12 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
+		//Obtem o desconto da Cota-Fornecedor 
+		query = obterDescontoEspecifico(idCota, produtoEdicao);
+		descontoId = (BigInteger) query.uniqueResult();
+		
+		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
+		
 		//Obtem o desconto do ProdutoEdicao 
 		query = obterDescontoProdutoEdicao(produtoEdicao);
 		descontoId = (BigInteger) query.uniqueResult();
@@ -248,12 +254,6 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		//Obtem o desconto do Produto 
 		query = obterDescontoProduto(produtoEdicao);
-		descontoId = (BigInteger) query.uniqueResult();
-		
-		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
-		
-		//Obtem o desconto da Cota-Fornecedor 
-		query = obterDescontoEspecifico(idCota, produtoEdicao);
 		descontoId = (BigInteger) query.uniqueResult();
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());

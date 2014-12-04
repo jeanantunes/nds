@@ -232,9 +232,9 @@ var VENDA_PRODUTO = {
 		$("#span_nome_cota", VENDA_PRODUTO.workspace).html("");
 	},
 	
-	pesquisarCotaVendaSuccessCallBack:function(){
+	pesquisarCotaVendaSuccessCallBack:function() {
 		
-		$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html($("vend-suplementar-#descricaoCotaVenda", VENDA_PRODUTO.workspace).val());
+		$("#span_nome_cota_venda", VENDA_PRODUTO.workspace).html($("#vend-suplementar-descricaoCotaVenda", VENDA_PRODUTO.workspace).val());
 		
 		$.postJSON(contextPath + "/devolucao/vendaEncalhe/obterBoxCota", 
 					{numeroCota:$("#vend-suplementar-numCotaVenda", VENDA_PRODUTO.workspace).val()},
