@@ -1520,7 +1520,7 @@ var fecharDiaController =  $.extend(true, {
 		
 		$("#consignaddo-saida-a-vista", fecharDiaController.workspace).html(resumo.resumoConsignado.valorAVistaFormatado);
 		
-		$("#consignaddo-alteracao-de-preco", fecharDiaController.workspace).html(resumo.resumoConsignado.altracaoPrecoFormatado);
+		$("#consignaddo-alteracao-de-preco", fecharDiaController.workspace).html(resumo.resumoConsignado.valorAlteracaoPrecoFormatado);
 
 		var linhaResumo = "<tr>";
 		

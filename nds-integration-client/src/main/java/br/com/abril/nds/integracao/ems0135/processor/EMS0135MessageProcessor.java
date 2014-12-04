@@ -729,18 +729,20 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     
     private String obterIcdPorCodigo(String codigo) {
         
-    	if(codigo.length() ==8 && !codigo.substring(1, 1).equals("0")){
-    	  return codigo.substring(1,6);
-    	} else if (codigo.length() ==8 && codigo.substring(1, 1).equals("0")){
-    	  return (new Integer(codigo)).intValue()+"";
+    	codigo = (new Integer(codigo).toString());
+    	if(codigo.length() == 10){
+    		return codigo;
+    	} else if(codigo.length() == 8){
+    		return (codigo.substring(0, 6));
     	} else {
-    	  return codigo;
+    		System.out.println(codigo);
+    		return (codigo);
+
     	}
     }
     
     @Override
     public void posProcess(Object tempVar) {
         // TODO Auto-generated method stub
-    }
-    
+    }   
 }

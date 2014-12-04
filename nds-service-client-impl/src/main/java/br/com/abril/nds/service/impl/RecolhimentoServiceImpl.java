@@ -211,20 +211,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Usuario usuario,
-												BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO) {
+	public void salvarBalanceamentoRecolhimento(Usuario usuario, BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO) {
 		
-		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
-			balanceamentoRecolhimentoDTO.getMatrizRecolhimento();
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = balanceamentoRecolhimentoDTO.getMatrizRecolhimento();
 		
-		if (matrizRecolhimento == null
-				|| matrizRecolhimento.isEmpty()) {
-			
+		if (matrizRecolhimento == null || matrizRecolhimento.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
 		}
 		
-		Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos =
-			new TreeMap<Long, ProdutoRecolhimentoDTO>();
+		Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos = new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
@@ -232,9 +227,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
 			
-			if (listaProdutoRecolhimentoDTO == null
-					|| listaProdutoRecolhimentoDTO.isEmpty()) {
-			
+			if (listaProdutoRecolhimentoDTO == null || listaProdutoRecolhimentoDTO.isEmpty()) {
 				continue;
 			}
 			
@@ -252,8 +245,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					continue;
 				}
 				
-				this.montarInformacoesSalvarBalanceamento(
-					mapaRecolhimentos, idsLancamento, produtoRecolhimento);
+				this.montarInformacoesSalvarBalanceamento(mapaRecolhimentos, idsLancamento, produtoRecolhimento);
 				
 				if (!produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty()) {
 					
@@ -271,9 +263,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		this.atualizarLancamentos(
-			idsLancamento, usuario, mapaRecolhimentos,
-			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
+		this.atualizarLancamentos(idsLancamento, usuario, mapaRecolhimentos, StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
 	}
 
 	private void montarInformacoesSalvarBalanceamento(
@@ -445,8 +435,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (Lancamento lancamento : listaLancamentos) {
 				
-				gerarHistoricoLancamento =
-					!(lancamento.getStatus().equals(statusLancamento));
+				gerarHistoricoLancamento = !(lancamento.getStatus().equals(statusLancamento));
 				
 				produtoRecolhimento = mapaLancamentoRecolhimento.get(lancamento.getId());
 				
@@ -467,8 +456,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
 				
-				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
-												   		lancamento, novaData);
+				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento, lancamento, novaData);
 				
 				if (gerarHistoricoLancamento) {
 				

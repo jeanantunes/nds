@@ -197,7 +197,11 @@ public class ResumoFechamentoDiarioConsignadoDTO implements Serializable {
 		public void setValorAVistaCE(BigDecimal valorAVistaCE) {
 			this.valorAVistaCE = valorAVistaCE;
 		}
-
+		
+		public String getValorAlteracaoPrecoFormatado() {
+			return CurrencyUtil.formatarValor(this.valorAlteracaoPreco);
+		}
+		
 	}
 
 	/**
