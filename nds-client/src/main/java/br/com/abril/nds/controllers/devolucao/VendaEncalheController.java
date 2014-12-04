@@ -164,18 +164,20 @@ public class VendaEncalheController extends BaseController {
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.FALSE);
 	}
 	
-	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito,boolean novaVenda){
+	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito, boolean novaVenda){
 		
-		validarParametrosVenda(listaVendas,numeroCota, dataDebito,novaVenda);
+		validarParametrosVenda(listaVendas, numeroCota, dataDebito, novaVenda);
 		
 		byte[] comprovanteVenda = null;
 		
 		if(novaVenda) {
 
 			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas, numeroCota, dataDebito, getUsuarioLogado());
+			
 		} else {
 			
 			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0), dataDebito, getUsuarioLogado());
+			
 		}
 		
 		session.setAttribute("COMPROVANTE_VENDA",comprovanteVenda);

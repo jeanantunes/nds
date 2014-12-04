@@ -74,11 +74,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 				input.setCodigoDistribuidor(input.getCodigoDistribuidor().trim()); 
 			}
 			
-			final boolean isCodigoDistribuidorDinap = (distribuidor.getCodigoDistribuidorDinap()!= null 
+			final boolean isCodigoDistribuidorDinap = (distribuidor.getCodigoDistribuidorDinap() != null 
 					&& distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor()));
 			
-			final boolean isCodigoDistribuidorFc = ( distribuidor.getCodigoDistribuidorFC()!= null 
-					&&  distribuidor.getCodigoDistribuidorFC().equals(input.getCodigoDistribuidor()));
+			final boolean isCodigoDistribuidorFc = (distribuidor.getCodigoDistribuidorFC() != null 
+					&& distribuidor.getCodigoDistribuidorFC().equals(input.getCodigoDistribuidor()));
 			
 			if(!isCodigoDistribuidorDinap && !isCodigoDistribuidorFc) {
 				

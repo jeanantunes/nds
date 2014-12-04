@@ -1389,7 +1389,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Transactional
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
             final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota){
+            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota) {
         
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade,
                 tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false, null);
@@ -1443,11 +1443,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
-                final Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
+                DescontoDTO desconto = null;
+                try {
+                	
+                	desconto = descontoService.obterDescontoPor(cotaRepository.buscarPorId(idCota).getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+				} catch (Exception e) {
+					
+					LOGGER.error("Impossível obter o Desconto.", e);
+					throw new ValidacaoException(TipoMensagem.WARNING, "Impossível obter o Desconto.");
+				}
                 
                 final BigDecimal precoComDesconto =
                         produtoEdicao.getPrecoVenda().subtract(
-                                MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
+                                MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), (desconto != null ? desconto.getValor() : BigDecimal.ZERO)));
                 
                 final ValoresAplicados valoresAplicados = new ValoresAplicados();
                 valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());

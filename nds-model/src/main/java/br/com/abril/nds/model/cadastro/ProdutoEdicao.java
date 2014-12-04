@@ -217,6 +217,9 @@ public class ProdutoEdicao implements Serializable {
     @JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
     private TipoClassificacaoProduto tipoClassificacaoProduto;
     
+    @Column(name = "CODIGO_NBM", length = 10)
+	private String codigoNBM;
+    
 	public ProdutoEdicao() {
 	}
 	
@@ -672,15 +675,21 @@ public class ProdutoEdicao implements Serializable {
     public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
         this.tipoClassificacaoProduto = tipoClassificacaoProduto;
     }
+    
+	public String getCodigoNBM() {
+		return codigoNBM;
+	}
+
+	public void setCodigoNBM(String codigoNBM) {
+		this.codigoNBM = codigoNBM;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getNumeroEdicao() == null) ? 0 : this.getNumeroEdicao().hashCode());
-		result = prime * result + ((this.getProduto() == null) ? 0 : this.getProduto().hashCode());
-		
+		result = prime * result + ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
 		return result;
 	}
 
@@ -716,5 +725,4 @@ public class ProdutoEdicao implements Serializable {
 	public String toString() {
 		return (produto != null && numeroEdicao != null) ? produto.toString() + "-" + numeroEdicao.toString() : "";
 	}
-
 }
