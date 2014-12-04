@@ -123,7 +123,7 @@ public class ResumoSuplementarFecharDiaServiceImpl implements ResumoSuplementarF
 			
 			dto.setTotalAlteracaoPreco(totalAlteracaoPreco);
 			
-			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda));			
+			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda).add(totalAlteracaoPreco));			
 		}
 		
 		return dto;
