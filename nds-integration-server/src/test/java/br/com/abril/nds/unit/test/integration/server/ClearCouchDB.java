@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.util;
+package br.com.abril.nds.unit.test.integration.server;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -13,12 +13,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.fileimporter.StartBatch;
 import br.com.abril.nds.integracao.model.canonic.EMS0127Input;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager="transactionManager")
-@ContextConfiguration(locations={StartBatch.SPRING_FILE_LOCATION})
+@ContextConfiguration(locations="file:src/test/resources/spring/applicationContext-ndsi-test.xml")
 public class ClearCouchDB {
 
 	@Autowired
