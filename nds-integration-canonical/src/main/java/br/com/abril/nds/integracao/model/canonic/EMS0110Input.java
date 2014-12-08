@@ -593,7 +593,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
     }
     
     //offset = 701, length=25
-    @Field(offset = 581, length=2)
+    @Field(offset = 563, length=2)
     public String getSegmento() {
         return segmento;
     }
@@ -607,149 +607,68 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((chamadaCapa == null) ? 0 : chamadaCapa.hashCode());
-        result = prime * result
-                + ((codBarra == null) ? 0 : codBarra.hashCode());
-        result = prime * result
-                + ((codCategoria == null) ? 0 : codCategoria.hashCode());
-        result = prime * result
-                + ((codColecao == null) ? 0 : codColecao.hashCode());
-        result = prime * result
-                + ((codDistrib == null) ? 0 : codDistrib.hashCode());
-        result = prime * result
-                + ((codEditor == null) ? 0 : codEditor.hashCode());
-        result = prime * result
-                + ((codForncProd == null) ? 0 : codForncProd.hashCode());
-        result = prime
-                * result
-                + ((codFornecProdReferencia == null) ? 0
-                        : codFornecProdReferencia.hashCode());
-        result = prime
-                * result
-                + ((codFornecPublicacao == null) ? 0 : codFornecPublicacao
-                        .hashCode());
+        result = prime * result + ((chamadaCapa == null) ? 0 : chamadaCapa.hashCode());
+        result = prime * result + ((codBarra == null) ? 0 : codBarra.hashCode());
+        result = prime * result + ((codCategoria == null) ? 0 : codCategoria.hashCode());
+        result = prime * result + ((codColecao == null) ? 0 : codColecao.hashCode());
+        result = prime * result + ((codDistrib == null) ? 0 : codDistrib.hashCode());
+        result = prime * result + ((codEditor == null) ? 0 : codEditor.hashCode());
+        result = prime * result + ((codForncProd == null) ? 0 : codForncProd.hashCode());
+        result = prime * result + ((codFornecProdReferencia == null) ? 0 : codFornecProdReferencia.hashCode());
+        result = prime * result + ((codFornecPublicacao == null) ? 0 : codFornecPublicacao.hashCode());
         result = prime * result + ((codNBM == null) ? 0 : codNBM.hashCode());
         result = prime * result + ((codProd == null) ? 0 : codProd.hashCode());
-        result = prime
-                * result
-                + ((codProdReferencia == null) ? 0 : codProdReferencia
-                        .hashCode());
-        result = prime * result
-                + ((codPublicacao == null) ? 0 : codPublicacao.hashCode());
-        result = prime * result
-                + ((codSitFiscal == null) ? 0 : codSitFiscal.hashCode());
-        result = prime
-                * result
-                + ((codSitTributaria == null) ? 0 : codSitTributaria.hashCode());
-        result = prime * result
-                + ((comprimento == null) ? 0 : comprimento.hashCode());
-        result = prime
-                * result
-                + ((condVendeSeparado == null) ? 0 : condVendeSeparado
-                        .hashCode());
+        result = prime * result + ((codProdReferencia == null) ? 0 : codProdReferencia.hashCode());
+        result = prime * result + ((codPublicacao == null) ? 0 : codPublicacao.hashCode());
+        result = prime * result + ((codSitFiscal == null) ? 0 : codSitFiscal.hashCode());
+        result = prime * result + ((codSitTributaria == null) ? 0 : codSitTributaria.hashCode());
+        result = prime * result + ((comprimento == null) ? 0 : comprimento.hashCode());
+        result = prime * result + ((condVendeSeparado == null) ? 0 : condVendeSeparado.hashCode());
         result = prime * result + (contemBrinde ? 1231 : 1237);
-        result = prime * result
-                + ((contextoEditor == null) ? 0 : contextoEditor.hashCode());
-        result = prime * result
-                + ((contextoProd == null) ? 0 : contextoProd.hashCode());
-        result = prime
-                * result
-                + ((contextoProdReferencia == null) ? 0
-                        : contextoProdReferencia.hashCode());
-        result = prime
-                * result
-                + ((contextoPublicacao == null) ? 0 : contextoPublicacao
-                        .hashCode());
-        result = prime * result
-                + ((dataDesativacao == null) ? 0 : dataDesativacao.hashCode());
-        result = prime * result
-                + ((dataGeracaoArq == null) ? 0 : dataGeracaoArq.hashCode());
-        result = prime * result
-                + ((descBrinde == null) ? 0 : descBrinde.hashCode());
+        result = prime * result + ((contextoEditor == null) ? 0 : contextoEditor.hashCode());
+        result = prime * result + ((contextoProd == null) ? 0 : contextoProd.hashCode());
+        result = prime * result + ((contextoProdReferencia == null) ? 0 : contextoProdReferencia.hashCode());
+        result = prime * result + ((contextoPublicacao == null) ? 0 : contextoPublicacao.hashCode());
+        result = prime * result + ((dataDesativacao == null) ? 0 : dataDesativacao.hashCode());
+        result = prime * result + ((dataGeracaoArq == null) ? 0 : dataGeracaoArq.hashCode());
+        result = prime * result + ((descBrinde == null) ? 0 : descBrinde.hashCode());
         result = prime * result + ((edicao == null) ? 0 : edicao.hashCode());
-        result = prime * result
-                + ((edicaoProd == null) ? 0 : edicaoProd.hashCode());
-        result = prime * result
-                + ((expessura == null) ? 0 : expessura.hashCode());
-        result = prime * result
-                + ((formaInclusao == null) ? 0 : formaInclusao.hashCode());
-        result = prime * result
-                + ((horaGeracaoArq == null) ? 0 : horaGeracaoArq.hashCode());
+        result = prime * result + ((edicaoProd == null) ? 0 : edicaoProd.hashCode());
+        result = prime * result + ((expessura == null) ? 0 : expessura.hashCode());
+        result = prime * result + ((formaInclusao == null) ? 0 : formaInclusao.hashCode());
+        result = prime * result + ((horaGeracaoArq == null) ? 0 : horaGeracaoArq.hashCode());
         result = prime * result + ((largura == null) ? 0 : largura.hashCode());
-        result = prime * result
-                + ((mnemonicoTab == null) ? 0 : mnemonicoTab.hashCode());
-        result = prime * result
-                + ((nomeProd == null) ? 0 : nomeProd.hashCode());
+        result = prime * result + ((mnemonicoTab == null) ? 0 : mnemonicoTab.hashCode());
+        result = prime * result + ((nomeProd == null) ? 0 : nomeProd.hashCode());
         result = prime * result + pactPadrao;
         result = prime * result + peb;
         result = prime * result + ((pesoUni == null) ? 0 : pesoUni.hashCode());
-        result = prime
-                * result
-                + ((regimeRecolhimento == null) ? 0 : regimeRecolhimento
-                        .hashCode());
-        result = prime
-                * result
-                + ((segmentacaoClasseSocial == null) ? 0
-                        : segmentacaoClasseSocial.hashCode());
-        result = prime
-                * result
-                + ((segmentacaoFormaFiscal == null) ? 0
-                        : segmentacaoFormaFiscal.hashCode());
-        result = prime
-                * result
-                + ((segmentacaoIdade == null) ? 0 : segmentacaoIdade.hashCode());
-        result = prime
-                * result
-                + ((segmentacaoLancamento == null) ? 0 : segmentacaoLancamento
-                        .hashCode());
-        result = prime
-                * result
+        result = prime * result + ((regimeRecolhimento == null) ? 0 : regimeRecolhimento.hashCode());
+        result = prime * result + ((segmentacaoClasseSocial == null) ? 0 : segmentacaoClasseSocial.hashCode());
+        result = prime * result + ((segmentacaoFormaFiscal == null) ? 0 : segmentacaoFormaFiscal.hashCode());
+        result = prime * result + ((segmentacaoIdade == null) ? 0 : segmentacaoIdade.hashCode());
+        result = prime * result + ((segmentacaoLancamento == null) ? 0 : segmentacaoLancamento.hashCode());
+        result = prime * result
                 + ((segmentacaoPeriodicidade == null) ? 0
                         : segmentacaoPeriodicidade.hashCode());
         result = prime * result
                 + ((segmentacaoSexo == null) ? 0 : segmentacaoSexo.hashCode());
-        result = prime
-                * result
+        result = prime * result
                 + ((segmentacaoTemaPrincipal == null) ? 0
                         : segmentacaoTemaPrincipal.hashCode());
-        result = prime
-                * result
+        result = prime * result
                 + ((segmentacaoTemaSecundario == null) ? 0
                         : segmentacaoTemaSecundario.hashCode());
         result = prime * result + (statusProd ? 1231 : 1237);
-        result = prime * result
-                + ((tipoDesconto == null) ? 0 : tipoDesconto.hashCode());
-        result = prime
-                * result
-                + ((tipoMaterialDivulgacao == null) ? 0
-                        : tipoMaterialDivulgacao.hashCode());
-        result = prime
-                * result
-                + ((tipoMaterialPromocional == null) ? 0
-                        : tipoMaterialPromocional.hashCode());
-        result = prime
-                * result
-                + ((tipoMaterialTroca == null) ? 0 : tipoMaterialTroca
-                        .hashCode());
-        result = prime * result
-                + ((tipoProd == null) ? 0 : tipoProd.hashCode());
-        result = prime
-                * result
-                + ((valorMaterialTroca == null) ? 0 : valorMaterialTroca
-                        .hashCode());
-        result = prime
-                * result
-                + ((valorValeDesconto == null) ? 0 : valorValeDesconto
-                        .hashCode());
-        result = prime
-                * result
-                + ((campoObscuro == null) ? 0 : campoObscuro
-                        .hashCode());
-        result = prime
-                * result
-                + ((nomeComercial == null) ? 0 : nomeComercial
-                        .hashCode());
+        result = prime * result + ((tipoDesconto == null) ? 0 : tipoDesconto.hashCode());
+        result = prime * result + ((tipoMaterialDivulgacao == null) ? 0 : tipoMaterialDivulgacao.hashCode());
+        result = prime * result + ((tipoMaterialPromocional == null) ? 0 : tipoMaterialPromocional.hashCode());
+        result = prime * result + ((tipoMaterialTroca == null) ? 0 : tipoMaterialTroca.hashCode());
+        result = prime * result + ((tipoProd == null) ? 0 : tipoProd.hashCode());
+        result = prime * result + ((valorMaterialTroca == null) ? 0 : valorMaterialTroca.hashCode());
+        result = prime * result + ((valorValeDesconto == null) ? 0 : valorValeDesconto.hashCode());
+        result = prime * result + ((campoObscuro == null) ? 0 : campoObscuro.hashCode());
+        result = prime * result + ((nomeComercial == null) ? 0 : nomeComercial.hashCode());
         return result;
     }
     
