@@ -50,7 +50,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
@@ -71,7 +71,4 @@
 			</textField>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="10"/>
-	</pageFooter>
 </jasperReport>
