@@ -120,7 +120,8 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		.append(" join PRODUTO p on p.ID = pe.PRODUTO_ID                                             ")
 		.append(" where hapv.id = (select max(id)                                                    ")
 		.append(" 	from historico_alteracao_preco_venda hapv                                        ")
-		.append("   where hapv.PRODUTO_EDICAO_ID = pe.ID)                                          ");
+		.append("   where hapv.PRODUTO_EDICAO_ID = pe.ID                                             ")
+		.append("   and hapv.DATA_OPERACAO = (select DATA_OPERACAO from distribuidor))               ");
 	
 		Query query = super.getSession().createSQLQuery(sql.toString());
 		
