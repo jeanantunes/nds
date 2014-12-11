@@ -1435,6 +1435,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				statusLancamentos.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.EM_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.RECOLHIDO);
+				statusLancamentos.add(StatusLancamento.EXPEDIDO);
 				statusLancamentos.add(StatusLancamento.FECHADO);
 				
 				List<Lancamento> lancamentos = new ArrayList<Lancamento>(produtoEdicao.getLancamentos());
@@ -1458,7 +1459,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 					if(l.getDataRecolhimentoDistribuidor().getTime() >= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
 						if(!statusLancamentos.contains(l.getStatus())) {
 							vendaBloqueada = true;
-							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não podeser efetivada.");
+							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
 						}
 					}
 				}

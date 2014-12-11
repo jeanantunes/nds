@@ -71,4 +71,7 @@
 			</textField>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="5"/>
+	</pageFooter>
 </jasperReport>
