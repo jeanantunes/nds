@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd   http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+	<bean id="ndsi-datasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" >
+		<property name="driverClassName" value="${database.driverClassName}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+	</bean>	
+	
+	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
+		<property name="protocol" value="${couchdb.protocol}"/>
+		<property name="host" value="${couchdb.host}"/>
+		<property name="port" value="${couchdb.port}"/>
+		<property name="username" value="${couchdb.username}"/>
+		<property name="password" value="${couchdb.password}"/>
+		<property name="bachSize" value="${couchdb.bachSize}"/>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="ndsi-datasource" />
+	</bean>
+
+	<!-- <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="jobFactory" ref="jobFactoryBean"/>
+		<property name="quartzProperties">
+			<map>
+				<entry key="org.quartz.threadPool.class" value="org.quartz.simpl.SimpleThreadPool" />
+				<entry key="org.quartz.jobStore.useProperties" value="true" />
+				<entry key="org.quartz.jobStore.class" value="org.quartz.impl.jdbcjobstore.JobStoreTX" />
+				<entry key="org.quartz.jobStore.driverDelegateClass" value="org.quartz.impl.jdbcjobstore.StdJDBCDelegate" />
+				<entry key="org.quartz.jobStore.tablePrefix" value="qrtz_" />
+				<entry key="org.quartz.jobStore.dataSource" value="ndsDS" />
+				<entry key="org.quartz.dataSource.qzDS.jndiURL" value="java:comp/env/jdbc/nds-client" />
+			</map>
+		</property>
+		<property name="applicationContextSchedulerContextKey">
+			<value>applicationContext</value>
+		</property>
+	</bean> -->
+	
+</beans>

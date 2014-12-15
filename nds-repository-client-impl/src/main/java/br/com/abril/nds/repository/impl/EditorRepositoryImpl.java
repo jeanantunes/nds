@@ -49,7 +49,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		StringBuilder hql = new StringBuilder("select new ");
 		hql.append(Editor.class.getCanonicalName())
-		   .append("(ed.id, p.razaoSocial) from Editor ed join ed.pessoaJuridica p ")
+		   .append("(ed.id, concat(ed.codigo, ' - ', p.razaoSocial)) from Editor ed join ed.pessoaJuridica p ")
 		   .append(" ORDER BY p.razaoSocial ");
 		
 		Query query = this.getSession().createQuery(hql.toString());

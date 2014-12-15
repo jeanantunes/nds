@@ -792,9 +792,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento menor que o valor da cobrança.");
 		}
 		
-		boolean dataDePagamentoMenorQueDataVencimento = (pagamento.getDataPagamento().compareTo(dataVencimento) < 0);
+		boolean dataDePagamentoMaiorQueDataVencimento = (pagamento.getDataPagamento().compareTo(dataVencimento) > 0);
 		
-		if(!aceitaPagamentoVencido && dataDePagamentoMenorQueDataVencimento) {
+		if(!aceitaPagamentoVencido && dataDePagamentoMaiorQueDataVencimento) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento de cobrança vencida.");
 		}
 		

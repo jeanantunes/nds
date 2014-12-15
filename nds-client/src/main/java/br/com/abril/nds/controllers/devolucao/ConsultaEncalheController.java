@@ -97,6 +97,7 @@ public class ConsultaEncalheController extends BaseController {
 	public void index(){
 		
 		carregarComboFornecedores();
+		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 	}
 	

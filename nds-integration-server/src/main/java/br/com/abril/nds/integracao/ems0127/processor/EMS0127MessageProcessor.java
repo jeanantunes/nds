@@ -124,7 +124,6 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
             LOGGER.error(e.getMessage(), e);
 		}
 		
-		
 		CouchDbClient cdbc = null;
 
 		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
@@ -211,7 +210,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select ce ")
-			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
+			.append("from IcdChamadaEncalhe ce ")
 			.append("where ce.tipoStatus in (:status) ")
 			.append("and ce.codigoDistribuidor = :distribuidor ")
 			.append("and ce.indiceCEProvisoria = :nao ")

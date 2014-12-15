@@ -81,13 +81,10 @@ $(function(){
 				    
 				    <td width="125">
 				    	
-				    	<input name="numCota" 
-				               id="numCota" 
-				               type="text"
-				               maxlength="11"
+				    	<input name="vend-suplementar-numCota" id="vend-suplementar-numCota" type="text" maxlength="11"
 				               style="width:70px; 
 				               float:left; margin-right:5px;"
-				               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
+				               onchange="pesquisaCotaVendaEncalhe.pesquisarPorNumeroCota('#vend-suplementar-numCota', '#vend-suplementar-descricaoCota',false,
 				              	  									 VENDA_PRODUTO.pesquisarCotaSuccessCallBack, 
 				              	  									 VENDA_PRODUTO.pesquisarCotaErrorCallBack);"/>
 				    </td>
@@ -95,14 +92,14 @@ $(function(){
 				    <td width="46">Nome:</td>
 				    
 				    <td width="320">
-				    	<input type="hidden" name="descricaoCota" id="descricaoCota"/>
+				    	<input type="hidden" name="vend-suplementar-descricaoCota" id="vend-suplementar-descricaoCota"/>
 				    	<span class="dadosFiltro" id="span_nome_cota" style="display: inline;"></span>     
 				    </td>
 				    
 				    <td width="86">Tipo de Venda:</td>
 				    
 				    <td width="180">
-				    	<select id="selectTipoVenda" name="tipoVendaSelecionado">
+				    	<select id="vend-suplementar-selectTipoVenda" name="vend-suplementar-selectTipoVenda">
 				      		<option value="">Todas</option>
 				      		<option value="ENCALHE">Venda de Encalhe</option>
 				      		<option value="SUPLEMENTAR">Venda de Suplementar</option>
@@ -115,11 +112,11 @@ $(function(){
 			  	<tr>
 				    <td>Período:</td>
 				    <td>
-				    	<input type="text" style="width:80px; " id="periodoDe" name="periodoDe">
+				    	<input type="text" style="width:80px; " id="vend-suplementar-periodoDe" name="vend-suplementar-periodoDe">
 				    </td>
 				    <td>Até:</td>
 				    <td>
-				    	<input type="text" style="width:80px; " id="periodoAte" name="periodoAte">
+				    	<input type="text" style="width:80px; " id="vend-suplementar-periodoAte" name="vend-suplementar-periodoAte">
 				    </td>
 				    <td>&nbsp;</td>
 				    <td>&nbsp;</td>

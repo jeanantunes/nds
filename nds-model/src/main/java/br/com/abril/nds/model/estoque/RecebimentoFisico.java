@@ -34,19 +34,25 @@ public class RecebimentoFisico implements Serializable {
 	@GeneratedValue(generator = "REC_FISICO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_RECEBIMENTO", nullable = false)
 	private Date dataRecebimento;
+	
 	@Temporal(value=TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CONFIRMACAO")
 	private Date dataConfirmacao;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscalEntrada notaFiscal;
+	
 	@ManyToOne(optional = false)
 	private Usuario recebedor;
+	
 	@ManyToOne
 	private Usuario conferente;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_CONFIRMACAO", nullable = false)
 	private StatusConfirmacao statusConfirmacao;
