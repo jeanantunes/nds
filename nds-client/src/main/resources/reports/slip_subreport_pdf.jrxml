@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_subreport" pageWidth="496" pageHeight="802" columnWidth="496" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="4153cc46-5208-4777-a70d-1f4d60ade565">
 	<property name="ireport.zoom" value="1.9965000000000053"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="14"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="VALOR_TOTAL_PAGAR" class="java.lang.String"/>
 	<parameter name="LISTA_RESUMO_COBRANCA" class="java.util.List"/>
@@ -26,14 +26,14 @@
 	<detail>
 		<band height="9">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f96e591b-a141-4a59-95da-7961a1fc0aea" mode="Opaque" x="0" y="0" width="208" height="9" isRemoveLineWhenBlank="true" backcolor="#F0F0F0"/>
+				<reportElement uuid="f96e591b-a141-4a59-95da-7961a1fc0aea" mode="Opaque" x="0" y="0" width="208" height="9" isRemoveLineWhenBlank="true" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{observacoes} == null ? "": $F{observacoes})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="10f034c1-b3bd-411c-985c-b368dc704c4a" mode="Opaque" x="208" y="0" width="127" height="9" isRemoveLineWhenBlank="true" backcolor="#F0F0F0"/>
+				<reportElement uuid="10f034c1-b3bd-411c-985c-b368dc704c4a" mode="Opaque" x="208" y="0" width="127" height="9" isRemoveLineWhenBlank="true" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
@@ -41,7 +41,7 @@
     ($F{tipoLancamento}.getSiglaOperacao()==null)?"": $F{tipoLancamento}.getSiglaOperacao())]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="77338aa4-4954-4504-8fde-0f1b1c5f6b71" mode="Opaque" x="334" y="0" width="162" height="9" isRemoveLineWhenBlank="true" backcolor="#F0F0F0"/>
+				<reportElement uuid="77338aa4-4954-4504-8fde-0f1b1c5f6b71" mode="Opaque" x="334" y="0" width="162" height="9" isRemoveLineWhenBlank="true" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
