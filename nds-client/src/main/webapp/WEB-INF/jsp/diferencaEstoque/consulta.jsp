@@ -91,8 +91,8 @@
   			<tr>
     			<td>Cota:</td>
     			<td colspan="3">
-    				<input type="text"  name="numeroCota" id="numeroCota"  style="width:80px; float:left;margin-right:5px;"
-    					onchange="pesquisaCotaFaltasSobras.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');">
+    				<input type="text"  name="diferenca-estoque-numeroCota" id="diferenca-estoque-numeroCota"  style="width:80px; float:left;margin-right:5px;"
+    					onchange="pesquisaCotaFaltasSobras.pesquisarPorNumeroCota('#diferenca-estoque-numeroCota', '#descricaoCota');">
       			</td>
     			<td>Nome:</td>
     			<td>

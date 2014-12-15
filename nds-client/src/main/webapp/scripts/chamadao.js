@@ -17,7 +17,7 @@ var chamadaoController = $.extend(true, {
 	ACAO_TELA: "PESQUISAR",
 	
 	init : function() {
-		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
+		var followUp = $('#chamadao-numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		chamadaoController.inicializar();
 		if(followUp != ''){			
@@ -206,7 +206,7 @@ var chamadaoController = $.extend(true, {
 	
 	validarMatrizRecolhimentoConfirmada : function() {
 		
-		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
+		var followUp = $('#chamadao-numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		var dataChamadaoFormatada;
 		
@@ -274,7 +274,7 @@ var chamadaoController = $.extend(true, {
 		
 		chamadaoController.zerarCamposParciais();
 		
-		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
+		var followUp = $('#chamadao-numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		var numeroCota;
 		var dataChamadaoFormatada;
@@ -283,7 +283,7 @@ var chamadaoController = $.extend(true, {
 		var comChamadaEncalhe = false;
 		
 		if(followUp != '') {
-			numeroCota = $("#numeroCotaFollowUp", chamadaoController.workspace).val();
+			numeroCota = $("#chamadao-numeroCotaFollowUp", chamadaoController.workspace).val();
 			dataChamadaoFormatada = $("#dataCotaFollowUp", chamadaoController.workspace).val();
 		} else {
 			numeroCota = $("#numeroCotaChamadao", chamadaoController.workspace).val();
