@@ -79,7 +79,7 @@ public class ReparteMinimo extends ProcessoAbstrato {
     		if (new BigDecimal(somaReparteMinimoFinal).divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.valueOf(0.75)) > 0) {
     			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
 					"O estudo não pode ser concluído pois o percentual do reparte mínimo é maior que 75% do reparte total à distribuir.\n"
-						+ "Desmarque a opção de reparte mínimo ou escolha uma quantidade menor."));
+						+ "\nSugestões: \n - Desmarque a opção de reparte mínimo. \n - Verifique os Mix cadastrados para o produto. \n - Verifique a quantidade para reparte mínimo."));
 
     			// A EMS 2050 descrevia que ao ocorrer esse erro deveria ser exibida uma tela para o usuário e após isso o cáculo
     			// prosseguir por motivos de estrutura esse cálculo não consegue disparar a

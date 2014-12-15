@@ -7,7 +7,6 @@ import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -121,22 +120,27 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public StatusLancamento getStatus() {
 		return status;
 	}
-	public void setStatus(StatusLancamento status) {
-		this.status = status;
+	public void setStatus(String status) {
+		this.status = StatusLancamento.valueOf(status);
 	}
 	public String getAlgoritmo() {
 		return algoritmo;
 	}
-	public void setAlgoritmo(TipoGeracaoEstudo tipoGeracaoEstudo) {
-		if ((tipoGeracaoEstudo == null) || (tipoGeracaoEstudo.equals(""))){
-			this.algoritmo = "";
-		}else{
-			this.algoritmo = tipoGeracaoEstudo.getDescricao();
-		}
+//	public void setAlgoritmo(TipoGeracaoEstudo tipoGeracaoEstudo) {
+//		if ((tipoGeracaoEstudo == null) || (tipoGeracaoEstudo.equals(""))){
+//			this.algoritmo = "";
+//		}else{
+//			this.algoritmo = tipoGeracaoEstudo.getDescricao();
+//		}
+//	}
+	
+	public void setAlgoritmo(String algoritmo) {
+		this.algoritmo = algoritmo;
 	}
 	public BigInteger getReparteDistribuido() {
 		return reparteDistribuido;
 	}
+
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
         if (reparteDistribuido == null) {
 			this.reparteDistribuido = BigInteger.ZERO;
