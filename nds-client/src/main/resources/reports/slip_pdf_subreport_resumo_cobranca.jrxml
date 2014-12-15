@@ -28,7 +28,7 @@
 				<text><![CDATA[RESUMO COBRANÇA]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="1207be38-8114-4320-9966-e4831edb38a6" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="204" height="12" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
+				<reportElement uuid="1207be38-8114-4320-9966-e4831edb38a6" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="204" height="12" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
 				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
 					<bottomPen lineWidth="0.0"/>
@@ -39,7 +39,7 @@
 				<textFieldExpression><![CDATA["VALOR TOTAL A PAGAR"]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="a92bd3e0-5dd8-4731-849a-a17836cd635b" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="204" y="0" width="293" height="12" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
+				<reportElement uuid="a92bd3e0-5dd8-4731-849a-a17836cd635b" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="204" y="0" width="293" height="12" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
 				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
 					<bottomPen lineWidth="0.0"/>
@@ -54,14 +54,14 @@
 	<detail>
 		<band height="9" splitType="Stretch">
 			<textField>
-				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="0" y="0" width="208" height="9" backcolor="#F0F0F0"/>
+				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="0" y="0" width="208" height="9" backcolor="#FFFFFF"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{observacoes} == null ? "" : $F{observacoes})]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="208" y="0" width="288" height="9" backcolor="#F0F0F0"/>
+				<reportElement uuid="3714d962-6b94-4d5c-ba9f-1ba8a6808138" mode="Opaque" x="208" y="0" width="288" height="9" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right">
 					<font size="7"/>
 				</textElement>
