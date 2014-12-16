@@ -141,8 +141,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         
         query.setParameterList(
                 "statusLancFechadoRecolhido", 
-                Arrays.asList(
-                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+                Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
 //        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
 		
