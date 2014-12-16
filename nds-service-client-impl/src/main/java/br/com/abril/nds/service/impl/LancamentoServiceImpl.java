@@ -29,6 +29,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -272,8 +273,14 @@ public class LancamentoServiceImpl implements LancamentoService {
 	    Long idProdutoEdicao = lancamento.getIdProdutoEdicao();
         Integer numeroPeriodo = lancamento.getNumeroPeriodo();
 	    
-        Lancamento lancamentoOriginal =
-            this.lancamentoRepository.obterLancamentoOriginalDaRedistribuicao(idProdutoEdicao, numeroPeriodo);
+        Lancamento lancamentoOriginal = this.lancamentoRepository.obterLancamentoOriginalDaRedistribuicao(idProdutoEdicao, numeroPeriodo);
+        
+        if(lancamentoOriginal == null) {
+        	
+        	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+        	throw new ValidacaoException(TipoMensagem.WARNING, 
+        			String.format("Não existe um Tipo de Distribuição LANÇAMENTO para a Edição %s / %s", produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao()));
+        }
         
         if (lancamentoOriginal.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)
                 || lancamentoOriginal.getStatus().equals(StatusLancamento.EM_RECOLHIMENTO)
