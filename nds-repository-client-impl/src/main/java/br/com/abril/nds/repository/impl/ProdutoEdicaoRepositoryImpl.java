@@ -1530,43 +1530,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 
-//	lancamento.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','EM_RECOLHIMENTO','RECOLHIDO','FECHADO')    
-	
-//	hql.append(" SELECT ");
-//	hql.append(" produto.codigo as codigoProduto, ");
-//	hql.append(" produto.nome as nomeProduto, ");
-//	hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
-//	hql.append(" plp.numeroPeriodo as periodo, ");
-//	
-//	hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-//	
-//	hql.append("  round((SELECT sum(estqProdCota.qtdeRecebida) ");
-//	hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-//	hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) as repartePrevisto, ");
-//	
-//	hql.append(" (CASE   ");
-//	hql.append("  	WHEN lancamento.status='FECHADO' OR lancamento.status='RECOLHIDO' ");
-//	hql.append("  THEN ");
-//	hql.append("  	  round((SELECT sum(estqProdCota.qtdeRecebida - estqProdCota.qtdeDevolvida) ");
-//	hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-//	hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) ");
-//	hql.append("  ELSE ");
-//	hql.append("      null ");
-//	hql.append("  END) as qtdeVendas, ");
-//	
-//	hql.append(" lancamento.status as situacaoLancamento, ");
-//	hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-//	hql.append(" produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-//	hql.append(" FROM EstoqueProdutoCota estoqueProduto");
-//	hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
-//	hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
-//	hql.append(" JOIN produtoEdicao.produto as produto ");
-//	hql.append(" LEFT JOIN produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-//	hql.append(" LEFT JOIN lancamento.periodoLancamentoParcial as plp ");
-
-
-
-
 	private String ordenarConsultaHistoricoVendaProdutoEdicao(final FiltroHistoricoVendaDTO filtro) {
 
 		final StringBuilder hql = new StringBuilder();

@@ -40,7 +40,6 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
 	    @Override
 	    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-//	    	return cota1.getQtdeRankingSegmento().compareTo(cota2.getQtdeRankingSegmento());
 	    	if (cota1.getQtdeRankingSegmento().compareTo(cota2.getQtdeRankingSegmento()) < 0) {
 	    		return 1;
 	        }
@@ -64,18 +63,18 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 	    if ((cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) && cota.isRecebeReparteComplementar()
 		    && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-		if ((cota.getEdicoesRecebidas().size() == 0) && (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) &&
-			(cota.isRecebeuUltimaEdicaoAberta())) {
-		    listaA.add(cota);
-		} else if ((cota.getEdicoesRecebidas().size() == 0) && (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico))) {
-		    listaB.add(cota);
-		} else if ((cota.getEdicoesRecebidas().size() == 1) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
-		    listaC.add(cota);
-		} else if ((cota.getEdicoesRecebidas().size() == 2) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
-		    listaD.add(cota);
-		} else if ((cota.getEdicoesRecebidas().size() >= 3) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
-		    listaE.add(cota);
-		}
+			if ((cota.getEdicoesRecebidas().size() == 0) && (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) &&
+				(cota.isRecebeuUltimaEdicaoAberta())) {
+			    listaA.add(cota);
+			} else if ((cota.getEdicoesRecebidas().size() == 0) && (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico))) {
+			    listaB.add(cota);
+			} else if ((cota.getEdicoesRecebidas().size() == 1) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
+			    listaC.add(cota);
+			} else if ((cota.getEdicoesRecebidas().size() == 2) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
+			    listaD.add(cota);
+			} else if ((cota.getEdicoesRecebidas().size() >= 3) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
+			    listaE.add(cota);
+			}
 	    }
 	}
 	listaOrdenada.addAll(listaA);
