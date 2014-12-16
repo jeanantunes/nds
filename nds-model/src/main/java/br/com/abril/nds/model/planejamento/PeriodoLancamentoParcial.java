@@ -60,7 +60,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 	@Column(name = "TIPO", nullable = false)
 	private TipoLancamentoParcial tipo;
 
-	@OneToMany(mappedBy="periodoLancamentoParcial", cascade=CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(mappedBy="periodoLancamentoParcial", cascade=CascadeType.ALL)
 	private List<Lancamento> lancamentos;
 	
 	/** Número do Período do lançamento parcial. */

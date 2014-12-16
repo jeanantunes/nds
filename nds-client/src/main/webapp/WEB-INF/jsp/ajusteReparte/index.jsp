@@ -92,7 +92,7 @@ $(function(){
 			<tr>
 				<td width="25">Cota:</td>
 				<td width="99">
-					<input name="numeroCota" id="numeroCota" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+					<input name="ajuste-reparte-numeroCota" id="ajuste-reparte-numeroCota" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
 
 					<span class="classPesquisar">
 						<a href="javascript:;">&nbsp;</a>
@@ -100,9 +100,9 @@ $(function(){
 				</td>
 				<td width="30">Nome:</td>
 				<td width="398">
-					<input name="nomeCota" id="nomeCota" type="text" style="width: 160px;" 
-										   onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCota');" 
-		 	   			   				   onblur="pesquisaCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');"/>
+					<input name="ajuste-reparte-nomeCota" id="ajuste-reparte-nomeCota" type="text" style="width: 160px;" 
+										   onkeyup="pesquisaCota.autoCompletarPorNome('#ajuste-reparte-nomeCota');" 
+		 	   			   				   onblur="pesquisaCota.pesquisarPorNomeCota('#ajuste-reparte-numeroCota', '#ajuste-reparte-nomeCota');"/>
 				</td>
 			</tr>
 		</table>

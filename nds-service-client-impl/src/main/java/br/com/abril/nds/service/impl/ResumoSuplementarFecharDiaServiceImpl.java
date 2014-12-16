@@ -115,7 +115,7 @@ public class ResumoSuplementarFecharDiaServiceImpl implements ResumoSuplementarF
 			
 			BigDecimal totalAlteracaoPreco = Util.nvl(this.obterValorAlteracaoPreco(dataOperacional), BigDecimal.ZERO);
 			
-			dto.setTotalEstoqueLogico(totalEstoqueLogico.add(totalAlteracaoPreco));
+			dto.setTotalEstoqueLogico(totalEstoqueLogico);
 		
 			dto.setTotalTransferencia(totalTransferencia);		
 			

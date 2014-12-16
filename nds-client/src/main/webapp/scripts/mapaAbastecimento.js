@@ -498,7 +498,7 @@
 			T.desbloquearCampos('box','rota','roteiro','quebraPorCota');
 			T.displayEntregador(false);
 			$('#quebraPorCota').attr("checked", false);
-			T.bloquearLinkProdutos();
+			T.desbloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':
