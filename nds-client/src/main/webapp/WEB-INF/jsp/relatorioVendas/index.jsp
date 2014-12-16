@@ -98,7 +98,8 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 							<input type="text" style="width: 80px; float: left; margin: 5px;" 
 								   name="numeroCotaListaCota" id="numeroCotaListaCota"
 								   onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#numeroCotaListaCota', '#nomeCotaListaCota',false,null,null);" /> 
-						<label>Nome:</label> <input type="text" style="width: 180px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
+						<label>Nome:</label>
+						<input type="text" style="width: 180px; float: left; margin: 5px;" name="nomeCotaListaCota" id="nomeCotaListaCota" />
 					</td>
 				</tr>
 				<tr class="linhaProduto">
@@ -143,24 +144,34 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="69">Fornecedor:</td>
-					<td width="255"><select name="select" id="selectFornecedor" style="width: 240px;">
+					<td width="255">
+						<select name="select" id="selectFornecedor" style="width: 240px;">
 							<option>Todos</option>
                     		<c:forEach items="${fornecedores}" var="fornecedor">
 								<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
                    			</c:forEach> 
-					</select></td>
+						</select>
+					</td>
 					<td width="47" colspan="-1">Código:</td>
 					<td width="108">
-						<input type="text" style="width: 80px;" name="codigoProduto" id="codigoProduto"
-							   onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#codigoProduto', '#nomeProduto', false,
+						<input type="text" style="width: 80px;" name="rel-vendas-codigoProduto" id="rel-vendas-codigoProduto"
+							   onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#rel-vendas-codigoProduto', '#rel-vendas-nomeProduto', false,
 											undefined,
 											undefined);" />
 					</td>
 					<td width="52">Produto:</td>
-					<td width="213"><input type="text" style="width: 200px;" name="nomeProduto" id="nomeProduto" /></td>
+					<td width="213">
+						<input type="text" style="width: 200px;" name="rel-vendas-nomeProduto" id="rel-vendas-nomeProduto" />
+					</td>
 					<td width="41">Edição:</td>
-					<td><input type="text" style="width: 100px;" name="edicaoProduto" id="edicaoProduto" /></td>
-					<td><a href="javascript:;" onclick="relatorioVendasController.esconde_pesq_avancada();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></td>
+					<td>
+						<input type="text" style="width: 100px;" name="edicaoProduto" id="edicaoProduto" />
+					</td>
+					<td>
+						<a href="javascript:;" onclick="relatorioVendasController.esconde_pesq_avancada();">
+							<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />
+						</a>
+					</td>
 				</tr>
 				<tr>
 					<td>Editor:</td>
@@ -172,11 +183,11 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 					</select></td>
 					<td colspan="-1">Cota:</td>
 					<td>
-						<input type="text" name="numeroCota" id="numeroCota" style="width: 80px;"
-							   onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#numeroCota', '#nomeCota',false,null,null);" />
+						<input type="text" name="rel-vandas-numeroCota" id="rel-vandas-numeroCota" style="width: 80px;"
+							   onchange="pesquisaCotaFiltroConsulta.pesquisarPorNumeroCota('#rel-vendas-numeroCota', '#rel-vendas-nomeCota',false,null,null);" />
 					</td>
 					<td>Nome:</td>
-					<td><input type="text" style="width: 200px;" id="nomeCota" name="nomeCota" /></td>
+					<td><input type="text" style="width: 200px;" id="rel-vendas-nomeCota" name="rel-vendas-nomeCota" /></td>
 					<td>&nbsp;</td>
 					<td width="104">&nbsp;</td>
 					<td width="15">&nbsp;</td>
