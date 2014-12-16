@@ -210,12 +210,12 @@
 		    <td width="33">Cota:</td>
 		         <td width="85">
 		         <input name="filtroDebitoCredito.numeroCota" 
-		       		    id="numeroCota" 
+		       		    id="debito-credito-numeroCota" 
 		       		    type="text"
 		       		    maxlength="11"
 		       		    style="width:80px; 
 		       		    float:left; margin-right:5px;"
-		       		    onchange="pesquisaCotaDebitoCreditoCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
+		       		    onchange="pesquisaCotaDebitoCreditoCota.pesquisarPorNumeroCota('#debito-credito-numeroCota', '#nomeCota');" />
 			</td>
 			<td width="41">Nome:</td>
 			<td colspan="3">

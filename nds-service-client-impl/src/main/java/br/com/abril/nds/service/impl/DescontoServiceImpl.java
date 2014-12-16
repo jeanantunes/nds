@@ -273,7 +273,7 @@ public class DescontoServiceImpl implements DescontoService {
             Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 
 			Desconto desconto =  new Desconto();
-			desconto.setDataAlteracao(dataAtual);
+			desconto.setDataOperacao(dataAtual);
 			desconto.setTipoDesconto(TipoDesconto.GERAL);
 			desconto.setUsado(false);
 			desconto.setUsuario(usuario);
@@ -409,13 +409,12 @@ public class DescontoServiceImpl implements DescontoService {
 		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Desconto descontoNew =  new Desconto();
-		descontoNew.setDataAlteracao(dataAtual);
+		descontoNew.setDataOperacao(dataAtual);
 		descontoNew.setTipoDesconto(TipoDesconto.ESPECIFICO);
 		descontoNew.setUsado(false);
 		descontoNew.setUsuario(usuario);
 		descontoNew.setValor(valorDesconto);
-		Long idDesconto = descontoRepository.adicionar(descontoNew);
-		descontoNew = descontoRepository.buscarPorId(idDesconto);
+		descontoRepository.adicionar(descontoNew);
 		
 		return descontoNew;
 		
@@ -1285,18 +1284,29 @@ public class DescontoServiceImpl implements DescontoService {
         Validate.notNull(idCota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         Desconto desconto = null;
+        
+        Cota cota = cotaRepository.buscarPorId(idCota);
+        
         if (produtoEdicao.getProduto().isPublicacao()) {
         	
             //Neste caso, o produto possui apenas um fornecedor
-            // Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
-            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
+            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+        	if(cota != null && cota.getNumeroCota() != null) {
+        		
+        		try {
+					DescontoDTO descontoDTO = this.obterDescontoPor(cota.getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+					return (descontoDTO != null && descontoDTO.getValor() != null) ? descontoDTO.getValor() : BigDecimal.ZERO;
+				} catch (Exception e) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível obter o desconto."));
+				}
+        	}
             
         } else {
         	
             //Produto possivelmente com mais de um fornecedor, seguindo
             // a instrução passada, utilizar o desconto do produto
-        	desconto = new Desconto();
-            desconto.setValor(produtoEdicao.getProduto().getDesconto());
+            return produtoEdicao.getProduto().getDesconto();
             
         }
         
@@ -1529,6 +1539,21 @@ public class DescontoServiceImpl implements DescontoService {
 		key = new StringBuilder()
 			.append("c")
 			.append(cotaId)
+			.append("f")
+			.append(fornecedorId);
+		
+		descontoDTO = descontos.get(key.toString());
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		/**
+		 * Desconto Especifico da Cota
+		 */
+		key = new StringBuilder()
+			.append("c")
+			.append(cotaId)
 			.append("e")
 			.append(editorId);
 		
@@ -1545,21 +1570,6 @@ public class DescontoServiceImpl implements DescontoService {
 			.append("e")
 			.append(editorId);
 	
-		descontoDTO = descontos.get(key.toString());
-		
-		if(descontoDTO != null) {
-			return descontoDTO;
-		}
-		
-		/**
-		 * Desconto Especifico da Cota
-		 */
-		key = new StringBuilder()
-			.append("c")
-			.append(cotaId)
-			.append("f")
-			.append(fornecedorId);
-		
 		descontoDTO = descontos.get(key.toString());
 		
 		if(descontoDTO != null) {
@@ -1687,7 +1697,7 @@ public class DescontoServiceImpl implements DescontoService {
 		 * Cria um desconto a ser utilizado em um ou mais fornecedores
 		 */
 		Desconto desconto =  new Desconto();
-		desconto.setDataAlteracao(dataAtual);
+		desconto.setDataOperacao(dataAtual);
 		desconto.setUsado(false);
 		desconto.setUsuario(usuario);
 		desconto.setValor(descontoDTO.getValorDesconto());

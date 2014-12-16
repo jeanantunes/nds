@@ -250,6 +250,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 				
 				produtoExistente.setCodigo(produto.getCodigo());
 				produtoExistente.setCodigoICD(produto.getCodigoICD());
+				produtoExistente.setNome(produto.getNome());
+				produtoExistente.setNomeComercial(produto.getNomeComercial());
 				produtoExistente.setSlogan(produto.getSlogan());
 				produtoExistente.setPeb(produto.getPeb());
 				produtoExistente.setFormaComercializacao(produto.getFormaComercializacao());

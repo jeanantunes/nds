@@ -9,13 +9,13 @@ init : function() {
 	
 	disabledEnterModalConfirmar.push('dialog-novo-ajusteReparte');
 	
-	$('#numeroCota', ajusteReparteController.workspace).bind({
+	$('#ajuste-reparte-numeroCota', ajusteReparteController.workspace).bind({
 		keyup: function(){
 			onlyNumeric(event);
 		},
 
 		change: function(){
-			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+			pesquisaCota.pesquisarPorNumeroCota('#ajuste-reparte-numeroCota', '#ajuste-reparte-nomeCota');
 		}
 	});
 	
@@ -272,15 +272,15 @@ init : function() {
 		  var data = [];
 		  var isValid = true;
 		  
-		  if(ajusteReparteController.get("numeroCota") != ""){
-			  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCota")});
+		  if(ajusteReparteController.get("ajuste-reparte-numeroCota") != ""){
+			  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("ajuste-reparte-numeroCota")});
 		  }else{
 			  ajusteReparteController.mensagemErro("Numero da cota não pode ser vazio.");
 			  isValid = false;
 		  }
 		  
-		  if(ajusteReparteController.get("nomeCota") != ""){
-			  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCota")});
+		  if(ajusteReparteController.get("ajuste-reparte-nomeCota") != ""){
+			  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("ajuste-reparte-nomeCota")});
 		  }else{
 			  ajusteReparteController.mensagemErro("Nome da cota não pode ser vazio.");
 			  isValid = false;
@@ -376,8 +376,8 @@ init : function() {
 	
 //	FUNCTION PARA LIMPAR POPUP
 	limparPopUp : function (){
-		$("#numeroCota").val("").enable();
-		$("#nomeCota").val("").enable();
+		$("#ajuste-reparte-numeroCota").val("").enable();
+		$("#ajuste-reparte-nomeCota").val("").enable();
 		$("AJUSTE_HISTORICO_input").val("");
 		$("#segmento1").val("");
 		$("#segmento2").val("").show();
@@ -630,7 +630,7 @@ init : function() {
 	},
 	
 	mostrarSegmentos : function() {
-		var numeroCota = $("#numeroCota").val();
+		var numeroCota = $("#ajuste-reparte-numeroCota").val();
 		
 		$.postJSON(contextPath + "/distribuicao/ajusteReparte/qtdAjustesSegmento", 
 				{nmCota:numeroCota},

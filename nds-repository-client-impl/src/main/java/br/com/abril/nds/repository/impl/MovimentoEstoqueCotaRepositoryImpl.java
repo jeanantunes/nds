@@ -2328,7 +2328,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	            nome = " codigoBox ";
 	            break;
 	        case NOME_EDICAO:
-	            nome = " nomeProduto,numeroEdicao ";
+	            nome = " nomeProduto, numeroEdicao ";
+	            break;
+	        case PRODUTO_COTA:
+	            nome = " nomeProduto, numeroEdicao, codigoCota ";
 	            break;
 	        default:
 	            nome = "";
@@ -4151,6 +4154,5 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         statusLancamento.add(StatusLancamento.BALANCEADO.name());
         statusLancamento.add(StatusLancamento.EXPEDIDO.name());
         
-    }
-	
+    }	
 }

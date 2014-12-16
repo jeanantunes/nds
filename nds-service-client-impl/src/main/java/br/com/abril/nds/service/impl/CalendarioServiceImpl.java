@@ -775,4 +775,74 @@ public class CalendarioServiceImpl implements CalendarioService {
         
         return data;
     }
+
+	@Override
+	public boolean isFeriadoSemOperacao(List<Feriado> feriados, Date data) {
+		
+		for(Feriado f : feriados) {
+			Calendar calFeriado = Calendar.getInstance();
+			Calendar calDataOperacao = Calendar.getInstance();
+			calFeriado.setTime(f.getData());
+			calDataOperacao.setTime(data);
+			if(f.isIndRepeteAnualmente()) {
+				calFeriado.set(Calendar.YEAR, calDataOperacao.get(Calendar.YEAR));
+			}
+			
+			if(calFeriado.equals(calDataOperacao)) {
+				if(f.isIndOpera()) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean isFeriadoComOperacao(List<Feriado> feriados, Date data) {
+		for(Feriado f : feriados) {
+			Calendar calFeriado = Calendar.getInstance();
+			Calendar calDataOperacao = Calendar.getInstance();
+			calFeriado.setTime(f.getData());
+			calDataOperacao.setTime(data);
+			if(f.isIndRepeteAnualmente()) {
+				calFeriado.set(Calendar.YEAR, calDataOperacao.get(Calendar.YEAR));
+			}
+			
+			if(calFeriado.equals(calDataOperacao)) {
+				if(f.isIndOpera()) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean isFeriadoMunicipalSemOperacao(List<Feriado> feriados, Date data) {
+		for(Feriado f : feriados) {
+			Calendar calFeriado = Calendar.getInstance();
+			Calendar calDataOperacao = Calendar.getInstance();
+			calFeriado.setTime(f.getData());
+			calDataOperacao.setTime(data);
+			if(f.isIndRepeteAnualmente()) {
+				calFeriado.set(Calendar.YEAR, calDataOperacao.get(Calendar.YEAR));
+			}
+			
+			if(calFeriado.equals(calDataOperacao)) {
+				if(f.getTipoFeriado().equals(TipoFeriado.MUNICIPAL) && !f.isIndOpera()) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		
+		return false;
+	}
 }

@@ -2,27 +2,26 @@ package br.com.abril.nds.vo;
 
 import java.io.Serializable;
 
-
-
 public class ProdutoEdicaoVO implements Serializable {
     
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -7568941971653076485L;
+	private static final long serialVersionUID = -7568941971653076485L;
 
     private Long id;
     
     private String nome, codigoBarras, precoCapaFormatado;
     
     private Long edicao;
-
+    
+    private Integer qtdeEmxs;
+    
     public ProdutoEdicaoVO(Long id, String nome, String codigoBarra, Long edicao, String precoCapa){
-        this.id = id;
+
+    	this.id = id;
         this.nome = nome;
         this.codigoBarras = codigoBarra;
         this.edicao = edicao;
         this.precoCapaFormatado = precoCapa;
+        
     }
     
     public Long getId() {
@@ -58,7 +57,6 @@ public class ProdutoEdicaoVO implements Serializable {
     public Long getEdicao() {
         return edicao;
     }
-
     
     public void setEdicao(Long edicao) {
         this.edicao = edicao;
@@ -67,20 +65,26 @@ public class ProdutoEdicaoVO implements Serializable {
     public String getPrecoCapaFormatado() {
         return precoCapaFormatado;
     }
-
     
     public void setPrecoCapaFormatado(String precoCapaFormatado) {
         this.precoCapaFormatado = precoCapaFormatado;
     }
+    
+	public Integer getQtdeEmxs() {
+		return qtdeEmxs;
+	}
 
-    @Override
+	public void setQtdeEmxs(Integer qtdeEmxs) {
+		this.qtdeEmxs = qtdeEmxs;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {

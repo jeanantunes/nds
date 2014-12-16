@@ -12,7 +12,7 @@ var manutencaoStatusCotaController = $.extend(true, {
 
 		manutencaoStatusCotaController.configurarCamposNumericos();
 		
-		var followUp = $('#numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
+		var followUp = $('#manutencao-status-numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
 		
 		if(followUp != ''){			
 			manutencaoStatusCotaController.pesquisarHistoricoStatusCota();
@@ -331,7 +331,7 @@ obterColunasGridPesquisaSemCota:function(){
 
 		var colunas;
 		
-		var followUp = $('#numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
+		var followUp = $('#manutencao-status-numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
 		var filtro;			
 		if(followUp != ''){			
 			filtro = [

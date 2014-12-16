@@ -1,112 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:aop="http://www.springframework.org/schema/aop" 
-	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:task="http://www.springframework.org/schema/task" 
-	xsi:schemaLocation="http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<cache:annotation-driven />
+
+	<aop:aspectj-autoproxy />
 
 	<aop:aspectj-autoproxy />
 	
 	<context:annotation-config />
-	<context:property-placeholder location="classpath:nds-client.properties, classpath:prophecies.properties" ignore-unresolvable="true" />
+	<context:property-placeholder
+		location="classpath:nds-client.properties, classpath:prophecies.properties"
+		ignore-unresolvable="true" />
 	<context:component-scan base-package="br.com.abril.nds" />
-	
+
 	<!-- TOMCAT -->
 	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-client">
 	    <jee:environment>zeroDateTimeBehavior=convertToNull</jee:environment>
 	</jee:jndi-lookup>
-	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
-	
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-		<constructor-arg ref="dataSource" />	
+	<jee:jndi-lookup id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
+
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource" />
 	</bean>
 
-	<task:annotation-driven executor="myExecutor"/>
-	
-	<task:executor id="myExecutor" pool-size="5"/>
-	
-	<util:properties id="properties" location="classpath:nds-client.properties" />		
+	<task:annotation-driven executor="myExecutor" />
+
+	<task:executor id="myExecutor" pool-size="5" />
+
+	<util:properties id="properties" location="classpath:nds-client.properties" />
 	<util:properties id="queries" location="classpath:/query.properties" />
-	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
-	
+	<util:properties id="query_estudo"
+		location="classpath:/query-estudo.properties" />
+
 	<!-- 
-	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/>
-	 -->
-	
+	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler" />
+ 	-->
+ 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
-		
-	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
-	
-	
+
+	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl" />
+
 	<!-- MASTER -->
-	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" /> -->
-	
+	<!-- 
+	<bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" />
+	-->
+
 	<!-- F2 -->
 	<!-- Descomentar abaixo para ligar o bloqueador -->
-	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
-	
+	<!--
+	<bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />
+	-->
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
-		
+
 		<property name="hibernateProperties">
-			<props>			
+			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.jdbc.batch_size">50</prop>
-				<!-- prop key="hibernate.hbm2ddl.auto">update</prop-->
-				
+				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
+
 				<!-- CONNECTION -->
-				
 				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
 				<prop key="hibernate.connection.zeroDateTimeBehavior">convertToNull</prop>
-				
+
 				<!-- CACHE -->
-				
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.cache.use_query_cache">true</prop>
-				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
+				</prop>
 
 				<!-- c3p0 -->
-				
 				<prop key="hibernate.c3p0.max_size">10</prop>
-			    <prop key="hibernate.c3p0.min_size">2</prop>
-			    <prop key="hibernate.c3p0.timeout">30000</prop>
-			    <prop key="hibernate.c3p0.max_statements">100</prop>
-			    <prop key="hibernate.c3p0.maxStatementsPerConnection">5</prop>
-			    <prop key="hibernate.c3p0.idle_test_period">1500</prop>
-			    <prop key="hibernate.c3p0.acquire_increment">2</prop>
-			    <prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
-			    <prop key="hibernate.c3p0.preferredTestQuery">SELECT 1</prop>
+				<prop key="hibernate.c3p0.min_size">2</prop>
+				<prop key="hibernate.c3p0.timeout">30000</prop>
+				<prop key="hibernate.c3p0.max_statements">100</prop>
+				<prop key="hibernate.c3p0.maxStatementsPerConnection">5</prop>
+				<prop key="hibernate.c3p0.idle_test_period">1500</prop>
+				<prop key="hibernate.c3p0.acquire_increment">2</prop>
+				<prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+				<prop key="hibernate.c3p0.preferredTestQuery">SELECT 1</prop>
 			</props>
 		</property>
-		
+
 		<!-- Descomentar abaixo para ligar o bloqueador -->
-		<!-- <property name="entityInterceptor">
-    		<ref local="interceptor" />
-  		</property> -->
+		<!-- <property name="entityInterceptor"> <ref local="interceptor" /> </property> -->
 	</bean>
-	
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	
+
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory">
-		<property name="enableQuartzTasks" value="true"/>
+		<property name="enableQuartzTasks" value="true" />
 	</bean>
-	
+
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-    	<property name="configLocation" value="classpath:quartz.properties"/>
-        <property name="jobFactory" ref="jobFactoryBean"/>
+		<property name="configLocation" value="classpath:quartz.properties" />
+		<property name="jobFactory" ref="jobFactoryBean" />
 	</bean>
-	
+
+	<!-- simple cache manager -->
+	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+		<property name="caches">
+			<set>
+				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="default" />
+			</set>
+		</property>
+	</bean>
+
 </beans>

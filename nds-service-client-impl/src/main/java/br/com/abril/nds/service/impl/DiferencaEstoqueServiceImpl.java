@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,6 +97,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -1514,8 +1517,7 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
     
     @Override
     @Transactional
-    public Set<Diferenca> verificarDiferencasIguais(final Set<Diferenca> listaDiferencas,
-            final Diferenca diferenca) {
+    public Set<Diferenca> verificarDiferencasIguais(final Set<Diferenca> listaDiferencas, final Diferenca diferenca) {
         
     	if(listaDiferencas == null){
     		
@@ -1528,8 +1530,7 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         		
         		listaDiferencas.add(diferenca);
         	}
-    	}
-    	else{
+    	} else {
     		
     		listaDiferencas.add(diferenca);
     	}
@@ -1564,22 +1565,25 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
     
     @Override
     @Transactional
-    public Set<DiferencaVO> verificarDiferencasVOIguais(final Set<DiferencaVO> listaNovaDiferencaVO, 
-    		final DiferencaVO diferencaVO) {
+    public Set<DiferencaVO> verificarDiferencasVOIguais(final Set<DiferencaVO> listaNovaDiferencaVO, DiferencaVO diferencaVO) {
         
 		 if (listaNovaDiferencaVO == null) {
 			 
 			 return listaNovaDiferencaVO;
 		 }
     	   
-    	if(!listaNovaDiferencaVO.isEmpty()){
+    	if(!listaNovaDiferencaVO.isEmpty()) {
     		 
-    		if(!this.atualizarItem(listaNovaDiferencaVO, diferencaVO)){
-            	
-            	listaNovaDiferencaVO.add(diferencaVO);
+    		if(!this.atualizarItem(listaNovaDiferencaVO, diferencaVO)) {
+
+    			Long id = this.gerarIdentificadorDiferenca(new ArrayList<DiferencaVO>(listaNovaDiferencaVO));
+        		diferencaVO.setId(id);
+    			listaNovaDiferencaVO.add(diferencaVO);
             }
-    	}
-    	else{
+    	} else {
+    		
+    		Long id = this.gerarIdentificadorDiferenca(new ArrayList<DiferencaVO>(listaNovaDiferencaVO));
+    		diferencaVO.setId(id);
     		
     		listaNovaDiferencaVO.add(diferencaVO);
     	}
@@ -1587,11 +1591,11 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         return listaNovaDiferencaVO;
     }
     
-    private boolean atualizarItem(final Set<DiferencaVO> listaDiferencas,final DiferencaVO novaDiferenca){
+    private boolean atualizarItem(final Set<DiferencaVO> listaDiferencas, DiferencaVO novaDiferenca) {
     	
     	boolean itemAtualizado = false;
     	
-    	for(DiferencaVO diferenca : listaDiferencas){
+    	for(DiferencaVO diferenca : listaDiferencas) {
     		
     		if (diferenca.getCodigoProduto().equals(novaDiferenca.getCodigoProduto())
                     && diferenca.getNumeroEdicao().equals(novaDiferenca.getNumeroEdicao())
@@ -1599,9 +1603,10 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
                     && diferenca.getTipoDirecionamento().equals(novaDiferenca.getTipoDirecionamento())
                     && diferenca.getTipoEstoque().equals(novaDiferenca.getTipoEstoque())) {
                 
-                final BigInteger quantidade = diferenca.getQuantidade();
-                
-                diferenca.setQuantidade(quantidade.add(diferenca.getQuantidade()));
+    			if(novaDiferenca.getId() == null) {
+    				novaDiferenca.setId(diferenca.getId());
+    			}
+                diferenca.setQuantidade(diferenca.getQuantidade().add(novaDiferenca.getQuantidade()));
                 
                 itemAtualizado = true;
             }
@@ -1783,5 +1788,49 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         }
         
         return this.diferencaEstoqueRepository.pesquisarDiferncas(codigoProduto, numeroEdicao, data);
+    }
+    
+    private <E> Long gerarIdentificadorDiferenca(final List<E> listaParaOperacao) {
+        
+        Long identificador = 0L;
+        
+        if(listaParaOperacao == null || listaParaOperacao.isEmpty()){
+            return identificador;
+        }
+        
+        Collections.sort(listaParaOperacao, new Comparator<E>() {
+            @Override
+            public int compare(final E o1, final E o2) {
+                
+                if(o1 instanceof DiferencaVO && o2 instanceof DiferencaVO) {
+                	
+                    return ((DiferencaVO) o1).getId().compareTo(((DiferencaVO) o2).getId());
+                } else if ( o1 instanceof Diferenca && o2 instanceof Diferenca ) {
+                    
+                    return ((Diferenca) o1).getId().compareTo(((Diferenca) o2).getId());
+                } else {
+                	
+                    return 0;
+                }
+            }
+        });
+        
+        final E diferenca = listaParaOperacao.get(listaParaOperacao.size()-1);
+        
+        if(diferenca instanceof DiferencaVO) {
+            
+            final DiferencaVO diferebcaVO = (DiferencaVO) diferenca;
+            
+            identificador = (Long) Util.nvl(diferebcaVO.getId(), 0) + 1;
+        } else if ( diferenca instanceof Diferenca ) {
+            
+            final Diferenca difer = (Diferenca)diferenca;
+            
+            final Long valor = difer.getId();
+            
+            identificador = valor == null ? 0L : valor + 1;
+        }
+        
+        return identificador;
     }
 }

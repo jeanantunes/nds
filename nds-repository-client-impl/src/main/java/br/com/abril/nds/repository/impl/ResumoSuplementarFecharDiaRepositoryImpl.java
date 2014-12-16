@@ -113,13 +113,15 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select sum(coalesce(ep.QTDE_SUPLEMENTAR, 0) * coalesce((select (valor_atual - valor_antigo) ")
-		.append(" from historico_alteracao_preco_venda ")   
-		.append(" where id = (select max(id) ")     
-		.append("     from historico_alteracao_preco_venda hapv ")
-		.append("     where hapv.PRODUTO_EDICAO_ID = pe.ID)), pe.PRECO_VENDA) - coalesce(ep.QTDE_SUPLEMENTAR, 0) * pe.PRECO_VENDA) ")
-		.append(" from estoque_produto ep ")
-		.append(" join PRODUTO_EDICAO pe on ep.PRODUTO_EDICAO_ID=pe.ID ");
+		sql.append(" select sum(coalesce(ep.QTDE_SUPLEMENTAR, 0) * (valor_atual - valor_antigo)) tot ")
+		.append(" from historico_alteracao_preco_venda hapv                                          ")
+		.append(" join estoque_produto ep on ep.PRODUTO_EDICAO_ID=hapv.PRODUTO_EDICAO_ID             ")
+		.append(" join PRODUTO_EDICAO pe on ep.PRODUTO_EDICAO_ID=pe.ID                               ")
+		.append(" join PRODUTO p on p.ID = pe.PRODUTO_ID                                             ")
+		.append(" where hapv.id = (select max(id)                                                    ")
+		.append(" 	from historico_alteracao_preco_venda hapv                                        ")
+		.append("   where hapv.PRODUTO_EDICAO_ID = pe.ID                                             ")
+		.append("   and hapv.DATA_OPERACAO = (select DATA_OPERACAO from distribuidor))               ");
 	
 		Query query = super.getSession().createSQLQuery(sql.toString());
 		

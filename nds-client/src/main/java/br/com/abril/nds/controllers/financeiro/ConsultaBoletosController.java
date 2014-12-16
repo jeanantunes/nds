@@ -36,6 +36,7 @@ import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -84,6 +85,9 @@ public class ConsultaBoletosController extends BaseController {
 
     private static final List<ItemDTO<StatusCobranca,String>> listaStatusCombo =  new ArrayList<ItemDTO<StatusCobranca,String>>();
 
+    @Autowired
+    private DistribuidorService distribuidorService;
+    
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaBoletos";
    
 	/**
@@ -105,6 +109,9 @@ public class ConsultaBoletosController extends BaseController {
 	@Get
 	@Path("/")
 	public void consulta(){ 
+		
+		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
+		
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pagos"));

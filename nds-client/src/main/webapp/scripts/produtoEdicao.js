@@ -913,10 +913,10 @@ var produtoEdicaoController =$.extend(true,  {
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataRecolhimentoPrevisto", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataRecolhimentoReal", bloquear);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peb", bloquear);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peb", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-descricaoProduto", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-codigoProdutoEdicao", bloquear);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-nomeComercialProduto", bloquear);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-nomeComercialProduto", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-precoPrevisto", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-codigoDeBarrasCorporativo", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-desconto", bloquear);

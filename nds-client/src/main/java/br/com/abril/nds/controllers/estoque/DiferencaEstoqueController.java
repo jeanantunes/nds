@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -587,22 +586,20 @@ public class DiferencaEstoqueController extends BaseController {
             final String pacotePadrao) {
         
         if (tipoDiferenca == null) {
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "O preenchimento do campo [Tipo de Diferença] não foi informado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] não foi informado!");
         }
         
-        if(edicaoProduto==null) {
+        if(edicaoProduto == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Edição] não foi informado!");
         }
         
-        if(diferenca==null) {
+        if(diferenca == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
         }
         
-        if(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.equals(tipoDiferenca))
-            diferencaEstoqueService.validarRateioParaCotasInativas(rateioCotas);
+        if(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.equals(tipoDiferenca)) diferencaEstoqueService.validarRateioParaCotasInativas(rateioCotas);
         
-        this.validarProdutoEmRecolhimento(direcionadoParaEstoque, codigoProduto,edicaoProduto,null);
+        this.validarProdutoEmRecolhimento(direcionadoParaEstoque, codigoProduto, edicaoProduto, null);
         
         if(idDiferenca == null) {
             
@@ -903,17 +900,13 @@ public class DiferencaEstoqueController extends BaseController {
         diferencaVO.setQuantidade(diferenca);
         diferencaVO.setQtdeEstoqueAtual(reparteAtual);
         
-        diferencaVO.setTipoDiferenca(
-                this.obterTipoDiferenca(
-                        tipoDiferenca, tipoEstoque));
+        diferencaVO.setTipoDiferenca(this.obterTipoDiferenca(tipoDiferenca, tipoEstoque));
         
         diferencaVO.setTipoEstoque(tipoEstoque);
         diferencaVO.setCadastrado(true);
         diferencaVO.setPacotePadrao(pacotePadrao);
         
-        diferencaVO.setDataLancamento(
-                DateUtil.formatarDataPTBR(
-                        distribuidorService.obterDataOperacaoDistribuidor()));
+        diferencaVO.setDataLancamento(DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
         
         return diferencaVO;
     }
@@ -969,27 +962,20 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
             listaNovasDiferencasVO = new HashSet<DiferencaVO>();
         }
         
-        Long id  = this.gerarIdentificadorDiferenca(new ArrayList<DiferencaVO>(listaNovasDiferencasVO));
-        
-        diferencaVO.setId(id);
-        
         listaNovasDiferencasVO = diferencaEstoqueService.verificarDiferencasVOIguais(listaNovasDiferencasVO, diferencaVO);
         
-        Set<Diferenca> listaDiferencas = (Set<Diferenca>)
-                httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+        Set<Diferenca> listaDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
         
         if (listaDiferencas == null) {
             
             listaDiferencas = new HashSet<Diferenca>();
         }
         
-        id = this.gerarIdentificadorDiferenca(new ArrayList<Diferenca>(listaDiferencas));
-        
         final Date dataMovimentacao = this.dataMovimentacaoDiferenca();
         
         this.validarNovaDiferenca(diferencaVO, tipoDiferenca);
         
-        final Diferenca diferenca = this.obterDiferenca(diferencaVO, id, dataMovimentacao);
+        final Diferenca diferenca = this.obterDiferenca(diferencaVO, diferencaVO.getId(), dataMovimentacao);
         
         listaDiferencas.removeAll(Collections.singleton(null));
         
@@ -1002,7 +988,7 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         return diferenca.getId();
     }
     
-    private <E> Long gerarIdentificadorDiferenca(final List<E> listaParaOperacao){
+    private <E> Long gerarIdentificadorDiferenca(final List<E> listaParaOperacao) {
         
         Long identificador = 0L;
         
@@ -1014,14 +1000,14 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
             @Override
             public int compare(final E o1, final E o2) {
                 
-                if(o1 instanceof DiferencaVO && o2 instanceof DiferencaVO){
-                    return ((DiferencaVO)o1).getId().compareTo(((DiferencaVO)o2).getId());
-                }
-                else if ( o1 instanceof Diferenca && o2 instanceof Diferenca ){
+                if(o1 instanceof DiferencaVO && o2 instanceof DiferencaVO) {
+                	
+                    return ((DiferencaVO) o1).getId().compareTo(((DiferencaVO) o2).getId());
+                } else if ( o1 instanceof Diferenca && o2 instanceof Diferenca ) {
                     
-                    return ((Diferenca)o1).getId().compareTo(((Diferenca)o2).getId());
-                }
-                else{
+                    return ((Diferenca) o1).getId().compareTo(((Diferenca) o2).getId());
+                } else {
+                	
                     return 0;
                 }
             }
@@ -1029,35 +1015,30 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         
         final E diferenca = listaParaOperacao.get(listaParaOperacao.size()-1);
         
-        if(diferenca instanceof DiferencaVO){
+        if(diferenca instanceof DiferencaVO) {
             
             final DiferencaVO diferebcaVO = (DiferencaVO) diferenca;
             
             identificador = (Long) Util.nvl(diferebcaVO.getId(), 0) + 1;
-        }
-        else if ( diferenca instanceof Diferenca ){
+        } else if ( diferenca instanceof Diferenca ) {
             
             final Diferenca difer = (Diferenca)diferenca;
             
             final Long valor = difer.getId();
             
-            identificador = valor == null?0L:valor + 1;
-            
+            identificador = valor == null ? 0L : valor + 1;
         }
         
         return identificador;
     }
     
-    private Diferenca obterDiferenca(final DiferencaVO diferencaVO,
-            final Long idDiferenca,final Date dataMovimentacao){
+    private Diferenca obterDiferenca(final DiferencaVO diferencaVO, final Long idDiferenca,final Date dataMovimentacao) {
         
         final Diferenca diferenca = new Diferenca();
         
         diferenca.setId(idDiferenca);
         
-        final ProdutoEdicao produtoEdicao =
-                produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-                        diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
+        final ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
         
         diferenca.setProdutoEdicao(produtoEdicao);
         diferenca.setQtde(diferencaVO.getQuantidade());
@@ -1162,8 +1143,7 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         
         validarNovosRateios(listaNovosRateios, diferencaVO);
         
-        Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
-                (Map<Long, List<RateioCotaVO>>) httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+        Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados = (Map<Long, List<RateioCotaVO>>) httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
         
         if (mapaRateiosCadastrados == null) {
             
@@ -1171,27 +1151,19 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
             
         }
         
-        final ProdutoEdicao produtoEdicao =
-                produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-                        diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
+        final ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
         
         for (final RateioCotaVO rateioCotaVO : listaNovosRateios) {
             
             rateioCotaVO.setIdDiferenca(diferencaVO.getId());
             
-            final Date dataMovimentacao =
-                    movimentoEstoqueCotaService.obterDataUltimaMovimentacaoReparteExpedida(
-                            rateioCotaVO.getNumeroCota(), produtoEdicao.getId());
+            final Date dataMovimentacao = movimentoEstoqueCotaService.obterDataUltimaMovimentacaoReparteExpedida(rateioCotaVO.getNumeroCota(), produtoEdicao.getId());
             
-            rateioCotaVO.setDataMovimento(
-                    dataMovimentacao == null ?
-                            distribuidorService.obterDataOperacaoDistribuidor() : dataMovimentacao);
+            rateioCotaVO.setDataMovimento(dataMovimentacao == null ? distribuidorService.obterDataOperacaoDistribuidor() : dataMovimentacao);
             
-            this.validarNovoRateio(rateioCotaVO,diferencaVO);
+            this.validarNovoRateio(rateioCotaVO, diferencaVO);
             
-            mapaRateiosCadastrados =
-                    this.incluirSeNaoExisteNoMapa(
-                            mapaRateiosCadastrados, diferencaVO.getId(), rateioCotaVO);
+            mapaRateiosCadastrados = this.incluirSeNaoExisteNoMapa(mapaRateiosCadastrados, diferencaVO.getId(), rateioCotaVO);
         }
         
         httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, mapaRateiosCadastrados);
@@ -2469,7 +2441,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     }
     
     @SuppressWarnings("unchecked")
-    private void validarProdutoDuplicadoLancamento(final Set<DiferencaVO> listaNovasDiferencas){
+    private void validarProdutoDuplicadoLancamento(final Set<DiferencaVO> listaNovasDiferencas) {
         
         final List<DiferencaVO> listaDiferencas = new ArrayList<DiferencaVO>();
         
@@ -2478,9 +2450,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             return;
         }
         
-        final Set<DiferencaVO> listaDiferencasCadastradas =
-                (Set<DiferencaVO>) httpSession.getAttribute(
-                        LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+        final Set<DiferencaVO> listaDiferencasCadastradas = (Set<DiferencaVO>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
         
         if (listaDiferencasCadastradas != null) {
             listaDiferencas.addAll(listaNovasDiferencas);
@@ -2501,7 +2471,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         for (final DiferencaVO diferencaVO : listaDiferencas) {
             
-            if (ultimaDiferencaVO != null&& diferencaVO.getCodigoProduto().trim().equalsIgnoreCase(ultimaDiferencaVO.getCodigoProduto())
+            if (ultimaDiferencaVO != null && diferencaVO.getCodigoProduto().trim().equalsIgnoreCase(ultimaDiferencaVO.getCodigoProduto())
                     && diferencaVO.getNumeroEdicao().trim().equalsIgnoreCase(ultimaDiferencaVO.getNumeroEdicao())
                     && diferencaVO.getTipoDirecionamento().equals(ultimaDiferencaVO.getTipoDirecionamento())
                     && diferencaVO.getTipoEstoque().equals(ultimaDiferencaVO.getTipoEstoque())) {

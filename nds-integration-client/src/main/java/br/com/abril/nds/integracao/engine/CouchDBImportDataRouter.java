@@ -31,7 +31,6 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
 
-
 @Component("couchDBImportDataRouter")
 public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
 
@@ -39,13 +38,13 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	
 	@Autowired
 	private PlatformTransactionManager transactionManager;
-	
+
 	@Autowired
     private NdsiLoggerFactory ndsiLoggerFactory;
-	
+
 	@Autowired
 	private CouchDbProperties couchDbProperties;
-	
+
 	@Override
 	public <T extends RouteTemplate> void routeData(T inputModel) {
 

@@ -56,7 +56,7 @@
 				</tr>
 				<tr id="trProd">
 					<td width="142"><strong>Produto:</strong></td>
-					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
+					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
 				</tr>
 				<tr id="trForn">
 					<td><strong>Fornecedor:</strong></td>
@@ -73,7 +73,7 @@
 				</tr>
 				<tr>
 					<td><strong> Slogan do Produto:</strong></td>
-					<td colspan="3"><input type="text" class="habilitarCampoInterface" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:652px;" /></td>
+					<td colspan="3"><input type="text" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:652px;" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Produto:</strong></td>
@@ -95,9 +95,9 @@
 				</tr>
 				<tr>
 					<td><strong>PEB:</strong></td>
-					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" class="habilitarCampoInterface"/></td>
+					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" /></td>
 					<td><strong>Pacote Padr&atilde;o:</strong></td>
-					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="4" class="habilitarCampoInterface"/></td>
+					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="4" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="1.3636363636363655"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
-		<paragraph leftIndent="3"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+		<paragraph leftIndent="2"/>
 	</style>
-	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
-		<paragraph leftIndent="3"/>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<paragraph leftIndent="2"/>
 	</style>
 	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
 	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
@@ -28,15 +28,26 @@
 	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="DATA" class="java.lang.String"/>
+	<parameter name="PRODUTOS" class="java.util.Collection"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="key" class="java.lang.Integer"/>
-	<field name="value" class="java.util.LinkedHashMap"/>
+	<field name="codigoBox" class="java.lang.Integer">
+		<fieldDescription><![CDATA[codigoBox]]></fieldDescription>
+	</field>
+	<field name="roteiro" class="java.lang.String">
+		<fieldDescription><![CDATA[roteiro]]></fieldDescription>
+	</field>
+	<field name="codigoRota" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoRota]]></fieldDescription>
+	</field>
+	<field name="produtos" class="java.util.Collection">
+		<fieldDescription><![CDATA[produtos]]></fieldDescription>
+	</field>
 	<title>
 		<band height="77" splitType="Prevent">
 			<subreport isUsingCache="false">
-				<reportElement uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3" isPrintRepeatedValues="false" x="0" y="0" width="555" height="77"/>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="550" height="77" uuid="ce1de7a4-1311-48da-9d66-f19a03e0a4f3"/>
 				<subreportParameter name="IMAGEM">
 					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -54,26 +65,107 @@
 		</band>
 	</title>
 	<detail>
-		<band height="78" splitType="Stretch">
-			<elementGroup>
-				<subreport>
-					<reportElement uuid="30d6a793-d7f5-4150-b401-f33f2559fb77" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="0" width="555" height="78"/>
-					<subreportParameter name="SUBREPORT_DIR">
-						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="BOX">
-						<subreportParameterExpression><![CDATA[$F{key}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="DATA">
-						<subreportParameterExpression><![CDATA[$P{DATA}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(
-((java.util.Map<String, Map<String, Map<br.com.abril.nds.vo.ProdutoEdicaoVO, Map<String, Integer>>>>
-    )$F{value}).entrySet()
-)]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_rota_quebra_roteiro.jasper"]]></subreportExpression>
-				</subreport>
-			</elementGroup>
+		<band height="21" splitType="Stretch">
+			<elementGroup/>
+			<break>
+				<reportElement x="0" y="0" width="100" height="1" uuid="7160f98d-16eb-4487-b5f1-d3eaa6a0d7a1"/>
+			</break>
+			<staticText>
+				<reportElement style="rel_stext" x="94" y="1" width="48" height="20" uuid="89468829-5a31-40cd-aa7c-3d961371abd6"/>
+				<textElement>
+					<font isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Roteiro:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="1" width="550" height="20" backcolor="#D3D3D3" uuid="9bc756bc-f6b8-49f8-8243-70f7efce9407"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement style="rel_stext" x="143" y="1" width="103" height="20" uuid="efdd01ce-14a6-4f91-bc01-192c21cb2709"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{roteiro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="rel_ftext" x="245" y="1" width="35" height="20" uuid="6ed0b50b-c4af-479b-83e8-c331d09e21df"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Rota:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="rel_ftext" x="2" y="1" width="30" height="20" uuid="0b19d2d6-55b7-43c3-8e3a-bdb266cb2c8e"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Box:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement style="rel_stext" x="443" y="1" width="107" height="20" uuid="d2bdd182-7b0d-425c-9255-65e84cda52ca"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DATA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="rel_stext" x="33" y="1" width="57" height="20" uuid="e00c9c6d-25b9-4e7d-86f0-97547ee93ea1"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoBox}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="rel_ftext" x="409" y="1" width="34" height="20" uuid="43db4694-a438-42c7-ba72-c38dfe3dc580"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="rel_stext" x="282" y="1" width="127" height="20" uuid="b5fb6dc1-e39c-48c2-bb9d-42dfa10e4c5a"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoRota}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="rel_ftext" x="95" y="1" width="48" height="20" uuid="afa356c1-8610-4c27-a99e-097e2f77b1f8"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Roteiro:]]></text>
+			</staticText>
+		</band>
+		<band height="50">
+			<subreport isUsingCache="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="550" height="50" uuid="387b053f-1673-42c3-8bf7-61d6af5ec461"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMAGEM">
+					<subreportParameterExpression><![CDATA[$P{IMAGEM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_RELATORIO">
+					<subreportParameterExpression><![CDATA[$P{NOME_RELATORIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRODUTOS">
+					<subreportParameterExpression><![CDATA[$F{produtos}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{produtos})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_rota_quebra_box.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 </jasperReport>

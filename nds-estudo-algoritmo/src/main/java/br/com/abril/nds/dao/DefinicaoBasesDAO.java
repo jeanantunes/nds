@@ -45,13 +45,17 @@ public class DefinicaoBasesDAO {
 	public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(ProdutoEdicaoEstudo edicao) {
 
 		Map<String, Object> params = new HashMap<>();
+		params.put("CODIGO_ICD", edicao.getProduto().getCodigoICD());
+		params.put("TIPO_CLASSIFICACAO_ID", edicao.getTipoClassificacaoProduto().getId());
 		params.put("CODIGO_PRODUTO", edicao.getProduto().getCodigo());
 
 		String query;
 		
-		if(edicao.getPeriodo() != null && edicao.getPeriodo() > 1){
+		if(edicao.getPeriodo() != null && edicao.getPeriodo() > 1) {
+			
 			query = queryEdicoesLancamentosBasesIcd;
-		}else{
+		} else {
+			
 			query = queryEdicoesLancamentosBasesParcialConsolidado;
 		}
 		
@@ -98,6 +102,7 @@ public class DefinicaoBasesDAO {
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 		produtoEdicao.setIdLancamento(rs.getLong("ID"));
 		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
+		produtoEdicao.setStatus(rs.getString("STATUS"));
 		produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 		produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
 		produtoEdicao.setParcial(rs.getBoolean("PARCIAL"));

@@ -106,13 +106,13 @@
  		 			<tr>
     					<td>Cota:</td>
     					<td>
-    						<input name="numCota" 
-			              		   id="numCota" 
+    						<input name="impressao-boleto-numCota" 
+			              		   id="impressao-boleto-numCota" 
 			              		   type="text"
 			              		   maxlength="11"
 			              		   style="width:70px; 
 			              		   float:left; margin-right:5px;"
-			              		   onchange="pesquisaCotaImpressaoBoletos.pesquisarPorNumeroCota('#numCota', '#descricaoCota',false,
+			              		   onchange="pesquisaCotaImpressaoBoletos.pesquisarPorNumeroCota('#impressao-boleto-numCota', '#descricaoCota',false,
 			              	  											null, 
 			              	  											impressaoBoletosController.pesquisarCotaErrorCallBack);" />
       					</td>

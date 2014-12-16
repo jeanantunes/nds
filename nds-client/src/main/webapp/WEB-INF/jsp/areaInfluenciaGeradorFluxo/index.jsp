@@ -57,12 +57,11 @@
 							<tr>
 								<td width="35">Cota:</td>
 								<td width="93">
-									<input type="text" name="numeroCota" id="numeroCota" style="width: 80px;" />
+									<input type="text" name="area-influencia-numeroCota" id="area-influencia-numeroCota" style="width: 80px;" />
 								</td>
 								<td width="36">Nome:</td>
 								<td width="348">
-									<input type="text" name="nomeCota"
-										id="nomeCota" style="width: 200px;" />
+									<input type="text" name="nomeCota" id="nomeCota" style="width: 200px;" />
 								</td>
 								<td width="104">
 									<span class="bt_pesquisar">
