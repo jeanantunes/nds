@@ -120,7 +120,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	       	.append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
         
         String templateHqlRecebimentoEstoqueFisicoPromocional = new StringBuilder()
-			.append(" (select COALESCE(sum(case when me.tipoMovimento.operacaoEstoque =:operacaoEntrada then me.qtde else (me.qtde*-1)end),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+        .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
 			.append(" where me.data <= :data ")
 			.append(" and me.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoRecebimentoFisicoPromocional) ")
 			.append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();

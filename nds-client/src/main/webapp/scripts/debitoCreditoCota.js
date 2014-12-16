@@ -385,7 +385,7 @@ var debitoCreditoCotaController = $.extend(true, {
  		
  		} else {
  			
- 			numeroCota = $("#numeroCota", debitoCreditoCotaController.workspace).val();
+ 			numeroCota = $("#debito-credito-numeroCota", debitoCreditoCotaController.workspace).val();
  		}
  		
  		$.postJSON(

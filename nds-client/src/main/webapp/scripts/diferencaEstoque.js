@@ -123,7 +123,7 @@ var diferencaEstoqueController = $.extend(true, {
 		var dataInicial = $("#dataInicial", diferencaEstoqueController.workspace).val();
 		var dataFinal = $("#dataFinal", diferencaEstoqueController.workspace).val();
 		var tipoDiferenca = $("#tipoDiferenca", diferencaEstoqueController.workspace).val();
-		var numeroCota = $("#numeroCota", diferencaEstoqueController.workspace).val();
+		var numeroCota = $("#diferenca-estoque-numeroCota", diferencaEstoqueController.workspace).val();
 		var nomeCota = $("#descricaoCota", diferencaEstoqueController.workspace).val();
 		
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexOptions({
@@ -313,7 +313,7 @@ var diferencaEstoqueController = $.extend(true, {
 		data.push({name:'filtro.tipoDiferenca',	   value: resultado.tipoDiferenca});
 		data.push({name:'filtro.quantidade', 	   value: resultado.quantidade});
 		
-		var numeroCota = $("#numeroCota", diferencaEstoqueController.workspace).val();
+		var numeroCota = $("#diferenca-estoque-numeroCota", diferencaEstoqueController.workspace).val();
 		
 		data.push({name:'filtro.numeroCota', 	   value: numeroCota});
 		

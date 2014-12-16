@@ -102,7 +102,7 @@ var alteracaoCotaController = $.extend(true, {
     			showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
     		});
     		
-			focusSelectRefField($("#numeroCota", this.workspace));
+			focusSelectRefField($("#alteracao-cota-numeroCota", this.workspace));
 			
 			$(document.body).keydown(function(e) {
 				
@@ -287,7 +287,7 @@ var alteracaoCotaController = $.extend(true, {
 	
 	callBackSuccess:function () {
 		
-		pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota($("#numeroCota", "#nomeCota",alteracaoCotaController.workspace).val(), false, function(result) {
+		pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota($("#alteracao-cota-numeroCota", "#alteracao-cota-nomeCota",alteracaoCotaController.workspace).val(), false, function(result) {
 
 			if (!result) {
 

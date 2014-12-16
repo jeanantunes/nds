@@ -24,7 +24,7 @@
 </head>
 
 <body>
-<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+<input type="hidden" value="${numeroCotaFollowUp}" id="chamadao-numeroCotaFollowUp" name="chamadao-numeroCotaFollowUp">
 <input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
 	
 	<form id="formUsoMatrizRecolhimentoConfirmada">
