@@ -186,6 +186,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
                         edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false, edicaoBaseEstudoDTO.isParcialConsolidado()));        
                 }
     } else {
+    	
         EstudoTransient estudoTemp = new EstudoTransient();
         estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(
                 produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
@@ -200,9 +201,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    	
     		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase;
     		    	
-	    		    	if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1){
+	    		    	if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1) {
+	    		    		
 	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, false);
-	    		    	}else{
+	    		    	} else {
+	    		    		
 	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, base.isParcial());
 	    		    	}
     		    	

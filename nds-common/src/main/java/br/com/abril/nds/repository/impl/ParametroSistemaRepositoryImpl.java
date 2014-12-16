@@ -26,6 +26,7 @@ implements ParametroSistemaRepository {
 
 	@Override
 	public ParametroSistema buscarParametroPorTipoParametro(TipoParametroSistema tipoParametroSistema){
+		
 		String hql = "from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
 
 		Query query = this.getSession().createQuery(hql);
@@ -120,10 +121,12 @@ implements ParametroSistemaRepository {
 	public String getParametro(String tipoParametro) {
 
 		try {
+			
 			String sql = "SELECT a.valor FROM ParametroSistema a WHERE a.tipoParametroSistema = :tipoParametro";
 			Query query = getSession().createQuery(sql);
 			query.setParameter("tipoParametro", TipoParametroSistema.valueOf(tipoParametro));
 			return (String) query.uniqueResult();
+			
 		} catch (PersistenceException e) {
 			return null;
 		}

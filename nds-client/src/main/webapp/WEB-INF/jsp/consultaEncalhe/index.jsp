@@ -52,15 +52,13 @@ $(function(){
 				<td width="46">Per&iacute;odo:</td>
 				
 				<td width="113">
-					<input type="text" id="dataRecolhimentoInicial" class="datePicker"
-					style="width: 80px; float: left; margin-right: 5px;" />
+					<input type="text" value="${data}" id="dataRecolhimentoInicial" class="datePicker" style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
 				<td width="24">At&eacute;:</td>
 				
 				<td width="113">
-					<input type="text" id="dataRecolhimentoFinal" class="datePicker"
-					style="width: 80px; float: left; margin-right: 5px;" />
+					<input type="text" value="${data}" id="dataRecolhimentoFinal" class="datePicker" style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
 				<td width="68">Fornecedor:</td>

@@ -41,6 +41,7 @@ import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -2710,9 +2711,9 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select dtd from ( ");
-    	hql.append(" select max(data_lcto_distribuidor) dtd , max(case when status in('CONFIRMADO','PLANEJADO') then 1 else 0 end ) st ");
+    	hql.append(" select max(data_lcto_distribuidor) dtd , (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
     	hql.append(" from lancamento ");
-    	hql.append(" where status in('BALANCEADO','CONFIRMADO','EM_BALANCEAMENTO','PLANEJADO') ");
+    	hql.append(" where status in(:lancamentosPreExpedicao) ");
     	hql.append(" group by data_lcto_distribuidor ) a ");
     	hql.append(" where st = 0) ");
     	hql.append(" and b.sm    in (select dia_semana  ");
@@ -2723,7 +2724,7 @@ public class LancamentoRepositoryImpl extends
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
-        //query.setParameterList("idFornecedor", idFornecedor);
+        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicao());
 
     	return query.list();
     }

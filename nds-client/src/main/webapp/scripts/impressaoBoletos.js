@@ -13,7 +13,7 @@ var impressaoBoletosController = $.extend(true, {
 		
 		$('input[id^="data"]', impressaoBoletosController.workspace).mask("99/99/9999");
 		
-		$("input[name='numCota']", impressaoBoletosController.workspace).numeric();
+		$("input[name='impressao-boleto-numCota']", impressaoBoletosController.workspace).numeric();
 		
 		$("#dataMovimento", impressaoBoletosController.workspace).focus();
 		
@@ -158,7 +158,7 @@ var impressaoBoletosController = $.extend(true, {
 			             {name:"box",value:$("#box", impressaoBoletosController.workspace).val()},
 			             {name:"rota",value:$("#rota", impressaoBoletosController.workspace).val()},
 			             {name:"roteiro",value:$("#roteiro", impressaoBoletosController.workspace).val()},
-			             {name:"numCota",value:$("#numCota", impressaoBoletosController.workspace).val()},
+			             {name:"numCota",value:$("#impressao-boleto-numCota", impressaoBoletosController.workspace).val()},
 			             {name:"tipoCobranca",value:$("#tipoCobranca", impressaoBoletosController.workspace).val()}
 			            ];
 		return formData;
@@ -170,7 +170,7 @@ var impressaoBoletosController = $.extend(true, {
 		
 		$("#divImpressoes").hide();
 		
-		if( $("#numCota", impressaoBoletosController.workspace).val().length ) {
+		if( $("#impressao-boleto-numCota", impressaoBoletosController.workspace).val().length ) {
 			$("#impressosGrid", impressaoBoletosController.workspace).flexOptions({
 				url: contextPath + "/financeiro/impressaoBoletos/consultar",
 				params: impressaoBoletosController.formData(),

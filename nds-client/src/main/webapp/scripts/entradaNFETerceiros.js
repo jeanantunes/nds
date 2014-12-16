@@ -200,7 +200,7 @@ var entradaNFETerceirosController = $.extend(true, {
 	//***OK***//
 	pesquisarCota : function() {
  		
-		numeroCota = $("#numeroCota", this.workspace).val();
+		numeroCota = $("#entrada-terceiro-numeroCota", this.workspace).val();
  		
  		$.postJSON(
 			contextPath + '/nfe/entradaNFETerceiros/buscarCotaPorNumero',

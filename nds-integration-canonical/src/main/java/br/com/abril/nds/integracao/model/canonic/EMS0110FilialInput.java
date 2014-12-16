@@ -269,7 +269,7 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
     
     // offset = 719, length=25)
     //offset = 599, length=2)
-    @Field(offset = 581, length=2)
+    @Field(offset = 563, length=2)
     public String getSegmento() {
         return segmento;
     }
@@ -282,10 +282,7 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime
-				* result
-				+ ((codigoBarrasCorporativo == null) ? 0 : codigoBarrasCorporativo
-						.hashCode());
+		result = prime * result + ((codigoBarrasCorporativo == null) ? 0 : codigoBarrasCorporativo.hashCode());
 		return result;
 	}
 
@@ -305,6 +302,4 @@ public class EMS0110FilialInput extends EMS0110Input implements Serializable {
 			return false;
 		return true;
 	}
-    
-    
 }
