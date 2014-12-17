@@ -141,6 +141,14 @@ function FlexGridService() {
 						input += " />";
 					}
 					
+					if(row.cell.repartePrevisto == undefined){
+						row.cell.repartePrevisto = '';
+					}
+					
+					if(row.cell.qtdVendasFormatada == undefined){
+						row.cell.qtdVendasFormatada = '';
+					}
+					
 					row.cell[model.columnName] = input;
 				});
 			}

@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.InfoProdutosBonificacaoDTO;
@@ -30,91 +31,163 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 	@Override
 	public List<InformacoesProdutoDTO> buscarProdutos(FiltroInformacoesProdutoDTO filtro) {
 
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" SELECT ");
 		
-		hql.append(" produto.codigo AS codProduto, ");
-		hql.append(" produto.codigoICD AS codigoICD, ");
-		hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
-		hql.append(" produto.nome AS nomeProduto, ");
-		hql.append(" periodoLancamentoParcial.numeroPeriodo AS periodo, ");
-		hql.append(" prodEdicao.precoVenda AS preco, ");
-		hql.append(" lancamento.status AS status, ");
-		hql.append(" estudoG.qtdeReparte AS reparteDistribuido, ");
-		hql.append(" estudoG.abrangencia AS percentualAbrangencia, ");
-		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=prodEdicao.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
-		hql.append(" lancamento.dataLancamentoPrevista AS datalanc, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor AS dataLcto, ");
-		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
-		hql.append(" CASE ");
-		hql.append(" WHEN estudoG.dataAlteracao = null THEN estudoG.dataCadastro ");
-		hql.append(" ELSE estudoG.dataAlteracao  end AS dataAlteracao, ");
-		hql.append(" estudoG.id AS estudo, ");
-		hql.append(" estudoG.liberado AS estudoLiberado, ");
-		hql.append(" estudoG.qtdeReparte AS qtdeReparteEstudo, ");
-
-		hql.append(" coalesce(estudoG.reparteMinimo, 0) as reparteMinimo, ");
+		sql.append("  SELECT ");
+		sql.append("         pd.codigo as codProduto, ");
+		sql.append("         pd.codigo_icd as codigoICD, ");
+		sql.append("         pe.numero_edicao as numeroEdicao, ");
+		sql.append("         cast(sum(case ");
+		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ");
+		sql.append("             else -mecReparte.QTDE end) as unsigned int) AS qtdeReparteEstudo, ");
+		sql.append("         pd.NOME as nomeProduto, ");
+		sql.append("         plp.NUMERO_PERIODO as periodo, ");
+		sql.append("         pe.PRECO_VENDA as preco, ");
+		sql.append("         lanc.STATUS as status, ");
+		sql.append("         cast(sum(case ");
+		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ");
+		sql.append("             else -mecReparte.QTDE end) as unsigned int) AS reparteDistribuido, ");
+		sql.append("         eg.abrangencia as percentualAbrangencia, ");
+		sql.append("         tcp.DESCRICAO as tipoClassificacaoProdutoDescricao, ");
+		sql.append("         lanc.DATA_LCTO_PREVISTA as datalanc, ");
+		sql.append("         lanc.DATA_LCTO_DISTRIBUIDOR as dataLcto, ");
+		sql.append("         lanc.DATA_REC_PREVISTA as dataRcto, ");
+		sql.append("         case ");
+		sql.append("             when eg.DATA_ALTERACAO is null then eg.DATA_CADASTRO ");
+		sql.append("             else eg.DATA_ALTERACAO ");
+		sql.append("         end as dataAlteracao, ");
+		sql.append("         eg.ID as estudo, ");
+		sql.append("         eg.LIBERADO as estudoLiberado, ");
+		sql.append("         coalesce(eg.REPARTE_MINIMO,0) as reparteMinimo, ");
+		sql.append("         eg.TIPO_GERACAO_ESTUDO as algoritmo, ");
+		sql.append("         usu.NOME as nomeUsuario, ");
+		sql.append("         case ");
+		sql.append("             when lanc.STATUS IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO') ");
+		sql.append("                 then cast(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA'  ");
+		sql.append("                               then mecReparte.QTDE ");
+		sql.append("                 else -mecReparte.QTDE ");
+		sql.append("             end) - ");
+		sql.append("             (select sum(mecEncalhe.qtde) ");
+		sql.append("                 from ");
+		sql.append("                     lancamento lancto ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     chamada_encalhe_lancamento cel ");
+		sql.append("                         on cel.LANCAMENTO_ID = lancto.ID ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     chamada_encalhe ce ");
+		sql.append("                         on ce.id = cel.CHAMADA_ENCALHE_ID ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     chamada_encalhe_cota cec ");
+		sql.append("                         on cec.CHAMADA_ENCALHE_ID = ce.ID ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     conferencia_encalhe confEnc ");
+		sql.append("                         on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+		sql.append("                 LEFT JOIN ");
+		sql.append("                     movimento_estoque_cota mecEncalhe ");
+		sql.append("                         on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+		sql.append("                 WHERE ");
+		sql.append("                     lancto.id = lanc.id) as unsigned int) ");
+		sql.append("                 else null ");
+		sql.append("         end as venda ");
+		sql.append("     from ");
+		sql.append("         LANCAMENTO lanc ");
+		sql.append("     inner join ");
+		sql.append("         PRODUTO_EDICAO pe ");
+		sql.append("             on lanc.PRODUTO_EDICAO_ID=pe.ID ");
+		sql.append("     inner join ");
+		sql.append("         PRODUTO pd ");
+		sql.append("             on pe.PRODUTO_ID=pd.ID ");
+		sql.append("     left outer join ");
+		sql.append("         PERIODO_LANCAMENTO_PARCIAL plp ");
+		sql.append("             on lanc.PERIODO_LANCAMENTO_PARCIAL_ID=plp.ID ");
+		sql.append("     join ");
+		sql.append("         ESTUDO_GERADO eg ");
+		sql.append("           on eg.LANCAMENTO_ID = lanc.id ");
+		sql.append("     left join ");
+		sql.append("         USUARIO usu ");
+		sql.append("             on eg.USUARIO_ID=usu.ID ");
+		sql.append("     join ");
+		sql.append("         tipo_classificacao_produto tcp ");
+		sql.append("             On tcp.ID = pe.TIPO_CLASSIFICACAO_PRODUTO_ID ");
+		sql.append("     LEFT JOIN ");
+		sql.append("         movimento_estoque_cota mecReparte ");
+		sql.append("             on mecReparte.LANCAMENTO_ID = lanc.id ");
+		sql.append("     LEFT JOIN ");
+		sql.append("         tipo_movimento tipo ");
+		sql.append("             ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+		sql.append("     WHERE ");
+		sql.append("         tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
 		
-		hql.append(" estudoG.tipoGeracaoEstudo AS algoritmo, ");
-		hql.append(" usuarioEstudo.nome AS nomeUsuario, ");
+		addWhereClauseList(filtro, sql);
 		
-		hql.append(" (select sum(coalesce(cec.qtdePrevista, 0) - coalesce(coe.qtde, 0)) ");
-		hql.append(" from ChamadaEncalhe ce ");
-		hql.append(" join ce.lancamentos l ");
-		hql.append(" join ce.chamadaEncalheCotas cec ");
-		hql.append(" left outer join cec.conferenciasEncalhe coe ");
-		hql.append(" where ce.produtoEdicao = prodEdicao ");
-		hql.append(" group by ce.produtoEdicao) AS venda ");
-        
-		hql.append(" FROM Lancamento AS lancamento ");
+		sql.append(" group BY eg.id ");
 		
-		hql.append(" join lancamento.produtoEdicao AS prodEdicao ");
-		hql.append(" join prodEdicao.produto AS produto ");
-		hql.append(" left join lancamento.periodoLancamentoParcial AS periodoLancamentoParcial, ");
-		hql.append(" EstudoGerado as estudoG ");
-		hql.append(" left join estudoG.usuario as usuarioEstudo ");
-		hql.append(" WHERE ");
-		hql.append(" estudoG.lancamentoID = lancamento.id ");
+		sql.append(this.ordenarConsultaBuscarProdutos(filtro));
 		
-		List<String> whereClauseList = new ArrayList<>();
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
-		if(StringUtils.isNotEmpty(filtro.getCodProduto())){
-			whereClauseList.add(" produto.codigoICD = :COD_PRODUTO ");
-		}
-		
-		if(filtro.getNumeroEdicao()!=null){
-			whereClauseList.add(" prodEdicao.numeroEdicao = :NUMERO_EDICAO ");
-		}
-		
-		if(filtro.getNumeroEstudo()!=null){
-			whereClauseList.add(" estudoG.id = :numero_estudo ");
-		}
-		
-		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
-			whereClauseList.add(" prodEdicao.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
-		}
-		
-		if(!whereClauseList.isEmpty()){
-			hql.append(" AND ");
-		}
-		
-		hql.append(StringUtils.join(whereClauseList, " AND "));
-		
-		hql.append(" group BY estudoG.id ");
-		
-		hql.append(this.ordenarConsultaBuscarProdutos(filtro));
-		
-		Query query = super.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
 		
 		setParameterBuscarProduto(filtro, query);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
+		query.addScalar("codProduto", StandardBasicTypes.STRING);
+		query.addScalar("codigoICD", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("qtdeReparteEstudo", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("periodo", StandardBasicTypes.INTEGER);
+		query.addScalar("preco", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("status", StandardBasicTypes.STRING);
+		query.addScalar("reparteDistribuido", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("percentualAbrangencia", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("tipoClassificacaoProdutoDescricao", StandardBasicTypes.STRING);
+		query.addScalar("datalanc", StandardBasicTypes.DATE);
+		query.addScalar("dataLcto", StandardBasicTypes.DATE);
+		query.addScalar("dataRcto", StandardBasicTypes.DATE);
+		query.addScalar("dataAlteracao", StandardBasicTypes.DATE);
+		query.addScalar("estudo", StandardBasicTypes.LONG);
+		query.addScalar("estudoLiberado", StandardBasicTypes.BOOLEAN);
+		query.addScalar("reparteMinimo", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("algoritmo", StandardBasicTypes.STRING);
+		query.addScalar("nomeUsuario", StandardBasicTypes.STRING);
+		query.addScalar("venda", StandardBasicTypes.BIG_INTEGER);
 		
 		if (filtro != null){
 			configurarPaginacao(filtro, query);
 		}
-		return query.list();
+
+		List<InformacoesProdutoDTO> resultado = query.list();
+		
+		return resultado;
+		
+	}
+
+	private void addWhereClauseList(FiltroInformacoesProdutoDTO filtro, StringBuilder sql) {
+		
+		List<String> whereClauseList = new ArrayList<>();
+		
+		if(StringUtils.isNotEmpty(filtro.getCodProduto())){
+			whereClauseList.add(" pd.codigo_icd = :COD_PRODUTO ");
+		}
+		
+		if(filtro.getNumeroEdicao()!=null){
+			whereClauseList.add(" pe.numero_Edicao = :NUMERO_EDICAO ");
+		}
+		
+		if(filtro.getNumeroEstudo()!=null){
+			whereClauseList.add(" eg.id = :numero_estudo ");
+		}
+		
+		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
+			whereClauseList.add(" pe.tipo_classificacao_produto_id = :ID_CLASSIFICACAO ");
+		}
+		
+		if(!whereClauseList.isEmpty()){
+			sql.append(" AND ");
+		}
+		
+		sql.append(StringUtils.join(whereClauseList, " AND "));
 	}
 
 	
@@ -212,8 +285,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return hql.toString();
 	}
 	
-	private void setParameterBuscarProduto(FiltroInformacoesProdutoDTO filtro,
-			Query query) {
+	private void setParameterBuscarProduto(FiltroInformacoesProdutoDTO filtro, Query query) {
 		if(filtro.getCodProduto()!=null){
 			query.setParameter("COD_PRODUTO", filtro.getCodProduto());
 		}
