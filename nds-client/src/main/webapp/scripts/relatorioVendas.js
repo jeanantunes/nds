@@ -1,7 +1,7 @@
 var relatorioVendasController = $.extend(true, {
 	init : function() {
 		
-		$("#numeroCota", relatorioVendasController.workspace).numeric();
+		$("#rel-vendas-numeroCota", relatorioVendasController.workspace).numeric();
 		
 		$("#datepickerDe", relatorioVendasController.workspace).datepicker({
 			showOn : "button",
@@ -600,11 +600,11 @@ var relatorioVendasController = $.extend(true, {
 		var dataAte = $("#datepickerAte", relatorioVendasController.workspace).val();
 
 		var selectFornecedor = $("select#selectFornecedor", relatorioVendasController.workspace).val();
-		var codigoProduto    = $("#codigoProduto", relatorioVendasController.workspace).val();
-		var nomeProduto      = $("#nomeProduto", relatorioVendasController.workspace).val();
+		var codigoProduto    = $("#rel-vendas-codigoProduto", relatorioVendasController.workspace).val();
+		var nomeProduto      = $("#rel-vendas-nomeProduto", relatorioVendasController.workspace).val();
 		var selectEditor     = $("select#selectEditor", relatorioVendasController.workspace).val();
-		var numerocota       = $("#numeroCota", relatorioVendasController.workspace).val();
-		var nomeCota         = $("#nomeCota", relatorioVendasController.workspace).val();
+		var numerocota       = $("#rel-vendas-numeroCota", relatorioVendasController.workspace).val();
+		var nomeCota         = $("#rel-vendas-nomeCota", relatorioVendasController.workspace).val();
 		var selectMunicipio  = $("select#selectMunicipio", relatorioVendasController.workspace).val();
 
 		var params = [
@@ -646,12 +646,12 @@ var relatorioVendasController = $.extend(true, {
 		} else if ($('#filtro_produto', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
 			if ($('#codigoProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
-				$("#codigoProduto", relatorioVendasController.workspace).val('');
+				$("#rel-vendas-codigoProduto", relatorioVendasController.workspace).val('');
 				codigoProduto=$('#codigoProdutoListaProduto', relatorioVendasController.workspace).val();
 			}
 			
 			if ($('#nomeProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
-				$("#nomeProduto", relatorioVendasController.workspace).val('');
+				$("#rel-vendas-nomeProduto", relatorioVendasController.workspace).val('');
 				nomeProduto=$('#nomeProdutoListaProduto', relatorioVendasController.workspace).val();
 			}
 			

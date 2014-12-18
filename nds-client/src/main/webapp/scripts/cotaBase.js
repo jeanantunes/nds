@@ -975,9 +975,9 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val(result.areaInfluencia);
 		
-		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicialFormatado);
+		$("#cota-base-periodoDe", cotaBaseController.workspace).val(result.dataInicialFormatado);
 		
-		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinalFormatado);
+		$("#cota-base-periodoAte", cotaBaseController.workspace).val(result.dataFinalFormatado);
 		
 		if (successCallBack) {
 			
@@ -1019,9 +1019,9 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val("");
 		
-		$("#periodoDe", cotaBaseController.workspace).val("");
+		$("#cota-base-periodoDe", cotaBaseController.workspace).val("");
 		
-		$("#periodoAte", cotaBaseController.workspace).val("");
+		$("#cota-base-periodoAte", cotaBaseController.workspace).val("");
 		
 		
 	}

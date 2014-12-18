@@ -196,7 +196,7 @@
 	            <td width="103">PEB:</td>
 	            <td width="126">
 	<!-- PEB -->
-	<input id="peb" name="" type="text" style="width:80px;" readonly="readonly" disabled="disabled" /> dias</td>
+	<input id="parcial-peb" name="parcial-peb" type="text" style="width:80px;" readonly="readonly" disabled="disabled" /> dias</td>
 	          </tr>
 	         
 	        </table>

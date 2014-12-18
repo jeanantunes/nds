@@ -91,9 +91,9 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#codigo", recebimentoFisicoController.workspace).numeric();
 		$("#edicao", recebimentoFisicoController.workspace).numeric();
-		$("#precoCapa", recebimentoFisicoController.workspace).numeric();
+		$("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).numeric();
 		$("#peso", recebimentoFisicoController.workspace).numeric();
-		$("#pacotePadrao", recebimentoFisicoController.workspace).numeric();
+		$("#recebimento-fisico-pacotePadrao", recebimentoFisicoController.workspace).numeric();
 		$("#repartePrevisto", recebimentoFisicoController.workspace).numeric();
 
 		$("#produto", recebimentoFisicoController.workspace).autocomplete({source: ""});
@@ -348,10 +348,10 @@ var recebimentoFisicoController = $.extend(true, {
 		} 
 		
 		var peso				= $("#peso", recebimentoFisicoController.workspace).val();
-		var pacotePadrao		= $("#pacotePadrao", recebimentoFisicoController.workspace).val();
+		var pacotePadrao		= $("#recebimento-fisico-pacotePadrao", recebimentoFisicoController.workspace).val();
 		var codigo 				= $("#codigo", recebimentoFisicoController.workspace).val();
 		var produto 			= $("#produto", recebimentoFisicoController.workspace).val();
-		var precoCapa			= $("#precoCapa", recebimentoFisicoController.workspace).val();
+		var precoCapa			= $("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).val();
 		var edicao 				= $("#edicao", recebimentoFisicoController.workspace).val();
 		var dataLancamento 		= $("#datepickerLancto", recebimentoFisicoController.workspace).val();
 		var dataRecolhimento 	= $("#datepickerRecolhimento", recebimentoFisicoController.workspace).val();
@@ -406,10 +406,10 @@ var recebimentoFisicoController = $.extend(true, {
 		} 
 		
 		var peso				= $("#peso", recebimentoFisicoController.workspace).val();
-		var pacotePadrao		= $("#pacotePadrao", recebimentoFisicoController.workspace).val();
+		var pacotePadrao		= $("#recebimento-fisico-pacotePadrao", recebimentoFisicoController.workspace).val();
 		var codigo 				= $("#codigo", recebimentoFisicoController.workspace).val();
 		var produto 			= $("#produto", recebimentoFisicoController.workspace).val();
-		var precoCapa			= $("#precoCapa", recebimentoFisicoController.workspace).val();
+		var precoCapa			= $("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).val();
 		var edicao 				= $("#edicao", recebimentoFisicoController.workspace).val();
 		var dataLancamento 		= $("#datepickerLancto", recebimentoFisicoController.workspace).val();
 		var dataRecolhimento 	= $("#datepickerRecolhimento", recebimentoFisicoController.workspace).val();
@@ -479,7 +479,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#codigo", recebimentoFisicoController.workspace).val("");
 		$("#produto", recebimentoFisicoController.workspace).val("");
-		$("#precoCapa", recebimentoFisicoController.workspace).val("");
+		$("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).val("");
 		$("#edicao", recebimentoFisicoController.workspace).val("");
 		$("#datepickerLancto", recebimentoFisicoController.workspace).val("");
 		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val("");
@@ -497,14 +497,14 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#codigo", recebimentoFisicoController.workspace).val("");
 		$("#produto", recebimentoFisicoController.workspace).val("");
-		$("#precoCapa", recebimentoFisicoController.workspace).val("");
+		$("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).val("");
 		$("#edicao", recebimentoFisicoController.workspace).val("");
 		$("#datepickerLancto", recebimentoFisicoController.workspace).val("");
 		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val("");
 		$("#repartePrevisto", recebimentoFisicoController.workspace).val("");
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");
 		$("#peso", recebimentoFisicoController.workspace).val("");
-		$("#pacotePadrao", recebimentoFisicoController.workspace).val("");
+		$("#recebimento-fisico-pacotePadrao", recebimentoFisicoController.workspace).val("");
 	
 	},
 	
@@ -1094,11 +1094,11 @@ var recebimentoFisicoController = $.extend(true, {
 
 		function(resultado) {
 
-			$("#pacotePadrao", recebimentoFisicoController.workspace).val(resultado.pacotePadrao);
+			$("#recebimento-fisico-pacotePadrao", recebimentoFisicoController.workspace).val(resultado.pacotePadrao);
 			$("#peso", recebimentoFisicoController.workspace).val(resultado.peso);
 			$("#codigo", recebimentoFisicoController.workspace).val(resultado.codigo);
 			$("#produto", recebimentoFisicoController.workspace).val(resultado.nomeProduto);
-			$("#precoCapa", recebimentoFisicoController.workspace).val(
+			$("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).val(
 				$.formatNumber(resultado.precoCapa, {format:"#,##0.00", locale:"br"})
 			);
 			$("#edicao", recebimentoFisicoController.workspace).val(resultado.edicao);
@@ -1207,7 +1207,7 @@ var recebimentoFisicoController = $.extend(true, {
 	alterarValorItem : function(idLinha) {
 		
 		var precoDesconto = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).text());
-		var preco = priceToFloat($("#precoCapa"+idLinha, recebimentoFisicoController.workspace).text());
+		var preco = priceToFloat($("#recebimento-fisico-precoCapa"+idLinha, recebimentoFisicoController.workspace).text());
 		
 		var qtdNota			= $("#qtdNotaItem"+idLinha).val();
 		var qtdPacote 		= $("#qtdPacoteItem"+idLinha).val();
@@ -1736,7 +1736,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoDesconto, {format:"#,##0.0000", locale:"br"})
 				);
-				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(
+				$("#recebimento-fisico-precoCapa"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
 				);
 				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).text(result.pacotePadrao);
@@ -2017,7 +2017,7 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				$("#valorItem" + index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(
-						(qtdItens) * parseFloat(priceToFloat($("#precoCapa" + index).text())),
+						(qtdItens) * parseFloat(priceToFloat($("#recebimento-fisico-precoCapa" + index).text())),
 						{format:"#,##0.00", locale:"br"}
 					)	
 				);
@@ -2560,11 +2560,11 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if(typeof result != "undefined") {
 				
-				$("#precoCapa", recebimentoFisicoController.workspace).val(
+				$("#recebimento-fisico-precoCapa", recebimentoFisicoController.workspace).val(
 					$.formatNumber(result.precoVenda, {format:"#,##0.00", locale:"br"})
 				);			
 				$("#peso", recebimentoFisicoController.workspace).val(result.peso);			
-				$("#pacotePadrao", recebimentoFisicoController.workspace).val(result.pacotePadrao);			
+				$("#recebimento-fisico-pacotePadrao", recebimentoFisicoController.workspace).val(result.pacotePadrao);			
 				
 			}
 			
