@@ -1633,7 +1633,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#fornecedor", ConferenciaEncalhe.workspace).text(result.nomeFornecedor);
 				$("#brinde", ConferenciaEncalhe.workspace).text(result.possuiBrinde == "true" ? "Sim" : "Não");
 				$("#editor", ConferenciaEncalhe.workspace).text(result.nomeEditor);
-				$("#pacotePadrao", ConferenciaEncalhe.workspace).text(result.pacotePadrao);
+				$("#conferencia-pacotePadrao", ConferenciaEncalhe.workspace).text(result.pacotePadrao);
 				
 				$("#precoDesconto", ConferenciaEncalhe.workspace).text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(4));
 				
@@ -1782,7 +1782,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			$("#nomeProduto", ConferenciaEncalhe.workspace).text("");
 			$("#edicaoProduto", ConferenciaEncalhe.workspace).text("");
-			$("#precoCapa", ConferenciaEncalhe.workspace).text("");
+			$("#conferencia-precoCapa", ConferenciaEncalhe.workspace).text("");
 			$("#desconto", ConferenciaEncalhe.workspace).text("");
 			
 			$("#valorTotal", ConferenciaEncalhe.workspace).text("");
@@ -1809,7 +1809,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#nomeProduto", ConferenciaEncalhe.workspace).text(result.nomeProduto);
 		$("#edicaoProduto", ConferenciaEncalhe.workspace).text(result.numeroEdicao);
-		$("#precoCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.precoCapa).toFixed(2));
+		$("#conferencia-precoCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.precoCapa).toFixed(2));
 		$("#desconto", ConferenciaEncalhe.workspace).text(parseFloat(result.desconto).toFixed(4));
 		
 		$("#valorTotal", ConferenciaEncalhe.workspace).text(((parseFloat(result.precoCapa) - parseFloat(result.desconto)) * parseFloat(result.qtdExemplar)).toFixed(2));
@@ -1857,7 +1857,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#nomeProduto", ConferenciaEncalhe.workspace).text("");
 		$("#edicaoProduto", ConferenciaEncalhe.workspace).text("");
-		$("#precoCapa", ConferenciaEncalhe.workspace).text("");
+		$("#conferencia-precoCapa", ConferenciaEncalhe.workspace).text("");
 		$("#desconto", ConferenciaEncalhe.workspace).text("");
 		$("#valorTotal", ConferenciaEncalhe.workspace).text("");
 
