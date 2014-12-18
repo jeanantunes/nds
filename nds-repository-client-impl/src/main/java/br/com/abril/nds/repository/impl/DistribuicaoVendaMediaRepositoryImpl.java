@@ -64,11 +64,14 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     tcp.id idClassificacao, ");
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");
     
-        sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte, ");
+//        sql.append("     cast(sum( if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0) ) as unsigned int) AS reparte, ");
+        
+        sql.append(" cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) as unsigned int) AS reparte, ");
         
         sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
         
-        sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - ( ");
+//        sql.append("     cast(sum(  if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0) ) - ( ");
+        sql.append("     cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) - ( ");
         sql.append("        select sum(mecEncalhe.qtde) ");
         sql.append("        from lancamento lanc ");
         sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
@@ -91,6 +94,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
         sql.append(" where l.status in (:statusLancamento) ");
 //        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento "); PSAN-139
+        
+        sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
@@ -141,8 +146,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         
         query.setParameterList(
                 "statusLancFechadoRecolhido", 
-                Arrays.asList(
-                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+                Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
 //        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
 		

@@ -62,10 +62,8 @@ public class EdicoesProdutosDTO implements Serializable {
 		return venda;
 	}
 	public void setVenda(BigDecimal venda) {
-	    if (venda == null) {
-		this.venda = null;
-	    } else {
-		this.venda = venda.toBigInteger();
+	    if (venda != null) {
+	    	this.venda = venda.toBigInteger();
 	    }
 	}
 	public Date getDtLancamento() {
@@ -117,10 +115,8 @@ public class EdicoesProdutosDTO implements Serializable {
 		return reparte;
 	}
 	public void setReparte(BigDecimal reparte) {
-	    if (reparte == null) {
-		this.reparte = null;
-	    } else {
-		this.reparte = reparte.toBigInteger();
+	    if (reparte != null) {
+	    	this.reparte = reparte.toBigInteger();
 	    }
 	}
 	public String getNomeProduto() {

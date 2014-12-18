@@ -1,5 +1,10 @@
 package br.com.abril.nds.process.definicaobases;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,9 +13,9 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 
@@ -44,8 +49,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     	
         if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
         	
-        	final boolean parcialComMaisDeUmPeriodo = 
-        			(estudo.getProdutoEdicaoEstudo().getPeriodo() != null && estudo.getProdutoEdicaoEstudo().getPeriodo() > 1);
+        	final boolean parcialComMaisDeUmPeriodo = (estudo.getProdutoEdicaoEstudo().getPeriodo() != null && estudo.getProdutoEdicaoEstudo().getPeriodo() > 1);
         	
         	if(!parcialComMaisDeUmPeriodo && estudo.isPracaVeraneio() && !estudo.getProdutoEdicaoEstudo().isColecao()) { 
         		
@@ -56,12 +60,13 @@ public class DefinicaoBases extends ProcessoAbstrato {
         		LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
         		
         		if (!edicoesBase.isEmpty()) {
-        			edicoesBase = filtrarClassificacao(edicoesBase, estudo);
+//        			edicoesBase = filtrarClassificacao(edicoesBase, estudo);
         			edicoesBase = estudoAlgoritmoService.limitarEdicoesApenasSeis(edicoesBase, estudo);
         			excluiEdicoesComMaisDeDoisAnos(edicoesBase);
         			excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
+        			atribuirPesoEdicaoFechadaMaisRecente(edicoesBase);
         			
-        			if(parcialComMaisDeUmPeriodo){
+        			if(parcialComMaisDeUmPeriodo) {
         				edicoesBase = filtarEdicoesParciais(edicoesBase, estudo);
         			}
         			
@@ -71,7 +76,43 @@ public class DefinicaoBases extends ProcessoAbstrato {
         	
         }
     }
-    
+
+	private void atribuirPesoEdicaoFechadaMaisRecente(LinkedList<ProdutoEdicaoEstudo> edicoesBase) {
+		List<ProdutoEdicaoEstudo> listaEdicoesFechadas = new ArrayList<>();
+		for(ProdutoEdicaoEstudo pe : edicoesBase) {
+			if(!pe.isEdicaoAberta() && pe.getStatus() != null 
+					&& Arrays.asList(
+							StatusLancamento.EM_RECOLHIMENTO.name()
+							, StatusLancamento.RECOLHIDO.name()
+							, StatusLancamento.FECHADO.name()).contains(pe.getStatus())) {
+				
+				listaEdicoesFechadas.add(pe);
+			}
+		}
+		
+		if(listaEdicoesFechadas.size() > 2) {
+			Collections.sort(listaEdicoesFechadas, new Comparator<ProdutoEdicaoEstudo>() {
+
+				@Override
+				public int compare(ProdutoEdicaoEstudo o1, ProdutoEdicaoEstudo o2) {
+					if(o1 != null && o2 != null) {
+						if(o1.getNumeroEdicao() > o2.getNumeroEdicao()) {
+							return -1;
+						} else {
+							return 1;
+						}
+					}
+					return 0;
+				}
+			});
+			
+			int ndx = edicoesBase.indexOf(listaEdicoesFechadas.get(0));
+			edicoesBase.get(ndx).setIndicePeso(BigDecimal.valueOf(2)); 
+			edicoesBase.get(ndx).setPeso(2L);
+		}
+	}
+	
+    /*
     private LinkedList<ProdutoEdicaoEstudo> filtrarClassificacao(final LinkedList<ProdutoEdicaoEstudo> edicoesBase, final EstudoTransient estudo) {
         final LinkedList<ProdutoEdicaoEstudo> listaFiltrada = new LinkedList<>();
         final TipoClassificacaoProduto tipoClassificacaoProdutoEstudo = estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto();
@@ -82,6 +123,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
         }
         return listaFiltrada;
     }
+    */
     
     private LinkedList<ProdutoEdicaoEstudo> filtarEdicoesParciais(LinkedList<ProdutoEdicaoEstudo> edicoesBase,  EstudoTransient estudo){
     	
