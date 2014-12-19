@@ -38,9 +38,9 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("         pd.codigo as codProduto, ");
 		sql.append("         pd.codigo_icd as codigoICD, ");
 		sql.append("         pe.numero_edicao as numeroEdicao, ");
-		sql.append("         cast(sum(case ");
+		sql.append("         coalesce(cast(sum(case ");
 		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ");
-		sql.append("             else -mecReparte.QTDE end) as unsigned int) AS qtdeReparteEstudo, ");
+		sql.append("             else -mecReparte.QTDE end) as unsigned int), 0) AS qtdeReparteEstudo, ");
 		sql.append("         pd.NOME as nomeProduto, ");
 		sql.append("         plp.NUMERO_PERIODO as periodo, ");
 		sql.append("         pe.PRECO_VENDA as preco, ");
@@ -116,8 +116,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("     LEFT JOIN ");
 		sql.append("         tipo_movimento tipo ");
 		sql.append("             ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
-		sql.append("     WHERE ");
-		sql.append("         tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+		sql.append("     WHERE (tipo.GRUPO_MOVIMENTO_ESTOQUE is null or ");
+		sql.append("         tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE')) ");
 		
 		addWhereClauseList(filtro, sql);
 		
