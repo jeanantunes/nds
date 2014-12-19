@@ -142,118 +142,123 @@ var dividirEstudo = $.extend(true, {
 
     confirmar : function() {
 
-	var numeroEstudoOriginal = $('#numeroEstudoOriginal');
-	var codigoProduto = $('#codigoProduto');
-	var nomeProduto = $('#nomeProduto');
-	var edicaoProduto = $('#edicaoProduto');
-	var dataDistribuicao = $('#dataDistribuicao');
-	var percentualDivisaoPrimeiroEstudo = $('#percentualDivisaoPrimeiroEstudo');
-	var percentualDivisaoSegundoEstudo = $('#percentualDivisaoSegundoEstudo');
-	var quantidadeReparte = $('#quantidadeReparte');
-	var numeroPrimeiroEstudo = $('#numeroPrimeiroEstudo');
-	var repartePrimeiroEstudo = $('#repartePrimeiroEstudo');
-	var numeroSegundoEstudo = $('#numeroSegundoEstudo');
-	var reparteSegundoEstudo = $('#reparteSegundoEstudo');
-	var dataLancamentoPrimeiroEstudo = $('#dataLancamentoPrimeiroEstudo');
-	var dataLancamentoSegundoEstudo = $('#dataLancamentoSegundoEstudo');
+		var numeroEstudoOriginal = $('#numeroEstudoOriginal');
+		var codigoProduto = $('#codigoProduto');
+		var nomeProduto = $('#nomeProduto');
+		var edicaoProduto = $('#edicaoProduto');
+		var dataDistribuicao = $('#dataDistribuicao');
+		var percentualDivisaoPrimeiroEstudo = $('#percentualDivisaoPrimeiroEstudo');
+		var percentualDivisaoSegundoEstudo = $('#percentualDivisaoSegundoEstudo');
+		var quantidadeReparte = $('#quantidadeReparte');
+		var numeroPrimeiroEstudo = $('#numeroPrimeiroEstudo');
+		var repartePrimeiroEstudo = $('#repartePrimeiroEstudo');
+		var numeroSegundoEstudo = $('#numeroSegundoEstudo');
+		var reparteSegundoEstudo = $('#reparteSegundoEstudo');
+		var dataLancamentoPrimeiroEstudo = $('#dataLancamentoPrimeiroEstudo');
+		var dataLancamentoSegundoEstudo = $('#dataLancamentoSegundoEstudo');
 
-	var dados = [];
-
-	dados.push({
-	    name : "divisaoEstudo.numeroEstudoOriginal",
-	    value : numeroEstudoOriginal.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.codigoProduto",
-	    value : codigoProduto.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.nomeProduto",
-	    value : nomeProduto.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.edicaoProduto",
-	    value : edicaoProduto.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.dataDistribuicao",
-	    value : dataDistribuicao.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.percentualDivisaoPrimeiroEstudo",
-	    value : percentualDivisaoPrimeiroEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.percentualDivisaoSegundoEstudo",
-	    value : percentualDivisaoSegundoEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.quantidadeReparte",
-	    value : quantidadeReparte.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.numeroPrimeiroEstudo",
-	    value : numeroPrimeiroEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.repartePrimeiroEstudo",
-	    value : repartePrimeiroEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.dataLancamentoPrimeiroEstudo",
-	    value : dataLancamentoPrimeiroEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.numeroSegundoEstudo",
-	    value : numeroSegundoEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.reparteSegundoEstudo",
-	    value : reparteSegundoEstudo.val()
-	});
-
-	dados.push({
-	    name : "divisaoEstudo.dataLancamentoSegundoEstudo",
-	    value : dataLancamentoSegundoEstudo.val()
-	});
-
-	$.postJSON('dividirEstudo/confirmar', dados, function(response) {
-/*//	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-//	    var pathTela = "/nds-client-f2";
-	    if(typeof(matrizDistribuicao)=="object"){
-//	    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
-//	    	console.log("pesquisando retorno da divisão")
-//	    	matrizDistribuicao.pesquisar();
-*/
-		
-		if(response){
-			exibirMensagem("SUCCESS",[response.msg]);
-			$('#repartePrimeiroEstudo').val(response.reparte[0]);
-			$('#reparteSegundoEstudo').val(response.reparte[1]);
-			
-			$('#numeroPrimeiroEstudo').val(response.estudo[0]);
-			$('#numeroSegundoEstudo').val(response.estudo[1]);
-			
-			if(typeof(matrizDistribuicao)=="object"){
-//		    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
-		    	matrizDistribuicao.pesquisar();
-			}
+		if(dataLancamentoSegundoEstudo.val() == "") {
+			exibirMensagem("WARNING",["Favor digitar uma data para o estudo 2."]);
+			return;
 		}
+	
+		var dados = [];
+
+		dados.push({
+		    name : "divisaoEstudo.numeroEstudoOriginal",
+		    value : numeroEstudoOriginal.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.codigoProduto",
+		    value : codigoProduto.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.nomeProduto",
+		    value : nomeProduto.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.edicaoProduto",
+		    value : edicaoProduto.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.dataDistribuicao",
+		    value : dataDistribuicao.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.percentualDivisaoPrimeiroEstudo",
+		    value : percentualDivisaoPrimeiroEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.percentualDivisaoSegundoEstudo",
+		    value : percentualDivisaoSegundoEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.quantidadeReparte",
+		    value : quantidadeReparte.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.numeroPrimeiroEstudo",
+		    value : numeroPrimeiroEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.repartePrimeiroEstudo",
+		    value : repartePrimeiroEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.dataLancamentoPrimeiroEstudo",
+		    value : dataLancamentoPrimeiroEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.numeroSegundoEstudo",
+		    value : numeroSegundoEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.reparteSegundoEstudo",
+		    value : reparteSegundoEstudo.val()
+		});
+	
+		dados.push({
+		    name : "divisaoEstudo.dataLancamentoSegundoEstudo",
+		    value : dataLancamentoSegundoEstudo.val()
+		});
+
+		$.postJSON('dividirEstudo/confirmar', dados, function(response) {
+	/*//	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+	//	    var pathTela = "/nds-client-f2";
+		    if(typeof(matrizDistribuicao)=="object"){
+	//	    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
+	//	    	console.log("pesquisando retorno da divisão")
+	//	    	matrizDistribuicao.pesquisar();
+	*/
+			
+			if(response){
+				exibirMensagem("SUCCESS",[response.msg]);
+				$('#repartePrimeiroEstudo').val(response.reparte[0]);
+				$('#reparteSegundoEstudo').val(response.reparte[1]);
+				
+				$('#numeroPrimeiroEstudo').val(response.estudo[0]);
+				$('#numeroSegundoEstudo').val(response.estudo[1]);
+				
+				if(typeof(matrizDistribuicao)=="object"){
+	//		    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
+			    	matrizDistribuicao.pesquisar();
+				}
+			}
 	    
-	}, function() {
-	});
+		}, function() {
+		});
     },
 
     acaoVoltar:function(tabTitle){
@@ -389,5 +394,4 @@ var dividirEstudo = $.extend(true, {
     	
     }
 }, BaseController);
-
 //@ sourceURL=dividirEstudo.js
