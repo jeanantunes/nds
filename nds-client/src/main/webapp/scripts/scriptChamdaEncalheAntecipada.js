@@ -132,8 +132,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		params:function(){
 			
 			var formData = [ 
-				             {name:"codigoProduto",value:$("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
-				             {name:"numeroEdicao",value:$("#edicao",chamdaEncalheAnteipadaController.workspace).val()},
+				             {name:"codigoProduto",value:$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
+				             {name:"numeroEdicao",value:$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"box",value:$("#box",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"fornecedor",value:$("#fornecedor",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"rota",value:$("#rota",chamdaEncalheAnteipadaController.workspace).val()},
@@ -194,11 +194,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		setHiddenProduto: function (){
-			 $("#codProdutoHidden",chamdaEncalheAnteipadaController.workspace).val($("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val());
+			 $("#codProdutoHidden",chamdaEncalheAnteipadaController.workspace).val($("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val());
 		},
 		
 		setHiddenNumeroEdicao: function (){
-		   	$("#numeroEdicaoHidden",chamdaEncalheAnteipadaController.workspace).val($("#edicao",chamdaEncalheAnteipadaController.workspace).val());
+		   	$("#numeroEdicaoHidden",chamdaEncalheAnteipadaController.workspace).val($("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val());
 		},
 		
 		setHiddenFornecedor: function (){
@@ -222,7 +222,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		getCodigoProdutoPesquisa: function (){
-			return  {"codigoProduto": $("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val()};
+			return  {"codigoProduto": $("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()};
 		},
 			
 		pesquisar: function(){
@@ -615,8 +615,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		validarEdicaoSuccessCallBack : function(){
 			
-			 var data = [{name:"codigoProduto",value:$("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
-             			 {name:"numeroEdicao",value:$("#edicao",chamdaEncalheAnteipadaController.workspace).val()},
+			 var data = [{name:"codigoProduto",value:$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
+             			 {name:"numeroEdicao",value:$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val()},
 						];
 			
 			 $.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarDataProgramada",
@@ -1321,11 +1321,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			$('input[id^="data"]',chamdaEncalheAnteipadaController.workspace).mask("99/99/9999");
 			
-			$("#edicao",chamdaEncalheAnteipadaController.workspace).numeric();
+			$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).numeric();
 
-			$("#produto",chamdaEncalheAnteipadaController.workspace).autocomplete({source: ""});
+			$("#chamada-encalhe-ant-produto",chamdaEncalheAnteipadaController.workspace).autocomplete({source: ""});
 			
-			$("#codigoProduto",chamdaEncalheAnteipadaController.workspace).focus();
+			$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).focus();
 			
 			$("#ceAntecipadaGrid",chamdaEncalheAnteipadaController.workspace).flexigrid({
 				preProcess:chamdaEncalheAnteipadaController.executarPreProcessamentoCota,

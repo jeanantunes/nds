@@ -93,9 +93,9 @@
 			    
 			    <td colspan="3">
 			    	
-			    	<input type="text" name="codigoProduto" id="codigoProduto" class="campoDePesquisa"
+			    	<input type="text" name="chamada-encalhe-ant-codigoProduto" id="chamada-encalhe-ant-codigoProduto" class="campoDePesquisa"
 							   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-							   onchange="pesquisaProdutoChamadaAntecipada.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#edicao', false,
+							   onchange="pesquisaProdutoChamadaAntecipada.pesquisarPorCodigoProduto('#chamada-encalhe-ant-codigoProduto', '#chamada-encalhe-ant-produto', '#chamada-encalhe-ant-edicao', false,
 									   									   chamdaEncalheAnteipadaController.pesquisarProdutosSuccessCallBack,
 									   									   chamdaEncalheAnteipadaController.pesquisarProdutosErrorCallBack);" />
 			    	
@@ -103,9 +103,9 @@
 			    
 			    <td width="54">Produto:</td>
 			    <td width="264">
-			    	<input type="text" name="produto" id="produto" style="width: 213px;" maxlength="255" class="campoDePesquisa"
-						       onkeyup="pesquisaProdutoChamadaAntecipada.autoCompletarPorNomeProduto('#produto', false);"
-						       onblur="pesquisaProdutoChamadaAntecipada.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false,
+			    	<input type="text" name="chamada-encalhe-ant-produto" id="chamada-encalhe-ant-produto" style="width: 213px;" maxlength="255" class="campoDePesquisa"
+						       onkeyup="pesquisaProdutoChamadaAntecipada.autoCompletarPorNomeProduto('#chamada-encalhe-ant-produto', false);"
+						       onblur="pesquisaProdutoChamadaAntecipada.pesquisarPorNomeProduto('#chamada-encalhe-ant-codigoProduto', '#chamada-encalhe-ant-produto', '#chamada-encalhe-ant-edicao', false,
 						    	   chamdaEncalheAnteipadaController.pesquisarProdutosSuccessCallBack,
 						    	   chamdaEncalheAnteipadaController.pesquisarProdutosErrorCallBack);"/>
 			    </td>
@@ -113,8 +113,8 @@
 			    <td width="42">Edição:</td>
 			    <td width="165">
 			    	
-			    	<input type="text" style="width:70px;" name="edicao" id="edicao" maxlength="20" disabled="disabled" class="campoDePesquisa"
-							   onchange="pesquisaProdutoChamadaAntecipada.validarNumEdicao('#codigoProduto', '#edicao', false,
+			    	<input type="text" style="width:70px;" name="chamada-encalhe-ant-edicao" id="chamada-encalhe-ant-edicao" maxlength="20" disabled="disabled" class="campoDePesquisa"
+							   onchange="pesquisaProdutoChamadaAntecipada.validarNumEdicao('#chamada-encalhe-ant-codigoProduto', '#chamada-encalhe-ant-edicao', false,
 							   										chamdaEncalheAnteipadaController.validarEdicaoSuccessCallBack,
 						    	   									chamdaEncalheAnteipadaController.validarEdicaoErrorCallBack);"/>
 			    	
