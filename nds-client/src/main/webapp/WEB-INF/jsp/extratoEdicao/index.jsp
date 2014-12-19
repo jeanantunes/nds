@@ -101,7 +101,7 @@ $(function(){
 				</tr>
 				<tr>
 					<td>Preço da Capa:</td>
-					<td><input type="text" name="precoCapa" id="precoCapa"
+					<td><input type="text" name="extrato-edicao-precoCapa" id="extrato-edicao-precoCapa"
 						style="width: 70px; float: left; margin-right: 5px;"
 						disabled="disabled" />
 					</td>

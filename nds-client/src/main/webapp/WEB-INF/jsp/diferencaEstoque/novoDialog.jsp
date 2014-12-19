@@ -204,7 +204,7 @@
 						<input type="text" id="edicaoProdutoInput" onchange="lancamentoNovoController.buscarPrecoProdutoEdicao();" style="width:80px;" maxlength="255" />
 					</td>
 					<td align="right" id="precoCapaProduto"></td>
-					<td align="center" id="pacotePadrao"></td>
+					<td align="center" id="conferencia-pacotePadrao"></td>
 					<td align="center" id="reparteProduto"></td>
 					<td align="center">
 						<input id="diferencaProdutoInput" style="width: 60px; text-align: center;" maxlength="10" />

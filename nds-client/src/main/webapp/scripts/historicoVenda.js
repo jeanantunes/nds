@@ -44,12 +44,12 @@ var historicoVendaController = $.extend(true, {
 			});
 		});
 
-		$('#numeroCota', historicoVendaController.workspace).change(function (){
-			autoComp.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumero", '#numeroCota', '#nomePessoa', 'numeroCota', 'nome', 'numero');
+		$('#hist-venda-numeroCota', historicoVendaController.workspace).change(function (){
+			autoComp.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumero", '#hist-venda-numeroCota', '#hist-venda-nomePessoa', 'numeroCota', 'nome', 'numero');
 		});
 		
-		$('#nomePessoa', historicoVendaController.workspace).keyup(function (){
-			autoComp.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#numeroCota', '#nomePessoa', "nomeCota", 2);
+		$('#hist-venda-nomePessoa', historicoVendaController.workspace).keyup(function (){
+			autoComp.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#hist-venda-numeroCota', '#hist-venda-nomePessoa', "nomeCota", 2);
 		});
 		
 		$('#filtroCodigoProduto', historicoVendaController.workspace).change(function (){
@@ -693,7 +693,7 @@ var historicoVendaController = $.extend(true, {
 		
 		historicoVendaController.limparInputsFiltro(
 				false, false, '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', 
-				'#componente', '#elemento', '#numeroCota', '#nomePessoa');
+				'#componente', '#elemento', '#hist-venda-numeroCota', '#hist-venda-nomePessoa');
 	},
 	    
 	filtroVenda : function(){
@@ -702,7 +702,7 @@ var historicoVendaController = $.extend(true, {
 		
 		historicoVendaController.limparInputsFiltro(
 				'#qtdReparteInicial', '#qtdReparteFinal', false, false, '#percentualVenda', 
-				'#componente', '#elemento', '#numeroCota', '#nomePessoa');
+				'#componente', '#elemento', '#hist-venda-numeroCota', '#hist-venda-nomePessoa');
 	},
 
 	filtroComponentes : function(){
@@ -710,7 +710,7 @@ var historicoVendaController = $.extend(true, {
 		$('.filtroComponentes', historicoVendaController.workspace).show();
 		
 		this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', 
-				'#qtdVendaFinal', '#percentualVenda', false, false, '#numeroCota', '#nomePessoa');
+				'#qtdVendaFinal', '#percentualVenda', false, false, '#hist-venda-numeroCota', '#hist-venda-nomePessoa');
 	},
 	
 	filtroCotas : function(){
@@ -728,7 +728,7 @@ var historicoVendaController = $.extend(true, {
 		
 		historicoVendaController.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', 
 				'#qtdVendaInicial', '#qtdVendaFinal', false, '#componente', 
-				'#elemento', '#numeroCota', '#nomePessoa');
+				'#elemento', '#hist-venda-numeroCota', '#hist-venda-nomePessoa');
 	},
 	
 	limparInputsFiltro : function(input1, input2, input3, input4, input5, input6, input7, input8, input9){

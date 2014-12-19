@@ -4,8 +4,8 @@ var regiaoController = $.extend(true, {
 	tableResultNMaiores : "", 
 	init : function() {
 		
-		$('#numeroCota').change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+		$('#regiao-numeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#regiao-numeroCota', '#regiao-nomeCota');
 		});
 	
 		$(".faixaGrid", regiaoController.workspace).flexigrid({
@@ -1433,8 +1433,8 @@ var regiaoController = $.extend(true, {
 
 	validarDadosParaRanking : function() {
 		
-		$('#numeroCota').val("");
-		$('#nomeCota').val("");
+		$('#regiao-numeroCota').val("");
+		$('#regiao-nomeCota').val("");
 		
 		var isValid = true;
 		var codValidado = new Array();
