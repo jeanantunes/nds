@@ -44,53 +44,52 @@
 				<legend>Formas de Pagamento</legend>
 
 				<table width="823" border="0" cellspacing="2" cellpadding="2">
-    
-                        <tr>
-                            <td width="133">Tipo de Pagamento:</td>
-                            <td><select name="dTipoCobranca" id="dTipoCobranca"
-                                style="width: 200px;"
+                	<tr>
+                    	<td width="133">Tipo de Pagamento:</td>
+                        <td>
+                        	<select name="dTipoCobranca" id="dTipoCobranca" style="width: 200px;"
                                 onchange="parametroCobrancaController.limparCamposValores();parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
-                                    <option value="">Selecione</option>
-                                    <c:forEach varStatus="counter" var="tipoCobranca"
-                                        items="${listaTiposCobranca}">
-                                        <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
-                                    </c:forEach>
-                            </select></td>
+                               <option value="">Selecione</option>
+                               <c:forEach varStatus="counter" var="tipoCobranca"
+                                   items="${listaTiposCobranca}">
+                                   <option value="${tipoCobranca.key}">${tipoCobranca.value}</option>
+                               </c:forEach>
+                            </select>
+                        </td>
     
-                            <td width="185" style="text-align: right;">Acumula D&iacute;vida:</td>
-                            <td width="270"><select name="acumulaDivida"
-                                id="acumulaDivida" style="width: 80px;" onchange="parametroCobrancaController.isAcumulaDivida = this.value">
+                        <td width="185" style="text-align: right;">Acumula D&iacute;vida:</td>
+                        <td width="270">
+                        	<select name="acumulaDivida" id="acumulaDivida" style="width: 80px;" onchange="parametroCobrancaController.isAcumulaDivida = this.value">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
-                            </select></td>
-                        </tr>
+                            </select>
+                        </td>
+                    </tr>
     
-                        <tr>
-                            <td width="133"><label class="tdComboBanco" for="dBanco">Banco:</label></td>
+                    <tr>
+                    	<td width="133"><label class="tdComboBanco" for="dBanco">Banco:</label></td>
+                        <td>
+                        	<select class="tdComboBanco" name="dBanco" id="dBanco" style="width: 200px;" onchange="parametroCobrancaController.obterDadosBancarios(this.value);">
+                            	<option value="">Selecione</option>
+                                <c:forEach varStatus="counter" var="banco"
+                                    items="${listaBancos}">
+                                    <option value="${banco.key}">${banco.value}</option>
+                                </c:forEach>
+                            </select>
+                        </td>
+                    </tr>
     
-                            <td><select class="tdComboBanco" name="dBanco" id="dBanco"
-                                style="width: 200px;"
-                                onchange="parametroCobrancaController.obterDadosBancarios(this.value);">
-                                    <option value="">Selecione</option>
-                                    <c:forEach varStatus="counter" var="banco"
-                                        items="${listaBancos}">
-                                        <option value="${banco.key}">${banco.value}</option>
-                                    </c:forEach>
-                            </select></td>
-                      
-                        </tr>
-    
-                        <tr>
-                        
-                            <td style="width: 228px; ">Vencimentos somente em dia &uacute;til:</td>
-                            <td><select name="vencimentoDiaUtil" id="vencimentoDiaUtil"
-                                style="width: 80px;">
-                                    <option value="S">Sim</option>
-                                    <option value="N">N&atilde;o</option>
-                            </select></td> 
-                            
-                        </tr>
-                        
+                    <tr>
+                    
+                        <td style="width: 228px; ">Vencimentos somente em dia &uacute;til:</td>
+                        <td>
+                        	<select name="vencimentoDiaUtil" id="vencimentoDiaUtil" style="width: 80px;">
+                                <option value="S">Sim</option>
+                                <option value="N">N&atilde;o</option>
+                        	</select>
+                      	</td> 
+                    </tr>
+                    
                         <tr>
                             <td><label class="tdMulta" for="taxaMulta">Multa %:</label></td>
     
@@ -351,7 +350,7 @@
 		  		</tr>
 		  		<tr>
 		  			<td style="width: 10%;">
-		  				<input type="text" class="numCota" id="numeroCota_" style="width: 40px;"
+		  				<input type="text" class="numCota" id="parametro-cobranca-numeroCota" style="width: 40px;"
 		  					onchange="parametroCobrancaController.buscarCotaPorNumero('')"/>
 		  			</td>
 		  			<td>
@@ -424,10 +423,12 @@
 							</c:forEach>
 					</select></td>
 
-					<td width="413"><span class="bt_novos"> <a
-							href="javascript:;" onclick="parametroCobrancaController.mostrarGridConsulta();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
-					</span></td>
-
+					<td width="413"><span class="bt_novos"> 
+						<a href="javascript:;" onclick="parametroCobrancaController.mostrarGridConsulta();">
+							<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+						</a>
+						</span>
+					</td>
 				</tr>
 			</table>
 		</fieldset>

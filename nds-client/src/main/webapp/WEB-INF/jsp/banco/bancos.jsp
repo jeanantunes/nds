@@ -206,8 +206,8 @@ label {
 						onkeyup='bancoController.autoCompletarPorNomeBanco("#nome")' />
 					</td>
 					<td width="54">Número:</td>
-					<td width="143"><input type="text" name="numero" maxlength="4"
-						id="numero" style="width: 130px;" />
+					<td width="143">
+						<input type="text" id="banco-numero" name="banco-numero" maxlength="4" style="width: 130px;" />
 					</td>
 					<td width="56">Cedente:</td>
 					<td width="160"><input type="text" name="cedente" maxlength="17"

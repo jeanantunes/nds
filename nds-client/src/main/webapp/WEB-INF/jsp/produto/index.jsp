@@ -12,6 +12,7 @@
 	produtoController.inicializar(pesquisaProdutoCadastroProduto);
 	
 	</script>
+	
 	<style>
 		label { 
 		        vertical-align:super; 
@@ -95,9 +96,9 @@
 				</tr>
 				<tr>
 					<td><strong>PEB:</strong></td>
-					<td><input type="text" name="peb" id="peb" style="width:80px;" maxlength="9" /></td>
+					<td><input type="text" name="produto-peb" id="produto-peb" style="width:80px;" maxlength="9" /></td>
 					<td><strong>Pacote Padr&atilde;o:</strong></td>
-					<td><input type="text" name="pacotePadrao" id="pacotePadrao" style="width:80px;" maxlength="4" /></td>
+					<td><input type="text" name="produto-pacotePadrao" id="produto-pacotePadrao" style="width:80px;" maxlength="4" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Desconto:</strong></td>
@@ -109,8 +110,7 @@
 					</td>
 					<td><strong>% Desconto:</strong></td>
 					<td>
-						<input type="text" name="percentualDesconto" id="percentualDesconto" 
-						style="width:80px;" maxlength="3" />
+						<input type="text" name="produto-percentualDesconto" id="produto-percentualDesconto" style="width:80px;" maxlength="3" />
 					</td>
 				</tr>
 			</table>

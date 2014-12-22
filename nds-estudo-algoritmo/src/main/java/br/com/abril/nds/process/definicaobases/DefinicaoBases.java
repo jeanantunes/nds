@@ -96,7 +96,13 @@ public class DefinicaoBases extends ProcessoAbstrato {
 				@Override
 				public int compare(ProdutoEdicaoEstudo o1, ProdutoEdicaoEstudo o2) {
 					if(o1 != null && o2 != null) {
-						if(o1.getNumeroEdicao() > o2.getNumeroEdicao()) {
+						if(o1.getDataLancamento() != null && o2.getDataLancamento() != null) {
+							if(o1.getDataLancamento().getTime() > o2.getDataLancamento().getTime()) {
+								return -1;
+							} else {
+								return 1;
+							}
+						} else if(o1.getDataLancamento() != null) {
 							return -1;
 						} else {
 							return 1;

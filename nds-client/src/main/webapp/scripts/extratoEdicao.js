@@ -23,7 +23,7 @@ var jsExtratoEdicao = $.extend(true, {
 		var numeroEdicao = jQuery("#edicao", jsExtratoEdicao.workspace).val();
 		var codigoProduto = jQuery("#codigo", jsExtratoEdicao.workspace).val();
 		var nomeProduto = jQuery("#idProdutoExtratoEdicao", jsExtratoEdicao.workspace).val();
-		var precoCapa = jQuery("#precoCapa", jsExtratoEdicao.workspace).val();
+		var precoCapa = jQuery("#extrato-edicao-precoCapa", jsExtratoEdicao.workspace).val();
 		var nomeFornecedor = jQuery("#nomeFornecedor", jsExtratoEdicao.workspace).val();
 		
 		$(".extratoEdicaoGrid", jsExtratoEdicao.workspace).flexOptions({
@@ -65,7 +65,7 @@ var jsExtratoEdicao = $.extend(true, {
 		  		  	edicao: $("#edicao", jsExtratoEdicao.workspace).val()};
 		
 		$.postJSON(contextPath + '/estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
-			$("#precoCapa", jsExtratoEdicao.workspace).val(floatToPrice(result));
+			$("#extrato-edicao-precoCapa", jsExtratoEdicao.workspace).val(floatToPrice(result));
 		});
 		
 	},
@@ -73,7 +73,7 @@ var jsExtratoEdicao = $.extend(true, {
 	pesquisarProdutoPorCodigo : function() {
 
 		$("#nomeFornecedor", jsExtratoEdicao.workspace).val("");
-		$("#precoCapa", jsExtratoEdicao.workspace).val("");
+		$("#extrato-edicao-precoCapa", jsExtratoEdicao.workspace).val("");
 		
 		pesquisaProdutoExtratoEdicao.pesquisarPorCodigoProduto('#codigo', '#idProdutoExtratoEdicao', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);	
 	},
@@ -81,14 +81,14 @@ var jsExtratoEdicao = $.extend(true, {
 	pesquisarProdutoPorNome : function() {
 
 		$("#nomeFornecedor", jsExtratoEdicao.workspace).val("");
-		$("#precoCapa", jsExtratoEdicao.workspace).val("");
+		$("#extrato-edicao-precoCapa", jsExtratoEdicao.workspace).val("");
 		
 		pesquisaProdutoExtratoEdicao.pesquisarPorNomeProduto('#codigo', '#idProdutoExtratoEdicao', '#edicao', false, jsExtratoEdicao.pesquisarProdutoCallBack);
 	},
 
 	validarNumeroEdicao : function() {
 
-		$("#precoCapa", jsExtratoEdicao.workspace).val("");
+		$("#extrato-edicao-precoCapa", jsExtratoEdicao.workspace).val("");
 		
 		pesquisaProdutoExtratoEdicao.validarNumEdicao('#codigo', '#edicao', false, jsExtratoEdicao.validarEdicaoCallBack);
 	},

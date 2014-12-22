@@ -75,7 +75,7 @@ var bancoController = $.extend(true, {
 				height : 180
 			});
 		
-			$("#numero", this.workspace).numeric();		
+			$("#banco-numero", this.workspace).numeric();		
 			
 			$("#newNumero", this.workspace).numeric();	
 			
@@ -250,7 +250,7 @@ var bancoController = $.extend(true, {
 				url: contextPath + "/banco/consultaBancos",
 				params: [
 				         {name:'nome', value:$("#nome", this.workspace).val()},
-				         {name:'numero', value:$("#numero", this.workspace).val()},
+				         {name:'numero', value:$("#banco-numero", this.workspace).val()},
 				         {name:'cedente', value:$("#cedente", this.workspace).val()},
 				         {name:'ativo', value:$("#ativo", this.workspace).val() }
 				        ] ,

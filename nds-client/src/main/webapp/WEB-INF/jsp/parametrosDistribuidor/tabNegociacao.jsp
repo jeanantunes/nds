@@ -78,7 +78,7 @@ function checkDescontoSelecionado() {
                    <td width="50"><span class="percentualDesconto" style="display:${parametrosDistribuidor.utilizaDesconto?"block":"none"}">
 
 <!-- % Desconto utilizado na negociação -->                      
-<input name="parametrosDistribuidor.percentualDesconto" id="percentualDesconto" value="${parametrosDistribuidor.percentualDesconto}" type="text" style="width:40px;" />
+<input name="parametrosDistribuidor.percentualDesconto" id="tab-negociacao-percentualDesconto" value="${parametrosDistribuidor.percentualDesconto}" type="text" style="width:40px;" />
 
 		
 		</span></td>

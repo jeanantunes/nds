@@ -371,7 +371,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	
 	montarModalExclusaoEstudo:function(){
 		
-		$( "#popup_confirmar_exclusao_estudo" ).dialog({
+		$( "#hist_estudo_popup_confirmar_exclusao_estudo" ).dialog({
 			resizable: false,
 			height:150,
 			width:200,

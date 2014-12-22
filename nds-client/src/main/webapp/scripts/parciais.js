@@ -293,7 +293,7 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'peb',				value: ParciaisController.get("peb")});
+		data.push({name:'parcial-peb',				value: ParciaisController.get("parcial-peb")});
 		data.push({name:'qtde',				value: ParciaisController.get("qtde")});
 		data.push({name:'idProdutoEdicao',	value: ParciaisController.idProdutoEdicao});
 		
@@ -365,11 +365,11 @@ var ParciaisController = $.extend(true, {
 	carregaPeb : function(periodos) {
 		
 		ParciaisController.set('qtde',periodos);
-		ParciaisController.set('peb','');
+		ParciaisController.set('parcial-peb','');
 		
 		$.postJSON(contextPath + "/parciais/obterPebDoProduto",
 				ParciaisController.getDadosParaPeb(),
-				function(result){ParciaisController.set('peb',result);},
+				function(result){ParciaisController.set('parcial-peb',result);},
 				null, 
 				true,
 				"dialog-novo");
