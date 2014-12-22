@@ -1614,7 +1614,7 @@ public class DescontoServiceImpl implements DescontoService {
 	    return  obterDescontoPor(descontos, 
 	            c  == null ? null : c.getId(), 
 	            pe == null ? null : p.getFornecedor().getId(), 
-	            null, 
+	            p  == null ? null : p.getEditor() == null ? null : p.getEditor().getId(), 
 	            p  == null ? null : p.getId(), pe == null ? null : pe.getId());
 	}
 

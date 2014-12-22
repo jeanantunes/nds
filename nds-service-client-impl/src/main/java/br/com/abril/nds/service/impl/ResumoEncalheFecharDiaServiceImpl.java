@@ -45,8 +45,7 @@ public class ResumoEncalheFecharDiaServiceImpl implements ResumoEncalheFecharDia
 		if (fecharDiaService.isDiaComFechamentoRealizado(dataOperacao)){
 			
 			return consolidadoEncalheRepository.obterResumoGeralEncalhe(dataOperacao);
-		}
-		else{
+		} else {
 			
 			return resumoEncalheFecharDiaRepository.obterResumoEncalhe(dataOperacao);
 		}
