@@ -539,11 +539,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if (isVendaConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel) && isConsignadoVendaEncalhe(produtoEdicao)) {
 
-			return criarVendaEncalheConsignado(vnd, numeroCota,dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
+			return criarVendaEncalheConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
 		} else {
 
-			return criarVendaEncalheContaFirme(vnd, numeroCota, dataVencimentoDebito,usuario, produtoEdicao);
+			return criarVendaEncalheContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
 			
 		}
 		
