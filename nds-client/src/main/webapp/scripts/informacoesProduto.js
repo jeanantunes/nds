@@ -488,7 +488,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	caracteristicasProd : function(result){
 		
-		var precoCapa = "#precoCapa";
+		var precoCapa = "#inf-produto-precoCapa";
 		informacoesProdutoController.validarCamposVazios(result.precoVenda, precoCapa);
 		$(precoCapa).val(floatToPrice($(precoCapa).val()));
 		

@@ -29,7 +29,9 @@
          <td>Data Nascimento:</td>
          <td><input type="text" id="dataNascimento" style="width:150px" /></td>
          <td>Orgão Emissor:</td>
-         <td width="59"><input type="text" id="orgaoEmissor" style="width:50px" /></td>
+         <td width="59">
+         	<input type="text" id="dados-cadastral-orgaoEmissor" style="width:50px" />
+         </td>
          <td width="31">UF:</td>
          <td width="135"><select id="ufOrgaoEmissor" style="width:50px">
          </select></td>

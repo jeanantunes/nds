@@ -73,13 +73,13 @@ CaracteristicaDistribuicaoRepository {
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")
         
-       .append(" cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte,             ")
+       .append(" cast(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end) as unsigned int) AS reparte,             ")
        .append("                                                                                                              ")
        .append("     case when lan.STATUS IN ('FECHADO',                                                                      ")
        .append("                             'RECOLHIDO',                                                                     ")
        .append("                             'EM_RECOLHIMENTO') then                                                          ")
        .append("                                                                                                              ")
-       .append("       cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - (                                ")
+       .append("       cast(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end) - (                                ")
        .append("           select sum(mecEncalhe.qtde)                                                                        ")
        .append("           from lancamento lanc                                                                               ")
        .append("           LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID                            ")
@@ -109,7 +109,8 @@ CaracteristicaDistribuicaoRepository {
         .append(" left join tipo_movimento tipo ON mecReparte.TIPO_MOVIMENTO_ID = tipo.ID  ")
         
         .append(" where lan.DATA_LCTO_DISTRIBUIDOR <> '3000-01-01' ")
-        .append(" and lan.STATUS not in ('CONFIRMADO', 'PLANEJADO', 'FURO', 'BALANCEADO', 'EM_BALANCEAMENTO') ");
+        .append(" and lan.STATUS not in ('CONFIRMADO', 'PLANEJADO', 'FURO', 'BALANCEADO', 'EM_BALANCEAMENTO') ")
+        .append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
         
         if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != "") {
             sql.append(" and pro.codigo_icd = :codigoProduto ");

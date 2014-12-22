@@ -174,7 +174,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 			{name:'parametrosDistribuidor.pararAcumuloDividas', value: $('#pararAcumuloDividas', this.workspace).val() != undefined ? $('#pararAcumuloDividas', this.workspace).val() : ''},
 			
-			{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto', this.workspace).val() != undefined ? $('#percentualDesconto', this.workspace).val() : ''},		
+			{name:'parametrosDistribuidor.percentualDesconto', value: $('#tab-negociacao-percentualDesconto', this.workspace).val() != undefined ? $('#tab-negociacao-percentualDesconto', this.workspace).val() : ''},		
 			{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.negociacao', value: $('#negociacao', this.workspace).is(':checked')},
@@ -799,7 +799,7 @@ var parametrosDistribuidorController = $.extend(true, {
 
 		
 		//$("#utilizaDesconto", this.workspace).disable();
-		//$("#percentualDesconto", this.workspace).disable();
+		//$("#tab-negociacao-percentualDesconto", this.workspace).disable();
 		//$("#parcelamentoDividas", this.workspace).disable();
 		//$("#negociacaoAteParcelas", this.workspace).disable();
 	},

@@ -218,11 +218,11 @@ function removeProdutoEscohido(idx){
 					<tr>
 						<td width="36">Cota:</td>
 						<td width="77">
-							<input type="text" name="numeroCota" id="numeroCota" style="width: 60px;" />
+							<input type="text" name="regiao-numeroCota" id="regiao-numeroCota" style="width: 60px;" />
 						</td>
 						<td width="40">Nome:</td>
 						<td width="129">
-							<input type="text" name="nomeCota" id="nomeCota" style="width: 120px;" />
+							<input type="text" name="regiao-nomeCota" id="regiao-nomeCota" style="width: 120px;" />
 						</td>
 						<td width="106">
 							<span class="bt_pesquisar">
