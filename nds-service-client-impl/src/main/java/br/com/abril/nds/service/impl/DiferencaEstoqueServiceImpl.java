@@ -582,7 +582,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		                }
 	            	} else {
 	            		
-	            		mec.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+	            		if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+	        				mec.setStatusIntegracao(StatusIntegracao.ENCALHE);
+	                    } else {
+	                    	mec.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+	                    }
 	            		
 	            		final boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
 	            		
@@ -1277,7 +1281,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
     	} else {
     		
-    		statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+				statusIntegracao = StatusIntegracao.ENCALHE;
+			} else {
+				statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+			}
     		
     		grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
     		
