@@ -307,7 +307,9 @@
          <tbody>
            <tr> 
            		<td><input id="codigoModal" class="codigoId" type="text"  style="width:80px;" onblur="mixCotaProdutoController.pesquisarPorCodigoProduto('#'+this.id,'#'+$(this).parent().parent().find('.target').attr('id'), '#'+$(this).parent().parent().find('.classificacao').attr('id'))"></td>
-           		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
+           		<td>
+           			<input id="produtoModal" type="text"  style="width:80px;" class="target">
+           		</td>
            		<td width=80px;>
 	                <select name="select" id="classifMixModal" style="width:160px;" class="classificacao">
 				            <c:forEach items="${classificacao}" var="tipoClassificacao">

@@ -60,7 +60,7 @@
 					        <td style="border-bottom:1px solid #ccc;"><strong>Editor:</strong></td>
 					        <td style="border-bottom:1px solid #ccc;" id="editor"></td>
 					        <td style="border-bottom:1px solid #ccc;"><strong>Pacote Padr&atilde;o:</strong></td>
-					        <td style="border-bottom:1px solid #ccc;" id="pacotePadrao"></td>
+					        <td style="border-bottom:1px solid #ccc;" id="conferencia-pacotePadrao"></td>
 						</tr>
 						<tr>
 					        <td style="border-bottom:1px solid #ccc; display:none;" class="obs"><strong>Observa&ccedil;&atilde;o:</strong></td>

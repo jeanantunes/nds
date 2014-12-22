@@ -936,63 +936,72 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(final FiltroHistogramaVendas filtro) {
 
 		String queryStringProdutoEdicao = 
-				" SELECT " +
-				" 	numeroEdicao as edicao, " +
-//				" 	periodicidade as periodo, " +
-				" 	venda as venda, " +
-				" 	dataRecolhimento as dtRecolhimento, " +
-				" 	dataLancamento as dtLancamento, " +
-				" 	reparte as reparte, " +
-				" 	nomeProduto, " +
-				" 	codigoProduto, " +
-				" 	classificacao as descricaoTipoClassificacao, " +
-				" 	segmento as descricaoTipoSegmento, " +
-				" 	statusLancamento as status " +
-				" FROM " +
-				"( SELECT distinct " +
-				" 	produtoedi1_.NUMERO_EDICAO as numeroEdicao, " +
-				" 	produto5_.PERIODICIDADE as periodicidade, " +
-				
-				" (CASE   " +
-				"  	WHEN lancamento2_.status = 'FECHADO' OR lancamento2_.status = 'RECOLHIDO' " +
-				"  THEN " +
-				"  	  round((SELECT sum(estqProdCota.qtde_recebida - estqProdCota.qtde_devolvida) " +
-				"          FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
-				"          WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) " +
-				"  ELSE null " +
-				"  END) venda, " +
-				
-				" 	coalesce(lp.RECOLHIMENTO_FINAL, lancamento2_.DATA_REC_DISTRIB) as dataRecolhimento, " +
-				" 	lancamento2_.DATA_LCTO_DISTRIBUIDOR as dataLancamento, " +
-				" 	estoqueProdutoCota.QTDE_RECEBIDA, " +
-				
-				"   round((SELECT sum(estqProdCota.qtde_recebida) " +
-				"   FROM ESTOQUE_PRODUTO_COTA estqProdCota " +
-				"   WHERE estqProdCota.produto_edicao_id = produtoedi1_.ID),0) as reparte, " +
-
-		        " 	produto5_.NOME as nomeProduto, " +
-				" 	produto5_.CODIGO as codigoProduto, " +				
-				" 	tipoclassi6_.DESCRICAO as classificacao, " +
-				" 	tiposegmen7_.DESCRICAO as segmento,"+
-				" 	lancamento2_.STATUS as statusLancamento, " +
-				"   estoqueProdutoCota.produto_edicao_id, " +
-				" 	estoqueProdutoCota.cota_id " +
-
-				"FROM " +
-				 " ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
-				 " inner join PRODUTO_EDICAO produtoedi1_ on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoedi1_.ID  " +
-				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +
-				 
-				 " left join PERIODO_LANCAMENTO_PARCIAL plp on lancamento2_.PERIODO_LANCAMENTO_PARCIAL_ID=plp.ID  " +
-				 " left join LANCAMENTO_PARCIAL lp on plp.LANCAMENTO_PARCIAL_ID=lp.ID  " +
-				 
-				 " inner join PRODUTO produto5_ on produtoedi1_.PRODUTO_ID=produto5_.ID  " +
-				 " left join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
-				 " left join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
-				 " inner join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID  " +
-				 " left join BOX box on cota2_.BOX_ID=box.ID  " +
-				 " ";
-
+			"SELECT                                                                            "+
+			"    pe.NUMERO_EDICAO AS edicao,                                                   "+
+			"    l.DATA_REC_DISTRIB AS dtRecolhimento,                                         "+
+			"    l.DATA_LCTO_DISTRIBUIDOR AS dtLancamento,                                     "+
+			"    p.NOME AS nomeProduto,                                                        "+
+			"    p.CODIGO AS codigoProduto,                                                    "+
+			"    tcp.DESCRICAO AS descricaoTipoClassificacao,                                  "+
+			"    tsp.DESCRICAO AS descricaoTipoSegmento,                                       "+
+			"    l.STATUS AS status,                                                           "+
+            "                                                                                  "+
+			"    sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE     "+
+			"			  else -mecReparte.QTDE end) AS reparte,          "+
+			"    case                                                                          "+
+			"        when l.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')              "+
+			"          then sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA'              "+
+			"							then mecReparte.QTDE else -mecReparte.QTDE end ) - (   "+
+			"                    select sum(mecEncalhe.qtde)                                   "+
+			"                    from                                                          "+
+			"                        lancamento lanc                                           "+
+			"                    LEFT JOIN                                                     "+
+			"                        chamada_encalhe_lancamento cel                            "+
+			"                            on cel.LANCAMENTO_ID = lanc.ID                        "+
+			"                    LEFT JOIN                                                     "+
+			"                        chamada_encalhe ce                                        "+
+			"                            on ce.id = cel.CHAMADA_ENCALHE_ID                     "+
+			"                    LEFT JOIN                                                     "+
+			"                        chamada_encalhe_cota cec                                  "+
+			"                            on cec.CHAMADA_ENCALHE_ID = ce.ID                     "+
+			"                    LEFT JOIN                                                     "+
+			"                        conferencia_encalhe confEnc                               "+
+			"                            on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID           "+
+			"                    LEFT JOIN                                                     "+
+			"                        movimento_estoque_cota mecEncalhe                         "+
+			"                            on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID  "+    
+			"                    WHERE                                                         "+
+			"                        lanc.id = l.id)                      "+
+			"        else null                                                                 "+
+			"    end as venda                                                                  "+
+            "                                                                                  "+
+			"FROM lancamento l                                                                 "+
+			"    JOIN                                                                          "+
+			"        produto_edicao pe                                                         "+
+			"          ON pe.id = l.produto_edicao_id                                          "+
+			"    LEFT JOIN                                                                     "+
+			"        periodo_lancamento_parcial plp                                            "+
+			"          ON plp.id = l.periodo_lancamento_parcial_id                             "+
+			"    JOIN                                                                          "+
+			"        produto p                                                                 "+
+			"          ON p.id = pe.produto_id                                                 "+
+			"    LEFT JOIN                                                                     "+
+			"        tipo_classificacao_produto tcp                                            "+
+			"          ON tcp.id = pe.tipo_classificacao_produto_id                            "+
+			"    LEFT JOIN                                                                     "+
+			"        movimento_estoque_cota mecReparte                                         "+
+			"          on mecReparte.LANCAMENTO_ID = l.id                                      "+
+			"    LEFT JOIN                                                                     "+
+			"        tipo_movimento tipo                                                       "+
+			"          ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID                               "+
+			"    LEFT JOIN                                                                     "+
+			"        tipo_segmento_produto tsp                                                 "+
+			"          ON p.TIPO_SEGMENTO_PRODUTO_ID = tsp.ID                                  "+
+			"    LEFT Join cota                                                                "+
+			"          ON mecReparte.COTA_ID = cota.ID                                         "+
+			"    Left join box                                                                 "+
+			"          ON cota.BOX_ID = box.ID                                                 "+
+			" ";
 
 		final List<String> whereList = new ArrayList<String>();
 		final HashMap<String,Object> parameterMap = new HashMap<String,Object>();
@@ -1006,7 +1015,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//codigo = codigo do produto
 		if (StringUtils.isNotEmpty(filtro.getCodigo())) {
 
-			whereList.add(" produto5_.CODIGO_ICD = :codICD");
+			whereList.add(" p.CODIGO_ICD = :codICD");
 			
 			parameterMap.put("codICD",filtro.getCodigo());
 
@@ -1014,13 +1023,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		//edicao = numero da edicao
 		if (StringUtils.isNotEmpty(filtro.getEdicao())) {
-			whereList.add(" produtoedi1_.numero_edicao = :numeroEdicao");
+			whereList.add(" pe.numero_edicao = :numeroEdicao");
 			parameterMap.put("numeroEdicao",Long.valueOf(filtro.getEdicao()));
 		}
 
         // classificação = classificação do produto
 		if (filtro.getIdTipoClassificacaoProduto() != null) {
-			whereList.add(" tipoclassi6_.id = :tipoClassificacaoProdutoId");
+			whereList.add(" tcp.id = :tipoClassificacaoProdutoId");
 			parameterMap.put("tipoClassificacaoProdutoId",Long.valueOf(filtro.getIdTipoClassificacaoProduto()));
 		}		
 
@@ -1090,7 +1099,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case REGIAO:
 
-				whereList.add(" estoqueProdutoCota.COTA_ID in (SELECT registro.cota_id FROM registro_cota_regiao as registro WHERE regiao_id = :regiaoId )");
+				whereList.add(" cota.id in (SELECT registro.cota_id FROM registro_cota_regiao as registro WHERE regiao_id = :regiaoId )");
 				parameterMap.put("regiaoId",Long.parseLong(filtro.getElemento()));
 				break;
 			default:
@@ -1099,18 +1108,32 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		}
 
+		whereList.add("l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','EM_RECOLHIMENTO','RECOLHIDO','FECHADO')");
+		whereList.add(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+		
 		queryStringProdutoEdicao += " where "+StringUtils.join(whereList," and ");
 
 		//Group by
-		queryStringProdutoEdicao += " ) as base " +
-									" GROUP BY base.numeroEdicao  " + 
+		queryStringProdutoEdicao += " GROUP BY pe.numero_edicao " +
 									this.ordenarConsultaHistogramaVenda(filtro);
 
-		final Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
+		final SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 
 		setParameters(query, parameterMap);
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 		configurarPaginacao(filtro,query);
+		
+		query.addScalar("edicao", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("dtRecolhimento", StandardBasicTypes.DATE);
+		query.addScalar("dtLancamento", StandardBasicTypes.DATE);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("descricaoTipoClassificacao", StandardBasicTypes.STRING);
+		query.addScalar("descricaoTipoSegmento", StandardBasicTypes.STRING);
+		query.addScalar("status", StandardBasicTypes.STRING);
+		query.addScalar("reparte", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
+		
 		final List<EdicoesProdutosDTO> resultado = query.list();
 
 		return resultado;
@@ -1385,92 +1408,127 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final Map<String, Object> parameters = new HashMap<String, Object>();
 
-		final StringBuilder hql = new StringBuilder();
+		final StringBuilder sql = new StringBuilder();
 
-		hql.append(" SELECT ");
-		hql.append(" produto.codigo as codigoProduto, ");
-		hql.append(" produto.nome as nomeProduto, ");
-		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append(" plp.numeroPeriodo as periodo, ");
+			sql.append(" SELECT                                                                                                                    ");
+			sql.append("     produto.CODIGO AS codigoProduto,                                                                                      ");
+			sql.append("     produto.NOME AS nomeProduto,                                                                                          ");
+			sql.append("     pe.NUMERO_EDICAO AS numeroEdicao,                                                                          ");
+			sql.append("     plp.NUMERO_PERIODO as periodo,                                                                                        ");
+			sql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento,                                                                  ");
+			sql.append("     lancamento.STATUS AS descricaoSituacaoLancamento,                                                                              ");
+			sql.append("     pe.CHAMADA_CAPA AS chamadaCapa,                                                                            ");
+			sql.append("     tipoClassificacaoProduto.descricao as descricaoClassificacao,                                              ");
+			sql.append("     round(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end), 0) AS repartePrevisto,   ");
+			sql.append("     round(case                                                                                                                  ");
+			sql.append("         when lancamento.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')                                             ");
+			sql.append("           then sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end) - (      ");
+			sql.append("                     select sum(mecEncalhe.qtde)                                                                           ");
+			sql.append("                     from                                                                                                  ");
+			sql.append("                         lancamento lanc                                                                                   ");
+			sql.append("                     LEFT JOIN                                                                                             ");
+			sql.append("                         chamada_encalhe_lancamento cel                                                                    ");
+			sql.append("                             on cel.LANCAMENTO_ID = lanc.ID                                                                ");
+			sql.append("                     LEFT JOIN                                                                                             ");
+			sql.append("                         chamada_encalhe ce                                                                                ");
+			sql.append("                             on ce.id = cel.CHAMADA_ENCALHE_ID                                                             ");
+			sql.append("                     LEFT JOIN                                                                                             ");
+			sql.append("                         chamada_encalhe_cota cec                                                                          ");
+			sql.append("                             on cec.CHAMADA_ENCALHE_ID = ce.ID                                                             ");
+			sql.append("                     LEFT JOIN                                                                                             ");
+			sql.append("                         conferencia_encalhe confEnc                                                                       ");
+			sql.append("                             on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID                                                   ");
+			sql.append("                     LEFT JOIN                                                                                             ");
+			sql.append("                         movimento_estoque_cota mecEncalhe                                                                 ");
+			sql.append("                             on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID                                          ");
+			sql.append("                     WHERE                                                                                                 ");
+			sql.append("                         lanc.id = lancamento.id)                                                                          ");
+			sql.append("         else null                                                                                                         ");
+			sql.append("     end,0) as qtdeVendas                                                                                                     ");
+	        sql.append("                                                                                                                           ");
+		    sql.append(" FROM lancamento lancamento                                                                                                ");
+		    sql.append("                                                                                                                           ");
+		    sql.append(" JOIN                                                                                                                      ");
+		    sql.append("     produto_edicao pe                                                                                          ");
+		    sql.append("       ON pe.id = lancamento.produto_edicao_id                                                                  ");
+		    sql.append(" LEFT JOIN                                                                                                                 ");
+		    sql.append("     periodo_lancamento_parcial plp                                                                                        ");
+		    sql.append("       ON plp.id = lancamento.periodo_lancamento_parcial_id                                                                ");
+		    sql.append(" JOIN                                                                                                                      ");
+		    sql.append("     produto produto                                                                                                       ");
+		    sql.append("       ON produto.id = pe.produto_id                                                                            ");
+		    sql.append(" LEFT JOIN                                                                                                                 ");
+		    sql.append("     tipo_classificacao_produto tipoClassificacaoProduto                                                                   ");
+		    sql.append("       ON tipoClassificacaoProduto.id = pe.tipo_classificacao_produto_id                                        ");
+		    sql.append(" JOIN                                                                                                                 ");
+		    sql.append("     movimento_estoque_cota mecReparte                                                                                     ");
+		    sql.append("       on mecReparte.LANCAMENTO_ID = lancamento.id                                                                         ");
+		    sql.append(" LEFT JOIN                                                                                                                 ");
+		    sql.append("     tipo_movimento tipo                                                                                                   ");
+		    sql.append("       ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID                                                                           ");
 		
-		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-		
-		hql.append("  round((SELECT sum(estqProdCota.qtdeRecebida) ");
-		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) as repartePrevisto, ");
-		
-		hql.append(" (CASE   ");
-		hql.append("  	WHEN lancamento.status='FECHADO' OR lancamento.status='RECOLHIDO' ");
-		hql.append("  THEN ");
-		hql.append("  	  round((SELECT sum(estqProdCota.qtdeRecebida - estqProdCota.qtdeDevolvida) ");
-		hql.append("          FROM EstoqueProdutoCota estqProdCota ");
-		hql.append("          WHERE estqProdCota.produtoEdicao = produtoEdicao.id),0) ");
-		hql.append("  ELSE ");
-		hql.append("      null ");
-		hql.append("  END) as qtdeVendas, ");
-		
-		hql.append(" lancamento.status as situacaoLancamento, ");
-		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-		hql.append(" produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-		hql.append(" FROM EstoqueProdutoCota estoqueProduto");
-		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
-		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
-		hql.append(" JOIN produtoEdicao.produto as produto ");
-		hql.append(" LEFT JOIN produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-		hql.append(" LEFT JOIN lancamento.periodoLancamentoParcial as plp ");
-
-		hql.append(" WHERE ");
+		sql.append(" WHERE ");
 
 		if(filtro.getProdutoDto().getCodigoProduto().length() > 6){
-			hql.append(" produto.codigo = :codigoProduto ");
+			sql.append(" produto.codigo = :codigoProduto ");
 		}else{
-			hql.append(" produto.codigoICD = :codigoProduto ");
+			sql.append(" produto.codigo_icd = :codigoProduto ");
 		}
 		
 		parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
+		
+		sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
 
 		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
-			hql.append(" and produtoEdicao.numeroEdicao in (");
+			sql.append(" and pe.numero_Edicao in (");
 
 			for (int i = 0; i < filtro.getListProdutoEdicaoDTO().size(); i++) {
-				hql.append(filtro.getListProdutoEdicaoDTO().get(i).getNumeroEdicao());	
+				sql.append(filtro.getListProdutoEdicaoDTO().get(i).getNumeroEdicao());	
 
 				if (filtro.getListProdutoEdicaoDTO().size() != i + 1) {
-					hql.append(","); 
+					sql.append(","); 
 				}
 			}
 
-			hql.append(")");
+			sql.append(")");
 		}
 
 		if (filtro.getTipoClassificacaoProdutoId() != null && filtro.getTipoClassificacaoProdutoId() > 0l) {
-			hql.append(" and tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
+			sql.append(" and tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
 			parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
 		}
 		if (filtro.getNumeroEdicao() != null && filtro.getNumeroEdicao() > 0l) {
-			hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
+			sql.append(" and pe.numero_Edicao = :numeroEdicao ");
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 
-		hql.append(" GROUP BY produtoEdicao.numeroEdicao ");
+		sql.append(" GROUP BY pe.numero_Edicao, produto.codigo ");
 
 		if(filtro.getOrdemColuna() != null){
-			hql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
+			sql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
 		}else{
-			hql.append(" ORDER BY lancamento.dataLancamentoPrevista DESC ");			
+			sql.append(" ORDER BY lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");			
 		}
 
-		final Query query = super.getSession().createQuery(hql.toString());
+		final SQLQuery query = super.getSession().createSQLQuery(sql.toString());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
 
 		this.setParameters(query, parameters);
 
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("periodo", StandardBasicTypes.INTEGER);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("repartePrevisto", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("qtdeVendas", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("descricaoSituacaoLancamento", StandardBasicTypes.STRING);
+		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
+		query.addScalar("descricaoClassificacao", StandardBasicTypes.STRING);
+		
 		return query.list();
 	}
-
-
-
 
 	private String ordenarConsultaHistoricoVendaProdutoEdicao(final FiltroHistoricoVendaDTO filtro) {
 
@@ -1486,7 +1544,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		    	break;
 
 		    case CLASSIFICACAO:
-		    	hql.append(" ORDER BY tipoClassificacaoProduto ");
+		    	hql.append(" ORDER BY descricaoClassificacao ");
 		    	break;
 
 		    case EDICAO:
@@ -1510,12 +1568,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		    	break;
 
 		    case STATUS:
-		    	hql.append(" ORDER BY situacaoLancamento ");
+		    	hql.append(" ORDER BY descricaoSituacaoLancamento ");
 		    	break;
 
 
 		    default:
-			hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
+			hql.append(" ORDER BY lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
 		    }
 
 		    if (filtro.getPaginacao().getOrdenacao() != null) {

@@ -78,12 +78,12 @@ var analiseEstudoController = $.extend(true, {
         
         $("#dataLancamento", analiseEstudoController.workspace).mask("99/99/9999");
         
-        $('#produto').keyup(function (){
-			pesquisaProduto.autoCompletarPorNomeProduto('#produto', false);
+        $('#analise-estudo-produto').keyup(function (){
+			pesquisaProduto.autoCompletarPorNomeProduto('#analise-estudo-produto', false);
 		});
 		
-		$('#produto').blur(function (){
-			pesquisaProduto.pesquisarPorNomeProduto('#codProduto', '#produto', {}, false, undefined, analiseEstudoController.errorCallBack);
+		$('#analise-estudo-produto').blur(function (){
+			pesquisaProduto.pesquisarPorNomeProduto('#codProduto', '#analise-estudo-produto', {}, false, undefined, analiseEstudoController.errorCallBack);
 		});
 		
 		$('#dataLancamento').blur(function (){
@@ -136,7 +136,7 @@ var analiseEstudoController = $.extend(true, {
     	
         var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val()}, 
                     {name : 'filtro.codigoProduto', value : $("#codProduto").val()}, 
-                    {name : 'filtro.nome', value : $("#produto").val()}, 
+                    {name : 'filtro.nome', value : $("#analise-estudo-produto").val()}, 
                     {name : 'filtro.numeroEdicao', value : $("#edicaoProd").val()},
                     {name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val()},
                     {name : 'filtro.dataLancamento', value :  $("#dataLancamento", analiseEstudoController.workspace).val()}];
@@ -186,7 +186,7 @@ var analiseEstudoController = $.extend(true, {
     
     errorCallBack : function errorCallBack(){
 		$('#codProduto').val('');
-		$('#produto').val('');
+		$('#analise-estudo-produto').val('');
 	},
     
 	validarData : function validarData(pObj) {

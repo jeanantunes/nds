@@ -1382,9 +1382,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         final Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null)
                 ? rateioDiferenca.getEstudoCota().getId() : null;
                 
-                return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
-                        dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
-                        idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica);
+        return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
+                dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
+                idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica);
     }
     
 	                                    /*

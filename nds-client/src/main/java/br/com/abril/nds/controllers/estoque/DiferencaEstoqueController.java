@@ -1351,20 +1351,19 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         final FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
                 (FiltroLancamentoDiferencaEstoqueDTO) httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
         
-        if(modoNovaDiferenca != null && modoNovaDiferenca ){
+        if(modoNovaDiferenca != null && modoNovaDiferenca ) {
             listaNovasDiferencas = (Set<Diferenca>) httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
         } else {
             
             listaNovasDiferencas = new HashSet<Diferenca>();
             
-            // Para não limitar os resultados que irão ser persistidos no
-            // sistema
+            // Para não limitar os resultados que irão ser persistidos no sistema
             filtroPesquisa.getPaginacao().setPaginaAtual(1);
             filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
             listaNovasDiferencas.addAll(diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
         }
         
-        if (!todos){
+        if (!todos) {
         
             this.validarDiferencasSelecionadas(listaNovasDiferencas);
         }

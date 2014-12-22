@@ -173,6 +173,9 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	
 	private boolean parcialConsolidado;
 	
+	private String descricaoClassificacao;
+	private String descricaoSituacaoLancamento;
+	
 	public ProdutoEdicaoDTO() {};
 	
 	public ProdutoEdicaoDTO(
@@ -1081,5 +1084,24 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setParcialConsolidado(boolean parcialConsolidado) {
 		this.parcialConsolidado = parcialConsolidado;
 	}
+
+	public String getDescricaoClassificacao() {
+		return descricaoClassificacao;
+	}
+
+	public void setDescricaoClassificacao(String descricaoClassificacao) {
+		this.descricaoClassificacao = descricaoClassificacao;
+		this.tipoClassificacaoFormatado = descricaoClassificacao;  
+	}
+
+	public String getDescricaoSituacaoLancamento() {
+		return descricaoSituacaoLancamento;
+	}
+
+	public void setDescricaoSituacaoLancamento(String descricaoSituacaoLancamento) {
+		this.descricaoSituacaoLancamento = descricaoSituacaoLancamento;
+		this.situacaoLancamento = StatusLancamento.valueOf(descricaoSituacaoLancamento);
+	}
+	
 
 }

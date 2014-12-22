@@ -199,7 +199,7 @@ var entregadorController = $.extend(true, {
 			data.push({name: 'pessoaFisica.nome', value: $("#nomeEntregador", this.workspace).val()});
 			data.push({name: 'pessoaFisica.apelido', value: $("#apelido", this.workspace).val()});
 			data.push({name: 'pessoaFisica.rg', value: $("#rg", this.workspace).val()});
-			data.push({name: 'pessoaFisica.orgaoEmissor', value: $("#orgaoEmissor", this.workspace).val()});
+			data.push({name: 'pessoaFisica.orgaoEmissor', value: $("#dados-cadastral-orgaoEmissor", this.workspace).val()});
 			data.push({name: 'pessoaFisica.ufOrgaoEmissor', value: $("#ufOrgaoEmissor", this.workspace).val()});
 			data.push({name: 'pessoaFisica.estadoCivil', value: $("#estadoCivil", this.workspace).val()});
 			data.push({name: 'pessoaFisica.sexo', value: $("#sexo", this.workspace).val()});
@@ -272,7 +272,7 @@ var entregadorController = $.extend(true, {
 					$("#cpf", this.workspace).val(result.pessoaFisica.cpf).mask("999.999.999-99");
 					$("#rg", this.workspace).val(result.pessoaFisica.rg);
 					$("#dataNascimento", this.workspace).val(result.dataNascimentoEntregadorFormatada).mask("99/99/9999");
-					$("#orgaoEmissor", this.workspace).val(result.pessoaFisica.orgaoEmissor);
+					$("#dados-cadastral-orgaoEmissor", this.workspace).val(result.pessoaFisica.orgaoEmissor);
 					entregadorController.preencherComboUF(result.pessoaFisica.ufOrgaoEmissor);
 					//$("#ufOrgaoEmissor", this.workspace).val(result.pessoaFisica.ufOrgaoEmissor);
 					$("#estadoCivil", this.workspace).val(result.pessoaFisica.estadoCivil);
@@ -770,7 +770,7 @@ var entregadorController = $.extend(true, {
 					$("#cpf", this.workspace).val(result.cpf).mask("999.999.999-99");
 					$("#rg", this.workspace).val(result.rg);
 					$("#dataNascimento", this.workspace).val(result.dataNascimento.$).mask("99/99/9999");
-					$("#orgaoEmissor", this.workspace).val(result.orgaoEmissor);
+					$("#dados-cadastral-orgaoEmissor", this.workspace).val(result.orgaoEmissor);
 					$("#ufOrgaoEmissor", this.workspace).val(result.ufOrgaoEmissor);
 					$("#estadoCivil", this.workspace).val(result.estadoCivil);
 					$("#sexo", this.workspace).val(result.sexo);
@@ -787,7 +787,7 @@ var entregadorController = $.extend(true, {
 				$("#cpf", this.workspace).val("");
 				$("#rg", this.workspace).val("");
 				$("#dataNascimento", this.workspace).val("");
-				$("#orgaoEmissor", this.workspace).val("");
+				$("#dados-cadastral-orgaoEmissor", this.workspace).val("");
 				$("#ufOrgaoEmissor", this.workspace).val("");
 				$("#estadoCivil", this.workspace).val("");
 				$("#sexo", this.workspace).val("");

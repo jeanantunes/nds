@@ -19,9 +19,6 @@
      
      </td>
      
-     
-      
-     
      <td><strong>Início de Atividade:</strong></td>
      <td><span id="dataInclusaoCPF"style="width:100px"></span></td>
    </tr>
@@ -56,7 +53,7 @@
      <td>Orgão Emissor:</td>
      <td width="313"><table width="100%" border="0" cellspacing="0" cellpadding="0">
        <tr>
-         <td width="67%"><input type="text" maxlength="4" style="width:100px" name="cotaDTO.orgaoEmissor" id="orgaoEmissor" /></td>
+         <td width="67%"><input type="text" maxlength="4" style="width:100px" name="cotaDTO.orgaoEmissor" id="dados-basico-orgaoEmissor" /></td>
          <td width="13%">UF:</td>
          <td width="20%"><select name="cotaDTO.estadoSelecionado" id="estadoSelecionado" style="width:50px">
            <option selected="selected"> </option>

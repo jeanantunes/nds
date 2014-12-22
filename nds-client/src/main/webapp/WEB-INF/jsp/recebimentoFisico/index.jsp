@@ -137,7 +137,7 @@
 					<td><input 	
 								disabled="disabled"
 								type="text" 
-								id="precoCapa"
+								id="recebimento-fisico-precoCapa"
 								style="width: 80px;" />
 					</td>
 				</tr>
@@ -153,7 +153,7 @@
 					<td>Pacote Padrão:</td>
 					<td><input 	disabled="disabled"
 								type="text" 
-								id="pacotePadrao"
+								id="recebimento-fisico-pacotePadrao"
 								style="width: 200px;" />
 					</td>
 				</tr>

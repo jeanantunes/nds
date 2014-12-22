@@ -406,7 +406,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		var cont = 1;
 
 		//Imprime todos os documentos recebidos
-		for(var i=0;i < tiposDocumento.length;i++){
+		for(var i = 0; i < tiposDocumento.length; i++) {
 			
 			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
