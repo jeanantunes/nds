@@ -2,6 +2,7 @@ package br.com.abril.nds.process.bonificacoes;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
@@ -67,23 +69,9 @@ public class Bonificacoes extends ProcessoAbstrato {
 			}
 
 			// inserindo valor nas cotas do estudo
-			for (CotaEstudo cota : estudo.getCotas()) {
-			    
-				String[] vetor = {bonificacao.getElemento()};
-			    
-				if (bonificacao.getComponente() != null && bonificacao.getElemento() != null && estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
-					
-					if (indiceBonificacao.compareTo(cota.getIndiceTratamentoRegional()) > 0) {
-					    cota.setIndiceTratamentoRegional(indiceBonificacao);
-					    cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
-					}
-	
-					if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
-					    cota.setReparteMinimoFinal(reparteMinimo);
-					    cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
-					}
-			    }
-			}
+			bonicacaoParaCotas(estudo.getCotas(), bonificacao, reparteMinimo, indiceBonificacao);
+			
+			bonicacaoParaCotas(estudo.getCotasExcluidas(), bonificacao, reparteMinimo, indiceBonificacao);
 
 			// se todas as cotas estiver selecionado, insere reparte minimo para as bancas SH e VZ fora do estudo
 			if (bonificacao.isTodasAsCotas() && bonificacao.getComponente() != null && bonificacao.getElemento() != null) {
@@ -118,4 +106,29 @@ public class Bonificacoes extends ProcessoAbstrato {
 	}
 	
     }
+
+	private void bonicacaoParaCotas(LinkedList<CotaEstudo> cotas, BonificacaoDTO bonificacao, BigInteger reparteMinimo, BigDecimal indiceBonificacao) {
+		
+		for (CotaEstudo cota : cotas) {
+		    
+			String[] vetor = {bonificacao.getElemento()};
+		    
+			if (bonificacao.getComponente() != null && bonificacao.getElemento() != null && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
+				
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaMixSemDeterminadaPublicacao)){
+					continue;
+				}
+				
+				if (indiceBonificacao.compareTo(cota.getIndiceTratamentoRegional()) > 0) {
+				    cota.setIndiceTratamentoRegional(indiceBonificacao);
+				    cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
+				}
+
+				if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
+				    cota.setReparteMinimoFinal(reparteMinimo);
+				    cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
+				}
+		    }
+		}
+	}
 }

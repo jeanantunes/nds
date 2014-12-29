@@ -153,7 +153,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      , CAST(c.PESSOA_ID as CHAR) as codJornaleiro ");
 		sql.append("      , CAST(c.NUMERO_COTA as CHAR) as codCota ");
 		sql.append("      , CAST(pdv.ID as CHAR) as codPDV ");
-		sql.append("      , DATE_FORMAT((mec.DATA),'%Y%m%d') as dataMovimento ");
+		sql.append("      , DATE_FORMAT((ce.DATA_RECOLHIMENTO),'%Y%m%d') as dataMovimento ");
 		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codProduto ");
 		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numEdicao ");
 		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codBarras ");
