@@ -178,7 +178,7 @@
 					</td>
 					<td class="class_linha_2" id="nomeProduto"></td>
 					<td class="class_linha_2" align="center" id="edicaoProduto"></td>
-					<td class="class_linha_2" align="center" id="precoCapa"></td>
+					<td class="class_linha_2" align="center" id="conferencia-precoCapa"></td>
 					<td class="class_linha_2" align="center" id="desconto"></td>
 					<td class="class_linha_2" align="center" id="valorTotal"></td>
 					<td align="center">

@@ -1,7 +1,10 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -226,8 +229,20 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		        selecionados.addAll(produtosBase);
     		        
     		    }
-    		    
     		}
+    		
+    		Collections.sort(selecionados, new Comparator<ProdutoEdicaoVendaMediaDTO>() {
+
+				@Override
+				public int compare(ProdutoEdicaoVendaMediaDTO o1, ProdutoEdicaoVendaMediaDTO o2) {
+					if(o1.getDataLancamento().getTime() > o2.getDataLancamento().getTime()) {
+						return -1;
+					}
+					return 0;
+				}
+
+    			
+    		});
     		
     		final boolean parcialComMaisDeUmPeriodo = 
         			(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null &&estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1);
@@ -241,8 +256,20 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
     	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
     	        	
-    	        	if((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
-    	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())) {
+    	        	boolean edicoesVeraneioRepartePositivo = false;
+    	        	List<ProdutoEdicaoEstudo> edicoesVeraneio = new ArrayList<ProdutoEdicaoEstudo>();
+    	        	edicoesVeraneio.addAll(edicoesPenultimoVeraneio);
+    	        	edicoesVeraneio.addAll(edicoesUltimoVeraneio);
+    	        	
+    	        	for(ProdutoEdicaoEstudo pee : edicoesVeraneio) {
+    	        		if(pee.getReparte() != null && pee.getReparte().compareTo(BigDecimal.ZERO) > 0) {
+    	        			edicoesVeraneioRepartePositivo = true;
+    	        			break;
+    	        		}
+    	        	}
+    	        	
+    	        	if((edicoesVeraneioRepartePositivo && ((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
+    	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())))) {
     	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, true);
     	        	} else {
     	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
