@@ -190,7 +190,7 @@ $(function(){
 	               <td>Tipo PDV:</td>
 	               <td><input type="text" name="tipoPDV" id="tipoPDV" disabled="disabled" style="width:110px;"/></td>
 	               <td width="46">Bairro:</td>
-	               <td width="91"><input type="text" name="bairro" id="bairro" disabled="disabled" style="width:90px;"/></td>
+	               <td width="91"><input type="text" name="cota-base-bairro" id="cota-base-bairro" disabled="disabled" style="width:90px;"/></td>
 	               <td width="41">Cidade:</td>
 	               <td colspan="2"><input type="text" name="cidade" id="cidade" disabled="disabled" style="width:100px;"/></td>
 	               <td colspan="2">Dias Restantes:</td>

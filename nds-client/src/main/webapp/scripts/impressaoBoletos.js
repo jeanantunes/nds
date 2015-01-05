@@ -155,7 +155,7 @@ var impressaoBoletosController = $.extend(true, {
 	formData: function(){
 		
 		var formData = [ {name:"dataMovimento",value:$("#dataMovimento", impressaoBoletosController.workspace).val()},
-			             {name:"box",value:$("#box", impressaoBoletosController.workspace).val()},
+			             {name:"box",value:$("#impressao-boleto-box", impressaoBoletosController.workspace).val()},
 			             {name:"rota",value:$("#rota", impressaoBoletosController.workspace).val()},
 			             {name:"roteiro",value:$("#roteiro", impressaoBoletosController.workspace).val()},
 			             {name:"numCota",value:$("#impressao-boleto-numCota", impressaoBoletosController.workspace).val()},
@@ -194,7 +194,7 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	
 	pesquisarCotaErrorCallBack:function(){
-		$("#box", impressaoBoletosController.workspace).val("");
+		$("#impressao-boleto-box", impressaoBoletosController.workspace).val("");
 		$("#rota", impressaoBoletosController.workspace).val("");
 		$("#roteiro", impressaoBoletosController.workspace).val("");
 		$("#tipoCobranca", impressaoBoletosController.workspace).val("");
