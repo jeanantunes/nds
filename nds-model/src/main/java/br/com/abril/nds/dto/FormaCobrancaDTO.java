@@ -62,7 +62,9 @@ public class FormaCobrancaDTO {
 	//CONTRUTOR PARA DADOS DA GRID
 	public FormaCobrancaDTO(Long idFormaCobranca, 
 			String fornecedor,
-			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto,
+			String concentracaoPagto, 
+			String tipoPagto, 
+			String detalhesTipoPagto,
 			boolean parametroDistribuidor,
 			String descUnificacao) {
 		super();

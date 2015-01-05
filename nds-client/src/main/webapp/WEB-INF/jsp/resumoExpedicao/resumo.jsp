@@ -121,7 +121,7 @@
 		    			<td>
 		    				<strong>Total R$:</strong>
 		    			</td>
-		    			<td id="valorTotal"></td>
+		    			<td id="valorTotal-resumo-expedicao"></td>
 		  			</tr>
 				</table>
 			</fieldset>

@@ -965,7 +965,7 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#tipoPDV", cotaBaseController.workspace).val(result.tipoPDV);
 		
-		$("#bairro", cotaBaseController.workspace).val(result.bairro);
+		$("#cota-base-bairro", cotaBaseController.workspace).val(result.bairro);
 		
 		$("#cidade", cotaBaseController.workspace).val(result.cidade);
 		
@@ -1007,7 +1007,7 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#tipoPDV", cotaBaseController.workspace).val("");
 		
-		$("#bairro", cotaBaseController.workspace).val("");
+		$("#cota-base-bairro", cotaBaseController.workspace).val("");
 		
 		$("#cidade", cotaBaseController.workspace).val("");
 		

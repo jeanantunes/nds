@@ -309,21 +309,21 @@ obterColunasGridPesquisaSemCota:function(){
 	
 	callBackSuccess:function () {
 		
-		pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCotaManutencaoStatusCota",manutencaoStatusCotaController.workspace).val(), false, function(result) {
+		pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCotaManutencaoStatusCota", manutencaoStatusCotaController.workspace).val(), false, function(result) {
 
 			if (!result) {
 
 				return;
 			}
 
-			$("#box",manutencaoStatusCotaController.workspace).val(result.codigoBox);
+			$("#manutencao-status-box", manutencaoStatusCotaController.workspace).val(result.codigoBox);
 		});
 
 	},
 	
 	callBackErro:function(){
 		
-		$("#box",manutencaoStatusCotaController.workspace).val("");
+		$("#manutencao-status-box", manutencaoStatusCotaController.workspace).val("");
 	
 	},
 
