@@ -272,7 +272,7 @@
 		   	      </tr>
 		      	  <tr>
 		      	    <td width="81" class="linha_borda"><strong>Banco:</strong></td>
-		      	    <td width="250" class="linha_borda" id="banco" />
+		      	    <td width="250" class="linha_borda" id="baixa-banco" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Emissão:</strong></td>
@@ -284,7 +284,7 @@
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Valor R$:</strong></td>
-		      	    <td class="linha_borda" id="valorBoleto" />
+		      	    <td class="linha_borda" id="baixa-valorBoleto" />
 		   	      </tr>
 		   	      <tr>
 		   	      		<td class="dataPagamentoManualBoleto" width="100">Data Pagamento:</td>
@@ -322,7 +322,7 @@
   				  </tr>
       	          <tr>
       	            <td class="linha_borda"><strong>Valor Total R$:</strong></td>
-      	            <td class="linha_borda" id="valorTotal" />
+      	            <td class="linha_borda" id="baixa-valorTotal" />
                   <tr>
       	          <tr>
       	            <td class="linha_borda">&nbsp;</td>

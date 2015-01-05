@@ -204,7 +204,7 @@
 				                      		<input id="qtdExemplaresTotal" type="text" style="width:60px; text-align:center;" disabled="disabled"/>
 				                      	</td>
 				                      	<td align="center">
-				                      		<input id="valorTotal" type="text" style="width:80px; text-align:right;" disabled="disabled"/>
+				                      		<input id="chamadao-valorTotal" type="text" style="width:80px; text-align:right;" disabled="disabled"/>
 				                      	</td>
 				                    </tr>
 				          		</table>

@@ -162,7 +162,7 @@
 		            <td>Data:</td>
 		            <td id="dataExibir"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotalNotaFiscalExibir"></td>
+		            <td id="conferencia-valorTotalNotaFiscalExibir"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>
@@ -231,7 +231,7 @@
 		    <td><input isEdicao="true" type="text" id="dataNotaFiscal" style="width:80px;" /></td>
 		    <td>Valor Total R$:</td>
 		    <td>
-		    	<input isEdicao="true" type="text" id="valorNotaFiscal" style="width:80px; text-align:right;" />
+		    	<input isEdicao="true" type="text" id="conferencia-valorNotaFiscal" style="width:80px; text-align:right;" />
 		    </td>
 		</tr>
 		<tr>

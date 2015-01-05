@@ -489,7 +489,7 @@ $(function(){
 						<tr>
 							<td width="57">Nome:</td>
 							<td width="346">
-								<select name="banco" id="banco" style="width: 150px;" class="formaCobrancaValueChangeListener">
+								<select name="parametro-cobranca-banco" id="parametro-cobranca-banco" style="width: 150px;" class="formaCobrancaValueChangeListener">
 									<option value=""></option>
 									<c:forEach varStatus="counter" var="banco"
 										items="${listaBancos}">

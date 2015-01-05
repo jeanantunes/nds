@@ -51,6 +51,8 @@ public class FornecedorDTO implements Serializable {
 	
 	private CanalDistribuicao canalDistribuicao;
 	
+	private boolean integraGFS;
+	
 	/**
 	 * @return the idFornecedor
 	 */
@@ -289,5 +291,13 @@ public class FornecedorDTO implements Serializable {
 
 	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
 		this.canalDistribuicao = canalDistribuicao;
+	}
+
+	public boolean isIntegraGFS() {
+		return integraGFS;
+	}
+
+	public void setIntegraGFS(boolean integraGFS) {
+		this.integraGFS = integraGFS;
 	}
 }

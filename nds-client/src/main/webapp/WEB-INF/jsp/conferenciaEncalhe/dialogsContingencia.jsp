@@ -40,7 +40,9 @@
 			<td>Data:</td>
 			<td><input isEdicao="true" type="text" id="dataNotaFiscal" style="width: 80px;" /></td>
 			<td>Valor Total R$:</td>
-			<td><input isEdicao="true" type="text" id="valorNotaFiscal" style="width: 80px; text-align: right;" maxlength="255" /></td>
+			<td>
+				<input isEdicao="true" type="text" id="contigencia-valorNotaFiscal" style="width: 80px; text-align: right;" maxlength="255" />
+			</td>
 		</tr>
 		<tr>
 			<td>NF-e:</td>
@@ -234,7 +236,7 @@
 		            <td>Data:</td>
 		            <td id="dataExibir"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotalNotaFiscalExibir"></td>
+		            <td id="contigencia-valorTotalNotaFiscalExibir"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>
