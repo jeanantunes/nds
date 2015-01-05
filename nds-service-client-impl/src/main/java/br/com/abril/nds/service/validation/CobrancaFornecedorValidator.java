@@ -138,7 +138,7 @@ public class CobrancaFornecedorValidator {
 	           			try {
 							if (CobrancaFornecedorValidator.this.descontoService.obterDescontoPor(
 								this.descontos, this.cota.getId(), this.fornecedor.getId(), 
-									null, this.produto.getId(), null) != null) {
+								this.produto.getEditor() == null ? null : this.produto.getEditor().getId(), this.produto.getId(), null) != null) {
 								
 								break;
 							}

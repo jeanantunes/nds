@@ -9,7 +9,7 @@ public class IpvRecolhimentoDTO extends FTFBaseDTO {
 	private String versao = "01";
 	
 	@FTFfield(tamanho=1, tipo="char", ordem=2)
-	private String tipoArquivo = "L";
+	private String tipoArquivo = "R";
 	
 	@FTFfield(tamanho=7, tipo="numeric", ordem=3)
 	private String codDistribuidor;
