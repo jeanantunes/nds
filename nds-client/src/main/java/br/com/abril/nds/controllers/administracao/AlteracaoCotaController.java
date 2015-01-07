@@ -147,8 +147,7 @@ public class AlteracaoCotaController extends BaseController {
         
         filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
         
-        final List<ConsultaAlteracaoCotaDTO> listaCotas = alteracaoCotaService
-                .pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+        final List<ConsultaAlteracaoCotaDTO> listaCotas = alteracaoCotaService.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
         
         if (listaCotas == null || listaCotas.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
