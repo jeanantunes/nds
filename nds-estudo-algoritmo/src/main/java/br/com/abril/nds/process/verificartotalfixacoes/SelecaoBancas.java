@@ -195,12 +195,12 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (estudo.getDistribuicaoVendaMediaDTO().getComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getElemento() != null) {
 	    estudo.setComplementarAutomatico(false);
 	    for (CotaEstudo cota : cotas) {
-		String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento(),
-				estudo.getDistribuicaoVendaMediaDTO().getElemento2(),estudo.getDistribuicaoVendaMediaDTO().getElemento3()};
-		if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
-		    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
-		}
+			String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento(),
+					estudo.getDistribuicaoVendaMediaDTO().getElemento2(),estudo.getDistribuicaoVendaMediaDTO().getElemento3()};
+			if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			    cota.setReparteCalculado(BigInteger.ZERO, estudo);
+			}
 	    }
 	}
 
@@ -235,72 +235,76 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	    BigDecimal qtdeCotasAtivas = BigDecimal.ZERO;
 	    for (CotaEstudo cota : cotas) {
-		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
-		}
+			if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+			    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
+			}
 	    }
 	    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
-		}
+			if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+			    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
+			}
 	    }
 	    for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
-		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
-		}
+			if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+			    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
+			}
 	    }
+	    
 	    BigDecimal abrangencia = new BigDecimal(estudo.getDistribuicaoVendaMediaDTO().getAbrangencia()).multiply(BigDecimal.valueOf(0.01));
 	    BigDecimal qtdeCotasAbrangencia = qtdeCotasAtivas.multiply(abrangencia);
 	    qtdeCotasAbrangencia = qtdeCotasAbrangencia.setScale(0, BigDecimal.ROUND_HALF_UP);
 	    // lista utilizada para que utilizemos apenas as bancas ativas
+	    
 	    List<CotaEstudo> temp = new ArrayList<>();
 	    for (CotaEstudo cota : cotas) {
-		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-		    temp.add(cota);
-		}
+			if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+			    temp.add(cota);
+			}
 	    }
 
 	    boolean estudoTemReparteMinimo = estudo.getReparteMinimo() != null;
 	    for (int i = 0; i < temp.size(); i++) {
-		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0 &&
-			!(temp.get(i).isNova() && estudoTemReparteMinimo)) {// se houver reparte minimo não remove as cotas novas do estudo		 
-		    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-		    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
-		    
-		    temp.get(i).setReparteMinimoFinal(BigInteger.ONE);
-		}
+			if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0 &&
+				!(temp.get(i).isNova() && estudoTemReparteMinimo)) {// se houver reparte minimo não remove as cotas novas do estudo		 
+			    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
+			    
+			    temp.get(i).setReparteMinimoFinal(BigInteger.ONE);
+			}
 	    }
 	}
 
 	// marcando bancas fora da regiao de distribuicao
 	if (estudo.getDistribuicaoVendaMediaDTO() != null && !estudo.getDistribuicaoVendaMediaDTO().isCotasAVista()) {
 	    for (CotaEstudo cota : cotas) {
-		for (String item : cota.getTiposCota()) {
-		    if (item.equals("A_VISTA")) {
-			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-			cota.setReparteCalculado(BigInteger.ZERO, estudo);
-		    }
-		}
+			for (String item : cota.getTiposCota()) {
+			    if (item.equals("A_VISTA")) {
+					cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+					cota.setReparteCalculado(BigInteger.ZERO, estudo);
+			    }
+			}
 	    }
 	}
 
-	// removendo excecoes da lista de cotas
-	if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente() != null &&
-		estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size() > 0) {
-	    String[] vetor = new String[estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size()];
-	    for (int i = 0; i < estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size(); i++) {
-		vetor[i] = estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().get(i); 
-	    }
-	    for (CotaEstudo cota : cotas) {
-		if (cota.getClassificacao().notIn(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico)) {		    
-		    if (estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente(), vetor, cota)) {
-			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-			cota.setReparteCalculado(BigInteger.ZERO, estudo);
+		// removendo excecoes da lista de cotas
+		if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente() != null &&
+			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size() > 0) {
+		    
+			String[] vetor = new String[estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size()];
+		    for (int i = 0; i < estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size(); i++) {
+		    	vetor[i] = estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().get(i); 
+		    }
+		    
+		    for (CotaEstudo cota : cotas) {
+				if (cota.getClassificacao().notIn(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico)) {		    
+				    if (estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente(), vetor, cota)) {
+				    	cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+				    	cota.setReparteCalculado(BigInteger.ZERO, estudo);
+				    }
+				}
 		    }
 		}
-	    }
-	}
-	return cotas;
+		return cotas;
     }
 
     private void calcularTotais(CotaEstudo cota, EstudoTransient estudo) {
@@ -387,14 +391,14 @@ public class SelecaoBancas extends ProcessoAbstrato {
 			    BigDecimal porcentualEnglobacao = BigDecimal.valueOf(cotaEnglobada.getPorcentualEnglobacao()).divide(BIGDECIMAL_100);
 
 			    if (validaEnglobacaoComPeriodoVigente(cotaEnglobada.getDataInclusao())) {
-				if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
-				    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
+					if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
+					    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
 					    cotasComHistoricoMap.get(cotaEnglobada.getId()));
-				} else {
-				    CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
-				    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
-				    cotasComHistoricoMap.put(cota.getId(), cota);
-				}
+					} else {
+					    CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
+					    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
+					    cotasComHistoricoMap.put(cota.getId(), cota);
+					}
 			    }
 			}
 		    }
@@ -404,7 +408,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
     }
 
     private boolean validaEnglobacaoComPeriodoVigente(Date dataInclusao) {
-	return LocalDate.fromDateFields(dataInclusao).plus(Years.ONE).isAfter(LocalDate.now());
+    	return LocalDate.fromDateFields(dataInclusao).plus(Years.ONE).isAfter(LocalDate.now());
     }
 
     private void distribuiEnglobacao(BigDecimal reparteInicial, BigDecimal vendaInicial, BigDecimal porcentualEnglobacao,
@@ -432,9 +436,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
     private ProdutoEdicaoEstudo buscaEdicaoPorNumeroLancamento(ProdutoEdicaoEstudo edicaoCotaDesenglobada, List<ProdutoEdicaoEstudo> edicoesRecebidas) {
 	if (edicoesRecebidas != null) {
 	    for (ProdutoEdicaoEstudo produtoEdicao : edicoesRecebidas) {
-		if (produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
-		    return produtoEdicao;
-		}
+			if (produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
+			    return produtoEdicao;
+			}
 	    }
 	}
 	return atualizaListaCotaEnglobadaComEdicaoClonada(edicaoCotaDesenglobada, edicoesRecebidas);
@@ -442,10 +446,10 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
     private ProdutoEdicaoEstudo atualizaListaCotaEnglobadaComEdicaoClonada(ProdutoEdicaoEstudo edicaoCotaDesenglobada,
 	    List<ProdutoEdicaoEstudo> edicoesRecebidas) {
-	ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
-	BeanUtils.copyProperties(edicaoCotaDesenglobada, produtoEdicao);
-	produtoEdicao.setReparte(BigDecimal.ZERO);
-	produtoEdicao.setVenda(BigDecimal.ZERO);
+		ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
+		BeanUtils.copyProperties(edicaoCotaDesenglobada, produtoEdicao);
+		produtoEdicao.setReparte(BigDecimal.ZERO);
+		produtoEdicao.setVenda(BigDecimal.ZERO);
 	return produtoEdicao;
     }
 }

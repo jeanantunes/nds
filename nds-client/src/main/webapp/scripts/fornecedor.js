@@ -132,6 +132,7 @@ var fornecedorController = $.extend(true,{
 			$("#fornecedorController-validadeContrato", 	fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-emailNfe", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-possuiContrato", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-integraGFS", 		    fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$( '#fornecedorController-validade', 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			
 		},
@@ -416,6 +417,13 @@ var fornecedorController = $.extend(true,{
 						$("#fornecedorController-banco", fornecedorController.workspace).val(result.idBanco);
 						$("#fornecedorController-canalDistribuicao", fornecedorController.workspace).val(result.canalDistribuicao);
 						
+						if (result.integraGFS) {
+							$("#fornecedorController-integraGFS", fornecedorController.workspace).check();
+						} else {
+							
+							$("#fornecedorController-integraGFS", fornecedorController.workspace).uncheck();
+						}
+						
 						if (result.possuiContrato) {
 
 							$("#fornecedorController-possuiContrato", fornecedorController.workspace).check();
@@ -432,7 +440,6 @@ var fornecedorController = $.extend(true,{
 							
 							$( '.fornecedorController-validade', fornecedorController.workspace ).hide();
 						}
-
 						fornecedorController.novoFornecedor(true, indBloqueiaCamposEdicaoFornecedor);
 						
 						ENDERECO_FORNECEDOR.getAction = fornecedorController.getActionParaGridEnderecoFornecedor;

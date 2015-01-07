@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.enums.OpcoesFiltro;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.util.export.Exportable;
@@ -29,6 +30,8 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	private DescricaoTipoEntrega descricaoTipoEntrega; 
 	
 	private TipoDesconto tipoDesconto;
+	
+	private OpcoesFiltro utilizaParametroCobrancaDistribuidor;
 	
 	private BigDecimal idVrMinimo;
 	
@@ -123,6 +126,12 @@ public class FiltroAlteracaoCotaDTO extends FiltroDTO implements Serializable {
 	}
 	public void setTipoDesconto(TipoDesconto tipoDesconto) {
 		this.tipoDesconto = tipoDesconto;
+	}
+	public OpcoesFiltro getUtilizaParametroCobrancaDistribuidor() {
+		return utilizaParametroCobrancaDistribuidor;
+	}
+	public void setUtilizaParametroCobrancaDistribuidor(OpcoesFiltro utilizaParametroCobrancaDistribuidor) {
+		this.utilizaParametroCobrancaDistribuidor = utilizaParametroCobrancaDistribuidor;
 	}
 	public Integer getIdVencimento() {
 		return idVencimento;

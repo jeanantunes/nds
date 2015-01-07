@@ -718,6 +718,8 @@ public class FornecedorController extends BaseController {
 		
 		fornecedor.setJuridica(pessoaJuridica);
 		
+		fornecedor.setIntegraGFS(fornecedorDTO.isIntegraGFS());
+		
 		Origem origem = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
 		
 		fornecedor.setOrigem(origem);
@@ -766,6 +768,8 @@ public class FornecedorController extends BaseController {
 		fornecedorDTO.setValidadeContrato(DateUtil.formatarDataPTBR(fornecedor.getValidadeContrato()));
 		
 		fornecedorDTO.setCanalDistribuicao(fornecedor.getCanalDistribuicao());
+		
+		fornecedorDTO.setIntegraGFS(fornecedor.isIntegraGFS());
 		
 		return fornecedorDTO;
 	}

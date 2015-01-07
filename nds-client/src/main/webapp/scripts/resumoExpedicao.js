@@ -283,7 +283,7 @@ var resumoExpedicaoController = $.extend(true, {
 			return resultado;
 		}
 		
-		$("#valorTotal", resumoExpedicaoController.workspace).html(resultado.somaTotal);
+		$("#valorTotal-resumo-expedicao", resumoExpedicaoController.workspace).html(resultado.somaTotal);
 		
 		return resultado.resultado;
 	},

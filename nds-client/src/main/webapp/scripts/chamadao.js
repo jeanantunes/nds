@@ -390,7 +390,7 @@ var chamadaoController = $.extend(true, {
 		
 		$("#qtdProdutosTotal", chamadaoController.workspace).val(resultado.qtdProdutosTotal);
 		$("#qtdExemplaresTotal", chamadaoController.workspace).val(resultado.qtdExemplaresTotal);
-		$("#valorTotal", chamadaoController.workspace).val(priceToFloat( resultado.valorTotal ));
+		$("#chamadao-valorTotal", chamadaoController.workspace).val(priceToFloat( resultado.valorTotal ));
 		
 		var checkAllSelected = chamadaoController.verifyCheckAll();
 		
@@ -490,7 +490,7 @@ return;
 			reparte = removeMascaraPriceFormat(reparte);
 			chamadaoController.parciais.qtdExemplaresParcial += intValue(reparte);
 			
-			var valor = $("#valorTotal" + rowId).html();
+			var valor = $("#chamadao-valorTotal" + rowId).html();
 			
 			valor = priceToFloat(valor);
 			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) + parseFloat(valor);
@@ -503,7 +503,7 @@ return;
 			reparte = removeMascaraPriceFormat(reparte);
 			chamadaoController.parciais.qtdExemplaresParcial -= intValue(reparte);
 			
-			var valor = $("#valorTotal" + input.value).html();
+			var valor = $("#chamadao-valorTotal" + input.value).html();
 			
 			valor = priceToFloat(valor);
 			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) - parseFloat(valor);
@@ -524,11 +524,11 @@ return;
 			
 		$("#qtdProdutosParcial", chamadaoController.workspace).val($("#qtdProdutosTotal", chamadaoController.workspace).val());
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val($("#qtdExemplaresTotal", chamadaoController.workspace).val());
-		$("#valorParcial", chamadaoController.workspace).val($("#valorTotal", chamadaoController.workspace).val());
+		$("#valorParcial", chamadaoController.workspace).val($("#chamadao-valorTotal", chamadaoController.workspace).val());
 		
 		chamadaoController.parciais.qtdProdutosParcial = $("#qtdProdutosTotal", chamadaoController.workspace).val();
 		chamadaoController.parciais.qtdExemplaresParcial = $("#qtdExemplaresTotal", chamadaoController.workspace).val();
-		chamadaoController.parciais.valorParcial = $("#valorTotal", chamadaoController.workspace).val();
+		chamadaoController.parciais.valorParcial = $("#chamadao-valorTotal", chamadaoController.workspace).val();
 	},
 	
 	zerarCamposParciais : function() {

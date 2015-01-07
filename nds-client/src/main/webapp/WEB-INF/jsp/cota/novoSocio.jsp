@@ -62,8 +62,7 @@
 				<tr>
 					<td>Bairro:</td>
 					<td>
-						<input type="text" name="socioCota.endereco.bairro" style="width:230px"
-							   id="bairro" />
+						<input type="text" name="socioCota.endereco.bairro" style="width:230px" id="bairro" />
 					</td>
 					<td>Complemento:</td>
 					<td>
@@ -78,8 +77,7 @@
 				  	</td>
 					<td>Logradouro:</td>
 					<td>
-						<input type="text" name="socioCota.endereco.logradouro" style="width:250px" 
-							   id="logradouro"  />
+						<input type="text" name="socioCota.endereco.logradouro" style="width:250px" id="logradouro"  />
 					</td>
 				</tr>
 				<tr>

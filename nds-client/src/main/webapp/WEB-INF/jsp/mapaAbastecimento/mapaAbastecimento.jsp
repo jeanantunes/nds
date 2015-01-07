@@ -140,7 +140,7 @@
               <td>
 			  
 <!-- Box -->
-<select id="box" name="select" style="width:120px;" onchange="MA.buscarRoteiroPorBox()">
+<select id="mapa-abastecimento-box" name="select" style="width:120px;" onchange="MA.buscarRoteiroPorBox()">
        <option selected="selected" value="">Selecione...</option>
 	        
 </select>

@@ -526,7 +526,7 @@
 						   id="alteracao-cota-numeroCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota('#alteracao-cota-numeroCota', '#alteracao-cota-�', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
+						   onchange="pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota('#alteracao-cota-numeroCota', '#alteracao-cota-�', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
 
 				</td>
               	<td>Nome:</td>
@@ -608,7 +608,14 @@
 						</c:forEach>
 					</select>              	
               	</td>
-
+				<td colspan="2">Utiliza Parâm. de Cob. Distribuidor:</td>
+				<td colspan="2">
+					<select name="filtroAlteracaoCotaDTO.utilizaParametroCobrancaDistribuidor" id="utilizaParametroCobrancaDistribuidor" style="width:100px;">
+						<option value="SIM">Sim</option>
+						<option value="NAO">Não</option>
+              			<option selected="selected" value="TODOS">Todos</option>
+					</select> 
+				</td>
               	<td><span class="bt_pesquisar"><a href="javascript:;" onclick="alteracaoCotaController.pesquisar();">Pesquisar</a></span></td>
             </tr>
 		</table>

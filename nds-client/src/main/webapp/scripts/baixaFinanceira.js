@@ -997,7 +997,7 @@ var baixaFinanceiraController = $.extend(true, {
 	sucessCallbackPesquisarBoleto : function(resultado) {
 		
 		$("#cota", baixaFinanceiraController.workspace).html(resultado.cota);
-		$("#banco", baixaFinanceiraController.workspace).html(resultado.banco);
+		$("#baixa-banco", baixaFinanceiraController.workspace).html(resultado.banco);
 		$("#nossoNumero", baixaFinanceiraController.workspace).html(resultado.nossoNumero);
 		$("#dataEmissao", baixaFinanceiraController.workspace).html(resultado.dataEmissao);
 		$("#dataVencimento", baixaFinanceiraController.workspace).html(resultado.dataVencimento);
@@ -1029,8 +1029,8 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorTotalHidden", baixaFinanceiraController.workspace).val(resultado.valorTotal);
 		$("#valorBoletoHidden", baixaFinanceiraController.workspace).val(resultado.valor);
 		
-		$("#valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
-		$("#valorBoleto", baixaFinanceiraController.workspace).html($("#valorBoletoHidden", baixaFinanceiraController.workspace).val());
+		$("#baixa-valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
+		$("#baixa-valorBoleto", baixaFinanceiraController.workspace).html($("#valorBoletoHidden", baixaFinanceiraController.workspace).val());
 		
 		baixaFinanceiraController.dividaManualNossoNumero();
 	},
@@ -1102,7 +1102,7 @@ var baixaFinanceiraController = $.extend(true, {
 			centsLimit: 2
 		});
 
-		$("#valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
+		$("#baixa-valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
 	},
 	
 	

@@ -133,7 +133,7 @@
 			  <tr>
 			    <td width="58">Box:</td>
 			    <td colspan="3">
-				    <select name="box" id="box" style="width:150px;" onchange="chamdaEncalheAnteipadaController.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
+				    <select name="chamada-encalhe-ant-box" id="chamada-encalhe-ant-box" style="width:150px;" onchange="chamdaEncalheAnteipadaController.recarregarComboRoteiroRotas(this.value)" class="campoDePesquisa">
 				      <option selected="selected" value="-1">Selecione</option>
 				      <option value="">Todos</option>
 				      <c:forEach var="box" items="${listaBoxes}">
