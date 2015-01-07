@@ -264,11 +264,11 @@
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Núm.Boleto:</strong></td>
-		      	    <td class="linha_borda" id="nossoNumero" />
+		      	    <td class="linha_borda" id="baixa-nossoNumero" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Cota:</strong></td>
-		      	    <td class="linha_borda" id="cota" />
+		      	    <td class="linha_borda" id="baixa-cota" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td width="81" class="linha_borda"><strong>Banco:</strong></td>
