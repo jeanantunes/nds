@@ -1099,7 +1099,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += "</tr>";
 					
-					$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar", ConferenciaEncalhe.workspace);
+					$(innerTable).appendTo("#conferencia-dadosGridConferenciaEncalheFinalizar", ConferenciaEncalhe.workspace);
 					
 					innerTable = '';
 				}
@@ -1191,7 +1191,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 			$("#numeroNotaFiscalExibir", ConferenciaEncalhe.workspace).text(notaFiscal.numero);
 			$("#serieExibir", ConferenciaEncalhe.workspace).text(notaFiscal.serie);
-			$("#dataExibir", ConferenciaEncalhe.workspace).text(notaFiscal.dataEmissao);
+			$("#conferencia-dataExibir", ConferenciaEncalhe.workspace).text(notaFiscal.dataEmissao);
 			$("#conferencia-valorTotalNotaFiscalExibir", ConferenciaEncalhe.workspace).text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
 			$("#chaveAcessoExibir", ConferenciaEncalhe.workspace).text(notaFiscal.chaveAcesso);
 		}

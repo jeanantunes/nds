@@ -56,15 +56,15 @@
 	<br />
 
 	<fieldset class="classFieldset">
-		<legend>Pesquisar Faltas e Sobras</legend>
 		
+		<legend>Pesquisar Faltas e Sobras</legend>
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   		<tbody>
   			<tr>
     			<td width="59" title="tooltip teste">Código:</td>
     			<td colspan="3">
-    				<input type="text" name="codigo" id="codigo"
+    				<input type="text" name="diferenca-estoque-codigo" id="diferenca-estoque-codigo"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#diferenca-estoque-codigo', '#diferenca-estoque-produto', '#diferenca-estoque-edicao', false,
 								   									   diferencaEstoqueController.pesquisarProdutosSuccessCallBack,
@@ -117,11 +117,11 @@
    	      <tbody><tr>
    	        <td width="178">Período de Data Lançamento:</td>
    	        <td width="108">
-   	        	<input type="text" name="dataInicial" id="dataInicial" style="width: 80px;" value="${dataAtual}" />
+   	        	<input type="text" name="diferenca-estoque-dataInicial" id="diferenca-estoque-dataInicial" style="width: 80px;" value="${dataAtual}" />
    	       	</td>
    	        <td width="33" align="center">Até</td>
    	        <td width="147">
-				<input type="text" name="dataFinal" id="dataFinal" style="width: 80px;" value="${dataAtual}" />
+				<input type="text" name="diferenca-estoque-dataFinal" id="diferenca-estoque-dataFinal" style="width: 80px;" value="${dataAtual}" />
    	        </td>
    	        <td width="134" align="right">&nbsp;</td>
    	        <td width="202">&nbsp;</td>

@@ -160,7 +160,7 @@
           		</tr>
           		<tr>
 		            <td>Data:</td>
-		            <td id="dataExibir"></td>
+		            <td id="conferencia-dataExibir"></td>
 		            <td>Valor Total R$:</td>
 		            <td id="conferencia-valorTotalNotaFiscalExibir"></td>
           		</tr>
@@ -176,7 +176,7 @@
 	<fieldset>
         <legend>Produtos Nota Fiscal</legend>
         <div style="overflow: auto; height: 250px; width: 828px; border: 1px #EEEEEE solid;">
-			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="dadosGridConferenciaEncalheFinalizar">
+			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="conferencia-dadosGridConferenciaEncalheFinalizar">
 				<tr class="header_table">
 					<td style="width: 50px; text-align: left;">C&oacute;digo</td>
 					<td style="width: 100px; text-align: left;">Produto</td>
