@@ -65,7 +65,11 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
             case 'REPARTE':    
         		reparte.show();
                 encalhe.hide();
+                this.alterarDataCalendario(tipoArquivo);
             break;  
+            case 'ENCALHE':
+            	this.alterarDataCalendario(tipoArquivo);
+            break;
             case 'PICKING':
         		reparte.show();
                 encalhe.hide();
@@ -76,5 +80,13 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
             break;  
     }
 
+};
+
+GeracaoArquivos.prototype.alterarDataCalendario = function(tipoArquivoGeracao){
+	$.postJSON(this.path + 'alterarDataCalendario',
+			   {tipoArquivo:tipoArquivoGeracao}, 
+			   function(result){
+				   $("#datepickerDe", this.workspace).val(result.data);
+			   });
 };
 //@ sourceURL=geracaoArquivo.js
