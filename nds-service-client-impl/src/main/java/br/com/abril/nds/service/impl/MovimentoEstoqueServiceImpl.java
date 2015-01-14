@@ -1408,7 +1408,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
         movimentoEstoqueCota.setCota(new Cota(idCota));
         
-        movimentoEstoqueCota.setData(dataMovimento==null ? dataOperacao : dataMovimento);
+        movimentoEstoqueCota.setData(dataOperacao);
         
         movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
         
@@ -1427,9 +1427,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             if (idLancamento==null) {
                 
-                idLancamento =
-                        lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-                                new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+                idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+                               		new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
             
@@ -1465,7 +1464,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             }
         }
         
-        if (valoresAplicadosParam != null){
+        if (valoresAplicadosParam != null) {
             
             movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
         }
