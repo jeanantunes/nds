@@ -91,8 +91,17 @@ public class AlteracaoCotaRepositoryImpl extends
 				.append("LEFT OUTER JOIN ENDERECO_COTA enderecoCota on cota.ID=enderecoCota.COTA_ID ")
 				.append("LEFT OUTER JOIN ENDERECO endereco on enderecoCota.ENDERECO_ID=endereco.ID ")
 				.append("LEFT OUTER JOIN BOX box on cota.BOX_ID=box.ID ")
-				.append("LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA parametroCobranca on cota.ID=parametroCobranca.COTA_ID  ")
-				.append("LEFT JOIN COTA_FORNECEDOR cotaFornecedor ON cota.ID = cotaFornecedor.COTA_ID ")
+				.append("LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA parametroCobranca on cota.ID=parametroCobranca.COTA_ID  ");
+		
+				if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
+						&& OpcoesFiltro.SIM.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
+					sql.append("LEFT OUTER JOIN FORMA_COBRANCA formaCobranca on formaCobranca.PARAMETRO_COBRANCA_COTA_ID=parametroCobranca.ID AND formaCobranca.ATIVA = false ");
+				} else if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
+						&& OpcoesFiltro.NAO.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
+					sql.append("INNER JOIN FORMA_COBRANCA formaCobranca on formaCobranca.PARAMETRO_COBRANCA_COTA_ID=parametroCobranca.ID AND formaCobranca.ATIVA = true ");
+				}
+				
+				sql.append("LEFT JOIN COTA_FORNECEDOR cotaFornecedor ON cota.ID = cotaFornecedor.COTA_ID ")
 				.append("LEFT JOIN FORNECEDOR fornecedor ON cotaFornecedor.FORNECEDOR_ID = fornecedor.ID ")
 				.append("LEFT JOIN PESSOA pessoaFornecedor ON fornecedor.JURIDICA_ID = pessoaFornecedor.ID ")
 				.append("LEFT JOIN DESCONTO_PRODUTO_EDICAO desconto ON cota.ID = desconto.COTA_ID AND desconto.FORNECEDOR_ID = fornecedor.ID ");
@@ -101,12 +110,9 @@ public class AlteracaoCotaRepositoryImpl extends
 
 		if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
 				&& OpcoesFiltro.SIM.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
-			sql.append("AND parametroCobranca.FATOR_VENCIMENTO is null ");
-		} else if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
-				&& OpcoesFiltro.NAO.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
-			sql.append("AND parametroCobranca.FATOR_VENCIMENTO is not null ");
+			sql.append("AND (SELECT count(0) FROM FORMA_COBRANCA formaCobranca WHERE formaCobranca.PARAMETRO_COBRANCA_COTA_ID=parametroCobranca.ID AND formaCobranca.ATIVA = true) = 0 ");
 		}
-		
+				
 		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota() > 0) {
 			sql.append("AND cota.NUMERO_COTA = :numeroCota ");
 		}

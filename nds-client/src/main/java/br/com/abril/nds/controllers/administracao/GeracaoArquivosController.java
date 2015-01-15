@@ -16,7 +16,9 @@ import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.ems0197.route.EMS0197Route;
 import br.com.abril.nds.integracao.ems0198.route.EMS0198Route;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -48,6 +50,9 @@ public class GeracaoArquivosController extends BaseController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
+    private CalendarioService calendarioService;
+	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -63,6 +68,8 @@ public class GeracaoArquivosController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void gerar(Date dataLctoPrevisto, String operacao) {
+		
+		validarDataDeGeracao(dataLctoPrevisto);
 
 		int qtdArquivosGerados = 0;
 		
@@ -85,6 +92,29 @@ public class GeracaoArquivosController extends BaseController {
 		}
 		
 		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").serialize();
+	}
+
+	private void validarDataDeGeracao(Date dataLctoPrevisto) {
+		Date dataOperacaoSistema = distribuidorService.obterDataOperacaoDistribuidor(); 
+		
+		if(DateUtil.isDataInicialMaiorDataFinal(dataOperacaoSistema, dataLctoPrevisto)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data de geração não pode ser anterior a data de operação do sistema.");
+		}
+	}
+	
+	@Post
+	public void alterarDataCalendario(String tipoArquivo) {
+		
+		Date dataOperacaoSistema = distribuidorService.obterDataOperacaoDistribuidor();
+		String data;
+		
+		if(tipoArquivo.equalsIgnoreCase("REPARTE")){
+			data = DateUtil.formatarDataPTBR(calendarioService.adicionarDiasUteis(dataOperacaoSistema, 1));
+		}else{
+			data = DateUtil.formatarDataPTBR(calendarioService.adicionarDiasUteis(dataOperacaoSistema, 2));
+		}
+			
+		result.use(Results.json()).from(data, "data").recursive().serialize();
 	}
 
 }
