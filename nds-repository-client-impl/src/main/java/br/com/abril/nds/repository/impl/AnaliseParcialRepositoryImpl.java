@@ -13,7 +13,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
@@ -88,7 +87,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("     and mec.cota_id = c.id ");
         sql.append("     and mec.produto_edicao_id = pe.id) juramento, ");
 
-        sql.append("    (select epc.qtde_recebida ");
+/*      ## Comentário necessário, pois pediram pra deixar a solução antiga em background
+ * 		sql.append("    (select epc.qtde_recebida ");
 		sql.append("     from lancamento l ");
 		sql.append("     inner join produto_edicao _ped on l.produto_edicao_id = _ped.id ");
 		sql.append("     inner join estoque_produto_cota epc on epc.produto_edicao_id = _ped.id ");
@@ -99,8 +99,18 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("     and l.data_lcto_distribuidor = (select max(_ul.data_lcto_distribuidor) ");
 		sql.append("                                     from lancamento _ul ");
 		sql.append("                                     where _ul.produto_edicao_id = _ped.id and _ul.status in (:statusLancamento)) ");
-		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");
-		
+		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");*/
+        
+        sql.append(" (select epc.QTDE_RECEBIDA ");
+        sql.append(" from estoque_produto_cota epc ");
+        sql.append(" where (epc.cota_id = c.id) "); 
+        sql.append(" 		AND epc.PRODUTO_EDICAO_ID = (select lct.PRODUTO_EDICAO_ID from lancamento lct ");
+        sql.append("                                   join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID ");
+        sql.append("                                   join produto pd ON pe.PRODUTO_ID = pd.ID ");
+        sql.append("                                where pd.codigo = p.codigo ");
+        sql.append("                                and lct.STATUS in (:statusLancamento)");
+        sql.append("                                order by lct.DATA_LCTO_DISTRIBUIDOR desc limit 1)) ultimoReparte,");
+        
         sql.append("     (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         
         sql.append("     (coalesce(ec.reparte_inicial,0) - coalesce(ec.reparte,0)) quantidadeAjuste ");
