@@ -950,11 +950,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
             rateioDiferenca.setDataNotaEnvio(rateioCotaVO.getDataEnvioNota());
             
-            final Lancamento ultimoLancamento =
-                    lancamentoService.obterUltimoLancamentoDaEdicao(
-                            diferenca.getProdutoEdicao().getId());
-            
-            rateioDiferenca.setDataMovimento(ultimoLancamento.getDataLancamentoDistribuidor());
+            rateioDiferenca.setDataMovimento(distribuidorService.obterDataOperacaoDistribuidor());
             
             rateioDiferenca = rateioDiferencaRepository.merge(rateioDiferenca);
             

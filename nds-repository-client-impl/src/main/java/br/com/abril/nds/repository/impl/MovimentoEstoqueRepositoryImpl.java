@@ -292,11 +292,8 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 			sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioAoJornaleiro ");
 		}
 		sql.append("	and ");
-		if(precoCapaHistoricoAlteracao) {
-			sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
-		} else {
-			sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
-		}
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
+		
 		sql.append("			select distinct produtoEdicao_.ID ");
 		sql.append("			from ");
 		sql.append("				EXPEDICAO expedicao ");
@@ -305,7 +302,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
 		sql.append("			where lancamento.STATUS <> :statusFuro");
 		if(precoCapaHistoricoAlteracao) {
-			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR <= :dataMovimento");
+			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
 		} else {
 			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento");
 		}

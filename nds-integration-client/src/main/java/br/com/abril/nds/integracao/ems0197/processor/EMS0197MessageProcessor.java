@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -37,6 +39,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	private static final String REPARTE_FOLDER = "reparte";
 
 	private static final String REPARTE_EXT = ".LCT";
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -63,7 +67,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		try{
 
-			String nomeArquivo = ""+outheader.getCodDistribuidor()+"."+outheader.getNumeroCota()+"."+outheader.getDataLctoDistrib();
+			String nomeArquivo = ""+outheader.getCodDistribuidor()+"."+StringUtils.leftPad(outheader.getNumeroCota(), 5, '0')+"."+sdf.format(outheader.getDataLctoDistrib());
 			
 			PrintWriter print = new PrintWriter(new FileWriter(
 					message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
@@ -93,7 +97,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	}
 		
 		
-		
+//		## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo
 //		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
 		
 //		for (EMS0197Header outheader : listHeaders){
