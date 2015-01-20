@@ -82,7 +82,7 @@ $(function(){
 
 					<input 	type="text" 
 							maxlength="17"
-							id="cota" onchange="pesquisaCotaConsultaEncalhe.pesquisarPorNumeroCota('#cota', '#nomeCota');" 
+							id="consulta-encalhe-cota" onchange="pesquisaCotaConsultaEncalhe.pesquisarPorNumeroCota('#consulta-encalhe-cota', '#consulta-encalhe-nomeCota');" 
 							style="width: 60px; float:left; margin-right:5px;"/>
 				
 				</td>
@@ -93,10 +93,10 @@ $(function(){
 
 		            <input type="text"
 		            maxlength="255" 
-		            name="nomeCota" 
-		            id="nomeCota" 
-		            onkeyup="pesquisaCotaConsultaEncalhe.autoCompletarPorNome('#nomeCota');" 
-		            onblur="pesquisaCotaConsultaEncalhe.pesquisarPorNomeCota('#cota', '#nomeCota');" 
+		            name="consulta-encalhe-nomeCota" 
+		            id="consulta-encalhe-nomeCota" 
+		            onkeyup="pesquisaCotaConsultaEncalhe.autoCompletarPorNome('#consulta-encalhe-nomeCota');" 
+		            onblur="pesquisaCotaConsultaEncalhe.pesquisarPorNomeCota('#consulta-encalhe-cota', '#consulta-encalhe-nomeCota');" 
 		            style="width:130px;"/>
 					
 				</td>

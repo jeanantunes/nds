@@ -7,17 +7,17 @@ var EmissaoCEController = $.extend(true, {
 		
 		var _this = this;
 		
-		$("#dataDe", this.workspace).mask("99/99/9999");
+		$("#emissaoce-dataDe", this.workspace).mask("99/99/9999");
 		
-		$( "#dataDe" , this.workspace).datepicker({
+		$( "#emissaoce-dataDe" , this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$("#dataAte", this.workspace).mask("99/99/9999");
+		$("#emissaoce-dataAte", this.workspace).mask("99/99/9999");
 		
-		$( "#dataAte" , this.workspace).datepicker({
+		$( "#emissaoce-dataAte" , this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -176,8 +176,8 @@ var EmissaoCEController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'filtro.dtRecolhimentoDe',		value: this.get("dataDe")});
-		data.push({name:'filtro.dtRecolhimentoAte',		value: this.get("dataAte")});
+		data.push({name:'filtro.dtRecolhimentoDe',		value: this.get("emissaoce-dataDe")});
+		data.push({name:'filtro.dtRecolhimentoAte',		value: this.get("emissaoce-dataAte")});
 		data.push({name:'filtro.codigoBoxDe',			value: this.get("boxDe")});
 		data.push({name:'filtro.codigoBoxAte',			value: this.get("boxAte")});
 		data.push({name:'filtro.numCotaDe',				value: this.get("cotaDe")});
