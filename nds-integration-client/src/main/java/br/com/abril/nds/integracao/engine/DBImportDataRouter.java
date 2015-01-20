@@ -70,14 +70,10 @@ public class DBImportDataRouter extends AbstractRepository implements ContentBas
 						message.setBody(o);
 						
 						try {
-													
 							messageProcessor.processMessage(message);	
-								
 						} catch(Exception e) {
 							ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-
 						}
-						
 											
 					}		
                     // Processamento a ser executado APÓS o processamento
