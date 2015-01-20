@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.ems3100.processor.EMS03100MessageProcessor;
+import br.com.abril.nds.integracao.ems3100.processor.EMS3100MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
@@ -15,7 +15,7 @@ import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 public class EMS3100Route extends CouchDBImportRouteTemplate {
 	
 	@Autowired
-	private EMS03100MessageProcessor messageProcessor;
+	private EMS3100MessageProcessor messageProcessor;
 
 	@Override
 	public InterfaceEnum getInterfaceEnum() {
