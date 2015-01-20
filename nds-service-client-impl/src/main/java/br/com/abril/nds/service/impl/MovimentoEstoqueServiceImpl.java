@@ -1780,7 +1780,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
-            
             if (idLancamento != null) {
                 
                 final Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
@@ -1788,6 +1787,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 movimentoEstoqueCota.setLancamentoId(lancamento.getId());
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+                
+                if(produtoEdicao.getPrecoVenda().compareTo(BigDecimal.ZERO) <= 0) {
+                	throw new ValidacaoException(TipoMensagem.ERROR, "Produto com Preço de Venda inválido.");
+                }
                 
 				/**
                  * A busca dos descontos é feita diretamente no Map, por chave,
