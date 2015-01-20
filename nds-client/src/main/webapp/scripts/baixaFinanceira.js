@@ -996,11 +996,11 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	sucessCallbackPesquisarBoleto : function(resultado) {
 		
-		$("#cota", baixaFinanceiraController.workspace).html(resultado.cota);
+		$("#baixa-cota", baixaFinanceiraController.workspace).html(resultado.cota);
 		$("#baixa-banco", baixaFinanceiraController.workspace).html(resultado.banco);
-		$("#nossoNumero", baixaFinanceiraController.workspace).html(resultado.nossoNumero);
-		$("#dataEmissao", baixaFinanceiraController.workspace).html(resultado.dataEmissao);
-		$("#dataVencimento", baixaFinanceiraController.workspace).html(resultado.dataVencimento);
+		$("#baixa-nossoNumero", baixaFinanceiraController.workspace).html(resultado.nossoNumero);
+		$("#baixa-dataEmissao", baixaFinanceiraController.workspace).html(resultado.dataEmissao);
+		$("#baixa-dataVencimento", baixaFinanceiraController.workspace).html(resultado.dataVencimento);
 		
 		$("#dividaTotal", baixaFinanceiraController.workspace).html(resultado.dividaTotal);
 		$("#dataPagamento", baixaFinanceiraController.workspace).html(resultado.dataPagamento);
@@ -1056,7 +1056,7 @@ var baixaFinanceiraController = $.extend(true, {
     		desconto = $("#desconto", baixaFinanceiraController.workspace).val();
     	}
     	
-    	var param ={ nossoNumero : $("#nossoNumero", baixaFinanceiraController.workspace).html(),
+    	var param ={ nossoNumero : $("#baixa-nossoNumero", baixaFinanceiraController.workspace).html(),
     			dataPagamento :$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).val(),
     			valor : $("#valorBoletoHidden", baixaFinanceiraController.workspace).val(),
     			desconto : desconto,

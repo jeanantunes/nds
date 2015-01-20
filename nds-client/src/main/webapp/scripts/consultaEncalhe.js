@@ -6,7 +6,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var colunasDetalhes = ConsultaEncalhe.obterColModelDetalhes();
 			var colunasOutrosValores = ConsultaEncalhe.obterColModelOutrosValores();
 			
-			$("#cota", ConsultaEncalhe.workspace).numeric();
+			$("#consulta-encalhe-cota", ConsultaEncalhe.workspace).numeric();
 			
 			$("#gridConsultaEncalhe", ConsultaEncalhe.workspace).flexigrid({
 				
@@ -64,7 +64,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
-			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 			
 			var formData = [
 			        
@@ -94,7 +94,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
-			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 			
 			var link = contextPath + '/devolucao/consultaEncalhe/gerarSlip' +
 									'?dataRecolhimentoInicial=' + dataRecolhimentoInicial +
@@ -232,7 +232,7 @@ var ConsultaEncalhe = $.extend(true, {
 	    	
 	    	if (!numeroCota){
 	    		
-	    		numeroCota = $("#cota", ConsultaEncalhe.workspace).val();
+	    		numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 	    	}
 	    	
 			$("#dadosDetalheEncalheGrid", ConsultaEncalhe.workspace).flexOptions({
