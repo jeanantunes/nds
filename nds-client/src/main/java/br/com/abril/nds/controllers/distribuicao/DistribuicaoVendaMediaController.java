@@ -551,10 +551,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	        
 	    estudoService.criarRepartePorPDV(estudo.getId());
 	        
-		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+//		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 	
 		List<Object> response = new ArrayList<>();
-		response.add(htmlEstudo);
+//		response.add(htmlEstudo);
 		response.add(estudo.getId());
 		response.add(estudo.isLiberado() == null ? false : true);
 		
