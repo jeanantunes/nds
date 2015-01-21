@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -55,7 +54,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	private static final String REPARTE_EXT = ".LCT";
 	
-	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -400,10 +399,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
 		sql.append("       CAST(ROUND(ROUND(pe.PRECO_VENDA, 2) * 100, 0) AS CHAR) AS precoCapa, ");
 
-		//		sql.append(" --       CAST(ROUND(ROUND(mec.PRECO_COM_DESCONTO, 2) * 100, 0) AS CHAR)AS precoCusto, ");
-		
-//		sql.append("       '00' AS precoCusto, ");
-		
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
 		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
@@ -436,42 +431,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       WHERE eg.DATA_LANCAMENTO = :data and ecg.REPARTE is not null  ");
 		sql.append(" 	 		 and c.id = :idCota");
 
-//		sql.append(" select                                                                                            ");
-//		sql.append("      	CAST((select d.COD_DISTRIBUIDOR_DINAP from distribuidor d limit 1) as CHAR) as codDistribuidor               ");
-//		sql.append("      , CAST(c.PESSOA_ID as CHAR) as codJornaleiro                                                              ");
-//		sql.append("      , CAST(c.NUMERO_COTA as CHAR) as codCota                                                                  ");
-//		sql.append("      , CAST(pdv.ID as CHAR) as codPDV                                                                          ");
-//		sql.append("      , DATE_FORMAT((mec.DATA),'%Y%m%d') as dataMovimento                                       ");
-//		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codProduto                                                                 ");
-//		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numEdicao                                                                 ");
-//		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codBarras                                                      ");
-//		sql.append("      , p.NOME as nomeProduto                                                                                ");
-//		sql.append("      , CAST(ROUND(mec.QTDE, 0) as CHAR) as reparte                                                                              ");
-//		sql.append("      , pes.RAZAO_SOCIAL as nomeEditora                                                                       ");
-//		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_VENDA, 2)*100, 0) as CHAR)  as precoCapa                                                   ");
-//		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_COM_DESCONTO, 2)*100, 0) as CHAR) as precoCusto                                         ");
-//		sql.append("      , pe.CHAMADA_CAPA  as  chamadaCapa                                                                          ");
-//		sql.append("      , DATE_FORMAT((mec.DATA),'%Y%m%d') as dataLancamento                                            ");
-//		sql.append("      , DATE_FORMAT((select me.DATA from movimento_estoque_cota me                                             ");
-//		sql.append("           where me.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and me.COTA_ID = mec.COTA_ID         ");
-//		sql.append("           group by me.LANCAMENTO_ID order by me.DATA asc limit 1),'%Y%m%d') as dataPrimeiroLancamentoParcial     ");
-//		sql.append("                                                                                                   ");
-//		
-//		sql.append("   from movimento_estoque_cota mec                                                                 ");
-//		sql.append("	 join lancamento l on l.id = mec.lancamento_id                                                 ");
-//		sql.append("	 join cota c on mec.COTA_ID = c.ID                                                             ");
-//		sql.append("	 join produto_edicao pe on pe.id = mec.produto_edicao_id                                       ");
-//		sql.append("	 join produto p on p.id = pe.produto_id                                                        ");
-//		sql.append("	 join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                       ");
-//		sql.append(" 	 join pdv on pdv.COTA_ID = c.ID                                                                ");
-//		sql.append(" 	 join editor edt ON p.EDITOR_ID = edt.ID                                                       ");
-//		sql.append(" 	 join pessoa pes ON edt.JURIDICA_ID = pes.ID                                                   ");
-//		sql.append(" where                                                                                             ");
-//		sql.append(" 	 mec.data = :data                                                                       	   ");
-//		sql.append(" 	 and c.id = :idCota                                                                            ");
-//		sql.append("	 and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos)												   ");
-		
-		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
@@ -491,7 +450,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("reparte", StandardBasicTypes.STRING);
 		query.addScalar("nomeEditora", StandardBasicTypes.STRING);
 		query.addScalar("precoCapa", StandardBasicTypes.STRING);
-//		query.addScalar("precoCusto", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
