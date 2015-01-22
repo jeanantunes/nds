@@ -276,21 +276,21 @@
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Emissão:</strong></td>
-		      	    <td class="linha_borda" id="dataEmissao" />
+		      	    <td class="linha_borda" id="baixa-dataEmissao" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Vencimento:</strong></td>
-		      	    <td class="linha_borda" id="dataVencimento" />
+		      	    <td class="linha_borda" id="baixa-dataVencimento" />
 		   	      </tr>
 		      	  <tr>
 		      	    <td class="linha_borda"><strong>Valor R$:</strong></td>
 		      	    <td class="linha_borda" id="baixa-valorBoleto" />
 		   	      </tr>
 		   	      <tr>
-		   	      		<td class="dataPagamentoManualBoleto" width="100">Data Pagamento:</td>
-			            <td class="dataPagamentoManualBoleto">
-							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManualBoleto();" name="dtPagamentoManualBoleto" type="text" id="dtPagamentoManualBoleto" style="width:120px; text-align:right;" />
-						</td>
+	   	      		<td class="dataPagamentoManualBoleto" width="100">Data Pagamento:</td>
+		            <td class="dataPagamentoManualBoleto">
+						<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManualBoleto();" name="dtPagamentoManualBoleto" type="text" id="dtPagamentoManualBoleto" style="width:120px; text-align:right;" />
+					</td>
 				  </tr>
 				  
 				  <tr style="display:none" id="infoEncalheBoletoAntecipado">

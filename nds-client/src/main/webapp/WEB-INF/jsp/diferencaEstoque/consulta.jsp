@@ -56,8 +56,8 @@
 	<br />
 
 	<fieldset class="classFieldset">
-		<legend>Pesquisar Faltas e Sobras</legend>
 		
+		<legend>Pesquisar Faltas e Sobras</legend>
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   		<tbody>
@@ -117,11 +117,11 @@
    	      <tbody><tr>
    	        <td width="178">Período de Data Lançamento:</td>
    	        <td width="108">
-   	        	<input type="text" name="dataInicial" id="dataInicial" style="width: 80px;" value="${dataAtual}" />
+   	        	<input type="text" name="diferenca-estoque-dataInicial" id="diferenca-estoque-dataInicial" style="width: 80px;" value="${dataAtual}" />
    	       	</td>
    	        <td width="33" align="center">Até</td>
    	        <td width="147">
-				<input type="text" name="dataFinal" id="dataFinal" style="width: 80px;" value="${dataAtual}" />
+				<input type="text" name="diferenca-estoque-dataFinal" id="diferenca-estoque-dataFinal" style="width: 80px;" value="${dataAtual}" />
    	        </td>
    	        <td width="134" align="right">&nbsp;</td>
    	        <td width="202">&nbsp;</td>

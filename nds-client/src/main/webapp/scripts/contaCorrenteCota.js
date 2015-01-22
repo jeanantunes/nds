@@ -5,9 +5,9 @@ var contaCorrenteCotaController = $.extend(true, {
 	 * QUANDO A PAGINA CARREGA.
 	 */
 	init : function() {
-		$("#cota", contaCorrenteCotaController.workspace).numeric();
+		$("#cc-cota", contaCorrenteCotaController.workspace).numeric();
 		
-		$("#nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
+		$("#cc-nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
 		
 		$( "#periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
 			showOn: "button",
@@ -37,9 +37,9 @@ var contaCorrenteCotaController = $.extend(true, {
 	 */
 	pesquisarItemContaCorrenteCota : function() {
 
-		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
+		var numeroCota = $("#cc-cota", contaCorrenteCotaController.workspace).val();
 		
-		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		var nomeCota = $("#cc-nomeCota", contaCorrenteCotaController.workspace).val();
 		
 		$("#cotaHidden", contaCorrenteCotaController.workspace).val(numeroCota);
 		

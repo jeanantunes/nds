@@ -999,8 +999,8 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#baixa-cota", baixaFinanceiraController.workspace).html(resultado.cota);
 		$("#baixa-banco", baixaFinanceiraController.workspace).html(resultado.banco);
 		$("#baixa-nossoNumero", baixaFinanceiraController.workspace).html(resultado.nossoNumero);
-		$("#dataEmissao", baixaFinanceiraController.workspace).html(resultado.dataEmissao);
-		$("#dataVencimento", baixaFinanceiraController.workspace).html(resultado.dataVencimento);
+		$("#baixa-dataEmissao", baixaFinanceiraController.workspace).html(resultado.dataEmissao);
+		$("#baixa-dataVencimento", baixaFinanceiraController.workspace).html(resultado.dataVencimento);
 		
 		$("#dividaTotal", baixaFinanceiraController.workspace).html(resultado.dividaTotal);
 		$("#dataPagamento", baixaFinanceiraController.workspace).html(resultado.dataPagamento);
