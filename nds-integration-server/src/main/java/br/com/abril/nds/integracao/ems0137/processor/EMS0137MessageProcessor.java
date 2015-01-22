@@ -190,7 +190,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
       
-			cdbc = this.getCouchDBClient(distribuidor);
+			cdbc = this.getCouchDBClient(distribuidor, true);
 			
 			for (EstrategiaLanctoPraca item : lista){
 				
@@ -219,7 +219,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
       
-			cdbc = this.getCouchDBClient(distribuidor);
+			cdbc = this.getCouchDBClient(distribuidor, true);
 			
 			for (EstrategiaMicroDistribuicao item : lista){
 				
@@ -252,7 +252,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			cdbc = this.getCouchDBClient(distribuidor);
+			cdbc = this.getCouchDBClient(distribuidor, true);
       
 			for (EstrategiaCluster item : lista){
 				
@@ -280,7 +280,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
       
-			cdbc = this.getCouchDBClient(distribuidor);
+			cdbc = this.getCouchDBClient(distribuidor, true);
 			
 			for (ComposicaoBaseCalculo item : lista){
 				
@@ -308,7 +308,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
       
-			cdbc = this.getCouchDBClient(distribuidor);
+			cdbc = this.getCouchDBClient(distribuidor, true);
 			
 			for (BaseCalculo item : lista){
 				

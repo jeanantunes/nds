@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.model.canonic;
 
-
 public enum InterfaceEnum {
 
 	EMS0109(109L, null, EMS0109Input.class),
@@ -21,7 +20,8 @@ public enum InterfaceEnum {
 	EMS0140(140L, null, EMS0140InputItem.class, EMS0140Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0185(185L, null, null),
 	EMS2021(2021L, null, EMS2021Input.class, TipoInterfaceEnum.DB),
-	EMS0137(137L, null, EMS0137InputItem.class, EMS0137Input.class, TipoInterfaceEnum.DETALHE_INLINE);
+	EMS0137(137L, null, EMS0137InputItem.class, EMS0137Input.class, TipoInterfaceEnum.DETALHE_INLINE),
+	EMS3100(3100L, null, EMS3100InputItem.class, EMS3100Input.class, TipoInterfaceEnum.DETALHE_INLINE);
 
 	private Long codigoInterface;
 	private Integer tamanhoLinha;
