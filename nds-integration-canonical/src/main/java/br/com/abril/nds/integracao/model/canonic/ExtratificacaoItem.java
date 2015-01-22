@@ -3,7 +3,6 @@ package br.com.abril.nds.integracao.model.canonic;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 
 public class ExtratificacaoItem implements Serializable {
 
@@ -27,10 +26,6 @@ public class ExtratificacaoItem implements Serializable {
 	
 	private BigDecimal qtdJornaleiros;
 	
-	private BigDecimal percentualDesconto;
-
-	private Date dataAprovacao;
-
 	public BigInteger getIdCota() {
 		return idCota;
 	}
@@ -103,19 +98,4 @@ public class ExtratificacaoItem implements Serializable {
 		this.qtdJornaleiros = qtdJornaleiros;
 	}
 
-	public BigDecimal getPercentualDesconto() {
-		return percentualDesconto;
-	}
-
-	public void setPercentualDesconto(BigDecimal percentualDesconto) {
-		this.percentualDesconto = percentualDesconto;
-	}
-
-	public Date getDataAprovacao() {
-		return dataAprovacao;
-	}
-
-	public void setDataAprovacao(Date dataAprovacao) {
-		this.dataAprovacao = dataAprovacao;
-	}
 }

@@ -17,6 +17,7 @@ import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,6 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
-import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS3100MessageProcessor extends AbstractRepository implements MessageProcessor  {
@@ -78,7 +78,7 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 				
-		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
+		this.diretorio = "/opt/interface_server/prodin/";//parametroSistemaRepository.getParametro("INBOUND_DIR");
 		// this.diretorio = "/opt/interface_server/prodin/";
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, null);
@@ -102,17 +102,20 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 						
 						Extratificacao doc = (Extratificacao) row.getDoc();
+						Extratificacao docServer = new Extratificacao(); 
+						BeanUtils.copyProperties(doc, docServer, "_rev", "_id");
 						
-						doc.setDataOperacao(DateUtil.normalizarDataSemHora(doc.getDataOperacao()));
-						
-						
-						couchDbExtratificador.save(doc);
-					
+						couchDbExtratificador.save(docServer);
+						couchDbClient.remove(doc);
 					}
 					
                 } catch (NoDocumentException e) {
                     LOGGER.error(e.getMessage(), e);
-				}			
+				} catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                    throw e;
+				}
+				
 			}
 		}
 	}

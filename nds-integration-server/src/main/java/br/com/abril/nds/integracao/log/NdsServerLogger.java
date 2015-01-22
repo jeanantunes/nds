@@ -154,6 +154,8 @@ public class NdsServerLogger extends AbstractRepository {
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
 		logExecucaoMensagem.setMensagem(descricaoErro);
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
+		logExecucaoMensagem.setNomeArquivo("");
+		
 		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
 			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
 		if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue()))

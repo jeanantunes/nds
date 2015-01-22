@@ -6,9 +6,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class Extratificacao implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	
+	@JsonProperty("_id")
+	private String _id;
+	
+	@JsonProperty("_rev")
+	private String _rev;
 	
 	private String tipoDocumento;
 	
