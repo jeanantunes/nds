@@ -78,8 +78,8 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 				
-		// this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
-		this.diretorio = "/opt/interface_server/prodin/";
+		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
+		// this.diretorio = "/opt/interface_server/prodin/";
 		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
 		List<String> distribuidores = this.getDistribuidores(this.diretorio, null);
 		

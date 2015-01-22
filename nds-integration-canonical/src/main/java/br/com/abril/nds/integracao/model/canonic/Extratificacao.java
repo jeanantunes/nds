@@ -53,7 +53,7 @@ public class Extratificacao implements Serializable {
 	}
 	
 	public void setDataOperacao(String dataOperacao) {
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		try {
 			this.dataOperacao = sdf.parse(dataOperacao);
 		} catch (ParseException e) {
