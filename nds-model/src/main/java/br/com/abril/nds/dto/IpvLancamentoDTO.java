@@ -6,10 +6,10 @@ import br.com.abril.nds.ftfutil.FTFfield;
 public class IpvLancamentoDTO extends FTFBaseDTO{
 	
 	@FTFfield(tamanho=2, tipo="numeric", ordem=1)
-	private String versao = "01";
+	private String versao;
 	
 	@FTFfield(tamanho=1, tipo="char", ordem=2)
-	private String tipoArquivo = "L";
+	private String tipoArquivo;
 	
 	@FTFfield(tamanho=7, tipo="numeric", ordem=3)
 	private String codDistribuidor;
@@ -58,7 +58,11 @@ public class IpvLancamentoDTO extends FTFBaseDTO{
 	
 	@FTFfield(tamanho=8, tipo="char", ordem=18)
 	private String dataPrimeiroLancamentoParcial;
-
+	
+	private Long idLancamento;
+	
+	private Long idProdutoEdicao;
+	
 	public String getVersao() {
 		return versao;
 	}
@@ -202,6 +206,22 @@ public class IpvLancamentoDTO extends FTFBaseDTO{
 	public void setDataPrimeiroLancamentoParcial(
 			String dataPrimeiroLancamentoParcial) {
 		this.dataPrimeiroLancamentoParcial = dataPrimeiroLancamentoParcial;
+	}
+	
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
 }

@@ -724,18 +724,18 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    //usado para exibir as variaveis do estudo
             
-			myWindow = window.open('', '_blank');
-			
-			if(myWindow && myWindow.document) {
-				myWindow.document.write(result.list[0]);
-				myWindow.focus();
-			} else {
-				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
-			}
+//			myWindow = window.open('', '_blank');
+//			
+//			if(myWindow && myWindow.document) {
+//				myWindow.document.write(result.list[0]);
+//				myWindow.focus();
+//			} else {
+//				exibirMensagem("WARNING", ["Ajuste as configurações de popup no browser."]);
+//			}
             
-            var isLiberado = result.list[2];
+            var isLiberado = result.list[1];
             	
-            $('#idEstudo').text(result.list[1]);
+            $('#idEstudo').text(result.list[0]);
             $('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
             
             	
