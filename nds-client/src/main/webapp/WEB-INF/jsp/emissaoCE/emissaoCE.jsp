@@ -82,13 +82,13 @@
     <td width="113">
     
 <!-- Dt Recolhimento de -->    
-<input id="dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
+<input id="emissaoce-dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
 
     <td width="28" colspan="-1" align="center">Até</td>
     <td width="130">
     
 <!-- Dt Recolhimento até -->
-<input id="dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
+<input id="emissaoce-dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
 
     <td>Intervalo Box:</td>
     <td width="91">

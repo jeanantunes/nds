@@ -1408,7 +1408,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
         movimentoEstoqueCota.setCota(new Cota(idCota));
         
-        movimentoEstoqueCota.setData(dataMovimento==null ? dataOperacao : dataMovimento);
+        movimentoEstoqueCota.setData(dataOperacao);
         
         movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
         
@@ -1427,9 +1427,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             if (idLancamento==null) {
                 
-                idLancamento =
-                        lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-                                new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+                idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+                               		new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
             
@@ -1465,7 +1464,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             }
         }
         
-        if (valoresAplicadosParam != null){
+        if (valoresAplicadosParam != null) {
             
             movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
         }
@@ -1781,7 +1780,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
-            
             if (idLancamento != null) {
                 
                 final Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
@@ -1789,6 +1787,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 movimentoEstoqueCota.setLancamentoId(lancamento.getId());
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+                
+                if(produtoEdicao.getPrecoVenda().compareTo(BigDecimal.ZERO) <= 0) {
+                	throw new ValidacaoException(TipoMensagem.ERROR, "Produto com Preço de Venda inválido.");
+                }
                 
 				/**
                  * A busca dos descontos é feita diretamente no Map, por chave,

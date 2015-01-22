@@ -43,16 +43,22 @@
 	<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
         <tr>
    	        <td width="58">Período:</td>
-   	        <td width="123"><input type="text" name="filtro.dataDe" value="filtro.dataDe" id="dataDe" style="width:80px;" /></td>
+   	        <td width="123">
+   	        	<input type="text" name="filtro.dataDe" value="filtro.dataDe" id="edicoes-fechadas-dataDe" style="width:80px;" />
+   	        </td>
    	        <td width="28" align="center">Até</td>
-   	        <td width="123"><input type="text" name="filtro.dataAte" value="filtro.dataAte" id="dataAte" style="width:80px;" /></td>
+   	        <td width="123">
+   	        	<input type="text" name="filtro.dataAte" value="filtro.dataAte" id="edicoes-fechadas-dataAte" style="width:80px;" />
+   	        </td>
    	        <td width="76">Fornecedor:</td>
-   	        <td width="211"><select name="filtro.fornecedor" id="fornecedor" style="width:200px;">
-   	          <option selected="selected" value="Todos">Todos</option>
-			  <c:forEach items="${fornecedores}" var="fornecedor">
-					<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
-			  </c:forEach> 
-            </select></td>
+   	        <td width="211">
+   	        	<select name="filtro.fornecedor" id="fornecedor" style="width:200px;">
+   	          		<option selected="selected" value="Todos">Todos</option>
+			  		<c:forEach items="${fornecedores}" var="fornecedor">
+						<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+			  		</c:forEach> 
+            	</select>
+            </td>
    	        <td width="287"><span class="bt_novos"><a href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
          </tr>
     </table>

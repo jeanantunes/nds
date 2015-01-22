@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -92,7 +93,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	
-// ## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno do layout antigo	
+// ## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo	
 //	@Override
 //	public void processMessage(Message message) {
 //		
@@ -271,7 +272,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			 
-			String nomeArquivo = ""+codDistrb+"."+numCota+"."+dataRec;
+			String nomeArquivo = ""+codDistrb+"."+StringUtils.leftPad(numCota, 5, '0')+"."+dataRec;
 
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
 					TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER + File.separator + nomeArquivo + ENCALHE_EXT));

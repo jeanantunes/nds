@@ -31,12 +31,16 @@ public class ClearCouchDB {
 			
 			View view = couchDbClient.view("importacao/porTipoDocumento");
 			
-			view.key("EMS0110", null);
+//			view.startKey(new Object[] {RouteInterface.EMS0110.getName(), null});
+//			view.endKey(RouteInterface.EMS0110.getName(), "");
+			
+			view.startKey("EMS3100", null);
+			view.endKey("EMS3100", "");
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
-			
+
 			ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, EMS0110Input.class);
-	
+			
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 				
 				couchDbClient.remove(row.getDoc());
