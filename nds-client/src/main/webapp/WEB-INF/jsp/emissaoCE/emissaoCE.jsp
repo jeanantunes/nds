@@ -82,21 +82,13 @@
     <td width="113">
     
 <!-- Dt Recolhimento de -->    
-<<<<<<< HEAD
 <input id="emissaoCE-dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
-=======
-<input id="emissaoce-dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 
     <td width="28" colspan="-1" align="center">Até</td>
     <td width="130">
     
 <!-- Dt Recolhimento até -->
-<<<<<<< HEAD
 <input id="emissaoCE-dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
-=======
-<input id="emissaoce-dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 
     <td>Intervalo Box:</td>
     <td width="91">

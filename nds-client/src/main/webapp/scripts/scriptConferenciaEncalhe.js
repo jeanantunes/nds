@@ -1044,11 +1044,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		var cont = 1;
 		//Imprime todos os documentos recebidos
-<<<<<<< HEAD
-		for(var i=0;i < tiposDocumento.length;i++){
-=======
 		for(var i = 0; i < tiposDocumento.length; i++) {
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 			
 			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
@@ -1941,17 +1937,13 @@ var ConferenciaEncalhe = $.extend(true, {
 					window.event.preventDefault();
 					alert("xitão chegou !!!!!");
 					$("#dialog-alert", ConferenciaEncalhe.workspace).dialog("close");
-<<<<<<< HEAD
 					
 					$("#qtdeExemplar", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
 					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
 					$("#sm", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
 					$("#codProduto", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
 					
-					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
-=======
 					$("#conferencia-vlrCE", ConferenciaEncalhe.workspace).focus();
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
 					$(this).parent('div').find('button:contains("Sim")').focus();
 					
@@ -2019,13 +2011,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 					
 					$(this).dialog("close");
-<<<<<<< HEAD
-					
-					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
-					
-=======
 					$("#conferencia-vlrCE", ConferenciaEncalhe.workspace).focus();
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
 					
 				}
@@ -2571,11 +2557,7 @@ function confirmarPopup_notaFiscal() {
 		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-<<<<<<< HEAD
-		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()},
-=======
 		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val())},
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 		        {name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
 		        ];
 		
@@ -2585,32 +2567,20 @@ function confirmarPopup_notaFiscal() {
 		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-<<<<<<< HEAD
-		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()}
-=======
 		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val())}
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 		        ];
 		
 	}
 
 	$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, function(result) {
 		
-<<<<<<< HEAD
 			$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");
 			
 			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			
-			$("#vlrCE", ConferenciaEncalhe.workspace).val($("#valorNotaFiscal", ConferenciaEncalhe.workspace).val());
+			$("#conferencia-vlrCE", ConferenciaEncalhe.workspace).val($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val());
 			
 		}, null, true, "dialog-notaFiscal"
-=======
-		focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-		
-		$("#conferencia-vlrCE", ConferenciaEncalhe.workspace).val($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val());
-		
-	}, null, true, "dialog-notaFiscal"
->>>>>>> 0acf996c4827ea9abe79a83897063f5f0cb4b18e
 	);
 	
 	ConferenciaEncalhe.limparNotaFiscal();
