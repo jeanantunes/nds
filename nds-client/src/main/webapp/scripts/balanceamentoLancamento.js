@@ -149,9 +149,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			return null;
 		}
 		
-		$("#valorTotal", _workspace).clear();
+		$("#matrizLancamento-valorTotal", _workspace).clear();
 		
-		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
+		$("#matrizLancamento-valorTotal", _workspace).html(resultadoPesquisa[1]);
 		
 		if(resultadoPesquisa && resultadoPesquisa[0] && resultadoPesquisa[0].rows) {
 			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
@@ -842,10 +842,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		var textoX ="Os lancamentos serão transferidos para um dia que o fornecedor não Opera:"+"\n"+"\n";
 		textoX =textoX+"\n";
 		
-		for(i=0;i<info.length;i++){
-		 textoX= textoX+info[i]+"\n";
+		for(var i = 0;i < info.length; i++) {
+			textoX= textoX+info[i]+"\n";
 		}
-		 
+		
 		textoX =textoX+"\n";
 		textoX =textoX+"\n"+" Deseja Continuar ?";
 		

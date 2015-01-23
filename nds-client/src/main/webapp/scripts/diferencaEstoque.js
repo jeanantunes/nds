@@ -13,7 +13,7 @@ var diferencaEstoqueController = $.extend(true, {
 		
 		$('input[id^="data"]', diferencaEstoqueController.workspace).mask("99/99/9999");
 		
-		$("#produto", diferencaEstoqueController.workspace).autocomplete({source: []});
+		$("#diferenca-estoque-produto", diferencaEstoqueController.workspace).autocomplete({source: []});
 
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexigrid({
 			preProcess: diferencaEstoqueController.executarPreProcessamento,
@@ -89,7 +89,7 @@ var diferencaEstoqueController = $.extend(true, {
 			height : 180
 		});
 
-		$("#codigo", diferencaEstoqueController.workspace).focus();
+		$("#diferenca-estoque-codigo", diferencaEstoqueController.workspace).focus();
 
 		diferencaEstoqueController.initDetalhesCotaGrid();
 	},
@@ -104,7 +104,7 @@ var diferencaEstoqueController = $.extend(true, {
 	},
 	
 	pesquisarFornecedores : function() {
-		var data = {codigoProduto: $("#codigo", diferencaEstoqueController.workspace).val()};
+		var data = {codigoProduto: $("#diferenca-estoque-codigo", diferencaEstoqueController.workspace).val()};
 		
 		$.postJSON(contextPath + "/estoque/diferenca/pesquisarFonecedores",
 				   data, diferencaEstoqueController.montarComboFornecedores);
@@ -113,15 +113,15 @@ var diferencaEstoqueController = $.extend(true, {
 	montarComboFornecedores : function(result) {
 		var comboFornecedores =  montarComboBox(result, true);
 		
-		$("#fornecedor", diferencaEstoqueController.workspace).html(comboFornecedores);
+		$("#diferenca-estoque-fornecedor", diferencaEstoqueController.workspace).html(comboFornecedores);
 	},
 	
 	pesquisar : function() {
 		
-		var codigoProduto = $("#codigo", diferencaEstoqueController.workspace).val();
-		var idFornecedor = $("#fornecedor", diferencaEstoqueController.workspace).val();
-		var dataInicial = $("#dataInicial", diferencaEstoqueController.workspace).val();
-		var dataFinal = $("#dataFinal", diferencaEstoqueController.workspace).val();
+		var codigoProduto = $("#diferenca-estoque-codigo", diferencaEstoqueController.workspace).val();
+		var idFornecedor = $("#diferenca-estoque-fornecedor", diferencaEstoqueController.workspace).val();
+		var dataInicial = $("#diferenca-estoque-dataInicial", diferencaEstoqueController.workspace).val();
+		var dataFinal = $("#diferenca-estoque-dataFinal", diferencaEstoqueController.workspace).val();
 		var tipoDiferenca = $("#tipoDiferenca", diferencaEstoqueController.workspace).val();
 		var numeroCota = $("#diferenca-estoque-numeroCota", diferencaEstoqueController.workspace).val();
 		var nomeCota = $("#descricaoCota", diferencaEstoqueController.workspace).val();

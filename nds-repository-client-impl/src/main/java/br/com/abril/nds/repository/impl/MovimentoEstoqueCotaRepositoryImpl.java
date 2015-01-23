@@ -3911,6 +3911,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     					GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
     					GrupoMovimentoEstoque.FALTA_DE_COTA.name(), 
     					GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+    					GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name(),
     					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
     					GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
     					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name(),

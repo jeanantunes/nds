@@ -6,7 +6,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var colunasDetalhes = ConsultaEncalhe.obterColModelDetalhes();
 			var colunasOutrosValores = ConsultaEncalhe.obterColModelOutrosValores();
 			
-			$("#cota", ConsultaEncalhe.workspace).numeric();
+			$("#consulta-encalhe-cota", ConsultaEncalhe.workspace).numeric();
 			
 			$("#gridConsultaEncalhe", ConsultaEncalhe.workspace).flexigrid({
 				
@@ -64,7 +64,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
-			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 			
 			var formData = [
 			        
@@ -94,7 +94,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var dataRecolhimentoInicial = $("#dataRecolhimentoInicial", ConsultaEncalhe.workspace).val();
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
-			var numeroCota				= $("#cota", ConsultaEncalhe.workspace).val();
+			var numeroCota				= $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 			
 			var link = contextPath + '/devolucao/consultaEncalhe/gerarSlip' +
 									'?dataRecolhimentoInicial=' + dataRecolhimentoInicial +
@@ -161,18 +161,18 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$(".grids", ConsultaEncalhe.workspace).show();
 			
-			$("#valorVendaDia",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorVendaDia).toFixed(2)));
-			$("#totalOutrosValores",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorDebitoCredito).toFixed(2)));
-			$("#valorAPagar",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorPagar).toFixed(2)));
+			$("#consulta-encalhe-valorVendaDia", ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorVendaDia).toFixed(2)));
+			$("#totalOutrosValores", ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorDebitoCredito).toFixed(2)));
+			$("#consulta-encalhe-valorAPagar", ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorPagar).toFixed(2)));
 			
 			if (resultado.valorReparte) {
 			
-				$("#totalReparte",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorReparte).toFixed(2)));
+				$("#totalReparte", ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorReparte).toFixed(2)));
 			}
 			
 			if (resultado.valorEncalhe) {
 
-				$("#totalEncalhe",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorEncalhe).toFixed(2)));
+				$("#totalEncalhe", ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorEncalhe).toFixed(2)));
 			}
 
 			return resultado.tableModel;
@@ -184,7 +184,7 @@ var ConsultaEncalhe = $.extend(true, {
 			//Verifica mensagens de erro do retorno da chamada ao controller.
 			if (resultado.mensagens) {
 				
-				$( "#dialog-detalhes-encalhe", ConsultaEncalhe.workspace ).dialog( "close" );
+				$( "#dialog-detalhes-encalhe", ConsultaEncalhe.workspace ).dialog("close");
 				exibirMensagem(
 					resultado.mensagens.tipoMensagem, 
 					resultado.mensagens.listaMensagens
@@ -232,7 +232,7 @@ var ConsultaEncalhe = $.extend(true, {
 	    	
 	    	if (!numeroCota){
 	    		
-	    		numeroCota = $("#cota", ConsultaEncalhe.workspace).val();
+	    		numeroCota = $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
 	    	}
 	    	
 			$("#dadosDetalheEncalheGrid", ConsultaEncalhe.workspace).flexOptions({

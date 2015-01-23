@@ -130,6 +130,9 @@ public class Fornecedor implements Serializable {
 	@Column(name="CANAL_DISTRIBUICAO")
 	private CanalDistribuicao canalDistribuicao;
 	
+	@Column(name="INTEGRA_GFS")
+	private boolean integraGFS;
+	
 	public Fornecedor(){}
 	
 	public Fornecedor(Long id) {
@@ -306,7 +309,39 @@ public class Fornecedor implements Serializable {
 	public void setBanco(Banco banco) {
 		this.banco = banco;
 	}
+	
+	public CanalDistribuicao getCanalDistribuicao() {
+		return canalDistribuicao;
+	}
 
+	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
+		this.canalDistribuicao = canalDistribuicao;
+	}
+
+	public Fornecedor getFornecedorUnificador() {
+		return fornecedorUnificador;
+	}
+
+	public void setFornecedorUnificador(Fornecedor fornecedorUnificador) {
+		this.fornecedorUnificador = fornecedorUnificador;
+	}
+
+	public List<Fornecedor> getFornecedoresUnificados() {
+		return fornecedoresUnificados;
+	}
+
+	public void setFornecedoresUnificados(List<Fornecedor> fornecedoresUnificados) {
+		this.fornecedoresUnificados = fornecedoresUnificados;
+	}
+
+	public boolean isIntegraGFS() {
+		return integraGFS;
+	}
+
+	public void setIntegraGFS(boolean integraGFS) {
+		this.integraGFS = integraGFS;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -331,31 +366,4 @@ public class Fornecedor implements Serializable {
 			return false;
 		return true;
 	}
-
-	public CanalDistribuicao getCanalDistribuicao() {
-		return canalDistribuicao;
-	}
-
-	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
-		this.canalDistribuicao = canalDistribuicao;
-	}
-
-	public Fornecedor getFornecedorUnificador() {
-		return fornecedorUnificador;
-	}
-
-	public void setFornecedorUnificador(Fornecedor fornecedorUnificador) {
-		this.fornecedorUnificador = fornecedorUnificador;
-	}
-
-	public List<Fornecedor> getFornecedoresUnificados() {
-		return fornecedoresUnificados;
-	}
-
-	public void setFornecedoresUnificados(List<Fornecedor> fornecedoresUnificados) {
-		this.fornecedoresUnificados = fornecedoresUnificados;
-	}
-	
-	
-
 }

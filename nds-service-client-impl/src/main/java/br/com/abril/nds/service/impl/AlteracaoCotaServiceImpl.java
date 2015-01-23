@@ -51,17 +51,14 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(
-			FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
-		return alteracaoCotaRepository
-				.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
+	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+		return alteracaoCotaRepository.pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
-		return alteracaoCotaRepository
-				.contarAlteracaoCota(filtroAlteracaoCotaDTO);
+		return alteracaoCotaRepository.contarAlteracaoCota(filtroAlteracaoCotaDTO);
 	}
 
 	@Override

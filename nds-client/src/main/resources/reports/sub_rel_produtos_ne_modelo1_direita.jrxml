@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_ne" pageWidth="238" pageHeight="842" columnWidth="238" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ab498849-c463-4941-a85e-e6fe015fbadd">
-	<property name="ireport.zoom" value="2.657341500000028"/>
+	<property name="ireport.zoom" value="3.2153832150000343"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" backcolor="#C0C0C0" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
@@ -44,6 +44,7 @@
 	<field name="valorDescontoProduto" class="java.math.BigDecimal"/>
 	<field name="produtoEdicao" class="java.lang.Long"/>
 	<field name="sequencia" class="java.lang.Integer"/>
+	<field name="percentualDesconto" class="java.math.BigDecimal"/>
 	<variable name="SUM_VALOR_TOTAL_PRODUTO" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{valorTotalProduto}]]></variableExpression>
 		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>

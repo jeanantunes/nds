@@ -408,7 +408,7 @@
 	                 <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						  <tr>
 						    <td width="9%">Valor R$:</td>
-						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" onblur="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
+						    <td width="15%"><input name="cota-garantia-valorBoleto" id="cota-garantia-valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" onblur="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
 						    <td width="13%">Qtde. Parcelas </td>
 						    <td width="10%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="6" style="width:50px; text-align:center;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
 						    <td width="15%">Valor Parcela R$:</td>

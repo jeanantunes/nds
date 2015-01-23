@@ -87,7 +87,17 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append(" FROM lancamento l ");
         sql.append("     JOIN produto_edicao pe ON pe.id = l.produto_edicao_id ");
         sql.append("     LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id ");
-        sql.append("     JOIN produto p ON p.id = pe.produto_id ");
+        //sql.append("     JOIN produto p ON p.id = pe.produto_id ");
+        
+        sql.append("     JOIN (select p.* from produto p  ");
+        sql.append("           	where p.codigo_icd = (select codigo_icd from produto p where p.codigo = :codigo_produto)  ");
+        sql.append("            union  ");
+        sql.append("           select p.* from produto p  ");
+        sql.append("           	where p.codigo_icd = :codigo_produto ");
+        sql.append("          ) p ON p.id = pe.produto_id   ");
+        
+        
+        
         sql.append("     LEFT JOIN tipo_classificacao_produto tcp ON tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append("     LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id ");
         sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
@@ -95,11 +105,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append(" where l.status in (:statusLancamento) ");
 //        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento "); PSAN-139
         
-        sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+        sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
 		}
+		
+		/*
 		if (filtro.getCodigo() != null) {
             if (usarICD) {
                 sql.append("   and ((p.codigo_icd = :codigo_produto) ");
@@ -108,6 +120,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                 sql.append("   and p.codigo = :codigo_produto ");
             }
         }
+		*/
+		
         if (filtro.getClassificacao() != null && filtro.getClassificacao() > 0) {
 			sql.append("   and tcp.id = :classificacao ");
 		}

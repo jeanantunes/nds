@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo1_wrapper" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9cb9a9bf-30de-410b-95d5-745786fd69c5">
-	<property name="ireport.zoom" value="0.9090909090909117"/>
+	<property name="ireport.zoom" value="1.000000000000003"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="9"/>
+	<property name="ireport.y" value="192"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -13,7 +13,7 @@
 	<detail>
 		<band height="842" splitType="Stretch">
 			<subreport>
-				<reportElement x="0" y="0" width="350" height="842" uuid="804aeea8-d31c-4f8f-8f17-598e2572527b"/>
+				<reportElement uuid="804aeea8-d31c-4f8f-8f17-598e2572527b" x="0" y="0" width="350" height="842"/>
 				<subreportParameter name="IND_EMISSAO_DEPEC">
 					<subreportParameterExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -58,7 +58,7 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "chamada_encalhe_modelo1_esquerda.jasper"]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement x="351" y="0" width="245" height="842" uuid="65df634f-2ada-498d-9648-f9caf4a9f561"/>
+				<reportElement uuid="65df634f-2ada-498d-9648-f9caf4a9f561" x="351" y="0" width="245" height="842"/>
 				<subreportParameter name="IND_EMISSAO_DEPEC">
 					<subreportParameterExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -72,7 +72,7 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "chamada_encalhe_modelo1_direita.jasper"]]></subreportExpression>
 			</subreport>
 			<line>
-				<reportElement x="350" y="28" width="1" height="786" uuid="d076d90a-e5bb-43fc-9aae-173b5c283ec0"/>
+				<reportElement uuid="d076d90a-e5bb-43fc-9aae-173b5c283ec0" x="350" y="28" width="1" height="786" isPrintWhenDetailOverflows="true"/>
 				<graphicElement>
 					<pen lineWidth="0.75" lineStyle="Dotted" lineColor="#666666"/>
 				</graphicElement>

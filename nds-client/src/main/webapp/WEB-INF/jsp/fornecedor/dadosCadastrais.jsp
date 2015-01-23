@@ -94,6 +94,12 @@
     		</select>
     	</td>
     </tr>
+    <tr>
+    	<td>Integra GFS:</td>
+	    <td>
+	      	<input type="checkbox" name="fornecedorDTO.integraGFS" id="fornecedorController-integraGFS"/>
+	    </td>
+	</tr>   
     </table>
-    <br />
+    <br/>
 </div>

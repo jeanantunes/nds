@@ -134,7 +134,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			var formData = [ 
 				             {name:"codigoProduto",value:$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"numeroEdicao",value:$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val()},
-				             {name:"box",value:$("#box",chamdaEncalheAnteipadaController.workspace).val()},
+				             {name:"box",value:$("#chamada-encalhe-ant-box",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"fornecedor",value:$("#fornecedor",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"rota",value:$("#rota",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"roteiro",value:$("#roteiro",chamdaEncalheAnteipadaController.workspace).val()},
@@ -227,7 +227,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 		pesquisar: function(){
 			
-			if($("#box",chamdaEncalheAnteipadaController.workspace).val() == -1){
+			if($("#chamada-encalhe-ant-box",chamdaEncalheAnteipadaController.workspace).val() == -1){
 				
 				chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
 			} else{
@@ -597,7 +597,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			comboBoxes = comboBoxes + "<option value=''>Todos</option>";
 			comboBoxes = comboBoxes + montarComboBox(result, false);
 			
-			$("#box",chamdaEncalheAnteipadaController.workspace).html(comboBoxes);
+			$("#chamada-encalhe-ant-box", chamdaEncalheAnteipadaController.workspace).html(comboBoxes);
 		}, 
 		
 		pesquisarFornecedor:function(data) {

@@ -55,7 +55,7 @@
 				<tr>
 					<td width="40" height="25">Cota:</td>
 					<td width="161">
-						<input type="text" id="contigencia-numeroCota" name="contigencia-numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="6" /> 
+						<input type="text" id="contingencia-numeroCota" name="contingencia-numeroCota" style="width: 80px; float: left; margin-right: 5px;" maxlength="255" /> 
 						<span class="bt_novos">
 							<a href="javascript:;" onclick="ConferenciaEncalheCont.pesquisarCota();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 						</span>
@@ -87,7 +87,7 @@
 						
 							<c:choose>
 								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
-							<input isEdicao="true" type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" onkeydown="ConferenciaEncalheCont.nextInputExemplares(0, window.event);" />
+							<input isEdicao="true" type="text" name="contingencia-vlrCE" id="contingencia-vlrCE" style="width: 100px; text-align: right;" maxlength="255" onkeydown="ConferenciaEncalheCont.nextInputExemplares(0, window.event);" />
 								</c:when>
 								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
 							<input isEdicao="true" type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" onkeydown="ConferenciaEncalheCont.nextInputExemplares(0, window.event);" />
@@ -136,12 +136,12 @@
 						<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
 							<strong>( = )Valor Venda Dia:</strong>
 						</td>
-						<td width="80" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;" id="valorVendaDia"></td>
+						<td width="80" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;" id="contingencia-valorVendaDia"></td>
 						<td width="130">&nbsp;&nbsp;<strong>
 							<a href="javascript:;" onclick="ConferenciaEncalheCont.popup_outros_valores();">( + )Outros valores</a>:</strong></td>
 						<td width="68" id="totalOutrosValores"></td>
 						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
-						<td width="77" id="valorAPagar"></td>
+						<td width="77" id="contingencia-valorAPagar"></td>
 						<td width="17">&nbsp;</td>
 					</tr>
 				</table>

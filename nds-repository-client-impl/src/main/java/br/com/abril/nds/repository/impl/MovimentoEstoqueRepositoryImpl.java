@@ -255,7 +255,8 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append(" select ");
 		if(precoCapaHistoricoAlteracao) {
 			
-			sql.append("coalesce(sum(movimentoEstoque.QTDE * coalesce((select (valor_atual - valor_antigo)");
+			sql.append("coalesce(sum((case when tipoMovimento.operacao_estoque = 'ENTRADA' then -movimentoEstoque.QTDE else movimentoEstoque.QTDE end) * ");
+			sql.append("coalesce((select (valor_atual - valor_antigo)");
 			sql.append("		from historico_alteracao_preco_venda ");
 			sql.append("		where id = (select max(id) "); 
 			sql.append("					from historico_alteracao_preco_venda hapv "); 
@@ -284,14 +285,15 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 			sql.append("	movimentoEstoque.DATA = :dataMovimento ");
 		}
 		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
-		sql.append("	and (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioJornaleiroJuramentado");
-		sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioAoJornaleiro");
-		sql.append("	and ");
+		sql.append("	and (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioJornaleiroJuramentado ");
 		if(precoCapaHistoricoAlteracao) {
-			sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+			sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentosConsignado) ");
 		} else {
-			sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in (");
+			sql.append("	or (tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioAoJornaleiro ");
 		}
+		sql.append("	and ");
+		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
+		
 		sql.append("			select distinct produtoEdicao_.ID ");
 		sql.append("			from ");
 		sql.append("				EXPEDICAO expedicao ");
@@ -300,7 +302,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append("				inner join  PRODUTO produto_  on produtoEdicao_.PRODUTO_ID=produto_.ID ");
 		sql.append("			where lancamento.STATUS <> :statusFuro");
 		if(precoCapaHistoricoAlteracao) {
-			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR <= :dataMovimento");
+			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
 		} else {
 			sql.append("				and lancamento.DATA_LCTO_DISTRIBUIDOR = :dataMovimento");
 		}
@@ -313,7 +315,25 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
 		query.setParameter("statusFuro", StatusLancamento.FURO.name());
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
-		query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		
+		if(precoCapaHistoricoAlteracao) {
+			query.setParameterList("gruposMovimentosConsignado", Arrays.asList(
+							  GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name()
+							, GrupoMovimentoEstoque.AJUSTE_REPARTE_FALTA_COTA.name()
+							, GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name()
+							, GrupoMovimentoEstoque.FALTA_DE.name()
+							, GrupoMovimentoEstoque.FALTA_EM.name()
+							, GrupoMovimentoEstoque.FALTA_EM_DIRECIONADA_PARA_COTA.name()
+							, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name()
+							, GrupoMovimentoEstoque.SOBRA_DE.name()
+							, GrupoMovimentoEstoque.SOBRA_EM.name()
+							, GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name()
+							, GrupoMovimentoEstoque.VENDA_ENCALHE.name()
+							, GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name()
+						));
+		} else {
+			query.setParameter("grupoMovimentoEnvioAoJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		}
 		query.setParameter("grupoMovimentoEnvioJornaleiroJuramentado", GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name());
 		
 		query.addScalar("VALOR_EXPEDIDO",StandardBasicTypes.BIG_DECIMAL);

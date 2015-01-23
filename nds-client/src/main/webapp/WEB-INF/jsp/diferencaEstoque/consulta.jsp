@@ -56,31 +56,32 @@
 	<br />
 
 	<fieldset class="classFieldset">
-		<legend>Pesquisar Faltas e Sobras</legend>
 		
+		<legend>Pesquisar Faltas e Sobras</legend>
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   		<tbody>
   			<tr>
     			<td width="59" title="tooltip teste">Código:</td>
     			<td colspan="3">
-    				<input type="text" name="codigo" id="codigo"
+    			
+    				<input type="text" name="diferenca-estoque-codigo" id="diferenca-estoque-codigo"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
+						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#diferenca-estoque-codigo', '#diferenca-estoque-produto', '#diferenca-estoque-edicao', false,
 								   									   diferencaEstoqueController.pesquisarProdutosSuccessCallBack,
 								   									   diferencaEstoqueController.pesquisarProdutosErrorCallBack);" />
     			</td>
     			<td width="48">Produto:</td>
     			<td width="282">
-    			<input type="text" name="produto" id="produto" style="width: 200px;" maxlength="255"
-					       onkeyup="pesquisaProdutoConsultaFaltasSobras.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="pesquisaProdutoConsultaFaltasSobras.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false,
+    			<input type="text" name="diferenca-estoque-produto" id="diferenca-estoque-produto" style="width: 200px;" maxlength="255"
+					       onkeyup="pesquisaProdutoConsultaFaltasSobras.autoCompletarPorNomeProduto('#diferenca-estoque-produto', false);"
+					       onblur="pesquisaProdutoConsultaFaltasSobras.pesquisarPorNomeProduto('#diferenca-estoque-codigo', '#diferenca-estoque-produto', '#diferenca-estoque-edicao', false,
 					    	   										  diferencaEstoqueController.pesquisarProdutosSuccessCallBack,
 					    	   										  diferencaEstoqueController.pesquisarProdutosErrorCallBack);"/>
 			</td>
     			<td width="103">Fornecedor:</td>
    			 	<td width="312" colspan="2">
-   			 		<select name="fornecedor" id="fornecedor" style="width: 200px;">
+   			 		<select name="diferenca-estoque-fornecedor" id="diferenca-estoque-fornecedor" style="width: 200px;">
 						<option selected="selected" value="">Todos</option>
 						<c:forEach var="fornecedor" items="${listaFornecedores}">
 							<option value="${fornecedor.key}">${fornecedor.value}</option>
@@ -92,13 +93,13 @@
     			<td>Cota:</td>
     			<td colspan="3">
     				<input type="text"  name="diferenca-estoque-numeroCota" id="diferenca-estoque-numeroCota"  style="width:80px; float:left;margin-right:5px;"
-    					onchange="pesquisaCotaFaltasSobras.pesquisarPorNumeroCota('#diferenca-estoque-numeroCota', '#descricaoCota');">
+    					onchange="pesquisaCotaFaltasSobras.pesquisarPorNumeroCota('#diferenca-estoque-numeroCota', '#diferenca-estoque-descricaoCota');">
       			</td>
     			<td>Nome:</td>
     			<td>
-    				<input type="text"  name="descricaoCota" id="descricaoCota" style="width:272px;"
-    				 		onkeyup="pesquisaCotaFaltasSobras.autoCompletarPorNome('#descricaoCota');" 
-		      		 	    onblur="pesquisaCotaFaltasSobras.pesquisarPorNomeCota('#numeroCota', '#descricaoCota');" >
+    				<input type="text"  name="diferenca-estoque-descricaoCota" id="diferenca-estoque-descricaoCota" style="width:272px;"
+    				 		onkeyup="pesquisaCotaFaltasSobras.autoCompletarPorNome('#diferenca-estoque-descricaoCota');" 
+		      		 	    onblur="pesquisaCotaFaltasSobras.pesquisarPorNomeCota('#diferenca-estoque-numeroCota', '#diferenca-estoque-descricaoCota');" >
     			</td>
     			<td>Tipo de Diferença:</td>
     			<td colspan="2">
@@ -117,11 +118,11 @@
    	      <tbody><tr>
    	        <td width="178">Período de Data Lançamento:</td>
    	        <td width="108">
-   	        	<input type="text" name="dataInicial" id="dataInicial" style="width: 80px;" value="${dataAtual}" />
+   	        	<input type="text" name="diferenca-estoque-dataInicial" id="diferenca-estoque-dataInicial" style="width: 80px;" value="${dataAtual}" />
    	       	</td>
    	        <td width="33" align="center">Até</td>
    	        <td width="147">
-				<input type="text" name="dataFinal" id="dataFinal" style="width: 80px;" value="${dataAtual}" />
+				<input type="text" name="diferenca-estoque-dataFinal" id="diferenca-estoque-dataFinal" style="width: 80px;" value="${dataAtual}" />
    	        </td>
    	        <td width="134" align="right">&nbsp;</td>
    	        <td width="202">&nbsp;</td>

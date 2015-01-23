@@ -255,12 +255,12 @@
             <tr>
               <td width="33">Cota:</td>
               <td width="92">
-              	<input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              	<input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cc-cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cc-cota', '#cc-nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
               	<input type="hidden" name="filtroViewContaCorrenteCota.cotaHidden" id="cotaHidden"/>
               </td>
               <td width="41">Nome:</td>
               <td width="240">
-              	<input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/>
+              	<input type="text" name="cc-nomeCota" id="cc-nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#cc-nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cc-cota', '#cc-nomeCota');" style="width:230px;"/>
               	<input type="hidden" name="nomeCotaHidden" id="nomeCotaHidden"/>
               </td>
               
@@ -269,13 +269,13 @@
               <td width="53">Período:</td>
               
               <td width="199">
-              		<input type="text" name="periodoContaDe" id="periodoContaDe" style="width:80px;"/>
+              		<input type="text" name="cc-periodoContaDe" id="cc-periodoContaDe" style="width:80px;"/>
               </td>
               
               <td width="22">Até:</td>
               
               <td width="199">
-              		<input type="text" name="periodoContaAte" id="periodoContaAte" style="width:80px;" >
+              		<input type="text" name="cc-periodoContaAte" id="cc-periodoContaAte" style="width:80px;" >
               </td>
               
               <td width="518">
