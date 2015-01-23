@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ne_modelo1_direita" pageWidth="245" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="241" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="24932483-073e-45bf-b3da-336da3e36812">
 	<property name="ireport.zoom" value="2.727272727272749"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -289,9 +289,9 @@
 	<pageHeader>
 		<band height="172">
 			<frame>
-				<reportElement uuid="05b05f10-5e4f-4912-9094-fbd832f28c7a" stretchType="RelativeToBandHeight" x="0" y="0" width="241" height="166"/>
+				<reportElement uuid="05b05f10-5e4f-4912-9094-fbd832f28c7a" stretchType="RelativeToBandHeight" x="0" y="0" width="241" height="170"/>
 				<rectangle>
-					<reportElement uuid="1a062a93-4084-45ff-9b6d-699c82766769" style="borda" x="2" y="2" width="239" height="27"/>
+					<reportElement uuid="1a062a93-4084-45ff-9b6d-699c82766769" style="borda" x="0" y="2" width="238" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="2b957817-7555-4cff-a841-f1a309d4fadf" x="3" y="3" width="238" height="9"/>
@@ -308,7 +308,7 @@
 					<textFieldExpression><![CDATA[$F{emissorNome}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="302b8a0b-fb69-44a1-95fa-24f004e4f18b" style="borda" x="2" y="29" width="239" height="27"/>
+					<reportElement uuid="302b8a0b-fb69-44a1-95fa-24f004e4f18b" style="borda" x="0" y="29" width="238" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="f3baa517-686c-40a7-8f3e-26f309485577" x="3" y="30" width="149" height="9"/>
@@ -341,7 +341,7 @@ $F{emissorCNPJ}.substring(2,5) + "." + $F{emissorCNPJ}.substring(5,8) + "/" +
 $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{emissorCNPJ}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="69bc1411-73e1-47e9-bf15-8fc86619088b" style="borda" x="2" y="56" width="239" height="27"/>
+					<reportElement uuid="69bc1411-73e1-47e9-bf15-8fc86619088b" style="borda" x="0" y="56" width="238" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="d13ea9a7-0cb9-467c-8416-193ef195bc41" x="3" y="57" width="96" height="9"/>
@@ -400,75 +400,75 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{emissorInscricaoEstadual}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="5d58dc4b-a9d2-48cb-8c49-4c9295fbee1a" style="borda" x="2" y="83" width="136" height="27"/>
+					<reportElement uuid="5d58dc4b-a9d2-48cb-8c49-4c9295fbee1a" style="borda" x="0" y="88" width="138" height="27"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="851e5dbe-25bb-4747-a166-330df61ea5d9" x="3" y="84" width="84" height="9"/>
+					<reportElement uuid="851e5dbe-25bb-4747-a166-330df61ea5d9" x="3" y="90" width="84" height="9"/>
 					<textElement textAlignment="Left">
 						<font size="6"/>
 					</textElement>
 					<text><![CDATA[Data de Lançamento]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement uuid="d6282512-ee28-467f-82fb-7c8a8df10c6e" style="dados" x="3" y="93" width="135" height="16"/>
+					<reportElement uuid="d6282512-ee28-467f-82fb-7c8a8df10c6e" style="dados" x="3" y="99" width="135" height="16"/>
 					<textElement textAlignment="Left">
 						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{dataLancamentoDeAte}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="4f608c02-6a6f-48af-92b7-ffe5e8f36707" style="borda" x="138" y="83" width="103" height="27"/>
+					<reportElement uuid="4f608c02-6a6f-48af-92b7-ffe5e8f36707" style="borda" x="138" y="88" width="100" height="27"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="9ff3c1ce-ae33-427a-8eac-cae88d1d6901" x="138" y="84" width="103" height="9"/>
+					<reportElement uuid="9ff3c1ce-ae33-427a-8eac-cae88d1d6901" x="138" y="90" width="103" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="6"/>
 					</textElement>
 					<text><![CDATA[Nota de Envio]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="a5ac8dfc-fb06-42dc-8099-fc2924bbd51a" style="dados" x="193" y="93" width="48" height="16"/>
+					<reportElement uuid="a5ac8dfc-fb06-42dc-8099-fc2924bbd51a" style="dados" x="193" y="99" width="48" height="16"/>
 					<textElement>
 						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroNF}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="1f73cac7-2576-4cce-bf70-9b4b2eb6930d" style="borda" x="2" y="110" width="239" height="27"/>
+					<reportElement uuid="1f73cac7-2576-4cce-bf70-9b4b2eb6930d" style="borda" x="0" y="115" width="238" height="27"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="6b7a4975-be40-499e-9734-3fbdb2a10842" x="3" y="111" width="238" height="9"/>
+					<reportElement uuid="6b7a4975-be40-499e-9734-3fbdb2a10842" x="3" y="117" width="238" height="9"/>
 					<textElement>
 						<font size="6"/>
 					</textElement>
 					<text><![CDATA[Cliente]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="b57072fd-3562-4de9-a684-c1bc9fb50dcc" style="dados" positionType="Float" x="3" y="120" width="238" height="16"/>
+					<reportElement uuid="b57072fd-3562-4de9-a684-c1bc9fb50dcc" style="dados" positionType="Float" x="3" y="126" width="238" height="16"/>
 					<textElement verticalAlignment="Middle">
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroCota} + " - " + $F{destinatarioNome}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="a92302a4-e7af-4014-988a-ff3662a17831" style="borda" x="2" y="137" width="239" height="27"/>
+					<reportElement uuid="a92302a4-e7af-4014-988a-ff3662a17831" style="borda" x="0" y="142" width="238" height="27"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="807b95c6-514a-4f88-b350-6ae2f8cd5eaf" x="3" y="138" width="238" height="9"/>
+					<reportElement uuid="807b95c6-514a-4f88-b350-6ae2f8cd5eaf" x="3" y="144" width="238" height="9"/>
 					<textElement>
 						<font size="6"/>
 					</textElement>
 					<text><![CDATA[Box / Rota]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="e1b2f8bd-d5f5-486a-a938-ba1f9acb6034" style="dados" x="3" y="147" width="238" height="16"/>
+					<reportElement uuid="e1b2f8bd-d5f5-486a-a938-ba1f9acb6034" style="dados" x="3" y="152" width="238" height="16"/>
 					<textElement>
 						<font size="7" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Box: " + $F{destinatarioNomeBox} + " - " + "Rota: " + $F{destinatarioDescricaoRota}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="102c0c7e-2526-4e0c-8414-fb04e7cc4335" x="138" y="93" width="55" height="16"/>
+					<reportElement uuid="102c0c7e-2526-4e0c-8414-fb04e7cc4335" x="138" y="99" width="55" height="16"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial" size="7"/>
 					</textElement>
