@@ -290,7 +290,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
                     lancamento.getDataPrevista(), lancamento.getIdProdutoEdicao(), estudoCota.getIdCota(),
                     expedicao.getIdUsuario(), estudoCota.getQtdeEfetiva(), expedicao.getTipoMovimentoEstoqueCota(),
-                    lancamento.getDataDistribuidor(), expedicao.getDataOperacao(),lancamento.getId(), estudoCota.getId(), descontos, false);
+                    expedicao.getDataOperacao(), expedicao.getDataOperacao(), lancamento.getId(), estudoCota.getId(), descontos, false);
             
             mec.setIdFornecedor(estudoCota.getIdFornecedorPadraoCota());
             
