@@ -9,12 +9,12 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		$("#cc-nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
 		
-		$( "#periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
+		$( "#cc-periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#periodoContaAte", contaCorrenteCotaController.workspace ).datepicker({
+		$( "#cc-periodoContaAte", contaCorrenteCotaController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -47,8 +47,8 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var parametroPesquisa = [
                  {name:'filtroViewContaCorrenteCotaDTO.numeroCota', value: numeroCota },
-                 {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#periodoContaDe", contaCorrenteCotaController.workspace).val() },
-                 {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#periodoContaAte", contaCorrenteCotaController.workspace).val() }
+                 {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#cc-periodoContaDe", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#cc-periodoContaAte", contaCorrenteCotaController.workspace).val() }
 		];
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
