@@ -106,14 +106,14 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         	.append("where diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDirecionamento =:tipoDirecionamentoDiferenca and diferenca.tipoDiferenca in (:%s) ) as %s ").toString();
         
         String templateHqlRecebimentoEstoqueEntradaSaida = new StringBuilder()
-		    .append(" (select COALESCE(sum(case when me_.tipoMovimento.operacaoEstoque =:operacaoEntrada then me_.qtde else (me_.qtde*-1)end),0) from MovimentoEstoque me_ join me_.produtoEdicao produtoEdicaoME_ ")
+		    .append(" (select COALESCE(sum(case when me_.tipoMovimento.operacaoEstoque =:operacaoEntrada then me_.qtde else (-me_.qtde)end),0) from MovimentoEstoque me_ join me_.produtoEdicao produtoEdicaoME_ ")
 		    .append(" where me_.data < :data ")
 		    .append(" and me_.status = :statusAprovado ")
 		    .append(" and me_.tipoMovimento.grupoMovimentoEstoque IN(:grupoMovimentoRecebimentoEntradaSaida) ")
 		    .append(" and produtoEdicaoME_.id = produtoEdicao.id )").toString();
         
         String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
-           	.append(" (select COALESCE(sum(case when me.tipoMovimento.operacaoEstoque =:operacaoEntrada then me.qtde else (me.qtde*-1)end),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+           	.append(" (select COALESCE(sum(case when me.tipoMovimento.operacaoEstoque =:operacaoEntrada then me.qtde else (-me.qtde) end),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
 	       	.append(" where me.data = :data ")
 	       	.append(" and me.status = :statusAprovado ")
 	       	.append(" and me.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoRecebimentoFisico )")
@@ -140,7 +140,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         // Quantidade efetiva distribuída, considerando movimento de envio de
         // reparte, como também o estorno, em caso de furo
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque IN( :grupoMovimentoEnvioJornaleiro )");
-        hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) ");
+        hql.append("then movimentoEstoque.qtde else (-movimentoEstoque.qtde) end) ");
         hql.append("from MovimentoEstoque movimentoEstoque ");
         hql.append("where movimentoEstoque.data = :data ");
         hql.append("and movimentoEstoque.produtoEdicao.id = lancamento.produtoEdicao.id ");
