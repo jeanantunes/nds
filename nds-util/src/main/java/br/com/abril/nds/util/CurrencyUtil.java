@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 
 import br.com.caelum.stella.inwords.FormatoDeReal;
@@ -261,4 +262,37 @@ public abstract class CurrencyUtil {
 		
 		return valorArredondado;
 	}
+	
+	/**
+	 * Metodo padrao calculo de valores com 4 casas
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	public static BigDecimal calculoValores(final BigDecimal precoVenda, final BigDecimal desconto, final BigDecimal reparte) {
+
+		BigDecimal precodesconto  = (precoVenda.multiply(desconto).divide(BigDecimal.valueOf(100))).multiply(reparte); 
+		
+		BigDecimal valor = new BigDecimal(String.valueOf(precodesconto)).setScale(4, BigDecimal.ROUND_FLOOR);
+		
+		return valor;
+	}
+	
+	/**
+	 * Metodo padrao calculo de valores com 4 casas
+	 * 
+	 * @param valor
+	 * @return
+	 */
+	public static BigDecimal calculoValorTotal(final List<PrecoReparte> precosRepartes) {
+
+		BigDecimal total = BigDecimal.ZERO;
+		 
+		for (PrecoReparte precoReparte : precosRepartes) {
+			total = total.add(precoReparte.getPrecoDesconto()).setScale(4, BigDecimal.ROUND_FLOOR).multiply(precoReparte.getQuantidade()).setScale(2, BigDecimal.ROUND_FLOOR);
+		}
+		
+		return total;
+	}
+
 }

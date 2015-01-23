@@ -126,7 +126,7 @@
 
 							<c:choose>
 								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
-							<input isEdicao="true" type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input isEdicao="true" type="text" name="conferencia-vlrCE" id="conferencia-vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
 								</c:when>
 								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
 							<input isEdicao="true" type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
@@ -180,7 +180,7 @@
 					<td class="class_linha_2" align="center" id="edicaoProduto"></td>
 					<td class="class_linha_2" align="center" id="conferencia-precoCapa"></td>
 					<td class="class_linha_2" align="center" id="desconto"></td>
-					<td class="class_linha_2" align="center" id="valorTotal"></td>
+					<td class="class_linha_2" align="center" id="conferencia-valorTotal"></td>
 					<td align="center">
 						
 						<input name="idProdutoEdicaoHidden" type="hidden" id="idProdutoEdicaoHidden" />
@@ -225,7 +225,7 @@
 						<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
 							<strong>( = )Valor Venda Dia:</strong>
 						</td>
-						<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="valorVendaDia"></td>
+						<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="conferencia-valorVendaDia"></td>
 						<td width="130">&nbsp;&nbsp;
 							<strong>
 								<a href="javascript:;" onclick="ConferenciaEncalhe.popup_outros_valores();"> ( + )Outros valores </a>:
@@ -233,7 +233,7 @@
 						</td>
 						<td width="68" id="totalOutrosValores"></td>
 						<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
-						<td width="77" id="valorAPagar"></td>
+						<td width="77" id="conferencia-valorAPagar"></td>
 						<td width="17">&nbsp;</td>
 					</tr>
 				</table>

@@ -325,6 +325,7 @@ public class NFeServiceImpl implements NFeService {
 
             throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
 
+
         }
         
         TRAVA_GERACAO_NFe.put("NFesSendoGeradas", true);

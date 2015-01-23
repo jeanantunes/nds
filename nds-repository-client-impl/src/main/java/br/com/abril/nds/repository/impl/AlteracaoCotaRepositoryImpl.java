@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaAlteracaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAlteracaoCotaDTO;
+import br.com.abril.nds.enums.OpcoesFiltro;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AlteracaoCotaRepository;
@@ -35,8 +36,7 @@ public class AlteracaoCotaRepositoryImpl extends
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(
-			FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+	public List<ConsultaAlteracaoCotaDTO> pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
 
 		SQLQuery query = templatePesquisaAlteracaoCota(filtroAlteracaoCotaDTO, false);
 		
@@ -57,8 +57,7 @@ public class AlteracaoCotaRepositoryImpl extends
 			query.setFirstResult(vo.getPosicaoInicial());
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaAlteracaoCotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaAlteracaoCotaDTO.class));
 
 		return query.list();
 	}
@@ -92,16 +91,29 @@ public class AlteracaoCotaRepositoryImpl extends
 				.append("LEFT OUTER JOIN ENDERECO_COTA enderecoCota on cota.ID=enderecoCota.COTA_ID ")
 				.append("LEFT OUTER JOIN ENDERECO endereco on enderecoCota.ENDERECO_ID=endereco.ID ")
 				.append("LEFT OUTER JOIN BOX box on cota.BOX_ID=box.ID ")
-				.append("LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA parametroCobranca on cota.ID=parametroCobranca.COTA_ID  ")
-				.append("LEFT JOIN COTA_FORNECEDOR cotaFornecedor ON cota.ID = cotaFornecedor.COTA_ID ")
+				.append("LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA parametroCobranca on cota.ID=parametroCobranca.COTA_ID  ");
+		
+				if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
+						&& OpcoesFiltro.SIM.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
+					sql.append("LEFT OUTER JOIN FORMA_COBRANCA formaCobranca on formaCobranca.PARAMETRO_COBRANCA_COTA_ID=parametroCobranca.ID AND formaCobranca.ATIVA = false ");
+				} else if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
+						&& OpcoesFiltro.NAO.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
+					sql.append("INNER JOIN FORMA_COBRANCA formaCobranca on formaCobranca.PARAMETRO_COBRANCA_COTA_ID=parametroCobranca.ID AND formaCobranca.ATIVA = true ");
+				}
+				
+				sql.append("LEFT JOIN COTA_FORNECEDOR cotaFornecedor ON cota.ID = cotaFornecedor.COTA_ID ")
 				.append("LEFT JOIN FORNECEDOR fornecedor ON cotaFornecedor.FORNECEDOR_ID = fornecedor.ID ")
 				.append("LEFT JOIN PESSOA pessoaFornecedor ON fornecedor.JURIDICA_ID = pessoaFornecedor.ID ")
 				.append("LEFT JOIN DESCONTO_PRODUTO_EDICAO desconto ON cota.ID = desconto.COTA_ID AND desconto.FORNECEDOR_ID = fornecedor.ID ");
 
 		sql.append(" WHERE  enderecoCota.PRINCIPAL = :enderecoPrincipal ");
 
-		if (filtroAlteracaoCotaDTO.getNumeroCota() != null
-				&& filtroAlteracaoCotaDTO.getNumeroCota() > 0) {
+		if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
+				&& OpcoesFiltro.SIM.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {
+			sql.append("AND (SELECT count(0) FROM FORMA_COBRANCA formaCobranca WHERE formaCobranca.PARAMETRO_COBRANCA_COTA_ID=parametroCobranca.ID AND formaCobranca.ATIVA = true) = 0 ");
+		}
+				
+		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota() > 0) {
 			sql.append("AND cota.NUMERO_COTA = :numeroCota ");
 		}
 
@@ -115,14 +127,12 @@ public class AlteracaoCotaRepositoryImpl extends
 				&& !filtroAlteracaoCotaDTO.getIdBairro().isEmpty()
 				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdBairro())) {
 			sql.append(" AND endereco.BAIRRO = :idBairro ");
-
 		}
 
 		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null
 				&& !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty()
 				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
 			sql.append(" AND  UPPER(endereco.CIDADE) LIKE :idMunicipio ");
-
 		}
 
 		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null
@@ -133,54 +143,42 @@ public class AlteracaoCotaRepositoryImpl extends
 
 		if (filtroAlteracaoCotaDTO.getDescricaoTipoEntrega() != null) {
 			sql.append("AND cota.DESCRICAO_TIPO_ENTREGA LIKE :descricaoTipoEntrega ");
-
 		}
 
-		if (filtroAlteracaoCotaDTO.getIdVencimento() != null
-				&& filtroAlteracaoCotaDTO.getIdVencimento() > 0) {
-
+		if (filtroAlteracaoCotaDTO.getIdVencimento() != null && filtroAlteracaoCotaDTO.getIdVencimento() > 0) {
 			sql.append("AND parametroCobranca.FATOR_VENCIMENTO = :fatorVencimento ");
-
 		}
 
-		if (filtroAlteracaoCotaDTO.getIdFornecedor() != null
-				&& filtroAlteracaoCotaDTO.getIdFornecedor() > 0) {
+		if (filtroAlteracaoCotaDTO.getIdFornecedor() != null && filtroAlteracaoCotaDTO.getIdFornecedor() > 0) {
 			sql.append("AND fornecedor.ID = :idFornecedor ");
-
 		}
 
 		if (filtroAlteracaoCotaDTO.getTipoDesconto() != null) {
-
 			sql.append("AND desconto.TIPO_DESCONTO =:tipoDesconto ");
 		}
-		if(!count){
+		
+		if(!count) {
 			sql.append("GROUP BY cota.ID");
 	
-			if (filtroAlteracaoCotaDTO.getPaginacao() != null
-					&& filtroAlteracaoCotaDTO.getPaginacao().getSortOrder() != null) {
+			if (filtroAlteracaoCotaDTO.getPaginacao() != null && filtroAlteracaoCotaDTO.getPaginacao().getSortOrder() != null) {
 				sql.append(" ORDER BY ")
-						.append(filtroAlteracaoCotaDTO.getPaginacao()
-								.getSortOrder())
+						.append(filtroAlteracaoCotaDTO.getPaginacao().getSortOrder())
 						.append(" ")
-						.append(filtroAlteracaoCotaDTO.getPaginacao()
-								.getOrdenacao().getOrdenacao());
+						.append(filtroAlteracaoCotaDTO.getPaginacao().getOrdenacao().getOrdenacao());
 			}
 		}
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("enderecoPrincipal", true);
 
-		if (filtroAlteracaoCotaDTO.getNumeroCota() != null
-				&& filtroAlteracaoCotaDTO.getNumeroCota() > 0) {
-			query.setParameter("numeroCota",
-					filtroAlteracaoCotaDTO.getNumeroCota());
+		if (filtroAlteracaoCotaDTO.getNumeroCota() != null && filtroAlteracaoCotaDTO.getNumeroCota() > 0) {
+			query.setParameter("numeroCota", filtroAlteracaoCotaDTO.getNumeroCota());
 		}
 
 		if (filtroAlteracaoCotaDTO.getNomeCota() != null
 				&& !filtroAlteracaoCotaDTO.getNomeCota().isEmpty()
 				&& !"-1".equals(filtroAlteracaoCotaDTO.getNomeCota())) {
-			query.setParameter("nomeCota", filtroAlteracaoCotaDTO.getNomeCota()
-					.toUpperCase() + "%");
+			query.setParameter("nomeCota", filtroAlteracaoCotaDTO.getNomeCota().toUpperCase() + "%");
 		}
 
 		if (filtroAlteracaoCotaDTO.getIdBairro() != null
@@ -192,38 +190,33 @@ public class AlteracaoCotaRepositoryImpl extends
 		if (filtroAlteracaoCotaDTO.getIdMunicipio() != null
 				&& !filtroAlteracaoCotaDTO.getIdMunicipio().isEmpty()
 				&& !"-1".equals(filtroAlteracaoCotaDTO.getIdMunicipio())) {
-			query.setParameter("idMunicipio", filtroAlteracaoCotaDTO
-					.getIdMunicipio().toUpperCase() + "%");
+			query.setParameter("idMunicipio", filtroAlteracaoCotaDTO.getIdMunicipio().toUpperCase() + "%");
 		}
 
 		if (filtroAlteracaoCotaDTO.getIdVrMinimo() != null
 				&& !filtroAlteracaoCotaDTO.getIdVrMinimo().toString().isEmpty()
 				&& filtroAlteracaoCotaDTO.getIdVrMinimo().doubleValue() > 0) {
-			query.setParameter("idVrMinimo",
-					filtroAlteracaoCotaDTO.getIdVrMinimo());
+			query.setParameter("idVrMinimo", filtroAlteracaoCotaDTO.getIdVrMinimo());
 		}
 
 		if (filtroAlteracaoCotaDTO.getDescricaoTipoEntrega() != null) {
-			query.setParameter("descricaoTipoEntrega",
-					filtroAlteracaoCotaDTO.getDescricaoTipoEntrega().name());
+			query.setParameter("descricaoTipoEntrega", filtroAlteracaoCotaDTO.getDescricaoTipoEntrega().name());
 		}
 
 		if (filtroAlteracaoCotaDTO.getIdVencimento() != null
 				&& filtroAlteracaoCotaDTO.getIdVencimento() > 0) {
-			query.setParameter("fatorVencimento",
-					filtroAlteracaoCotaDTO.getIdVencimento());
+			query.setParameter("fatorVencimento", filtroAlteracaoCotaDTO.getIdVencimento());
 		}
 
 		if (filtroAlteracaoCotaDTO.getIdFornecedor() != null
 				&& filtroAlteracaoCotaDTO.getIdFornecedor() > 0) {
-			query.setParameter("idFornecedor",
-					filtroAlteracaoCotaDTO.getIdFornecedor());
+			query.setParameter("idFornecedor", filtroAlteracaoCotaDTO.getIdFornecedor());
 		}
 
 		if (filtroAlteracaoCotaDTO.getTipoDesconto() != null) {
-			query.setParameter("tipoDesconto", filtroAlteracaoCotaDTO
-					.getTipoDesconto().name());
+			query.setParameter("tipoDesconto", filtroAlteracaoCotaDTO.getTipoDesconto().name());
 		}
+		
 		return query;
 	}
 

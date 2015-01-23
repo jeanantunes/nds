@@ -1029,6 +1029,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(),
 				chamadaEncalheCota.getCota().getNumeroCota(),
 				chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId(), 
+				null,
 		        null);
 		
 		final boolean juramentada = false;

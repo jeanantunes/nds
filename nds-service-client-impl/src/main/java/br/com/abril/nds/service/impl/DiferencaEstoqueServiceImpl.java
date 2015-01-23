@@ -543,13 +543,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                                 ultimoLancamento.getDataLancamentoDistribuidor(), origem);
             }
             
-            if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+            if(diferenca.getProdutoEdicao().getProduto().getFornecedor().isIntegraGFS()) {
+            
 	            if (statusAprovacao == null) {
 	                
 	                statusAprovacao = obterStatusLancamento(diferenca);
 	            }
+	            
             } else {
-            	
             	
             	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
                     
@@ -569,7 +570,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             if(listaMovimentosEstoqueCota != null && !listaMovimentosEstoqueCota.isEmpty()) {
 	            for(MovimentoEstoqueCota mec : listaMovimentosEstoqueCota) {
 	            	
-	            	if(!mec.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+	            	if(mec.getProdutoEdicao().getProduto().getFornecedor().isIntegraGFS()) {
 	            	
 		        		if (!diferenca.getTipoDiferenca().isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
 		                    
@@ -949,11 +950,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
             rateioDiferenca.setDataNotaEnvio(rateioCotaVO.getDataEnvioNota());
             
-            final Lancamento ultimoLancamento =
-                    lancamentoService.obterUltimoLancamentoDaEdicao(
-                            diferenca.getProdutoEdicao().getId());
-            
-            rateioDiferenca.setDataMovimento(ultimoLancamento.getDataLancamentoDistribuidor());
+            rateioDiferenca.setDataMovimento(distribuidorService.obterDataOperacaoDistribuidor());
             
             rateioDiferenca = rateioDiferencaRepository.merge(rateioDiferenca);
             

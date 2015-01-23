@@ -7,6 +7,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			 * Renderiza componente de Data(período) da tela
 			 */
 			$('#digitacaoContagemDevolucao-dataDe', digitacaoContagemDevolucaoController.workspace).datepicker({
+
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,

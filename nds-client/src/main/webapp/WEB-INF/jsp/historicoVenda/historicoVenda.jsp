@@ -118,7 +118,7 @@ $(function() {
                       <label for="todas">Todos os Status</label>
                     </td>
                     <td width="20">
-                      <input type="radio" name="status" id="cotasAtivas" value="radio" />
+                      <input type="radio" name="status" id="hist-venda-cotasAtivas" value="radio" />
                     </td>
                     <td width="184">
                       <label for="cotasAtivas">Cotas Ativas</label>

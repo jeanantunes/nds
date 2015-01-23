@@ -102,9 +102,9 @@ $(function(){
 											 
 				 <tr>
 				     <td width="73">Período de:</td>
-				    <td width="121"><input name="dataDe" type="text" id="digitacaoContagemDevolucao-dataDe" style="width:80px; float:left; margin-right:5px;"/></td>
+				    <td width="121"><input name="digitacao-contagem-dataDe" type="text" id="digitacao-contagem-dataDe" style="width:80px; float:left; margin-right:5px;"/></td>
 				    <td width="22">Até:</td>
-				    <td width="131"><input name="dataAte" type="text" id="digitacaoContagemDevolucao-dataAte" style="width:80px; float:left; margin-right:5px;"/></td>
+				    <td width="131"><input name="digitacao-contagem-dataAte" type="text" id="digitacao-contagem-dataAte" style="width:80px; float:left; margin-right:5px;"/></td>
 				    <td >Fornecedor:</td>
 				    <td width="230">
 				    <select name="idFornecedor" id="idFornecedor" style="width:200px;">

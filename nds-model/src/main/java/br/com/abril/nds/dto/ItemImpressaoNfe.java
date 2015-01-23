@@ -23,6 +23,8 @@ public class ItemImpressaoNfe{
 	private BigDecimal valorTotalProduto;
 	
 	private BigDecimal valorDescontoProduto;
+	
+	private BigDecimal percentualDesconto;
 
 	private String CSTProduto;
 
@@ -120,6 +122,14 @@ public class ItemImpressaoNfe{
 
 	public void setValorDescontoProduto(BigDecimal valorDescontoProduto) {
 		this.valorDescontoProduto = valorDescontoProduto;
+	}
+
+	public BigDecimal getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
 	}
 
 	public String getCSTProduto() {

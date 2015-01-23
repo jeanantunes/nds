@@ -223,7 +223,12 @@ balanceamentoLancamento.inicializar();
 		        <div class="grids" style="display:none;">
 		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
 		         	  
-		         	  <div style="margin-top:15px; margin-left:30px; float:left;"><strong>Valor Total R$: <span id="valorTotal"></span></strong></div>
+		         	  <div style="margin-top:15px; margin-left:30px; float:left;">
+		         	  	<strong>Valor Total R$: 
+		         	  		<span id="matrizLancamento-valorTotal">
+		         	  		</span>
+		         	  	</strong>
+		         	  </div>
 						<table width="175" border="0" align="right" cellpadding="0" cellspacing="0">
 						    <tr>
 						        <td width="110" align="right"><label for="selTodos">Selecionar Todos</label></td>

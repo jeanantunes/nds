@@ -482,7 +482,7 @@ var historicoVendaController = $.extend(true, {
 	
 		filtro.push({
 			name : "filtro.cotasAtivas",
-			value : $('#cotasAtivas', historicoVendaController.workspace).is(':checked')
+			value : $('#hist-venda-cotasAtivas', historicoVendaController.workspace).is(':checked')
 		});
 		
 		for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
@@ -505,7 +505,7 @@ var historicoVendaController = $.extend(true, {
 	
 		filtro.push({
 			name : "filtro.cotasAtivas",
-			value : $('#cotasAtivas', historicoVendaController.workspace).is(':checked')
+			value : $('#hist-venda-cotasAtivas', historicoVendaController.workspace).is(':checked')
 		});
 		
 		for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
