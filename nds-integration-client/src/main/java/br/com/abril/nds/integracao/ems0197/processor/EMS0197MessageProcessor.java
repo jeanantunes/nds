@@ -101,60 +101,18 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
 			
 			
-			for (IpvLancamentoDTO ipvLancamento : listDetalhes) {
-
-                final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(ipvLancamento.getIdProdutoEdicao());
-                
-				/**
-                 * A busca dos descontos é feita diretamente no Map, por chave,
-                 * agilizando o retorno do resultado
-                 */
-                DescontoDTO descontoDTO = null;
-                try {
-                	
-                	if( produtoEdicao.getProduto().getFornecedor() == null) {
-                		throw new Exception("Produto sem Fornecedor cadastrado!");
-                	}
-                	
-                	if( produtoEdicao.getProduto().getEditor() == null) {
-                		throw new Exception("Produto sem Editor cadastrado!");
-                	}
-                	
-                    descontoDTO = descontoService.obterDescontoPor(descontos, outheader.getIdCota()
-                    		, produtoEdicao.getProduto().getFornecedor().getId()
-                    		, produtoEdicao.getProduto().getEditor().getId()
-                    		, produtoEdicao.getProduto().getId()
-                    		, produtoEdicao.getId());
-
-                    if(descontoDTO == null) {
-                    	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
-                    	throw new ValidacaoException();
-                    }
-                } catch (final ValidacaoException e) {
-                    final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
-                    LOGGER.error(msg, e);
-                    throw new ValidacaoException(TipoMensagem.ERROR, msg);
-                } catch (final Exception e) {
-                    final String msg = e.getMessage();
-                    LOGGER.error(msg, e);
-                    throw new ValidacaoException(TipoMensagem.ERROR, msg);
-                }
-                
-                final BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;
-                
-                final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
-                
-                ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP).toString());
-                               
-			}
+			addDescontoProduto(descontos, outheader, print, listDetalhes);
 			
 			
+		/*	
 			for (IpvLancamentoDTO dto : listDetalhes) {
 				
 				EMS0197Detalhe outDetalhe = createDetalhes(dto);
 
 				print.println(fixedFormatManager.export(outDetalhe));
 			}
+			
+			*/
 				
 //			EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
 			
@@ -209,6 +167,69 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 //				
 //			}
 //		}
+	}
+
+	private void addDescontoProduto(final Map<String, DescontoDTO> descontos, EMS0197Header outheader, PrintWriter print, List<IpvLancamentoDTO> listDetalhes) {
+		
+		for (IpvLancamentoDTO ipvLancamento : listDetalhes) {
+
+		    //final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(ipvLancamento.getIdProdutoEdicao());
+		    
+		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(ipvLancamento.getCodProduto(), Long.parseLong(ipvLancamento.getNumEdicao()));
+		    
+			/**
+		     * A busca dos descontos é feita diretamente no Map, por chave,
+		     * agilizando o retorno do resultado
+		     */
+		    DescontoDTO descontoDTO = null;
+		    try {
+		    	
+		    	if( produtoEdicao.getProduto().getFornecedor() == null) {
+		    		throw new Exception("Produto sem Fornecedor cadastrado!");
+		    	}
+		    	
+		    	if( produtoEdicao.getProduto().getEditor() == null) {
+		    		throw new Exception("Produto sem Editor cadastrado!");
+		    	}
+		    	
+		        descontoDTO = descontoService.obterDescontoPor(descontos, outheader.getIdCota()
+		        		, produtoEdicao.getProduto().getFornecedor().getId()
+		        		, produtoEdicao.getProduto().getEditor().getId()
+		        		, produtoEdicao.getProduto().getId()
+		        		, produtoEdicao.getId());
+
+		        if(descontoDTO == null) {
+		        	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
+		        	throw new ValidacaoException();
+		        }
+		    } catch (final ValidacaoException e) {
+		        final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
+		        LOGGER.error(msg, e);
+		        throw new ValidacaoException(TipoMensagem.ERROR, msg);
+		    } catch (final Exception e) {
+		        final String msg = e.getMessage();
+		        LOGGER.error(msg, e);
+		        throw new ValidacaoException(TipoMensagem.ERROR, msg);
+		    }
+		    
+		    final BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;
+		    
+		    final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
+		    
+		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP).toString());
+		    
+		    exportarDadosParaArquivo(print, ipvLancamento);
+
+		}
+	}
+
+	private void exportarDadosParaArquivo(PrintWriter print, IpvLancamentoDTO ipvLancamento) {
+		
+		EMS0197Detalhe outDetalhe = createDetalhes(ipvLancamento);
+
+		//print.print(fixedFormatManager.export(outDetalhe)+"\n");
+		print.write(fixedFormatManager.export(outDetalhe), 0, 204);
+		print.println();
 	}
 
 	/**
@@ -401,9 +422,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
-		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
-		sql.append("       lct.ID as idLancamento, ");
-		sql.append("       pe.id as idProdutoEdicao ");
+		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial ");
+		//sql.append("       lct.ID as idLancamento, ");
+		//sql.append("       pe.id as idProdutoEdicao ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 		
@@ -453,8 +474,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
-		query.addScalar("idLancamento", StandardBasicTypes.LONG);
-		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		//query.addScalar("idLancamento", StandardBasicTypes.LONG);
+		//query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(IpvLancamentoDTO.class));
 
