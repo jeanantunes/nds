@@ -82,7 +82,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0198Detalhe outDetalhe = createDetalhes(cec);
 				
-				print.println(fixedFormatManager.export(outDetalhe));
+				//print.println(fixedFormatManager.export(outDetalhe));
+				print.write(fixedFormatManager.export(outDetalhe), 0, 196);
+				print.println();
+					//print(fixedFormatManager.export(outDetalhe)+"\n");
 			}
 			print.flush();
 			print.close();
