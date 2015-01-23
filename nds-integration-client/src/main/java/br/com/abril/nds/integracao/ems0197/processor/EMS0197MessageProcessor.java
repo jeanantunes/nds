@@ -299,6 +299,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		StringBuilder sql = new StringBuilder();
 		
+		/*
 		sql.append(" select distinct(c.id) as idCota, c.numero_cota as numeroCota");
 		sql.append(" , pdv.NOME as nomePDV "); 
 		sql.append(" , mec.data as dataLctoDistrib ");
@@ -310,10 +311,29 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" where mec.DATA = :data ");
 		sql.append(" and pdv.PONTO_PRINCIPAL = true ");
 		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
+		*/
+		
+		sql.append(" SELECT DISTINCT (c.id) AS idCota, ");
+		sql.append("                 c.numero_cota AS numeroCota, ");
+		sql.append("                 pdv.NOME AS nomePDV, ");
+		sql.append("                 eg.DATA_LANCAMENTO AS dataLctoDistrib, ");
+		sql.append("                 (SELECT d.COD_DISTRIBUIDOR_DINAP FROM distribuidor d LIMIT 1) AS codDistribuidor ");
+		sql.append("   FROM cota c ");
+		sql.append("        JOIN pdv pdv ");
+		sql.append("           ON pdv.cota_id = c.id ");
+		sql.append("        JOIN estudo_cota_gerado ecg ");
+		sql.append("           ON ecg.COTA_ID = c.ID ");
+		sql.append("        JOIN estudo_gerado eg  ");
+		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("        ");
+		sql.append("  WHERE eg.DATA_LANCAMENTO = :data  ");
+		sql.append("           AND pdv.PONTO_PRINCIPAL = TRUE ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
+		
+		/*
 		query.setParameterList("grupos", 
 				Arrays.asList( 
 						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
@@ -323,6 +343,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
 						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
 				));
+				
+				*/
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("dataLctoDistrib", StandardBasicTypes.DATE);
