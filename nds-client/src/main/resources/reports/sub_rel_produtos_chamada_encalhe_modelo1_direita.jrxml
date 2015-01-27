@@ -67,75 +67,75 @@
 		<groupFooter>
 			<band height="100">
 				<staticText>
-					<reportElement uuid="d4ab0151-4bd5-4310-811f-6579540fddbd" x="25" y="17" width="110" height="14"/>
+					<reportElement x="25" y="17" width="110" height="14" uuid="d4ab0151-4bd5-4310-811f-6579540fddbd"/>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Reparte R$]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement uuid="a79dc8dc-354e-4b27-a68a-ba6c7758f0e6" x="140" y="17" width="96" height="14"/>
+					<reportElement x="140" y="17" width="96" height="14" uuid="a79dc8dc-354e-4b27-a68a-ba6c7758f0e6"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_TOTAL_REPARTE}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="36b907ac-5f39-451f-ad86-0f45ac68c369" x="138" y="29" width="98" height="1"/>
+					<reportElement x="138" y="29" width="98" height="1" uuid="36b907ac-5f39-451f-ad86-0f45ac68c369"/>
 				</line>
 				<staticText>
-					<reportElement uuid="2242fc18-b232-437c-b6d1-df4b6056d333" x="25" y="34" width="110" height="14"/>
+					<reportElement x="25" y="34" width="110" height="14" uuid="2242fc18-b232-437c-b6d1-df4b6056d333"/>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Desconto R$]]></text>
 				</staticText>
-				<textField pattern="#,##0.00;-#,##0.00">
-					<reportElement uuid="6e1e985c-565b-4987-ac44-9efc9ee9d72f" x="140" y="33" width="96" height="14"/>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement x="140" y="33" width="96" height="14" uuid="6e1e985c-565b-4987-ac44-9efc9ee9d72f"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_PRODUTO}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="e05c0845-15e1-457b-b268-a50b35d2e0da" x="138" y="46" width="98" height="1"/>
+					<reportElement x="138" y="46" width="98" height="1" uuid="e05c0845-15e1-457b-b268-a50b35d2e0da"/>
 				</line>
 				<staticText>
-					<reportElement uuid="85f01710-a7e8-4e87-9140-c343a3b1cbec" x="25" y="51" width="110" height="14"/>
+					<reportElement x="25" y="51" width="110" height="14" uuid="85f01710-a7e8-4e87-9140-c343a3b1cbec"/>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Reparte Líquido R$]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement uuid="9be4d358-0371-47a0-9453-72c2eef90419" x="140" y="51" width="96" height="14"/>
+					<reportElement x="140" y="51" width="96" height="14" uuid="9be4d358-0371-47a0-9453-72c2eef90419"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}.doubleValue()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="6df78610-ac26-42ff-8ba3-d5e9d22ab2a4" x="138" y="63" width="98" height="1"/>
+					<reportElement x="138" y="63" width="98" height="1" uuid="6df78610-ac26-42ff-8ba3-d5e9d22ab2a4"/>
 				</line>
 				<staticText>
-					<reportElement uuid="818badb0-416c-4f2a-b48b-3b89fbda4729" x="25" y="69" width="110" height="14"/>
+					<reportElement x="25" y="69" width="110" height="14" uuid="818badb0-416c-4f2a-b48b-3b89fbda4729"/>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Encalhe R$]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement uuid="af37e9ae-f208-4250-81b6-c46ab51b711a" x="140" y="69" width="96" height="14"/>
+					<reportElement x="140" y="69" width="96" height="14" uuid="af37e9ae-f208-4250-81b6-c46ab51b711a"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_ENCALHE}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="db256ce3-c479-4804-93d5-0f2fd9f481f8" x="138" y="82" width="98" height="1"/>
+					<reportElement x="138" y="82" width="98" height="1" uuid="db256ce3-c479-4804-93d5-0f2fd9f481f8"/>
 				</line>
 				<staticText>
-					<reportElement uuid="252032c0-e74d-421b-80c5-a752e745acd3" x="0" y="0" width="112" height="17">
+					<reportElement x="0" y="0" width="112" height="17" uuid="252032c0-e74d-421b-80c5-a752e745acd3">
 						<printWhenExpression><![CDATA[$P{LANCAMENTO_COM_FURO} == true]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -144,17 +144,17 @@
 					<text><![CDATA[(1) Furo de Lançamento]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="bfc5c932-3dbb-4456-893a-d91c4fdd7c48" x="25" y="86" width="110" height="14"/>
+					<reportElement x="25" y="86" width="110" height="14" uuid="bfc5c932-3dbb-4456-893a-d91c4fdd7c48"/>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Total Líquido R$]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="14db151e-6f25-490d-be85-9f5f797a8410" x="138" y="98" width="98" height="1"/>
+					<reportElement x="138" y="98" width="98" height="1" uuid="14db151e-6f25-490d-be85-9f5f797a8410"/>
 				</line>
 				<textField pattern="">
-					<reportElement uuid="d91e43c9-5d76-4b87-a99f-f84d80d44cca" x="139" y="85" width="96" height="14"/>
+					<reportElement x="139" y="85" width="96" height="14" uuid="d91e43c9-5d76-4b87-a99f-f84d80d44cca"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
@@ -166,7 +166,7 @@
 	<columnHeader>
 		<band height="37">
 			<staticText>
-				<reportElement uuid="89adafc8-20c3-43d1-a880-1f68d3953f3e" style="cabecalho" mode="Opaque" x="206" y="0" width="32" height="23"/>
+				<reportElement style="cabecalho" mode="Opaque" x="206" y="0" width="32" height="23" uuid="89adafc8-20c3-43d1-a880-1f68d3953f3e"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -179,7 +179,7 @@
 				<text><![CDATA[Qtde Dev]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3ae69c54-6a76-4c68-a007-73125dad6012" style="cabecalho" mode="Opaque" x="57" y="23" width="47" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="57" y="23" width="47" height="14" uuid="3ae69c54-6a76-4c68-a007-73125dad6012"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -193,7 +193,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="18199441-43e9-4007-a362-09d16c33358b" style="cabecalho" mode="Opaque" x="57" y="0" width="113" height="23"/>
+				<reportElement style="cabecalho" mode="Opaque" x="57" y="0" width="113" height="23" uuid="18199441-43e9-4007-a362-09d16c33358b"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -206,7 +206,7 @@
 				<text><![CDATA[Produto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a3086589-784b-4e77-86e9-279d47f1fcc0" style="cabecalho" mode="Opaque" x="104" y="23" width="66" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="104" y="23" width="66" height="14" uuid="a3086589-784b-4e77-86e9-279d47f1fcc0"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -220,7 +220,7 @@
 				<text><![CDATA[Preço Desc R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="dd2aa9cf-d37d-4f0d-a55b-ef8e64d0e569" style="cabecalho" mode="Opaque" x="0" y="0" width="57" height="23"/>
+				<reportElement style="cabecalho" mode="Opaque" x="0" y="0" width="57" height="23" uuid="dd2aa9cf-d37d-4f0d-a55b-ef8e64d0e569"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -233,7 +233,7 @@
 				<text><![CDATA[Seq]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="97fc27c6-614c-4e66-b8f6-c4e1c0dc35fb" style="cabecalho" mode="Opaque" x="0" y="23" width="57" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="0" y="23" width="57" height="14" uuid="97fc27c6-614c-4e66-b8f6-c4e1c0dc35fb"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -247,7 +247,7 @@
 				<text><![CDATA[Código]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="01138a79-19ee-450d-b7e3-0d8701e7bb1d" style="cabecalho" mode="Opaque" x="170" y="23" width="68" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="170" y="23" width="68" height="14" uuid="01138a79-19ee-450d-b7e3-0d8701e7bb1d"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -261,7 +261,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b6d9dd56-85d9-4120-96be-eed260929c87" style="cabecalho" mode="Opaque" x="170" y="0" width="36" height="23"/>
+				<reportElement style="cabecalho" mode="Opaque" x="170" y="0" width="36" height="23" uuid="b6d9dd56-85d9-4120-96be-eed260929c87"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -278,7 +278,7 @@
 	<detail>
 		<band height="31">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="89349eee-6c01-4b94-a5b3-c035cc93ec1e" style="linha" mode="Opaque" x="0" y="0" width="57" height="15"/>
+				<reportElement style="linha" mode="Opaque" x="0" y="0" width="57" height="15" uuid="89349eee-6c01-4b94-a5b3-c035cc93ec1e"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -291,7 +291,7 @@
 				<textFieldExpression><![CDATA[$F{sequencia}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="29193c54-ddbb-4c65-a03c-b580e0e5ba9d" style="linha" mode="Opaque" x="57" y="0" width="113" height="15"/>
+				<reportElement style="linha" mode="Opaque" x="57" y="0" width="113" height="15" uuid="29193c54-ddbb-4c65-a03c-b580e0e5ba9d"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -305,7 +305,7 @@
 				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="25b607a8-13ef-40ba-83d0-1c0f2652e3e1" style="linha" mode="Opaque" x="57" y="15" width="47" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="57" y="15" width="47" height="16" uuid="25b607a8-13ef-40ba-83d0-1c0f2652e3e1"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -319,7 +319,7 @@
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="6b62f953-e2c5-45b6-8845-7f00457daf1c" style="linha" mode="Opaque" x="0" y="15" width="57" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="0" y="15" width="57" height="16" uuid="6b62f953-e2c5-45b6-8845-7f00457daf1c"/>
 				<box topPadding="0" bottomPadding="5">
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.25" lineStyle="Solid"/>
@@ -334,7 +334,7 @@
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="f120af9b-8d0a-4a66-a7d1-9e199af52613" style="linha" mode="Opaque" x="104" y="15" width="66" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="104" y="15" width="66" height="16" uuid="f120af9b-8d0a-4a66-a7d1-9e199af52613"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -348,7 +348,7 @@
 				<textFieldExpression><![CDATA[$F{vlrPrecoComDesconto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="b3e28bcc-1051-4691-8510-96e706e26e8c" style="linha" mode="Opaque" x="206" y="0" width="32" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="206" y="0" width="32" height="16" uuid="b3e28bcc-1051-4691-8510-96e706e26e8c"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -361,7 +361,7 @@
 				<textFieldExpression><![CDATA[($F{quantidadeDevolvida} != null && $F{quantidadeDevolvida}.intValue() > 0) ? $F{quantidadeDevolvida} : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="f90d025c-4ebe-4b80-8ec6-cce0c036a955" style="linha" mode="Opaque" x="170" y="0" width="36" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="170" y="0" width="36" height="16" uuid="f90d025c-4ebe-4b80-8ec6-cce0c036a955"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -374,7 +374,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement uuid="f29f1711-924d-4ec4-9eed-dff26fcfa35f" style="linha" mode="Opaque" x="170" y="15" width="68" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="170" y="15" width="68" height="16" uuid="f29f1711-924d-4ec4-9eed-dff26fcfa35f"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
