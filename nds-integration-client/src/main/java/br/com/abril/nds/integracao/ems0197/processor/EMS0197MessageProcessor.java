@@ -30,7 +30,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
-import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
@@ -229,7 +228,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		//print.print(fixedFormatManager.export(outDetalhe)+"\n");
 		print.write(fixedFormatManager.export(outDetalhe), 0, 204);
-		print.println();
+		print.print("\r\n");
 	}
 
 	/**
@@ -237,7 +236,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @param jornaleiro
 	 * @return
-	 */
 	private EMS0197Trailer createTrailer(String numeroCota, Integer qtdRegistros) {
 		
 		EMS0197Trailer outTrailer = new EMS0197Trailer();
@@ -247,6 +245,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		return outTrailer;
 	}
+	 */
 
 	/**
 	 * Cria os detalhes do arquivo
