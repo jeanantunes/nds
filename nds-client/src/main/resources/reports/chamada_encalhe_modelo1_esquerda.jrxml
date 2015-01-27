@@ -348,10 +348,10 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					</textElement>
 					<text><![CDATA[Endereço]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="f45a1117-f622-48a8-8f95-04c78b10e690" style="dados" x="2" y="39" width="154" height="15"/>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="f45a1117-f622-48a8-8f95-04c78b10e690" style="dados" x="2" y="36" width="154" height="19"/>
 					<textElement>
-						<font size="8" isBold="false"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioLogradouro}.toUpperCase()]]></textFieldExpression>
 				</textField>
