@@ -61,7 +61,7 @@
       
       <td>Classificação da Cota:</td>
       <td>
-      		<div id="selectClassificacao"></div>
+      		<div id="manter-selectClassificacao"></div>
       </td>
     </tr>
     
