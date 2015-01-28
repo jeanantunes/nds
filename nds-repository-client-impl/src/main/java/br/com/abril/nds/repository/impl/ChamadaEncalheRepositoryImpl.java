@@ -699,7 +699,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("        produtoEdicao.codigoDeBarras as codigoBarras, 	                ");
 		hql.append(" 	    produto.codigo as codigoProduto, 				                ");
 		hql.append(" 	    produto.nome as nomeProduto, 					                ");
-		hql.append(" 	    produto.nomeComercial as nomeComercial, 					    ");
+		hql.append(" 	    coalesce(produtoEdicao.nomeComercial, produto.nomeComercial) as nomeComercial, 					    ");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			                ");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			                ");
 

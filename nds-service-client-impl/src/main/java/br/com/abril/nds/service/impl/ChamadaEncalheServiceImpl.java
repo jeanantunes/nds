@@ -873,13 +873,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String periodoRecolhimento = null;
 			
 			if(mapGPS != null && !mapGPS.isEmpty()) {
-				if (mapGPS.containsKey(dto.getIdCota())){
+				
+				if (mapGPS.containsKey(dto.getIdCota())) {
 					
-				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
-					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
-					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
-				}
-				else{
+				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()) ? 
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+				
+				} else {
 					
 					periodoRecolhimento = dto.getDataRecolhimento();
 				}	
