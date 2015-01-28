@@ -59,10 +59,8 @@ public class IpvLancamentoDTO extends FTFBaseDTO{
 	@FTFfield(tamanho=8, tipo="char", ordem=18)
 	private String dataPrimeiroLancamentoParcial;
 	
-	/*
-	@FTFfield(tamanho=0, tipo="char", ordem=20)
-	private Long idProdutoEdicao;
-	*/
+	@FTFfield(tamanho=10, tipo="numeric", ordem=19)
+	private String idLancamento;
 	
 	public String getVersao() {
 		return versao;
@@ -208,14 +206,14 @@ public class IpvLancamentoDTO extends FTFBaseDTO{
 			String dataPrimeiroLancamentoParcial) {
 		this.dataPrimeiroLancamentoParcial = dataPrimeiroLancamentoParcial;
 	}
-/*
-	public Long getIdProdutoEdicao() {
-		return idProdutoEdicao;
+
+	public String getIdLancamento() {
+		return idLancamento;
 	}
 
-	public void setIdProdutoEdicao(Long idProdutoEdicao) {
-		this.idProdutoEdicao = idProdutoEdicao;
+	public void setIdLancamento(String idLancamento) {
+		this.idLancamento = idLancamento;
 	}
-	*/
+	
 	
 }
