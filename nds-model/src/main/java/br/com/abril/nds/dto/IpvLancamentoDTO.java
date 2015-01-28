@@ -60,7 +60,7 @@ public class IpvLancamentoDTO extends FTFBaseDTO{
 	private String dataPrimeiroLancamentoParcial;
 	
 	@FTFfield(tamanho=10, tipo="numeric", ordem=19)
-	private Long idLancamento;
+	private String idLancamento;
 	
 	public String getVersao() {
 		return versao;
@@ -207,12 +207,13 @@ public class IpvLancamentoDTO extends FTFBaseDTO{
 		this.dataPrimeiroLancamentoParcial = dataPrimeiroLancamentoParcial;
 	}
 
-	public Long getIdLancamento() {
+	public String getIdLancamento() {
 		return idLancamento;
 	}
 
-	public void setIdLancamento(Long idLancamento) {
+	public void setIdLancamento(String idLancamento) {
 		this.idLancamento = idLancamento;
 	}
+	
 	
 }

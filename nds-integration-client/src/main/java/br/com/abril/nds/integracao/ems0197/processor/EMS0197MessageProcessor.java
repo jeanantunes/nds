@@ -174,7 +174,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		    //final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(ipvLancamento.getIdProdutoEdicao());
 		    
-		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(ipvLancamento.getIdLancamento());
+		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(Long.parseLong(ipvLancamento.getIdLancamento()));
 		    
 			/**
 		     * A busca dos descontos é feita diretamente no Map, por chave,
@@ -444,7 +444,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
 		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
-		sql.append("       lct.ID as idLancamento ");
+		sql.append("       CAST(lct.ID AS CHAR) as idLancamento ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 		
@@ -494,7 +494,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
-		query.addScalar("idLancamento", StandardBasicTypes.LONG);
+		query.addScalar("idLancamento", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(IpvLancamentoDTO.class));
 
