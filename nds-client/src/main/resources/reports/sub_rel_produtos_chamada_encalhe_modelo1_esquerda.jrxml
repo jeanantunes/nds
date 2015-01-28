@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_chamada_encalhe_esc" pageWidth="346" pageHeight="842" columnWidth="346" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="8c114182-af00-4c58-a66b-a3af9b62ec09">
 	<property name="ireport.zoom" value="2.5937424601000028"/>
-	<property name="ireport.x" value="65"/>
-	<property name="ireport.y" value="206"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" backcolor="#C0C0C0" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -108,7 +108,7 @@
 					<textFieldExpression><![CDATA[$V{SUM_TOTAL_REPARTE}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="236" y="29" width="100" height="1" uuid="536439ab-0b0c-4a8f-896a-c3ddf26eef1e"/>
+					<reportElement x="236" y="28" width="100" height="1" uuid="536439ab-0b0c-4a8f-896a-c3ddf26eef1e"/>
 				</line>
 				<staticText>
 					<reportElement x="92" y="34" width="142" height="14" uuid="eed1b3e3-829b-4920-b5fd-a31c9ff94475"/>
@@ -118,14 +118,14 @@
 					<text><![CDATA[Valor Desconto R$]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement x="240" y="33" width="96" height="14" uuid="a0e2271d-5981-4ea4-8a7c-a24b170b9125"/>
+					<reportElement x="240" y="34" width="96" height="14" uuid="a0e2271d-5981-4ea4-8a7c-a24b170b9125"/>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_PRODUTO}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="236" y="46" width="100" height="1" uuid="6d2081da-f80c-4647-90ce-5eddcb2d023f"/>
+					<reportElement x="236" y="45" width="100" height="1" uuid="6d2081da-f80c-4647-90ce-5eddcb2d023f"/>
 				</line>
 				<staticText>
 					<reportElement x="92" y="51" width="142" height="14" uuid="8d0bcc35-4e2a-457e-adfc-7fe1deaca3f7"/>
@@ -142,7 +142,7 @@
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="236" y="63" width="100" height="1" uuid="d1c15091-e1be-44a8-bd42-febea9174e7c"/>
+					<reportElement x="236" y="62" width="100" height="1" uuid="d1c15091-e1be-44a8-bd42-febea9174e7c"/>
 				</line>
 				<staticText>
 					<reportElement x="92" y="69" width="142" height="14" uuid="6dfd74eb-7dc9-45c3-9eed-42373cdd8dc5"/>
@@ -152,14 +152,16 @@
 					<text><![CDATA[Valor Encalhe R$]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement x="240" y="69" width="96" height="14" uuid="71dafd9b-8394-4ff3-a3e9-bee214ff1023"/>
+					<reportElement x="240" y="68" width="96" height="14" uuid="71dafd9b-8394-4ff3-a3e9-bee214ff1023">
+						<printWhenExpression><![CDATA[$V{SUM_VALOR_ENCALHE}.doubleValue() > 0.0]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_ENCALHE}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="236" y="82" width="100" height="1" uuid="807a5072-aeb6-467b-92a1-f63397257107"/>
+					<reportElement x="236" y="79" width="100" height="1" uuid="807a5072-aeb6-467b-92a1-f63397257107"/>
 				</line>
 				<staticText>
 					<reportElement x="92" y="86" width="142" height="14" uuid="fbac34fb-e945-4029-b12a-22ff7e246387"/>
@@ -172,7 +174,9 @@
 					<reportElement x="236" y="96" width="100" height="1" uuid="8f991219-44c6-4cad-82c4-c7384061f58f"/>
 				</line>
 				<textField pattern="">
-					<reportElement x="240" y="85" width="96" height="14" uuid="338413e2-b70b-415b-b71f-f80e96852ca0"/>
+					<reportElement x="240" y="85" width="96" height="14" uuid="338413e2-b70b-415b-b71f-f80e96852ca0">
+						<printWhenExpression><![CDATA[$V{SUM_VALOR_ENCALHE}.doubleValue() > 0.0]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
