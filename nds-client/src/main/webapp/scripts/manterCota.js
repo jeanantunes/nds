@@ -411,7 +411,7 @@ var MANTER_COTA = $.extend(true, {
         }else if(idCombo == "#classificacaoSelecionada"){
         	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionada" style="width:300px;" disabled="disabled">';
         	var fim = '</select>';
-        	$("#selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
+        	$("#manter-selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
 
         }else{
         	$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);        	

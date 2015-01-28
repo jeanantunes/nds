@@ -350,7 +350,7 @@ function limparLstExcecao1(){
           	<tr>
 	          	<td width="76">Classifica&ccedil;&atilde;o:</td>
 	            <td colspan="3">
-		        <select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
+		        <select name="filtro.idTipoClassificacaoProduto" id="distribuicao-venda-media-selectClassificacao" style="width:200px;">
 			        <option value="-1" selected="selected">Selecione...</option>
 			        <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
 			            <option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>
