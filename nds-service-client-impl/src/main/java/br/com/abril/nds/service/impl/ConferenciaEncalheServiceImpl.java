@@ -124,7 +124,6 @@ import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.repository.impl.FeriadoRepositoryImpl;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -570,7 +569,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
 		
 	}
-
 	
 	private class DiaSemanaRecolhimento {
 		
@@ -582,8 +580,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	    /**
+	/**
      * Valida a existência de chamada de encalhe de acordo com a cota de
      * operação diferenciada e produtoEdicao cuja dataRecolhimento esteja dentro
      * da faixa aceitavel para cota de operação diferenciada.
@@ -2273,20 +2270,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				obterControleConferenciaEncalheCotaAtualizado(controleConfEncalheCota, statusOperacao, usuario);
 		
-		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = 
-				obterMapaTipoMovimentoEstoque();
+		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = obterMapaTipoMovimentoEstoque();
 		
 		final boolean validarExemplaresComZero =false;
 		
 		for(final ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
-			
 
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota(), 
 					dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
-				
-			
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 

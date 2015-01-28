@@ -132,11 +132,9 @@ public class ContaCorrenteCotaController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         }
         
-        List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService
-                .obterContaCorrente(filtroViewContaCorrenteCotaDTO);
+        List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
         
-        result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue())
-                .serialize();
+        result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
     }
     
     /**

@@ -10,6 +10,8 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -28,12 +30,13 @@ import br.com.abril.nds.service.ConferenciaEncalheService;
 @Component
 public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheAsyncComponent {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConferenciaEncalheAsyncComponentImpl.class);	
+	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
-	
 	
 	@Override
 	@Async
@@ -57,18 +60,15 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			
 			conferenciaEncalheService.sinalizarFimProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota());
 			
-			
 		} catch(Exception e) {
 			
 			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
-			e.printStackTrace();
+			LOGGER.error("", e);
 			
 		}
 		
 	}
-	
-	
 	
 	@Override
 	@Async
@@ -95,7 +95,7 @@ public class ConferenciaEncalheAsyncComponentImpl implements ConferenciaEncalheA
 			
 			conferenciaEncalheService.sinalizarErroProcessoEncalhe(controleConfEncalheCota.getCota().getNumeroCota(), e);
 			
-			e.printStackTrace();
+			LOGGER.error("", e);
 			
 		} 
 		
