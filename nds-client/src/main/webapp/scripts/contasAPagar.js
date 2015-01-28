@@ -8,7 +8,7 @@ var contasAPagarController = $.extend(true, {
 		$("#contasAPagar_Filtro_Ate", this.workspace).mask("99/99/9999");
 		$("#contasAPagar_Filtro_Ce", this.workspace).numeric();
 		
-		$("#produto", this.workspace).autocomplete({source: ''});
+		$("#conta-pagar-produto", this.workspace).autocomplete({source: ''});
 		$("#edicao", this.workspace).numeric();
 		
 		$("#contasAPagar_Filtro_De", this.workspace).datepicker({
@@ -85,12 +85,12 @@ var contasAPagarController = $.extend(true, {
 	 * */
 	
 	pesquisarProdutoPorCodigo : function() {
-		pesquisaProdutoCAP.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false);	
+		pesquisaProdutoCAP.pesquisarPorCodigoProduto('#codigo', '#conta-pagar-produto', '#edicao', false);	
 	},
 	
 	
 	pesquisarProdutoPorNome : function() {
-		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigo', '#produto', '#edicao', false);
+		pesquisaProdutoCAP.pesquisarPorNomeProduto('#codigo', '#conta-pagar-produto', '#edicao', false);
 	},
 	
 	pesquisarProdutoPorCodigoConsignado : function() {

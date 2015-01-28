@@ -16,6 +16,7 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
     private BigDecimal indicePeso;
     private Long idLancamento;
     private Date dataLancamento;
+    private String status;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private Integer periodo;
 
@@ -73,6 +74,12 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
 	}
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	public boolean isColecao() {
 		return colecao;

@@ -1,7 +1,10 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -186,6 +189,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
                         edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false, edicaoBaseEstudoDTO.isParcialConsolidado()));        
                 }
     } else {
+    	
         EstudoTransient estudoTemp = new EstudoTransient();
         estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(
                 produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
@@ -200,9 +204,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		    	
     		    	List<ProdutoEdicaoVendaMediaDTO> produtosBase;
     		    	
-	    		    	if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1){
+	    		    	if(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null && estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1) {
+	    		    		
 	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, false);
-	    		    	}else{
+	    		    	} else {
+	    		    		
 	    		    		produtosBase = distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(), base.getProduto().getNome(), base.getNumeroEdicao(), base.getTipoClassificacaoProduto().getId(), false, base.isParcial());
 	    		    	}
     		    	
@@ -223,8 +229,20 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		        selecionados.addAll(produtosBase);
     		        
     		    }
-    		    
     		}
+    		
+    		Collections.sort(selecionados, new Comparator<ProdutoEdicaoVendaMediaDTO>() {
+
+				@Override
+				public int compare(ProdutoEdicaoVendaMediaDTO o1, ProdutoEdicaoVendaMediaDTO o2) {
+					if(o1.getDataLancamento().getTime() > o2.getDataLancamento().getTime()) {
+						return -1;
+					}
+					return 0;
+				}
+
+    			
+    		});
     		
     		final boolean parcialComMaisDeUmPeriodo = 
         			(estudoTemp.getProdutoEdicaoEstudo().getPeriodo() != null &&estudoTemp.getProdutoEdicaoEstudo().getPeriodo() > 1);
@@ -238,8 +256,20 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	        	List<ProdutoEdicaoEstudo> edicoesPenultimoVeraneio = estudoAlgoritmoService.obterEdicoesPenultimoVeraneio(estudoTemp);
     	        	List<ProdutoEdicaoEstudo> edicoesUltimoVeraneio = estudoAlgoritmoService.obterEdicoesUltimoVeraneio(estudoTemp);
     	        	
-    	        	if((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
-    	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())) {
+    	        	boolean edicoesVeraneioRepartePositivo = false;
+    	        	List<ProdutoEdicaoEstudo> edicoesVeraneio = new ArrayList<ProdutoEdicaoEstudo>();
+    	        	edicoesVeraneio.addAll(edicoesPenultimoVeraneio);
+    	        	edicoesVeraneio.addAll(edicoesUltimoVeraneio);
+    	        	
+    	        	for(ProdutoEdicaoEstudo pee : edicoesVeraneio) {
+    	        		if(pee.getReparte() != null && pee.getReparte().compareTo(BigDecimal.ZERO) > 0) {
+    	        			edicoesVeraneioRepartePositivo = true;
+    	        			break;
+    	        		}
+    	        	}
+    	        	
+    	        	if((edicoesVeraneioRepartePositivo && ((edicoesPenultimoVeraneio != null && !edicoesPenultimoVeraneio.isEmpty()) 
+    	        			|| (edicoesUltimoVeraneio != null && !edicoesUltimoVeraneio.isEmpty())))) {
     	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, true);
     	        	} else {
     	        		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO, false);
@@ -521,10 +551,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	        
 	    estudoService.criarRepartePorPDV(estudo.getId());
 	        
-		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+//		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 	
 		List<Object> response = new ArrayList<>();
-		response.add(htmlEstudo);
+//		response.add(htmlEstudo);
 		response.add(estudo.getId());
 		response.add(estudo.isLiberado() == null ? false : true);
 		

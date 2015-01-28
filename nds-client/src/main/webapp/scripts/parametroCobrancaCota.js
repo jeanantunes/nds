@@ -936,7 +936,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#_idFormaCobranca", this.workspace).val("");
 		$("#tipoCobrancaParametroCobrancaCota", this.workspace).val("");
 		$("#tipoFormaCobranca", this.workspace).val("");
-		$("#banco", this.workspace).val("");
+		$("#parametro-cobranca-banco", this.workspace).val("");
 		$("#numBanco", this.workspace).val("");
 		$("#nomeBanco", this.workspace).val("");
 		$("#agencia", this.workspace).val("");
@@ -1092,7 +1092,7 @@ var parametroCobrancaCotaController = $.extend(true, {
                 }
                 
                 montarComboBoxUnicaOpcao("",
-                    descricaoBanco,$("#banco", this.workspace));
+                    descricaoBanco,$("#parametro-cobranca-banco", this.workspace));
             }
         }
 		
@@ -1134,7 +1134,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 
     carregarBancos : function(selected){
         carregarCombo(contextPath + "/cota/parametroCobrancaCota/carregarBancos", null,
-            $("#banco", this.workspace), selected, null);
+            $("#parametro-cobranca-banco", this.workspace), selected, null);
     },
 
 	obterFormaCobrancaDefault : function(){
@@ -1195,7 +1195,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var tipoCobranca        = $("#tipoCobrancaParametroCobrancaCota", this.workspace).val();
 		var tipoFormaCobranca   = $("#tipoFormaCobranca", this.workspace).val();
-		var idBanco             = $("#banco", this.workspace).val();
+		var idBanco             = $("#parametro-cobranca-banco", this.workspace).val();
 		var numBanco            = $("#numBanco", this.workspace).val();
 		var nomeBanco           = $("#nomeBanco", this.workspace).val();
 		var agencia             = $("#agencia", this.workspace).val();

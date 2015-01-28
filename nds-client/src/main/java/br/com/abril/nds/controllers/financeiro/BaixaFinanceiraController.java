@@ -1036,10 +1036,7 @@ TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
 				
 		this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, getUsuarioLogado().getId(), isIsento);
 		
-		this.result.use(
-			Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Cobrança postergada com sucesso!"),
-                "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cobrança postergada com sucesso!"), "result").recursive().serialize();
 	}
 	
 	

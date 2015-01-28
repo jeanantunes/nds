@@ -118,7 +118,7 @@ $(function() {
                       <label for="todas">Todos os Status</label>
                     </td>
                     <td width="20">
-                      <input type="radio" name="status" id="cotasAtivas" value="radio" />
+                      <input type="radio" name="status" id="hist-venda-cotasAtivas" value="radio" />
                     </td>
                     <td width="184">
                       <label for="cotasAtivas">Cotas Ativas</label>
@@ -254,7 +254,7 @@ $(function() {
                       </label>
                     </td>
                     <td colspan="2">
-                      <input type="text" name="filtro.cotaDto.numeroCota" id="numeroCota" style="width:60px;" class="filtroCotas"  />
+                      <input type="text" name="filtro.cotaDto.numeroCota" id="hist-venda-numeroCota" style="width:60px;" class="filtroCotas"  />
                     </td>
                     <td width="30">
                       <span class="filtroCotas">
@@ -262,7 +262,7 @@ $(function() {
                       </span>
                     </td>
                     <td width="207">
-                      <input type="text" name="filtro.cotaDto.nomePessoa" id="nomePessoa" style="width:200px;" class="filtroCotas"  />
+                      <input type="text" name="filtro.cotaDto.nomePessoa" id="hist-venda-nomePessoa" style="width:200px;" class="filtroCotas"  />
                     </td>
                     <td width="23">
                       <span class="classPesquisar filtroCotas">

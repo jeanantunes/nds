@@ -1284,18 +1284,29 @@ public class DescontoServiceImpl implements DescontoService {
         Validate.notNull(idCota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         Desconto desconto = null;
+        
+        Cota cota = cotaRepository.buscarPorId(idCota);
+        
         if (produtoEdicao.getProduto().isPublicacao()) {
         	
             //Neste caso, o produto possui apenas um fornecedor
-            // Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
-            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
+            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+        	if(cota != null && cota.getNumeroCota() != null) {
+        		
+        		try {
+					DescontoDTO descontoDTO = this.obterDescontoPor(cota.getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+					return (descontoDTO != null && descontoDTO.getValor() != null) ? descontoDTO.getValor() : BigDecimal.ZERO;
+				} catch (Exception e) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível obter o desconto."));
+				}
+        	}
             
         } else {
         	
             //Produto possivelmente com mais de um fornecedor, seguindo
             // a instrução passada, utilizar o desconto do produto
-        	desconto = new Desconto();
-            desconto.setValor(produtoEdicao.getProduto().getDesconto());
+            return produtoEdicao.getProduto().getDesconto();
             
         }
         
@@ -1603,7 +1614,7 @@ public class DescontoServiceImpl implements DescontoService {
 	    return  obterDescontoPor(descontos, 
 	            c  == null ? null : c.getId(), 
 	            pe == null ? null : p.getFornecedor().getId(), 
-	            null, 
+	            p  == null ? null : p.getEditor() == null ? null : p.getEditor().getId(), 
 	            p  == null ? null : p.getId(), pe == null ? null : pe.getId());
 	}
 

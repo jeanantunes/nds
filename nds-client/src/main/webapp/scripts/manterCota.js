@@ -1442,7 +1442,7 @@ var COTA_CPF = $.extend(true, {
         $("#nomePessoaCPF", this.workspace).val(result.nomePessoa);
         $("#numeroCPF", this.workspace).val(result.numeroCPF);
         $("#numeroRG", this.workspace).val(result.numeroRG);
-        $("#orgaoEmissor", this.workspace).val(result.orgaoEmissor);
+        $("#dados-basico-orgaoEmissor", this.workspace).val(result.orgaoEmissor);
         $("#estadoSelecionado", this.workspace).val(result.estadoSelecionado);
         $("#estadoCivilSelecionado", this.workspace).val(result.estadoCivilSelecionado);
         $("#sexoSelecionado", this.workspace).val(result.sexoSelecionado);
@@ -1556,7 +1556,7 @@ var COTA_CPF = $.extend(true, {
                 if(result.nomePessoa)$("#nomePessoaCPF", this.workspace).val(result.nomePessoa);
                 if(result.numeroRG)$("#numeroRG", this.workspace).val(result.numeroRG);
                 if(result.dataNascimento)$("#dataNascimento", this.workspace).val(result.dataNascimento.$);
-                if(result.orgaoEmissor)$("#orgaoEmissor", this.workspace).val(result.orgaoEmissor);
+                if(result.orgaoEmissor)$("#dados-basico-orgaoEmissor", this.workspace).val(result.orgaoEmissor);
                 if(result.estadoSelecionado)$("#estadoSelecionado", this.workspace).val(result.estadoSelecionado);
                 if(result.estadoCivilSelecionado)$("#estadoCivilSelecionado", this.workspace).val(result.estadoCivilSelecionado);
                 if(result.sexoSelecionado)$("#sexoSelecionado", this.workspace).val(result.sexoSelecionado);
@@ -1578,7 +1578,7 @@ var COTA_CPF = $.extend(true, {
         $("#numeroCPF", this.workspace).val("");
         $("#numeroRG", this.workspace).val("");
         $("#dataNascimento", this.workspace).val("");
-        $("#orgaoEmissor", this.workspace).val("");
+        $("#dados-basico-orgaoEmissor", this.workspace).val("");
         $("#estadoSelecionado", this.workspace).val("");
         $("#estadoCivilSelecionado", this.workspace).val("");
         $("#sexoSelecionado", this.workspace).val("");

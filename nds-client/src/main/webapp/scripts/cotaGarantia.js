@@ -1615,7 +1615,7 @@ CaucaoLiquida.prototype.preparaValor = function(vr,casasDecimais){
 
 CaucaoLiquida.prototype.calculaValorParcela = function(){
 
-    var vrBoleto = removeMascaraPriceFormat($("#valorBoleto",_workspace).val());
+    var vrBoleto = removeMascaraPriceFormat($("#cota-garantia-valorBoleto", _workspace).val());
     var qtdParcelas = removeMascaraPriceFormat($("#qtdParcelaBoleto",_workspace).val());
 
     var valorParcela = Math.round(vrBoleto / qtdParcelas);
@@ -1631,7 +1631,7 @@ CaucaoLiquida.prototype.getValorCaucaoLiquida = function(tipo){
     var valor = "";
 
     if (tipo=='BOLETO'){
-        valor = $("#valorBoleto", _workspace).val();
+        valor = $("#cota-garantia-valorBoleto", _workspace).val();
     }
     else if (tipo=='DEPOSITO_TRANSFERENCIA'){
         valor = $("#valorDeposito", _workspace).val();
@@ -1908,7 +1908,7 @@ CaucaoLiquida.prototype.isResgatar = function(){
 	
     var _this = this;
     
-    var valor = floatValue($("#valorBoleto",this.workspace).val());
+    var valor = floatValue($("#cota-garantia-valorBoleto",this.workspace).val());
     
     if (valor <= 0) {
         
@@ -1984,7 +1984,7 @@ CaucaoLiquida.prototype.bindEvents = function() {
     	CaucaoLiquida.prototype.reajustarValorDescontoComissao();
     });
 
-    $("#valorBoleto", _workspace).priceFormat({
+    $("#cota-garantia-valorBoleto", _workspace).priceFormat({
         allowNegative : true,
         centsSeparator : ',',
         thousandsSeparator : '.'

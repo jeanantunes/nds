@@ -23,7 +23,7 @@
 
 <form id="frm-mantencao-status-cota-corpo-tela-consulta">
 
-	<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+	<input type="hidden" value="${numeroCotaFollowUp}" id="manutencao-status-numeroCotaFollowUp" name="manutencao-status-numeroCotaFollowUp">
 	
 	<div class="areaBts">
 		<div class="area">
@@ -65,7 +65,7 @@
 				</td>
 				<td width="55">Box:</td>
 				<td width="149">
-					<input type="text" class="campoDePesquisa" name="box" id="box" style="width: 100px;" disabled="disabled" />
+					<input type="text" class="campoDePesquisa" name="manutencao-status-box" id="manutencao-status-box" style="width: 100px;" disabled="disabled" />
 				</td>
 				<td width="49">Status:</td>
 				<td width="154">

@@ -39,7 +39,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@Column(name = "LANCAMENTO_MANUAL", nullable = false)
 	private boolean lancamentoManual;
 	
-	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
+	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.ALL)
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
 
 	@OneToOne(mappedBy="movimentoFinanceiroCota")

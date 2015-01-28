@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ne_modelo1_esquerda" pageWidth="350" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="346" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ea9abc14-cabb-4d88-9a89-4ada7afa32cd">
 	<property name="ireport.zoom" value="2.4793388429752783"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -427,7 +427,9 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{numeroNF}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="3e103966-e936-4c5f-a778-437f03caa641" x="256" y="56" width="90" height="12"/>
+					<reportElement uuid="3e103966-e936-4c5f-a778-437f03caa641" x="256" y="56" width="90" height="12">
+						<printWhenExpression><![CDATA[$F{naturezaOperacao} != null]]></printWhenExpression>
+					</reportElement>
 					<textElement>
 						<font size="5"/>
 					</textElement>
@@ -444,7 +446,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 			<frame>
 				<reportElement uuid="bd10ea83-8d24-4f95-b5cb-6f6ee1468a73" stretchType="RelativeToBandHeight" x="0" y="86" width="346" height="85"/>
 				<rectangle>
-					<reportElement uuid="800edf67-f0f2-4c91-ad9a-ec5a8996836d" style="borda" x="2" y="2" width="182" height="27"/>
+					<reportElement uuid="800edf67-f0f2-4c91-ad9a-ec5a8996836d" style="borda" x="0" y="2" width="184" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="3d1f3172-727e-429f-b118-b02794139d90" x="3" y="3" width="181" height="9"/>
@@ -480,7 +482,7 @@ $F{destinatarioCNPJ}.substring(2,5) + "." + $F{destinatarioCNPJ}.substring(5,8) 
 $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,14) : $F{destinatarioCNPJ}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="89bfdc5f-caa2-44de-bb74-80b4689dd7a4" style="borda" x="2" y="29" width="155" height="27"/>
+					<reportElement uuid="89bfdc5f-caa2-44de-bb74-80b4689dd7a4" style="borda" x="0" y="29" width="157" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="dcc2356e-32f9-47e9-84e5-32540ab84487" x="3" y="30" width="154" height="9"/>
@@ -565,7 +567,7 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<textFieldExpression><![CDATA[$F{destinatarioInscricaoEstadual}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="15b4daa2-820e-4ff1-8ec6-fa53bca5c71e" style="borda" x="2" y="56" width="98" height="27"/>
+					<reportElement uuid="15b4daa2-820e-4ff1-8ec6-fa53bca5c71e" style="borda" x="0" y="56" width="100" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="dd6a2f7a-a929-455c-a462-aa420814fd5e" x="3" y="57" width="97" height="9"/>

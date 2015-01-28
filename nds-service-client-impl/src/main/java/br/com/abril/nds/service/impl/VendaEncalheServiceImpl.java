@@ -43,6 +43,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -422,19 +423,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 			vnd.setHorarioVenda(horarioVenda);
 			
-			if(TipoVendaEncalhe.ENCALHE.equals(vnd.getTipoVendaEncalhe())){
+			if(TipoVendaEncalhe.ENCALHE.equals(vnd.getTipoVendaEncalhe())) {
 				
-				vendasEfetivadasEncalhe.add(
-						this.processarVendaEncalhe(
-								vnd, numeroCota,dataVencimentoDebito, usuario, 
-								dataOperacao, qtdDiasEncalheAtrasadoAceitavel));
-			}
-			else{
+				vendasEfetivadasEncalhe.add(this.processarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito, usuario, dataOperacao, qtdDiasEncalheAtrasadoAceitavel));
+			} else {
 				
-				vendasEfetivadasSuplementar.add(
-						this.processarVendaEncalhe(
-								vnd, numeroCota,dataVencimentoDebito, usuario,
-								dataOperacao, qtdDiasEncalheAtrasadoAceitavel));
+				vendasEfetivadasSuplementar.add(this.processarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito, usuario, dataOperacao, qtdDiasEncalheAtrasadoAceitavel));
 			}
 		}
 		
@@ -545,11 +539,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		if (isVendaConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel) && isConsignadoVendaEncalhe(produtoEdicao)) {
 
-			return criarVendaEncalheConsignado(vnd, numeroCota,dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
+			return criarVendaEncalheConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
 		} else {
 
-			return criarVendaEncalheContaFirme(vnd, numeroCota, dataVencimentoDebito,usuario, produtoEdicao);
+			return criarVendaEncalheContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
 			
 		}
 		
@@ -587,7 +581,43 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		
-		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null,cota.getId(), produtoEdicao);
+		BigDecimal percentualDesconto = null;
+		DescontoDTO desconto = null;
+		
+		try {
+			if(cota != null && cota.getNumeroCota() != null
+					&& produtoEdicao != null && produtoEdicao.getProduto() != null && produtoEdicao.getProduto().getCodigo() != null
+					&& produtoEdicao.getNumeroEdicao() != null) {
+				
+				desconto = descontoService.obterDescontoPor(cota.getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+			}
+			
+			if(desconto != null) {
+				
+				percentualDesconto = desconto.getValor();
+			} else {
+				
+				if(cota != null && cota.getNumeroCota() != null
+						&& produtoEdicao != null && produtoEdicao.getProduto() != null && produtoEdicao.getProduto().getCodigo() != null
+						&& produtoEdicao.getNumeroEdicao() != null) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível obter o desconto para Cota: %s / ProdutoEdição: %s - %s.", 
+							cota.getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao()));
+				} else if (cota != null && cota.getNumeroCota() != null) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível obter o desconto para Cota: %s.", cota.getNumeroCota()));
+				} else {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível obter o desconto. Cota não informada."));
+				}
+			}
+		} catch (ValidacaoException ve) {
+			
+			throw ve;
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível obter o desconto."));
+		}
 		
 		BigDecimal valorDoDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 		
@@ -600,10 +630,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return valoresAplicados;
 	}
 	
-	private VendaProduto criarVendaEncalheContaFirme(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, 
-												 Usuario usuario,ProdutoEdicao produtoEdicao) {
+	private VendaProduto criarVendaEncalheContaFirme(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, Usuario usuario, ProdutoEdicao produtoEdicao) {
 		
-		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
+		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
 
 		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaEncalheDistribuidor(vnd, usuario, produtoEdicao);
 
@@ -645,11 +674,10 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private VendaProduto criarVendaSuplementar(VendaEncalheDTO vnd,Integer numeroCota, 
 			Date dataVencimentoDebito, Usuario usuario, Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 
-		ProdutoEdicao produtoEdicao = 
-				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
 			
 		if (FormaComercializacao.CONSIGNADO.equals(vnd.getFormaVenda())) {
-
+			
 			return criarVendaSuplementarConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
 		} else {
@@ -671,14 +699,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 													 Usuario usuario, ProdutoEdicao produtoEdicao) {
 		
 		
-		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
+		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
 
 		MovimentoEstoque movimentoEstoque = 
-				gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(),
-																  usuario.getId(),vendaProduto.getQntProduto());
+				gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(), vendaProduto.getQntProduto());
 		
-		List<MovimentoFinanceiroCota> movimentoFinanceiro = 
-				gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito, vendaProduto);
+		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito, vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
@@ -958,7 +984,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		venda.setHorarioVenda(vendaDTO.getHorarioVenda());
 		venda.setQntProduto(vendaDTO.getQntProduto());
 		venda.setTipoVenda(vendaDTO.getTipoVendaEncalhe());
-		
 		
 		venda.setValorTotalVenda(valoresAplicados.getPrecoComDesconto().multiply(new BigDecimal(vendaDTO.getQntProduto())));
 		venda.setValoresAplicados(valoresAplicados);
@@ -1392,7 +1417,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto, Long numeroEdicao, Integer numeroCota){
+	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto, Long numeroEdicao, Integer numeroCota) {
 		
 		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 		
@@ -1410,6 +1435,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				statusLancamentos.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.EM_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.RECOLHIDO);
+				statusLancamentos.add(StatusLancamento.EXPEDIDO);
 				statusLancamentos.add(StatusLancamento.FECHADO);
 				
 				List<Lancamento> lancamentos = new ArrayList<Lancamento>(produtoEdicao.getLancamentos());
@@ -1431,8 +1457,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				for(Lancamento l : lancamentos) {
 					if(l.getDataRecolhimentoDistribuidor().getTime() >= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
-						if(statusLancamentos.contains(l.getStatus())) {
+						if(!statusLancamentos.contains(l.getStatus())) {
 							vendaBloqueada = true;
+							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
 						}
 					}
 				}
@@ -1453,28 +1480,28 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			final boolean produtoComFormaComercializacaoContaFirme = 
 					FormaComercializacao.CONTA_FIRME.equals(produtoEdicao.getProduto().getFormaComercializacao()) || vendaBloqueada;
 			
-			if(qntProduto!= null && qntProduto.compareTo(BigInteger.ZERO)>0){
+			if(qntProduto!= null && qntProduto.compareTo(BigInteger.ZERO) > 0) {
 			    
 				vendaEncalheDTO.setQntDisponivelProduto(qntProduto);
 				vendaEncalheDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
 				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 				
-				Long idCota = cotaRepository.obterIdPorNumeroCota(numeroCota);
+				Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 				
-				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, idCota, produtoEdicao);
-		
+				ValoresAplicados valoresAplicados = this.obterValoresAplicados(cota, produtoEdicao);
+				
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
         
-				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, descontoProduto);
+				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, valoresAplicados.getValorDesconto());
 				
 				vendaEncalheDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
 				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao,tipoVendaEncalhe,produtoComFormaComercializacaoContaFirme));
 				vendaEncalheDTO.setTipoVendaEncalhe(tipoVendaEncalhe);
 				vendaEncalheDTO.setProdutoContaFirme(produtoComFormaComercializacaoContaFirme);
-			}
-			else{
+			} else {
+				
 				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda!");
 			}
 		}

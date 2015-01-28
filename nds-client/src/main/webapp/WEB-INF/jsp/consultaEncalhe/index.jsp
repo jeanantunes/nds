@@ -52,15 +52,13 @@ $(function(){
 				<td width="46">Per&iacute;odo:</td>
 				
 				<td width="113">
-					<input type="text" id="dataRecolhimentoInicial" class="datePicker"
-					style="width: 80px; float: left; margin-right: 5px;" />
+					<input type="text" value="${data}" id="dataRecolhimentoInicial" class="datePicker" style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
 				<td width="24">At&eacute;:</td>
 				
 				<td width="113">
-					<input type="text" id="dataRecolhimentoFinal" class="datePicker"
-					style="width: 80px; float: left; margin-right: 5px;" />
+					<input type="text" value="${data}" id="dataRecolhimentoFinal" class="datePicker" style="width: 80px; float: left; margin-right: 5px;" />
 				</td>
 				
 				<td width="68">Fornecedor:</td>
@@ -84,7 +82,7 @@ $(function(){
 
 					<input 	type="text" 
 							maxlength="17"
-							id="cota" onchange="pesquisaCotaConsultaEncalhe.pesquisarPorNumeroCota('#cota', '#nomeCota');" 
+							id="consulta-encalhe-cota" onchange="pesquisaCotaConsultaEncalhe.pesquisarPorNumeroCota('#consulta-encalhe-cota', '#consulta-encalhe-nomeCota');" 
 							style="width: 60px; float:left; margin-right:5px;"/>
 				
 				</td>
@@ -95,10 +93,10 @@ $(function(){
 
 		            <input type="text"
 		            maxlength="255" 
-		            name="nomeCota" 
-		            id="nomeCota" 
-		            onkeyup="pesquisaCotaConsultaEncalhe.autoCompletarPorNome('#nomeCota');" 
-		            onblur="pesquisaCotaConsultaEncalhe.pesquisarPorNomeCota('#cota', '#nomeCota');" 
+		            name="consulta-encalhe-nomeCota" 
+		            id="consulta-encalhe-nomeCota" 
+		            onkeyup="pesquisaCotaConsultaEncalhe.autoCompletarPorNome('#consulta-encalhe-nomeCota');" 
+		            onblur="pesquisaCotaConsultaEncalhe.pesquisarPorNomeCota('#consulta-encalhe-cota', '#consulta-encalhe-nomeCota');" 
 		            style="width:130px;"/>
 					
 				</td>
@@ -134,7 +132,7 @@ $(function(){
 					<td width="126" align="center" bgcolor="#EFEFEF" style="border: 1px solid #000;">
 						<strong>( = )Valor Venda Dia:</strong>
 					</td>
-					<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="valorVendaDia"></td>
+					<td width="80" align="center" bgcolor="#EFEFEF"	style="border: 1px solid #000;" id="consulta-encalhe-valorVendaDia"></td>
 					<td width="130">&nbsp;&nbsp;
 						<strong>
 							<a href="javascript:;" onclick="ConsultaEncalhe.popupOutrosValores();"> ( + )Outros valores </a>:
@@ -142,7 +140,7 @@ $(function(){
 					</td>
 					<td width="68" id="totalOutrosValores"></td>
 					<td width="125"><strong>( = )Valor a pagar R$:</strong></td>
-					<td width="77" id="valorAPagar"></td>
+					<td width="77" id="consulta-encalhe-valorAPagar"></td>
 					<td width="17">&nbsp;</td>
 				</tr>
 			</table>

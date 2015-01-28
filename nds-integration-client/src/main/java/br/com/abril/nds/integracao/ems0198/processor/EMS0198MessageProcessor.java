@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Query;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -23,14 +22,11 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Detalhe;
-import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Header;
-import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Trailer;
 import br.com.abril.nds.integracao.ems0198.outbound.EMS198HeaderDTO;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
-import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -60,7 +56,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	private Date dataLctoDistrib;
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+	//private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 	
 	private int quantidadeArquivosGerados = 0;
 	
@@ -81,7 +77,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0198Detalhe outDetalhe = createDetalhes(cec);
 				
-				print.println(fixedFormatManager.export(outDetalhe));
+				//print.println(fixedFormatManager.export(outDetalhe));
+				print.write(fixedFormatManager.export(outDetalhe), 0, 196);
+				print.print("\r\n");
+					//print(fixedFormatManager.export(outDetalhe)+"\n");
 			}
 			print.flush();
 			print.close();
@@ -92,7 +91,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	
-// ## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno do layout antigo	
+// ## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo	
 //	@Override
 //	public void processMessage(Message message) {
 //		
@@ -153,7 +152,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      , CAST(c.PESSOA_ID as CHAR) as codJornaleiro ");
 		sql.append("      , CAST(c.NUMERO_COTA as CHAR) as codCota ");
 		sql.append("      , CAST(pdv.ID as CHAR) as codPDV ");
-		sql.append("      , DATE_FORMAT((mec.DATA),'%Y%m%d') as dataMovimento ");
+		sql.append("      , DATE_FORMAT((ce.DATA_RECOLHIMENTO),'%Y%m%d') as dataMovimento ");
 		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codProduto ");
 		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numEdicao ");
 		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codBarras ");
@@ -271,7 +270,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			 
-			String nomeArquivo = ""+codDistrb+"."+numCota+"."+dataRec;
+			String nomeArquivo = ""+codDistrb+"."+StringUtils.leftPad(numCota, 5, '0')+"."+dataRec;
 
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
 					TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER + File.separator + nomeArquivo + ENCALHE_EXT));
@@ -308,7 +307,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		return outDetalhe;
 	}
 
-	
+	/*
 	private List<ChamadaEncalheCota> findListPDV(Message message) {
 
 		StringBuilder sql = new StringBuilder();
@@ -373,7 +372,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 						
 	}
 	
-	
 	private void criaHeader(PrintWriter print, Integer numeroCota, String nome, Date data) {
 
 		EMS0198Header outheader = new EMS0198Header();
@@ -385,7 +383,9 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		print.println(fixedFormatManager.export(outheader));
 		
 	}
+	 */
 	
+	/*
 	private void criaTrailer(PrintWriter print, Integer numeroCota,	Integer quantidadeRegistros) {
 
 		EMS0198Trailer outtrailer = new EMS0198Trailer();
@@ -394,13 +394,15 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		outtrailer.setQuantidadeRegistros(quantidadeRegistros.toString());
 		
 		print.println(fixedFormatManager.export(outtrailer));
-
+*/
 		                /*
          * A quantidade de arquivos gerados é incrementado aqui pois
          * considera-se que o arquivo foi gerado corretamente.
          */
+	/*
 		this.quantidadeArquivosGerados++;
 	}
+*/
 
 //	private void criaDetalhes(PrintWriter print, ChamadaEncalheCota cec) {
 //		

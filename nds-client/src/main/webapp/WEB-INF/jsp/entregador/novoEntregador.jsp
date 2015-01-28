@@ -41,7 +41,7 @@
 				</jsp:include>
 			</div>
 			
-			<div id="cotas">
+			<div id="novo-entregador-cotas">
 				<br clear="all"/>
 					<fieldset style="width:765px; margin:5px;">
 						<legend>Endereços</legend>

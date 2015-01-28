@@ -164,8 +164,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select editor from Editor editor ");
-		sql.append("where editor.codigo = :codigoEditor ");
-		sql.append("where editor.ativo = :true ");
+		sql.append(" where editor.codigo = :codigoEditor ");
+		sql.append(" and editor.ativo = :true ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 
@@ -327,6 +327,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	}
 	
 	private Produto criarProdutoComInputDeEdicao(Message message) {
+		
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		Produto produto = new Produto();
@@ -344,21 +345,19 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             return null;
         }
 		
-		DescontoLogistica descontoLogistica =
-		        this.descontoLogisticaService.obterDescontoLogisticaVigente(Integer.parseInt( input.getTipoDesconto()),
-		                                                                    fornecedor.getId(),
-		                                                                    DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
+		DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(
+				Integer.parseInt(input.getTipoDesconto()),
+				fornecedor.getId(),
+				DateUtil.parseData(input.getDataGeracaoArq(), FORMATO_DATA));
 		
 		if(descontoLogistica == null) {
 			
-			if(input.getTipoDesconto()!=null && !input.getTipoDesconto().trim().equals("") 
-					&& !input.getTipoDesconto().trim().equals("0")
-					&& !input.getTipoDesconto().trim().equals("00")) {
+			if(input.getTipoDesconto()!=null && !input.getTipoDesconto().trim().equals("") && !input.getTipoDesconto().trim().equals("0") && !input.getTipoDesconto().trim().equals("00")) {
 				
 				this.ndsiLoggerFactory.getLogger().logError(
-					message,
-					EventoExecucaoEnum.ERRO_INFRA,
-					"Desconto Logística não encontrado. "+Integer.parseInt( input.getTipoDesconto())
+					message, EventoExecucaoEnum.ERRO_INFRA,
+					"Desconto Logística não encontrado. " 
+					+Integer.parseInt( input.getTipoDesconto())
 					+ " Produto "+produto.getCodigo());
 			}
 			 
@@ -380,24 +379,30 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null == editor) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Editor " + input.getCodEditor() + " não encontrado. Produto " + input.getCodProd() +" Edição "+input.getEdicaoProd());
+					"Editor " + input.getCodEditor() 
+					+ " não encontrado. Produto " 
+					+ input.getCodProd() 
+					+" Edição "+input.getEdicaoProd());
 
-//			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
+			//throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 		}
 		
 		TipoProduto tipoProduto = this.findTipoProduto(input.getCodCategoria());
 
 		if (null == tipoProduto) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.SEM_DOMINIO,
-					"Tipo Produto "+input.getCodCategoria()+" não encontrado. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
+					EventoExecucaoEnum.SEM_DOMINIO, "Tipo Produto "
+					+ input.getCodCategoria()+" não encontrado. Produto "
+					+input.getCodProd() 
+					+" Edição "+input.getEdicaoProd());
 
-//			throw new RuntimeException("Tipo Produto nao encontrado.");
+			// throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
 				
 		this.ndsiLoggerFactory.getLogger().logError(message,
-				EventoExecucaoEnum.SEM_DOMINIO,
-				"Publicação Cadastrada através do Produto Edição, Código ICD não será Preenchido. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd());
+				EventoExecucaoEnum.SEM_DOMINIO, "Publicação Cadastrada através do Produto Edição, Código ICD não será Preenchido. Produto "
+				+input.getCodProd()
+				+" Edição "+input.getEdicaoProd());
 
 		
 		produto.setTipoProduto(tipoProduto);
@@ -413,37 +418,30 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		produto.setCodigo(input.getCodProd());
 		produto.setAtivo(input.getStatusProd());
 		produto.setDataDesativacao(input.getDataDesativacao());
-		produto.setFormaComercializacao(
-				(input.getFormaComercializacao().equals("CON") 
-						? FormaComercializacao.CONSIGNADO 
-						: FormaComercializacao.CONTA_FIRME
-				) 
-		);
+		produto.setFormaComercializacao((input.getFormaComercializacao().equals("CON") ? FormaComercializacao.CONSIGNADO : FormaComercializacao.CONTA_FIRME));
 		
 		if (input.getSegmento() == null || input.getSegmento().trim().equals("")) {
 			
 			if(produto.getTipoSegmentoProduto()==null || produto.getTipoSegmentoProduto().getId().intValue()==0){
-			ndsiLoggerFactory.getLogger().logError(
-					message,
+				ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Produto com Segmento INDEFINIDO, Será atribuido 'OUTROS'. Produto "+input.getCodProd()+" Edição "+input.getEdicaoProd(), input.getCodProd(), input.getEdicaoProd() )
+					String.format( "Produto com Segmento INDEFINIDO, Será atribuido 'OUTROS'. Produto " + input.getCodProd()
+					+" Edição " +input.getEdicaoProd(), input.getCodProd(), input.getEdicaoProd())
 				);
 			
-			//FIXME Não deveria vir Segmento como nulo
-			produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));
+				//FIXME Não deveria vir Segmento como nulo
+				produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));
 			}
 			
-			
 		}else{
+			
 			produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+			
 		}
-
 		
 		String codigoSituacaoTributaria = input.getCodSitTributaria();
 		produto.setTributacaoFiscal(this.getTributacaoFiscal(codigoSituacaoTributaria));
-
 		produto.setOrigem(Origem.INTERFACE);
-		
 		produto.addFornecedor(fornecedor);
 		
 		if (descontoLogistica != null && descontoLogistica.getPercentualDesconto() != null) {
@@ -451,32 +449,34 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			produto.setDescontoLogistica(descontoLogistica);
 
 		} else {
-			
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
 					String.format( "Produto sem Desconto-Logística:  %1$s - %1$s", input.getCodProd(), input.getEdicaoProd() )
 				);
-			
 		}
 
 		this.getSession().persist(produto);
 		
 		this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.SEM_DOMINIO,
-				"Produto Inserido com Periodicidade INDEFINIDA. Produto "+ produto.getCodigo()+" Edição "+input.getEdicaoProd());	
+				"Produto Inserido com Periodicidade INDEFINIDA. Produto "+ produto.getCodigo()
+				+" Edição "+input.getEdicaoProd()
+				);
+		
 		return produto;
 	}
 
     private Fornecedor obterFornecedor(Message message) {
-        String codigoDistribuidor = 
-                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+        String codigoDistribuidor =  message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
 		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorCodigoInterface(Integer.parseInt(codigoDistribuidor));
+		
         return fornecedor;
     }
 
 	private boolean verificarDistribuidor(Message message) {
+		
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		String codigoDistribuidorSistema = message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.toString()).toString();
@@ -492,6 +492,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	}
 
 	private ProdutoEdicao findProdutoEdicao(Message message) {
+		
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
@@ -509,6 +510,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	}
 
 	private Produto findProduto(Message message) {
+		
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
@@ -617,15 +619,15 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		
 		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
-        if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
-                (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(
-                        tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
+		
+        if ((tipoSegmentoProduto == null && input.getSegmento() != null) 
+        		|| (input.getSegmento() != null && !input.getSegmento().trim().equals("") 
+        		&& !Objects.equal(tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
             
-        	if(produto != null && produto.getTipoSegmentoProduto() != null 
-        			&& produto.getTipoSegmentoProduto().getDescricao() != null) {
+        	if(produto != null && produto.getTipoSegmentoProduto() != null && produto.getTipoSegmentoProduto().getDescricao() != null) {
         		
-	        	if((produto.getTipoSegmentoProduto().getId()==0 || produto.getTipoSegmentoProduto().getId()==9 ) &&
-	        		(new Long(input.getSegmento()).intValue()!=0 && new Long(input.getSegmento()).intValue()!=9)) {
+	        	if((produto.getTipoSegmentoProduto().getId() ==0 || produto.getTipoSegmentoProduto().getId() == 9) 
+	        		&& (new Long(input.getSegmento()).intValue() !=0 && new Long(input.getSegmento()).intValue() != 9)) {
 	        		
 	        		this.ndsiLoggerFactory.getLogger().logInfo(message,
 	                    EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -685,6 +687,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		String codigoDeBarras = input.getCodBarra();
 		boolean validarCodigoBarras = validarCodigoBarras(produto.getCodigo(), input.getEdicaoProd(), message, codigoDeBarras);
+		
 		if(validarCodigoBarras) {
 			edicao.setCodigoDeBarras(codigoDeBarras);
 		}
@@ -708,9 +711,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		} else { // ---
 			
 			ndsiLoggerFactory.getLogger().logError(
-	                message,
-	                EventoExecucaoEnum.HIERARQUIA,
-	                "-Classificação Nula não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
+	                message, EventoExecucaoEnum.HIERARQUIA, "-Classificação Nula não existe. Produto "+input.getCodProd()+" Edição "+ input.getEdicaoProd());
 			
 			//FIXME Classificação não deveria vir como nula.
 			edicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto("NORMAL"));
@@ -813,24 +814,16 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			
 		}
 		
-		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoGeral = 
-				descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.GERAL, fornecedor, null);
+		Set<DescontoProdutoEdicao> conjuntoDescontoProdutoEdicaoGeral = descontoProdutoEdicaoRepository.obterDescontoProdutoEdicao(TipoDesconto.GERAL, fornecedor, null);
 		
 		if(conjuntoDescontoProdutoEdicaoGeral!=null && !conjuntoDescontoProdutoEdicaoGeral.isEmpty()) {
 			
-			
 			for(DescontoProdutoEdicao descontoGeral : conjuntoDescontoProdutoEdicaoGeral) {
-				
 				descontoService.processarDescontoDistribuidor(conjuntoFornecedor, descontoGeral.getDesconto());
-				
 			}
-			
-			
 		}
-		
 	}
 
-	
 	private void atualizaProdutoEdicaoConformeInput(ProdutoEdicao edicao, Message message) {
 		
 		EMS0110FilialInput input = (EMS0110FilialInput) message.getBody();
@@ -888,7 +881,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
         
         if ((tipoSegmentoProduto == null && input.getSegmento() != null && !input.getSegmento().trim().equals("")) 
         		|| (input.getSegmento() != null && !input.getSegmento().trim().equals("") 
-                	&& !Objects.equal(tipoSegmentoProduto.getId(), Long.valueOf(input.getSegmento())))) {
+                && !Objects.equal(tipoSegmentoProduto.getId(), Long.valueOf(input.getSegmento())))) {
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -1222,5 +1215,4 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
-	
 }

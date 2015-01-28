@@ -4,16 +4,16 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
         
 						var pesquisaCota = new PesquisaCota();
 						// Associando eventos ao DOM
-						$("#numeroCota").change(function(){
-							pesquisaCota.pesquisarPorNumeroCota('#numeroCota','#nomeCota');
+						$("#area-influencia-numeroCota").change(function(){
+							pesquisaCota.pesquisarPorNumeroCota('#area-influencia-numeroCota','#area-influencia-nomeCota');
 						});
 						
-						$("#nomeCota").keyup(function(){
-							pesquisaCota.autoCompletarPorNome('#nomeCota');
+						$("#area-influencia-nomeCota").keyup(function(){
+							pesquisaCota.autoCompletarPorNome('#area-influencia-nomeCota');
 						});
 						
-						$("#nomeCota").change(function(){
-							pesquisaCota.pesquisarPorNomeCota('#numeroCota','#nomeCota');
+						$("#area-influencia-nomeCota").change(function(){
+							pesquisaCota.pesquisarPorNomeCota('#area-influencia-numeroCota','#area-influencia-nomeCota');
 						});
 						
 						
@@ -170,11 +170,11 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 
 						data.push({
 							name : 'filtro.numeroCota',
-							value : areaInfluenciaGeradorFluxoController.get("numeroCota")
+							value : areaInfluenciaGeradorFluxoController.get("area-influencia-numeroCota")
 						});
 						data.push({
 							name : 'filtro.nomeCota',
-							value : areaInfluenciaGeradorFluxoController.get("nomeCota")
+							value : areaInfluenciaGeradorFluxoController.get("area-influencia-nomeCota")
 						});
 						
 						return data;
@@ -202,7 +202,7 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 						});
 						data.push({
 							name : 'filtro.cotasAtivas',
-							value : areaInfluenciaGeradorFluxoController.get("cotasAtivas")
+							value : areaInfluenciaGeradorFluxoController.get("area-influencia-cotasAtivas")
 						});
 
 						return data;
@@ -240,15 +240,15 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 					},
 					
 					limparCamposCota : function() {
-						$('#numeroCota').val("");
-						$('#nomeCota').val("");
+						$('#area-influencia-numeroCota').val("");
+						$('#area-influencia-nomeCota').val("");
 					},
 					
 					limparCamposArea : function() {
 						$('#areaInfluencia').val(null);
 						$('#geradorFluxoPrincipal').val(null);
 						$('#geradorFluxoSecundario').val(null);
-						$('#cotasAtivas').click();
+						$('#area-influencia-cotasAtivas').click();
 					}
 
 				}, BaseController);

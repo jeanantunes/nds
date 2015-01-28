@@ -154,7 +154,7 @@
        				<td width="50">C&oacute;digo</td>
          			<td width="80"><input type="text" id="codigo" name="filtro.produto" style="width:60px;" onchange="contasAPagarController.pesquisarProdutoPorCodigo();"/></td>
          			<td width="50">Produto</td>
-         			<td width="180"><input type="text" id="produto" style="width:150px;" onkeyup="pesquisaProdutoCAP.autoCompletarPorNomeProduto('#produto', false);" onblur="contasAPagarController.pesquisarProdutoPorNome();"/></td>
+         			<td width="180"><input type="text" id="conta-pagar-produto" style="width:150px;" onkeyup="pesquisaProdutoCAP.autoCompletarPorNomeProduto('#conta-pagar-produto', false);" onblur="contasAPagarController.pesquisarProdutoPorNome();"/></td>
 					<td width="40">Edi&ccedil;&atilde;o</td>
 					<td width="60" align="right"><input type="text" id="edicao" name="filtro.edicao" style="width:60px;"/></td>
 					<td width="70">&nbsp;</td>

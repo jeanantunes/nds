@@ -4,46 +4,72 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.dto.IpvLancamentoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
-import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.MathUtil;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
 public class EMS0197MessageProcessor extends AbstractRepository implements MessageProcessor {
-
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0197MessageProcessor.class);
+	
 	private static final String REPARTE_FOLDER = "reparte";
 
 	private static final String REPARTE_EXT = ".LCT";
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	
+	
+	
 	@Autowired
 	private DescontoService descontoService; 	
 	
@@ -58,12 +84,14 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		this.quantidadeArquivosGerados = 0;
 		
 		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
+
+		final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
 		
 		for (EMS0197Header outheader : listHeaders){
 		
 		try{
 
-			String nomeArquivo = ""+outheader.getCodDistribuidor()+"."+outheader.getNumeroCota()+"."+outheader.getDataLctoDistrib();
+			String nomeArquivo = ""+outheader.getCodDistribuidor()+"."+StringUtils.leftPad(outheader.getNumeroCota(), 5, '0')+"."+sdf.format(outheader.getDataLctoDistrib());
 			
 			PrintWriter print = new PrintWriter(new FileWriter(
 					message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
@@ -71,12 +99,19 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 			
 			List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
 			
+			
+			addDescontoProduto(descontos, outheader, print, listDetalhes);
+			
+			
+		/*	
 			for (IpvLancamentoDTO dto : listDetalhes) {
 				
 				EMS0197Detalhe outDetalhe = createDetalhes(dto);
 
 				print.println(fixedFormatManager.export(outDetalhe));
 			}
+			
+			*/
 				
 //			EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
 			
@@ -93,7 +128,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	}
 		
 		
-		
+//		## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo
 //		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
 		
 //		for (EMS0197Header outheader : listHeaders){
@@ -133,12 +168,74 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 //		}
 	}
 
+	private void addDescontoProduto(final Map<String, DescontoDTO> descontos, EMS0197Header outheader, PrintWriter print, List<IpvLancamentoDTO> listDetalhes) {
+		
+		for (IpvLancamentoDTO ipvLancamento : listDetalhes) {
+
+		    //final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(ipvLancamento.getIdProdutoEdicao());
+		    
+		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(Long.parseLong(ipvLancamento.getIdLancamento()));
+		    
+			/**
+		     * A busca dos descontos é feita diretamente no Map, por chave,
+		     * agilizando o retorno do resultado
+		     */
+		    DescontoDTO descontoDTO = null;
+		    try {
+		    	
+		    	if( produtoEdicao.getProduto().getFornecedor() == null) {
+		    		throw new Exception("Produto sem Fornecedor cadastrado!");
+		    	}
+		    	
+		    	if( produtoEdicao.getProduto().getEditor() == null) {
+		    		throw new Exception("Produto sem Editor cadastrado!");
+		    	}
+		    	
+		        descontoDTO = descontoService.obterDescontoPor(descontos, outheader.getIdCota()
+		        		, produtoEdicao.getProduto().getFornecedor().getId()
+		        		, produtoEdicao.getProduto().getEditor().getId()
+		        		, produtoEdicao.getProduto().getId()
+		        		, produtoEdicao.getId());
+
+		        if(descontoDTO == null) {
+		        	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
+		        	throw new ValidacaoException();
+		        }
+		    } catch (final ValidacaoException e) {
+		        final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
+		        LOGGER.error(msg, e);
+		        throw new ValidacaoException(TipoMensagem.ERROR, msg);
+		    } catch (final Exception e) {
+		        final String msg = e.getMessage();
+		        LOGGER.error(msg, e);
+		        throw new ValidacaoException(TipoMensagem.ERROR, msg);
+		    }
+		    
+		    final BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;
+		    
+		    final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
+		    
+		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP).toString());
+		    
+		    exportarDadosParaArquivo(print, ipvLancamento);
+
+		}
+	}
+
+	private void exportarDadosParaArquivo(PrintWriter print, IpvLancamentoDTO ipvLancamento) {
+		
+		EMS0197Detalhe outDetalhe = createDetalhes(ipvLancamento);
+
+		//print.print(fixedFormatManager.export(outDetalhe)+"\n");
+		print.write(fixedFormatManager.export(outDetalhe), 0, 204);
+		print.print("\r\n");
+	}
+
 	/**
 	 * Cria o trailer do arquivo
 	 * 
 	 * @param jornaleiro
 	 * @return
-	 */
 	private EMS0197Trailer createTrailer(String numeroCota, Integer qtdRegistros) {
 		
 		EMS0197Trailer outTrailer = new EMS0197Trailer();
@@ -148,6 +245,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		return outTrailer;
 	}
+	 */
 
 	/**
 	 * Cria os detalhes do arquivo
@@ -200,6 +298,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		StringBuilder sql = new StringBuilder();
 		
+		/*
 		sql.append(" select distinct(c.id) as idCota, c.numero_cota as numeroCota");
 		sql.append(" , pdv.NOME as nomePDV "); 
 		sql.append(" , mec.data as dataLctoDistrib ");
@@ -211,10 +310,29 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append(" where mec.DATA = :data ");
 		sql.append(" and pdv.PONTO_PRINCIPAL = true ");
 		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
+		*/
+		
+		sql.append(" SELECT DISTINCT (c.id) AS idCota, ");
+		sql.append("                 c.numero_cota AS numeroCota, ");
+		sql.append("                 pdv.NOME AS nomePDV, ");
+		sql.append("                 eg.DATA_LANCAMENTO AS dataLctoDistrib, ");
+		sql.append("                 (SELECT d.COD_DISTRIBUIDOR_DINAP FROM distribuidor d LIMIT 1) AS codDistribuidor ");
+		sql.append("   FROM cota c ");
+		sql.append("        JOIN pdv pdv ");
+		sql.append("           ON pdv.cota_id = c.id ");
+		sql.append("        JOIN estudo_cota_gerado ecg ");
+		sql.append("           ON ecg.COTA_ID = c.ID ");
+		sql.append("        JOIN estudo_gerado eg  ");
+		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("        ");
+		sql.append("  WHERE eg.DATA_LANCAMENTO = :data  ");
+		sql.append("           AND pdv.PONTO_PRINCIPAL = TRUE ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
+		
+		/*
 		query.setParameterList("grupos", 
 				Arrays.asList( 
 						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
@@ -224,6 +342,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
 						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
 				));
+				
+				*/
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("dataLctoDistrib", StandardBasicTypes.DATE);
@@ -304,56 +424,61 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select                                                                                            ");
-		sql.append("      	CAST((select d.COD_DISTRIBUIDOR_DINAP from distribuidor d limit 1) as CHAR) as codDistribuidor               ");
-		sql.append("      , CAST(c.PESSOA_ID as CHAR) as codJornaleiro                                                              ");
-		sql.append("      , CAST(c.NUMERO_COTA as CHAR) as codCota                                                                  ");
-		sql.append("      , CAST(pdv.ID as CHAR) as codPDV                                                                          ");
-		sql.append("      , DATE_FORMAT((mec.DATA),'%Y%m%d') as dataMovimento                                       ");
-		sql.append("      , CAST(SUBSTRING(p.CODIGO, -8) as CHAR) as codProduto                                                                 ");
-		sql.append("      , CAST(pe.NUMERO_EDICAO as CHAR) as numEdicao                                                                 ");
-		sql.append("      , CAST(pe.CODIGO_DE_BARRAS as CHAR) as codBarras                                                      ");
-		sql.append("      , p.NOME as nomeProduto                                                                                ");
-		sql.append("      , CAST(ROUND(mec.QTDE, 0) as CHAR) as reparte                                                                              ");
-		sql.append("      , pes.RAZAO_SOCIAL as nomeEditora                                                                       ");
-		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_VENDA, 2)*100, 0) as CHAR)  as precoCapa                                                   ");
-		sql.append("      , CAST(ROUND(ROUND(mec.PRECO_COM_DESCONTO, 2)*100, 0) as CHAR) as precoCusto                                         ");
-		sql.append("      , pe.CHAMADA_CAPA  as  chamadaCapa                                                                          ");
-		sql.append("      , DATE_FORMAT((mec.DATA),'%Y%m%d') as dataLancamento                                            ");
-		sql.append("      , DATE_FORMAT((select me.DATA from movimento_estoque_cota me                                             ");
-		sql.append("           where me.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and me.COTA_ID = mec.COTA_ID         ");
-		sql.append("           group by me.LANCAMENTO_ID order by me.DATA asc limit 1),'%Y%m%d') as dataPrimeiroLancamentoParcial     ");
-		sql.append("                                                                                                   ");
 		
-		sql.append("   from movimento_estoque_cota mec                                                                 ");
-		sql.append("	 join lancamento l on l.id = mec.lancamento_id                                                 ");
-		sql.append("	 join cota c on mec.COTA_ID = c.ID                                                             ");
-		sql.append("	 join produto_edicao pe on pe.id = mec.produto_edicao_id                                       ");
-		sql.append("	 join produto p on p.id = pe.produto_id                                                        ");
-		sql.append("	 join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                       ");
-		sql.append(" 	 join pdv on pdv.COTA_ID = c.ID                                                                ");
-		sql.append(" 	 join editor edt ON p.EDITOR_ID = edt.ID                                                       ");
-		sql.append(" 	 join pessoa pes ON edt.JURIDICA_ID = pes.ID                                                   ");
-		sql.append(" where                                                                                             ");
-		sql.append(" 	 mec.data = :data                                                                       	   ");
-		sql.append(" 	 and c.id = :idCota                                                                            ");
-		sql.append("	 and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos)												   ");
+		sql.append("   SELECT ");
+		sql.append("       '01' as versao, ");
+		sql.append("       'L' as tipoArquivo, ");
+		sql.append("       CAST((SELECT d.COD_DISTRIBUIDOR_DINAP FROM distribuidor d LIMIT 1) AS CHAR) AS codDistribuidor, ");
+		sql.append("       CAST(c.PESSOA_ID AS CHAR) AS codJornaleiro, ");
+		sql.append("       CAST(c.NUMERO_COTA AS CHAR) AS codCota, ");
+		sql.append("       CAST(pdvs.ID AS CHAR) AS codPDV, ");
+		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataMovimento, ");
+		sql.append("       CAST(SUBSTRING(p.CODIGO, -8) AS CHAR) AS codProduto, ");
+		sql.append("       CAST(pe.NUMERO_EDICAO AS CHAR) AS numEdicao, ");
+		sql.append("       CAST(pe.CODIGO_DE_BARRAS AS CHAR) AS codBarras, ");
+		sql.append("       p.NOME AS nomeProduto, ");
+		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
+		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
+		sql.append("       CAST(ROUND(ROUND(pe.PRECO_VENDA, 2) * 100, 0) AS CHAR) AS precoCapa, ");
+
+		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
+		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
+		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
+		sql.append("       CAST(lct.ID AS CHAR) as idLancamento ");
+
+		sql.append("   FROM estudo_cota_gerado ecg ");
 		
-		
+		sql.append("     JOIN estudo_gerado eg   ");
+		sql.append("       ON ecg.ESTUDO_ID = eg.ID ");
+		sql.append("     JOIN lancamento lct  ");
+		sql.append("       ON eg.LANCAMENTO_ID = lct.ID ");
+		sql.append("     JOIN produto_edicao pe  ");
+		sql.append("       ON lct.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("     JOIN produto p ");
+		sql.append("       ON pe.PRODUTO_ID = p.ID ");
+		sql.append("     JOIN cota c  ");
+		sql.append("       ON ecg.COTA_ID = c.ID ");
+		sql.append("     JOIN pdv pdvs ");
+		sql.append("       ON pdvs.COTA_ID = c.ID ");
+		sql.append("     LEFT JOIN editor edt ");
+		sql.append("       ON p.EDITOR_ID = edt.ID ");
+		sql.append("     JOIN pessoa pes ");
+		sql.append("       ON edt.JURIDICA_ID = pes.ID ");
+		sql.append("     LEFT JOIN produto_fornecedor pf  ");
+		sql.append("       ON pf.PRODUTO_ID = p.ID ");
+		sql.append("     LEFT JOIN fornecedor f ");
+		sql.append("       ON pf.fornecedores_ID = f.ID ");
+
+		sql.append("       WHERE eg.DATA_LANCAMENTO = :data and ecg.REPARTE is not null  ");
+		sql.append(" 	 		 and c.id = :idCota");
+
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
 		query.setParameter("idCota", idCota);
-		query.setParameterList("grupos", 
-				Arrays.asList( 
-						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
-						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
-						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
-						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
-						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
-						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
-				));
 		
+		query.addScalar("versao", StandardBasicTypes.STRING);
+		query.addScalar("tipoArquivo", StandardBasicTypes.STRING);
 		query.addScalar("codDistribuidor", StandardBasicTypes.STRING);
 		query.addScalar("codJornaleiro", StandardBasicTypes.STRING);
 		query.addScalar("codCota", StandardBasicTypes.STRING);
@@ -366,10 +491,10 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("reparte", StandardBasicTypes.STRING);
 		query.addScalar("nomeEditora", StandardBasicTypes.STRING);
 		query.addScalar("precoCapa", StandardBasicTypes.STRING);
-		query.addScalar("precoCusto", StandardBasicTypes.STRING);
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
+		query.addScalar("idLancamento", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(IpvLancamentoDTO.class));
 

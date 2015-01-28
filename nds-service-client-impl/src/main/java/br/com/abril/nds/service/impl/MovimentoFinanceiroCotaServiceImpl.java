@@ -482,9 +482,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     @Transactional
     public void removerMovimentoFinanceiroCota(final Long idMovimento) {
         
-        movimentoFinanceiroCotaRepository.removerPorId(idMovimento);
-        
-      
+    	final MovimentoFinanceiroCota m = movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
+    	
+        this.movimentoFinanceiroCotaRepository.remover(m);
     }
     
     /**

@@ -46,17 +46,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 		//hack para message dialog com tamanho fixo
 		$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).css('width', '93%');
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).numeric();
-		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).numeric();
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).numeric();
 		
-		$("#vlrCE", ConferenciaEncalheCont.workspace).maskMoney({
+		$("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
 		
-		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).maskMoney({
+		$("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
@@ -70,7 +70,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
 			
 			if(e.keyCode == 13 && !visibleOverlay()) {
 
@@ -137,7 +137,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
 				
-				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
 				
 				setTimeout(function() {
 					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
@@ -156,7 +156,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
 				
-				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
 				
 				setTimeout(function() {
 					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
@@ -169,21 +169,21 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	pesquisarCota : function(){
 		
-		var numeroCotaDipopnivelPesquisa = $("#numeroCota",ConferenciaEncalheCont.workspace).attr('readonly');
+		var numeroCotaDipopnivelPesquisa = $("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly');
 		
 		if (numeroCotaDipopnivelPesquisa == 'readonly'){
 			return;
 		}
 		
-		var numeroCotaEmConferencia = $("#numeroCota", ConferenciaEncalheCont.workspace).val();
+		var numeroCotaEmConferencia = $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val();
 		
 		ConferenciaEncalheCont.limpaTela();
 		
-		$("#numeroCota", ConferenciaEncalheCont.wokspace).val(numeroCotaEmConferencia);
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.wokspace).val(numeroCotaEmConferencia);
 		
 		
 		var data = [
-		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
+		            {name: 'numeroCota', value : $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val()}, 
 		            {name: 'indObtemDadosFromBD', value : true},
 		            {name: 'indConferenciaContingencia', value: true}
 		           ];
@@ -235,7 +235,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							ConferenciaEncalheCont.modalAberta = false;
 							
-							$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+							$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
 							
 							ConferenciaEncalheCont.numeroCotaEditavel(true);
 						},
@@ -259,9 +259,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 			},
 			function() {
 				
-				$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val("");
 				
-				focusSelectRefField($("#numeroCota", ConferenciaEncalheCont.workspace));
+				focusSelectRefField($("#contingencia-numeroCota", ConferenciaEncalheCont.workspace));
 			}
 		);
 	},
@@ -376,7 +376,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		var cont = 1;
 
 		//Imprime todos os documentos recebidos
-		for(i=0;i < tiposDocumento.length;i++){
+		for(var i = 0; i < tiposDocumento.length; i++) {
 			
 			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
@@ -439,7 +439,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: parseFloat($("#vlrCE", ConferenciaEncalheCont.workspace).val())},
+		var data = [{name: "valorCEInformado", value: parseFloat($("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).val())},
 		            {name: "qtdCEInformado", value: parseFloat($("#qtdCE", ConferenciaEncalheCont.workspace).val())}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
@@ -640,9 +640,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(4));
 		$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(4));
-		$("#valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(4));
+		$("#contingencia-valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(4));
 		$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
-		$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+		$("#contingencia-valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 		
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).show();
 		$("#nomeCota", ConferenciaEncalheCont.workspace).text(result.razaoSocial);
@@ -711,7 +711,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}, function(){
 					
 					var data = [
-								  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
+								  {name: 'numeroCota', 			value : $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val()}, 
 								  {name: 'indObtemDadosFromBD', value : false},
 								  {name: 'indConferenciaContingencia', value: false}
 								 ];
@@ -755,9 +755,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(4));
 				$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(4));
-				$("#valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(4));
+				$("#contingencia-valorVendaDia", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorVendaDia).toFixed(4));
 				$("#totalOutrosValores", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
-				$("#valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+				$("#contingencia-valorAPagar", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 				
 				ConferenciaEncalheCont.numeroCotaEditavel(false);
 				
@@ -943,11 +943,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		if (r==false){
 			
-			$("#numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', true);
+			$("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', true);
 		}
 		else{
 			
-			$("#numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', false);
+			$("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', false);
 		}
 	},
 	
@@ -1225,7 +1225,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "</tr>";
 					
-					$(innerTable).appendTo("#dadosGridConferenciaEncalheFinalizar", ConferenciaEncalheCont.workspace);
+					$(innerTable).appendTo("#contingencia-dadosGridConferenciaEncalheFinalizar", ConferenciaEncalheCont.workspace);
 					
 					innerTable = '';
 				}
@@ -1444,8 +1444,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 			$("#numeroNotaFiscalExibir", ConferenciaEncalheCont.workspace).text(notaFiscal.numero);
 			$("#serieExibir", ConferenciaEncalheCont.workspace).text(notaFiscal.serie);
-			$("#dataExibir", ConferenciaEncalheCont.workspace).text(notaFiscal.dataEmissao);
-			$("#valorTotalNotaFiscalExibir", ConferenciaEncalheCont.workspace).text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
+			$("#contingencia-dataExibir", ConferenciaEncalheCont.workspace).text(notaFiscal.dataEmissao);
+			$("#contingencia-valorTotalNotaFiscalExibir", ConferenciaEncalheCont.workspace).text(parseFloat(notaFiscal.valorProdutos).toFixed(2));
 			$("#chaveAcessoExibir", ConferenciaEncalheCont.workspace).text(notaFiscal.chaveAcesso);
 		}
 		
@@ -1533,7 +1533,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 						    if (result.valorProdutos){
 							    
-						    	$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val(parseFloat(result.valorProdutos).toFixed(2));
+						    	$("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val(parseFloat(result.valorProdutos).toFixed(2));
 								
 						    }
 							
@@ -1546,7 +1546,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					$("#dialog-alert", ConferenciaEncalheCont.workspace).dialog("close");
 					
-					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+					$("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).focus();
 					
 					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
 					
@@ -1591,7 +1591,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val()},
-								{name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val())},
+								{name : "notaFiscal.valorProdutos", value : priceToFloat($("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val())},
 								{name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).val()}
 						];
 						
@@ -1601,7 +1601,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val()},
-								{name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val())}
+								{name : "notaFiscal.valorProdutos", value : priceToFloat($("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val())}
 						];
 						
 					}
@@ -1611,9 +1611,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							$("#dialog-notaFiscal", ConferenciaEncalheCont.workspace).dialog("close");
 							
-							$("#vlrCE", ConferenciaEncalheCont.workspace).val($("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val());
+							$("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).val($("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val());
 							
-							$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+							$("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).focus();
 
 							$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
 
@@ -1623,7 +1623,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
-					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+					$("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).focus();
 					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
 				}
 			}, 
@@ -1821,11 +1821,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).hide();
 		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(0);
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val("");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).select();
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).select();
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+		$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
 		
 		bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 	},

@@ -619,7 +619,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		if (!linhasComErro.isEmpty()) {
 			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING,mensagem);
+			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagem);
 			
 			validacao.setDados(linhasComErro);
 		
@@ -635,11 +635,11 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/montarPesquisaCotas")
-	public void montarListaPesquisaCota(String codigoProduto,Long numeroEdicao) {
+	public void montarListaPesquisaCota(String codigoProduto, Long numeroEdicao) {
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
 		
-		List<ChamadaEncalheAntecipadaVO> listaPesquisaCota= new ArrayList<ChamadaEncalheAntecipadaVO>();
+		List<ChamadaEncalheAntecipadaVO> listaPesquisaCota = new ArrayList<ChamadaEncalheAntecipadaVO>();
 		
 		int qtdeInicialPadrao = 30;
 		
@@ -653,8 +653,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			listaPesquisaCota.add(encalheAntecipadaVO);
 		}
 		
-		TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>> tableModel =
-						new TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>>();
+		TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>> tableModel = new TableModel<CellModelKeyValue<ChamadaEncalheAntecipadaVO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPesquisaCota));
 		

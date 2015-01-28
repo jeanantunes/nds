@@ -24,7 +24,7 @@
 </head>
 
 <body>
-<input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
+<input type="hidden" value="${numeroCotaFollowUp}" id="chamadao-numeroCotaFollowUp" name="chamadao-numeroCotaFollowUp">
 <input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
 	
 	<form id="formUsoMatrizRecolhimentoConfirmada">
@@ -204,7 +204,7 @@
 				                      		<input id="qtdExemplaresTotal" type="text" style="width:60px; text-align:center;" disabled="disabled"/>
 				                      	</td>
 				                      	<td align="center">
-				                      		<input id="valorTotal" type="text" style="width:80px; text-align:right;" disabled="disabled"/>
+				                      		<input id="chamadao-valorTotal" type="text" style="width:80px; text-align:right;" disabled="disabled"/>
 				                      	</td>
 				                    </tr>
 				          		</table>

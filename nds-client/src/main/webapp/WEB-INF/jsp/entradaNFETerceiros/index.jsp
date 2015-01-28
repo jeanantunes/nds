@@ -188,7 +188,7 @@ fieldset label {
 						</select>
 					</td>
 					<td width="50">Cota:</td>
-					<td width="180"><input type="text" id="numeroCota"
+					<td width="180"><input type="text" id="entrada-terceiro-numeroCota"
 						name="filtro.cota.numeroCota"
 						style="width: 80px; float: left; margin-right: 5px;"
 						onchange="entradaNFETerceirosController.pesquisarCota();" /></td>

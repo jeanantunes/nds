@@ -132,9 +132,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		params:function(){
 			
 			var formData = [ 
-				             {name:"codigoProduto",value:$("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
-				             {name:"numeroEdicao",value:$("#edicao",chamdaEncalheAnteipadaController.workspace).val()},
-				             {name:"box",value:$("#box",chamdaEncalheAnteipadaController.workspace).val()},
+				             {name:"codigoProduto",value:$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
+				             {name:"numeroEdicao",value:$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val()},
+				             {name:"box",value:$("#chamada-encalhe-ant-box",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"fornecedor",value:$("#fornecedor",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"rota",value:$("#rota",chamdaEncalheAnteipadaController.workspace).val()},
 				             {name:"roteiro",value:$("#roteiro",chamdaEncalheAnteipadaController.workspace).val()},
@@ -148,7 +148,12 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		parseGridLine: function(lineIndex) {
 			
-			var gridLine = $("#gridAntecipada tr[id^='row']")[lineIndex];
+			var gridLine = [];
+			if(!(typeof $("#gridAntecipada tr[id^='row']")[0] == "undefined")) {
+				gridLine = $("#gridAntecipada tr[id^='row']")[lineIndex];
+			} else {
+				gridLine = $("#ceAntecipadaCotaGrid tr[id^='row']")[lineIndex];
+			}
 			
 			if (!gridLine) {
 				
@@ -189,11 +194,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		setHiddenProduto: function (){
-			 $("#codProdutoHidden",chamdaEncalheAnteipadaController.workspace).val($("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val());
+			 $("#codProdutoHidden",chamdaEncalheAnteipadaController.workspace).val($("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val());
 		},
 		
 		setHiddenNumeroEdicao: function (){
-		   	$("#numeroEdicaoHidden",chamdaEncalheAnteipadaController.workspace).val($("#edicao",chamdaEncalheAnteipadaController.workspace).val());
+		   	$("#numeroEdicaoHidden",chamdaEncalheAnteipadaController.workspace).val($("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val());
 		},
 		
 		setHiddenFornecedor: function (){
@@ -217,12 +222,12 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		},
 		
 		getCodigoProdutoPesquisa: function (){
-			return  {"codigoProduto": $("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val()};
+			return  {"codigoProduto": $("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()};
 		},
 			
 		pesquisar: function(){
 			
-			if($("#box",chamdaEncalheAnteipadaController.workspace).val() == -1){
+			if($("#chamada-encalhe-ant-box",chamdaEncalheAnteipadaController.workspace).val() == -1){
 				
 				chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
 			} else{
@@ -295,7 +300,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			if(chamdaEncalheAnteipadaController.tipoPesquisaGridCota == chamdaEncalheAnteipadaController.tipoPesquisaSelecionado){
 				
-				params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGridAux(chamdaEncalheAnteipadaController.nameGridPesquisaCota), params);
+				params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGridAux(chamdaEncalheAnteipadaController.gridSelectionHelper.checkedItems), params);
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotasPesquisa",params, 
 						 function (result){
@@ -315,8 +320,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var checkTodos = params['gravarTodos'];
 				
 				if(checkTodos == "undefined" || !checkTodos ){
-					//params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGrid(chamdaEncalheAnteipadaController.nameGrid), params);
-					params = serializeArrayToPost('listaChamadaEncalheAntecipada',  chamdaEncalheAnteipadaController.obterParametrosGridAux(chamdaEncalheAnteipadaController.gridSelectionHelper.checkedItems), params);
+
+					params = serializeArrayToPost('listaChamadaEncalheAntecipada', chamdaEncalheAnteipadaController.obterParametrosGridAux(chamdaEncalheAnteipadaController.gridSelectionHelper.checkedItems), params);
 				} 
 				
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/gravarCotas", params, 
@@ -325,6 +330,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						$("#dialog-novo",chamdaEncalheAnteipadaController.workspace).dialog("close");
 				
 						$("#checkCE",chamdaEncalheAnteipadaController.workspace).attr("checked", true);
+						
+						chamdaEncalheAnteipadaController.gridSelectionHelper.resetData();
 						
 						if (checkTodos) {
 							
@@ -590,7 +597,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			comboBoxes = comboBoxes + "<option value=''>Todos</option>";
 			comboBoxes = comboBoxes + montarComboBox(result, false);
 			
-			$("#box",chamdaEncalheAnteipadaController.workspace).html(comboBoxes);
+			$("#chamada-encalhe-ant-box", chamdaEncalheAnteipadaController.workspace).html(comboBoxes);
 		}, 
 		
 		pesquisarFornecedor:function(data) {
@@ -608,8 +615,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		validarEdicaoSuccessCallBack : function(){
 			
-			 var data = [{name:"codigoProduto",value:$("#codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
-             			 {name:"numeroEdicao",value:$("#edicao",chamdaEncalheAnteipadaController.workspace).val()},
+			 var data = [{name:"codigoProduto",value:$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).val()},
+             			 {name:"numeroEdicao",value:$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).val()},
 						];
 			
 			 $.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarDataProgramada",
@@ -838,7 +845,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var inputQuantidadeExemplares = 
 					'<input isEdicao="true" type="text" id="qntExemplares' + index + '" name="qntExemplares" disabled="disabled" style="width:80px; text-align: center"   />';
 				
-				var parametroCheckbox = '\'#qntExemplares' + index + '\', this';
+				var parametroCheckbox = '\'#qntExemplares' + index + '\', this, '+ index +'';
 
 				var inputCheck = '<input isEdicao="true" disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+chamdaEncalheAnteipadaController.groupNameCheckGridCota+'" onclick="chamdaEncalheAnteipadaController.calcularTotalCota( '+parametroCheckbox +')" />';	
 				
@@ -874,9 +881,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		
 		calcularTotalGridCota: function (idInputExemplares, inputCkeck){
 			
-			var check  = document.getElementById("sel",chamdaEncalheAnteipadaController.workspace).checked ; 
+			var check  = document.getElementById("sel", chamdaEncalheAnteipadaController.workspace).checked ; 
 			
-			if(check){
+			if(check) {
 
 				var exemplares = eval( ($(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val()=="")?0:$(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val());
 				var checked = $("input[name=" + chamdaEncalheAnteipadaController.groupNameCheck + "]:checked",chamdaEncalheAnteipadaController.workspace).length;
@@ -889,23 +896,24 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 
 				chamdaEncalheAnteipadaController.desmarcarCheckTodos();				
 				
-			}else{
+			} else {
+				
 				chamdaEncalheAnteipadaController.calcularTotalCota(idInputExemplares, inputCkeck);
 			}	
 		},
 		
-		calcularTotalCota: function(idExemplares,input){
+		calcularTotalCota: function(idExemplares, input, index) {
 			
-			var exemplares = eval( ($(idExemplares).val()=="")?0:$(idExemplares).val());
+			var exemplares = eval(($(idExemplares).val()=="") ? 0 : $(idExemplares).val());
 			
-			if(input.checked == false){
+			if(input.checked == false) {
 				chamdaEncalheAnteipadaController.totalCota -= 1;
 				chamdaEncalheAnteipadaController.totalExemplares -= exemplares;	
-			}
-			else{
-				
+				chamdaEncalheAnteipadaController.gridSelectionHelper.uncheckItem(index);
+			} else {
 				chamdaEncalheAnteipadaController.totalCota += 1;
 				chamdaEncalheAnteipadaController.totalExemplares += exemplares;
+				chamdaEncalheAnteipadaController.gridSelectionHelper.checkItem(index);
 			}
 			
 			chamdaEncalheAnteipadaController.atribuirValorQntCotas();
@@ -914,16 +922,16 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			chamdaEncalheAnteipadaController.desmarcarCheckTodos();	
 		},
 		
-		atribuirValorQntExemplares: function (){
-			$("#idTotalExemplares",chamdaEncalheAnteipadaController.workspace).val(chamdaEncalheAnteipadaController.gridSelectionHelper.getTotalExemplares());
+		atribuirValorQntExemplares: function () {
+			$("#idTotalExemplares", chamdaEncalheAnteipadaController.workspace).val(chamdaEncalheAnteipadaController.gridSelectionHelper.getTotalExemplares());
 		},
 		
 		atribuirValorQntCotas: function (){
-			$("#idTotalCotas",chamdaEncalheAnteipadaController.workspace).val(chamdaEncalheAnteipadaController.gridSelectionHelper.getTotalCotas());
+			$("#idTotalCotas", chamdaEncalheAnteipadaController.workspace).val(chamdaEncalheAnteipadaController.gridSelectionHelper.getTotalCotas());
 		},
 		
 		desmarcarCheckTodos: function (){
-			$('#sel',chamdaEncalheAnteipadaController.workspace).attr("checked",false);
+			$('#sel', chamdaEncalheAnteipadaController.workspace).attr("checked",false);
 			checkedItems = new Array();
 			uncheckedItems= new Array();
 		},
@@ -931,19 +939,21 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 		obterParametrosGridAux: function(checkedList){
 			
 			var listaChamadaEncalheAntecipada = new Array();
-			
 			$.each(checkedList, function(index, value) {
 				
 				var cotaSelecionada = {'codigoProduto':chamdaEncalheAnteipadaController.getHiddenProduto(),
-						'numeroEdicao':chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
-						'numeroCota':value.numeroCota,
-						'nomeCota':value.nomeCota,
-						'id':value.id,
-						'qntExemplares':value.exemplares,
-						'codigoChamadaAntecipada':value.codigoChamadaAntecipada,
-						'idLancamento':value.idLancamento};
+						'numeroEdicao': chamdaEncalheAnteipadaController.getHiddenNumeroEdicao(),
+						'numeroCota': value.numeroCota,
+						'nomeCota': value.nomeCota,
+						'id': value.id,
+						'qntExemplares': value.exemplares,
+						'codigoChamadaAntecipada': value.codigoChamadaAntecipada,
+						'idLancamento': value.idLancamento};
 			
-				listaChamadaEncalheAntecipada.push(cotaSelecionada);
+				if(typeof value.numeroCota != "undefined") {
+					
+					listaChamadaEncalheAntecipada.push(cotaSelecionada);
+				}
 				
 			});
 			
@@ -1131,7 +1141,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/cancelarChamdaEncalheCotasPesquisa",
 						params,
 						function (result){
-					 
+					
+							chamdaEncalheAnteipadaController.gridSelectionHelper.resetData();
+					
 							 chamdaEncalheAnteipadaController.montarGridPesquisaCotas();
 							 chamdaEncalheAnteipadaController.zerarTotais();
 							 
@@ -1309,11 +1321,11 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			
 			$('input[id^="data"]',chamdaEncalheAnteipadaController.workspace).mask("99/99/9999");
 			
-			$("#edicao",chamdaEncalheAnteipadaController.workspace).numeric();
+			$("#chamada-encalhe-ant-edicao",chamdaEncalheAnteipadaController.workspace).numeric();
 
-			$("#produto",chamdaEncalheAnteipadaController.workspace).autocomplete({source: ""});
+			$("#chamada-encalhe-ant-produto",chamdaEncalheAnteipadaController.workspace).autocomplete({source: ""});
 			
-			$("#codigoProduto",chamdaEncalheAnteipadaController.workspace).focus();
+			$("#chamada-encalhe-ant-codigoProduto",chamdaEncalheAnteipadaController.workspace).focus();
 			
 			$("#ceAntecipadaGrid",chamdaEncalheAnteipadaController.workspace).flexigrid({
 				preProcess:chamdaEncalheAnteipadaController.executarPreProcessamentoCota,

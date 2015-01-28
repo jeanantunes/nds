@@ -267,11 +267,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
 
         if (buscarProduto == null || buscarProduto.isEmpty()) {
-
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo
-                + "] não encontrado."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] não encontrado."));
         }
-
 
         InformacoesProdutoDTO infoDTO = buscarProduto.get(0);
         ProdutoDistribuicaoVO produtoDistribuicaoVO = new ProdutoDistribuicaoVO();
@@ -283,7 +280,6 @@ public class MatrizDistribuicaoController extends BaseController {
         produtoDistribuicaoVO.setReparte(new BigDecimal(infoDTO.getReparteDistribuido()));
         produtoDistribuicaoVO.setEstudoLiberado(infoDTO.getEstudoLiberado());
         produtoDistribuicaoVO.setQtdeReparteEstudo(infoDTO.getQtdeReparteEstudo());
-
 
         result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
     }

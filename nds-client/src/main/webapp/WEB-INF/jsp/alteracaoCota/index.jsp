@@ -523,21 +523,21 @@
 				<td width="120">
 					<input name="filtroAlteracaoCotaDTO.numeroCota"  class="campoDePesquisa"
 						   type="text"
-						   id="numeroCota"
+						   id="alteracao-cota-numeroCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
+						   onchange="pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota('#alteracao-cota-numeroCota', '#alteracao-cota-�', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
 
 				</td>
               	<td>Nome:</td>
 				<td width="240">
 					<input name="filtroAlteracaoCotaDTO.nomeCota" class="campoDePesquisa"
 						   type="text"
-						   id="nomeCota" 
+						   id="alteracao-cota-nomeCota" 
 						   maxlength="255" 
 						   style="width: 200px;"
-						   onkeyup="pesquisaCotaAlteracaoCota.autoCompletarPorNome('#nomeCota');" 
-		      		 	   onblur="pesquisaCotaAlteracaoCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
+						   onkeyup="pesquisaCotaAlteracaoCota.autoCompletarPorNome('#alteracao-cota-nomeCota');" 
+		      		 	   onblur="pesquisaCotaAlteracaoCota.pesquisarPorNomeCota('#alteracao-cota-numeroCota', '#alteracao-cota-nomeCota', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
 				</td>
                 <td width="85">Municipio:</td>
                 <td colspan="3">
@@ -608,7 +608,14 @@
 						</c:forEach>
 					</select>              	
               	</td>
-
+				<td colspan="2">Utiliza Parâm. de Cob. Distribuidor:</td>
+				<td colspan="2">
+					<select name="filtroAlteracaoCotaDTO.utilizaParametroCobrancaDistribuidor" id="utilizaParametroCobrancaDistribuidor" style="width:100px;">
+						<option value="SIM">Sim</option>
+						<option value="NAO">Não</option>
+              			<option selected="selected" value="TODOS">Todos</option>
+					</select> 
+				</td>
               	<td><span class="bt_pesquisar"><a href="javascript:;" onclick="alteracaoCotaController.pesquisar();">Pesquisar</a></span></td>
             </tr>
 		</table>

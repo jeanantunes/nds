@@ -40,7 +40,9 @@
 			<td>Data:</td>
 			<td><input isEdicao="true" type="text" id="dataNotaFiscal" style="width: 80px;" /></td>
 			<td>Valor Total R$:</td>
-			<td><input isEdicao="true" type="text" id="valorNotaFiscal" style="width: 80px; text-align: right;" maxlength="255" /></td>
+			<td>
+				<input isEdicao="true" type="text" id="contingencia-valorNotaFiscal" style="width: 80px; text-align: right;" maxlength="255" />
+			</td>
 		</tr>
 		<tr>
 			<td>NF-e:</td>
@@ -232,9 +234,9 @@
           		</tr>
           		<tr>
 		            <td>Data:</td>
-		            <td id="dataExibir"></td>
+		            <td id="contingencia-dataExibir"></td>
 		            <td>Valor Total R$:</td>
-		            <td id="valorTotalNotaFiscalExibir"></td>
+		            <td id="contingencia-valorTotalNotaFiscalExibir"></td>
           		</tr>
           		<tr>
 		            <td>Chave de Acesso:</td>
@@ -248,7 +250,7 @@
 	<fieldset>
         <legend>Produtos Nota Fiscal</legend>
         <div style="overflow: auto; height: 250px; width: 828px; border: 1px #EEEEEE solid;">
-			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="dadosGridConferenciaEncalheFinalizar">
+			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="contingencia-dadosGridConferenciaEncalheFinalizar">
 				<tr class="header_table">
 					<td style="width: 50px; text-align: left;">Código</td>
 					<td style="width: 100px; text-align: left;">Produto</td>

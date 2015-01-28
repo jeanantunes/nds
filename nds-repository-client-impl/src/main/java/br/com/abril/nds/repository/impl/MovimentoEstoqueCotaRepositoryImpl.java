@@ -3881,10 +3881,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	sql.append(" update movimento_estoque_cota mc ")
 	    	.append(" join lancamento l on mc.LANCAMENTO_ID = l.ID ")
 	    	.append(" join tipo_movimento tm on tm.ID = mc.TIPO_MOVIMENTO_ID ")
-	    	.append(" set mc.PRECO_VENDA =:precoProduto ,")
-	    	.append(" mc.PRECO_COM_DESCONTO = :precoProduto - ((mc.valor_desconto/100)* :precoProduto)")
+	    	.append(" set mc.PRECO_VENDA = :precoProduto ,")
+	    	.append(" mc.PRECO_COM_DESCONTO = :precoProduto - ((mc.valor_desconto/100)* :precoProduto) ")
 	    	.append(" where l.STATUS in (:statusLancamento) ")
-	    	.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE =:statusRecebimentoReparte")
+	    	.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:statusRecebimentoReparte) ")
 	    	.append(" and mc.PRODUTO_EDICAO_ID =:idProdutoEdicao ");
 	   
     	Query query = getSession().createSQLQuery(sql.toString());
@@ -3893,7 +3893,23 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     			Arrays.asList(StatusLancamento.EXPEDIDO.name(),
     						  StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name()));
     	query.setParameter("idProdutoEdicao", idProdutoEdicao);
-    	query.setParameter("statusRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+    	query.setParameterList("statusRecebimentoReparte", 
+    			Arrays.asList(
+    					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(),
+    					GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
+    					GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+    					GrupoMovimentoEstoque.FALTA_DE_COTA.name(), 
+    					GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+    					GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name(),
+    					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+    					GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+    					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name(),
+    					GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name(),
+    					GrupoMovimentoEstoque.COMPRA_ENCALHE.name(),
+    					GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name(),
+    					GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR.name()
+					)
+				);
     	query.setParameter("precoProduto", precoProduto);
     	
     	query.executeUpdate();

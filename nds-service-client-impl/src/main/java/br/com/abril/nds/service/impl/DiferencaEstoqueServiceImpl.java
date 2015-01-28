@@ -543,13 +543,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                                 ultimoLancamento.getDataLancamentoDistribuidor(), origem);
             }
             
-            if(!diferenca.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+            if(diferenca.getProdutoEdicao().getProduto().getFornecedor().isIntegraGFS()) {
+            
 	            if (statusAprovacao == null) {
 	                
 	                statusAprovacao = obterStatusLancamento(diferenca);
 	            }
+	            
             } else {
-            	
             	
             	if (diferenca.getTipoDiferenca().isAlteracaoReparte()) {
                     
@@ -569,7 +570,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             if(listaMovimentosEstoqueCota != null && !listaMovimentosEstoqueCota.isEmpty()) {
 	            for(MovimentoEstoqueCota mec : listaMovimentosEstoqueCota) {
 	            	
-	            	if(!mec.getProdutoEdicao().getProduto().getOrigem().equals(Origem.MANUAL)) {
+	            	if(mec.getProdutoEdicao().getProduto().getFornecedor().isIntegraGFS()) {
 	            	
 		        		if (!diferenca.getTipoDiferenca().isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
 		                    
@@ -582,7 +583,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		                }
 	            	} else {
 	            		
-	            		mec.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+	            		if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+	        				mec.setStatusIntegracao(StatusIntegracao.ENCALHE);
+	                    } else {
+	                    	mec.setStatusIntegracao(StatusIntegracao.NAO_INTEGRAR);
+	                    }
 	            		
 	            		final boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
 	            		
@@ -945,11 +950,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
             rateioDiferenca.setDataNotaEnvio(rateioCotaVO.getDataEnvioNota());
             
-            final Lancamento ultimoLancamento =
-                    lancamentoService.obterUltimoLancamentoDaEdicao(
-                            diferenca.getProdutoEdicao().getId());
-            
-            rateioDiferenca.setDataMovimento(ultimoLancamento.getDataLancamentoDistribuidor());
+            rateioDiferenca.setDataMovimento(distribuidorService.obterDataOperacaoDistribuidor());
             
             rateioDiferenca = rateioDiferencaRepository.merge(rateioDiferenca);
             
@@ -1277,7 +1278,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             
     	} else {
     		
-    		statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+				statusIntegracao = StatusIntegracao.ENCALHE;
+			} else {
+				statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+			}
     		
     		grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
     		
@@ -1382,9 +1387,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         final Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null)
                 ? rateioDiferenca.getEstudoCota().getId() : null;
                 
-                return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
-                        dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
-                        idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica);
+        return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
+                dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
+                idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica);
     }
     
 	                                    /*

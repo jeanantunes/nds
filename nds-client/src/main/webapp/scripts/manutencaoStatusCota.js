@@ -12,7 +12,7 @@ var manutencaoStatusCotaController = $.extend(true, {
 
 		manutencaoStatusCotaController.configurarCamposNumericos();
 		
-		var followUp = $('#numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
+		var followUp = $('#manutencao-status-numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
 		
 		if(followUp != ''){			
 			manutencaoStatusCotaController.pesquisarHistoricoStatusCota();
@@ -309,21 +309,21 @@ obterColunasGridPesquisaSemCota:function(){
 	
 	callBackSuccess:function () {
 		
-		pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCotaManutencaoStatusCota",manutencaoStatusCotaController.workspace).val(), false, function(result) {
+		pesquisaCotaManutencaoStatusCota.obterPorNumeroCota($("#numeroCotaManutencaoStatusCota", manutencaoStatusCotaController.workspace).val(), false, function(result) {
 
 			if (!result) {
 
 				return;
 			}
 
-			$("#box",manutencaoStatusCotaController.workspace).val(result.codigoBox);
+			$("#manutencao-status-box", manutencaoStatusCotaController.workspace).val(result.codigoBox);
 		});
 
 	},
 	
 	callBackErro:function(){
 		
-		$("#box",manutencaoStatusCotaController.workspace).val("");
+		$("#manutencao-status-box", manutencaoStatusCotaController.workspace).val("");
 	
 	},
 
@@ -331,7 +331,7 @@ obterColunasGridPesquisaSemCota:function(){
 
 		var colunas;
 		
-		var followUp = $('#numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
+		var followUp = $('#manutencao-status-numeroCotaFollowUp', manutencaoStatusCotaController.workspace).val();
 		var filtro;			
 		if(followUp != ''){			
 			filtro = [

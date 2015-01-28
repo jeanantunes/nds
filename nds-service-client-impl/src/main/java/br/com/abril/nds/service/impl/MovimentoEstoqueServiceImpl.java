@@ -290,7 +290,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
                     lancamento.getDataPrevista(), lancamento.getIdProdutoEdicao(), estudoCota.getIdCota(),
                     expedicao.getIdUsuario(), estudoCota.getQtdeEfetiva(), expedicao.getTipoMovimentoEstoqueCota(),
-                    lancamento.getDataDistribuidor(), expedicao.getDataOperacao(),lancamento.getId(), estudoCota.getId(), descontos, false);
+                    expedicao.getDataOperacao(), expedicao.getDataOperacao(), lancamento.getId(), estudoCota.getId(), descontos, false);
             
             mec.setIdFornecedor(estudoCota.getIdFornecedorPadraoCota());
             
@@ -1385,7 +1385,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Transactional
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
             final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota){
+            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota) {
         
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade,
                 tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false, null);
@@ -1408,7 +1408,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
         movimentoEstoqueCota.setCota(new Cota(idCota));
         
-        movimentoEstoqueCota.setData(dataMovimento==null ? dataOperacao : dataMovimento);
+        movimentoEstoqueCota.setData(dataOperacao);
         
         movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
         
@@ -1427,9 +1427,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             if (idLancamento==null) {
                 
-                idLancamento =
-                        lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-                                new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+                idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+                               		new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
             
@@ -1441,11 +1440,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
-                final Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
+                DescontoDTO desconto = null;
+                try {
+                	
+                	desconto = descontoService.obterDescontoPor(cotaRepository.buscarPorId(idCota).getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+				} catch (Exception e) {
+					
+					LOGGER.error("Impossível obter o Desconto.", e);
+					throw new ValidacaoException(TipoMensagem.WARNING, "Impossível obter o Desconto.");
+				}
                 
                 final BigDecimal precoComDesconto =
                         produtoEdicao.getPrecoVenda().subtract(
-                                MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
+                                MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), (desconto != null ? desconto.getValor() : BigDecimal.ZERO)));
                 
                 final ValoresAplicados valoresAplicados = new ValoresAplicados();
                 valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
@@ -1457,7 +1464,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             }
         }
         
-        if (valoresAplicadosParam != null){
+        if (valoresAplicadosParam != null) {
             
             movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
         }
@@ -1773,7 +1780,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                         new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
             }
             
-            
             if (idLancamento != null) {
                 
                 final Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
@@ -1781,6 +1787,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 movimentoEstoqueCota.setLancamentoId(lancamento.getId());
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+                
+                if(produtoEdicao.getPrecoVenda().compareTo(BigDecimal.ZERO) <= 0) {
+                	throw new ValidacaoException(TipoMensagem.ERROR, "Produto com Preço de Venda inválido.");
+                }
                 
 				/**
                  * A busca dos descontos é feita diretamente no Map, por chave,

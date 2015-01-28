@@ -443,7 +443,7 @@
 		
 		
 		var comboBox =  montarComboBox(result[0], false);
-		$('#box', _workspace).html(comboBox);
+		$('#mapa-abastecimento-box', _workspace).html(comboBox);
 		
 		var comboRota =  montarComboBox(result[1], false);
 		$('#rota', _workspace).html(comboRota);
@@ -498,7 +498,7 @@
 			T.desbloquearCampos('box','rota','roteiro','quebraPorCota');
 			T.displayEntregador(false);
 			$('#quebraPorCota').attr("checked", false);
-			T.bloquearLinkProdutos();
+			T.desbloquearLinkProdutos();
 			T.limparProdutosSelecionados();
 			break;
 		case 'COTA':

@@ -965,7 +965,7 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#tipoPDV", cotaBaseController.workspace).val(result.tipoPDV);
 		
-		$("#bairro", cotaBaseController.workspace).val(result.bairro);
+		$("#cota-base-bairro", cotaBaseController.workspace).val(result.bairro);
 		
 		$("#cidade", cotaBaseController.workspace).val(result.cidade);
 		
@@ -975,9 +975,9 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val(result.areaInfluencia);
 		
-		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicialFormatado);
+		$("#cota-base-periodoDe", cotaBaseController.workspace).val(result.dataInicialFormatado);
 		
-		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinalFormatado);
+		$("#cota-base-periodoAte", cotaBaseController.workspace).val(result.dataFinalFormatado);
 		
 		if (successCallBack) {
 			
@@ -1007,7 +1007,7 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#tipoPDV", cotaBaseController.workspace).val("");
 		
-		$("#bairro", cotaBaseController.workspace).val("");
+		$("#cota-base-bairro", cotaBaseController.workspace).val("");
 		
 		$("#cidade", cotaBaseController.workspace).val("");
 		
@@ -1019,9 +1019,9 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val("");
 		
-		$("#periodoDe", cotaBaseController.workspace).val("");
+		$("#cota-base-periodoDe", cotaBaseController.workspace).val("");
 		
-		$("#periodoAte", cotaBaseController.workspace).val("");
+		$("#cota-base-periodoAte", cotaBaseController.workspace).val("");
 		
 		
 	}

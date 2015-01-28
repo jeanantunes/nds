@@ -7,7 +7,7 @@ var edicoesFechadasController = $.extend(true, {
 		this.initGridDetalheEdicoesFechadas();
 		this.bindButtons();
 
-		$("#dataDe", edicoesFechadasController.workspace).datepicker({
+		$("#edicoes-fechadas-dataDe", edicoesFechadasController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
@@ -15,9 +15,9 @@ var edicoesFechadasController = $.extend(true, {
 			defaultDate : new Date()
 		});
 
-		$("#dataDe", edicoesFechadasController.workspace).mask("99/99/9999");
+		$("#edicoes-fechadas-dataDe", edicoesFechadasController.workspace).mask("99/99/9999");
 
-		$("#dataAte", edicoesFechadasController.workspace).datepicker({
+		$("#edicoes-fechadas-dataAte", edicoesFechadasController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
@@ -25,7 +25,7 @@ var edicoesFechadasController = $.extend(true, {
 			defaultDate : new Date()
 		});
 
-		$("#dataAte", edicoesFechadasController.workspace).mask("99/99/9999");
+		$("#edicoes-fechadas-dataAte", edicoesFechadasController.workspace).mask("99/99/9999");
 	
 	},
 	bindButtons : function() {
@@ -234,8 +234,8 @@ var edicoesFechadasController = $.extend(true, {
 		edicoesFechadasController.popup_detalhes();			
 	},
 	pesquisar : function() {
-		var dataDe = $("#dataDe", edicoesFechadasController.workspace).val();
-		var dataAte = $("#dataAte", edicoesFechadasController.workspace).val();
+		var dataDe = $("#edicoes-fechadas-dataDe", edicoesFechadasController.workspace).val();
+		var dataAte = $("#edicoes-fechadas-dataAte", edicoesFechadasController.workspace).val();
 		var selectFornecedor = $("select#fornecedor", edicoesFechadasController.workspace).val();
 
 		$(".consultaEdicoesFechadasGrid", edicoesFechadasController.workspace).flexOptions({

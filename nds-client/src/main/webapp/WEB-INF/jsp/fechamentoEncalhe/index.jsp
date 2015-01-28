@@ -164,7 +164,7 @@
 		</div>
 	</fieldset>
 	
-	<form id="cotas-bloqueadas">
+	<form id="fechamento-encalhe-cotas-bloqueadas">
 		<jsp:include page="../cota/cotaBloqueada.jsp" />
 	</form>
 	

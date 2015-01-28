@@ -38,8 +38,6 @@ public class ChamadaEncalheServiceImplTest {
 		return data;
 	}
 	
-	
-	
 	private List<NotaEnvioProdutoEdicao> obterListaNotaEnvioProdutoEdicao() {
 		
 		List<NotaEnvioProdutoEdicao> lista = new ArrayList<>();
@@ -167,6 +165,7 @@ public class ChamadaEncalheServiceImplTest {
 		p.setIdProdutoEdicao(1L);
 		p.setCodigoProduto("0001");
 		p.setNomeProduto("CARAS");
+		p.setReparte(BigInteger.TEN);
 		produtosEmissao.add(p);
 		
 		
@@ -174,6 +173,7 @@ public class ChamadaEncalheServiceImplTest {
 		p.setIdProdutoEdicao(2L);
 		p.setCodigoProduto("0002");
 		p.setNomeProduto("VEJA");
+		p.setReparte(BigInteger.TEN);
 		if(possuiDetalheMultiNotaEnvio) {
 			p.setDescricaoNotaEnvio("Nota 1 xxxx Nota 2 kkkkk Nota 3 dddddd");
 		}
@@ -184,6 +184,7 @@ public class ChamadaEncalheServiceImplTest {
 		p.setIdProdutoEdicao(3L);
 		p.setCodigoProduto("0003");
 		p.setNomeProduto("VIVA MAIS");
+		p.setReparte(BigInteger.TEN);
 		produtosEmissao.add(p);
 		
 		
@@ -191,6 +192,7 @@ public class ChamadaEncalheServiceImplTest {
 		p.setIdProdutoEdicao(4L);
 		p.setCodigoProduto("0004");
 		p.setNomeProduto("COQUETEL");
+		p.setReparte(BigInteger.TEN);
 		if(possuiDetalheMultiNotaEnvio) {
 			p.setDescricaoNotaEnvio("Nota 34 yyyNota 15 oooooo");
 		}

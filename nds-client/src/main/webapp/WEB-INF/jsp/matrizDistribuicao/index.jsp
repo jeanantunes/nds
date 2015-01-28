@@ -57,7 +57,7 @@ var lancamentosSelecionados = [];
 <div id="telasAuxiliaresContent"/>
 <div id="matrizDistribuicaoContent">
 	<form id="form_exclusao_estudo">
-	<div id="popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
+	<div id="matriz_distribuicao_popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
 		<p>Confirma a exclus&atildeo do estudo?</p>
 	</div>
 	

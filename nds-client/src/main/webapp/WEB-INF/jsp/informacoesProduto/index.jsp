@@ -177,7 +177,7 @@ $(function(){
               <table width="320" border="0" cellpadding="2" cellspacing="1">
             <tr>
               <td width="99">Preço Capa R$:</td>
-              <td width="210"><input type="text" name="precoCapa" id="precoCapa" style="width:70px; text-align:left;" /></td>
+              <td width="210"><input type="text" name="inf-produto-precoCapa" id="inf-produto-precoCapa" style="width:70px; text-align:left;" /></td>
               </tr>
             <tr>
               <td>Pct. Padrão:</td>

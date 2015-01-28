@@ -5,16 +5,16 @@ var contaCorrenteCotaController = $.extend(true, {
 	 * QUANDO A PAGINA CARREGA.
 	 */
 	init : function() {
-		$("#cota", contaCorrenteCotaController.workspace).numeric();
+		$("#cc-cota", contaCorrenteCotaController.workspace).numeric();
 		
-		$("#nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
+		$("#cc-nomeCota", contaCorrenteCotaController.workspace).autocomplete({source: ""});
 		
-		$( "#periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
+		$( "#cc-periodoContaDe", contaCorrenteCotaController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#periodoContaAte", contaCorrenteCotaController.workspace ).datepicker({
+		$( "#cc-periodoContaAte", contaCorrenteCotaController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -37,9 +37,9 @@ var contaCorrenteCotaController = $.extend(true, {
 	 */
 	pesquisarItemContaCorrenteCota : function() {
 
-		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
+		var numeroCota = $("#cc-cota", contaCorrenteCotaController.workspace).val();
 		
-		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		var nomeCota = $("#cc-nomeCota", contaCorrenteCotaController.workspace).val();
 		
 		$("#cotaHidden", contaCorrenteCotaController.workspace).val(numeroCota);
 		
@@ -47,8 +47,8 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var parametroPesquisa = [
                  {name:'filtroViewContaCorrenteCotaDTO.numeroCota', value: numeroCota },
-                 {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#periodoContaDe", contaCorrenteCotaController.workspace).val() },
-                 {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#periodoContaAte", contaCorrenteCotaController.workspace).val() }
+                 {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#cc-periodoContaDe", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#cc-periodoContaAte", contaCorrenteCotaController.workspace).val() }
 		];
 
 		$(".itemContaCorrenteCotaGrid", contaCorrenteCotaController.workspace).flexOptions({

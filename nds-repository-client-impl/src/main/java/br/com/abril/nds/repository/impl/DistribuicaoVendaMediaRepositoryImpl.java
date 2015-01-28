@@ -64,11 +64,14 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     tcp.id idClassificacao, ");
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");
     
-        sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) as unsigned int) AS reparte, ");
+//        sql.append("     cast(sum( if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0) ) as unsigned int) AS reparte, ");
+        
+        sql.append(" cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) as unsigned int) AS reparte, ");
         
         sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
         
-        sql.append("     cast(sum(if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0)) - ( ");
+//        sql.append("     cast(sum(  if(tipo.OPERACAO_ESTOQUE = 'ENTRADA', mecReparte.QTDE, 0) ) - ( ");
+        sql.append("     cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) - ( ");
         sql.append("        select sum(mecEncalhe.qtde) ");
         sql.append("        from lancamento lanc ");
         sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
@@ -84,17 +87,31 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append(" FROM lancamento l ");
         sql.append("     JOIN produto_edicao pe ON pe.id = l.produto_edicao_id ");
         sql.append("     LEFT JOIN periodo_lancamento_parcial plp ON plp.id = l.periodo_lancamento_parcial_id ");
-        sql.append("     JOIN produto p ON p.id = pe.produto_id ");
+        //sql.append("     JOIN produto p ON p.id = pe.produto_id ");
+        
+        sql.append("     JOIN (select p.* from produto p  ");
+        sql.append("           	where p.codigo_icd = (select codigo_icd from produto p where p.codigo = :codigo_produto)  ");
+        sql.append("            union  ");
+        sql.append("           select p.* from produto p  ");
+        sql.append("           	where p.codigo_icd = :codigo_produto ");
+        sql.append("          ) p ON p.id = pe.produto_id   ");
+        
+        
+        
         sql.append("     LEFT JOIN tipo_classificacao_produto tcp ON tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append("     LEFT JOIN movimento_estoque_cota mecReparte on mecReparte.LANCAMENTO_ID = l.id ");
         sql.append("     LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
 
         sql.append(" where l.status in (:statusLancamento) ");
 //        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento "); PSAN-139
+        
+        sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
 		}
+		
+		/*
 		if (filtro.getCodigo() != null) {
             if (usarICD) {
                 sql.append("   and ((p.codigo_icd = :codigo_produto) ");
@@ -103,6 +120,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
                 sql.append("   and p.codigo = :codigo_produto ");
             }
         }
+		*/
+		
         if (filtro.getClassificacao() != null && filtro.getClassificacao() > 0) {
 			sql.append("   and tcp.id = :classificacao ");
 		}
@@ -141,8 +160,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         
         query.setParameterList(
                 "statusLancFechadoRecolhido", 
-                Arrays.asList(
-                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+                Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
 //        query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO.name());
 		

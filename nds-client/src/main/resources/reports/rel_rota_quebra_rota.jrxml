@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="80" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
 	</style>
-	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
 		<paragraph leftIndent="3"/>
 	</style>
 	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
@@ -41,47 +41,62 @@
 				<reportElement x="0" y="0" width="100" height="1" uuid="3caaffe2-124e-40f6-936a-ec3b919a9316"/>
 			</break>
 			<rectangle>
-				<reportElement x="0" y="2" width="550" height="20" backcolor="#D3D3D3" uuid="6b1a0e5f-c0fe-4a16-8b2a-9bed2234eeeb"/>
+				<reportElement x="0" y="2" width="550" height="20" backcolor="#D8D8D8" uuid="6b1a0e5f-c0fe-4a16-8b2a-9bed2234eeeb"/>
 			</rectangle>
 			<staticText>
-				<reportElement style="rel_stext" x="5" y="2" width="30" height="20" uuid="9577d0f7-0e42-4198-8cc8-f18e24cf30e6"/>
-				<textElement>
-					<font isBold="true"/>
+				<reportElement x="5" y="2" width="30" height="20" uuid="9577d0f7-0e42-4198-8cc8-f18e24cf30e6"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Box:]]></text>
 			</staticText>
 			<textField>
-				<reportElement style="rel_ftext" x="40" y="2" width="45" height="20" uuid="ead30f7a-af63-4094-b694-57decbe8a69d"/>
+				<reportElement x="40" y="2" width="45" height="20" uuid="ead30f7a-af63-4094-b694-57decbe8a69d"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{BOX}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement style="rel_stext" x="85" y="2" width="47" height="20" uuid="a0cf4792-8c1d-455b-b982-1d3e678ce46f"/>
-				<textElement>
-					<font isBold="true"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Roteiro:]]></text>
 			</staticText>
 			<textField>
 				<reportElement style="rel_ftext" x="133" y="2" width="100" height="20" uuid="9216cca6-481b-4f72-837b-2289ac58d538"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{ROTEIRO}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement style="rel_stext" x="233" y="2" width="37" height="20" uuid="77bfddaa-72df-4617-9e30-fc373398d037"/>
-				<textElement>
-					<font isBold="true"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Rota:]]></text>
 			</staticText>
 			<textField>
 				<reportElement style="rel_ftext" x="270" y="2" width="85" height="20" uuid="2caa06eb-8496-4d07-8727-baf9c7639704"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement style="rel_stext" x="408" y="2" width="33" height="20" uuid="387bef34-7a84-4909-8c5c-7cd7a0bc7edb"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
 				<text><![CDATA[Data:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement style="rel_ftext" x="455" y="2" width="95" height="20" uuid="441120d7-825d-403d-9367-3fa9224ac215"/>
+				<textElement>
+					<font fontName="Arial Black" size="9" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{DATA}]]></textFieldExpression>
 			</textField>
 			<elementGroup>

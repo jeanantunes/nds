@@ -26,7 +26,7 @@ $(function(){
 
 </div>
 
-<div id="popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
+<div id="hist_estudo_popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
   <p>Confirma a exclusão do estudo?</p>
 </div>
 

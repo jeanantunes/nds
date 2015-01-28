@@ -6,14 +6,14 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
-			$('input[id^="data"]', digitacaoContagemDevolucaoController.workspace).datepicker({
+			$('input[id^="digitacao-contagem-data"]', digitacaoContagemDevolucaoController.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('input[id^="data"]', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
+			$('input[id^="digitacao-contagem-data"]', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
 
 			var colunas = digitacaoContagemDevolucaoController.montarColunas();
 			
@@ -37,7 +37,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 			$(".areaBts", digitacaoContagemDevolucaoController.workspace).hide();
 			
-			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
+			$("#digitacao-contagem-dataDe", digitacaoContagemDevolucaoController.workspace).focus();
 			
 			this.montaGridEdicoesFechadas();
 			

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd   
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd   
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd   
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd   
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+		
+	
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceNdsi" />
+		<property name="packagesToScan" value="br.com.abril.nds.model" />
+		<property name="hibernateProperties">
+			<props>			
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>				
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+			<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+				<prop key="hibernate.c3p0.min_size">5</prop>	
+				<prop key="hibernate.c3p0.max_size">20</prop>	
+				<prop key="hibernate.c3p0.timeout">300</prop>	
+				<prop key="hibernate.c3p0.max_statements">50</prop>	
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>				
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="sessionFactoryGfs" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceGfs" />
+		<property name="packagesToScan" value="br.com.abril.nds" />
+		<property name="hibernateProperties">
+			<props>			
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>				
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
+				<prop key="hibernate.c3p0.min_size">5</prop>	
+				<prop key="hibernate.c3p0.max_size">20</prop>	
+				<prop key="hibernate.c3p0.timeout">300</prop>	
+				<prop key="hibernate.c3p0.max_statements">50</prop>	
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>				
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="sessionFactoryIcd" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceIcd" />
+		<property name="packagesToScan" value="br.com.abril.nds" />
+		<property name="hibernateProperties">
+			<props>			
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>				
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
+				<prop key="hibernate.c3p0.min_size">5</prop>	
+				<prop key="hibernate.c3p0.max_size">20</prop>	
+				<prop key="hibernate.c3p0.timeout">300</prop>	
+				<prop key="hibernate.c3p0.max_statements">50</prop>	
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
+				<prop key="hibernate.transaction.auto_close_session">true</prop>	
+			</props>
+		</property>
+	</bean>
+	
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="transactionManagerIcd"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryIcd" />
+	</bean>
+	
+	<bean id="transactionManagerGfs"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryGfs" />
+	</bean>
+		
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManagerIcd" />
+	<tx:annotation-driven transaction-manager="transactionManagerGfs" />
+	
+</beans>
