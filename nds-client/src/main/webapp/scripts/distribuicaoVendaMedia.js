@@ -236,7 +236,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var codigo = $("#codigoPesquisaBases").val();
 		var produto = $("#produtoPesquisaBases").val();
 		var edicao = $("#edicaoPesquisaBases").val();
-		var classificacao = $("#selectClassificacao").val();
+		var classificacao = $("#distribuicao-venda-media-selectClassificacao").val();
 		var idLancamento = $("#idLancamento").val();
 		var modoAnalise = $("#modoAnalise").val();
 		var idProdutoEdicao = $("#idProdutoEdicao").val();

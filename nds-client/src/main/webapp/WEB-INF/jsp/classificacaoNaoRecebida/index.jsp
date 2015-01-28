@@ -100,7 +100,7 @@ $(function() {
            	  <table width="756" border="0" cellpadding="2" cellspacing="1" id="classificacaoNaoRecebida_filtroPorClassificacao" class="filtro filtroPorClassificacao" style="display:none;">
             <tr>
             	<td width="76">Classifica&ccedil;&atilde;o:</td>
-                <td width="560"><select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
+                <td width="560"><select name="filtro.idTipoClassificacaoProduto" id="classificacao-selectClassificacao" style="width:200px;">
                   <option selected="selected">Selecione...</option>
                   <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
                   	<option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>

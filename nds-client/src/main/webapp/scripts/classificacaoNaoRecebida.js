@@ -819,7 +819,7 @@
 	},
 
 	mostraFiltroPorClassificacao : function(){
-		$('#selectClassificacao', classificacaoNaoRecebidaController.workspace).val(null);
+		$('#classificacao-selectClassificacao', classificacaoNaoRecebidaController.workspace).val(null);
 		$('#classificacaoNaoRecebida_filtroPorCota', classificacaoNaoRecebidaController.workspace).hide();
 		$('#classificacaoNaoRecebida_filtroPorClassificacao', classificacaoNaoRecebidaController.workspace).show();
 		$('.porCota', classificacaoNaoRecebidaController.workspace).hide();	
