@@ -384,13 +384,13 @@ public class EmissaoCEController extends BaseController {
 
 	public void imprimirCEPDF(FiltroEmissaoCE filtro) {
         
-	    byte[] notasGeradas = null;
+	    byte[] cesGeradas = null;
 	    
 	    try {
             
-            notasGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
+            cesGeradas = this.chamadaEncalheService.gerarEmissaoCE(filtro);
     
-            if (notasGeradas != null) {
+            if (cesGeradas != null) {
     
                 DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
         
@@ -400,7 +400,7 @@ public class EmissaoCEController extends BaseController {
         
                 output = this.httpResponse.getOutputStream();
         
-                output.write(notasGeradas);
+                output.write(cesGeradas);
         
                 httpResponse.getOutputStream().close();
         
@@ -438,7 +438,7 @@ public class EmissaoCEController extends BaseController {
 		
 		if (dados == null){
 		    
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível Emitir a CE !");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível Emitir a CE!");
 		}
 		
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
