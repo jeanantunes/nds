@@ -14,6 +14,11 @@ public class LancamentoHelper {
 				, StatusLancamento.EM_BALANCEAMENTO);		
 	}
 	
+	public static Collection<StatusLancamento> getStatusLancamentosPosBalanceamentoLancamento() {
+		
+		return Arrays.asList(StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO);		
+	}
+	
 	public static Collection<StatusLancamento> getStatusLancamentosPosExpedicao() {
 		
 		return Arrays.asList(StatusLancamento.EXPEDIDO
