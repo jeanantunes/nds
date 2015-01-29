@@ -12,7 +12,8 @@
 
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
-    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+//    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+   
     var estudoCopiado = $("#reparteCopiado").val();
     
     if(estudoCopiado != "" ){
