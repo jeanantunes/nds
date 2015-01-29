@@ -2709,10 +2709,16 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select dtd from ( ");
-    	hql.append(" select max(data_lcto_distribuidor) dtd , (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
-    	hql.append(" from lancamento ");
-    	hql.append(" where status in(:lancamentosPreExpedicao) ");
-    	hql.append(" group by data_lcto_distribuidor ) a ");
+    	hql.append(" select distinct l.data_lcto_distribuidor dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+    	hql.append(" from lancamento l inner join ( ");
+    	hql.append(" 	SELECT distinct data_lcto_distribuidor from lancamento l ");
+    	hql.append(" 	inner join ( ");
+    	hql.append(" 		select distinct data_lcto_distribuidor dtd from lancamento where status in (:lancamentosPreExpedicao) ");
+    	hql.append(" 	) rs1 on rs1. dtd = l.data_lcto_distribuidor ");
+    	hql.append(" 	and l.data_lcto_distribuidor > now() ");
+    	hql.append(" ) rs2 on rs2.data_lcto_distribuidor = l.data_lcto_distribuidor ");
+    	hql.append(" and l.status not in(:lancamentosPosBalanceamentoLancamento) ");
+    	
     	hql.append(" where st = 0) ");
     	hql.append(" and b.sm    in (select dia_semana  ");
     	hql.append(" from distribuicao_fornecedor  ");
@@ -2723,6 +2729,7 @@ public class LancamentoRepositoryImpl extends
         Query query = getSession().createSQLQuery(hql.toString());
         
         query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicao());
+        query.setParameterList("lancamentosPosBalanceamentoLancamento", LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamento());
 
     	return query.list();
     }
