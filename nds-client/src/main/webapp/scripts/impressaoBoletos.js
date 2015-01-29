@@ -231,8 +231,7 @@ var impressaoBoletosController = $.extend(true, {
 	
 	imprimirDivida:function(nossoNumero){
 		
-		$.postJSON(contextPath + "/financeiro/impressaoBoletos/validarImpressaoDivida",
-				[{name:"nossoNumero",value:nossoNumero}], function(result){
+		$.postJSON(contextPath + "/financeiro/impressaoBoletos/validarImpressaoDivida", [{name:"nossoNumero",value:nossoNumero}], function(result){
 			
 			if(result == "true"){
 				
@@ -248,7 +247,6 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	
 	renderizarArquivo: function (nossoNumero){
-		
 		var file = contextPath + "/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero;
 		$('#download-iframe', impressaoBoletosController.workspace).attr('src', file);	
 	},
@@ -264,7 +262,7 @@ var impressaoBoletosController = $.extend(true, {
 		});
 	},
 	
-recarregarComboRoteiroRotas:function(idBox){
+	recarregarComboRoteiroRotas:function(idBox){
 		
 		$.postJSON(contextPath + "/financeiro/impressaoBoletos/recarregarRoteiroRota",
 				[{name:"idBox",value:idBox}], function(result){
