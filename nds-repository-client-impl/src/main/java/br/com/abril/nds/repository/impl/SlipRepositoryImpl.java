@@ -44,4 +44,22 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
         
         return query.list();
     }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date data) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" select s from Slip s ")
+		  .append(" where s.numeroCota not in(:cotas) ")
+		  .append(" and date(s.dataConferencia) = :dataConferencia ");
+		
+		Query query = this.getSession().createQuery(sb.toString());
+	        
+        query.setParameterList("cotas", listaCotas);
+        query.setParameter("dataConferencia", data);
+        
+        return query.list();
+	}
 }
