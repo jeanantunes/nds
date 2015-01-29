@@ -264,7 +264,6 @@ public class EmissaoCEController extends BaseController {
 			filtro.setQtdCapasPorPagina(49);
 			filtro.setQtdMaximaProdutosComTotalizacao(18);
 		}
-
 		
 		return chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
 	}
