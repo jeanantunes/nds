@@ -547,6 +547,7 @@ var analiseParcialController = $.extend(true, {
 		              legenda_element.removeClass('asterisco');
 		          } else {
 		              legenda_element.addClass('asterisco');
+		              analiseParcialController.addEventoLegenda();
 		          }
 		
 		          $('#total_reparte_sugerido').text(
@@ -822,7 +823,10 @@ var analiseParcialController = $.extend(true, {
             	
                 $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
             }
+            
+            analiseParcialController.addEventoLegenda();
         });
+       
     },
 
     modeloNormal : function (estudoOrigem) {
@@ -1222,9 +1226,11 @@ var analiseParcialController = $.extend(true, {
         });
         
         
+//        $('.asterisco').mouseenter(function (event){
+//        	$('.asterisco').tipsy({live: true, gravity: 'sw', title: function(){return 'Reparte Alterado';}});
+//        	setTimeout($(".tipsy").hide(),3000);
+//        });
         
-
-//        analiseParcialController.cotasQueNaoEntraramNoEstudo();
     },
     
     verificacoesParaLiberarEstudo : function(){
@@ -1395,6 +1401,8 @@ var analiseParcialController = $.extend(true, {
                     {name: 'queryDTO.estudo',   value: estudo},
                     {name: 'queryDTO.tipoSegmentoProduto',   value: tipoSegmentoProduto}]
         }).flexReload();
+        
+        
     },
     
     verCapa : function() {
@@ -1458,6 +1466,14 @@ var analiseParcialController = $.extend(true, {
     	analiseParcialController.verificarPermissaoAcesso(analiseParcialController.exibirModalCotasQueNaoEntraramNoEstudo);
     },
     
+    bloquearInputCotasQueNaoEntraramNoEstudo : function() {
+	    var inputsCotasNaoSelecionadas = $("#cotasNaoSelec tr td input");
+	
+	    inputsCotasNaoSelecionadas.each(function () {
+	        $(this).disable();
+	    });
+    },
+    
     exibirModalCotasQueNaoEntraramNoEstudo:function(){
     	
     	 //limpa os campos ao abrir o pop-up
@@ -1467,6 +1483,10 @@ var analiseParcialController = $.extend(true, {
         $("#cotasQueNaoEntraramNoEstudo_elementos").val('');
 
         analiseParcialController.cotasQueNaoEntraramNoEstudo();
+        
+//        if($('#status_estudo').text()==='Liberado'){
+//        	analiseParcialController.bloquearInputCotasQueNaoEntraramNoEstudo();
+//        }
 
         $("#dialog-cotas-estudos").dialog({
             escondeHeader: false,
@@ -1557,6 +1577,12 @@ var analiseParcialController = $.extend(true, {
                 	  }
                   }
                 });
+            	
+            	setTimeout(function(){
+            		if($('#status_estudo').text()==='Liberado'){
+            			analiseParcialController.bloquearInputCotasQueNaoEntraramNoEstudo();
+              	  }
+    				},2000);
               },
 	        beforeClose: function() {
 	        	$("#cotasNaoSelec tr td input",  analiseParcialController.workspace).filter(function(){return this.value > 0;}).remove();
@@ -1604,6 +1630,13 @@ var analiseParcialController = $.extend(true, {
         .add("#ordenarPorDe")
         .add("#ordenarPorAte")
         .val('');
+    },
+    
+    addEventoLegenda: function () {
+        $('.asterisco').mouseenter(function (event){
+        	$('.asterisco').tipsy({live: true, gravity: 'sw', title: function(){return 'Reparte Alterado';}});
+        	setTimeout(function(){$(".tipsy").hide()},2000);
+        });
     },
 
     filtrarOrdenarPor : function(estudo) {
