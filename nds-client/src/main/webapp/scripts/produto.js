@@ -16,11 +16,11 @@ var produtoController = $.extend(true, {
 		
 		$(".bt_arq", this.workspace).hide();
 
-		$("#comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
+		$("#produto-comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
 		this.tamanhoInicial = 3;
 		
-		$('#codigoProduto', produtoController.workspace).change(function (){
-			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
+		$('#produto-codigoProduto', produtoController.workspace).change(function (){
+			produtoController.pesquisarPorCodigoProduto('#produto-codigoProduto', '#produto-produto', '#produto-comboGeracaoAutomatica', false);
 		});
 		
 		$('#nomeProduto', produtoController.workspace).bind({
@@ -32,12 +32,12 @@ var produtoController = $.extend(true, {
 			}
 		});
 		
-		$("#produto",produtoController.workspace).autocomplete({
+		$("#produto-produto",produtoController.workspace).autocomplete({
 			source:function(param ,callback) {
 				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
 			},
 			select : function(event, ui) {
-				$('#codigoProduto',produtoController.workspace).val(ui.item.chave.codigo);
+				$('#produto-codigoProduto',produtoController.workspace).val(ui.item.chave.codigo);
 				
 			},
 			minLength: 2,
@@ -109,7 +109,7 @@ var produtoController = $.extend(true, {
 		
 		var nomeProduto = $(idProduto, produtoController.workspace).attr("value");
 		
-		var idGeracao = "#comboGeracaoAutomatica";
+		var idGeracao = "#produto-comboGeracaoAutomatica";
 		
 		if (nomeProduto != ""){
 			if (nomeProduto && nomeProduto.length > 1) {
@@ -123,9 +123,9 @@ var produtoController = $.extend(true, {
 	},
 	
 	limparCamposFiltro : function (){
-		$("#produto", produtoController.workspace).val("");
-		$("#codigoProduto", produtoController.workspace).val("");
-		$("#comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
+		$("#produto-produto", produtoController.workspace).val("");
+		$("#produto-codigoProduto", produtoController.workspace).val("");
+		$("#produto-comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
 	},
 	
 	
@@ -157,7 +157,7 @@ var produtoController = $.extend(true, {
 		$(idGeracao, produtoController.workspace).val(produtoController.formatarValorParaPopularCombo(result.isGeracaoAutomatica)).disable();
 		$(idCodigo, produtoController.workspace).val(result.id);
 		
-		$("#fornecedor", produtoController.workspace).focus();
+		$("#produto-fornecedor", produtoController.workspace).focus();
 		
 	},
 	
@@ -187,7 +187,7 @@ var produtoController = $.extend(true, {
 	},
 	
 	getCodigoProdutoPesquisa: function () {
-		return  {codigoProduto:$("#codigoProduto", this.workspace).val()};
+		return  {codigoProduto:$("#produto-codigoProduto", this.workspace).val()};
 	},
 	
 	pesquisarFornecedor:function(data){
@@ -213,7 +213,7 @@ var produtoController = $.extend(true, {
 	montarComboFornecedores:function(result) {
 		var comboFornecedores =  montarComboBox(result, true);
 		
-		$("#fornecedor", this.workspace).html(comboFornecedores);
+		$("#produto-fornecedor", this.workspace).html(comboFornecedores);
 	},
 
 	iniciarGrid : function() {
@@ -310,12 +310,12 @@ var produtoController = $.extend(true, {
 	
 	pesquisar : function() {
 		
-		var codigo = $("#codigoProduto", this.workspace).val();
-		var produto = $("#produto", this.workspace).val();
-		var fornecedor = $("#fornecedor", this.workspace).val();
-		var editor = $("#edicao", this.workspace).val();
-		var codigoTipoProduto = $("#comboTipoProduto", this.workspace).val();
-		var isGeracaoAutomatica = produtoController.formatarCampoComboGeracaoAutomatica("#comboGeracaoAutomatica");
+		var codigo = $("#produto-codigoProduto", this.workspace).val();
+		var produto = $("#produto-produto", this.workspace).val();
+		var fornecedor = $("#produto-fornecedor", this.workspace).val();
+		var editor = $("#produto-edicao", this.workspace).val();
+		var codigoTipoProduto = $("#produto-comboTipoProduto", this.workspace).val();
+		var isGeracaoAutomatica = produtoController.formatarCampoComboGeracaoAutomatica("#produto-comboGeracaoAutomatica");
 		
 		
 		$(".produtosGrid", this.workspace).flexOptions({
@@ -375,7 +375,7 @@ var produtoController = $.extend(true, {
 	
 		var valorAtual;
 		
-		if(($("#produto").val() != "") && ($("#codigoProduto").val() != "")){
+		if(($("#produto-produto").val() != "") && ($("#produto-codigoProduto").val() != "")){
 			if(produtoController.valorComboGerAuto != null){
 				
 				if(produtoController.valorComboGerAuto == true){
@@ -383,7 +383,7 @@ var produtoController = $.extend(true, {
 				}else{
 					valorAtual = 1;
 				}
-				$("#comboGeracaoAutomatica").val(valorAtual).disable();
+				$("#produto-comboGeracaoAutomatica").val(valorAtual).disable();
 			}
 		}
 		
@@ -521,7 +521,7 @@ var produtoController = $.extend(true, {
 			},
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
-				$("#comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
+				$("#produto-comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
 			},
 			form: $("#dialog-excluir", this.workspace).parents("form")
 		});
