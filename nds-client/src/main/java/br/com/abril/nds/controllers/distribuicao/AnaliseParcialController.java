@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -184,6 +185,17 @@ public class AnaliseParcialController extends BaseController {
     public void percentualAbrangencia(Long estudoId) {
         BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
         result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
+    }
+    
+    @Post
+    public void reparteTotalEVendaTotalPorEdicao(List<DetalhesEdicoesBasesAnaliseEstudoDTO> listaDetalhesEdicoesBases) {
+        
+//    	DetalhesEdicoesBasesAnaliseEstudoDTO reparte_vendaTotal = analiseParcialService.obterReparteEVendaTotal(codigoProduto, Long.parseLong(edicao), Long.parseLong(idTipoClassificacao), 
+//    																					   !periodo.equals("null") ? Integer.parseInt(periodo) : null);
+    	
+    	List<DetalhesEdicoesBasesAnaliseEstudoDTO> listaReparteVendaTotal = listaDetalhesEdicoesBases;
+    	
+        result.use(Results.json()).withoutRoot().from(listaReparteVendaTotal).serialize();
     }
 
     @Path("/init")
