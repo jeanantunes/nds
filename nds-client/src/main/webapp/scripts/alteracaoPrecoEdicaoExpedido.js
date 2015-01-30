@@ -7,9 +7,9 @@ var manutencaoPublicacaoController = $.extend(true, {
 	
 	init : function() {
 		
-		$("#edicaoProduto", manutencaoPublicacaoController.workspace).numeric();
+		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).numeric();
 		
-		$('#novoPrecoProduto', manutencaoPublicacaoController.workspace).maskMoney({
+		$('#manut-publicacao-novoPrecoProduto', manutencaoPublicacaoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
@@ -20,9 +20,9 @@ var manutencaoPublicacaoController = $.extend(true, {
 	
 	pesquisar: function (){
 		
-		manutencaoPublicacaoController.codigoProduto =  $("#codigoProduto", manutencaoPublicacaoController.workspace).val() ;
-		manutencaoPublicacaoController.numeroEdicao = $("#edicaoProduto", manutencaoPublicacaoController.workspace).val();
-		manutencaoPublicacaoController.nomeProduto = $("#nomeProduto", manutencaoPublicacaoController.workspace).val();
+		manutencaoPublicacaoController.codigoProduto =  $("#manut-publicacao-codigoProduto", manutencaoPublicacaoController.workspace).val() ;
+		manutencaoPublicacaoController.numeroEdicao = $("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val();
+		manutencaoPublicacaoController.nomeProduto = $("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val();
 		
 		var data = {codigo:manutencaoPublicacaoController.codigoProduto,
 					numeroEdicao:manutencaoPublicacaoController.numeroEdicao};
@@ -35,11 +35,11 @@ var manutencaoPublicacaoController = $.extend(true, {
 	
 	renderizarDaodosProduto:function(precoProduto){
 	
-		$("#resultado",manutencaoPublicacaoController.workspace).show();
-		$("#txtPrecoProduto",manutencaoPublicacaoController.workspace).text(precoProduto); 
-		$("#txtLegenda",manutencaoPublicacaoController.workspace).text(manutencaoPublicacaoController.montarTituloFieldPublicacao());
-		$("#novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
-		$("#novoPrecoProduto",manutencaoPublicacaoController.workspace).focus();
+		$("#manut-publicacao-resultado",manutencaoPublicacaoController.workspace).show();
+		$("#manut-publicacao-txtPrecoProduto",manutencaoPublicacaoController.workspace).text(precoProduto); 
+		$("#manut-publicacao-txtLegenda",manutencaoPublicacaoController.workspace).text(manutencaoPublicacaoController.montarTituloFieldPublicacao());
+		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
+		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).focus();
 	},
 	
 	montarTituloFieldPublicacao:function(){
@@ -53,7 +53,7 @@ var manutencaoPublicacaoController = $.extend(true, {
 	
 	tratraErroProduto:function(){
 		
-		$("#resultado",manutencaoPublicacaoController.workspace).hide();
+		$("#manut-publicacao-resultado",manutencaoPublicacaoController.workspace).hide();
 		manutencaoPublicacaoController.codigoProduto = null;
 		manutencaoPublicacaoController.numeroEdicao = null;
 	},
@@ -75,11 +75,11 @@ var manutencaoPublicacaoController = $.extend(true, {
 			exibirMensagem(result.tipoMensagem,result.listaMensagens);
 		}
 		
-		$("#resultado",manutencaoPublicacaoController.workspace).hide();
-		$("#codigoProduto", manutencaoPublicacaoController.workspace).val("") ;
-		$("#edicaoProduto", manutencaoPublicacaoController.workspace).val("");
-		$("#nomeProduto", manutencaoPublicacaoController.workspace).val("");
-		$("#novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
+		$("#manut-publicacao-resultado",manutencaoPublicacaoController.workspace).hide();
+		$("#manut-publicacao-codigoProduto", manutencaoPublicacaoController.workspace).val("") ;
+		$("#manut-publicacao-edicaoProduto", manutencaoPublicacaoController.workspace).val("");
+		$("#manut-publicacao-nomeProduto", manutencaoPublicacaoController.workspace).val("");
+		$("#manut-publicacao-novoPrecoProduto",manutencaoPublicacaoController.workspace).val("");
 		manutencaoPublicacaoController.codigoProduto = null;
 		manutencaoPublicacaoController.numeroEdicao = null;
 	},

@@ -337,9 +337,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		    parametersSlip.put("VALOR_SLIP", slip.getValorSlip());
 		    parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slip.getValorTotalSemDesconto());
 		    parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
-		    parametersSlip.put("VALOR_TOTAL_PAGAR", 
-		            CurrencyUtil.formatarValor(
-		                    slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
+		    parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
 		    parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
 		    
 		    arquivos.add(this.gerarSlipPDF(slip));
