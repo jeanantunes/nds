@@ -2718,12 +2718,10 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" 	and l.data_lcto_distribuidor > now() ");
     	hql.append(" ) rs2 on rs2.data_lcto_distribuidor = l.data_lcto_distribuidor ");
     	hql.append(" and l.status not in(:lancamentosPosBalanceamentoLancamento) ");
-    	
-    	hql.append(" where st = 0) ");
+    	hql.append(" where (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) = 0) rs1) ");
     	hql.append(" and b.sm    in (select dia_semana  ");
     	hql.append(" from distribuicao_fornecedor  ");
     	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
-    	//hql.append(" and fornecedor_id in (:idFornecedor)  ");
     	hql.append(" ) order by dt  ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
