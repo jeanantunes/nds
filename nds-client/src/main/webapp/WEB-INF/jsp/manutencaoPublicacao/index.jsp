@@ -44,18 +44,18 @@
 	        	<tr>
 	        		<td width="45" align="right">Código:</td>
 	        		<td width="79">
-	        			<input class="campoDePesquisa" id="codigoProduto" name="codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
-						   onchange="pesquisaProdutoPreco.pesquisarPorCodigoProdutoAutoCompleteEdicao('#codigoProduto', '#nomeProduto', '#edicaoProduto' , false);" />
+	        			<input class="campoDePesquisa" id="manut-publicacao-codigoProduto" name="manut-publicacao-codigoProduto" style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
+						   onchange="pesquisaProdutoPreco.pesquisarPorCodigoProdutoAutoCompleteEdicao('#manut-publicacao-codigoProduto', '#manut-publicacao-nomeProduto', '#manut-publicacao-edicaoProduto' , false);" />
 	        		</td>
 					<td width="64" align="right">Produto:</td>
 					<td width="196">
-						<input class="campoDePesquisa" id="nomeProduto" type="text" name="nomeProduto"  style="width: 150px;" maxlength="255"
-					       onkeyup="pesquisaProdutoPreco.autoCompletarPorNomeProduto('#nomeProduto', false);"
-					       onblur="pesquisaProdutoPreco.pesquisarPorNomeProduto('#codigoProduto', '#nomeProduto', null, false);"/>
+						<input class="campoDePesquisa" id="manut-publicacao-nomeProduto" type="text" name="manut-publicacao-nomeProduto"  style="width: 150px;" maxlength="255"
+					       onkeyup="pesquisaProdutoPreco.autoCompletarPorNomeProduto('#manut-publicacao-nomeProduto', false);"
+					       onblur="pesquisaProdutoPreco.pesquisarPorNomeProduto('#manut-publicacao-codigoProduto', '#manut-publicacao-nomeProduto', null, false);"/>
 					</td>
 					<td width="50" align="right">Edição:</td>
 					<td width="90">
-						<input class="campoDePesquisa" id="edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
+						<input class="campoDePesquisa" id="manut-publicacao-edicaoProduto"  type="text" name="edicoes" style="width:80px;"/></td>
 					<td width="258">
 						<span style="cursor: pointer;" class="bt_novos" onclick="manutencaoPublicacaoController.pesquisar();">
 							<a href="javascript:;" id="linkPesquisarAlteracaoPreco"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
@@ -65,18 +65,18 @@
 	  		</table>
 	  	</fieldset>
 	  	
-	  	<fieldset class="fieldPrecoProduto" style="display: none;" id="resultado">
+	  	<fieldset class="fieldPrecoProduto" style="display: none;" id="manut-publicacao-resultado">
 	  		
-	  		<legend><span id="txtLegenda">Publicação:</span></legend>
+	  		<legend><span id="manut-publicacao-txtLegenda">Publicação:</span></legend>
 	  			
 	  		<div style="margin-left: 1%;">	
 	            <br />
-	            <strong>Preço Atual</strong>: <span id="txtPrecoProduto"></span>
+	            <strong>Preço Atual</strong>: <span id="manut-publicacao-txtPrecoProduto"></span>
 	            <br />
 	            <br />
 	            <p>
 	            	<strong>Novo Preço:</strong>
-	            	<input type="text" name="novoPrecoProduto" id="novoPrecoProduto" style="width:80px; margin-left:5px;" maxlength="10"/>
+	            	<input type="text" name="manut-publicacao-novoPrecoProduto" id="manut-publicacao-novoPrecoProduto" style="width:80px; margin-left:5px;" maxlength="10"/>
 	            </p>
 	            <br />
 			</div>

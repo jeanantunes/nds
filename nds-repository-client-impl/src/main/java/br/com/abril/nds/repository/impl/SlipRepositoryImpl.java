@@ -49,13 +49,22 @@ public class SlipRepositoryImpl extends AbstractRepositoryModel<Slip, Long> impl
 	@SuppressWarnings("unchecked")
 	public List<Slip> obterSlipsPorCotasData(List<Integer> listaCotas, Date data) {
 		
-		StringBuilder sb = new StringBuilder();
+		StringBuilder hql = new StringBuilder();
 		
-		sb.append(" select s from Slip s ")
-		  .append(" where s.numeroCota not in(:cotas) ")
-		  .append(" and date(s.dataConferencia) = :dataConferencia ");
+		hql.append(" select s from Roteirizacao r ") 
+		.append(" join r.box b ")
+		.append(" join r.roteiros roteiro ")
+		.append(" join roteiro.rotas rota ")
+		.append(" join rota.rotaPDVs rotaPdv ")
+		.append(" join rotaPdv.pdv pdv ")
+		.append(" join pdv.cota cota, ")
+		.append(" Slip s ")
+		.append(" where s.numeroCota not in(:cotas) ")
+		.append(" and s.numeroCota = cota.numeroCota ")
+	    .append(" and date(s.dataConferencia) = :dataConferencia ")
+		.append(" order by b.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
 		
-		Query query = this.getSession().createQuery(sb.toString());
+		Query query = this.getSession().createQuery(hql.toString());
 	        
         query.setParameterList("cotas", listaCotas);
         query.setParameter("dataConferencia", data);
