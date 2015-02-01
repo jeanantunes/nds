@@ -1947,7 +1947,7 @@ var analiseParcialController = $.extend(true, {
             parameters.push({name: 'edicoesBase['+ i +'].venda',           value: 0});
             parameters.push({name: 'edicoesBase['+ i +'].ordemExibicao',   value: analiseParcialController.validarParametros(row.ordemExibicao)});
             parameters.push({name: 'edicoesBase['+ i +'].produtoEdicaoId', value: analiseParcialController.validarParametros(row.produtoEdicaoId)});
-            parameters.push({name: 'edicoesBase['+ i +'].periodo',   	   value: analiseParcialController.validarParametros(row.periodo)});
+            parameters.push({name: 'edicoesBase['+ i +'].periodo',   	   value: row.periodo != undefined ? row.periodo : 'null'});
             
 			
 		}
