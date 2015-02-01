@@ -56,7 +56,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
         .append("       CASE WHEN plp.NUMERO_PERIODO=1 THEN                     																					  ") 
         .append("       	((SELECT reparte FROM lancamento lc WHERE lc.id = lanc.id and lc.DATA_LCTO_DISTRIBUIDOR = :dataLanctoPrev) - ifnull(lanc.REPARTE_PROMOCIONAL, 0))       								      ") 
         .append("       WHEN plp.numero_periodo>1 THEN       																									  ") 
-        .append("           (SELECT sum(lc.REPARTE) FROM lancamento lc WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id AND lc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.ID and lc.DATA_LCTO_DISTRIBUIDOR = :dataLanctoPrev)      ") 
+        .append("           (select (ep.QTDE + ep.QTDE_SUPLEMENTAR + ep.QTDE_DEVOLUCAO_ENCALHE) from estoque_produto ep where ep.PRODUTO_EDICAO_ID = prodEdic.id)") 
         .append("       ELSE          																															  ")   
         .append("           (SELECT sum(lc.REPARTE) FROM lancamento lc WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id AND lc.DATA_LCTO_DISTRIBUIDOR = :dataLanctoPrev)          										  ") 
         .append("       END          																																  ") 

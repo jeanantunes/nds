@@ -1887,60 +1887,30 @@ var analiseParcialController = $.extend(true, {
 		$('#analiseParcialPopUpVenda', analiseParcialController.workspace).html('')
 		.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
 		
-//		var qtdEdicoesSelecionadas = edicoesBaseDadosEdicoes.length; 
+		for(var y = 0; y < analiseParcialController.detalheEdicoesBases.length; y++){
+			detalheEdicao = analiseParcialController.detalheEdicoesBases[y];
+			
+				$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).append(
+				'<td class="class_linha_1">'+(detalheEdicao.codigoProduto != undefined ? detalheEdicao.codigoProduto : "")+'</td>');
 		
-		// carregando popUp_detalhesDados-analiseParcial
-//		for (var i = 0; i <= edicoesBaseDadosEdicoes.length; i++) {
-//			row = edicoesBaseDadosEdicoes[i];
-//			
-//			 $.post(analiseParcialController.path + '/distribuicao/analise/parcial/reparteTotalEVendaTotalPorEdicao',
-//			            [{name: 'codigoProduto', value: row.codigoProduto},
-//			             {name: 'edicao', value: row.edicao},
-//			             {name: 'idTipoClassificacao', value: row.idTipoClassificacao},
-//			             {name: 'periodo', value: row.periodo != undefined ? row.periodo : null}],
-//			            
-//			             function (result) {
-//				 			analiseParcialController.detalheEdicoesBases.push(result);
-//				 			i++;
-//			            });
-////			 qtdEdicoesSelecionadas = 6 - edicoesBaseDadosEdicoes.length; 
-//		}
-		
-		for (var i = 0; i < edicoesBaseDadosEdicoes.length; i++) {
-			row = edicoesBaseDadosEdicoes[i];
+				$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace).append(
+						'<td class="class_linha_1">'+(detalheEdicao.nomeProduto != undefined ? detalheEdicao.nomeProduto : "")+'</td>');
 				
-				for(var y = 0; y < analiseParcialController.detalheEdicoesBases.length; y++){
-					detalheEdicao = analiseParcialController.detalheEdicoesBases[y];
-					
-					if(row.codigoProduto === detalheEdicao.codigoProduto && row.edicao == detalheEdicao.edicao && row.dataLancamento === detalheEdicao.dataLancamento){
+				$("#analiseParcialPopUpNumeroEdicao", analiseParcialController.workspace).append(
+						'<td class="class_linha_1">'+(detalheEdicao.edicao != undefined ? detalheEdicao.edicao : "")+'</td>');
+				
+				$("#analiseParcialPopUpDatalancamento", analiseParcialController.workspace).append(
+						'<td width="130" align="center" class="class_linha_2">' + (detalheEdicao.dataLancamento != undefined ? detalheEdicao.dataLancamento : "") + '</td>');
 
-						$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).append(
-						'<td class="class_linha_1">'+(detalheEdicao.codigoProduto != undefined ? detalheEdicao.codigoProduto : "")+'</td>');
-				
-						$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace).append(
-								'<td class="class_linha_1">'+(detalheEdicao.nomeProduto != undefined ? detalheEdicao.nomeProduto : "")+'</td>');
-						
-						$("#analiseParcialPopUpNumeroEdicao", analiseParcialController.workspace).append(
-								'<td class="class_linha_1">'+(detalheEdicao.edicao != undefined ? detalheEdicao.edicao : "")+'</td>');
-						
-						$("#analiseParcialPopUpDatalancamento", analiseParcialController.workspace).append(
-								'<td width="130" align="center" class="class_linha_2">' + (detalheEdicao.dataLancamento != undefined ? detalheEdicao.dataLancamento : "") + '</td>');
-		
-			 			$("#analiseParcialPopUpReparte", analiseParcialController.workspace).append(
-							'<td align="right" class="class_linha_1">' + (detalheEdicao.reparte != undefined ? detalheEdicao.reparte : "") +'</td>');
-		                
-		                $("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
-		    					'<td align="right" class="class_linha_1">' + (detalheEdicao.venda != undefined ? detalheEdicao.venda : "") + '</td>');
-		                
-					}else{
-						continue;
-					}
-					y++;
-				}
+	 			$("#analiseParcialPopUpReparte", analiseParcialController.workspace).append(
+					'<td align="right" class="class_linha_1">' + (detalheEdicao.reparte != undefined ? detalheEdicao.reparte : "") +'</td>');
+                
+                $("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
+    					'<td align="right" class="class_linha_1">' + (detalheEdicao.venda != undefined ? detalheEdicao.venda : "") + '</td>');
 		}
 		
 		// por estética de layout, insiro elementos td vazios
-		for ( var it = 0; it < edicoesBaseDadosEdicoes.length; it++) {
+		for ( var it = 0; it < 6 - edicoesBaseDadosEdicoes.length; it++) {
 			$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).append(
 					'<td class="class_linha_1"></td>');
 			
@@ -1963,34 +1933,46 @@ var analiseParcialController = $.extend(true, {
 	},
 	
 	montarDadosDetalhesEdicoesBases : function(){
-		analiseParcialController.detalheEdicoesBases = [];
+		var parameters = [];
 		
-		for (var i = 0; i < edicoesBaseDadosEdicoes.length; i++) {
-			row = edicoesBaseDadosEdicoes[i];
+		for (var i = 0; i < analiseParcialController.edicoesBase.length; i++) {
+			var row = analiseParcialController.edicoesBase[i];
  			
-			var detalhe = {};
- 			detalhe.codigoProduto = row.codigoProduto;
- 			detalhe.nomeProduto = row.nomeProduto;
- 			detalhe.edicao = row.edicao;
- 			detalhe.dataLancamento = row.dataLancamento;
- 			detalhe.reparte = 0;
- 			detalhe.venda = 0; 
- 			detalhe.ordemExibicao = row.ordemExibicao;
 			
-			analiseParcialController.detalheEdicoesBases.push(detalhe);
+			parameters.push({name: 'edicoesBase['+ i +'].codigoProduto',   value: analiseParcialController.validarParametros(row.codigoProduto)});
+            parameters.push({name: 'edicoesBase['+ i +'].nomeProduto',     value: analiseParcialController.validarParametros(row.nomeProduto)});
+            parameters.push({name: 'edicoesBase['+ i +'].edicao',      	   value: analiseParcialController.validarParametros(row.edicao)});
+            parameters.push({name: 'edicoesBase['+ i +'].dataLancamento',  value: analiseParcialController.validarParametros(row.dataLancamento)});
+            parameters.push({name: 'edicoesBase['+ i +'].reparte',         value: 0});
+            parameters.push({name: 'edicoesBase['+ i +'].venda',           value: 0});
+            parameters.push({name: 'edicoesBase['+ i +'].ordemExibicao',   value: analiseParcialController.validarParametros(row.ordemExibicao)});
+            parameters.push({name: 'edicoesBase['+ i +'].produtoEdicaoId', value: analiseParcialController.validarParametros(row.produtoEdicaoId)});
+            parameters.push({name: 'edicoesBase['+ i +'].periodo',   	   value: analiseParcialController.validarParametros(row.periodo)});
+            
 			
 		}
+		
+		parameters.push({name: 'estudoId', value: $('#estudoId').val()});
+		
 		 $.post(analiseParcialController.path + '/distribuicao/analise/parcial/reparteTotalEVendaTotalPorEdicao',
-		            [{name: 'listaDetalhesEdicoesBases', value: analiseParcialController.detalheEdicoesBases}],
-		            
+		            parameters,
 		             function (result) {
-			 			analiseParcialController.detalheEdicoesBases.push(result);
-			 			
-			 			if(i === edicoesBaseDadosEdicoes.length){
-			 				analiseParcialController.prepararDetalhesEdicoesBases();
-			 			}
+			 			analiseParcialController.detalheEdicoesBases = '';
+			 			analiseParcialController.detalheEdicoesBases = result;
+		 				analiseParcialController.prepararDetalhesEdicoesBases();
 		            });
+	},
+	
+	validarParametros : function(parametro){
+		if(parametro == undefined || parametro == null){
+			return '';
+		}else{
+			return parametro;
+		}
+		
 	}
+	
+	
     
 });
 
