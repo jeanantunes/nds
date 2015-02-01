@@ -354,9 +354,9 @@ function definicaoReparte(){
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td>Código:</td>
-              <td id="codigoProduto">${estudo.produtoEdicao.produto.codigo}</td>
+              <td id="analise-normal-codigoProduto">${estudo.produtoEdicao.produto.codigo}</td>
               <td>Produto:</td>
-              <td width="173" id="nomeProduto">${estudo.produtoEdicao.produto.nome}
+              <td width="173" id="analise-normal-nomeProduto">${estudo.produtoEdicao.produto.nome}
               </td>
               <td width="77">Edição:</td>
               <td id="numeroEdicao">${estudo.produtoEdicao.numeroEdicao}</td>

@@ -55,13 +55,11 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	    //caso a impressão inclua boleto e slip deve-se verifcar se as cotas ausentes foram cobradas
 	    if (comSlip){
     	    
-    	    final Integer qtdCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(
-    	            filtro.getDataMovimento(), true, filtro.getNumeroCota());
+    	    final Integer qtdCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(filtro.getDataMovimento(), true, filtro.getNumeroCota());
     	    
     	    if (qtdCotasAusentes != null && qtdCotasAusentes > 0){
     	        
-    	        throw new ValidacaoException(TipoMensagem.WARNING, 
-    	                "Não é possível gerar a impressão. Ainda existem cotas pendentes de geração de cobrança.");
+    	        throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível gerar a impressão. Ainda existem cotas pendentes de geração de cobrança.");
     	    }
 	    }
 	    
@@ -80,15 +78,11 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		if(dividas.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dívidas a serem impressas.");
 		
-		final List<PoliticaCobranca> politicasCobranca = 
-                politicaCobrancaRepository.obterPoliticasCobranca(
-                        Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
+		final List<PoliticaCobranca> politicasCobranca = politicaCobrancaRepository.obterPoliticasCobranca(Arrays.asList(TipoCobranca.BOLETO, TipoCobranca.BOLETO_EM_BRANCO));
 		
 		if (comSlip){
 		
-		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(
-		            dividas, filtro.getTipoCobranca(), politicasCobranca,
-		            filtro.getDataMovimento());
+		    return documentoCobrancaService.gerarDocumentoCobrancaComSlip(dividas, filtro.getTipoCobranca(), politicasCobranca, filtro.getDataMovimento());
 		} else {
 		    
 		    return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());

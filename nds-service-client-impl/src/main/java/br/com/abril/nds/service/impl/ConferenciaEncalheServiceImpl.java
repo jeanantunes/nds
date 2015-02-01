@@ -1818,18 +1818,45 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional
-	public void criarBackupConferenciaEncalhe(Usuario usuario, Cota cota, final List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	public void criarBackupConferenciaEncalhe(Usuario usuario
+			, InfoConferenciaEncalheCota infoConferenciaEncalheCota
+			, ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
-		this.sinalizarInicioProcessoEncalhe(cota.getNumeroCota(), usuario);
+		this.sinalizarInicioProcessoEncalhe(controleConferenciaEncalheCota.getCota().getNumeroCota(), usuario);
 
 		Date dataCriacao = new Date();
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		limparBackupAnterior(cota.getNumeroCota(), dataOperacao);
+		limparBackupAnterior(controleConferenciaEncalheCota.getCota().getNumeroCota(), dataOperacao);
 		
-		for(ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
-			criarNovoRegistroBackupConferenciaEncalhe(conf, cota, dataCriacao, dataOperacao);
+		List<Date> datasRecolhimento = new ArrayList<Date>();
+		datasRecolhimento.add(dataOperacao);
+		List<ConferenciaEncalheDTO>	listaConferenciaEncalheCompleta = obterListaConferenciaEncalheContingencia(
+					dataOperacao, 
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
+					datasRecolhimento, new ArrayList<ConferenciaEncalheDTO>(infoConferenciaEncalheCota.getListaConferenciaEncalhe()));
+		
+		if(listaConferenciaEncalheCompleta!=null && !listaConferenciaEncalheCompleta.isEmpty()) {
+			
+			carregarDiaRecolhimento(controleConferenciaEncalheCota.getCota().getNumeroCota(), dataOperacao, listaConferenciaEncalheCompleta);
+			
+		}
+		
+		List<Long> produtoEdicoesIdsConferidos = new ArrayList<Long>();
+		
+		for(ConferenciaEncalheDTO conf : infoConferenciaEncalheCota.getListaConferenciaEncalhe()) {
+			produtoEdicoesIdsConferidos.add(conf.getIdProdutoEdicao());
+		}
+		
+		for(ConferenciaEncalheDTO conf : listaConferenciaEncalheCompleta) {
+			if(!produtoEdicoesIdsConferidos.contains(conf.getIdProdutoEdicao())) {
+				infoConferenciaEncalheCota.getListaConferenciaEncalhe().add(conf);
+			}
+		}
+		
+		for(ConferenciaEncalheDTO conf : infoConferenciaEncalheCota.getListaConferenciaEncalhe()) {
+			criarNovoRegistroBackupConferenciaEncalhe(conf, controleConferenciaEncalheCota.getCota(), dataCriacao, dataOperacao);
 		}
 		
 	}

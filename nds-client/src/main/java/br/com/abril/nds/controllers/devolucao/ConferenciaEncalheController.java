@@ -1696,15 +1696,16 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	/**
 	 * Salva Conferencia de encalhe da Cota
+	 * @param infoConferenciaEncalheCota TODO
 	 * @param controleConfEncalheCota
 	 * @param listaConferenciaEncalheCotaToSave
 	 * @param indConferenciaContingencia
 	 */
-	private void salvarConferenciaCota(final ControleConferenciaEncalheCota controleConfEncalheCota,
-			                           final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
-			                           final boolean indConferenciaContingencia){
+	private void salvarConferenciaCota(InfoConferenciaEncalheCota infoConferenciaEncalheCota,
+			                           final ControleConferenciaEncalheCota controleConfEncalheCota,
+			                           final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave, final boolean indConferenciaContingencia){
 			
-		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave));
+		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), infoConferenciaEncalheCota, controleConfEncalheCota);
 		
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
@@ -1771,7 +1772,7 @@ public class ConferenciaEncalheController extends BaseController {
 		final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
 				obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 		
-		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
+		this.salvarConferenciaCota(info, controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 "result").recursive()
@@ -2090,13 +2091,13 @@ public class ConferenciaEncalheController extends BaseController {
 			final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
 					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 			
-			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave));
+			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), info, controleConfEncalheCota);
 
-			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
+			limparIdsTemporarios(info.getListaConferenciaEncalhe());
 			
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
-					  new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave), 
+					  new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()), 
 					  this.getUsuarioLogado(),
 					  indConferenciaContingencia,
 					  info.getReparte());
