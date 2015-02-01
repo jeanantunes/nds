@@ -297,7 +297,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
 		sql.append("			else lc.REPARTE ");
 		sql.append(" 		end ");
-		sql.append(" 	else estp.qtde ");
+		sql.append(" 	else (estp.QTDE + estp.QTDE_SUPLEMENTAR + estp.QTDE_DEVOLUCAO_ENCALHE) ");
 		sql.append(" end ");
 		
 		sql.append(" From estudo_gerado eg ");

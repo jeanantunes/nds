@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
@@ -29,6 +30,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
@@ -184,6 +186,34 @@ public class AnaliseParcialController extends BaseController {
     public void percentualAbrangencia(Long estudoId) {
         BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
         result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
+    }
+    
+    @Post
+    public void reparteTotalEVendaTotalPorEdicao(List<EdicoesProdutosDTO> edicoesBase, String estudoId) {
+        
+    	
+    	for (EdicoesProdutosDTO edicoesDTO : edicoesBase) {
+    		
+    		if(edicoesDTO.getProdutoEdicaoId() == null || edicoesDTO.getProdutoEdicaoId().equals("null")){
+    			continue;
+    		}
+    		
+    		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(edicoesDTO.getProdutoEdicaoId()); 
+    		
+    		
+    		DetalhesEdicoesBasesAnaliseEstudoDTO detalhes = analiseParcialService.obterReparteEVendaTotal(edicoesDTO.getCodigoProduto(), 
+				edicoesDTO.getEdicao().longValue(), pe.getTipoClassificacaoProduto().getId(), 
+				edicoesDTO.getPeriodo() != null ? Integer.parseInt(edicoesDTO.getPeriodo()) : null);
+			
+    		if(detalhes != null){
+    			edicoesDTO.setReparte(new BigDecimal(detalhes.getReparte()));
+    			edicoesDTO.setVenda(new BigDecimal(detalhes.getVenda()));
+    			edicoesDTO.setDataLancamento(detalhes.getDataLancamento());
+    		}
+    	
+    	}
+    	
+    	result.use(Results.json()).withoutRoot().from(edicoesBase).serialize();
     }
 
     @Path("/init")
