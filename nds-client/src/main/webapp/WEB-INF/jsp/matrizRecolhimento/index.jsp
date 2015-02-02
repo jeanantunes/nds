@@ -42,14 +42,14 @@
 
 
 
-			<span class="bt_novos" >
-				<a id="linkEditor" href="javascript:;" title="Balancear Editor">
-					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif">
-				</a>
+			<span class="bt_novos">
+				<a id="linkEditor_disabled" style="background-color: gray;opacity: 0.5;">
+					  <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif" title="Balancear Editor" >
+				<a/>
 			</span>
 
 			<span class="bt_novos" >
-				<a id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
+				<a id="linkValor" href="javascript:;" title="Volume">
 					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_financeiro.png">
 				</a>
 			</span>
@@ -65,11 +65,18 @@
 				</a>
 			</span>
 
+			<span class="bt_novos" >
+				<a isEdicao="true" id="linkBloquearDia" href="javascript:;"  title="Bloquear o Dia">
+					<img  height="15" width="15" border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_bloqueado.gif">
+				</a>
+			</span>
+			
 			<span class="bt_novos hidden_buttons" style="display:none;">
 				<a isEdicao="true" id="linkReprogramar" href="javascript:;" title="Reprogramar" >
 					<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 				</a>
 			</span>
+			
 			<span class="bt_arq" >
   					<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -77,16 +84,17 @@
     		</span>
 
 			<span class="bt_arq" >
-				<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=PDF" 	 title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
 				</a>
 			</span>
 
-			<span class="bt_novos" >
-				<a isEdicao="true" id="linkConfirmar" href="javascript:;"  title="Confirmar balanceamento">
-					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+           <span class="bt_novos hidden_buttons" style="display:none;">
+				<a isEdicao="true" id="linkConfirmar" href="javascript:;" title="Confirmar Balanceamento" >
+					<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
 				</a>
 			</span>
+			
 
 			<span class="bt_novos" >
 				<a isEdicao="true" id="linkReabrirMatriz" href="javascript:;" title="Reabrir Matriz">
@@ -176,6 +184,23 @@
 		    	<legend>Reabrir Matrizes Confirmadas</legend>
 
 		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableReaberturaMatrizConfirmada">
+		        </table>
+
+		    </fieldset>
+		</div>
+		</form>
+		
+		<form id="form-cadeado-matriz">
+		<div id="dialog-cadeado-matriz" title="Balanceamento" style="display:none;">
+
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-cadeado" name="messageDialog"/>
+			</jsp:include>
+
+		    <fieldset style="width:250px!important;">
+		    	<legend>Bloquear Matriz</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableCadeadoMatrizConfirmada">
 		        </table>
 
 		    </fieldset>
