@@ -521,8 +521,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras, final Date dataOperacao) {
-		
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota
+			, final String codigoBarras, final Date dataOperacao, List<Date> datasRecolhimentoValidas) {
 		
 		final StringBuilder hql = new StringBuilder(" select produtoEdicao.id as chave, ");
 		hql.append(" produtoEdicao.codigoDeBarras as value, ");
@@ -544,7 +544,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 			
 			hql.append(" and upper(produtoEdicao.codigoDeBarras) like upper(:codigoBarras) ");
 			
-			hql.append(" and ce.dataRecolhimento = :dataOperacao ");
+			hql.append(" and (ce.dataRecolhimento = :dataOperacao ");
+			hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas)) ");
 			
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
@@ -555,12 +556,12 @@ public class ConferenciaEncalheRepositoryImpl extends
 		if(codigoBarras!=null && !codigoBarras.trim().isEmpty()) {
 			
 			query.setParameter("codigoBarras", codigoBarras + "%" );
-			
 		}
 		
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO);
 		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("datasRecolhimentoValidas", datasRecolhimentoValidas);
 		
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		
