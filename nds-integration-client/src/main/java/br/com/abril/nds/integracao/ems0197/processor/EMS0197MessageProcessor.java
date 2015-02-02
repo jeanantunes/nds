@@ -215,7 +215,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		    
 		    final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
 		    
-		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP).toString());
+		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).toString());
 		    
 		    exportarDadosParaArquivo(print, ipvLancamento);
 
