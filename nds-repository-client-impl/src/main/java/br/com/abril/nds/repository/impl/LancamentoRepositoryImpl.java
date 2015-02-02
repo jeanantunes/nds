@@ -2361,6 +2361,8 @@ public class LancamentoRepositoryImpl extends
 		List<StatusLancamento> statusLancamento = new ArrayList<>();
 
 		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_RECOLHIMENTO);
 
 		query.setParameterList("datasConfirmadas", datasConfirmadas);
 		query.setParameterList("statusLancamento", statusLancamento);
@@ -2368,6 +2370,30 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRecolhimentosEmBalanceamentoRecolhimento(
+			List<Date> datasConfirmadas) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+
+		statusLancamento.add(StatusLancamento.EXPEDIDO);
+
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+
+		return query.list();
+	}
+	
 	public Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe) {
 
 		StringBuilder hql = new StringBuilder();
@@ -2692,38 +2718,8 @@ public class LancamentoRepositoryImpl extends
         return query.list();
     }
     
-    public List<Date> obterDatasRecolhimentoValidas() {
 
-    	StringBuilder hql = new StringBuilder();
-    	
-    	hql.append(" select dtd                                                                         ");
-	    hql.append(" from                                                                               ");
-	    hql.append("     (  select distinct l.data_rec_distrib dtd,                                     ");
-	    hql.append("         (case when status in ('EM_RECOLHIMENTO') then 1 else 0 end) st             ");
-	    hql.append("     from lancamento l                                                              ");
-	    hql.append("     inner join                                                                     ");
-	    hql.append("         (                                                                          ");
-	    hql.append("             SELECT distinct data_rec_distrib                                       ");
-	    hql.append("             from lancamento l                                                      ");
-	    hql.append("             inner join                                                             ");
-	    hql.append("                 (                                                                  ");
-	    hql.append("                     select distinct data_rec_distrib dtd                           ");
-	    hql.append("                     from lancamento                                                ");
-	    hql.append("                     where status in (:produtosEmRecolhimento)                      ");
-	    hql.append("                 ) rs1 on rs1.dtd = l.data_rec_distrib                              ");
-	    hql.append("             ) rs2 on rs2.data_rec_distrib = l.data_rec_distrib                     ");
-	    hql.append("             where (                                                                ");
-	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 0 ");
-	    hql.append("             ) rs1                                                                  ");
-    	
-        Query query = getSession().createSQLQuery(hql.toString());
-        
-        query.setParameterList("produtosEmRecolhimento", Arrays.asList(StatusLancamento.EM_RECOLHIMENTO.name()));
-
-    	return query.list();
-    }
-
-    public List<Date> obterDatasLancamentoValidas() {
+    public List<Date> obterDatasLancamentoValido(List<Long> idFornecedor) {
 
     	StringBuilder hql = new StringBuilder();
     	
@@ -2739,25 +2735,20 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select dtd from ( ");
-    	hql.append(" select distinct l.data_lcto_distribuidor dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
-    	hql.append(" from lancamento l inner join ( ");
-    	hql.append(" 	SELECT distinct data_lcto_distribuidor from lancamento l ");
-    	hql.append(" 	inner join ( ");
-    	hql.append(" 		select distinct data_lcto_distribuidor dtd from lancamento where status in (:lancamentosPreExpedicao) ");
-    	hql.append(" 	) rs1 on rs1. dtd = l.data_lcto_distribuidor ");
-    	hql.append(" 	and l.data_lcto_distribuidor > now() ");
-    	hql.append(" ) rs2 on rs2.data_lcto_distribuidor = l.data_lcto_distribuidor ");
-    	hql.append(" and l.status not in(:lancamentosPosBalanceamentoLancamento) ");
-    	hql.append(" where (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) = 0) rs1) ");
+    	hql.append(" select max(data_lcto_distribuidor) dtd , (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+    	hql.append(" from lancamento ");
+    	hql.append(" where status in(:lancamentosPreExpedicao) ");
+    	hql.append(" group by data_lcto_distribuidor ) a ");
+    	hql.append(" where st = 0) ");
     	hql.append(" and b.sm    in (select dia_semana  ");
     	hql.append(" from distribuicao_fornecedor  ");
     	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
+    	//hql.append(" and fornecedor_id in (:idFornecedor)  ");
     	hql.append(" ) order by dt  ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
         query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicao());
-        query.setParameterList("lancamentosPosBalanceamentoLancamento", LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamento());
 
     	return query.list();
     }
