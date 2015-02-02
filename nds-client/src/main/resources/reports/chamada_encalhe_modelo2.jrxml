@@ -289,7 +289,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 	<pageHeader>
 		<band height="86">
 			<frame>
-				<reportElement uuid="26ce4dd1-5027-4e4c-b04e-da7536b0f645" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="3" width="591" height="80" printWhenGroupChanges="COTA"/>
+				<reportElement uuid="26ce4dd1-5027-4e4c-b04e-da7536b0f645" stretchType="RelativeToBandHeight" x="0" y="3" width="591" height="80"/>
 				<rectangle>
 					<reportElement uuid="2ce20a32-8a66-492c-9502-aeb61a4835ae" style="borda" x="0" y="52" width="129" height="28"/>
 				</rectangle>
