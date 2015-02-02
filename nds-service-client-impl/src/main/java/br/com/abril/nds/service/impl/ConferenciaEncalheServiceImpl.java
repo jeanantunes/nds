@@ -3465,7 +3465,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao);
+		List<Date> datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
 	
 	@Transactional

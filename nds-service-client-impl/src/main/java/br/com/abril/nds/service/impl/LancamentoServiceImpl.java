@@ -643,7 +643,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			 lista.add(new Long(1));
 			 
 			 if(dinap.isEmpty()) {
-				 dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+				 dinap.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 			 
 			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
@@ -653,7 +653,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			 lista.add(new Long(2));
 			 
 			 if(fc.isEmpty()){
-				 fc.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+				 fc.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 			 
 			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
@@ -664,7 +664,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			 lista.add(new Long(2));
 				 
 			 if(dinapFC.isEmpty()) {
-				dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+				dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 				 
 			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinapFC);

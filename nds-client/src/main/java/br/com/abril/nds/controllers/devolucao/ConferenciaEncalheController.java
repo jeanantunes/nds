@@ -901,7 +901,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		
 		if(idProdutoEdicaoAnterior == null) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Informe o Código ou Nome do Produto.");
 		}
 		
 		try {
