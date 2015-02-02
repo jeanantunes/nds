@@ -58,7 +58,7 @@ $(function(){
 				</td>
 				<td width="152">Classificação:</td>
 				<td width="86">
-					<select id="classificacao" class="inputField">
+					<select id="caracteristica-distribuicao-classificacao" class="inputField">
 						<option value=""></option>
 						<c:forEach var="classificacao" items="${classificacoes}">
 							<option value="<c:out value="${classificacao.descricao}"/>">
@@ -69,7 +69,7 @@ $(function(){
 			</td>
 			<td width="48">Segmento:</td>
 			<td width="206">
-				<select id="segmento" class="inputField" style="width:100px;">
+				<select id="caracteristica-distribuicao-segmento" class="inputField" style="width:100px;">
 					<option value=""></option>
 					<c:forEach var="segmento" items="${segmentos}">
 						<option value="<c:out value="${segmento.descricao}"/>
