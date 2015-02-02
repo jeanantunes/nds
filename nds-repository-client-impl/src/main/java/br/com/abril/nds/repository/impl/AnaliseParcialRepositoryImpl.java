@@ -423,7 +423,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("        (case when plp.id is not null then 1 else 0 end) parcial, ");
         
         
-        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' ");
+        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' or l.status = 'EM_RECOLHIMENTO'");
         sql.append("            then ");
         sql.append("                (coalesce( ");
         sql.append("                    sum(mecReparte.QTDE), 0) - ");

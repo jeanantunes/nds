@@ -548,7 +548,7 @@ var analiseParcialController = $.extend(true, {
 		              legenda_element.removeClass('asterisco');
 		          } else {
 		              legenda_element.addClass('asterisco');
-		              analiseParcialController.addEventoLegenda();
+//		              analiseParcialController.addEventoLegenda();
 		          }
 		
 		          $('#total_reparte_sugerido').text(
@@ -825,7 +825,7 @@ var analiseParcialController = $.extend(true, {
                 $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
             }
             
-            analiseParcialController.addEventoLegenda();
+//            analiseParcialController.addEventoLegenda();
         });
        
     },
@@ -1630,12 +1630,12 @@ var analiseParcialController = $.extend(true, {
         .val('');
     },
     
-    addEventoLegenda: function () {
-        $('.asterisco').mouseenter(function (event){
-        	$('.asterisco').tipsy({live: true, gravity: 'sw', title: function(){return 'Reparte Alterado';}});
-        	setTimeout(function(){$(".tipsy").hide()},2000);
-        });
-    },
+//    addEventoLegenda: function () {
+//        $('.asterisco').mouseenter(function (event){
+//        	$('.asterisco').tipsy({live: true, gravity: 'sw', title: function(){return 'Reparte Alterado';}});
+//        	setTimeout(function(){$(".tipsy").hide()},2000);
+//        });
+//    },
 
     filtrarOrdenarPor : function(estudo) {
         
