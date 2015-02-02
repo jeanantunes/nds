@@ -6,15 +6,15 @@ init : function() {
 	
 	$("#btnPesquisar", consultaNotasController.workspace).keypress(function(event) {
 
-		var keynum;
+		var keynum = 0;
 
 		if (window.event) {
 
-			keynum = event.keyCode
+			keynum = event.keyCode;
 
 		} else if (event.which) {
 
-			keynum = event.which
+			keynum = event.which;
 		}
 
 		if (keynum == 13) {
