@@ -411,6 +411,11 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 * @return the balanceamentoSalvo
 	 */
 	public boolean isBalanceamentoSalvo() {
+		//return StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(statusLancamento);
+		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento);
+	}
+	
+	public boolean isBalanceamentoCadeado() {
 		return StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(statusLancamento);
 	}
 	
@@ -446,7 +451,8 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 * @return the balanceamentoConfirmado
 	 */
 	public boolean isBalanceamentoConfirmado() {
-		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento) || 
+		return 
+				StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento) || 
 				StatusLancamento.EM_RECOLHIMENTO.equals(statusLancamento) ||  
 				StatusLancamento.RECOLHIDO.equals(statusLancamento);
 	}
