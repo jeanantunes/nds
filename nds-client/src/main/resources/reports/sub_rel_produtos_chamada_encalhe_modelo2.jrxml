@@ -79,16 +79,16 @@
 					<reportElement uuid="ce8583b9-8d0b-49b5-8b15-36303da92fd9" x="475" y="86" width="100" height="1"/>
 				</line>
 				<textField pattern="">
-					<reportElement uuid="d15e91e5-ebb8-42b0-99dd-189bf61937ae" x="479" y="30" width="96" height="16"/>
+					<reportElement uuid="d15e91e5-ebb8-42b0-99dd-189bf61937ae" x="479" y="31" width="96" height="16"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{SUM_TOTAL_BRUTO}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="7ab5711a-f9f2-4e38-bf51-dc067ff101fb" x="331" y="30" width="142" height="14"/>
+					<reportElement uuid="7ab5711a-f9f2-4e38-bf51-dc067ff101fb" x="331" y="10" width="142" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-					<text><![CDATA[Valor Reparte R$]]></text>
+					<text><![CDATA[Qtde. Exs. Devolvidos]]></text>
 				</staticText>
 				<staticText>
 					<reportElement uuid="6dbc7636-23d0-4210-bf6b-45568c7e0442" x="331" y="50" width="142" height="16"/>
@@ -155,6 +155,16 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}.subtract($V{SUM_VALOR_ENCALHE}).doubleValue()]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement uuid="538cde89-3676-4e72-9937-7e2943f23a97" x="331" y="30" width="142" height="14"/>
+					<textElement textAlignment="Right">
+						<font size="10"/>
+					</textElement>
+					<text><![CDATA[Valor Reparte R$]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="a60bedd5-2e20-4366-bfe8-3926043485bb" x="475" y="25" width="100" height="1"/>
+				</line>
 			</band>
 		</groupFooter>
 	</group>
