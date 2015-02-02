@@ -2692,8 +2692,38 @@ public class LancamentoRepositoryImpl extends
         return query.list();
     }
     
+    public List<Date> obterDatasRecolhimentoValidas() {
 
-    public List<Date> obterDatasLancamentoValido(List<Long> idFornecedor) {
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select dtd                                                                         ");
+	    hql.append(" from                                                                               ");
+	    hql.append("     (  select distinct l.data_rec_distrib dtd,                                     ");
+	    hql.append("         (case when status in ('EM_RECOLHIMENTO') then 1 else 0 end) st             ");
+	    hql.append("     from lancamento l                                                              ");
+	    hql.append("     inner join                                                                     ");
+	    hql.append("         (                                                                          ");
+	    hql.append("             SELECT distinct data_rec_distrib                                       ");
+	    hql.append("             from lancamento l                                                      ");
+	    hql.append("             inner join                                                             ");
+	    hql.append("                 (                                                                  ");
+	    hql.append("                     select distinct data_rec_distrib dtd                           ");
+	    hql.append("                     from lancamento                                                ");
+	    hql.append("                     where status in (:produtosEmRecolhimento)                      ");
+	    hql.append("                 ) rs1 on rs1.dtd = l.data_rec_distrib                              ");
+	    hql.append("             ) rs2 on rs2.data_rec_distrib = l.data_rec_distrib                     ");
+	    hql.append("             where (                                                                ");
+	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 0 ");
+	    hql.append("             ) rs1                                                                  ");
+    	
+        Query query = getSession().createSQLQuery(hql.toString());
+        
+        query.setParameterList("produtosEmRecolhimento", Arrays.asList(StatusLancamento.EM_RECOLHIMENTO.name()));
+
+    	return query.list();
+    }
+
+    public List<Date> obterDatasLancamentoValidas() {
 
     	StringBuilder hql = new StringBuilder();
     	

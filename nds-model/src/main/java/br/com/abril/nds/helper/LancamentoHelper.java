@@ -27,4 +27,5 @@ public class LancamentoHelper {
 				, StatusLancamento.RECOLHIDO
 				, StatusLancamento.FECHADO);		
 	}
+	
 }

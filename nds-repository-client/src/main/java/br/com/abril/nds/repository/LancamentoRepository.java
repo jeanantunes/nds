@@ -35,20 +35,15 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
-	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
-			List<Long> idsFornecedores);
+	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data, List<Long> idsFornecedores);
 
 	void atualizarLancamento(Long idLancamento, Date novaDataLancamentoPrevista);
 
-	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(
-			List<Date> periodoDistribuicao, List<Long> fornecedores,
-			GrupoProduto grupoCromo);
+	List<ResumoPeriodoBalanceamentoDTO> buscarResumosPeriodo(List<Date> periodoDistribuicao, List<Long> fornecedores, GrupoProduto grupoCromo);
 
-	List<Lancamento> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
-			Date data, Long idFornecedor, Boolean estudo);
+	List<Lancamento> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo);
 
-	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor,
-			Boolean estudo);
+	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor, Boolean estudo);
 
 	Lancamento obterLancamentoPosteriorDataLancamento(Date dataPrevista, Long idProdutoEdicao);
 
@@ -70,9 +65,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return List<ProdutoRecolhimentoDTO>
 	 */
-	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(
-			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores,
-			GrupoProduto grupoCromo);
+	List<ProdutoRecolhimentoDTO> obterBalanceamentoRecolhimento(Intervalo<Date> periodoRecolhimento, List<Long> fornecedores, GrupoProduto grupoCromo);
 
 	/**
 	 * Método que retorna o balanceamento do recolhimento referentes a um
@@ -179,8 +172,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return Date
 	 */
-	public abstract Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao,
-			Date dataOperacao);
+	public abstract Date obterDataUltimoLancamentoParcial(Long idProdutoEdicao, Date dataOperacao);
 
 	/**
 	 * Obtém a ultima (mais atual) dataLancamentoDistribuidor de determinado
@@ -192,8 +184,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @return Date.
 	 */
-	public Date obterDataUltimoLancamento(Long idProdutoEdicao,
-			Date dataOperacao);
+	public Date obterDataUltimoLancamento(Long idProdutoEdicao, Date dataOperacao);
 
 	/**
 	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
@@ -206,9 +197,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            Fim do intervalo para recolhimento.
 	 * @return
 	 */
-	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
-			Long idFornecedor, Calendar dataInicioRecolhimento,
-			Calendar dataFimRecolhimento);
+	public abstract List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento);
 
 	/**
 	 * Método que retorna os produtos do balanceamento do lançamento referentes
@@ -230,8 +219,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @param dataOperacao
 	 * @return Date
 	 */
-	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(
-			Date dataOperacao);
+	public Date buscarUltimoBalanceamentoLancamentoRealizadoDia(Date dataOperacao);
 
 	/**
 	 * Busca último balanceamento de lançamento realizado no sistema
@@ -246,8 +234,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * @param dataOperacao
 	 * @return Date
 	 */
-	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(
-			Date dataOperacao);
+	public Date buscarUltimoBalanceamentoRecolhimentoRealizadoDia(Date dataOperacao);
 
 	/**
 	 * Busca último balanceamento de recolhimento realizado no sistema
@@ -290,8 +277,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - fornecedores dos produtos
 	 * @return lista lancamentos cancelados
 	 */
-	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(
-			Intervalo<Date> periodo, List<Long> idFornecedores);
+	public List<ProdutoLancamentoCanceladoDTO> obterLancamentosCanceladosPor(Intervalo<Date> periodo, List<Long> idFornecedores);
 
 	/**
 	 * Verifica se existe Matriz de Balanciamento co status Planejado ou
@@ -313,14 +299,11 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 */
 	Lancamento obterProximoLancamento(Lancamento lancamentoAtual);
 
-	Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao,
-			String propertyLancamentoDistribuidor);
+	Date obterDataMinimaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor);
 
-	Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao,
-			String propertyLancamentoDistribuidor);
+	Date obterDataMaximaProdutoEdicao(Long idProdutoEdicao, String propertyLancamentoDistribuidor);
 
-	List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(
-			Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoFuroCota);
+	List<MovimentoEstoqueCota> buscarMovimentosEstoqueCotaParaFuro(Lancamento lancamento, TipoMovimentoEstoque tipoMovimentoFuroCota);
 	
 	Boolean existeLancamentoNaoBalanceado(Date dataLancamento);
 
@@ -328,8 +311,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterLancamentosPrevistosPorPeriodo(Intervalo<Date> periodoDistribuicao);
 	
-	List<Lancamento> obterLancamentosARecolherNaSemana(
-			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
+	List<Lancamento> obterLancamentosARecolherNaSemana(Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
 	
 	boolean existeCobrancaParaLancamento(Long idLancamento);
 
@@ -337,8 +319,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	LancamentoDTO obterLancamentoPorID(Long idLancamento);
 
-	void alterarLancamento(Long idLancamento,Date date, StatusLancamento expedido,
-			Expedicao expedicao);
+	void alterarLancamento(Long idLancamento,Date date, StatusLancamento expedido, Expedicao expedicao);
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente);
 	
@@ -394,8 +375,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeConferenciaEncalheParaLancamento(Long idLancamento);
 
-	boolean existeConferenciaEncalheParaLancamento(Long id,
-			TipoChamadaEncalhe matrizRecolhimento);
+	boolean existeConferenciaEncalheParaLancamento(Long id, TipoChamadaEncalhe matrizRecolhimento);
 	
 	public List<Lancamento> obterPorEstudo(Estudo estudo);
 
@@ -423,7 +403,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo);
 	
-	List<Date> obterDatasLancamentoValido(List<Long> idFornecedor);
+	List<Date> obterDatasLancamentoValidas();
+	
+	List<Date> obterDatasRecolhimentoValidas();
 	
 	Lancamento obterParaAtualizar(Long id);
 	
@@ -436,4 +418,5 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	boolean existemLancamentosConfirmados(Date dataRecolhimento);
 
 	boolean isRedistribuicao(String codigoProduto, Long numeroEdicao);
+	
 }
