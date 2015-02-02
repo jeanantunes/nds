@@ -256,6 +256,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 
 	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
+		this.estoque = reparte;
 	}
 	
 	public boolean isItemFinalizado() {
