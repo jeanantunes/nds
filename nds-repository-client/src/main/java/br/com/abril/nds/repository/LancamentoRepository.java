@@ -426,7 +426,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo);
 	
-	List<Date> obterDatasLancamentoValido(List<Long> idFornecedor);
+	List<Date> obterDatasLancamentoValidas();
+	
+	List<Date> obterDatasRecolhimentoValidas();
 	
 	Lancamento obterParaAtualizar(Long id);
 	
