@@ -40,7 +40,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
 		.append(" estoqueProd.QTDE_JURAMENTADO as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
-		.append(" estoqueProd.QTDE as estoque,")
+//		.append(" estoqueProd.QTDE as estoque,")
         
 		.append(" (SELECT sum(lc.REPARTE_PROMOCIONAL) FROM lancamento lc join periodo_lancamento_parcial plcp on plcp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ")
         .append(" 		WHERE lc.PRODUTO_EDICAO_ID = prodEdic.id and plcp.NUMERO_PERIODO = plp.NUMERO_PERIODO) AS promo, ")

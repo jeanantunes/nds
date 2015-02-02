@@ -203,7 +203,7 @@ public class AnaliseParcialController extends BaseController {
     		
     		DetalhesEdicoesBasesAnaliseEstudoDTO detalhes = analiseParcialService.obterReparteEVendaTotal(edicoesDTO.getCodigoProduto(), 
 				edicoesDTO.getEdicao().longValue(), pe.getTipoClassificacaoProduto().getId(), 
-				edicoesDTO.getPeriodo() != null ? Integer.parseInt(edicoesDTO.getPeriodo()) : null);
+				!edicoesDTO.getPeriodo().equals("null") ? Integer.parseInt(edicoesDTO.getPeriodo()) : null);
 			
     		if(detalhes != null){
     			edicoesDTO.setReparte(new BigDecimal(detalhes.getReparte()));
