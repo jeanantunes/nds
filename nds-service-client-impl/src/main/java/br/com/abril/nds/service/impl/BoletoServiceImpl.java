@@ -322,11 +322,9 @@ public class BoletoServiceImpl implements BoletoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Banco não encontrado!");
         }
         
-        final ControleBaixaBancaria controleBaixa =
-                controleBaixaRepository.obterControleBaixaBancaria(dataPagamento, banco);
+        final ControleBaixaBancaria controleBaixa = controleBaixaRepository.obterControleBaixaBancaria(dataPagamento, banco);
         
-        if (controleBaixa != null
-                && controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
+        if (controleBaixa != null && controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "Já foi realizada baixa automática para a data de pagamento informada e banco " + banco.getNome()
@@ -342,8 +340,7 @@ public class BoletoServiceImpl implements BoletoService {
                     "deve ser igual ao valor informado!");
         }
         
-        controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,
-                dataOperacao, dataPagamento, usuario, banco);
+        controleBaixaService.alterarControleBaixa(StatusControle.INICIADO, dataOperacao, dataPagamento, usuario, banco);
         
         final ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
         
@@ -354,10 +351,23 @@ public class BoletoServiceImpl implements BoletoService {
                 
                 for (final PagamentoDTO pagamento : arquivoPagamento.getListaPagemento()) {
                     
-                    this.baixarBoleto(TipoBaixaCobranca.AUTOMATICA, pagamento, usuario,
-                            arquivoPagamento.getNomeArquivo(),
-                            dataNovoMovimento, resumoBaixaBoletos, banco,
-                            dataPagamento);
+                	boolean ignorarDataPagamento = true;
+            		try {
+            			if (pagamento != null && pagamento.getNossoNumero() != null && Integer.parseInt(pagamento.getNossoNumero()) > 0) {
+            				ignorarDataPagamento = false;
+            			}
+            		} catch (NumberFormatException nfe) {
+            			
+            		}
+            		
+            		if (!ignorarDataPagamento) {
+            			
+            			this.baixarBoleto(TipoBaixaCobranca.AUTOMATICA, pagamento, usuario,
+            					arquivoPagamento.getNomeArquivo(),
+            					dataNovoMovimento, resumoBaixaBoletos, banco,
+            					dataPagamento);
+            		}
+                	
                 }
                 
                 controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO,
@@ -1154,8 +1164,8 @@ public class BoletoServiceImpl implements BoletoService {
     private void validarDadosEntradaBaixaManual(final PagamentoDTO pagamento) {
         
         final List<String> listaMensagens = new ArrayList<String>();
-        
-        if (pagamento.getDataPagamento() == null) {
+		
+		if (pagamento.getDataPagamento() == null) {
             
             listaMensagens.add("Data de pagmento é obrigatória!");
         }
