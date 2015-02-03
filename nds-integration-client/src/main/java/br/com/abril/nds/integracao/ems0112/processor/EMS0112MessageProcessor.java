@@ -53,7 +53,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			sql.append(" LEFT JOIN FETCH e.enderecos ender ");
 			sql.append(" LEFT JOIN FETCH e.telefones tel ");
 			sql.append(" JOIN FETCH e.pessoaJuridica p ");
-			sql.append(" WHERE e.codigo = :codigoEditor ");
+			sql.append(" WHERE e.codigo = :codigoEditor AND e.ativo = true ");
 			
 			Query query = getSession().createQuery(sql.toString());
 			query.setParameter("codigoEditor", input.getCodigoEditor());

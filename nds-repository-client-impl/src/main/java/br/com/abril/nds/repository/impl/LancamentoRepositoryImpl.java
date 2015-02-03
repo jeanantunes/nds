@@ -1993,7 +1993,7 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataBase", dataBase);
-		query.setParameter("statusRecolhido",StatusLancamento.RECOLHIDO);
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
 		query.setParameter("grupoRecolhimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
 
 		return query.list();
