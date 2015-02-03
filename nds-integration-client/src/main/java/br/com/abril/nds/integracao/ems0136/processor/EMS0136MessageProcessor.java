@@ -356,7 +356,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		PeriodoLancamentoParcial ultimoPeriodo = parcial.getPeriodoFinal();
 
-		if (ultimoPeriodo.equals(periodo) || ultimoPeriodo.after(periodo)) {
+		if (ultimoPeriodo != null && (ultimoPeriodo.equals(periodo) || ultimoPeriodo.after(periodo))) {
 
 			return periodo;
 		} 
