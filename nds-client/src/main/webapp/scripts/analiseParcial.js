@@ -1188,22 +1188,27 @@ var analiseParcialController = $.extend(true, {
 
 
         $('#liberar').click(function(event){
-            if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
-            	var id = $('#estudoId').val();
-            		$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
-            				[{name : 'estudoId', value : id}],
-            				
-            				function(result) {
-            					analiseParcialController.liberarEstudo();
-		            		},
-		            		function(result) {
-		            			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
-		            		},
-		            		null
-            		);
-            		
-            }
-            event.preventDefault();
+            
+        	setTimeout(function(){
+        	
+	        	if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
+	            	var id = $('#estudoId').val();
+	            		$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
+	            				[{name : 'estudoId', value : id}],
+	            				
+	            				function(result) {
+	            					analiseParcialController.liberarEstudo();
+			            		},
+			            		function(result) {
+			            			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
+			            		},
+			            		null
+	            		);
+	            		
+	            }
+	            event.preventDefault();
+	            
+        	},1500);
         });
         
         $('#naoLiberar').click(function(event){
@@ -1238,7 +1243,7 @@ var analiseParcialController = $.extend(true, {
     	if ($('#status_estudo').text() == 'Liberado') {
             analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
             return false;
-        }else if (setTimeout(function(){$('#saldo_reparte').html() != 0 },1500)) {
+        }else if ($('#saldo_reparte').html() != 0) {
             analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             return false;
     	}else{
