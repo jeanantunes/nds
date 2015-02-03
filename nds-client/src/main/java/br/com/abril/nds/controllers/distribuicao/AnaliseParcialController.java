@@ -206,8 +206,8 @@ public class AnaliseParcialController extends BaseController {
 				!edicoesDTO.getPeriodo().equals("null") ? Integer.parseInt(edicoesDTO.getPeriodo()) : null);
 			
     		if(detalhes != null){
-    			edicoesDTO.setReparte(new BigDecimal(detalhes.getReparte()));
-    			edicoesDTO.setVenda(new BigDecimal(detalhes.getVenda()));
+    			edicoesDTO.setReparte(detalhes.getReparte() != null ? new BigDecimal(detalhes.getReparte()) : new BigDecimal(0));
+    			edicoesDTO.setVenda(detalhes.getVenda() != null ? new BigDecimal(detalhes.getVenda()) : new BigDecimal(0));
     			edicoesDTO.setDataLancamento(detalhes.getDataLancamento());
     		}
     	

@@ -1188,21 +1188,20 @@ var analiseParcialController = $.extend(true, {
 
 
         $('#liberar').click(function(event){
-            if(analiseParcialController.verificacoesParaLiberarEstudo()) {
-                
+            if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
             	var id = $('#estudoId').val();
-		    	
-    	    	$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
-    	    			[{name : 'estudoId', value : id}],
-    				
-	    			function(result) {
-    	    			analiseParcialController.liberarEstudo();
-    	    		},
-    				function(result) {
-    					analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
-    				},
-    				null
-    			);
+            		$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
+            				[{name : 'estudoId', value : id}],
+            				
+            				function(result) {
+            					analiseParcialController.liberarEstudo();
+		            		},
+		            		function(result) {
+		            			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
+		            		},
+		            		null
+            		);
+            		
             }
             event.preventDefault();
         });
@@ -1239,13 +1238,12 @@ var analiseParcialController = $.extend(true, {
     	if ($('#status_estudo').text() == 'Liberado') {
             analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
             return false;
-        }else if ($('#saldo_reparte').html() != 0) {
+        }else if (setTimeout(function(){$('#saldo_reparte').html() != 0 },1500)) {
             analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             return false;
     	}else{
     		return true;
     	}
-    	
     },
     
     liberarEstudo : function(){
@@ -1890,6 +1888,17 @@ var analiseParcialController = $.extend(true, {
 		for(var y = 0; y < analiseParcialController.detalheEdicoesBases.length; y++){
 			detalheEdicao = analiseParcialController.detalheEdicoesBases[y];
 			
+			var reparte;
+			var venda;
+			
+			if(detalheEdicao.reparte != undefined){
+				reparte = detalheEdicao.reparte != 0 ? detalheEdicao.reparte : '';
+			}
+			
+			if(detalheEdicao.venda != undefined){
+				venda = detalheEdicao.venda != 0 ? detalheEdicao.venda : '';
+			}
+			
 				$("#analiseParcialPopUpCodProduto", analiseParcialController.workspace).append(
 				'<td class="class_linha_1">'+(detalheEdicao.codigoProduto != undefined ? detalheEdicao.codigoProduto : "")+'</td>');
 		
@@ -1903,10 +1912,10 @@ var analiseParcialController = $.extend(true, {
 						'<td width="130" align="center" class="class_linha_2">' + (detalheEdicao.dataLancamento != undefined ? detalheEdicao.dataLancamento : "") + '</td>');
 
 	 			$("#analiseParcialPopUpReparte", analiseParcialController.workspace).append(
-					'<td align="right" class="class_linha_1">' + (detalheEdicao.reparte != undefined ? detalheEdicao.reparte : "") +'</td>');
+					'<td align="right" class="class_linha_1">' + (reparte) +'</td>');
                 
                 $("#analiseParcialPopUpVenda", analiseParcialController.workspace).append(
-    					'<td align="right" class="class_linha_1">' + (detalheEdicao.venda != undefined ? detalheEdicao.venda : "") + '</td>');
+    					'<td align="right" class="class_linha_1">' + (venda) + '</td>');
 		}
 		
 		// por estética de layout, insiro elementos td vazios
