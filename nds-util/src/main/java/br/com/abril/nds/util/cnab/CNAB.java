@@ -411,23 +411,23 @@ public class CNAB {
     	
     	CNAB cnab = new CNAB(PadraoCNAB.CNAB400);
 
-    	cnab.indiceDataPagamentoInicio = 366;
-    	cnab.indiceDataPagamentoFim = 391;
+    	cnab.indiceDataPagamentoInicio = 295;
+    	cnab.indiceDataPagamentoFim = 301;
 		
-    	cnab.indiceNossoNumeroInicio = 63;
+    	cnab.indiceNossoNumeroInicio = 62;
     	cnab.indiceNossoNumeroFim = 70;
 		
-    	cnab.indiceValorPagamentoInicio = 127;
-    	cnab.indiceValorPagamentoFim = 139;
+    	cnab.indiceValorPagamentoInicio = 254;
+    	cnab.indiceValorPagamentoFim = 266;
 		
     	cnab.indiceNumeroRegistroInicio = 395;
 		cnab.indiceNumeroRegistroFim = 400;
 
-		cnab.indiceNumeroAgenciaInicio = 143;
-		cnab.indiceNumeroAgenciaFim = 147;
+		cnab.indiceNumeroAgenciaInicio = 26;
+		cnab.indiceNumeroAgenciaFim = 30;
 		
-		cnab.indiceNumeroContaInicio = 24;
-		cnab.indiceNumeroContaFim = 28;
+		cnab.indiceNumeroContaInicio = 33;
+		cnab.indiceNumeroContaFim = 38;
 		
 		return cnab;
 	}
