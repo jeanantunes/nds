@@ -91,9 +91,11 @@ public class BancoServiceImpl implements BancoService {
 	@Transactional(readOnly=true)
 	@Override
 	public BancoVO obterDadosBanco(long idBanco) {
-		BancoVO bancoVO=null;
+		
+		BancoVO bancoVO = null;
 		Banco banco = bancoRepository.buscarPorId(idBanco);
-		if (banco!=null){
+		
+		if (banco != null) {
 			bancoVO = new BancoVO();
 			bancoVO.setIdBanco(banco.getId());
 			bancoVO.setNumero(banco.getNumeroBanco());
@@ -109,8 +111,12 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());
 			bancoVO.setVrMulta(banco.getVrMulta());
-			bancoVO.setInstrucoes(banco.getInstrucoes());
+			bancoVO.setInstrucoes1(banco.getInstrucoes1());
+			bancoVO.setInstrucoes2(banco.getInstrucoes2());
+			bancoVO.setInstrucoes3(banco.getInstrucoes3());
+			bancoVO.setInstrucoes4(banco.getInstrucoes4());
 		}
+		
 		return bancoVO; 
 	}
 	

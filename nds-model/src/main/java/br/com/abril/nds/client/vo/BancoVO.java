@@ -18,7 +18,10 @@ public class BancoVO {
     boolean ativo;
     BigDecimal multa;
     BigDecimal vrMulta;
-    String instrucoes;
+    String instrucoes1;
+    String instrucoes2;
+    String instrucoes3;
+    String instrucoes4;
     
     public BancoVO(){
     	
@@ -29,7 +32,7 @@ public class BancoVO {
 			String codigoCedente, Long agencia, String digitoAgencia,
 			Long conta, String digito, String apelido, Integer carteira,
 			BigDecimal juros, boolean ativo, BigDecimal multa,
-			BigDecimal vrMulta, String instrucoes) {
+			BigDecimal vrMulta, String instrucoes1, String instrucoes2, String instrucoes3, String instrucoes4) {
 		super();
 		this.idBanco = idBanco;
 		this.numero = numero;
@@ -45,7 +48,10 @@ public class BancoVO {
 		this.ativo = ativo;
 		this.multa = multa;
 		this.vrMulta = vrMulta;
-		this.instrucoes = instrucoes;
+		this.instrucoes1 = instrucoes1;
+		this.instrucoes2 = instrucoes2;
+		this.instrucoes3 = instrucoes3;
+		this.instrucoes4 = instrucoes4;
 	}
 
 
@@ -169,12 +175,36 @@ public class BancoVO {
 		this.vrMulta = vrMulta;
 	}
 
-	public String getInstrucoes() {
-		return instrucoes;
+	public String getInstrucoes1() {
+		return instrucoes1;
 	}
 
-	public void setInstrucoes(String instrucoes) {
-		this.instrucoes = instrucoes;
+	public void setInstrucoes1(String instrucoes1) {
+		this.instrucoes1 = instrucoes1;
+	}
+
+	public String getInstrucoes2() {
+		return instrucoes2;
+	}
+
+	public void setInstrucoes2(String instrucoes2) {
+		this.instrucoes2 = instrucoes2;
+	}
+
+	public String getInstrucoes3() {
+		return instrucoes3;
+	}
+
+	public void setInstrucoes3(String instrucoes3) {
+		this.instrucoes3 = instrucoes3;
+	}
+
+	public String getInstrucoes4() {
+		return instrucoes4;
+	}
+
+	public void setInstrucoes4(String instrucoes4) {
+		this.instrucoes4 = instrucoes4;
 	}
 
 

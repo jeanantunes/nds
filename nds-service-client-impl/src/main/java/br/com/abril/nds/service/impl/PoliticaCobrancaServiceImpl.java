@@ -320,8 +320,10 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
                     parametroCobrancaDTO.setTaxaMulta(banco.getMulta());
                     parametroCobrancaDTO.setValorMulta(banco.getVrMulta());
                     parametroCobrancaDTO.setTaxaJuros(banco.getJuros());
-                    parametroCobrancaDTO.setInstrucoes(banco.getInstrucoes());
-                    
+                    parametroCobrancaDTO.setInstrucoes1(banco.getInstrucoes1());
+                    parametroCobrancaDTO.setInstrucoes2(banco.getInstrucoes2());
+                    parametroCobrancaDTO.setInstrucoes3(banco.getInstrucoes3());
+                    parametroCobrancaDTO.setInstrucoes4(banco.getInstrucoes4());
                 }
                 parametroCobrancaDTO.setTipoCobranca(formaCobranca.getTipoCobranca());
                 
@@ -349,32 +351,31 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         FormaCobranca formaCobranca = null;
         Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
         Banco banco = null;
-        boolean novaPolitica=false;
-        boolean novaForma=false;
+        boolean novaPolitica = false;
+        boolean novaForma = false;
         
-        if (parametroCobrancaDTO.getIdBanco()!=null) {
+        if (parametroCobrancaDTO.getIdBanco() != null) {
             banco=bancoRepository.buscarPorId(parametroCobrancaDTO.getIdBanco());
         }
         
         
-        if (parametroCobrancaDTO.getIdPolitica()!=null) {
+        if (parametroCobrancaDTO.getIdPolitica() != null) {
             politica = politicaCobrancaRepository.buscarPorId(parametroCobrancaDTO.getIdPolitica());
         }
         
         
         if(politica==null) {
             
-            if (politicaCobrancaRepository.verificarPorTipoCobrancaPor(parametroCobrancaDTO.getTipoCobranca())){
+            if (politicaCobrancaRepository.verificarPorTipoCobrancaPor(parametroCobrancaDTO.getTipoCobranca())) {
                 
                 throw new ValidacaoException(
                         TipoMensagem.WARNING,
-                        "Já existe parâmetro cadastrado para o Tipo de Pagamento "
-                                +
+                        "Já existe parâmetro cadastrado para o Tipo de Pagamento " +
                                 parametroCobrancaDTO.getTipoCobranca().getDescricao());
             }
             
             novaPolitica = true;
-            novaForma=true;
+            novaForma = true;
             politica = new PoliticaCobranca();
             formaCobranca = new FormaCobranca();
         } else {
@@ -382,7 +383,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
             
             formaCobranca = politica.getFormaCobranca();
             
-            if (formaCobranca!=null){
+            if (formaCobranca!=null) {
                 novaForma=false;
                 
                 concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
@@ -404,7 +405,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
         final PoliticaCobranca parametroCobrancaPrincipal = this.obterPoliticaCobrancaPrincipal();
         
-        if(parametroCobrancaPrincipal != null && parametroCobrancaDTO.isPrincipal()){
+        if(parametroCobrancaPrincipal != null && parametroCobrancaDTO.isPrincipal()) {
             parametroCobrancaPrincipal.setPrincipal(false);
             politicaCobrancaRepository.alterar(parametroCobrancaPrincipal);
         }
@@ -418,7 +419,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         politica.setFatorVencimento(Integer.valueOf(parametroCobrancaDTO.getFatorVencimento().toString()));
         politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
         
-        if(parametroCobrancaDTO.isPrincipal()){
+        if(parametroCobrancaDTO.isPrincipal()) {
         	 politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
         	 this.atualizarAcumuloDeDividas(parametroCobrancaDTO.isAcumulaDivida());
         }
@@ -440,9 +441,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
         formaCobranca.setVencimentoDiaUtil(parametroCobrancaDTO.isVencimentoDiaUtil());
         
-        if(TipoCobranca.BOLETO.equals(parametroCobrancaDTO.getTipoCobranca()) || TipoCobranca.BOLETO_EM_BRANCO.equals(parametroCobrancaDTO.getTipoCobranca())){
+        if(TipoCobranca.BOLETO.equals(parametroCobrancaDTO.getTipoCobranca()) || TipoCobranca.BOLETO_EM_BRANCO.equals(parametroCobrancaDTO.getTipoCobranca())) {
             formaCobranca.setFormaCobrancaBoleto(parametroCobrancaDTO.getFormaCobrancaBoleto());
-        }else{
+        } else {
             formaCobranca.setFormaCobrancaBoleto(null);
         }
         
@@ -450,63 +451,63 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         //CONCENTRACAO COBRANCA (DIAS DA SEMANA)
         concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
         ConcentracaoCobrancaCota concentracaoCobranca;
-        if (parametroCobrancaDTO.isDomingo()){
+        if (parametroCobrancaDTO.isDomingo()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.DOMINGO);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
             concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
             concentracoesCobranca.add(concentracaoCobranca);
         }
-        if (parametroCobrancaDTO.isSegunda()){
+        if (parametroCobrancaDTO.isSegunda()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.SEGUNDA_FEIRA);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
             concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
             concentracoesCobranca.add(concentracaoCobranca);
         }
-        if (parametroCobrancaDTO.isTerca()){
+        if (parametroCobrancaDTO.isTerca()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.TERCA_FEIRA);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
             concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
             concentracoesCobranca.add(concentracaoCobranca);
         }
-        if (parametroCobrancaDTO.isQuarta()){
+        if (parametroCobrancaDTO.isQuarta()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.QUARTA_FEIRA);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
             concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
             concentracoesCobranca.add(concentracaoCobranca);
         }
-        if (parametroCobrancaDTO.isQuinta()){
+        if (parametroCobrancaDTO.isQuinta()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.QUINTA_FEIRA);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
             concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
             concentracoesCobranca.add(concentracaoCobranca);
         }
-        if (parametroCobrancaDTO.isSexta()){
+        if (parametroCobrancaDTO.isSexta()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.SEXTA_FEIRA);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
             concentracaoCobrancaRepository.adicionar(concentracaoCobranca);
             concentracoesCobranca.add(concentracaoCobranca);
         }
-        if (parametroCobrancaDTO.isSabado()){
+        if (parametroCobrancaDTO.isSabado()) {
             
-            concentracaoCobranca=new ConcentracaoCobrancaCota();
+            concentracaoCobranca = new ConcentracaoCobrancaCota();
             concentracaoCobranca.setDiaSemana(DiaSemana.SABADO);
             concentracaoCobranca.setFormaCobranca(formaCobranca);
             
@@ -520,15 +521,15 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         
         
         formaCobranca.setFornecedores(null);
-        if ((parametroCobrancaDTO.getFornecedoresId()!=null)&&(parametroCobrancaDTO.getFornecedoresId().size()>0)){
+        if ((parametroCobrancaDTO.getFornecedoresId() != null) && (parametroCobrancaDTO.getFornecedoresId().size() > 0)) {
             
             final List<Long> idsFornecedor = parametroCobrancaDTO.getFornecedoresId();
             Fornecedor fornecedor;
             final Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
-            for (final Long idFornecedor : idsFornecedor){
+            for (final Long idFornecedor : idsFornecedor) {
                 
                 fornecedor = fornecedorService.obterFornecedorPorId(idFornecedor);
-                if (fornecedor!=null){
+                if (fornecedor != null) {
                     fornecedores.add(fornecedor);
                 }
             }
@@ -539,7 +540,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
         }
         
         
-        if(novaPolitica){
+        if(novaPolitica) {
             
             formaCobrancaRepository.adicionar(formaCobranca);
             
@@ -547,13 +548,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
             
             politicaCobrancaRepository.adicionar(politica);
             
-        }
-        else{
+        } else {
             
-            if(novaForma){
+            if(novaForma) {
                 formaCobrancaRepository.adicionar(formaCobranca);
-            }
-            else{
+            } else {
                 formaCobrancaRepository.merge(formaCobranca);
             }
             

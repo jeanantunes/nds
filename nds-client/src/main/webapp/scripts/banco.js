@@ -159,7 +159,7 @@ var bancoController = $.extend(true, {
 			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
-				height:310,
+				height:410,
 				width:655,
 				modal: true,
 				buttons: {
@@ -181,7 +181,7 @@ var bancoController = $.extend(true, {
 		
 			$( "#dialog-alterar", this.workspace).dialog({
 				resizable: false,
-				height:310,
+				height:410,
 				width:655,
 				modal: true,
 				buttons: {
@@ -319,20 +319,23 @@ var bancoController = $.extend(true, {
 		
 	    novoBanco : function() {
 			var param ={
-					 numero     : $("#newNumero", this.workspace).val(),
-					 nome       : $("#newNome", this.workspace).val(),
-					 codigoCedente    : $("#newCodigoCedente", this.workspace).val(),
-					 agencia    : $("#newAgencia", this.workspace).val(),
-					 digitoAgencia    : $("#newDigitoAgencia", this.workspace).val(),
-					 conta      : $("#newConta", this.workspace).val(),
-					 digito     : $("#newDigito", this.workspace).val(),
-					 apelido    : $("#newApelido", this.workspace).val(),
-					 carteira   : $("#newCarteira", this.workspace).val(),
-					 juros      : $("#newJuros", this.workspace).val(),
-					 ativo      : $("#newAtivo", this.workspace).is(':checked'),
-					 multa      : $("#newMulta", this.workspace).val(),
-					 vrMulta    : $("#newVrMulta", this.workspace).val(),
-					 instrucoes : $("#newInstrucoes", this.workspace).val()
+					 numero     	: $("#newNumero", this.workspace).val(),
+					 nome       	: $("#newNome", this.workspace).val(),
+					 codigoCedente	: $("#newCodigoCedente", this.workspace).val(),
+					 agencia    	: $("#newAgencia", this.workspace).val(),
+					 digitoAgencia	: $("#newDigitoAgencia", this.workspace).val(),
+					 conta      	: $("#newConta", this.workspace).val(),
+					 digito     	: $("#newDigito", this.workspace).val(),
+					 apelido    	: $("#newApelido", this.workspace).val(),
+					 carteira   	: $("#newCarteira", this.workspace).val(),
+					 juros      	: $("#newJuros", this.workspace).val(),
+					 ativo      	: $("#newAtivo", this.workspace).is(':checked'),
+					 multa      	: $("#newMulta", this.workspace).val(),
+					 vrMulta    	: $("#newVrMulta", this.workspace).val(),
+					 instrucoes1 	: $("#newInstrucoes1", this.workspace).val(),
+					 instrucoes2 	: $("#newInstrucoes2", this.workspace).val(),
+					 instrucoes3 	: $("#newInstrucoes3", this.workspace).val(),
+					 instrucoes4 	: $("#newInstrucoes4", this.workspace).val()
 			
 			};
 
@@ -366,7 +369,10 @@ var bancoController = $.extend(true, {
 					 ativo      : $("#alterAtivo", this.workspace).is(':checked'),					
 					 multa      : $("#alterMulta", this.workspace).val(),
 					 vrMulta    : $("#alterVrMulta", this.workspace).val(),
-					 instrucoes : $("#alterInstrucoes", this.workspace).val()};
+					 instrucoes1 : $("#alterInstrucoes1", this.workspace).val(),
+					 instrucoes2 : $("#alterInstrucoes2", this.workspace).val(),
+					 instrucoes3 : $("#alterInstrucoes3", this.workspace).val(),
+					 instrucoes4 : $("#alterInstrucoes4", this.workspace).val()};
 
 			$.postJSON(contextPath + "/banco/alteraBanco", param,
 					   function(result) {
@@ -409,7 +415,10 @@ var bancoController = $.extend(true, {
 			
 			$("#alterMulta", this.workspace).val(resultado.multa);
 			$("#alterVrMulta", this.workspace).val(resultado.vrMulta);
-			$("#alterInstrucoes", this.workspace).val(resultado.instrucoes);
+			$("#alterInstrucoes1", this.workspace).val(resultado.instrucoes1);
+			$("#alterInstrucoes2", this.workspace).val(resultado.instrucoes2);
+			$("#alterInstrucoes3", this.workspace).val(resultado.instrucoes3);
+			$("#alterInstrucoes4", this.workspace).val(resultado.instrucoes4);
 			
 			bancoController.formatarValores();
 			

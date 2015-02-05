@@ -97,9 +97,23 @@ label {
 
 				</tr>
 				<tr>
-					<td>Instruções:</td>
-					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes" maxlength="200"
-							style="width: 503px;"></textarea>
+					<td>Instruções 1:</td>
+					<td colspan="3"><textarea name="newInstrucoes1" id="newInstrucoes1" maxlength="200" style="width: 503px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 2:</td>
+					<td colspan="3"><textarea name="newInstrucoes2" id="newInstrucoes2" maxlength="200" style="width: 503px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 3:</td>
+					<td colspan="3"><textarea name="newInstrucoes3" id="newInstrucoes3" maxlength="200" style="width: 503px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 4:</td>
+					<td colspan="3"><textarea name="newInstrucoes4" id="newInstrucoes4" maxlength="200" style="width: 503px;"></textarea>
 					</td>
 				</tr>
 			</table>
@@ -178,9 +192,23 @@ label {
 					
 				</tr>
 				<tr>
-					<td>Instruções:</td>
-					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes" maxlength="200"
-							style="width: 510px;"></textarea>
+					<td>Instruções 1:</td>
+					<td colspan="3"><textarea name="alterInstrucoes1" id="alterInstrucoes1" maxlength="200" style="width: 510px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 2:</td>
+					<td colspan="3"><textarea name="alterInstrucoes2" id="alterInstrucoes2" maxlength="200" style="width: 510px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 3:</td>
+					<td colspan="3"><textarea name="alterInstrucoes3" id="alterInstrucoes3" maxlength="200" style="width: 510px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 4:</td>
+					<td colspan="3"><textarea name="alterInstrucoes4" id="alterInstrucoes4" maxlength="200" style="width: 510px;"></textarea>
 					</td>
 				</tr>
 			</table>

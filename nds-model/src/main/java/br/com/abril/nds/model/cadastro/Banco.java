@@ -46,8 +46,14 @@ public class Banco implements Serializable {
 	private Integer carteira;
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;
-	@Column(name = "INSTRUCOES")
-	private String instrucoes;
+	@Column(name = "INSTRUCOES_1")
+	private String instrucoes1;
+	@Column(name = "INSTRUCOES_2")
+	private String instrucoes2;
+	@Column(name = "INSTRUCOES_3")
+	private String instrucoes3;
+	@Column(name = "INSTRUCOES_4")
+	private String instrucoes4;
 	@Column(name = "JUROS")
 	private BigDecimal juros;
 	@Column(name = "MULTA")
@@ -143,12 +149,36 @@ public class Banco implements Serializable {
 		this.ativo = ativo;
 	}
 
-	public String getInstrucoes() {
-		return instrucoes;
+	public String getInstrucoes1() {
+		return instrucoes1;
 	}
-	
-	public void setInstrucoes(String instrucoes) {
-		this.instrucoes = instrucoes;
+
+	public void setInstrucoes1(String instrucoes1) {
+		this.instrucoes1 = instrucoes1;
+	}
+
+	public String getInstrucoes2() {
+		return instrucoes2;
+	}
+
+	public void setInstrucoes2(String instrucoes2) {
+		this.instrucoes2 = instrucoes2;
+	}
+
+	public String getInstrucoes3() {
+		return instrucoes3;
+	}
+
+	public void setInstrucoes3(String instrucoes3) {
+		this.instrucoes3 = instrucoes3;
+	}
+
+	public String getInstrucoes4() {
+		return instrucoes4;
+	}
+
+	public void setInstrucoes4(String instrucoes4) {
+		this.instrucoes4 = instrucoes4;
 	}
 
 	public BigDecimal getJuros() {

@@ -187,7 +187,7 @@ public class BancoController extends BaseController {
     public void novoBanco(final String numero, final String nome, final String codigoCedente, final String agencia,
             final String digitoAgencia, final String conta, final String digito, final String apelido,
             final Integer carteira, final BigDecimal juros, final boolean ativo, final BigDecimal multa,
-            final BigDecimal vrMulta, final String instrucoes) {
+            final BigDecimal vrMulta, final String instrucoes1, final String instrucoes2, final String instrucoes3, final String instrucoes4) {
         
         if (bancoService.obterBancoPorApelido(apelido) != null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
@@ -213,7 +213,10 @@ public class BancoController extends BaseController {
         banco.setAtivo(ativo);
         banco.setMulta(multa);
         banco.setVrMulta(vrMulta);
-        banco.setInstrucoes(instrucoes);
+        banco.setInstrucoes1(instrucoes1);
+        banco.setInstrucoes2(instrucoes2);
+        banco.setInstrucoes3(instrucoes3);
+        banco.setInstrucoes4(instrucoes4);
         
         try {
             bancoService.incluirBanco(banco);
@@ -270,7 +273,8 @@ public class BancoController extends BaseController {
     public void alteraBanco(final long idBanco, final String numero, final String nome, final String codigoCedente,
             final String agencia, final String digitoAgencia, final String conta, final String digito,
             final String apelido, final Integer carteira, final BigDecimal juros, final boolean ativo,
-            final BigDecimal multa, final BigDecimal vrMulta, final String instrucoes) {
+            final BigDecimal multa, final BigDecimal vrMulta, final String instrucoes1,
+            final String instrucoes2, final String instrucoes3, final String instrucoes4) {
         
         if (!httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido)
                 && bancoService.obterBancoPorApelido(apelido) != null) {
@@ -304,7 +308,10 @@ public class BancoController extends BaseController {
         banco.setAtivo(ativo);
         banco.setMulta(multa);
         banco.setVrMulta(vrMulta);
-        banco.setInstrucoes(instrucoes);
+        banco.setInstrucoes1(instrucoes1);
+        banco.setInstrucoes2(instrucoes2);
+        banco.setInstrucoes3(instrucoes3);
+        banco.setInstrucoes4(instrucoes4);
         
         try {
             bancoService.alterarBanco(banco);

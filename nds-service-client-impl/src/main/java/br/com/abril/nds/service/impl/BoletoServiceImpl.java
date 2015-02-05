@@ -1595,7 +1595,7 @@ public class BoletoServiceImpl implements BoletoService {
             final Integer numeroCota,
             final boolean aceitaPagamentoVencido,
             final boolean boletoEmBranco,
-            final List<PoliticaCobranca> politicasCobranca){
+            final List<PoliticaCobranca> politicasCobranca) {
         
         valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
         
@@ -1606,9 +1606,8 @@ public class BoletoServiceImpl implements BoletoService {
         
         if(pessoaCedente instanceof PessoaJuridica) {
             
-            nomeCedente = ((PessoaJuridica)pessoaCedente).getRazaoSocial();
-            documentoCedente = ((PessoaJuridica)pessoaCedente).getCnpj();
-            
+            nomeCedente = ((PessoaJuridica) pessoaCedente).getRazaoSocial();
+            documentoCedente = ((PessoaJuridica) pessoaCedente).getCnpj();
             
         } else {
             
@@ -1626,22 +1625,22 @@ public class BoletoServiceImpl implements BoletoService {
         
         //DADOS DO SACADO
         
-        String nomeSacado="";
+        String nomeSacado = "";
         
-        String documentoSacado="";
+        String documentoSacado = "";
         
-        if (pessoaSacado instanceof PessoaFisica){
+        if (pessoaSacado instanceof PessoaFisica) {
             nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
             documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
         }
-        if (pessoaSacado instanceof PessoaJuridica){
+        if (pessoaSacado instanceof PessoaJuridica) {
             nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
         }
         
-        if(numeroCota != null && numeroCota >0){
+        if(numeroCota != null && numeroCota >0) {
             corpoBoleto.setSacadoNome(numeroCota + " - "+ nomeSacado);
-        }else{
+        } else {
             corpoBoleto.setSacadoNome(nomeSacado);
         }
         
@@ -1650,15 +1649,14 @@ public class BoletoServiceImpl implements BoletoService {
         
         //ENDERECO DO SACADO
         
-        if (enderecoSacado!=null){
+        if (enderecoSacado != null) {
             corpoBoleto.setEnderecoSacadoUf(enderecoSacado.getUf());
             corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());
             corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());
             corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro());
             corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getTipoLogradouro() + " " + enderecoSacado.getLogradouro());
             corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero());
-        }
-        else{
+        } else {
             corpoBoleto.setEnderecoSacadoUf("SP");
             corpoBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
             corpoBoleto.setEnderecoSacadoCep("");
@@ -1743,10 +1741,10 @@ public class BoletoServiceImpl implements BoletoService {
         //PARAMETROS ?
         corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
-        corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes());
-        corpoBoleto.setBoletoInstrucao2("");
-        corpoBoleto.setBoletoInstrucao3("");
-        corpoBoleto.setBoletoInstrucao4("");
+        corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes1());
+        corpoBoleto.setBoletoInstrucao2(banco.getInstrucoes2());
+        corpoBoleto.setBoletoInstrucao3(banco.getInstrucoes3());
+        corpoBoleto.setBoletoInstrucao4(banco.getInstrucoes4());
         corpoBoleto.setBoletoInstrucao5("");
         corpoBoleto.setBoletoInstrucao6("");
         corpoBoleto.setBoletoInstrucao7("");
@@ -1942,9 +1940,9 @@ public class BoletoServiceImpl implements BoletoService {
         
         final boolean aceitaPagamentoVencido = distribuidorRepository.aceitaBaixaPagamentoVencido();
         
-        for(final String nossoNumero  : nossoNumeros){
+        for(final String nossoNumero : nossoNumeros) {
             
-            boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+            boleto = boletoRepository.obterPorNossoNumero(nossoNumero, null, false);
             
             if(boleto!= null){
                 corpos.add(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
@@ -1973,7 +1971,7 @@ public class BoletoServiceImpl implements BoletoService {
             corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor, pessoaSacado, aceitaPagamentoVencido));
         }
         
-        if(!corpos.isEmpty()){
+        if(!corpos.isEmpty()) {
             final GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
             final byte[] b = geradorBoleto.getByteGroupPdf();
             return b;
