@@ -547,8 +547,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
         estudoCopia.setDataCadastro(new Date());
         estudoCopia.setTipoGeracaoEstudo(TipoGeracaoEstudo.COPIA_PROPORCIONAL);
         
+        Integer pctePadrao = lancamento.getProdutoEdicao().getPacotePadrao();
+        
         if(pacotePadrao == null){
-        	estudoCopia.setPacotePadrao(new BigInteger("1"));
+        	estudoCopia.setPacotePadrao(new BigInteger(pctePadrao.toString()));
         	estudoCopia.setDistribuicaoPorMultiplos(0);
         }
         
