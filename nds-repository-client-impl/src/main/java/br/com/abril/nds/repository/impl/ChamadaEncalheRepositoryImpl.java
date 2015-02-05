@@ -687,58 +687,62 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
+	
 	public Map<Long, List<ProdutoEmissaoDTO>> obterProdutosEmissaoCE(FiltroEmissaoCE filtro) {
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select cota.id as idCota,                                              ");
-		hql.append("        produtoEdicao.codigoDeBarras as codigoBarras, 	                ");
-		hql.append(" 	    produto.codigo as codigoProduto, 				                ");
-		hql.append(" 	    produto.nome as nomeProduto, 					                ");
-		hql.append(" 	    coalesce(produtoEdicao.nomeComercial, produto.nomeComercial) as nomeComercial, 					    ");
-		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			                ");
-		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			                ");
-
-		hql.append(" 	    (movimentoCota.valoresAplicados.valorDesconto) as desconto, 	");
-		hql.append("		produtoEdicao.precoVenda as precoVenda,    		                ");
-		hql.append(" 	    periodoLancParcial.tipo as tipoRecolhimento, 		            ");
-		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento,       ");
-		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,            ");
-		hql.append("        chamadaEncalhe.dataRecolhimento as dataRecolhimento,            ");
-		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
-		
-		// case when count(conferenci23_.ID)>0 then 1 else 0 end as  col_15_0_,
-		
-		hql.append(" ( ");
-		hql.append(" sum(case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimentoCota.qtde else - movimentoCota.qtde end) ");
-		//hql.append(obterSubHqlQtdeReparte(filtro));
-		hql.append(" ) as reparte,	");
-
-		hql.append(" coalesce(sum(conferenciaEncalhe.qtde), 0) as quantidadeDevolvida, ");
-		//hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
-		
-		
-		hql.append(" case when count(conferenciaEncalhe.id) > 0 then true else false end as confereciaRealizada,");
-		//hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
-				
-		hql.append("		chamadaEncalhe.sequencia as sequencia, ");
-		
-		hql.append(" min(notaEnvio.numero) as numeroNotaEnvio ");
+		hql.append(" select                                                                                     ")
+		.append(" cota4_.ID as idCota,                                                                          ")
+        .append(" produtoedi5_.CODIGO_DE_BARRAS as codigoBarras,                                                ")
+        .append(" produto6_.CODIGO as codigoProduto,                                                            ")
+        .append(" produto6_.NOME as nomeProduto,                                                                ")
+        .append(" coalesce(produtoedi5_.NOME_COMERCIAL, produto6_.NOME_COMERCIAL) as nomeComercial,             ")
+        .append(" produtoedi5_.ID as idProdutoEdicao,                                                           ")
+        .append(" produtoedi5_.NUMERO_EDICAO as edicao,                                                         ")
+        .append(" movimentoe16_.VALOR_DESCONTO as desconto,                                                     ")
+        .append(" produtoedi5_.PRECO_VENDA as precoVenda,                                                       ")
+        .append(" periodolan11_.TIPO as tipoRecolhimento,                                                       ")
+        .append(" lancamento10_.DATA_LCTO_DISTRIBUIDOR as dataLancamento,                                       ")
+        .append(" chamadaenc1_.DATA_RECOLHIMENTO as dataRecolhimento,                                           ")
+        .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, 0) as precoComDesconto, ")
+        .append(" sum(case when tipomovime17_.OPERACAO_ESTOQUE= (case when (conferenci2_.DATA is not null) then 'SAIDA' else 'ENTRADA' end) then movimentoe16_.QTDE else -movimentoe16_.QTDE end ) as reparte, ")
+        .append(" coalesce(sum(conferenci2_.QTDE), 0) as quantidadeDevolvida,                                   ")
+        .append(" case when count(conferenci2_.id)>0 then 1 else 0 end as confereciaRealizada,                  ")
+        .append(" chamadaenc1_.SEQUENCIA as sequencia,                                                          ")
+        .append(" min(notaenvio15_.numero) as numeroNotaEnvio                                                   ");  
 		
 		gerarFromWhereProdutosCE(filtro, hql, param);
 		
-		hql.append(" group by chamadaEncalhe, cota.id ");
+		hql.append(" group by chamadaenc1_.ID , cota4_.ID ");
 		
-		hql.append(" order by chamadaEncalhe.dataRecolhimento, sequencia ");
+		hql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
 		
-		Query query =  getSession().createQuery(hql.toString());
+		SQLQuery query =  getSession().createSQLQuery(hql.toString());
 		
 		setParameters(query, param);
 		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+        query.addScalar("codigoBarras", StandardBasicTypes.STRING);
+        query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+        query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+        query.addScalar("nomeComercial", StandardBasicTypes.STRING);
+        query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+        query.addScalar("edicao", StandardBasicTypes.LONG);
+        query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("tipoRecolhimento", StandardBasicTypes.CLASS);
+        query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+        query.addScalar("dataRecolhimento", StandardBasicTypes.DATE);
+        query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
+        query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("quantidadeDevolvida", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("confereciaRealizada", StandardBasicTypes.BOOLEAN);
+        query.addScalar("sequencia", StandardBasicTypes.INTEGER);
+        query.addScalar("numeroNotaEnvio", StandardBasicTypes.LONG);
+        
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEmissaoDTO.class));
 		
 		List<ProdutoEmissaoDTO> listaProdutoEmissaoCota = query.list();
@@ -761,58 +765,73 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		return mapProdutosEmissaoCota;
+		
 	}
 
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
-
-		//TODO Ajuste alterações PARCIAIS
 		
-		hql.append(" from ChamadaEncalheCota chamEncCota 					                         ")
-		   .append(" join chamEncCota.chamadaEncalhe chamadaEncalhe 		                         ")
-		   .append(" left join chamEncCota.conferenciasEncalhe conferenciaEncalhe 			         ")
-		   .append(" left join conferenciaEncalhe.controleConferenciaEncalheCota controleConfEncalhe ")
-		   .append(" join chamEncCota.cota cota                                                      ")
-		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		                         ")
-		   .append(" join produtoEdicao.produto produto 					                         ")
-		   .append(" join produto.fornecedores fornecedores 				                         ")
-		   .append(" INNER join chamadaEncalhe.lancamentos lancamentos 			                     ")
-		   .append(" left join lancamentos.periodoLancamentoParcial periodoLancParcial 	             ")
-		   .append(" left join lancamentos.estudo estudo                                             ")
-           
-		   .append(" left join estudo.estudoCotas estudoCotas                                        ")
-           .append(" left join estudoCotas.itemNotaEnvios itensNotaEnvio                             ")
-           .append(" left join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio                    ")
-		   
-		   .append(" INNER JOIN lancamentos.movimentoEstoqueCotas  movimentoCota 	                 ")
-		   .append(" INNER JOIN movimentoCota.tipoMovimento tipoMovimento                            ")
-		   .append(" where (movimentoCota.id is null or movimentoCota.cota = cota)	                 ")
-		   .append(" and (estudoCotas.id is null or estudoCotas.cota = cota)                         ")
-		   .append(" and chamEncCota.postergado = :isPostergado                                      ")
-		   .append(" and movimentoCota.movimentoEstoqueCotaFuro is null                              ");
-		   // .append(" and chamEncCota.qtdePrevista>0  ")
+		hql.append("    	from CHAMADA_ENCALHE_COTA chamadaenc0_ inner join CHAMADA_ENCALHE chamadaenc1_ "); 
+        hql.append("    	    on chamadaenc0_.CHAMADA_ENCALHE_ID=chamadaenc1_.ID  ");
+	    hql.append("    	inner join PRODUTO_EDICAO produtoedi5_ ");
+	    hql.append("    	        on chamadaenc1_.PRODUTO_EDICAO_ID=produtoedi5_.ID "); 
+	    hql.append("    	inner join PRODUTO produto6_ ");
+	    hql.append("    	        on produtoedi5_.PRODUTO_ID=produto6_.ID"); 
+	    hql.append("    	inner join PRODUTO_FORNECEDOR fornecedor7_ ");
+	    hql.append("    	        on produto6_.ID=fornecedor7_.PRODUTO_ID"); 
+	    hql.append("    	inner join FORNECEDOR fornecedor8_ ");
+	    hql.append("    	        on fornecedor7_.fornecedores_ID=fornecedor8_.ID"); 
+	    hql.append("    	inner join CHAMADA_ENCALHE_LANCAMENTO lancamento9_ ");
+	    hql.append("    	        on chamadaenc1_.ID=lancamento9_.CHAMADA_ENCALHE_ID "); 
+	    hql.append("    	inner join LANCAMENTO lancamento10_ ");
+	    hql.append("    	        on lancamento9_.LANCAMENTO_ID=lancamento10_.ID  "); 
+	    hql.append("    	left outer join PERIODO_LANCAMENTO_PARCIAL periodolan11_  ");
+	    hql.append("    	        on lancamento10_.PERIODO_LANCAMENTO_PARCIAL_ID=periodolan11_.ID "); 
+	    hql.append("    	left outer join ESTUDO estudo12_  ");
+	    hql.append("    	        on lancamento10_.ESTUDO_ID=estudo12_.ID "); 
+	    hql.append("    	left outer join ESTUDO_COTA estudocota13_  ");
+	    hql.append("    	        on estudo12_.ID=estudocota13_.ESTUDO_ID "); 
+	    hql.append("    	left outer join NOTA_ENVIO_ITEM itemnotaen14_  ");
+	    hql.append("    	        on estudocota13_.ID=itemnotaen14_.ESTUDO_COTA_ID "); 
+	    hql.append("    	left outer join NOTA_ENVIO notaenvio15_  ");
+	    hql.append("    	        on itemnotaen14_.NOTA_ENVIO_ID=notaenvio15_.numero "); 
+	    hql.append("    	left outer join CONFERENCIA_ENCALHE conferenci2_  ");
+	    hql.append("    	        on chamadaenc0_.ID=conferenci2_.CHAMADA_ENCALHE_COTA_ID "); 
+	    hql.append("    	left outer join CONTROLE_CONFERENCIA_ENCALHE_COTA controleco3_  ");
+	    hql.append("    	        on conferenci2_.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=controleco3_.ID "); 
+	    hql.append("    	inner join MOVIMENTO_ESTOQUE_COTA movimentoe16_  ");
+	    hql.append("    	        on movimentoe16_.PRODUTO_EDICAO_ID = produtoedi5_.ID and movimentoe16_.COTA_ID = chamadaenc0_.COTA_ID ");
+	    hql.append("    	        and case when (conferenci2_.DATA is not null) then movimentoe16_.data = conferenci2_.DATA else lancamento10_.ID=movimentoe16_.LANCAMENTO_ID end ");
+	    hql.append("    	inner join TIPO_MOVIMENTO tipomovime17_  ");
+	    hql.append("    	        on movimentoe16_.TIPO_MOVIMENTO_ID=tipomovime17_.ID ");
+	    hql.append("    	inner join COTA cota4_  ");
+	    hql.append("    	        on chamadaenc0_.COTA_ID=cota4_.ID "); 
+	    hql.append("    	where (movimentoe16_.ID is null or movimentoe16_.COTA_ID=cota4_.ID) "); 
+	    hql.append("    	    and (estudocota13_.ID is null or estudocota13_.COTA_ID=cota4_.ID)  ");
+	    hql.append("    	    and chamadaenc0_.POSTERGADO = :isPostergado  ");
+	    hql.append("    	    and (movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null) ");	
 	
 		param.put("isPostergado", false);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
-			hql.append(" and chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			hql.append(" and chamadaenc1_.DATA_RECOLHIMENTO >=:dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			hql.append(" and chamadaenc1_.DATA_RECOLHIMENTO <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
 		}
 		
 		if (filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()){
 		    
-		    hql.append(" and fornecedores.id in (:fornec) ");
+		    hql.append(" and fornecedor7_.id in (:fornec) ");
 		    param.put("fornec", filtro.getFornecedores());
 		}
 		
 		if(filtro.getNumCotaDe() != null || filtro.getNumCotaAte() != null) {
 			
-			hql.append(" and cota.numeroCota between :numeroCotaDe and :numeroCotaAte ");
+			hql.append(" and cota4_.numero_cota between :numeroCotaDe and :numeroCotaAte ");
 			param.put("numeroCotaDe", filtro.getNumCotaDe());
 			param.put("numeroCotaAte", filtro.getNumCotaAte());
 		}
