@@ -145,7 +145,6 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				}
 			    
 			} else if (padraoCNAB.isDetalhe(line)) {
-					
 				
 				if ( UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco) ||
 					 UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL.equals(codigoBanco)	){
@@ -170,7 +169,6 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				if(bancoCNAB.containsDataPagamento(line)) {
 					strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
 					pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento, padraoCNAB.getFormatoDataArquivoCNAB()));
-
 				}
 				
 				if(bancoCNAB.containsNossoNumero(line)) {
@@ -252,14 +250,20 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 	}
 	
-	
-
-	
 	private void validarLeituraLinha(PagamentoDTO pagamento) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (pagamento.getDataPagamento() == null) {
+		boolean ignorarDataPagamento = true;
+		try {
+			if (pagamento != null && pagamento.getNossoNumero() != null && Integer.parseInt(pagamento.getNossoNumero()) > 0) {
+				ignorarDataPagamento = false;
+			}
+		} catch (NumberFormatException nfe) {
+			
+		}
+		
+		if (!ignorarDataPagamento && pagamento.getDataPagamento() == null) {
 			
 			listaMensagens.add("Falha ao processar o arquivo: data de pagamento inválida!");
 		}
