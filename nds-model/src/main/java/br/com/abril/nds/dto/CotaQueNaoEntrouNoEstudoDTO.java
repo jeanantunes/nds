@@ -11,6 +11,7 @@ public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 	private String motivo;
 	private String siglaMotivo;
 	private BigInteger quantidade;
+	private String situacaoCota;
 	
 	public Integer getNumeroCota() {
 	    return numeroCota;
@@ -41,5 +42,11 @@ public class CotaQueNaoEntrouNoEstudoDTO implements Serializable {
 	}
 	public void setQuantidade(BigInteger quantidade) {
 	    this.quantidade = quantidade;
+	}
+	public String getSituacaoCota() {
+		return situacaoCota;
+	}
+	public void setSituacaoCota(String situacaoCota) {
+		this.situacaoCota = situacaoCota;
 	}
 }
