@@ -1935,6 +1935,13 @@ var analiseParcialController = $.extend(true, {
 			
 			var nomeProduto = detalheEdicao.nomeProduto != undefined ? detalheEdicao.nomeProduto : "";
 			
+			var novoNome = nomeProduto.split('.');
+			
+			var joinNome;
+			for ( i=0; i < novoNome.length; i++ ) {
+				joinNome += '. '+novoNome[i];
+			}
+			
 			if(detalheEdicao.reparte != undefined){
 				reparte = detalheEdicao.reparte != 0 ? detalheEdicao.reparte : '';
 			}
@@ -1947,7 +1954,7 @@ var analiseParcialController = $.extend(true, {
 				'<td class="class_linha_1">'+(detalheEdicao.codigoProduto != undefined ? detalheEdicao.codigoProduto : "")+'</td>');
 		
 				$("#analiseParcialPopUpNomeProduto", analiseParcialController.workspace).append(
-						'<td class="class_linha_1">'+(nomeProduto)+'</td>');
+						'<td class="class_linha_1">'+(joinNome)+'</td>');
 				
 				$("#analiseParcialPopUpNumeroEdicao", analiseParcialController.workspace).append(
 						'<td class="class_linha_1">'+(detalheEdicao.edicao != undefined ? detalheEdicao.edicao : "")+'</td>');
