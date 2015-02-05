@@ -1937,9 +1937,14 @@ var analiseParcialController = $.extend(true, {
 			
 			var novoNome = nomeProduto.split('.');
 			
-			var joinNome;
-			for ( i=0; i < novoNome.length; i++ ) {
-				joinNome += '. '+novoNome[i];
+			var joinNome = '';
+			
+			if(novoNome.length > 1){
+				for ( i=0; i < novoNome.length; i++ ) {
+					joinNome += novoNome[i] + '. ';
+				}
+			}else{
+				joinNome = novoNome;
 			}
 			
 			if(detalheEdicao.reparte != undefined){
