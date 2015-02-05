@@ -46,6 +46,7 @@ import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -104,6 +105,9 @@ public class AnaliseParcialController extends BaseController {
     
     @Autowired
     private RepartePdvService repartePdvService;
+    
+    @Autowired
+    private SituacaoCotaService situacaoCotaService;
     
     @Autowired
     private CotaService cotaService;
@@ -333,7 +337,7 @@ public class AnaliseParcialController extends BaseController {
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
     }
-
+    
     @Path("/liberar")
     @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {

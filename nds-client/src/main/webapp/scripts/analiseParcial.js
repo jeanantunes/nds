@@ -1315,8 +1315,8 @@ var analiseParcialController = $.extend(true, {
             var isReadOnly = (value.cell.siglaMotivo === 'CL' || value.cell.siglaMotivo === 'FN') ? 'readonly' : '';
 
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.siglaMotivo + '" id="'+i+'" style="width: 50px;" value="'+
-            value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
-            ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
+            value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' + 
+            ' situacaoCota="'+ value.cell.situacaoCota +'" ' + ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
         });
         
         if($("[id='dialog-cotas-estudos']", analiseParcialController.workspace).length > 1){
@@ -1331,8 +1331,41 @@ var analiseParcialController = $.extend(true, {
     validaMotivoCotaReparte : function(input) {
         var $input = $(input);
         $input.data('valid', false);
+        var situacaoCota;
 
         if ($input.val() !== '' && !isNaN($input.val()) && $input.val() > 0) {
+        	
+        	situacaoCota = $input.attr('situacaoCota');
+        	
+        	if(situacaoCota === 'SUSPENSO'){
+        		
+        		$("#dialog-confirmacao-cota-suspensa").dialog({
+                    escondeHeader: false,
+                    resizable : false,
+                    modal : true,
+                    buttons : {
+                        "Confirmar" : function() {
+                        	$(this).dialog("close");
+                        },
+                        "Cancelar" : function() {
+                        	$input.val('');
+                        	analiseParcialController.atualizaQuantidadeTotal($input);
+                        	$(this).dialog("close");
+                        	return;
+                        }
+                    },
+                    open: function() {
+                    	$(document.body).unbind("keydown");
+                    	
+                    	$("#dialog-confirmacao-cota-suspensa").keypress(function(e) {
+                          if (e.keyCode == $.ui.keyCode.ENTER || e.keyCode == $.ui.keyCode.ESCAPE) {
+                        	  e.preventDefault();
+                        	  $(this).dialog("close");
+                          }
+                        });
+                      },
+                });
+        	}
         	
         	var message = '';
         	
@@ -1438,7 +1471,7 @@ var analiseParcialController = $.extend(true, {
 
         return data;
     },
-
+    
     postMudarReparteLote: function () {
         $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/mudarReparteLote',
             analiseParcialController.getCotasComReparte(),
@@ -1500,7 +1533,6 @@ var analiseParcialController = $.extend(true, {
             buttons : {
                 "Confirmar" : function() {
                     var $inputsPreenchidos = $("#cotasNaoSelec tr td input").filter(function(){return this.value > 0;});
-
                     var isValid = true;
                     $inputsPreenchidos.each(function () {
                         if ($(this).data('valid') === false) {
@@ -1510,6 +1542,11 @@ var analiseParcialController = $.extend(true, {
                     });
 
                     if ($inputsPreenchidos.length > 0 && isValid) {
+                    	
+//                    	if ($inputsPreenchidos.filter('[motivo="SS"]').length > 0) {
+//                    		
+//                    	}
+                    	
                         if ($inputsPreenchidos.filter('[motivo="SM"]').length > 0) {
 
                             var params = [];

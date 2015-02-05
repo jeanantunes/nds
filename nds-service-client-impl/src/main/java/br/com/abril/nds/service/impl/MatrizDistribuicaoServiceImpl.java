@@ -528,7 +528,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		return estudo.getId();
     }
 
-    private EstudoGerado obterCopiaDeEstudo(EstudoGerado estudo, Lancamento lancamento) {
+    private EstudoGerado obterCopiaDeEstudo(EstudoGerado estudo, Lancamento lancamento, BigInteger pacotePadrao) {
         
         EstudoGerado estudoCopia = new EstudoGerado();
         
@@ -546,6 +546,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
         estudoCopia.setUsuario(this.usuarioService.getUsuarioLogado());
         estudoCopia.setDataCadastro(new Date());
         estudoCopia.setTipoGeracaoEstudo(TipoGeracaoEstudo.COPIA_PROPORCIONAL);
+        
+        if(pacotePadrao == null){
+        	estudoCopia.setPacotePadrao(new BigInteger("1"));
+        	estudoCopia.setDistribuicaoPorMultiplos(0);
+        }
         
         Long id = this.estudoGeradoRepository.adicionar(estudoCopia);
         
@@ -582,7 +587,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		BigInteger totalReparte = BigInteger.ZERO;
 	
 		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
-		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
+		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo, lancamento, vo.getPacotePadrao());
 		estudoCopia.setQtdeReparte(vo.getReparteDistribuido());
 		LinkedList<EstudoCotaGerado> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
 		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vo.getCodigoProduto(), vo.getNumeroEdicao().longValue());
