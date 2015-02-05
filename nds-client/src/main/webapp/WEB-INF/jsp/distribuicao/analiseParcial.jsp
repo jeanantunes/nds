@@ -646,7 +646,7 @@ table.dadosTab { margin-left: 370px;}
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
 	</div>
 	
-	<div id="dialog-confirmacao-cota-suspensa" title="Confirmação Cota suspensa" style="width: auto; min-height: 30px; height: 30px">
+	<div id="dialog-confirmacao-cota-suspensa" title="Confirmação Cota suspensa" style="display: none; width: auto; min-height: 30px; height: 30px" >
 		<p>Cota Suspensa, deseja adicionar?</p>
 	</div>
 
