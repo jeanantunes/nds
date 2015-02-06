@@ -688,6 +688,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public Map<Long, List<ProdutoEmissaoDTO>> obterProdutosEmissaoCE(FiltroEmissaoCE filtro) {
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
@@ -733,7 +734,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         query.addScalar("edicao", StandardBasicTypes.LONG);
         query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL);
-        query.addScalar("tipoRecolhimento", StandardBasicTypes.CLASS);
+        query.addScalar("tipoRecolhimento", StandardBasicTypes.STRING);
         query.addScalar("dataLancamento", StandardBasicTypes.DATE);
         query.addScalar("dataRecolhimento", StandardBasicTypes.DATE);
         query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
