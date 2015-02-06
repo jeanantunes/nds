@@ -5,28 +5,48 @@ import java.math.BigDecimal;
 public class BancoVO {
 
 	long idBanco;
+	
 	String numero;
-    String nome;
+    
+	String nome;
+    
+	long idPessoaCedente;
+	
     String codigoCedente;
+    
+    String digitoCodigoCedente;
+    
     Long agencia;
+    
     String digitoAgencia;
+    
     Long conta;
+    
     String digito;
+    
     String apelido;
+    
     Integer carteira;
+    
     BigDecimal juros;
+    
     boolean ativo;
+    
     BigDecimal multa;
+    
     BigDecimal vrMulta;
+    
     String instrucoes1;
+    
     String instrucoes2;
+    
     String instrucoes3;
+    
     String instrucoes4;
     
-    public BancoVO(){
+    public BancoVO() {
     	
     }
-    
 
 	public BancoVO(long idBanco, String numero, String nome,
 			String codigoCedente, Long agencia, String digitoAgencia,
@@ -79,12 +99,28 @@ public class BancoVO {
 		this.nome = nome;
 	}
 
+	public long getIdPessoaCedente() {
+		return idPessoaCedente;
+	}
+
+	public void setIdPessoaCedente(long idPessoaCedente) {
+		this.idPessoaCedente = idPessoaCedente;
+	}
+
 	public String getCodigoCedente() {
 		return codigoCedente;
 	}
 
 	public void setCodigoCedente(String codigoCedente) {
 		this.codigoCedente = codigoCedente;
+	}
+
+	public String getDigitoCodigoCedente() {
+		return digitoCodigoCedente;
+	}
+
+	public void setDigitoCodigoCedente(String digitoCodigoCedente) {
+		this.digitoCodigoCedente = digitoCodigoCedente;
 	}
 
 	public Long getAgencia() {

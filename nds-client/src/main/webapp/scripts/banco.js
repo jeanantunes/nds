@@ -156,11 +156,25 @@ var bancoController = $.extend(true, {
 				return;
 	    	
 	    	bancoController.limparTelaCadastroBanco();
+	    	
+	    	$('#newPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
+	    	
+	    	$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
+				   	null,
+				   	function(result) {
+						$.each(result, function(k, v) {
+							selectedId = document.formularioAlteraBanco.alterAtivo.idPessoaCedente;
+								
+							$('#newPessoasCedente', this.workspace).append(
+									'<option value="'+ v.key +'" '+ ((selectedId == v.key) ? ' selected' : '') +'>'+ v.value +'</option>'
+							);
+						});
+					});
 			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:410,
-				width:655,
+				width:680,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -182,7 +196,7 @@ var bancoController = $.extend(true, {
 			$( "#dialog-alterar", this.workspace).dialog({
 				resizable: false,
 				height:410,
-				width:655,
+				width:680,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -321,7 +335,9 @@ var bancoController = $.extend(true, {
 			var param ={
 					 numero     	: $("#newNumero", this.workspace).val(),
 					 nome       	: $("#newNome", this.workspace).val(),
+					 idPessoaCedente    : $('#newPessoasCedente', this.workspace).val(),
 					 codigoCedente	: $("#newCodigoCedente", this.workspace).val(),
+					 digitoCodigoCedente    : $("#newDigitoCodigoCedente", this.workspace).val(),
 					 agencia    	: $("#newAgencia", this.workspace).val(),
 					 digitoAgencia	: $("#newDigitoAgencia", this.workspace).val(),
 					 conta      	: $("#newConta", this.workspace).val(),
@@ -351,6 +367,13 @@ var bancoController = $.extend(true, {
 		               },
 					   null,
 					   true);
+			
+			$('#newPessoasCedente', this.workspace).val(),
+			$("#newInstrucoes1", this.workspace).val('');
+			$("#newInstrucoes2", this.workspace).val('');
+			$("#newInstrucoes3", this.workspace).val('');
+			$("#newInstrucoes4", this.workspace).val('');
+			
 		},
 		
 		alterarBanco : function() {
@@ -358,7 +381,9 @@ var bancoController = $.extend(true, {
 			var param = {idBanco    : $("#idBanco", this.workspace).val(),
 			    	 numero     : $("#alterNumero", this.workspace).val(),
 					 nome       : $("#alterNome", this.workspace).val(),
+					 idPessoaCedente    : $('#alterPessoasCedente', this.workspace).val(),
 					 codigoCedente    : $("#alterCodigoCedente", this.workspace).val(),
+					 digitoCodigoCedente    : $("#alterDigitoCodigoCedente", this.workspace).val(),
 					 agencia    : $("#alterAgencia", this.workspace).val(),
 					 digitoAgencia    : $("#alterDigitoAgencia", this.workspace).val(),
 					 conta      : $("#alterConta", this.workspace).val(),
@@ -402,6 +427,7 @@ var bancoController = $.extend(true, {
 			$("#alterNumero", this.workspace).val(resultado.numero);
 			$("#alterNome", this.workspace).val(resultado.nome);
 			$("#alterCodigoCedente", this.workspace).val(resultado.codigoCedente);
+			$("#alterDigitoCodigoCedente", this.workspace).val(resultado.digitoCodigoCedente);
 			$("#alterAgencia", this.workspace).val(resultado.agencia);
 			$("#alterDigitoAgencia", this.workspace).val(resultado.digitoAgencia);
 			$("#alterConta", this.workspace).val(resultado.conta);
@@ -412,6 +438,7 @@ var bancoController = $.extend(true, {
 			
 			$("#alterAtivo", this.workspace).val(resultado.ativo);
 			document.formularioAlteraBanco.alterAtivo.checked = resultado.ativo;
+			document.formularioAlteraBanco.alterAtivo.idPessoaCedente = resultado.idPessoaCedente;
 			
 			$("#alterMulta", this.workspace).val(resultado.multa);
 			$("#alterVrMulta", this.workspace).val(resultado.vrMulta);
@@ -419,6 +446,19 @@ var bancoController = $.extend(true, {
 			$("#alterInstrucoes2", this.workspace).val(resultado.instrucoes2);
 			$("#alterInstrucoes3", this.workspace).val(resultado.instrucoes3);
 			$("#alterInstrucoes4", this.workspace).val(resultado.instrucoes4);
+			
+			$('#newPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
+			$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
+			   	null,
+			   	function(result) {
+					$.each(result, function(k, v) {
+						selectedId = document.formularioAlteraBanco.alterAtivo.idPessoaCedente;
+							
+						$('#alterPessoasCedente', this.workspace).append(
+								'<option value="'+ v.key +'" '+ ((selectedId == v.key) ? ' selected' : '') +'>'+ v.value +'</option>'
+						);
+					});
+				});
 			
 			bancoController.formatarValores();
 			

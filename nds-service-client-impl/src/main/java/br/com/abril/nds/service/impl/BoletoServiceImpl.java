@@ -46,7 +46,6 @@ import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
@@ -1316,7 +1315,7 @@ public class BoletoServiceImpl implements BoletoService {
         return movimentoFinanceiroCotaDTO;
     }
     
-    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, 
+    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, Pessoa pessoaCedente, 
             final boolean aceitaPagamentoVencido, final List<PoliticaCobranca> politicasCobranca){
         
         final String nossoNumero = boleto.getNossoNumero();
@@ -1326,6 +1325,7 @@ public class BoletoServiceImpl implements BoletoService {
         final Date dataEmissao = boleto.getDataEmissao();
         final Date dataVencimento = boleto.getDataVencimento();
         final Pessoa pessoaSacado = boleto.getCota().getPessoa();
+        pessoaCedente = banco.getPessoaJuridicaCedente(); 
         
         Endereco endereco = null;
         
@@ -1500,13 +1500,14 @@ public class BoletoServiceImpl implements BoletoService {
 									            final BigDecimal valorDebitos,
 									            final BigDecimal valorCreditos,
 									            final String nossoNumero,
-									            final String digitoNossoNumero){
+									            final String digitoNossoNumero) {
         
         final Pessoa pessoaSacado = cota.getPessoa();
         
-        final Distribuidor distribuidor = this.distribuidorRepository.obter();
+//        final Distribuidor distribuidor = this.distribuidorRepository.obter();
+//        final Pessoa pessoaCedente = distribuidor.getJuridica();
         
-        final Pessoa pessoaCedente = distribuidor.getJuridica();
+        final Pessoa pessoaCedente = banco.getPessoaJuridicaCedente();
         
         Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
         
@@ -1611,8 +1612,8 @@ public class BoletoServiceImpl implements BoletoService {
             
         } else {
             
-            nomeCedente = ((PessoaFisica)pessoaCedente).getNome();
-            documentoCedente = ((PessoaFisica)pessoaCedente).getCpf();
+            nomeCedente = ((PessoaFisica) pessoaCedente).getNome();
+            documentoCedente = ((PessoaFisica) pessoaCedente).getCpf();
             
         }
         
