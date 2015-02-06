@@ -58,7 +58,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Cálculos do percentual de excedente
 	calcularPercentualExcedente(estudo);
 
-	minimoMaximo.executar(estudo);
+	if(estudo.isUsarMix()){
+		minimoMaximo.executar(estudo);
+	}
+	
 
 	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar reparte calculado
 	ajustarReparteCalculado(estudo);
@@ -203,9 +206,16 @@ public class CalcularReparte extends ProcessoAbstrato {
     }
 
     public void ajustarReparteCalculado(EstudoTransient estudo) {
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(cota.getReparteCalculado())), estudo);
-	}
+		for (CotaEstudo cota : estudo.getCotas()) {
+			
+			BigInteger reparteArredondado = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(cota.getReparteCalculado()));
+			
+			if(reparteArredondado.compareTo(cota.getReparteMinimo()) < 0){
+				cota.setReparteCalculado(cota.getReparteMinimo(), estudo);
+			}else{
+				cota.setReparteCalculado(reparteArredondado, estudo);
+			}
+		}
     }
 
     private boolean temEdicaoBaseFechada(EstudoTransient estudo) {
