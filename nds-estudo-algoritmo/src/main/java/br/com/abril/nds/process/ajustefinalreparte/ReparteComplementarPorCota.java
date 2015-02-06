@@ -59,7 +59,9 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	LinkedList<CotaEstudo> listaD = new LinkedList<>();
 	// Lista de cotas que receberam 3 ou mais edições das edições base
 	LinkedList<CotaEstudo> listaE = new LinkedList<>();
-
+	
+	//add validação para excluir banca mix
+	
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 	    if ((cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) && cota.isRecebeReparteComplementar()
 		    && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
@@ -130,5 +132,12 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		}
 	    }
 	}
+	
+	if(estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0){
+		estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(estudo.getReparteComplementar()));
+	}
+	
+	
+	
     }
 }

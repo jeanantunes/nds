@@ -32,7 +32,7 @@ public class ReparteMinimo extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
     	
     	BigDecimal somatoriaReparteMinimo = BigDecimal.ZERO;
-    	BigInteger somaReparteMinimoFinal = BigInteger.ZERO;
+    	BigInteger somaReparteMinimoFinal = BigInteger.ZERO; 
     	
     	for (CotaEstudo cota : estudo.getCotas()) {
 		    
