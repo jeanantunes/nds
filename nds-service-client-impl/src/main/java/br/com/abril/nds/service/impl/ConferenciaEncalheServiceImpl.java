@@ -1960,7 +1960,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
+		
 		List<Long> listaIdConferenciaEncalheParaExclusao = obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 

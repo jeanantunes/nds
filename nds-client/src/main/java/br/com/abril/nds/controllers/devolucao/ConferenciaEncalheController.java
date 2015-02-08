@@ -597,6 +597,7 @@ public class ConferenciaEncalheController extends BaseController {
 	private Map<String, Object> obterMapaConferenciaEncalhe(Integer numeroCota,
 			final boolean indObtemDadosFromBD,
 			final boolean indConferenciaContingencia) {
+		
 		if (numeroCota == null) {
 			
 			numeroCota = this.getNumeroCotaFromSession();
@@ -2050,6 +2051,8 @@ public class ConferenciaEncalheController extends BaseController {
                 throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 			}
 			
+			// limparIdsTemporarios(info.getListaConferenciaEncalhe());
+			
 			controleConfEncalheCota.setCota(info.getCota());
 			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
 			
@@ -2092,8 +2095,8 @@ public class ConferenciaEncalheController extends BaseController {
 					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 			
 			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), info, controleConfEncalheCota);
-
-			limparIdsTemporarios(info.getListaConferenciaEncalhe());
+			
+			info.getListaConferenciaEncalhe().retainAll(listaConferenciaEncalheCotaToSave);
 			
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
@@ -2123,7 +2126,7 @@ public class ConferenciaEncalheController extends BaseController {
 		} else {
 			
 			this.result.use(Results.json()).from(
-                    new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result")
+                    new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada."), "result")
                     .recursive().serialize();
 		}
 	}
@@ -2255,7 +2258,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Excluir conferência]")
 	public void excluirConferencia(final Long idConferenciaEncalhe){
 		
-		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO dto : lista){
 			
