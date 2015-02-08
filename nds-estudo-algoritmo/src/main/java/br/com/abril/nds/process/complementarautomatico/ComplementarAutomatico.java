@@ -115,7 +115,7 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		
 		// se for distribuicao por multiplos, faz arredondamento para o pacote padrao
 		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
-			if(estudo.getReparteMinimo().compareTo(estudo.getPacotePadrao()) >= 0){
+			if(estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(estudo.getPacotePadrao()) >= 0){
 				estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).divide(new BigDecimal(estudo.getReparteMinimo()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger().multiply(estudo.getReparteMinimo()));
 			}else{
 				estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger().multiply(estudo.getPacotePadrao()));
