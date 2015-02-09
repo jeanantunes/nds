@@ -547,7 +547,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 			hql.append(" and ce.dataRecolhimento = :dataOperacao ");
 			
 			if(!datasRecolhimentoValidas.isEmpty()){
-				hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas)) ");
+				hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas) ");
 			}
 			
 			hql.append(" group by produtoEdicao.id			")
