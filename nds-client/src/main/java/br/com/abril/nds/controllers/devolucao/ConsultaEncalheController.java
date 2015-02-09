@@ -285,8 +285,7 @@ public class ConsultaEncalheController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
 		
-		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
-				dataRecolhimentoFinal, idFornecedor, numeroCota);
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		

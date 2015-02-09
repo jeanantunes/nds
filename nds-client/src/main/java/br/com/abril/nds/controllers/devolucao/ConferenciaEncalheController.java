@@ -578,8 +578,7 @@ public class ConferenciaEncalheController extends BaseController {
 			final boolean indObtemDadosFromBD,  
 			final boolean indConferenciaContingencia){
 		
-		final Map<String, Object> dados = obterMapaConferenciaEncalhe(
-				numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
+		final Map<String, Object> dados = obterMapaConferenciaEncalhe(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
 		
 		result.use(CustomJson.class).from(dados).serialize();
 	}
@@ -2089,12 +2088,13 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
-			final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = 
-					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
+			final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
+		
+			for (final ConferenciaEncalheDTO dto : listaConferenciaEncalheCotaToSave){			
+				dto.setOcultarItem(false);
+			}
 			
 			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), info, controleConfEncalheCota);
-			
-//			info.getListaConferenciaEncalhe().retainAll(listaConferenciaEncalheCotaToSave);
 			
 			limparIdsTemporarios(info.getListaConferenciaEncalhe());
 			
@@ -2262,12 +2262,11 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		for (final ConferenciaEncalheDTO dto : lista){
 			
-			if (dto.getIdConferenciaEncalhe().equals(idConferenciaEncalhe)){
-				
-				lista.remove(dto);
-				
+			if (dto.getIdConferenciaEncalhe().equals(idConferenciaEncalhe)){				
+				dto.setQtdExemplar(BigInteger.valueOf(0));
+				dto.setQtdInformada(BigInteger.valueOf(0));
+				dto.setOcultarItem(true);
 				break;
-				
 			}
 		}
 		
