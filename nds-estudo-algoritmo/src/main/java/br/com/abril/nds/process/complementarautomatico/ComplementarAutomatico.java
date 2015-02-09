@@ -112,9 +112,19 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    estudo.setReparteComplementar(calculo1.max(calculo2).toBigInteger());
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).toBigInteger());
 		}
-
+		
 		// se for distribuicao por multiplos, faz arredondamento para o pacote padrao
-		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(estudo.getReparteComplementar())));
+		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
+			if(estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(estudo.getPacotePadrao()) >= 0){
+				estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).divide(new BigDecimal(estudo.getReparteMinimo()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger().multiply(estudo.getReparteMinimo()));
+			}else{
+				estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger().multiply(estudo.getPacotePadrao()));
+			}
+        } else {
+        	estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+        }
+		
+//		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(estudo.getReparteComplementar())));
 
 		estudo.setReparteComplementarInicial(estudo.getReparteComplementar());
 		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(estudo.getReparteComplementar()));

@@ -597,7 +597,6 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.modalAberta = false;
 							
-							ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 							
 							$("#conferencia-numeroCota", ConferenciaEncalhe.workspace).focus();
 						}
@@ -2549,5 +2548,4 @@ function confirmarPopup_notaFiscal(){
 	}, null, true, "dialog-notaFiscal"
 	);
 }
-
 //@ sourceURL=scriptConferenciaEncalhe.js
