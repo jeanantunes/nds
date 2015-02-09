@@ -2872,7 +2872,7 @@ public class LancamentoRepositoryImpl extends
 	    hql.append("                 ) rs1 on rs1.dtd = l.data_rec_distrib                              ");
 	    hql.append("             ) rs2 on rs2.data_rec_distrib = l.data_rec_distrib                     ");
 	    hql.append("             where (                                                                ");
-	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 0 ");
+	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 1 ");
 	    hql.append("             ) rs1                                                                  ");
     	
         Query query = getSession().createSQLQuery(hql.toString());

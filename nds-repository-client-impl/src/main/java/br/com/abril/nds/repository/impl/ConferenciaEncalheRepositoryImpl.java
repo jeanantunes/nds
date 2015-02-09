@@ -544,11 +544,12 @@ public class ConferenciaEncalheRepositoryImpl extends
 			hql.append(" and upper(produtoEdicao.codigoDeBarras) like upper(:codigoBarras) ");
 			
 			
-			hql.append(" and ce.dataRecolhimento = :dataOperacao ");
+			hql.append(" and (ce.dataRecolhimento = :dataOperacao ");
 			
-			if(!datasRecolhimentoValidas.isEmpty()){
+			if(!datasRecolhimentoValidas.isEmpty()) {
 				hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas) ");
 			}
+			hql.append(" ) ");
 			
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
@@ -565,7 +566,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO);
 		query.setParameter("dataOperacao", dataOperacao);
 		
-		if(!datasRecolhimentoValidas.isEmpty()){
+		if(!datasRecolhimentoValidas.isEmpty()) {
 			query.setParameterList("datasRecolhimentoValidas", datasRecolhimentoValidas);
 		}
 		
