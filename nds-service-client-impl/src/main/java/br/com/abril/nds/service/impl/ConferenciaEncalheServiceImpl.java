@@ -2307,7 +2307,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConferenciaEncalheCota.getCota(), 
 					dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
 			
-			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
+			if(conferenciaEncalheDTO.getIdConferenciaEncalhe() != null) {
 
 				atualizarRegistroConferenciaEncalhe(
 						cota,

@@ -2051,8 +2051,6 @@ public class ConferenciaEncalheController extends BaseController {
                 throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 			}
 			
-			// limparIdsTemporarios(info.getListaConferenciaEncalhe());
-			
 			controleConfEncalheCota.setCota(info.getCota());
 			controleConfEncalheCota.setId(info.getIdControleConferenciaEncalheCota());
 			
@@ -2096,7 +2094,9 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), info, controleConfEncalheCota);
 			
-			info.getListaConferenciaEncalhe().retainAll(listaConferenciaEncalheCotaToSave);
+//			info.getListaConferenciaEncalhe().retainAll(listaConferenciaEncalheCotaToSave);
+			
+			limparIdsTemporarios(info.getListaConferenciaEncalhe());
 			
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
