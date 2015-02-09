@@ -368,11 +368,7 @@ var bancoController = $.extend(true, {
 					   null,
 					   true);
 			
-			$('#newPessoasCedente', this.workspace).val(),
-			$("#newInstrucoes1", this.workspace).val('');
-			$("#newInstrucoes2", this.workspace).val('');
-			$("#newInstrucoes3", this.workspace).val('');
-			$("#newInstrucoes4", this.workspace).val('');
+			bancoController.limparTelaCadastroBanco();
 			
 		},
 		
@@ -411,6 +407,8 @@ var bancoController = $.extend(true, {
 				       },
 					   null,
 					   true);
+			
+			bancoController.limparTelaCadastroBanco();
 		},
 		
 		editarBanco : function(idBanco){
@@ -447,7 +445,7 @@ var bancoController = $.extend(true, {
 			$("#alterInstrucoes3", this.workspace).val(resultado.instrucoes3);
 			$("#alterInstrucoes4", this.workspace).val(resultado.instrucoes4);
 			
-			$('#newPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
+			$('#alterPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
 			$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
 			   	null,
 			   	function(result) {
@@ -484,8 +482,10 @@ var bancoController = $.extend(true, {
 		},
 		
 	    limparTelaCadastroBanco : function() {
+	    	document.formularioAlteraBanco.alterAtivo.idPessoaCedente = -1;
 			$("#newNumero", this.workspace).val("");
 			$("#newNome", this.workspace).val("");
+			$('#alterPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
 			$("#newCodigoCedente", this.workspace).val("");
 			$("#newAgencia", this.workspace).val("");
 			$("#newConta", this.workspace).val("");
@@ -497,7 +497,10 @@ var bancoController = $.extend(true, {
 			$("#newAtivo", this.workspace).val("");
 			$("#newMulta", this.workspace).val("");
 			$("#newVrMulta", this.workspace).val("");
-			$("#newInstrucoes", this.workspace).val("");
+			$("#newInstrucoes1", this.workspace).val("");
+			$("#newInstrucoes2", this.workspace).val("");
+			$("#newInstrucoes3", this.workspace).val("");
+			$("#newInstrucoes4", this.workspace).val("");
 		}, 
 	    
 	    limparMulta : function(){
