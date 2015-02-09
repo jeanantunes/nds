@@ -1267,8 +1267,9 @@ var COTA_CNPJ = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoCotaFinanceiro", value: $("#tipoCotaFinanceiro", this.workspace).val()});
         formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
-
+        
         var existeCota = false;
         for (var i = 0; i < formData.length; i++) {
         	if (formData[i].value == 'cotaDTO.numeroCota') {
