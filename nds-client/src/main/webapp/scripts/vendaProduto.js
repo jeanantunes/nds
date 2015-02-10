@@ -255,7 +255,7 @@ var vendaProdutoController = $.extend(true, {
 		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected', vendaProdutoController.workspace).text()});
 		data.push({name:'filtro.numeroCota',		value: vendaProdutoController.get("numeroCota")});
 		data.push({name:'filtro.nomeCota',		value: vendaProdutoController.get("nomeCota")});
-		data.push({name:'filtro.idClassificacaoProduto',		value: vendaProdutoController.get("selectClassificacao")});
+		data.push({name:'filtro.idClassificacaoProduto',		value: vendaProdutoController.get("venda-produto-selectClassificacao")});
 		
 		return data;
 	},

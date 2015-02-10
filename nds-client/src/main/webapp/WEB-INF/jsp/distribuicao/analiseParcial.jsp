@@ -12,7 +12,8 @@
 
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
-    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+//    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+   
     var estudoCopiado = $("#reparteCopiado").val();
     
     if(estudoCopiado != "" ){
@@ -643,6 +644,10 @@ table.dadosTab { margin-left: 370px;}
 
     <div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
+	</div>
+	
+	<div id="dialog-confirmacao-cota-suspensa" title="Confirmação Cota suspensa" style="display: none; width: auto; min-height: 30px; height: 30px" >
+		<p>Cota Suspensa, deseja adicionar?</p>
 	</div>
 
     <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>

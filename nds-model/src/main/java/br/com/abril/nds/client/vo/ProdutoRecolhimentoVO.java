@@ -19,6 +19,9 @@ public class ProdutoRecolhimentoVO {
 	
 	private Long idProdutoEdicao;
 	
+	@Export(label="Status")
+	private String statusLancamento;
+	
 	@Export(label="Código")
 	private String codigoProduto;
 	
@@ -101,6 +104,20 @@ public class ProdutoRecolhimentoVO {
 		this.idLancamento = idLancamento;
 	}
 
+	/**
+	 * @return the statusLancamento
+	 */
+	public String getStatusLancamento() {
+		return statusLancamento;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = statusLancamento;
+	}
+	
 	/**
 	 * @return the codigoProduto
 	 */

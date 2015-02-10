@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo1_direita" pageWidth="245" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="241" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="24932483-073e-45bf-b3da-336da3e36812">
 	<property name="ireport.zoom" value="2.7272727272727506"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="147"/>
+	<property name="ireport.y" value="144"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -161,6 +161,7 @@
 	<field name="box" class="java.lang.Integer"/>
 	<field name="nomeRoteiro" class="java.lang.String"/>
 	<field name="dataRecolhimento" class="java.lang.String"/>
+	<field name="nomeRota" class="java.lang.String"/>
 	<pageHeader>
 		<band height="172">
 			<frame>
@@ -326,21 +327,21 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{numCota} + " - " + $F{destinatarioNome}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement uuid="a92302a4-e7af-4014-988a-ff3662a17831" style="borda" x="2" y="142" width="238" height="27"/>
+					<reportElement uuid="a92302a4-e7af-4014-988a-ff3662a17831" style="dados" x="2" y="142" width="238" height="27"/>
 				</rectangle>
 				<staticText>
 					<reportElement uuid="807b95c6-514a-4f88-b350-6ae2f8cd5eaf" x="3" y="142" width="227" height="14"/>
 					<textElement>
-						<font fontName="SansSerif" size="8"/>
+						<font fontName="SansSerif" size="6"/>
 					</textElement>
 					<text><![CDATA[Box / Roteiro / Rota]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="e1b2f8bd-d5f5-486a-a938-ba1f9acb6034" style="dados" x="3" y="153" width="227" height="16"/>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="e1b2f8bd-d5f5-486a-a938-ba1f9acb6034" style="dados" x="3" y="150" width="195" height="16"/>
 					<textElement>
 						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Box: " + $F{box} + " / "+ $F{nomeRoteiro} + " - " + "Rota: " + $F{nomeRoteiro}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{box} + " / " + $F{nomeRoteiro} + " / " + $F{nomeRota}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

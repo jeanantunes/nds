@@ -1215,8 +1215,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         parameters.put("isPostergado", false);
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
-        if (filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null
-                && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+        if (filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
             sql.append(" limit :posicaoInicial, :posicaoFinal");
             parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
             parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());

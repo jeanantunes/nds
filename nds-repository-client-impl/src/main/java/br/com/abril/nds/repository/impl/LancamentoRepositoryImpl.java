@@ -1995,7 +1995,7 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataBase", dataBase);
-		query.setParameter("statusRecolhido",StatusLancamento.RECOLHIDO);
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
 		query.setParameter("grupoRecolhimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
 
 		return query.list();
@@ -2363,6 +2363,8 @@ public class LancamentoRepositoryImpl extends
 		List<StatusLancamento> statusLancamento = new ArrayList<>();
 
 		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_RECOLHIMENTO);
 
 		query.setParameterList("datasConfirmadas", datasConfirmadas);
 		query.setParameterList("statusLancamento", statusLancamento);
@@ -2370,6 +2372,30 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRecolhimentosEmBalanceamentoRecolhimento(
+			List<Date> datasConfirmadas) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+
+		statusLancamento.add(StatusLancamento.EXPEDIDO);
+
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+
+		return query.list();
+	}
+	
 	public Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe) {
 
 		StringBuilder hql = new StringBuilder();
@@ -2695,7 +2721,7 @@ public class LancamentoRepositoryImpl extends
     }
     
 
-    public List<Date> obterDatasLancamentoValido(List<Long> idFornecedor) {
+    public List<Date> obterDatasLancamentoValidas() {
 
     	StringBuilder hql = new StringBuilder();
     	
@@ -2826,4 +2852,36 @@ public class LancamentoRepositoryImpl extends
 		return count != null && count.compareTo(BigInteger.ZERO) > 0;
 
 	}
+	
+	public List<Date> obterDatasRecolhimentoValidas() {
+
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select dtd                                                                         ");
+	    hql.append(" from                                                                               ");
+	    hql.append("     (  select distinct l.data_rec_distrib dtd,                                     ");
+	    hql.append("         (case when status in ('EM_RECOLHIMENTO') then 1 else 0 end) st             ");
+	    hql.append("     from lancamento l                                                              ");
+	    hql.append("     inner join                                                                     ");
+	    hql.append("         (                                                                          ");
+	    hql.append("             SELECT distinct data_rec_distrib                                       ");
+	    hql.append("             from lancamento l                                                      ");
+	    hql.append("             inner join                                                             ");
+	    hql.append("                 (                                                                  ");
+	    hql.append("                     select distinct data_rec_distrib dtd                           ");
+	    hql.append("                     from lancamento                                                ");
+	    hql.append("                     where status in (:produtosEmRecolhimento)                      ");
+	    hql.append("                 ) rs1 on rs1.dtd = l.data_rec_distrib                              ");
+	    hql.append("             ) rs2 on rs2.data_rec_distrib = l.data_rec_distrib                     ");
+	    hql.append("             where (                                                                ");
+	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 1 ");
+	    hql.append("             ) rs1                                                                  ");
+    	
+        Query query = getSession().createSQLQuery(hql.toString());
+        
+        query.setParameterList("produtosEmRecolhimento", Arrays.asList(StatusLancamento.EM_RECOLHIMENTO.name()));
+
+    	return query.list();
+    }
+	
 }

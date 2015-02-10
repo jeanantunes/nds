@@ -410,7 +410,7 @@ var MANTER_COTA = $.extend(true, {
         }else if(idCombo == "#classificacaoSelecionada"){
         	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionada" style="width:300px;" disabled="disabled">';
         	var fim = '</select>';
-        	$("#selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
+        	$("#manter-selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
 
         }else{
         	$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);        	
@@ -1277,7 +1277,7 @@ var COTA_CNPJ = $.extend(true, {
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
         formData.push({name:"cotaDTO.tipoCotaFinanceiro", value: $("#tipoCotaFinanceiro", this.workspace).val()});
         formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
-
+        
         var existeCota = false;
         for (var i = 0; i < formData.length; i++) {
         	if (formData[i].value == 'cotaDTO.numeroCota') {

@@ -531,7 +531,7 @@ public class ConferenciaEncalheController extends BaseController {
 			final boolean indObtemDadosFromBD,  
 			final boolean indConferenciaContingencia){
 		
-		final Map<String, Object> dados = this.obterMapaConferenciaEncalhe(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
+		final Map<String, Object> dados = obterMapaConferenciaEncalhe(numeroCota, indObtemDadosFromBD, indConferenciaContingencia);
 		
 		result.use(CustomJson.class).from(dados).serialize();
 	}
@@ -900,7 +900,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		
 		if(idProdutoEdicaoAnterior == null) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Informe o Código ou Nome do Produto.");
 		}
 		
 		try {
@@ -1696,15 +1696,16 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	/**
 	 * Salva Conferencia de encalhe da Cota
+	 * @param infoConferenciaEncalheCota TODO
 	 * @param controleConfEncalheCota
 	 * @param listaConferenciaEncalheCotaToSave
 	 * @param indConferenciaContingencia
 	 */
-	private void salvarConferenciaCota(final ControleConferenciaEncalheCota controleConfEncalheCota,
-			                           final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
-			                           final boolean indConferenciaContingencia){
+	private void salvarConferenciaCota(InfoConferenciaEncalheCota infoConferenciaEncalheCota,
+			                           final ControleConferenciaEncalheCota controleConfEncalheCota,
+			                           final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave, final boolean indConferenciaContingencia){
 			
-		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave));
+		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), infoConferenciaEncalheCota, controleConfEncalheCota);
 		
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
@@ -1748,7 +1749,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 		
-		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
+		this.salvarConferenciaCota(info, controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 "result").recursive()
@@ -2050,10 +2051,14 @@ public class ConferenciaEncalheController extends BaseController {
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
 			final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
+		
+			for (final ConferenciaEncalheDTO dto : listaConferenciaEncalheCotaToSave){			
+				dto.setOcultarItem(false);
+			}
 			
-			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), controleConfEncalheCota.getCota(), new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave));
-
-			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
+			this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), info, controleConfEncalheCota);
+			
+			limparIdsTemporarios(info.getListaConferenciaEncalhe());
 			
 			/*
 			dadosDocumentacaoConfEncalheCota = this.conferenciaEncalheService.finalizarConferenciaEncalhe(controleConfEncalheCota, 
@@ -2082,7 +2087,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 			this.conferenciaEncalheAsyncComponent.finalizarConferenciaEncalheAsync(
 					  controleConfEncalheCota, 
-					  new ArrayList<ConferenciaEncalheDTO>(listaConferenciaEncalheCotaToSave), 
+					  new ArrayList<ConferenciaEncalheDTO>(info.getListaConferenciaEncalhe()), 
 					  this.getUsuarioLogado(),
 					  indConferenciaContingencia,
 					  info.getReparte());
@@ -2320,16 +2325,15 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Excluir conferência]")
 	public void excluirConferencia(final Long idConferenciaEncalhe){
 		
-		final Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+		Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
 		for (final ConferenciaEncalheDTO dto : lista){
 			
-			if (dto.getIdConferenciaEncalhe().equals(idConferenciaEncalhe)){
-				
-				lista.remove(dto);
-				
+			if (dto.getIdConferenciaEncalhe().equals(idConferenciaEncalhe)){				
+				dto.setQtdExemplar(BigInteger.valueOf(0));
+				dto.setQtdInformada(BigInteger.valueOf(0));
+				dto.setOcultarItem(true);
 				break;
-				
 			}
 		}
 		

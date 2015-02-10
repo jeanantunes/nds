@@ -33,6 +33,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean parcialCalculado;
 	
+	private boolean ocultarItem;
+	
 	/**
 	 * O instante em que o objeto que representa conferência de encalhe
 	 * foi conferido (ou criado).
@@ -385,7 +387,15 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setQtdExemplarDaGrid(String qtdExemplarDaGrid) {
 		this.qtdExemplarDaGrid = qtdExemplarDaGrid;
 	}
+	
+	public boolean isOcultarItem() {
+		return ocultarItem;
+	}
 
+	public void setOcultarItem(boolean ocultarItem) {
+		this.ocultarItem = ocultarItem;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

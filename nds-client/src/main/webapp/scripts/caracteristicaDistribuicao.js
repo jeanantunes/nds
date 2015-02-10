@@ -367,10 +367,10 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	},
 	
 	validarCamposDeAte:function(){
-		if($("#faixaDe").val() ==''|| $("#faixaAte").val()=='' || $("#faixaDe").val() == undefined || $("#faixaAte").val()==undefined){
+		if($("#caracteristica-distribuicao-faixaDe").val() ==''|| $("#caracteristica-distribuicao-faixaAte").val()=='' || $("#caracteristica-distribuicao-faixaDe").val() == undefined || $("#caracteristica-distribuicao-faixaAte").val()==undefined){
 			return false;
 		}else{
-			return floatValue($("#faixaDe").val()) > floatValue($("#faixaAte").val());
+			return floatValue($("#caracteristica-distribuicao-faixaDe").val()) > floatValue($("#caracteristica-distribuicao-faixaAte").val());
 		}
 		 
 	},
@@ -507,30 +507,30 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	},
 	
 	camposVazios:function(){
-		var codigoVazio = $("#codigoProduto").val() =="" ;
-		var produtoVazio = $("#nomeProduto").val() =="" ;
-		var nomeEditorVazio = $("#nomeEditor").val() =="";
-		var segmentoVazio =  $("#segmento").val()=="";
+		var codigoVazio = $("#caracteristica-distribuicao-codigoProduto").val() =="" ;
+		var produtoVazio = $("#caracteristica-distribuicao-nomeProduto").val() =="" ;
+		var nomeEditorVazio = $("#caracteristica-distribuicao-nomeEditor").val() =="";
+		var segmentoVazio =  $("#caracteristica-distribuicao-segmento").val()=="";
 //		var brindeVazio = $("#brinde").val()=="";
-		var classificacaoVazio =  $("#classificacao").val()=="";
-		var chamadaCapaVazio = $("#chamadaCapa").val()==""; 
-		var faixaDeVazio=$("#faixaDe").val()=="";
-		var faixaAteVazio=$("#faixaAte").val()=="";
+		var classificacaoVazio =  $("#caracteristica-distribuicao-classificacao").val()=="";
+		var chamadaCapaVazio = $("#caracteristica-distribuicao-chamadaCapa").val()==""; 
+		var faixaDeVazio=$("#caracteristica-distribuicao-faixaDe").val()=="";
+		var faixaAteVazio=$("#caracteristica-distribuicao-faixaAte").val()=="";
 		
 		return (codigoVazio && produtoVazio && classificacaoVazio && nomeEditorVazio &&  segmentoVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio);
 	},
 	
 	
 	isSimples:function(){
-		var codigoPreenchido = $("#codigoProduto").val().length >0;
-		var produtoPreenchido = $("#nomeProduto").val().length>0;
-		var nomeEditorPreenchido = $("#nomeEditor").val().length>0;
-		var segmentoVazio =  $("#segmento").val()=="";
-//		var brindeVazio = $("#brinde").val()=="";
-		var classificacaoVazio =  $("#classificacao").val()=="";
-		var chamadaCapaVazio = $("#chamadaCapa").val()==""; 
-		var faixaDeVazio=$("#faixaDe").val()=="";
-		var faixaAteVazio=$("#faixaAte").val()=="";
+		var codigoPreenchido =     $("#caracteristica-distribuicao-codigoProduto").val().length >0;
+		var produtoPreenchido =    $("#caracteristica-distribuicao-nomeProduto").val().length>0;
+		var nomeEditorPreenchido = $("#caracteristica-distribuicao-nomeEditor").val().length>0;
+		var segmentoVazio =        $("#caracteristica-distribuicao-segmento").val()=="";
+//		var brindeVazio = $("#caracteristica-distribuicao-brinde").val()=="";
+		var classificacaoVazio =   $("#caracteristica-distribuicao-classificacao").val()=="";
+		var chamadaCapaVazio =     $("#caracteristica-distribuicao-chamadaCapa").val()==""; 
+		var faixaDeVazio =         $("#caracteristica-distribuicao-faixaDe").val()=="";
+		var faixaAteVazio =        $("#caracteristica-distribuicao-faixaAte").val()=="";
 		
 		var outrosCamposVazios =classificacaoVazio  &&  segmentoVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio;
 		
@@ -539,18 +539,18 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 
 	
 	getDadosFiltroPesquisaDetalhe:function() {
-		var valDe = $("#faixaDe", this.workspace).val();
-		var valAte = $("#faixaAte", this.workspace).val();
+		var valDe = $("#caracteristica-distribuicao-faixaDe", this.workspace).val();
+		var valAte = $("#caracteristica-distribuicao-faixaAte", this.workspace).val();
 		var data = [];
-		data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto", this.workspace).val()});
-		data.push({name:'filtro.nomeProduto', value: $("#nomeProduto", this.workspace).val()});
-		data.push({name:'filtro.nomeEditor', value: $("#nomeEditor", this.workspace).val()});
-		data.push({name:'filtro.opcaoFiltroPublicacao', value:$('#checkPublicacaoExato').is(":checked")});
+		data.push({name:'filtro.codigoProduto',	value: $("#caracteristica-distribuicao-codigoProduto", this.workspace).val()});
+		data.push({name:'filtro.nomeProduto', value: $("#caracteristica-distribuicao-nomeProduto", this.workspace).val()});
+		data.push({name:'filtro.nomeEditor', value: $("#caracteristica-distribuicao-nomeEditor", this.workspace).val()});
+		data.push({name:'filtro.opcaoFiltroPublicacao', value:$('#caracteristica-distribuicao-checkPublicacaoExato').is(":checked")});
 		
-		data.push({name:'filtro.classificacaoProduto', value: $("#classificacao option:selected", this.workspace).val()});
-		data.push({name:'filtro.segmento', value: $("#segmento option:selected", this.workspace).val()});
-		data.push({name:'filtro.brinde', value:$('#checkIsBrinde').is(":checked")});
-		data.push({name:'filtro.chamadaCapa', value:$('#chamadaCapa', this.workspace).val()});
+		data.push({name:'filtro.classificacaoProduto', value: $("#caracteristica-distribuicao-classificacao option:selected", this.workspace).val()});
+		data.push({name:'filtro.segmento', value: $("#caracteristica-distribuicao-segmento option:selected", this.workspace).val()});
+		data.push({name:'filtro.brinde', value:$('#caracteristica-distribuicao-checkIsBrinde').is(":checked")});
+		data.push({name:'filtro.chamadaCapa', value:$('#caracteristica-distribuicao-chamadaCapa', this.workspace).val()});
 		data.push({name:'filtro.faixaPrecoDe', value: valDe.replace(",",".")});
 		data.push({name:'filtro.faixaPrecoAte', value: valAte.replace(",",".")});
 		

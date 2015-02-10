@@ -589,7 +589,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
 		
 	}
-
 	
 	private class DiaSemanaRecolhimento {
 		
@@ -601,8 +600,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	    /**
+	/**
      * Valida a existência de chamada de encalhe de acordo com a cota de
      * operação diferenciada e produtoEdicao cuja dataRecolhimento esteja dentro
      * da faixa aceitavel para cota de operação diferenciada.
@@ -1863,18 +1861,45 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional
-	public void criarBackupConferenciaEncalhe(Usuario usuario, Cota cota, final List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	public void criarBackupConferenciaEncalhe(Usuario usuario
+			, InfoConferenciaEncalheCota infoConferenciaEncalheCota
+			, ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
-		this.sinalizarInicioProcessoEncalhe(cota.getNumeroCota(), usuario);
+		this.sinalizarInicioProcessoEncalhe(controleConferenciaEncalheCota.getCota().getNumeroCota(), usuario);
 
 		Date dataCriacao = new Date();
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		limparBackupAnterior(cota.getNumeroCota(), dataOperacao);
+		limparBackupAnterior(controleConferenciaEncalheCota.getCota().getNumeroCota(), dataOperacao);
 		
-		for(ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
-			criarNovoRegistroBackupConferenciaEncalhe(conf, cota, dataCriacao, dataOperacao);
+		List<Date> datasRecolhimento = new ArrayList<Date>();
+		datasRecolhimento.add(dataOperacao);
+		List<ConferenciaEncalheDTO>	listaConferenciaEncalheCompleta = obterListaConferenciaEncalheContingencia(
+					dataOperacao, 
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
+					datasRecolhimento, new ArrayList<ConferenciaEncalheDTO>(infoConferenciaEncalheCota.getListaConferenciaEncalhe()));
+		
+		if(listaConferenciaEncalheCompleta!=null && !listaConferenciaEncalheCompleta.isEmpty()) {
+			
+			carregarDiaRecolhimento(controleConferenciaEncalheCota.getCota().getNumeroCota(), dataOperacao, listaConferenciaEncalheCompleta);
+			
+		}
+		
+		List<Long> produtoEdicoesIdsConferidos = new ArrayList<Long>();
+		
+		for(ConferenciaEncalheDTO conf : infoConferenciaEncalheCota.getListaConferenciaEncalhe()) {
+			produtoEdicoesIdsConferidos.add(conf.getIdProdutoEdicao());
+		}
+		
+		for(ConferenciaEncalheDTO conf : listaConferenciaEncalheCompleta) {
+			if(!produtoEdicoesIdsConferidos.contains(conf.getIdProdutoEdicao())) {
+				infoConferenciaEncalheCota.getListaConferenciaEncalhe().add(conf);
+			}
+		}
+		
+		for(ConferenciaEncalheDTO conf : infoConferenciaEncalheCota.getListaConferenciaEncalhe()) {
+			criarNovoRegistroBackupConferenciaEncalhe(conf, controleConferenciaEncalheCota.getCota(), dataCriacao, dataOperacao);
 		}
 		
 	}
@@ -1980,9 +2005,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		final List<Long> listaIdConferenciaEncalheParaExclusao = 
-				obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
+		
+		List<Long> listaIdConferenciaEncalheParaExclusao = obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
 				                                listaConferenciaEncalhe, 
@@ -2327,7 +2351,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTO, controleConferenciaEncalheCota.getCota(), dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
 			
-			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
+			if(conferenciaEncalheDTO.getIdConferenciaEncalhe() != null) {
 
 				atualizarRegistroConferenciaEncalhe(
 						cota,
@@ -3593,7 +3617,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao);
+		List<Date> datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
 	
     /**

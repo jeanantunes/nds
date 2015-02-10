@@ -1287,7 +1287,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				cobrarHoje = true;
 			}
 		}
-		String localidade =  cota.getEnderecoPrincipal().getEndereco().getCidade();
+		
+		String localidade = null;
+		if(cota != null && cota.getEnderecoPrincipal() != null) {
+			if(cota.getEnderecoPrincipal().getEndereco() != null) {
+				localidade = cota.getEnderecoPrincipal().getEndereco().getCidade();
+			} else {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem Endereço.", (cota != null) ? cota.getNumeroCota() : "[Não localizada]"));
+			}
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem Endereço Principal.", (cota != null) ? cota.getNumeroCota() : "[Não localizada]"));
+		}
+		
 		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
 
 		if(!cobrarHoje){

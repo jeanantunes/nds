@@ -72,10 +72,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Override
 	@Transactional(readOnly = true)
 	public boolean isDistribuidor(final Integer codigo) {
-		
-		return 
-			this.codigoDistribuidorDinap().equals(codigo.toString())
-				|| this.codigoDistribuidorFC().equals(codigo.toString());
+		return this.codigoDistribuidorDinap().equals(codigo.toString()) || this.codigoDistribuidorFC().equals(codigo.toString());
 	}
 
 	@Override

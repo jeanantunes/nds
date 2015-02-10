@@ -178,7 +178,7 @@
     					
                         <tr>
                             <td valign="top">Instru&ccedil;&otilde;es:</td>
-                            <td colspan="3"><textarea name="instrucoes" rows="2"
+                            <td colspan="3"><textarea name="instrucoes" rows="4"
                                     maxlength="100" id="instrucoes" style="width: 605px; height: 46px"
                                     readonly="true"></textarea></td>
                         </tr>

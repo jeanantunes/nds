@@ -107,7 +107,7 @@ $(function(){
 				    <td width="131"><input name="digitacao-contagem-dataAte" type="text" id="digitacao-contagem-dataAte" style="width:80px; float:left; margin-right:5px;"/></td>
 				    <td >Fornecedor:</td>
 				    <td width="230">
-				    <select name="idFornecedor" id="idFornecedor" style="width:200px;">
+				    <select name="digitacao-contagem-idFornecedor" id="digitacao-contagem-idFornecedor" style="width:200px;">
 				      <option value=""  selected="selected">Todos</option>
 				      <c:forEach items="${listaFornecedores}" var="fornecedor">
 				      		<option value="${fornecedor.key}">${fornecedor.value}</option>	

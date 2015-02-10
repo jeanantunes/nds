@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.RepartePDVDTO;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -409,6 +410,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return cotasAtivas == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(cotasComReparte)
                 .divide(BigDecimal.valueOf(cotasAtivas), 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
                 .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
+    }
+    
+    @Override
+    @Transactional
+    public DetalhesEdicoesBasesAnaliseEstudoDTO obterReparteEVendaTotal(String codigoProduto, Long edicao, Long idTipoClassificacao, Integer numPeriodoParcial){
+    	return analiseParcialRepository.buscarReparteVendaTotalPorEdicao(codigoProduto, edicao, idTipoClassificacao, numPeriodoParcial);
     }
 
     @Override

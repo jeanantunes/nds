@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo1_esquerda" pageWidth="350" pageHeight="843" whenNoDataType="AllSectionsNoDetail" columnWidth="346" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="ea9abc14-cabb-4d88-9a89-4ada7afa32cd">
 	<property name="ireport.zoom" value="2.479338842975208"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="87"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -160,8 +160,9 @@
 	<field name="box" class="java.lang.Integer"/>
 	<field name="nomeRoteiro" class="java.lang.String"/>
 	<field name="dataRecolhimento" class="java.lang.String"/>
+	<field name="nomeRota" class="java.lang.String"/>
 	<pageHeader>
-		<band height="170">
+		<band height="172" splitType="Stretch">
 			<frame>
 				<reportElement uuid="1d2fd863-9bee-4bb1-a386-66455b23fa06" stretchType="RelativeToBandHeight" x="0" y="0" width="346" height="85"/>
 				<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
@@ -300,7 +301,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="bd10ea83-8d24-4f95-b5cb-6f6ee1468a73" stretchType="RelativeToBandHeight" x="-1" y="86" width="348" height="84"/>
+				<reportElement uuid="bd10ea83-8d24-4f95-b5cb-6f6ee1468a73" x="-1" y="86" width="348" height="84"/>
 				<rectangle>
 					<reportElement uuid="800edf67-f0f2-4c91-ad9a-ec5a8996836d" style="borda" x="1" y="2" width="212" height="27"/>
 				</rectangle>
@@ -347,10 +348,10 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					</textElement>
 					<text><![CDATA[Endereço]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="f45a1117-f622-48a8-8f95-04c78b10e690" style="dados" x="2" y="39" width="154" height="15"/>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="f45a1117-f622-48a8-8f95-04c78b10e690" style="dados" x="2" y="36" width="154" height="19"/>
 					<textElement>
-						<font size="8" isBold="false"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioLogradouro}.toUpperCase()]]></textFieldExpression>
 				</textField>
@@ -436,7 +437,7 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement uuid="bacf4be5-df1f-4a84-8740-a3332b689e88" style="dados" x="2" y="66" width="90" height="16"/>
 					<textElement>
-						<font size="8" isBold="false"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{dataRecolhimento}]]></textFieldExpression>
 				</textField>
@@ -453,7 +454,7 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement uuid="cbf3b08f-9df9-4d6d-84db-85e4a17fc6ad" style="dados" x="94" y="66" width="62" height="16"/>
 					<textElement>
-						<font size="8" isBold="false"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{dataEmissao}]]></textFieldExpression>
 				</textField>
@@ -467,12 +468,12 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					</textElement>
 					<text><![CDATA[Box / Roteriro / Rota]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement uuid="9833d624-0f28-4854-8bd9-ea82aefe916a" style="dados" stretchType="RelativeToBandHeight" x="158" y="66" width="185" height="16"/>
-					<textElement markup="styled">
-						<font fontName="Arial" size="8" isBold="false" isUnderline="false"/>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="9833d624-0f28-4854-8bd9-ea82aefe916a" style="dados" x="158" y="62" width="189" height="20"/>
+					<textElement textAlignment="Left" markup="styled">
+						<font fontName="SansSerif" size="8" isBold="false" isUnderline="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Box: " + $F{box} + " / " + "Roteiro: " + $F{nomeRoteiro} + " / " + "Rota: " + $F{nomeRoteiro}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{box} + " / " + $F{nomeRoteiro} + " / " + $F{nomeRota}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

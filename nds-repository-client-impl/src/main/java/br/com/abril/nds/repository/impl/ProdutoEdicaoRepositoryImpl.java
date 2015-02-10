@@ -1420,7 +1420,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			sql.append("     pe.CHAMADA_CAPA AS chamadaCapa,                                                                            ");
 			sql.append("     tipoClassificacaoProduto.descricao as descricaoClassificacao,                                              ");
 			sql.append("     round(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end), 0) AS repartePrevisto,   ");
-			sql.append("     round(case                                                                                                                  ");
+			sql.append("     coalesce(round(case                                                                                                                  ");
 			sql.append("         when lancamento.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')                                             ");
 			sql.append("           then sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end) - (      ");
 			sql.append("                     select sum(mecEncalhe.qtde)                                                                           ");
@@ -1444,7 +1444,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			sql.append("                     WHERE                                                                                                 ");
 			sql.append("                         lanc.id = lancamento.id)                                                                          ");
 			sql.append("         else null                                                                                                         ");
-			sql.append("     end,0) as qtdeVendas                                                                                                     ");
+			sql.append("     end, 0), 0) as qtdeVendas                                                                                                     ");
 	        sql.append("                                                                                                                           ");
 		    sql.append(" FROM lancamento lancamento                                                                                                ");
 		    sql.append("                                                                                                                           ");
