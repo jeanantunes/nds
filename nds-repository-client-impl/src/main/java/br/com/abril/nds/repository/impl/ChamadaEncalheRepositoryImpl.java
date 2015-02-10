@@ -823,15 +823,16 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    hql.append("    	inner join MOVIMENTO_ESTOQUE_COTA movimentoe16_  ");
 	    hql.append("    	        on movimentoe16_.PRODUTO_EDICAO_ID = produtoedi5_.ID and movimentoe16_.COTA_ID = chamadaenc0_.COTA_ID ");
 	    hql.append("    	        and case when (conferenci2_.DATA is not null) then movimentoe16_.data = conferenci2_.DATA else lancamento10_.ID=movimentoe16_.LANCAMENTO_ID end ");
-	    hql.append("    	inner join TIPO_MOVIMENTO tipomovime17_  ");
-	    hql.append("    	        on movimentoe16_.TIPO_MOVIMENTO_ID=tipomovime17_.ID ");
-	    hql.append("    	inner join COTA cota4_  ");
-	    hql.append("    	        on chamadaenc0_.COTA_ID=cota4_.ID "); 
-	    hql.append("    	where (movimentoe16_.ID is null or movimentoe16_.COTA_ID=cota4_.ID) "); 
-	    hql.append("    	    and (estudocota13_.ID is null or estudocota13_.COTA_ID=cota4_.ID)  ");
-	    hql.append("    	    and chamadaenc0_.POSTERGADO = :isPostergado  ");
-	    hql.append("    	    and (movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null) ");	
-	
+	    hql.append("    	inner join TIPO_MOVIMENTO tipomovime17_                                 ");
+	    hql.append("    	        on movimentoe16_.TIPO_MOVIMENTO_ID=tipomovime17_.ID             ");
+	    hql.append("    	inner join COTA cota4_                                                  ");
+	    hql.append("    	        on chamadaenc0_.COTA_ID=cota4_.ID                               "); 
+	    hql.append("    	where (movimentoe16_.ID is null or movimentoe16_.COTA_ID=cota4_.ID)     "); 
+	    hql.append("    	    and (estudocota13_.ID is null or estudocota13_.COTA_ID=cota4_.ID)   ");
+	    hql.append("    	    and chamadaenc0_.POSTERGADO = :isPostergado                         ");
+	    hql.append("    	    and (movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null)          ");	
+	    hql.append("    	    and lancamento10_.tipo_lancamento='LANCAMENTO'                      ");
+	    
 		param.put("isPostergado", false);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
