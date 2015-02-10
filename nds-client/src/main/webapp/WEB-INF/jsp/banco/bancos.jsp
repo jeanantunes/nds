@@ -49,25 +49,37 @@ label {
 					</td>
 				</tr>
 				<tr>
-					<td nowrap="nowrap">Código Cedente:</td>
-					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente" maxlength="17"
-						style="width: 143px;" />
+					<td nowrap="nowrap">Cedente:</td>
+					<td>
+						<select id="newPessoasCedente" name="newPessoasCedente" style="width: 200px;">
+							<option value="-1" selected="selected">Selecione...</option>
+						</select>
 					</td>
-					<td>Agência / Dígito:</td>
-					<td><input maxlength="10" type="text" name="newAgencia" id="newAgencia"
-						style="width: 168px;" /> - <input maxlength="2" type="text" name="newDigitoAgencia"
-						id="newDigitoAgencia" style="width: 27px;" />
-					</td>
+					<td></td>
+					<td width="219"></td>
 				</tr>
 				<tr>
-					<td>Conta / Digito:</td>
-					<td><input maxlength="17" type="text" name="newConta" id="newConta"
-						style="width: 93px;" /> - <input maxlength="2" type="text" name="newDigito"
-						id="newDigito" style="width: 30px;" />
+					<td nowrap="nowrap">Código Cedente:</td>
+					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente" maxlength="17"
+						style="width: 100px;" />
+						 - <input maxlength="2" type="text" name="newDigitoCodigoCedente"
+						id="newDigitoCodigoCedente" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>
 					<td width="219"><input type="text" name="newApelido" maxlength="100"
 						id="newApelido" style="width: 215px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Agência / Dígito:</td>
+					<td><input maxlength="10" type="text" name="newAgencia" id="newAgencia"
+						style="width: 100px;" /> - <input maxlength="2" type="text" name="newDigitoAgencia"
+						id="newDigitoAgencia" style="width: 30px;" />
+					</td>
+					<td>Conta / Digito:</td>
+					<td><input maxlength="17" type="text" name="newConta" id="newConta"
+						style="width: 93px;" /> - <input maxlength="2" type="text" name="newDigito"
+						id="newDigito" style="width: 30px;" />
 					</td>
 				</tr>
 				<tr>
@@ -97,9 +109,23 @@ label {
 
 				</tr>
 				<tr>
-					<td>Instruções:</td>
-					<td colspan="3"><textarea name="newInstrucoes" id="newInstrucoes" maxlength="200"
-							style="width: 503px;"></textarea>
+					<td>Instruções 1:</td>
+					<td colspan="3"><textarea name="newInstrucoes1" id="newInstrucoes1" maxlength="200" style="width: 503px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 2:</td>
+					<td colspan="3"><textarea name="newInstrucoes2" id="newInstrucoes2" maxlength="200" style="width: 503px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 3:</td>
+					<td colspan="3"><textarea name="newInstrucoes3" id="newInstrucoes3" maxlength="200" style="width: 503px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 4:</td>
+					<td colspan="3"><textarea name="newInstrucoes4" id="newInstrucoes4" maxlength="200" style="width: 503px;"></textarea>
 					</td>
 				</tr>
 			</table>
@@ -130,25 +156,35 @@ label {
 					</td>
 				</tr>
 				<tr>
-					<td>Código Cedente:</td>
-					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente" maxlength="17"
-						style="width: 143px;" />
-					</td>
-					<td>Agência / Dígito:</td>
-					<td><input maxlength="10" type="text" name="alterAgencia" id="alterAgencia"
-						style="width: 165px;" /> - <input maxlength="2" type="text" name="alterDigitoAgencia"
-						id="alterDigitoAgencia" style="width: 30px;" />
+					<td>Cedente:</td>
+					<td>
+						<select id="alterPessoasCedente" name="alterPessoasCedente" style="width: 200px;">
+							<option value="-1" selected="selected">Selecione...</option>
+						</select>
 					</td>
 				</tr>
 				<tr>
-					<td>Conta / Digito:</td>
-					<td><input maxlength="17" type="text" name="alterConta" id="alterConta"
-						style="width: 97px;" /> - <input maxlength="2" type="text" name="alterDigito"
-						id="alterDigito" style="width: 26px;" />
+					<td>Código Cedente:</td>
+					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente" maxlength="17"
+						style="width: 100px;" />
+						 - <input maxlength="2" type="text" name="alterDigitoCodigoCedente"
+						id="alterDigitoCodigoCedente" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>
 					<td width="205"><input type="text" name="alterApelido" maxlength="100"
 						id="alterApelido" style="width: 215px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>Agência / Dígito:</td>
+					<td><input maxlength="10" type="text" name="alterAgencia" id="alterAgencia"
+						style="width: 100px;" /> - <input maxlength="2" type="text" name="alterDigitoAgencia"
+						id="alterDigitoAgencia" style="width: 30px;" />
+					</td>
+					<td>Conta / Digito:</td>
+					<td><input maxlength="17" type="text" name="alterConta" id="alterConta"
+						style="width: 97px;" /> - <input maxlength="2" type="text" name="alterDigito"
+						id="alterDigito" style="width: 26px;" />
 					</td>
 				</tr>
 				<tr>
@@ -178,9 +214,23 @@ label {
 					
 				</tr>
 				<tr>
-					<td>Instruções:</td>
-					<td colspan="3"><textarea name="alterInstrucoes" id="alterInstrucoes" maxlength="200"
-							style="width: 510px;"></textarea>
+					<td>Instruções 1:</td>
+					<td colspan="3"><textarea name="alterInstrucoes1" id="alterInstrucoes1" maxlength="200" style="width: 510px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 2:</td>
+					<td colspan="3"><textarea name="alterInstrucoes2" id="alterInstrucoes2" maxlength="200" style="width: 510px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 3:</td>
+					<td colspan="3"><textarea name="alterInstrucoes3" id="alterInstrucoes3" maxlength="200" style="width: 510px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Instruções 4:</td>
+					<td colspan="3"><textarea name="alterInstrucoes4" id="alterInstrucoes4" maxlength="200" style="width: 510px;"></textarea>
 					</td>
 				</tr>
 			</table>

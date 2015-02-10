@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -26,32 +28,62 @@ public class Banco implements Serializable {
 	@GeneratedValue(generator = "BANCO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "NUMERO_BANCO", nullable = false)
 	private String numeroBanco;
+	
 	@Column(name = "NOME", nullable = false)
 	private String nome;
+	
 	@Column(name = "APELIDO", nullable = false)
 	private String apelido;
+	
 	@Column(name = "AGENCIA", nullable = false)
 	private Long agencia;
+	
 	@Column(name = "DV_AGENCIA")
 	private String dvAgencia;
+	
 	@Column(name = "CONTA", nullable = false)
 	private Long conta;
+	
 	@Column(name = "DV_CONTA")
 	private String dvConta;
+	
+	@OneToOne
+	@JoinColumn(name = "PESSOA_JURIDICA_CEDENTE_ID", nullable = false)
+	private Pessoa pessoaJuridicaCedente;
+	
 	@Column(name = "CODIGO_CEDENTE", nullable = false)
 	private String codigoCedente;
+	
+	@Column(name = "DIGITO_CODIGO_CEDENTE")
+	private String digitoCodigoCedente;
+	
 	@Column(name = "CARTEIRA")
 	private Integer carteira;
+	
 	@Column(name = "ATIVO", nullable = false)
 	private boolean ativo;
-	@Column(name = "INSTRUCOES")
-	private String instrucoes;
+	
+	@Column(name = "INSTRUCOES_1")
+	private String instrucoes1;
+	
+	@Column(name = "INSTRUCOES_2")
+	private String instrucoes2;
+	
+	@Column(name = "INSTRUCOES_3")
+	private String instrucoes3;
+	
+	@Column(name = "INSTRUCOES_4")
+	private String instrucoes4;
+	
 	@Column(name = "JUROS")
 	private BigDecimal juros;
+	
 	@Column(name = "MULTA")
 	private BigDecimal multa;
+	
 	@Column(name = "VR_MULTA")
 	private BigDecimal vrMulta;
 	
@@ -119,6 +151,14 @@ public class Banco implements Serializable {
 		this.dvConta = dvConta;
 	}
 	
+	public Pessoa getPessoaJuridicaCedente() {
+		return pessoaJuridicaCedente;
+	}
+
+	public void setPessoaJuridicaCedente(Pessoa pessoaJuridicaCedente) {
+		this.pessoaJuridicaCedente = pessoaJuridicaCedente;
+	}
+
 	public String getCodigoCedente() {
 		return codigoCedente;
 	}
@@ -127,6 +167,14 @@ public class Banco implements Serializable {
 		this.codigoCedente = codigoCedente;
 	}
 	
+	public String getDigitoCodigoCedente() {
+		return digitoCodigoCedente;
+	}
+
+	public void setDigitoCodigoCedente(String digitoCodigoCedente) {
+		this.digitoCodigoCedente = digitoCodigoCedente;
+	}
+
 	public Integer getCarteira() {
 		return carteira;
 	}
@@ -143,12 +191,36 @@ public class Banco implements Serializable {
 		this.ativo = ativo;
 	}
 
-	public String getInstrucoes() {
-		return instrucoes;
+	public String getInstrucoes1() {
+		return instrucoes1;
 	}
-	
-	public void setInstrucoes(String instrucoes) {
-		this.instrucoes = instrucoes;
+
+	public void setInstrucoes1(String instrucoes1) {
+		this.instrucoes1 = instrucoes1;
+	}
+
+	public String getInstrucoes2() {
+		return instrucoes2;
+	}
+
+	public void setInstrucoes2(String instrucoes2) {
+		this.instrucoes2 = instrucoes2;
+	}
+
+	public String getInstrucoes3() {
+		return instrucoes3;
+	}
+
+	public void setInstrucoes3(String instrucoes3) {
+		this.instrucoes3 = instrucoes3;
+	}
+
+	public String getInstrucoes4() {
+		return instrucoes4;
+	}
+
+	public void setInstrucoes4(String instrucoes4) {
+		this.instrucoes4 = instrucoes4;
 	}
 
 	public BigDecimal getJuros() {

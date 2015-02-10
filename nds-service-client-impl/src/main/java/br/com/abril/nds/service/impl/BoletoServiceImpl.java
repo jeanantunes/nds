@@ -46,7 +46,6 @@ import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
@@ -425,8 +424,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         final List<Cobranca> boletosNaoPagos = boletoRepository.obterBoletosNaoPagos(dataPagamento);
         
-        final Integer numeroMaximoAcumulosDistribuidor =
-                distribuidorRepository.numeroMaximoAcumuloDividas();
+        final Integer numeroMaximoAcumulosDistribuidor = distribuidorRepository.numeroMaximoAcumuloDividas();
         
         int contador = 0;
         
@@ -435,16 +433,13 @@ public class BoletoServiceImpl implements BoletoService {
         String nossoNumero = "";
         
         final TipoMovimentoFinanceiro tipoMovimentoFinanceiroPendente =
-                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-                        GrupoMovimentoFinaceiro.PENDENTE);
+                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.PENDENTE);
         
         final TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros =
-                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-                        GrupoMovimentoFinaceiro.JUROS);
+                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.JUROS);
         
         final TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta =
-                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-                        GrupoMovimentoFinaceiro.MULTA);
+                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.MULTA);
         
         final FormaCobranca formaCobrancaPrincipal =
                 formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
@@ -454,7 +449,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         for (final Cobranca boleto : boletosNaoPagos) {
             
-            if (!this.isCotaAtiva(boleto.getCota())){
+            if (!this.isCotaAtiva(boleto.getCota())) {
                 
                 continue;
             }
@@ -1316,7 +1311,7 @@ public class BoletoServiceImpl implements BoletoService {
         return movimentoFinanceiroCotaDTO;
     }
     
-    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, final Pessoa pessoaCedente, 
+    private CorpoBoleto gerarCorpoBoletoCota(final Boleto boleto, Pessoa pessoaCedente, 
             final boolean aceitaPagamentoVencido, final List<PoliticaCobranca> politicasCobranca){
         
         final String nossoNumero = boleto.getNossoNumero();
@@ -1326,6 +1321,7 @@ public class BoletoServiceImpl implements BoletoService {
         final Date dataEmissao = boleto.getDataEmissao();
         final Date dataVencimento = boleto.getDataVencimento();
         final Pessoa pessoaSacado = boleto.getCota().getPessoa();
+        pessoaCedente = banco.getPessoaJuridicaCedente(); 
         
         Endereco endereco = null;
         
@@ -1500,13 +1496,14 @@ public class BoletoServiceImpl implements BoletoService {
 									            final BigDecimal valorDebitos,
 									            final BigDecimal valorCreditos,
 									            final String nossoNumero,
-									            final String digitoNossoNumero){
+									            final String digitoNossoNumero) {
         
         final Pessoa pessoaSacado = cota.getPessoa();
         
-        final Distribuidor distribuidor = this.distribuidorRepository.obter();
+//        final Distribuidor distribuidor = this.distribuidorRepository.obter();
+//        final Pessoa pessoaCedente = distribuidor.getJuridica();
         
-        final Pessoa pessoaCedente = distribuidor.getJuridica();
+        final Pessoa pessoaCedente = banco.getPessoaJuridicaCedente();
         
         Endereco enderecoSacado = cota.getEnderecoPrincipal().getEndereco();
         
@@ -1595,7 +1592,7 @@ public class BoletoServiceImpl implements BoletoService {
             final Integer numeroCota,
             final boolean aceitaPagamentoVencido,
             final boolean boletoEmBranco,
-            final List<PoliticaCobranca> politicasCobranca){
+            final List<PoliticaCobranca> politicasCobranca) {
         
         valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
         
@@ -1606,42 +1603,42 @@ public class BoletoServiceImpl implements BoletoService {
         
         if(pessoaCedente instanceof PessoaJuridica) {
             
-            nomeCedente = ((PessoaJuridica)pessoaCedente).getRazaoSocial();
-            documentoCedente = ((PessoaJuridica)pessoaCedente).getCnpj();
-            
+            nomeCedente = ((PessoaJuridica) pessoaCedente).getRazaoSocial();
+            documentoCedente = ((PessoaJuridica) pessoaCedente).getCnpj();
             
         } else {
             
-            nomeCedente = ((PessoaFisica)pessoaCedente).getNome();
-            documentoCedente = ((PessoaFisica)pessoaCedente).getCpf();
+            nomeCedente = ((PessoaFisica) pessoaCedente).getNome();
+            documentoCedente = ((PessoaFisica) pessoaCedente).getCpf();
             
         }
         
         
         //DADOS DO CEDENTE
-        corpoBoleto.setCodigoCedente(Integer.valueOf(banco.getCodigoCedente()));
+        corpoBoleto.setCodigoCedente(banco.getCodigoCedente());
+        corpoBoleto.setDigitoCodigoCedente(banco.getDigitoCodigoCedente());
         corpoBoleto.setCedenteNome(nomeCedente);
         corpoBoleto.setCedenteDocumento(documentoCedente);
         
         
         //DADOS DO SACADO
         
-        String nomeSacado="";
+        String nomeSacado = "";
         
-        String documentoSacado="";
+        String documentoSacado = "";
         
-        if (pessoaSacado instanceof PessoaFisica){
+        if (pessoaSacado instanceof PessoaFisica) {
             nomeSacado = ((PessoaFisica) pessoaSacado).getNome();
             documentoSacado = ((PessoaFisica) pessoaSacado).getCpf();
         }
-        if (pessoaSacado instanceof PessoaJuridica){
+        if (pessoaSacado instanceof PessoaJuridica) {
             nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
             documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
         }
         
-        if(numeroCota != null && numeroCota >0){
+        if(numeroCota != null && numeroCota >0) {
             corpoBoleto.setSacadoNome(numeroCota + " - "+ nomeSacado);
-        }else{
+        } else {
             corpoBoleto.setSacadoNome(nomeSacado);
         }
         
@@ -1650,15 +1647,14 @@ public class BoletoServiceImpl implements BoletoService {
         
         //ENDERECO DO SACADO
         
-        if (enderecoSacado!=null){
+        if (enderecoSacado != null) {
             corpoBoleto.setEnderecoSacadoUf(enderecoSacado.getUf());
             corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());
             corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());
             corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro());
             corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getTipoLogradouro() + " " + enderecoSacado.getLogradouro());
             corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero());
-        }
-        else{
+        } else {
             corpoBoleto.setEnderecoSacadoUf("SP");
             corpoBoleto.setEnderecoSacadoLocalidade("Endereco nao cadastrado.");
             corpoBoleto.setEnderecoSacadoCep("");
@@ -1743,10 +1739,10 @@ public class BoletoServiceImpl implements BoletoService {
         //PARAMETROS ?
         corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
-        corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes());
-        corpoBoleto.setBoletoInstrucao2("");
-        corpoBoleto.setBoletoInstrucao3("");
-        corpoBoleto.setBoletoInstrucao4("");
+        corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes1());
+        corpoBoleto.setBoletoInstrucao2(banco.getInstrucoes2());
+        corpoBoleto.setBoletoInstrucao3(banco.getInstrucoes3());
+        corpoBoleto.setBoletoInstrucao4(banco.getInstrucoes4());
         corpoBoleto.setBoletoInstrucao5("");
         corpoBoleto.setBoletoInstrucao6("");
         corpoBoleto.setBoletoInstrucao7("");
@@ -1904,8 +1900,7 @@ public class BoletoServiceImpl implements BoletoService {
             throws IOException, ValidationException {
         
         final GeradorBoleto geradorBoleto = 
-                new GeradorBoleto(
-                        this.gerarCorpoBoletoCota(boleto, cedente, aceitaPagamentoVencido, politicasCobranca));
+                new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, cedente, aceitaPagamentoVencido, politicasCobranca));
         
         byte[] b = null;
         
@@ -1942,9 +1937,9 @@ public class BoletoServiceImpl implements BoletoService {
         
         final boolean aceitaPagamentoVencido = distribuidorRepository.aceitaBaixaPagamentoVencido();
         
-        for(final String nossoNumero  : nossoNumeros){
+        for(final String nossoNumero : nossoNumeros) {
             
-            boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null,false);
+            boleto = boletoRepository.obterPorNossoNumero(nossoNumero, null, false);
             
             if(boleto!= null){
                 corpos.add(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
@@ -1973,7 +1968,7 @@ public class BoletoServiceImpl implements BoletoService {
             corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor, pessoaSacado, aceitaPagamentoVencido));
         }
         
-        if(!corpos.isEmpty()){
+        if(!corpos.isEmpty()) {
             final GeradorBoleto geradorBoleto = new GeradorBoleto(corpos) ;
             final byte[] b = geradorBoleto.getByteGroupPdf();
             return b;

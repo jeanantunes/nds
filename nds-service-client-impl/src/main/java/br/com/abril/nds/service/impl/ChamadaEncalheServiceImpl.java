@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -970,6 +971,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
         
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+        parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }
