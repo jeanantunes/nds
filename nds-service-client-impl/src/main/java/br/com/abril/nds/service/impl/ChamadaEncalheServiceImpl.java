@@ -886,7 +886,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 					periodoRecolhimento = dto.getDataRecolhimento();
 				}	
 			} else {
-				periodoRecolhimento = dto.getDataRecolhimento();
+				periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()) ? 
+	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
+	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
 			}
 			
 			

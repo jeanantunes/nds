@@ -724,10 +724,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end) ")
         .append(" from movimento_estoque_cota mec ")
         .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
+        .append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID ")
+        .append(" inner join produto p on p.id = pe.PRODUTO_ID ")
+        .append(" inner join cota c on c.id = mec.COTA_ID ")
+        .append(" inner join chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = pe.id ")
+        .append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id and cec.COTA_ID = c.id ")
+        .append(" inner join chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
+        .append(" inner join lancamento l on l.id = mec.LANCAMENTO_ID and l.id = cel.LANCAMENTO_ID and l.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID ")
 		.append(" where mec.produto_edicao_id = produtoedi5_.id ")
 		.append(" and mec.cota_id = chamadaenc0_.cota_id ")
 		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE' ")
 		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ")
+		.append(" and l.id = lancamento10_.id ")
 		.append(" ) as reparte, ")
         
         

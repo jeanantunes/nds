@@ -1814,7 +1814,7 @@ public class CotaServiceImpl implements CotaService {
         if ( pessoa instanceof  PessoaJuridica  ){
             
             ((PessoaJuridica) pessoa).setCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
-            ((PessoaJuridica) pessoa).setInscricaoEstadual(cotaDto.getInscricaoEstadual());
+            ((PessoaJuridica) pessoa).setInscricaoEstadual(cotaDto.getInscricaoEstadual() != null ? cotaDto.getInscricaoEstadual().trim() : "");
             ((PessoaJuridica) pessoa).setInscricaoMunicipal(cotaDto.getInscricaoMunicipal());
             ((PessoaJuridica) pessoa).setNomeFantasia(cotaDto.getNomeFantasia());
             ((PessoaJuridica) pessoa).setRazaoSocial(cotaDto.getRazaoSocial());

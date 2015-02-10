@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chamada_encalhe_modelo2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="b891bc34-8c93-407c-bb03-65e0637d3d27">
 	<property name="ireport.zoom" value="1.8627639691774651"/>
-	<property name="ireport.x" value="70"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="SansSerif" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="SansSerif" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -146,6 +146,7 @@
 		<fieldDescription><![CDATA[dataRecolhimento]]></fieldDescription>
 	</field>
 	<field name="nomeRota" class="java.lang.String"/>
+	<field name="periodoRecolhimento" class="java.lang.String"/>
 	<group name="COTA">
 		<groupExpression><![CDATA[$F{numCota}]]></groupExpression>
 	</group>
@@ -346,7 +347,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textElement verticalAlignment="Bottom">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{dataRecolhimento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{periodoRecolhimento} != null ? $F{periodoRecolhimento} : $F{dataRecolhimento}]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement uuid="1b689e55-969a-434b-bfd7-3f5133b96235" style="borda" x="129" y="44" width="113" height="22"/>
