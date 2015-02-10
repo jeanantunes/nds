@@ -92,27 +92,24 @@ public class GeradorBoleto {
         	throw new ValidationException("Número do banco não encontrado: "+corpoBoleto.getContaNumeroBanco() +". favor contatar a área de sistemas. - Tabela Cobrança BANCO_ID");
         	
         ContaBancaria contaBancaria = new ContaBancaria(bancoByNumero.create());
-        contaBancaria.setNumeroDaConta(new NumeroDaConta(corpoBoleto.getCodigoCedente(), null));
+        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
+        contaBancaria.setNumeroDaConta(new NumeroDaConta(Integer.valueOf(corpoBoleto.getCodigoCedente()), corpoBoleto.getDigitoCodigoCedente()));
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
         //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  
         carteira.setTipoCobranca(TipoDeCobranca.valueOf(corpoBoleto.getContaTipoDeCobranca())); 
         contaBancaria.setCarteira(carteira);
-        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
         
         //TITULO
         Titulo titulo;
-        if (sacadorAvalista!=null){
+        if (sacadorAvalista != null) {
             titulo = new Titulo(contaBancaria, sacado, cedente, sacadorAvalista);
-        }
-        else{
+        } else {
         	titulo = new Titulo(contaBancaria, sacado, cedente);
         }
         //PARAMETROS BANCARIOS DO TITULO
-        ParametrosBancariosMap parametrosBancarios = new
-        ParametrosBancariosMap();
-        parametrosBancarios.adicione(TipoIdentificadorCNR.class.getName(),
-                                     TipoIdentificadorCNR.valueOf(corpoBoleto.getTituloTipoIdentificadorCNR()));
+        ParametrosBancariosMap parametrosBancarios = new ParametrosBancariosMap();
+        parametrosBancarios.adicione(TipoIdentificadorCNR.class.getName(), TipoIdentificadorCNR.valueOf(corpoBoleto.getTituloTipoIdentificadorCNR()));
         titulo.setParametrosBancarios(parametrosBancarios);
         titulo.setNumeroDoDocumento(corpoBoleto.getTituloNumeroDoDocumento());
         titulo.setNossoNumero(corpoBoleto.getTituloNossoNumero());
@@ -190,7 +187,7 @@ public class GeradorBoleto {
 	  */
 	 public byte[] getBytePdf() throws ValidationException  {
 	    Boleto boleto = this.createBoleto(corpoBoleto);
-	    BoletoViewer boletoViewer = new BoletoViewer(boleto,getClass().getResource("/boletoTemplate/BoletoNDS.pdf"));
+	    BoletoViewer boletoViewer = new BoletoViewer(boleto, getClass().getResource("/boletoTemplate/BoletoNDS.pdf"));
 	    byte[] byteArrayPdf = boletoViewer.getPdfAsByteArray();
 	    return byteArrayPdf;
 	 }

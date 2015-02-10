@@ -424,8 +424,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         final List<Cobranca> boletosNaoPagos = boletoRepository.obterBoletosNaoPagos(dataPagamento);
         
-        final Integer numeroMaximoAcumulosDistribuidor =
-                distribuidorRepository.numeroMaximoAcumuloDividas();
+        final Integer numeroMaximoAcumulosDistribuidor = distribuidorRepository.numeroMaximoAcumuloDividas();
         
         int contador = 0;
         
@@ -434,16 +433,13 @@ public class BoletoServiceImpl implements BoletoService {
         String nossoNumero = "";
         
         final TipoMovimentoFinanceiro tipoMovimentoFinanceiroPendente =
-                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-                        GrupoMovimentoFinaceiro.PENDENTE);
+                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.PENDENTE);
         
         final TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros =
-                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-                        GrupoMovimentoFinaceiro.JUROS);
+                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.JUROS);
         
         final TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta =
-                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-                        GrupoMovimentoFinaceiro.MULTA);
+                tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.MULTA);
         
         final FormaCobranca formaCobrancaPrincipal =
                 formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
@@ -453,7 +449,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         for (final Cobranca boleto : boletosNaoPagos) {
             
-            if (!this.isCotaAtiva(boleto.getCota())){
+            if (!this.isCotaAtiva(boleto.getCota())) {
                 
                 continue;
             }
@@ -1619,7 +1615,8 @@ public class BoletoServiceImpl implements BoletoService {
         
         
         //DADOS DO CEDENTE
-        corpoBoleto.setCodigoCedente(Integer.valueOf(banco.getCodigoCedente()));
+        corpoBoleto.setCodigoCedente(banco.getCodigoCedente());
+        corpoBoleto.setDigitoCodigoCedente(banco.getDigitoCodigoCedente());
         corpoBoleto.setCedenteNome(nomeCedente);
         corpoBoleto.setCedenteDocumento(documentoCedente);
         
@@ -1903,8 +1900,7 @@ public class BoletoServiceImpl implements BoletoService {
             throws IOException, ValidationException {
         
         final GeradorBoleto geradorBoleto = 
-                new GeradorBoleto(
-                        this.gerarCorpoBoletoCota(boleto, cedente, aceitaPagamentoVencido, politicasCobranca));
+                new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, cedente, aceitaPagamentoVencido, politicasCobranca));
         
         byte[] b = null;
         
