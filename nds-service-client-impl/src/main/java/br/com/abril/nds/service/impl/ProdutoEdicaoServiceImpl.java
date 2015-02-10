@@ -456,10 +456,29 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     private boolean isDataRecolhimentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento) {
     	
-		if( dto.getDataRecolhimentoDistribuidor() != null && 
-	    	dto.getDataRecolhimentoDistribuidor().compareTo(lancamento.getDataRecolhimentoDistribuidor()) == 0 ) {
-				return false;
-		}
+    	if(lancamento != null && lancamento.getPeriodoLancamentoParcial() != null) {
+            
+    		final PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(dto.getId());
+            
+    		if(ultimoPeriodo != null) {
+    			
+    			Lancamento ulancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
+    			
+    			Date dataUltimoRecolhimento = null;
+    			if(ultimoPeriodo != null && ulancamento != null) {
+    				dataUltimoRecolhimento = ulancamento.getDataRecolhimentoDistribuidor();
+    			} else {
+    				dataUltimoRecolhimento = lancamento.getDataRecolhimentoDistribuidor();
+    			}
+    			
+    			if( dto.getDataRecolhimentoDistribuidor() != null && dto.getDataRecolhimentoDistribuidor().compareTo(dataUltimoRecolhimento) == 0 ) {
+    				return false;
+    			}
+    		}
+    	
+    	} else if( dto.getDataRecolhimentoDistribuidor() != null && dto.getDataRecolhimentoDistribuidor().compareTo(lancamento.getDataRecolhimentoDistribuidor()) == 0 ) {
+			return false;
+    	}
 		
 		return true;
     	

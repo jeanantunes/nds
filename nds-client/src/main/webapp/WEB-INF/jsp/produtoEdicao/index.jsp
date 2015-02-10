@@ -208,7 +208,7 @@ fieldset {
 										<td colspan="5"><input type="text"
 											name="produtoEdicaoDTO.nomeComercialProduto"
 											id="produtoEdicaoController-nomeComercialProduto"
-											style="width: 340px;" /></td>
+											style="width: 340px; text-transform: uppercase;" /></td>
 									</tr>
 									<tr>
 
