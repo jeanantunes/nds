@@ -141,7 +141,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("             from pdv as pdvs ");
         sql.append("             group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         
-        sql.append(" left join estudo_cota_gerado ecg_origem on ecg_origem.estudo_id = e.estudo_origem_copia ");
+        sql.append(" left join estudo_cota_gerado ecg_origem on ecg_origem.estudo_id = e.estudo_origem_copia and ecg_origem.COTA_ID = ec.cota_id ");
         
         sql.append("  cross join (select DATA_OPERACAO from distribuidor) data_distrib ");
         
@@ -718,12 +718,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
         sql.append("       ec.reparte quantidade, ");
+        sql.append("       cast(cota.situacao_cadastro as char) as situacaoCota, ");
         sql.append("       ec.classificacao motivo ");
         sql.append("  from estudo_cota_gerado ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");
@@ -823,6 +823,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("numeroCota", StandardBasicTypes.INTEGER)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("situacaoCota", StandardBasicTypes.STRING)
                 .addScalar("motivo", StandardBasicTypes.STRING);
 
         for (int i = 0; i < params.size(); i++) {

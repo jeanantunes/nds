@@ -32,6 +32,8 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 	calcularRedutorAutomatico(estudo);
     }
 
+    // não aplicar redutor automatico para MIX
+    
     public void calcularRedutorAutomatico(EstudoTransient estudo) {
 	
     	List<CotaEstudo> cotasForRemove = new ArrayList<>();

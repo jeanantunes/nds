@@ -62,7 +62,7 @@ var manutencaoPublicacaoController = $.extend(true, {
 		
 		var data = {codigo:manutencaoPublicacaoController.codigoProduto,
 				    numeroEdicao:manutencaoPublicacaoController.numeroEdicao,
-				    precoProduto:$("#novoPrecoProduto", manutencaoPublicacaoController.workspace).val()};
+				    precoProduto:$("#manut-publicacao-novoPrecoProduto", manutencaoPublicacaoController.workspace).val()};
 		
 		$.postJSON(manutencaoPublicacaoController.url + "/confirmarAlteracaoPreco", 
 				   data,

@@ -12,8 +12,13 @@ import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Moeda;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.BancoRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.service.BancoService;
 
 /**
@@ -27,6 +32,12 @@ public class BancoServiceImpl implements BancoService {
 	
 	@Autowired
 	private BancoRepository bancoRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
 	
 	/**
 	 * Método responsavel por obter bancos cadastrados
@@ -91,15 +102,19 @@ public class BancoServiceImpl implements BancoService {
 	@Transactional(readOnly=true)
 	@Override
 	public BancoVO obterDadosBanco(long idBanco) {
-		BancoVO bancoVO=null;
+		
+		BancoVO bancoVO = null;
 		Banco banco = bancoRepository.buscarPorId(idBanco);
-		if (banco!=null){
+		
+		if (banco != null) {
 			bancoVO = new BancoVO();
 			bancoVO.setIdBanco(banco.getId());
 			bancoVO.setNumero(banco.getNumeroBanco());
 			bancoVO.setNome(banco.getNome());
 			bancoVO.setApelido(banco.getApelido());
+			bancoVO.setIdPessoaCedente(banco.getPessoaJuridicaCedente().getId());
 			bancoVO.setCodigoCedente(banco.getCodigoCedente());
+			bancoVO.setDigitoCodigoCedente(banco.getDigitoCodigoCedente());
 			bancoVO.setAgencia(banco.getAgencia());
 			bancoVO.setDigitoAgencia(banco.getDvAgencia());
 			bancoVO.setConta(banco.getConta());
@@ -109,8 +124,12 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setAtivo(banco.isAtivo());
 			bancoVO.setMulta(banco.getMulta());
 			bancoVO.setVrMulta(banco.getVrMulta());
-			bancoVO.setInstrucoes(banco.getInstrucoes());
+			bancoVO.setInstrucoes1(banco.getInstrucoes1());
+			bancoVO.setInstrucoes2(banco.getInstrucoes2());
+			bancoVO.setInstrucoes3(banco.getInstrucoes3());
+			bancoVO.setInstrucoes4(banco.getInstrucoes4());
 		}
+		
 		return bancoVO; 
 	}
 	
@@ -226,6 +245,23 @@ public class BancoServiceImpl implements BancoService {
 	public List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult) {
 		
 		return bancoRepository.obterBancosPorNome(nomeBanco, qtdMaxResult);
+	}
+
+	@Override
+	public List<ItemDTO<Long, String>> obterPessoasDisponiveisParaCedente() {
+		
+		List<ItemDTO<Long, String>> pessoasCedente =  new ArrayList<ItemDTO<Long, String>>();
+		
+		Pessoa pessoDistribuidor = distribuidorRepository.obter().getJuridica(); 
+		ItemDTO<Long, String> pessoa = new ItemDTO<Long, String>(pessoDistribuidor.getId(), pessoDistribuidor.getNome());
+		pessoasCedente.add(pessoa);
+		
+		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro.ATIVO, null);
+		for(Fornecedor f : fornecedores) {
+			pessoasCedente.add(new ItemDTO<Long, String>(f.getJuridica().getId(), f.getJuridica().getNome()));
+		}
+		
+		return pessoasCedente;
 	}
 
 }

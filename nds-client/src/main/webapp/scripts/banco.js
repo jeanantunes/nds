@@ -156,11 +156,25 @@ var bancoController = $.extend(true, {
 				return;
 	    	
 	    	bancoController.limparTelaCadastroBanco();
+	    	
+	    	$('#newPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
+	    	
+	    	$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
+				   	null,
+				   	function(result) {
+						$.each(result, function(k, v) {
+							selectedId = document.formularioAlteraBanco.alterAtivo.idPessoaCedente;
+								
+							$('#newPessoasCedente', this.workspace).append(
+									'<option value="'+ v.key +'" '+ ((selectedId == v.key) ? ' selected' : '') +'>'+ v.value +'</option>'
+							);
+						});
+					});
 			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
-				height:310,
-				width:655,
+				height:410,
+				width:680,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -181,8 +195,8 @@ var bancoController = $.extend(true, {
 		
 			$( "#dialog-alterar", this.workspace).dialog({
 				resizable: false,
-				height:310,
-				width:655,
+				height:410,
+				width:680,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -319,20 +333,25 @@ var bancoController = $.extend(true, {
 		
 	    novoBanco : function() {
 			var param ={
-					 numero     : $("#newNumero", this.workspace).val(),
-					 nome       : $("#newNome", this.workspace).val(),
-					 codigoCedente    : $("#newCodigoCedente", this.workspace).val(),
-					 agencia    : $("#newAgencia", this.workspace).val(),
-					 digitoAgencia    : $("#newDigitoAgencia", this.workspace).val(),
-					 conta      : $("#newConta", this.workspace).val(),
-					 digito     : $("#newDigito", this.workspace).val(),
-					 apelido    : $("#newApelido", this.workspace).val(),
-					 carteira   : $("#newCarteira", this.workspace).val(),
-					 juros      : $("#newJuros", this.workspace).val(),
-					 ativo      : $("#newAtivo", this.workspace).is(':checked'),
-					 multa      : $("#newMulta", this.workspace).val(),
-					 vrMulta    : $("#newVrMulta", this.workspace).val(),
-					 instrucoes : $("#newInstrucoes", this.workspace).val()
+					 numero     	: $("#newNumero", this.workspace).val(),
+					 nome       	: $("#newNome", this.workspace).val(),
+					 idPessoaCedente    : $('#newPessoasCedente', this.workspace).val(),
+					 codigoCedente	: $("#newCodigoCedente", this.workspace).val(),
+					 digitoCodigoCedente    : $("#newDigitoCodigoCedente", this.workspace).val(),
+					 agencia    	: $("#newAgencia", this.workspace).val(),
+					 digitoAgencia	: $("#newDigitoAgencia", this.workspace).val(),
+					 conta      	: $("#newConta", this.workspace).val(),
+					 digito     	: $("#newDigito", this.workspace).val(),
+					 apelido    	: $("#newApelido", this.workspace).val(),
+					 carteira   	: $("#newCarteira", this.workspace).val(),
+					 juros      	: $("#newJuros", this.workspace).val(),
+					 ativo      	: $("#newAtivo", this.workspace).is(':checked'),
+					 multa      	: $("#newMulta", this.workspace).val(),
+					 vrMulta    	: $("#newVrMulta", this.workspace).val(),
+					 instrucoes1 	: $("#newInstrucoes1", this.workspace).val(),
+					 instrucoes2 	: $("#newInstrucoes2", this.workspace).val(),
+					 instrucoes3 	: $("#newInstrucoes3", this.workspace).val(),
+					 instrucoes4 	: $("#newInstrucoes4", this.workspace).val()
 			
 			};
 
@@ -348,6 +367,9 @@ var bancoController = $.extend(true, {
 		               },
 					   null,
 					   true);
+			
+			bancoController.limparTelaCadastroBanco();
+			
 		},
 		
 		alterarBanco : function() {
@@ -355,7 +377,9 @@ var bancoController = $.extend(true, {
 			var param = {idBanco    : $("#idBanco", this.workspace).val(),
 			    	 numero     : $("#alterNumero", this.workspace).val(),
 					 nome       : $("#alterNome", this.workspace).val(),
+					 idPessoaCedente    : $('#alterPessoasCedente', this.workspace).val(),
 					 codigoCedente    : $("#alterCodigoCedente", this.workspace).val(),
+					 digitoCodigoCedente    : $("#alterDigitoCodigoCedente", this.workspace).val(),
 					 agencia    : $("#alterAgencia", this.workspace).val(),
 					 digitoAgencia    : $("#alterDigitoAgencia", this.workspace).val(),
 					 conta      : $("#alterConta", this.workspace).val(),
@@ -366,7 +390,10 @@ var bancoController = $.extend(true, {
 					 ativo      : $("#alterAtivo", this.workspace).is(':checked'),					
 					 multa      : $("#alterMulta", this.workspace).val(),
 					 vrMulta    : $("#alterVrMulta", this.workspace).val(),
-					 instrucoes : $("#alterInstrucoes", this.workspace).val()};
+					 instrucoes1 : $("#alterInstrucoes1", this.workspace).val(),
+					 instrucoes2 : $("#alterInstrucoes2", this.workspace).val(),
+					 instrucoes3 : $("#alterInstrucoes3", this.workspace).val(),
+					 instrucoes4 : $("#alterInstrucoes4", this.workspace).val()};
 
 			$.postJSON(contextPath + "/banco/alteraBanco", param,
 					   function(result) {
@@ -380,6 +407,8 @@ var bancoController = $.extend(true, {
 				       },
 					   null,
 					   true);
+			
+			bancoController.limparTelaCadastroBanco();
 		},
 		
 		editarBanco : function(idBanco){
@@ -396,6 +425,7 @@ var bancoController = $.extend(true, {
 			$("#alterNumero", this.workspace).val(resultado.numero);
 			$("#alterNome", this.workspace).val(resultado.nome);
 			$("#alterCodigoCedente", this.workspace).val(resultado.codigoCedente);
+			$("#alterDigitoCodigoCedente", this.workspace).val(resultado.digitoCodigoCedente);
 			$("#alterAgencia", this.workspace).val(resultado.agencia);
 			$("#alterDigitoAgencia", this.workspace).val(resultado.digitoAgencia);
 			$("#alterConta", this.workspace).val(resultado.conta);
@@ -406,10 +436,27 @@ var bancoController = $.extend(true, {
 			
 			$("#alterAtivo", this.workspace).val(resultado.ativo);
 			document.formularioAlteraBanco.alterAtivo.checked = resultado.ativo;
+			document.formularioAlteraBanco.alterAtivo.idPessoaCedente = resultado.idPessoaCedente;
 			
 			$("#alterMulta", this.workspace).val(resultado.multa);
 			$("#alterVrMulta", this.workspace).val(resultado.vrMulta);
-			$("#alterInstrucoes", this.workspace).val(resultado.instrucoes);
+			$("#alterInstrucoes1", this.workspace).val(resultado.instrucoes1);
+			$("#alterInstrucoes2", this.workspace).val(resultado.instrucoes2);
+			$("#alterInstrucoes3", this.workspace).val(resultado.instrucoes3);
+			$("#alterInstrucoes4", this.workspace).val(resultado.instrucoes4);
+			
+			$('#alterPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
+			$.postJSON(contextPath + "/banco/obterPessoasDisponiveisParaCedente",
+			   	null,
+			   	function(result) {
+					$.each(result, function(k, v) {
+						selectedId = document.formularioAlteraBanco.alterAtivo.idPessoaCedente;
+							
+						$('#alterPessoasCedente', this.workspace).append(
+								'<option value="'+ v.key +'" '+ ((selectedId == v.key) ? ' selected' : '') +'>'+ v.value +'</option>'
+						);
+					});
+				});
 			
 			bancoController.formatarValores();
 			
@@ -435,8 +482,10 @@ var bancoController = $.extend(true, {
 		},
 		
 	    limparTelaCadastroBanco : function() {
+	    	document.formularioAlteraBanco.alterAtivo.idPessoaCedente = -1;
 			$("#newNumero", this.workspace).val("");
 			$("#newNome", this.workspace).val("");
+			$('#alterPessoasCedente', this.workspace).empty().append('<option value="-1" selected>Selecione...</option>');
 			$("#newCodigoCedente", this.workspace).val("");
 			$("#newAgencia", this.workspace).val("");
 			$("#newConta", this.workspace).val("");
@@ -448,7 +497,10 @@ var bancoController = $.extend(true, {
 			$("#newAtivo", this.workspace).val("");
 			$("#newMulta", this.workspace).val("");
 			$("#newVrMulta", this.workspace).val("");
-			$("#newInstrucoes", this.workspace).val("");
+			$("#newInstrucoes1", this.workspace).val("");
+			$("#newInstrucoes2", this.workspace).val("");
+			$("#newInstrucoes3", this.workspace).val("");
+			$("#newInstrucoes4", this.workspace).val("");
 		}, 
 	    
 	    limparMulta : function(){

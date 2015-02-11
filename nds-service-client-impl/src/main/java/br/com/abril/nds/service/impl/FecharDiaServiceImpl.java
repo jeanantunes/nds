@@ -1731,8 +1731,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		this.processarLancamentosVencidos(dataOperacao, usuario);
 		
-		//TODO Habilitar esse processo quando o NDSBKLOG 9 for concluido e testado
-		//this.processarLancamentosFechados(dataOperacao, usuario);
+		this.processarLancamentosFechados(dataOperacao, usuario);
+		
 	}
 
 	private void processarLancamentosEmRecolhimento(Date dataOperacao, Usuario usuario) {
@@ -1773,8 +1773,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	}
 	
 	private void processarLancamentosFechados(Date dataOperacao, Usuario usuario) {
-		
-		//TODO Habilitar esse processo quando o NDSBKLOG 9 for concluido e testado
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoParaFechamento(dataOperacao);
 		

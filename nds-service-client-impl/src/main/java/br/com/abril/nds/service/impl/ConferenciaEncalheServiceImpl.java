@@ -1960,9 +1960,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		final List<Long> listaIdConferenciaEncalheParaExclusao = 
-				obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
+		
+		List<Long> listaIdConferenciaEncalheParaExclusao = obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
 				                                listaConferenciaEncalhe, 
@@ -2308,7 +2307,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					controleConferenciaEncalheCota.getCota(), 
 					dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
 			
-			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
+			if(conferenciaEncalheDTO.getIdConferenciaEncalhe() != null) {
 
 				atualizarRegistroConferenciaEncalhe(
 						cota,

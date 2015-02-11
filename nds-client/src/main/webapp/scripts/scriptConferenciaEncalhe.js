@@ -596,7 +596,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
 							ConferenciaEncalhe.modalAberta = false;
-							
+
 							ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 							
 							$("#conferencia-numeroCota", ConferenciaEncalhe.workspace).focus();
@@ -842,11 +842,14 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("._dadosConfEncalhe", ConferenciaEncalhe.workspace).remove();
 		
-		$.each(listaConferencia,
-				function(index, value) {
-					
+		$.each(listaConferencia, function(index, value) {
+			
+			if(value.ocultarItem){
+				return;
+			}
+			
 					var parcialNaoFinal =  value.parcialNaoFinal;
-				
+					
 					var _class;
 					
 					if (index % 2 == 0){
@@ -991,7 +994,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalhe.workspace).text(result.situacao);
 		
-		
 		if(!indNaoAlteraFoco) {
 
 			if( $("#conferencia-vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
@@ -1009,11 +1011,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 			
 		}
-		
-		
 		bloquearItensEdicao(ConferenciaEncalhe.workspace);
 	},
-	
 	
 	formatarDadosDebitoCredito : function(listaDebitoCredito) {
 		
@@ -2549,5 +2548,4 @@ function confirmarPopup_notaFiscal(){
 	}, null, true, "dialog-notaFiscal"
 	);
 }
-
 //@ sourceURL=scriptConferenciaEncalhe.js

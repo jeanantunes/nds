@@ -533,7 +533,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 			.append(" inner join cec.cota cota					 		")
 			.append(" inner join ce.produtoEdicao produtoEdicao 		")
 			.append(" inner join produtoEdicao.produto produto			")
-			.append(" inner join produto.fornecedores fornecedor  		")
 			.append(" inner join produtoEdicao.lancamentos lancamentos 	")
 			
 			.append(" where ");
@@ -544,8 +543,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 			
 			hql.append(" and upper(produtoEdicao.codigoDeBarras) like upper(:codigoBarras) ");
 			
+			
 			hql.append(" and (ce.dataRecolhimento = :dataOperacao ");
-			hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas)) ");
+			
+			if(!datasRecolhimentoValidas.isEmpty()) {
+				hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas) ");
+			}
+			hql.append(" ) ");
 			
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
@@ -561,7 +565,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO);
 		query.setParameter("dataOperacao", dataOperacao);
-		query.setParameterList("datasRecolhimentoValidas", datasRecolhimentoValidas);
+		
+		if(!datasRecolhimentoValidas.isEmpty()) {
+			query.setParameterList("datasRecolhimentoValidas", datasRecolhimentoValidas);
+		}
 		
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		

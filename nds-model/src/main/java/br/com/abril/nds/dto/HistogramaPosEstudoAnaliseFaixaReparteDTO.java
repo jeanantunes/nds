@@ -207,21 +207,32 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 		this.setQtdCotas(
 				this.getQtdCotas().add(consolidar.getQtdCotas())
 			);
-		this.setReparteTotal(
+		this.setReparteTotal( 
 			this.getReparteTotal().add(consolidar.getReparteTotal())
 		);
-		this.setReparteMedio(
-			this.getReparteTotal().divide(BigDecimal.valueOf(this.getQtdCotas().intValue()), 4, RoundingMode.HALF_EVEN)
-		);
+		
+		if((this.getReparteTotal().compareTo(BigDecimal.ZERO) > 0) && (this.getQtdCotas().compareTo(BigInteger.ZERO)>0)){
+			this.setReparteMedio(
+				this.getReparteTotal().divide(BigDecimal.valueOf(this.getQtdCotas().intValue()), 4, RoundingMode.HALF_EVEN)
+			);
+		}
+		
 		this.setVendaNominal(
 			this.getVendaNominal().add(consolidar.getVendaNominal())
 		);
-		this.setVendaMedia(
-			this.getVendaNominal().divide(BigDecimal.valueOf(this.getQtdCotas().doubleValue()), 4, RoundingMode.HALF_EVEN)
-		);
-		this.setVendaPercent(
-			this.getVendaNominal().divide(this.getReparteTotal(), 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100))
-		);
+		
+		if((this.getVendaNominal().compareTo(BigDecimal.ZERO) > 0) && (this.getQtdCotas().compareTo(BigInteger.ZERO) > 0)){
+			this.setVendaMedia(
+				this.getVendaNominal().divide(BigDecimal.valueOf(this.getQtdCotas().doubleValue()), 4, RoundingMode.HALF_EVEN)
+			);
+		}
+		
+		if((this.getVendaNominal().compareTo(BigDecimal.ZERO) > 0) && (this.getReparteTotal().compareTo(BigDecimal.ZERO) > 0)){
+			this.setVendaPercent(
+				this.getVendaNominal().divide(this.getReparteTotal(), 4, RoundingMode.HALF_EVEN).multiply(BigDecimal.valueOf(100))
+			);
+		}
+		
 		this.setEncalheMedio(
 			this.getReparteMedio().subtract(this.getVendaMedia())
 		);
