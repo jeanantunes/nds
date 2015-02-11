@@ -612,8 +612,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     }
     
     private StringBuilder obterQueryListaConsultaEncalhe(final FiltroConsultaEncalheDTO filtro, final boolean counting) {
-        
-        
+    	
 		final StringBuilder subSqlVendaProduto = new StringBuilder();
         
 		subSqlVendaProduto.append(" select COALESCE(sum( vp.QNT_PRODUTO ),0) ");
@@ -679,7 +678,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
           subSqlValoresDesconto.append("  ) END AS valorComDesconto, ");
         	
         }
-        
         
         final StringBuilder subSqlIndObservacao = new StringBuilder();
         
@@ -1037,7 +1035,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(filtro.getIdCota()!=null ? " AND MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(" GROUP BY MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID		                                                                 ");
 		
-		
 		StringBuilder sqlTblReparte = new StringBuilder();
 		
 		sqlTblReparte.append(" SELECT	");
@@ -1072,7 +1069,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(" GROUP BY CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID ");
 		sqlTblReparte.append(" ) AS EDICAO_ENCALHADA ON ( MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID ) ");
 		
+		sqlTblReparte.append(" INNER JOIN cota c on c.id = MEC.COTA_ID ");
+		
 		sqlTblReparte.append(" INNER JOIN TIPO_MOVIMENTO TM ON (TM.ID = MEC.TIPO_MOVIMENTO_ID) ");
+		
+		sqlTblReparte.append(" INNER JOIN chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID ");
+				
+		sqlTblReparte.append(" INNER JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id and cec.COTA_ID = c.id "); 
+		
+		sqlTblReparte.append(" INNER JOIN chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.id ");
+		
+		sqlTblReparte.append(" INNER JOIN lancamento l on l.id = mec.LANCAMENTO_ID and l.id = cel.LANCAMENTO_ID and l.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID"); 
 		
 		sqlTblReparte.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
