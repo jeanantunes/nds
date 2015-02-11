@@ -184,6 +184,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 			 for(ProdutoRecolhimentoDTO prDTO :listaProdutos){
 				
+				 /*
 				if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz) 
 						&& prDTO.getStatusLancamento().compareTo(StatusLancamento.EXPEDIDO)==0
 						){
@@ -195,7 +196,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						prDTO.setNovaData(prDTO.getDataRecolhimentoPrevista());
 						copiaMatriz.get(prDTO.getDataRecolhimentoPrevista()).add(prDTO);
 					}
-				}
+				}*/
 				
 			 }
 			}

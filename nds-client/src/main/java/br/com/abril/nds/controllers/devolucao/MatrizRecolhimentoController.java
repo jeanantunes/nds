@@ -1848,6 +1848,15 @@ public class MatrizRecolhimentoController extends BaseController {
         
         List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
         
+        List<ConfirmacaoVO> confirmacoesVOCadeado = this.montarListaDatasCadeado();
+        
+        if(confirmacoesVO!=null){
+        	
+        	if(confirmacoesVOCadeado!=null){
+        	 confirmacoesVO.addAll(confirmacoesVOCadeado);
+        	}
+        }
+        
         List<String> datasConfirmadasReabertura = new ArrayList<>();
         
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -2106,6 +2115,7 @@ public class MatrizRecolhimentoController extends BaseController {
             for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
                 
                 confirmado = produtoRecolhimento.isBalanceamentoConfirmado();
+            	//confirmado = !produtoRecolhimento.getStatusLancamento().getDescricao().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO.name());
                 
                 if (!confirmado) {
                     
