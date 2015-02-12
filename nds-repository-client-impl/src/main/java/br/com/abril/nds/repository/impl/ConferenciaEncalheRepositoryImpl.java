@@ -375,7 +375,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 0 AS qtdInformada, ");
 		hql.append(" 0 AS valorTotal, ");
 		
-		hql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapaInformado, ");
+		hql.append(" COALESCE(MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapaInformado, ");
 
 		hql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, 0) AS precoComDesconto, ");
 
