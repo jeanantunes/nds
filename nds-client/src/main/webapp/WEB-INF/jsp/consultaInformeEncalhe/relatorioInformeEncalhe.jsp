@@ -315,6 +315,13 @@
 													${dado.tipoLancamentoParcial}
 												</td>
 											</c:if>
+											
+											<c:if test="${contains}">
+												<td align="center" style="font-size:14px!important;">
+													<strong>${dado.pacotePadrao}</strong>
+												</td>
+											</c:if>
+											
 										</tr>
 									</c:when>
 									<c:otherwise>
