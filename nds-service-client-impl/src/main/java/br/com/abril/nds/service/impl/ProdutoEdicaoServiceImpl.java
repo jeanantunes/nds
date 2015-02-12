@@ -993,6 +993,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         final BigInteger repartePromocional = (dto.getRepartePromocional() == null) ? BigInteger.ZERO : dto.getRepartePromocional();
         produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
         
+        // Reparte:
+        produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
+        
         // Texto boletim informativo:
         produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
               
@@ -1005,9 +1008,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
             
             produtoEdicao.setGrupoProduto(dto.getGrupoProduto());
-            
-            // Reparte:
-            produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
             
             // Características do lançamento:
             // TODO: !!!colocar o select da categoria aqui!!!
