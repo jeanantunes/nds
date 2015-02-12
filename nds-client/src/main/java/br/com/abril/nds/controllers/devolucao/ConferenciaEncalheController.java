@@ -1046,6 +1046,7 @@ public class ConferenciaEncalheController extends BaseController {
 			final BigInteger qtdeEncalhe = this.obterQuantidadeEncalheDaString(qtdExemplares);
 			
 			conferenciaEncalheDTOSessao.setQtdExemplar(qtdeEncalhe);
+			conferenciaEncalheDTOSessao.setOcultarItem(false);
 
 			this.atualizarProdutoRepetido(produtoEdicaoId, qtdeEncalhe, indConferenciaContingencia);
 			
@@ -2039,14 +2040,14 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
-		if (horaInicio != null){
+		if (horaInicio != null) {
 		
 			final ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
 			controleConfEncalheCota.setDataInicio(horaInicio);
 			
 			final InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 			
-			if (info == null){
+			if (info == null) {
                 throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 			}
 			
@@ -2256,13 +2257,13 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	@LogFuncional(value="Conferência de Encalhe [Excluir conferência]")
-	public void excluirConferencia(final Long idConferenciaEncalhe){
+	public void excluirConferencia(final Long idConferenciaEncalhe) {
 		
 		Set<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
 		
-		for (final ConferenciaEncalheDTO dto : lista){
+		for (final ConferenciaEncalheDTO dto : lista) {
 			
-			if (dto.getIdConferenciaEncalhe().equals(idConferenciaEncalhe)){				
+			if (dto.getIdConferenciaEncalhe().equals(idConferenciaEncalhe)) {				
 				dto.setQtdExemplar(BigInteger.valueOf(0));
 				dto.setQtdInformada(BigInteger.valueOf(0));
 				dto.setOcultarItem(true);
