@@ -152,6 +152,10 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
 			<input type="hidden" id="tipoClassificacaoProdutoDescricao" value="${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}" />
 			<input type="hidden" id="numeroPeriodo" value="${lancamento.periodoLancamentoParcial.numeroPeriodo}" />
+			<input type="hidden" id="dataLancamentoParcial1" value="${parcial0}" />
+			<input type="hidden" id="dataLancamentoParcial2" value="${parcial1}" />
+			<input type="hidden" id="dataLancamentoParcial3" value="${parcial2}" />
+			
 			
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>

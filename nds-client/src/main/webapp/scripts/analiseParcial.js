@@ -419,9 +419,9 @@ var analiseParcialController = $.extend(true, {
                     $('<tr>')
                         .append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
                             .append('<div style="text-align: right;">Edições Base:</div>'))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('3ª Parcial')))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('2ª Parcial')))
-                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('1ª Parcial')))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append($('#dataLancamentoParcial1').val())))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append($('#dataLancamentoParcial2').val())))
+                        .append($('<th colspan="2">').append($('<div style="text-align: center;">').append($('#dataLancamentoParcial3').val())))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('Acumulado')))
                 );
             }
