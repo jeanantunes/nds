@@ -101,8 +101,7 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (strSemanaRecolhimento.length() != 6) {
                 
-                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                        "Semana deve estar no padrão ano+semana (Ex: semana 4 de 2012, 201204)"));
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Semana deve estar no padrão ano+semana (Ex: semana 4 de 2012, 201204)"));
             }
             
             dataInicioRecolhimento = Calendar.getInstance();
@@ -177,8 +176,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         if ((semanaRecolhimento == null) && (dataRecolhimento == null)) {
             
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Informe [Semana] ou [Data Recolhimento]"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe [Semana] ou [Data Recolhimento]"));
         }
         
         final ParametrosRecolhimentoDistribuidor parametros = distribuidorService.parametrosRecolhimentoDistribuidor();
@@ -190,14 +188,11 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             semanaRecolhimento = Integer.parseInt(semanaRecolhimento.toString().substring(4));
             
-            if (semanaRecolhimento > dataInicioRecolhimento
-                    .getMaximum(Calendar.WEEK_OF_YEAR)) {
-                throw new ValidacaoException(new ValidacaoVO(
-                        TipoMensagem.WARNING, "Semana inválida."));
+            if (semanaRecolhimento > dataInicioRecolhimento.getMaximum(Calendar.WEEK_OF_YEAR)) {
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Semana inválida."));
             }
             
-            dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
-                    semanaRecolhimento);
+            dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR, semanaRecolhimento);
             
             dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
             dataFimRecolhimento = Calendar.getInstance();
@@ -207,10 +202,7 @@ public class ConsultaInformeEncalheController extends BaseController {
             dataInicioRecolhimento = dataRecolhimento;
             dataFimRecolhimento = Calendar.getInstance();
             
-            List<Integer> diasRec = 
-                    this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
-                            idFornecedor, OperacaoDistribuidor.RECOLHIMENTO);
-            
+            List<Integer> diasRec = this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, OperacaoDistribuidor.RECOLHIMENTO);
             
             Date dataFim = calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), 1);
             Calendar c = Calendar.getInstance();
@@ -227,18 +219,14 @@ public class ConsultaInformeEncalheController extends BaseController {
             dataFimRecolhimento.setTime(dataFim);
         }
         
-        final List<InformeEncalheDTO> dados = 
-                lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor,
-                        dataInicioRecolhimento, dataFimRecolhimento, sortname,
-                        Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
+        final List<InformeEncalheDTO> dados = lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
         
         result.include("diaMesInicioRecolhimento", 1);
         if (dataInicioRecolhimento != null) {
-            result.include("dataInicioRecolhimento", new SimpleDateFormat("dd/MM").format(dataInicioRecolhimento
-                    .getTime()));
-            result.include("diaSemanaInicioRecolhimento", SemanaUtil.obterDiaSemana(dataInicioRecolhimento
-                    .get(Calendar.DAY_OF_WEEK)));
+            result.include("dataInicioRecolhimento", new SimpleDateFormat("dd/MM").format(dataInicioRecolhimento.getTime()));
+            result.include("diaSemanaInicioRecolhimento", SemanaUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
         }
+        
         result.include("diaMesFimRecolhimento", maxDiaSemanaRecolhimento);
         
         if (semanaRecolhimento != null){
@@ -251,95 +239,75 @@ public class ConsultaInformeEncalheController extends BaseController {
             result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataFimRecolhimento
                     .get(Calendar.DAY_OF_WEEK)));
         }
-        final List<ColunaRelatorioInformeEncalhe> colunas = new ArrayList<ColunaRelatorioInformeEncalhe>();
         
-
+        final List<ColunaRelatorioInformeEncalhe> colunas = new ArrayList<ColunaRelatorioInformeEncalhe>();
         
         if (tipoImpressao != null && tipoImpressao.getColunas() != null){
             final int qtdColunas = tipoImpressao.getColunas().isEmpty() ? 1 : tipoImpressao.getColunas().size();
             
             if (tipoImpressao.getColunas().contains("sequenciaMatriz")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Sequência",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "sequenciaMatriz"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Sequência", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "sequenciaMatriz"));
             }
             
             if (tipoImpressao.getColunas().contains("codigoProduto")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Código",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "codigoProduto"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Código", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "codigoProduto"));
             }
             
             if (tipoImpressao.getColunas().contains("nomeProduto")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Produto",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 13),
-                        "nomeProduto"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Produto", this.calcularTamanhoColunaRelatorio(qtdColunas, 13), "nomeProduto"));
             }
             
             if (tipoImpressao.getColunas().contains("numeroEdicao")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("ED.",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "numeroEdicao"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("ED.", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "numeroEdicao"));
             }
             
             if (tipoImpressao.getColunas().contains("chamadaCapa")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Chamada de Capa",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 10),
-                        "chamadaCapa"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Chamada de Capa", this.calcularTamanhoColunaRelatorio(qtdColunas, 10), "chamadaCapa"));
             }
             
             if (tipoImpressao.getColunas().contains("codigoDeBarras")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Código de Barras",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 9),
-                        "codigoDeBarras"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Código de Barras", this.calcularTamanhoColunaRelatorio(qtdColunas, 9), "codigoDeBarras"));
             }
             
             if (tipoImpressao.getColunas().contains("precoVenda")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("R$ Capa",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "precoVenda"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("R$ Capa", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "precoVenda"));
             }
             
             if (tipoImpressao.getColunas().contains("nomeEditor")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Editor",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 14),
-                        "nomeEditor"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Editor", this.calcularTamanhoColunaRelatorio(qtdColunas, 14), "nomeEditor"));
             }
             
             if (tipoImpressao.getColunas().contains("brinde")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Brinde",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "brinde"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Brinde", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "brinde"));
             }
             
             if (tipoImpressao.getColunas().contains("dataLancamento")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Lanc.",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "dataLancamento"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Lanc.", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "dataLancamento"));
             }
             
             if (tipoImpressao.getColunas().contains("dataRecolhimento")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Rec.",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 4),
-                        "dataRecolhimento"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Rec.", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "dataRecolhimento"));
             }
             
             if (tipoImpressao.getColunas().contains("tipoLancamentoParcial")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("TR",
-                        this.calcularTamanhoColunaRelatorio(qtdColunas, 3),
-                        "tipoLancamentoParcial"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("TR", this.calcularTamanhoColunaRelatorio(qtdColunas, 3), "tipoLancamentoParcial"));
+            }
+            
+            if (tipoImpressao.getColunas().contains("pacotePadrao")){
+                
+                colunas.add(new ColunaRelatorioInformeEncalhe("Pacote Padrao", this.calcularTamanhoColunaRelatorio(qtdColunas, 3), "pacotePadrao"));
             }
         }
         

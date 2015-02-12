@@ -129,27 +129,34 @@ fieldset label {
 						<td><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.brinde" type="checkbox" value="brinde" /></td>
 						<td><label for="tipoImpressao.colunas.brinde">Brinde</label></td>
-						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.dataLancamento" type="checkbox"
-							value="dataLancamento" /></td>
-						<td><label for="tipoImpressao.colunas.dataLancamento">Data
-								Lan&ccedil;amento</label></td>
-						
+						<td>
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataLancamento" type="checkbox" value="dataLancamento" />
+						</td>
+						<td>
+							<label for="tipoImpressao.colunas.dataLancamento">Data Lan&ccedil;amento</label>
+						</td>
 					</tr>
 					<tr>
-						
-						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.dataRecolhimento" type="checkbox"
-							value="dataRecolhimento" /></td>
-						<td><label for="tipoImpressao.colunas.dataRecolhimento">Data
-								Recolhimento</label></td>
+						<td>
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataRecolhimento" type="checkbox" value="dataRecolhimento" />
+						</td>
+						<td>
+							<label for="tipoImpressao.colunas.dataRecolhimento">Data Recolhimento</label>
+						</td>
 					
-						<td><input name="tipoImpressao.colunas[]"
+						<td>
+							<input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.tipoLancamentoParcial"
 							type="checkbox" value="tipoLancamentoParcial" /></td>
-						<td><label
-							for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento
-								Parcial/Final</label></td>
+						<td>
+							<label for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento Parcial/Final</label>
+						</td>
+						<td>
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.pacotePadrao" type="checkbox" value="pacotePadrao" />
+						</td>			
+						<td>
+							<label for="tipoImpressao.colunas.pacotePadrao">Pacote Padrao</label>
+						</td>		
 					</tr>
 				</table>
 			</fieldset>
@@ -166,8 +173,7 @@ fieldset label {
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 		<legend> Pesquisar Informe de Recolhimento</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1"
-			class="filtro">
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="74">Fornecedor:</td>
 				<td width="210"><select name="select" id="idFornecdorSelect"
