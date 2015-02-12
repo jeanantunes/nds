@@ -6,11 +6,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script type="text/javascript">
-	
 	var pesquisaProdutoParciais = new PesquisaProduto(ParciaisController.workspace);
-	
-	
-	
 </script>
 		
 <style type="text/css">
@@ -30,65 +26,54 @@
 
 	<div id="dialog-edit-produto" title="Dados do Produto">
 		
-		<jsp:include page="../messagesDialog.jsp">
-			<jsp:param value="dialog-edit-produto" name="messageDialog"/>
-		</jsp:include>
-	
-	        <table width="412" border="0" cellpadding="2" cellspacing="1" class="filtro">
-	            <tr>
-	              <td width="129">Código:</td>
-	              <td width="272">
-	
-	
-	<input id="parcial-codigoProdutoEd" name="textfield2" type="text" style="width:80px;" value="" disabled="disabled" /></td>
-	
-	            </tr>
-	            <tr>
-	              <td>Produto:</td>
-	              <td>
-	              
-	<input id="parcial-nomeProdutoEd" name="textfield7" type="text" style="width:250px;" value="" disabled="disabled"/></td>
-	 
-	            </tr>
-	            <tr>
-	              <td>Edição:</td>
-	              <td>
-	
-	<input id="parcial-numEdicaoEd" name="textfield" type="text" style="width:80px;" value="" disabled="disabled"/></td>
-	
-	            </tr>
-	            <tr>
-	              <td>Preço Capa R$:</td>
-	              <td>
-	
-	<input id="parcial-precoCapaEd" name="textfield3" type="text" style="width:80px; text-align:right" value="" disabled="disabled"/></td>
-	
-	            </tr>
-	            <tr>
-	              <td>Fornecedor:</td>
-	              <td>
-	
-	<input id="parcial-nomeFornecedorEd" name="textfield4" type="text" style="width:250px;" value="" disabled="disabled"/></td>
-	
-	            </tr>
-	            <tr>
-	              <td>Data Lançamento:</td>
-	              <td>
-	
-					<input id="parcial-dataLancamentoEd" type="text" style="width:80px;" />
-				  </td>
-	
-	            </tr>
-	            <tr>
-	              <td>Data Recolhimento:</td>
-	              <td>
-	
-					<input id="parcial-dataRecolhimentoEd" type="text"  style="width:80px;" />
-				  </td>
-	
-	            </tr>
-	          </table>
-	</div>
+	<jsp:include page="../messagesDialog.jsp">
+		<jsp:param value="dialog-edit-produto" name="messageDialog"/>
+	</jsp:include>
+
+	<table width="412" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		<tr>
+	    	<td width="129">Código:</td>
+	        <td width="272">
+				<input id="parcial-codigoProdutoEd" name="textfield2" type="text" style="width:80px;" value="" disabled="disabled" />
+			</td>
+		</tr>
+	    <tr>
+	    	<td>Produto:</td>
+	        <td>
+				<input id="parcial-nomeProdutoEd" name="textfield7" type="text" style="width:250px;" value="" disabled="disabled"/>
+			</td>
+		</tr>
+        <tr>
+          <td>Edição:</td>
+          <td><input id="parcial-numEdicaoEd" name="textfield" type="text" style="width:80px;" value="" disabled="disabled"/></td>
+
+        </tr>
+        <tr>
+        	<td>Preço Capa R$:</td>
+          	<td>
+          		<input id="parcial-precoCapaEd" name="textfield3" type="text" style="width:80px; text-align:right" value="" disabled="disabled"/>
+          	</td>
+        </tr>
+        <tr>
+        	<td>Fornecedor:</td>
+          	<td>
+				<input id="parcial-nomeFornecedorEd" name="textfield4" type="text" style="width:250px;" value="" disabled="disabled"/>
+			</td>
+        </tr>
+        <tr>
+     	<td>Data Lançamento:</td>
+          	<td>
+				<input id="parcial-dataLancamentoEd" type="text" style="width:80px;" />
+ 			</td>
+        </tr>
+        <tr>
+       		<td>Data Recolhimento:</td>
+          	<td>
+				<input id="parcial-dataRecolhimentoEd" type="text"  style="width:80px;" />
+ 			</td>
+        </tr>
+	</table>
+</div>
 </form>
 
 <form id="idParciaisExcluir">
@@ -141,43 +126,34 @@
 	
 	<fieldset style="margin-bottom:5px;">
 		<legend>Parciais</legend>
-		
-	    	<table class="parcial-parciaisPopGrid"></table>
-
+    	<table class="parcial-parciaisPopGrid"></table>
 	</fieldset>
-	
-	
 	<br />
-	
 	<div id="exportacaoPeriodosModal">
-		            
 		<span class="bt_novos">
-		            
-		<!-- ARQUIVO EXCEL -->
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-				
-				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
+			<!-- ARQUIVO EXCEL -->
+			<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			</a>
 		</span>
 		
 		<span class="bt_novos">
-			
-		<!-- IMPRIMIR PDF -->	
-		<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF" rel="tipsy" title="Imprimir">
-		
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
-				</span>
+			<!-- IMPRIMIR PDF -->	
+			<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF" rel="tipsy" title="Imprimir">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+			</a>
+		</span>
 		</div>   
-	<span id="btnNovoPeriodoManualModal" class="bt_novos" title="Novo">
- 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoManual(true);">
- 			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Período" />
- 		</a>
- 	 </span>
-	 <span id="btnIncluirPeriodosModal" class="bt_novos">
-	 	<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoAutomatico(true);" rel="tipsy" title="Recalcular Períodos">
-	 		<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" alt="Incluir Períodos" />
-	 	</a>
-	 </span>	
-	
+		<span id="btnNovoPeriodoManualModal" class="bt_novos" title="Novo">
+ 			<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoManual(true);">
+ 				<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Período" />
+ 			</a>
+ 	 	</span>
+	 	<span id="btnIncluirPeriodosModal" class="bt_novos">
+	 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoAutomatico(true);" rel="tipsy" title="Recalcular Períodos">
+	 			<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" alt="Incluir Períodos" />
+	 		</a>
+	 	</span>	
 	</div>
 </form>
 
