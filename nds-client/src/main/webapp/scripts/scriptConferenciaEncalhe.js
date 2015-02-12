@@ -310,7 +310,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	
-	bindkeypressCodigoSM : function(){
+	bindkeypressCodigoSM : function() {
 		
 		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
 			
@@ -492,7 +492,13 @@ var ConferenciaEncalhe = $.extend(true, {
 
 		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8',function() {
 			
-			if (!ConferenciaEncalhe.modalAberta){
+			if (!ConferenciaEncalhe.modalAberta) {
+				
+				if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+					
+					ConferenciaEncalhe.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'), true);
+					return;
+				}
 				
 				ConferenciaEncalhe.processandoConferenciaEncalhe = true;
 				
@@ -506,8 +512,15 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 		}));
 
-		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			if (!ConferenciaEncalhe.modalAberta){
+		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', function() {
+			
+			if (!ConferenciaEncalhe.modalAberta) {
+				
+				if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+					
+					ConferenciaEncalhe.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'), true);
+					return;
+				}
 				
 				ConferenciaEncalhe.processandoConferenciaEncalhe = true;
 				
@@ -866,10 +879,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
 					
-					
-					
-					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + 
-						'" onkeydown="ConferenciaEncalhe.posicionarQtdExemplares(event,'+index+');" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.validarValorZero('+ 
+					var inputExemplares = '<input isEdicao="true" elIndex="'+ index +'" id="qtdExemplaresGrid_'+ index + 
+						'" onkeydown="ConferenciaEncalhe.posicionarQtdExemplares(event, '+ index +');" class="input-numericPacotePadrao" onchange="ConferenciaEncalhe.valorAnteriorInput = this.defaultValue;ConferenciaEncalhe.validarValorZero('+ 
 						index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
@@ -1442,9 +1453,9 @@ var ConferenciaEncalhe = $.extend(true, {
 		ConferenciaEncalhe.verificarPermissaoSuperVisor(index);
 	},
 	
-	verificarPermissaoSuperVisor : function(index){
+	verificarPermissaoSuperVisor : function(index, salvandoOuFinalizandoConferencia) {
 		
-		if(ConferenciaEncalhe.processandoConferenciaEncalhe){
+		if(ConferenciaEncalhe.processandoConferenciaEncalhe) {
 			return;
 		}
 		
@@ -1470,18 +1481,18 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
 			data, 
-			function(result){
+			function(result) {
 				
-				if (result && result.result != ""){
+				if (result && result.result != "") {
 					
 					ConferenciaEncalhe.resetValue = true;
 					
-					if (result[0]){
+					if (result[0]) {
 						
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalhe.resetValue = false;
 						
-						if (index || index == 0){
+						if (index || index == 0) {
 							
 							ConferenciaEncalhe.atualizarValores(index);
 						} else {
@@ -1502,13 +1513,13 @@ var ConferenciaEncalhe = $.extend(true, {
 								"Ok": function() {
 									
 									ConferenciaEncalhe.resetValue = false;
-									ConferenciaEncalhe.autenticarSupervisor(index);
+									ConferenciaEncalhe.autenticarSupervisor(index, salvandoOuFinalizandoConferencia);
 									focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 									
 								},
 								"Cancelar": function() {
 									
-									if (index || index == 0){
+									if (index || index == 0) {
 										
 										$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
 									} else {
@@ -1563,7 +1574,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		);
 	},
 	
-	autenticarSupervisor : function(index){
+	autenticarSupervisor : function(index, salvandoOuFinalizandoConferencia) {
 		
 		var paramUsuario = {
 				usuario:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val(),
@@ -1602,9 +1613,14 @@ var ConferenciaEncalhe = $.extend(true, {
 					return;
 				}
 				
-				if (index || index == 0){
+				if (index || index == 0) {
 					
 					ConferenciaEncalhe.atualizarValores(index);
+					
+					setTimeout(function() {
+						ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.popup_salvarInfos);
+					}, 1000);
+					
 				} else {
 					
 					ConferenciaEncalhe.adicionarProdutoConferido();
@@ -1613,7 +1629,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog("close");
 				return;
 			},
-			function (){
+			function() {
 				ConferenciaEncalhe.resetValue = true;
 			}
 		);
@@ -1839,7 +1855,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(parseInt(result.qtdExemplar));
 	},
 
-	adicionarProdutoConferido : function(){
+	adicionarProdutoConferido : function() {
 		
 		var idProdutoEdicao = $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val();
 		
@@ -1847,7 +1863,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		            {name: "qtdExemplares", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,
-			function(result){
+			function(result) {
 				
 				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);	
 				
@@ -1857,7 +1873,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 			},
-			function(){
+			function() {
 				
 				ConferenciaEncalhe.limparDadosProduto(true);
 				
