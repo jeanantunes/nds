@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
@@ -128,6 +129,18 @@ public class AnaliseParcialController extends BaseController {
         } else {
             result.include("tipoExibicao", modoAnalise);
             session.setAttribute("modoAnalise", modoAnalise);
+            
+            if(modoAnalise.equalsIgnoreCase("PARCIAL")){
+            	List<DataLancamentoPeriodoEdicoesBasesDTO> lcmtos = analiseParcialService.obterDataLacmtoPeridoEdicoesBaseParciais(id, lancamento.getProdutoEdicao().getId());
+            	
+            	for (int i = 0; i < 3; i++) {
+            		if(i < lcmtos.size()){
+            			result.include("parcial"+i, "L - "+lcmtos.get(i).getDataLancamento());
+            		}else{
+            			result.include("parcial"+i, "L - ");
+            		}
+				}
+            }
         }
         
         result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));

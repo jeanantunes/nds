@@ -909,7 +909,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa,		");
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
 		hql.append(" produtoEdicao.precoVenda as precoVenda, 		");
-
+		hql.append(" produtoEdicao.pacotePadrao as pacotePadrao, 		");
 		hql.append(" (CASE WHEN produtoEdicao.origem = :origemInterface ");
 		hql.append(" THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
 		hql.append(" ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
@@ -950,10 +950,7 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
-		query.setParameterList("statusLancamento",
-                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-                        StatusLancamento.EM_RECOLHIMENTO, 
-                        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
 		query.setParameter("origemInterface", Origem.INTERFACE);
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 		
@@ -964,8 +961,7 @@ public class LancamentoRepositoryImpl extends
 			query.setFirstResult(initialResult);
 		}
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				InformeEncalheDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformeEncalheDTO.class));
 
 		return query.list();
 

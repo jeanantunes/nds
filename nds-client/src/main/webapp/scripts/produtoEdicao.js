@@ -901,8 +901,8 @@ var produtoEdicaoController =$.extend(true,  {
 		var bloquear = (bloquearOrigemInterface || bloquearRedistribuicao);
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamentoPrevisto", bloquearOrigemInterface);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamento", !bloquearOrigemInterface);
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", bloquear);
@@ -919,7 +919,7 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-largura", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-comprimento", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-espessura", bloquear);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-boletimInformativo", bloquear);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-boletimInformativo", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-descricaoDesconto", bloquear);
 
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-pacotePadrao", bloquearRedistribuicao);

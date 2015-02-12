@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
@@ -983,4 +984,34 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 				
 		return (DetalhesEdicoesBasesAnaliseEstudoDTO) query.uniqueResult();
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DataLancamentoPeriodoEdicoesBasesDTO> obterDataDeLacmtoPeriodoParcial (Long idEstudo, Long idProdutoEdicao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select  ");
+		sql.append("   lc.DATA_LCTO_DISTRIBUIDOR as dataLancamento,  ");
+		sql.append("   plp.NUMERO_PERIODO as numPeriodo  ");
+		sql.append(" from lancamento lc  ");
+		sql.append(" join periodo_lancamento_parcial plp  ");
+		sql.append("   on plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" join estudo_produto_edicao_base epe  ");
+		sql.append("   on epe.ESTUDO_ID = :estudoId ");
+		sql.append(" where lc.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
+		sql.append("     and plp.NUMERO_PERIODO = epe.PERIODO_PARCIAL  ");
+		sql.append(" order by plp.NUMERO_PERIODO desc limit 3; ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", idEstudo);
+		query.setParameter("produtoEdicaoId", idProdutoEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DataLancamentoPeriodoEdicoesBasesDTO.class));
+		
+		return query.list(); 
+	}
+	
 }
