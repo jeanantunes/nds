@@ -57,7 +57,7 @@
 				</tr>
 				<tr id="trProd">
 					<td width="142"><strong>Produto:</strong></td>
-					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
+					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="24" /></td>
 				</tr>
 				<tr id="trForn">
 					<td><strong>Fornecedor:</strong></td>
