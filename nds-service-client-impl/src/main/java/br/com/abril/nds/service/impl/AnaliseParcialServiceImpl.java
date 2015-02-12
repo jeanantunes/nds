@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
@@ -570,6 +571,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	}
 		
 		return validacao;
-		
+	}
+	
+	@Override
+	@Transactional
+	public List<DataLancamentoPeriodoEdicoesBasesDTO> obterDataLacmtoPeridoEdicoesBaseParciais(Long idEstudo, Long idProdutoEdicao){
+		return analiseParcialRepository.obterDataDeLacmtoPeriodoParcial(idEstudo, idProdutoEdicao);
 	}
 }
