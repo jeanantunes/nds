@@ -329,9 +329,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
 			Integer initialResult, Integer maxResults) {
-		return lancamentoRepository.obterLancamentoInformeRecolhimento(
-				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento,
-				orderBy, ordenacao, initialResult, maxResults);
+		return lancamentoRepository.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, orderBy, ordenacao, initialResult, maxResults);
 	}
 	
 	@Override

@@ -448,6 +448,4 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		return query;
 	}	
-	
-	
 }
