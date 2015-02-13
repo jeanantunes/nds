@@ -708,7 +708,7 @@ var lancamentoNovoController = $.extend(true, {
 			});
 	},
 	
-	cadastrarDiferencaEstoqueRateio:function (isBotaoIncluirNovo, dataExtend, params) {
+	cadastrarDiferencaEstoqueRateio: function (isBotaoIncluirNovo, dataExtend, params) {
 		
 		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
 		
@@ -1517,7 +1517,7 @@ var lancamentoNovoController = $.extend(true, {
 		}
 	},
 	
-	tratarVisualizacaoOpcaoEstoque:function(params) {
+	tratarVisualizacaoOpcaoEstoque: function(params) {
 	
 		var value = params.tipoDiferenca;
 		var direcionamento = params.direcionamento;
@@ -1581,11 +1581,11 @@ var lancamentoNovoController = $.extend(true, {
 			$(".prodSemCota", this.workspace).show();
 			$(".lctoPorCota", this.workspace).show();
 			
-			if (direcionamento && direcionamento === 'COTA') {
+			if (direcionamento && direcionamento === 'ESTOQUE') {
+				$("#paraEstoque", this.workspace).check();
+			} else {				
 				$("#paraCota", this.workspace).check();
 				$("#fieldCota", lancamentoNovoController.workspace).show();
-			} else {				
-				$("#paraEstoque", this.workspace).check();
 			}
 		}
 		

@@ -114,9 +114,10 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @param idProdutoEdicao
 	 *            - Id do ProdutoEdicao
+	 * @param dataLimiteLancamento TODO
 	 * @return Lancamento
 	 */
-	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento);
 	
 	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
 
@@ -369,7 +370,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 
-	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota, Date dataLimiteLancamento);
 	
 	Integer obterProximaSequenciaMatrizPorData(Date dataLancamento);
 	

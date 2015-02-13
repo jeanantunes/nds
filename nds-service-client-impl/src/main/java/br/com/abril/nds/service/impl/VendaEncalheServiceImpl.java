@@ -1566,7 +1566,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			return false;
 		}
 		
-		Lancamento lancamento =  lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		Lancamento lancamento =  lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), null);
 		
 		if(lancamento == null || lancamento.getPeriodoLancamentoParcial() == null){
 			return false;
