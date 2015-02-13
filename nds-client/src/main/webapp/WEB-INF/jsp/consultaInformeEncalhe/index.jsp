@@ -55,58 +55,49 @@ fieldset label {
 			<fieldset>
 				<legend>Tipo de Impress&atilde;o</legend>
 				<div id="buttonsetTipoImpressaoCapas">
-					<input type="radio" id="radioTipoImpressaoCapasNAO"
-						name="tipoImpressao.capas" value="NAO" checked="checked" /><label
-						for="radioTipoImpressaoCapasNAO">Sem Capas</label> <input
-						type="radio" id="radioTipoImpressaoCapasFIM"
-						name="tipoImpressao.capas" value="FIM" /><label
-						for="radioTipoImpressaoCapasFIM">Capas no Fim</label> <input
-						type="radio" id="radioTipoImpressaoCapasPAR"
-						name="tipoImpressao.capas" value="PAR" /><label
-						for="radioTipoImpressaoCapasPAR">Capas nas Paginas Pares</label>
+					<input type="radio" id="radioTipoImpressaoCapasNAO" name="tipoImpressao.capas" value="NAO" checked="checked" />
+					<label for="radioTipoImpressaoCapasNAO">Sem Capas</label> 
+					<input type="radio" id="radioTipoImpressaoCapasFIM" name="tipoImpressao.capas" value="FIM" />
+					<label for="radioTipoImpressaoCapasFIM">Capas no Fim</label>
+					<input type="radio" id="radioTipoImpressaoCapasPAR" name="tipoImpressao.capas" value="PAR" />
+					<label for="radioTipoImpressaoCapasPAR">Capas nas Paginas Pares</label>
 				</div>
 			</fieldset>
 			<br clear="all" /> <br />
 			<fieldset>
 				<legend>Colunas</legend>
-				<table width="825" border="0" cellspacing="0" cellpadding="0"
-					id="colunasTable">
+				<table width="825" border="0" cellspacing="0" cellpadding="0" id="colunasTable">
 					<tr>
 						
-						<td width="27"><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.sequenciaMatriz" type="checkbox"
-							value="sequenciaMatriz" /></td>
-						<td width="183"><label
-							for="tipoImpressao.colunas.sequenciaMatriz">Sequ&ecirc;ncia</label></td>
-					
-					
-						<td width="27"><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.codigoProduto" type="checkbox"
-							value="codigoProduto" /></td>
-						<td width="183"><label
-							for="tipoImpressao.colunas.codigoProduto">C&oacute;digo</label></td>
-
-						<td width="21"><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.nomeProduto" type="checkbox"
-							value="nomeProduto" /></td>
-						<td width="105"><label
-							for="tipoImpressao.colunas.nomeProduto">Produto</label></td>
-
-						<td width="23"><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.numeroEdicao" type="checkbox"
-							value="numeroEdicao" /></td>
-						<td width="101"><label
-							for="tipoImpressao.colunas.numeroEdicao">Edi&ccedil;&atilde;o</label>
+						<td width="27">
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.sequenciaMatriz" type="checkbox" value="sequenciaMatriz" />
 						</td>
-
-						<td width="23"><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.chamadaCapa" type="checkbox"
-							value="chamadaCapa" /></td>
-						<td width="200"><label
-							for="tipoImpressao.colunas.chamadaCapa">Chamada de Capa</label></td>
-
-						
-
+						<td width="183">
+							<label for="tipoImpressao.colunas.sequenciaMatriz">Sequ&ecirc;ncia</label>
+						</td>
+						<td width="27">
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.codigoProduto" type="checkbox" value="codigoProduto" />
+						</td>
+						<td width="183">
+							<label for="tipoImpressao.colunas.codigoProduto">C&oacute;digo</label>
+						</td>
+						<td width="21">
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeProduto" type="checkbox" value="nomeProduto" />
+						</td>
+						<td width="105">
+							<label for="tipoImpressao.colunas.nomeProduto">Produto</label>
+						</td>
+						<td width="23">
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.numeroEdicao" type="checkbox" value="numeroEdicao" />
+						</td>
+						<td width="101">
+							<label for="tipoImpressao.colunas.numeroEdicao">Edi&ccedil;&atilde;o</label>
+						</td>
+						<td width="23">
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.chamadaCapa" type="checkbox" value="chamadaCapa" />
+						</td>
+						<td width="200"><label for="tipoImpressao.colunas.chamadaCapa">Chamada de Capa</label></td>
+					
 					</tr>
 					<tr>
 						
@@ -116,7 +107,6 @@ fieldset label {
 						<td><label for="tipoImpressao.colunas.codigoDeBarras">C&oacute;digo
 								Barras</label></td>
 						
-					
 						<td><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.precoVenda" type="checkbox"
 							value="precoVenda" /></td>
@@ -143,11 +133,9 @@ fieldset label {
 						<td>
 							<label for="tipoImpressao.colunas.dataRecolhimento">Data Recolhimento</label>
 						</td>
-					
 						<td>
-							<input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.tipoLancamentoParcial"
-							type="checkbox" value="tipoLancamentoParcial" /></td>
+							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.tipoLancamentoParcial" type="checkbox" value="tipoLancamentoParcial" />
+						</td>
 						<td>
 							<label for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento Parcial/Final</label>
 						</td>
