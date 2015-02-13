@@ -316,12 +316,18 @@
 												</td>
 											</c:if>
 											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'pacotePadrao'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
 											<c:if test="${contains}">
-												<td align="center" style="font-size:14px!important;">
-													<strong>${dado.pacotePadrao}</strong>
+												<td align="center">
+													${dado.pacotePadrao}
 												</td>
 											</c:if>
-											
 										</tr>
 									</c:when>
 									<c:otherwise>

@@ -103,7 +103,7 @@ public class ConsultaEncalheController extends BaseController {
 	public void index(){
 		
 		carregarComboFornecedores();
-		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
+		result.include("listaBoxes", carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
 		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 	}
@@ -638,8 +638,7 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	private FiltroConsultaEncalheDTO obterFiltroExportacao() {
 		
-		FiltroConsultaEncalheDTO filtro = 
-				(FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtro != null) {
 			
@@ -672,17 +671,11 @@ public class ConsultaEncalheController extends BaseController {
 					PessoaJuridica juridica = fornecedor.getJuridica();
 					
 					if(juridica!=null) {
-						
 						filtro.setNomeFornecedor(juridica.getRazaoSocial());
-						
 					}
-												
 				}
-				
 			} else {
-				
 				filtro.setNomeFornecedor("TODOS");
-				
 			}
 		}
 		
@@ -696,8 +689,7 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	private void tratarFiltro(FiltroConsultaEncalheDTO filtro) {
 
-		FiltroConsultaEncalheDTO filtroSession = 
-				(FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDTO filtroSession = (FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtro) && filtroSession.getPaginacao() != null) {
 
@@ -714,8 +706,7 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	private void tratarFiltroDetalhe(FiltroConsultaEncalheDetalheDTO filtro) {
 
-		FiltroConsultaEncalheDetalheDTO filtroSession = 
-				(FiltroConsultaEncalheDetalheDTO) session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDetalheDTO filtroSession = (FiltroConsultaEncalheDetalheDTO) session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtro)) {
 

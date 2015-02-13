@@ -200,8 +200,6 @@ InformeEncalhe.prototype.busca = function() {
 	this.imprimirParans.idFornecedor = $("#idFornecdorSelect", this.workspace).val();
 	this.imprimirParans.semanaRecolhimento = $("#semanaRecolhimentoBox", this.workspace).val();
 	this.imprimirParans.dataRecolhimento = $("#dataRecolhimentoBox", this.workspace).val();
-	
-	
 };
 
 InformeEncalhe.prototype.bindEvents = function() {

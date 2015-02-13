@@ -18,24 +18,12 @@ fieldset label {
 	line-height: 0px;
 }
 </style>
-<script
-	src="${pageContext.request.contextPath}/scripts/jquery.form.js"
-	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.button.js"
-	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/vendor/jquery.ui.widget.js"
-	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js"
-	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js"
-	type="text/javascript"></script>
-<script
-	src="${pageContext.request.contextPath}/scripts/informeEncalhe.js"
-	type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery.form.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/ui/jquery.ui.button.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery-upload/js/vendor/jquery.ui.widget.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.iframe-transport.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery-upload/js/jquery.fileupload.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/informeEncalhe.js" type="text/javascript"></script>
 <script type="text/javascript">
 	$(function() {
 		var informeEncalhe = new InformeEncalhe();
@@ -96,24 +84,16 @@ fieldset label {
 						<td width="23">
 							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.chamadaCapa" type="checkbox" value="chamadaCapa" />
 						</td>
-						<td width="200"><label for="tipoImpressao.colunas.chamadaCapa">Chamada de Capa</label></td>
-					
+						<td width="200"><label for="tipoImpressao.colunas.chamadaCapa">Chamada de Capa</label></td>					
 					</tr>
 					<tr>
 						
-						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.codigoDeBarras" type="checkbox"
-							value="codigoDeBarras" /></td>
-						<td><label for="tipoImpressao.colunas.codigoDeBarras">C&oacute;digo
-								Barras</label></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.codigoDeBarras" type="checkbox" value="codigoDeBarras" /></td>
+						<td><label for="tipoImpressao.colunas.codigoDeBarras">C&oacute;digo Barras</label></td>
 						
-						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.precoVenda" type="checkbox"
-							value="precoVenda" /></td>
-						<td><label for="tipoImpressao.colunas.precoVenda">Pre&ccedil;o
-								de Capa</label></td>
-						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.nomeEditor" type="checkbox"
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.precoVenda" type="checkbox" value="precoVenda" /></td>
+						<td><label for="tipoImpressao.colunas.precoVenda">Pre&ccedil;o de Capa</label></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeEditor" type="checkbox"
 							value="nomeEditor" /></td>
 						<td><label for="tipoImpressao.colunas.nomeEditor">Editor</label></td>
 						<td><input name="tipoImpressao.colunas[]"
@@ -139,12 +119,13 @@ fieldset label {
 						<td>
 							<label for="tipoImpressao.colunas.tipoLancamentoParcial">Recolhimento Parcial/Final</label>
 						</td>
+						
 						<td>
 							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.pacotePadrao" type="checkbox" value="pacotePadrao" />
 						</td>			
 						<td>
 							<label for="tipoImpressao.colunas.pacotePadrao">Pacote Padrao</label>
-						</td>		
+						</td>
 					</tr>
 				</table>
 			</fieldset>
@@ -182,7 +163,7 @@ fieldset label {
 				<td colspan="3">Sugerir Semana:</td>
 
 				<td width="50">
-					<input type="checkbox" checked="checked" id="sugerirSemana" />
+					<input type="checkbox" id="sugerirSemana" />
 				</td>
 				
 				<td colspan="3">Data Recolhimento:</td>
