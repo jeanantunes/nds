@@ -330,17 +330,16 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Date novaData = this.parciaisService.obterDataUtilMaisProxima(data);
 
 		boolean hasMatrizConfirmada = this.lancamentoService.existeMatrizRecolhimentoConfirmado(data);
-		boolean fornecedorOpera = 
-				this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
-					idFornecedor, operacaoDistribuidor
-				).contains(DateUtil.toCalendar(novaData).get(Calendar.DAY_OF_WEEK));
+		boolean fornecedorOpera = this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor)
+				.contains(DateUtil.toCalendar(novaData).get(Calendar.DAY_OF_WEEK));
 
-		if (hasMatrizConfirmada || !fornecedorOpera) {
+		if (!hasMatrizConfirmada && fornecedorOpera) {
 
-			return this.getProximaDataUtil(DateUtil.adicionarDias(novaData, 1), idFornecedor, operacaoDistribuidor);
+			return novaData;
 		}
+		
+		return this.getProximaDataUtil(DateUtil.adicionarDias(novaData, 1), idFornecedor, operacaoDistribuidor);
 
-		return novaData;
 	}
 
 	private PeriodoLancamentoParcial tratarPeriodo(LancamentoParcial parcial, EMS0136Input input) {
