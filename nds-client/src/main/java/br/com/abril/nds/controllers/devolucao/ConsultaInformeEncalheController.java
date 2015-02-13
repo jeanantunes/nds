@@ -119,9 +119,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         final Long quantidade = lancamentoService.quantidadeLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento);
         
         if (quantidade > 0) {
-            final List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
-                    .obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
-            
+            final List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
             result.use(FlexiGridJson.class).from(informeEncalheDTOs).total(quantidade.intValue()).page(page).serialize();
         } else {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Registros não encontrados."));
@@ -137,9 +135,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
-        final Date dataInicioSemana =
-                SemanaUtil.obterDataDaSemanaNoAno(
-                        semana, distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana(), cal.get(Calendar.YEAR));
+        final Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(semana, distribuidorService.inicioSemanaRecolhimento().getCodigoDiaSemana(), cal.get(Calendar.YEAR));
         
         final Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
         
@@ -210,7 +206,6 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (diasRec != null && !diasRec.isEmpty()){
                 while (!diasRec.contains(c.get(Calendar.DAY_OF_WEEK))){
-                    
                     dataFim = calendarioService.adicionarDiasUteis(c.getTime(), 1);
                     c.setTime(dataFim);
                 }
@@ -222,6 +217,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         final List<InformeEncalheDTO> dados = lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
         
         result.include("diaMesInicioRecolhimento", 1);
+        
         if (dataInicioRecolhimento != null) {
             result.include("dataInicioRecolhimento", new SimpleDateFormat("dd/MM").format(dataInicioRecolhimento.getTime()));
             result.include("diaSemanaInicioRecolhimento", SemanaUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
@@ -236,14 +232,14 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         if (dataFimRecolhimento != null) {
             result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataFimRecolhimento.getTime()));
-            result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataFimRecolhimento
-                    .get(Calendar.DAY_OF_WEEK)));
+            result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
         }
         
         final List<ColunaRelatorioInformeEncalhe> colunas = new ArrayList<ColunaRelatorioInformeEncalhe>();
         
         if (tipoImpressao != null && tipoImpressao.getColunas() != null){
-            final int qtdColunas = tipoImpressao.getColunas().isEmpty() ? 1 : tipoImpressao.getColunas().size();
+            
+        	final int qtdColunas = tipoImpressao.getColunas().isEmpty() ? 1 : tipoImpressao.getColunas().size();
             
             if (tipoImpressao.getColunas().contains("sequenciaMatriz")){
                 
@@ -307,7 +303,7 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (tipoImpressao.getColunas().contains("pacotePadrao")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Pacote Padrao", this.calcularTamanhoColunaRelatorio(qtdColunas, 3), "pacotePadrao"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Pacote Padrao", this.calcularTamanhoColunaRelatorio(qtdColunas, 2), "pacotePadrao"));
             }
         }
         
