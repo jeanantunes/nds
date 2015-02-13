@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +29,13 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -79,17 +84,18 @@ public class ConsultaEncalheController extends BaseController {
 	@Autowired
 	private ConsultaEncalheService consultaEncalheService;
 	
-	
-	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private BoxService boxService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
 	private static final String FILTRO_DETALHE_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalheDetalhe";
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	private static final String SUFIXO_DIA = "º Dia";
 	
@@ -97,6 +103,7 @@ public class ConsultaEncalheController extends BaseController {
 	public void index(){
 		
 		carregarComboFornecedores();
+		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
 		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 	}
@@ -755,6 +762,36 @@ public class ConsultaEncalheController extends BaseController {
 		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setTotal((listaDebitoCreditoCota!= null) ? listaDebitoCreditoCota.size() : 0);
 		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setPage(1);
 		
+	}
+
+	/**
+	 * Carrega a lista de Boxes
+	 * @return 
+	 */
+	private List<ItemDTO<Integer, String>> carregarBoxes(List<Box> listaBoxes){
+		
+		sortByCodigo(listaBoxes);
+		
+		List<ItemDTO<Integer, String>> boxes = new ArrayList<ItemDTO<Integer,String>>();
+				
+		for(Box box : listaBoxes){
+			
+			boxes.add(new ItemDTO<Integer, String>(box.getCodigo(),box.getCodigo() + " - " + box.getNome()));
+		}
+		
+		return boxes;			
+	}
+	
+
+	private void sortByCodigo(List<Box> listaBoxes) {
+		Collections.sort(listaBoxes, new Comparator<Box>() {
+			@Override
+			public int compare(Box box1, Box box2) {
+				if(box1.getCodigo()==null)
+					return -1;
+				return box1.getCodigo().compareTo(box2.getCodigo());
+			}
+		});
 	}
 
 }

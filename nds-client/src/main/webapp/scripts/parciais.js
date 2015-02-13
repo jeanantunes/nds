@@ -665,7 +665,7 @@ var ParciaisController = $.extend(true, {
 		data.push({name:'idPeriodo',			value: idPeriodo});
 		data.push({name:'idProdutoEdicao',		value: idProdutoEdicao});
 
-		$(".parcial-parciaisVendaGrid",ParciaisController.workspace).flexOptions({			
+		$(".parcial-parciaisVendaGrid", ParciaisController.workspace).flexOptions({			
 			url : contextPath + "/parciais/pesquisarParciaisVenda",
 			dataType : 'json',
 			params: data
