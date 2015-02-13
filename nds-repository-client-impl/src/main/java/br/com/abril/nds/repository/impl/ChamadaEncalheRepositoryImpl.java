@@ -721,22 +721,22 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null and mec.movimento_financeiro_cota_id is null) as precoComDesconto, ")
         */
 		// .append(" sum(case when tipomovime17_.OPERACAO_ESTOQUE= (case when (conferenci2_.DATA is not null) then 'SAIDA' else 'ENTRADA' end) then movimentoe16_.QTDE else -movimentoe16_.QTDE end ) as reparte, ")
-        .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end) ")
-        .append(" from movimento_estoque_cota mec ")
-        .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
-        .append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID ")
-        .append(" inner join produto p on p.id = pe.PRODUTO_ID ")
-        .append(" inner join cota c on c.id = mec.COTA_ID ")
-        .append(" inner join chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = pe.id ")
-        .append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id and cec.COTA_ID = c.id ")
-        .append(" inner join chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.id ")
+        .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
+        .append(" from movimento_estoque_cota mec                                                               ")
+        .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                 ")
+        .append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID                                 ")
+        .append(" inner join produto p on p.id = pe.PRODUTO_ID                                                  ")
+        .append(" inner join cota c on c.id = mec.COTA_ID                                                       ")
+        .append(" inner join chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = pe.id                                 ")
+        .append(" inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id and cec.COTA_ID = c.id  ")
+        .append(" inner join chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.id                   ")
         .append(" inner join lancamento l on l.id = mec.LANCAMENTO_ID and l.id = cel.LANCAMENTO_ID and l.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID ")
-		.append(" where mec.produto_edicao_id = produtoedi5_.id ")
-		.append(" and mec.cota_id = chamadaenc0_.cota_id ")
-		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE' ")
-		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ")
-		.append(" and l.id = lancamento10_.id ")
-		.append(" ) as reparte, ")
+		.append(" where mec.produto_edicao_id = produtoedi5_.id                                                 ")
+		.append(" and mec.cota_id = chamadaenc0_.cota_id                                                        ")
+		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE'                                             ")
+		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ")
+		// .append(" and l.id = lancamento10_.id ")
+		.append(" ) as reparte,                                                                                 ")
         
         
         .append(" coalesce(sum(conferenci2_.QTDE), 0) as quantidadeDevolvida,                                   ")
@@ -839,7 +839,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    hql.append("    	    and (estudocota13_.ID is null or estudocota13_.COTA_ID=cota4_.ID)   ");
 	    hql.append("    	    and chamadaenc0_.POSTERGADO = :isPostergado                         ");
 	    hql.append("    	    and (movimentoe16_.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null)          ");	
-	    hql.append("    	    and lancamento10_.tipo_lancamento='LANCAMENTO'                      ");
 	    
 		param.put("isPostergado", false);
 		
