@@ -991,8 +991,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return (BigDecimal) (totalEncalhe == null ? BigDecimal.ZERO : totalEncalhe);
     }
 
-    public StringBuilder getFromWhereConsultaEncalhe(
-			final FiltroConsultaEncalheDTO filtro) {
+    public StringBuilder getFromWhereConsultaEncalhe(final FiltroConsultaEncalheDTO filtro) {
 		
 		final StringBuilder sqlTblPrecoVenda = new StringBuilder();
 		
@@ -1130,6 +1129,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    	sql.append(" AND FORNECEDOR.ID = :idFornecedor ");
 	    }
 		
+	    if(filtro.getCodigoProduto() != null) {
+	    	sql.append(" AND PRODUTO.CODIGO = :codigoProduto ");
+	    }
+	    
 		sql.append(" GROUP BY ");
 		
 		sql.append(" CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID,     ");
@@ -1214,6 +1217,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdFornecedor() != null) {
             parameters.put("idFornecedor", filtro.getIdFornecedor());
+        }
+
+        if(filtro.getCodigoProduto() != null) {
+            parameters.put("codigoProduto", filtro.getCodigoProduto());
         }
         
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());

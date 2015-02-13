@@ -178,6 +178,49 @@ var ConsultaEncalhe = $.extend(true, {
 			return resultado.tableModel;
 			
 		},
+
+		//Pesquisa por código de produto
+		pesquisarPorCodigoProduto : function(idCodigo, idProduto, idGeracao, isFromModal) {
+			
+			var codigoProduto = $(idCodigo, ConsultaEncalhe.workspace).attr("value");
+			
+			if (codigoProduto != ""){
+
+				codigoProduto = $.trim(codigoProduto);
+				
+				$(idCodigo, ConsultaEncalhe.workspace).val(codigoProduto);
+				
+				$(idProduto, ConsultaEncalhe.workspace).val("");
+				$(idGeracao, ConsultaEncalhe.workspace).val(-1);
+				
+				if (codigoProduto && codigoProduto.length > 0) {
+					
+					$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+							{codigoProduto:codigoProduto},
+							function(result) { ConsultaEncalhe.successCallBack(result, idProduto, idGeracao); },
+							function() { ConsultaEncalhe.errorCallBack(idCodigo); }, isFromModal);
+					
+				} 
+				
+			}else{
+				ConsultaEncalhe.limparCamposFiltro();
+			}
+		},
+		
+		errorCallBack : function(idCodigo) {
+			ConsultaEncalhe.limparCamposFiltro();
+			$(idCodigo, ConsultaEncalhe.workspace).focus();
+		},
+		
+		limparCamposFiltro : function (){
+			$("#consulta-encalhe-produto", ConsultaEncalhe.workspace).val("");
+			$("#consulta-encalhe-codigoProduto", ConsultaEncalhe.workspace).val("");
+		},
+		
+		successCallBack : function(result, idProduto, idGeracao, idCodigo, isFromModal) {
+			$(idProduto, ConsultaEncalhe.workspace).val(result.nome);
+			$(idCodigo, ConsultaEncalhe.workspace).val(result.id);
+		},
 		
 		executarPreProcessamentoDetalhe: function(resultado) {
 			
