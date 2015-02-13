@@ -293,8 +293,7 @@ public class MatrizRecolhimentoController extends BaseController {
         
         FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
         
-        TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = this
-                .clonarMapaRecolhimento(balanceamentoRecolhimento.getMatrizRecolhimento());
+        TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = this.clonarMapaRecolhimento(balanceamentoRecolhimento.getMatrizRecolhimento());
         
         Usuario usuario = getUsuarioLogado();
         
