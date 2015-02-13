@@ -386,14 +386,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				qtdProdutos = Math.min(filtro.getProdutos().size(), QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
 				for (int index = 0; index < qtdProdutos; index++) {
 					
-					hql.append(",COALESCE((SELECT COALESCE(estudoPDV.REPARTE, estudoCota.REPARTE) FROM estudo e  ");
+					hql.append(",COALESCE((SELECT SUM(COALESCE(estudoPDV.REPARTE, estudoCota.REPARTE)) FROM estudo e  ");
 					hql.append(" LEFT JOIN estudo_pdv estudoPDV                                           ");
 					hql.append(" on estudoPDV.ESTUDO_ID = e.ID                                            ");
 					hql.append(" LEFT join estudo_cota estudoCota                                         ");
 					hql.append(" on estudoCota.estudo_id = e.ID                                           ");
 					hql.append(" where e.PRODUTO_EDICAO_ID =:idProdutoEdicao").append(index);
 					hql.append(" and estudoCota.COTA_ID = cota_.ID ");
-					//hql.append(" and estudoPDV.COTA_ID  = cota_.ID ");
+					// hql.append(" and estudoPDV.COTA_ID  = cota_.ID ");
 					// hql.append(" and estudoPDV.PDV_ID = rotas_.PDV_ID ");
 					hql.append("),0) as qtdProduto").append(index);
 					/*
@@ -448,6 +448,4 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		return query;
 	}	
-	
-	
 }
