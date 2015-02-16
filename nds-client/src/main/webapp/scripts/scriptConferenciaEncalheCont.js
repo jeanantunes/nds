@@ -142,8 +142,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 		if (!ConferenciaEncalheCont.modalAberta) {
 			
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				$(document.body).unbind('keydown.salvarConferencia');
-				$(document.body).unbind('keydown.finalizarConferencia');
 				ConferenciaEncalheCont.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'), true);
 				return;
 			}
@@ -168,8 +166,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 		if (!ConferenciaEncalheCont.modalAberta) {
 
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				$(document.body).unbind('keydown.salvarConferencia');
-				$(document.body).unbind('keydown.finalizarConferencia');
 				ConferenciaEncalheCont.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'), true);
 				return;
 			}
@@ -835,6 +831,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 						ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 					} else {
 						
+						ConferenciaEncalheCont.removerAtalhos();
+						
 						$("#msgSupervisor", ConferenciaEncalheCont.workspace).text(result[1]);
 						
 						$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog({
@@ -850,9 +848,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 									
 								},
 								"Cancelar": function() {
+									
+									ConferenciaEncalheCont.atribuirAtalhos();
+									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
-									$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalhe.salvarConferencia));
-									$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalhe.finalizarConferencia));
+									
 									$(this).dialog("close");
 								}
 							},
@@ -872,12 +872,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							close: function(){
 								
-								if (ConferenciaEncalheCont.resetValue){
+								if (ConferenciaEncalheCont.resetValue) {
+									
+									ConferenciaEncalheCont.atribuirAtalhos();
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
-									
-									$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalhe.salvarConferencia));
-									$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalhe.finalizarConferencia));
 									
 									setTimeout(function(){
 										$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
@@ -1771,6 +1770,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
+					ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
+					
 					$(this).dialog("close");
 				}
 
@@ -1786,9 +1787,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			},
 			
-			close : function(){
+			close : function() {
 				
+				ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
 				ConferenciaEncalheCont.modalAberta = false;
+				
 			},
 			form: $("#dialog-salvar", this.workspace).parents("form")			
 		});

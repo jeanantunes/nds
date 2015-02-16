@@ -512,8 +512,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		if (!ConferenciaEncalhe.modalAberta) {
 			
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				$(document.body).unbind('keydown.salvarConferencia');
-				$(document.body).unbind('keydown.finalizarConferencia');
 				ConferenciaEncalhe.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'));
 				return;
 			}
@@ -534,8 +532,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		if (!ConferenciaEncalhe.modalAberta) {
 			
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				$(document.body).unbind('keydown.salvarConferencia');
-				$(document.body).unbind('keydown.finalizarConferencia');
 				ConferenciaEncalhe.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'));
 				return;
 			}
@@ -1356,9 +1352,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 		});
 		
-		var param = serializeArrayToPost('listaConferenciaEncalhe', 
-				data);
-
+		var param = serializeArrayToPost('listaConferenciaEncalhe', data);
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
 				param, 
@@ -1379,12 +1373,11 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 		);
 		
-		
 	},
 	
 	atualizarValores : function(index){
 		
-		if(ConferenciaEncalhe.processandoConferenciaEncalhe){
+		if(ConferenciaEncalhe.processandoConferenciaEncalhe) {
 			return;
 		}
 		
@@ -1507,6 +1500,8 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 					} else {
 						
+						ConferenciaEncalhe.removerAtalhos();
+						
 						$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result[1]);
 						
 						$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog({
@@ -1532,8 +1527,7 @@ var ConferenciaEncalhe = $.extend(true, {
 										ConferenciaEncalhe.limparDadosProduto(true);
 									}
 									
-									$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalhe.salvarConferencia));
-									$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalhe.finalizarConferencia));
+									ConferenciaEncalhe.atribuirAtalhos();
 									
 									focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 									
@@ -1543,8 +1537,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
 							close: function(reBindFunction) {
 								
-								if (ConferenciaEncalhe.resetValue){
-									if (index || index == 0){
+								if (ConferenciaEncalhe.resetValue) {
+									if (index || index == 0) {
 										
 										$("#qtdExemplaresGrid_" + index, ConferenciaEncalhe.workspace).val(ConferenciaEncalhe.valorAnteriorInput);
 									} else {
@@ -1552,8 +1546,8 @@ var ConferenciaEncalhe = $.extend(true, {
 										ConferenciaEncalhe.limparDadosProduto(true);
 									}
 									
-									$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalhe.salvarConferencia));
-									$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalhe.finalizarConferencia));
+									ConferenciaEncalhe.atribuirAtalhos();
+									
 								}
 								
 								setTimeout(function(){
@@ -2240,6 +2234,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				"Cancelar" : function() {
 					
 					window.event.preventDefault();
+					ConferenciaEncalhe.processandoConferenciaEncalhe = false;
 					
 					$(this).dialog("close");
 				}
@@ -2259,6 +2254,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
+				ConferenciaEncalhe.processandoConferenciaEncalhe = false;
 				
 				focusSelectRefField($("#conferencia-numeroCota", ConferenciaEncalhe.workspace));
 			},
