@@ -1305,22 +1305,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         diferenca.setResponsavel(usuarioLogado);
         diferenca.setProdutoEdicao(produtoEdicao);
         
-        
+        StatusAprovacao statusAprovacao = null;
         if (qntDiferenca.compareTo(BigInteger.ZERO) < 0) {
             
             diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
-            
-            diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.RECOLHIMENTO,
-                    StatusAprovacao.PERDA, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
+            statusAprovacao = StatusAprovacao.PERDA;
             
         } else if (qntDiferenca.compareTo(BigInteger.ZERO) > 0) {
             
             diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
-            
-            diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.RECOLHIMENTO,
-                    StatusAprovacao.GANHO, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
+            statusAprovacao = StatusAprovacao.GANHO;
             
         }
+        
+        diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.RECOLHIMENTO,
+        		statusAprovacao, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
     }
     
     @Transactional
