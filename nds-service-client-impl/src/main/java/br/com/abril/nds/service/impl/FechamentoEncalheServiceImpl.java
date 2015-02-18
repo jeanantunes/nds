@@ -1223,8 +1223,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         // desempenho
         final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null,null, null);
 
-        this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository
-                .obterDataOperacaoDistribuidor());
+        this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository.obterDataOperacaoDistribuidor());
         
         if (!listaEncalhe.isEmpty()) {
             
@@ -1275,13 +1274,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	}
     	movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
         
-        final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item
-                .getChamadaEncalheId());
+        final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getChamadaEncalheId());
         
         if (lancamentoParcial != null) {
             
-            parciaisService.atualizarReparteDoProximoLancamentoPeriodo(
-                lancamentoParcial, usuario, encalheFisico);
+            parciaisService.atualizarReparteDoProximoLancamentoPeriodo(lancamentoParcial, usuario, encalheFisico);
         }
     }
 

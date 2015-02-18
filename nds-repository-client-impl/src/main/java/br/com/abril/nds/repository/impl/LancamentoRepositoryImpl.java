@@ -775,12 +775,13 @@ public class LancamentoRepositoryImpl extends
 				.append(" from Lancamento lancamento ")
 				.append(" where lancamento.id = ")
 				.append(" (select max(lancamentoMaxDate.id) ")
-				.append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ) ")
+				.append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+			if(dataLimiteLancamento != null) {
+				hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
+			}
+				hql.append(") ")
 				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
 		
-		if(dataLimiteLancamento != null) {
-			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
-		}
 
 		Query query = getSession().createQuery(hql.toString());
 
