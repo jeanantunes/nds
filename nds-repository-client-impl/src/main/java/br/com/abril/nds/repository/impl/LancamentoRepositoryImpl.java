@@ -779,7 +779,7 @@ public class LancamentoRepositoryImpl extends
 				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
 		
 		if(dataLimiteLancamento != null) {
-			hql.append(" and lancamento.dataLancamentoDistribuidor = :dataLimiteLancamento ");
+			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
 		}
 
 		Query query = getSession().createQuery(hql.toString());
@@ -832,7 +832,7 @@ public class LancamentoRepositoryImpl extends
 				.append("   and cotaMaxDate.id = :idCota  ");
 		
 		if(dataLimiteLancamento != null) {
-				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor = :dataLimiteLancamento ");
+				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
 		}
 		
 				hql.append(" ) ")
