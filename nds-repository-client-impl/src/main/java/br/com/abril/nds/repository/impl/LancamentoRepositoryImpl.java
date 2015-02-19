@@ -929,8 +929,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" editorPessoaJuridica.razaoSocial as nomeEditor		");
 
-		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor,
-				dataInicioRecolhimento, dataFimRecolhimento));
+		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento));
 
 		hql.append(" order by ");
 
@@ -977,8 +976,7 @@ public class LancamentoRepositoryImpl extends
 	 * 
 	 * @return String
 	 */
-	private String getHQLObtemLancamentoInformeRecolhimento(Long idFornecedor,
-			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
+	private String getHQLObtemLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
 
 		StringBuffer hql = new StringBuffer();
 
@@ -1017,20 +1015,15 @@ public class LancamentoRepositoryImpl extends
 			query.setParameter("idFornecedor", idFornecedor);
 		}
 
-		query.setParameter("dataInicioRecolhimento",
-				dataInicioRecolhimento.getTime());
+		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 
-		query.setParameterList("statusLancamento",
-                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-                        StatusLancamento.EM_RECOLHIMENTO, 
-                        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
 		
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
 		return hql.toString();
-
 	}
 
 	/*

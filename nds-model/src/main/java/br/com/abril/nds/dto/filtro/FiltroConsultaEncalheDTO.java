@@ -30,11 +30,15 @@ public class FiltroConsultaEncalheDTO {
 	
 	private boolean utilizaPrecoCapa;
 	
-	private Integer box;
+	private Integer idBox;
 	
-	private Integer edicao;
+	private Integer numeroEdicao;
 
 	private Integer codigoProduto;
+	
+	private Long idProduto;
+	
+	protected Long idProdutoEdicao;
 	
 	private PaginacaoVO paginacao;
 	
@@ -265,20 +269,20 @@ public class FiltroConsultaEncalheDTO {
 		this.desconsiderarCotaAVista = desconsiderarCotaAVista;
 	}
 	
-	public Integer getBox() {
-		return box;
+	public Integer getIdBox() {
+		return idBox;
 	}
 
-	public void setBox(Integer box) {
-		this.box = box;
+	public void setIdBox(Integer idBox) {
+		this.idBox = idBox;
 	}
 
-	public Integer getEdicao() {
-		return edicao;
+	public Integer getNumeroEdicao() {
+		return numeroEdicao;
 	}
 
-	public void setEdicao(Integer edicao) {
-		this.edicao = edicao;
+	public void setNumeroEdicao(Integer numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
 
 	public Integer getCodigoProduto() {
@@ -287,6 +291,22 @@ public class FiltroConsultaEncalheDTO {
 
 	public void setCodigoProduto(Integer codigoProduto) {
 		this.codigoProduto = codigoProduto;
+	}
+	
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+	
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 	@Override

@@ -65,13 +65,19 @@ var ConsultaEncalhe = $.extend(true, {
 			var dataRecolhimentoFinal 	= $("#dataRecolhimentoFinal", ConsultaEncalhe.workspace).val();
 			var idFornecedor			= $("#idFornecedor", ConsultaEncalhe.workspace).val();
 			var numeroCota				= $("#consulta-encalhe-cota", ConsultaEncalhe.workspace).val();
+			var codigoProduto			= $("#consulta-encalhe-codigoProduto", ConsultaEncalhe.workspace).val();
+			var idBox			        = $("#consulta-encalhe-box", ConsultaEncalhe.workspace).val();
+			var numeroEdicao			= $("#consulta-encalhe-edicao", ConsultaEncalhe.workspace).val();
 			
 			var formData = [
 			        
 			        {name:'dataRecolhimentoInicial', value: dataRecolhimentoInicial},
 			        {name:'dataRecolhimentoFinal', value: dataRecolhimentoFinal},
 			        {name:'idFornecedor', value: idFornecedor},
-			        {name:'numeroCota', value: numeroCota }
+			        {name:'numeroCota', value: numeroCota },
+			        {name:'codigoProduto', value: codigoProduto },
+			        {name:'idBox', value: idBox },
+			        {name:'numeroEdicao', value: numeroEdicao }
 			];
 			
 			$("#gridConsultaEncalhe", ConsultaEncalhe.workspace).flexOptions({
