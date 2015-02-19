@@ -651,17 +651,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         if (cota != null) {
             
-            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(diferenca.getProdutoEdicao().getId(), cota.getId());
+            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(diferenca.getProdutoEdicao().getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
             
             if(ultimoLancamento == null) {
-            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId());
+            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), distribuidorService.obterDataOperacaoDistribuidor());
             }
             
         } else {
             
-            ultimoLancamento =
-                    lancamentoService.obterUltimoLancamentoDaEdicao(
-                            diferenca.getProdutoEdicao().getId());
+            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), distribuidorService.obterDataOperacaoDistribuidor());
         }
         
         return ultimoLancamento;
@@ -1721,7 +1719,7 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
             
         }else{
             
-            lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+            lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), null);
         }
         
         if(lancamento!= null

@@ -83,9 +83,10 @@ public interface LancamentoService {
      * Obtém o último Lancamento de determinado ProdutoEdicao
      * 
      * @param idProdutoEdicao - Id do ProdutoEdicao
+	         * @param dataLimiteLancamento TODO
      * @return Lancamento
      */
-	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento);
 	
 	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 	
@@ -149,7 +150,7 @@ public interface LancamentoService {
 
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 
-	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota, Date dataLimiteLancamento);
 	
 	Date getMaiorDataLancamento(Long idProdutoEdicao);
 	
