@@ -142,7 +142,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		if (!ConferenciaEncalheCont.modalAberta) {
 			
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				ConferenciaEncalheCont.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'), true);
+				elNdx = $(document.activeElement).attr('elIndex');
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.salvarConferencia');
 				return;
 			}
 			
@@ -166,7 +168,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		if (!ConferenciaEncalheCont.modalAberta) {
 
 			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
-				ConferenciaEncalheCont.verificarPermissaoSuperVisor($(document.activeElement).attr('elIndex'), true);
+				elNdx = $(document.activeElement).attr('elIndex');
+				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
 				return;
 			}
 			
@@ -803,7 +807,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		);
 	},
 	
-	verificarPermissaoSuperVisor : function(index, salvandoOuFinalizandoConferenciaCont) {
+	verificarPermissaoSuperVisor : function(index, caller) {
 		
 		if(ConferenciaEncalheCont.processandoConferenciaEncalhe) {
 			return;
@@ -891,6 +895,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 				} else {
 					ConferenciaEncalheCont.atualizarValores(index);
+					
+					if(caller && caller == 'keydown.salvarConferencia') {
+						ConferenciaEncalheCont.salvarConferencia();
+					} else if(caller && caller == 'keydown.finalizarConferencia') {
+						ConferenciaEncalheCont.finalizarConferencia();
+					}
+					
 					ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 				}
 			}, null, null, null, false
