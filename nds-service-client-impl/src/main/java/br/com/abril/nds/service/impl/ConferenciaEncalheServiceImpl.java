@@ -3264,7 +3264,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							+ conferenciaEncalheDTO.getNomeProduto()
 							+ " - "
 							+ conferenciaEncalheDTO.getNumeroEdicao()
- + "] no estoque da cota, insuficiente para movimentação.");
+							+ "] no estoque da cota, insuficiente para movimentação.");
 		}
 	}
 
