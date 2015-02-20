@@ -186,7 +186,7 @@
 											
 											<c:if test="${contains}">
 												<td>
-													<div style="white-space:nowrap; overflow: hidden;font-size:14px!important;">
+													<div style="white-space:nowrap; overflow: hidden; font-size:14px!important;">
 														<strong>${dado.nomeProduto}</strong>
 													</div>
 												</td>
@@ -325,7 +325,9 @@
 											
 											<c:if test="${contains}">
 												<td align="center">
-													${dado.pacotePadrao}
+													<div style="white-space:nowrap; overflow: hidden; font-size:14px!important;">
+														<strong>${dado.pacotePadrao}</strong>
+													</div>
 												</td>
 											</c:if>
 										</tr>

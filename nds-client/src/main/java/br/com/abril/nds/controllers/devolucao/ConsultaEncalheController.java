@@ -33,12 +33,14 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -74,6 +76,9 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
 	private Result result;
@@ -290,9 +295,9 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto, Integer idBox, Integer numeroEdicao, String sortorder, String sortname, int page, int rp){
 		
-		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota);
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBox, numeroEdicao);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -397,10 +402,10 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Get
 	@Path("/gerarSlip")
-	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota) throws IOException {
+	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto) throws IOException {
 		
 		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
-				dataRecolhimentoFinal, idFornecedor, numeroCota);
+				dataRecolhimentoFinal, idFornecedor, numeroCota, null, null, null);
 		
 		byte[] slip =  consultaEncalheService.gerarDocumentosConferenciaEncalhe(filtro);
 		
@@ -412,8 +417,13 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 
-	private FiltroConsultaEncalheDTO getFiltroConsultaEncalheDTO(String dataRecolhimentoInicial,
-			String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota) {
+	private FiltroConsultaEncalheDTO getFiltroConsultaEncalheDTO(String dataRecolhimentoInicial, 
+			String dataRecolhimentoFinal, 
+			Long idFornecedor, 
+			Integer numeroCota, 
+			Integer codigoProduto,
+			Integer idBox,
+			Integer numeroEdicao) {
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -429,12 +439,36 @@ public class ConsultaEncalheController extends BaseController {
 		
 		filtro.setIdFornecedor(idFornecedor);
 		
-		Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
-		filtro.setNumCota(numeroCota);
-		if(cota!=null) {
-			filtro.setIdCota(cota.getId());
-		}
+		filtro.setCodigoProduto(codigoProduto);
+		
+		filtro.setNumeroEdicao(numeroEdicao);
+		
+		filtro.setIdBox(idBox);
+		
+		if(numeroCota != null) {
+			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+			filtro.setNumCota(numeroCota);
 			
+			if(cota!=null) {
+				filtro.setIdCota(cota.getId());
+			}
+			
+		}
+		
+		if(numeroEdicao != null) {
+			
+			if(codigoProduto == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Favor informar o código do produto para efetuar a pesquisa.");
+			}
+			
+			ProdutoEdicao produtoEdicao  = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto.toString(), numeroEdicao.toString());
+			filtro.setNumeroEdicao(numeroEdicao);
+			
+			if(produtoEdicao!=null) {
+				filtro.setIdProdutoEdicao(produtoEdicao.getId());
+			}
+		}
+		
 		return filtro;
 	}
 
