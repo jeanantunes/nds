@@ -93,11 +93,9 @@ fieldset label {
 						
 						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.precoVenda" type="checkbox" value="precoVenda" /></td>
 						<td><label for="tipoImpressao.colunas.precoVenda">Pre&ccedil;o de Capa</label></td>
-						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeEditor" type="checkbox"
-							value="nomeEditor" /></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.nomeEditor" type="checkbox" value="nomeEditor" /></td>
 						<td><label for="tipoImpressao.colunas.nomeEditor">Editor</label></td>
-						<td><input name="tipoImpressao.colunas[]"
-							id="tipoImpressao.colunas.brinde" type="checkbox" value="brinde" /></td>
+						<td><input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.brinde" type="checkbox" value="brinde" /></td>
 						<td><label for="tipoImpressao.colunas.brinde">Brinde</label></td>
 						<td>
 							<input name="tipoImpressao.colunas[]" id="tipoImpressao.colunas.dataLancamento" type="checkbox" value="dataLancamento" />
