@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -657,12 +658,20 @@ public class MatrizDistribuicaoController extends BaseController {
 
         for (ProdutoDistribuicaoVO produtoDistribuicaoVO : produtoDistribuicaoVOs) {
             Produto obterProdutoPorCodigo = this.produtoService.obterProdutoPorCodigo(produtoDistribuicaoVO.getCodigoProduto());
-
+            
             if (obterProdutoPorCodigo.getIsGeracaoAutomatica() == null || obterProdutoPorCodigo.getIsGeracaoAutomatica() == false) {
                 naoPermiteGeracaoAutomaticaList.add(produtoDistribuicaoVO);
                 msgErro.add("Produto " + produtoDistribuicaoVO.getCodigoProduto()
                     + " não permite geração automática de estudo.");
             }
+            
+            if (obterProdutoPorCodigo.getCodigoICD() == null || obterProdutoPorCodigo.getCodigoICD().equalsIgnoreCase("null") || 
+            		StringUtils.isBlank(obterProdutoPorCodigo.getCodigoICD())) {
+            	naoPermiteGeracaoAutomaticaList.add(produtoDistribuicaoVO);
+            	msgErro.add("Produto " + produtoDistribuicaoVO.getCodigoProduto()
+            			+ " está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+            }
+            
         }
         produtoDistribuicaoVOs.removeAll(naoPermiteGeracaoAutomaticaList);
 
@@ -730,6 +739,20 @@ public class MatrizDistribuicaoController extends BaseController {
 
     public void setSession(HttpSession session) {
         this.session = session;
+    }
+    
+    @Post
+    @Path("verificarICD")
+    public void verificarICD(String codProduto){
+    	
+    	Produto produto = produtoService.obterProdutoPorCodigo(codProduto);
+    	
+    	if(produto.getCodigoICD() == null || StringUtils.isBlank(produto.getCodigoICD()) || produto.getCodigoICD().equalsIgnoreCase("null")){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+    	}else{
+    		result.nothing();
+    	}
+    	
     }
 
 

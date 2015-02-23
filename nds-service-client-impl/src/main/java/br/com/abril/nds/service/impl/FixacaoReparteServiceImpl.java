@@ -356,9 +356,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Override
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
         Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
+       /*
         if (StringUtils.isBlank(produto.getCodigoICD())) {
             return true; // Não deixar fixar sem um codigo ICD cadastrado.
         }
+        */
         fixacaoReparteDTO.setProdutoFixado(produto.getCodigoICD());
         return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
     }
@@ -382,12 +384,40 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			FiltroConsultaFixacaoCotaDTO filtroConsultaFixacaoCotaDTO = new FiltroConsultaFixacaoCotaDTO();
 			filtroConsultaFixacaoCotaDTO.setCota(copiaDTO.getCotaNumeroOrigem().toString());
 			
+			FiltroConsultaFixacaoCotaDTO cotaDestinofiltroConsultaFixacaoDTO = new FiltroConsultaFixacaoCotaDTO();
+			cotaDestinofiltroConsultaFixacaoDTO.setCota(copiaDTO.getCotaNumeroDestino().toString());
+			
 			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaDTO.getCotaNumeroDestino());
 			
 			List<FixacaoReparteDTO> fixacaoCotaOrigemList = fixacaoReparteRepository.obterFixacoesRepartePorCota(filtroConsultaFixacaoCotaDTO);
-			if(fixacaoCotaOrigemList==null || fixacaoCotaOrigemList.isEmpty()){
-                throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
+			
+			List<FixacaoReparteDTO> fixacaoCotaDestinoList = fixacaoReparteRepository.obterFixacoesRepartePorCota(cotaDestinofiltroConsultaFixacaoDTO);
+			
+			List<FixacaoReparteDTO> fixacoesInvalidas = new ArrayList<>();
+			
+			if(fixacaoCotaDestinoList != null){
+				for (FixacaoReparteDTO origemFixacaoReparteDTO : fixacaoCotaOrigemList) {
+					for (FixacaoReparteDTO destinoFixacaoReparteDTO : fixacaoCotaDestinoList) {
+						if(origemFixacaoReparteDTO.getCodigoProduto() == null || origemFixacaoReparteDTO.getCodigoProduto().equalsIgnoreCase("NULL")){
+							fixacoesInvalidas.add(origemFixacaoReparteDTO);
+							continue;
+						}
+						
+						if(destinoFixacaoReparteDTO.getCodigoProduto() != null &&
+						   origemFixacaoReparteDTO.getCodigoProduto().equals(destinoFixacaoReparteDTO.getCodigoProduto()) && 
+						   origemFixacaoReparteDTO.getClassificacaoProdutoId().compareTo(destinoFixacaoReparteDTO.getClassificacaoProdutoId()) == 0){
+							fixacoesInvalidas.add(origemFixacaoReparteDTO);
+						}
+					}
+				}
+				fixacaoCotaOrigemList.removeAll(fixacoesInvalidas);
+				fixacoesInvalidas.clear();
 			}
+			
+			if(fixacaoCotaOrigemList==null || fixacaoCotaOrigemList.isEmpty()){
+                throw new ValidacaoException(TipoMensagem.WARNING, "Não há Fixação de Reparte válida para cópia.");
+			}
+			
 			for (FixacaoReparteDTO fixacaoReparteDTO : fixacaoCotaOrigemList) {
 				fixacaoReparteDTO.setCotaFixadaId(cotaDestino.getId());
 			}
@@ -400,19 +430,57 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			}
 			break;
 		case PRODUTO:
-			
-			FiltroConsultaFixacaoProdutoDTO filtroConsultaFixacaoProdutoDTO = new FiltroConsultaFixacaoProdutoDTO();
-			
+
 			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaDTO.getCodigoProdutoDestino());
 			Produto produtoOrigem = produtoService.obterProdutoPorCodigo(copiaDTO.getCodigoProdutoOrigem());
 
+			FiltroConsultaFixacaoProdutoDTO filtroConsultaFixacaoProdutoDTO = new FiltroConsultaFixacaoProdutoDTO();
+
 			filtroConsultaFixacaoProdutoDTO.setCodigoProduto(produtoOrigem.getCodigoICD());
             filtroConsultaFixacaoProdutoDTO.setClassificacaoProduto(copiaDTO.getClassificacaoProduto());
-			
+
+            
+            FiltroConsultaFixacaoProdutoDTO filtroProdutoDestino = new FiltroConsultaFixacaoProdutoDTO();
+            
+            filtroProdutoDestino.setCodigoProduto(produtoDestino.getCodigoICD());
+            filtroProdutoDestino.setClassificacaoProduto(copiaDTO.getClassificacaoProduto());
+            
 			List<FixacaoReparteDTO> listFixacaoReparteOrigemDTO = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
 			
+			List<FixacaoReparteDTO> listFixacaoReparteDestino = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroProdutoDestino);
+			
+			List<FixacaoReparteDTO> fixacoesProdutoInvalidas = new ArrayList<>();
+			
+			
 			if(listFixacaoReparteOrigemDTO==null || listFixacaoReparteOrigemDTO.isEmpty()){
-                throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Não há Fixação de Reparte válida para cópia.");
+			}
+			
+			
+			if(listFixacaoReparteDestino != null){
+				for (FixacaoReparteDTO origemFixacaoProduto : listFixacaoReparteOrigemDTO) {
+					for (FixacaoReparteDTO destinoFixacaoProduto : listFixacaoReparteDestino) {
+						
+						if(origemFixacaoProduto.getCodigoProduto() == null || origemFixacaoProduto.getCodigoProduto().equalsIgnoreCase("NULL")){
+							fixacoesProdutoInvalidas.add(origemFixacaoProduto);
+							continue;
+						}
+						
+						if(destinoFixacaoProduto.getCodigoProduto() != null &&
+						   destinoFixacaoProduto.getCotaFixadaId(). compareTo(origemFixacaoProduto.getCotaFixadaId()) == 0 &&
+						   destinoFixacaoProduto.getClassificacaoProdutoId().compareTo(origemFixacaoProduto.getClassificacaoProdutoId()) == 0){
+							fixacoesProdutoInvalidas.add(origemFixacaoProduto);
+						}
+					}
+				}
+				
+				listFixacaoReparteOrigemDTO.removeAll(fixacoesProdutoInvalidas);
+				fixacoesProdutoInvalidas.clear();
+			
+			}
+			
+			if(listFixacaoReparteOrigemDTO.isEmpty()){
+                throw new ValidacaoException(TipoMensagem.WARNING, "Não há Fixação de Reparte válida para cópia.");
 			}
 			
 			for (FixacaoReparteDTO fixacaoReparteDTO : listFixacaoReparteOrigemDTO) {

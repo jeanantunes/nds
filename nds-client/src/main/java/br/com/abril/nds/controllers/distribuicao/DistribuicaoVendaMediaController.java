@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -53,7 +55,6 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -153,7 +154,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
         produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
         produto = produtoEdicao.getProduto();
     }
-
+	
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
 	session.removeAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO);
@@ -497,6 +498,21 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		result.nothing();
     	}
     }
+    
+    @Post
+    @Path("verificarICD")
+    public void verificarICD(String codProduto){
+    	
+    	Produto produto = prodService.obterProdutoPorCodigo(codProduto);
+    	
+    	if(produto.getCodigoICD() == null || StringUtils.isBlank(produto.getCodigoICD()) || produto.getCodigoICD().equalsIgnoreCase("null")){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+    	}else{
+    		result.nothing();
+    	}
+    	
+    }
+    
     
     @Path("gerarEstudo")
     @Post

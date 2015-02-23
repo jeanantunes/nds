@@ -1278,6 +1278,7 @@ var analiseParcialController = $.extend(true, {
     	$('<div>Liberar estudo?</div>').dialog({
 			escondeHeader: false,
 			title: 'Confirmação',
+			modal : true,
 			buttons: {
 				"Confirmar": function() {
 					$(this).dialog("close");

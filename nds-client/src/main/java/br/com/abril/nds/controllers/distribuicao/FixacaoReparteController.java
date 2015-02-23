@@ -486,9 +486,7 @@ public class FixacaoReparteController extends BaseController {
 			}
 			
 		} else {
-			result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
-					"result").recursive().serialize();
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),"result").recursive().serialize();
 		}
 	}
 	
@@ -498,8 +496,6 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 		
 		TipoMensagem tipoMsg = TipoMensagem.WARNING;
 		List<String> msg = new ArrayList<String>();
-		
-		
 
 		switch (copiaDTO.getTipoCopia()) {
 		case COTA:
@@ -593,6 +589,23 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 				getErrosUpload().add("- Registro existente para o produto[" + fixacaoReparteDTO.getProdutoFixado() + "] e cota[" + fixacaoReparteDTO.getCotaFixadaString() + "].") ;
 				continue;
 			}
+            
+            if(fixacaoReparteDTO.getProdutoFixado() == null){
+            	invalidos.add(fixacaoReparteDTO);
+        		getErrosUpload().add("Há Produtos com Código ICD inválido, ajuste-os no Cadastro de Produto.");
+        		continue;
+            }
+            
+            
+            if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){ 
+            	Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
+            	
+            	if(produto.getCodigoICD() == null || produto.getCodigoICD().isEmpty() || produto.getCodigo().equals("0")){
+            		invalidos.add(fixacaoReparteDTO);
+            		getErrosUpload().add("Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+            		continue;
+            	}
+            }
 
 			cotaIds.add(fixacaoReparteDTO.getCotaFixada());
 			codigoProdutos.add(fixacaoReparteDTO.getProdutoFixado());
@@ -670,6 +683,16 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 					if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(fixacaoReparteDTO.getClassificacaoProduto()))
                         return "Cota de número " + cota.getNumeroCota() + " não recebe classificação do tipo "
                             + classificacaoNaoRecebidaDTO.getNomeClassificacao();
+				}
+			}
+			
+			//Tratamento para ICD null ou == 0
+			
+			if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){
+				Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
+				
+				if(produto.getCodigoICD() == null || produto.getCodigoICD().isEmpty() || produto.getCodigo().equals("0")){
+					return "Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste no Cadastro de Produto.";
 				}
 			}
 			
