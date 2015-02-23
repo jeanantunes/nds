@@ -91,8 +91,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         if ((semanaRecolhimento == null) && (dataRecolhimento == null)) {
             
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Informe [Semana] ou [Data Recolhimento]"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Informe [Semana] ou [Data Recolhimento]"));
         }
         
         if (semanaRecolhimento != null) {
@@ -214,7 +213,7 @@ public class ConsultaInformeEncalheController extends BaseController {
             dataFimRecolhimento.setTime(dataFim);
         }
         
-        final List<InformeEncalheDTO> dados = lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
+        final List<InformeEncalheDTO> dados = lancamentoService.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataInicioRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
         
         result.include("diaMesInicioRecolhimento", 1);
         
