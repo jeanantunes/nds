@@ -143,6 +143,10 @@ public class MixCotaProdutoController extends BaseController {
 		Produto produtoPorCodigo = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 		String codigoICD = produtoPorCodigo.getCodigoICD();
 		filtro.setCodigoProduto(codigoICD);
+		
+		if(!produtoService.isIcdValido(codigoICD)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produtoPorCodigo.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+		}
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
 
@@ -474,15 +478,11 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
-			
-			String codigo = prod != null ? prod.getCodigoICD() : "";  
-			
-			if(!StringUtils.isBlank(codigo)){
+			if(produtoService.isIcdValido(mixCotaDTO.getCodigoICD())){
 
 				MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
 
-				mix.setCodigoICD(codigo);
+				mix.setCodigoICD(mixCotaDTO.getCodigoICD());
 				mix.setClassificacaoProduto(mixCotaDTO.getClassificacaoProduto());
 				mix.setNumeroCota(mixCotaDTO.getNumeroCota().toString());
 				mix.setReparteMinimo(mixCotaDTO.getReparteMinimo().longValue());
@@ -496,12 +496,10 @@ public class MixCotaProdutoController extends BaseController {
 			
 			List<String> mensagens = this.mixCotaProdutoService.adicionarMixEmLote(mixCotaProdutoDTOList);
 			
-			if (!mensagens.isEmpty()) {
+			if (!mensagens.isEmpty() || !mixCotaDTOInconsistente.isEmpty()) {
 				
-				if(!mixCotaDTOInconsistente.isEmpty()){
-					for (MixCotaDTO mixCotaDTO : mixCotaDTOInconsistente) {
-						mensagens.add("[codigoProduto: "+mixCotaDTO.getCodigoProduto()+"],[classificacao: "+mixCotaDTO.getClassificacaoProduto()+"],[numercoCota: "+mixCotaDTO.getNumeroCota()+"] - "+mixCotaDTO.getError());
-					}
+				for (MixCotaDTO mixCotaDTO : mixCotaDTOInconsistente) {
+					mensagens.add("[codigoProduto: "+mixCotaDTO.getCodigoProduto()+"],[classificacao: "+mixCotaDTO.getClassificacaoProduto()+"],[numercoCota: "+mixCotaDTO.getNumeroCota()+"] - "+mixCotaDTO.getError());
 				}
 				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
@@ -526,27 +524,41 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
+			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
+			
+			if(!produtoService.isIcdValido(prod.getCodigoICD())){
+				mixCotaDTO.setError("Código ICD inválido.");
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
+			}else{
+				mixCotaDTO.setCodigoICD(prod.getCodigoICD());
+			}
+			
 			if(StringUtils.isBlank(mixCotaDTO.getCodigoProduto())){
 				mixCotaDTO.setError("Código de produto inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
+
 			if( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0)){
 				mixCotaDTO.setError("Número de Cota Inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
+			
 			if(( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )){
 				mixCotaDTO.setError("Reparte mínimo Inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
+			
 			if( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0 
 					|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ){
 				mixCotaDTO.setError("Reparte Máximo Inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
+			
 			if(StringUtils.isNotEmpty(mixCotaDTO.getError())){
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
@@ -556,10 +568,12 @@ public class MixCotaProdutoController extends BaseController {
 				mixCotaDTO.setError("Reparte Mínimo inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
+			
 			if(!descricaoList.contains(mixCotaDTO.getClassificacaoProduto())){
 				mixCotaDTO.setError("Classificação inválida.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
+			
 			if(!cotaService.validarNumeroCota(mixCotaDTO.getNumeroCota(), TipoDistribuicaoCota.ALTERNATIVO)){
 				mixCotaDTO.setError("Cota Inválida.");
 				listCotaInconsistente.add(mixCotaDTO);

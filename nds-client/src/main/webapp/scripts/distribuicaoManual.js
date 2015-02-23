@@ -55,6 +55,24 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.isSolicitarSenhaCotaSuspensa = true;
 		
 		distribuicaoManual.focusRight("#numeroCotaGrid"+(distribuicaoManual.rowCount - 1));
+		
+		distribuicaoManual.verificarICD();
+	},
+	
+	verificarICD : function(){
+		$.postJSON(
+	            pathTela + "/distribuicaoManual/verificarICD", 
+	            [{name : "codProduto" , value : $('#distrinuicao-manual-codigoProduto').text()}],
+	            function(result) {
+	            },
+	            function(result){
+	            	//distribuicaoManual.voltar();
+	            	setTimeout(function() { 
+		            	$(".ui-tabs-selected").find("span").click();
+		    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+	    			}, 500);
+	            }
+	            );
 	},
 	
 	voltar : function() {

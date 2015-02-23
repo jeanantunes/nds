@@ -1422,7 +1422,6 @@ var mixCotaProdutoController = $.extend(true, {
 						}
 						
 						var data = [];
-//						console.log(type);
 						data.push({name:"copiaMix.tipoCopia",	value: type.toUpperCase()});
 						data.push({name:"copiaMix.cotaNumeroOrigem",	value: $("#cotaOrigemInput").val()});
 						data.push({name:"copiaMix.nomeCotaOrigem",	value: $("#nomeCotaOrigemInput").val()});
@@ -1437,8 +1436,15 @@ var mixCotaProdutoController = $.extend(true, {
 						modal = this;
 						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/gerarCopiaMix',  data, 
 								function(result){
-								$(modal).dialog("close");
-										exibirMensagem("WARNING",result.listaMensagens);
+									$(modal).dialog("close");
+									exibirMensagem("WARNING",result.listaMensagens);
+									
+									if(type=='cota'){
+										mixCotaProdutoController.pesquisarPorCota();
+									}else if(type=='produto'){
+										mixCotaProdutoController.pesquisarPorProduto();
+									}
+									
 								},
 								function(result){ });
 					},
