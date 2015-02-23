@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -665,8 +664,7 @@ public class MatrizDistribuicaoController extends BaseController {
                     + " não permite geração automática de estudo.");
             }
             
-            if (obterProdutoPorCodigo.getCodigoICD() == null || obterProdutoPorCodigo.getCodigoICD().equalsIgnoreCase("null") || 
-            		StringUtils.isBlank(obterProdutoPorCodigo.getCodigoICD())) {
+            if(!produtoService.isIcdValido(obterProdutoPorCodigo.getCodigoICD())){
             	naoPermiteGeracaoAutomaticaList.add(produtoDistribuicaoVO);
             	msgErro.add("Produto " + produtoDistribuicaoVO.getCodigoProduto()
             			+ " está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
@@ -745,12 +743,10 @@ public class MatrizDistribuicaoController extends BaseController {
     @Path("verificarICD")
     public void verificarICD(String codProduto){
     	
-    	Produto produto = produtoService.obterProdutoPorCodigo(codProduto);
-    	
-    	if(produto.getCodigoICD() == null || StringUtils.isBlank(produto.getCodigoICD()) || produto.getCodigoICD().equalsIgnoreCase("null")){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
-    	}else{
+    	if(produtoService.isIcdValido(codProduto)){
     		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
     	}
     	
     }

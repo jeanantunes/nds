@@ -11,7 +11,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,7 +32,6 @@ import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
-import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
@@ -503,14 +501,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Path("verificarICD")
     public void verificarICD(String codProduto){
     	
-    	Produto produto = prodService.obterProdutoPorCodigo(codProduto);
-    	
-    	if(produto.getCodigoICD() == null || StringUtils.isBlank(produto.getCodigoICD()) || produto.getCodigoICD().equalsIgnoreCase("null")){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
-    	}else{
+    	if(prodService.isIcdValido(codProduto)){
     		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
     	}
-    	
     }
     
     

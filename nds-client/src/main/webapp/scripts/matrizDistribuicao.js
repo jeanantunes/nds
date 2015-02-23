@@ -1064,7 +1064,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		
-		$.postJSON(pathTela + "/distribuicaoManual/verificarICD", 
+		$.postJSON(pathTela + "/matrizDistribuicao/verificarICD", 
 	               [{name : "codProduto" , value : selecionado.codigoProduto}],
 	               function(result) { },
 	               function(result){
@@ -1612,18 +1612,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        return;
 	    }
 	    
-	    $.postJSON(pathTela + "/distribuicaoManual/verificarICD", 
-	               [{name : "codProduto" , value : selecionado.codigoProduto}],
-	               function(result) { },
-	               function(result){
-	            	   setTimeout(function() { 
-			            	$(".ui-tabs-selected").find("span").click();
-			    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
-		    			}, 500);
-	            	   return;
-	               }
-	            );
-	    
 	    var postData = [];
 	    postData.push({name: "estudoId",        	value: selecionado.estudo});
 	    postData.push({name: "idProdutoEdicao", 	value: selecionado.idProdutoEdicao});
@@ -1646,6 +1634,18 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    T.esconderOpcoes();
 
         this.tabSomarCopiarEstudos = 'complementar';
+        
+        $.postJSON(pathTela + "/matrizDistribuicao/verificarICD", 
+	               [{name : "codProduto" , value : selecionado.codigoProduto}],
+	               function(result) { },
+	               function(result){
+	            	   setTimeout(function() { 
+			            	$(".ui-tabs-selected").find("span").click();
+			    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+		    			}, 500);
+	            	   return;
+	               }
+	            );
     };
 
 	this.analise = function(){

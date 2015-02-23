@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -22,7 +21,6 @@ import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
@@ -207,12 +205,10 @@ public class DistribuicaoManualController extends BaseController {
     @Path("verificarICD")
     public void verificarICD(String codProduto){
     	
-    	Produto produto = prodService.obterProdutoPorCodigo(codProduto);
-    	
-    	if(produto.getCodigoICD() == null || StringUtils.isBlank(produto.getCodigoICD()) || produto.getCodigoICD().equalsIgnoreCase("null")){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
-    	}else{
+    	if(prodService.isIcdValido(codProduto)){
     		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
     	}
     	
     }
