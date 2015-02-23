@@ -314,7 +314,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 		TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 		
-		if(StringUtils.isBlank(prd.getCodigoICD()) || prd.getCodigoICD().equals("0")){
+		if(!produtoService.isIcdValido(prd.getCodigoICD())){
 			return "Produto ["+prd.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.";
 		}
 		
@@ -440,7 +440,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoICD());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
-			if(StringUtils.isBlank(prd.getCodigoICD()) || prd.getCodigoICD().equals("0")){
+			if(!produtoService.isIcdValido(prd.getCodigoICD())){
 				mensagens.add("Produto ["+prd.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
 				mixCotaProdutoDTO.setItemValido(false);
 				continue;
@@ -462,15 +462,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
                                 + tipoSegProd.getDescricao());
 						mixCotaProdutoDTO.setItemValido(false);
 						
-						
 					}
-					
 				}
 			}
-			
-			
-			
-			
 		}
 		
 		
@@ -523,7 +517,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " dados da cota devem ser preenchidos";
 		}
 		
-		if (StringUtils.isBlank((mixCotaProdutoDTO.getCodigoICD()))) {
+		if (!produtoService.isIcdValido(mixCotaProdutoDTO.getCodigoICD())) {
 			
 			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " Produto com Código ICD inválido, ajuste-o no Cadastro de Produto.";
 		}
@@ -698,7 +692,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			fMixProduto.setCodigoProduto(produtoOrigem.getCodigoICD());
 			
-			if(StringUtils.isBlank(produtoDestino.getCodigoICD()) || produtoDestino.getCodigoICD().equals("0")){
+			if(!produtoService.isProdutoEmEstoque(produtoDestino.getCodigoICD())){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produtoDestino.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
 			}
 			

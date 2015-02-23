@@ -144,7 +144,7 @@ public class MixCotaProdutoController extends BaseController {
 		String codigoICD = produtoPorCodigo.getCodigoICD();
 		filtro.setCodigoProduto(codigoICD);
 		
-		if(codigoICD == null){
+		if(!produtoService.isIcdValido(codigoICD)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produtoPorCodigo.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
 		}
 
@@ -478,7 +478,7 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			if(!StringUtils.isBlank(mixCotaDTO.getCodigoICD())){
+			if(produtoService.isIcdValido(mixCotaDTO.getCodigoICD())){
 
 				MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
 
@@ -526,7 +526,7 @@ public class MixCotaProdutoController extends BaseController {
 			
 			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
 			
-			if(StringUtils.isBlank(prod.getCodigoICD()) || prod.getCodigoICD().equals("0")){
+			if(!produtoService.isIcdValido(prod.getCodigoICD())){
 				mixCotaDTO.setError("Código ICD inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;

@@ -600,7 +600,7 @@ public class FixacaoReparteController extends BaseController {
             if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){ 
             	Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
             	
-            	if(produto.getCodigoICD() == null || produto.getCodigoICD().isEmpty() || produto.getCodigo().equals("0")){
+            	if(!produtoService.isIcdValido(produto.getCodigo())){
             		invalidos.add(fixacaoReparteDTO);
             		getErrosUpload().add("Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
             		continue;
@@ -691,7 +691,7 @@ public class FixacaoReparteController extends BaseController {
 			if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){
 				Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 				
-				if(produto.getCodigoICD() == null || produto.getCodigoICD().isEmpty() || produto.getCodigo().equals("0")){
+				if(!produtoService.isProdutoEmEstoque(produto.getCodigo())){
 					return "Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste no Cadastro de Produto.";
 				}
 			}

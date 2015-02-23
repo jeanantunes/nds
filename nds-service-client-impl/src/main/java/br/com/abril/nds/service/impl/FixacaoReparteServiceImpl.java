@@ -398,7 +398,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			if(fixacaoCotaDestinoList != null){
 				for (FixacaoReparteDTO origemFixacaoReparteDTO : fixacaoCotaOrigemList) {
 					for (FixacaoReparteDTO destinoFixacaoReparteDTO : fixacaoCotaDestinoList) {
-						if(origemFixacaoReparteDTO.getCodigoProduto() == null || origemFixacaoReparteDTO.getCodigoProduto().equalsIgnoreCase("NULL")){
+						if(!produtoService.isIcdValido(origemFixacaoReparteDTO.getCodigoProduto())){
 							fixacoesInvalidas.add(origemFixacaoReparteDTO);
 							continue;
 						}
@@ -461,7 +461,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				for (FixacaoReparteDTO origemFixacaoProduto : listFixacaoReparteOrigemDTO) {
 					for (FixacaoReparteDTO destinoFixacaoProduto : listFixacaoReparteDestino) {
 						
-						if(origemFixacaoProduto.getCodigoProduto() == null || origemFixacaoProduto.getCodigoProduto().equalsIgnoreCase("NULL")){
+						if(!produtoService.isIcdValido(origemFixacaoProduto.getCodigoProduto())){
 							fixacoesProdutoInvalidas.add(origemFixacaoProduto);
 							continue;
 						}
