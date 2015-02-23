@@ -328,7 +328,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    	cota.setSomaReparteEdicoesAbertas(cota.getSomaReparteEdicoesAbertas().add(edicao.getReparte()));
 	    } else {
 		if (cota.getVendaEdicaoMaisRecenteFechada() == null) {
-		    cota.setVendaEdicaoMaisRecenteFechada(edicao.getVenda().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+			if(edicao.getVenda() != null){
+				cota.setVendaEdicaoMaisRecenteFechada(edicao.getVenda().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+			}else{
+				cota.setVendaEdicaoMaisRecenteFechada(edicao.getReparte().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+			}
 		}
 		cota.setCotaSoRecebeuEdicaoAberta(false);
 	    }
