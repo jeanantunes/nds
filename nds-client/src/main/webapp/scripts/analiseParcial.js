@@ -521,123 +521,63 @@ var analiseParcialController = $.extend(true, {
     	if(usedMix == "false"){
     		legendaCota = "";
     	}
-    	var cota_legenda =  mixID ? mixID : fixacaoID
+    	var cota_legenda =  mixID ? mixID : fixacaoID;
 
-    	$.postJSON(
-    			analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
-    			[{name:'numeroCota', value : numeroCota},
+		$.ajax({
+            url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
+            data: [{name:'numeroCota', value : numeroCota},
     		     {name:'estudoId', value : $('#estudoId').val()},
     		     {name:'variacaoDoReparte', value : reparteSubtraido},
     		     {name:'reparteDigitado', value : reparteDigitado},
     		     {name:'legendaCota', value : legendaCota},
     		     {name:'fixacaoMixID', value : cota_legenda}],
-			function(result) {
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            cache: false,
+            success: function(result) {
 	    		
-    		var saldoReparteAtualizado = parseInt(saldoReparte.text(), 10) - reparteSubtraido;
+    			var saldoReparteAtualizado = parseInt(saldoReparte.text(), 10) - reparteSubtraido;
 		          
 		        saldoReparte.text(saldoReparteAtualizado);
 		      	
-		          
 		      	input_reparte_element.attr('reparteAtual', reparteDigitado);
 		      	
 		      	var reparteInicial = input_reparte_element.attr('reparteInicial');
 		          
-		          input_reparte_element.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
+		        input_reparte_element.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
 		          
-		          if (reparteDigitado === reparteInicial) {
-		              legenda_element.removeClass('asterisco');
-		          } else {
-		              legenda_element.addClass('asterisco');
-//		              analiseParcialController.addEventoLegenda();
-		          }
-		
-		          $('#total_reparte_sugerido').text(
-		                  $('#baseEstudoGridParcial tr td input:text').map(function(){
-		                      return parseInt(this.value, 10);
-		                  }).toArray().reduce(function(a,b){
-		                          return a+b; 
-		                  	}));
-		
-		          if (typeof histogramaPosEstudoController != 'undefined') {
-		          	
-		          	histogramaPosEstudoController.change.refreshGrid = true;
-		          	histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
-		          	
-		          }
-		          
-                  $('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
+				if (reparteDigitado === reparteInicial) {
+					legenda_element.removeClass('asterisco');
+				} else {
+					legenda_element.addClass('asterisco');
+				}
+				
+				$('#total_reparte_sugerido').text(
+					$('#baseEstudoGridParcial tr td input:text').map(function() {
+						return parseInt(this.value, 10);
+					}).toArray().reduce(function(a, b) {
+						return a + b; 
+					})
+				);
+				
+				if (typeof histogramaPosEstudoController != 'undefined') {
+				
+					histogramaPosEstudoController.change.refreshGrid = true;
+					histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
+  	
+				}
+  
+				$('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
     		},
-			function(result) {
+    		error: function(result) {
 
     			analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
         		input_reparte_element.val(reparteAtual);
                 $('#abrangencia').text('');
         		
-			});
-    	
-    	
-//    	$.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
-//            data: {
-//            	'numeroCota': numeroCota, 
-//            	'estudoId': $('#estudoId').val(), 
-//            	'variacaoDoReparte': reparteSubtraido, 
-//            	'reparteDigitado' : reparteDigitado, 
-//            	'legendaCota' : legendaCota,
-//            	'fixacaoMixID': mixID ? mixID : fixacaoID
-//            },
-//            success: function(result) {
-//            	
-//            	if (result.mensagens) {
-//            		
-//            		analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-//            		
-//            		input_reparte_element.val(reparteAtual);
-//            		
-//            		return;
-//            	}
-//            	
-//            	var saldoReparteAtualizado = parseInt(saldoReparte.text(), 10) - reparteSubtraido;
-//                
-//                saldoReparte.text(saldoReparteAtualizado);
-//            	
-//                
-//            	input_reparte_element.attr('reparteAtual', reparteDigitado);
-//            	
-//            	var reparteInicial = input_reparte_element.attr('reparteInicial');
-//                
-//                input_reparte_element.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
-//                
-//                if (reparteDigitado === reparteInicial) {
-//                    legenda_element.removeClass('asterisco');
-//                } else {
-//                    legenda_element.addClass('asterisco');
-//                }
-//
-//                $('#total_reparte_sugerido').text(
-//                        $('#baseEstudoGridParcial tr td input:text').map(function(){
-//                            return parseInt(this.value, 10);
-//                        }).toArray().reduce(function(a,b){
-//                                return a+b; 
-//                        	}));
-//
-//                if (typeof histogramaPosEstudoController != 'undefined') {
-//                	
-//                	histogramaPosEstudoController.change.refreshGrid = true;
-//                	histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
-//                	
-//                }
-//                
-//                setTimeout(analiseParcialController.atualizaAbrangencia(),150);
-//                
-//            },
-//            error: function() {
-//                analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
-//                input_reparte_element.val(input_reparte_element.attr('reparteAtual'));
-//            }
-//        });
-    	
-//    }
-    	
+			}
+        });
     },
     
     resetReparteSugerido : function(input, numeroCota){

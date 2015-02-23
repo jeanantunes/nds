@@ -329,20 +329,18 @@ public class LancamentoServiceImpl implements LancamentoService {
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
 			Integer initialResult, Integer maxResults) {
-		return lancamentoRepository.obterLancamentoInformeRecolhimento(
-				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento,
-				orderBy, ordenacao, initialResult, maxResults);
+		return lancamentoRepository.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, orderBy, ordenacao, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly=true)
-	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
 		}
 		
-		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao);
+		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao, dataLimiteLancamento);
 	}
 	
 	@Override
@@ -369,7 +367,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
+	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
@@ -379,7 +377,7 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
 		}
 		
-		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota);
+		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataLimiteLancamento);
 	}
 	
 	@Override

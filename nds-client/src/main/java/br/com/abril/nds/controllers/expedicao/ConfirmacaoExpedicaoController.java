@@ -255,7 +255,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 					final ExpedicaoDTO expedicaoDTO = new ExpedicaoDTO(
 							selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, 
 							tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado, 
-							dataVencimentoDebito,fornecedorPadraoDistribuidor.getId());
+							dataVencimentoDebito, fornecedorPadraoDistribuidor.getId());
 					
 					retorno = lancamentoService.confirmarExpedicao(expedicaoDTO);
 					

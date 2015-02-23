@@ -368,7 +368,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	
     	if (filtro.getCodigo() != null && filtro.getEdicao() != null) {
     	    
-    	    idProdutoEdicaoPesquisa = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString()).getId();
+    		ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString());
+    		if(pe != null) {
+    			idProdutoEdicaoPesquisa = pe.getId();
+    		}
     	}
     	
     	filtro.setConsolidado(modoAnalise.equals("NORMAL") || idProdutoEdicaoPesquisa == null || !idProdutoEdicao.equals(idProdutoEdicaoPesquisa));

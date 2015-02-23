@@ -186,7 +186,7 @@
 											
 											<c:if test="${contains}">
 												<td>
-													<div style="white-space:nowrap; overflow: hidden;font-size:14px!important;">
+													<div style="white-space:nowrap; overflow: hidden; font-size:14px!important;">
 														<strong>${dado.nomeProduto}</strong>
 													</div>
 												</td>
@@ -316,12 +316,20 @@
 												</td>
 											</c:if>
 											
+											<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'pacotePadrao'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
 											<c:if test="${contains}">
-												<td align="center" style="font-size:14px!important;">
-													<strong>${dado.pacotePadrao}</strong>
+												<td align="center">
+													<div style="white-space:nowrap; overflow: hidden; font-size:14px!important;">
+														<strong>${dado.pacotePadrao}</strong>
+													</div>
 												</td>
 											</c:if>
-											
 										</tr>
 									</c:when>
 									<c:otherwise>

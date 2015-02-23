@@ -88,12 +88,13 @@ function Endereco(paramTela, paramMessage) {
 
 			var lastIndex = data.rows[i].cell.length;
 
-			data.rows[i].cell[lastIndex - 1] =					
-				data.rows[i].cell[lastIndex - 1] == "true" 
+			var principal = data.rows[i].cell[lastIndex - 1];
+			
+			data.rows[i].cell[lastIndex - 1] = data.rows[i].cell[lastIndex - 1] == "true" 
 						? '<img src="'+contextPath+'/images/ico_check.gif" border="0px"/>'
 						: '&nbsp;';
 
-			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id);
+			data.rows[i].cell[lastIndex] = _this.getAction(data.rows[i].id, principal);
 			
 		}
 
@@ -105,24 +106,45 @@ function Endereco(paramTela, paramMessage) {
 		return data;
 	},
 
-	this.getAction = function (idEndereco) {
+	this.getAction = function (idEndereco, principal) {
 
         var title = this.readonly ? 'Visualizar Endereco' : 'Editar Endereço';
-
+        
 		var retorno = '<a href="javascript:;" isEdicao="true" onclick="'+paramTela+'.editarEndereco(' + idEndereco + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="'+ title +'">' +
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 				'</a>';
 
-		if (!this.readonly) {
-			retorno += '<a href="javascript:;" isEdicao="true" class="acaoExclusao" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
-			' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
-			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
-			'</a>';
+		if(principal == "true") {
+			retorno += '<span style="width: 80px; border: 0px; background-color: inherit;" readonly="readonly"> ' +
+				'<a href="javascript:;" isEdicao="false" id="linkBloquearExclusao" ' +
+					' style="cursor:pointer;border:0px;margin:5px;cursor:default;opacity:0.4" title="Excluir endereço">' +
+					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+					'</a></span>';
+			
+			this.bloquearLink("linkBloquearExclusao");
+		} else {
+			
+			if (!this.readonly) {
+				retorno += '<a href="javascript:;" isEdicao="true" class="acaoExclusao" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
+				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+				'</a>';
+			}
 		}
+		
 		return retorno;
 	},
 
+	this.bloquearLink = function(idLink) {
+
+		var link = $("#" + idLink);
+		link.addClass("linkDisabled");
+		link.unbind("click");
+		link.css("text-decoration", "none");
+	},
+
+	
 	this.popularGridEnderecos = function() {
 		
 		this.popularGrid(); 

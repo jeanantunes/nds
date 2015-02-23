@@ -98,7 +98,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 	},
 	
-	atribuirAtalhos: function(){
+	atribuirAtalhos: function() {
 		$(document.body).unbind();
 		
 		var permissaoAlteracao = ($('#permissaoAlteracao',workspace).val()=="true");
@@ -127,43 +127,61 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 		}));
 		
+		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalheCont.salvarConferencia));
 		
-		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8',function() {
-			if(!permissaoAlteracao){
-				exibirAcessoNegado();
-				return;
-			}
-			if (!ConferenciaEncalheCont.modalAberta){
-				
-				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-				
+		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalheCont.finalizarConferencia));
+		
+	},
+	
+	salvarConferencia : function() {
+		
+		if(!permissaoAlteracao) {
+			exibirAcessoNegado();
+			return;
+		}
+		if (!ConferenciaEncalheCont.modalAberta) {
+			
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
 				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-				
-				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
-				}, 1000);
-				
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.salvarConferencia');
+				return;
 			}
 			
-		}));
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
+			}, 1000);
+			
+		};
 		
-		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			if(!permissaoAlteracao){
-				exibirAcessoNegado();
-				return;
-			}
-			if (!ConferenciaEncalheCont.modalAberta){
+	},
+	
+	finalizarConferencia: function() {
+		if(!permissaoAlteracao){
+			exibirAcessoNegado();
+			return;
+		}
+		if (!ConferenciaEncalheCont.modalAberta) {
 
-				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-				
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
 				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-				
-				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
-				}, 1000);
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
+				return;
 			}
 			
-		}));
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
+			}, 1000);
+		};
 		
 	},
 	
@@ -584,7 +602,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
 					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + 
-						'" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + 
+						'" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+ index +', window.event);" elIndex="'+ index +'" id="qtdExemplaresGrid_'+ index + 
 						'" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" '+
 						' onchange="ConferenciaEncalheCont.valorAnteriorInput = this.defaultValue;ConferenciaEncalheCont.verificarPermissaoSuperVisor('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
@@ -789,9 +807,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		);
 	},
 	
-	verificarPermissaoSuperVisor : function(index){
+	verificarPermissaoSuperVisor : function(index, caller) {
 		
-		if(ConferenciaEncalheCont.processandoConferenciaEncalhe){
+		if(ConferenciaEncalheCont.processandoConferenciaEncalhe) {
 			return;
 		}
 		
@@ -803,9 +821,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
 			data, 
-			function(result){
+			function(result) {
 				
-				if (result && result.result != ""){
+				if (result && result.result != "") {
 					
 					ConferenciaEncalheCont.resetValue = true;
 					
@@ -816,6 +834,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 						ConferenciaEncalheCont.atualizarValores(index);
 						ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 					} else {
+						
+						ConferenciaEncalheCont.removerAtalhos();
 						
 						$("#msgSupervisor", ConferenciaEncalheCont.workspace).text(result[1]);
 						
@@ -828,11 +848,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 								"Ok": function() {
 									
 									ConferenciaEncalheCont.resetValue = false;
-									ConferenciaEncalheCont.autenticarSupervisor(index);
+									ConferenciaEncalheCont.autenticarSupervisor(index, salvandoOuFinalizandoConferenciaCont);
 									
 								},
 								"Cancelar": function() {
+									
+									ConferenciaEncalheCont.atribuirAtalhos();
+									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+									
 									$(this).dialog("close");
 								}
 							},
@@ -852,7 +876,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							close: function(){
 								
-								if (ConferenciaEncalheCont.resetValue){
+								if (ConferenciaEncalheCont.resetValue) {
+									
+									ConferenciaEncalheCont.atribuirAtalhos();
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 									
@@ -869,6 +895,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 				} else {
 					ConferenciaEncalheCont.atualizarValores(index);
+					
+					if(caller && caller == 'keydown.salvarConferencia') {
+						ConferenciaEncalheCont.salvarConferencia();
+					} else if(caller && caller == 'keydown.finalizarConferencia') {
+						ConferenciaEncalheCont.finalizarConferencia();
+					}
+					
 					ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 				}
 			}, null, null, null, false
@@ -914,13 +947,21 @@ var ConferenciaEncalheCont = $.extend(true, {
 					return;
 				}
 				
-				if (index){
+				if (index) {
+					
 					ConferenciaEncalheCont.atualizarValores(index, true);
+					
+					setTimeout(function() {
+						ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
+					}, 1000);
 				}
 				
-				if (callback){
+				if (callback) {
 					callback(paramCallback, keepDialog);
 				}
+				
+				$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalhe.salvarConferencia));
+				$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalhe.finalizarConferencia));
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
 				return;
@@ -1740,6 +1781,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
+					ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
+					
 					$(this).dialog("close");
 				}
 
@@ -1755,9 +1798,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			},
 			
-			close : function(){
+			close : function() {
 				
+				ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
 				ConferenciaEncalheCont.modalAberta = false;
+				
 			},
 			form: $("#dialog-salvar", this.workspace).parents("form")			
 		});
