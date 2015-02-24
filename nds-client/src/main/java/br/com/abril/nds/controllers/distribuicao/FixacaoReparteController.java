@@ -686,12 +686,10 @@ public class FixacaoReparteController extends BaseController {
 				}
 			}
 			
-			//Tratamento para ICD null ou == 0
-			
 			if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){
 				Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 				
-				if(!produtoService.isProdutoEmEstoque(produto.getCodigo())){
+				if(!produtoService.isIcdValido(produto.getCodigo())){
 					return "Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste no Cadastro de Produto.";
 				}
 			}

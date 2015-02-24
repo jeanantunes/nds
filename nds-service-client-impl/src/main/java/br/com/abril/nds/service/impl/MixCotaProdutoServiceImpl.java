@@ -692,7 +692,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			fMixProduto.setCodigoProduto(produtoOrigem.getCodigoICD());
 			
-			if(!produtoService.isProdutoEmEstoque(produtoDestino.getCodigoICD())){
+			if(!produtoService.isIcdValido(produtoDestino.getCodigoICD())){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produtoDestino.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
 			}
 			
