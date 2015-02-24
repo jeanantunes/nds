@@ -1064,6 +1064,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		
+		$.postJSON(pathTela + "/matrizDistribuicao/verificarICD", 
+	               [{name : "codProduto" , value : selecionado.codigoProduto}],
+	               function(result) { },
+	               function(result){
+	            	   T.mostraTelaMatrizDistribuicao();
+	            	   return;
+	               }
+	            );
+		
 		T.mostraTelaCopiarProporcionalDeEstudo();
 		
 		T.populaEdicaoSelecionada(selecionado);
@@ -1597,6 +1606,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	            selecionado = lancamento;
 	        }
 	    });
+	    
 	    if (selecionado == null) {
 	        exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
 	        return;
@@ -1624,6 +1634,18 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    T.esconderOpcoes();
 
         this.tabSomarCopiarEstudos = 'complementar';
+        
+        $.postJSON(pathTela + "/matrizDistribuicao/verificarICD", 
+	               [{name : "codProduto" , value : selecionado.codigoProduto}],
+	               function(result) { },
+	               function(result){
+	            	   setTimeout(function() { 
+			            	$(".ui-tabs-selected").find("span").click();
+			    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+		    			}, 500);
+	            	   return;
+	               }
+	            );
     };
 
 	this.analise = function(){

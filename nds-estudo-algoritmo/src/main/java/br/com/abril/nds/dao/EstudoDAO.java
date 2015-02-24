@@ -71,6 +71,10 @@ public class EstudoDAO {
 			    	
 					produto.setIdEstudo(estudoId);
 					produto.setIdCota(cota.getId());
+					 
+					if(produto.getVenda() == null){
+						produto.setVenda(produto.getReparte());
+					}
 					
 					listaProdutoEdicao.add(produto);
 			    }

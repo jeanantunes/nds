@@ -33,6 +33,7 @@ import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -58,6 +59,9 @@ public class DistribuicaoManualController extends BaseController {
     
     @Autowired
     private ProdutoEdicaoService produtoEdicaoService;
+    
+    @Autowired
+    private ProdutoService prodService;
 
     @Autowired
     private LancamentoService lancamentoService;
@@ -196,6 +200,18 @@ public class DistribuicaoManualController extends BaseController {
     	}
 		
 	}
+    
+    @Post
+    @Path("verificarICD")
+    public void verificarICD(String codProduto){
+    	
+    	if(prodService.isIcdValido(codProduto)){
+    		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+    	}
+    	
+    }
 
 	private void validarStatusCota(List<EstudoCotaDTO> cotasParaDistribuicao) {
 		
