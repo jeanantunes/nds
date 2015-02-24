@@ -327,6 +327,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("        ");
 		sql.append("  WHERE eg.DATA_LANCAMENTO = :data  ");
 		sql.append("           AND pdv.PONTO_PRINCIPAL = TRUE ");
+		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		

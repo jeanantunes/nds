@@ -900,6 +900,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         if(filtro.getIdProdutoEdicao() != null) {
             parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
         }
+
+        if(filtro.getIdBox() != null) {
+            parameters.put("box", filtro.getIdBox());
+        }
         
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
         parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
@@ -1028,8 +1032,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID) ");
 		
 		if(filtro.getIdBox() != null) {
-			sqlTblPrecoVenda.append(" INNER JOIN COTA ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = COTA.ID) ");
-			sqlTblPrecoVenda.append(" INNER JOIN BOX ON  (COTA.BOX_ID = COTA.ID) ");
+			// sqlTblPrecoVenda.append(" INNER JOIN COTA ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = COTA.ID) ");
+			sqlTblPrecoVenda.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
         }
 		
 		sqlTblPrecoVenda.append(" INNER JOIN PRODUTO_EDICAO ON (PRODUTO_EDICAO.ID = CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID)  ");
@@ -1041,7 +1045,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(filtro.getIdCota() !=null ? " AND CCEC.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(filtro.getCodigoProduto() != null ? " AND PRODUTO.CODIGO = :codigoProduto " : "");
 		sqlTblPrecoVenda.append(filtro.getIdProdutoEdicao() != null ? " AND PRODUTO_EDICAO.ID = :idProdutoEdicao " : "");
-		sqlTblPrecoVenda.append(filtro.getIdBox() != null ? " AND BOX.ID = :box " : "");
+		sqlTblPrecoVenda.append(filtro.getIdBox() != null ? " AND BOX.CODIGO = :box " : "");
 		
 		sqlTblPrecoVenda.append(" GROUP BY CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID) AS EDICAO_ENCALHADA ON  					");
 		sqlTblPrecoVenda.append(" ( MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID AND MEC.TIPO_MOVIMENTO_ID ) ");
@@ -1084,8 +1088,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)   ");
 		
 		if(filtro.getIdBox() != null) {
-			sqlTblReparte.append(" INNER JOIN COTA ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = COTA.ID) ");
-			sqlTblReparte.append(" INNER JOIN BOX ON  (COTA.BOX_ID = COTA.ID) ");
+			// sqlTblReparte.append(" INNER JOIN COTA ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = COTA.ID) ");
+			sqlTblReparte.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
         }
 		
 		sqlTblReparte.append(" INNER JOIN PRODUTO_EDICAO ON (PRODUTO_EDICAO.ID = CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID)                 ");
@@ -1097,7 +1101,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(filtro.getIdCota() !=null ? " AND CCEC.COTA_ID = :idCota " : "");
 		sqlTblReparte.append(filtro.getCodigoProduto() != null ? " AND PRODUTO.CODIGO = :codigoProduto " : "");
 		sqlTblReparte.append(filtro.getIdProdutoEdicao() !=null ? " AND PRODUTO_EDICAO.ID = :idProdutoEdicao " : "");
-		sqlTblReparte.append(filtro.getIdBox() !=null ? " AND BOX.ID = :box " : "");
+		sqlTblReparte.append(filtro.getIdBox() !=null ? " AND BOX.CODIGO = :box " : "");
 		sqlTblReparte.append(" GROUP BY CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID ");
 		sqlTblReparte.append(" ) AS EDICAO_ENCALHADA ON ( MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID ) ");
 		
@@ -1168,7 +1172,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    if(filtro.getIdFornecedor() != null) {
 	    	sql.append(" AND FORNECEDOR.ID = :idFornecedor ");
 	    }
-		
+	    
 		sql.append(" GROUP BY ");
 		
 		sql.append(" CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID,     ");
@@ -1261,6 +1265,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(filtro.getIdProdutoEdicao() != null) {
             parameters.put("idProdutoEdicao", filtro.getIdProdutoEdicao());
+        }
+        
+        if(filtro.getIdBox() != null) {
+            parameters.put("box", filtro.getIdBox());
         }
         
         parameters.put("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
