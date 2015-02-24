@@ -589,9 +589,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					width : 360,
 					modal : true,
 					buttons : {
-						"Sim" : function() {
+						"Sim" : function(event) {
 							
-							window.event.preventDefault();
+							if(!event) { event = window.event; }
+							event.preventDefault();
 							
 							ConferenciaEncalhe.carregarListaConferencia(data);
 							
@@ -605,9 +606,10 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.numeroCotaEditavel(false);
 						},
-						"Não" : function() {
+						"Não" : function(event) {
 							
-							window.event.preventDefault();
+							if(!event) { event = window.event; }
+							event.preventDefault();
 							
 							ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
 							

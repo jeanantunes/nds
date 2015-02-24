@@ -228,11 +228,9 @@ public class VisaoEstoqueController extends BaseController {
         
         final TipoEstoque tipoEstoque = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
         
-        visaoEstoqueService.atualizarInventarioEstoque(filtro.getListaTransferencia(), tipoEstoque, this
-                .getUsuarioLogado());
+        visaoEstoqueService.atualizarInventarioEstoque(filtro.getListaTransferencia(), tipoEstoque, this.getUsuarioLogado());
         
-        final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS,
-                "Atualização de inventário concluída com sucesso.");
+        final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Atualização de inventário concluída com sucesso.");
         
         result.use(Results.json()).from(validacao, "result").serialize();
     }
