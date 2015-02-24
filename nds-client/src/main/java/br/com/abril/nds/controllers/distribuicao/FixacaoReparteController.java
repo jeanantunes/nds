@@ -132,7 +132,9 @@ public class FixacaoReparteController extends BaseController {
 
 		this.setingIdProduto_produto(filtro);
 		
-		
+        if(!produtoService.isIcdValido(filtro.getCodigoProduto())){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+filtro.getNomeProduto()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+        }
 		
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
@@ -761,6 +763,8 @@ public class FixacaoReparteController extends BaseController {
 	private void setingIdProduto_produto(FiltroConsultaFixacaoProdutoDTO filtro) {
 		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 		filtro.setIdProduto(produto.getId());
+		filtro.setCodigoProduto(produto.getCodigo());
+		filtro.setNomeProduto(produto.getNomeComercial());
 	}
 	
 }

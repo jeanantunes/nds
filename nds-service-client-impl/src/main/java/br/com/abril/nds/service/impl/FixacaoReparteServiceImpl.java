@@ -98,10 +98,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		Produto produto = produtoService.obterProdutoPorCodigo(filtroConsultaFixacaoProdutoDTO.getCodigoProduto());
         filtroConsultaFixacaoProdutoDTO.setCodigoProduto(produto.getCodigoICD());
         
-        if(!produtoService.isIcdValido(produto.getCodigoICD())){
-        	throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
-        }
-        
         List<FixacaoReparteDTO> fixacoesPorProduto = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
         
         return fixacoesPorProduto;
