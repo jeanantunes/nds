@@ -132,6 +132,8 @@ public class FixacaoReparteController extends BaseController {
 
 		this.setingIdProduto_produto(filtro);
 		
+		
+		
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){

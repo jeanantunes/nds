@@ -97,7 +97,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		Produto produto = produtoService.obterProdutoPorCodigo(filtroConsultaFixacaoProdutoDTO.getCodigoProduto());
         filtroConsultaFixacaoProdutoDTO.setCodigoProduto(produto.getCodigoICD());
-
+        
+        if(!produtoService.isIcdValido(produto.getCodigoICD())){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+        }
+        
         List<FixacaoReparteDTO> fixacoesPorProduto = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
         
         return fixacoesPorProduto;
@@ -356,11 +360,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Override
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
         Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
-       /*
-        if (StringUtils.isBlank(produto.getCodigoICD())) {
-            return true; // Não deixar fixar sem um codigo ICD cadastrado.
-        }
-        */
         fixacaoReparteDTO.setProdutoFixado(produto.getCodigoICD());
         return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
     }
