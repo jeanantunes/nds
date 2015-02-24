@@ -739,7 +739,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" ) as reparte,                                                                                 ")
         
         
-        .append(" coalesce(sum(conferenci2_.QTDE), 0) as quantidadeDevolvida,                                   ")
+        .append(" coalesce(conferenci2_.QTDE, 0 ) as quantidadeDevolvida,                                       ")
         .append(" case when count(conferenci2_.id)>0 then 1 else 0 end as confereciaRealizada,                  ")
         .append(" chamadaenc1_.SEQUENCIA as sequencia,                                                          ")
         .append(" min(notaenvio15_.numero) as numeroNotaEnvio                                                   ");  
