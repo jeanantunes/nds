@@ -1411,8 +1411,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			],
 			beforeClose: function() {
-				if(exec){
-				  exec =false;
+				if(exec) {
+				  exec = false;
 				  balanceamentoRecolhimentoController.validarLancamentoParaReabertura();
 				}
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
@@ -1452,9 +1452,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			],
 			beforeClose: function() {
-				if(exec){
-				  exec =false;
-				  balanceamentoRecolhimentoController.validarLancamentoParaReabertura();
+				if(exec) {
+				  exec = false;
 				}
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
 		    },
