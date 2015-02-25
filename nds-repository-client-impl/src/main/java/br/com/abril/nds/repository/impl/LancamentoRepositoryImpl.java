@@ -767,7 +767,7 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -775,12 +775,21 @@ public class LancamentoRepositoryImpl extends
 				.append(" from Lancamento lancamento ")
 				.append(" where lancamento.id = ")
 				.append(" (select max(lancamentoMaxDate.id) ")
-				.append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
-				.append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ");
+				.append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+			if(dataLimiteLancamento != null) {
+				hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
+			}
+				hql.append(") ")
+				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
+		
 		query.setMaxResults(1);
 
 		return (Lancamento) query.uniqueResult();
@@ -806,8 +815,7 @@ public class LancamentoRepositoryImpl extends
     }
 
 	@Override
-	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(
-			Long idProdutoEdicao, Long idCota) {
+	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -815,20 +823,29 @@ public class LancamentoRepositoryImpl extends
 				.append(" from MovimentoEstoqueCota mec ")
 				.append(" join mec.produtoEdicao.lancamentos lancamento ")
 				.append(" join mec.cota cota ")
-				.append(" where lancamento.dataLancamentoPrevista = ")
+				.append(" where lancamento.dataLancamentoDistribuidor = ")
 				.append(" (")
-				.append("   select max(lancamentoMaxDate.dataLancamentoPrevista) ")
+				.append("   select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
 				.append("   from MovimentoEstoqueCota mecMaxDate ")
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ")
-				.append("   and cotaMaxDate.id = :idCota ").append(" ) ")
-				.append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ")
-				.append(" and cota.id=:idCota ");
+				.append("   and cotaMaxDate.id = :idCota  ");
+		
+		if(dataLimiteLancamento != null) {
+				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
+		}
+		
+				hql.append(" ) ")
+				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ")
+				.append(" and cota.id = :idCota ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
 
 		query.setParameter("idCota", idCota);
 		
@@ -909,7 +926,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa,		");
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
 		hql.append(" produtoEdicao.precoVenda as precoVenda, 		");
-
+		hql.append(" produtoEdicao.pacotePadrao as pacotePadrao, 		");
 		hql.append(" (CASE WHEN produtoEdicao.origem = :origemInterface ");
 		hql.append(" THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
 		hql.append(" ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
@@ -929,8 +946,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" editorPessoaJuridica.razaoSocial as nomeEditor		");
 
-		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor,
-				dataInicioRecolhimento, dataFimRecolhimento));
+		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento));
 
 		hql.append(" order by ");
 
@@ -950,10 +966,7 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
-		query.setParameterList("statusLancamento",
-                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-                        StatusLancamento.EM_RECOLHIMENTO, 
-                        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
 		query.setParameter("origemInterface", Origem.INTERFACE);
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 		
@@ -964,8 +977,7 @@ public class LancamentoRepositoryImpl extends
 			query.setFirstResult(initialResult);
 		}
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				InformeEncalheDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformeEncalheDTO.class));
 
 		return query.list();
 
@@ -981,8 +993,7 @@ public class LancamentoRepositoryImpl extends
 	 * 
 	 * @return String
 	 */
-	private String getHQLObtemLancamentoInformeRecolhimento(Long idFornecedor,
-			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
+	private String getHQLObtemLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
 
 		StringBuffer hql = new StringBuffer();
 
@@ -1021,20 +1032,15 @@ public class LancamentoRepositoryImpl extends
 			query.setParameter("idFornecedor", idFornecedor);
 		}
 
-		query.setParameter("dataInicioRecolhimento",
-				dataInicioRecolhimento.getTime());
+		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 
-		query.setParameterList("statusLancamento",
-                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-                        StatusLancamento.EM_RECOLHIMENTO, 
-                        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
 		
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
 		return hql.toString();
-
 	}
 
 	/*

@@ -23,6 +23,7 @@ $(function() {
 			distribuicaoVendaMedia.produtoEdicaoBases=[];
 		});
 		distribuicaoVendaMedia.carregarEventos();
+		distribuicaoVendaMedia.verificarICD();
 	});
 
 function popup_novo() {

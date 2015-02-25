@@ -66,7 +66,7 @@ var ParciaisController = $.extend(true, {
 	 */
 	cliquePesquisar : function() {
 		
-		if(ParciaisController.get('parcial-codigoProduto').length!=0 && ParciaisController.get('parcial-edicaoProduto').length!=0) {
+		if(ParciaisController.get('parcial-codigoProduto').length != 0 && ParciaisController.get('parcial-edicaoProduto').length != 0) {
 			$('#parcial-painelLancamentos',ParciaisController.workspace).hide();
 			$('#parcial-painelPeriodos',ParciaisController.workspace).show();	
 			
@@ -77,6 +77,8 @@ var ParciaisController = $.extend(true, {
 			
 			ParciaisController.pesquisarPeriodosParciais();
 		} else {
+			ParciaisController.codigoProduto = ParciaisController.get('parcial-codigoProduto');
+			ParciaisController.nomeProduto = ParciaisController.get('parcial-nomeProduto');
 			$('#parcial-painelPeriodos',ParciaisController.workspace).hide();
 			$('#parcial-painelLancamentos',ParciaisController.workspace).show();
 			ParciaisController.pesquisarLancamentosParciais();
@@ -85,7 +87,7 @@ var ParciaisController = $.extend(true, {
 	
 	pesquisarLancamentosParciais : function() {
 		
-		$(".parcial-parciaisGrid",ParciaisController.workspace).flexOptions({			
+		$(".parcial-parciaisGrid", ParciaisController.workspace).flexOptions({			
 			url : contextPath + "/parciais/pesquisarParciais",
 			dataType : 'json',
 			preProcess: ParciaisController.processaRetornoPesquisaParciais,
@@ -105,7 +107,7 @@ var ParciaisController = $.extend(true, {
 			params:ParciaisController.getDados()
 		});
 		
-		$(".parcial-periodosGrid",ParciaisController.workspace).flexReload();
+		$(".parcial-periodosGrid", ParciaisController.workspace).flexReload();
 		
 	},
 
@@ -293,8 +295,8 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'parcial-peb',				value: ParciaisController.get("parcial-peb")});
-		data.push({name:'parcial-qtde',				value: ParciaisController.get("parcial-qtde")});
+		data.push({name:'peb',				value: ParciaisController.get("parcial-peb")});
+		data.push({name:'qtde',				value: ParciaisController.get("parcial-qtde")});
 		data.push({name:'idProdutoEdicao',	        value: ParciaisController.idProdutoEdicao});
 		
 		return data;
@@ -304,7 +306,7 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 
-		data.push({name:'parcial-dataRecolhimento',	value: ParciaisController.get("parcial-dataRecolhimentoManual")});
+		data.push({name:'dataRecolhimento',	value: ParciaisController.get("parcial-dataRecolhimentoManual")});
 		data.push({name:'idProdutoEdicao',	value: ParciaisController.idProdutoEdicao});
 		
 		return data;
@@ -314,8 +316,8 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'parcial-codigoProduto',		value: ParciaisController.codigoProduto});
-		data.push({name:'parcial-edicaoProduto',		value: ParciaisController.numEdicao});
+		data.push({name:'codigoProduto',		value: ParciaisController.codigoProduto});
+		data.push({name:'edicaoProduto',		value: ParciaisController.numEdicao});
 		data.push({name:'periodos',				        value: ParciaisController.get("parcial-qtde")});
 		return data;
 	},
@@ -324,8 +326,8 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'parcial-dataLancamento',		value: ParciaisController.get('parcial-dataLancamentoEd')});
-		data.push({name:'parcial-dataRecolhimento',		value: ParciaisController.get('parcial-dataRecolhimentoEd')});
+		data.push({name:'dataLancamento',		value: ParciaisController.get('parcial-dataLancamentoEd')});
+		data.push({name:'dataRecolhimento',		value: ParciaisController.get('parcial-dataRecolhimentoEd')});
 		data.push({name:'idLancamento',			        value: ParciaisController.idLancamento});	
 		
 		return data;
@@ -346,8 +348,8 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'parcial-dataLancamento',		value: ParciaisController.get('parcial-dataLancamentoEd')});
-		data.push({name:'parcial-dataRecolhimento',		value: ParciaisController.get('parcial-dataRecolhimentoEd')});
+		data.push({name:'dataLancamento',		value: ParciaisController.get('parcial-dataLancamentoEd')});
+		data.push({name:'dataRecolhimento',		value: ParciaisController.get('parcial-dataRecolhimentoEd')});
 		
 		return data;
 	},
@@ -356,15 +358,15 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'parcial-dataLancamento',		value: ParciaisController.get('parcial-lancamentoNovaRed')});
-		data.push({name:'parcial-dataRecolhimento',		value: $("#parcial-dataRecolhimentoRed",ParciaisController.workspace).text()});
+		data.push({name:'dataLancamento',		value: ParciaisController.get('parcial-lancamentoNovaRed')});
+		data.push({name:'dataRecolhimento',		value: $("#parcial-dataRecolhimentoRed",ParciaisController.workspace).text()});
 
 		return data;
 	},
 	
 	carregaPeb : function(periodos) {
 		
-		ParciaisController.set('parcial-qtde',periodos);
+		ParciaisController.set('parcial-qtde', periodos);
 		ParciaisController.set('parcial-peb','');
 		
 		$.postJSON(contextPath + "/parciais/obterPebDoProduto",
@@ -633,7 +635,7 @@ var ParciaisController = $.extend(true, {
 			'dialog-nova-redistribuicao');		
 	},
 	
-	validarDiaUtil:function(successCallback, datasValidacao){
+	validarDiaUtil : function(successCallback, datasValidacao){
 		
 		$.postJSON(contextPath + "/parciais/validarDiaUtil",
 			datasValidacao,
@@ -663,7 +665,7 @@ var ParciaisController = $.extend(true, {
 		data.push({name:'idPeriodo',			value: idPeriodo});
 		data.push({name:'idProdutoEdicao',		value: idProdutoEdicao});
 
-		$(".parcial-parciaisVendaGrid",ParciaisController.workspace).flexOptions({			
+		$(".parcial-parciaisVendaGrid", ParciaisController.workspace).flexOptions({			
 			url : contextPath + "/parciais/pesquisarParciaisVenda",
 			dataType : 'json',
 			params: data

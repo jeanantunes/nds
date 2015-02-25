@@ -472,5 +472,23 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigoICD) {
 		return produtoRepository.obterProdutoPorICDBaseadoNoPrimeiroBarra(codigoICD);
 	}
-    
+	
+	@Override
+	public Boolean isIcdValido (String codIcd){
+		
+		Produto produto = obterProdutoPorCodigo(codIcd);
+    	Integer icd;
+    	
+    	try {
+    		icd = Integer.parseInt(produto.getCodigoICD());
+		} catch (Exception e) {
+			return false;
+		}
+    	
+    	if(icd > 0){
+    		return true;
+    	}else{
+    		return false;
+    	}
+	}
 }

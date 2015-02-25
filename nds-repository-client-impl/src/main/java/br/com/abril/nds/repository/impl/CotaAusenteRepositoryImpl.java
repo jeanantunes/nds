@@ -310,7 +310,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		query.setParameter("statusFuro", StatusLancamento.FURO.name());
 		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
 		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
-		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
+		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name());
 		
 		query.addScalar("VALOR_COTA_AUSENTE",StandardBasicTypes.BIG_DECIMAL);
 		

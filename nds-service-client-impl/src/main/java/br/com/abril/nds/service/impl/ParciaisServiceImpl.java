@@ -356,7 +356,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		Date dtLancamento = null;
 		Date dtRecolhimento = null;
 		
-		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), null);
 		
 		TipoLancamentoParcial tipoLancamentoParcial = TipoLancamentoParcial.PARCIAL;
 		

@@ -1004,7 +1004,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		diferencaQtdItens = diferencaQtdItens.abs();
 		
-		estoqueProdutoFilaRepository.insert(cota.getId(), idProdutoEdicao,movimentoEstoqueDTO.getGrupoMovimentoEstoque().getTipoEstoque() , operacaoEstoque, diferencaQtdItens);
+		estoqueProdutoFilaRepository.insert(cota.getId(), idProdutoEdicao, movimentoEstoqueDTO.getGrupoMovimentoEstoque().getTipoEstoque(), operacaoEstoque, diferencaQtdItens);
 	}
     
 	private Long atualizarEstoqueProduto(final TipoMovimentoEstoque tipoMovimentoEstoque,

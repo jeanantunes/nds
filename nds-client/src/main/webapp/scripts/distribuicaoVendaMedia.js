@@ -31,6 +31,19 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	    });
 	};
 	
+	this.verificarICD = function(){
+		
+		$.postJSON(
+	            pathTela + "/distribuicaoVendaMedia/verificarICD", 
+	            [{name : "codProduto" , value : $('#codigoProduto',this.workspace).text()}],
+	            function(result) {
+	            },
+	            function(result){
+	            	distribuicaoVendaMedia.cancelar();
+	            }
+	    );
+	};
+	
 	this.removerDuplicados = function eliminateDuplicates(arr) {
 		  var i,
 	      len=arr.length,

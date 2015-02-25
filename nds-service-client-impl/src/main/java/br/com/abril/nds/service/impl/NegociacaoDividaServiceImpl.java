@@ -201,12 +201,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 final Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
                 BigDecimal encargo = (divida.getEncargos() != null) ? divida.getEncargos() : BigDecimal.ZERO;
                 
-                encargo = encargo.add(this.cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida
-                        .getDtVencimento(), data, formaCobrancaPrincipal));
+                encargo = encargo.add(this.cobrancaService.calcularJuros(banco, cota.getId(), divida.getVlDivida(), divida.getDtVencimento(), data, formaCobrancaPrincipal));
                 
                 if (divida.getDtVencimento().compareTo(data) < 0) {
-                    encargo = encargo.add(this.cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(),
-                            formaCobrancaPrincipal));
+                    encargo = encargo.add(this.cobrancaService.calcularMulta(banco, cota, divida.getVlDivida(), formaCobrancaPrincipal));
                 }
                 divida.setEncargos(encargo.setScale(2, RoundingMode.HALF_EVEN));
                 

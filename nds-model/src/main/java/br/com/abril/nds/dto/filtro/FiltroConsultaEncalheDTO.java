@@ -30,12 +30,22 @@ public class FiltroConsultaEncalheDTO {
 	
 	private boolean utilizaPrecoCapa;
 	
+	private Integer idBox;
+	
+	private Integer numeroEdicao;
+
+	private Integer codigoProduto;
+	
+	private Long idProduto;
+	
+	protected Long idProdutoEdicao;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
 	
 	private boolean desconsiderarCotaAVista;
-
+	
 	public FiltroConsultaEncalheDTO() {
 	    
 	}
@@ -243,7 +253,6 @@ public class FiltroConsultaEncalheDTO {
 		this.numCota = numCota;
 	}
 	
-
 	public boolean isUtilizaPrecoCapa() {
 		return utilizaPrecoCapa;
 	}
@@ -252,8 +261,6 @@ public class FiltroConsultaEncalheDTO {
 		this.utilizaPrecoCapa = utilizaPrecoCapa;
 	}
 	
-	
-
 	public boolean isDesconsiderarCotaAVista() {
 		return desconsiderarCotaAVista;
 	}
@@ -261,39 +268,62 @@ public class FiltroConsultaEncalheDTO {
 	public void setDesconsiderarCotaAVista(boolean desconsiderarCotaAVista) {
 		this.desconsiderarCotaAVista = desconsiderarCotaAVista;
 	}
+	
+	public Integer getIdBox() {
+		return idBox;
+	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
+	public void setIdBox(Integer idBox) {
+		this.idBox = idBox;
+	}
+
+	public Integer getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Integer numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+
+	public Integer getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(Integer codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+	
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+	
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((dataRecolhimentoFinal == null) ? 0 : dataRecolhimentoFinal
-						.hashCode());
-		result = prime
-				* result
-				+ ((dataRecolhimentoInicial == null) ? 0
-						: dataRecolhimentoInicial.hashCode());
+		result = prime * result + ((dataRecolhimentoFinal == null) ? 0 : dataRecolhimentoFinal.hashCode());
+		result = prime * result + ((dataRecolhimentoInicial == null) ? 0 : dataRecolhimentoInicial.hashCode());
 		result = prime * result + ((idCota == null) ? 0 : idCota.hashCode());
-		result = prime * result
-				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
-		result = prime * result
-				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
-		result = prime * result
-				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
-		result = prime * result
-				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
-		result = prime * result
-				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result + ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime * result + ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result + ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
+		result = prime * result + ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
+		result = prime * result + ((paginacao == null) ? 0 : paginacao.hashCode());
 		return result;
 	}
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

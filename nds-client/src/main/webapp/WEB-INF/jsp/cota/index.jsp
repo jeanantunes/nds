@@ -35,6 +35,13 @@
 
 </style>
 
+<style>
+.linkDisabled {
+	cursor: default;
+	opacity: 0.4;
+}
+</style>
+
 </head>
 
 <body>

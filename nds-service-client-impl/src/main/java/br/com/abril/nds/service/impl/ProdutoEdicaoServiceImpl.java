@@ -456,10 +456,29 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     private boolean isDataRecolhimentoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento) {
     	
-		if( dto.getDataRecolhimentoDistribuidor() != null && 
-	    	dto.getDataRecolhimentoDistribuidor().compareTo(lancamento.getDataRecolhimentoDistribuidor()) == 0 ) {
-				return false;
-		}
+    	if(lancamento != null && lancamento.getPeriodoLancamentoParcial() != null) {
+            
+    		final PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(dto.getId());
+            
+    		if(ultimoPeriodo != null) {
+    			
+    			Lancamento ulancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
+    			
+    			Date dataUltimoRecolhimento = null;
+    			if(ultimoPeriodo != null && ulancamento != null) {
+    				dataUltimoRecolhimento = ulancamento.getDataRecolhimentoDistribuidor();
+    			} else {
+    				dataUltimoRecolhimento = lancamento.getDataRecolhimentoDistribuidor();
+    			}
+    			
+    			if( dto.getDataRecolhimentoDistribuidor() != null && dto.getDataRecolhimentoDistribuidor().compareTo(dataUltimoRecolhimento) == 0 ) {
+    				return false;
+    			}
+    		}
+    	
+    	} else if( dto.getDataRecolhimentoDistribuidor() != null && dto.getDataRecolhimentoDistribuidor().compareTo(lancamento.getDataRecolhimentoDistribuidor()) == 0 ) {
+			return false;
+    	}
 		
 		return true;
     	
@@ -974,6 +993,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         final BigInteger repartePromocional = (dto.getRepartePromocional() == null) ? BigInteger.ZERO : dto.getRepartePromocional();
         produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
         
+        // Reparte:
+        produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
+        
+        // Texto boletim informativo:
+        produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
+              
         if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
             // Campos exclusivos para o Distribuidor::
             
@@ -983,9 +1008,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
             
             produtoEdicao.setGrupoProduto(dto.getGrupoProduto());
-            
-            // Reparte:
-            produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
             
             // Características do lançamento:
             // TODO: !!!colocar o select da categoria aqui!!!
@@ -1000,9 +1022,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             dimEdicao.setComprimento(dto.getComprimento());
             dimEdicao.setEspessura(dto.getEspessura());
             produtoEdicao.setDimensao(dimEdicao);
-            
-            // Texto boletim informativo:
-            produtoEdicao.setBoletimInformativo(dto.getBoletimInformativo());
             
             //Desconto Fornecedor x Distribuidor
             produtoEdicao.setDescricaoDesconto(dto.getDescricaoDesconto());

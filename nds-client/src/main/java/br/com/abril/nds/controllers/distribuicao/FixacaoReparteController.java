@@ -132,6 +132,10 @@ public class FixacaoReparteController extends BaseController {
 
 		this.setingIdProduto_produto(filtro);
 		
+        if(!produtoService.isIcdValido(filtro.getCodigoProduto())){
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+filtro.getNomeProduto()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+        }
+		
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
@@ -486,9 +490,7 @@ public class FixacaoReparteController extends BaseController {
 			}
 			
 		} else {
-			result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
-					"result").recursive().serialize();
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),"result").recursive().serialize();
 		}
 	}
 	
@@ -498,8 +500,6 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 		
 		TipoMensagem tipoMsg = TipoMensagem.WARNING;
 		List<String> msg = new ArrayList<String>();
-		
-		
 
 		switch (copiaDTO.getTipoCopia()) {
 		case COTA:
@@ -593,6 +593,23 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 				getErrosUpload().add("- Registro existente para o produto[" + fixacaoReparteDTO.getProdutoFixado() + "] e cota[" + fixacaoReparteDTO.getCotaFixadaString() + "].") ;
 				continue;
 			}
+            
+            if(fixacaoReparteDTO.getProdutoFixado() == null){
+            	invalidos.add(fixacaoReparteDTO);
+        		getErrosUpload().add("Há Produtos com Código ICD inválido, ajuste-os no Cadastro de Produto.");
+        		continue;
+            }
+            
+            
+            if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){ 
+            	Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
+            	
+            	if(!produtoService.isIcdValido(produto.getCodigo())){
+            		invalidos.add(fixacaoReparteDTO);
+            		getErrosUpload().add("Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+            		continue;
+            	}
+            }
 
 			cotaIds.add(fixacaoReparteDTO.getCotaFixada());
 			codigoProdutos.add(fixacaoReparteDTO.getProdutoFixado());
@@ -673,6 +690,14 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 				}
 			}
 			
+			if(fixacaoReparteDTO.getProdutoFixado().length() >= 8){
+				Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
+				
+				if(!produtoService.isIcdValido(produto.getCodigo())){
+					return "Produto ["+produto.getNomeComercial()+"]: Código ICD inválido, ajuste no Cadastro de Produto.";
+				}
+			}
+			
 			
 			//tratamento para segmento
 			List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota = segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
@@ -738,6 +763,8 @@ new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."),
 	private void setingIdProduto_produto(FiltroConsultaFixacaoProdutoDTO filtro) {
 		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 		filtro.setIdProduto(produto.getId());
+		filtro.setCodigoProduto(produto.getCodigo());
+		filtro.setNomeProduto(produto.getNomeComercial());
 	}
 	
 }

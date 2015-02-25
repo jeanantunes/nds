@@ -34,6 +34,8 @@ public class InformeEncalheDTO implements Serializable {
 	
 	private String chamadaCapa;
 	
+	private int pacotePadrao;
+	
 	private String codigoDeBarras;
 	
 	private BigDecimal precoVenda;
@@ -147,7 +149,14 @@ public class InformeEncalheDTO implements Serializable {
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
+	
+	public int getPacotePadrao() {
+		return pacotePadrao;
+	}
 
+	public void setPacotePadrao(int pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
 
 	/**
 	 * @return the codigoDeBarras
