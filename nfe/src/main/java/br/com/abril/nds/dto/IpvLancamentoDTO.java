@@ -5,9 +5,6 @@ import br.com.abril.nds.ftfutil.FTFfield;
 
 public class IpvLancamentoDTO extends FTFBaseDTO {
 	
-	
-	
-	int b = 0;
 	@FTFfield(tamanho=2, tipo="numeric", ordem=1)
 	private String versao = "01";
 	
