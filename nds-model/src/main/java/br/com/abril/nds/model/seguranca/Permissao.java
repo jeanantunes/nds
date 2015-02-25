@@ -288,8 +288,8 @@ public enum Permissao {
 	ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO("Débitos / Créditos Cota",                              Permissao.ROLE_FINANCEIRO, true), 
 	ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA("Débitos / Créditos Cota",                              	  	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO, true, null), 
 	
-	ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO("Impressão de Boletos",                                     Permissao.ROLE_FINANCEIRO, true), 
-	ROLE_FINANCEIRO_IMPRESSAO_BOLETOS("Impressão de Boletos",                                     	       	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO, true, null), 
+	ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO("Impressão de Boletos e Slips",                             Permissao.ROLE_FINANCEIRO, true), 
+	ROLE_FINANCEIRO_IMPRESSAO_BOLETOS("Impressão de Boletos e Slips",                                     	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO, true, null), 
 	
 	ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO("Manutenção de Status Cota",                           Permissao.ROLE_FINANCEIRO, true), 
 	ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA("Manutenção de Status Cota",                           	       	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO, true, null), 

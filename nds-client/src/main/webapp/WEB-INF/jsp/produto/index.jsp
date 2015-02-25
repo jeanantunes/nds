@@ -57,7 +57,7 @@
 				</tr>
 				<tr id="trProd">
 					<td width="142"><strong>Produto:</strong></td>
-					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
+					<td width="250"><input type="text" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="24" /></td>
 				</tr>
 				<tr id="trForn">
 					<td><strong>Fornecedor:</strong></td>
@@ -293,10 +293,10 @@
 			<tr>
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
-			    	<input type="text" name="codigoProduto" id="codigoProduto"
+			    	<input type="text" name="produto-codigoProduto" id="produto-codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
 						   onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
-						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '', false,
+						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#produto-codigoProduto', '#produto-produto', '', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack);" />
 				</td>
 				
@@ -305,12 +305,12 @@
 					<!-- <input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
 					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
-					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"/>
+					<input type="text" name="produto-produto" id="produto-produto" style="width: 222px;" maxlength="255"/>
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">
-					<input type="text" id="fornecedor" name="fornecedor" style="width:200px;"
-					       onkeyup="produtoController.autoCompletarPorNomeFornecedor('#fornecedor', false);" />
+					<input type="text" id="produto-fornecedor" name="produto-fornecedor" style="width:200px;"
+					       onkeyup="produtoController.autoCompletarPorNomeFornecedor('#produto-fornecedor', false);" />
 				
 				</td>
 				<td width="106">&nbsp;</td>
@@ -318,11 +318,11 @@
 			<tr>
 				<td>Editor:</td>
 				<td colspan="3" style="width:470px;">
-					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20"/>
+					<input type="text" style="width:410px;" name="produto-edicao" id="produto-edicao" maxlength="20"/>
 				</td>
 				<td>Tipo de Produto:</td>
 				<td>
-					<select id="comboTipoProduto" style="width:207px;">
+					<select id="produto-comboTipoProduto" style="width:207px;">
 						<option value="0"></option>
 						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
 							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>

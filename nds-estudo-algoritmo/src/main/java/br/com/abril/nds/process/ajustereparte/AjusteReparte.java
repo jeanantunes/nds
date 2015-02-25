@@ -59,7 +59,9 @@ public class AjusteReparte extends ProcessoAbstrato {
 	    			
 	    			BigInteger vendaMedia = cota.getVendaMediaMaisN().add(cota.getVendaMedia().toBigInteger());
 				
-			    	if (vendaMedia.compareTo(estudo.getPacotePadrao()) > 0) {
+	    			// add validacao numero parcial e distribuicao multiplos false
+	    			
+	    			if (vendaMedia.compareTo(estudo.getPacotePadrao()) > 0) {
 			    		
 			    		BigDecimal verificador = new BigDecimal(vendaMedia).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
 			    		

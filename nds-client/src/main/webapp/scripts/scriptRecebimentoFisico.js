@@ -1207,7 +1207,7 @@ var recebimentoFisicoController = $.extend(true, {
 	alterarValorItem : function(idLinha) {
 		
 		var precoDesconto = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).text());
-		var preco = priceToFloat($("#recebimento-fisico-precoCapa"+idLinha, recebimentoFisicoController.workspace).text());
+		var preco = priceToFloat($("#precoCapaItem"+idLinha, recebimentoFisicoController.workspace).text());
 		
 		var qtdNota			= $("#qtdNotaItem"+idLinha).val();
 		var qtdPacote 		= $("#qtdPacoteItem"+idLinha).val();
@@ -1736,7 +1736,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoDesconto, {format:"#,##0.0000", locale:"br"})
 				);
-				$("#recebimento-fisico-precoCapa"+index, recebimentoFisicoController.workspace).text(
+				$("#precoCapaItem"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
 				);
 				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).text(result.pacotePadrao);
@@ -1898,7 +1898,7 @@ var recebimentoFisicoController = $.extend(true, {
 			 					index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
 			 var precoCapa ='<span class="money" maxlength="17" value="'+valuePrecoCapa+
-			 				'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapa'+ index +
+			 				'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapaItem'+ index +
 			 				'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
 			 
 			 var precoDesconto ='<span class="money" maxlength="17" value="'+valuePrecoDesconto+
@@ -2017,7 +2017,7 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				$("#valorItem" + index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(
-						(qtdItens) * parseFloat(priceToFloat($("#recebimento-fisico-precoCapa" + index).text())),
+						(qtdItens) * parseFloat(priceToFloat($("#precoCapaItem" + index).text())),
 						{format:"#,##0.00", locale:"br"}
 					)	
 				);
@@ -2071,7 +2071,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#pacotePadraoItem" + idLinha, recebimentoFisicoController.workspace).text("");
 		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
-		
+		$("precoCapaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 	},
 	
 	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {
@@ -2142,7 +2142,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaPrecoDesconto).find("div").find('[name="itensRecebimento.precoDescontoItem"]').text();
 			
 			var precoCapa = 
-				$(colunaPrecoCapa).find("div").find('[name="itensRecebimento.precoCapa"]').text();
+				$(colunaPrecoCapa).find("div").find('[name="itensRecebimento.precoCapaItem"]').text();
 			
 			var qtdNota =
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
@@ -2249,7 +2249,7 @@ var recebimentoFisicoController = $.extend(true, {
 							'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 		
 		 var precoCapa ='<span class="money" maxlength="17"'+
-						'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapa'+ index +
+						'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapaItem'+ index +
 						'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
 		
 		var precoDesconto ='<span class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+
@@ -2342,7 +2342,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaPrecoDesconto).find('[name="itensRecebimento.precoDescontoItem"]').text();
 			
 			var valuePrecoCapa=
-				$(colunaPrecoCapa).find('[name="itensRecebimento.precoCapa"]').text();
+				$(colunaPrecoCapa).find('[name="itensRecebimento.precoCapaItem"]').text();
 			
 			var valueQtdNota =
 				$(colunaQtdNota).find('input[name="itensRecebimento.qtdNotaItem"]').val();

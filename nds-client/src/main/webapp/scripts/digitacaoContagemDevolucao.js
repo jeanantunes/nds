@@ -6,25 +6,28 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
-			$('#digitacaoContagemDevolucao-dataDe', digitacaoContagemDevolucaoController.workspace).datepicker({
 
+			$('input[id^="digitacao-contagem-dataDe"]', digitacaoContagemDevolucaoController.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('#digitacaoContagemDevolucao-dataDe', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
-			
-			$('#digitacaoContagemDevolucao-dataAte', digitacaoContagemDevolucaoController.workspace).datepicker({
+			$('input[id^="digitacao-contagem-dataDe"]', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
+
+			/**
+			 * Renderiza componente de Data(período) da tela
+			 */
+			$('input[id^="digitacao-contagem-dataAte"]', digitacaoContagemDevolucaoController.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 				buttonImageOnly: true,
 				dateFormat: "dd/mm/yy"
 			});
 			
-			$('#digitacaoContagemDevolucao-dataAte', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
-
+			$('input[id^="digitacao-contagem-dataAte"]', digitacaoContagemDevolucaoController.workspace).mask("99/99/9999");
+			
 			var colunas = digitacaoContagemDevolucaoController.montarColunas();
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexigrid({				
@@ -85,7 +88,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		**/
 		pesquisar: function (){
 			
-			var formData = $('#pesquisaContagemDevolucaoForm', digitacaoContagemDevolucaoController.workspace).serializeArray();
+			var formData = [{name:"dataDe",value:$("#digitacao-contagem-dataDe", digitacaoContagemDevolucaoController.workspace).val()},
+			                {name:"dataAte",value:$("#digitacao-contagem-dataAte", digitacaoContagemDevolucaoController.workspace).val()}, 
+			                {name:"idFornecedor", value:$("#digitacao-contagem-idFornecedor", digitacaoContagemDevolucaoController.workspace).val()},
+			                {name:"semanaConferenciaEncalhe", value:$("#semanaConferenciaEncalhe", digitacaoContagemDevolucaoController.workspace).val()}];
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexOptions({
 				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",

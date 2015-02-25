@@ -47,4 +47,7 @@ public interface BancoService {
 	List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult);
 
 	void excluirBanco(long idBanco);
+	
+	List<ItemDTO<Long, String>> obterPessoasDisponiveisParaCedente();
+	
 }

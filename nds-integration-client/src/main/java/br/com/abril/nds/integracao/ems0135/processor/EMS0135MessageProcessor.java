@@ -350,7 +350,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 
                 try {
     				//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-                	dataLancamento =lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
+                	dataLancamento = lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId());
                 	dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
                 	
                 	this.ndsiLoggerFactory.getLogger().logWarning(message,

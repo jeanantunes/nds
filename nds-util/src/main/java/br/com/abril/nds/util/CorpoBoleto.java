@@ -11,7 +11,8 @@ public class CorpoBoleto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Integer codigoCedente;
+	private String codigoCedente;
+	private String digitoCodigoCedente;
 	private String cedenteNome;
 	private String cedenteDocumento;
 	
@@ -76,14 +77,27 @@ public class CorpoBoleto implements Serializable {
 	/**
 	 * @return the codigoCedente
 	 */
-	public Integer getCodigoCedente() {
+	public String getCodigoCedente() {
 		return codigoCedente;
 	}
 	/**
 	 * @param codigoCedente the codigoCedente to set
 	 */
-	public void setCodigoCedente(Integer codigoCedente) {
+	public void setCodigoCedente(String codigoCedente) {
 		this.codigoCedente = codigoCedente;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getDigitoCodigoCedente() {
+		return digitoCodigoCedente;
+	}
+	/**
+	 * @param digitoCodigoCedente
+	 */
+	public void setDigitoCodigoCedente(String digitoCodigoCedente) {
+		this.digitoCodigoCedente = digitoCodigoCedente;
 	}
 	/**
 	 * @return the cedenteNome

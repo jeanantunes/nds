@@ -1,4 +1,7 @@
 <jsp:useBean id="random" class="java.util.Random" scope="application" />
+<jsp:useBean id="date" class="java.util.Date"/>
+<fmt:formatDate var="time" value="${date}" pattern="HHmm"/>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>

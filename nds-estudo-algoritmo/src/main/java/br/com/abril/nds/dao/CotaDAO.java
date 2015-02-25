@@ -219,11 +219,15 @@ public class CotaDAO {
 		}
 		
 		if (rs.getBigDecimal("REPARTE_MAX") != null) {
-		    cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
+		    if(estudo.isUsarMix()){
+		    	cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
+		    }
 		}
 		
 		if (rs.getBigDecimal("REPARTE_MIN") != null) {
-		    cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
+			if(estudo.isUsarMix()){
+				cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
+			}
 		}
 		
 		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {

@@ -30,7 +30,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
-import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Trailer;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
@@ -175,7 +174,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		    //final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(ipvLancamento.getIdProdutoEdicao());
 		    
-		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(ipvLancamento.getCodProduto(), Long.parseLong(ipvLancamento.getNumEdicao()));
+		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(Long.parseLong(ipvLancamento.getIdLancamento()));
 		    
 			/**
 		     * A busca dos descontos é feita diretamente no Map, por chave,
@@ -216,7 +215,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		    
 		    final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
 		    
-		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(1000)).setScale(0, RoundingMode.HALF_UP).toString());
+		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).toString());
 		    
 		    exportarDadosParaArquivo(print, ipvLancamento);
 
@@ -229,7 +228,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		//print.print(fixedFormatManager.export(outDetalhe)+"\n");
 		print.write(fixedFormatManager.export(outDetalhe), 0, 204);
-		print.println();
+		print.print("\r\n");
 	}
 
 	/**
@@ -237,7 +236,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @param jornaleiro
 	 * @return
-	 */
 	private EMS0197Trailer createTrailer(String numeroCota, Integer qtdRegistros) {
 		
 		EMS0197Trailer outTrailer = new EMS0197Trailer();
@@ -247,6 +245,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		
 		return outTrailer;
 	}
+	 */
 
 	/**
 	 * Cria os detalhes do arquivo
@@ -328,6 +327,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("        ");
 		sql.append("  WHERE eg.DATA_LANCAMENTO = :data  ");
 		sql.append("           AND pdv.PONTO_PRINCIPAL = TRUE ");
+		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -444,9 +444,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
-		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial ");
-		//sql.append("       lct.ID as idLancamento, ");
-		//sql.append("       pe.id as idProdutoEdicao ");
+		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
+		sql.append("       CAST(lct.ID AS CHAR) as idLancamento ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 		
@@ -496,8 +495,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
-		//query.addScalar("idLancamento", StandardBasicTypes.LONG);
-		//query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("idLancamento", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(IpvLancamentoDTO.class));
 

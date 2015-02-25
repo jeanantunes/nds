@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -873,18 +874,21 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String periodoRecolhimento = null;
 			
 			if(mapGPS != null && !mapGPS.isEmpty()) {
-				if (mapGPS.containsKey(dto.getIdCota())){
+				
+				if (mapGPS.containsKey(dto.getIdCota())) {
 					
-				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
-					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
-					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
-				}
-				else{
+				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()) ? 
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+				
+				} else {
 					
 					periodoRecolhimento = dto.getDataRecolhimento();
 				}	
 			} else {
-				periodoRecolhimento = dto.getDataRecolhimento();
+				periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()) ? 
+	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
+	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
 			}
 			
 			
@@ -969,6 +973,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
         
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+        parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }

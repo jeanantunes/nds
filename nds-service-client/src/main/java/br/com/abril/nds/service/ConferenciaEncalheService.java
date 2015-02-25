@@ -33,7 +33,7 @@ public interface ConferenciaEncalheService {
 	
 	public void validarCotaProcessandoEncalhe(Integer numeroCota);
 
-	public void criarBackupConferenciaEncalhe(Usuario usuario, Cota cota, final List<ConferenciaEncalheDTO> listaConferenciaEncalhe);
+	public void criarBackupConferenciaEncalhe(Usuario usuario, InfoConferenciaEncalheCota infoConferenciaEncalheCota, ControleConferenciaEncalheCota controleConferenciaEncalheCota);
 	
 	/**
 	 * Obtém mapa tendo como chave idFornecedor e valor 

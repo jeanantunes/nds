@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -27,13 +29,18 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -71,6 +78,9 @@ public class ConsultaEncalheController extends BaseController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -79,17 +89,18 @@ public class ConsultaEncalheController extends BaseController {
 	@Autowired
 	private ConsultaEncalheService consultaEncalheService;
 	
-	
-	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private BoxService boxService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalhe";
 	
 	private static final String FILTRO_DETALHE_SESSION_ATTRIBUTE = "filtroPesquisaConsultaEncalheDetalhe";
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	private static final String SUFIXO_DIA = "º Dia";
 	
@@ -97,6 +108,7 @@ public class ConsultaEncalheController extends BaseController {
 	public void index(){
 		
 		carregarComboFornecedores();
+		result.include("listaBoxes", carregarBoxes(boxService.buscarTodos(TipoBox.ENCALHE)));
 		result.include("data", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 	}
@@ -283,10 +295,9 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota,  String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto, Integer idBox, Integer numeroEdicao, String sortorder, String sortname, int page, int rp){
 		
-		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
-				dataRecolhimentoFinal, idFornecedor, numeroCota);
+		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial, dataRecolhimentoFinal, idFornecedor, numeroCota, codigoProduto, idBox, numeroEdicao);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -391,10 +402,10 @@ public class ConsultaEncalheController extends BaseController {
 	
 	@Get
 	@Path("/gerarSlip")
-	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota) throws IOException {
+	public void gerarSlip(String dataRecolhimentoInicial, String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota, Integer codigoProduto) throws IOException {
 		
 		FiltroConsultaEncalheDTO filtro = getFiltroConsultaEncalheDTO(dataRecolhimentoInicial,
-				dataRecolhimentoFinal, idFornecedor, numeroCota);
+				dataRecolhimentoFinal, idFornecedor, numeroCota, null, null, null);
 		
 		byte[] slip =  consultaEncalheService.gerarDocumentosConferenciaEncalhe(filtro);
 		
@@ -406,8 +417,13 @@ public class ConsultaEncalheController extends BaseController {
 		
 	}
 
-	private FiltroConsultaEncalheDTO getFiltroConsultaEncalheDTO(String dataRecolhimentoInicial,
-			String dataRecolhimentoFinal, Long idFornecedor, Integer numeroCota) {
+	private FiltroConsultaEncalheDTO getFiltroConsultaEncalheDTO(String dataRecolhimentoInicial, 
+			String dataRecolhimentoFinal, 
+			Long idFornecedor, 
+			Integer numeroCota, 
+			Integer codigoProduto,
+			Integer idBox,
+			Integer numeroEdicao) {
 		
 		if(idFornecedor == null || idFornecedor < 0) {
 			idFornecedor = null;
@@ -423,12 +439,36 @@ public class ConsultaEncalheController extends BaseController {
 		
 		filtro.setIdFornecedor(idFornecedor);
 		
-		Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
-		filtro.setNumCota(numeroCota);
-		if(cota!=null) {
-			filtro.setIdCota(cota.getId());
-		}
+		filtro.setCodigoProduto(codigoProduto);
+		
+		filtro.setNumeroEdicao(numeroEdicao);
+		
+		filtro.setIdBox(idBox);
+		
+		if(numeroCota != null) {
+			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota);
+			filtro.setNumCota(numeroCota);
 			
+			if(cota!=null) {
+				filtro.setIdCota(cota.getId());
+			}
+			
+		}
+		
+		if(numeroEdicao != null) {
+			
+			if(codigoProduto == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Favor informar o código do produto para efetuar a pesquisa.");
+			}
+			
+			ProdutoEdicao produtoEdicao  = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto.toString(), numeroEdicao.toString());
+			filtro.setNumeroEdicao(numeroEdicao);
+			
+			if(produtoEdicao!=null) {
+				filtro.setIdProdutoEdicao(produtoEdicao.getId());
+			}
+		}
+		
 		return filtro;
 	}
 
@@ -632,8 +672,7 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	private FiltroConsultaEncalheDTO obterFiltroExportacao() {
 		
-		FiltroConsultaEncalheDTO filtro = 
-				(FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDTO filtro = (FiltroConsultaEncalheDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtro != null) {
 			
@@ -666,17 +705,11 @@ public class ConsultaEncalheController extends BaseController {
 					PessoaJuridica juridica = fornecedor.getJuridica();
 					
 					if(juridica!=null) {
-						
 						filtro.setNomeFornecedor(juridica.getRazaoSocial());
-						
 					}
-												
 				}
-				
 			} else {
-				
 				filtro.setNomeFornecedor("TODOS");
-				
 			}
 		}
 		
@@ -690,8 +723,7 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	private void tratarFiltro(FiltroConsultaEncalheDTO filtro) {
 
-		FiltroConsultaEncalheDTO filtroSession = 
-				(FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDTO filtroSession = (FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtro) && filtroSession.getPaginacao() != null) {
 
@@ -708,8 +740,7 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	private void tratarFiltroDetalhe(FiltroConsultaEncalheDetalheDTO filtro) {
 
-		FiltroConsultaEncalheDetalheDTO filtroSession = 
-				(FiltroConsultaEncalheDetalheDTO) session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
+		FiltroConsultaEncalheDetalheDTO filtroSession = (FiltroConsultaEncalheDetalheDTO) session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtro)) {
 
@@ -756,6 +787,36 @@ public class ConsultaEncalheController extends BaseController {
 		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setTotal((listaDebitoCreditoCota!= null) ? listaDebitoCreditoCota.size() : 0);
 		resultadoConsultaEncalheVO.getTableModelDebitoCredito().setPage(1);
 		
+	}
+
+	/**
+	 * Carrega a lista de Boxes
+	 * @return 
+	 */
+	private List<ItemDTO<Integer, String>> carregarBoxes(List<Box> listaBoxes){
+		
+		sortByCodigo(listaBoxes);
+		
+		List<ItemDTO<Integer, String>> boxes = new ArrayList<ItemDTO<Integer,String>>();
+				
+		for(Box box : listaBoxes){
+			
+			boxes.add(new ItemDTO<Integer, String>(box.getCodigo(),box.getCodigo() + " - " + box.getNome()));
+		}
+		
+		return boxes;			
+	}
+	
+
+	private void sortByCodigo(List<Box> listaBoxes) {
+		Collections.sort(listaBoxes, new Comparator<Box>() {
+			@Override
+			public int compare(Box box1, Box box2) {
+				if(box1.getCodigo()==null)
+					return -1;
+				return box1.getCodigo().compareTo(box2.getCodigo());
+			}
+		});
 	}
 
 }

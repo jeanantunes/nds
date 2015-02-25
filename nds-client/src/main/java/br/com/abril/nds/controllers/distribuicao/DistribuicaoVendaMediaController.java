@@ -53,7 +53,6 @@ import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -153,7 +152,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
         produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
         produto = produtoEdicao.getProduto();
     }
-
+	
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
 	session.removeAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE_VERANEIO);
@@ -369,7 +368,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	
     	if (filtro.getCodigo() != null && filtro.getEdicao() != null) {
     	    
-    	    idProdutoEdicaoPesquisa = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString()).getId();
+    		ProdutoEdicao pe = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), filtro.getEdicao().toString());
+    		if(pe != null) {
+    			idProdutoEdicaoPesquisa = pe.getId();
+    		}
     	}
     	
     	filtro.setConsolidado(modoAnalise.equals("NORMAL") || idProdutoEdicaoPesquisa == null || !idProdutoEdicao.equals(idProdutoEdicaoPesquisa));
@@ -497,6 +499,18 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		result.nothing();
     	}
     }
+    
+    @Post
+    @Path("verificarICD")
+    public void verificarICD(String codProduto){
+    	
+    	if(prodService.isIcdValido(codProduto)){
+    		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+    	}
+    }
+    
     
     @Path("gerarEstudo")
     @Post

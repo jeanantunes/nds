@@ -18,7 +18,7 @@ public class NdsProfiler {
 	
 	private static final String EXECUCAO = "Execução";
 	
-	@Around("execution(* br.com.abril.nds.repository.*.*(..))")
+	@Around("execution(* br.com.abril.nds.repository.*.*(..)) || execution(* br.com.abril.nds.dao.*.*(..))")
 	public Object profileRepository(ProceedingJoinPoint pjp) throws Throwable {
 		
 		Class<? extends Object> clazz = pjp.getTarget().getClass();

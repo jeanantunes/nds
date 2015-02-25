@@ -35,7 +35,9 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private String desconto;
 	
-	private TipoLancamentoParcial tipoRecolhimento;
+	//private TipoLancamentoParcial tipoRecolhimento;
+	
+	private String tipoRecolhimento;
 	
 	private String dataLancamento;
 	
@@ -172,19 +174,19 @@ public class ProdutoEmissaoDTO implements Serializable{
 	/**
 	 * @return the tipoRecolhimento
 	 */
-	public TipoLancamentoParcial getTipoRecolhimento() {
+	public String getTipoRecolhimento() {
 		return tipoRecolhimento;
 	}
 	
 	public String getInicialTipoRecolhimento() {
 		
-		return ((this.tipoRecolhimento != null) ? (tipoRecolhimento.getDescricao().indexOf("P") > -1 ? "P": "F") : "F");
+		return ((this.tipoRecolhimento != null) ? (tipoRecolhimento.indexOf("P") > -1 ? "P": "F") : "F");
 	}
 	
 	/**
 	 * @param tipoRecolhimento the tipoRecolhimento to set
 	 */
-	public void setTipoRecolhimento(TipoLancamentoParcial tipoRecolhimento) {
+	public void setTipoRecolhimento(String tipoRecolhimento) {
 		
 		this.tipoRecolhimento = tipoRecolhimento;
 		//this.tipoRecolhimento = tipoRecolhimento ? "P":"F";

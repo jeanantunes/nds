@@ -132,9 +132,6 @@
             		<input name="pesq_prod" type="text" 
             			   id="pesq_prod" style="width:200px; float:left; margin-right:5px;"
             			   onkeypress="return disableEnterKey(event);"/>
-	                <span class="classPesquisar">
-	                	<a href="javascript:;" onclick="mostrar_produtos();">&nbsp;</a>
-	                </span>
             	</td>
           	</tr>
         </table>

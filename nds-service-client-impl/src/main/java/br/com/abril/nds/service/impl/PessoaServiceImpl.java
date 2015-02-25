@@ -167,4 +167,14 @@ public class PessoaServiceImpl implements PessoaService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CNPJ] está inválido!");
 		}
 	}
+
+
+	@Override
+	@Transactional
+	public Pessoa buscarPessoaPorId(Long idPessoa) {
+
+		if(idPessoa == null) return null;
+		
+		return this.pessoaRepository.buscarPorId(idPessoa);
+	}
 }

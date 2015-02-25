@@ -34,6 +34,9 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public interface LancamentoRepository extends Repository<Lancamento, Long> {
+	
+	public List<Lancamento> obterRecolhimentosEmBalanceamentoRecolhimento(
+			List<Date> datasConfirmadas);
 
 	SumarioLancamentosDTO sumarioBalanceamentoMatrizLancamentos(Date data,
 			List<Long> idsFornecedores);
@@ -111,9 +114,10 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 * 
 	 * @param idProdutoEdicao
 	 *            - Id do ProdutoEdicao
+	 * @param dataLimiteLancamento TODO
 	 * @return Lancamento
 	 */
-	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+	Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento);
 	
 	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
 
@@ -366,7 +370,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 
-	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota, Date dataLimiteLancamento);
 	
 	Integer obterProximaSequenciaMatrizPorData(Date dataLancamento);
 	
@@ -423,7 +427,9 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterLancamentosDoPeriodoParcial(Long idPeriodo);
 	
-	List<Date> obterDatasLancamentoValido(List<Long> idFornecedor);
+	List<Date> obterDatasLancamentoValidas();
+	
+	List<Date> obterDatasRecolhimentoValidas();
 	
 	Lancamento obterParaAtualizar(Long id);
 	

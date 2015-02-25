@@ -273,31 +273,31 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 
 	 @Override
 	 @Transactional
-	 public void atualizarEstoqueProdutoCota(){
+	 public void atualizarEstoqueProdutoCota() {
 	     
 	     final List<EstoqueProdutoFilaDTO> epfs = this.estoqueProdutoFilaRepository.buscarTodosEstoqueProdutoFila();
 	     
-	     for (EstoqueProdutoFilaDTO epf : epfs){
+	     for (EstoqueProdutoFilaDTO epf : epfs) {
 	         
 	         boolean atualizaReg = true;
 	         
-	         if (OperacaoEstoque.SAIDA.equals(epf.getOperacaoEstoque())){
+	         if (OperacaoEstoque.SAIDA.equals(epf.getOperacaoEstoque())) {
 	             
 	             epf.setQtde(epf.getQtde().negate());
 	         }
 	         
 	         EstoqueProduto ep = this.obterEstoqueProdutoParaAtualizar(epf.getIdProdutoEdicao());
 	         
-	         if (ep == null){
+	         if (ep == null) {
 	             
 	             ep = new EstoqueProduto();
 	             ep.setProdutoEdicao(produtoEdicaoRespository.buscarPorId(epf.getIdProdutoEdicao()));
 	         }
 	         
-	         switch(epf.getTipoEstoque()){
+	         switch(epf.getTipoEstoque()) {
 	             case DEVOLUCAO_ENCALHE:
 	                 
-	                 if (ep.getQtdeDevolucaoEncalhe() == null){
+	                 if (ep.getQtdeDevolucaoEncalhe() == null) {
 	                     
 	                     ep.setQtdeDevolucaoEncalhe(epf.getQtde());
 	                 } else {
@@ -308,7 +308,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	             break;
 	             case JURAMENTADO:
                     
-	                 if (ep.getQtdeJuramentado() == null){
+	                 if (ep.getQtdeJuramentado() == null) {
 	                     
 	                     ep.setQtdeJuramentado(epf.getQtde());
 	                 } else {
@@ -319,7 +319,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
                  break;
                  case SUPLEMENTAR:
                      
-                     if (ep.getQtdeSuplementar() == null){
+                     if (ep.getQtdeSuplementar() == null) {
                          
                          ep.setQtdeSuplementar(epf.getQtde());
                      } else {
@@ -335,7 +335,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
                      break;
 	         }
 	         
-	         if (atualizaReg){
+	         if (atualizaReg) {
 	             
 	             this.saveOrUpdate(ep);
 	         }

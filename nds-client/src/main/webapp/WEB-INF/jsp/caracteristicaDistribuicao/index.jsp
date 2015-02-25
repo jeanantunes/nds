@@ -54,11 +54,11 @@ $(function(){
 			<tr>
 				<td width="52">Código:</td>
 				<td width="86">
-					<input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onkeydown="onlyNumeric(event);" class="inputField" />
+					<input type="text" name="caracteristica-distribuicao-codigoProduto" id="caracteristica-distribuicao-codigoProduto"  style="width:80px;" onkeydown="onlyNumeric(event);" class="inputField" />
 				</td>
 				<td width="152">Classificação:</td>
 				<td width="86">
-					<select id="classificacao" class="inputField">
+					<select id="caracteristica-distribuicao-classificacao" class="inputField">
 						<option value=""></option>
 						<c:forEach var="classificacao" items="${classificacoes}">
 							<option value="<c:out value="${classificacao.descricao}"/>">
@@ -69,7 +69,7 @@ $(function(){
 			</td>
 			<td width="48">Segmento:</td>
 			<td width="206">
-				<select id="segmento" class="inputField" style="width:100px;">
+				<select id="caracteristica-distribuicao-segmento" class="inputField" style="width:100px;">
 					<option value=""></option>
 					<c:forEach var="segmento" items="${segmentos}">
 						<option value="<c:out value="${segmento.descricao}"/>
@@ -81,34 +81,34 @@ $(function(){
 		</td>
 		<td width="48">Brinde:</td>
 		<td width="70">
-		<input type="checkbox" name="checkBrinde" id="checkIsBrinde" style="margin-right:0px;"/>
+		<input type="checkbox" name="caracteristica-distribuicao-checkBrinde" id="caracteristica-distribuicao-checkIsBrinde" style="margin-right:0px;"/>
 		</td>
 </tr>
 <tr></tr>
 <tr>
 	<td width="48">Produto:</td>
 	<td width="206">
-		<input type="text" name="nomeProduto" id="nomeProduto"  style="width:100px;" class="inputField"></input>
+		<input type="text" name="caracteristica-distribuicao-nomeProduto" id="caracteristica-distribuicao-nomeProduto"  style="width:100px;" class="inputField"></input>
 </td>
 <td width="70">Nome Editor:</td>
 <td width="206">
-	<input type="text" name="nomeEditor" id="nomeEditor" style="width:100px;" class="inputField"></input>
+	<input type="text" name="caracteristica-distribuicao-nomeEditor" id="caracteristica-distribuicao-nomeEditor" style="width:100px;" class="inputField"></input>
 </td>
 <td width="200">Chamada de capa:</td>
 <td width="206">
-<input type="text" name="chamadaCapa" id="chamadaCapa" style="width:100px;" class="inputField"></input>
+<input type="text" name="caracteristica-distribuicao-chamadaCapa" id="caracteristica-distribuicao-chamadaCapa" style="width:100px;" class="inputField"></input>
 <td width="70">Exato</td>
 <td width="70">
-<input type="checkbox" name="checkPublicacao" id="checkPublicacaoExato" style="margin-right:0px;"/>
+<input type="checkbox" name="caracteristica-distribuicao-checkPublicacao" id="caracteristica-distribuicao-checkPublicacaoExato" style="margin-right:0px;"/>
 </td>
 </tr>
 <tr>
 <td width="200" >Faixa de Preço:</td>
 <td colspan="2" >
 De:
-<input type="text" name="faixaDe" id="faixaDe" onkeyup="return caracteristicaDistribuicaoController.moeda(this);" maxlength="8" style="width:50px;" class="inputField"/>
+<input type="text" name="caracteristica-distribuicao-faixaDe" id="caracteristica-distribuicao-faixaDe" onkeyup="return caracteristicaDistribuicaoController.moeda(this);" maxlength="8" style="width:50px;" class="inputField"/>
 Até:
-<input type="text" name="faixaAte" maxlength="8" id="faixaAte" onkeyup="return caracteristicaDistribuicaoController.moeda(this);"  style="width:50px;" class="inputField"/>
+<input type="text" name="caracteristica-distribuicao-faixaAte" maxlength="8" id="caracteristica-distribuicao-faixaAte" onkeyup="return caracteristicaDistribuicaoController.moeda(this);"  style="width:50px;" class="inputField"/>
 </td>
 <td width="106" >
 <span class="bt_pesquisar" style="width:35px;">

@@ -121,10 +121,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			//TODO
 			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)){
 				
-				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
+				//if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
 					
 					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
-				}
+				//}
 			}
 		}
 		
@@ -138,7 +138,12 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 										 	ProdutoRecolhimentoDTO produtoRecolhimento,TreeSet<Date> datasRecolhimentoDisponiveis) {
 
 		//TODO
-		return (produtoRecolhimento.isBalanceamentoConfirmado() || (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || (produtoRecolhimento.getPeb()<22 && datasRecolhimentoDisponiveis.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
+		//return (produtoRecolhimento.isBalanceamentoConfirmado() || (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || (produtoRecolhimento.getPeb()<22 && datasRecolhimentoDisponiveis.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
+		return (
+				produtoRecolhimento.isBalanceamentoConfirmado() || 
+				(produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || 
+				(produtoRecolhimento.getPeb()<22 && datasRecolhimentoDisponiveis.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
+		
 	}
 	
 	/*
@@ -281,10 +286,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
+			//if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoDisponiveis())) {
 				
-				continue;
-			}
+				//continue;
+			//}
 			
 			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				

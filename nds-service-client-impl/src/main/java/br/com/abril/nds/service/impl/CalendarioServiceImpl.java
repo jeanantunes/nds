@@ -717,13 +717,10 @@ public class CalendarioServiceImpl implements CalendarioService {
     public boolean isFeriadoSemOperacao(final Date data) {
         
         if (data == null) {
-            
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
-        
-        return feriadoRepository.isNaoOpera(data, localidadeDistribuidor);
+        return feriadoRepository.isNaoOpera(data, null);
     }
     
     @Override

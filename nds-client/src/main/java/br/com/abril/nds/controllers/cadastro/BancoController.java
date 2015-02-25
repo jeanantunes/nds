@@ -18,13 +18,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBancosDTO.OrdenacaoColunaBancos;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BancoService;
+import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -55,6 +58,9 @@ public class BancoController extends BaseController {
     
     @Autowired
     private BancoService bancoService;
+    
+    @Autowired
+    private PessoaService pessoaService;
     
     private final Result result;
     
@@ -110,8 +116,7 @@ public class BancoController extends BaseController {
         filtroAtual.setPaginacao(paginacao);
         filtroAtual.setOrdenacaoColuna(Util.getEnumByStringValue(OrdenacaoColunaBancos.values(), sortname));
         
-        final FiltroConsultaBancosDTO filtroSessao = (FiltroConsultaBancosDTO) httpSession
-                .getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+        final FiltroConsultaBancosDTO filtroSessao = (FiltroConsultaBancosDTO) httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
         
         if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
             filtroAtual.getPaginacao().setPaginaAtual(1);
@@ -184,17 +189,16 @@ public class BancoController extends BaseController {
     @Post
     @Path("/novoBanco")
     @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
-    public void novoBanco(final String numero, final String nome, final String codigoCedente, final String agencia,
-            final String digitoAgencia, final String conta, final String digito, final String apelido,
+    public void novoBanco(final String numero, final String nome, final String codigoCedente, final String digitoCodigoCedente, final String agencia,
+            final String digitoAgencia, final String conta, final String digito, final String apelido, final Long idPessoaCedente,
             final Integer carteira, final BigDecimal juros, final boolean ativo, final BigDecimal multa,
-            final BigDecimal vrMulta, final String instrucoes) {
+            final BigDecimal vrMulta, final String instrucoes1, final String instrucoes2, final String instrucoes3, final String instrucoes4) {
         
         if (bancoService.obterBancoPorApelido(apelido) != null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
         }
         
-        validarCadastroBanco(numero, nome, codigoCedente, agencia, digitoAgencia, conta, digito, apelido, juros, multa,
-                vrMulta);
+        validarCadastroBanco(numero, nome, codigoCedente, idPessoaCedente, agencia, digitoAgencia, conta, digito, apelido, juros, multa, vrMulta);
         
         final long lAgencia = Long.parseLong(agencia);
         final long lConta = Long.parseLong(conta);
@@ -202,7 +206,9 @@ public class BancoController extends BaseController {
         final Banco banco = new Banco();
         banco.setNumeroBanco(numero);
         banco.setNome(nome);
+        banco.setPessoaJuridicaCedente(pessoaService.buscarPessoaPorId(idPessoaCedente));
         banco.setCodigoCedente(codigoCedente);
+        banco.setDigitoCodigoCedente(digitoCodigoCedente);
         banco.setAgencia(lAgencia);
         banco.setDvAgencia(digitoAgencia);
         banco.setConta(lConta);
@@ -213,7 +219,10 @@ public class BancoController extends BaseController {
         banco.setAtivo(ativo);
         banco.setMulta(multa);
         banco.setVrMulta(vrMulta);
-        banco.setInstrucoes(instrucoes);
+        banco.setInstrucoes1(instrucoes1);
+        banco.setInstrucoes2(instrucoes2);
+        banco.setInstrucoes3(instrucoes3);
+        banco.setInstrucoes4(instrucoes4);
         
         try {
             bancoService.incluirBanco(banco);
@@ -237,12 +246,16 @@ public class BancoController extends BaseController {
     @Post
     @Path("/buscaBanco")
     public void buscaBanco(final long idBanco) {
+    	
         final BancoVO bancoVO = bancoService.obterDadosBanco(idBanco);
+        
         if (bancoVO == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Banco " + idBanco + " não encontrado.");
         }
+        
         httpSession.setAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE, bancoVO.getApelido());
-        result.use(Results.json()).from(bancoVO, "result").recursive().serialize();
+        
+        result.use(Results.json()).from(bancoVO, "result").serialize();
     }
     
     /**
@@ -267,18 +280,18 @@ public class BancoController extends BaseController {
     @Post
     @Path("/alteraBanco")
     @Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
-    public void alteraBanco(final long idBanco, final String numero, final String nome, final String codigoCedente,
+    public void alteraBanco(final long idBanco, final String numero, final String nome, final String codigoCedente, final String digitoCodigoCedente,
             final String agencia, final String digitoAgencia, final String conta, final String digito,
             final String apelido, final Integer carteira, final BigDecimal juros, final boolean ativo,
-            final BigDecimal multa, final BigDecimal vrMulta, final String instrucoes) {
+            final BigDecimal multa, final BigDecimal vrMulta, final long idPessoaCedente, final String instrucoes1,
+            final String instrucoes2, final String instrucoes3, final String instrucoes4) {
         
         if (!httpSession.getAttribute(APELIDO_ANTIGO_SESSION_ATTRIBUTE).equals(apelido)
                 && bancoService.obterBancoPorApelido(apelido) != null) {
             throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um banco com este apelido.");
         }
         
-        validarCadastroBanco(numero, nome, codigoCedente, agencia, digitoAgencia, conta, digito, apelido, juros, multa,
-                vrMulta);
+        validarCadastroBanco(numero, nome, codigoCedente, idPessoaCedente, agencia, digitoAgencia, conta, digito, apelido, juros, multa, vrMulta);
         
         if (!ativo) {
             if (bancoService.verificarPendencias(idBanco)) {
@@ -293,7 +306,9 @@ public class BancoController extends BaseController {
         final Banco banco = bancoService.obterBancoPorId(idBanco);
         banco.setNumeroBanco(numero);
         banco.setNome(nome);
+        banco.setPessoaJuridicaCedente(pessoaService.buscarPessoaPorId(idPessoaCedente));
         banco.setCodigoCedente(codigoCedente);
+        banco.setDigitoCodigoCedente(digitoCodigoCedente);
         banco.setAgencia(lAgencia);
         banco.setDvAgencia(digitoAgencia);
         banco.setConta(lConta);
@@ -304,7 +319,10 @@ public class BancoController extends BaseController {
         banco.setAtivo(ativo);
         banco.setMulta(multa);
         banco.setVrMulta(vrMulta);
-        banco.setInstrucoes(instrucoes);
+        banco.setInstrucoes1(instrucoes1);
+        banco.setInstrucoes2(instrucoes2);
+        banco.setInstrucoes3(instrucoes3);
+        banco.setInstrucoes4(instrucoes4);
         
         try {
             bancoService.alterarBanco(banco);
@@ -335,11 +353,15 @@ public class BancoController extends BaseController {
      * @param multa
      * @param vrMulta
      */
-    private void validarCadastroBanco(final String numero, final String nome, final String codigoCedente,
+    private void validarCadastroBanco(final String numero, final String nome, final String codigoCedente, final Long idPessoaCedente,
             final String agencia, final String digitoAgencia, final String conta, final String digito,
             final String apelido, final BigDecimal juros, final BigDecimal multa, final BigDecimal vrMulta) {
         
         final List<String> errorMsgs = new LinkedList<String>();
+        
+        if (idPessoaCedente == null || idPessoaCedente < 0) {
+            errorMsgs.add("Selecione o Cedente.");
+        }
         
         if (StringUtils.isBlank(numero)) {
             errorMsgs.add("Preencha o número do banco.");
@@ -436,6 +458,18 @@ public class BancoController extends BaseController {
         }
         
         result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
+    }
+    
+    @Post
+    public void obterPessoasDisponiveisParaCedente() {
+    	
+    	final List<ItemDTO<Long, String>> pessoasCedente = bancoService.obterPessoasDisponiveisParaCedente();
+
+    	if (pessoasCedente != null) {
+    		result.include("listaPessoas", pessoasCedente);
+    	}
+
+    	result.use(CustomJson.class).from(pessoasCedente).serialize();
     }
     
 }

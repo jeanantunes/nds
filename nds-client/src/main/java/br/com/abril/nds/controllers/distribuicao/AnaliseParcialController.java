@@ -20,6 +20,8 @@ import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
@@ -29,6 +31,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
@@ -44,6 +47,7 @@ import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
@@ -104,6 +108,9 @@ public class AnaliseParcialController extends BaseController {
     private RepartePdvService repartePdvService;
     
     @Autowired
+    private SituacaoCotaService situacaoCotaService;
+    
+    @Autowired
     private CotaService cotaService;
     
     private static final String EDICOES_BASE_SESSION_ATTRIBUTE = "";
@@ -122,6 +129,18 @@ public class AnaliseParcialController extends BaseController {
         } else {
             result.include("tipoExibicao", modoAnalise);
             session.setAttribute("modoAnalise", modoAnalise);
+            
+            if(modoAnalise.equalsIgnoreCase("PARCIAL")){
+            	List<DataLancamentoPeriodoEdicoesBasesDTO> lcmtos = analiseParcialService.obterDataLacmtoPeridoEdicoesBaseParciais(id, lancamento.getProdutoEdicao().getId());
+            	
+            	for (int i = 0; i < 3; i++) {
+            		if(i < lcmtos.size()){
+            			result.include("parcial"+i, "L - "+lcmtos.get(i).getDataLancamento());
+            		}else{
+            			result.include("parcial"+i, "L - ");
+            		}
+				}
+            }
         }
         
         result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));
@@ -184,6 +203,34 @@ public class AnaliseParcialController extends BaseController {
     public void percentualAbrangencia(Long estudoId) {
         BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
         result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
+    }
+    
+    @Post
+    public void reparteTotalEVendaTotalPorEdicao(List<EdicoesProdutosDTO> edicoesBase, String estudoId) {
+        
+    	
+    	for (EdicoesProdutosDTO edicoesDTO : edicoesBase) {
+    		
+    		if(edicoesDTO.getProdutoEdicaoId() == null || edicoesDTO.getProdutoEdicaoId().equals("null")){
+    			continue;
+    		}
+    		
+    		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(edicoesDTO.getProdutoEdicaoId()); 
+    		
+    		
+    		DetalhesEdicoesBasesAnaliseEstudoDTO detalhes = analiseParcialService.obterReparteEVendaTotal(edicoesDTO.getCodigoProduto(), 
+				edicoesDTO.getEdicao().longValue(), pe.getTipoClassificacaoProduto().getId(), 
+				!edicoesDTO.getPeriodo().equals("null") ? Integer.parseInt(edicoesDTO.getPeriodo()) : null);
+			
+    		if(detalhes != null){
+    			edicoesDTO.setReparte(detalhes.getReparte() != null ? new BigDecimal(detalhes.getReparte()) : new BigDecimal(0));
+    			edicoesDTO.setVenda(detalhes.getVenda() != null ? new BigDecimal(detalhes.getVenda()) : new BigDecimal(0));
+    			edicoesDTO.setDataLancamento(detalhes.getDataLancamento());
+    		}
+    	
+    	}
+    	
+    	result.use(Results.json()).withoutRoot().from(edicoesBase).serialize();
     }
 
     @Path("/init")
@@ -303,7 +350,7 @@ public class AnaliseParcialController extends BaseController {
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
     }
-
+    
     @Path("/liberar")
     @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {

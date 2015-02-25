@@ -248,6 +248,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         final String razaoSocialDistrib = this.distribuidorService.obterRazaoSocialDistribuidor();
         
+        List<Integer> listaCotas = new ArrayList<>();
+        
         try {
             
             final List<Boleto> boletos = this.boletoRepository.obterPorNossoNumero(listNossoNumero);
@@ -274,54 +276,23 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 
                 if (adicionarSlip){
                     
-                    final Slip slip = 
-                            this.slipRepository.obterPorNumeroCotaData(
+                    final Slip slip = this.slipRepository.obterPorNumeroCotaData(
                                     boletos.get(index).getCota().getNumeroCota(),
                                     data);
                     
-                    if (slip != null){
+                    listaCotas.add(boletos.get(index).getCota().getNumeroCota());
                     
-                        final Map<String, Object> parametersSlip = new HashMap<String, Object>();
-                        slip.setParametersSlip(parametersSlip);
-                        
-                        parametersSlip.put("NUMERO_COTA", slip.getNumeroCota());
-                        parametersSlip.put("NOME_COTA", slip.getNomeCota());
-                        parametersSlip.put("NUM_SLIP", slip.getNumSlip().toString());
-                        parametersSlip.put("CODIGO_BOX", slip.getCodigoBox());
-                        parametersSlip.put("CODIGO_ROTEIRO", slip.getDescricaoRoteiro());
-                        parametersSlip.put("CODIGO_ROTA", slip.getDescricaoRota());
-                        parametersSlip.put("DATA_CONFERENCIA", slip.getDataConferencia());
-                        parametersSlip.put("CE_JORNALEIRO", slip.getCeJornaleiro());
-                        parametersSlip.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
-                        parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
-                        parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
-                        parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slip.getPagamentoPendente());
-                        parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
-                        parametersSlip.put("VALOR_CREDITO_DIF", slip.getValorCreditoDif());
-                        parametersSlip.put("LOGOTIPO", logo);
-                        
-                        List<DebitoCreditoCota> debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), true);
-                        slip.setListaComposicaoCobranca(debCre);
-                        parametersSlip.put("LISTA_COMPOSICAO_COBRANCA", debCre);
-                        
-                        debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
-                        slip.setListaResumoCobranca(debCre);
-                        parametersSlip.put("LISTA_RESUMO_COBRANCA", debCre);
-                        
-                        parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slip.getValorLiquidoDevido());
-                        parametersSlip.put("VALOR_DEVIDO", slip.getValorTotalReparte());
-                        parametersSlip.put("VALOR_SLIP", slip.getValorSlip());
-                        parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slip.getValorTotalSemDesconto());
-                        parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
-                        parametersSlip.put("VALOR_TOTAL_PAGAR", 
-                                CurrencyUtil.formatarValor(
-                                        slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
-                        parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
-                        
-                        arquivos.add(this.gerarSlipPDF(slip));
-                    }
+                    geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
                 }
             }
+            
+            
+            List<Slip> slips = this.slipRepository.obterSlipsPorCotasData(listaCotas, data);
+            
+            for (Slip slip : slips) {
+				this.geracaoSlip(arquivos, logo, razaoSocialDistrib, slip);
+			}
+            
         } catch (Exception e) {
             
             throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage() + " ao gerar arquivo de cobrança + Slip");
@@ -329,6 +300,49 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         return PDFUtil.mergePDFs(arquivos);
     }
+
+	private void geracaoSlip(final List<byte[]> arquivos, final Image logo,
+			final String razaoSocialDistrib, final Slip slip) {
+		if (slip != null){
+		
+		    final Map<String, Object> parametersSlip = new HashMap<String, Object>();
+		    slip.setParametersSlip(parametersSlip);
+		    
+		    parametersSlip.put("NUMERO_COTA", slip.getNumeroCota());
+		    parametersSlip.put("NOME_COTA", slip.getNomeCota());
+		    parametersSlip.put("NUM_SLIP", slip.getNumSlip().toString());
+		    parametersSlip.put("CODIGO_BOX", slip.getCodigoBox());
+		    parametersSlip.put("CODIGO_ROTEIRO", slip.getDescricaoRoteiro());
+		    parametersSlip.put("CODIGO_ROTA", slip.getDescricaoRota());
+		    parametersSlip.put("DATA_CONFERENCIA", slip.getDataConferencia());
+		    parametersSlip.put("CE_JORNALEIRO", slip.getCeJornaleiro());
+		    parametersSlip.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
+		    parametersSlip.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
+		    parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
+		    parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slip.getPagamentoPendente());
+		    parametersSlip.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
+		    parametersSlip.put("VALOR_CREDITO_DIF", slip.getValorCreditoDif());
+		    parametersSlip.put("LOGOTIPO", logo);
+		    
+		    List<DebitoCreditoCota> debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), true);
+		    slip.setListaComposicaoCobranca(debCre);
+		    parametersSlip.put("LISTA_COMPOSICAO_COBRANCA", debCre);
+		    
+		    debCre = this.slipRepository.obterComposicaoSlip(slip.getId(), false);
+		    slip.setListaResumoCobranca(debCre);
+		    parametersSlip.put("LISTA_RESUMO_COBRANCA", debCre);
+		    
+		    parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slip.getValorLiquidoDevido());
+		    parametersSlip.put("VALOR_DEVIDO", slip.getValorTotalReparte());
+		    parametersSlip.put("VALOR_SLIP", slip.getValorSlip());
+		    parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slip.getValorTotalSemDesconto());
+		    parametersSlip.put("VALOR_TOTAL_DESCONTO", slip.getValorTotalDesconto());
+		    parametersSlip.put("VALOR_TOTAL_PAGAR", CurrencyUtil.formatarValor(slip.getValorTotalPagar().setScale(2,java.math.RoundingMode.HALF_UP)));
+		    parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", razaoSocialDistrib);
+		    
+		    arquivos.add(this.gerarSlipPDF(slip));
+		}
+	}
     
 	                                        /**
      * BOLETO/COBRANCA

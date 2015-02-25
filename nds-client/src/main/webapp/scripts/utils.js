@@ -174,8 +174,6 @@ function exibirMensagem(tipoMensagem, mensagens) {
 
 	//clearMessageTimeout();
 	
-	
-	
 	var divSuccess = $("#effectSuccess");
 	var divWarning = $("#effectWarning");
 	var divError = $("#effectError");
@@ -189,9 +187,9 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divWarning, textWarning,
 						   divError, textError, false);
 	
-	
+	$(document.body).unbind('keydown.hideMessages');
 	$(document.body).bind('keydown.hideMessages', jwerty.event('ESC',
-	function(){
+	function() {
 		esconde(false,divSuccess);
 		esconde(false,divWarning);
 		esconde(false,divError);

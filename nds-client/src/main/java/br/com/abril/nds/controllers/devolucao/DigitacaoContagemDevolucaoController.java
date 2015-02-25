@@ -613,8 +613,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		validarPeriodo(dataInicial, dataFinal);		
 		
-		Intervalo<Date> periodo = new Intervalo<Date>(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), 
-										  			  DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
+		Intervalo<Date> periodo = new Intervalo<Date>(DateUtil.parseData(dataInicial, "dd/MM/yyyy"), DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
 
 		return periodo; 
 	}

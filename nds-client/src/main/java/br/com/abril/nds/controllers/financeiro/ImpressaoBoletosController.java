@@ -117,15 +117,13 @@ public class ImpressaoBoletosController extends BaseController {
 	 */
 	private void carregarTiposCobranca() {
 
-		List<TipoCobranca> tiposCobranca =
-			this.politicaCobrancaService.obterTiposCobrancaDistribuidor();
+		List<TipoCobranca> tiposCobranca = this.politicaCobrancaService.obterTiposCobrancaDistribuidor();
 		
 		List<ItemDTO<TipoCobranca, String>> listaTipoCobranca = new ArrayList<ItemDTO<TipoCobranca, String>>();
 
 		for (TipoCobranca tipo : tiposCobranca) {
 
-			listaTipoCobranca.add(new ItemDTO<TipoCobranca, String>(tipo, tipo
-					.getDescTipoCobranca()));
+			listaTipoCobranca.add(new ItemDTO<TipoCobranca, String>(tipo, tipo.getDescTipoCobranca()));
 		}
 
 		result.include("listaTipoCobranca", listaTipoCobranca);
@@ -171,8 +169,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 		for (Rota rota : rotas) {
 
-			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota
-					.getDescricaoRota()));
+			listaRotas.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
 
 		return listaRotas;
@@ -213,15 +210,12 @@ public class ImpressaoBoletosController extends BaseController {
 		List<Rota> rotas = null;
 
 		if (roteiro != null) {
-
 			rotas = roteirizacaoService.buscarRotasPorRoteiro(roteiro);
 		} else {
-
 			rotas = roteirizacaoService.buscarRotas();
 		}
 
-		result.use(Results.json()).from(getRotas(rotas), "result").recursive()
-				.serialize();
+		result.use(Results.json()).from(getRotas(rotas), "result").recursive().serialize();
 	}
 
 	@Post
@@ -256,16 +250,13 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Post
 	@Path("/consultar")
-	public void consultarDividas(String dataMovimento, Long box, Long rota,
-			Long roteiro, Integer numCota, TipoCobranca tipoCobranca,
-			String sortorder, String sortname, int page, int rp) {
+	public void consultarDividas(String dataMovimento, Long box, Long rota, Long roteiro, Integer numCota, TipoCobranca tipoCobranca, String sortorder, String sortname, int page, int rp) {
 
 		isDataMovimento(dataMovimento);
 
 		Date data = DateUtil.parseDataPTBR(dataMovimento);
 
-		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO(data, box,
-				rota, roteiro, numCota, tipoCobranca);
+		FiltroDividaGeradaDTO filtro = new FiltroDividaGeradaDTO(data, box, rota, roteiro, numCota, tipoCobranca);
 
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 
@@ -288,12 +279,9 @@ public class ImpressaoBoletosController extends BaseController {
 
 		FiltroDividaGeradaDTO filtro = this.obterFiltroExportacao();
 
-		List<GeraDividaDTO> listaDividasGeradas = dividaService
-				.obterDividasGeradas(filtro);
+		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
 
-		FileExporter.to("divida-cota", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null, listaDividasGeradas,
-				GeraDividaDTO.class, this.httpResponse);
+		FileExporter.to("divida-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaDividasGeradas, GeraDividaDTO.class, this.httpResponse);
 	}
 
 	/*
@@ -301,8 +289,7 @@ public class ImpressaoBoletosController extends BaseController {
 	 */
 	private FiltroDividaGeradaDTO obterFiltroExportacao() {
 
-		FiltroDividaGeradaDTO filtro = (FiltroDividaGeradaDTO) this.session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroDividaGeradaDTO filtro = (FiltroDividaGeradaDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 
 		if (filtro != null) {
 
@@ -314,8 +301,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 			if (filtro.getNumeroCota() != null) {
 
-				Cota cota = this.cotaService.obterPorNumeroDaCota(filtro
-						.getNumeroCota());
+				Cota cota = this.cotaService.obterPorNumeroDaCota(filtro.getNumeroCota());
 
 				if (cota != null) {
 
@@ -342,16 +328,14 @@ public class ImpressaoBoletosController extends BaseController {
 			}
 
 			if (filtro.getIdRota() != null) {
-				Rota rota = roteirizacaoService.buscarRotaPorId(filtro
-						.getIdRota());
+				Rota rota = roteirizacaoService.buscarRotaPorId(filtro.getIdRota());
 				if (rota != null) {
 					filtro.setRota(rota.getDescricaoRota());
 				}
 			}
 
 			if (filtro.getIdRoteiro() != null) {
-				Roteiro roteiro = roteirizacaoService.buscarRoteiroPorId(filtro
-						.getIdRoteiro());
+				Roteiro roteiro = roteirizacaoService.buscarRoteiroPorId(filtro.getIdRoteiro());
 				if (roteiro != null) {
 					filtro.setRoteiro(roteiro.getDescricaoRoteiro());
 				}
@@ -372,8 +356,7 @@ public class ImpressaoBoletosController extends BaseController {
 		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
 
 		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 
 		Long totalRegistros = dividaService.obterQuantidadeDividasGeradas(filtro);
@@ -401,8 +384,7 @@ public class ImpressaoBoletosController extends BaseController {
 	 * @param listaGeraDividaDTO
 	 * @return List<DividaGeradaVO>
 	 */
-	private List<DividaGeradaVO> getListaDividaGeradaVO(
-			List<GeraDividaDTO> listaGeraDividaDTO) {
+	private List<DividaGeradaVO> getListaDividaGeradaVO(List<GeraDividaDTO> listaGeraDividaDTO) {
 
 		List<DividaGeradaVO> listaDividasGeradasVO = new ArrayList<DividaGeradaVO>();
 
@@ -412,25 +394,15 @@ public class ImpressaoBoletosController extends BaseController {
 
 			dividaGeradaVO = new DividaGeradaVO();
 			dividaGeradaVO.setBox(divida.getBox());
-			dividaGeradaVO.setDataEmissao(DateUtil.formatarDataPTBR(divida
-					.getDataEmissao()));
-			dividaGeradaVO.setDataVencimento(DateUtil.formatarDataPTBR(divida
-					.getDataVencimento()));
+			dividaGeradaVO.setDataEmissao(DateUtil.formatarDataPTBR(divida.getDataEmissao()));
+			dividaGeradaVO.setDataVencimento(DateUtil.formatarDataPTBR(divida.getDataVencimento()));
 			dividaGeradaVO.setNomeCota(divida.getNomeCota());
-			dividaGeradaVO
-					.setNumeroCota(String.valueOf(divida.getNumeroCota()));
-			dividaGeradaVO.setRota((divida.getRota() == null) ? "" : divida
-					.getRota());
-			dividaGeradaVO.setRoteiro((divida.getRoteiro() == null) ? ""
-					: divida.getRoteiro());
-			dividaGeradaVO
-					.setSuportaEmail((divida.getSuportaEmail() == null) ? Boolean.FALSE
-							.toString() : divida.getSuportaEmail().toString());
-			dividaGeradaVO
-					.setTipoCobranca((divida.getTipoCobranca() != null) ? divida
-							.getTipoCobranca().getDescTipoCobranca() : "");
-			dividaGeradaVO.setValor(CurrencyUtil.formatarValor(divida
-					.getValor()));
+			dividaGeradaVO.setNumeroCota(String.valueOf(divida.getNumeroCota()));
+			dividaGeradaVO.setRota((divida.getRota() == null) ? "" : divida.getRota());
+			dividaGeradaVO.setRoteiro((divida.getRoteiro() == null) ? "" : divida.getRoteiro());
+			dividaGeradaVO.setSuportaEmail((divida.getSuportaEmail() == null) ? Boolean.FALSE.toString() : divida.getSuportaEmail().toString());
+			dividaGeradaVO.setTipoCobranca((divida.getTipoCobranca() != null) ? divida.getTipoCobranca().getDescTipoCobranca() : "");
+			dividaGeradaVO.setValor(CurrencyUtil.formatarValor(divida.getValor()));
 			dividaGeradaVO.setVias(String.valueOf(divida.getVias()));
 			dividaGeradaVO.setNossoNumero(divida.getNossoNumero());
 
@@ -468,9 +440,7 @@ public class ImpressaoBoletosController extends BaseController {
 			List<FiltroDividaGeradaDTO.ColunaOrdenacao> ordenacaoColunas = new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>();
 
 			for (String sort : sortNames) {
-
-				ordenacaoColunas.add(Util.getEnumByStringValue(
-						FiltroDividaGeradaDTO.ColunaOrdenacao.values(), sort.trim()));
+				ordenacaoColunas.add(Util.getEnumByStringValue(FiltroDividaGeradaDTO.ColunaOrdenacao.values(), sort.trim()));
 			}
 
 			filtro.setListaColunaOrdenacao(ordenacaoColunas);
@@ -484,20 +454,17 @@ public class ImpressaoBoletosController extends BaseController {
 		byte[] arquivo = dividaService.gerarArquivoImpressao(nossoNumero);
 
 		if (arquivo == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Divida não encontrado para impressão");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Divida não encontrado para impressão");
 		}
 
 		session.setAttribute(DIVIDA_SESSION_ATTRIBUTE, arquivo);
 
-		result.use(Results.json()).from(Boolean.TRUE.toString(), "result")
-				.serialize();
+		result.use(Results.json()).from(Boolean.TRUE.toString(), "result").serialize();
 	}
 
 	@Post
 	@Path("/validarImpressaoDividas")
-	public void validarImpressaoDividaEmMassa(String tipoImpressao)
-			throws Exception {
+	public void validarImpressaoDividaEmMassa(String tipoImpressao) throws Exception {
 
 		FiltroDividaGeradaDTO filtro = obterFiltroExportacao();
 
@@ -541,8 +508,7 @@ public class ImpressaoBoletosController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void imprimirDivida(String nossoNumero) throws Exception {
 
-		byte[] arquivo = (byte[]) session
-				.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
+		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
 
 		imprimirDividas(arquivo, nossoNumero);
 
@@ -554,8 +520,7 @@ public class ImpressaoBoletosController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void imprimirBoletosEmMassa() throws Exception {
 
-		byte[] arquivo = (byte[]) session
-				.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
+		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
 
 		imprimirDividas(arquivo, BOLETO);
 
@@ -567,8 +532,7 @@ public class ImpressaoBoletosController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void imprimirDividasEmMassa() throws Exception {
 
-		byte[] arquivo = (byte[]) session
-				.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
+		byte[] arquivo = (byte[]) session.getAttribute(DIVIDA_SESSION_ATTRIBUTE);
 
 		imprimirDividas(arquivo, DIVIDAS);
 
@@ -585,8 +549,7 @@ public class ImpressaoBoletosController extends BaseController {
 			throws IOException {
 
 		this.httpResponse.setContentType("application/pdf");
-		this.httpResponse.setHeader("Content-Disposition",
-				"attachment; filename=" + nameArquivo + ".pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nameArquivo + ".pdf");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
@@ -605,8 +568,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 		result.use(Results.nothing());
 
-		throw new ValidacaoException(TipoMensagem.SUCCESS, "Divida "
-				+ nossoNumero + " enviada com sucesso.");
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "Divida " + nossoNumero + " enviada com sucesso.");
 
 	}
 
@@ -618,8 +580,7 @@ public class ImpressaoBoletosController extends BaseController {
 	 */
 	private void tratarFiltro(FiltroDividaGeradaDTO filtro) {
 
-		FiltroDividaGeradaDTO filtroSession = (FiltroDividaGeradaDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroDividaGeradaDTO filtroSession = (FiltroDividaGeradaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 
 		if (filtroSession != null && !filtroSession.equals(filtro)) {
 
@@ -637,14 +598,11 @@ public class ImpressaoBoletosController extends BaseController {
 	private void isDataMovimento(String dataMovimento) {
 
 		if (dataMovimento == null || dataMovimento.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"O preenchimento do campo \"Data\" é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo \"Data\" é obrigatório.");
 		}
 
 		if (!DateUtil.isValidDate(dataMovimento, "dd/MM/yyyy")) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida.");
 		}
 	}
-	
-
 }

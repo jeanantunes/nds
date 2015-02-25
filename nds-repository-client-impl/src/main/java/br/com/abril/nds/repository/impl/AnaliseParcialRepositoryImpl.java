@@ -17,8 +17,10 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
@@ -37,7 +39,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
     	
     	List<String> statusLancamento = Arrays.asList(StatusLancamento.EXPEDIDO.name(), 
@@ -141,7 +142,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("             from pdv as pdvs ");
         sql.append("             group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
         
-        sql.append(" left join estudo_cota_gerado ecg_origem on ecg_origem.estudo_id = e.estudo_origem_copia ");
+        sql.append(" left join estudo_cota_gerado ecg_origem on ecg_origem.estudo_id = e.estudo_origem_copia and ecg_origem.COTA_ID = ec.cota_id ");
         
         sql.append("  cross join (select DATA_OPERACAO from distribuidor) data_distrib ");
         
@@ -423,7 +424,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("        (case when plp.id is not null then 1 else 0 end) parcial, ");
         
         
-        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' ");
+        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' or l.status = 'EM_RECOLHIMENTO'");
         sql.append("            then ");
         sql.append("                (coalesce( ");
         sql.append("                    sum(mecReparte.QTDE), 0) - ");
@@ -718,12 +719,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
         sql.append("       ec.reparte quantidade, ");
+        sql.append("       cast(cota.situacao_cadastro as char) as situacaoCota, ");
         sql.append("       ec.classificacao motivo ");
         sql.append("  from estudo_cota_gerado ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");
@@ -823,6 +824,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("numeroCota", StandardBasicTypes.INTEGER)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("situacaoCota", StandardBasicTypes.STRING)
                 .addScalar("motivo", StandardBasicTypes.STRING);
 
         for (int i = 0; i < params.size(); i++) {
@@ -864,7 +866,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return listNumeroCota.toArray(new Integer[listNumeroCota.size()-1]);
     }
 
-//    @Transactional
     @Override
     public void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
         StringBuilder sql = new StringBuilder();
@@ -879,4 +880,138 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setLong(2, idEstudo);
         query.executeUpdate();
     }
+
+	@Override
+	public DetalhesEdicoesBasesAnaliseEstudoDTO buscarReparteVendaTotalPorEdicao(String codigoProduto, Long edicao, Long idTipoClassificacao, Integer numPeriodoParcial) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		sql.append("	   p.CODIGO as codigoProduto, ");
+		sql.append("       p.NOME_COMERCIAL as nomeProduto, ");
+		sql.append("       pe.NUMERO_EDICAO as edicao, ");
+		sql.append("       l.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
+		sql.append("        cast(sum( ");
+		sql.append("                 CASE ");
+		sql.append("                     WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN mecReparte.QTDE ");
+		sql.append("                     ELSE -mecReparte.QTDE ");
+		sql.append("                 END) AS UNSIGNED INT) AS reparte, ");
+		sql.append("        CASE ");
+		sql.append("           WHEN l.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
+		sql.append("           THEN ");
+		sql.append("              cast(sum( ");
+		sql.append("                       CASE ");
+		sql.append("                           WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
+		sql.append("                           THEN ");
+		sql.append("                             mecReparte.QTDE ");
+		sql.append("                           ELSE ");
+		sql.append("                             -mecReparte.QTDE ");
+		sql.append("                       END) ");
+		sql.append("                 - (SELECT sum(mecEncalhe.qtde) ");
+		sql.append("                      FROM lancamento lanc ");
+		sql.append("                           LEFT JOIN chamada_encalhe_lancamento cel ");
+		sql.append("                              ON cel.LANCAMENTO_ID = lanc.ID ");
+		sql.append("                           LEFT JOIN chamada_encalhe ce ");
+		sql.append("                              ON ce.id = cel.CHAMADA_ENCALHE_ID ");
+		sql.append("                           LEFT JOIN chamada_encalhe_cota cec ");
+		sql.append("                              ON cec.CHAMADA_ENCALHE_ID = ce.ID ");
+		sql.append("                           LEFT JOIN conferencia_encalhe confEnc ");
+		sql.append("                              ON confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
+		sql.append("                           LEFT JOIN movimento_estoque_cota mecEncalhe ");
+		sql.append("                              ON mecEncalhe.id = ");
+		sql.append("                                    confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
+		sql.append("                     WHERE lanc.id = l.id) AS UNSIGNED INT) ");
+		sql.append("           ELSE ");
+		sql.append("              NULL ");
+		sql.append("        END ");
+		sql.append("           AS venda ");
+		sql.append("   FROM lancamento l ");
+		sql.append("        JOIN produto_edicao pe ");
+		sql.append("           ON pe.id = l.produto_edicao_id ");
+		sql.append("        LEFT JOIN periodo_lancamento_parcial plp ");
+		sql.append("           ON plp.id = l.periodo_lancamento_parcial_id ");
+		sql.append("        JOIN (SELECT p.* ");
+		sql.append("                FROM produto p ");
+		sql.append("               WHERE p.codigo_icd = (SELECT codigo_icd ");
+		sql.append("                                       FROM produto p ");
+		sql.append("                                      WHERE p.codigo = :codProduto) ");
+		sql.append("              UNION ");
+		sql.append("              SELECT p.* ");
+		sql.append("                FROM produto p ");
+		sql.append("               WHERE p.codigo_icd = :codProduto) p ");
+		sql.append("           ON p.id = pe.produto_id ");
+		sql.append("        LEFT JOIN tipo_classificacao_produto tcp ");
+		sql.append("           ON tcp.id = pe.tipo_classificacao_produto_id ");
+		sql.append("        LEFT JOIN movimento_estoque_cota mecReparte ");
+		sql.append("           ON mecReparte.LANCAMENTO_ID = l.id ");
+		sql.append("        LEFT JOIN tipo_movimento tipo ");
+		sql.append("           ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+		sql.append("  WHERE l.status IN ");
+		sql.append("                   ('EXPEDIDO', ");
+		sql.append("                   'EM_BALANCEAMENTO_RECOLHIMENTO', ");
+		sql.append("                   'BALANCEADO_RECOLHIMENTO', ");
+		sql.append("                   'EM_RECOLHIMENTO', ");
+		sql.append("                   'RECOLHIDO', ");
+		sql.append("                   'FECHADO') ");
+		sql.append("        AND tipo.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE' ");
+		sql.append("        AND pe.NUMERO_EDICAO = :edicao");
+		sql.append("        AND tcp.ID = :tipClassif ");
+		
+		if(numPeriodoParcial != null){
+			sql.append("    AND plp.NUMERO_PERIODO = :numPeriodo ");
+		}
+		
+		sql.append(" GROUP BY pe.numero_edicao, pe.id ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("codProduto", codigoProduto);
+		query.setParameter("edicao", edicao);
+		query.setParameter("tipClassif", idTipoClassificacao);
+		
+		if(numPeriodoParcial != null){
+			query.setParameter("numPeriodo", numPeriodoParcial);
+		}
+		
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("edicao", StandardBasicTypes.LONG);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("venda", StandardBasicTypes.BIG_INTEGER);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalhesEdicoesBasesAnaliseEstudoDTO.class));
+				
+		return (DetalhesEdicoesBasesAnaliseEstudoDTO) query.uniqueResult();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DataLancamentoPeriodoEdicoesBasesDTO> obterDataDeLacmtoPeriodoParcial (Long idEstudo, Long idProdutoEdicao){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select  ");
+		sql.append("   lc.DATA_LCTO_DISTRIBUIDOR as dataLancamento,  ");
+		sql.append("   plp.NUMERO_PERIODO as numPeriodo  ");
+		sql.append(" from lancamento lc  ");
+		sql.append(" join periodo_lancamento_parcial plp  ");
+		sql.append("   on plp.ID = lc.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" join estudo_produto_edicao_base epe  ");
+		sql.append("   on epe.ESTUDO_ID = :estudoId ");
+		sql.append(" where lc.PRODUTO_EDICAO_ID = :produtoEdicaoId  ");
+		sql.append("     and plp.NUMERO_PERIODO = epe.PERIODO_PARCIAL  ");
+		sql.append(" order by plp.NUMERO_PERIODO desc limit 3; ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", idEstudo);
+		query.setParameter("produtoEdicaoId", idProdutoEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DataLancamentoPeriodoEdicoesBasesDTO.class));
+		
+		return query.list(); 
+	}
+	
 }

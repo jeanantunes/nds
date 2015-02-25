@@ -10,6 +10,8 @@ public class ProdutoRecolhimentoFormatadoVO {
 
 	private Long idFornecedor;
 	
+	private String statusLancamento;
+	
 	private String idLancamento;
 	
 	private String idProdutoEdicao;
@@ -92,6 +94,20 @@ public class ProdutoRecolhimentoFormatadoVO {
 		this.idLancamento = (idLancamento != null) ? idLancamento : "";
 	}
 
+	/**
+	 * @return the statusLancamento
+	 */
+	public String getStatusLancamento() {
+		return statusLancamento;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = (statusLancamento != null) ? statusLancamento : "";
+	}
+	
 	/**
 	 * @return the codigoProduto
 	 */
