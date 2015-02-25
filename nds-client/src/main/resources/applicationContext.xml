@@ -99,7 +99,6 @@
 
 	<!-- F2 -->
 	<!-- Descomentar abaixo para ligar o bloqueador -->
-<<<<<<< HEAD
 	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
 	
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
