@@ -556,11 +556,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	private Query queryConsultaMECNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
-		Query query = this.getSession().createQuery(hql.toString());		
-
-		if(filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)
-				|| filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
-			query.setParameter("true", true);
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if(filtro.getNotaFiscalTipoEmissao() != null) {
+			
+			if (filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)
+					|| filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+				query.setParameter("true", true);
+			}
 		}
 
 		query.setParameter("false", false);
