@@ -3708,14 +3708,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 .append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ")
                 .append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
                 .append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
-                .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, FORMA_COMERCIALIZACAO, COTA_CONTRIBUINTE_EXIGE_NF, ID) ")
+                .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, FORMA_COMERCIALIZACAO, COTA_CONTRIBUINTE_EXIGE_NF, GERAR_COTA_EXIGE_NFE, ID) ")
                 .append("values ")
                 .append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
                 .append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
                 .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, ")
                 .append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
                 .append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
-                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, :cotaContribuinteExigeNF, -1) ");
+                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, :cotaContribuinteExigeNF, true, -1) ");
                 
                 final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
                 
