@@ -565,6 +565,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
+		bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);

@@ -32,7 +32,6 @@ public class BloqueioConferenciaEncalheComponent {
 	 */
 	public void validarUsuarioConferindoCota(HttpSession session, Integer numeroCota) {
 		
-//		String userSessionID = getIdentificacaoUnicaUsuarioLogado(session);
 		String user = usuarioService.getUsuarioLogado().getLogin();
 		
 		final ServletContext context = session.getServletContext();
@@ -43,12 +42,12 @@ public class BloqueioConferenciaEncalheComponent {
 		if (mapaCotaConferidaUsuario != null && (mapaCotaConferidaUsuario.containsKey(numeroCota))) {
 			
 			CotaUsuarioConferencia cuc = mapaCotaConferidaUsuario.get(numeroCota); 
-			if(cuc.getLogin().equals(user) && cuc.getSessionId().equals(session.getId())) {
+			if(cuc.getLogin().equals(user) && !cuc.getSessionId().equals(session.getId())) {
 
-				throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não é possível executar Conferência de Encalhe simultânea para o usuário: %s!", user));
+				throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não é possível executar Conferência de Encalhe simultânea para o usuário: %s!", cuc.getLogin()));
 			} else {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível executar mais de uma conferência de encalhe ao mesmo tempo!");
+				throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não é possível executar mais de uma conferência de encalhe ao mesmo tempo. Usuário %s conferindo!", cuc.getLogin()));
 			}
 		}
 	}
@@ -61,12 +60,10 @@ public class BloqueioConferenciaEncalheComponent {
 		final ServletContext context = session.getServletContext();
 		
 		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, CotaUsuarioConferencia> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, CotaUsuarioConferencia>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final Map<Integer, CotaUsuarioConferencia> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, CotaUsuarioConferencia>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
 		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
+		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 		
 			
 		if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
@@ -100,16 +97,13 @@ public class BloqueioConferenciaEncalheComponent {
 	
 	public void removerTravaConferenciaCotaUsuario(HttpSession session) {
 		
-		final String userSessionID = getIdentificacaoUnicaUsuarioLogado(session);
+		final String userSessionID = this.getIdentificacaoUnicaUsuarioLogado(session);
 		
 		@SuppressWarnings("unchecked")
-		final
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		final Map<Integer, CotaUsuarioConferencia> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, CotaUsuarioConferencia>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
 		@SuppressWarnings("unchecked")
-		final
-		Map<String, String> mapaLoginNomeUsuario = 
-			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
+		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 
 		
 		if(mapaLoginNomeUsuario != null) {
@@ -123,7 +117,8 @@ public class BloqueioConferenciaEncalheComponent {
 		final Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
 
 		for(final Integer numeroCota : cotasEmConferencia) {
-			if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
+			CotaUsuarioConferencia cuc = mapaCotaConferidaUsuario.get(numeroCota);
+			if(cuc.getLogin().equals(usuarioService.getUsuarioLogado().getLogin())) {
 				mapaCotaConferidaUsuario.remove(numeroCota);
 			}
 		}
@@ -148,7 +143,6 @@ public class BloqueioConferenciaEncalheComponent {
 		
 		definirIdentificaoDoUsuario(session);
 		
-//		final String userSessionID = this.getIdentificacaoUnicaUsuarioLogado(session);
 		final String user = usuarioService.getUsuarioLogado().getLogin();
 		
 		verificarTravaConferenciaCotaUsuario(numeroCota, session);
@@ -156,12 +150,10 @@ public class BloqueioConferenciaEncalheComponent {
 		final ServletContext context = session.getServletContext();
 
 		@SuppressWarnings("unchecked")
-		Map<Integer, CotaUsuarioConferencia> mapaCotaConferidaUsuario = 
-			(LinkedHashMap<Integer, CotaUsuarioConferencia>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
+		Map<Integer, CotaUsuarioConferencia> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, CotaUsuarioConferencia>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 
 		@SuppressWarnings("unchecked")
-		Map<String, String> mapaLoginNomeUsuario = 
-			(LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
+		Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
 
 		
 		if(mapaCotaConferidaUsuario == null) {
@@ -173,6 +165,19 @@ public class BloqueioConferenciaEncalheComponent {
 		if(mapaLoginNomeUsuario == null) {
 			mapaLoginNomeUsuario = new LinkedHashMap<>();
 			context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO, mapaLoginNomeUsuario);
+		}
+		
+		if(mapaCotaConferidaUsuario != null) {
+			
+			for(Integer numeroCotaConferida : mapaCotaConferidaUsuario.keySet()) {
+				if(!numeroCotaConferida.equals(numeroCota)) {
+					if(mapaCotaConferidaUsuario.get(numeroCotaConferida) != null 
+							&& mapaCotaConferidaUsuario.get(numeroCotaConferida).getLogin() != null 
+							&& mapaCotaConferidaUsuario.get(numeroCotaConferida).getLogin().equals(user)) {
+						mapaCotaConferidaUsuario.remove(numeroCotaConferida);
+					}
+				}
+			}
 		}
 
 		mapaLoginNomeUsuario.put(user, (String) session.getAttribute(Constants.USER_NAME_PARA_TRAVA_CONFERENCIA));
