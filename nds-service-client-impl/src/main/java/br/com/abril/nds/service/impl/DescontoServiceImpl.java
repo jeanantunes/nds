@@ -1443,7 +1443,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append("pl")
 			.append("pd");
 		
-		descontoDTO = descontos.get(key);
+		descontoDTO = descontos.get(key.toString());
 		
 		if(descontoDTO != null) {
 			return descontoDTO;
@@ -1459,7 +1459,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append(produtoEdicaoId)
 			.append("pd");
 		
-		descontoDTO = descontos.get(key);
+		descontoDTO = descontos.get(key.toString());
 	
 		if(descontoDTO != null) {
 			return descontoDTO;
@@ -1473,7 +1473,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append(produtoId)
 			.append("pd");	
 
-		descontoDTO = descontos.get(key);
+		descontoDTO = descontos.get(key.toString());
 		
 		if(descontoDTO != null) {
 			return descontoDTO;
@@ -1491,7 +1491,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append(produtoId)
 			.append("pl");
 		
-		descontoDTO = descontos.get(key);
+		descontoDTO = descontos.get(key.toString());
 	
 		if(descontoDTO != null) {
 			return descontoDTO;
@@ -1527,7 +1527,7 @@ public class DescontoServiceImpl implements DescontoService {
 			.append("p")
 			.append(produtoId);
 		
-		descontoDTO = descontos.get(key);
+		descontoDTO = descontos.get(key.toString());
 	
 		if(descontoDTO != null) {
 			return descontoDTO;
