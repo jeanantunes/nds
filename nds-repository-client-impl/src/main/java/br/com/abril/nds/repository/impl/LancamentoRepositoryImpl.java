@@ -771,18 +771,14 @@ public class LancamentoRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select lancamento ")
-				.append(" from Lancamento lancamento ")
-				.append(" where lancamento.id = ")
-				.append(" (select max(lancamentoMaxDate.id) ")
-				.append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
-			if(dataLimiteLancamento != null) {
-				hql.append(" and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
-			}
-				hql.append(") ")
-				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" select max(lancamento) ")
+			.append(" from Lancamento lancamento ")
+			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		if(dataLimiteLancamento != null) {
+			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
+		}
+			hql.append(") ");
 		
-
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -790,8 +786,26 @@ public class LancamentoRepositoryImpl extends
 			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
 		}
 		
-		query.setMaxResults(1);
+		Lancamento l = (Lancamento) query.uniqueResult();
+		
+		if(l != null) return l;
+		
+		hql = new StringBuilder();
+			hql.append(" select min(lancamento) ")
+			.append(" from Lancamento lancamento ")
+			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		if(dataLimiteLancamento != null) {
+			hql.append(" and lancamento.dataLancamentoDistribuidor > :dataLimiteLancamento ");
+		}
+			hql.append(" ) ");
+		
+		query = getSession().createQuery(hql.toString());
 
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
+		
 		return (Lancamento) query.uniqueResult();
 	}
 	
