@@ -198,5 +198,7 @@ public interface LancamentoService {
 
 	public abstract boolean isRedistribuicao(String codigoProduto, Long numeroEdicao);
 	
+	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
+	
 }
  
