@@ -649,7 +649,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         ProdutoEdicao produtoEdicao = null;
         
         boolean indDataLancamentoAlterada = true;
-        
         boolean indDataRecolhimentoAlterada = true;
     	
     	if(dto.getId()!=null) {
@@ -682,9 +681,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
         
-        Lancamento lancamento = this.obterLancamento(dto, produtoEdicao);
+        List<Lancamento> lancamentos = this.obterLancamentos(dto, produtoEdicao);
         
-        this.validarRegimeRecolhimento(dto, lancamento, produtoEdicao, indDataRecolhimentoAlterada);
+        this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
         
         // 02) Salvar imagem:
         if (imgInputStream != null) {
@@ -702,12 +701,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
         final Usuario usuario = usuarioService.getUsuarioLogado();
         
-        lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
-        
-        if(dto.isParcial()) {
-            
-            this.salvarLancamentoParcial(dto, produtoEdicao,usuario, indNovoProdutoEdicao, lancamento);
-        }
+        for (Lancamento lancamento : lancamentos) {
+			        	
+        	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+        	
+        	if(dto.isParcial()) {
+        		
+        		this.salvarLancamentoParcial(dto, produtoEdicao,usuario, indNovoProdutoEdicao, lancamento);
+        	}
+		}
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
@@ -746,30 +748,30 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     
     private void validarRegimeRecolhimento(
     		final ProdutoEdicaoDTO dto, 
-    		final Lancamento lancamento, 
+    		final List<Lancamento> lancamentos, 
     		final ProdutoEdicao produtoEdicao,
     		final boolean indDataRecolhimentoAlterada ) {
     	
-        if (indDataRecolhimentoAlterada && this.isLancamentoBalanceadoRecolhimento(lancamento)) {
-            
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
-        }
-        
-        if (ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())
-                && dto.isParcial()) {
-            
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Para redistribuição não é possível escolher o regime de recolhimento parcial."));
-        }
+    	for (Lancamento lancamento : lancamentos) {
+    		
+    		if (indDataRecolhimentoAlterada && this.isLancamentoBalanceadoRecolhimento(lancamento)) {
+    			
+    			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
+    		}
+    		
+    		if (ModoTela.REDISTRIBUICAO.equals(dto.getModoTela()) && dto.isParcial()) {
+    			
+    			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Para redistribuição não é possível escolher o regime de recolhimento parcial."));
+    		}
+		}
     }
     
-    private Lancamento obterLancamento(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao) {
+    private List<Lancamento> obterLancamentos(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao) {
         
         if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
-            return new Lancamento();
+            return new ArrayList<>();
         } else {
-            return lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+            return lService.obterLancamentosEdicao(produtoEdicao.getId());
         }
     }
     
