@@ -1213,7 +1213,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoCompraSuplementar) ")  
 		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
-		.append(" ) rs1 group by numeroCota, id, idProdutoEdicao, numeroNotaEnvio")
+		.append(" ) rs1 group by numeroCota, id, idProdutoEdicao, DATA, numeroNotaEnvio")
 		.append(" order by dataMovimento ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
