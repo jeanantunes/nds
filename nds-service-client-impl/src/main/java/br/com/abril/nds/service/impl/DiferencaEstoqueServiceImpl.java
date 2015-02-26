@@ -660,6 +660,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         } else {
             
             ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), distribuidorService.obterDataOperacaoDistribuidor());
+            
+            if(ultimoLancamento == null) {
+            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), null);
+            }
         }
         
         return ultimoLancamento;
@@ -1209,7 +1213,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 idProdutoEdicao, dataNotaEnvio, numeroCota);
     }
     
-	                                    /*
+	/*
      * Efetua a geração da movimentação de estoque para diferença.
      */
     private MovimentoEstoque gerarMovimentoEstoque(final Diferenca diferenca, final Long idUsuario,
@@ -1221,10 +1225,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         final TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
         
-        this.tratarDiferencasDirecionadasParaCota(
-            diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica,
-            validarTransfEstoqueDiferenca, dataLancamento, origem
-        );
+        this.tratarDiferencasDirecionadasParaCota(diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, origem);
 
         StatusIntegracao statusIntegracao = null;
         
