@@ -1,4 +1,4 @@
-package br.com.abril.nds.sessionscoped;
+package br.com.abril.nds.session.scoped;
 
 import java.io.Serializable;
 
@@ -9,6 +9,10 @@ import br.com.caelum.vraptor.ioc.SessionScoped;
 @SessionScoped
 public class ConferenciaEncalheSessionScopeAttr implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long idBoxLogado;
 
 	public Long getIdBoxLogado() {
