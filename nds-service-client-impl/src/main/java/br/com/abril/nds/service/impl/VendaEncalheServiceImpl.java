@@ -1449,7 +1449,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				});
 				
 				for(Lancamento l : lancamentos) {
-					if(l.getDataRecolhimentoDistribuidor().getTime() >= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
+					if(l.getDataRecolhimentoDistribuidor().getTime() <= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
 						if(!statusLancamentos.contains(l.getStatus())) {
 							vendaBloqueada = true;
 							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
@@ -1466,7 +1466,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda!");
 			}
 			
-			TipoVendaEncalhe tipoVendaEncalhe= this.obterTipoVenda(estoqueProduto);
+			TipoVendaEncalhe tipoVendaEncalhe = this.obterTipoVenda(estoqueProduto);
 			
 			BigInteger qntProduto = this.getQntProdutoEstoque(tipoVendaEncalhe, estoqueProduto);
 			
@@ -1576,18 +1576,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	private TipoVendaEncalhe obterTipoVenda(EstoqueProduto estoqueProduto){
 		
-		if(estoqueProduto.getQtdeSuplementar() == null){
-			return  TipoVendaEncalhe.ENCALHE;
+		if(estoqueProduto.getQtdeDevolucaoEncalhe() == null){
+			return TipoVendaEncalhe.SUPLEMENTAR;
 		}
 		
-		if(estoqueProduto.getQtdeSuplementar().compareTo(BigInteger.ZERO) <= 0){
+		if(estoqueProduto.getQtdeDevolucaoEncalhe().compareTo(BigInteger.ZERO) <= 0) {
 			
-			return  TipoVendaEncalhe.ENCALHE;		
+			return  TipoVendaEncalhe.SUPLEMENTAR;		
 				
-		}
-		else{
+		} else {
 				
-			return TipoVendaEncalhe.SUPLEMENTAR;
+			return TipoVendaEncalhe.ENCALHE;
 		}
 
 	}
