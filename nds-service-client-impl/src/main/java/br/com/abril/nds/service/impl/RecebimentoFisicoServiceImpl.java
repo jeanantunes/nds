@@ -39,6 +39,8 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -283,6 +285,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()), notaFiscal.getValorBruto());
 		
 		notaFiscal.setDataRecebimento(this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		NaturezaOperacao naturezaOperacao = tipoNotaFiscalRepository.obterNaturezaOperacao(distribuidorService.obter().getTipoAtividade(), TipoEmitente.FORNECEDOR, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false, false);
+		
+		notaFiscal.setNaturezaOperacao(naturezaOperacao);
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
