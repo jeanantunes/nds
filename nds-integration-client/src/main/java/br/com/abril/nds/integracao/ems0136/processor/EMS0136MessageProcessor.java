@@ -217,15 +217,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			}
 		}
 		
-		if (lp != null) {
+		//if (lp != null) {
 
-			for (Lancamento lancamentoRemover : helper.getLancamentosRemover()) {
+			//for (Lancamento lancamentoRemover : helper.getLancamentosRemover()) {
 				
-				lp.getPeriodos().remove(lancamentoRemover.getPeriodoLancamentoParcial());
-			}
+				//lp.getPeriodos().remove(lancamentoRemover.getPeriodoLancamentoParcial());
+			//}
 			
-			lancamentosDaEdicao.removeAll(helper.getLancamentosRemover());
-		}
+			//lancamentosDaEdicao.removeAll(helper.getLancamentosRemover());
+		//}
 
 		return helper;
 	}
