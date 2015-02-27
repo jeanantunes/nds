@@ -1555,7 +1555,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
                 dataLancamento = uLancamento.getDataLancamentoDistribuidor();
                 
-                if(primeiroPeriodo!= null) {
+                if(primeiroPeriodo != null) {
 
                 	Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial();
                     
