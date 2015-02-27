@@ -385,9 +385,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
 		
-		//alert(data);
 		var dataPesquisa = $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
-		//alert(dataPesquisa);
+		
 		if (data!=null){
 			$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val(data);
 			$.each($('.labelDataLancamento'), function(k, v) {
@@ -428,6 +427,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexReload();
 			
 		});
+		
+		balanceamentoRecolhimentoController.carregarDiaSemana();
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -1095,8 +1096,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 						mensagemValidacaoReprogramacao = "A data escolhida é uma data já confirmada. Você deseja continuar?";
 					}
 					
-					$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace)
-						.html(mensagemValidacaoReprogramacao);
+					$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace).html(mensagemValidacaoReprogramacao);
 					
 					$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
 						resizable: false,
@@ -1217,8 +1217,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 								mensagemValidacaoReprogramacao = "A data escolhida é uma data já confirmada. Você deseja continuar?";
 							}
 							
-							$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace)
-								.html(mensagemValidacaoReprogramacao);
+							$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace).html(mensagemValidacaoReprogramacao);
 							
 							$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
 								resizable: false,
