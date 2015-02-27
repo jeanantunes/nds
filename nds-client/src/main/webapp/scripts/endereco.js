@@ -115,6 +115,15 @@ function Endereco(paramTela, paramMessage) {
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 				'</a>';
 
+		retorno += '<span style="width: 80px; border: 0px; background-color: inherit;" readonly="readonly"> ' +
+				'<a href="javascript:;" isEdicao="false" id="linkBloquearExclusao" ' +
+					' style="cursor:pointer;border:0px;margin:5px;cursor:default;opacity:0.4" title="Excluir endereço">' +
+					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+					'</a></span>';
+			
+		this.bloquearLink("linkBloquearExclusao");
+		
+		/*
 		if(principal == "true") {
 			retorno += '<span style="width: 80px; border: 0px; background-color: inherit;" readonly="readonly"> ' +
 				'<a href="javascript:;" isEdicao="false" id="linkBloquearExclusao" ' +
@@ -132,6 +141,9 @@ function Endereco(paramTela, paramMessage) {
 				'</a>';
 			}
 		}
+		
+		 
+		 */
 		
 		return retorno;
 	},
