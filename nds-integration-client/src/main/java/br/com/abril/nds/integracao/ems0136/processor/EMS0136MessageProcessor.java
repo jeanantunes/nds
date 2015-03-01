@@ -201,7 +201,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				int numeroLancamento = 1;
 				
 				if (lancamentoAtual.getPeriodoLancamentoParcial() != null) {
-					numeroLancamento = lancamentoAtual.getPeriodoLancamentoParcial().getPrimeiroLancamento().getNumeroLancamento() + 1; 
+					numeroLancamento = lancamentoAtual.getPeriodoLancamentoParcial().getPrimeiroLancamento().getNumeroLancamento(); 
 				}
 
 				lancamentoAtual.setNumeroLancamento(numeroLancamento);
