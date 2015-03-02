@@ -242,7 +242,6 @@ public class ParciaisController extends BaseController {
 	 */	
 	private TableModel<CellModelKeyValue<PeriodoParcialDTO>> efetuarConsultaPeriodos(FiltroParciaisDTO filtro) {
 		
-		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
 		
 		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
