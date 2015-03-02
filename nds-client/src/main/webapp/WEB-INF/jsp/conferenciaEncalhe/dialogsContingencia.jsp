@@ -211,7 +211,7 @@
 </form>
 
 <form id="form-dadosNotaFiscal">
-<<<<<<< HEAD
+
 	<div id="dialog-dadosNotaFiscalContingencia" title="Dados da Nota Fiscal" style="display:none;">
 		
 		<jsp:include page="../messagesDialog.jsp">
