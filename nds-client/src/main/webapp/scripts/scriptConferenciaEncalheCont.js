@@ -221,7 +221,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var numeroCotaEmConferencia = $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val();
 		
-		ConferenciaEncalheCont.limpaTela();
+		ConferenciaEncalheCont.limparTela();
 		
 		$("#contingencia-numeroCota", ConferenciaEncalheCont.wokspace).val(numeroCotaEmConferencia);
 		

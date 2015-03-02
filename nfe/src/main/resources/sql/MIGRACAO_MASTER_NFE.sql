@@ -242,6 +242,7 @@ INSERT INTO natureza_operacao VALUES
 ('28', '1', '0', '1', '0', '1', '0', 'Venda de Mercadoria recebida anteriormente em Consignação', '5115', '6115', NULL, 'PRESTADOR_FILIAL', 'DISTRIBUIDOR', 'COTA', 'SAIDA', 'CONSIGNADO', '27', '9', '0000-00-00 00:00:00', '2014-08-26 16:18:15', 'awsuser@10.129.28.111'     ),
 ('30', '0', '0', '0', '0', '0', '0', 'Remessa para Distribuição', '5949', '6949', NULL, 'PRESTADOR_FILIAL', 'FORNECEDOR', 'DISTRIBUIDOR', 'ENTRADA', 'CONSIGNADO', '99', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', ''                                                  ),
 ('31', '0', '0', '0', '0', '0', '0', 'Devolução de Remessa para Distribuição', '5949', '6949', NULL, 'PRESTADOR_FILIAL', 'COTA', 'DISTRIBUIDOR', 'ENTRADA', 'CONSIGNADO', '29', '0', '2014-07-04 11:03:12', '2014-07-04 11:03:12', 'root@localhost'                             );
+('32', '0', '0', '0', '0', '0', '0', 'Remessa de mercadoria em consignação mercantil ou industrial', '5917', '6917', NULL, 'MERCANTIL', 'FORNECEDOR', 'DISTRIBUIDOR', 'ENTRADA', 'CONSIGNADO', '98', '0', '2014-07-04 11:03:12', '2014-07-04 11:03:12', 'root@localhost'        );
 SET FOREIGN_KEY_CHECKS=1;
 
 -- ==========================================================================

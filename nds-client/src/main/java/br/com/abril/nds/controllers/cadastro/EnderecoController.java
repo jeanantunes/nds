@@ -314,9 +314,11 @@ public class EnderecoController extends BaseController {
             
         } else {
             
-    		if (tela.equals(Tela.ENDERECO_PDV)) {
-    			validarUnicoEnderecoPDV(enderecoAssociacao);
-    		}
+        	if(enderecoAssociacao.getId() != null ) {
+        		if (tela.equals(Tela.ENDERECO_PDV)) {
+        			validarUnicoEnderecoPDV(enderecoAssociacao);
+        		}
+        	}
         	
             validarDuplicidadeEndereco(enderecoAssociacao);
             
@@ -470,8 +472,7 @@ public class EnderecoController extends BaseController {
         final List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
         
         if (listaExibir!=null && listaExibir.size() > 0){
-            
-            // throw new ValidacaoException(TipoMensagem.WARNING, "Já existe associação de endereço para este PDV.");
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Já existe associação de endereço para este PDV.");
         }
     }
     
