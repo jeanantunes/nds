@@ -252,7 +252,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
 								
-								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
+								ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_alert);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(false);
 							},
