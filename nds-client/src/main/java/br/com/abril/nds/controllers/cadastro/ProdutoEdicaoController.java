@@ -270,8 +270,8 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataLancamentoPrevisto());
 			produtoEdicaoDTO.setDataRecolhimentoPrevisto(produtoEdicaoDTO.getDataLancamentoPrevisto());
-		}
-		else{			
+		} else {
+			
 			produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
 		}
 		 
@@ -290,9 +290,7 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(
-			        produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), 
-			        contentType, imgInputStream,istrac29, modoTela);
+			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream,istrac29, modoTela);
 			
             this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
 			
