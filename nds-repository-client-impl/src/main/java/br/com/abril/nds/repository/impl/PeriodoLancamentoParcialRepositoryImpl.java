@@ -51,6 +51,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" lancamento2_.DATA_REC_PREVISTA AS dataRecolhimentoPrevista, ");
 		hql.append(" produtoedi3_.ORIGEM AS origem, ");
 		hql.append(" lancamento2_.ID AS idLancamento, ");
+		hql.append(" lancamento2_.STATUS AS statusLancamento, ");
 		hql.append(" periodolan0_.ID AS idPeriodo, ");
 
 		hql.append(" (SELECT coalesce(sum(CASE tipomovime11_.OPERACAO_ESTOQUE WHEN 'ENTRADA' THEN movimentoe10_.QTDE ELSE (movimentoe10_.QTDE*-1) END), 0) ");
@@ -139,6 +140,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		((SQLQuery) query).addScalar("dataLancamentoPrevista", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("dataRecolhimentoPrevista", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("idLancamento", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("statusLancamento", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("idPeriodo", StandardBasicTypes.LONG);
 		((SQLQuery) query).addScalar("origem");
 		
@@ -681,7 +683,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		sql.append(" Lancamento l ");
 		sql.append(" where l.periodoLancamentoParcial.lancamentoParcial.id = :idLancamentoParcial ");
 		sql.append(" and l.tipoLancamento = :tipoLancamento ");
-		sql.append(" order by l.dataRecolhimentoDistribuidor asc ");
+		sql.append(" order by l.dataLancamentoDistribuidor asc ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 		
