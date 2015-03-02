@@ -104,7 +104,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return;
 		}
 
-		LancamentoParcial lancamentoParcial = this.tratarLancamentoParciall(input,produtoEdicao);
+		LancamentoParcial lancamentoParcial = this.tratarLancamentoParciall(input, produtoEdicao);
 		
 		PeriodoLancamentoParcial periodo = this.tratarPeriodo(lancamentoParcial, input);
 		
@@ -217,15 +217,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			}
 		}
 		
-		//if (lp != null) {
+		if (lp != null) {
 
-			//for (Lancamento lancamentoRemover : helper.getLancamentosRemover()) {
+			for (Lancamento lancamentoRemover : helper.getLancamentosRemover()) {
 				
-				//lp.getPeriodos().remove(lancamentoRemover.getPeriodoLancamentoParcial());
-			//}
+				lp.getPeriodos().remove(lancamentoRemover.getPeriodoLancamentoParcial());
+			}
 			
-			//lancamentosDaEdicao.removeAll(helper.getLancamentosRemover());
-		//}
+			lancamentosDaEdicao.removeAll(helper.getLancamentosRemover());
+		}
 
 		return helper;
 	}
@@ -356,22 +356,27 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		PeriodoLancamentoParcial ultimoPeriodo = parcial.getPeriodoFinal();
 
 		if (ultimoPeriodo != null && (ultimoPeriodo.equals(periodo) || ultimoPeriodo.after(periodo))) {
-
+			ultimoPeriodo.setTipo(input.getTipoRecolhimento() == "P" ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
 			return periodo;
 		} 
 
-		ultimoPeriodo.setTipo(TipoLancamentoParcial.PARCIAL);
-
+		ultimoPeriodo.setTipo(input.getTipoRecolhimento() == "P" ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
+		
 		if (periodo == null) {
 			
-			Integer numeroNovoPeriodo = ultimoPeriodo.getNumeroPeriodo() + 1;
+			Integer numeroNovoPeriodo = 1;
 			
-			return this.criarNovoPeriodoLancamento(parcial, numeroNovoPeriodo, TipoLancamentoParcial.FINAL, dataRecolhimento);
+			if(ultimoPeriodo.getNumeroPeriodo() != null){
+				
+				numeroNovoPeriodo = ultimoPeriodo.getNumeroPeriodo() + 1;
+			}
+			
+			return this.criarNovoPeriodoLancamento(parcial, numeroNovoPeriodo, input.getTipoRecolhimento() == "P" ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL, dataRecolhimento);
 		}
 		
-		periodo.setNumeroPeriodo(ultimoPeriodo.getNumeroPeriodo()+1);
-		periodo.setTipo(TipoLancamentoParcial.FINAL);
-		
+		periodo.setNumeroPeriodo(input.getNumeroPeriodo());
+		periodo.setTipo(ultimoPeriodo.getTipo());
+		parcial.getPeriodos().add(periodo);
 		return periodo;
 	}
 
