@@ -649,6 +649,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         ProdutoEdicao produtoEdicao = null;
         
         boolean indDataLancamentoAlterada = true;
+        boolean indDataLancamentoPrevistoAlterada = true;
         boolean indDataRecolhimentoAlterada = true;
     	
     	if(dto.getId() != null) {
@@ -658,10 +659,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     		if(lancamento != null) {
         		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento);
         		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
+        		indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento);
         	}
     	}
     	
-    	if(dto.isParcial() && (indDataLancamentoAlterada || indDataRecolhimentoAlterada)) {
+    	if(dto.isParcial() && (indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada)) {
         	
         	throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alteração de Lancamentos Parciais. Utilize a tela de Parciais.");
         }
@@ -693,8 +695,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             if(!FileType.JPEG.getContentType().equalsIgnoreCase(contentType) &&
                     !FileType.GIF.getContentType().equalsIgnoreCase(contentType)  &&
                     !FileType.PNG.getContentType().equalsIgnoreCase(contentType)) {
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "O formato da imagem da capa não é válido!");
+            	
+                throw new ValidacaoException(TipoMensagem.WARNING, "O formato da imagem da capa não é válido!");
             }
             
             capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
@@ -702,17 +704,31 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
         final Usuario usuario = usuarioService.getUsuarioLogado();
         
-    	Lancamento lancamento = this.obterLancamento(dto, produtoEdicao);
-    	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
-    	
-    	List<Lancamento> lancamentos = this.obterLancamentos(dto, produtoEdicao);
-    	this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
+        List<Lancamento> lancamentos = this.obterLancamentos(dto, produtoEdicao);
+        this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
+
+        if(indDataLancamentoAlterada || indDataRecolhimentoAlterada) {
+        	Lancamento lancamento = null;
+        	if(indDataLancamentoAlterada) {
+        		
+        		lancamento = this.obterLancamento(dto, produtoEdicao, false);
+        	} else {
+        		
+        		lancamento = this.obterLancamento(dto, produtoEdicao, true);
+        	}
+        	
+        	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+        }
     	
     	if(indDataRecolhimentoAlterada) {
     		
     		for (Lancamento lanc : lancamentos) {
     			
-    			lanc.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+    			if(Arrays.asList(StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO
+    					, StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO).contains(lanc.getStatus())) {
+    				
+    				lanc.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+    			}
     		}
     	}
         
@@ -780,12 +796,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         }
     }
     
-    private Lancamento obterLancamento(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao) {
+    private Lancamento obterLancamento(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao, boolean obterUltimoLancamento) {
         
         if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
             return new Lancamento();
         } else {
-            return lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+        	if(obterUltimoLancamento) {
+        		
+        		return lService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+        	} else {
+        		
+        		return lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+        	}
         }
     }
     

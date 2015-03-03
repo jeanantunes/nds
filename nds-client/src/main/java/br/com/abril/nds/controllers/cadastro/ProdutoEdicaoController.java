@@ -479,7 +479,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		if (!listaMensagensValidacao.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
-		}else{
+		} else {
 			listaMensagensValidacao = validarDadosEdicao(dto, codigoProduto, modoTela);
 			if (!listaMensagensValidacao.isEmpty()) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
