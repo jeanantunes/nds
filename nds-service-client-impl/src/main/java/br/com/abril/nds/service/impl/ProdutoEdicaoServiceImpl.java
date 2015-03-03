@@ -663,7 +663,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	}
     	}
     	
-    	if(dto.isParcial() && (indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada)) {
+    	if(dto.isParcial() && dto.getId() != null && (indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada)) {
         	
         	throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alteração de Lancamentos Parciais. Utilize a tela de Parciais.");
         }
@@ -707,8 +707,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         List<Lancamento> lancamentos = this.obterLancamentos(dto, produtoEdicao);
         this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
 
+        Lancamento lancamento = null;
         if(indDataLancamentoAlterada || indDataRecolhimentoAlterada) {
-        	Lancamento lancamento = null;
         	if(indDataLancamentoAlterada) {
         		
         		lancamento = this.obterLancamento(dto, produtoEdicao, false);
@@ -718,6 +718,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	}
         	
         	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+        	
+        }
+        
+        if(dto.isParcial()) {
+        	
+        	if(lancamento == null) {
+        		
+        		lancamento = this.obterLancamento(dto, produtoEdicao, true);
+        	}
+        	this.salvarLancamentoParcial(dto, produtoEdicao, usuario, indNovoProdutoEdicao, lancamento);
         }
     	
     	if(indDataRecolhimentoAlterada) {
@@ -853,11 +863,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             		throw new ValidacaoException(TipoMensagem.WARNING, "O tipo de distribuição deve ser \"Lançamento\"");
             	}
             	
-                lancamentoParcial =
-                        this.criarNovoLancamentoParcial(dto, produtoEdicao);
+                lancamentoParcial = this.criarNovoLancamentoParcial(dto, produtoEdicao);
                 
-                final PeriodoLancamentoParcial periodo =
-                        this.criarNovoPeriodoLancamentoParcial(lancamentoParcial);
+                final PeriodoLancamentoParcial periodo = this.criarNovoPeriodoLancamentoParcial(lancamentoParcial);
                 
                 lancamento.setPeriodoLancamentoParcial(periodo);
                 
@@ -1073,12 +1081,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             segm.setTemaPrincipal(dto.getTemaPrincipal());
             segm.setTemaSecundario(dto.getTemaSecundario());
             
-            
-            //			if (dto.getTipoSegmentoProdutoId() != null) {
-            //			produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
-            //            }
-            
-            
             produtoEdicao.setSegmentacao(segm);
         }
         
@@ -1086,7 +1088,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
         
         // Regime de Recolhimento;
-        produtoEdicao.setParcial(dto.isParcial());	
+        if(produtoEdicao.isParcial() != dto.isParcial()) {
+        	
+        	Lancamento l = lancamentoRepository.obterPrimeiroLancamentoDaEdicao(dto.getId());
+        	
+        	if(Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO, StatusLancamento.FECHADO).contains(l.getStatus())) {
+        		
+        		throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível a alteração do Regime de Recolhimento para esta edição.");
+        	}
+        	
+        	if(!dto.isParcial()) {
+        		
+        		throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alterar um lançamento parcial para normal.");
+        	}
+        	
+        	produtoEdicao.setParcial(dto.isParcial());	
+        }
         
         // Campos editáveis, independente da Origem
         produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto() == null || dto.getTipoClassificacaoProduto().getId() == null ? null : dto.getTipoClassificacaoProduto());
