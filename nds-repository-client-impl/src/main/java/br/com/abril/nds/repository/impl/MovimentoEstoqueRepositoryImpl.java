@@ -595,19 +595,19 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append(" coalesce(sum(movimentoEstoque.QTDE * produtoEdicao.PRECO_VENDA),0) as VALOR_SUPLEMENTAR ");
+		sql.append(" coalesce(sum(movimentoEstoque.QTDE * produtoEdicao.PRECO_VENDA), 0) as VALOR_SUPLEMENTAR ");
 		sql.append(" from ");
 		sql.append("	MOVIMENTO_ESTOQUE movimentoEstoque ");
 		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
 		sql.append("	join PRODUTO_EDICAO produtoEdicao on movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append("	join venda_produto_movimento_estoque mVenda on mVenda.ID_MOVIMENTO_ESTOQUE = movimentoEstoque.id ");
-		sql.append("	join venda_produto venda on venda.ID = mVenda.ID_VENDA_PRODUTO ");
+		sql.append("	left outer join venda_produto_movimento_estoque mVenda on mVenda.ID_MOVIMENTO_ESTOQUE = movimentoEstoque.id ");
+		sql.append("	left outer join venda_produto venda on venda.ID = mVenda.ID_VENDA_PRODUTO ");
 		sql.append(" where ");
 		sql.append("	movimentoEstoque.DATA = :dataMovimentacao "); 
 		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
-		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE = :vendaEncalheSuplementar ");
-		sql.append("	and venda.TIPO_COMERCIALIZACAO_VENDA = :formaComercializacao ");
-		sql.append("	and venda.TIPO_VENDA_ENCALHE = :tipoVenda ");	
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:vendaEncalheSuplementar) ");
+		sql.append("	and if(venda.TIPO_COMERCIALIZACAO_VENDA is not null, venda.TIPO_COMERCIALIZACAO_VENDA = :formaComercializacao, venda.TIPO_COMERCIALIZACAO_VENDA is null) ");
+		sql.append("	and if(venda.TIPO_VENDA_ENCALHE is not null, venda.TIPO_VENDA_ENCALHE = :tipoVenda, venda.TIPO_VENDA_ENCALHE is null) ");	
 		sql.append("	and ");
 		sql.append("		movimentoEstoque.PRODUTO_EDICAO_ID in ( ");
 		sql.append("			select distinct produtoEdicao_.ID "); 
