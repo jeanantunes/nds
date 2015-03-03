@@ -625,7 +625,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
 		
-	
 		List<Long> lista = new ArrayList<Long>();
 		Distribuidor distribuidor = distribuidorService.obter();
 		

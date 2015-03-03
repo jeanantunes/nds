@@ -192,18 +192,22 @@ var ParciaisController = $.extend(true, {
 			$("#exportacao",ParciaisController.workspace).show();
 		}
 		
-		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoPrincipal(index,row);} );
+		$.each(result.rows, function(index,row) {
+			
+			ParciaisController.gerarAcaoPrincipal(index, row);
+		});
 				
 		return result;
 	},
 	
 	processaRetornoPeriodosParciais : function(result) {
 		
-		$("#exportacao",ParciaisController.workspace).hide();
+		$("#exportacao", ParciaisController.workspace).hide();
+		$("#btnIncluirPeriodos", ParciaisController.workspace).show();
 		
-		if(result.mensagens) 
+		if(result.mensagens) {
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-			
+		}
 		
 		if(result.rows.length==0) {
 			$('#exportacaoPeriodos',ParciaisController.workspace).hide();
@@ -211,11 +215,18 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodos',ParciaisController.workspace).show();
 			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
-		var indexUtimoRegistro = result.rows.length -1 ;
+		
+		var indexUtimoRegistro = result.rows.length-1 ;
 		var isExcluir = false;
-		$.each(result.rows, function(index,row){
+		$.each(result.rows, function(index, row) {
+			
 			var isExcluir = (index != indexUtimoRegistro);
-			ParciaisController.gerarAcaoDetalhes(index,row,isExcluir);
+			if(row.cell.statusLancamento == 'EXPEDIDO') {
+				
+				$("#btnIncluirPeriodos", ParciaisController.workspace).hide();
+			}
+			
+			ParciaisController.gerarAcaoDetalhes(index, row, isExcluir);
 		} );
 				
 		return result;
@@ -1287,4 +1298,4 @@ $(function() {
 	bloquearItensEdicao(ParciaisController.workspace);				
 });
 
-//@ sourceURL=parcial.js
+//@ sourceURL=parciais.js
