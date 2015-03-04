@@ -101,6 +101,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * EMAIL
 	 */
+	@XmlTransient
 	@Column(name="EMAIL_DESTINATARIO", nullable=true, length=60)
 	private String email;
 	

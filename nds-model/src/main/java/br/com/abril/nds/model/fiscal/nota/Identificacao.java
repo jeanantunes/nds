@@ -30,23 +30,21 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 @XmlType(name="ide")
 public class Identificacao implements Serializable {
 	
-	/*
-	 * Isso sera utilizado na versão 3.10
+	// @Transient
+	// @XmlTransient
+	// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 	@Transient
 	@XmlTransient
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ") {
 		
-		private static final long serialVersionUID = -3751355831694201574L;
+	private static final long serialVersionUID = -3751355831694201574L;
 
 		public StringBuffer format(Date date, StringBuffer toAppendTo, java.text.FieldPosition pos) {
             StringBuffer toFix = super.format(date, toAppendTo, pos);
             return toFix.insert(toFix.length()-2, ':');
         };
-	};*/
-	@Transient
-	@XmlTransient
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	
+	};
 	public enum FormaPagamento implements NotaFiscalEnum {
 		
 		A_VISTA(0), 
@@ -349,7 +347,7 @@ public class Identificacao implements Serializable {
 	private Date dataEmissao;
 
 	@Transient
-	@XmlElement(name="dEmi")
+	@XmlElement(name="dhEmi")
 	private String dataEmissaoXML;
 	
 	/**
@@ -382,7 +380,7 @@ public class Identificacao implements Serializable {
 	private LocalDestinoOperacao localDestinoOperacao;
 	
 	@Transient
-	//@XmlElement(name="idDest")
+	@XmlElement(name="idDest")
 	@XmlTransient // Usado na versao 3.10
 	private Integer localDestinoOperacaoXML;
 	
@@ -444,18 +442,18 @@ public class Identificacao implements Serializable {
 	@XmlTransient
 	private OperacaoConsumidorFinal operacaoConsumidorFinal;
 	
-	@Transient
-	//@XmlElement(name="indFinal")
-	@XmlTransient // Usado na versao 3.10
-	private Integer operacaoConsumidorFinalXML;
-	
 	@Column(name = "PRESENCA_CONSUMIDOR", nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
 	@XmlTransient
 	private PresencaConsumidor presencaConsumidor;
 	
 	@Transient
-	//@XmlElement(name="indPres")
+	@XmlElement(name="indFinal")
+	@XmlTransient // Usado na versao 3.10
+	private Integer operacaoConsumidorFinalXML;
+	
+	@Transient
+	@XmlElement(name="indPres")
 	@XmlTransient // Usado na versao 3.10
 	private Integer presencaConsumidorXML;
 	

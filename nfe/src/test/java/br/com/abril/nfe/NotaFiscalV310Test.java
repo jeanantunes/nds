@@ -18,7 +18,7 @@ public class NotaFiscalV310Test {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(NotaFiscalV310Test.class);
 
-	private static String xmlFile = "/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/nfeassinada.xml";
+	private static String xmlFile = "C:/Users/wrpaiva/Desktop/NFE/nfeassinada_v3.xml";
 	private String versaoNFE = "3.10";
 	
 	@Test

@@ -114,8 +114,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 
 		if (IND_SIM.equals(tributacao.getIndicadorBaseCalculoIPI())) {
 			ipi.setValorBaseCalculo(valorItem);
-			ipi.setValor(valorItem.multiply(tributacao.getAliquotaIPI())
-					.divide(CEM, NFE_DECIMAL_MC));
+			ipi.setValor(valorItem.multiply(tributacao.getAliquotaIPI()).divide(CEM, NFE_DECIMAL_MC));
 		}
 		ipi.setAliquota(tributacao.getAliquotaIPI());
 		return ipi;
@@ -127,8 +126,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		pis.setCst(tributacao.getCstPIS());
 
 		pis.setValorBaseCalculo(valorItem);
-		pis.setValor(valorItem.multiply(tributacao.getAliquotaIPI()).divide(
-				CEM, NFE_DECIMAL_MC));
+		pis.setValor(valorItem.multiply(tributacao.getAliquotaIPI()).divide(CEM, NFE_DECIMAL_MC));
 
 		pis.setPercentualAliquota(tributacao.getAliquotaPIS());
 		return pis;
@@ -140,8 +138,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		cofins.setCst(tributacao.getCstCOFINS());
 
 		cofins.setValorBaseCalculo(valorItem);
-		cofins.setValor(valorItem.multiply(tributacao.getAliquotaCOFINS())
-				.divide(CEM, NFE_DECIMAL_MC));
+		cofins.setValor(valorItem.multiply(tributacao.getAliquotaCOFINS()).divide(CEM, NFE_DECIMAL_MC));
 
 		cofins.setPercentualAliquota(tributacao.getAliquotaCOFINS());
 		return cofins;
