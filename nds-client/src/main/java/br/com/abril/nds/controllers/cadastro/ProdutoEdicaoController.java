@@ -227,8 +227,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
- "Registros não encontrados."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Registros não encontrados."));
 		}
 	}
 	
