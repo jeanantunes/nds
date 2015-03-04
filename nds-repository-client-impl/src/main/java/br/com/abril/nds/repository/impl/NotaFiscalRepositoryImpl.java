@@ -334,16 +334,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
 
-		if(filtro.getPaginacaoVO()!=null) {
-			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
-				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-			}
-
-			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
-				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-			}
-		}
-
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
 
 		return query.list();
