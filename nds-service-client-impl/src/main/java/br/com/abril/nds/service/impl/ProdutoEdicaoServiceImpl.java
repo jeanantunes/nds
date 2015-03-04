@@ -651,7 +651,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         boolean indDataLancamentoAlterada = true;
         boolean indDataRecolhimentoAlterada = true;
     	
-    	if(dto.getId()!=null) {
+    	if(dto.getId() != null) {
     		
     		Lancamento lancamento = lService.obterPrimeiroLancamentoDaEdicao(dto.getId());
         	
@@ -660,6 +660,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
         	}
     	}
+    	
+    	if(dto.isParcial() && (indDataLancamentoAlterada || indDataRecolhimentoAlterada)) {
+        	
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alteração de Lancamentos Parciais. Utilize a tela de Parciais.");
+        }
         
         final boolean indNovoProdutoEdicao = (dto.getId() == null);
         
@@ -681,10 +686,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         // 01 ) Salvar/Atualizar o ProdutoEdicao:
         produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
         
-        List<Lancamento> lancamentos = this.obterLancamentos(dto, produtoEdicao);
-        
-        this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
-        
         // 02) Salvar imagem:
         if (imgInputStream != null) {
             
@@ -701,15 +702,19 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             
         final Usuario usuario = usuarioService.getUsuarioLogado();
         
-        for (Lancamento lancamento : lancamentos) {
-			        	
-        	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
-        	
-        	if(dto.isParcial()) {
-        		
-        		this.salvarLancamentoParcial(dto, produtoEdicao,usuario, indNovoProdutoEdicao, lancamento);
-        	}
-		}
+    	Lancamento lancamento = this.obterLancamento(dto, produtoEdicao);
+    	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+    	
+    	List<Lancamento> lancamentos = this.obterLancamentos(dto, produtoEdicao);
+    	this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
+    	
+    	if(indDataRecolhimentoAlterada) {
+    		
+    		for (Lancamento lanc : lancamentos) {
+    			
+    			lanc.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
+    		}
+    	}
         
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
@@ -717,7 +722,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
     	
-    	if(produtoEdicao.getId() == null){
+    	if(produtoEdicao.getId() == null) {
     		return;
     	}
     	
@@ -772,6 +777,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             return new ArrayList<>();
         } else {
             return lService.obterLancamentosEdicao(produtoEdicao.getId());
+        }
+    }
+    
+    private Lancamento obterLancamento(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao) {
+        
+        if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
+            return new Lancamento();
+        } else {
+            return lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
         }
     }
     
@@ -1555,7 +1569,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
                 dataLancamento = uLancamento.getDataLancamentoDistribuidor();
                 
-                if(primeiroPeriodo!= null) {
+                if(primeiroPeriodo != null) {
 
                 	Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial();
                     
@@ -1564,11 +1578,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 
                 final PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
                 
-                Lancamento lancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
+                if(ultimoPeriodo == null) {
+                	
+                	LOGGER.error(String.format("Nenhum Lançamento do tipo \"LANCAMENTO\" foi encontrado. %s", produtoEdicao.toString()));
+                	throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum Lançamento do tipo \"LANCAMENTO\" foi encontrado para a edição.");
+                }
                 
-                if(ultimoPeriodo!= null && lancamento!= null){
+                Lancamento lancamento = ultimoPeriodo.getLancamentoPeriodoParcial();
+                if(ultimoPeriodo != null && lancamento != null) {
                     dto.setDataRecolhimentoReal(lancamento.getDataRecolhimentoDistribuidor());
-                }else{
+                } else {
                     dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
                 }
                 

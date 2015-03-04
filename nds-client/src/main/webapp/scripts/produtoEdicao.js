@@ -492,7 +492,7 @@ var produtoEdicaoController =$.extend(true,  {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);				
 			$(".grids",produtoEdicaoController.workspace).hide();
-		}else{
+		} else {
 
 			var nProduto = '';
 			var cProduto = '';

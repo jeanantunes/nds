@@ -121,8 +121,20 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Date dataLancamento = this.obterProximaDataComFatorRelancamentoParcialDistribuidor(dataRecolhimento);
 		
-		periodoPosterior.getUltimoLancamento().setDataRecolhimentoDistribuidor(dataRecolhimento);
-		periodoPosterior.getUltimoLancamento().setDataRecolhimentoPrevista(dataRecolhimento);
+		if(periodoPosterior.getUltimoLancamento() != null && periodoPosterior.getUltimoLancamento().getPeriodoLancamentoParcial() != null
+				&& periodoPosterior.getUltimoLancamento().getPeriodoLancamentoParcial().getLancamentos() != null) {
+			
+			for(Lancamento lanc : periodoPosterior.getUltimoLancamento().getPeriodoLancamentoParcial().getLancamentos()) {
+				lanc.setDataRecolhimentoDistribuidor(dataRecolhimento);
+				lanc.setDataRecolhimentoPrevista(dataRecolhimento);
+			}
+			
+		} else {
+			
+			periodoPosterior.getUltimoLancamento().setDataRecolhimentoDistribuidor(dataRecolhimento);
+			periodoPosterior.getUltimoLancamento().setDataRecolhimentoPrevista(dataRecolhimento);
+		}
+		
 		periodoPosterior.setTipo(TipoLancamentoParcial.PARCIAL);
 
 		PeriodoLancamentoParcial novoPeriodo = this.gerarPeriodoParcial(				
@@ -139,9 +151,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 	
 	private void reajustarPeriodosLancamentoParcial(LancamentoParcial lancamentoParcial) {
-		
-		List<Lancamento> lancamentos = 
-				this.periodoLancamentoParcialRepository.obterLancamentosParciais(lancamentoParcial.getId());
+
+		List<Lancamento> lancamentos = this.periodoLancamentoParcialRepository.obterLancamentosParciais(lancamentoParcial.getId());
 
 		int ultimoPeriodo = lancamentos != null ? lancamentos.size() : 0;
 		
@@ -326,13 +337,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Integer peb = getPebProduto(produtoEdicao, qtdePeriodos);
 		
-		if(this.limparPeriodos(qtdePeriodos, lancamentoParcial,qntPeriodosNaoBalanceados)){
+		if(this.limparPeriodos(qtdePeriodos, lancamentoParcial, qntPeriodosNaoBalanceados)) {
 			
 			qtdePeriodos = qtdePeriodos - qntPeriodosNaoBalanceados.intValue();
 		}
 				
-		this.processarDadosLancamentoParcial(produtoEdicao, qtdePeriodos, usuario,
-											 lancamentoParcial, peb);
+		this.processarDadosLancamentoParcial(produtoEdicao, qtdePeriodos, usuario, lancamentoParcial, peb);
 	}
 	
 	private void validarLancamentosRecolhidos(LancamentoParcial lancamentoParcial) {
@@ -360,7 +370,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		TipoLancamentoParcial tipoLancamentoParcial = TipoLancamentoParcial.PARCIAL;
 		
-		for(int numeroPeriodo=1 ; numeroPeriodo<=qtdePeriodos; numeroPeriodo++) {
+		for(int numeroPeriodo = 1 ; numeroPeriodo <= qtdePeriodos; numeroPeriodo++) {
 		
 			if(ultimoLancamento == null) {
 				
@@ -379,7 +389,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 				break;
 			}			
 			
-			dtRecolhimento = this.obterDataRecolhimentoUtil(dtRecolhimento,peb);
+			dtRecolhimento = this.obterDataRecolhimentoUtil(dtRecolhimento, peb);
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
@@ -719,13 +729,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 		PeriodoLancamentoParcial periodoAnterior = 
 				periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1, periodo.getLancamentoParcial().getId());
 		
-		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())){
+		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())) {
 			
-			if(periodoAnterior != null){
+			if(periodoAnterior != null) {
 				
 				Lancamento lancamentoPeriodo = periodoAnterior.getLancamentoPeriodoParcial();
 				
-				validarStatusLancamentoPeriodoExclusao(lancamentoPeriodo,"Lançamento não pode ser excluido! É necessário manter um período final");
+				validarStatusLancamentoPeriodoExclusao(lancamentoPeriodo, "Lançamento não pode ser excluido! É necessário manter um período final");
 				
 				periodoAnterior.setTipo(TipoLancamentoParcial.FINAL);			
 			}
