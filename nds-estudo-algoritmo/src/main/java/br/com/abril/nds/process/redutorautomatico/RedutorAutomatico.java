@@ -32,8 +32,6 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 	calcularRedutorAutomatico(estudo);
     }
 
-    // não aplicar redutor automatico para MIX
-    
     public void calcularRedutorAutomatico(EstudoTransient estudo) {
 	
     	List<CotaEstudo> cotasForRemove = new ArrayList<>();
@@ -43,9 +41,19 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     		if (cota.getVendaEdicaoMaisRecenteFechada() != null) {
 			
     			if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigInteger.ZERO) == 0)) {
-				    cota.setReparteCalculado(BigInteger.ZERO, estudo);
+				    
+    				if(cota.getClassificacao().in(ClassificacaoCota.ReparteFixado)){
+    					continue;
+    				}
+    				
+    				if(cota.getClassificacao().in(ClassificacaoCota.CotaMix)){
+    					if(cota.getIntervaloMinimo().compareTo(BigInteger.ZERO) > 0){
+    						continue;
+    					}
+    				}
+    				
+    				cota.setReparteCalculado(BigInteger.ZERO, estudo);
 				    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
-//				    cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
 				    
 				    cotasForRemove.add(cota);
 				    
