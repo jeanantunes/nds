@@ -15,16 +15,20 @@
 	<util:properties id="queries" location="classpath:/query.properties" />
 
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
-<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
 		<constructor-arg ref="dataSource" />	
 	</bean>
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-	
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
+		<!-- 
+		<property name="url" value="jdbc:mysql://rds-mql-dev-prv-distb-01.c4gu9vovwusc.sa-east-1.rds.amazonaws.com:3306/nds_lab3" />
+		<property name="username" value="awsuser" />
+		<property name="password" value="dgbdistb01mgr" />
+		-->
+		<property name="url" value="jdbc:mysql://10.129.28.137:3306/nds_lab3" />
 		<property name="username" value="root" />
-		<property name="password" value="root" />
+		<property name="password" value="abril@123" />
     </bean> 
 
 	<bean id="sessionFactory"
@@ -55,6 +59,16 @@
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="jobFactoryBean" class="br.com.abril.nds.client.quartz.AutowiringSpringBeanJobFactory">
+		<property name="enableQuartzTasks" value="true" />
+	</bean>
+
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<!-- <property name="configLocation" value="classpath:quartz.properties" /> -->
+		<property name="configLocation" value="file:src/test/resources/quartz.properties" />
+		<property name="jobFactory" ref="jobFactoryBean" />
 	</bean>
 	
 	<bean id="couchDbProperties" class="br.com.abril.nds.integracao.couchdb.CouchDbProperties">
