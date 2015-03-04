@@ -261,7 +261,7 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void salvar(UploadedFile imagemCapa,
-			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
+			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela, boolean istrac29) {
 			
 		produtoEdicaoDTO.setModoTela(modoTela);
 		
@@ -289,7 +289,7 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream,istrac29, modoTela);
+			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream, istrac29, modoTela);
 			
             this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!"), "result").recursive().serialize();
 			
@@ -478,7 +478,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		if (!listaMensagensValidacao.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
-		}else{
+		} else {
 			listaMensagensValidacao = validarDadosEdicao(dto, codigoProduto, modoTela);
 			if (!listaMensagensValidacao.isEmpty()) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));

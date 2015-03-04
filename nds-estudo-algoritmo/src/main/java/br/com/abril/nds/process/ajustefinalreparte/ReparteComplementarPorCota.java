@@ -13,6 +13,7 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
+import br.com.abril.nds.util.BigIntegerUtil;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -62,7 +63,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	
 	//add validação para excluir banca mix
 	
-	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+	for (CotaEstudo cota : estudo.getCotasExcluidas()) { 
 	    if ((cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) && cota.isRecebeReparteComplementar()
 		    && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 			if ((cota.getEdicoesRecebidas().size() == 0) && (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) &&
@@ -88,56 +89,69 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     }
 
     private void distribuirReparteComplementar(EstudoTransient estudo, LinkedList<CotaEstudo> listaOrdenada) {
-	BigInteger reparte = BigInteger.valueOf(2);
-	if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ONE) > 0) {
-	    reparte = estudo.getPacotePadrao();
-	}
-	if (estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(reparte) > 0) {
-	    reparte = estudo.getReparteMinimo();
-	}
-	for (CotaEstudo cota : listaOrdenada) {
-	    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
-		break;
-	    }
-	    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
-		cota.setReparteCalculado(cota.getIntervaloMaximo());
-	    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
-		cota.setReparteCalculado(cota.getIntervaloMinimo());
-	    } else {
-		cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
-		cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
-		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-	    }
-	}
-	BigInteger reparteGeral = BigInteger.ONE;
-	if (estudo.isDistribuicaoPorMultiplos()) {
-	    reparteGeral = reparte;
-	}
-	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
-	    for (CotaEstudo cota : estudo.getCotas()) {
-		if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
-		    break;
+		BigInteger reparte = BigInteger.valueOf(2);
+		
+		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ONE) > 0) {
+		    reparte = estudo.getPacotePadrao();
 		}
-		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix,
-			ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+		
+		if (estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(reparte) > 0) {
+		    reparte = estudo.getReparteMinimo();
+		}
+		
+		if(BigIntegerUtil.isMenorQueZero(estudo.getReparteDistribuir())){
+			estudo.setReparteComplementar(estudo.getReparteComplementar().add(estudo.getReparteDistribuir()));
+		}
+	
+		for (CotaEstudo cota : listaOrdenada) {
+		    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
+		    	break;
+		    }
+		    
 		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
-			cota.setReparteCalculado(cota.getIntervaloMaximo());
+		    	cota.setReparteCalculado(cota.getIntervaloMaximo());
 		    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
-			cota.setReparteCalculado(cota.getIntervaloMinimo());
+		    	cota.setReparteCalculado(cota.getIntervaloMinimo());
 		    } else {
-			cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
-			estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparteGeral));
+				cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
+				cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
+				estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
 		    }
 		}
-	    }
-	}
-	
-	if(estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0){
-		estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(estudo.getReparteComplementar()));
-	}
-	
-	
-	
+		
+		BigInteger reparteGeral = BigInteger.ONE;
+		
+		if (estudo.isDistribuicaoPorMultiplos()) {
+		    reparteGeral = reparte;
+		}
+		
+		while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
+		    
+			for (CotaEstudo cota : estudo.getCotas()) {
+			
+				if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
+					break;
+				}
+
+				if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
+					ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix,
+					ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+				    
+					if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+				    	cota.setReparteCalculado(cota.getIntervaloMaximo());
+				    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+				    	cota.setReparteCalculado(cota.getIntervaloMinimo());
+				    } else {
+						cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
+						estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparteGeral));
+				    }
+					
+				}
+		    }
+		}
+		
+		if(estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0){
+			estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(estudo.getReparteComplementar()));
+		}
     }
 }
