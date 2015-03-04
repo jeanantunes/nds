@@ -1,5 +1,6 @@
 package br.com.abril.nds.helper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -14,9 +15,27 @@ public class LancamentoHelper {
 				, StatusLancamento.EM_BALANCEAMENTO);		
 	}
 	
+	public static Collection<String> getStatusLancamentosPreExpedicaoString() {
+		
+		Collection<String> statusString = new ArrayList<>(); 
+		for(StatusLancamento sl : getStatusLancamentosPreExpedicao()) {
+			statusString.add(sl.name());
+		}
+		return statusString;
+	}
+	
 	public static Collection<StatusLancamento> getStatusLancamentosPosBalanceamentoLancamento() {
 		
 		return Arrays.asList(StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO);		
+	}
+	
+	public static Collection<String> getStatusLancamentosPosBalanceamentoLancamentoString() {
+		
+		Collection<String> statusString = new ArrayList<>(); 
+		for(StatusLancamento sl : getStatusLancamentosPosBalanceamentoLancamento()) {
+			statusString.add(sl.name());
+		}
+		return statusString;
 	}
 	
 	public static Collection<StatusLancamento> getStatusLancamentosPosExpedicao() {
@@ -26,6 +45,15 @@ public class LancamentoHelper {
 				, StatusLancamento.EM_RECOLHIMENTO
 				, StatusLancamento.RECOLHIDO
 				, StatusLancamento.FECHADO);		
+	}
+	
+	public static Collection<String> getStatusLancamentosPosExpedicaoString() {
+		
+		Collection<String> statusString = new ArrayList<>(); 
+		for(StatusLancamento sl : getStatusLancamentosPosExpedicao()) {
+			statusString.add(sl.name());
+		}
+		return statusString;	
 	}
 	
 }

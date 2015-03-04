@@ -623,7 +623,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 	
 	@Transactional
-	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
+	public Date obterDataLancamentoValido(Date dataLancamento, Long idFornecedor) {
 		
 		List<Long> lista = new ArrayList<Long>();
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -660,7 +660,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 			 lista.add(new Long(2));
 			 
-			 if(fc.isEmpty()){
+			 if(fc.isEmpty()) {
 				 fc.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 			 
@@ -681,51 +681,35 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return dataLancamento;
 	}
 	
-	private Date obterDataLancamentoValida(Date dataLancamento,LinkedList<Date> listaDatas){
-		
-		Date anterior;
-		Date posterior;
+	private Date obterDataLancamentoValida(Date dataLancamento, LinkedList<Date> listaDatas){
+
 		Date operacao;
-		long qtAnterior;
-		long qtPosterior;
-		
-		if(listaDatas==null || listaDatas.isEmpty()){
-		 
-		  operacao = distribuidorService.obterDataOperacaoDistribuidor();
-		  
-		  if(dataLancamento.before(operacao)){
-			return operacao;
-		  }else{
+
+		if(listaDatas==null || listaDatas.isEmpty()) {
+
+			operacao = distribuidorService.obterDataOperacaoDistribuidor();
+
+			if(dataLancamento.before(operacao)) {
+				return operacao;
+			} else {
+				return dataLancamento;
+			}
+		} else if(listaDatas.contains(dataLancamento)) {
 			return dataLancamento;
-		  }
-		}else if(listaDatas.contains(dataLancamento)){
-		  return dataLancamento;
-		}else if(dataLancamento.before(listaDatas.getFirst())){
-		  return listaDatas.getFirst();
-		}else{
+		} else if(dataLancamento.before(listaDatas.getFirst())) {
+			return listaDatas.getFirst();
+		} else {
 
-			for(int i =0;i<listaDatas.size();i++) {
-				if(i>0 && i<listaDatas.size() && dataLancamento.after(listaDatas.get(i-1)) 
-						&& dataLancamento.before(listaDatas.get(i+1))){
+			for(int i = 0; i < listaDatas.size(); i++) {
+				if(i > 0 && i < listaDatas.size() && dataLancamento.before(listaDatas.get(i))) {
 
-					anterior   = listaDatas.get(i-1);
-					posterior  = listaDatas.get(i+1);
-
-					qtAnterior = dataLancamento.getTime() - anterior.getTime();
-					qtPosterior = posterior.getTime() - dataLancamento.getTime();
-
-					if(qtAnterior<qtPosterior){
-						return anterior;  
-					}else{
-						return posterior;
-					}
-
+					return listaDatas.get(i);
 				}
 			}
 
 			dataLancamento =  listaDatas.getFirst();
 
-		  return dataLancamento;
+			return dataLancamento;
 		}
 		
 	}
