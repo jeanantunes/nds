@@ -573,8 +573,6 @@ var analiseParcialController = $.extend(true, {
 					histogramaPosEstudoController.change.refreshGrid = true;
 					histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
 					
-					$('#fieldSetResumoAbrangenciaEstudo').html(result).toFixed(2)) + '% ');
-  	
 				}
   
 				$('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
