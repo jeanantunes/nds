@@ -802,7 +802,10 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-comprimento").val(result.comprimento);
 							$("#produtoEdicaoController-espessura").val(result.espessura);
 							$("#produtoEdicaoController-chamadaCapa").val(result.chamadaCapa);
+							
 							$('#produtoEdicaoController-parcial').val(result.parcial + "");
+							$('#produtoEdicaoController-parcial option[value='+ (result.parcial + "") +']').attr('selected','selected');
+							
 							$('#produtoEdicaoController-boletimInformativo').val(result.boletimInformativo);
 //							$('#produtoEdicaoController-semanaRecolhimento').val(result.semanaRecolhimento);
 							if (result.dataRecolhimentoReal || result.dataRecolhimentoPrevisto) {
@@ -928,7 +931,14 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-chamadaCapa", bloquearRedistribuicao);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peso", bloquearRedistribuicao);
 		
-//		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
+		if($("#produtoEdicaoController-parcial option:selected").val() == "true") {
+			
+			$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", true);
+		} else {
+			
+			$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", false);
+		}
+		
 		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
 		
 		//Segmentação
