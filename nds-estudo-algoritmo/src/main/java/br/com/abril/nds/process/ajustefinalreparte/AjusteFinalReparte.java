@@ -81,6 +81,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 	    	reparte = estudo.getPacotePadrao();
 	    }
 	   
+	    BigInteger excecaoReservaAjuste = BigInteger.ZERO; 
+	    
 	    // distribuicao para TODAS as cotas em ordem decrescente de reparte
 	    while (estudo.getReservaAjuste().compareTo(reparte) >= 0) {
 
@@ -106,6 +108,14 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			if(estudo.getCotas().isEmpty()){
 				break;
 			}
+			
+			if(estudo.getReservaAjuste().compareTo(excecaoReservaAjuste) == 0){
+				estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(estudo.getReservaAjuste()));
+				estudo.setReservaAjuste(BigInteger.ZERO);
+				break;
+			}
+			
+			excecaoReservaAjuste = estudo.getReservaAjuste();
 		
 	    }
 	}
