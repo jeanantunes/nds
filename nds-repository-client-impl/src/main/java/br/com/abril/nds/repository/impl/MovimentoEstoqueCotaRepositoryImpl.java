@@ -53,6 +53,8 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDetalhes;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.TipoConsulta;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -3528,6 +3530,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public ValoresAplicados obterValoresAplicadosProdutoEdicao(final Integer numeroCota,
             final Long idProdutoEdicao, final Date dataOperacao) {
         
+    	if(numeroCota == null) {
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota não informada ao obter Valores de Expedição.");
+    	}
+    	
+    	if(idProdutoEdicao == null) {
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não informada ao obter Valores de Expedição.");
+    	}
+    	
+    	if(dataOperacao == null) {
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Data de Operacao não informada ao obter Valores de Expedição.");
+    	}
+    	
     	final StringBuilder sql = new StringBuilder();
     	
     	sql.append(" SELECT	");
