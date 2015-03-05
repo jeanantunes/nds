@@ -29,9 +29,15 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
-	    distribuirReparteComplementar(estudo, ordenarLista(estudo));
-	}
+	
+    	if(BigIntegerUtil.isMaiorQueZero(estudo.getReparteDistribuir())){
+    		estudo.setReparteComplementar(estudo.getReparteComplementar().add(estudo.getReparteDistribuir()));
+    		estudo.setReparteDistribuir(BigInteger.ZERO);
+    	}
+    	
+    	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+    		distribuirReparteComplementar(estudo, ordenarLista(estudo));
+    	}
     }
 
     private LinkedList<CotaEstudo> ordenarLista(EstudoTransient estudo) {
@@ -101,6 +107,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		
 		if(BigIntegerUtil.isMenorQueZero(estudo.getReparteDistribuir())){
 			estudo.setReparteComplementar(estudo.getReparteComplementar().add(estudo.getReparteDistribuir()));
+			estudo.setReparteDistribuir(BigInteger.ZERO);
 		}
 	
 		for (CotaEstudo cota : listaOrdenada) {

@@ -536,6 +536,13 @@ var analiseParcialController = $.extend(true, {
             async: false,
             cache: false,
             success: function(result) {
+            	
+            	if(result.mensagens != undefined && result.mensagens.tipoMensagem == 'WARNING'){
+    				analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+        			input_reparte_element.val(reparteAtual);
+                	$('#abrangencia').text('');
+                	return;
+    			}
 	    		
     			var saldoReparteAtualizado = parseInt(saldoReparte.text(), 10) - reparteSubtraido;
 		          
@@ -565,6 +572,8 @@ var analiseParcialController = $.extend(true, {
 				
 					histogramaPosEstudoController.change.refreshGrid = true;
 					histogramaPosEstudoController.change.estudoId = $('#estudoId').val();
+					
+					$('#fieldSetResumoAbrangenciaEstudo').html(result).toFixed(2)) + '% ');
   	
 				}
   
