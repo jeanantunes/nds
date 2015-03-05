@@ -42,6 +42,7 @@ import br.com.abril.nds.model.fiscal.nota.TribIPI;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.MathUtil;
 
 public class ItemNotaFiscalBuilder  {
 	
@@ -109,9 +110,9 @@ public class ItemNotaFiscalBuilder  {
 	private static DetalheNotaFiscal montarItem(AbstractMovimentoEstoque movimentoEstoque, DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
 		
 		ProdutoServico produtoServico = null;
+		Long codigoBarras = null;
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			Long codigoBarras = null;
 			try {
 				
 				if(movimentoEstoque.getProdutoEdicao().getCodigoDeBarras() == null) {
@@ -168,8 +169,8 @@ public class ItemNotaFiscalBuilder  {
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
 		produtoServico.setValorUnitario(valorUnitario);
 		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade()))));
-		
-		produtoServico.setValorDesconto(BigDecimal.ZERO);
+				
+		produtoServico.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas(valorDesconto));
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
 		produtoServico.setValorFreteCompoeValorNF(false);
@@ -315,7 +316,7 @@ public class ItemNotaFiscalBuilder  {
 					pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
 				}
 			}
-			pis.setValor(produtoServico.getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
+			pis.setValor(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100)))));
 			
 			// FIXME Ajustar CST
 			pisWrapper.setPis(pis);
@@ -351,7 +352,7 @@ public class ItemNotaFiscalBuilder  {
 					cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
 				}
 			}
-			cofins.setValor(produtoServico.getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
+			cofins.setValor(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100)))));
 			
 			cofinsWrapper.setCofins(cofins);
 			
@@ -462,10 +463,10 @@ public class ItemNotaFiscalBuilder  {
 	private static DetalheNotaFiscal montarItem(MovimentoFechamentoFiscal movimentoFechamentoFiscal,
 			DetalheNotaFiscal detalheNotaFiscal, NotaFiscal notaFiscal, Map<String, TributoAliquota> tributoAliquota) {
 		
+		Long codigoBarras = null;
 		ProdutoServico produtoServico = null;
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
-			Long codigoBarras = null;
 			try {
 				
 				if(movimentoFechamentoFiscal.getProdutoEdicao().getCodigoDeBarras() == null) {

@@ -4,75 +4,80 @@
 		versao="2.00">
 		<ide>
 			<cUF>35</cUF>
-			<cNF>00000040</cNF>
+			<cNF>00000011</cNF>
 			<natOp>Remessa de mercadoria em consignação mercantil ou industri
 			</natOp>
 			<indPag>2</indPag>
 			<mod>55</mod>
 			<serie>5</serie>
-			<nNF>40</nNF>
-			<dEmi>2014-04-09</dEmi>
+			<nNF>11</nNF>
+			<dhEmi>2015-03-05T15:11:55-03:00</dhEmi>
 			<tpNF>1</tpNF>
+			<idDest>1</idDest>
 			<cMunFG>3550308</cMunFG>
 			<tpImp>2</tpImp>
 			<tpEmis>1</tpEmis>
 			<cDV>0</cDV>
 			<tpAmb>2</tpAmb>
 			<finNFe>1</finNFe>
+			<indFinal>0</indFinal>
+			<indPres>0</indPres>
 			<procEmi>3</procEmi>
 			<verProc>2.2.21</verProc>
 		</ide>
 		<emit>
-			<CNPJ>61438248004625</CNPJ>
-			<xNome>Filial Treelog</xNome>
-			<xFant>Dist Santos</xFant>
+			<CNPJ>07348198000148</CNPJ>
+			<xNome>DMCAMP DISTRIB. REV. LTDA. EPP</xNome>
+			<xFant>DMCAMP</xFant>
 			<enderEmit>
-				<xLgr>Rua Joao Gerra</xLgr>
-				<nro>216</nro>
-				<xBairro>Macuco</xBairro>
+				<xLgr>Rua Artur Ramos</xLgr>
+				<nro>215</nro>
+				<xBairro>Vila João Jorge</xBairro>
 				<cMun>3550308</cMun>
-				<xMun>Santos</xMun>
+				<xMun>Campinas</xMun>
 				<UF>SP</UF>
-				<CEP>11015130</CEP>
+				<CEP>13041302</CEP>
 				<cPais>1058</cPais>
 				<xPais>Brasil</xPais>
 			</enderEmit>
-			<IE>633664400114</IE>
-			<IM>18309981</IM>
+			<IE>244989941114</IE>
+			<IM>467022</IM>
 			<CNAE>4789099</CNAE>
 			<CRT>3</CRT>
 		</emit>
 		<dest>
-			<CPF>15905572801</CPF>
-			<xNome>FABRICIO DOMINGOS MANINI</xNome>
+			<CNPJ>17027473000185</CNPJ>
+			<xNome>SAO FIRMINO COML.MAGAZINE LTDA</xNome>
 			<enderDest>
-				<xLgr>RUA SOARES DE CAMARGO</xLgr>
-				<nro>60</nro>
-				<xBairro>BOQUEIRÃO</xBairro>
+				<xLgr>RUA MARIETA DA SILVA</xLgr>
+				<nro>175</nro>
+				<complemento>Nº 185</complemento>
+				<xBairro>VILA GUILHERME</xBairro>
 				<cMun>3550308</cMun>
-				<xMun>SANTOS</xMun>
+				<xMun>SÃO PAULO</xMun>
 				<UF>SP</UF>
-				<CEP>11045050</CEP>
+				<CEP>02066030</CEP>
 				<cPais>1058</cPais>
 				<xPais>Brasil</xPais>
 			</enderDest>
-			<email>magali.coelho@abril.com.br</email>
+			<IE>145726749110</IE>
 		</dest>
 		<det nItem="1">
 			<prod>
-				<cProd>21820001</cProd>
-				<cEAN>9771981227007</cEAN>
-				<xProd>GUIA DA TV</xProd>
+				<cProd>61310001</cProd>
+				<cEAN>0</cEAN>
+				<xProd>CARAS</xProd>
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>47</qCom>
-				<vUnCom>1.1175</vUnCom>
-				<vProd>52.52</vProd>
-				<cEANTrib>9771981227007</cEANTrib>
+				<qCom>9</qCom>
+				<vUnCom>8.1750</vUnCom>
+				<vProd>73.58</vProd>
+				<cEANTrib>0</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>47</qTrib>
-				<vUnTrib>1.1175</vUnTrib>
+				<qTrib>9</qTrib>
+				<vUnTrib>8.1750</vUnTrib>
+				<vDesc>0</vDesc>
 				<indTot>0</indTot>
 			</prod>
 			<imposto>
@@ -94,37 +99,38 @@
 				<PIS>
 					<PISAliq>
 						<CST>1</CST>
-						<vBC>0.0000</vBC>
-						<pPIS>1.6500</pPIS>
-						<vPIS>0.866580</vPIS>
+						<vBC>0.00</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>1.214070</vPIS>
 					</PISAliq>
 				</PIS>
 				<COFINS>
 					<COFINSAliq>
 						<CST>1</CST>
-						<vBC>0.0000</vBC>
-						<pCOFINS>7.6000</pCOFINS>
-						<vCOFINS>3.991520</vCOFINS>
+						<vBC>0.00</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>5.592080</vCOFINS>
 					</COFINSAliq>
 				</COFINS>
 			</imposto>
-			<infAdProd>Edição 363</infAdProd>
+			<infAdProd>Edição 1113</infAdProd>
 		</det>
 		<det nItem="2">
 			<prod>
-				<cProd>44948001</cProd>
-				<cEAN>7897710188103</cEAN>
-				<xProd>ROBOCOP - VIVER</xProd>
+				<cProd>94370001</cProd>
+				<cEAN>9771413804004</cEAN>
+				<xProd>ANAMARIA</xProd>
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>4</qCom>
-				<vUnCom>4.4250</vUnCom>
-				<vProd>17.70</vProd>
-				<cEANTrib>7897710188103</cEANTrib>
+				<qCom>81</qCom>
+				<vUnCom>1.8750</vUnCom>
+				<vProd>151.88</vProd>
+				<cEANTrib>9771413804004</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>4</qTrib>
-				<vUnTrib>4.4250</vUnTrib>
+				<qTrib>81</qTrib>
+				<vUnTrib>1.8750</vUnTrib>
+				<vDesc>0</vDesc>
 				<indTot>0</indTot>
 			</prod>
 			<imposto>
@@ -146,37 +152,38 @@
 				<PIS>
 					<PISAliq>
 						<CST>1</CST>
-						<vBC>0.0000</vBC>
-						<pPIS>1.6500</pPIS>
-						<vPIS>0.292050</vPIS>
+						<vBC>0.00</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>2.506020</vPIS>
 					</PISAliq>
 				</PIS>
 				<COFINS>
 					<COFINSAliq>
 						<CST>1</CST>
-						<vBC>0.0000</vBC>
-						<pCOFINS>7.6000</pCOFINS>
-						<vCOFINS>1.345200</vCOFINS>
+						<vBC>0.00</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>11.542880</vCOFINS>
 					</COFINSAliq>
 				</COFINS>
 			</imposto>
-			<infAdProd>Edição 1</infAdProd>
+			<infAdProd>Edição 960</infAdProd>
 		</det>
 		<det nItem="3">
 			<prod>
-				<cProd>26676001</cProd>
-				<cEAN>9772177389004</cEAN>
-				<xProd>SUPER NOVELAS</xProd>
+				<cProd>12561001</cProd>
+				<cEAN>9771517093007</cEAN>
+				<xProd>VIVA MAIS</xProd>
 				<NCM>49029000</NCM>
 				<CFOP>5917</CFOP>
 				<uCom>KG</uCom>
-				<qCom>28</qCom>
+				<qCom>40</qCom>
 				<vUnCom>1.4925</vUnCom>
-				<vProd>41.79</vProd>
-				<cEANTrib>9772177389004</cEANTrib>
+				<vProd>59.70</vProd>
+				<cEANTrib>9771517093007</cEANTrib>
 				<uTrib>KG</uTrib>
-				<qTrib>28</qTrib>
+				<qTrib>40</qTrib>
 				<vUnTrib>1.4925</vUnTrib>
+				<vDesc>0</vDesc>
 				<indTot>0</indTot>
 			</prod>
 			<imposto>
@@ -198,29 +205,30 @@
 				<PIS>
 					<PISAliq>
 						<CST>1</CST>
-						<vBC>0.0000</vBC>
-						<pPIS>1.6500</pPIS>
-						<vPIS>0.689535</vPIS>
+						<vBC>0.00</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>0.985050</vPIS>
 					</PISAliq>
 				</PIS>
 				<COFINS>
 					<COFINSAliq>
 						<CST>1</CST>
-						<vBC>0.0000</vBC>
-						<pCOFINS>7.6000</pCOFINS>
-						<vCOFINS>3.176040</vCOFINS>
+						<vBC>0.00</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>4.537200</vCOFINS>
 					</COFINSAliq>
 				</COFINS>
 			</imposto>
-			<infAdProd>Edição 208</infAdProd>
+			<infAdProd>Edição 805</infAdProd>
 		</det>
 		<total>
 			<ICMSTot>
-				<vBC>112.01</vBC>
+				<vBC>0</vBC>
 				<vICMS>0.00</vICMS>
-				<vBCST>112.01</vBCST>
+				<vICMSDeson>0</vICMSDeson>
+				<vBCST>0</vBCST>
 				<vST>0</vST>
-				<vProd>112.01</vProd>
+				<vProd>285.16</vProd>
 				<vFrete>0</vFrete>
 				<vSeg>0</vSeg>
 				<vDesc>0</vDesc>
@@ -229,17 +237,19 @@
 				<vPIS>0.00</vPIS>
 				<vCOFINS>0.00</vCOFINS>
 				<vOutro>0</vOutro>
-				<vNF>112.01</vNF>
+				<vNF>285.16</vNF>
 			</ICMSTot>
 		</total>
 		<transp>
-			<modFrete>1</modFrete>
+			<modFrete>0</modFrete>
 			<transporta>
-				<CNPJ>73240163000115</CNPJ>
-				<xNome>Ipanema do Seu Rodrigção</xNome>
+				<CNPJ />
+				<xNome />
+				<xEnder>
+				</xEnder>
 			</transporta>
 		</transp>
-		<infAdic>Nota Fiscal de acordo com...</infAdic>
+		<infAdic>Teste NF-e</infAdic>
 	</infNFe>
 	<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
 		<SignedInfo>
@@ -252,10 +262,10 @@
 					<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
 				</Transforms>
 				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-				<DigestValue>1TRmS9CVHuZwnwR/Npvk9BD0Oos=</DigestValue>
+				<DigestValue>A40zYa5Krna/MHi3ARI/hgFmCfk=</DigestValue>
 			</Reference>
 		</SignedInfo>
-		<SignatureValue>DiR/Er5PXW+K0lqgtOpnqWmeI5m0jyOVdcGCrPF0NRq0j8pZ5S/rMHPM09wylnrXR6jZ8IaeAl+kLGrTdUqJTegfVT/wlJI3pqxmggNL8E9IWQV6ai74M13DO8jzcTk6WVii/QGgMMQ0OgZVTXFAp7uwnMNzyjl+ml8TXxshzaVClAigP7N45Z7MfrK7pRj/sxBQO6MGhr9ET+Ngl1hjzXQUmVoXm6gRFFpytAdjvOZXQzZxz30ZqSfmGzXnPH9VC4T6JMchojdrxdQh3kRn0axgyzji7hOmrkPdR2xJggQDjQJKH98W+Y2mxqXhkvx7xvPIIkUBAeKpTFkjBEkCvg==
+		<SignatureValue>iiTAMJZP3IgXMIXAm2lLa9YQYBdMeiC1z6IOnuMvxRqLuFSbK/cj8OKdg56NxLeFt2nt5aF8g1fyNHGVIzB6KswGzyRfV7z/1U7Wn4yqLbJ68EWt+Ma23nO/OMfACM0cTqtnUZD+SDW227TaYniA1aBabjLSQNVWQHsSPYb3a7yuDLnjVowM/qxawElmtBam/8tg9Df8fMA9mbKt+YhgIbNMa7FcTtFw6tdsqvyK+bXVO9sY+DtmEjeiylInZoXd6KPgiUuhMHqUL6Rsx/7iC5nDzlWXz4xmHhxwD6PQOfoo2pRbeHG+Caw3vR2YlZrCjPMaq9Ak0VRmPXzq9W5Thw==
 		</SignatureValue>
 		<KeyInfo>
 			<X509Data>

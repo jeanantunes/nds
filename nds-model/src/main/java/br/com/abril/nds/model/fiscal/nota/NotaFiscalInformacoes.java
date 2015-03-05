@@ -40,7 +40,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	private static String idNFe = "NFe00000000000000000000000000000000000000000000";
 	
 	@XmlAttribute
-	private static String versao = "2.00";
+	private static String versao = "3.10";
 		
 	/**
 	 * IDE
@@ -132,7 +132,8 @@ public class NotaFiscalInformacoes implements Serializable {
 	
 	@Column(name = "INFORMACOES_ADICIONAIS")
 	@XmlElement(name="infAdic")
-	private	String informacoesAdicionais;
+	@Embedded
+	private	InfAdicWrapper infAdicWrapper;
 	
 	/**
 	 * Construtor padrão.
@@ -316,6 +317,14 @@ public class NotaFiscalInformacoes implements Serializable {
 		this.notaImpressa = notaImpressa;
 	}
 	
+	public InfAdicWrapper getInfAdicWrapper() {
+		return infAdicWrapper;
+	}
+
+	public void setInfAdicWrapper(InfAdicWrapper infAdicWrapper) {
+		this.infAdicWrapper = infAdicWrapper;
+	}
+
 	public NotaFiscalValorCalculado getNotaFiscalValoresCalculados() {
 		return notaFiscalValoresCalculados;
 	}
@@ -323,14 +332,6 @@ public class NotaFiscalInformacoes implements Serializable {
 	public void setNotaFiscalValoresCalculados(
 			NotaFiscalValorCalculado notaFiscalValoresCalculados) {
 		this.notaFiscalValoresCalculados = notaFiscalValoresCalculados;
-	}
-
-	public String getInformacoesAdicionais() {
-		return informacoesAdicionais;
-	}
-
-	public void setInformacoesAdicionais(String informacoesAdicionais) {
-		this.informacoesAdicionais = informacoesAdicionais;
 	}
 
 	public Set<Processo> getProcessos() {

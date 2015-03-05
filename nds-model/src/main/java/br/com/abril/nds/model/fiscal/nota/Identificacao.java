@@ -381,7 +381,7 @@ public class Identificacao implements Serializable {
 	
 	@Transient
 	@XmlElement(name="idDest")
-	@XmlTransient // Usado na versao 3.10
+	// @XmlTransient // Usado na versao 3.10
 	private Integer localDestinoOperacaoXML;
 	
 	@Column(name="NOTA_FISCAL_CODIGO_MUNICIPIO")
@@ -449,12 +449,12 @@ public class Identificacao implements Serializable {
 	
 	@Transient
 	@XmlElement(name="indFinal")
-	@XmlTransient // Usado na versao 3.10
+	// @XmlTransient // Usado na versao 3.10
 	private Integer operacaoConsumidorFinalXML;
 	
 	@Transient
 	@XmlElement(name="indPres")
-	@XmlTransient // Usado na versao 3.10
+	// @XmlTransient // Usado na versao 3.10
 	private Integer presencaConsumidorXML;
 	
 	/**

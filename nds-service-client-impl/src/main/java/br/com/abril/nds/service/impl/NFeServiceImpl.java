@@ -61,6 +61,7 @@ import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
+import br.com.abril.nds.model.fiscal.nota.InfAdicWrapper;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaNFE;
@@ -510,7 +511,7 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-//		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		
 		return notas;
 	}
@@ -562,7 +563,7 @@ public class NFeServiceImpl implements NFeService {
 				
 				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
 					
-					notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+					notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
 					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
 					notasFiscais.add(notasFiscalSubdividida);
@@ -570,7 +571,12 @@ public class NFeServiceImpl implements NFeService {
 			} else {
 			
 				//FIXME: Ajustar o valor do campo para valores parametrizados
-				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+					InfAdicWrapper infAdicWrapper = new InfAdicWrapper();
+					notaFiscal.getNotaFiscalInformacoes().setInfAdicWrapper(infAdicWrapper);
+				}
+				
+				notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 				notasFiscais.add(notaFiscal);
@@ -715,7 +721,12 @@ public class NFeServiceImpl implements NFeService {
 			
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculadosEstoqueProduto(notaFiscal, estoque);
 			
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+			if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+				InfAdicWrapper infAdicWrapper = new InfAdicWrapper();
+				notaFiscal.getNotaFiscalInformacoes().setInfAdicWrapper(infAdicWrapper);
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		}	
 	}
 
@@ -771,7 +782,7 @@ public class NFeServiceImpl implements NFeService {
 				
 				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
 					
-					notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+					notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
 					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
 					notasFiscais.add(notasFiscalSubdividida);
@@ -780,7 +791,12 @@ public class NFeServiceImpl implements NFeService {
 				
 			} else {
 				
-				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+					InfAdicWrapper infAdicWrapper = new InfAdicWrapper();
+					notaFiscal.getNotaFiscalInformacoes().setInfAdicWrapper(infAdicWrapper);
+				}
+				
+				notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 				notasFiscais.add(notaFiscal);
@@ -959,14 +975,20 @@ public class NFeServiceImpl implements NFeService {
 				
 				for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
 					
-					notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+					notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 					FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
 					NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
 					notasFiscais.add(notasFiscalSubdividida);
 				}
 			} else {
 			
-				notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+					InfAdicWrapper infAdicWrapper = new InfAdicWrapper();
+					notaFiscal.getNotaFiscalInformacoes().setInfAdicWrapper(infAdicWrapper);
+				}
+				
+				notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				
 				FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 				notasFiscais.add(notaFiscal);
@@ -1045,14 +1067,19 @@ public class NFeServiceImpl implements NFeService {
 			
 			for(NotaFiscal notasFiscalSubdividida : notasFiscaisSubdivididas) {
 				
-				notasFiscalSubdividida.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+				notasFiscalSubdividida.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 				FaturaBuilder.montarFaturaNotaFiscal(notasFiscalSubdividida);
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notasFiscalSubdividida);
 				notasFiscais.add(notasFiscalSubdividida);
 			}
 		} else {
 			
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+			if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+				InfAdicWrapper infAdicWrapper = new InfAdicWrapper();
+				notaFiscal.getNotaFiscalInformacoes().setInfAdicWrapper(infAdicWrapper);
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 			notasFiscais.add(notaFiscal);
@@ -1256,8 +1283,12 @@ public class NFeServiceImpl implements NFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota, tributoRegimeTributario);
 			}
 			
-			//FIXME: Ajustar o valor do campo para valores parametrizados
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+			if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() == null) {
+				InfAdicWrapper infAdicWrapper = new InfAdicWrapper();
+				notaFiscal.getNotaFiscalInformacoes().setInfAdicWrapper(infAdicWrapper);
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().setInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 			notasFiscais.add(notaFiscal);
