@@ -270,8 +270,8 @@ public class ItemNotaFiscalBuilder  {
 			IPI ipi = new IPI();
 			
 			ipi.setCst(ipiProduto.getCst().toString());
-			ipi.setAliquota(ipiProduto.getValorAliquota());
-			ipi.setValorBaseCalculo(ipiProduto.getBaseCalculo());
+			ipi.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+			ipi.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
 			ipi.setCodigoEnquadramento(ipiProduto.getCst());
 			ipi.setIPITrib(new TribIPI());
 			ipi.getIPITrib().setCst(ipiProduto.getCst());
@@ -306,13 +306,13 @@ public class ItemNotaFiscalBuilder  {
 				pis.setCst(tributacaoProduto.get("PIS").getCst());
 				
 				if(tributacaoProduto.get("PIS").isIsentoOuNaoTributado()) {
-					pis.setValorBaseCalculo(BigDecimal.valueOf(0));
-					pis.setValorAliquota(BigDecimal.valueOf(0));
-					pis.setPercentualAliquota(BigDecimal.valueOf(0));	
+					pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+					pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+					pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
 				} else {
-					pis.setValorBaseCalculo(tributacaoProduto.get("PIS").getBaseCalculo());
-					pis.setValorAliquota(tributoPis.getValor());
-					pis.setPercentualAliquota(tributoPis.getValor());
+					pis.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(tributacaoProduto.get("PIS").getBaseCalculo()));
+					pis.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
+					pis.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoPis.getValor()));
 				}
 			}
 			pis.setValor(produtoServico.getValorTotalBruto().multiply(tributoPis.getValor().divide(BigDecimal.valueOf(100))));
@@ -342,13 +342,13 @@ public class ItemNotaFiscalBuilder  {
 				cofins.setCst(tributacaoProduto.get("COFINS").getCst());
 				
 				if(tributacaoProduto.get("COFINS").isIsentoOuNaoTributado()) {
-					cofins.setValorBaseCalculo(BigDecimal.valueOf(0));
-					cofins.setValorAliquota(BigDecimal.valueOf(0));
-					cofins.setPercentualAliquota(BigDecimal.valueOf(0));	
+					cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+					cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));
+					cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0)));	
 				} else {
-					cofins.setValorBaseCalculo(tributacaoProduto.get("COFINS").getBaseCalculo());
-					cofins.setValorAliquota(tributoCofins.getValor());
-					cofins.setPercentualAliquota(tributoCofins.getValor());
+					cofins.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(tributacaoProduto.get("COFINS").getBaseCalculo()));
+					cofins.setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
+					cofins.setPercentualAliquota(CurrencyUtil.arredondarValorParaDuasCasas(tributoCofins.getValor()));
 				}
 			}
 			cofins.setValor(produtoServico.getValorTotalBruto().multiply(tributoCofins.getValor().divide(BigDecimal.valueOf(100))));
