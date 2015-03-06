@@ -1908,7 +1908,9 @@ var recebimentoFisicoController = $.extend(true, {
 			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+
 			 					'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +
 			 					'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+
-			 					'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+			 					'); recebimentoFisicoController.alterarValorItem('+index+'); '+
+			 					'$(\'#checkbox'+ index +'\').check(); '+
+			 					'recebimentoFisicoController.replicarQtdLancamentoManual('+index+');"></input>';
 			     
 	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+
 	         					'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +
