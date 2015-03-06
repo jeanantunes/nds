@@ -123,7 +123,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Column(name="IE_SUBSTITUTO_TRIBUTARIO_EMITENTE", length=14, nullable=true)
 	@NFEExport(secao=TipoSecao.C, posicao=3, tamanho=14)
-	@XmlTransient
+	@XmlElement(name="IEST")
 	private String inscricaoEstadualSubstituto;
 	
 	/**

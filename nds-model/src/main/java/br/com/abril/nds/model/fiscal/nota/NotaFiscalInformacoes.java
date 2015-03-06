@@ -37,7 +37,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	private static final long serialVersionUID = -580456077685816545L;
 	
 	@XmlAttribute(name="Id")
-	private static String idNFe = "NFe00000000000000000000000000000000000000000000";
+	private static String idNFe;
 	
 	@XmlAttribute
 	private static String versao = "3.10";
@@ -142,11 +142,11 @@ public class NotaFiscalInformacoes implements Serializable {
 		
 	}
 
-	public static String getIdNFe() {
+	public String getIdNFe() {
 		return idNFe;
 	}
 
-	public static void setIdNFe(String idNFe) {
+	public void setIdNFe(String idNFe) {
 		NotaFiscalInformacoes.idNFe = idNFe;
 	}
 

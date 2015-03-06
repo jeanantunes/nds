@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -940,6 +942,8 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
+			montaChaveAcesso(notaFiscal);
+			
 			// obter os movimentos da cota
 			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
 			final List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
@@ -1018,7 +1022,7 @@ public class NFeServiceImpl implements NFeService {
 		for(final TributoAliquota tributo : distribuidor.getRegimeTributarioTributoAliquota()){
 			tributoAliquota.put(tributo.getNomeTributo(), tributo);
 		}
-				
+		
 		NotaFiscalBuilder.popularDadosEmissor(notaFiscal, distribuidor);
 		
 		NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor);
@@ -1374,4 +1378,75 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 	}
+	
+	private static void montaChaveAcesso(NotaFiscal notaFiscal) {
+		
+		
+		String mes = recuperarMes(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
+		String ano = recuperarAno(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
+		
+		String mesFormatado = lpadTo(mes, 2, '0');;
+		String anoFormatado = ano.substring(2, 4);
+		
+		String anoMes = anoFormatado + mesFormatado;
+		
+		StringBuilder chave = new StringBuilder();  
+        chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoUf().toString(), 2, '0'));  
+        chave.append(lpadTo(anoMes, 4, '0'));  
+        chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento().toString().replaceAll("\\D",""), 14, '0'));  
+        chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getModeloDocumentoFiscal().toString(), 2, '0'));  
+        chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString(), 3, '0'));  
+        chave.append(lpadTo(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal()), 9, '0'));  
+        chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoEmissao().getIntValue().toString(), 1, '0'));  
+        chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF(), 8, '0'));  
+        chave.append(modulo11(chave.toString()));
+		
+        chave.insert(0, "NFe");
+		
+		notaFiscal.getNotaFiscalInformacoes().setIdNFe(chave.toString());
+		
+	}
+	
+	private static String recuperarMes(Date data) {
+		GregorianCalendar dataCal = new GregorianCalendar();  
+		dataCal.setTime(data);  
+		return String.valueOf(dataCal.get(Calendar.MONTH)+1);  
+	}
+	
+	private static String recuperarAno(Date data) {
+		GregorianCalendar dataCal = new GregorianCalendar();  
+		dataCal.setTime(data);  
+		return String.valueOf(dataCal.get(Calendar.YEAR));  
+	}
+	
+	public static String lpadTo(String input, int width, char ch) {  
+        String strPad = "";  
+  
+        StringBuffer sb = new StringBuffer(input.trim());  
+        
+        while (sb.length() < width)  
+            sb.insert(0,ch);  
+        strPad = sb.toString();  
+          
+        if (strPad.length() > width) {  
+            strPad = strPad.substring(0,width);  
+        }
+        
+        return strPad;  
+	}  
+	
+	public static int modulo11(String chave) {  
+        int total = 0;  
+        int peso = 2;  
+              
+        for (int i = 0; i < chave.length(); i++) {  
+            total += (chave.charAt((chave.length()-1) - i) - '0') * peso;  
+            peso ++;  
+            if (peso == 10)  
+                peso = 2;  
+        }  
+        int resto = total % 11;  
+        return (resto == 0 || resto == 1) ? 0 : (11 - resto);  
+    }
+
 }

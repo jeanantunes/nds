@@ -41,10 +41,10 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 		try {
 			if (getKeyStore() != null) {
 				logger.debug("Recuperando credenciais de armazém tipo {}.", getKeyStore().getType());
-				if (getKeyStore().containsAlias("1")) {
-					privateKey = (PrivateKey) getKeyStore().getKey("1", "changeit".toCharArray());
+				if (getKeyStore().containsAlias("{3ed46e23-51f5-462f-ab68-b5bea536993d}")) {
+					privateKey = (PrivateKey) getKeyStore().getKey("{3ed46e23-51f5-462f-ab68-b5bea536993d}", "arutil14".toCharArray());
 					logger.debug("Chave particular recuperada no formato: {}.", privateKey.getFormat());
-					certificate = getKeyStore().getCertificate("1");
+					certificate = getKeyStore().getCertificate("{3ed46e23-51f5-462f-ab68-b5bea536993d}");
 					logger.debug("Certificado recuperado: {}.", ((X509Certificate) certificate).getSubjectDN());
 				} else {
 					throw new IllegalArgumentException(
