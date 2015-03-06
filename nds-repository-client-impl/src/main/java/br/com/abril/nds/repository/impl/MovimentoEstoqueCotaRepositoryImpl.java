@@ -811,9 +811,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    sql.append("	INNER JOIN PRODUTO PRODUTO ON ( PRODUTO.ID = PRODUTO_EDICAO.PRODUTO_ID )                                  ");
 	    
 	    sql.append("	INNER JOIN MOVIMENTO_ESTOQUE_COTA MEC ON ( MEC.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID 	");
-	    sql.append("	AND MEC.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) 						");
+	    sql.append("		AND MEC.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) 						");
 	    
 	    sql.append("	INNER JOIN TIPO_MOVIMENTO TM ON ( MEC.TIPO_MOVIMENTO_ID = TM.ID )                       ");
+	    sql.append("	INNER JOIN CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE.ID AND cel.LANCAMENTO_ID = MEC.LANCAMENTO_ID ");
 	    sql.append("  	LEFT JOIN CONFERENCIA_ENCALHE ON (                                                      ");
 	    sql.append("		CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.ID               ");
 	    sql.append("        AND CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID       ");
