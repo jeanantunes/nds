@@ -20,6 +20,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0111Input;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -29,6 +30,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -53,6 +55,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -283,6 +288,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 				lancamento.setReparte(repartePrevisto);
 			}
 			
+			lancamento.setDataLancamentoPrevista(input.getDataLancamento());
 			final BigInteger repartePromocional = BigInteger.valueOf(input.getRepartePromocional());
 			
 			if (null != lancamento.getRepartePromocional() && !lancamento.getRepartePromocional().equals(repartePromocional)) {
@@ -497,15 +503,22 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
-	private Date atualizaPeb(Date dataLancamento,ProdutoEdicao produtoEdicao){
+	private Date atualizaPeb(Date dataLancamento, ProdutoEdicao produtoEdicao) {
+		
 		// Cálcular data de recolhimento
 		Calendar calRecolhimento = Calendar.getInstance();
 		calRecolhimento.setTime(dataLancamento);
 		int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
-		if (peb == 0) {
+		if (peb <= 0) {
 			peb = 15;
 		}
 		calRecolhimento.add(Calendar.DAY_OF_MONTH, peb);
+		
+		while(!calendarioService.isDiaOperante(calRecolhimento.getTime(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO)) {
+			
+			calRecolhimento.add(Calendar.DAY_OF_MONTH, 1);
+		};
+		
 		return calRecolhimento.getTime();
 	}
 	
