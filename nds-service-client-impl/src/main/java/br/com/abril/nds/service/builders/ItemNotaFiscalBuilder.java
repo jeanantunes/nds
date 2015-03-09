@@ -168,9 +168,11 @@ public class ItemNotaFiscalBuilder  {
 		
 		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
 		produtoServico.setValorUnitario(valorUnitario);
-		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade()))));
+		produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 2));
 				
-		produtoServico.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas(valorDesconto));
+		// produtoServico.setValorDesconto(CurrencyUtil.arredondarValorParaDuasCasas(BigDecimal.valueOf(0.01)));
+		
+		produtoServico.setValorCompoeValorNF(true);
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
 		produtoServico.setValorFreteCompoeValorNF(false);

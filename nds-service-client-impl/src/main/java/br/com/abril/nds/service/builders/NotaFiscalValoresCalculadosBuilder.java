@@ -58,7 +58,7 @@ public class NotaFiscalValoresCalculadosBuilder {
 		
 		BigDecimal valorTotalItens = BigDecimal.ZERO;
 		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
-			valorTotalItens = valorTotalItens.add(dnf.getProdutoServico().getValorTotalBruto());
+			valorTotalItens = valorTotalItens.add(CurrencyUtil.arredondarValorParaDuasCasas(dnf.getProdutoServico().getValorTotalBruto()));
 		}
 		
 		return valorTotalItens;

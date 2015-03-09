@@ -250,6 +250,15 @@ public abstract class CurrencyUtil {
 		return valorArredondado;
 	}
 
+	public static BigDecimal truncateDecimal(final BigDecimal valor, int numberofDecimals) {
+	    if (valor.doubleValue() > 0.0) {
+	        return new BigDecimal(String.valueOf(valor)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR);
+	    } else {
+	        return new BigDecimal(String.valueOf(valor)).setScale(numberofDecimals, BigDecimal.ROUND_CEILING);
+	    }
+	
+	}
+	
 	/**
 	 * Metodo padrao para arredondamentos com 4 casas
 	 * 
