@@ -12,7 +12,6 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
-import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Este processo tem como objetivo calcular o reparteComplementar que será

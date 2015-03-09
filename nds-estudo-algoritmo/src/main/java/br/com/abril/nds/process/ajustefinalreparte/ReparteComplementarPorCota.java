@@ -29,9 +29,15 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
-	    distribuirReparteComplementar(estudo, ordenarLista(estudo));
-	}
+	
+    	if(BigIntegerUtil.isMaiorQueZero(estudo.getReparteDistribuir())){
+    		estudo.setReparteComplementar(estudo.getReparteComplementar().add(estudo.getReparteDistribuir()));
+    		estudo.setReparteDistribuir(BigInteger.ZERO);
+    	}
+    	
+    	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+    		distribuirReparteComplementar(estudo, ordenarLista(estudo));
+    	}
     }
 
     private LinkedList<CotaEstudo> ordenarLista(EstudoTransient estudo) {
@@ -101,25 +107,14 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		
 		if(BigIntegerUtil.isMenorQueZero(estudo.getReparteDistribuir())){
 			estudo.setReparteComplementar(estudo.getReparteComplementar().add(estudo.getReparteDistribuir()));
+			estudo.setReparteDistribuir(BigInteger.ZERO);
 		}
 	
-		for (CotaEstudo cota : listaOrdenada) {
-		    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
-		    	break;
-		    }
-		    
-		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
-		    	cota.setReparteCalculado(cota.getIntervaloMaximo());
-		    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
-		    	cota.setReparteCalculado(cota.getIntervaloMinimo());
-		    } else {
-				cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
-				cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
-				estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-		    }
-		}
+		distribuicaoCotasExcluidasEstudo(estudo, listaOrdenada, reparte);
 		
 		BigInteger reparteGeral = BigInteger.ONE;
+		
+		BigInteger excecaoDistribReparteComp = BigInteger.ZERO;
 		
 		if (estudo.isDistribuicaoPorMultiplos()) {
 		    reparteGeral = reparte;
@@ -148,10 +143,36 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 					
 				}
 		    }
+			
+			if(excecaoDistribReparteComp.compareTo(estudo.getReparteDistribuir()) == 0){
+				break;
+			}
+			
+			excecaoDistribReparteComp = estudo.getReparteComplementar();
 		}
 		
 		if(estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0){
-			estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(estudo.getReparteComplementar()));
+//			estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(estudo.getReparteComplementar()));
+			distribuicaoCotasExcluidasEstudo(estudo, listaOrdenada, reparteGeral);
 		}
     }
+
+	private void distribuicaoCotasExcluidasEstudo(EstudoTransient estudo,
+			LinkedList<CotaEstudo> listaOrdenada, BigInteger reparte) {
+		for (CotaEstudo cota : listaOrdenada) {
+		    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
+		    	break;
+		    }
+		    
+		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+		    	cota.setReparteCalculado(cota.getIntervaloMaximo());
+		    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+		    	cota.setReparteCalculado(cota.getIntervaloMinimo());
+		    } else {
+				cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
+				cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
+				estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
+		    }
+		}
+	}
 }

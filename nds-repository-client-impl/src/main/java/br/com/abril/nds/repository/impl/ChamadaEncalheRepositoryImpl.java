@@ -814,7 +814,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    hql.append("    	left outer join ESTUDO estudo12_  ");
 	    hql.append("    	        on lancamento10_.ESTUDO_ID=estudo12_.ID "); 
 	    hql.append("    	left outer join ESTUDO_COTA estudocota13_  ");
-	    hql.append("    	        on estudo12_.ID=estudocota13_.ESTUDO_ID "); 
+	    hql.append("    	        on estudo12_.ID=estudocota13_.ESTUDO_ID and estudocota13_.cota_id = chamadaenc0_.cota_id "); 
 	    hql.append("    	left outer join NOTA_ENVIO_ITEM itemnotaen14_  ");
 	    hql.append("    	        on estudocota13_.ID=itemnotaen14_.ESTUDO_COTA_ID "); 
 	    hql.append("    	left outer join NOTA_ENVIO notaenvio15_  ");

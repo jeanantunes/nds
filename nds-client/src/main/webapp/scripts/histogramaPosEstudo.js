@@ -559,7 +559,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					// Primeira coluna
 					$('#fieldSetResumoReparteTotal').html(formatarMilhar(response.qtdReparteDistribuidor || 0));
 					$('#fieldSetResumoRepartePromocional').html(formatarMilhar(response.saldo || 0));
-					$('#fieldSetResumoReservaTecnica').html(formatarMilhar(response.qtdSobraEstudo || 0));
+//					$('#fieldSetResumoReservaTecnica').html(formatarMilhar(response.qtdSobraEstudo || 0));
 					$('#fieldSetResumoReparteDistribuida').html(formatarMilhar(response.qtdReparteDistribuidoEstudo || 0));
 
 					// Segunda Coluna
