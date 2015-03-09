@@ -335,18 +335,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<Long> idsProdutoEdicao = new ArrayList<>();
 		
+		if(cota != null && cota.getProdutos() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota selecionada.");
+		}
 		
 		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
 			
 			idsProdutoEdicao.add(produtoDTO.getIdProdutoEdicao());
-			
-			// if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
-				// produtoDTO.setQuantidadeDevolvida(null);
-				// produtoDTO.setQuantidadeDev(null);
-			// } else {
-				//produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
-				//produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
-			//}
 			
 			produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
 			produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
@@ -890,7 +886,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
 	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
 			}
-			
 			
 			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
