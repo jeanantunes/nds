@@ -2739,7 +2739,6 @@ public class LancamentoRepositoryImpl extends
         
         return query.list();
     }
-    
 
     public List<Date> obterDatasLancamentoValidas() {
 
@@ -2757,21 +2756,53 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select dtd from ( ");
-    	hql.append(" select max(data_lcto_distribuidor) dtd , (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
-    	hql.append(" from lancamento ");
-    	hql.append(" where status in(:lancamentosPreExpedicao) ");
-    	hql.append(" group by data_lcto_distribuidor ) a ");
-    	hql.append(" where st = 0) ");
-    	hql.append(" and b.sm    in (select dia_semana  ");
-    	hql.append(" from distribuicao_fornecedor  ");
-    	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
-    	//hql.append(" and fornecedor_id in (:idFornecedor)  ");
-    	hql.append(" ) order by dt  ");
+    	hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+    	hql.append(" 	from ( ");
+    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		from lancamento l ");
+    	hql.append(" 		where status in(:lancamentosPreExpedicao) ");
+    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+    	hql.append(" 		union ");
+    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		from lancamento l ");
+    	hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
+    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+    	hql.append(" 		group by data_lcto_distribuidor ");
+    	hql.append(" 	) rs ) a ");
+    	hql.append(" 	where st = 0) ");
+    	hql.append(" and b.sm    in (select dia_semana ");
+    	hql.append(" 	from distribuicao_fornecedor ");
+    	hql.append(" 	where operacao_distribuidor = 'DISTRIBUICAO' ");
+    	hql.append(" ) ");
+    	hql.append(" and dt in (select dtd from ( ");
+		hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+		hql.append(" 	from ( ");
+		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		from lancamento l ");
+		hql.append(" 		where status in(:lancamentosPreExpedicao) ");
+		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+		hql.append(" 		union ");
+		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		from lancamento l ");
+		hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
+		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+		hql.append(" 		group by data_lcto_distribuidor ");
+		hql.append(" 	) rs ");
+		hql.append(" 	) a ");
+		hql.append(" 	where st = 1 ");
+		hql.append(" ) ");
+    	hql.append(" order by dt ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
-        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicao());
-
+        
+        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicaoString());
+        
+        List<String> statusLancamentoPosBalanceamento = new ArrayList<>();
+        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
+        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("lancamentosPosBalanceamentoLancamento", statusLancamentoPosBalanceamento);
+    	
     	return query.list();
     }
     

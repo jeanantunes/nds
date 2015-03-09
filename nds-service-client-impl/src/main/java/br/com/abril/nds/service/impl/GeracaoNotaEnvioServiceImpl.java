@@ -384,21 +384,36 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             DescontoDTO descontoDTO = null;
             try {
-                
+            	
+            	if( produtoEdicao.getProduto().getFornecedor() == null) {
+            		throw new Exception("Produto sem Fornecedor cadastrado!");
+            	}
+            	
+            	if( produtoEdicao.getProduto().getEditor() == null) {
+            		throw new Exception("Produto sem Editor cadastrado!");
+            	}
+            	
                 descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId()
                 		, produtoEdicao.getProduto().getFornecedor().getId()
                 		, produtoEdicao.getProduto().getEditor().getId()
-                		, produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+                		, produtoEdicao.getProduto().getId()
+                		, produtoEdicao.getId());
+
+                if(descontoDTO == null) {
+                	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
+                	throw new ValidacaoException();
+                }
+            } catch (final ValidacaoException e) {
+                final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
+                LOGGER.error(msg, e);
+                throw new ValidacaoException(TipoMensagem.ERROR, msg);
             } catch (final Exception e) {
-                final String msg = "Erro ao obter desconto: Cota: " + cota.getNumeroCota() + " / Produto: "
+                String msg = e.getMessage();
+                LOGGER.error(msg, e);
+                msg = "Erro ao obter desconto: Cota: " + cota.getNumeroCota() + " / Produto: "
                         + produtoEdicao.getProduto().getCodigo() + " - " + produtoEdicao.getNumeroEdicao();
                 LOGGER.error(msg, e);
                 throw new ValidacaoException(TipoMensagem.ERROR, msg);
-            }
-            
-            if(descontoDTO == null) {
-                
-                throw new ValidacaoException(TipoMensagem.ERROR, "Cota/Produto sem desconto: Cota: "+ cota.getNumeroCota() +" / Produto: "+ produtoEdicao.getProduto().getCodigo() +" - "+ produtoEdicao.getNumeroEdicao());
             }
             
             if(quantidadeResultante == null) {
@@ -426,10 +441,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             // Cria novo item nota caso o Estudo ainda não possua
             itemNotaEnvio = criarNovoItemNotaEnvio(itemNotaEnvio, estudoCota, produtoEdicao,
-                    precoVenda, ((descontoDTO
-                            .getValor() != null) ?
-                                    descontoDTO.getValor() : BigDecimal.ZERO)
-                                    , quantidade);
+                    precoVenda, ((descontoDTO.getValor() != null) ? descontoDTO.getValor() : BigDecimal.ZERO), quantidade);
             
             if(estudoCota.getEstudo() != null && estudoCota.getEstudo().getLancamento() != null) {
                 itemNotaEnvio.setSequenciaMatrizLancamento(estudoCota.getEstudo().getLancamento().getSequenciaMatriz());

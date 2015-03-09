@@ -56,6 +56,7 @@ public class NotaFiscalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=2, tamanho=60)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=2 , tamanho=60))
 	})
+	@XmlElement(name="xCpl")
 	private String complemento;
 	
 	@Column(name = "BAIRRO", length=60)

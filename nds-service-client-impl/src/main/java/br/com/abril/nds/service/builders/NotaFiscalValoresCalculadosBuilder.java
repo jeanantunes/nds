@@ -45,6 +45,7 @@ public class NotaFiscalValoresCalculadosBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorBaseICMSSubstituto(BigDecimal.valueOf(0));
 		
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMS(CurrencyUtil.arredondarValorParaDuasCasas(valorICMS));
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setvICMSDeson(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMSSubstituto(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorOutro(BigDecimal.valueOf(0));
 		
@@ -57,7 +58,7 @@ public class NotaFiscalValoresCalculadosBuilder {
 		
 		BigDecimal valorTotalItens = BigDecimal.ZERO;
 		for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
-			valorTotalItens = valorTotalItens.add(dnf.getProdutoServico().getValorTotalBruto());
+			valorTotalItens = valorTotalItens.add(CurrencyUtil.arredondarValorParaDuasCasas(dnf.getProdutoServico().getValorTotalBruto()));
 		}
 		
 		return valorTotalItens;
@@ -121,6 +122,7 @@ public class NotaFiscalValoresCalculadosBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorDesconto(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorFrete(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMS(valorICMS);
+		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setvICMSDeson(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorICMSSubstituto(valorICMS);
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorImpostoImportacao(BigDecimal.valueOf(0));
 		notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().setValorIPI(valorIPI);

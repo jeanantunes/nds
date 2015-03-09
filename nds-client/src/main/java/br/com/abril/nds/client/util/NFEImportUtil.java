@@ -36,7 +36,7 @@ public abstract class NFEImportUtil {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NFEImportUtil.class);
     
-    private static String versaoNFE = "2.00";
+    private static String versaoNFE = "3.10";
     
     /**
      * Constante com caminho do arquivo do xsd do POJO TNFe

@@ -82,6 +82,13 @@ public class IdentificacaoDestinatario implements Serializable {
 	@NFEExportType
 	@XmlElement(name="enderDest")
 	private NotaFiscalEndereco endereco;
+
+	/**
+	 * indIEDest
+	 */
+	@Column(name="INDICADOR_DESTINATARIO", nullable=true, length=14)
+	@XmlElement(name="indIEDest")
+	private int indicadorDestinatario;
 	
 	/**
 	 * IE
@@ -101,6 +108,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * EMAIL
 	 */
+	@XmlTransient
 	@Column(name="EMAIL_DESTINATARIO", nullable=true, length=60)
 	private String email;
 	
@@ -185,7 +193,20 @@ public class IdentificacaoDestinatario implements Serializable {
 	public void setNomeFantasia(String nomeFantasia) {
 		this.nomeFantasia = nomeFantasia;
 	}
+	
+	/**
+	 * @return the indicadorDestinatario
+	 */
+	public int getIndicadorDestinatario() {
+		return indicadorDestinatario;
+	}
 
+	/**
+	 * @param indicadorDestinatario the indicadorDestinatario to set
+	 */
+	public void setIndicadorDestinatario(int indicadorDestinatario) {
+		this.indicadorDestinatario = indicadorDestinatario;
+	}
 
 	/**
 	 * @return the inscricaoEstadual
@@ -193,7 +214,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	public String getInscricaoEstadual() {
 		return inscricaoEstadual;
 	}
-
 
 	/**
 	 * @param inscricaoEstadual the inscricaoEstadual to set

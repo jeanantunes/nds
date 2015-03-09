@@ -582,16 +582,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                                         quantidade,
                                         tipoMovimento);
                                 
-                                listaMovimentoCotaEnvio.add(gerarMovimentoCota(data,
-                                        movimentoCota.getProdutoEdicao().getId(),
-                                        movimentoCota.getCota().getId(),
-                                        movimentoCota.getUsuario().getId(),
-                                        quantidade,
-                                        tipoMovimentoCota,
-                                        data,
-                                        null,
-                                        movimentoCota.getLancamento()!=null?movimentoCota.getLancamento().getId():null,
-                                                null));
+                                listaMovimentoCotaEnvio.add(criarMovimentoCota(data
+                                		, movimentoCota.getProdutoEdicao().getId()
+                                		, movimentoCota.getCota().getId()
+                                		, movimentoCota.getUsuario().getId()
+                                		, quantidade
+                                		, tipoMovimentoCota
+                                		, data
+                                		, null
+                                		, movimentoCota.getLancamento() != null ? movimentoCota.getLancamento().getId() : null
+                                		, null
+                                		, false
+                                		, movimentoCota.getValoresAplicados()));
+                                
             }
         }
         
@@ -1428,14 +1431,25 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
         }
         
+        if (valoresAplicadosParam != null) {
+            
+            movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
+        } else {
+        	
+        	if(idCota != null && idProdutoEdicao != null) {
+        		Cota c = cotaRepository.buscarCotaPorID(idCota);
+        		ValoresAplicados valoresAplicados = movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(c.getNumeroCota(), idProdutoEdicao, dataOperacao);
+        		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+        	}
+        }
+        
         if (dataLancamento != null && idProdutoEdicao != null) {
             
-            if (idLancamento==null) {
+            if (idLancamento == null) {
                 
                 idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
 
             }
-            
             
             if (idLancamento != null) {
                 
@@ -1443,35 +1457,31 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 movimentoEstoqueCota.setLancamento(lancamento);
                 
-                final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-                
-                DescontoDTO desconto = null;
-                try {
+                if(movimentoEstoqueCota.getValoresAplicados() == null) {
                 	
-                	desconto = descontoService.obterDescontoPor(cotaRepository.buscarPorId(idCota).getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
-				} catch (Exception e) {
-					
-					LOGGER.error("Impossível obter o Desconto.", e);
-					throw new ValidacaoException(TipoMensagem.WARNING, "Impossível obter o Desconto.");
-				}
-                
-                final BigDecimal precoComDesconto =
-                        produtoEdicao.getPrecoVenda().subtract(
-                                MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), (desconto != null ? desconto.getValor() : BigDecimal.ZERO)));
-                
-                final ValoresAplicados valoresAplicados = new ValoresAplicados();
-                valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
-                valoresAplicados.setValorDesconto(desconto.getValor());
-                valoresAplicados.setPrecoComDesconto(precoComDesconto);
-                
-                movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
-                
+                	final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+                	DescontoDTO desconto = null;
+                	try {
+                		
+                		desconto = descontoService.obterDescontoPor(cotaRepository.buscarPorId(idCota).getNumeroCota(), produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
+                	} catch (Exception e) {
+                		
+                		LOGGER.error("Impossível obter o Desconto.", e);
+                		throw new ValidacaoException(TipoMensagem.WARNING, "Impossível obter o Desconto.");
+                	}
+                	
+                	final BigDecimal precoComDesconto =
+                			produtoEdicao.getPrecoVenda().subtract(
+                					MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), (desconto != null ? desconto.getValor() : BigDecimal.ZERO)));
+                	
+                	final ValoresAplicados valoresAplicados = new ValoresAplicados();
+                	valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
+                	valoresAplicados.setValorDesconto(desconto.getValor());
+                	valoresAplicados.setPrecoComDesconto(precoComDesconto);
+                	
+                	movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+                }
             }
-        }
-        
-        if (valoresAplicadosParam != null) {
-            
-            movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
         }
         
         if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatico) {

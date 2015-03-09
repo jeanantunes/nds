@@ -711,16 +711,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         
         .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, 0) as precoComDesconto, ")
         
-        /*
-        .append(" (select coalesce(mec.preco_com_desconto, mec.preco_venda, 0) ")
-        .append(" from movimento_estoque_cota mec ")
-		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
-		.append(" where mec.produto_edicao_id = produtoedi5_.id ")
-		.append(" and mec.cota_id = chamadaenc0_.cota_id ")
-		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE' ")
-		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null and mec.movimento_financeiro_cota_id is null) as precoComDesconto, ")
-        */
-		// .append(" sum(case when tipomovime17_.OPERACAO_ESTOQUE= (case when (conferenci2_.DATA is not null) then 'SAIDA' else 'ENTRADA' end) then movimentoe16_.QTDE else -movimentoe16_.QTDE end ) as reparte, ")
         .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
         .append(" from movimento_estoque_cota mec                                                               ")
         .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                 ")
@@ -734,11 +724,17 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" where mec.produto_edicao_id = produtoedi5_.id                                                 ")
 		.append(" and mec.cota_id = chamadaenc0_.cota_id                                                        ")
 		.append(" and tm.grupo_movimento_estoque <> 'ENVIO_ENCALHE'                                             ")
-		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ")
-		// .append(" and l.id = lancamento10_.id ")
-		.append(" ) as reparte,                                                                                 ")
-        
-        
+		.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null                                                ");
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			hql.append(" and ce.DATA_RECOLHIMENTO >=:dataDe ");
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			hql.append(" and ce.DATA_RECOLHIMENTO <=:dataAte ");
+		}
+		
+		hql.append(" ) as reparte,                                                                              ")
         .append(" coalesce(conferenci2_.QTDE, 0 ) as quantidadeDevolvida,                                       ")
         .append(" case when count(conferenci2_.id)>0 then 1 else 0 end as confereciaRealizada,                  ")
         .append(" chamadaenc1_.SEQUENCIA as sequencia,                                                          ")
@@ -795,7 +791,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		return mapProdutosEmissaoCota;
-		
 	}
 
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
@@ -819,7 +814,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    hql.append("    	left outer join ESTUDO estudo12_  ");
 	    hql.append("    	        on lancamento10_.ESTUDO_ID=estudo12_.ID "); 
 	    hql.append("    	left outer join ESTUDO_COTA estudocota13_  ");
-	    hql.append("    	        on estudo12_.ID=estudocota13_.ESTUDO_ID "); 
+	    hql.append("    	        on estudo12_.ID=estudocota13_.ESTUDO_ID and estudocota13_.cota_id = chamadaenc0_.cota_id "); 
 	    hql.append("    	left outer join NOTA_ENVIO_ITEM itemnotaen14_  ");
 	    hql.append("    	        on estudocota13_.ID=itemnotaen14_.ESTUDO_COTA_ID "); 
 	    hql.append("    	left outer join NOTA_ENVIO notaenvio15_  ");

@@ -21,6 +21,10 @@ public class ValoresCalculadosWrapper {
 	@XmlElement(name="vICMS")
 	private	BigDecimal valorICMS;
 	
+	@Column(name = "VALOR_ICMS_DESON")
+	@XmlElement(name="vICMSDeson")
+	private	BigDecimal vICMSDeson;
+	
 	@Column(name = "VALOR_BASE_ICMS_SUBSTITUTO")
 	@XmlElement(name="vBCST")
 	private	BigDecimal valorBaseICMSSubstituto;
@@ -100,7 +104,15 @@ public class ValoresCalculadosWrapper {
 	public void setValorICMS(BigDecimal valorICMS) {
 		this.valorICMS = valorICMS;
 	}
+	
+	public BigDecimal getvICMSDeson() {
+		return vICMSDeson;
+	}
 
+	public void setvICMSDeson(BigDecimal vICMSDeson) {
+		this.vICMSDeson = vICMSDeson;
+	}
+	
 	public BigDecimal getValorBaseICMSSubstituto() {
 		return valorBaseICMSSubstituto;
 	}

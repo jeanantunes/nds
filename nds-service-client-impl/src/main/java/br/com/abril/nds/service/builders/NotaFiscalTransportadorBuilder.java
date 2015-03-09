@@ -27,6 +27,7 @@ public class NotaFiscalTransportadorBuilder {
 			notaFiscal.getNotaFiscalInformacoes().setInformacaoTransporte(new InformacaoTransporte());
 		}
 		
+		/*
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper() == null){
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setTransportadorWrapper(new TransportadorWrapper());
 		}
@@ -34,33 +35,33 @@ public class NotaFiscalTransportadorBuilder {
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getVeiculo() == null){
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setVeiculo(new br.com.abril.nds.model.fiscal.nota.Veiculo());
 		}
-		
 		NotaFiscalEndereco endereco = null;
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco() == null){
 			endereco = new NotaFiscalEndereco();
 		}
-		
+		*/
 		if(transportadores == null || transportadores.isEmpty()) {
 			
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("");	
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("");
-			
+			//notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("");	
+			//notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("");
+			/*
 			if(endereco == null){
 				endereco = new NotaFiscalEndereco();
 			}
-			endereco.setBairro("");
-			endereco.setLogradouro("");
-			endereco.setCep("");
-			endereco.setNumero("");
+			endereco.setBairro("   ");
+			endereco.setLogradouro("     ");
+			endereco.setCep("    ");
+			endereco.setNumero("    ");
 			endereco.setCodigoCidadeIBGE(0L);
-			endereco.setCidade("");
+			endereco.setCidade("     ");
 			endereco.setCodigoPais(0L);
 			endereco.setCodigoUf(0L);
-			endereco.setComplemento("");
-			endereco.setPais("");
-			endereco.setTipoLogradouro("");
+			endereco.setComplemento("    ");
+			endereco.setPais("       ");
+			endereco.setTipoLogradouro("    ");
 			endereco.setUf("");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
+			*/
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
 		} else {
 			

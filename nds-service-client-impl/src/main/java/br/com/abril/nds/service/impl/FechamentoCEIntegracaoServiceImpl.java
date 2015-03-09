@@ -69,6 +69,7 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.TipoMovimentoService;
@@ -140,6 +141,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Autowired
 	private FornecedorService fornecedorService;
 
+	@Autowired
+	private LancamentoParcialService lancamentoParcialService;
+	
 	@Transactional(readOnly=true)
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
@@ -274,13 +278,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	
 		BigInteger quantidadeEncalhe = BigInteger.valueOf(itemFo.getQtdeDevolucaoInformada());
 		
-		if (quantidadeEncalhe.compareTo(BigInteger.ZERO) == 0){
+		if (quantidadeEncalhe.compareTo(BigInteger.ZERO) == 0) {
 			
 			return;
 		}
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-    			this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
     	
 		Usuario usuario = this.usuarioService.getUsuarioLogado();
 		
@@ -310,7 +313,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		TipoMovimentoEstoque tipoMovimentoPerda = null; 
 		TipoMovimentoEstoque tipoMovimentoSobraEmReparte = null;
 		
-		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
+		for(ChamadaEncalheFornecedor cef : chamadasFornecedor) {
 			
 			BigDecimal totalCreditoApurado = BigDecimal.ZERO;
 			BigDecimal totalCreditoInformado = BigDecimal.ZERO;
@@ -326,23 +329,30 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				
 				EstoqueProduto estoqueProduto = itemFo.getProdutoEdicao().getEstoqueProduto();
 				
-				itemFo = this.atualizarItemCE(itemFo,itensAlterados,estoqueProduto);
+				itemFo = this.atualizarItemCE(itemFo, itensAlterados, estoqueProduto);
 				
 				this.validarEncalheOuVendaInformado(itemFo);
 				
-				this.processarEstoqueProduto(itemFo.getProdutoEdicao(),estoqueProduto);
+				this.processarEstoqueProduto(itemFo.getProdutoEdicao(), estoqueProduto);
 				
-				this.efetuarTransferenciaEstoqueProduto(itemFo.getProdutoEdicao(), usuario);
+				if(!RegimeRecolhimento.PARCIAL.equals(itemFo.getRegimeRecolhimento())) {
+					
+					this.efetuarTransferenciaEstoqueProduto(itemFo.getProdutoEdicao(), usuario);
+				}
 				
 				Diferenca diferenca = this.processarDiferenca(itemFo, usuario, tipoMovimentoPerda, tipoMovimentoSobraEmReparte);
 				
-				if(diferenca!= null){
+				if(diferenca!= null) {
+					
 					itemFo.setDiferenca(diferenca);
 				}
 				
 				itemFo = this.itemChamadaEncalheFornecedorRepository.merge(itemFo);
 				
-				this.gerarMovimentoEstoqueDevolucaoFornecedor(itemFo, dataOperacao);
+				if(!RegimeRecolhimento.PARCIAL.equals(itemFo.getRegimeRecolhimento())) {
+					
+					this.gerarMovimentoEstoqueDevolucaoFornecedor(itemFo, dataOperacao);
+				}
 				
 				totalCreditoApurado = totalCreditoApurado.add(itemFo.getValorVendaApurado());
 				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
@@ -449,7 +459,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		final List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
 		
-		this.processaCE(filtro,itensAlterados,chamadasFornecedor);
+		this.processaCE(filtro, itensAlterados, chamadasFornecedor);
 	}
 	
 	private Diferenca processarDiferenca(ItemChamadaEncalheFornecedor item, 
@@ -458,13 +468,13 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 										 TipoMovimentoEstoque tipoMovimentoSobraEmReparte){
 		Diferenca diferenca = null;
 		
-		if(!RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
+		if(!RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())) {
 			
 			diferenca = this.processarDiferencaDeItemCEFornecedor(item,usuario);
 
-			if (diferenca != null){
+			if (diferenca != null) {
 				
-				if(TipoEstoque.PERDA.equals(diferenca.getTipoEstoque())){
+				if(TipoEstoque.PERDA.equals(diferenca.getTipoEstoque())) {
 					
 					if(tipoMovimentoPerda == null){
 						tipoMovimentoPerda = 
@@ -481,12 +491,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					
 					diferenca = diferencaEstoqueService.lancarDiferencaFechamentoCEIntegracao(diferenca,movimentoEstoque, StatusAprovacao.PERDA);
 					
-				}
-				else{
+				} else {
 					
-					if(tipoMovimentoSobraEmReparte == null){
-						tipoMovimentoSobraEmReparte = 
-								tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM_DEVOLUCAO);
+					if(tipoMovimentoSobraEmReparte == null) { 
+						tipoMovimentoSobraEmReparte = tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SOBRA_EM_DEVOLUCAO);
 					}
 					
 					MovimentoEstoque movimentoEstoque =  

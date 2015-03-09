@@ -34,8 +34,7 @@ public class TransferenciaEstoqueParcialController extends BaseController {
 	public void buscarQtdeEstoqueParaTransferenciaParcial(String codigoProduto, Long numeroEdicao) {
 		
 		BigInteger qtdeEstoqueParaTransferencia = 
-			this.transferenciaEstoqueParcialService.buscarQuantidadeParaTransferencia(
-				codigoProduto, numeroEdicao);
+			this.transferenciaEstoqueParcialService.buscarQuantidadeParaTransferencia(codigoProduto, numeroEdicao);
 		
 		this.result.use(Results.json()).withoutRoot().from(qtdeEstoqueParaTransferencia).serialize();
 	}
@@ -43,12 +42,9 @@ public class TransferenciaEstoqueParcialController extends BaseController {
 	@Post
 	public void transferir(String codigoProduto, Long numeroEdicaoOrigem, Long numeroEdicaoDestino) {
 		
-		this.transferenciaEstoqueParcialService.transferir(
-			codigoProduto, numeroEdicaoOrigem, numeroEdicaoDestino, super.getUsuarioLogado().getId());
+		this.transferenciaEstoqueParcialService.transferir(codigoProduto, numeroEdicaoOrigem, numeroEdicaoDestino, super.getUsuarioLogado().getId());
 		
-		this.result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência efetuada com sucesso."), 
-				"result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência efetuada com sucesso."), "result").recursive().serialize();
 	}
 	
 }

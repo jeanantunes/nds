@@ -59,17 +59,19 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 			throw new ValidacaoException(TipoMensagem.ERROR, "Número de Edição inválido.");
 		}
 		
-		ProdutoEdicao produtoEdicao = 
-			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				codigoProduto, numeroEdicao.toString());
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
 		
 		if (produtoEdicao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição inválido.");
 		}
 		
-		BigInteger qtdeEstoqueParaTransferencia =
-			this.estoqueProdutoRespository.buscarQtdeEstoqueParaTransferenciaParcial(produtoEdicao.getId());
+		if(produtoEdicao.isParcial()) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não é possível transferir estoque de um produto Parcial.");
+		}
+		
+		BigInteger qtdeEstoqueParaTransferencia = this.estoqueProdutoRespository.buscarQtdeEstoqueParaTransferenciaParcial(produtoEdicao.getId());
 		
 		return qtdeEstoqueParaTransferencia == null ? BigInteger.ZERO : qtdeEstoqueParaTransferencia;
 	}
@@ -161,15 +163,14 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 
 	private void fecharLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
 		
-		List<Lancamento> lancamentos = 
-			this.lancamentoRepository.obterLancamentosDaEdicao(produtoEdicaoOrigem.getId());
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosDaEdicao(produtoEdicaoOrigem.getId());
 		
 		if (lancamentos == null || lancamentos.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há lançamento para o produto/edição de origem.");
 		}
 		
-		for (Lancamento lancamentoOrigem : lancamentos){
+		for (Lancamento lancamentoOrigem : lancamentos) {
 		    
 		    lancamentoOrigem.setStatus(StatusLancamento.FECHADO);
 	        

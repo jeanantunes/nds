@@ -193,13 +193,17 @@ public class ProdutoServico implements Serializable {
 	@XmlTransient
 	private BigDecimal valorAliquotaIPI;
 	
-	@Column(name="VALOR_FRETE_COMPOE_VALOR_NF", precision=13, nullable=false)
+	@Column(name="VALOR_COMPOE_VALOR_NF", precision=13, nullable=false)
 	@XmlTransient
-	private boolean valorFreteCompoeValorNF;
+	private boolean valorCompoeValorNF;
 	
 	@Transient
 	@XmlElement(name="indTot")
-	private Long valorFreteCompoeValorNFXML;
+	private Long valorCompoeValorNFXML;
+	
+	@XmlTransient
+	@Column(name="VALOR_FRETE_COMPOE_VALOR_NF", precision=13, nullable=false)
+	private boolean valorFreteCompoeValorNF;
 	
 	@ManyToMany
 	@JoinTable( joinColumns = {			
@@ -462,13 +466,22 @@ public class ProdutoServico implements Serializable {
 		this.valorAliquotaIPI = valorAliquotaIPI;
 	}
 
+	
+	public boolean isValorCompoeValorNF() {
+		return valorCompoeValorNF;
+	}
+
+	public void setValorCompoeValorNF(boolean valorCompoeValorNF) {
+		this.valorCompoeValorNF = valorCompoeValorNF;
+		this.valorCompoeValorNFXML = valorCompoeValorNF ? 1L : 0L;
+	}
+
 	public boolean isValorFreteCompoeValorNF() {
 		return valorFreteCompoeValorNF;
 	}
 
 	public void setValorFreteCompoeValorNF(boolean valorFreteCompoeValorNF) {
-		this.valorFreteCompoeValorNF = valorFreteCompoeValorNF;
-		this.valorFreteCompoeValorNFXML = valorFreteCompoeValorNF ? 1L : 0L; 
+		this.valorFreteCompoeValorNF = valorFreteCompoeValorNF; 
 	}
 
 	/**
