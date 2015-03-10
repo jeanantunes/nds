@@ -15,7 +15,7 @@
 	<context:annotation-config />
 	<context:property-placeholder
 		location="classpath:nds-client.properties, classpath:prophecies.properties"
-		ignore-unresolvable="true" />
+		ignore-unresolvable="false" />
 	<context:component-scan base-package="br.com.abril.nds" />
 
 	<!-- TOMCAT -->
@@ -35,8 +35,7 @@
 
 	<util:properties id="properties" location="classpath:nds-client.properties" />
 	<util:properties id="queries" location="classpath:/query.properties" />
-	<util:properties id="query_estudo"
-		location="classpath:/query-estudo.properties" />
+	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
 
 	<!-- 
 	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler" />
