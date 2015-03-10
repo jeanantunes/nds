@@ -294,32 +294,42 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte
 	// (exceto repartes fixados (FX), quantidades MAXIMAS E MINIMAS (MM) e bancas com MIX (MX)).
 	BigInteger reparte = BigInteger.ONE;
+	BigInteger excessaoDoTratamento = BigInteger.ZERO;
+
 	if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
 	    reparte = estudo.getPacotePadrao();
 	}
+		
 		while (estudo.getReparteDistribuir().compareTo(reparte) >= 0 || estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0) {
 		    for (CotaEstudo cota : cotas) {
 				if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 					ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
 					    if (estudo.getReparteDistribuir().compareTo(reparte) >= 0) {
-						cota.setReparteCalculado(cota.getReparteCalculado().add(reparte), estudo);
+					    	cota.setReparteCalculado(cota.getReparteCalculado().add(reparte), estudo);
 					    } else if ((estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0)) {
-					    	if(cota.getReparteCalculado().compareTo(cota.getReparteMinimoFinal()) > 0){
-					    		cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
-					    	}
-					    } else {
-					    	break;
-					    }
+							    	if(cota.getReparteCalculado().compareTo(cota.getReparteMinimoFinal()) > 0){
+							    		cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
+							    	}
+					    		} else {
+					    			break;
+					    		}
 				}
+				
 				if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 0) {
 				    break;
 				}
+				
 		    }
 		    
 		    if(cotas.size() == 0){
 		    	break;
 		    }
+
+		    if(excessaoDoTratamento.compareTo(estudo.getReparteDistribuir()) == 0){
+		    	break;
+		    }
 		    
+		    excessaoDoTratamento = estudo.getReparteDistribuir();
 		}
     }
 }

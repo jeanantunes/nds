@@ -1898,7 +1898,7 @@ var recebimentoFisicoController = $.extend(true, {
 			 					index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
 			 var precoCapa ='<span class="money" maxlength="17" value="'+valuePrecoCapa+
-			 				'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapaItem'+ index +
+			 				'" type="text" readonly="readonly" name="itensRecebimento.precoCapaItem" id="precoCapaItem'+ index +
 			 				'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
 			 
 			 var precoDesconto ='<span class="money" maxlength="17" value="'+valuePrecoDesconto+
@@ -1908,7 +1908,9 @@ var recebimentoFisicoController = $.extend(true, {
 			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+
 			 					'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +
 			 					'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+
-			 					'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+			 					'); recebimentoFisicoController.alterarValorItem('+index+'); '+
+			 					'$(\'#checkbox'+ index +'\').check(); '+
+			 					'recebimentoFisicoController.replicarQtdLancamentoManual('+index+');"></input>';
 			     
 	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+
 	         					'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +
@@ -2249,7 +2251,7 @@ var recebimentoFisicoController = $.extend(true, {
 							'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 		
 		 var precoCapa ='<span class="money" maxlength="17"'+
-						'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapaItem'+ index +
+						'" type="text" readonly="readonly" name="itensRecebimento.precoCapaItem" id="precoCapaItem'+ index +
 						'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
 		
 		var precoDesconto ='<span class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+
@@ -2300,7 +2302,7 @@ var recebimentoFisicoController = $.extend(true, {
     },
     
     //ADICIONA NOVA LINHA NA GRID
-    incluiNovoItem : function(){
+    incluiNovoItem : function() {
     	
     	var data = [];
 
@@ -2435,7 +2437,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaProduto).find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
 				$(colunaEdicao).find('input[name="itensRecebimento.edicaoItem"]').val(dataValores[index].cell[2].value);
 				$(colunaPacotePadrao).find('[name="itensRecebimento.pacotePadraoItem"]').text(dataValores[index].cell[3].value);
-				$(colunaPrecoCapa).find('[name="itensRecebimento.precoCapa"]').text(dataValores[index].cell[4].value);
+				$(colunaPrecoCapa).find('[name="itensRecebimento.precoCapaItem"]').text(dataValores[index].cell[4].value);
 				$(colunaPrecoDesconto).find('[name="itensRecebimento.precoDescontoItem"]').text(dataValores[index].cell[5].value);
 				
 				$(colunaQtdNota).find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[6].value);

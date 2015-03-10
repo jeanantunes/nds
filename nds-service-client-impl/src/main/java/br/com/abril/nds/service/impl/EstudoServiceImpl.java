@@ -47,6 +47,7 @@ import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
+import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.LancamentoService;
@@ -82,6 +83,9 @@ public class EstudoServiceImpl implements EstudoService {
     
     @Autowired
     private LancamentoService lancamentoService;
+    
+    @Autowired
+    private AnaliseParcialService analiseParcialService;
     
     @Autowired
     private HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService;
@@ -150,6 +154,8 @@ public class EstudoServiceImpl implements EstudoService {
 			final Integer reparte = lancamentoService.obterRepartePromocionalEdicao(codigoProduto, numeroEdicao);
 			analiseDTO.setQtdRepartePromocional(BigIntegerUtil.valueOfInteger(reparte));
 		}
+		
+		analiseDTO.setAbrangenciaEstudo(analiseParcialService.calcularPercentualAbrangencia(estudoId));
 		
 		return analiseDTO;
 	}

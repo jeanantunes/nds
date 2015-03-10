@@ -80,16 +80,17 @@ public class PeriodoLancamentoParcial implements Serializable {
 	 */
 	public Lancamento getLancamentoPeriodoParcial(){
 		
-		if(this.lancamentos == null ){
+		if(this.lancamentos == null ) {
 			return null;
 		}
 		
-		for(Lancamento item : this.lancamentos){
-			if(TipoLancamento.LANCAMENTO.equals(item.getTipoLancamento())){
+		for(Lancamento item : this.lancamentos) {
+			if(TipoLancamento.LANCAMENTO.equals(item.getTipoLancamento())) {
 				return item;
 			}
 		}
-		return null;
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum lançamento do tipo \"LANCAMENTO\" foi encontrado para este período.");
 	}
 
 	public Lancamento getPrimeiroLancamento() {
@@ -109,8 +110,8 @@ public class PeriodoLancamentoParcial implements Serializable {
 		
 		for (Lancamento item : this.lancamentos) {
 			
-			if (maiorNumeroLancamento == null
-					|| maiorNumeroLancamento < item.getNumeroLancamento()) {
+			if (item.getTipoLancamento() != null && item.getTipoLancamento().equals(TipoLancamento.LANCAMENTO)
+					&& (maiorNumeroLancamento == null || maiorNumeroLancamento < item.getNumeroLancamento())) {
 				
 				maiorNumeroLancamento = item.getNumeroLancamento();
 				
