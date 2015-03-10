@@ -144,4 +144,16 @@ public class BloqueioConferenciaEncalheComponent {
 
 	}
 
+	@Transactional
+	public void limparSessionsConferenciaCotaUsuario() {
+		
+		try {
+			
+			conferenciaEncalheCotaUsuarioRepository.removerTodos();
+		} catch(DataIntegrityViolationException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível limpar as sessões no Banco de Dados."));
+		}
+	}
+
 }

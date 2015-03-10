@@ -15,5 +15,7 @@ public interface ConferenciaEncalheCotaUsuarioRepository extends Repository<Conf
 	public int removerPorLogin(String login);
 	
 	public int removerPorSessionId(String sessionId);
+
+	public int removerTodos();
 	
 }

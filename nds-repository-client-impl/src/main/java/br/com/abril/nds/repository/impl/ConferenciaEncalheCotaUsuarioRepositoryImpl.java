@@ -81,5 +81,14 @@ public class ConferenciaEncalheCotaUsuarioRepositoryImpl extends AbstractReposit
 		
 		return query.executeUpdate();
 	}
+
+	@Override
+	public int removerTodos() {
+		
+		String hql = "delete from ConferenciaEncalheCotaUsuario";
+		Query query = getSession().createQuery(hql);
+		
+		return query.executeUpdate();
+	}
 	
 }
