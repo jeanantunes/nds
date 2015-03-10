@@ -20,10 +20,10 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(SimpleSecurityHandlerBean.class);
 	
-	@Value(value="${secutiry.certificate.alias:}")
+	@Value("${security.certificate.alias}")
 	private String alias;
 	
-	@Value(value="${secutiry.certificate.password:}")
+	@Value("${security.certificate.password}")
 	private char[] password;
 	   
 	public SimpleSecurityHandlerBean() {
@@ -41,10 +41,10 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 		try {
 			if (getKeyStore() != null) {
 				logger.debug("Recuperando credenciais de armazém tipo {}.", getKeyStore().getType());
-				if (getKeyStore().containsAlias("{3ed46e23-51f5-462f-ab68-b5bea536993d}")) {
-					privateKey = (PrivateKey) getKeyStore().getKey("{3ed46e23-51f5-462f-ab68-b5bea536993d}", "arutil14".toCharArray());
+				if (getKeyStore().containsAlias(alias)) {
+					privateKey = (PrivateKey) getKeyStore().getKey(alias, password);
 					logger.debug("Chave particular recuperada no formato: {}.", privateKey.getFormat());
-					certificate = getKeyStore().getCertificate("{3ed46e23-51f5-462f-ab68-b5bea536993d}");
+					certificate = getKeyStore().getCertificate(alias);
 					logger.debug("Certificado recuperado: {}.", ((X509Certificate) certificate).getSubjectDN());
 				} else {
 					throw new IllegalArgumentException(
