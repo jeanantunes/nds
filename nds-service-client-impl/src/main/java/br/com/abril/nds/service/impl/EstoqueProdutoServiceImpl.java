@@ -23,6 +23,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -64,6 +65,8 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRespository;
 	
+	@Autowired
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
@@ -344,4 +347,10 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	     }
 	}
 	 
+	@Override
+	@Transactional
+	public BigInteger obterVendaBaseadoNoEstoque(Long idProdutoEdicao){
+		return estoqueProdutoCotaRepository.obterVendaBaseadoNoEstoque(idProdutoEdicao);
+	}
+
 }

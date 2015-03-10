@@ -51,5 +51,7 @@ public interface EstoqueProdutoService {
     EstoqueProduto obterEstoqueProdutoParaAtualizar(Long idProdutoEdicao);
 
     void atualizarEstoqueProdutoCota();
+
+	BigInteger obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
     
 }

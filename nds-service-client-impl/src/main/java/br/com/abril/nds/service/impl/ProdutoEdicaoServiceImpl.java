@@ -81,6 +81,7 @@ import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -185,7 +186,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
     
     @Autowired
-    HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
+    private HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
+    
+    @Autowired
+    private EstoqueProdutoService estoqueProdutoService;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -1923,7 +1927,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     @Transactional
     public List<ProdutoEdicaoDTO> obterEdicoesProduto(final FiltroHistoricoVendaDTO filtro) {
-        return produtoEdicaoRepository.obterEdicoesProduto(filtro);
+    	
+    	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
+    	
+    	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
+			if(peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO") && peDTO.getVenda() == 0){
+				peDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).doubleValue());
+			}
+		}
+    	
+    	return listEdicoesProdutoDto; 
     }
     
     /**
