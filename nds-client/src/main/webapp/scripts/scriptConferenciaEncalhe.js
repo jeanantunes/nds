@@ -1300,9 +1300,14 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				var proximoCampo = (index - 1); 
 
-				var position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				var position = index;
+				if($(listaItemGrid[proximoCampo]) && $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]')
+						&& $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val()) {
 				
-				setTimeout(function(){
+					position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				}
+				
+				setTimeout(function() {
 					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').focus().setCursorPosition(position);
 				},1);
 				
@@ -1310,9 +1315,14 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				var proximoCampo = (index + 1);
 
-				var position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				var position = index;
+				if($(listaItemGrid[proximoCampo]) && $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]')
+						&& $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val()) {
 				
-				setTimeout(function(){
+					position = $(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').val().length;
+				}
+				
+				setTimeout(function() {
 					$(listaItemGrid[proximoCampo]).find('[id^="qtdExemplaresGrid_"]').focus().setCursorPosition(position);
 				},1);
 				
@@ -1362,9 +1372,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
 				param, 
-				function(result){
-			
-					executarPosAtualizacaoGrid();
+				function(result) {
+					if(executarPosAtualizacaoGrid) {
+						
+						executarPosAtualizacaoGrid();
+					}
 			
 				}, function(){
 					
@@ -1537,6 +1549,11 @@ var ConferenciaEncalhe = $.extend(true, {
 									
 									focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 									
+									if($('#dialog-autenticar-supervisor input')) {
+										
+										$('#dialog-autenticar-supervisor input').val('');
+									}
+									
 									$(this).dialog("close");
 								}
 							},
@@ -1554,6 +1571,11 @@ var ConferenciaEncalhe = $.extend(true, {
 									
 									ConferenciaEncalhe.atribuirAtalhos();
 									
+								}
+								
+								if($('#dialog-autenticar-supervisor input')) {
+									
+									$('#dialog-autenticar-supervisor input').val('');
 								}
 								
 								setTimeout(function(){
@@ -1635,7 +1657,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					ConferenciaEncalhe.atualizarValores(index);
 					
 					setTimeout(function() {
-						ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.popup_salvarInfos);
+						ConferenciaEncalhe.atualizarValoresGridInteira();
 					}, 1000);
 					
 				} else {
@@ -1643,6 +1665,9 @@ var ConferenciaEncalhe = $.extend(true, {
 					ConferenciaEncalhe.adicionarProdutoConferido();
 				}
 
+				ConferenciaEncalhe.removerAtalhos();
+				ConferenciaEncalhe.atribuirAtalhos();
+				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog("close");
 				return;
 			},
