@@ -1038,7 +1038,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				&& "checked".equalsIgnoreCase(filtro.getInserirComponentes())
 				&& !"-1".equalsIgnoreCase(filtro.getComponente())) {
 
-			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota2_.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
+			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
 
 			switch (ComponentesPDV.values()[Integer.parseInt(filtro
 					.getComponente())]) {
@@ -1088,9 +1088,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case COTAS_A_VISTA:
 
-				queryStringProdutoEdicao += " left outer join PARAMETRO_COBRANCA_COTA param_cob_cota on cota2_.ID = param_cob_cota.cota_id ";
-
-				whereList.add(" param_cob_cota.tipo_cota = :tipoCota");
+				whereList.add(" cota.tipo_cota = :tipoCota");
 				parameterMap.put("tipoCota",TipoCota.A_VISTA);
 
 				break;
@@ -1109,7 +1107,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 
 		whereList.add("l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','EM_RECOLHIMENTO','RECOLHIDO','FECHADO')");
-		whereList.add(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+		whereList.add(" tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
 		
 		queryStringProdutoEdicao += " where "+StringUtils.join(whereList," and ");
 
@@ -1334,9 +1332,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case COTAS_A_VISTA:
 
-				queryStringProdutoEdicao += " left outer join PARAMETRO_COBRANCA_COTA param_cob_cota on cota2_.ID = param_cob_cota.cota_id ";
-
-				whereList.add(" param_cob_cota.tipo_cota = :tipoCota");
+				whereList.add(" cota2_.tipo_cota = :tipoCota");
 				parameterMap.put("tipoCota",TipoCota.A_VISTA);
 
 				break;
