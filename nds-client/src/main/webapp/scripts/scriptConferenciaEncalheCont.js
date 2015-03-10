@@ -722,11 +722,14 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
 				param, 
-				function(result){
+				function(result) {
 			
-					executarPosAtualizacaoGrid();
+					if(executarPosAtualizacaoGrid) {
+						
+						executarPosAtualizacaoGrid();
+					}
 			
-				}, function(){
+				}, function() {
 					
 					var data = [
 								  {name: 'numeroCota', 			value : $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val()}, 
@@ -848,7 +851,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								"Ok": function() {
 									
 									ConferenciaEncalheCont.resetValue = false;
-									ConferenciaEncalheCont.autenticarSupervisor(index, salvandoOuFinalizandoConferenciaCont);
+									ConferenciaEncalheCont.autenticarSupervisor(index, caller);
 									
 								},
 								"Cancelar": function() {
@@ -856,6 +859,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 									ConferenciaEncalheCont.atribuirAtalhos();
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+									
+									if($('#dialog-autenticar-supervisor input')) {
+										
+										$('#dialog-autenticar-supervisor input').val('');
+									}
 									
 									$(this).dialog("close");
 								}
@@ -874,7 +882,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 							},
 							
-							close: function(){
+							close: function() {
 								
 								if (ConferenciaEncalheCont.resetValue) {
 									
@@ -886,6 +894,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 										$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
 									},1);
 									
+								}
+								
+								if($('#dialog-autenticar-supervisor input')) {
+									
+									$('#dialog-autenticar-supervisor input').val('');
 								}
 								
 								ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
@@ -917,10 +930,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
 			
-			exibirMensagem(
-				'WARNING', 
-				['Usuário e senha são obrigatórios.']
-			);
+			exibirMensagem('WARNING', ['Usuário e senha são obrigatórios.']);
 			
 			ConferenciaEncalheCont.resetValue = true;
 			
@@ -952,7 +962,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.atualizarValores(index, true);
 					
 					setTimeout(function() {
-						ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
+						ConferenciaEncalheCont.atualizarValoresGridInteira();
 					}, 1000);
 				}
 				

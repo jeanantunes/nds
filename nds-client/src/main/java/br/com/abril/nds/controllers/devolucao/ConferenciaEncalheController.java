@@ -61,7 +61,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
+import br.com.abril.nds.session.scoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -193,7 +193,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Abertura da tela]")
 	public void index() {
 		
-		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, null);
 		
 		this.result.include(
 				"dataOperacao", 
@@ -457,9 +457,9 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
-	public void iniciarConferenciaEncalhe(final Integer numeroCota){
+	public void iniciarConferenciaEncalhe(final Integer numeroCota) {
 
-		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, numeroCota);
 
 		limparDadosSessao();
 
@@ -565,7 +565,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
-		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
+		bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
+		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())) {
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		}	
@@ -616,7 +617,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
-		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
+		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD) {
 			
 			recarregarInfoConferenciaEncalheCotaEmSession(numeroCota, indConferenciaContingencia);
 			
