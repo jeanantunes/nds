@@ -566,7 +566,7 @@ public class ConferenciaEncalheController extends BaseController {
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
 		bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
-		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
+		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())) {
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		}	
@@ -617,7 +617,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
-		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
+		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD) {
 			
 			recarregarInfoConferenciaEncalheCotaEmSession(numeroCota, indConferenciaContingencia);
 			

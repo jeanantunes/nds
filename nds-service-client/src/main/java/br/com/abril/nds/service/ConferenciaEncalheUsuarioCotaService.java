@@ -1,19 +1,19 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.model.seguranca.ConferenciaEncalheUsuarioCota;
+import br.com.abril.nds.model.seguranca.ConferenciaEncalheCotaUsuario;
 
 /**
  * @author InfoA2
  */
 public interface ConferenciaEncalheUsuarioCotaService {
 
-	public ConferenciaEncalheUsuarioCota obterPorCota(Integer numeroCota);
+	public ConferenciaEncalheCotaUsuario obterPorCota(Integer numeroCota);
 	
-	public ConferenciaEncalheUsuarioCota obterPorLogin(String login);
+	public ConferenciaEncalheCotaUsuario obterPorLogin(String login);
 	
-	public ConferenciaEncalheUsuarioCota obterPorSessionId(String sessionId);
+	public ConferenciaEncalheCotaUsuario obterPorSessionId(String sessionId);
 	
-	public boolean removerPorLogin(Integer numeroCota);
+	public boolean removerPorCota(Integer numeroCota);
 	
 	public boolean removerPorLogin(String login);
     

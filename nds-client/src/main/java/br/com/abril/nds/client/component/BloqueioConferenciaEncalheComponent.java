@@ -1,21 +1,18 @@
 package br.com.abril.nds.client.component;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.seguranca.ConferenciaEncalheUsuarioCota;
+import br.com.abril.nds.model.seguranca.ConferenciaEncalheCotaUsuario;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ConferenciaEncalheCotaUsuarioRepository;
 import br.com.abril.nds.service.UsuarioService;
 
 @Component
@@ -23,6 +20,9 @@ public class BloqueioConferenciaEncalheComponent {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private ConferenciaEncalheCotaUsuarioRepository conferenciaEncalheCotaUsuarioRepository; 
 
 	/**
 	 * Se o usuário (session id) ja estiver conferindo alguma cota,
@@ -30,99 +30,58 @@ public class BloqueioConferenciaEncalheComponent {
 	 * 
 	 * @session
 	 */
+	@Transactional
 	public void validarUsuarioConferindoCota(HttpSession session, Integer numeroCota) {
 		
 		String user = usuarioService.getUsuarioLogado().getLogin();
 		
-		final ServletContext context = session.getServletContext();
-		
-		@SuppressWarnings("unchecked")
-		final Map<Integer, ConferenciaEncalheUsuarioCota> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, ConferenciaEncalheUsuarioCota>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
-		
-		if (mapaCotaConferidaUsuario != null && (mapaCotaConferidaUsuario.containsKey(numeroCota))) {
+		ConferenciaEncalheCotaUsuario cuc = conferenciaEncalheCotaUsuarioRepository.obterPorNumeroCota(numeroCota);
 			
-			ConferenciaEncalheUsuarioCota cuc = mapaCotaConferidaUsuario.get(numeroCota); 
-			if(cuc.getLogin().equals(user) && !cuc.getSessionId().equals(session.getId())) {
+		if(cuc == null || (cuc.getLogin().equals(user) && cuc.getSessionId().equals(session.getId()) && cuc.getNumeroCota().equals(numeroCota))) {
+			return;
+		}
+		
+		if(cuc.getLogin().equals(user) && !cuc.getSessionId().equals(session.getId())) {
 
-				throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não é possível executar Conferência de Encalhe simultânea para o usuário: %s!", cuc.getLogin()));
-			} else {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não é possível executar mais de uma conferência de encalhe ao mesmo tempo. Usuário %s conferindo!", cuc.getLogin()));
-			}
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Não é possível executar Conferência de Encalhe simultânea para o usuário: %s!", cuc.getLogin()));
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING
+					, String.format("Não é possível executar mais de uma conferência de encalhe ao mesmo tempo. Usuário %s conferindo!", (cuc != null ? cuc.getLogin() : "Não identificado")));
 		}
 	}
 	
-	private void verificarTravaConferenciaCotaUsuario(final Integer numeroCota, HttpSession session) {
+	@Transactional
+	private boolean existeTravaConferenciaCotaUsuario(final Integer numeroCota, HttpSession session) {
 		
-//		final String userSessionID = getIdentificacaoUnicaUsuarioLogado(session);
-		final String user = usuarioService.getNomeUsuarioLogado();
-		
-		final ServletContext context = session.getServletContext();
-		
-		@SuppressWarnings("unchecked")
-		final Map<Integer, ConferenciaEncalheUsuarioCota> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, ConferenciaEncalheUsuarioCota>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
-		
-		@SuppressWarnings("unchecked")
-		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-		
-			
-		if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
-			return;
-		} 
+		final String user = usuarioService.getUsuarioLogado().getLogin();
 		
 		validarUsuarioConferindoCota(session, numeroCota);
 		
-		if(!mapaCotaConferidaUsuario.containsKey(numeroCota)) {
-			return;
+		final ConferenciaEncalheCotaUsuario donoDoLockCotaConferida = conferenciaEncalheCotaUsuarioRepository.obterPorNumeroCota(numeroCota);
+		
+		if(donoDoLockCotaConferida == null) {
+			
+			return false;
 		}
 		
-		final ConferenciaEncalheUsuarioCota donoDoLockCotaConferida = mapaCotaConferidaUsuario.get(numeroCota);
-		
-		if(user.equals(donoDoLockCotaConferida)) {
-			return;
+		if(donoDoLockCotaConferida != null && user.equals(donoDoLockCotaConferida.getLogin())) {
+			
+			return true;
 		}
 		
         String nomeUsuario = "Não identificado";
 		
-		if(mapaLoginNomeUsuario != null && mapaLoginNomeUsuario.get(donoDoLockCotaConferida) != null) {
-			nomeUsuario = mapaLoginNomeUsuario.get(donoDoLockCotaConferida);
-		}
-		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
                 " Não é possível iniciar a conferência de encalhe para esta cota, "
-                    + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
-	
+                    + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + (donoDoLockCotaConferida != null ? donoDoLockCotaConferida.getNomeUsuario() : nomeUsuario) +" ] ");
 		
 	}
 	
+	@Transactional
 	public void removerTravaConferenciaCotaUsuario(HttpSession session) {
 		
-		final String userSessionID = this.getIdentificacaoUnicaUsuarioLogado(session);
-		
-		@SuppressWarnings("unchecked")
-		final Map<Integer, ConferenciaEncalheUsuarioCota> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, ConferenciaEncalheUsuarioCota>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
-		
-		@SuppressWarnings("unchecked")
-		final Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-
-		
-		if(mapaLoginNomeUsuario != null) {
-			mapaLoginNomeUsuario.remove(userSessionID);
-		}
-		
-		if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
-			return;
-		}
-		
-		final Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
-
-		for(final Integer numeroCota : cotasEmConferencia) {
-			ConferenciaEncalheUsuarioCota cuc = mapaCotaConferidaUsuario.get(numeroCota);
-			if(cuc.getLogin().equals(usuarioService.getUsuarioLogado().getLogin())) {
-				mapaCotaConferidaUsuario.remove(numeroCota);
-			}
-		}
-	
+		conferenciaEncalheCotaUsuarioRepository.removerPorSessionId(session.getId());
 	}
 	
 	public String getIdentificacaoUnicaUsuarioLogado(HttpSession session) {
@@ -139,6 +98,7 @@ public class BloqueioConferenciaEncalheComponent {
         return "Não Identificado";
 	}
 
+	@Transactional
 	public void atribuirTravaConferenciaCotaUsuario(Integer numeroCota, HttpSession session) {
 		
 		definirIdentificaoDoUsuario(session);
@@ -146,48 +106,21 @@ public class BloqueioConferenciaEncalheComponent {
 		final String nomeUsuario = usuarioService.getUsuarioLogado().getNome();
 		final String login = usuarioService.getUsuarioLogado().getLogin();
 		
-		verificarTravaConferenciaCotaUsuario(numeroCota, session);
+		if(!existeTravaConferenciaCotaUsuario(numeroCota, session)) {
 
-		final ServletContext context = session.getServletContext();
-
-		@SuppressWarnings("unchecked")
-		Map<Integer, ConferenciaEncalheUsuarioCota> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, ConferenciaEncalheUsuarioCota>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
-
-		@SuppressWarnings("unchecked")
-		Map<String, String> mapaLoginNomeUsuario = (LinkedHashMap<String, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO);
-
-		if(mapaCotaConferidaUsuario == null) {
-			mapaCotaConferidaUsuario = new LinkedHashMap<>();
-			context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO, mapaCotaConferidaUsuario);
-		}
-		
-
-		if(mapaLoginNomeUsuario == null) {
-			mapaLoginNomeUsuario = new LinkedHashMap<>();
-			context.setAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_LOGIN_NOME_USUARIO, mapaLoginNomeUsuario);
-		}
-		
-		if(mapaCotaConferidaUsuario != null) {
-			
-			for(Integer numeroCotaConferida : mapaCotaConferidaUsuario.keySet()) {
-				if(!numeroCotaConferida.equals(numeroCota)) {
-					if(mapaCotaConferidaUsuario.get(numeroCotaConferida) != null 
-							&& mapaCotaConferidaUsuario.get(numeroCotaConferida).getLogin() != null 
-							&& mapaCotaConferidaUsuario.get(numeroCotaConferida).getLogin().equals(login)) {
-						mapaCotaConferidaUsuario.remove(numeroCotaConferida);
-					}
-				}
+			conferenciaEncalheCotaUsuarioRepository.removerPorLogin(login);
+			ConferenciaEncalheCotaUsuario cuc = new ConferenciaEncalheCotaUsuario(login, nomeUsuario, session.getId(), numeroCota);
+			try {
+				
+				conferenciaEncalheCotaUsuarioRepository.adicionar(cuc);
+			} catch(DataIntegrityViolationException e) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s está sendo conferida.", numeroCota));
 			}
 		}
-
-		ConferenciaEncalheUsuarioCota cuc = new ConferenciaEncalheUsuarioCota(login, nomeUsuario, session.getId(), numeroCota);
-		
-		mapaLoginNomeUsuario.put(login, (String) session.getAttribute(Constants.USER_NAME_PARA_TRAVA_CONFERENCIA));
-		
-		mapaCotaConferidaUsuario.put(numeroCota, cuc);
 	}
 
-	
+	@Transactional
 	private void definirIdentificaoDoUsuario(HttpSession session) {
 
 		final Usuario usuario = usuarioService.getUsuarioLogado();

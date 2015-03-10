@@ -8,9 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 
-//@Entity
-//@Table(name = "CONFERENCIA_ENCALHE_COTA_USUARIO")
-public class ConferenciaEncalheUsuarioCota implements Serializable {
+@Entity
+@Table(name = "CONFERENCIA_ENCALHE_COTA_USUARIO")
+public class ConferenciaEncalheCotaUsuario implements Serializable {
 	
 	/**
 	 * 
@@ -24,13 +24,17 @@ public class ConferenciaEncalheUsuarioCota implements Serializable {
 	@Column(name="LOGIN", nullable = false, unique = true)
 	private String login;
 
-	@Column(name="NUMERO_USUARIO")
+	@Column(name="NOME_USUARIO")
 	private String nomeUsuario;
 	
 	@Column(name="SESSION_ID", nullable = false, unique = true)
 	private String sessionId;
 	
-	public ConferenciaEncalheUsuarioCota(String login, String nomeUsuario, String sessionId, Integer numeroCota) throws IllegalArgumentException {
+	public ConferenciaEncalheCotaUsuario() {
+		super();
+	}
+	
+	public ConferenciaEncalheCotaUsuario(String login, String nomeUsuario, String sessionId, Integer numeroCota) throws IllegalArgumentException {
 		this.login = login;
 		this.nomeUsuario = nomeUsuario;
 		this.sessionId = sessionId;
