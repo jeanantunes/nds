@@ -504,6 +504,7 @@ public class NFeServiceImpl implements NFeService {
 		}
 		
 		ParametroSistema ps = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+		
 		if (ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.equals(ProcessoEmissao.valueOf(ps.getValor())) && TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
 			
 			this.ftfService.gerarFtf(notas);
@@ -513,7 +514,7 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		// if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		
 		return notas;
 	}
@@ -916,7 +917,7 @@ public class NFeServiceImpl implements NFeService {
 		
 		for (final Cota cota : cotas) {
 			
-			final NotaFiscal notaFiscal = new NotaFiscal();
+			NotaFiscal notaFiscal = new NotaFiscal();
 			naturezaOperacao.setNotaFiscalNumeroNF(naturezaOperacao.getNotaFiscalNumeroNF() + 1);
 			naturezaOperacaoRepository.merge(naturezaOperacao);
 			
@@ -943,6 +944,10 @@ public class NFeServiceImpl implements NFeService {
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
 			montaChaveAcesso(notaFiscal);
+			
+			//notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(6L);
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
+			
 			
 			// obter os movimentos da cota
 			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();
@@ -1399,7 +1404,7 @@ public class NFeServiceImpl implements NFeService {
         chave.append(lpadTo(String.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal()), 9, '0'));  
         chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoEmissao().getIntValue().toString(), 1, '0'));  
         chave.append(lpadTo(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF(), 8, '0'));  
-        chave.append(modulo11(chave.toString()));
+        chave.append(gerarChaveAcesso(chave.toString()));
 		
         chave.insert(0, "NFe");
 		
@@ -1435,7 +1440,7 @@ public class NFeServiceImpl implements NFeService {
         return strPad;  
 	}  
 	
-	public static int modulo11(String chave) {  
+	public static int gerarChaveAcesso(String chave) {  
         int total = 0;  
         int peso = 2;  
               

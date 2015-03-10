@@ -8,7 +8,6 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.TransportadorWrapper;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 
 public class NotaFiscalTransportadorBuilder {

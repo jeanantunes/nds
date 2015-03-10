@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,8 +37,9 @@ public class NotaFiscalInformacoes implements Serializable {
 	 */
 	private static final long serialVersionUID = -580456077685816545L;
 	
+	@Transient
 	@XmlAttribute(name="Id")
-	private static String idNFe;
+	private String idNFe;
 	
 	@XmlAttribute
 	private static String versao = "3.10";
@@ -147,7 +149,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	}
 
 	public void setIdNFe(String idNFe) {
-		NotaFiscalInformacoes.idNFe = idNFe;
+		this.idNFe = idNFe;
 	}
 
 	public static String getVersao() {
