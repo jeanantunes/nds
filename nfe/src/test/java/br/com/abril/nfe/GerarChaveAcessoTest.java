@@ -1,5 +1,7 @@
 package br.com.abril.nfe;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,8 @@ public class GerarChaveAcessoTest {
 	
 	@Test
 	public void montarChaveAcesso() throws Exception {
+		String chaveAcesso = "NFe42110585785244000199550010000000202000000050";
+		
 		try {  
             String cUF = "42"; // Código da UF do emitente do Documento Fiscal.  
             String dataAAMM = "1105"; // Ano e Mês de emissão da NF-e.  
@@ -32,7 +36,9 @@ public class GerarChaveAcessoTest {
             chave.append(gerarChaveAcesso(chave.toString()));  
   
             chave.insert(0, "NFe");  
-  
+            
+            
+            // Assert.assertEquals(chave, chaveAcesso);
             info("Chave NF-e: " + chave.toString());
 		} catch (Exception e) {  
 			LOGGER.error("Exception: "+ e.getMessage());  

@@ -94,7 +94,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal() != null ? distribuidor.getJuridica().getInscricaoMunicipal() : "0");
 		
 		//FIXME: Obter o valor cnae
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("4789099");
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("4618403");
 		
 		//FIXME: Obter o valor crt
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
@@ -265,8 +265,6 @@ public class NotaFiscalBuilder implements Serializable {
 		//FIXME: Ajustar codigo de municipio do cadastro
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(6L);
-		
 	}
 
 	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Distribuidor distribuidor, Map<String, ParametroSistema> parametrosSistema) {
@@ -325,7 +323,7 @@ public class NotaFiscalBuilder implements Serializable {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(0L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		}
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(6L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
 		
 	}
 	
