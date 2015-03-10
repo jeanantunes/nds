@@ -1931,7 +1931,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
     	
     	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
-			if(peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO") && peDTO.getVenda() == 0){
+			if(peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO") && (peDTO.getVenda() == null || peDTO.getVenda() == 0)){
 				peDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).doubleValue());
 			}
 		}
