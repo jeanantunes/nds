@@ -806,13 +806,18 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
 				data, 
-				function(result){
+				function(result) {
 					
 					ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);
 					
 					ConferenciaEncalhe.configurarAtalhos();
 					
 					$(".atalhosCE", ConferenciaEncalhe.workspace).show();
+				},
+				function() {
+					
+					$("#conferencia-numeroCota", ConferenciaEncalhe.workspace).val("");
+					focusSelectRefField($("#conferencia-numeroCota", ConferenciaEncalhe.workspace));
 				}
 		);
 	},
@@ -964,7 +969,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	preProcessarConsultaConferenciaEncalhe : function(result, indNaoAlteraFoco) {
 		
-		if (result.mensagens){
+		if (result.mensagens) {
 			
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 			
