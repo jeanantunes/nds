@@ -1726,7 +1726,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	for (EdicoesProdutosDTO edicoesProdutosDTO : historicoEdicoes) {
 			if(edicoesProdutosDTO.getStatus().equalsIgnoreCase("FECHADO") 
 					&& (edicoesProdutosDTO.getVenda() == null || edicoesProdutosDTO.getVenda().compareTo(BigInteger.ZERO)<=0)){
-				edicoesProdutosDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(edicoesProdutosDTO.getIdProdutoEdicao()));
+				edicoesProdutosDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(edicoesProdutosDTO.getIdProdutoEdicao().longValue()));
 			}
 		}
     	

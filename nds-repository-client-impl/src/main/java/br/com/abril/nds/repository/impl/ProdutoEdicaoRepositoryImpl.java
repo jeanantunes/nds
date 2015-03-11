@@ -1123,7 +1123,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		configurarPaginacao(filtro,query);
 		
 		query.addScalar("edicao", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("dtRecolhimento", StandardBasicTypes.DATE);
 		query.addScalar("dtLancamento", StandardBasicTypes.DATE);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
