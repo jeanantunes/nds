@@ -50,5 +50,5 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	public abstract ItemDTO<Long, BigInteger> loadIdAndQtdDevolvidaByIdProdutoEdicaoAndIdCota(
 			final Long idProdutoEdicao, final Long idCota);
 
-	BigInteger obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
+	BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
 }

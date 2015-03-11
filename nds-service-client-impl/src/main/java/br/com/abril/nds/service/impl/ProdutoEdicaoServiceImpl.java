@@ -1721,7 +1721,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     public List<EdicoesProdutosDTO> obterHistoricoEdicoes(final FiltroHistogramaVendas filtro) {
         
-        return produtoEdicaoRepository.obterHistoricoEdicoes(filtro);
+    	List<EdicoesProdutosDTO> historicoEdicoes = produtoEdicaoRepository.obterHistoricoEdicoes(filtro); 
+    	
+    	for (EdicoesProdutosDTO edicoesProdutosDTO : historicoEdicoes) {
+			if(edicoesProdutosDTO.getStatus().equalsIgnoreCase("FECHADO") 
+					&& (edicoesProdutosDTO.getVenda() == null || edicoesProdutosDTO.getVenda().compareTo(BigInteger.ZERO)<=0)){
+				edicoesProdutosDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(edicoesProdutosDTO.getIdProdutoEdicao()));
+			}
+		}
+    	
+        return historicoEdicoes;
     }
     
     @Transactional(readOnly = true)
@@ -1931,8 +1940,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
     	
     	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
-			if(peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO") && (peDTO.getVenda() == null || peDTO.getVenda() == 0)){
-				peDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).doubleValue());
+			if((peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO")) 
+					&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+				peDTO.setQtdeVendas(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).toBigInteger());
 			}
 		}
     	

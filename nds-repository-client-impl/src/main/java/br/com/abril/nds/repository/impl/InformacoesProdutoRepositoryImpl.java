@@ -38,6 +38,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("         pd.codigo as codProduto, ");
 		sql.append("         pd.codigo_icd as codigoICD, ");
 		sql.append("         pe.numero_edicao as numeroEdicao, ");
+		sql.append("         pe.id as idProdutoEdicao, ");
 		sql.append("         coalesce(cast(sum(case ");
 		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ");
 		sql.append("             else -mecReparte.QTDE end) as unsigned int), 0) AS qtdeReparteEstudo, ");
@@ -134,6 +135,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		query.addScalar("codProduto", StandardBasicTypes.STRING);
 		query.addScalar("codigoICD", StandardBasicTypes.STRING);
 		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		query.addScalar("qtdeReparteEstudo", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
 		query.addScalar("periodo", StandardBasicTypes.INTEGER);
@@ -373,7 +375,12 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		}
 		
 		if (paginacao.getPosicaoInicial() != null) {
-			query.setFirstResult(paginacao.getPosicaoInicial());
+			if(paginacao.getPosicaoInicial() > paginacao.getQtdResultadosTotal()){
+				query.setFirstResult(1);
+				paginacao.setPaginaAtual(1);
+			}else{
+				query.setFirstResult(paginacao.getPosicaoInicial());
+			}
 		}
 	}
 

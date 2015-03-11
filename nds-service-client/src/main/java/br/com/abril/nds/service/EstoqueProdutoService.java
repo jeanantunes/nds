@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +53,6 @@ public interface EstoqueProdutoService {
 
     void atualizarEstoqueProdutoCota();
 
-	BigInteger obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
+	BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
     
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.Date;
@@ -349,7 +350,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 
 	@Override
 	@Transactional
-	public BigInteger obterVendaBaseadoNoEstoque(Long idProdutoEdicao){
+	public BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao){
 		return estoqueProdutoCotaRepository.obterVendaBaseadoNoEstoque(idProdutoEdicao);
 	}
 

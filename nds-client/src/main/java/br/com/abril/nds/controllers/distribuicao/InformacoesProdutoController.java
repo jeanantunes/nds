@@ -132,7 +132,7 @@ public class InformacoesProdutoController extends BaseController {
 				if(o1 != null && o2 != null) {
 					try {
 						if(sdf.parse(o1.getDataLcto()).compareTo(sdf.parse(o2.getDataLcto())) < 0) {
-							o2.setVenda(BigInteger.ZERO);
+//							o2.setVenda(BigInteger.ZERO);
 							return -1;
 						} else {
 							return 1;

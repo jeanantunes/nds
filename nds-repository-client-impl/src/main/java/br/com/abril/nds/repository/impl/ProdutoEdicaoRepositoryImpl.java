@@ -938,6 +938,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		String queryStringProdutoEdicao = 
 			"SELECT                                                                            "+
 			"    pe.NUMERO_EDICAO AS edicao,                                                   "+
+			"    pe.id AS idProdutoEdicao,                                                   "+
 			"    l.DATA_REC_DISTRIB AS dtRecolhimento,                                         "+
 			"    l.DATA_LCTO_DISTRIBUIDOR AS dtLancamento,                                     "+
 			"    p.NOME AS nomeProduto,                                                        "+
@@ -1124,6 +1125,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		configurarPaginacao(filtro,query);
 		
 		query.addScalar("edicao", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		query.addScalar("dtRecolhimento", StandardBasicTypes.DATE);
 		query.addScalar("dtLancamento", StandardBasicTypes.DATE);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
