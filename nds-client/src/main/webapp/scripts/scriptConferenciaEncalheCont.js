@@ -715,8 +715,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 		});
 		
-		var param = serializeArrayToPost('listaConferenciaEncalhe', 
-				data);
+		var param = serializeArrayToPost('listaConferenciaEncalhe', data);
 		
 		param.indConferenciaContingencia = true;
 		
@@ -768,7 +767,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValores", 
 			data, 
-			function(result){
+			function(result) {
 			
 			    $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(result.conf.qtdExemplar);
 			
@@ -784,26 +783,37 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				if(focusOnInput) {
 					
-					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
-					
-					setTimeout(function(){
-						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
-					},1);
+					if($("#qtdExemplaresGrid_"+ (index + 1))) {
+						
+						setTimeout(function() {
+							$("#qtdExemplaresGrid_"+ (index + 1)).focus();
+						}, 1);
+					} else if($("#qtdExemplaresGrid_"+ (index - 1))) {
+						
+						setTimeout(function() {
+							$("#qtdExemplaresGrid_"+ (index - 1)).focus();
+						}, 1);
+					} else {
+						
+						setTimeout(function() {
+							$("#contingencia-numeroCota").focus();
+						}, 1);
+					}
 					
 				}
 				
 			},
 			function(result) {
 
-				if (result.mensagens){
+				if (result.mensagens) {
 
 					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 					
 					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
 					
-					setTimeout(function(){
+					setTimeout(function() {
 						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
-					},1);
+					}, 1);
 					
 				}
 			}, null, null, false
@@ -830,7 +840,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					ConferenciaEncalheCont.resetValue = true;
 					
-					if (result[0]){
+					if (result[0]) {
 						
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalheCont.resetValue = false;
@@ -892,7 +902,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 									
 									setTimeout(function(){
 										$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
-									},1);
+									}, 1);
 									
 								}
 								
@@ -960,49 +970,52 @@ var ConferenciaEncalheCont = $.extend(true, {
 				if (index) {
 					
 					ConferenciaEncalheCont.atualizarValores(index, true);
-					
+										
 					setTimeout(function() {
 						ConferenciaEncalheCont.atualizarValoresGridInteira();
 					}, 1000);
 				}
 				
-				if (callback) {
-					callback(paramCallback, keepDialog);
+				if(callback && callback == 'keydown.salvarConferencia') {
+					ConferenciaEncalheCont.salvarConferencia();
+				} else if(callback && callback == 'keydown.finalizarConferencia') {
+					ConferenciaEncalheCont.finalizarConferencia();
 				}
 				
-				$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalhe.salvarConferencia));
-				$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalhe.finalizarConferencia));
+				ConferenciaEncalheCont.removerAtalhos();
+				ConferenciaEncalheCont.atribuirAtalhos();
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
+				
 				return;
 			},
-			function (){
+			function () {
+				
 				ConferenciaEncalheCont.resetValue = true;
 			}
 		);
 	},
 	
-	enterOnSupervisorModal : function(event){
+	enterOnSupervisorModal : function(event) {
 		
-		if (event && event.keyCode == 13){
+		if (event && event.keyCode == 13) {
 			
 			$(".ui-dialog-buttonpane button:contains('Ok')", ConferenciaEncalheCont.workspace).click();
 		}
 	},
 	
-	numeroCotaEditavel : function(r){
+	numeroCotaEditavel : function(r) {
 		
-		if (r==false){
+		if (r==false) {
 			
 			$("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', true);
-		}
-		else{
+		} else {
 			
 			$("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', false);
 		}
 	},
 	
-	inicializarAutoCompleteSugestaoProdutoEdicao: function(){
+	inicializarAutoCompleteSugestaoProdutoEdicao: function() {
 		
 		var functionBuscaProduto = function(url, term, successCallback) { 
 		

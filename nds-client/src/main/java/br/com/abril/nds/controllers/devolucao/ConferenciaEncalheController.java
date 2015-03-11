@@ -174,15 +174,17 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
 	
-	private void preCarregarBoxes(){
+	private void preCarregarBoxes() {
 		
 		 // Obter box usuário
-		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
-				this.getUsuarioLogado().getBox().getId() != null){
+		if(this.getUsuarioLogado() != null && this.getUsuarioLogado().getBox() != null && 
+				this.getUsuarioLogado().getBox().getId() != null) {
 			
-			if(conferenciaEncalheSessionScopeAttr != null){
+			if(conferenciaEncalheSessionScopeAttr != null) {
 				conferenciaEncalheSessionScopeAttr.setIdBoxLogado(this.getUsuarioLogado().getBox().getId());
 			}
+			
+			this.result.include("idBoxLogado", conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 		}
 		
 		limparDadosSessao();
@@ -227,10 +229,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	public void carregarComboBoxEncalheContingencia() {
 		
-		final List<Box> boxes = 
-				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
+		final List<Box> boxes = this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
-		if( boxes!=null ) {
+		if(boxes != null) {
 
 			final Map<String, String> mapBox = new HashMap<String, String>();
 			
@@ -247,15 +248,14 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void carregarComboBoxEncalhe() {
 		
-		final List<Box> boxes = 
-				this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
+		final List<Box> boxes = this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
 		this.result.include("boxes", boxes);
 	}
 	
 	@Post
 	@Path("/obterBoxLogado")
-	public void obterBoxLogado(){
+	public void obterBoxLogado() {
 		
         Long idBoxlogado = (Long) this.session.getAttribute(ID_BOX_LOGADO_SESSION);
         
@@ -265,7 +265,9 @@ public class ConferenciaEncalheController extends BaseController {
 
         } else {
     		
-        	this.result.use(Results.json()).from("").serialize();
+        	idBoxlogado = (usuarioService.getUsuarioLogado() != null) ? 
+        						(usuarioService.getUsuarioLogado().getBox() != null ? usuarioService.getUsuarioLogado().getBox().getId() : 0L) : 0L;
+        	this.result.use(Results.json()).from(idBoxlogado == 0L ? "" : idBoxlogado).serialize();
         	
         }
         
@@ -565,7 +567,15 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
-		bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
+		try {
+			
+			bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
+		} catch(Throwable e) {
+			
+			LOGGER.error("A Cota %s está sendo conferida.", e);
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s está sendo conferida.", numeroCota));
+		}
+		
 		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())) {
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
@@ -1729,6 +1739,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Salvar conferência]")
 	public void salvarConferencia(final boolean indConferenciaContingencia){
 		
+		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
+		
 		this.verificarInicioConferencia();
 		
 		final ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
@@ -2040,6 +2053,9 @@ public class ConferenciaEncalheController extends BaseController {
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
+		
+		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
 		
 		if (horaInicio != null) {
 		

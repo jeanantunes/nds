@@ -2,6 +2,8 @@ package br.com.abril.nds.client.component;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,8 @@ import br.com.abril.nds.service.UsuarioService;
 
 @Component
 public class BloqueioConferenciaEncalheComponent {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BloqueioConferenciaEncalheComponent.class);
 	
 	@Autowired
 	private UsuarioService usuarioService;
@@ -113,8 +117,9 @@ public class BloqueioConferenciaEncalheComponent {
 			try {
 				
 				conferenciaEncalheCotaUsuarioRepository.adicionar(cuc);
-			} catch(DataIntegrityViolationException e) {
+			} catch(Throwable e) {
 				
+				LOGGER.error("A Cota %s está sendo conferida.", e);
 				throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s está sendo conferida.", numeroCota));
 			}
 		}
