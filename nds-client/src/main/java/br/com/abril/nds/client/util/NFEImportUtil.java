@@ -2,12 +2,16 @@ package br.com.abril.nds.client.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -21,10 +25,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
-import br.inf.portalfiscal.nfe.TNFe;
-import br.inf.portalfiscal.nfe.TNfeProc;
 import br.inf.portalfiscal.nfe.TProcCancNFe;
-import br.inf.portalfiscal.nfe.TRetCancNFe;
+import br.inf.portalfiscal.nfe.v310.TNFe;
+import br.inf.portalfiscal.nfe.v310.TNfeProc;
+import br.inf.portalfiscal.nfe.v310.TRetCancNFe;
 
 /**
  * Classe utilitária que importa os arquivos de nota fiscal.
@@ -83,23 +87,31 @@ public abstract class NFEImportUtil {
 	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
 	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
 	            
-	        }else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)){
-	        	context = JAXBContext.newInstance(TNfeProc.class);
-	            unmarshaller = context.createUnmarshaller();
-	        	final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
-	            retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
+	        } else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)){
+	        	
+	        	//context = JAXBContext.newInstance(TNfeProc.class);
+	            //unmarshaller = context.createUnmarshaller();
+	        	//final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
 	            
-	        }else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath)){
+				context = JAXBContext.newInstance(TNfeProc.class);  
+			   
+				unmarshaller = context.createUnmarshaller();  
+			   
+				TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(arquivo), TNfeProc.class).getValue();  
+			   
+				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
+	            
+	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath)){
 	        	
 	        	context = JAXBContext.newInstance(TProcCancNFe.class);
                 unmarshaller = context.createUnmarshaller();
                 final TRetCancNFe retornoCancelamentoNFe = (TRetCancNFe) unmarshaller.unmarshal(arquivo);
                 retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(retornoCancelamentoNFe);
 	        	
-	        }else{
+	        } else{
 	        	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
 	        }
-        
+	        
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
@@ -174,9 +186,20 @@ public abstract class NFEImportUtil {
             }
             final String chaveAcesso = nfeProc.getNFe().getInfNFe().getId().substring(3);
             final Long protocolo = Long.parseLong(nfeProc.getProtNFe().getInfProt().getNProt());
-            final Date dataRecebimento = nfeProc.getProtNFe().getInfProt().getDhRecbto().toGregorianCalendar()
-                    .getTime();
+            
+            Date dataRecebimento = null;
+            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+            
+        	try {
+        		dataRecebimento = dateParser.parse(nfeProc.getProtNFe().getInfProt().getDhRecbto());
+
+        	} catch (ParseException e) {
+        		throw new ValidacaoException(TipoMensagem.ERROR, "Erro na conversão da date recebida nfe");
+        	}
+            
+            
             final String motivo = null;
+            
             final StatusRetornado status = StatusRetornado.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
             
             retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
@@ -186,6 +209,7 @@ public abstract class NFEImportUtil {
             retornoNFEDTO.setDataRecebimento(dataRecebimento);
             retornoNFEDTO.setMotivo(motivo);
             retornoNFEDTO.setStatus(status);
+            
         } else {
             throw new ProcessamentoNFEException();
         }
