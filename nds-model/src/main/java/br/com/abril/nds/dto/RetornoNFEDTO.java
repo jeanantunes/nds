@@ -15,6 +15,8 @@ public class RetornoNFEDTO implements Serializable {
 
 	private static final long serialVersionUID = 9039066467977718266L;
 	
+	private Long idNota;
+	
 	private Long numeroNotaFiscal;
 	
 	private String cpfCnpj;
@@ -28,6 +30,14 @@ public class RetornoNFEDTO implements Serializable {
 	private String motivo;
 	
 	private Date dataRecebimento;
+	
+	public Long getIdNota() {
+		return idNota;
+	}
+
+	public void setIdNota(Long idNota) {
+		this.idNota = idNota;
+	}
 
 	public Long getNumeroNotaFiscal() {
 		return numeroNotaFiscal;
