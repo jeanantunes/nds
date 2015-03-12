@@ -24,6 +24,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
 import br.com.abril.nds.client.job.AjusteReparteJob;
 import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.client.job.FixacaoReparteJob;
@@ -76,6 +77,9 @@ public class ApplicationContextListener implements ServletContextListener {
 		try {
 			
 			final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
+			
+			BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent = springContext.getBean(BloqueioConferenciaEncalheComponent.class);
+			bloqueioConferenciaEncalheComponent.limparSessionsConferenciaCotaUsuario();
 			
 			SchedulerFactoryBean schedulerFactoryBean =	springContext.getBean(SchedulerFactoryBean.class);
 			 

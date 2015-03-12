@@ -323,7 +323,7 @@ public class MixCotaProdutoController extends BaseController {
 	@Post
 	@Path("/excluirTodos")
 	public void excluirTodos() {
-		mixCotaProdutoService.excluirTodos();
+//		mixCotaProdutoService.excluirTodos();
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
