@@ -2872,11 +2872,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		conferenciaEncalheRepository.remover(conferenciaEncalhe);
 		
-		if(movimentoEstoqueCota!=null){
+		if(movimentoEstoqueCota != null) {
+			
 			excluirRegistroMovimentoEstoqueCota(movimentoEstoqueCota);
 		}
 		
-		if(movimentoEstoque!=null){
+		if(movimentoEstoque != null) {
+			
 			movimentoEstoqueService.excluirRegistroMovimentoEstoqueDeEncalhe(cota, movimentoEstoque);
 		}
 		

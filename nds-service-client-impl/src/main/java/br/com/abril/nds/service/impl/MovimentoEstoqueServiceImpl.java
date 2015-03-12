@@ -189,7 +189,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                             null, idProdutoEdicao, movimento.getCota().getId(), idUsuario,
                             movimento.getQtde(), tipoMovimentoCota,lancamento.getDataLancamentoDistribuidor(), null, lancamento.getId(), null);
             
-            if (movimentoEstoqueCota.getTipoMovimento() != tipoMovimentoEstCotaAusente){
+            if (movimentoEstoqueCota.getTipoMovimento() != tipoMovimentoEstCotaAusente) {
                 
                 total = total.add(movimento.getQtde());
             } else {
