@@ -40,17 +40,34 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 
 	var params = this.getParams();
 	
-	$.postJSON(this.path + 'gerar',
-			params, 
-			function(data) {
+	if($("#tipoArquivo", this.workspace).val() == "PICKING") {
+		
+		$.postJSON(this.path + 'gerar',
+				params, 
+				function(data) {
+					$("#resultado", this.workspace).show();
+					$("#qtdArquivosGerados", this.workspace).html(data.int);
+				},
+				function(result) {
+					$("#resultado", this.workspace).show();
+					$("#qtdArquivosGerados", this.workspace).html(0);
+				}
+		);
+	} else {
+		
+		$.fileDownload(this.path + 'gerar', {
+			httpMethod : "POST",
+			data : params,
+			successCallback: function (data) {
 				$("#resultado", this.workspace).show();
 				$("#qtdArquivosGerados", this.workspace).html(data.int);
-			},
-			function(result) {
-				$("#resultado", this.workspace).show();
-				$("#qtdArquivosGerados", this.workspace).html(0);
+            },
+			failCallback : function(arg) {
+				exibirMensagem("WARNING", ["Erro ao gerar Arquivo!"]);
 			}
-	);
+		});
+	}
+	
 };
 
 GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
