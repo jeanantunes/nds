@@ -67,7 +67,7 @@
 	    
 	    	<legend>Arquivo retorno NFE</legend>
 	        
-			<div id="gridNFe" style="display: none;" class="grids">
+			<div id="gridNFe" class="grids">
 				<div id="retornoNfe-flexigrid-pesquisa" />
 			</div>
 	        

@@ -1,7 +1,6 @@
 var retornoNFEController  = $.extend(true, {
-	
+
 	path : contextPath +"/nfe/retornoNFe/",
-	
 	
 	init : function() {
 		this.initFlexiGrids();
@@ -11,15 +10,6 @@ var retornoNFEController  = $.extend(true, {
 	initFlexiGrids : function() {
 		
 		$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexigrid({
-			preProcess : (function(result) {	
-				if(result && result.mensagens) {
-					var tipoMensagem = result.mensagens.tipoMensagem;
-					var listaMensagens = result.mensagens.listaMensagens;
-					if (tipoMensagem && listaMensagens) {
-						exibirMensagemDialog(tipoMensagem, listaMensagens, "");
-					}
-				}
-			}),
 			colModel : [{
 				display : 'Num. Total de Arquivos',
 				name : 'numeroTotalArquivos',
@@ -52,7 +42,6 @@ var retornoNFEController  = $.extend(true, {
 		
 	},
 	
-	
 	initFiltroDatas : function() {
 		$.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor', null, 
 				function(result) {
@@ -60,7 +49,7 @@ var retornoNFEController  = $.extend(true, {
 		        }
 		);
 		
-		$( "#retornoNFEDataReferencia", retornoNFEController.workspace ).datepicker({
+		$( "#retornoNFEDataReferencia", retornoNFEController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -71,12 +60,8 @@ var retornoNFEController  = $.extend(true, {
 	
 	pesquisar : function() {
 		
-		// this.limparTabela();
-		
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
 		var params = [];
-		
-		var grid;
 		
 		if(!dataReferencia) {
 			exibirMensagem("WARNING", ["O campo [Date de Referência] é obrigatório"], "");
@@ -85,20 +70,18 @@ var retornoNFEController  = $.extend(true, {
 
 			params.push({name : "dataReferencia", value : dataReferencia});
 			
-			
-			grid = $("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace);
-			
-			grid.flexOptions({
-				"url" : this.path + 'pesquisarArquivos.json',
-				params : params,
+			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
 				dataType : 'json',
-				newp : 1, 
+				url: contextPath + "/nfe/retornoNFe/pesquisarArquivos.json",
+				params: params
 			});
 			
-			grid.flexReload();
+			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexReload();
 			$(".grids").show();
 			
 		}
 	},
+	
+
 }, BaseController);
 //@ sourceURL=retornoNFE.js

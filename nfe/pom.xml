@@ -68,6 +68,13 @@
 			<artifactId>nds-common</artifactId>
 			<version>1.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nfe-ws</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 		<!--<dependency>
 			<groupId>br.com.abril.nfeschema</groupId>
 			<artifactId>schema</artifactId>
