@@ -121,8 +121,14 @@ public final class FTFParser {
 				if (annot instanceof FTFfield) {
 					
 					Object obj = getter.invoke(ftfBaseDTO, null);
-					
-					String value = (String) ((obj == null) ? "" : obj);
+					String value = "";
+					try {
+						
+						value = (String) ((obj == null) ? "" : obj);
+					} catch(Exception e) {
+						
+						value = (String) ((obj == null) ? "" : obj.toString());
+					}
 					
 					FTFfield campo = (FTFfield)annot;
 					if (value.length() > campo.tamanho()) {

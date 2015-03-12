@@ -1,6 +1,7 @@
 
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
@@ -85,6 +87,7 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -142,6 +145,7 @@ import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
@@ -151,6 +155,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class FecharDiaServiceImpl implements FecharDiaService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(FecharDiaServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
@@ -299,10 +304,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Autowired
 	private CotaAusenteRepository cotaAusenteRepository;
 
-	
 	@Autowired
 	private BoletoService boletoService;
-	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService;
 	
 	@Override
 	@Transactional
@@ -1682,6 +1688,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			processarDebitosCotaTaxasEntrega(dataFechamento);
 			
+			LOGGER.info("FECHAMENTO DIARIO - LIMPEZA DO DIRETORIO DE ARQUIVOS REPARTE/ENCALHE");
+			
+			limparDiretorioArquivosIPV();
+			
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
@@ -1692,6 +1702,25 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 	
+	private void limparDiretorioArquivosIPV() {
+		
+		ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
+		
+		String dir = ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator;
+		File diretorio = new File(dir); 
+		for(File input : diretorio.listFiles()) {
+			if(input.isDirectory()) continue;			
+			input.delete();
+		}
+		
+		dir = ps.getValor() + File.separator +"encalhe"+ File.separator +"zip"+ File.separator;
+		diretorio = new File(dir); 
+		for(File input : diretorio.listFiles()) {
+			if(input.isDirectory()) continue;			
+			input.delete();
+		}
+	}
+
 	private void processarDebitosCotaTaxasEntrega(Date dataFechamento){
 		
 		this.debitoCreditoCotaService.processarDebitoDeDistribuicaoDeEntregaDaCota(dataFechamento);
