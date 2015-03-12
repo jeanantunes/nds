@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
@@ -35,6 +37,7 @@ import br.com.abril.nds.repository.RegiaoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
 import br.com.abril.nds.repository.TipoPontoPDVRepository;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.util.Util;
 
@@ -73,6 +76,9 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 	@Autowired
     private TipoGeradorFluxoPDVRepsitory tipoGeradorFluxoPDVRepsitory;
 	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoCota;
+	
 	@Override
 	@Transactional
 	public List<TipoClassificacaoProduto> buscarClassificacao() {
@@ -82,7 +88,18 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 	@Override
 	@Transactional
 	public List<InformacoesProdutoDTO> buscarProduto(FiltroInformacoesProdutoDTO filtro) {
-		return infoProdutosRepo.buscarProdutos(filtro);
+		List<InformacoesProdutoDTO> listaInformacoesProduto = infoProdutosRepo.buscarProdutos(filtro); 
+		
+		for (InformacoesProdutoDTO informacoesProdutoDTO : listaInformacoesProduto) {
+			
+			if((informacoesProdutoDTO.getStatus() != null && informacoesProdutoDTO.getStatus().equals(StatusLancamento.FECHADO))
+					&& (informacoesProdutoDTO.getVenda() == null || informacoesProdutoDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)){
+				informacoesProdutoDTO.setVenda(estoqueProdutoCota.obterVendaBaseadoNoEstoque(informacoesProdutoDTO.getIdProdutoEdicao()).toBigInteger());
+			}
+			
+		}
+		
+		return listaInformacoesProduto;
 	}
 
 	@Override

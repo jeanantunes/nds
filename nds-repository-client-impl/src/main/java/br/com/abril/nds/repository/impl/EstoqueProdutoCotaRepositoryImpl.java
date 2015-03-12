@@ -296,4 +296,19 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			.executeUpdate();
 	}
 	
+	@Override
+	public BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao){
+		
+		final StringBuilder sql = new StringBuilder("");
+		
+		sql.append("select sum(epc.QTDE_RECEBIDA)-sum(epc.QTDE_DEVOLVIDA) as venda from estoque_produto_cota epc where epc.PRODUTO_EDICAO_ID = :idProdutoEdicao");
+		
+		final SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (BigDecimal) query.uniqueResult();
+		
+	}
+	
 }

@@ -79,6 +79,8 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private BigInteger qtdeReparteEstudo;
 	private String codigoICD;
 	
+	private Long idProdutoEdicao;
+	
 	public String getNomeUsuario() {
 		return nomeUsuario;
 	}
@@ -151,8 +153,8 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	
 	public BigInteger getVenda() {
 		
-		return this.reparte.subtract(this.encalhe);
-		//return venda;
+//		return this.reparte.subtract(this.encalhe);
+		return this.venda;
 	}
 	
 	public void setVenda(BigInteger venda) {
@@ -285,4 +287,13 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setCodigoICD(String codigoICD) {
 		this.codigoICD = codigoICD;
 	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+	
 }

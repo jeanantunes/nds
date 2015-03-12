@@ -57,7 +57,7 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	private BigInteger idProdEd;
 	private BigInteger idProd;
 	
-	
+	private String statusLancamento;
 	
 	public BigInteger getIdProdEd() {
 		return idProdEd;
@@ -188,5 +188,10 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	public void setIdProd(BigInteger idProd) {
 		this.idProd = idProd;
 	}
-	
+	public String getStatusLancamento() {
+		return statusLancamento;
+	}
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = statusLancamento;
+	}
 }
