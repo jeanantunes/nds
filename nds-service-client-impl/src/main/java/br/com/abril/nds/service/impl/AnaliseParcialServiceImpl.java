@@ -518,7 +518,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 	@Override
 	@Transactional
 	public void atualizarFixacaoOuMix(ReparteFixacaoMixWrapper wrapper) {
-
+		
+		if(wrapper.getId() == null){
+    		return;
+    	}
+		
 		Usuario usuarioLogado = this.usuarioService.getUsuarioLogado();
 
 		if(wrapper.isFixacao()) {
@@ -532,14 +536,34 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         } else if (wrapper.isMix()) {
         	
         	boolean isPDVUnico = mixCotaProdutoRepository.verificarMixDefinidoPorPDV(wrapper.getId());
+        		
+    		if(isPDVUnico == true){
+    			
+    			this.mixCotaProdutoRepository.atualizarReparte(
+    					isPDVUnico,
+    					wrapper.getId(), 
+    					wrapper.getReparte().longValue(), 
+    					usuarioLogado, 
+    					wrapper.getDataAtualizacao()
+    					);
+    			
+    		}else{
 
-        	this.mixCotaProdutoRepository.atualizarReparte(
-    			isPDVUnico,
-        		wrapper.getId(), 
-        		wrapper.getReparte().longValue(), 
-        		usuarioLogado, 
-        		wrapper.getDataAtualizacao()
-        	);
+    			MixCotaProduto mix = mixCotaProdutoRepository.buscarPorId(wrapper.getId());
+    			
+    			if(wrapper.getReparte() < mix.getReparteMinimo() || wrapper.getReparte() > mix.getReparteMaximo()){
+    				
+    				this.mixCotaProdutoRepository.atualizarReparte(
+        					isPDVUnico,
+        					wrapper.getId(), 
+        					wrapper.getReparte().longValue(), 
+        					usuarioLogado, 
+        					wrapper.getDataAtualizacao()
+        					);
+    				
+    			}
+    		}
+        	
         }
 	}
 	

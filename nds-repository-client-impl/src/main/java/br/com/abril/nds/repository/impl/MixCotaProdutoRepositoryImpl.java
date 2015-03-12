@@ -530,7 +530,7 @@ public class MixCotaProdutoRepositoryImpl extends
 	    query.setParameter("qtd", qtd);
 	    query.setParameter("tipoClassificacaoProduto", tipoClassificacaoProduto);
 	    
-	    return (boolean) query.uniqueResult();
+	    return query.list().isEmpty() ? false : (boolean) query.uniqueResult();
 	}
 
 	@Override
