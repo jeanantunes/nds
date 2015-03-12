@@ -522,9 +522,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
-<<<<<<< HEAD
 		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
-=======
 		
 		try {
 			
@@ -536,10 +534,10 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())) {
->>>>>>> 0046807ee44570f45faee48cc6ac9eeead20cb74
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		}	
+		}
 	}
 	
 	@Post
@@ -614,12 +612,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
-<<<<<<< HEAD
-		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
-=======
 		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD) {
 			
->>>>>>> 0046807ee44570f45faee48cc6ac9eeead20cb74
 			recarregarInfoConferenciaEncalheCotaEmSession(numeroCota, indConferenciaContingencia);
 			infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		}
