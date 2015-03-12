@@ -38,7 +38,7 @@ public class GerarChaveAcessoTest {
             chave.insert(0, "NFe");  
             
             
-            // Assert.assertEquals(chave, chaveAcesso);
+            Assert.assertEquals(chave.toString(), chaveAcesso);
             info("Chave NF-e: " + chave.toString());
 		} catch (Exception e) {  
 			LOGGER.error("Exception: "+ e.getMessage());  
