@@ -938,6 +938,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		String queryStringProdutoEdicao = 
 			"SELECT                                                                            "+
 			"    pe.NUMERO_EDICAO AS edicao,                                                   "+
+			"    pe.id AS idProdutoEdicao,                                                   "+
 			"    l.DATA_REC_DISTRIB AS dtRecolhimento,                                         "+
 			"    l.DATA_LCTO_DISTRIBUIDOR AS dtLancamento,                                     "+
 			"    p.NOME AS nomeProduto,                                                        "+
@@ -1122,6 +1123,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		configurarPaginacao(filtro,query);
 		
 		query.addScalar("edicao", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("dtRecolhimento", StandardBasicTypes.DATE);
 		query.addScalar("dtLancamento", StandardBasicTypes.DATE);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
@@ -1408,6 +1410,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 			sql.append(" SELECT                                                                                                                    ");
 			sql.append("     produto.CODIGO AS codigoProduto,                                                                                      ");
+			sql.append("     pe.id as id, ");
 			sql.append("     produto.NOME AS nomeProduto,                                                                                          ");
 			sql.append("     pe.NUMERO_EDICAO AS numeroEdicao,                                                                          ");
 			sql.append("     plp.NUMERO_PERIODO as periodo,                                                                                        ");
@@ -1513,6 +1516,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		this.setParameters(query, parameters);
 
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("id", StandardBasicTypes.LONG);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
 		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
 		query.addScalar("periodo", StandardBasicTypes.INTEGER);

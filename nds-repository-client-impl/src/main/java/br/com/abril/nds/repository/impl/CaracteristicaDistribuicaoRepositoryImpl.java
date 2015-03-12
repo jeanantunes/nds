@@ -69,6 +69,8 @@ CaracteristicaDistribuicaoRepository {
         .append(" pro.nome as 'nomeProduto', ")
         .append(" pes2.RAZAO_SOCIAL as 'nomeEditor', ")
         .append(" ped.CHAMADA_CAPA as 'chamadaCapa', ")
+        .append(" ped.id as idProdEd, ")
+        .append(" cast(lan.STATUS as char) as statusLancamento, ")
         .append(" ped.NUMERO_EDICAO as 'numeroEdicao', ")
         .append(" coalesce(tipoclas.descricao, '') as 'classificacao', ")
         .append(" coalesce(ped.PRECO_VENDA, 0) as 'precoCapa', ")

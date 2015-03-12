@@ -81,6 +81,7 @@ import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -185,7 +186,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
     
     @Autowired
-    HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
+    private HistoricoAlteracaoPrecoVendaRepository historicoAlteracaoPrecoVendaRepository;
+    
+    @Autowired
+    private EstoqueProdutoService estoqueProdutoService;
     
     @Value("${data_cabalistica}")
     private String dataCabalistica;
@@ -1717,7 +1721,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     public List<EdicoesProdutosDTO> obterHistoricoEdicoes(final FiltroHistogramaVendas filtro) {
         
-        return produtoEdicaoRepository.obterHistoricoEdicoes(filtro);
+    	List<EdicoesProdutosDTO> historicoEdicoes = produtoEdicaoRepository.obterHistoricoEdicoes(filtro); 
+    	
+    	for (EdicoesProdutosDTO edicoesProdutosDTO : historicoEdicoes) {
+			if(edicoesProdutosDTO.getStatus().equalsIgnoreCase("FECHADO") 
+					&& (edicoesProdutosDTO.getVenda() == null || edicoesProdutosDTO.getVenda().compareTo(BigInteger.ZERO)<=0)){
+				edicoesProdutosDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(edicoesProdutosDTO.getIdProdutoEdicao().longValue()));
+			}
+		}
+    	
+        return historicoEdicoes;
     }
     
     @Transactional(readOnly = true)
@@ -1923,7 +1936,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     @Override
     @Transactional
     public List<ProdutoEdicaoDTO> obterEdicoesProduto(final FiltroHistoricoVendaDTO filtro) {
-        return produtoEdicaoRepository.obterEdicoesProduto(filtro);
+    	
+    	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
+    	
+    	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
+			if((peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO")) 
+					&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+				peDTO.setQtdeVendas(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).toBigInteger());
+			}
+		}
+    	
+    	return listEdicoesProdutoDto; 
     }
     
     /**
