@@ -402,6 +402,10 @@
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
 		</repository>
 		<repository>
+			<id>nexus3rd</id>
+			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/repositories/thirdparty/</url>
+		</repository>
+		<repository>
 			<id>repomaven</id>
 			<url>http://repo.maven.apache.org/maven2/</url>		
 		</repository>
