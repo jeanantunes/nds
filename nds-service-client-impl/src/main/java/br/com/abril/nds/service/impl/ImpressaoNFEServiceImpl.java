@@ -189,8 +189,16 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				 */
 				
 				// saber qual e modelo para gera MODELO 1 MODELO 2...
+				List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
 				
-				this.impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
+				for (NotaFiscal notaFiscal : notas) {
+					DanfeDTO danfe = montarDanfe(notaFiscal);
+					
+					if(danfe!=null) {
+						listaDanfeWrapper.add(new DanfeWrapper(danfe));
+					}
+				}
+				
 					
 			}
 		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade()) || TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {

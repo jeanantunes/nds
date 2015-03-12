@@ -113,25 +113,12 @@ var retornoNFEController  = $.extend(true, {
 		});
 	},
 
-	dataBind : function() {
-		$("#numeroTotalArquivos", this.workspace).html(this.sumarizacaoRetornoNFE.numeroTotalArquivos);
-		$("#numeroNotasAprovadas", this.workspace).html(this.sumarizacaoRetornoNFE.numeroNotasAprovadas);
-		$("#numeroNotasRejeitadas", this.workspace).html(this.sumarizacaoRetornoNFE.numeroNotasRejeitadas);
-		
-	},
-
-	dataUnBind : function() {
-		this.sumarizacaoRetornoNFE.numeroTotalArquivos = $("#numeroTotalArquivos", this.workspace).html();
-		this.sumarizacaoRetornoNFE.numeroNotasAprovadas = $("#numeroNotasAprovadas", this.workspace).html();
-		this.sumarizacaoRetornoNFE.numeroNotasRejeitadas = $("#numeroNotasRejeitadas", this.workspace).html();
-	},
-
 	limparTabela : function() {
 		
 		$("#numeroTotalArquivos", this.workspace).html(0);
 		$("#numeroNotasAprovadas", this.workspace).html(0);
 		$("#numeroNotasRejeitadas", this.workspace).html(0);
-		this.dataUnBind();
+		
 	},
 
 }, BaseController);

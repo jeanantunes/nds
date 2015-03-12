@@ -402,7 +402,7 @@ var impressaoNfeController = $.extend(true, {
 				
 				successCallback: function (url) {
 			    	console.log('success');
-			    	$("#preparing-file-modal").dialog('close');
+			    	$("#preparing-file-modal").hide();
 			    },
 			    failCallback: function (responseHtml, url) {
 			        preparingFileModal.dialog('close');
@@ -413,7 +413,7 @@ var impressaoNfeController = $.extend(true, {
 			
 		}
 		
-		
+		$('#preparing-file-modal').dialog('close');
 	},
 	
 	/**

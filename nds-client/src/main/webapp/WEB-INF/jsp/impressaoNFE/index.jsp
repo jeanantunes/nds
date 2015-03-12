@@ -23,9 +23,9 @@
         <span class="bt_arq"><a href="javascript:;" id="impressaoNfe-btnImprimirPDF" title="Imprimir" onclick="impressaoNfeController.imprimir('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>	
 	</div>
 </div>
-<div class="linha_separa_fields">&nbsp;</div>
+<div class="linha_separa_fields">&nbsp; </div>
 
-<div id="preparing-file-modal" title="Preparando para gera��o do report..." style="display: none;">
+<div id="preparing-file-modal" title="Preparando para gera&ccedil;&atilde;o do report..." style="display: none;">
     Por Favor Aguarde...
     <div class="ui-progressbar-value ui-corner-left ui-corner-right" style="width: 100%; height:22px; margin-top: 20px;"></div>
 </div>
