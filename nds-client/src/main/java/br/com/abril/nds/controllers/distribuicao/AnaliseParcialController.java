@@ -319,7 +319,8 @@ public class AnaliseParcialController extends BaseController {
     
     @Path("/mudarReparte")
     public void mudarReparte(Integer numeroCota, Long estudoId, Long fixacaoMixID, Long variacaoDoReparte, Long reparteDigitado, String legendaCota) {
-        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
+        
+    	analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte, reparteDigitado);
         
         if(ClassificacaoCota.ReparteFixado.getCodigo().equalsIgnoreCase(legendaCota) || 
                 ClassificacaoCota.CotaMix.getCodigo().equalsIgnoreCase(legendaCota)) {
@@ -355,9 +356,17 @@ public class AnaliseParcialController extends BaseController {
     @Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS_ALTERACAO)
     public void liberar(Long estudoId, List<CotaLiberacaoEstudo> cotas) {
     	
-        analiseParcialService.liberar(estudoId, cotas);
-        
-        result.nothing();
+    	ValidacaoException validacao = analiseParcialService.validarLiberacaoDeEstudo(estudoId);
+    	
+    	if(validacao == null){
+    		analiseParcialService.liberar(estudoId, cotas);
+    	}else{
+    		if(validacao.getValidacao().getTipoMensagem()==TipoMensagem.WARNING){
+        		throw new ValidacaoException(validacao.getValidacao().getTipoMensagem(), validacao.getValidacao().getListaMensagens());
+    		}
+    	}
+
+    	result.nothing();
     }
 
     private TableModel<CellModelKeyValue<AnaliseParcialDTO>> monta(List<AnaliseParcialDTO> lista) {

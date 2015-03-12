@@ -31,7 +31,7 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-          		<a isEdicao="true" id="retornoNFEConfirmar" href="javascript:;" rel="tipsy" title="Confirmar Integração do Arquivo">
+          		<a isEdicao="true" id="retornoNFEConfirmar" onclick="retornoNFEController.confirmar();" rel="tipsy" title="Confirmar Integração do Arquivo">
          		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
             </span>
           

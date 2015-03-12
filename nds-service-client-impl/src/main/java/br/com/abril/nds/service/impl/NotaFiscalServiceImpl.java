@@ -449,8 +449,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 
-		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository
-				.tipoImpressaoNENECADANFE();
+		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
 
 		Distribuidor distribuidor = distribuidorRepository.obter();
 
@@ -499,7 +498,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private NotaFiscal atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
 
-		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getNumeroNotaFiscal());
+		NotaFiscal notaFiscal = this.notaFiscalRepository.obterNotaFiscalNumeroChaveAcesso(dadosRetornoNFE);
 
 		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 		
