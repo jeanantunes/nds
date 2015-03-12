@@ -17,7 +17,7 @@
 <link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
 <link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
 
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 
 <script language="javascript" type="text/javascript" src="scripts/jwerty/jwerty.js"></script>

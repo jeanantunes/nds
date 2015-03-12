@@ -1,28 +1,39 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.ems0197.route.EMS0197Route;
 import br.com.abril.nds.integracao.ems0198.route.EMS0198Route;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -51,6 +62,9 @@ public class GeracaoArquivosController extends BaseController {
 	
 	@Autowired
     private CalendarioService calendarioService;
+	
+	@Autowired
+	private ParametroSistemaService parametroSistemaService; 
 	
 	@Autowired
 	private Result result;
@@ -86,9 +100,56 @@ public class GeracaoArquivosController extends BaseController {
 			qtdArquivosGerados = 1;
 			
 		} else if (operacao.equals("REPARTE")) {
+			
 			qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+			if(qtdArquivosGerados > 0) {
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
+				File file = new File(ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
+				try {
+					InputStream isFile = new FileInputStream(file);    
+					
+					byte[] arquivo = IOUtils.toByteArray(isFile);
+					httpServletResponse.setContentType("application/zip");
+					httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + "reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
+			        
+			        final OutputStream output = httpServletResponse.getOutputStream();
+			        output.write(arquivo);
+			        
+			        httpServletResponse.flushBuffer();
+					
+				} catch (IOException e) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo REPARTE.");
+				}    
+			}
+			
 		} else {
+			
 			qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
+			if(qtdArquivosGerados > 0) {
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
+				File file = new File(ps.getValor() + File.separator +"encalhe"+ File.separator +"zip"+ File.separator +"encalhe-"+ sdf.format(dataLctoPrevisto) +".zip");
+				try {
+					InputStream isFile = new FileInputStream(file);    
+					
+					byte[] arquivo = IOUtils.toByteArray(isFile);
+					httpServletResponse.setContentType("application/zip");
+					httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + "encalhe-"+ sdf.format(dataLctoPrevisto) +".zip");
+			        
+			        final OutputStream output = httpServletResponse.getOutputStream();
+			        output.write(arquivo);
+			        
+			        httpServletResponse.flushBuffer();
+					
+				} catch (IOException e) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo ENCALHE.");
+				}    
+			}
 		}
 		
 		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").serialize();

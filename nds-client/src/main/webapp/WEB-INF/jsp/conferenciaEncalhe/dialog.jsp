@@ -109,7 +109,7 @@
 	    <label>Confirma Box de Encalhe: </label>
 	    <select name="boxes" style="width:150px;" id="boxLogado">
 			<c:forEach var="item" items="${boxes}">
-		       <option value="${item.id}">${item.nome}</option>
+		       <option value="${item.id}" <c:if test="${idBoxLogado == item.id}">selected</c:if>>${item.nome}</option>
 		    </c:forEach>
 	    </select>
 	</fieldset>

@@ -1,12 +1,19 @@
 package br.com.abril.nds.integracao.ems0198.processor;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
@@ -88,7 +95,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		this.quantidadeArquivosGerados = cotasRecolhimento == null ? 0 : cotasRecolhimento.size();
+		
+		compactarArquivos(message);
 	}
+	
 	
 	
 // ## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo	
@@ -140,6 +150,69 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 //		
 //	}
 
+
+	private void compactarArquivos(Message message) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+		String dir = message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER +File.separator;
+		File diretorio = new File(dir); 
+		FileOutputStream fos = null;
+		ZipOutputStream zipOut = null;
+		FileInputStream fis = null;
+		try {
+			
+			fos = new FileOutputStream(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) 
+						+ File.separator + ENCALHE_FOLDER + File.separator +"zip"+ File.separator +"encalhe-"+ sdf.format(dataLctoDistrib) +".zip");
+			zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+			for(File input : diretorio.listFiles()) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				fis = new FileInputStream(input);
+				ZipEntry ze = new ZipEntry(input.getName());
+				System.out.println("Zipping the file: "+input.getName());
+				zipOut.putNextEntry(ze);
+				byte[] tmp = new byte[4 * 1024];
+				int size = 0;
+				while((size = fis.read(tmp)) != -1) {
+					
+					zipOut.write(tmp, 0, size);
+				}
+				zipOut.flush();
+				fis.close();
+			}
+			
+			zipOut.close();
+			
+			for(File input : diretorio.listFiles()) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				input.delete();
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			LOGGER.error("Falha ao obter arquivo.", e);
+		} catch (IOException e) {
+			
+			LOGGER.error("IOException", e);
+		} finally {
+			try {
+				
+				if(fos != null) { 
+					fos.close();
+				}
+			} catch(Exception ex) {
+
+				LOGGER.error("Falha ao fechar arquivo.", ex);
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private List<IpvRecolhimentoDTO> listRecolhimento(Message message, String idCota){
@@ -298,8 +371,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		try {
 			detalhe = ftfParser.parseArquivo(dto);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			LOGGER.error("Erro no parse do arquivo.", e);
 		}
 		
 		outDetalhe.setDetalhes(detalhe);

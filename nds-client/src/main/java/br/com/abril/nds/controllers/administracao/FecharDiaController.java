@@ -533,7 +533,6 @@ public class FecharDiaController extends BaseController {
                 
                 LOGGER.info("FINALIZADO PROCESSAMENTO FECHAMENTO DIA");
                 
-                
                 setFechamentoDiarioDTO(dto);
                 
                 //this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);

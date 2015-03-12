@@ -73,7 +73,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
+import br.com.abril.nds.session.scoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -197,15 +197,17 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
 	
-	private void preCarregarBoxes(){
+	private void preCarregarBoxes() {
 		
 		 // Obter box usuário
-		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
-				this.getUsuarioLogado().getBox().getId() != null){
+		if(this.getUsuarioLogado() != null && this.getUsuarioLogado().getBox() != null && 
+				this.getUsuarioLogado().getBox().getId() != null) {
 			
-			if(conferenciaEncalheSessionScopeAttr != null){
+			if(conferenciaEncalheSessionScopeAttr != null) {
 				conferenciaEncalheSessionScopeAttr.setIdBoxLogado(this.getUsuarioLogado().getBox().getId());
 			}
+			
+			this.result.include("idBoxLogado", conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 		}
 		
 		limparDadosSessao();
@@ -216,7 +218,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Abertura da tela]")
 	public void index() {
 		
-		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, null);
 		
 		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
@@ -250,7 +252,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final List<Box> boxes = this.conferenciaEncalheService.obterListaBoxEncalhe(this.getUsuarioLogado().getId());
 		
-		if( boxes!=null ) {
+		if(boxes != null) {
 
 			final Map<String, String> mapBox = new HashMap<String, String>();
 			
@@ -274,7 +276,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Path("/obterBoxLogado")
-	public void obterBoxLogado(){
+	public void obterBoxLogado() {
 		
         Long idBoxlogado = (Long) this.session.getAttribute(ID_BOX_LOGADO_SESSION);
         
@@ -284,7 +286,9 @@ public class ConferenciaEncalheController extends BaseController {
 
         } else {
     		
-        	this.result.use(Results.json()).from("").serialize();
+        	idBoxlogado = (usuarioService.getUsuarioLogado() != null) ? 
+        						(usuarioService.getUsuarioLogado().getBox() != null ? usuarioService.getUsuarioLogado().getBox().getId() : 0L) : 0L;
+        	this.result.use(Results.json()).from(idBoxlogado == 0L ? "" : idBoxlogado).serialize();
         	
         }
         
@@ -407,9 +411,9 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@LogFuncional(value="Conferência de Encalhe [Início da conferência]")
-	public void iniciarConferenciaEncalhe(final Integer numeroCota){
+	public void iniciarConferenciaEncalhe(final Integer numeroCota) {
 
-		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(this.session, numeroCota);
 
 		limparDadosSessao();
 		
@@ -518,7 +522,21 @@ public class ConferenciaEncalheController extends BaseController {
 		this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 		
 		indicarStatusConferenciaEncalheCotaSalvo();
+<<<<<<< HEAD
 		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())){
+=======
+		
+		try {
+			
+			bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
+		} catch(Throwable e) {
+			
+			LOGGER.error("A Cota %s está sendo conferida.", e);
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s está sendo conferida.", numeroCota));
+		}
+		
+		if(this.isEncalheInformado(infoConfereciaEncalheCota.getListaConferenciaEncalhe())) {
+>>>>>>> 0046807ee44570f45faee48cc6ac9eeead20cb74
 	        	
 	        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(this.getNumeroCotaFromSession(), this.session);
 		}	
@@ -596,7 +614,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		
+<<<<<<< HEAD
 		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD){
+=======
+		if (infoConfereciaEncalheCota == null || indObtemDadosFromBD) {
+			
+>>>>>>> 0046807ee44570f45faee48cc6ac9eeead20cb74
 			recarregarInfoConferenciaEncalheCotaEmSession(numeroCota, indConferenciaContingencia);
 			infoConfereciaEncalheCota = this.getInfoConferenciaSession();
 		}
@@ -1728,6 +1751,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@LogFuncional(value="Conferência de Encalhe [Salvar conferência]")
 	public void salvarConferencia(final boolean indConferenciaContingencia){
 		
+		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
+		
 		this.verificarInicioConferencia();
 		
 		final ControleConferenciaEncalheCota controleConfEncalheCota = new ControleConferenciaEncalheCota();
@@ -2016,6 +2042,9 @@ public class ConferenciaEncalheController extends BaseController {
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
+		
+		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
+		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
 		
 		if (horaInicio != null) {
 		

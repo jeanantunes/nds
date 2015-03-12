@@ -1,6 +1,10 @@
 package br.com.abril.nds.integracao.ems0197.processor;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
@@ -28,10 +34,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.ftfutil.FTFParser;
+import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
@@ -67,9 +73,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
-	
-	
-	
 	@Autowired
 	private DescontoService descontoService; 	
 	
@@ -77,105 +80,164 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 	/** Quantidade de arquivos processados. */
 	private int quantidadeArquivosGerados = 0;
-	
+
 	@Override
 	public void processMessage(Message message) {
-		
+
 		this.quantidadeArquivosGerados = 0;
-		
+
 		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
 
 		final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(dataLctoDistrib);
-		
-		for (EMS0197Header outheader : listHeaders){
-		
-		try{
 
-			String nomeArquivo = ""+outheader.getCodDistribuidor()+"."+StringUtils.leftPad(outheader.getNumeroCota(), 5, '0')+"."+sdf.format(outheader.getDataLctoDistrib());
-			
-			PrintWriter print = new PrintWriter(new FileWriter(
-					message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-					+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
-			
-			List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
-			
-			
-			addDescontoProduto(descontos, outheader, print, listDetalhes);
-			
-			
-		/*	
+		for (EMS0197Header outheader : listHeaders) {
+
+			try {
+
+				String nomeArquivo = ""+ outheader.getCodDistribuidor() +"."+StringUtils.leftPad(outheader.getNumeroCota(), 5, '0') +"."+ sdf.format(outheader.getDataLctoDistrib());
+
+				PrintWriter print = new PrintWriter(new FileWriter(
+						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+						+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
+
+				List<IpvLancamentoDTO> listDetalhes = getDetalhesPickingLancamento(outheader.getIdCota(), this.dataLctoDistrib);
+
+				addDescontoProduto(descontos, outheader, print, listDetalhes);
+
+				/*	
 			for (IpvLancamentoDTO dto : listDetalhes) {
-				
+
 				EMS0197Detalhe outDetalhe = createDetalhes(dto);
 
 				print.println(fixedFormatManager.export(outDetalhe));
 			}
-			
-			*/
+
+				 */
+
+				//			EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
+
+				//			print.println(fixedFormatManager.export(outTrailer));
+
+				print.flush();
+				print.close();
+
+				this.quantidadeArquivosGerados++;
 				
-//			EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
-			
-//			print.println(fixedFormatManager.export(outTrailer));
+			} catch(IOException e) {
 				
-			print.flush();
-			print.close();
-					
-			this.quantidadeArquivosGerados++;
+				LOGGER.error("Falha ao gerar arquivo.", e);
+			}
 		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
+
+		compactarArquivos(message);
+		
+		//		## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo
+		//		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
+
+		//		for (EMS0197Header outheader : listHeaders){
+		//
+		//			try{
+		//				
+		//				String nomeArquivo = String.format("%1$05d%2$s", 
+		//						Integer.parseInt(outheader.getNumeroCota()), outheader.getFormatedDate()); 												
+		//				
+		//				PrintWriter print = new PrintWriter(new FileWriter(
+		//						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+		//						+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
+		//				
+		//				print.println(fixedFormatManager.export(outheader));
+		//			
+		//				List<DetalhesPickingDTO> listDetalhes = getDetalhesPicking(outheader.getIdCota(), this.dataLctoDistrib);
+		//				
+		//				for(DetalhesPickingDTO pickingDTO : listDetalhes){
+		//					
+		//					EMS0197Detalhe outDetalhe = createDetalhes(pickingDTO);
+		//
+		//					print.println(fixedFormatManager.export(outDetalhe));
+		//				}
+		//					
+		//				EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
+		//				
+		//				print.println(fixedFormatManager.export(outTrailer));
+		//					
+		//				print.flush();
+		//				print.close();
+		//						
+		//				this.quantidadeArquivosGerados++;
+		//			}
+		//			catch(IOException e){
+		//				
+		//			}
+		//		}
 	}
+
+	private void compactarArquivos(Message message) {
 		
-		
-//		## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo
-//		List<EMS0197Header> listHeaders = this.criarHeader(dataLctoDistrib);
-		
-//		for (EMS0197Header outheader : listHeaders){
-//
-//			try{
-//				
-//				String nomeArquivo = String.format("%1$05d%2$s", 
-//						Integer.parseInt(outheader.getNumeroCota()), outheader.getFormatedDate()); 												
-//				
-//				PrintWriter print = new PrintWriter(new FileWriter(
-//						message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
-//						+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivo + REPARTE_EXT));
-//				
-//				print.println(fixedFormatManager.export(outheader));
-//			
-//				List<DetalhesPickingDTO> listDetalhes = getDetalhesPicking(outheader.getIdCota(), this.dataLctoDistrib);
-//				
-//				for(DetalhesPickingDTO pickingDTO : listDetalhes){
-//					
-//					EMS0197Detalhe outDetalhe = createDetalhes(pickingDTO);
-//
-//					print.println(fixedFormatManager.export(outDetalhe));
-//				}
-//					
-//				EMS0197Trailer outTrailer = createTrailer(outheader.getNumeroCota(), listDetalhes.size());
-//				
-//				print.println(fixedFormatManager.export(outTrailer));
-//					
-//				print.flush();
-//				print.close();
-//						
-//				this.quantidadeArquivosGerados++;
-//			}
-//			catch(IOException e){
-//				
-//			}
-//		}
+		SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+		String dir = message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + REPARTE_FOLDER +File.separator;
+		File diretorio = new File(dir); 
+		FileOutputStream fos = null;
+		ZipOutputStream zipOut = null;
+		FileInputStream fis = null;
+		try {
+			
+			fos = new FileOutputStream(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) 
+						+ File.separator + REPARTE_FOLDER + File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoDistrib) +".zip");
+			zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+			for(File input : diretorio.listFiles()) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				fis = new FileInputStream(input);
+				ZipEntry ze = new ZipEntry(input.getName());
+				System.out.println("Zipping the file: "+input.getName());
+				zipOut.putNextEntry(ze);
+				byte[] tmp = new byte[4 * 1024];
+				int size = 0;
+				while((size = fis.read(tmp)) != -1) {
+					
+					zipOut.write(tmp, 0, size);
+				}
+				zipOut.flush();
+				fis.close();
+			}
+			
+			zipOut.close();
+			
+			for(File input : diretorio.listFiles()) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				input.delete();
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			LOGGER.error("Falha ao obter arquivo.", e);
+		} catch (IOException e) {
+			
+			LOGGER.error("IOException", e);
+		} finally {
+			try {
+				
+				if(fos != null) { 
+					fos.close();
+				}
+			} catch(Exception ex) {
+
+				LOGGER.error("Falha ao fechar arquivo.", ex);
+			}
+		}
 	}
 
 	private void addDescontoProduto(final Map<String, DescontoDTO> descontos, EMS0197Header outheader, PrintWriter print, List<IpvLancamentoDTO> listDetalhes) {
 		
 		for (IpvLancamentoDTO ipvLancamento : listDetalhes) {
 
-		    //final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(ipvLancamento.getIdProdutoEdicao());
-		    
-		    final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(Long.parseLong(ipvLancamento.getIdLancamento()));
-		    
 			/**
 		     * A busca dos descontos é feita diretamente no Map, por chave,
 		     * agilizando o retorno do resultado
@@ -183,26 +245,26 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		    DescontoDTO descontoDTO = null;
 		    try {
 		    	
-		    	if( produtoEdicao.getProduto().getFornecedor() == null) {
+		    	if( ipvLancamento.getIdFornecedor() == null) {
 		    		throw new Exception("Produto sem Fornecedor cadastrado!");
 		    	}
 		    	
-		    	if( produtoEdicao.getProduto().getEditor() == null) {
+		    	if( ipvLancamento.getIdEditor() == null) {
 		    		throw new Exception("Produto sem Editor cadastrado!");
 		    	}
 		    	
 		        descontoDTO = descontoService.obterDescontoPor(descontos, outheader.getIdCota()
-		        		, produtoEdicao.getProduto().getFornecedor().getId()
-		        		, produtoEdicao.getProduto().getEditor().getId()
-		        		, produtoEdicao.getProduto().getId()
-		        		, produtoEdicao.getId());
+		        		, ipvLancamento.getIdFornecedor()
+		        		, ipvLancamento.getIdEditor()
+		        		, ipvLancamento.getIdProduto()
+		        		, ipvLancamento.getIdProdutoEdicao());
 
 		        if(descontoDTO == null) {
-		        	LOGGER.error("Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao());
+		        	LOGGER.error("Produto sem desconto: " + ipvLancamento.getCodProduto() + " / " + ipvLancamento.getNumEdicao());
 		        	throw new ValidacaoException();
 		        }
 		    } catch (final ValidacaoException e) {
-		        final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / " + produtoEdicao.getNumeroEdicao();
+		        final String msg = "Produto sem desconto: " + ipvLancamento.getCodProduto() + " / " + ipvLancamento.getNumEdicao();
 		        LOGGER.error(msg, e);
 		        throw new ValidacaoException(TipoMensagem.ERROR, msg);
 		    } catch (final Exception e) {
@@ -212,10 +274,11 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		    }
 		    
 		    final BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;
+		    BigDecimal precoVenda = new BigDecimal(ipvLancamento.getPrecoCapa());
+		    final BigDecimal precoComDesconto = precoVenda.subtract(MathUtil.calculatePercentageValue(precoVenda, desconto));
+		    ipvLancamento.setPrecoCapa(precoVenda.multiply(BigDecimal.valueOf(100)).setScale(0).toString());
 		    
-		    final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
-		    
-		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP).toString());
+		    ipvLancamento.setPrecoCusto(precoComDesconto.multiply(BigDecimal.valueOf(100)).setScale(0, RoundingMode.HALF_UP).toString());
 		    
 		    exportarDadosParaArquivo(print, ipvLancamento);
 
@@ -265,8 +328,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		try {
 			detalhe = ftfParser.parseArquivo(dto);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			LOGGER.error("Erro no parse do Arquivo", e);
 		}
 		
 		outDetalhe.setDetalhes(detalhe);
@@ -440,12 +503,16 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       p.NOME AS nomeProduto, ");
 		sql.append("       CAST(ROUND(ecg.QTDE_EFETIVA, 0) AS CHAR) AS reparte, ");
 		sql.append("       pes.RAZAO_SOCIAL AS nomeEditora, ");
-		sql.append("       CAST(ROUND(ROUND(pe.PRECO_VENDA, 2) * 100, 0) AS CHAR) AS precoCapa, ");
+		sql.append("       CAST(ROUND(pe.PRECO_VENDA, 2) AS CHAR) AS precoCapa, ");
 
 		sql.append("       pe.CHAMADA_CAPA AS chamadaCapa, ");
 		sql.append("       DATE_FORMAT((eg.DATA_LANCAMENTO), '%Y%m%d') AS dataLancamento, ");
 		sql.append("       DATE_FORMAT(((select l.DATA_LCTO_DISTRIBUIDOR from lancamento l where l.PRODUTO_EDICAO_ID = pe.id order by l.DATA_LCTO_DISTRIBUIDOR asc limit 1)), '%Y%m%d') AS dataPrimeiroLancamentoParcial, ");
-		sql.append("       CAST(lct.ID AS CHAR) as idLancamento ");
+		sql.append("       CAST(lct.ID AS CHAR) as idLancamento, ");
+		sql.append("       CAST(pe.ID AS CHAR) as idProdutoEdicao, ");
+		sql.append("       CAST(p.ID AS CHAR) as idProduto, ");
+		sql.append("       CAST(f.ID AS CHAR) as idFornecedor, ");
+		sql.append("       CAST(edt.ID AS CHAR) as idEditor ");
 
 		sql.append("   FROM estudo_cota_gerado ecg ");
 		
@@ -470,13 +537,17 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("     LEFT JOIN fornecedor f ");
 		sql.append("       ON pf.fornecedores_ID = f.ID ");
 
-		sql.append("       WHERE eg.DATA_LANCAMENTO = :data and ecg.REPARTE is not null  ");
-		sql.append(" 	 		 and c.id = :idCota");
+		sql.append("       WHERE lct.DATA_LCTO_DISTRIBUIDOR = :data ");
+		sql.append("       		and lct.STATUS in (:statusLancamento) ");
+		sql.append("       		and ecg.REPARTE is not null ");
+		sql.append("       		and ecg.REPARTE > 0 ");
+		sql.append(" 	 		and c.id = :idCota");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
 		query.setParameter("idCota", idCota);
+		query.setParameterList("statusLancamento", LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
 		
 		query.addScalar("versao", StandardBasicTypes.STRING);
 		query.addScalar("tipoArquivo", StandardBasicTypes.STRING);
@@ -495,7 +566,11 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
 		query.addScalar("dataLancamento", StandardBasicTypes.STRING);
 		query.addScalar("dataPrimeiroLancamentoParcial", StandardBasicTypes.STRING);
-		query.addScalar("idLancamento", StandardBasicTypes.STRING);
+		query.addScalar("idLancamento", StandardBasicTypes.LONG);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("idProduto", StandardBasicTypes.LONG);
+		query.addScalar("idFornecedor", StandardBasicTypes.LONG);
+		query.addScalar("idEditor", StandardBasicTypes.LONG);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(IpvLancamentoDTO.class));
 
