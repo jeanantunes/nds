@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 
 @Service
 public class CaracteristicaDistribuicaoServiceImpl implements CaracteristicaDistribuicaoService {
@@ -24,6 +26,8 @@ public class CaracteristicaDistribuicaoServiceImpl implements CaracteristicaDist
 	@Autowired
 	private CaracteristicaDistribuicaoRepository claDistribuicaoRepository;
 	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Override
 	@Transactional
@@ -33,9 +37,18 @@ public class CaracteristicaDistribuicaoServiceImpl implements CaracteristicaDist
 
 	@Override
 	@Transactional
-	public List<CaracteristicaDistribuicaoDTO> buscarComFiltroCompleto(
-			FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
-		return claDistribuicaoRepository.obterCaracteristicaDistribuicaoDetalhe(filtro);
+	public List<CaracteristicaDistribuicaoDTO> buscarComFiltroCompleto(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
+		
+		List<CaracteristicaDistribuicaoDTO> listaCaracteristicaDistribuicaoDTO = claDistribuicaoRepository.obterCaracteristicaDistribuicaoDetalhe(filtro); 
+		
+		for (CaracteristicaDistribuicaoDTO caracteristicaDistribuicaoDTO : listaCaracteristicaDistribuicaoDTO) {
+			if((caracteristicaDistribuicaoDTO.getStatusLancamento() != null && caracteristicaDistribuicaoDTO.getStatusLancamento().equalsIgnoreCase("FECHADO"))
+					&& (caracteristicaDistribuicaoDTO.getVenda() == null || caracteristicaDistribuicaoDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)){
+				caracteristicaDistribuicaoDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(caracteristicaDistribuicaoDTO.getIdProdEd().longValue()).toBigInteger());
+			}
+		}
+		
+		return listaCaracteristicaDistribuicaoDTO;
 	}
 
 	@Override
