@@ -595,7 +595,10 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append(" coalesce(sum(movimentoEstoque.QTDE * produtoEdicao.PRECO_VENDA), 0) as VALOR_SUPLEMENTAR ");
+		sql.append(" coalesce(sum(case when (tipoMovimento.operacao_estoque = 'SAIDA') ");
+	    sql.append("        then movimentoEstoque.qtde ");
+	    sql.append("        else - movimentoEstoque.qtde ");
+	    sql.append("    end ), 0) as VALOR_SUPLEMENTAR ");
 		sql.append(" from ");
 		sql.append("	MOVIMENTO_ESTOQUE movimentoEstoque ");
 		sql.append("	join TIPO_MOVIMENTO tipoMovimento on movimentoEstoque.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
@@ -605,7 +608,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append(" where ");
 		sql.append("	movimentoEstoque.DATA = :dataMovimentacao "); 
 		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
-		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:vendaEncalheSuplementar) ");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:vendaEncalheSuplementar, :estornoVendaEncalheSuplementar) ");
 		sql.append("	and if(venda.TIPO_COMERCIALIZACAO_VENDA is not null, venda.TIPO_COMERCIALIZACAO_VENDA = :formaComercializacao, venda.TIPO_COMERCIALIZACAO_VENDA is null) ");
 		sql.append("	and if(venda.TIPO_VENDA_ENCALHE is not null, venda.TIPO_VENDA_ENCALHE = :tipoVenda, venda.TIPO_VENDA_ENCALHE is null) ");	
 		sql.append("	and ");
@@ -627,6 +630,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		query.setParameter("dataMovimentacao", dataMovimentacao);
 		query.setParameter("statusAprovado",StatusAprovacao.APROVADO.name() );
 		query.setParameter("vendaEncalheSuplementar", GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name());
+		query.setParameterList("estornoVendaEncalheSuplementar", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name()));
 		query.setParameter("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.SUPLEMENTAR.name());
 		query.setParameter("statusFuro",StatusLancamento.FURO.name());
