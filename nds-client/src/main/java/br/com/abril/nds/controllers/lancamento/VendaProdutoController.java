@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
@@ -108,7 +109,7 @@ public class VendaProdutoController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(listaVendaProdutoDTO.size());
+		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 		
 		return tableModel;
 	}
@@ -238,13 +239,13 @@ public class VendaProdutoController extends BaseController {
 	
 	private void tratarFiltro(FiltroVendaProdutoDTO filtroAtual) {
 
-		FiltroVendaProdutoDTO filtroSession = (FiltroVendaProdutoDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
+//		FiltroVendaProdutoDTO filtroSession = (FiltroVendaProdutoDTO) session
+//				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+//		
+//		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+//
+//			filtroAtual.getPaginacao().setPaginaAtual(1);
+//		}
 		
 		this.montarFiltroVendaProduto(filtroAtual);
 		
