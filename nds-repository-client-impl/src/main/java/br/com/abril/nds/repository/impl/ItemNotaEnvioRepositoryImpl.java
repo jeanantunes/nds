@@ -84,7 +84,6 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " from MovimentoEstoqueCota mec "
 				   + " join mec.cota cota "
 				   + " join mec.lancamento lancamento "
-				   + " join mec.estudoCota estudoCota "
 				   + " join mec.tipoMovimento tipoMovimento "
 				   + " join mec.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
