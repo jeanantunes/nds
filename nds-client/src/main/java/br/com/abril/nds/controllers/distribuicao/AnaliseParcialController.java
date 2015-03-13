@@ -358,10 +358,13 @@ public class AnaliseParcialController extends BaseController {
     	
     	ValidacaoException validacao = analiseParcialService.validarLiberacaoDeEstudo(estudoId);
     	
-    	if(validacao == null){
+    	if(validacao == null || validacao.getValidacao().getTipoMensagem().equals(TipoMensagem.SUCCESS)) {
+    		
     		analiseParcialService.liberar(estudoId, cotas);
-    	}else{
-    		if(validacao.getValidacao().getTipoMensagem()==TipoMensagem.WARNING){
+    	} else {
+    		
+    		if(validacao.getValidacao().getTipoMensagem().equals(TipoMensagem.WARNING)) {
+    			
         		throw new ValidacaoException(validacao.getValidacao().getTipoMensagem(), validacao.getValidacao().getListaMensagens());
     		}
     	}

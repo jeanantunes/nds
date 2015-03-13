@@ -255,13 +255,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					for (Long idLancamento : produtoRecolhimento.getIdsLancamentosAgrupados()) {
 						
-						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
-							balanceamentoRecolhimentoDTO.getProdutosRecolhimentoAgrupados(), idLancamento);
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(balanceamentoRecolhimentoDTO.getProdutosRecolhimentoAgrupados(), idLancamento);
 						
 						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
 						
-						this.montarInformacoesSalvarBalanceamento(
-							mapaRecolhimentos, idsLancamento, produtoRecolhimentoAgrupado);
+						this.montarInformacoesSalvarBalanceamento(mapaRecolhimentos, idsLancamento, produtoRecolhimentoAgrupado);
 					}
 				}
 			//}
@@ -283,8 +281,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	private boolean isProdutoAgrupado(ProdutoRecolhimentoDTO produtoRecolhimento) {
 		
-		return (produtoRecolhimento.isProdutoAgrupado()
-					&& produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty());
+		return (produtoRecolhimento.isProdutoAgrupado() && produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty());
 	}
 	
 	/**
@@ -701,10 +698,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			return;
 		}
 		
-		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), 
-				                                                 cota.isDevolveEncalhe());
+		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
-		if (!criarCahamadaEncalheCota){
+		if (!criarCahamadaEncalheCota) {
 		
 		    return;
 		}
@@ -712,6 +708,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		ChamadaEncalheCota chamadaEncalheCota = this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
 		
 		if (chamadaEncalheCota == null) {
+			
 			chamadaEncalheCota = new ChamadaEncalheCota();
 		}
 		
@@ -734,8 +731,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
-		
-		// this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe,

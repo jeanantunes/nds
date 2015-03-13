@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1208,7 +1209,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoCompraSuplementar) ")  
 		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
-		.append(" ) rs1 group by numeroCota, id, idProdutoEdicao, DATA, numeroNotaEnvio")
+		.append(" ) rs1 ")
+		.append(" group by numeroCota, id, idProdutoEdicao, DATA, numeroNotaEnvio")
+		.append(" having reparte > 0 ")
 		.append(" order by dataMovimento ");
 		
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
@@ -1224,7 +1227,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setParameter("movimentoFaltaCota", GrupoMovimentoEstoque.FALTA_EM_COTA.name());
 		query.setParameter("movimentoRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-		query.setParameter("movimentoCompraSuplementar", GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name());
+		query.setParameterList("movimentoCompraSuplementar", Arrays.asList(
+				GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name()
+				, GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR.name()
+				, GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name()
+			)
+		);
 		
 		query.setParameter("recolhimentoDe", filtro.getDtRecolhimentoDe());
 		query.setParameter("recolhimentoAte", filtro.getDtRecolhimentoAte());
