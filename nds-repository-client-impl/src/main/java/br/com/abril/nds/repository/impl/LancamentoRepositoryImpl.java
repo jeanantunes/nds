@@ -2794,7 +2794,7 @@ public class LancamentoRepositoryImpl extends
         Query query = getSession().createSQLQuery(hql.toString());
         
         
-        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicaoString());
+        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreBalanceamentoString());
         
         List<String> statusLancamentoPosBalanceamento = new ArrayList<>();
         statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());

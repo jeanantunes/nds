@@ -8,11 +8,28 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 
 public class LancamentoHelper {
 
-	public static Collection<StatusLancamento> getStatusLancamentosPreExpedicao() {
+	public static Collection<StatusLancamento> getStatusLancamentosPreBalanceamento() {
 		
 		return Arrays.asList(StatusLancamento.CONFIRMADO
 				, StatusLancamento.PLANEJADO
 				, StatusLancamento.EM_BALANCEAMENTO);		
+	}
+	
+	public static Collection<String> getStatusLancamentosPreBalanceamentoString() {
+		
+		Collection<String> statusString = new ArrayList<>(); 
+		for(StatusLancamento sl : getStatusLancamentosPreBalanceamento()) {
+			statusString.add(sl.name());
+		}
+		return statusString;
+	}
+	
+	public static Collection<StatusLancamento> getStatusLancamentosPreExpedicao() {
+		
+		return Arrays.asList(StatusLancamento.CONFIRMADO
+				, StatusLancamento.PLANEJADO
+				, StatusLancamento.EM_BALANCEAMENTO
+				, StatusLancamento.BALANCEADO);		
 	}
 	
 	public static Collection<String> getStatusLancamentosPreExpedicaoString() {
