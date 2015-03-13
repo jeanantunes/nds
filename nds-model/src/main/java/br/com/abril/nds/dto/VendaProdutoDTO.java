@@ -60,6 +60,9 @@ public class VendaProdutoDTO implements Serializable {
 
 	private String codigoProduto;
 	
+	private BigInteger idProdutoEdicao;
+	private String statusLancamento;
+	
 	public VendaProdutoDTO() {
 		
 	}
@@ -225,4 +228,20 @@ public class VendaProdutoDTO implements Serializable {
 		this.codigoProduto = codigoProduto;
 	}
 
+	public BigInteger getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public String getStatusLancamento() {
+		return statusLancamento;
+	}
+
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = statusLancamento;
+	}
+	
 }
