@@ -347,5 +347,18 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		
 		return count.longValue();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EstudoGerado> obterPorLancamentoId(Long idLancamento) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("from EstudoGerado eg ")
+		.append(" where eg.lancamentoID = :idLancamento ");
+		
+		Query q = getSession().createQuery(hql.toString());
+        q.setParameter("idLancamento", idLancamento);
+        return (List<EstudoGerado>) q.list();		
+	}
 	
 }

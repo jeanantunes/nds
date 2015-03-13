@@ -32,25 +32,25 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
 
     @Override
     public void executar(EstudoTransient estudo) {
-	
-    estudo.getCotas().addAll(estudo.getCotasExcluidas());
-	estudo.getCotas().addAll(estudo.getCotasForaDaRegiao());
-	estudo.getCotas().addAll(estudo.getCotasSoComEdicaoAberta());
-	estudo.getCotas().addAll(estudo.getCotasComReparteJaCalculado());
-	
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.CotaNova) 
-	    		&& cota.getReparteCalculado() != null && cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
-	    	cota.setReparteCalculado(null);
-	    }
-	    
-	    if(cota.getClassificacao().in(ClassificacaoCota.CotaMixSemMinMax)){
-	    	cota.setClassificacao(ClassificacaoCota.CotaMix);
-	    }
-	}
-	
-	estudo.setDataLancamento(estudo.getProdutoEdicaoEstudo().getDataLancamento());
-	
-	estudoAlgoritmoService.gravarEstudo(estudo);
+
+    	estudo.getCotas().addAll(estudo.getCotasExcluidas());
+    	estudo.getCotas().addAll(estudo.getCotasForaDaRegiao());
+    	estudo.getCotas().addAll(estudo.getCotasSoComEdicaoAberta());
+    	estudo.getCotas().addAll(estudo.getCotasComReparteJaCalculado());
+
+    	for (CotaEstudo cota : estudo.getCotas()) {
+    		if (cota.getClassificacao().notIn(ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.CotaNova) 
+    				&& cota.getReparteCalculado() != null && cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
+    			cota.setReparteCalculado(null);
+    		}
+
+    		if(cota.getClassificacao().in(ClassificacaoCota.CotaMixSemMinMax)){
+    			cota.setClassificacao(ClassificacaoCota.CotaMix);
+    		}
+    	}
+
+    	estudo.setDataLancamento(estudo.getProdutoEdicaoEstudo().getDataLancamento());
+
+    	estudoAlgoritmoService.gravarEstudo(estudo);
     }
 }
