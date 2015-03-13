@@ -219,8 +219,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         BigInteger totalParcialJuramentado = BigInteger.ZERO;
         
-        final Map<String, DescontoDTO> descontos = 
-        		descontoService.obterDescontosMapPorLancamentoProdutoEdicao(lancamento.getDataDistribuidor());
+        final Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(lancamento.getDataDistribuidor());
         
         final DescontoProximosLancamentos descontoProximosLancamentos = 
         		descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(lancamento.getIdProduto(), lancamento.getDataDistribuidor());
@@ -1501,24 +1500,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public Long atualizarEstoqueProdutoCota(final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final MovimentoEstoqueCota movimentoEstoqueCota) {
+    public Long atualizarEstoqueProdutoCota(final TipoMovimentoEstoque tipoMovimentoEstoque, final MovimentoEstoqueCota movimentoEstoqueCota) {
         
         if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
             
             final Long idCota = movimentoEstoqueCota.getCota().getId();
             final Long idProdutoEd = movimentoEstoqueCota.getProdutoEdicao().getId();
             
-            EstoqueProdutoCota estoqueProdutoCota =
-                    estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(
-                            idProdutoEd, idCota);
+            EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutoECota(idProdutoEd, idCota);
             
             if (estoqueProdutoCota == null) {
                 
                 estoqueProdutoCota = new EstoqueProdutoCota();
                 
-                final ProdutoEdicao produtoEdicao =
-                        produtoEdicaoRepository.buscarPorId(idProdutoEd);
+                final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEd);
                 
                 estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
                 estoqueProdutoCota.setQtdeDevolvida(BigInteger.ZERO);
@@ -1534,25 +1529,22 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             if (OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque())) {
                 
-                quantidadeRecebida = (estoqueProdutoCota.getQtdeRecebida() != null)
-                        ? estoqueProdutoCota.getQtdeRecebida() : BigInteger.ZERO;
+                quantidadeRecebida = (estoqueProdutoCota.getQtdeRecebida() != null) ? estoqueProdutoCota.getQtdeRecebida() : BigInteger.ZERO;
                         
-                        novaQuantidade = quantidadeRecebida.add(movimentoEstoqueCota.getQtde());
-                        
-                        estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
+                novaQuantidade = quantidadeRecebida.add(movimentoEstoqueCota.getQtde());
+                
+                estoqueProdutoCota.setQtdeRecebida(novaQuantidade);
                         
             } else {
                 
-                quantidadeDevolvida = (estoqueProdutoCota.getQtdeDevolvida() != null)
-                        ? estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
+                quantidadeDevolvida = (estoqueProdutoCota.getQtdeDevolvida() != null) ? estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
                         
-                        novaQuantidade = quantidadeDevolvida.add(movimentoEstoqueCota.getQtde());
-                        
-                        estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
+                novaQuantidade = quantidadeDevolvida.add(movimentoEstoqueCota.getQtde());
+                
+                estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
             }
             
-            this.validarAlteracaoEstoqueProdutoCota(
-                    novaQuantidade, estoqueProdutoCota.getProdutoEdicao());
+            this.validarAlteracaoEstoqueProdutoCota(novaQuantidade, estoqueProdutoCota.getProdutoEdicao());
             
             if (estoqueProdutoCota.getId() == null) {
                 
@@ -1839,8 +1831,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;
                 
-                final BigDecimal precoComDesconto =
-                        produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
+                final BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
                 
                 movimentoEstoqueCota.setPrecoVenda(produtoEdicao.getPrecoVenda());
                 movimentoEstoqueCota.setPrecoComDesconto(precoComDesconto);
