@@ -1188,15 +1188,15 @@ var analiseParcialController = $.extend(true, {
     verificacoesParaLiberarEstudo : function(){
     	
     	if ($('#status_estudo').text() == 'Liberado') {
-            analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
+            analiseParcialController.exibirMsg('WARNING', ['Estudo já está liberado.']);
             return false;
-        }else if ($('#saldo_reparte').html() != 0) {
+        } else if ($('#saldo_reparte').html() != 0) {
             analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             return false;
-    	}else{
-    		if(analiseParcialController.verificarDivergenciaReparte()){
+    	} else {
+    		if(analiseParcialController.verificarDivergenciaReparte()) {
     			return true;
-    		}else{
+    		} else {
     			analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
     			return false;
     		}

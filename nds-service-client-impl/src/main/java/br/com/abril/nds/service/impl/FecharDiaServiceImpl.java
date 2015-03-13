@@ -337,6 +337,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Autowired
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
+	@Autowired
 	private ParametroSistemaService parametroSistemaService;
 	
 	@Override
