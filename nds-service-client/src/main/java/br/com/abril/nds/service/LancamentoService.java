@@ -186,7 +186,7 @@ public interface LancamentoService {
 	
 	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
 
-	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento);
+	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento, boolean alterarStatusLancamento);
 	
 	void reajustarNumerosLancamento(PeriodoLancamentoParcial periodo);
 	

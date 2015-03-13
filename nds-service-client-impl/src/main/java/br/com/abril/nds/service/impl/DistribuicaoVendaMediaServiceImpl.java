@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,8 +102,10 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
 		
 		for (ProdutoEdicaoVendaMediaDTO peVendaMediaDTO : prodEdicaoParabaseEstudo) {
 			if((peVendaMediaDTO.getStatus() != null && peVendaMediaDTO.getStatus().equalsIgnoreCase("FECHADO")) 
-					&& (peVendaMediaDTO.getVenda() == null || peVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)){
-				peVendaMediaDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(peVendaMediaDTO.getId().longValue()).toBigInteger());
+					&& (peVendaMediaDTO.getVenda() == null || peVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)) {
+				
+				BigDecimal vendas = estoqueProdutoService.obterVendaBaseadoNoEstoque(peVendaMediaDTO.getId().longValue());
+				peVendaMediaDTO.setVenda(vendas != null ? vendas.toBigInteger() : BigInteger.valueOf(0));
 			}
 		}
 		

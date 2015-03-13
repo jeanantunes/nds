@@ -146,7 +146,7 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			lancamento.setAlteradoInteface(true);
 			this.getSession().merge(lancamento);
 			
-			this.lancamentoService.atualizarRedistribuicoes(lancamento, dtRecolhimentoArquivo);
+			this.lancamentoService.atualizarRedistribuicoes(lancamento, dtRecolhimentoArquivo, true);
 			
 			this.tratarParciais(lancamento, message, codigoProduto, edicao);
 		}

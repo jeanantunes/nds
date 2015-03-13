@@ -386,10 +386,14 @@ var histogramaPosEstudoController = $.extend(true, {
 					$.postJSON(
 						url,
 						[{name : "id", value : matrizSelecionada.estudo}],
-						function(response){
+						function(response) {
 							// refaz a pesquisa na matriz de distribuicao
-							var filtro = histogramaPosEstudoController.matrizDistribuicaoController.parametrosDePesquisa;
-							histogramaPosEstudoController.matrizDistribuicaoController.pesquisar(filtro);
+							var filtro = [];
+							if(histogramaPosEstudoController && histogramaPosEstudoController.matrizDistribuicaoController) {
+								
+								filtro = histogramaPosEstudoController.matrizDistribuicaoController.parametrosDePesquisa;
+								histogramaPosEstudoController.matrizDistribuicaoController.pesquisar(filtro);
+							}
 							// fecha a aba
 							$('.ui-tabs-selected').children('.ui-icon-close').click();
 						}

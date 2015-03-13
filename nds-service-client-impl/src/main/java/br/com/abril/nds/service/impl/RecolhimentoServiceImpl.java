@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +79,8 @@ import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
  */
 @Service
 public class RecolhimentoServiceImpl implements RecolhimentoService {
-	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RecolhimentoServiceImpl.class);
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -138,11 +141,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 			}
 		  } catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-			e.printStackTrace();
+			  
+			  LOGGER.error("", e);
 		  } catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-			e.printStackTrace();
+			  
+			  LOGGER.error("", e);
 		  }
 		  
 		  return matrizCopia;
@@ -154,57 +157,53 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Override
 	@Transactional(readOnly = true)
 	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer anoNumeroSemana,
-																 List<Long> listaIdsFornecedores,
-																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean forcarBalanceamento) {
-		
-		RecolhimentoDTO dadosRecolhimento =
-			this.obterDadosRecolhimento(anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento, forcarBalanceamento);
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO =
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		
-		if(balanceamentoRecolhimentoDTO!=null && balanceamentoRecolhimentoDTO.getMatrizRecolhimento()!=null){
-		  
-		  TreeMap<Date, List<ProdutoRecolhimentoDTO>> copiaMatriz = copiarMatriz(balanceamentoRecolhimentoDTO.getMatrizRecolhimento());
-			
-		  Date dataMatriz;
-		  List <ProdutoRecolhimentoDTO> listaProdutos;
-		
-		  for(Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimentoDTO.getMatrizRecolhimento().entrySet()){
-			
-			dataMatriz = entry.getKey();
-			listaProdutos = entry.getValue();
-			
-			if(listaProdutos!=null && !listaProdutos.isEmpty()){
-				
-			 for(ProdutoRecolhimentoDTO prDTO :listaProdutos){
-				
-				 /*
-				if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz) 
-						&& prDTO.getStatusLancamento().compareTo(StatusLancamento.EXPEDIDO)==0
-						){
-					//remove e insere no dia certo 
+			List<Long> listaIdsFornecedores,
+			TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
+			boolean forcarBalanceamento) {
 
-					if(copiaMatriz.containsKey(prDTO.getDataRecolhimentoPrevista())){
-						
-						copiaMatriz.get(dataMatriz).remove(prDTO);
-						prDTO.setNovaData(prDTO.getDataRecolhimentoPrevista());
-						copiaMatriz.get(prDTO.getDataRecolhimentoPrevista()).add(prDTO);
-					}
-				}*/
-				
-			 }
-			}
-			
-		  }
-		  balanceamentoRecolhimentoDTO.setMatrizRecolhimento(copiaMatriz);
-		}
+		RecolhimentoDTO dadosRecolhimento = this.obterDadosRecolhimento(anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento, forcarBalanceamento);
+
+		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
+
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO = balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+
+		if(balanceamentoRecolhimentoDTO != null && balanceamentoRecolhimentoDTO.getMatrizRecolhimento() != null) {
+
+			TreeMap<Date, List<ProdutoRecolhimentoDTO>> copiaMatriz = copiarMatriz(balanceamentoRecolhimentoDTO.getMatrizRecolhimento());
+
+			Date dataMatriz;
+			List <ProdutoRecolhimentoDTO> listaProdutos;
+
+			for(Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimentoDTO.getMatrizRecolhimento().entrySet()){
+
+				dataMatriz = entry.getKey();
+				listaProdutos = entry.getValue();
+
+				if(listaProdutos != null && !listaProdutos.isEmpty()) {
+
+					for(ProdutoRecolhimentoDTO prDTO : listaProdutos) {
+
+						/*
+						if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz) 
+								&& prDTO.getStatusLancamento().compareTo(StatusLancamento.EXPEDIDO)==0
+								){
+							//remove e insere no dia certo 
 		
+							if(copiaMatriz.containsKey(prDTO.getDataRecolhimentoPrevista())){
+		
+								copiaMatriz.get(dataMatriz).remove(prDTO);
+								prDTO.setNovaData(prDTO.getDataRecolhimentoPrevista());
+								copiaMatriz.get(prDTO.getDataRecolhimentoPrevista()).add(prDTO);
+							}
+						}*/
+
+					}
+				}
+
+			}
+			balanceamentoRecolhimentoDTO.setMatrizRecolhimento(copiaMatriz);
+		}
+
 		return balanceamentoRecolhimentoDTO;
 	}
 
@@ -213,7 +212,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Usuario usuario, BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO,StatusLancamento statusLancamento,Date dataPesquisa) {
+	public void salvarBalanceamentoRecolhimento(Usuario usuario, BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO, StatusLancamento statusLancamento, Date dataPesquisa) {
 		
 		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = balanceamentoRecolhimentoDTO.getMatrizRecolhimento();
 		
@@ -431,51 +430,33 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
 			
-			boolean gerarHistoricoLancamento = false;
-			
-			HistoricoLancamento historicoLancamento = null;
-			
 			for (Lancamento lancamento : listaLancamentos) {
-				
-				gerarHistoricoLancamento = !(lancamento.getStatus().equals(statusLancamento));
 				
 				produtoRecolhimento = mapaLancamentoRecolhimento.get(lancamento.getId());
 				
 				Date novaData = produtoRecolhimento.getNovaData();
 				
-				if(statusLancamento!=null){
+				if(statusLancamento != null) {
+					
 				  lancamento.setStatus(statusLancamento);
 				}
+				
 				lancamento.setDataStatus(new Date());
 				lancamento.setUsuario(usuario);		
 				
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
 				
-				if (lancamento.getPeriodoLancamentoParcial() != null){
+				if (lancamento.getPeriodoLancamentoParcial() != null) {
 				
 				    this.parciaisService.alterarRecolhimento(lancamento, novaData);
 				}
 				
 				this.lancamentoRepository.merge(lancamento);
 
-				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
+				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData, (statusLancamento != null));
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento, lancamento, novaData);
 				
-				if (gerarHistoricoLancamento) {
-				
-					historicoLancamento = new HistoricoLancamento();
-					
-					historicoLancamento.setLancamento(lancamento);
-					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
-					historicoLancamento.setStatusNovo(lancamento.getStatus());
-					historicoLancamento.setDataEdicao(new Date());
-					historicoLancamento.setResponsavel(usuario);
-					
-                    // TODO: geração de historico desativada devido a criação de
-                    // trigger para realizar essa geração.
-					//this.historicoLancamentoRepository.merge(historicoLancamento);
-				}
 			}
 		}
 	}
