@@ -595,7 +595,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		final StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append(" coalesce(sum(case when (tipoMovimento.operacao_estoque = 'SAIDA') ");
+		sql.append(" coalesce(sum(produtoEdicao.PRECO_VENDA * case when (tipoMovimento.operacao_estoque = 'SAIDA') ");
 	    sql.append("        then movimentoEstoque.qtde ");
 	    sql.append("        else - movimentoEstoque.qtde ");
 	    sql.append("    end ), 0) as VALOR_SUPLEMENTAR ");

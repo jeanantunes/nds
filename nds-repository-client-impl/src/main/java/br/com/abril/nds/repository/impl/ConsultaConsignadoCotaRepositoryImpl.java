@@ -512,8 +512,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			}
 		};
 		
-		return (BigDecimal) namedParameterJdbcTemplate.queryForObject(
-				sql.toString(), parameters, cotaRowMapper);
+		return (BigDecimal) namedParameterJdbcTemplate.queryForObject(sql.toString(), parameters, cotaRowMapper);
 	}
 	
 	@Override
@@ -563,7 +562,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
-		if(filtro.getIdFornecedor()!=null) {
+		if(filtro.getIdFornecedor() != null) {
 		
 			sql.append(" AND forn.ID = :idFornecedor ");
 		}
