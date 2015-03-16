@@ -107,11 +107,14 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		List<NotasCotasImpressaoNfeDTO> cotas = null;
+		
+		/*
 		if(!this.distribuidorRepository.obrigacaoFiscal()) {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvio(filtro);
 		} else {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
-		}
+		}*/
+		cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
 				
 		return cotas;
 	}

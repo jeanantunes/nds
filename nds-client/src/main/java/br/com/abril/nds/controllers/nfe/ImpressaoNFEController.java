@@ -238,14 +238,17 @@ public class ImpressaoNFEController extends BaseController {
 	 */
 	@Post
 	@SuppressWarnings("deprecation")
-	public void exportar(FileType fileType) throws IOException {
-
-		FiltroImpressaoNFEDTO filtro = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
-
+	public void exportar(FiltroImpressaoNFEDTO filtro, FileType fileType) throws IOException {
+		
 		filtro.setPaginacao(null);
-
+		
 		List<NotasCotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
 
+		
+		if(listaNFeDTO == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado nenhum item");
+		}
+		
 		FileExporter.to("cotas", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				null, 

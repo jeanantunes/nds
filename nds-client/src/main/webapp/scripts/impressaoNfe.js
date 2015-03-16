@@ -661,7 +661,7 @@ var impressaoNfeController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Cota',
-				name : 'idCota',
+				name : 'numeroCota',
 				width : 70,
 				sortable : true,
 				align : 'left'

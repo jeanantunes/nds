@@ -21,6 +21,7 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 		this.notaImpressa = notaImpressa;
 		this.idCota = c.getId();
 		this.nomeCota = c.getPessoa().getNome();
+		this.numeroCota = c.getNumeroCota();
 		this.vlrTotal = vlrTotal.setScale(2, BigDecimal.ROUND_DOWN);;
 		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100")))).setScale(2, BigDecimal.ROUND_DOWN);;
 		this.totalExemplares = totalExemplares;
@@ -36,6 +37,9 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 	
 	@Export(label="Id Cota", alignment=Alignment.LEFT)
 	private Long idCota;
+	
+	@Export(label="Id Cota", alignment=Alignment.LEFT)
+	private Integer numeroCota;
 	
 	@Export(label="Cota", alignment=Alignment.LEFT)
 	private String nomeCota;
@@ -62,11 +66,19 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 	public Long getIdCota() {
 		return idCota;
 	}
-
+	
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
-
+	
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+	
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+	
 	public String getNomeCota() {
 		return nomeCota;
 	}
