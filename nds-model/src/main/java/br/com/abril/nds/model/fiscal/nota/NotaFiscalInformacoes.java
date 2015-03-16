@@ -109,6 +109,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	 */
 	@Embedded
 	@NFEExportType
+	@XmlTransient
 	private InformacaoEletronica informacaoEletronica;
 	
 	/**
