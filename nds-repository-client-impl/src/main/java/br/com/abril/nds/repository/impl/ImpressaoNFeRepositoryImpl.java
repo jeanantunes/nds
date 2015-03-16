@@ -35,9 +35,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select distinct new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, ")
-		   .append(" nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), ")
-		   .append(" SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
+		sql.append("select distinct new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(ident.numeroDocumentoFiscal, ")
+		   .append(" nfi.notaImpressa, cota, coalesce(SUM(prd.quantidade), 0), coalesce(SUM(prd.valorTotalBruto), 0), ")
+		   .append(" coalesce(SUM(prd.valorUnitario), 0) ) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -118,7 +118,22 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
 		}
 		
-		sql.append("from NotaFiscal nf, Cota cota join nf.notaFiscalInformacoes.detalhesNotaFiscal ps ");
+		sql.append("from NotaFiscal nf, Cota cota ")
+		.append(" JOIN nf.notaFiscalInformacoes as nfi ")
+		.append(" JOIN nf.notaFiscalInformacoes.detalhesNotaFiscal as det ")
+		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN infElet.retornoComunicacaoEletronica retComElet")
+		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
+		.append(" JOIN nfi.identificacaoDestinatario as identDest")
+		.append(" JOIN nfi.identificacao as ident ")
+		.append(" JOIN ident.naturezaOperacao as natOp ")
+		.append(" LEFT JOIN natOp.processo as proc ")
+		.append(" JOIN identEmit.documento as doc ")
+		.append(" JOIN identDest.documento as docDest ")
+		.append(" JOIN identDest.pessoaDestinatarioReferencia pdest")
+		.append(" JOIN det.produtoServico as prd ")
+		.append(" JOIN prd.produtoEdicao as pe ");
+		
 		
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
 			sql.append(", MovimentoEstoqueCota movEstCota ");
@@ -134,17 +149,17 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		sql.append("WHERE 1 = 1 ");
-		sql.append("and nf.identificacaoDestinatario.pessoaDestinatarioReferencia.id = cota.pessoa.id ");
+		sql.append("and pdest.id = cota.pessoa.id ");
 		
 		if(filtro.getTipoNFe() != null && Long.parseLong(filtro.getTipoNFe()) > -1) {
 			sql.append("and nf.identificacao.tipoNotaFiscal.id = :tipoNotaFiscal ");
 		}
 		
 		if(filtro.getDataEmissao() != null) {
-			sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
+			sql.append("and ident.dataEmissao = :dataEmissao ");
 		}
 		
-		sql.append("and nf.informacaoEletronica.retornoComunicacaoEletronica.status = :statusNFe ");
+		sql.append("and retComElet.statusRetornado = :statusNFe ");
 		
 		//Filtra por datas de movimento de, entre e ate
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
@@ -186,7 +201,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		if(filtro.getNumerosNotas() != null && filtro.getNumerosNotas().size() > 0) {	
-			sql.append("and nf.identificacao.numeroDocumentoFiscal in (:numerosNotas) ");
+			sql.append("and ident.numeroDocumentoFiscal in (:numerosNotas) ");
 		}
 		
 		if(filtro.getIdBoxInicial() != null || filtro.getIdBoxFinal() != null) {
@@ -205,7 +220,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		if (paginacao != null) {
 
 			Map<String, String> columnToSort = new HashMap<String, String>();
-			columnToSort.put("numeroNota", "nf.identificacao.numeroDocumentoFiscal");
+			columnToSort.put("numeroNota", "ident.numeroDocumentoFiscal");
 			columnToSort.put("idCota", "cota.id");
 			columnToSort.put("nomeCota", "cota.pessoa.nome");
 			columnToSort.put("vlrTotal", "vlrTotal");

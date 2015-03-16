@@ -64,6 +64,7 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.InfAdicWrapper;
+import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaNFE;
@@ -514,7 +515,7 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		// if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		
 		return notas;
 	}
@@ -668,7 +669,7 @@ public class NFeServiceImpl implements NFeService {
 		} catch (Exception e) {
 			
 			LOGGER.error("Erro ao Gerar NF-e", e);
-			throw e;
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao Gerar NF-e");
 		}
 		
 		if(!notasGeradas) {
@@ -948,6 +949,11 @@ public class NFeServiceImpl implements NFeService {
 			//notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(6L);
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
 			
+			if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
 			
 			// obter os movimentos da cota
 			final List<MovimentoFechamentoFiscal> movimentosFechamentoFiscal = new ArrayList<>();

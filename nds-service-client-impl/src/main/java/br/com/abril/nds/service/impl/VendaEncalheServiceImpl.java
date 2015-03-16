@@ -431,7 +431,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendasEfetivadasSuplementar.add(this.processarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito, usuario, dataOperacao, qtdDiasEncalheAtrasadoAceitavel));
 			}
 		}
-		
+			
 		byte[] relatorio = gerarComprovanteVenda(vendasEfetivadasEncalhe,vendasEfetivadasSuplementar);
 
 		return relatorio;

@@ -1412,6 +1412,48 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
         
+
+        List<FormaCobrancaFornecedorDTO> formasCobrancaCotaFornecedor = formaCobrancaRepository.obterFormasCobrancaCotaFornecedor();
+        formasCobrancaCotaFornecedor.addAll(formaCobrancaRepository.obterFormasCobrancaDistribuidorFornecedor());
+        ordenarFormasCobrancaCotaFornecedor(formasCobrancaCotaFornecedor);
+        
+        Map<Long, List<Long>> mapaFornecedorCotas = new HashMap<>();
+        for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+        	if(mapaFornecedorCotas.get(fcf.getIdFornecedor()) == null) {
+        		mapaFornecedorCotas.put(fcf.getIdFornecedor(), new ArrayList<Long>());
+        	}
+        	
+        	mapaFornecedorCotas.get(fcf.getIdFornecedor()).add(fcf.getIdCota());
+        }
+        
+        final List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(idLancamento, idProdutoEdicao);
+        
+
+        for (final EstudoCotaDTO estudoCota : listaEstudoCota) {
+            
+            if (estudoCota.getQtdeEfetiva() == null || BigInteger.ZERO.equals(estudoCota.getQtdeEfetiva())) {
+                
+                continue;
+            }
+            
+            boolean formaCobrancaValida = false;
+            for(FormaCobrancaFornecedorDTO fcf : formasCobrancaCotaFornecedor) {
+            	
+            	if(fcf.getIdCota() != null && fcf.getIdCota().equals(estudoCota.getIdCota()) 
+            			&& fcf.getIdFornecedor() != null && fcf.getIdFornecedor().equals(idProdutoEdicao)) {
+            		formaCobrancaValida = true;
+            		break;
+            	}
+            	
+            	if(!formaCobrancaValida) {
+            		if(fcf.getIdCota() == null && fcf.getIdFornecedor().equals(idProdutoEdicao)) {
+            			formaCobrancaValida = true;
+            			break;
+            		}
+            	}
+            }
+        
+        }
         movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
         movimentoEstoqueCota.setCota(new Cota(idCota));
         
@@ -1430,6 +1472,17 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
         }
         
+        /*
+        if(produtoEdicao.getProduto().getFormaComercializacao().equals(FormaComercializacao.CONTA_FIRME) || (estudoCotaDTO.getTipoCota().equals(TipoCota.A_VISTA) && !estudoCotaDTO.isDevolveEncalhe())){        	
+        	movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONTA_FIRME.name());
+        } else {
+    		movimentoEstoqueCota.setFormaComercializacao(FormaComercializacao.CONSIGNADO.name());
+    	}
+    	
+        movimentoEstoqueCota.setCotaContribuinteExigeNF(!distribuidor.isPossuiRegimeEspecialDispensaInterna() || estudoCotaDTO.isCotaContribuinteExigeNotaFiscal());
+		*/
+
+        
         if (valoresAplicadosParam != null) {
             
             movimentoEstoqueCota.setValoresAplicados(valoresAplicadosParam);
@@ -1440,7 +1493,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         		ValoresAplicados valoresAplicados = movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(c.getNumeroCota(), idProdutoEdicao, dataOperacao);
         		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
         	}
-        }
+        }        
         
         if (dataLancamento != null && idProdutoEdicao != null) {
             
