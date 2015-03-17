@@ -113,8 +113,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 				
 				filtro.setIdFornecedor(null);
 				
-				totaisFornecedores = 
-					this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
+				totaisFornecedores = this.consultaConsignadoCota.buscarTotalDetalhado(filtro);
 				
 				for(TotalConsultaConsignadoCotaDetalhado tt : totaisFornecedores) {
 				    totalGeral = totalGeral.add(tt.getTotal());

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.VendaProdutoRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> implements VendaProdutoRepository {
@@ -66,6 +68,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
         hql.append(" 	 produtoEdicao.NUMERO_EDICAO AS numEdicao, ");
         hql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
         hql.append("     lancamento.DATA_REC_DISTRIB AS dataRecolhimento, ");
+        hql.append("     lancamento.status AS statusLancamento, ");
+        hql.append(" 	 produtoEdicao.id AS idProdutoEdicao, ");
         hql.append("     produtoEdicao.PRECO_VENDA AS precoCapa, ");
         hql.append("     produtoEdicao.CHAMADA_CAPA AS chamadaCapa, ");
         hql.append("     produtoEdicao.PARCIAL AS parcial, ");
@@ -82,6 +86,8 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		query.addScalar("numEdicao", StandardBasicTypes.LONG);
 		query.addScalar("dataLancamento");
 		query.addScalar("dataRecolhimento");
+		query.addScalar("statusLancamento", StandardBasicTypes.STRING);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("venda", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("percentualVenda");
@@ -101,13 +107,41 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(VendaProdutoDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+//		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+//			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+//		
+//		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+//			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		this.configurarPaginacao(filtro, query);
 				
 		return query.list();
+	}
+	
+	private void configurarPaginacao(FiltroVendaProdutoDTO filtro, Query query) {
+		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		if(paginacao==null){
+			return;
+		}
+		
+		if (paginacao.getQtdResultadosTotal().equals(0)) {
+			paginacao.setQtdResultadosTotal(query.list().size());
+		}
+		
+		if(paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}
+		
+		if (paginacao.getPosicaoInicial() != null) {
+			if(paginacao.getPosicaoInicial() > paginacao.getQtdResultadosTotal()){
+				query.setFirstResult(1);
+				paginacao.setPaginaAtual(1);
+			}else{
+				query.setFirstResult(paginacao.getPosicaoInicial());
+			}
+		}
 	}
 	
 	private String getSqlFromEWhereVendaPorProduto(FiltroVendaProdutoDTO filtro) {

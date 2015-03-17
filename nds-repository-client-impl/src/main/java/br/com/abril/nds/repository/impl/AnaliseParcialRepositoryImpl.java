@@ -424,11 +424,19 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("        (case when plp.id is not null then 1 else 0 end) parcial, ");
         
         
-        sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' or l.status = 'EM_RECOLHIMENTO'");
+        sql.append("        (case when l.status IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
         sql.append("            then ");
-        sql.append("                (coalesce( ");
-        sql.append("                    sum(mecReparte.QTDE), 0) - ");
-        sql.append("                    coalesce((select sum(mecEncalhe.qtde) ");
+        
+        sql.append("              		cast(sum( ");
+		sql.append("                       CASE ");
+		sql.append("                           WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
+		sql.append("                           THEN ");
+		sql.append("                             mecReparte.QTDE ");
+		sql.append("                           ELSE ");
+		sql.append("                             -mecReparte.QTDE ");
+		sql.append("                       END) ");
+        
+        sql.append("                    - (select sum(mecEncalhe.qtde) ");
         sql.append("                        from lancamento lanc ");
         sql.append("                        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
         sql.append("                        LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID ");
@@ -436,12 +444,17 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("                        LEFT JOIN cota cota on cota.id = cec.COTA_ID ");
         sql.append("                        LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID ");
         sql.append("                        LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID ");
-        sql.append("                        WHERE lanc.id = l.id and cota.id = c.id), 0)) ");
+        sql.append("                        WHERE lanc.id = l.id and cota.id = c.id) AS UNSIGNED INT) ");
         sql.append("            else ");
         sql.append("                null ");
         sql.append("        end) as venda, ");
         
-        sql.append("        coalesce(sum(mecReparte.QTDE), 0) as reparte, ");
+        sql.append(" cast(sum(                                                                   ");
+        sql.append("         CASE                                                                ");
+        sql.append("             WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN mecReparte.QTDE     ");
+        sql.append("             ELSE -mecReparte.QTDE                                           ");
+        sql.append("         END) AS UNSIGNED INT)  as reparte,                                  ");
+        
         sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta, ");
         sql.append("        c.numero_cota numeroCota ");
         sql.append(" from estudo_gerado eg ");
@@ -453,6 +466,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("   join periodo_lancamento_parcial plp on plp.ID = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
         sql.append("   left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append("   left join movimento_estoque_cota mecReparte on mecReparte.lancamento_id = l.id and mecReparte.COTA_ID = c.ID");
+        sql.append("   LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID");
         sql.append(" where eg.id = :estudoId ");
         sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
         sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");

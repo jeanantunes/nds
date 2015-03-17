@@ -345,14 +345,16 @@ public class ProdutoEdicaoController extends BaseController {
 					List<String> mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto(), null);	
 					
 					try {
+						
 					    produtoEdicaoService.tratarInformacoesAdicionaisProdutoEdicaoArquivo(prodEdicao);
 					} catch(ValidacaoException ex) {
+						
 					    mensagens.add(ex.getMessage());
 					}
 					
 					if(!mensagens.isEmpty()){
 						
-						if(prodEdicao.getNumeroEdicao() != null){
+						if(prodEdicao.getNumeroEdicao() != null) {
 							
                             validacaoEdicao.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
                                     + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o." + "\n"

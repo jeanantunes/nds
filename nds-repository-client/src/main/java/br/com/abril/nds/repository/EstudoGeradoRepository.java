@@ -22,17 +22,17 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	
 	void liberarEstudo(List<Long> listIdEstudos, boolean liberado);
 	
-	public EstudoGerado obterEstudoECotasPorIdEstudo(Long idEstudo);
+	EstudoGerado obterEstudoECotasPorIdEstudo(Long idEstudo);
 	
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id, boolean isEdicoesBaseEspecificas);
 	
-	public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
+	EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
 	
-	public List<EstudoGerado> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd);
+	List<EstudoGerado> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd);
 
-	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
+	void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
 
-	public Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado);
+	Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado);
 
     int obterCotasComRepartePorIdEstudo(Long estudoId);
 
@@ -40,6 +40,8 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 	
 	EstudoGerado obterParaAtualizar(Long id);
 
-	public abstract Long countEstudoGeradoParaLancamento(Long idLancamento, Date dtLancamento);
+	Long countEstudoGeradoParaLancamento(Long idLancamento, Date dtLancamento);
+
+	List<EstudoGerado> obterPorLancamentoId(Long idLancamento);
 	
 }

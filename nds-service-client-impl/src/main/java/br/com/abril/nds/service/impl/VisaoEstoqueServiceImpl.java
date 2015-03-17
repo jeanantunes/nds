@@ -205,8 +205,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	@Transactional
 	public void atualizarInventarioEstoque(List<VisaoEstoqueTransferenciaDTO> invetarioAtualizar, TipoEstoque tipoEstoque, Usuario usuario) {
 		
-		if (invetarioAtualizar == null 
-				|| invetarioAtualizar.isEmpty()) {
+		if (invetarioAtualizar == null || invetarioAtualizar.isEmpty()) {
 			
 			return;
 		}
@@ -220,13 +219,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 
 			Diferenca diferenca = new Diferenca();
 
-			ProdutoEdicao produtoEdicao = 
-				this.produtoEdicaoRepository.buscarPorId(dto.getProdutoEdicaoId());
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(dto.getProdutoEdicaoId());
 			
 			if (produtoEdicao == null) {
 				
-				throw new ValidacaoException(
-					TipoMensagem.ERROR, "Não foi encontrado o produto/edição para inventário de estoque!");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado o produto/edição para inventário de estoque!");
 			}
 			
 			BigInteger qtdeDiferenca = new BigInteger(dto.getQtde().toString());

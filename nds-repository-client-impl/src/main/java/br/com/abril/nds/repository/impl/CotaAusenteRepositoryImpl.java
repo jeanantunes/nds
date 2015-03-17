@@ -270,7 +270,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
-		sql.append(" coalesce(sum(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:suplementarCotaAusente, :estornoVendaSuplementar) ");
+		sql.append(" coalesce(sum(if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN (:suplementarCotaAusente) ");
 		sql.append("				,movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA  ");
 		sql.append("				,movimentoEstoque.QTDE*produtoEdicao.PRECO_VENDA*-1)),0) as VALOR_COTA_AUSENTE ");
 				
@@ -281,7 +281,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		sql.append(" where ");
 		sql.append("	movimentoEstoque.DATA = :dataMovimento ");
 		sql.append("	and movimentoEstoque.STATUS = :statusAprovado ");
-		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:suplementarCotaAusente, :reparteCotaAusente, :estornoVendaSuplementar)");
+		sql.append("	and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:suplementarCotaAusente, :reparteCotaAusente)");
 		sql.append("	and movimentoEstoque.PRODUTO_EDICAO_ID in (");
 		sql.append("			select distinct produtoEdicao_.ID ");
 		sql.append("			from EXPEDICAO expedicao ");
@@ -311,7 +311,6 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
 		query.setParameter("suplementarCotaAusente", GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
 		query.setParameter("reparteCotaAusente", GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name());
-		query.setParameterList("estornoVendaSuplementar", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.name(), GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name()));
 		
 		query.addScalar("VALOR_COTA_AUSENTE",StandardBasicTypes.BIG_DECIMAL);
 		

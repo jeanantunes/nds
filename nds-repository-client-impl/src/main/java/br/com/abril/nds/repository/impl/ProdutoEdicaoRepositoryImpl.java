@@ -1625,7 +1625,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		parameters.put("statusLancFechadoRecolhido", 
 		        Arrays.asList(
-		                StatusLancamento.FECHADO, StatusLancamento.RECOLHIDO));
+		                StatusLancamento.FECHADO, StatusLancamento.RECOLHIDO, StatusLancamento.EM_RECOLHIMENTO));
 
 		final Query query = super.getSession().createQuery(hql.toString());
 

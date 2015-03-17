@@ -866,34 +866,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private MovimentoEstoqueCota gerarMovimentoCompraConsignadoCota(ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
 			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao, FormaComercializacao formaComercializacao) {
 
-		Date dataLancamento = null;
-		if(produtoEdicao != null) {
-			List<Lancamento> lancamentos = new ArrayList<Lancamento>();
-			for(Lancamento l : produtoEdicao.getLancamentos()) {
-				if(l.getDataLancamentoDistribuidor().before(dataOperacao) || l.getDataLancamentoDistribuidor().equals(dataOperacao)) {
-					lancamentos.add(l);
-				}
-			}
-			
-			Collections.sort(lancamentos, new Comparator<Lancamento>() {
-
-				@Override
-				public int compare(Lancamento o1, Lancamento o2) {
-					if(o1.getDataLancamentoDistribuidor().after(o2.getDataLancamentoDistribuidor())) {
-						return -1;
-					}
-					return 0;
-				}
-			});
-			
-			if(lancamentos.size() == 0) {
-				lancamentos = new ArrayList<Lancamento>(produtoEdicao.getLancamentos());
-				dataLancamento = lancamentos.get(0).getDataLancamentoDistribuidor();
-			} else {
-				dataLancamento = lancamentos.get(0).getDataLancamentoDistribuidor();
-			}
-		}
-		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = null;
 		
 		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVenda)) {
@@ -908,6 +880,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		if (tipoMovimentoEstoqueCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado tipo de movimento de estoque para compra de encalhe suplementar!");
+		}
+		
+		Date dataLancamento = null;
+		Lancamento l = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), dataOperacao);
+		if(l != null) {
+			
+			dataLancamento = l.getDataLancamentoDistribuidor();
 		}
 
 		return movimentoEstoqueService.gerarMovimentoCota(

@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -581,21 +582,28 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
     @Transactional
-    public void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento) {
+    public void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento, boolean alterarStatusLancamento) {
         
         Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
         
-        Integer numeroPeriodo = (lancamento.getPeriodoLancamentoParcial() != null)
-                                    ? lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo() : null;
+        Integer numeroPeriodo = (lancamento.getPeriodoLancamentoParcial() != null) ? lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo() : null;
         
-        List<Lancamento> redistribuicoes =
-            this.lancamentoRepository.obterRedistribuicoes(idProdutoEdicao, numeroPeriodo);
+        List<Lancamento> redistribuicoes = this.lancamentoRepository.obterRedistribuicoes(idProdutoEdicao, numeroPeriodo);
         
         for (Lancamento redistribuicao : redistribuicoes) {
             
             redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
-            redistribuicao.setStatus(lancamento.getStatus());
+            if(alterarStatusLancamento && LancamentoHelper.getStatusLancamentosPreExpedicao().contains(redistribuicao.getStatus())) {
+            	
+            	throw new ValidacaoException(TipoMensagem.WARNING, 
+            			String.format("Existe redistribuição não expedida para o produto %s / %s.<br />Exclua para continuar."
+            					, lancamento.getProdutoEdicao().getProduto().getCodigo(), lancamento.getProdutoEdicao().getNumeroEdicao()));
+            }
             
+            if(alterarStatusLancamento) {
+            	
+            	redistribuicao.setStatus(lancamento.getStatus());
+            }
             
             this.lancamentoRepository.merge(redistribuicao);
         }
