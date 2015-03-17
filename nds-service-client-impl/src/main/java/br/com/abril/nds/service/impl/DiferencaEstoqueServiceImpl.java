@@ -396,14 +396,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                         diferencaRedirecionada.isAutomatica(),
                         validarTransfEstoqueDiferenca, dataLancamento, null);
         
-        final LancamentoDiferenca lancamentoDiferenca =
-                this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, null);
+        final LancamentoDiferenca lancamentoDiferenca = this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, null);
         
         diferencaRedirecionada.setLancamentoDiferenca(lancamentoDiferenca);
         
         diferencaRedirecionada = diferencaEstoqueRepository.merge(diferencaRedirecionada);
         
-        this.processarTransferenciaEstoque(diferencaRedirecionada,diferencaRedirecionada.getResponsavel().getId(), null);
+        this.processarTransferenciaEstoque(diferencaRedirecionada, diferencaRedirecionada.getResponsavel().getId(), null);
     }
     
     private Diferenca redirecionarDiferencaEstoque(final BigInteger qntDiferenca,final Diferenca diferenca){
@@ -755,6 +754,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             return;
         }
         
+        if (TipoEstoque.SUPLEMENTAR.equals(diferenca.getTipoEstoque())) {
+            
+            return;
+        }
         
         if (TipoEstoque.GANHO.equals(diferenca.getTipoEstoque())) {
             
@@ -1295,10 +1298,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         }
 
         return movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
-                diferenca.getProdutoEdicao().getId(), idUsuario,
-                diferenca.getQtde(), tipoMovimentoEstoque,
-                isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, 
-                statusIntegracao, origem, TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.equals(tipoDiferenca));
+                diferenca, idUsuario,
+                tipoMovimentoEstoque, isAprovacaoAutomatica,
+                validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, 
+                origem, TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.equals(tipoDiferenca));
     }
     
     private void tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
