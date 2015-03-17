@@ -48,6 +48,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -56,6 +57,10 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalMEC;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -70,10 +75,12 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
@@ -176,6 +183,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private GerarCobrancaService cobrancaService;
 		
 	private Image logoDistribuidor;
+
+	@Autowired
+	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
+	
+	@Autowired
+	private TipoMovimentoFiscalRepository tipoMovimentoFiscalRepository;
 	
 	private SlipVendaEncalheDTO obterDadosSlipVenda(VendaProduto... vendas){
 		
@@ -534,8 +547,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private VendaProduto criarVendaEncalhe(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, Usuario usuario,
 			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 
-		ProdutoEdicao produtoEdicao =
-				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
 		
 		if (isVendaConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel) && isConsignadoVendaEncalhe(produtoEdicao)) {
 
@@ -560,7 +572,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		MovimentoEstoqueCota movimentoEstoqueCota =
 						 gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 															usuario.getId(), qntProduto, TipoVendaEncalhe.ENCALHE,
-															dataOperacao);
+															dataOperacao, FormaComercializacao.CONSIGNADO);
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
 		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
@@ -568,7 +580,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaEncalheDistribuidor(vnd, usuario, produtoEdicao);
 		
 		gerarMovimentoChamadaEncalheCota(produtoEdicao, vendaProduto.getCota(),qntProduto);
-
+		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
 		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONSIGNADO);
@@ -682,7 +694,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 		} else {
 
-			return criarVendaSuplementarContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
+			return criarVendaSuplementarContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 		}
 	}
 
@@ -695,16 +707,21 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param usuario
 	 * @param produtoEdicao
 	 */
-	private VendaProduto criarVendaSuplementarContaFirme(VendaEncalheDTO vnd, Integer numeroCota, Date dataVencimentoDebito, 
-													 Usuario usuario, ProdutoEdicao produtoEdicao) {
-		
-		
+	private VendaProduto criarVendaSuplementarContaFirme(VendaEncalheDTO vnd, Integer numeroCota, Date dataVencimentoDebito, Usuario usuario, ProdutoEdicao produtoEdicao, Date dataOperacao) {
+				
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
 
-		MovimentoEstoque movimentoEstoque = 
-				gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(), vendaProduto.getQntProduto());
+		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(), vendaProduto.getQntProduto());
 		
 		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito, vendaProduto);
+		
+
+		MovimentoEstoqueCota movimentoEstoqueCota = 
+				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
+										   		   usuario.getId(), vendaProduto.getQntProduto(), TipoVendaEncalhe.SUPLEMENTAR,
+										   		   dataOperacao, FormaComercializacao.CONTA_FIRME);
+		
+		this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
@@ -712,7 +729,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		vendaProduto.getMovimentoFinanceiro().addAll(movimentoFinanceiro);
 		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONTA_FIRME);
 		vendaProduto.setTipoVenda(TipoVendaEncalhe.SUPLEMENTAR);
-
+		
 		return vendaProdutoRepository.merge(vendaProduto);
 	}
 
@@ -725,8 +742,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param usuario
 	 * @param produtoEdicao
 	 */
-	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd, Integer numeroCota, Date dataVencimentoDebito, 
-														 Usuario usuario, ProdutoEdicao produtoEdicao, Date dataOperacao) {
+	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd, 
+			Integer numeroCota, 
+			Date dataVencimentoDebito, 
+			Usuario usuario, 
+		    ProdutoEdicao produtoEdicao, 
+		    Date dataOperacao) {
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
 		
@@ -735,17 +756,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 										   		   usuario.getId(), qntProduto, TipoVendaEncalhe.SUPLEMENTAR,
-										   		   dataOperacao);
+										   		   dataOperacao, FormaComercializacao.CONSIGNADO);
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
 		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		
-		MovimentoEstoque movimentoEstoque = 
-				gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(),
-																  usuario.getId(), qntProduto);
+		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(), usuario.getId(), qntProduto);
 
 		gerarMovimentoChamadaEncalheCota(produtoEdicao, vendaProduto.getCota(), qntProduto);
-
+		
+		this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
+		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
 		vendaProduto.setTipoComercializacaoVenda(FormaComercializacao.CONSIGNADO);
@@ -753,7 +774,34 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		return vendaProdutoRepository.merge(vendaProduto);
 	}
-
+	
+	private void gerarMovimentoFechamentoFiscalCota(Date dataOperacao, MovimentoEstoqueCota movimentoEstoqueCota, Cota cota, ProdutoEdicao produtoEdicao, VendaProduto vendaProduto) {
+		
+		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+		MovimentoFechamentoFiscalCota mffc = new MovimentoFechamentoFiscalCota();
+		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mffc, movimentoEstoqueCota));
+		mffc.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+		mffc.setNotaFiscalLiberadaEmissao(true);
+		mffc.setData(dataOperacao);
+		mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
+		mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
+		mffc.setQtde(vendaProduto.getQntProduto());
+		mffc.setTipoDestinatario(TipoDestinatario.COTA);
+		mffc.setCota(movimentoEstoqueCota.getCota());
+		mffc.setChamadaEncalheCota(null);
+		mffc.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
+		
+		if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() || cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
+			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(true); 
+			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);
+		} else {			
+			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
+			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+		}
+			
+		movimentoFechamentoFiscalRepository.adicionar(mffc);
+	}
+	
 	/**
 	 * Cria movimento financeiro da cota da venda de produto informada.
 	 * 
@@ -816,7 +864,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param qntProduto
 	 */
 	private MovimentoEstoqueCota gerarMovimentoCompraConsignadoCota(ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
-			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao) {
+			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao, FormaComercializacao formaComercializacao) {
 
 		Date dataLancamento = null;
 		if(produtoEdicao != null) {
@@ -914,7 +962,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param cota
 	 * @param qntProduto
 	 */
-	private void gerarMovimentoChamadaEncalheCota(ProdutoEdicao produtoEdicao,Cota cota, BigInteger qntProduto) {
+	private void gerarMovimentoChamadaEncalheCota(ProdutoEdicao produtoEdicao, Cota cota, BigInteger qntProduto) {
 
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao,TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
@@ -923,8 +971,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			return;
 		}
 		
-		ChamadaEncalheCota chamadaEncalheCota = 
-				chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(),cota.getId());
+		ChamadaEncalheCota chamadaEncalheCota = chamadaEncalheCotaRepository.buscarPorChamadaEncalheECota(chamadaEncalhe.getId(),cota.getId());
 
 		if (chamadaEncalheCota == null) {
 			chamadaEncalheCota = new ChamadaEncalheCota();
