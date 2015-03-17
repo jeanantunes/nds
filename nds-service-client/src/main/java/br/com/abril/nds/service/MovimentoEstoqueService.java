@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -120,12 +121,12 @@ public interface MovimentoEstoqueService {
 	 */
 	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
 
-	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao,
-													Long idUsuario, BigInteger quantidade,
-													TipoMovimentoEstoque tipoMovimentoEstoque,
+	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Diferenca diferenca,
+													Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque,
 													boolean isMovimentoDiferencaAutomatica,
-													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
-													StatusIntegracao statusIntegracao, Origem origem, boolean isFaltaDirecionadaCota);
+													boolean validarTransfEstoqueDiferenca,
+													Date dataLancamento, StatusIntegracao statusIntegracao,
+													Origem origem, boolean isFaltaDirecionadaCota);
 	
 	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
