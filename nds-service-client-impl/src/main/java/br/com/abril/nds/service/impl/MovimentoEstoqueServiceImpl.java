@@ -189,7 +189,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     lancamento.getDataLancamentoDistribuidor(), 
                     null, 
                     lancamento.getId(), 
-                    null);
+                    null, FormaComercializacao.CONSIGNADO);
             
             if (movimentoEstoqueCota.getTipoMovimento() != tipoMovimentoEstCotaAusente) {
                 
@@ -593,7 +593,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                                 		, movimentoCota.getLancamento() != null ? movimentoCota.getLancamento().getId() : null
                                 		, null
                                 		, false
-                                		, movimentoCota.getValoresAplicados(), FormaComercializacao.CONSIGNADO));
+                                		, movimentoCota.getValoresAplicados(), FormaComercializacao.CONSIGNADO, false, false));
                                 
             }
         }
@@ -1390,12 +1390,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento,
             final Long idProdutoEdicao, final Long idCota, final Long idUsuario,
             final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque, final Date dataOperacao,
-            final ValoresAplicados valoresAplicados) {
+            final ValoresAplicados valoresAplicados, FormaComercializacao formaComercializacao, boolean isContribuinte, boolean isExigeNotaFiscal) {
         
         return criarMovimentoCota(
                 dataLancamento, idProdutoEdicao, idCota, idUsuario, 
                 quantidade, tipoMovimentoEstoque, null, dataOperacao, null, null, false, 
-                valoresAplicados, FormaComercializacao.CONSIGNADO);
+                valoresAplicados, formaComercializacao, isContribuinte, isExigeNotaFiscal);
         
     }
     
@@ -1410,23 +1410,23 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final boolean isMovimentoDiferencaAutomatico) {
         
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota,
-                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, FormaComercializacao.CONSIGNADO);
+                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, FormaComercializacao.CONSIGNADO, false, false);
     }
     
     @Override
     @Transactional
     public MovimentoEstoqueCota gerarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
             final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota) {
+            final Date dataMovimento, final Date dataOperacao, final Long idLancamento, final Long idEstudoCota, FormaComercializacao formaComercializacao) {
         
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade,
-                tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false, null, FormaComercializacao.CONSIGNADO);
+                tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false, null, formaComercializacao, false, false);
     }
     
     private MovimentoEstoqueCota criarMovimentoCota(final Date dataLancamento, final Long idProdutoEdicao, final Long idCota,
             final Long idUsuario, final BigInteger quantidade, final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Date dataMovimento, Date dataOperacao, Long idLancamento, final Long idEstudoCota,final boolean isMovimentoDiferencaAutomatico,
-            final ValoresAplicados valoresAplicadosParam, FormaComercializacao formaComercializacao) {
+            final ValoresAplicados valoresAplicadosParam, FormaComercializacao formaComercializacao, boolean isContribuinte, boolean isExigeNota) {
         
         this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
         
@@ -1480,6 +1480,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         	}
         }        
         
+        movimentoEstoqueCota.setCotaContribuinteExigeNF(isExigeNota == true ? isExigeNota : isContribuinte);
+          
         if (dataLancamento != null && idProdutoEdicao != null) {
             
             if (idLancamento == null) {
@@ -1675,7 +1677,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte, dataOperacao, true);
             
-            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, null);
+            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
         }
     }
     
@@ -1722,7 +1724,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe, dataOperacao, true);
             
-            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, null);
+            gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
         }
     }
     

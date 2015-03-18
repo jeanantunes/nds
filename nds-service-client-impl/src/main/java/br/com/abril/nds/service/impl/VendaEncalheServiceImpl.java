@@ -568,11 +568,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
 
 		BigInteger qntProduto = vendaProduto.getQntProduto();
-
+		
+		Cota cota = vendaProduto.getCota();
+		
 		MovimentoEstoqueCota movimentoEstoqueCota =
 						 gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 															usuario.getId(), qntProduto, TipoVendaEncalhe.ENCALHE,
-															dataOperacao, FormaComercializacao.CONSIGNADO);
+															dataOperacao, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
 		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
@@ -715,13 +717,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito, vendaProduto);
 		
-
+		Cota cota = vendaProduto.getCota();
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 										   		   usuario.getId(), vendaProduto.getQntProduto(), TipoVendaEncalhe.SUPLEMENTAR,
-										   		   dataOperacao, FormaComercializacao.CONTA_FIRME);
+										   		   dataOperacao, FormaComercializacao.CONTA_FIRME, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
-		this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
+		// this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
@@ -753,10 +756,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		BigInteger qntProduto = vendaProduto.getQntProduto();
 		
+		Cota cota = vendaProduto.getCota();
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 										   		   usuario.getId(), qntProduto, TipoVendaEncalhe.SUPLEMENTAR,
-										   		   dataOperacao, FormaComercializacao.CONSIGNADO);
+										   		   dataOperacao, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
 		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
@@ -765,7 +770,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		gerarMovimentoChamadaEncalheCota(produtoEdicao, vendaProduto.getCota(), qntProduto);
 		
-		this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
+		// this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
@@ -864,7 +869,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param qntProduto
 	 */
 	private MovimentoEstoqueCota gerarMovimentoCompraConsignadoCota(ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
-			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao, FormaComercializacao formaComercializacao) {
+			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao, FormaComercializacao formaComercializacao, boolean isContribuinte, boolean isExigeNotaFiscal) {
 
 		GrupoMovimentoEstoque grupoMovimentoEstoque = null;
 		
@@ -891,7 +896,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		return movimentoEstoqueService.gerarMovimentoCota(
 		        dataLancamento, produtoEdicao.getId(), idCota, idUsuario, qntProduto, 
-		        tipoMovimentoEstoqueCota, dataOperacao, null);
+		        tipoMovimentoEstoqueCota, dataOperacao, null, formaComercializacao, isContribuinte, isExigeNotaFiscal);
 	}
 
 	/**
@@ -930,7 +935,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
     		dataLancamento = l.getDataLancamentoDistribuidor();
     	}
 		
-		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, qntProduto, tipoMovimentoEstoqueCota, dataOperacao, null);
+		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, qntProduto, tipoMovimentoEstoqueCota, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
 	}
 
 	/**
@@ -1222,7 +1227,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigDecimal preco = precoVenda.subtract(valorDesconto).setScale(4,BigDecimal.ROUND_HALF_EVEN);
 
 		BigDecimal valorVendaNovo = preco.multiply(new BigDecimal(qntNovaProduto));
-
+		
 		if (qntAtualProduto.compareTo(qntNovaProduto) != 0) {
 
 			MovimentoEstoque movimento = processarAtualizcaoMovimentoEstoqueDistribuidor(qntAtualProduto, qntNovaProduto, 
@@ -1240,10 +1245,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaProduto.getMovimentoFinanceiro().addAll(movimentoFinanceiro);
 				
 			}else {
-
+				
+				Cota cota = vendaProduto.getCota();
+				
 				processarAtualizacaoMovimentoEstoqueCota(qntAtualProduto, qntNovaProduto, vendaProduto.getProdutoEdicao().getId(), 
 														usuario.getId(), vendaProduto.getCota().getId(), vendaProduto.getTipoVenda(),
-														this.distribuidorService.obterDataOperacaoDistribuidor());
+														this.distribuidorService.obterDataOperacaoDistribuidor(), cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 
 				processarAtualizacaoChamadaEncalheCota(vendaProduto,qntNovaProduto);
 			}
@@ -1393,7 +1400,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	private void processarAtualizacaoMovimentoEstoqueCota(BigInteger qntProdutoAtual, BigInteger qntProdutoNovo,
 														  Long idProdutoEdicao, Long idUsuario, Long idCota, 
-														  TipoVendaEncalhe tipoVenda, Date dataOperacao) {
+														  TipoVendaEncalhe tipoVenda, Date dataOperacao, boolean isContribuinte, boolean isExigeNota) {
 		
 		BigInteger quantidadeProdutoAlterada = BigInteger.ZERO;
 		TipoMovimentoEstoque tipoMovimento = null;
@@ -1434,7 +1441,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
 		}
 
-		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao, idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao, null);
+		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao, idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao, null, FormaComercializacao.CONSIGNADO, isContribuinte, isExigeNota);
 
 	}
 

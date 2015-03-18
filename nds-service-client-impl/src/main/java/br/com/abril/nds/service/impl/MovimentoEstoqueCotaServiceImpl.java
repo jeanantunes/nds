@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.TransferenciaReparteSuplementarDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -266,7 +267,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				null, produtoEdicao.getId(), cota.getId(), usuario.getId(), 
-					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null);
+					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
 		}
 	}
 
