@@ -1100,18 +1100,15 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 																	vendaProduto.getProdutoEdicao().getId(), 
 																	vendaProduto.getUsuario().getId(), 
 																	vendaProduto.getTipoVenda());
-		
-		if (FormaComercializacao.CONSIGNADO.equals(vendaProduto.getTipoComercializacaoVenda())) {
 			
-			// Atualiza estoque da cota
-			gerarMovimentoEstornoCompraConsignadoCota(vendaProduto.getProdutoEdicao().getId(), vendaProduto.getCota().getId(),
-												   	  vendaProduto.getUsuario().getId(),vendaProduto.getQntProduto(),
-												      vendaProduto.getTipoVenda(),
-												      this.distribuidorService.obterDataOperacaoDistribuidor());
+		// Atualiza estoque da cota
+		gerarMovimentoEstornoCompraConsignadoCota(vendaProduto.getProdutoEdicao().getId(), vendaProduto.getCota().getId(),
+											   	  vendaProduto.getUsuario().getId(),vendaProduto.getQntProduto(),
+											      vendaProduto.getTipoVenda(),
+											      this.distribuidorService.obterDataOperacaoDistribuidor());
 
-			// Atualiza a chamada de encalhe do produto edição referente a cota
-			processaAtualizacaoChamadaEncalheCotaVendaCancelada(vendaProduto);
-		}
+		// Atualiza a chamada de encalhe do produto edição referente a cota
+		processaAtualizacaoChamadaEncalheCotaVendaCancelada(vendaProduto);
 
 		vendaProduto.getMovimentoEstoque().add(movimento);
 		
