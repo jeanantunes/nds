@@ -51,4 +51,7 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 			final Long idProdutoEdicao, final Long idCota);
 
 	BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
+
+	public abstract BigDecimal obterVendaCotaBaseadoNoEstoque(Long idProdEdicao,
+			Integer numeroCota);
 }

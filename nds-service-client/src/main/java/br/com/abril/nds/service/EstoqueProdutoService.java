@@ -54,5 +54,8 @@ public interface EstoqueProdutoService {
     void atualizarEstoqueProdutoCota();
 
 	BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao);
+
+	public abstract BigDecimal obterVendaCotaBaseadoNoEstoque(Long idProdutoEdicao,
+			Integer numeroCota);
     
 }

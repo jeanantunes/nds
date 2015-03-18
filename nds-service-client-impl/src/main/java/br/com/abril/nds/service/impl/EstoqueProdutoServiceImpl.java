@@ -353,5 +353,10 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	public BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao){
 		return estoqueProdutoCotaRepository.obterVendaBaseadoNoEstoque(idProdutoEdicao);
 	}
-
+	
+	@Transactional
+	@Override
+	public BigDecimal obterVendaCotaBaseadoNoEstoque(Long idProdutoEdicao, Integer numeroCota){
+		return estoqueProdutoCotaRepository.obterVendaCotaBaseadoNoEstoque(idProdutoEdicao, numeroCota);
+	}
 }
