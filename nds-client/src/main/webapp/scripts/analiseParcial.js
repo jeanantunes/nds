@@ -8,7 +8,7 @@ var analiseParcialController = $.extend(true, {
     edicoesBase : [],
     edicoesBaseDadosEdicoes : [],
     detalheEdicoesBases : [],
-    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" />',
+    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" onkeydown="onlyNumeric(event);" />',
     tipoExibicao : 'NORMAL',
     
                                      
@@ -430,7 +430,7 @@ var analiseParcialController = $.extend(true, {
 
     atualizaReparte : function(input, isAtualizarRepartePDV) {
     	
-    	if (!$('#saldo_reparte').text() || $('#saldo_reparte').text() == ""){
+    	if (!$('#saldo_reparte').text() || $('#saldo_reparte').text() == "" || isNaN($('#saldo_reparte').text())){
     		$('#saldo_reparte').text(0);
     	}
     	
@@ -444,6 +444,11 @@ var analiseParcialController = $.extend(true, {
         var idRowGrid = input_reparte_element.attr('idrowgrid');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var legenda_element = input_reparte_element.closest('td').next().find('div');
+        
+        if(input_reparte_element.val().trim() == ''){
+        	analiseParcialController.atualizarReparteCota(input_reparte_element, numeroCota, reparteSubtraido, reparteDigitado, reparteAtual, saldoReparte, legenda_element, idRowGrid);
+    		return;
+        }
         
         if (reparteAtual != reparteDigitado) {
             var legendaText = legenda_element.text();
@@ -549,6 +554,10 @@ var analiseParcialController = $.extend(true, {
 		        saldoReparte.text(saldoReparteAtualizado);
 		      	
 		      	input_reparte_element.attr('reparteAtual', reparteDigitado);
+		      	 
+		      	if(input_reparte_element.val().trim() == ''){
+		      		input_reparte_element.val(reparteDigitado);
+		        }
 		      	
 		      	var reparteInicial = input_reparte_element.attr('reparteInicial');
 		          
@@ -560,13 +569,7 @@ var analiseParcialController = $.extend(true, {
 					legenda_element.addClass('asterisco');
 				}
 				
-				$('#total_reparte_sugerido').text(
-					$('#baseEstudoGridParcial tr td input:text').map(function() {
-						return parseInt(this.value, 10);
-					}).toArray().reduce(function(a, b) {
-						return a + b; 
-					})
-				);
+				analiseParcialController.somarTotais();
 				
 				if (typeof histogramaPosEstudoController != 'undefined') {
 				
