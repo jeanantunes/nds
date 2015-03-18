@@ -365,7 +365,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" mffc.cota.situacaoCadastro as situacaoCadastro, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica as exigeNotaFiscalEletronica, ");
 		hql.append(" cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS as contribuinteICMS, ");
-		hql.append(" chamadaEncalheCota.processoUtilizaNfe as contribuinteICMSExigeNFe ");
+		// hql.append(" chamadaEncalheCota.processoUtilizaNfe as contribuinteICMSExigeNFe ");
+		hql.append(" CASE WHEN cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true THEN true else cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica END as contribuinteICMSExigeNFe");
 		
 		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);
 
@@ -726,14 +727,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		hql.append(" FROM MovimentoFechamentoFiscalCota mffc ")
 		.append(" JOIN mffc.tipoMovimento tipoMovimento ")
-		.append(" JOIN mffc.chamadaEncalheCota chamadaEncalheCota ")
-		.append(" JOIN chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
-		.append(" JOIN chamadaEncalhe.lancamentos lancamentos ")
+		.append(" LEFT OUTER JOIN mffc.chamadaEncalheCota chamadaEncalheCota ")
+		.append(" LEFT OUTER JOIN chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+		.append(" LEFT OUTER JOIN chamadaEncalhe.lancamentos lancamentos ")
 		.append(" JOIN mffc.cota cota ")
 		.append(" JOIN cota.pessoa pessoa ")
-		.append(" LEFT JOIN cota.box box ")
-		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
-		.append(" LEFT JOIN roteirizacao.roteiros roteiro ")
+		.append(" LEFT OUTER JOIN cota.box box ")
+		.append(" LEFT OUTER JOIN box.roteirizacao roteirizacao ")
+		.append(" LEFT OUTER JOIN roteirizacao.roteiros roteiro ")
 		.append(" JOIN mffc.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
@@ -742,12 +743,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" AND mffc.qtde > 0 ");
 		
 		if(filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado()) {
-			
 			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
 		}
 		
 		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica()) {
-			
 			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
 		}
 
@@ -794,7 +793,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(!isGroup){
-			hql.append(" GROUP BY mffc.cota.numeroCota, chamadaEncalheCota.processoUtilizaNfe ");
+			hql.append(" GROUP BY mffc.cota.numeroCota ");
 		} else {
 			hql.append(" GROUP BY mffc ");
 		}

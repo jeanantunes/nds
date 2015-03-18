@@ -16,6 +16,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -26,6 +27,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -66,6 +68,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
+	
+	@Autowired
+	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
 	private CalendarioService calendarioService;
@@ -717,17 +722,18 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 		validarStatusLancamentoPeriodo(lancamento, "Lancamento já foi expedido, não pode ser excluido.");
 
+		validarEstudoGeradoLancamento(lancamento.getId());
+		
 		PeriodoLancamentoParcial periodo = periodoLancamentoParcialRepository.obterPeriodoPorIdLancamento(idLancamento);
 		
-		if (periodo.getLancamentoParcial()!= null 
-				&&  periodo.getLancamentoParcial().getPeriodos()!= null 
-				&& periodo.getLancamentoParcial().getPeriodos().size() == 1 ){
+		if (periodo.getLancamentoParcial() != null 
+				&&  periodo.getLancamentoParcial().getPeriodos() != null 
+				&& periodo.getLancamentoParcial().getPeriodos().size() == 1) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Para excluir todos os lançamentos parciais deve ser alterado o 'Regime Recolhimento' no cadastro de edição");
 		}
 		
-		PeriodoLancamentoParcial periodoAnterior = 
-				periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1, periodo.getLancamentoParcial().getId());
+		PeriodoLancamentoParcial periodoAnterior = periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1, periodo.getLancamentoParcial().getId());
 		
 		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())) {
 			
@@ -749,9 +755,19 @@ public class ParciaisServiceImpl implements ParciaisService{
 			}
 		}
 		
-		this.periodoLancamentoParcialRepository.merge(periodoAnterior);
+		periodoLancamentoParcialRepository.merge(periodoAnterior);
 		
-		this.periodoLancamentoParcialRepository.remover(periodo);
+		periodoLancamentoParcialRepository.remover(periodo);
+	}
+
+	private void validarEstudoGeradoLancamento(Long idLancamento) {
+		
+		List<EstudoGerado> eg = estudoGeradoRepository.obterPorLancamentoId(idLancamento);
+		
+		if(eg != null && !eg.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lancamento possui estudo, não pode ser excluido.");
+		}
 	}
 
 	private void atualizarRecolhimentosPeriodoAnterior(PeriodoLancamentoParcial periodoAnterior, Date dataRecolhimento) {

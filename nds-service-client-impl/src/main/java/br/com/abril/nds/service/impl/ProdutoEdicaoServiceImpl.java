@@ -1967,6 +1967,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     }
     
     @Override
+    @Transactional
     public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(final ProdutoEdicaoDTO dto) {
         
         if(dto.getCodigoProduto()==null) {

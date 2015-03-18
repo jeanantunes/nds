@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.VendaProdutoRepository;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.VendaProdutoService;
 
 @Service
@@ -26,14 +27,28 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 	
 	@Autowired
 	private TipoClassificacaoProdutoRepository tipoClassificacaoProduto;
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 
 	@Override
 	@Transactional
 	public List<VendaProdutoDTO> buscaVendaPorProduto(FiltroVendaProdutoDTO filtro) {
-		if(filtro == null) 
+		
+		if(filtro == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		}
+		
+		List<VendaProdutoDTO> listVendaProduto = vendaProdutoRepository.buscarVendaPorProduto(filtro);
 				
-		return vendaProdutoRepository.buscarVendaPorProduto(filtro);
+		for (VendaProdutoDTO vendaProdutoDTO : listVendaProduto) {
+			if(vendaProdutoDTO.getStatusLancamento().equalsIgnoreCase("FECHADO") 
+					&& (vendaProdutoDTO.getVenda() == null || vendaProdutoDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)){
+				vendaProdutoDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(vendaProdutoDTO.getIdProdutoEdicao().longValue()).toBigInteger());
+			}
+		}
+		
+		return listVendaProduto;
 		 
 	}
 

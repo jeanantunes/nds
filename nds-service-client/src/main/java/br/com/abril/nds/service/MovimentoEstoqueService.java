@@ -15,8 +15,10 @@ import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -48,9 +50,9 @@ public interface MovimentoEstoqueService {
 	MovimentoEstoqueCota gerarMovimentoCota(
 	        Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, 
 	        BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
-	        ValoresAplicados valoresAplicados);
+	        ValoresAplicados valoresAplicados, FormaComercializacao formaComercializacao, boolean isContribuinte, boolean isExigeNota);
 
-	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota, FormaComercializacao formaComercializacao);
 
 	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
 
@@ -123,12 +125,12 @@ public interface MovimentoEstoqueService {
 	 */
 	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
 
-	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao,
-													Long idUsuario, BigInteger quantidade,
-													TipoMovimentoEstoque tipoMovimentoEstoque,
+	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Diferenca diferenca,
+													Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque,
 													boolean isMovimentoDiferencaAutomatica,
-													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
-													StatusIntegracao statusIntegracao, Origem origem, boolean isFaltaDirecionadaCota);
+													boolean validarTransfEstoqueDiferenca,
+													Date dataLancamento, StatusIntegracao statusIntegracao,
+													Origem origem, boolean isFaltaDirecionadaCota);
 	
 	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Distribuidor distribuidor, Date dataLancamento, ProdutoEdicao produtoEdicao, 
 			Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, 

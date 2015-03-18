@@ -54,6 +54,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -1087,6 +1088,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		final TipoMovimentoEstoque tipoMovimentoEstoqueCota = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
+		Cota cota = chamadaEncalheCota.getCota();
+		
 		ValoresAplicados valoresAplicados = 
 		        movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
 		        		chamadaEncalheCota.getCota().getNumeroCota()
@@ -1115,7 +1118,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						BigInteger.ZERO, 
 						tipoMovimentoEstoqueCota,
 						this.distribuidorService.obterDataOperacaoDistribuidor(),
-						valoresAplicados);
+						valoresAplicados, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		return movimentoEstoqueCota;
 	}
     
@@ -1257,7 +1260,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         MovimentoEstoqueCota movimentoEstoqueCota = 
             this.movimentoEstoqueService.gerarMovimentoCota(proximoLancamentoPeriodo.getDataCriacao(), 
                 item.getIdProdutoEdicao(), item.getIdCota(), usuarioId, item.getQtde(), tipoMovimentoEstoque, 
-                dataProximoLancamento, dataOperacao, proximoLancamentoPeriodo.getId(), estudoCota.getId());
+                dataProximoLancamento, dataOperacao, proximoLancamentoPeriodo.getId(), estudoCota.getId(), FormaComercializacao.CONSIGNADO);
         
         movimentoEstoqueCotaJuramentado.setMovimentoEstoqueCotaJuramentado(movimentoEstoqueCota);
         

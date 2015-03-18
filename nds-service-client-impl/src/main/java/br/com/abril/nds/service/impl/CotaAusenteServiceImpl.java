@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -307,7 +308,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 															        idUsuario, 
 															        qtdeARestaurarCotaAusenteSuplementar, 
 															        tipoMovimentoCota,
-																	dataOperacaoDistribuidor, null);
+																	dataOperacaoDistribuidor, null, FormaComercializacao.CONSIGNADO, false, false);
 				}	
 			}	
 		}
@@ -417,7 +418,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				data, produtoEdicao.getId(), cota.getId(), 
-				idUsuario, qtdeRateio, tipoMovimentoCota, data, null, null, null);
+				idUsuario, qtdeRateio, tipoMovimentoCota, data, null, null, null, FormaComercializacao.CONSIGNADO);
 			
 			for (CotaAusente cotaAusente : cotasAusentes) {
 				

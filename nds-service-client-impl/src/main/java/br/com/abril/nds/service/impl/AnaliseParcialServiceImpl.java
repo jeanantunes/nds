@@ -333,6 +333,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	
     	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
     	
+    	if(estudoGerado.isLiberado()){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Estudo já liberado!");
+    	}
+    	
     	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos() == 1){
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
@@ -526,6 +530,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 		Usuario usuarioLogado = this.usuarioService.getUsuarioLogado();
 
 		if(wrapper.isFixacao()) {
+			
+			FixacaoReparte fixacao = fixacaoReparteRepository.buscarPorId(wrapper.getId());
+			
+			if(fixacao == null){
+				return;
+			}
+			
         	this.fixacaoReparteRepository.atualizarQtdeExemplares(
         		wrapper.getId(), 
         		wrapper.getReparte(), 
@@ -534,6 +545,14 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         	);
 
         } else if (wrapper.isMix()) {
+        	
+        	MixCotaProduto mix = null;
+        	
+    		mix = mixCotaProdutoRepository.buscarPorId(wrapper.getId());
+        	
+        	if(mix == null){
+        		return;
+        	}
         	
         	boolean isPDVUnico = mixCotaProdutoRepository.verificarMixDefinidoPorPDV(wrapper.getId());
         		
@@ -549,8 +568,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     			
     		}else{
 
-    			MixCotaProduto mix = mixCotaProdutoRepository.buscarPorId(wrapper.getId());
-    			
     			if(wrapper.getReparte() < mix.getReparteMinimo() || wrapper.getReparte() > mix.getReparteMaximo()){
     				
     				this.mixCotaProdutoRepository.atualizarReparte(

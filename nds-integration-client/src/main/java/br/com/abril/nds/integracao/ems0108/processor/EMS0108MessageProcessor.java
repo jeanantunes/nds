@@ -190,7 +190,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 								
 								lancamento.setDataRecolhimentoDistribuidor(dataLancamentoRecolhimentoProduto);
 								
-								this.lancamentoService.atualizarRedistribuicoes(lancamento, dataLancamentoRecolhimentoProduto);
+								this.lancamentoService.atualizarRedistribuicoes(lancamento, dataLancamentoRecolhimentoProduto, true);
 							}
 							
 							this.getSession().merge(lancamento);

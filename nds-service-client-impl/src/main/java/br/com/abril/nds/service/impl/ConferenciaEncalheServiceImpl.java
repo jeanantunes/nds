@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -3110,6 +3111,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Usuario usuario,
 			final ChamadaEncalheCota chamadaEncalheCota) {
 		
+		Cota cota = controleConferenciaEncalheCota.getCota();
+		
 		final Long idCota = controleConferenciaEncalheCota.getCota().getId();
 		
 		final ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
@@ -3137,7 +3140,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota,
 						this.distribuidorService.obterDataOperacaoDistribuidor(),
-						valoresAplicados);
+						valoresAplicados, FormaComercializacao.CONSIGNADO, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		return movimentoEstoqueCota;
 	}

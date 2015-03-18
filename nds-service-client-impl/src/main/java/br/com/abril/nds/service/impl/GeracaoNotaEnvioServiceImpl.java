@@ -790,7 +790,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         notasEnvio.add(notaEnvio);
         
         final List<ItemNotaEnvio> listaItemNotaEnvio = 
-        		this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos,mapMovimentoEstoqueCota);
+        		this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos, mapMovimentoEstoqueCota);
         
         if (listaItemNotaEnvio != null && !listaItemNotaEnvio.isEmpty()) {
             
