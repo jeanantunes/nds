@@ -135,6 +135,7 @@ import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
@@ -285,6 +286,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired
     private AssociacaoVeiculoMotoristaRotaRepository motoristaRotaRepository;
+    
+    @Autowired
+    private EstoqueProdutoService estoqueProdutoService;
     
     @Transactional(readOnly = true)
     @Override
@@ -2763,7 +2767,14 @@ public class CotaServiceImpl implements CotaService {
                         produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
                 
                 if (dto != null) {
+
+                	if(dto.getStatusLancamento() != null && dto.getStatusLancamento().equalsIgnoreCase("FECHADO") && 
+                			(dto.getQtdeVendas() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+                		dto.setQtdeVendas(estoqueProdutoService.obterVendaCotaBaseadoNoEstoque(dto.getId(), analiseHistoricoDTO.getNumeroCota()).toBigInteger());
+                	}
+                	
                     qtdEdicaoVendida++;
+                    
                     if (i == 0) {
                         if(dto.getReparte() != null){
                             analiseHistoricoDTO.setEd1Reparte(dto.getReparte().intValue());
