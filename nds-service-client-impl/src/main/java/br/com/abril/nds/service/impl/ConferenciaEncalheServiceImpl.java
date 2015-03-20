@@ -3328,6 +3328,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(ctrlConfEncalheCota.getId()!=null) { 
 			ctrlConfEncalheCota.setDataFim(dataFinalizacao);
 			
+			ctrlConfEncalheCota.setStatus(statusOperacao);
 			synchronized (this) {
 				ctrlConfEncalheCota.setControleConferenciaEncalhe(parametrosDistribuidorService.obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
 			}
