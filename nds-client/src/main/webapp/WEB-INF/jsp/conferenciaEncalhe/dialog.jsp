@@ -231,23 +231,6 @@
 		    	<input isEdicao="true" type="text" id="conferencia-valorNotaFiscal" style="width:80px; text-align:right;" />
 		    </td>
 		</tr>
-		<tr>
-			<td>NF-e:</td>
-			<td>
-				<table width="300" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-				    
-				        <td width="26"><input isEdicao="true" type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalhe.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
-				        <td width="71" valign="bottom">Sim</td>
-				        <td width="20"><input isEdicao="true" type="radio"  onchange="ConferenciaEncalhe.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
-				        <td width="183" valign="bottom">N&atilde;o</td>
-	      			
-	      			</tr>
-	    		</table>
-	    	</td>
-	    	<td>&nbsp;</td>
-	    	<td>&nbsp;</td>
-		</tr>
 		
 		<tr>
 			<td colspan="4">
