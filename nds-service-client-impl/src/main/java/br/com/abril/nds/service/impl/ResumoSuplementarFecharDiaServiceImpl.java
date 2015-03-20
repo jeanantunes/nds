@@ -113,6 +113,8 @@ public class ResumoSuplementarFecharDiaServiceImpl implements ResumoSuplementarF
 			
 			BigDecimal totalVenda = Util.nvl(this.obterValorVenda(dataOperacional), BigDecimal.ZERO);
 			
+			BigDecimal totalInventario = Util.nvl(this.obterValorInventario(dataOperacional), BigDecimal.ZERO);
+			
 			BigDecimal totalAlteracaoPreco = Util.nvl(this.obterValorAlteracaoPreco(dataOperacional), BigDecimal.ZERO);
 			
 			dto.setTotalEstoqueLogico(totalEstoqueLogico);
@@ -121,12 +123,19 @@ public class ResumoSuplementarFecharDiaServiceImpl implements ResumoSuplementarF
 			
 			dto.setTotalVenda(totalVenda);
 			
+			dto.setTotalInventario(totalInventario);
+			
 			dto.setTotalAlteracaoPreco(totalAlteracaoPreco);
 			
-			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda).add(totalAlteracaoPreco));			
+			dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda).add(totalAlteracaoPreco).add(totalInventario));			
 		}
 		
 		return dto;
+	}
+
+	private BigDecimal obterValorInventario(Date dataOperacao) {
+		
+		return this.resumoSuplementarFecharDiaRepository.obterValorInventario(dataOperacao);
 	}
 
 	@Override
