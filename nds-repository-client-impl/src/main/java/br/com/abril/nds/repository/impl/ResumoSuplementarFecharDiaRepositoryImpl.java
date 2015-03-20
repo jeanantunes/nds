@@ -15,8 +15,10 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
@@ -105,7 +107,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
-		return total != null ? total : BigDecimal.ZERO ;
+		return total != null ? total : BigDecimal.ZERO;
 	}
 	
 	@Override
@@ -338,6 +340,34 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.SUPLEMENTAR); 
         
         return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public BigDecimal obterValorInventario(Date dataOperacao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		hql.append(" SUM(  ");
+		hql.append(" CASE WHEN tm.operacaoEstoque = :entrada ");
+		hql.append(" THEN (COALESCE( me.qtde, 0) * pe.precoVenda) ");
+		hql.append(" ELSE (COALESCE(-me.qtde, 0) * pe.precoVenda) END) ");       
+		hql.append(" FROM MovimentoEstoque as me ");
+		hql.append(" JOIN me.tipoMovimento as tm ");       
+		hql.append(" JOIN me.produtoEdicao as pe ");
+		hql.append(" WHERE me.data = :dataOperacao ");
+		hql.append(" AND me.origem = :origemInventario ");
+		hql.append(" GROUP BY me.data");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("dataOperacao", dataOperacao);
+	
+		query.setParameter("origemInventario", Origem.INVENTARIO);  
+        query.setParameter("entrada", OperacaoEstoque.ENTRADA);  
+	
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		
+		return total != null ? total : BigDecimal.ZERO;
 	}
 
 }
