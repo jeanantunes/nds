@@ -2205,7 +2205,14 @@ public class ConferenciaEncalheController extends BaseController {
                     itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
                     itemNotaFiscalEntrada.setTipoLancamento(TipoLancamento.LANCAMENTO);
                     itemNotaFiscalEntrada.setDataRecolhimento(conferenciaEncalhe.getDataRecolhimento());
-                    itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataLancamento());
+                    
+                    if(conferenciaEncalhe.getDataLancamento() == null) {
+                    	
+                    	Lancamento	l =	lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(produtoEdicao.getId(), info.getCota().getId(), distribuidorService.obterDataOperacaoDistribuidor());
+                    	
+                    	itemNotaFiscalEntrada.setDataLancamento(l.getDataLancamentoDistribuidor());
+                    }
+                    
                     itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
                     itemNotaFiscalEntrada.setPreco(conferenciaEncalhe.getPrecoComDesconto());
                     itemNotaFiscalEntrada.setOrigem(Origem.MANUAL);
@@ -2398,7 +2405,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		final List<String> mensagens = new ArrayList<String>();
 		
-		if(notaFiscalEntradaCota.getNumero() == null) {
+		if(notaFiscalEntradaCota.getNumero() == null || notaFiscalEntradaCota.getNumero() == 0 ) {
             mensagens.add("Número da nota fiscal deve ser preenchido.");
 		}
 		
@@ -2412,6 +2419,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(notaFiscalEntradaCota.getValorProdutos() == null) {
 			mensagens.add("Valor Total deve ser preenchido.");
+		}
+		
+		if(notaFiscalEntradaCota.getChaveAcesso() == null || notaFiscalEntradaCota.getChaveAcesso().isEmpty()) {
+			mensagens.add("A chave de acesso deve ser preenchida.");
 		}
 		
 		if(!mensagens.isEmpty()){
@@ -2435,7 +2446,7 @@ public class ConferenciaEncalheController extends BaseController {
 		dadosNotaFiscal.put("serie", 	notaFiscal.getSerie());
 		dadosNotaFiscal.put("dataEmissao", DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao()));
 		dadosNotaFiscal.put("chaveAcesso", notaFiscal.getChaveAcesso());
-		dadosNotaFiscal.put("valorProdutos", valorProdutos);
+		dadosNotaFiscal.put("valorProdutos", valorProdutos.setScale(2, RoundingMode.HALF_UP));
 		
 		this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, dadosNotaFiscal);
 		
@@ -2796,8 +2807,8 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorVendaDia", valorVendaDia.setScale(4, RoundingMode.HALF_UP));
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar",  CurrencyUtil.arredondarValorParaDuasCasas(valorPagar.setScale(2, RoundingMode.HALF_UP)));
-			dados.put("valorTotal",  valorTotal.setScale(4, RoundingMode.HALF_UP));
-			dados.put("valorTotalNota", valorTotalNota);
+			dados.put("valorTotal",  valorTotal.setScale(2, RoundingMode.HALF_UP));
+			dados.put("valorTotalNota", valorTotalNota.setScale(2, RoundingMode.HALF_UP));
 			dados.put("valorPagarAtualizado",  CurrencyUtil.arredondarValorParaQuatroCasas(valorPagarAtualizado));
 			
 			dados.put("idconf", info.getIdControleConferenciaEncalheCota());

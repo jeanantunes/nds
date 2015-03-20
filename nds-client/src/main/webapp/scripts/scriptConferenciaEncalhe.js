@@ -2049,20 +2049,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#dialog-alert", ConferenciaEncalhe.workspace).show();
 	},
-
-	mostrarChaveAcesso : function() {
-		
-		if($('input:radio[name=radioNFE]:checked', ConferenciaEncalhe.workspace).val() == 'S') {
-			
-			$("#divForChaveAcessoNFE", ConferenciaEncalhe.workspace).show();
-			
-		} else {
-
-			$("#divForChaveAcessoNFE", ConferenciaEncalhe.workspace).hide();
-			
-		}
-		
-	},
 	
 	popup_notaFiscal : function() {
 		
@@ -2639,29 +2625,17 @@ function confirmarPopup_logado(){
 }
 
 function confirmarPopup_notaFiscal() {
+	
 	var data = []; 
 	
-	if($('input:radio[name=radioNFE]:checked').val() == 'S') {
-		
-		data = [
-		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val())},
-		        {name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
-		        ];
-		
-	} else {
-		
-		data = [
-		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val())}
-		        ];
-		
-	}
-
+	data = [
+	        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
+	        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
+	        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
+	        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#conferencia-valorNotaFiscal", ConferenciaEncalhe.workspace).val())},
+	        {name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
+	        ];
+	
 	$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, function(result) {
 		
 			$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");

@@ -3326,17 +3326,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final Date dataFinalizacao = new Date();
 		
 		if(ctrlConfEncalheCota.getId()!=null) { 
+			ctrlConfEncalheCota.setDataFim(dataFinalizacao);
 			
-			final ControleConferenciaEncalheCota controleConferenciaEncalheCotaFromBD = controleConferenciaEncalheCotaRepository.buscarPorId(ctrlConfEncalheCota.getId());
+			synchronized (this) {
+				ctrlConfEncalheCota.setControleConferenciaEncalhe(parametrosDistribuidorService.obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
+			}
 			
-			controleConferenciaEncalheCotaFromBD.setStatus(statusOperacao);
-			controleConferenciaEncalheCotaFromBD.setUsuario(usuario);
-			
-			controleConferenciaEncalheCotaFromBD.setDataFim(dataFinalizacao);
-			
-			controleConferenciaEncalheCotaFromBD.setConferenciasEncalhe(null);
-			
-			return controleConferenciaEncalheCotaRepository.merge(controleConferenciaEncalheCotaFromBD);
+			return controleConferenciaEncalheCotaRepository.merge(ctrlConfEncalheCota);
 			
 		} else {
 
