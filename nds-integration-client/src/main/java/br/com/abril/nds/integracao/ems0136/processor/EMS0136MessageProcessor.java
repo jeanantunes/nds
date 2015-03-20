@@ -290,26 +290,23 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	private void tratarDatasInput(EMS0136Input input, ProdutoEdicao produtoEdicao, Message message) {
 
 		Date dataOriginal = input.getDataLancamento();
-		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal,produtoEdicao.getProduto().getFornecedor().getId());
-		
-		Date dataLancamento = this.getProximaDataUtil(dataSugerida, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.DISTRIBUICAO);
-		dataLancamento = lancamentoService.obterDataLancamentoValido(dataLancamento,produtoEdicao.getProduto().getFornecedor().getId());
+		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
 		
 		Date dataRecolhimento = this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO);
 		
-		if(dataOriginal.compareTo(dataLancamento) != 0) {
+		if(dataOriginal.compareTo(dataSugerida) != 0) {
 			
 			 this.ndsiLoggerFactory.getLogger().logWarning(message,
 			 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-					 "Alteração da Data Lcto Distribuidor"
-							+ " de  " + DateUtil.formatarDataPTBR(dataOriginal)
-							+ " para  " + DateUtil.formatarDataPTBR(dataSugerida)
-							+ " Produto "+produtoEdicao.getProduto().getCodigo()
-							+ " Edição " + produtoEdicao.getNumeroEdicao());
+					 "Alteração da Data Lcto Distribuidor (Arquivo)"
+							+" de "+ DateUtil.formatarDataPTBR(dataOriginal)
+							+" para "+ DateUtil.formatarDataPTBR(dataSugerida)
+							+" Produto "+ produtoEdicao.getProduto().getCodigo()
+							+" Edição "+ produtoEdicao.getNumeroEdicao());
 			 
 		}
 		
-		input.setDataLancamento(dataLancamento);
+		input.setDataLancamento(dataSugerida);
 		input.setDataRecolhimento(dataRecolhimento);
 	}
 	
