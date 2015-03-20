@@ -721,6 +721,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         		lancamento = this.obterLancamento(dto, produtoEdicao, true);
         	}
         	
+        	if(lancamento != null && lancamento.getNumeroLancamento() != null && lancamento.getNumeroLancamento() > 0) {
+        		
+        		dto.setNumeroLancamento(lancamento.getNumeroLancamento());
+        	}
         	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
         	
         }
