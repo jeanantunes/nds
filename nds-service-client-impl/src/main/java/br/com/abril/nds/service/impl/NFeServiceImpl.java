@@ -1319,7 +1319,7 @@ public class NFeServiceImpl implements NFeService {
 		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			if(cota.getParametrosCotaNotaFiscalEletronica() != null) {				
 				if(cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
-					return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoEmitente.COTA, TipoDestinatario.FORNECEDOR, TipoOperacao.SAIDA, false, false, null);
+					return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoEmitente.COTA, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.SAIDA, false, false, null);
 				} else {//if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica()){
 					return this.naturezaOperacaoRepository.obterNaturezaOperacao(distribuidor.getTipoAtividade(), TipoEmitente.COTA, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false, null);
 				}

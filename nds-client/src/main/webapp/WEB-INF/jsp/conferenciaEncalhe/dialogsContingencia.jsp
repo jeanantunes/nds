@@ -38,23 +38,9 @@
 				<td>Data:</td>
 				<td><input isEdicao="true" type="text" id="dataNotaFiscal" style="width: 80px;" /></td>
 				<td>Valor Total R$:</td>
-				<td><input isEdicao="true" type="text" id="valorNotaFiscal" style="width: 80px; text-align: right;" maxlength="255" /></td>
+				<td><input isEdicao="true" type="text" id="contingencia-valorNotaFiscal" style="width: 80px; text-align: right;" maxlength="255" /></td>
 			</tr>
-			<tr>
-				<td>NF-e:</td>
-				<td>
-					<table width="300" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-					        <td width="26"><input isEdicao="true" type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalheCont.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
-					        <td width="71" valign="bottom">Sim</td>
-					        <td width="20"><input isEdicao="true" type="radio"  onchange="ConferenciaEncalheCont.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
-					        <td width="183" valign="bottom">Não</td>
-						</tr>
-					</table>
-				</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
+			
 			<tr>
 				<td colspan="4">
 				
@@ -108,6 +94,7 @@
 </div>
 </form>
 
+<!--  
 <form id="form-alert">
 <div id="dialog-alert" title="Nota Fiscal">
 	<fieldset style="width: 410px;">
@@ -116,6 +103,7 @@
 	</fieldset>
 </div>
 </form>
+-->
 
 <form id="form-finaliza-conferencia">
 <div id="dialog-finaliza-conferencia" title="Finalizar Conferência" style="display: none;">
@@ -229,9 +217,9 @@
 	          		</tr>
 	          		<tr>
 			            <td>Data:</td>
-			            <td id="dataExibir"></td>
+			            <td id="contingencia-dataExibir"></td>
 			            <td>Valor Total R$:</td>
-			            <td id="valorTotalNotaFiscalExibir"></td>
+			            <td id="contingencia-valorTotalNotaFiscalExibir"></td>
 	          		</tr>
 	          		<tr>
 			            <td>Chave de Acesso:</td>

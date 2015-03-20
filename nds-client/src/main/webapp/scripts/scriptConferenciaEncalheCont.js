@@ -83,6 +83,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 		        this.value = this.value.replace(/\D/g, '');
 		    }
 		});
+
+		$("#contingencia-valorTotalNotaFiscalExibir", ConferenciaEncalheCont.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
 		
 		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).numeric();
 		
@@ -1383,19 +1389,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 		});
 	},
 	
-	mostrarChaveAcesso : function() {
-		
-		if($('input:radio[name=radioNFE]:checked').val() == 'S') {
-			
-			$("#divForChaveAcessoNFE", ConferenciaEncalheCont.workspace).show();
-			
-		} else {
-
-			$("#divForChaveAcessoNFE", ConferenciaEncalheCont.workspace).hide();
-			
-		}
-	},
-	
 	redefinirValorTotalExemplaresFooter: function() {
 		
 		var totalAtualizado = 0;
@@ -1692,9 +1685,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					ConferenciaEncalheCont.isConfirmar = true;
 					
-					if($('input:radio[name=radioNFE]:checked', ConferenciaEncalheCont.workspace).val() == 'S') {
-						
-						data = [
+					data = [
 								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val()},
 								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val()},
@@ -1702,20 +1693,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 								{name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).val()}
 						];
 						
-					} else {
-						
-						data = [
-								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalheCont.workspace).val()},
-								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val()},
-								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val()},
-								{name : "notaFiscal.valorProdutos", value : priceToFloat($("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val())}
-						];
-						
-					}
-					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, function(result) {
 							
 							$("#dialog-notaFiscal", ConferenciaEncalheCont.workspace).dialog("close");
+							
+							console.log($("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val(parseFloat(result.valorProdutos).toFixed(2)));
 							
 							$("#contingencia-vlrCE", ConferenciaEncalheCont.workspace).val($("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val());
 							
@@ -1965,7 +1947,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#serieNotaFiscal", ConferenciaEncalheCont.workspace).val("");
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).val("");
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
-		$("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val("");
+		$("#contingencia-valorNotaFiscal", ConferenciaEncalheCont.workspace).val("");
 		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).val("");
 	},
 	
