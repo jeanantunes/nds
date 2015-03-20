@@ -470,7 +470,7 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não existe ou ja foi excluido.");
         }
         
-        if (lancamento.getNumeroLancamento() == 1) {
+        if (lancamento.getNumeroLancamento() != null && lancamento.getNumeroLancamento() == 1) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Não é perdido excluir o lançamento número 1.");
         }
         
