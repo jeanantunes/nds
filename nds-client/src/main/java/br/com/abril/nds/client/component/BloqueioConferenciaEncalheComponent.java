@@ -131,17 +131,20 @@ public class BloqueioConferenciaEncalheComponent {
 		final Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		if(usuario == null) {
+			
             throw new ValidacaoException(TipoMensagem.WARNING ,"Não foi possível identificar o usuário logado");
 		}
 		
 		String nome = "Não Identificado";
 		
 		if(usuario.getNome() != null && !usuario.getNome().isEmpty()) {
+			
 			nome = usuario.getNome();
 		}
 		
 		if(usuario.getLogin() == null || usuario.getLogin().isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING ,"Não foi possível identificar o usuário logado");
+			
+			throw new ValidacaoException(TipoMensagem.WARNING , "Não foi possível identificar o usuário logado");
 		}
 		
 		session.setAttribute(Constants.USER_LOGIN_PARA_TRAVA_CONFERENCIA, usuario.getLogin());
