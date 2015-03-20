@@ -2211,6 +2211,10 @@ public class ConferenciaEncalheController extends BaseController {
                     	Lancamento	l =	lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(produtoEdicao.getId(), info.getCota().getId(), distribuidorService.obterDataOperacaoDistribuidor());
                     	
                     	itemNotaFiscalEntrada.setDataLancamento(l.getDataLancamentoDistribuidor());
+                    } else {
+                    	
+                    	itemNotaFiscalEntrada.setDataLancamento(conferenciaEncalhe.getDataLancamento());
+                    	
                     }
                     
                     itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
