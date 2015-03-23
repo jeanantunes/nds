@@ -721,7 +721,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     }
     
     @Transactional
-    public void transferirEstoqueProdutoEdicaoParcial(Long idProdutoEdicao, Usuario usuario, TipoEstoque tipoEstoque) {
+    public void transferirEstoqueProdutoEdicaoParcial(Long idProdutoEdicao, Usuario usuario) {
     	
     	EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
     	
@@ -729,32 +729,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     	BigInteger qtdeSuplementar 		= (estoqueProduto.getQtdeSuplementar() == null) ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
     	BigInteger qtdeLancamento		= (estoqueProduto.getQtde() == null) ? BigInteger.ZERO : estoqueProduto.getQtde();
     	
-    	if(TipoEstoque.LANCAMENTO.equals(tipoEstoque)) {
-    		
-    		qtdeLancamento = qtdeLancamento.add(qtdeRecolhimento).add(qtdeSuplementar);
-    		estoqueProduto.setQtde(qtdeLancamento);
-        	estoqueProduto.setQtdeSuplementar(BigInteger.ZERO);
-        	estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
-    	} else {
-    		
-    		qtdeRecolhimento = qtdeRecolhimento.add(qtdeLancamento).add(qtdeSuplementar);
-    		estoqueProduto.setQtde(BigInteger.ZERO);
-        	estoqueProduto.setQtdeSuplementar(BigInteger.ZERO);
-        	estoqueProduto.setQtdeDevolucaoEncalhe(qtdeRecolhimento);
-    	}
+    	qtdeLancamento = qtdeLancamento.add(qtdeRecolhimento).add(qtdeSuplementar);
     	
+    	estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
+    	estoqueProduto.setQtdeSuplementar(BigInteger.ZERO);
+    	estoqueProduto.setQtde(qtdeLancamento);
     	estoqueProdutoRespository.alterar(estoqueProduto);
     	
-    	TipoMovimentoEstoque tipoMovimentoRecolhimento = 
-    			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(TipoEstoque.LANCAMENTO.equals(tipoEstoque) ? 
-    					GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO : GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO);
+    	TipoMovimentoEstoque tipoMovimentoSaidaRecolhimento = 
+    			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO);
 
     	TipoMovimentoEstoque tipoMovimentoSaidaSuplementar = 
     			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
     	
-        TipoMovimentoEstoque tipoMovimentoLancamento =
-        		tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(TipoEstoque.LANCAMENTO.equals(tipoEstoque) ?
-        				GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO : GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
+        TipoMovimentoEstoque tipoMovimentoEntradaLancamento =
+        		tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
         
         
         ParametroMovimentoEstoque parametroMovimentoEstoque = new ParametroMovimentoEstoque();
@@ -763,7 +752,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		parametroMovimentoEstoque.idUsuario 				= usuario.getId(); 			
 		
 		
-		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoRecolhimento;
+		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoSaidaRecolhimento;
 		parametroMovimentoEstoque.quantidade 				= qtdeRecolhimento; 	
         MovimentoEstoque movEstoqSaidaRecolhimento 	= criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
         movimentoEstoqueRepository.adicionar(movEstoqSaidaRecolhimento);
@@ -773,7 +762,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         MovimentoEstoque movEstoqSaidaSuplementar 	= criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
         movimentoEstoqueRepository.adicionar(movEstoqSaidaSuplementar);
 
-		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoLancamento;
+		parametroMovimentoEstoque.tipoMovimentoEstoque 		= tipoMovimentoEntradaLancamento;
 		parametroMovimentoEstoque.quantidade 				= qtdeSuplementar.add(qtdeRecolhimento); 	
         MovimentoEstoque movEstoqEntradaLancamento 	= criarNovoObjetoMovimentoEstoque(parametroMovimentoEstoque);
         movimentoEstoqueRepository.adicionar(movEstoqEntradaLancamento);

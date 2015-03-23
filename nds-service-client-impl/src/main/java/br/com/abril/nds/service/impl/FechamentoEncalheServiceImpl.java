@@ -1273,14 +1273,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     		return;
     	}
     	
-    	TipoEstoque tipoEstoqueDirecionamento = TipoEstoque.LANCAMENTO;
     	if(isEstoqueLancamento(item)) {
-    		tipoEstoqueDirecionamento = TipoEstoque.LANCAMENTO;
-		} else {
-			tipoEstoqueDirecionamento = TipoEstoque.DEVOLUCAO_ENCALHE;
+    		movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcial(item.getProdutoEdicao(), usuario);
 		}
-    	
-    	movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcial(item.getProdutoEdicao(), usuario, tipoEstoqueDirecionamento);
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getChamadaEncalheId());
         
