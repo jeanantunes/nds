@@ -1440,21 +1440,23 @@ var regiaoController = $.extend(true, {
 		var codValidado = new Array();
 		var edicaoValidada = new Array();
 		
-		if((produtosEscolhidosArray.length == 0) || (produtosEscolhidosArray == "")){
-			 var erros = new Array();
-	           erros[0] = "Inclua no mínimo 01 produto.";
-	           exibirMensagemDialog('WARNING',   erros,"");
-
-	           return;
+		if((produtosEscolhidosArray.length == 0) || (produtosEscolhidosArray == "")) {
+			
+			var erros = new Array();
+			erros[0] = "Inclua no mínimo 01 produto.";
+			exibirMensagemDialog('WARNING',   erros,"");
+			
+			return;
 		}
 		
-		if(produtosEscolhidosArray.length <= 6){
+		if(produtosEscolhidosArray.length <= 6) {
 			
-			for(var i=0; i < produtosEscolhidosArray.length; i++){
+			for(var i=0; i < produtosEscolhidosArray.length; i++) {
 				
-				for(var u=i+1; u < produtosEscolhidosArray.length; u++){
+				for(var u=i+1; u < produtosEscolhidosArray.length; u++) {
 					
-					if(produtosEscolhidosArray[i].cell.numeroEdicao == produtosEscolhidosArray[u].cell.numeroEdicao){
+					if(produtosEscolhidosArray[i].cell.codProduto == produtosEscolhidosArray[u].cell.codProduto 
+							&& produtosEscolhidosArray[i].cell.numeroEdicao == produtosEscolhidosArray[u].cell.numeroEdicao) {
 						isValid = false;
 					}
 				}
@@ -1462,22 +1464,23 @@ var regiaoController = $.extend(true, {
 				edicaoValidada[i] = produtosEscolhidosArray[i].cell.numeroEdicao;
 			}
 		
-		}else{
+		} else {
+			
 			isValid = false;
 		}
 		
-		
-		if (isValid == true){
+		if (isValid == true) {
 			
 			regiaoController.rankingNMaiores(codValidado, edicaoValidada);
 			
-		}else{
-			 var erros = new Array();
-	           erros[0] = "Os produtos selecionados só podem ser até 6 edições do mesmo produto ou até 6 produtos com edições diferentes";
-	           exibirMensagemDialog('WARNING',   erros,"");
-
-	           return;
-	           isValid = true;
+		} else {
+			
+			var erros = new Array();
+			erros[0] = "Os produtos selecionados só podem ser até 6 edições do mesmo produto ou até 6 produtos com edições diferentes";
+			exibirMensagemDialog('WARNING', erros,"");
+			
+			isValid = true;
+			return;
 		}
 	},	
 	
