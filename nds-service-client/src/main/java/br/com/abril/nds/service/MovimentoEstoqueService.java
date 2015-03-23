@@ -31,7 +31,7 @@ import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 public interface MovimentoEstoqueService {
 
-    void transferirEstoqueProdutoEdicaoParcial(Long idProdutoEdicao, Usuario usuario, TipoEstoque tipoEstoque);
+    void transferirEstoqueProdutoEdicaoParcial(Long idProdutoEdicao, Usuario usuario);
 	
     void transferirEstoqueProdutoChamadaoParaRecolhimento(Long idProdutoEdicao, Usuario usuario);
     
