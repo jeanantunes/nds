@@ -2766,11 +2766,17 @@ public class CotaServiceImpl implements CotaService {
                 final ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(
                         produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
                 
-                if (dto != null) {
+                if (dto != null && dto.getId() != null) {
 
                 	if(dto.getStatusLancamento() != null && dto.getStatusLancamento().equalsIgnoreCase("FECHADO") && 
                 			(dto.getQtdeVendas() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
-                		dto.setQtdeVendas(estoqueProdutoService.obterVendaCotaBaseadoNoEstoque(dto.getId(), analiseHistoricoDTO.getNumeroCota()).toBigInteger());
+                		
+                		BigDecimal venda = estoqueProdutoService.obterVendaCotaBaseadoNoEstoque(dto.getId(), analiseHistoricoDTO.getNumeroCota()); 
+                		
+                		if(venda != null){
+                			dto.setQtdeVendas(venda.toBigInteger());
+                		}
+                		
                 	}
                 	
                     qtdEdicaoVendida++;
