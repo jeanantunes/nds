@@ -70,7 +70,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
         query.setParameterList("grupoEntradaSuplementar", Arrays.asList(
                 GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE,
                 GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO,
-                GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR,
                 GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE,
                 GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
                 GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR));  
