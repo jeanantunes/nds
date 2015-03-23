@@ -1134,6 +1134,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		final StringBuilder sql = new StringBuilder();
 
 		sql.append(" FROM CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC                                                               ");
+		sql.append(" INNER JOIN BOX ON (CCEC.BOX_ID = BOX.ID) 																   ");
 		sql.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)    ");
 		sql.append(" INNER JOIN PRODUTO_EDICAO ON (PRODUTO_EDICAO.ID = CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID)                  ");
 		sql.append(" INNER JOIN PRODUTO ON (PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID)                                            ");
@@ -1160,8 +1161,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append(" WHERE CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal	");
 		
-		if(filtro.getIdCota()!=null) {
+		if(filtro.getIdCota() != null) {
 	    	sql.append(" AND CCEC.COTA_ID = :idCota  ");
+	    }
+		
+		if(filtro.getIdBox() != null) {
+	    	sql.append(" AND BOX.CODIGO = :box  ");
 	    }
 	    
 		if(filtro.getCodigoProduto() != null) {
