@@ -36,6 +36,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -74,6 +76,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
@@ -461,13 +466,23 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     @Transactional(readOnly = false)
     public void removerLancamento(Long id) {
+    	
         if (id == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "Id do lançamento deve ser especificado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Id do lançamento deve ser especificado.");
         }
         
         Lancamento lancamento = lancamentoRepository.buscarPorId(id);
         if (lancamento == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não existe ou ja foi excluido.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não existe ou ja foi excluido.");
+        }
+        
+        List<EstudoGerado> estudosGerados = estudoGeradoRepository.obterPorLancamentoId(id);
+        if(estudosGerados != null && !estudosGerados.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não pode ser excluído por já ter Estudo.");
+        }
+        
+        if (lancamento.getEstudo() != null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não pode ser excluído por já ter Estudo.");
         }
         
         if (lancamento.getNumeroLancamento() != null && lancamento.getNumeroLancamento() == 1) {
@@ -476,12 +491,11 @@ public class LancamentoServiceImpl implements LancamentoService {
         
         if (lancamento.getPeriodoLancamentoParcial() != null
                 && TipoLancamentoParcial.PARCIAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Este Lançamento é parcial e não pode ser excluido. Consulte a tela de parciais.");
+        	
+            throw new ValidacaoException(TipoMensagem.WARNING, "Este Lançamento é parcial e não pode ser excluido. Consulte a tela de parciais.");
         }
         if (!STATUS_LANCAMENTOS_REMOVIVEL.contains(lancamento.getStatus())) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "O status deste Lançamento é "
-                    + lancamento.getStatus().getDescricao() + " e não pode ser removido.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O status deste Lançamento é "+ lancamento.getStatus().getDescricao() +" e não pode ser removido.");
         }
         this.lancamentoRepository.remover(lancamento);
     }
