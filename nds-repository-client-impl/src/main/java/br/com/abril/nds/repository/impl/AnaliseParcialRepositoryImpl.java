@@ -640,7 +640,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("                    'EM_RECOLHIMENTO', ");
     	sql.append("                    'RECOLHIDO', ");
     	sql.append("                    'FECHADO') ");
-    	sql.append("                AND l.PRODUTO_EDICAO_ID =  :produtoEdicaoId ");
+    	sql.append("                AND l.PRODUTO_EDICAO_ID in (:produtoEdicaoId) ");
     	sql.append("                AND c.NUMERO_COTA = :numeroCota ");
     	sql.append("                GROUP BY pe.numero_edicao, plp.numero_periodo, mecReparte.COTA_ID, l.ID) T  GROUP BY T.numeroEdicao ");
         
