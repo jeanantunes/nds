@@ -22,7 +22,7 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	protected ProdutoEdicao produtoEdicao;
 	
-	@Column(name="ORIGEM",columnDefinition="VARCHAR(50) default 'MANUAL'", insertable = false, updatable = true)
+	@Column(name="ORIGEM", columnDefinition="VARCHAR(50) default 'MANUAL'", updatable = true)
 	@Enumerated(EnumType.STRING)
 	private Origem origem;
 	
