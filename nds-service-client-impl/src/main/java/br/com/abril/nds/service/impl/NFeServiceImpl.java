@@ -597,7 +597,6 @@ public class NFeServiceImpl implements NFeService {
 		
 		Map<Long, CotaExemplaresDTO> cotasDTOMap = new HashMap<>();		
 		for(CotaExemplaresDTO cotaDTO : cotasDTO) {
-			
 			cotasDTOMap.put(cotaDTO.getIdCota(), cotaDTO);
 		}
 		
