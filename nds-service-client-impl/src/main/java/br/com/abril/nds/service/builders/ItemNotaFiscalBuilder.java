@@ -526,7 +526,9 @@ public class ItemNotaFiscalBuilder  {
 		produtoServico.setValorTotalBruto(CurrencyUtil.arredondarValorParaDuasCasas(produtoServico.getValorTotalBruto().add(valorTotalBruto)));
 		produtoServico.setValorUnitario(valorUnitario);
 		
-		produtoServico.setValorDesconto(BigDecimal.ZERO);
+		// produtoServico.setValorDesconto(BigDecimal.ZERO);
+		
+		produtoServico.setValorCompoeValorNF(true);
 		
 		//FIXME: Ajustar os produtos para sinalizarem a inclusao do frete na nf
 		produtoServico.setValorFreteCompoeValorNF(false);

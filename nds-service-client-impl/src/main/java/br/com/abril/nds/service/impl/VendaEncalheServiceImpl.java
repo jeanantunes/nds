@@ -780,33 +780,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return vendaProdutoRepository.merge(vendaProduto);
 	}
 	
-	private void gerarMovimentoFechamentoFiscalCota(Date dataOperacao, MovimentoEstoqueCota movimentoEstoqueCota, Cota cota, ProdutoEdicao produtoEdicao, VendaProduto vendaProduto) {
-		
-		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
-		MovimentoFechamentoFiscalCota mffc = new MovimentoFechamentoFiscalCota();
-		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mffc, movimentoEstoqueCota));
-		mffc.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-		mffc.setNotaFiscalLiberadaEmissao(true);
-		mffc.setData(dataOperacao);
-		mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
-		mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());
-		mffc.setQtde(vendaProduto.getQntProduto());
-		mffc.setTipoDestinatario(TipoDestinatario.COTA);
-		mffc.setCota(movimentoEstoqueCota.getCota());
-		mffc.setChamadaEncalheCota(null);
-		mffc.setValoresAplicados(movimentoEstoqueCota.getValoresAplicados());
-		
-		if(cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() || cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS()) {
-			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(true); 
-			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(true);
-		} else {			
-			mffc.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
-			mffc.setNotaFiscalDevolucaoSimbolicaEmitida(false);
-		}
-			
-		movimentoFechamentoFiscalRepository.adicionar(mffc);
-	}
-	
 	/**
 	 * Cria movimento financeiro da cota da venda de produto informada.
 	 * 
