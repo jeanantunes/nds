@@ -89,7 +89,7 @@ public class NotaFiscalBuilder implements Serializable {
 		// Dados do Distribuidor
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNome(distribuidor.getJuridica().getRazaoSocial().trim());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNomeFantasia(distribuidor.getJuridica().getNomeFantasia());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual().trim());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoEstadualSubstituto(distribuidor.getJuridica().getInscricaoMunicipal());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal() != null ? distribuidor.getJuridica().getInscricaoMunicipal() : "0");
 		
@@ -177,7 +177,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal() != null ? distribuidor.getJuridica().getInscricaoMunicipal() : "0");
 		
 		//FIXME: Obter o valor cnae
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("4789099");
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("4618403");
 		
 		//FIXME: Obter o valor crt
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);

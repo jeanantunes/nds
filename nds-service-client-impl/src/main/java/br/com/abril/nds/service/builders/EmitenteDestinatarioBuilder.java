@@ -133,7 +133,11 @@ public class EmitenteDestinatarioBuilder {
 		documento.setDocumento(distribuidor.getJuridica().getDocumento().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
+		
+		if(distribuidor.getJuridica().getInscricaoEstadual() != null && !distribuidor.getJuridica().getInscricaoEstadual().isEmpty()){
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());			
+		}
+		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
 		
 		if(distribuidor.getJuridica().getEnderecos() != null 
@@ -218,7 +222,11 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaJuridica.getRazaoSocial());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaJuridica.getEmail());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+			
+			if(pessoaJuridica.getInscricaoEstadual() != null && !pessoaJuridica.getInscricaoEstadual().isEmpty()){
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+			}
+			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
 		} else if (pessoa instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;

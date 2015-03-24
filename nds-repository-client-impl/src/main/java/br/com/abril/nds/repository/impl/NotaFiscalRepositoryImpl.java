@@ -246,20 +246,21 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	public NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE) {
 
 		StringBuffer sql = new StringBuffer("");
-
-		sql.append(" SELECT notaFiscal");
-		sql.append(" FROM NotaFiscal as notaFiscal");
-		sql.append(" WHERE");
-
-
-		if(dadosRetornoNFE.getChaveAcesso()!=null) {
-
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal = :numeroNotaFiscal ");
-
-		}
-
+		
+		sql.append(" FROM NotaFiscal as notaFiscal")
+		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
+		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN nfi.identificacao as ident ")
+		.append(" WHERE")
+		.append(" ident.numeroDocumentoFiscal = :numeroNotaFiscal ");
+		
+		sql.append(" AND infElet.chaveAcesso = :chaveAcesso ");
+		
 		Query query = this.getSession().createQuery(sql.toString());
+
+				
 		query.setParameter("numeroNotaFiscal", dadosRetornoNFE.getNumeroNotaFiscal());
+		query.setParameter("chaveAcesso", dadosRetornoNFE.getChaveAcesso());
 
 		return (NotaFiscal) query.uniqueResult();
 
@@ -369,17 +370,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" CASE WHEN cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true THEN true else cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica END as contribuinteICMSExigeNFe");
 		
 		Query query = queryConsultaCotaMFFNfeParameters(queryConsultaCotaMFFNfe(filtro, hql, false, false, false), filtro);
-
-		if(filtro.getPaginacaoVO()!=null) {
-			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
-				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-			}
-
-			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
-				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-			}
-		}
-
+			
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
 
 		return query.list();
@@ -808,11 +799,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	public Query queryConsultaCotaMFFNfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
-
-
+		
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
-
+		
 		query.setParameter("true", true);
 		
 		if((filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado())
@@ -1030,16 +1020,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0)  / 100))) * me.qtde) as totalDesconto "); 
 		
 		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
-		
-		if(filtro.getPaginacaoVO() != null) {
-			if(filtro.getPaginacaoVO().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-			}
-			
-			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-			}
-		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
 		

@@ -49,12 +49,12 @@ public class SecurityUtils {
     static char SEP = File.separatorChar;
     static String trustStoreName = "cacerts";
     static String trustStorePath = null;
-    static String trustStorePassword = "changeit";
+    static String trustStorePassword = "arutil14";
     
     public static final String algoritmo= "RSA"; 
 	public static final String algoritmoAssinatura= "MD5withRSA"; 
 	private static final String C14N_TRANSFORM_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-	public static File file= new File("C://Users/wrpaiva/Desktop/receita/certificado.jks"); // ‪C:\certificado.cer
+	public static File file= new File("C://Users/wrpaiva/certificadoAR/certificado.jks"); // ‪C:\certificado.cer
 	private static String alias="alias";
 	private static char[] senha="changeit".toCharArray(); 
 	static XMLSignatureFactory sig;
