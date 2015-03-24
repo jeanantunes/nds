@@ -565,9 +565,11 @@ public class ItemNotaFiscalBuilder  {
 			if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().isNotaFiscalDevolucaoSimbolica()) {
 				
 				movimentoFechamentoFiscal.setNotaFiscalDevolucaoSimbolicaEmitida(true);
+				
 			} else if(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().isNotaFiscalVendaConsignado()) {
 				
 				((MovimentoFechamentoFiscalCota) movimentoFechamentoFiscal).setNotaFiscalVendaEmitida(true);
+				
 			} else {
 				
 				throw new ValidacaoException(TipoMensagem.ERROR, "Natureza de Operação incompatível com o Movimento Fiscal.");
