@@ -232,8 +232,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     		sql.append(" FROM CHAMADA_ENCALHE CHEN          ");
     		sql.append(" WHERE CHEN.PRODUTO_EDICAO_ID = ENCALHE_INFO_EDICAO.PRODUTOEDICAO	");
     		sql.append(" AND CHEN.DATA_RECOLHIMENTO <= :dataRecolhimento                    ");
-    		sql.append(" ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) THEN TRUE ELSE FALSE END AS matrizRecolhimento, ");
-			sql.append(" CASE WHEN PLP.TIPO IS NOT NULL THEN PLP.TIPO ELSE NULL END AS recolhimento ");
+    		sql.append(" ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheMatrizRecolhimento) THEN TRUE ELSE FALSE END AS matrizRecolhimento ");
+//			sql.append(" CASE WHEN PLP.TIPO IS NOT NULL THEN PLP.TIPO ELSE NULL END AS recolhimento ");
         	
         }
 
@@ -257,11 +257,16 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			sql.append(" CE.ID AS chamadaEncalheId,  ");
 			sql.append(" PE.ORIGEM AS origem,        ");
 			sql.append(" COALESCE(PE.PRECO_VENDA, 0) AS precoCapa, ");
-			sql.append(" CASE WHEN PE.PARCIAL = TRUE THEN 'P' ELSE 'N' END AS tipo ");
+			sql.append(" CASE WHEN PE.PARCIAL = TRUE THEN 'P' ELSE 'N' END AS tipo, ");
+			sql.append(" PLP.tipo as recolhimento ");
 		}
 		
 		sql.append(" FROM CHAMADA_ENCALHE_COTA CEC                                      ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)  ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO CEL ON (CEL.CHAMADA_ENCALHE_ID = CE.ID) ");
+		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID AND L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO) ");
+		sql.append(" LEFT OUTER JOIN PERIODO_LANCAMENTO_PARCIAL PLP ON PLP.ID = L.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO_PARCIAL LP ON PLP.LANCAMENTO_PARCIAL_ID = LP.ID ");
 		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CE.PRODUTO_EDICAO_ID)     ");
 		sql.append(" INNER JOIN PRODUTO P ON (PE.PRODUTO_ID = P.ID)                     ");
 		sql.append(" INNER JOIN PRODUTO_FORNECEDOR PF ON (PF.PRODUTO_ID = P.ID)         ");
@@ -294,7 +299,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			sql.append(" CE.ID AS chamadaEncalheId,  ");
 			sql.append(" PE.ORIGEM AS origem,        ");
 			sql.append(" COALESCE(PE.PRECO_VENDA, 0) AS precoCapa, ");
-			sql.append(" CASE WHEN PE.PARCIAL = TRUE THEN 'P' ELSE 'N' END AS tipo ");
+			sql.append(" CASE WHEN PE.PARCIAL = TRUE THEN 'P' ELSE 'N' END AS tipo, ");
+			sql.append(" PLP.tipo as recolhimento ");
 		}
 		
 		sql.append(" FROM CONTROLE_CONFERENCIA_ENCALHE CCE                     ");
@@ -302,6 +308,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append(" INNER JOIN CONFERENCIA_ENCALHE CONFENC ON (CONFENC.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)   ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE_COTA CEC ON (CEC.ID = CONFENC.CHAMADA_ENCALHE_COTA_ID)                    ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)   ");
+		sql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO CEL ON (CEL.CHAMADA_ENCALHE_ID = CE.ID) ");
+		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID AND L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO) ");
+		sql.append(" LEFT OUTER JOIN PERIODO_LANCAMENTO_PARCIAL PLP ON PLP.ID = L.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO_PARCIAL LP ON PLP.LANCAMENTO_PARCIAL_ID = LP.ID ");
 		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CONFENC.PRODUTO_EDICAO_ID) ");
 		sql.append(" INNER JOIN PRODUTO P ON (PE.PRODUTO_ID = P.ID) ");
 		sql.append(" INNER JOIN PRODUTO_FORNECEDOR PF ON (PF.PRODUTO_ID = P.ID) ");

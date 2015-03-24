@@ -69,6 +69,9 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
 	
+	@Column(name = "UTILIZA_IPV", nullable = false)
+	private boolean utilizaIPV;
+	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
 	
@@ -268,6 +271,16 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public boolean isUtilizaIPV() {
+		return utilizaIPV;
+	}
+
+
+	public void setUtilizaIPV(boolean utilizaIPV) {
+		this.utilizaIPV = utilizaIPV;
+	}
+
+
 	public PoliticaSuspensao getPoliticaSuspensao() {
 		return politicaSuspensao;
 	}

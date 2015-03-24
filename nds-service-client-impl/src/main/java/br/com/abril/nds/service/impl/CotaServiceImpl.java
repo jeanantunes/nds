@@ -1234,13 +1234,15 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     public CotaDTO obterDadosCadastraisCota(final Long idCota){
         
-        if (idCota == null){
+        if (idCota == null) {
+        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
         }
         
         final Cota cota  = cotaRepository.buscarPorId(idCota);
         
-        if (cota == null){
+        if (cota == null) {
+        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
         }
         
@@ -1253,6 +1255,7 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
         cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
+        cotaDTO.setUtilizaIPV(cota.isUtilizaIPV());
         
         if (cota.getTipoDistribuicaoCota() != null) {
             cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
@@ -1463,7 +1466,7 @@ public class CotaServiceImpl implements CotaService {
         
         Cota cota  = null;
         
-        if(cotaDto.getIdCota()!= null){
+        if(cotaDto.getIdCota() != null) {
             cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
         }
         
@@ -1472,7 +1475,7 @@ public class CotaServiceImpl implements CotaService {
         boolean incluirPDV = false;
         // Flag indica criação de uma nova cota
         boolean newCota = false;
-        if(cota == null){
+        if(cota == null) {
             cota = new Cota();
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
@@ -1495,6 +1498,8 @@ public class CotaServiceImpl implements CotaService {
         cota.setNumeroCota(cotaDto.getNumeroCota());
         
         cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
+        
+        cota.setUtilizaIPV(cotaDto.isUtilizaIPV());
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
@@ -1529,7 +1534,8 @@ public class CotaServiceImpl implements CotaService {
         
         processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
         
-        if(incluirPDV){
+        if(incluirPDV) {
+        	
             persisteDadosPDV(cota, cotaDto);
         }
         
