@@ -262,8 +262,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         final Boolean fechado = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(filtro.getDataEncalhe());
         
-        List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheRepository.buscarConferenciaEncalheNovo(
-                filtro, sortorder, sort, startSearch, rp);
+        List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, sortorder, sort, startSearch, rp);
         
         if (listaEncalhe.isEmpty()) {
         	return listaEncalhe;
@@ -276,8 +275,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             listaDeIdsProdutoEdicao.add(encalhe.getProdutoEdicao());
         }
         
-        final List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository
-                .buscarMovimentoEstoqueCota(filtro, listaDeIdsProdutoEdicao);
+        final List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeIdsProdutoEdicao);
         
         carregarQtdLogicoNaListaEncalheFisicoLogico(filtro, listaEncalhe, listaMovimentoEstoqueCota, listaDeIdsProdutoEdicao);
         
@@ -301,34 +299,28 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	 * @param fechado
 	 * @param listaEncalhe
 	 */
-	private void carregarQtdFisicoNaListaEncalheFisicoLogico(
-			final FiltroFechamentoEncalheDTO filtro, final Boolean fechado,
-			List<FechamentoFisicoLogicoDTO> listaEncalhe
-			) {
+	private void carregarQtdFisicoNaListaEncalheFisicoLogico(final FiltroFechamentoEncalheDTO filtro, final Boolean fechado, List<FechamentoFisicoLogicoDTO> listaEncalhe) {
 		
 		if (filtro.getBoxId() == null) {
         	
-            final List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository
-                    .buscarFechamentoEncalhe(filtro.getDataEncalhe());
+            final List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
             
             for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
+            	
                 this.setarInfoComumFechamentoFisicoLogicoDTO(encalhe, fechado);
                 
                 for (final FechamentoEncalhe fechamento : listaFechamento) {
-                    if (encalhe.getProdutoEdicao().equals(
-                            fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
+                    if (encalhe.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
                         encalhe.setFisico(fechamento.getQuantidade());
                         encalhe.setDiferenca(calcularDiferenca(encalhe));
                         break;
                     }
                 }
             }
-            // throw new ValidacaoException(TipoMensagem.ERROR, "xxxxxxxxxxxx");
             
         } else {
         	
-            final List<FechamentoEncalheBox> listaFechamentoBox = fechamentoEncalheBoxRepository
-                    .buscarFechamentoEncalheBox(filtro);
+            final List<FechamentoEncalheBox> listaFechamentoBox = fechamentoEncalheBoxRepository.buscarFechamentoEncalheBox(filtro);
             
             for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
                 
@@ -516,8 +508,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         if (encalhe.getExemplaresDevolucao() == null) {
             encalhe.setExemplaresDevolucao(BigInteger.valueOf(0));
         }
-        encalhe.setTotal(new BigDecimal(encalhe.getExemplaresDevolucao()).multiply(encalhe
-                .getPrecoCapaDesconto()));
+        encalhe.setTotal(new BigDecimal(encalhe.getExemplaresDevolucao()).multiply(encalhe.getPrecoCapaDesconto()));
         encalhe.setFechado(fechado);
         
         carregarDescricaoEstoque(encalhe);
@@ -569,9 +560,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
      */
     private boolean isEstoqueLancamento(FechamentoFisicoLogicoDTO encalhe) {
     	
-    	return "P".equals(encalhe.getTipo()) && 
-    			encalhe.getRecolhimento() != null && 
-    			TipoLancamentoParcial.PARCIAL.name().equals(encalhe.getRecolhimento());
+    	return "P".equals(encalhe.getTipo()) 
+    			&& encalhe.getRecolhimento() != null && TipoLancamentoParcial.PARCIAL.name().equals(encalhe.getRecolhimento());
     	
     }
     
