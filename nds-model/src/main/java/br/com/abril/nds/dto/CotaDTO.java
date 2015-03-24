@@ -37,6 +37,7 @@ public class CotaDTO implements Serializable {
     private Date dataInclusao;
     private String razaoSocial;
     private String nomeFantasia;
+    private boolean utilizaIPV;
     private String numeroCnpj;
     private String inscricaoEstadual;
     private String inscricaoMunicipal;
@@ -348,6 +349,20 @@ public class CotaDTO implements Serializable {
     }
 
     /**
+     * @return
+     */
+    public boolean isUtilizaIPV() {
+		return utilizaIPV;
+	}
+
+	/**
+	 * @param utilizaIPV
+	 */
+	public void setUtilizaIPV(boolean utilizaIPV) {
+		this.utilizaIPV = utilizaIPV;
+	}
+
+	/**
      * @param nomeFantasia the nomeFantasia to set
      */
     public void setNomeFantasia(String nomeFantasia) {
