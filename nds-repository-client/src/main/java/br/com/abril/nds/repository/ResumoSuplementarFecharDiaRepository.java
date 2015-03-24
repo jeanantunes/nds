@@ -29,4 +29,6 @@ public interface ResumoSuplementarFecharDiaRepository {
 
 	BigDecimal obterValorAlteracaoPreco(Date dataOperacao);
 
+	BigDecimal obterValorInventario(Date dataOperacao);
+
 }

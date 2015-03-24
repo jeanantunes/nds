@@ -25,5 +25,11 @@ public class SemaforoServiceImpl implements SemaforoService {
 		
 		return this.semaforoRepository.obterSemaforosAtualizadosEm(data);
 	}
+	
+	@Transactional
+	public void atualizarStatusProcessoEncalheIniciadoEm(Date data) {
+		
+		this.semaforoRepository.atualizarStatusProcessoEncalheIniciadoEm(data);
+	}
 
 }

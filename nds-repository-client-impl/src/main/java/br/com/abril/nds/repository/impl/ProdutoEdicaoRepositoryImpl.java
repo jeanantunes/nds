@@ -1599,7 +1599,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT ");
+		sql.append(" Select sum(T.REPARTE) AS reparte, sum(T.qtdeVendas) AS qtdeVendas, T.statusLancamento AS statusLancamento, T.ID AS id from (SELECT ");
         
         sql.append(" cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) as unsigned int) AS reparte, ");
         
@@ -1648,7 +1648,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    
 	    sql.append("   and c.NUMERO_COTA = :numeroCota ");
 		
-		sql.append(" group by pe.numero_edicao, pe.id, mecReparte.COTA_ID");
+		sql.append(" group by pe.numero_edicao, pe.id, mecReparte.cota_id, plp.numero_periodo ORDER BY l.ID desc) as T");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

@@ -39,10 +39,15 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	private Date dataRecolhimento;
 	
 	private BigDecimal precoCapa;
+	
 	private BigDecimal precoCapaDesconto;
+	
 	private BigInteger exemplaresDevolucao;
+	
 	private BigInteger exemplaresDevolucaoJuramentado;
+	
 	private BigInteger exemplaresVendaEncalhe;
+	
 	private BigDecimal total;
 	
 	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 11, fontSize=9)

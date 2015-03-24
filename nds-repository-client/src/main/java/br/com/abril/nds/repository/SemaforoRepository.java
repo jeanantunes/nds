@@ -10,5 +10,7 @@ public interface SemaforoRepository extends Repository<Semaforo, Integer> {
 	Semaforo selectForUpdate(Integer numeroCota);
 	
 	List<Semaforo> obterSemaforosAtualizadosEm(Date data);
+
+	void atualizarStatusProcessoEncalheIniciadoEm(Date data);
 	
 }

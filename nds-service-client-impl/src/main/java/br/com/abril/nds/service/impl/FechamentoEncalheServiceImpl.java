@@ -1423,8 +1423,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
         
-        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null,null, null);
-
+        // TODO: Refatorar a parte de fechamento de encalhe para melhor
+        // desempenho
+        final List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null, null, null);
+        
         this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, distribuidorRepository.obterDataOperacaoDistribuidor());
         
         for (final FechamentoFisicoLogicoDTO itemSessao : listaEncalheSessao) {
@@ -1501,7 +1503,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     	if(item.isChamadao() && !item.isMatrizRecolhimento()) {
     		return;
     	}
-    	movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcialParaLancamento(item.getProdutoEdicao(), usuario);
+    	
+    	if(isEstoqueLancamento(item)) {
+    		movimentoEstoqueService.transferirEstoqueProdutoEdicaoParcial(item.getProdutoEdicao(), usuario);
+		}
         
         final Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getChamadaEncalheId());
         

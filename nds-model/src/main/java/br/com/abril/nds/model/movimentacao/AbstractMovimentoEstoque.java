@@ -34,7 +34,7 @@ public abstract class AbstractMovimentoEstoque extends Movimento {
 	@Column(name = "NOTA_FISCAL_EMITIDA")
 	private boolean notaFiscalEmitida;
 	
-	@Column(name="ORIGEM",columnDefinition="VARCHAR(50) default 'MANUAL'", insertable = false, updatable = true)
+	@Column(name="ORIGEM", columnDefinition="VARCHAR(50) default 'MANUAL'", updatable = true)
 	@Enumerated(EnumType.STRING)
 	private Origem origem;
 	

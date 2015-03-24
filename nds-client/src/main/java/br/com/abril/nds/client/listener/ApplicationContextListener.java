@@ -32,6 +32,8 @@ import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.client.job.RankingFaturamentoJob;
 import br.com.abril.nds.client.job.RankingSegmentoJob;
 import br.com.abril.nds.client.job.RegiaoJob;
+import br.com.abril.nds.service.SemaforoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -81,8 +83,11 @@ public class ApplicationContextListener implements ServletContextListener {
 			BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent = springContext.getBean(BloqueioConferenciaEncalheComponent.class);
 			bloqueioConferenciaEncalheComponent.limparSessionsConferenciaCotaUsuario();
 			
+			DistribuidorService distribuidorService = (DistribuidorService) springContext.getBean("distribuidorServiceImpl");
+			SemaforoService semaforoService = (SemaforoService) springContext.getBean("semaforoServiceImpl");
+			semaforoService.atualizarStatusProcessoEncalheIniciadoEm(distribuidorService.obterDataOperacaoDistribuidor());
+			
 			SchedulerFactoryBean schedulerFactoryBean =	springContext.getBean(SchedulerFactoryBean.class);
-			 
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
