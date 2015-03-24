@@ -2697,7 +2697,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
         }
         
-        
         final ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
         
         if(pe == null) {

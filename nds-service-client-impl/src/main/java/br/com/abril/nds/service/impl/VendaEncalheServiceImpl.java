@@ -67,6 +67,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -1432,17 +1433,18 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			if(produtoEdicao.getLancamentos() != null && !produtoEdicao.getLancamentos().isEmpty()) {
 				
 				List<StatusLancamento> statusLancamentos = new ArrayList<StatusLancamento>();
+				statusLancamentos.add(StatusLancamento.EXPEDIDO);
+				statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.EM_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.RECOLHIDO);
-				statusLancamentos.add(StatusLancamento.EXPEDIDO);
 				statusLancamentos.add(StatusLancamento.FECHADO);
 				
 				List<Lancamento> lancamentos = new ArrayList<Lancamento>(produtoEdicao.getLancamentos());
 				Collections.sort(lancamentos, new Comparator<Lancamento>() {
 					@Override
 					public int compare(Lancamento o1, Lancamento o2) {
-						if(o1 != null && o2 != null) {
+						if(o1 != null && o2 != null && o1.getDataRecolhimentoDistribuidor() != null) {
 							o1.getDataRecolhimentoDistribuidor().compareTo(o2.getDataRecolhimentoDistribuidor());
 						}
 						if(o1 != null && o2 == null) {
@@ -1456,11 +1458,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				});
 				
 				for(Lancamento l : lancamentos) {
-					if(l.getDataRecolhimentoDistribuidor().getTime() <= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
-						if(!statusLancamentos.contains(l.getStatus())) {
-							vendaBloqueada = true;
-							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
-						}
+					
+					if(!TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
+						
+						vendaBloqueada = true;
+						throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
 					}
 				}
 			}
@@ -1469,8 +1471,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
 			
-			if(estoqueProduto == null){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda!");
+			if(estoqueProduto == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não existe produto disponível em estoque para venda!");
 			}
 			
 			TipoVendaEncalhe tipoVendaEncalhe = this.obterTipoVenda(estoqueProduto);

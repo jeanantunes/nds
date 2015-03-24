@@ -1357,6 +1357,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		consolidadoSuplementar.setValorSaldo(resumoSuplementar.getSaldo());
 		consolidadoSuplementar.setValorTransferencia(resumoSuplementar.getTotalTransferencia());
 		consolidadoSuplementar.setValorVendas(resumoSuplementar.getTotalVenda());
+		consolidadoSuplementar.setValorInventario(resumoSuplementar.getTotalInventario());
 		consolidadoSuplementar.setValorAlteracaoPreco(resumoSuplementar.getTotalAlteracaoPreco());
 		consolidadoSuplementar.setFechamentoDiario(fechamento);
 		
