@@ -254,6 +254,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      pdv.PONTO_PRINCIPAL = true ");
 		sql.append("      and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		sql.append("      and c.id = :idCota ");
+		sql.append("      and c.UTILIZA_IPV = :true ");
 		sql.append("      order by c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID ");
 		
 		
@@ -261,6 +262,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		query.setParameter("dataRecolhimento", this.dataLctoDistrib);
 		query.setParameter("idCota", idCota);
+		query.setParameter("true", true);
 		
 		query.addScalar("codDistribuidor", StandardBasicTypes.STRING);
 		query.addScalar("codJornaleiro", StandardBasicTypes.STRING);
@@ -311,11 +313,13 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("   join pdv on pdv.COTA_ID = cota.ID ");
 		sql.append("  where pdv.PONTO_PRINCIPAL = true  ");
 		sql.append(" 		and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		sql.append(" 		and cota.UTILIZA_IPV = :true ");
 		sql.append(" 		group by cota.NUMERO_COTA ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString()); 
 		
 		query.setParameter("dataRecolhimento", this.dataLctoDistrib);
+		query.setParameter("true", true);
 		
 		query.addScalar("cotaId", StandardBasicTypes.STRING);
 		query.addScalar("numCota", StandardBasicTypes.STRING);

@@ -162,8 +162,7 @@ public class FechamentoEncalheController extends BaseController {
                     .recursive().serialize();
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
-					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, 
-							aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
+					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
 
 			this.getSession().setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
 			

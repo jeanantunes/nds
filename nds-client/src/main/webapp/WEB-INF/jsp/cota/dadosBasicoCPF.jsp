@@ -32,7 +32,9 @@
 				  items="${listaTiposCota}">
 				  <option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
 			  </c:forEach>
-	  </select></td><td></td><td></td>
+	  </select></td>
+	  <td>Utiliza IPV?</td>
+      <td><input type="checkbox" name="cotaDTO.utilizaIPV" id="utilizaIPV" /></td>
     </tr>
    
    <tr>
