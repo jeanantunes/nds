@@ -8,6 +8,13 @@
 				<td>
 					<table width="100%" border="0" cellspacing="2" cellpadding="0">
 						<tr>
+							<td width="35%">Cnae:</td>
+							<td><input type="text" name="fiscal-cnae" id="fiscal-cnae" value="${parametrosDistribuidor.cnae}" /></td>
+							<td width="35%"></td>
+							<td></td>
+						</tr>
+						
+						<tr>
 							<td width="35%">Tipo Prestador:</td>
 							<td><select name="tipoAtividade" id="tipoAtividade" style="width: 150px;">
 									<c:forEach var="tipoPrestador" items="${listaTipoPrestador}">

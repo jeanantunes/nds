@@ -446,6 +446,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 		}
 		
+		parametrosDistribuidor.setCnae(distribuidor.getCnae());
 		parametrosDistribuidor.setNfInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
 		parametrosDistribuidor.setNumeroDispositivoLegal(distribuidor.getNumeroDispositivoLegal());
 		parametrosDistribuidor.setDataLimiteVigenciaRegimeEspecial(distribuidor.getDataLimiteVigenciaRegimeEspecial());
@@ -1027,6 +1028,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 			
 			distribuidor.setRegimeTributario(regimeTributario);
+		}
+		
+		if(parametrosDistribuidor.getCnae() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING ,"O campo 'CNAE' não pode ser vazio!");
+		} else {
+			distribuidor.setCnae(parametrosDistribuidor.getCnae());
 		}
 		
 		if(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna()) {

@@ -224,6 +224,9 @@ public class Distribuidor {
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
+	@Column(name ="CNAE", nullable = false)
+	private String cnae;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = true)
 	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
@@ -840,6 +843,14 @@ public class Distribuidor {
 			ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor) {
 		this.parametrosAprovacaoDistribuidor = parametrosAprovacaoDistribuidor;
 	}
+	
+	public String getCnae() {
+		return cnae;
+	}
+
+	public void setCnae(String cnae) {
+		this.cnae = cnae;
+	}
 
 	public TipoAtividade getTipoAtividade() {
 		return tipoAtividade;
@@ -1423,6 +1434,7 @@ public class Distribuidor {
 				+ qntDiasVencinemtoVendaEncalhe + ", tipoAtividade="
 				+ tipoAtividade + ", possuiRegimeEspecialDispensaInterna="
 				+ possuiRegimeEspecialDispensaInterna
+				+ ", cnae =" + cnae
 				+ ", numeroDispositivoLegal=" + numeroDispositivoLegal
 				+ ", dataLimiteVigenciaRegimeEspecial="
 				+ dataLimiteVigenciaRegimeEspecial + ", tipoImpressaoCE="

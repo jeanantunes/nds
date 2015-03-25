@@ -38,7 +38,7 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 		
 			notaFiscalItem.setCodigoItem(Long.valueOf(estoqueProduto.getProdutoEdicao().getProduto().getCodigo()));
 			notaFiscalItem.setDescricao(estoqueProduto.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
-			notaFiscalItem.setNCM(estoqueProduto.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getDescricao());
+			notaFiscalItem.setNCM(estoqueProduto.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo().toString());
 			notaFiscalItem.setQuantidade(estoqueProduto.getQtde());
 			notaFiscalItem.setUnidade(estoqueProduto.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 			notaFiscalItem.setValorTotal(estoqueProduto.getProdutoEdicao().getDesconto().multiply(new BigDecimal(estoqueProduto.getQtde())));

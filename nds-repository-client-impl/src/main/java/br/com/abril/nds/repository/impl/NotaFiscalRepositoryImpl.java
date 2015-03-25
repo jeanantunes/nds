@@ -875,17 +875,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mfff.qtde) as exemplares ");
 
 		Query query = queryConsultaFornecedorMFFNfeParameters(queryConsultaFornecedorMFFNfe(filtro, hql, false, false, false), filtro);
-
-		if(filtro.getPaginacaoVO()!=null) {
-			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
-				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-			}
-
-			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
-				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-			}
-		}
-
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
 
 		return query.list();

@@ -1889,18 +1889,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, indBuscaTotalParcial, false);
         
-        if(filtro.getPaginacao()!=null) {
-            
-            if(filtro.getPaginacao().getPosicaoInicial()!=null) {
-                query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-            }
-            
-            if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-                query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-            }
-            
-        }
-        
         return query.list();
         
     }
