@@ -13,23 +13,27 @@
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
 //    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
-   
+
     var estudoCopiado = $("#reparteCopiado").val();
     
-    if(estudoCopiado != "" ){
+    if(estudoCopiado != "" ) {
     	$("#tdEstudoCopiado").show();
     	$("#spanReparteCopiado").text(estudoCopiado);
-    }else{
+    } else {
+    	
     	$("#tdEstudoCopiado").hide();
     }
-  });
+    
+});
 
-function mostraDados_analiseParcial(){
+function mostraDados_analiseParcial() {
+	
 	analiseParcialController.montarDadosDetalhesEdicoesBases();
-	}
-function escondeDados_analiseParcial(){
+}
+function escondeDados_analiseParcial() {
+	
 	$('.detalhesDados-analiseParcial').hide();
-	}
+}
 	
 </script>
 

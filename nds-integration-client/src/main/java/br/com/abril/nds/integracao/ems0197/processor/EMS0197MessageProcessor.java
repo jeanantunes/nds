@@ -361,20 +361,6 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 		StringBuilder sql = new StringBuilder();
 		
-		/*
-		sql.append(" select distinct(c.id) as idCota, c.numero_cota as numeroCota");
-		sql.append(" , pdv.NOME as nomePDV "); 
-		sql.append(" , mec.data as dataLctoDistrib ");
-		sql.append(" ,(select d.COD_DISTRIBUIDOR_DINAP from distribuidor d limit 1) as codDistribuidor  ");
-		sql.append(" from cota c ");
-		sql.append(" join pdv pdv on pdv.cota_id = c.id  ");
-		sql.append(" join movimento_estoque_cota mec on mec.cota_id = c.ID ");
-		sql.append(" join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ");
-		sql.append(" where mec.DATA = :data ");
-		sql.append(" and pdv.PONTO_PRINCIPAL = true ");
-		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
-		*/
-		
 		sql.append(" SELECT DISTINCT (c.id) AS idCota, ");
 		sql.append("                 c.numero_cota AS numeroCota, ");
 		sql.append("                 pdv.NOME AS nomePDV, ");
@@ -389,25 +375,14 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("           ON ecg.ESTUDO_ID = eg.ID ");
 		sql.append("        ");
 		sql.append("  WHERE eg.DATA_LANCAMENTO = :data  ");
-		sql.append("           AND pdv.PONTO_PRINCIPAL = TRUE ");
+		sql.append("           AND pdv.PONTO_PRINCIPAL = :true ");
 		sql.append("           AND ecg.QTDE_EFETIVA > 0 ");
+		sql.append("           AND c.UTILIZA_IPV = :true ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
-		
-		/*
-		query.setParameterList("grupos", 
-				Arrays.asList( 
-						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
-						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
-						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
-						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
-						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
-						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
-				));
-				
-				*/
+		query.setParameter("true", true);
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("dataLctoDistrib", StandardBasicTypes.DATE);
@@ -542,11 +517,13 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       		and ecg.REPARTE is not null ");
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
+		sql.append(" 	 		and c.UTILIZA_IPV = :true");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
 		query.setParameter("idCota", idCota);
+		query.setParameter("true", true);
 		query.setParameterList("statusLancamento", LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
 		
 		query.addScalar("versao", StandardBasicTypes.STRING);

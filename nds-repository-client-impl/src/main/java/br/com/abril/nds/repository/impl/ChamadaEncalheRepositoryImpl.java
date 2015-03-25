@@ -148,16 +148,21 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao,
-				 									 TipoChamadaEncalhe tipoChamadaEncalhe,
-				 									 Boolean fechado) {
+	public List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe, Boolean fechado, List<Lancamento> lancamentosCE) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select chamadaEncalhe ");
 		hql.append(" from ChamadaEncalhe chamadaEncalhe ");
 		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ");
+		if(lancamentosCE != null && !lancamentosCE.isEmpty()) {
+			hql.append(" join chamadaEncalhe.lancamentos lancamentos ");
+		}
 		hql.append(" where chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		
+		if(lancamentosCE != null && !lancamentosCE.isEmpty()) {
+			hql.append(" and lancamentos in (:lancamentos) ");
+		}
 		
 		if (tipoChamadaEncalhe != null ) {
 			hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
@@ -172,6 +177,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("produtoEdicao", produtoEdicao);
+		if(lancamentosCE != null && !lancamentosCE.isEmpty()) {
+			query.setParameterList("lancamentos", lancamentosCE);
+		}
 		
 		if (tipoChamadaEncalhe != null) {
 			query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);

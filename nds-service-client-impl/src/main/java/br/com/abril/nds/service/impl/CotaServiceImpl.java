@@ -1278,6 +1278,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
 		cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
+		cotaDTO.setUtilizaIPV(cota.isUtilizaIPV());
 		
 		if (cota.getTipoDistribuicaoCota() != null) {
 		    cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
@@ -1293,8 +1294,8 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
 		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
 		
-		return cotaDTO;
-	}
+        return cotaDTO;
+    }
     
     @Transactional
     private List<CotaBaseDTO> atribuirCotaBase(final Integer numeroCota) {
@@ -1446,6 +1447,7 @@ public class CotaServiceImpl implements CotaService {
         }
         
         if (cotaComDebitos(idCota)){
+
             throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
 		}
 		
@@ -1495,9 +1497,10 @@ public class CotaServiceImpl implements CotaService {
 		
 		boolean incluirPDV = false;
 
+
         // Flag indica criação de uma nova cota
         boolean newCota = false;
-        if(cota == null){
+        if(cota == null) {
             cota = new Cota();
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
@@ -1520,6 +1523,8 @@ public class CotaServiceImpl implements CotaService {
         cota.setNumeroCota(cotaDto.getNumeroCota());
         
         cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
+        
+        cota.setUtilizaIPV(cotaDto.isUtilizaIPV());
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
@@ -1554,7 +1559,8 @@ public class CotaServiceImpl implements CotaService {
         
         processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
         
-        if(incluirPDV){
+        if(incluirPDV) {
+        	
             persisteDadosPDV(cota, cotaDto);
         }
         

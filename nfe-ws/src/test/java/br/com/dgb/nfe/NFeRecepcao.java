@@ -3,19 +3,29 @@ package br.com.dgb.nfe;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.security.Security;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.commons.httpclient.protocol.Protocol;
 
 import br.com.abril.nfe.integracao.NfeRecepcao2Stub;
 
 public class NFeRecepcao {
 
-    public static void main(String[] args) {
+	private static final int SSL_PORT = 443; 
+    
+	public static void main(String[] args) {
+    	
+    	
         try {
             String codigoDoEstado = "35";
 
@@ -24,42 +34,48 @@ public class NFeRecepcao {
              * para cada WebService existe um endereco Diferente.
              */
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx");
-            URL url = new URL("https://nfe.fazenda.sp.gov.br/ws/recepcaoevento.asmx");
+            URL url = new URL("https://homologacao.nfe.fazenda.sp.gov.br/ws/nfeautorizacao.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nferetrecepcao/NfeRetRecepcao2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfecancelamento/NfeCancelamento2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfeinutilizacao/NfeInutilizacao2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfeconsulta/NfeConsulta2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfestatusservico/NfeStatusServico2.asmx");
             
-            String caminhoDoCertificadoDoCliente = "C:\\Users\\wrpaiva\\certificadoAR\\certificadodigitalarsp2014.pfx";
-            String senhaDoCertificadoDoCliente = "arutil14";
-            String arquivoCacertsGeradoParaCadaEstado = "C:\\Users\\wrpaiva\\certificadoAR\\certificado.jks";
-
-            /**
-             * Informações do Certificado Digital.
-             */
-            System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-
-            System.setProperty("javax.net.ssl.keyStoreType", "PKCS12");
-
-            System.clearProperty("javax.net.ssl.keyStore");
-            System.clearProperty("javax.net.ssl.keyStorePassword");
-            System.clearProperty("javax.net.ssl.trustStore");
-
-            System.setProperty("javax.net.ssl.keyStore", caminhoDoCertificadoDoCliente);
-            System.setProperty("javax.net.ssl.keyStorePassword", senhaDoCertificadoDoCliente);
-
-            System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-            System.setProperty("javax.net.ssl.trustStore", arquivoCacertsGeradoParaCadaEstado);
-
+            String caminhoDoCertificadoDoCliente = "C:/Users/wrpaiva/certificadoAR/certificado.jks";  
+            String senhaDoCertificado = "arutil14";  
+            String arquivoCacertsGeradoTodosOsEstados = "NFeCacerts";  
+  
+            InputStream entrada = new FileInputStream(caminhoDoCertificadoDoCliente);  
+            KeyStore ks = KeyStore.getInstance("pkcs12");  
+            try {  
+                ks.load(new FileInputStream("C:/Users/wrpaiva/certificadoAR/certificado.jks"), "arutil14".toCharArray());
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            }  
+  
+            String alias = "";  
+            Enumeration<String> aliasesEnum = ks.aliases();  
+            while (aliasesEnum.hasMoreElements()) {  
+                alias = (String) aliasesEnum.nextElement();  
+                if (ks.isKeyEntry(alias)) {  
+                    break;  
+                }  
+            }  
+            X509Certificate certificate = (X509Certificate) ks.getCertificate(alias);  
+            PrivateKey privateKey = (PrivateKey) ks.getKey(alias, senhaDoCertificado.toCharArray());  
+            SocketFactoryDinamico socketFactoryDinamico = new SocketFactoryDinamico(certificate, privateKey);  
+            socketFactoryDinamico.setFileCacerts(arquivoCacertsGeradoTodosOsEstados);  
+  
+            Protocol protocol = new Protocol("https", socketFactoryDinamico, 443);  
+            Protocol.registerProtocol("https", protocol);  
+            
             /**
              * IMPORTANTE: O XML já deve ser assinado antes do envio.
              * Lendo o Xml de um arquivo Gerado.
              */
             StringBuilder xml = new StringBuilder();
             String linha = null;
-            String caminhoArquivo = "C:/opt/parametros_nds/notas/exportado/NF-e-0-00000001.xml";
+            String caminhoArquivo = "C:/Users/wrpaiva/certificadoAR/NF-e-31-00000002.xml";
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(caminhoArquivo), "UTF-8"));
             
             while ((linha = in.readLine()) != null) {
@@ -99,6 +115,8 @@ public class NFeRecepcao {
 
             System.out.println(result.getExtraElement().toString());
         } catch (Exception e) {
+        	System.out.println("ERRO"+ e);
+        	
             e.printStackTrace();
         }
     }

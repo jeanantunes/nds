@@ -1085,13 +1085,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlTblReparte.append(" FROM  ");
 		sqlTblReparte.append(" MOVIMENTO_ESTOQUE_COTA MEC	");
+		if(filtro.getIdBox() != null) {
+			sqlTblReparte.append(" INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON (CCEC.COTA_ID = MEC.COTA_ID)   ");
+			sqlTblReparte.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
+			sqlTblReparte.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID ");
+			sqlTblReparte.append(" 	AND CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID = MEC.PRODUTO_EDICAO_ID )   ");
+        }
 		sqlTblReparte.append(" INNER JOIN                   	");
 		sqlTblReparte.append(" (SELECT PRODUTO_EDICAO.ID AS ID  ");
 		sqlTblReparte.append(" FROM CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ");
 		sqlTblReparte.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID)   ");
 		
 		if(filtro.getIdBox() != null) {
-			// sqlTblReparte.append(" INNER JOIN COTA ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = COTA.ID) ");
 			sqlTblReparte.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
         }
 		
@@ -1101,10 +1106,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(" INNER JOIN FORNECEDOR ON (PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID)                            ");
 		sqlTblReparte.append(" INNER JOIN PESSOA ON (PESSOA.ID = FORNECEDOR.JURIDICA_ID)                                                ");
 		sqlTblReparte.append(" WHERE CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal                                           ");
-		sqlTblReparte.append(filtro.getIdCota() !=null ? " AND CCEC.COTA_ID = :idCota " : "");
+		sqlTblReparte.append(filtro.getIdCota() != null ? " AND CCEC.COTA_ID = :idCota " : "");
 		sqlTblReparte.append(filtro.getCodigoProduto() != null ? " AND PRODUTO.CODIGO = :codigoProduto " : "");
-		sqlTblReparte.append(filtro.getIdProdutoEdicao() !=null ? " AND PRODUTO_EDICAO.ID = :idProdutoEdicao " : "");
-		sqlTblReparte.append(filtro.getIdBox() !=null ? " AND BOX.CODIGO = :box " : "");
+		sqlTblReparte.append(filtro.getIdProdutoEdicao() != null ? " AND PRODUTO_EDICAO.ID = :idProdutoEdicao " : "");
+		sqlTblReparte.append(filtro.getIdBox() != null ? " AND BOX.CODIGO = :box " : "");
 		sqlTblReparte.append(" GROUP BY CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID ");
 		sqlTblReparte.append(" ) AS EDICAO_ENCALHADA ON ( MEC.PRODUTO_EDICAO_ID = EDICAO_ENCALHADA.ID ) ");
 		
@@ -1125,6 +1130,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe ");
 		
 		sqlTblReparte.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
+		
+		if(filtro.getIdBox() != null) {
+			
+			sqlTblReparte.append(" AND BOX.CODIGO = :box ");
+			sqlTblReparte.append(" AND CCEC.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal "); 
+		}
 		
 		sqlTblReparte.append(" AND MEC.LANCAMENTO_ID is not null ");
 				
