@@ -11,7 +11,6 @@ var analiseParcialController = $.extend(true, {
     inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" onkeydown="onlyNumeric(event);" />',
     tipoExibicao : 'NORMAL',
     
-                                     
     totalizarEdicoesBasesDadosEdicoes : function(indice, reparte, venda){
     	
     	if (edicoesBaseDadosEdicoes[indice] != undefined){ 
@@ -236,24 +235,14 @@ var analiseParcialController = $.extend(true, {
                     $dialog.find('#fxDataAlteracao').text(result.fxDataAlteracao ? result.fxDataAlteracao.$ : '');
                     $fixacao.show();
                 }
+                
+                $('#dialog-cotas-detalhes').dialog( "open" );
         });
 
 
         $("#cotasDetalhesGrid").flexOptions({ params: [{name: 'numeroCota', value: numeroCota},
                                                        {name: 'estudoId', value: $('#estudoId').val()}] }).flexReload();
 
-        $("#dialog-cotas-detalhes").dialog({
-            escondeHeader: false,
-            resizable : false,
-            height : 560,
-            width : 740,
-            modal : true,
-            buttons : {
-                "Fechar" : function() {
-                    $(this).dialog("close");
-                }
-            }
-        });
     },
 
     somarTotais : function() {
@@ -944,6 +933,20 @@ var analiseParcialController = $.extend(true, {
     },
 
     init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
+    	
+    	$("#dialog-cotas-detalhes").dialog({
+	   		autoOpen: false,
+            escondeHeader: false,
+            resizable : false,
+            height : 560,
+            width : 740,
+            modal : true,
+            buttons : {
+                "Fechar" : function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
     	
     	$('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
