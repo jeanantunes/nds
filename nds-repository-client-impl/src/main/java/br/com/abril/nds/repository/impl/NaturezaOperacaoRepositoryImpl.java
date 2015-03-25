@@ -366,7 +366,6 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		.append("FROM natureza_operacao no ")
 		.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
 		
-		
 		if(tipoEmitente != null) {
 			sql.append("AND no.TIPO_EMITENTE = :tipoEmitente ");
 		}

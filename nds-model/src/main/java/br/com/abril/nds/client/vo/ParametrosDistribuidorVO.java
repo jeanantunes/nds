@@ -44,6 +44,8 @@ public class ParametrosDistribuidorVO {
     private String numeroTelefone;
     
     private String numeroDDD;
+  
+    private String cnae;
     
     // -= Aba Operação =-
     // Frame Parciais / Matriz de Lançamento
@@ -1301,6 +1303,14 @@ public class ParametrosDistribuidorVO {
 
 	public void setNumeroDDD(String numeroDDD) {
 		this.numeroDDD = numeroDDD;
+	}
+	
+	public String getCnae() {
+		return cnae;
+	}
+
+	public void setCnae(String cnae) {
+		this.cnae = cnae;
 	}
 
 	public List<TiposNotasFiscaisParametrosVO> getTiposNotasFiscais() {

@@ -1196,3 +1196,6 @@ alter table movimento_estoque_cota add index NDX_MEC_COTA_FURO_STATUSFINANC_1 (S
 -- ==========================================================================
 
 alter table nota_fiscal_produto_servico add column VALOR_COMPOE_VALOR_NF tinyint(4) DEFAULT '1' NOT NULL after VALOR_ALIQUOTA_IPI;
+
+
+alter table distribuidor add column CNAE varchar(10) NULL after ACEITA_RECOLHIMENTO_PARCIAL_ATRASO;

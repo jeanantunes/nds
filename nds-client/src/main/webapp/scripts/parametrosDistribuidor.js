@@ -199,6 +199,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
 			
+			{name:'parametrosDistribuidor.cnae', value: $('#fiscal-cnae', this.workspace).val()},
 			{name:'parametrosDistribuidor.tipoAtividade', value: $('#tipoAtividade', this.workspace).val()},
 			{name:'parametrosDistribuidor.regimeTributario.id', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.nfInformacoesAdicionais', value: $('#informacoesAdicionais', this.workspace).val()},
