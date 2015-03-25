@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -1483,7 +1484,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				vendaEncalheDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
-				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao,tipoVendaEncalhe,produtoComFormaComercializacaoContaFirme));
+				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao, tipoVendaEncalhe, produtoComFormaComercializacaoContaFirme));
 				vendaEncalheDTO.setTipoVendaEncalhe(tipoVendaEncalhe);
 				vendaEncalheDTO.setProdutoContaFirme(produtoComFormaComercializacaoContaFirme);
 			} else {
@@ -1495,7 +1496,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return vendaEncalheDTO;
 	}
 
-	private FormaComercializacao obterFormaComercializacaoVenda(ProdutoEdicao produtoEdicao,TipoVendaEncalhe tipoVendaEncalhe, boolean produtoComFormaComercializacaoContaFirme) {
+	private FormaComercializacao obterFormaComercializacaoVenda(ProdutoEdicao produtoEdicao, TipoVendaEncalhe tipoVendaEncalhe, boolean produtoComFormaComercializacaoContaFirme) {
 		
 		FormaComercializacao formaComercializacao = null;
 		
@@ -1508,7 +1509,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				return FormaComercializacao.CONTA_FIRME;
 			}
 			
-			if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)){
+			if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)) {
 				
 				formaComercializacao = FormaComercializacao.CONSIGNADO;
 			} else {
@@ -1532,12 +1533,10 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return formaComercializacao;
 	}
 	
-	private boolean isVendaSuplementarConsignadoCota(ProdutoEdicao produtoEdicao, 
-			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel){
+	private boolean isVendaSuplementarConsignadoCota(ProdutoEdicao produtoEdicao, Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 		
-		List<ChamadaEncalhe> chamadas = 
-				chamadaEncalheRepository.obterChamadasEncalhe(
-						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, null) ;
+		Lancamento lancamento = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+		List<ChamadaEncalhe> chamadas = chamadaEncalheRepository.obterChamadasEncalhe(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, null, Arrays.asList(lancamento)) ;
 		
 		if(chamadas.isEmpty()) {
 			return true;
