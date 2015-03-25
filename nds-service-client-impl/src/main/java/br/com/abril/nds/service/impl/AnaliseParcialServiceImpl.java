@@ -390,14 +390,17 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
+    	
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
         	
-        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo().equals("") || cotaQueNaoEntrouNoEstudoDTO.getMotivo() == null){
+        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo() == null || cotaQueNaoEntrouNoEstudoDTO.getMotivo().equals("")) {
+        		
         		cotaQueNaoEntrouNoEstudoDTO.setMotivo("SH");
         	}
         	
-        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo().equalsIgnoreCase("MX")){
+        	if(cotaQueNaoEntrouNoEstudoDTO.getMotivo().equalsIgnoreCase("MX")) {
+        		
         		cotaQueNaoEntrouNoEstudoDTO.setMotivo("SM");
         	}
         	
