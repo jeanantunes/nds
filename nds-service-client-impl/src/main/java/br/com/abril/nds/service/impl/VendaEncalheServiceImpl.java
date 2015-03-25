@@ -556,7 +556,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 		} else {
 
-			return criarVendaEncalheContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
+			return criarVendaEncalheContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
 		}
 		
@@ -645,13 +645,20 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return valoresAplicados;
 	}
 	
-	private VendaProduto criarVendaEncalheContaFirme(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, Usuario usuario, ProdutoEdicao produtoEdicao) {
+	private VendaProduto criarVendaEncalheContaFirme(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, Usuario usuario, ProdutoEdicao produtoEdicao, Date dataOperacao) {
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
 
+		Cota cota = vendaProduto.getCota(); 
+		
 		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaEncalheDistribuidor(vnd, usuario, produtoEdicao);
 
 		List<MovimentoFinanceiroCota> movimentoFinanceiro = gerarMovimentoFinanceiroCotaDebito(dataVencimentoDebito, vendaProduto);
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = 
+				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
+										   		   usuario.getId(), vendaProduto.getQntProduto(), TipoVendaEncalhe.SUPLEMENTAR,
+										   		   dataOperacao, FormaComercializacao.CONTA_FIRME, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
@@ -724,8 +731,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
 										   		   usuario.getId(), vendaProduto.getQntProduto(), TipoVendaEncalhe.SUPLEMENTAR,
 										   		   dataOperacao, FormaComercializacao.CONTA_FIRME, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
-		
-		// this.gerarMovimentoFechamentoFiscalCota(dataOperacao, movimentoEstoqueCota, vendaProduto.getCota(), produtoEdicao, vendaProduto);
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
