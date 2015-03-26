@@ -554,6 +554,10 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
+			montaChaveAcesso(notaFiscal);
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
+			
 			// obter os movimentos de cada cota
 			filtro.setIdFornecedor(fornecedor.getId());
 			List<MovimentoEstoque> movimentosEstoque = this.notaFiscalRepository.obterMovimentosEstoqueFornecedor(filtro);
@@ -770,8 +774,11 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
+			montaChaveAcesso(notaFiscal);
+			
 			// obter os movimentos de fechamentos fiscais
 			filtro.setIdCota(fornecedor.getId());
+			
 			
 			final List<MovimentoFechamentoFiscal> movimentosFechamentosFiscais = this.notaFiscalRepository.obterMovimentosFechamentosFiscaisFornecedor(filtro);
 			
