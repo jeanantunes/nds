@@ -65,7 +65,7 @@ public class NFeRecepcao {
                     
                     Protocol protocol = new Protocol("https", socketFactoryDinamico, 443);  
                     Protocol.registerProtocol("https", protocol);  
-                    socketFactoryDinamico.setFileCacerts("C:/Users/wrpaiva/certificadoAR/certificado.jks");  
+                    socketFactoryDinamico.setFileCacerts("C:/Program Files/Java/jdk1.7.0_51/jre/lib/security/cacerts");  
                     
                     /**
                      * IMPORTANTE: O XML já deve ser assinado antes do envio.

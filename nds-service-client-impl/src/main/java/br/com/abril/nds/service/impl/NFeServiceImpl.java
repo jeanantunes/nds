@@ -515,7 +515,7 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		// if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		
 		return notas;
 	}
@@ -553,6 +553,10 @@ public class NFeServiceImpl implements NFeService {
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, fornecedor);
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
+			montaChaveAcesso(notaFiscal);
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
 			
 			// obter os movimentos de cada cota
 			filtro.setIdFornecedor(fornecedor.getId());
@@ -770,8 +774,11 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
+			montaChaveAcesso(notaFiscal);
+			
 			// obter os movimentos de fechamentos fiscais
 			filtro.setIdCota(fornecedor.getId());
+			
 			
 			final List<MovimentoFechamentoFiscal> movimentosFechamentosFiscais = this.notaFiscalRepository.obterMovimentosFechamentosFiscaisFornecedor(filtro);
 			

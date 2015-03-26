@@ -44,7 +44,40 @@ public class GerarChaveAcessoTest {
 			LOGGER.error("Exception: "+ e.getMessage());  
 		}  
 	}	
-      
+    
+	
+	@Test
+	public void validarChaveAcesso() throws Exception {
+		String chaveAcessoInformada = "42110585785244000199550010000000202000000050";
+		
+		try {  
+            String cUF = chaveAcessoInformada.substring(0,2); // Código da UF do emitente do Documento Fiscal.  
+            String dataAAMM = chaveAcessoInformada.substring(2,6); // Ano e Mês de emissão da NF-e.  
+            String cnpjCpf = chaveAcessoInformada.substring(6, 20); // CNPJ do emitente.  
+            String mod = chaveAcessoInformada.substring(20, 22); // Modelo do Documento Fiscal.  
+            String serie = chaveAcessoInformada.substring(22, 25); // Série do Documento Fiscal.  
+            String tpEmis = chaveAcessoInformada.substring(25, 23); // Forma de emissão da NF-e  
+            String nNF = chaveAcessoInformada.substring(27, 35); // Número do Documento Fiscal.  
+            String cNF = chaveAcessoInformada.substring(27, 35); // Código Numérico que compõe a Chave de Acesso.  
+              
+            StringBuilder chave = new StringBuilder();  
+            chave.append(cUF);  
+            chave.append(dataAAMM);  
+            chave.append(cnpjCpf.replaceAll("\\D",""), 14, '0');  
+            chave.append(mod);  
+            chave.append(serie);  
+            chave.append(nNF);  
+            chave.append(tpEmis);  
+            chave.append(cNF);  
+            chave.append(gerarChaveAcesso(chave.toString()));              
+            
+            Assert.assertEquals(chave.toString(), chaveAcessoInformada);
+            info("Chave NF-e: " + chave.toString());
+		} catch (Exception e) {  
+			LOGGER.error("Exception: "+ e.getMessage());  
+		}  
+	}
+	
     public static int gerarChaveAcesso(String chave) {  
         int total = 0;  
         int peso = 2;  
