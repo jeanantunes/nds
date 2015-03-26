@@ -438,9 +438,14 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 		
 		try {
-			//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
-			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
+			
+			int fatorRelParc = distribuidorService.obter().getFatorRelancamentoParcial();
+			Calendar c = Calendar.getInstance();
+			c.setTime(dataLancamento);
+			c.add(Calendar.DAY_OF_MONTH, (fatorRelParc > 2 ? fatorRelParc - 2 : 0)); //2 é o Fator de Relancamento Parcial do PRODIN
+			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(c.getTime(), produtoEdicao.getProduto().getFornecedor().getId()));
 		} catch (Exception e) {
+			
 		}
 		
 		lancamento.setProdutoEdicao(produtoEdicao);
