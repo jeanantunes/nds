@@ -1376,8 +1376,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			quantidadeProdutoAlterada = qntProdutoNovo.subtract(qntProdutoAtual);
 			
-			tipoMovimento = 
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoCompra);
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoCompra);
 		}
 
 		// Se a quantidade de produto nova informada for menor que a quantidade
@@ -1386,8 +1385,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			quantidadeProdutoAlterada = qntProdutoAtual.subtract(qntProdutoNovo);
 			
-			tipoMovimento = 
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstrnoCompra);
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstrnoCompra);
 		}
 
 		if (tipoMovimento == null) {
@@ -1396,8 +1394,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 					"Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
 		}
 
-		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, 
-				tipoMovimento, dataOperacao, null);
+		Lancamento l = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataOperacao);
+    	Date dataLancamento = null;
+    	if(l != null) {
+    		
+    		dataLancamento = l.getDataLancamentoDistribuidor();
+    	}
+		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao, null);
+		
 	}
 
 	@Override
