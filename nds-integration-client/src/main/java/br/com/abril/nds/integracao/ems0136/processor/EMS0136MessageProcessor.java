@@ -130,7 +130,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		return true;
 	}
 
-	private ProdutoEdicao obterProdutoEdicaoValidado(Message message,EMS0136Input input) {
+	private ProdutoEdicao obterProdutoEdicaoValidado(Message message, EMS0136Input input) {
 		
 		String codigoProduto = input.getCodigoProduto();
 		Long numeroEdicao = input.getEdicaoCapa();
@@ -141,12 +141,23 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Produto "
-					+ codigoProduto + " Edição " + numeroEdicao
-					+" não encontrado.");
+					"Produto "+ codigoProduto + " Edição " + numeroEdicao +" não encontrado.");
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(input.getDataHoraExtracao());
+			c.add(Calendar.DAY_OF_MONTH, 40);
+			if(c.getTime().compareTo(new Date()) < 0) {
+				
+				input.setErro(null);
+			} else {
+				
+				input.setErro("Produto "+ codigoProduto + " Edição " + numeroEdicao +" não encontrado.");
+			}
+				
 			return null;
 		}
 		
+		input.setErro(null);
 		produtoEdicao.setParcial(true);
 
 		return produtoEdicao;
