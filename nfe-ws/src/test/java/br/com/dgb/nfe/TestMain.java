@@ -28,13 +28,18 @@ import org.bouncycastle.asn1.DERString;
 public class TestMain {
 
     private void testAlheio() throws CertificateException, IOException {
-        String x509content = "C:/Users/wrpaiva/certificadoAR/NF-e-31-00000002";
+        String x509content = "C:/Users/wrpaiva/certificadoAR/certificado.pfx";
         CertificateFactory fact = CertificateFactory.getInstance("X.509");
         ByteArrayInputStream bais = new ByteArrayInputStream(x509content.getBytes());
         while (bais.available() > 0) {
             X509Certificate x509 = (X509Certificate) fact.generateCertificate(bais);
             exibeCertificado(x509);
         }
+        
+        System.out.println("Certificate Type: "+fact.getType());
+		System.out.println("Public Key: \n"+fact.getProvider().getName());
+		
+        
         bais.close();
     }
 
@@ -115,7 +120,7 @@ public class TestMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws CertificateParsingException, IOException, CertificateException {
-//        new Main().test();
+    	// new TestMain().testAlheio();
         new TestMain().test();
     }
 
