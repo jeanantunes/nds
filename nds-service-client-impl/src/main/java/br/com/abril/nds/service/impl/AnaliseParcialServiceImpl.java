@@ -149,8 +149,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
                 int contadorParciais = 1;
                 
-                List<EdicoesProdutosDTO> edicoesProdutoPorCota =
-                    this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota());
+                List<EdicoesProdutosDTO> edicoesProdutoPorCota = this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota());
                 
                 for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
                     if (edicoesProdutosDTO.isParcial()) {
@@ -165,8 +164,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 
                 this.completarParciaisBase(temp, QTDE_PARCIAIS_BASE);
                 
-                EdicoesProdutosDTO edicoesProdutosAcumulado = 
-                        this.getReparteVendaAcumulado(edicoesProdutoPorCota);
+                EdicoesProdutosDTO edicoesProdutosAcumulado = this.getReparteVendaAcumulado(edicoesProdutoPorCota);
                 
                 if (edicoesProdutosAcumulado != null) {
                 
@@ -278,6 +276,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return edicoesProdutosAcumulado;
     }
 
+    @Transactional
     public List<EdicoesProdutosDTO> getEdicoesProdutoPorCota(List<EdicoesProdutosDTO> edicoesProdutosDTO, Integer numeroCota) {
         
         List<EdicoesProdutosDTO> edicoesProdutoPorCota = new ArrayList<>();
@@ -293,14 +292,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return edicoesProdutoPorCota;
     }
     
-    @Transactional
     private void carregarInformacoesEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
         for (EdicoesProdutosDTO edicao : edicoesBase) {
             edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
         }
     }
 
-    @Transactional
     private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
 
         List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
@@ -324,7 +321,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     @Transactional
     public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
-	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
+    	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota, classificacaoCota);
     }
     
     @Override
@@ -351,7 +348,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
     
-    @Transactional
     private void validarDistribuicaoPorMultiplo(Long estudoId, Long reparteDigitado, EstudoGerado estudo) {
     		
 		BigInteger multiplo = new BigInteger(estudo.getPacotePadrao().toString());
@@ -540,12 +536,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 				return;
 			}
 			
-        	this.fixacaoReparteRepository.atualizarQtdeExemplares(
-        		wrapper.getId(), 
-        		wrapper.getReparte(), 
-        		wrapper.getDataAtualizacao(), 
-        		usuarioLogado
-        	);
+        	this.fixacaoReparteRepository.atualizarQtdeExemplares(wrapper.getId(), wrapper.getReparte(), wrapper.getDataAtualizacao(), usuarioLogado);
 
         } else if (wrapper.isMix()) {
         	
@@ -571,7 +562,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     			
     		}else{
 
-    			if(wrapper.getReparte() < mix.getReparteMinimo() || wrapper.getReparte() > mix.getReparteMaximo()){
+    			if(wrapper.getReparte() < mix.getReparteMinimo() || wrapper.getReparte() > mix.getReparteMaximo()) {
     				
     				this.mixCotaProdutoRepository.atualizarReparte(
         					isPDVUnico,
@@ -605,12 +596,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		}
     	} 
 
-    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)){
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)) {
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
     	
     	
-    	if(validacao == null){
+    	if(validacao == null) {
     		validacao = new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
     	}
 		

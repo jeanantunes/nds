@@ -574,8 +574,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("                   AS reparte, ");
     	sql.append("                CAST( ");
     	sql.append("                   COALESCE( ");
-    	sql.append("                      (SELECT mecRep2.QTDE ");
-    	sql.append("                         FROM    movimento_estoque_cota mecRep2 ");
+    	sql.append("                      (SELECT SUM(IF(tm.OPERACAO_ESTOQUE = 'ENTRADA', mecRep2.QTDE, 0)) ");
+    	sql.append("                         FROM movimento_estoque_cota mecRep2 ");
     	sql.append("                              JOIN ");
     	sql.append("                                 tipo_movimento tm ");
     	sql.append("                              ON mecRep2.TIPO_MOVIMENTO_ID = tm.ID ");
