@@ -469,25 +469,32 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
+	@Transactional
 	public Produto obterProdutoPorICDBaseadoNoPrimeiroBarra(String codigoICD) {
+		
 		return produtoRepository.obterProdutoPorICDBaseadoNoPrimeiroBarra(codigoICD);
 	}
 	
 	@Override
-	public Boolean isIcdValido (String codIcd){
+	@Transactional
+	public Boolean isIcdValido(String codIcd) {
 		
 		Produto produto = obterProdutoPorCodigo(codIcd);
     	Integer icd;
     	
     	try {
+    		
     		icd = Integer.parseInt(produto.getCodigoICD());
 		} catch (Exception e) {
+			
 			return false;
 		}
     	
-    	if(icd > 0){
+    	if(icd > 0) {
+    		
     		return true;
-    	}else{
+    	} else {
+    		
     		return false;
     	}
 	}
