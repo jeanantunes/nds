@@ -1199,3 +1199,5 @@ alter table nota_fiscal_produto_servico add column VALOR_COMPOE_VALOR_NF tinyint
 
 
 alter table distribuidor add column CNAE varchar(10) NULL after ACEITA_RECOLHIMENTO_PARCIAL_ATRASO;
+
+update `natureza_operacao` set `ID`='5',`GERAR_COTA_CONTRIBUINTE_ICMS`='1' where `ID`='5';

@@ -25,6 +25,7 @@ public class EnderecoCota extends AssociacaoEndereco implements Serializable {
 	@GeneratedValue(generator = "ENDERECO_COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
@@ -45,6 +46,29 @@ public class EnderecoCota extends AssociacaoEndereco implements Serializable {
 		this.cota = cota;
 	}
 
-	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EnderecoCota other = (EnderecoCota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 	
 }

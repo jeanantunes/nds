@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import junit.framework.Assert;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
@@ -753,5 +755,53 @@ public abstract class Util {
         final URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
         
         return urlDanfe;
+    }
+    
+    public static boolean validarChaveAcesso(String chaveAcessoInformada) {
+        
+    	try {  
+    		String cUF = chaveAcessoInformada.substring(0,2); // Código da UF do emitente do Documento Fiscal.  
+            String dataAAMM = chaveAcessoInformada.substring(2,6); // Ano e Mês de emissão da NF-e.  
+            String cnpjCpf = chaveAcessoInformada.substring(6, 20); // CNPJ do emitente.  
+            String mod = chaveAcessoInformada.substring(20, 22); // Modelo do Documento Fiscal.  
+            String serie = chaveAcessoInformada.substring(22, 25); // Série do Documento Fiscal.  
+            String nNF = chaveAcessoInformada.substring(25, 33); // Número do Documento Fiscal.  
+            String tpEmis = chaveAcessoInformada.substring(33, 35); // Forma de emissão da NF-e  
+            String cNF = chaveAcessoInformada.substring(35, 43); // Código Numérico que compõe a Chave de Acesso.  
+              
+            StringBuilder chave = new StringBuilder();  
+            chave.append(cUF);  
+            chave.append(dataAAMM);  
+            chave.append(cnpjCpf);  
+            chave.append(mod);  
+            chave.append(serie);  
+            chave.append(nNF);  
+            chave.append(tpEmis);  
+            chave.append(cNF);  
+            chave.append(montarChaveAcesso(chave.toString()));              
+            
+		} catch (Exception e) {  
+			LOGGER.error("Exception: "+ e.getMessage());  
+		}
+    	
+    	if(!chaveAcessoInformada.equals(chaveAcessoInformada)){
+    		return true;
+    	}
+    	
+        return false;
+    }
+    
+    public static int montarChaveAcesso(String chave) {  
+        int total = 0;  
+        int peso = 2;  
+              
+        for (int i = 0; i < chave.length(); i++) {  
+            total += (chave.charAt((chave.length()-1) - i) - '0') * peso;  
+            peso ++;  
+            if (peso == 10)  
+                peso = 2;  
+        }  
+        int resto = total % 11;  
+        return (resto == 0 || resto == 1) ? 0 : (11 - resto);  
     }
 }

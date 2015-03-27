@@ -196,8 +196,6 @@ public class ChamadaEncalheCota implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getChamadaEncalhe() == null) ? 0 : this.getChamadaEncalhe().hashCode());
-		result = prime * result + ((this.getCota() == null) ? 0 : this.getCota().hashCode());
 		return result;
 	}
 
@@ -214,16 +212,6 @@ public class ChamadaEncalheCota implements Serializable {
 			if (other.getId() != null)
 				return false;
 		} else if (!this.getId().equals(other.getId()))
-			return false;
-		if (this.getChamadaEncalhe() == null) {
-			if (other.getChamadaEncalhe() != null)
-				return false;
-		} else if (!this.getChamadaEncalhe().equals(other.getChamadaEncalhe()))
-			return false;
-		if (this.getCota() == null) {
-			if (other.getCota() != null)
-				return false;
-		} else if (!this.getCota().equals(other.getCota()))
 			return false;
 		return true;
 	}
