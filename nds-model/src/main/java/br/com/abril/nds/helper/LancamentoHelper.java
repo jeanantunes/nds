@@ -59,6 +59,7 @@ public class LancamentoHelper {
 		
 		return Arrays.asList(StatusLancamento.EXPEDIDO
 				, StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO
+				, StatusLancamento.BALANCEADO_RECOLHIMENTO
 				, StatusLancamento.EM_RECOLHIMENTO
 				, StatusLancamento.RECOLHIDO
 				, StatusLancamento.FECHADO);		
