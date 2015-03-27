@@ -1447,10 +1447,22 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				for(Lancamento l : lancamentos) {
 					
-					if(!TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
+					if(!produtoEdicao.isParcial() && !TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
 						
 						vendaBloqueada = true;
 						throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
+					} else if(produtoEdicao.isParcial()) {
+						
+						Lancamento lancAtual = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+						if(l.getDataLancamentoDistribuidor().compareTo(lancAtual.getDataLancamentoDistribuidor()) <= 0) {
+							
+							if(!TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
+								
+								vendaBloqueada = true;
+								throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
+							}
+						}
+						
 					}
 				}
 			}

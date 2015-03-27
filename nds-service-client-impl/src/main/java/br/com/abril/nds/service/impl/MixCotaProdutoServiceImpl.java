@@ -111,8 +111,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(filtroConsultaMixCotaDTO.getCota());
 		
-		if(cota==null)
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
+		if(cota == null) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
+		}
 		
 		boolean tipoAlternativo = cota.getTipoDistribuicaoCota() != null && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
 		
@@ -585,19 +587,14 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		List<TipoClassificacaoProduto> classificacaoList = this.tipoClassificacaoProdutoRepository.buscarTodos();
 		
-		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : mixCotaProdutoDTOList) {
-			
-			
 			
 			if (!mixCotaProdutoDTO.isItemValido()) {
 				
 				continue;
 			}
-			
-
 			
 			Cota cota = cotaService.obterPorNumeroDaCota(Integer.valueOf(mixCotaProdutoDTO.getNumeroCota()));
 			
