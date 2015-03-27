@@ -561,7 +561,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
     	StringBuilder sql = new StringBuilder();
                                                                                                                                         
-    	sql.append(" select ce.PRODUTO_EDICAO_ID produtoEdicaoId, epc.QTDE_RECEBIDA reparte, sum(cec.QTDE_PREVISTA - coe.QTDE) venda    ");
+    	sql.append(" select ce.PRODUTO_EDICAO_ID produtoEdicaoId, epc.QTDE_RECEBIDA reparte, (cec.QTDE_PREVISTA - coe.QTDE) venda       ");
     	sql.append(" from chamada_encalhe_cota cec                                                                                      ");
     	sql.append(" inner join chamada_encalhe ce on ce.id = cec.CHAMADA_ENCALHE_ID                                                    ");
     	sql.append(" inner join chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.ID                                        ");
@@ -574,7 +574,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append(" and c.NUMERO_COTA = :numeroCota                                                                                    ");
     	sql.append(" and ce.PRODUTO_EDICAO_ID in (:produtoEdicaoId)                                                                     ");
     	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)                                                                         ");
-    	sql.append(" group by ce.PRODUTO_EDICAO_ID                                                                                      ");
+    	sql.append(" group by ce.PRODUTO_EDICAO_ID, ce.id                                                                               ");
     	
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
