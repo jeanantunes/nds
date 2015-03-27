@@ -148,14 +148,8 @@ public class Box implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getCodigo() == null) ? 0 : getCodigo().hashCode());
-		result = prime * result + ((this.getCotas()== null) ? 0 : getCotas().hashCode());
 		result = prime * result + ((this.getId() == null) ? 0 : getId().hashCode());
 		result = prime * result + ((this.getNome() == null) ? 0 : getNome().hashCode());
-		result = prime * result
-				+ ((this.getRoteirizacao() == null) ? 0 : getRoteirizacao().hashCode());
-		result = prime * result + ((this.getTipoBox() == null) ? 0 : getTipoBox().hashCode());
-		result = prime * result
-				+ ((this.getUsuarios() == null) ? 0 : getUsuarios().hashCode());
 		return result;
 	}
 
@@ -173,11 +167,6 @@ public class Box implements Serializable {
 				return false;
 		} else if (!this.getCodigo().equals(other.getCodigo()))
 			return false;
-		if (this.getCotas() == null) {
-			if (other.getCotas() != null)
-				return false;
-		} else if (!this.getCotas().equals(other.getCotas()))
-			return false;
 		if (this.getId() == null) {
 			if (other.getId() != null)
 				return false;
@@ -188,18 +177,7 @@ public class Box implements Serializable {
 				return false;
 		} else if (!this.getNome().equals(other.getNome()))
 			return false;
-		if (this.getRoteirizacao() == null) {
-			if (other.getRoteirizacao() != null)
-				return false;
-		} else if (!this.getRoteirizacao().equals(other.getRoteirizacao()))
-			return false;
-		if (this.getTipoBox() != other.getTipoBox())
-			return false;
-		if (this.getUsuarios() == null) {
-			if (other.getUsuarios() != null)
-				return false;
-		} else if (!this.getUsuarios().equals(other.getUsuarios()))
-			return false;
+		
 		return true;
 	}
 }

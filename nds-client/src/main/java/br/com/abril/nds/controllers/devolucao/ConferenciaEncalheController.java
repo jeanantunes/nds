@@ -2407,6 +2407,10 @@ public class ConferenciaEncalheController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Dados da nota fiscal inválidos.");
 		}
 		
+		if(Util.validarChaveAcesso(notaFiscalEntradaCota.getChaveAcesso())) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A 'Chave de Acesso' inválida!");
+		}
+		
 		final List<String> mensagens = new ArrayList<String>();
 		
 		if(notaFiscalEntradaCota.getNumero() == null || notaFiscalEntradaCota.getNumero() == 0 ) {
@@ -2427,6 +2431,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if(notaFiscalEntradaCota.getChaveAcesso() == null || notaFiscalEntradaCota.getChaveAcesso().isEmpty()) {
 			mensagens.add("A chave de acesso deve ser preenchida.");
+		}
+		
+		if(notaFiscalEntradaCota.getChaveAcesso().length() <= 43) {
+			mensagens.add("A quantidade de caracteres digitada para o campo ['Chave de Acesso'] e inválida.");
 		}
 		
 		if(!mensagens.isEmpty()){
@@ -2450,6 +2458,7 @@ public class ConferenciaEncalheController extends BaseController {
 		dadosNotaFiscal.put("serie", 	notaFiscal.getSerie());
 		dadosNotaFiscal.put("dataEmissao", DateUtil.formatarDataPTBR(notaFiscal.getDataEmissao()));
 		dadosNotaFiscal.put("chaveAcesso", notaFiscal.getChaveAcesso());
+		
 		dadosNotaFiscal.put("valorProdutos", valorProdutos.setScale(2, RoundingMode.HALF_UP));
 		
 		this.session.setAttribute(NOTA_FISCAL_CONFERENCIA, dadosNotaFiscal);

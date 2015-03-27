@@ -56,14 +56,14 @@ public class GerarChaveAcessoTest {
             String cnpjCpf = chaveAcessoInformada.substring(6, 20); // CNPJ do emitente.  
             String mod = chaveAcessoInformada.substring(20, 22); // Modelo do Documento Fiscal.  
             String serie = chaveAcessoInformada.substring(22, 25); // Série do Documento Fiscal.  
-            String tpEmis = chaveAcessoInformada.substring(25, 23); // Forma de emissão da NF-e  
-            String nNF = chaveAcessoInformada.substring(27, 35); // Número do Documento Fiscal.  
-            String cNF = chaveAcessoInformada.substring(27, 35); // Código Numérico que compõe a Chave de Acesso.  
+            String nNF = chaveAcessoInformada.substring(25, 33); // Número do Documento Fiscal.  
+            String tpEmis = chaveAcessoInformada.substring(33, 35); // Forma de emissão da NF-e  
+            String cNF = chaveAcessoInformada.substring(35, 43); // Código Numérico que compõe a Chave de Acesso.  
               
             StringBuilder chave = new StringBuilder();  
             chave.append(cUF);  
             chave.append(dataAAMM);  
-            chave.append(cnpjCpf.replaceAll("\\D",""), 14, '0');  
+            chave.append(cnpjCpf);  
             chave.append(mod);  
             chave.append(serie);  
             chave.append(nNF);  
