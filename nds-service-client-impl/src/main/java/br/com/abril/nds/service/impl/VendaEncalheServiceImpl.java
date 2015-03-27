@@ -49,7 +49,6 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -58,10 +57,6 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
-import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
-import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalMEC;
-import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -1417,8 +1412,15 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		if (tipoMovimento == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
 		}
+		
+		Lancamento l = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataOperacao);
+		Date dataLancamento = null;
+		if(l != null) {
+			
+			dataLancamento = l.getDataLancamentoDistribuidor();
+		}
 
-		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao, idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao, null, FormaComercializacao.CONSIGNADO, isContribuinte, isExigeNota);
+		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao, null, FormaComercializacao.CONSIGNADO, isContribuinte, isExigeNota);
 
 	}
 
