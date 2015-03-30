@@ -755,19 +755,23 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final Map<String, Object> parameters = new HashMap<String, Object>();
         final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         
-        if(filtro.getIdCota()!=null) {
+        if(filtro.getIdCota() != null) {
             parameters.put("idCota", filtro.getIdCota());
         } else {
         	parameters.put("origemInterface", Origem.INTERFACE.name());
         }
         
-        parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+        parameters.put("grupoMovimentoEstoqueConsignado", Arrays.asList(
+					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()
+					, GrupoMovimentoEstoque.COMPRA_ENCALHE.name()
+					, GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name())
+				);
         
         if(filtro.getIdFornecedor() != null) {
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
 
-        if (filtro.getCodigoProduto() != null) {
+        if(filtro.getCodigoProduto() != null) {
         	parameters.put("codigoProduto", filtro.getCodigoProduto());
         }
 
@@ -884,13 +888,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final Map<String, Object> parameters = new HashMap<String, Object>();
         final NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         
-        if(filtro.getIdCota()!=null) {
+        if(filtro.getIdCota() != null) {
             parameters.put("idCota", filtro.getIdCota());
         } else {
             parameters.put("origemInterface", Origem.INTERFACE.name());
         }
             
-        parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+        parameters.put("grupoMovimentoEstoqueConsignado", Arrays.asList(
+					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()
+					, GrupoMovimentoEstoque.COMPRA_ENCALHE.name()
+					, GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name())
+				);
         
         if(filtro.getIdFornecedor() != null) {
             parameters.put("idFornecedor", filtro.getIdFornecedor());
@@ -1055,13 +1063,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlTblPrecoVenda.append(" INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID ) ");
 		
-		sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoqueConsignado  ");
+		sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEstoqueConsignado) ");
 		sqlTblPrecoVenda.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(" GROUP BY MEC.PRODUTO_EDICAO_ID ");
 		sqlTblPrecoVenda.append(" ) AS PRECO_VENDA_DE_REPARTE ON (MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PRECO_VENDA_DE_REPARTE.PRODUTO_EDICAO_ID AND ");
 		sqlTblPrecoVenda.append(" 								MOVIMENTO_ESTOQUE_COTA.DATA = PRECO_VENDA_DE_REPARTE.DATA_REPARTE)                       ");
 		sqlTblPrecoVenda.append(" INNER JOIN TIPO_MOVIMENTO ON (TIPO_MOVIMENTO.ID = MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID) ");
-		sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoqueConsignado ");
+		sqlTblPrecoVenda.append(" WHERE TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEstoqueConsignado) ");
 		sqlTblPrecoVenda.append(filtro.getIdCota()!=null ? " AND MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota " : "");
 		sqlTblPrecoVenda.append(" GROUP BY MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID		                                                                 ");
 		
@@ -1272,14 +1280,18 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	parameters.put("origemInterface", Origem.INTERFACE.name());
         }
         
-        parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+        parameters.put("grupoMovimentoEstoqueConsignado", Arrays.asList(
+					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()
+					, GrupoMovimentoEstoque.COMPRA_ENCALHE.name()
+					, GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name())
+				);
         
         if(filtro.getIdFornecedor() != null) {
             parameters.put("idFornecedor", filtro.getIdFornecedor());
         }
         
         if(filtro.getCodigoProduto() != null) {
-           parameters.put("codigoProduto", filtro.getCodigoProduto());
+        	parameters.put("codigoProduto", filtro.getCodigoProduto());
         }
         
         if(filtro.getIdProdutoEdicao() != null) {
