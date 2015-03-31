@@ -22,7 +22,6 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -117,7 +116,7 @@ public interface MovimentoEstoqueService {
 														Long idCota, Long idUsuario, 
 														BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 														Long idEstudoCota,
-														boolean isMovimentoDiferencaAutomatico);
+														boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota);
 
     /**
 	 * Obtem Objeto com Lista de movimentos de estoque referentes à reparte e Map de edicoes com saidas e entradas diversas

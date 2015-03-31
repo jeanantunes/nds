@@ -1404,10 +1404,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             final BigInteger quantidade, 
             final TipoMovimentoEstoque tipoMovimentoEstoque,
             final Long idEstudoCota,
-            final boolean isMovimentoDiferencaAutomatico) {
+            final boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota) {
         
         return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota,
-                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, FormaComercializacao.CONSIGNADO, false, false);
+                idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico, null, FormaComercializacao.CONSIGNADO, isContribuinte, isExigeNota);
     }
     
     @Override
