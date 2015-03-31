@@ -988,7 +988,7 @@ alter table controle_conferencia_encalhe_cota add column NFE_DIGITADA tinyint(1)
 
 alter table conferencia_encalhe add column PRECO_COM_DESCONTO decimal(18,4) NULL;
 
-alter table conferencia_encalhe_backup add column `PROCESSO_UTILIZA_NFE` tinyint(1) DEFAULT '0' NOT NULL;
+alter table conferencia_encalhe_backup add column PROCESSO_UTILIZA_NFE tinyint(1) DEFAULT '0' NOT NULL;
 
 -- ==========================================================================
 
@@ -1200,4 +1200,12 @@ alter table nota_fiscal_produto_servico add column VALOR_COMPOE_VALOR_NF tinyint
 
 alter table distribuidor add column CNAE varchar(10) NULL after ACEITA_RECOLHIMENTO_PARCIAL_ATRASO;
 
-update `natureza_operacao` set `ID`='5',`GERAR_COTA_CONTRIBUINTE_ICMS`='1' where `ID`='5';
+update natureza_operacao set ID='5',GERAR_COTA_CONTRIBUINTE_ICMS='1' where ID='5';
+
+update ncm set ID='1',CODIGO='49029000',DESCRICAO='REVISTAS',UNIDADE_MEDIDA='UN' where ID='1';
+update ncm set ID='2',CODIGO='49019100',DESCRICAO='FASCICULO',UNIDADE_MEDIDA='UN' where ID='2';
+update ncm set ID='3',CODIGO='49019000',DESCRICAO='LIVROS',UNIDADE_MEDIDA='UN' where ID='3';
+update ncm set ID='4',CODIGO='48205000',DESCRICAO='CROMO',UNIDADE_MEDIDA='UN' where ID='4';
+update ncm set ID='5',CODIGO='49030000',DESCRICAO='LIVRO ILUSTRADO',UNIDADE_MEDIDA='UN' where ID='5';
+update ncm set ID='6',CODIGO='85243100',DESCRICAO='CD',UNIDADE_MEDIDA='UN' where ID='6';
+update ncm set ID='7',CODIGO='49111090',DESCRICAO='CARTAZ',UNIDADE_MEDIDA='UN' where ID='7';
