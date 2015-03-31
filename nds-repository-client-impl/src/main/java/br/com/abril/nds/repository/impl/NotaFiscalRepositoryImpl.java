@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.NotaFiscalDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.TipoMovimentoDTO.Operacao;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -325,7 +326,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" mec.cota.id as idCota, ");
 		hql.append(" mec.cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
-		hql.append(" SUM(mec.qtde) as exemplares, ");
+		hql.append(" SUM(case when tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN mec.qtde ELSE -mec.qtde END) as exemplares, ");
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto, "); 	
 		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro, ");
@@ -553,6 +554,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			}
 		}
 
+		query.setParameter("tipoOperacaoEntrada", Operacao.ENTRADA);
 		query.setParameter("false", false);
 		
 		// Data Movimento:	...  Até   ...
