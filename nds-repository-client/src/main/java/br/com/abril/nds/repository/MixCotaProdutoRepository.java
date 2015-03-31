@@ -11,20 +11,19 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-public interface MixCotaProdutoRepository extends
-		Repository<MixCotaProduto, Long> {
+public interface MixCotaProdutoRepository extends Repository<MixCotaProduto, Long> {
 
-	public List<MixCotaDTO> pesquisarPorCota(
-			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO);
+	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO);
 	
-	public List<MixProdutoDTO> pesquisarPorProduto(
-			FiltroConsultaMixPorProdutoDTO filtroConsultaMixProdutoDTO);
+	public List<MixProdutoDTO> pesquisarPorProduto(FiltroConsultaMixPorProdutoDTO filtroConsultaMixProdutoDTO);
 	
 	public void  excluirTodos();
 	
 	public boolean existeMixCotaProdutoCadastrado(Long idProduto, Long idCota);
 	
 	public void removerPorIdCota(Long idCota);
+	
+	public void removerProdutoPorCodigoICD(String codigoICD);
 
 	public void execucaoQuartz();
 
