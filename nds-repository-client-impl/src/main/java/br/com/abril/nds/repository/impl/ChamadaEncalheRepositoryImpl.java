@@ -1127,6 +1127,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID 														")
 		.append(" inner join cota c on c.id = mec.cota_id 																				")
 		.append(" inner join lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and l.id = mec.LANCAMENTO_ID 					")
+		.append(" inner join chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = l.id 												")
+		.append(" inner join chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID and cel.CHAMADA_ENCALHE_ID = ce.id 		")
 		.append(" inner join estudo e ON e.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID 													")
 		.append(" inner join estudo_cota ec ON ec.ESTUDO_ID = e.id and ec.COTA_ID = mec.COTA_ID and mec.ESTUDO_COTA_ID = ec.id 			")
 		.append(" left join nota_envio_item nei ON nei.PRODUTO_EDICAO_ID = e.PRODUTO_EDICAO_ID and nei.ESTUDO_COTA_ID = ec.id 			")
@@ -1144,7 +1146,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
 		.append(" 	group by c.id, ce.DATA_RECOLHIMENTO, mec.PRODUTO_EDICAO_ID ")
 		.append(" 	having count(0) > 1 ")
-		.append(" ) rs1 on rs1.pedId = mec.PRODUTO_EDICAO_ID and c.id = rs1.cId ");
+		.append(" ) rs1 on rs1.pedId = mec.PRODUTO_EDICAO_ID and c.id = rs1.cId ")
+		.append("	and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte ");
 
 		if(filtro != null && filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null) {
 			
