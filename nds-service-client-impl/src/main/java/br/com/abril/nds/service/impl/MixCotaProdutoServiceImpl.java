@@ -201,8 +201,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Override
 	@Transactional
 	public void excluirTodos() {
-		mixCotaProdutoRepository.excluirTodos();
 		
+		mixCotaProdutoRepository.excluirTodos();
 	}
 
 	@Override
@@ -219,6 +219,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		this.mixCotaProdutoRepository.removerPorIdCota(idCota);
 	}
 	
+	@Override
+	@Transactional
+	public void excluirMixProdutoPorCodigoICD(String codigoICD) {
+		
+		this.mixCotaProdutoRepository.removerProdutoPorCodigoICD(codigoICD);
+	}
 	
 	@Override
 	@Transactional

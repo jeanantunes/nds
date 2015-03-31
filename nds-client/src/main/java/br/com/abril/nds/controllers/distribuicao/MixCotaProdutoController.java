@@ -321,9 +321,23 @@ public class MixCotaProdutoController extends BaseController {
 	}
 	
 	@Post
-	@Path("/excluirTodos")
-	public void excluirTodos() {
-//		mixCotaProdutoService.excluirTodos();
+	@Path("/excluirTodosPorCota")
+	public void excluirTodosPorCota(Integer numeroCota) {
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		if(cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s não foi encontrada.", numeroCota));
+		}
+		mixCotaProdutoService.excluirMixPorCota(cota.getId());
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/excluirTodosPorProduto")
+	public void excluirTodosPorProduto(String codigoICD) {
+		
+		mixCotaProdutoService.excluirMixProdutoPorCodigoICD(codigoICD);
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
