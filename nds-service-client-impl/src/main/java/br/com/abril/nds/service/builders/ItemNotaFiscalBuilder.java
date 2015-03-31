@@ -19,6 +19,8 @@ import br.com.abril.nds.model.cadastro.Tributacao.TributacaoTipoOperacao;
 import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
@@ -42,7 +44,6 @@ import br.com.abril.nds.model.fiscal.nota.TribIPI;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.MathUtil;
 
 public class ItemNotaFiscalBuilder  {
 	
@@ -166,7 +167,12 @@ public class ItemNotaFiscalBuilder  {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
 		
-		produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
+		if(((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
+			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
+		} else {
+			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()));
+		}
+		
 		produtoServico.setValorUnitario(valorUnitario);
 		produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 2));
 				

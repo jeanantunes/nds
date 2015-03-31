@@ -335,7 +335,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" mec.cotaContribuinteExigeNF as contribuinteICMSExigeNFe ");
 
 		Query query = queryConsultaMECNfeParameters(queryConsultaMECNfe(filtro, hql, false, false, false), filtro);
-
+		query.setParameter("tipoOperacaoEntrada", Operacao.ENTRADA);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
 
 		return query.list();
@@ -554,7 +555,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			}
 		}
 
-		query.setParameter("tipoOperacaoEntrada", Operacao.ENTRADA);
 		query.setParameter("false", false);
 		
 		// Data Movimento:	...  Até   ...
