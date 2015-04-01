@@ -569,7 +569,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
 			
-			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento);
+			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
 
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository.obterChamadasEncalheLancamentos(idsLancamento, false);
 

@@ -3777,7 +3777,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento) {
+    public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento, Long cotaId) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -3805,6 +3805,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" where lancamento.id IN (:idsLancamento) ");
         
+        if(cotaId != null) {
+        	
+        	sql.append(" and mec.cota.id = :cotaId ");
+        }
+        
         sql.append(" and produtoEdicao.id = produtoEdicaoLcto.id ");
         
         sql.append(" and mecFuro.id is null ");
@@ -3828,6 +3833,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
         
         query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+        
+        if(cotaId != null) {
+        	
+        	query.setParameter("cotaId", cotaId);
+        }
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         

@@ -94,12 +94,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append("     produtoEdicao.PRECO_VENDA AS precoVenda, ");
 		hql.append("     mec.VALOR_DESCONTO AS desconto, ");
 		hql.append("     mec.PRECO_COM_DESCONTO AS precoDesconto, ");
-		hql.append("     estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA AS reparte, ");
+		hql.append("     sum(if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) as reparte, ");
 		hql.append("     pessoa.RAZAO_SOCIAL AS nomeFornecedor, ");
 		hql.append("     lancamento.DATA_REC_PREVISTA AS dataRecolhimento, ");
-		hql.append("     produtoEdicao.PRECO_VENDA * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) AS valorTotal, ");
-		hql.append("     mec.PRECO_COM_DESCONTO * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) AS valorTotalDesconto, ");
-		hql.append("     lancamento.ID AS idLancamento, ");
+		hql.append("     sum(if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) * mec.PRECO_VENDA AS valorTotal, ");
+		hql.append("     sum(if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) * mec.PRECO_COM_DESCONTO AS valorTotalDesconto, ");
+		hql.append("     min(lancamento.ID) AS idLancamento, ");
 		hql.append("     produtoEdicao.POSSUI_BRINDE AS possuiBrinde ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
@@ -387,7 +387,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			}
 		}
 		
-		hql.append(" GROUP BY lancamento.ID");
+		hql.append(" GROUP BY produtoEdicao.ID");
 		
 		return hql;
 	}
@@ -449,8 +449,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	 * @param filtro - filtro da pesquisa
 	 * @param query - objeto query
 	 */
-	private void aplicarParametrosParaPesquisaConsignadosCota(FiltroChamadaoDTO filtro, 
-													 	 	  Query query) {
+	private void aplicarParametrosParaPesquisaConsignadosCota(FiltroChamadaoDTO filtro, Query query) {
 		
 		query.setParameter("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		
