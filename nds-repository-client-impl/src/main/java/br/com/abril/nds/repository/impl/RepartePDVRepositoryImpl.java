@@ -99,11 +99,19 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 	@SuppressWarnings("unchecked")
 	public List<RepartePDV> buscarPorCota(Long idCota) {
 		
-		Query query = 
-			this.getSession().createQuery(
-				" from RepartePDV rep WHERE rep.mixCotaProduto.cota.id = :idCota ");
+		Query query = this.getSession().createQuery(" from RepartePDV rep WHERE rep.mixCotaProduto.cota.id = :idCota ");
 		
 		query.setParameter("idCota", idCota);
+        
+        return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RepartePDV> buscarPorProduto(Long produtoId) {
+		
+		Query query = this.getSession().createQuery(" from RepartePDV rep WHERE rep.produto.id = :produtoId ");
+		
+		query.setParameter("produtoId", produtoId);
         
         return query.list();
 	}

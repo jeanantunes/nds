@@ -384,27 +384,27 @@ var produtoEdicaoController =$.extend(true,  {
 				sortable : false,
 				align : 'center'
 			},{ 
-				display : 'Lancto Previsto',
-				name : 'dataLancamentoPrevista',
-				width : 100,
-				sortable : false,
-				align : 'center'
-			},{ 
 				display : 'Lancto Real',
 				name : 'dataLancamentoDistribuidor',
 				width : 80,
 				sortable : false,
 				align : 'center'
 			},{
-				display : 'Recolhimento Previsto',
-				name : 'dataRecolhimentoPrevista',
-				width : 120,
-				sortable : false,
-				align : 'center'
-			},{
 				display : 'Recolhimento Real',
 				name : 'dataRecolhimentoDistribuidor',
 				width : 100,
+				sortable : false,
+				align : 'center'
+			},{ 
+				display : 'Lancto Previsto',
+				name : 'dataLancamentoPrevista',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			},{
+				display : 'Recolhimento Previsto',
+				name : 'dataRecolhimentoPrevista',
+				width : 120,
 				sortable : false,
 				align : 'center'
 			},{

@@ -14,7 +14,6 @@ import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 
 public interface MixCotaProdutoService {
 	
-	
 	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO);
 	
 	public List<MixProdutoDTO> pesquisarPorProduto(FiltroConsultaMixPorProdutoDTO filtroConsultaMixProdutoDTO);
@@ -23,8 +22,8 @@ public interface MixCotaProdutoService {
 	
 	public List<PdvDTO> obterListaPdvPorMix(Long id);
 	
-	
 	public MixCotaProdutoDTO obterPorId(Long id);
+
 	public void excluirTodos();
 	
 	public void excluirMixPorCota(Long idCota);
@@ -44,4 +43,7 @@ public interface MixCotaProdutoService {
 	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long tipoClassifProdId, String codigoICD);
 	
 	boolean verificarReparteMinMaxCotaProdutoMix(Integer numeroCota, String codigoProduto, Long qtd, Long tipoClassificacaoProduto);
+
+	public void excluirMixProdutoPorCodigoICD(String codigoICD);
+	
 }

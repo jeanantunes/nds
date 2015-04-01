@@ -321,9 +321,23 @@ public class MixCotaProdutoController extends BaseController {
 	}
 	
 	@Post
-	@Path("/excluirTodos")
-	public void excluirTodos() {
-//		mixCotaProdutoService.excluirTodos();
+	@Path("/excluirTodosPorCota")
+	public void excluirTodosPorCota(Integer numeroCota) {
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		if(cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("A Cota %s não foi encontrada.", numeroCota));
+		}
+		mixCotaProdutoService.excluirMixPorCota(cota.getId());
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/excluirTodosPorProduto")
+	public void excluirTodosPorProduto(String codigoICD) {
+		
+		mixCotaProdutoService.excluirMixProdutoPorCodigoICD(codigoICD);
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
@@ -478,7 +492,7 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			if(produtoService.isIcdValido(mixCotaDTO.getCodigoICD())){
+			if(produtoService.isIcdValido(mixCotaDTO.getCodigoICD())) {
 
 				MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
 
@@ -496,7 +510,7 @@ public class MixCotaProdutoController extends BaseController {
 			
 			List<String> mensagens = this.mixCotaProdutoService.adicionarMixEmLote(mixCotaProdutoDTOList);
 			
-			if (!mensagens.isEmpty() || !mixCotaDTOInconsistente.isEmpty()) {
+			if (mensagens != null && !mensagens.isEmpty() || !mixCotaDTOInconsistente.isEmpty()) {
 				
 				for (MixCotaDTO mixCotaDTO : mixCotaDTOInconsistente) {
 					mensagens.add("[codigoProduto: "+mixCotaDTO.getCodigoProduto()+"],[classificacao: "+mixCotaDTO.getClassificacaoProduto()+"],[numercoCota: "+mixCotaDTO.getNumeroCota()+"] - "+mixCotaDTO.getError());
@@ -506,7 +520,7 @@ public class MixCotaProdutoController extends BaseController {
 			} else {
 			    this.result.use(Results.nothing());
 			}
-		}else{
+		} else {
 			
 			//salvar em sessao mixCotaDTOIconsistente para posteriormente mostrar na tela
 			session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
@@ -526,34 +540,40 @@ public class MixCotaProdutoController extends BaseController {
 			
 			Produto prod = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
 			
-			if(!produtoService.isIcdValido(prod.getCodigoICD())){
+			if(prod == null) {
+				mixCotaDTO.setError(String.format("Código Prodin/ICD inválido: %s.", mixCotaDTO.getCodigoProduto()));
+				listCotaInconsistente.add(mixCotaDTO);
+				continue;
+			}
+			
+			if(!produtoService.isIcdValido(prod.getCodigoICD())) {
 				mixCotaDTO.setError("Código ICD inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
-			}else{
+			} else {
 				mixCotaDTO.setCodigoICD(prod.getCodigoICD());
 			}
 			
-			if(StringUtils.isBlank(mixCotaDTO.getCodigoProduto())){
+			if(StringUtils.isBlank(mixCotaDTO.getCodigoProduto())) {
 				mixCotaDTO.setError("Código de produto inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
 
-			if( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0)){
+			if(mixCotaDTO.getNumeroCota() == null || mixCotaDTO.getNumeroCota().equals(0)) {
 				mixCotaDTO.setError("Número de Cota Inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
 			
-			if(( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )){
+			if((mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )) {
 				mixCotaDTO.setError("Reparte mínimo Inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
 			}
 			
-			if( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0 
-					|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ){
+			if(mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0 
+					|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ) {
 				mixCotaDTO.setError("Reparte Máximo Inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 				continue;
@@ -564,17 +584,17 @@ public class MixCotaProdutoController extends BaseController {
 				continue;
 			}
 			
-			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
+			if(mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1) {
 				mixCotaDTO.setError("Reparte Mínimo inválido.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
 			
-			if(!descricaoList.contains(mixCotaDTO.getClassificacaoProduto())){
+			if(descricaoList != null && !descricaoList.contains(mixCotaDTO.getClassificacaoProduto())) {
 				mixCotaDTO.setError("Classificação inválida.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
 			
-			if(!cotaService.validarNumeroCota(mixCotaDTO.getNumeroCota(), TipoDistribuicaoCota.ALTERNATIVO)){
+			if(!cotaService.validarNumeroCota(mixCotaDTO.getNumeroCota(), TipoDistribuicaoCota.ALTERNATIVO)) {
 				mixCotaDTO.setError("Cota Inválida.");
 				listCotaInconsistente.add(mixCotaDTO);
 			}
