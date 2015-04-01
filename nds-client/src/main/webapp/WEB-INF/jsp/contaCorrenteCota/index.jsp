@@ -318,8 +318,8 @@
       				<td><img src="${pageContext.request.contextPath}/images/hammer.png" alt="Dívida Negociada"></td>
       				<td>Dívida Negociada</td>
       			
-      				<td><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" alt="Dívida Postergada"></td>
-      				<td>Dívida Postergada</td>
+      				<td><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" alt="Valor Postergado"></td>
+      				<td>Valor Postergado</td>
       			
       				<td><img src="${pageContext.request.contextPath}/images/seta_sobe.gif" alt="Dívida Acumulada"></td>
       				<td>Dívida Acumulada</td>

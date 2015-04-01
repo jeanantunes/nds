@@ -1947,7 +1947,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, isolation=Isolation.READ_COMMITTED)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
