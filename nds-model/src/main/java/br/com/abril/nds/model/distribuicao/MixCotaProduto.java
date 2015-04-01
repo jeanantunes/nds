@@ -63,7 +63,7 @@ public class MixCotaProduto {
 	@JoinColumn(name = "TIPO_CLASSIFICACAO_PRODUTO_ID")
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
-	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE})
+	@Cascade({CascadeType.ALL})
 	@OneToMany(mappedBy="mixCotaProduto")
 	List<RepartePDV> repartesPDV;
 	

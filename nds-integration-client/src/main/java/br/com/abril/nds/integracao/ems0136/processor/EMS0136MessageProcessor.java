@@ -408,11 +408,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		return pParcial;
 	}
 
-	private Lancamento tratarLancamento(
-			ProdutoEdicao produtoEdicao, 
-			PeriodoLancamentoParcial periodo,
-			LancamentoHelper helper,
-			EMS0136Input input) {
+	private Lancamento tratarLancamento(ProdutoEdicao produtoEdicao, PeriodoLancamentoParcial periodo, LancamentoHelper helper, EMS0136Input input) {
 		
 		Date dataLancamento = input.getDataLancamento();
 		Date dataRecolhimento = input.getDataRecolhimento();
@@ -426,22 +422,21 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			return first;
 		}
 		
-		if (periodo.getPrimeiroLancamento() != null) {
+		if (periodo != null && periodo.getPrimeiroLancamento() != null) {
 			
 			return periodo.getPrimeiroLancamento();
 		}
 
-		Lancamento novoLancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao);
+		Lancamento novoLancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao, periodo);
 		
-		novoLancamento.setPeriodoLancamentoParcial(periodo);
-
 		return novoLancamento;
 	}
 	
-	private Lancamento criarNovoLancamento(Date dataRecolhimento,Date dataLancamento,ProdutoEdicao produtoEdicao){
+	private Lancamento criarNovoLancamento(Date dataRecolhimento, Date dataLancamento, ProdutoEdicao produtoEdicao, PeriodoLancamentoParcial periodo) {
 
 		Lancamento lancamento = new Lancamento();
 
+		lancamento.setPeriodoLancamentoParcial(periodo);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
@@ -450,11 +445,15 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			int fatorRelParc = distribuidorService.obter().getFatorRelancamentoParcial();
-			Calendar c = Calendar.getInstance();
-			c.setTime(dataLancamento);
-			c.add(Calendar.DAY_OF_MONTH, (fatorRelParc > 2 ? fatorRelParc - 2 : 0)); //2 é o Fator de Relancamento Parcial do PRODIN
-			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(c.getTime(), produtoEdicao.getProduto().getFornecedor().getId()));
+			if(periodo != null && periodo.getNumeroPeriodo() > 1) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(dataLancamento);
+				int fatorRelParc = distribuidorService.obter().getFatorRelancamentoParcial();
+				c.add(Calendar.DAY_OF_MONTH, (fatorRelParc > 2 ? fatorRelParc - 2 : 0)); //2 é o Fator de Relancamento Parcial do PRODIN
+				dataLancamento = c.getTime();
+			}
+			
+			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
 		} catch (Exception e) {
 			
 		}

@@ -479,6 +479,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Transactional
 	public Boolean isIcdValido(String codIcd) {
 		
+		if(codIcd == null) {
+			
+			return false;
+		}
+		
 		Produto produto = obterProdutoPorCodigo(codIcd);
     	Integer icd;
     	

@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -244,25 +245,22 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
      * @param filtro
      * @return List<ChamadaEncalheFornecedor>
      */
-    private List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(final FiltroFechamentoCEIntegracaoDTO filtro){
+    private List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(final FiltroFechamentoCEIntegracaoDTO filtro) {
     	
-        if (filtro.getSemana() == null){
+        if (filtro.getSemana() == null) {
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
         }
         
-		filtro.setPeriodoRecolhimento(
-		        this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+		filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
 		
 		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
-		final List<ChamadaEncalheFornecedor> chamadasFornecedor = 
-		        chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		final List<ChamadaEncalheFornecedor> chamadasFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
 		
-		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
+		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR,
-			        "Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
 		}
 		
 		return chamadasFornecedor;
@@ -302,9 +300,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
      * @param chamadasFornecedor
      * @param fechamento
      */
-	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			                Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados,
-			                List<ChamadaEncalheFornecedor> chamadasFornecedor) {
+	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<Long, ItemFechamentoCEIntegracaoDTO> itensAlterados, List<ChamadaEncalheFornecedor> chamadasFornecedor) {
 		
 		final Usuario usuario = this.usuarioService.getUsuarioLogado();
 		
@@ -322,8 +318,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			BigDecimal totalVendaApurada = BigDecimal.ZERO;
 			BigDecimal totalVendaInformada = BigDecimal.ZERO;
 			
-			List<ItemChamadaEncalheFornecedor> itensChamadaEncalheFornecedor = 
-							itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cef.getId());
+			List<ItemChamadaEncalheFornecedor> itensChamadaEncalheFornecedor = itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cef.getId());
 			
 			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor) {
 				
@@ -454,8 +449,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 */
 	@Override
 	@Transactional
-	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			             Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados) {
+	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados) {
 		
 		final List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
 		
@@ -520,16 +514,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Transactional
 	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens) {
 		
-		for(ItemFechamentoCEIntegracaoDTO item : itens){
+		for(ItemFechamentoCEIntegracaoDTO item : itens) {
 			
 			ItemChamadaEncalheFornecedor itemCE = this.itemChamadaEncalheFornecedorRepository.buscarPorId(item.getIdItemCeIntegracao());
 			
-			itemCE.setQtdeVendaInformada(Util.nvl(item.getVenda(),0L).longValue());
-			itemCE.setQtdeDevolucaoInformada(Util.nvl(item.getEncalhe(),0L).longValue());
+			itemCE.setQtdeVendaInformada(Util.nvl(item.getVenda(), 0L).longValue());
+			itemCE.setQtdeDevolucaoInformada(Util.nvl(item.getEncalhe(), 0L).longValue());
 			
-			if(itemCE!= null){
+			if(itemCE != null) {
 				
-				itemCE = this.atualizarItemCE(itemCE,null,null);
+				itemCE = this.atualizarItemCE(itemCE, null, null);
 				
 				this.validarEncalheOuVendaInformado(itemCE);
 				
@@ -647,41 +641,43 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	}
 	
 	private ItemChamadaEncalheFornecedor atualizarItemCE(ItemChamadaEncalheFornecedor item,
-			Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados, EstoqueProduto estoqueProduto){
+			Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados, EstoqueProduto estoqueProduto) {
 		
-		Long qntVenda = Util.nvl(item.getQtdeVendaInformada(),0L);
+		if(item == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Item de Fechamento inválido.");
+		}
+		
+		Long qntVenda = Util.nvl(item.getQtdeVendaInformada(), 0L);
 		Long qntEncalhe = item.getQtdeDevolucaoInformada();
 		
-		if(itensAlterados!= null 
-				&& itensAlterados.containsKey(item.getId())){
+		if(itensAlterados != null && itensAlterados.containsKey(item.getId())) {
 			
 			ItemFechamentoCEIntegracaoDTO itemCE = itensAlterados.get(item.getId());
 			
-			qntVenda = Util.nvl(itemCE.getVenda(),0L).longValue();
-			qntEncalhe = Util.nvl(itemCE.getEncalhe(),0L).longValue();
-		}
-		else{
+			qntVenda = Util.nvl(itemCE.getVenda(), 0L).longValue();
+			qntEncalhe = Util.nvl(itemCE.getEncalhe(), 0L).longValue();
+		} else {
 			
-			if(qntEncalhe == null){
+			if(qntEncalhe == null) {
 				
-				if(estoqueProduto!= null){
+				if(estoqueProduto != null) {
 
-					qntEncalhe = Util.nvl(estoqueProduto.getQtde(),BigInteger.ZERO)
-								.add(Util.nvl(estoqueProduto.getQtdeSuplementar(),BigInteger.ZERO)
-										.add(Util.nvl(estoqueProduto.getQtdeDevolucaoEncalhe(),BigInteger.ZERO)))
+					qntEncalhe = Util.nvl(estoqueProduto.getQtde(), BigInteger.ZERO)
+								.add(Util.nvl(estoqueProduto.getQtdeSuplementar(), BigInteger.ZERO)
+										.add(Util.nvl(estoqueProduto.getQtdeDevolucaoEncalhe(), BigInteger.ZERO)))
 											.longValue();
-				}
-				else{
+				} else {
+					
 					qntEncalhe = 0L;
 				}
 			}
 		}
 		
-		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
+		if(Arrays.asList(RegimeRecolhimento.PARCIAL, RegimeRecolhimento.FINAL).contains(item.getRegimeRecolhimento())) {
 			
 			item.setQtdeVendaApurada(qntVenda);
-		}
-		else{
+		} else {
 			
 			item.setQtdeVendaApurada(item.getQtdeEnviada() - qntEncalhe);
 		}
@@ -711,19 +707,19 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Transactional(readOnly=true)
 	public FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(final FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-	    if (filtro.getSemana() == null){
+	    if (filtro.getSemana() == null) {
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
         }
         
-        filtro.setPeriodoRecolhimento(
-                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+        filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
         
         filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		final BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
 		
-		if(qntItens.compareTo(BigInteger.ZERO) == 0){
+		if(qntItens.compareTo(BigInteger.ZERO) == 0) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
@@ -731,7 +727,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 		fechamentoCEIntegracaoDTO.setQntItensCE(qntItens.intValue());
 		
-		fechamentoCEIntegracaoDTO.setItensFechamentoCE( this.buscarItensFechamentoCeIntegracao(filtro));
+		fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoCeIntegracao(filtro));
 		
 		fechamentoCEIntegracaoDTO.setConsolidado(this.obterConsolidadoCE(filtro));
 		
