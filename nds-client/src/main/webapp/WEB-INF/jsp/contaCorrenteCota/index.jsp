@@ -269,13 +269,13 @@
               <td width="53">Período:</td>
               
               <td width="199">
-              		<input type="text" name="cc-periodoContaDe" id="cc-periodoContaDe" style="width:80px;"/>
+              		<input type="text" name="cc-periodoContaDe" id="cc-periodoContaDe" style="width:80px;" value="${dataDe}" />
               </td>
               
               <td width="22">Até:</td>
               
               <td width="199">
-              		<input type="text" name="cc-periodoContaAte" id="cc-periodoContaAte" style="width:80px;" >
+              		<input type="text" name="cc-periodoContaAte" id="cc-periodoContaAte" style="width:80px;" value="${dataAte}" />
               </td>
               
               <td width="518">
