@@ -654,7 +654,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Map<Fornecedor,List<FormaCobranca>> mapFormasCobrancaFornecedor = this.formaCobrancaService.obterMapFornecedorFormasCobranca(dataOperacao);
 		
-		
 		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
 			
 			MovimentoFinanceiroCota primeiroMovimentoFinanceiroCota = listaMovimentoFinanceiroCota.get(0);
