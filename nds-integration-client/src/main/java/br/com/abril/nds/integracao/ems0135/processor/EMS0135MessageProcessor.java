@@ -286,6 +286,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto.setPeb(35);
                     produto.setPeso(100L);
                     produto.setIsGeracaoAutomatica(false);
+                    produto.setIsRemessaDistribuicao(false);
                     produto.setFornecedores(fornecedores);
                     if(inputItem.getDesconto() != null) {
                         produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));

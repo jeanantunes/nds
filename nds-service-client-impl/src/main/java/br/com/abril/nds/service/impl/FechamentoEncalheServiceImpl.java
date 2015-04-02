@@ -965,7 +965,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		MovimentoFechamentoFiscalCota mffc = new MovimentoFechamentoFiscalCota();
 		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mffc, movimentoEstoqueCota));
 		mffc.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
-		mffc.setNotaFiscalLiberadaEmissao(false);
+		mffc.setNotaFiscalLiberadaEmissao(true);
 		mffc.setData(dataOperacao);
 		mffc.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.ENTRADA));
 		mffc.setProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao());

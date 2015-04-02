@@ -275,6 +275,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                     produto.setPeb((inputItem.getPeb() != null) ? inputItem.getPeb() : 35);
                     produto.setPeso((inputItem.getPeso() != null) ? Math.round(inputItem.getPeso()) : 100L);
                     produto.setIsGeracaoAutomatica(true);
+                    produto.setIsRemessaDistribuicao(false);
                     
                     this.getSession().persist(produto);
                 }

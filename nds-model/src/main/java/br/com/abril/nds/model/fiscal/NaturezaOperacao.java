@@ -24,6 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.Tributo;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 /**
@@ -105,6 +106,15 @@ public class NaturezaOperacao implements Serializable {
 	                    },
 	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO", name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
 	private List<TipoMovimento> tipoMovimento;
+	
+	@OneToMany
+	@JoinTable(
+	            name="NATUREZA_OPERACAO_TRIBUTO",
+	            joinColumns={
+	            		@JoinColumn(table="NATUREZA_OPERACAO", name="NATUREZA_OPERACAO_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="TRIBUTOS", name="TRIBUTO_ID", referencedColumnName="id"))
+	private List<Tributo> tipoTributo;
 	
 	@Column(name = "NOTA_FISCAL_NUMERO_NF", length=60)
 	private Long notaFiscalNumeroNF;

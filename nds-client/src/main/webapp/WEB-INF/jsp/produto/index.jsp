@@ -144,6 +144,12 @@
 													<input type="checkbox" class="habilitarCampoInterface" id="selGeracaoAuto" name="selGeracaoAuto" style="float: left; margin-right: 25px;" />
 											</td>
 										<tr>
+										<tr>
+											<td>Remessa Distribuicao:</td>
+												<td style="width:100px;">
+													<input type="checkbox" id="selRemessaDistribuicao" name="selRemessaDistribuicao" style="float: left; margin-right: 25px;" />
+											</td>
+										<tr>
 									</table>
 								</fieldset>
 							</td>
