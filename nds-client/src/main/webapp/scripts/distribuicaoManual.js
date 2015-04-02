@@ -647,7 +647,7 @@ var distribuicaoManual = $.extend(true, {
 		$('#produtoEdicaoIdXLS').val($('#idProdutoEdicao').val());
 		$('#reparteDistribuirXLS').val($('#reparteInicial').val());
 		$('#reparteDistribuidoXLS').val($('#distrinuicao-manual-totalDistribuido').text());
-		$('#dataLancamentoXLS').val($('#dataLancamento').html());
+		$('#dataLancamentoXLS').val($('#distrinuicao-manual-dataLancamento').html());
 		$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
 		$('#reparteTotalXLS').val(distribuicaoManual.reparteTotal);
 	  
