@@ -1043,7 +1043,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblPrecoVenda.append(" INNER JOIN CONFERENCIA_ENCALHE ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CCEC.ID) ");
 		
 		if(filtro.getIdBox() != null) {
-			// sqlTblPrecoVenda.append(" INNER JOIN COTA ON (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = COTA.ID) ");
 			sqlTblPrecoVenda.append(" INNER JOIN BOX ON  (CCEC.BOX_ID = BOX.ID) ");
         }
 		
@@ -1136,6 +1135,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlTblReparte.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		sqlTblReparte.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe ");
+		
+		sqlTblReparte.append(" AND CE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		
 		sqlTblReparte.append(filtro.getIdCota()!=null ? " AND MEC.COTA_ID = :idCota " : "");
 		
@@ -3774,7 +3775,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento) {
+    public List<CotaReparteDTO> obterReparte(final Set<Long> idsLancamento, Long cotaId) {
         
         final StringBuilder sql = new StringBuilder();
         
@@ -3803,6 +3804,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" where lancamento.id IN (:idsLancamento) ");
         
+        if(cotaId != null) {
+        	
+        	sql.append(" and mec.cota.id = :cotaId ");
+        }
+        
         sql.append(" and produtoEdicao.id = produtoEdicaoLcto.id ");
         
         sql.append(" and mecFuro.id is null ");
@@ -3826,6 +3832,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
         
         query.setParameter("processado", StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+        
+        if(cotaId != null) {
+        	
+        	query.setParameter("cotaId", cotaId);
+        }
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         

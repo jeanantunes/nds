@@ -1434,9 +1434,8 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(
-			ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista,
-			Date dataRecolhimentoPrevista) {
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosProdutoEdicaoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -1454,7 +1453,6 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		Query query = getSession().createQuery(sql.toString());
-		query.setMaxResults(1);
 		query.setParameter("produtoEdicao", produtoEdicao.getId());
 
 		if (dataLancamentoPrevista != null) {
@@ -1462,11 +1460,10 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		if (dataRecolhimentoPrevista != null) {
-			query.setParameter("dataRecolhimentoPrevista",
-					dataRecolhimentoPrevista);
+			query.setParameter("dataRecolhimentoPrevista", dataRecolhimentoPrevista);
 		}
 
-		return (Lancamento) query.uniqueResult();
+		return (List<Lancamento>) query.list();
 	}
 
 	@Override
