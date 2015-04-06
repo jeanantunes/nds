@@ -217,8 +217,8 @@ public class ContaCorrenteCotaController extends BaseController {
         
         request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO, filtro);
         
-        List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
-                .obterMovimentoEstoqueCotaConsignado(filtro);
+        List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+        
         if (listaConsignadoCota != null) {
             Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
             

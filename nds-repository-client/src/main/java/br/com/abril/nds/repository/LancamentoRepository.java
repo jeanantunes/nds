@@ -272,7 +272,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - data a ser comparada com a data de recolhimento prevista
 	 * @return Lancamento
 	 */
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(
+	public List<Lancamento> obterLancamentosProdutoEdicaoPorDataLancamentoOuDataRecolhimento(
 			ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista,
 			Date dataRecolhimentoPrevista);
 
