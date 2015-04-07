@@ -288,7 +288,9 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$("#novoNumeroNota", recebimentoFisicoController.workspace).val($("#notaFiscal", recebimentoFisicoController.workspace).val());
 			$("#novoSerieNota", recebimentoFisicoController.workspace).val($("#serie", recebimentoFisicoController.workspace).val());		
-			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val($("#chaveAcesso", recebimentoFisicoController.workspace).val());		
+			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val($("#chaveAcesso", recebimentoFisicoController.workspace).val());
+			$("#recebimento-naturezaOperacao", recebimentoFisicoController.workspace).val($("#recebimento-naturezaOperacao", recebimentoFisicoController.workspace).val());
+			
 		}
 		$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
 	},
@@ -302,8 +304,15 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var fornecedor = $("#fornecedor", recebimentoFisicoController.workspace).val();
 		
+		var naturezaOperacao = $("#recebimento-naturezaOperacao", recebimentoFisicoController.workspace).val();
+		
 		if(fornecedor == "-1"){
 			exibirMensagem('WARNING', ['Não é possível Adicionar Novo Produto para opção TODOS em Fornecedor']);
+			return;
+		}
+		
+		if(naturezaOperacao == "-1"){
+			exibirMensagem('WARNING', ['Não é possível Adicionar Novo Produto para opção Selecione em naturezaOperacao']);
 			return;
 		}
 		
@@ -487,7 +496,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");		
 		$('#labelValorTotal', recebimentoFisicoController.workspace).text('0,00');
 		$('#labelValorTotalDesconto', recebimentoFisicoController.workspace).text('0,00');
-	
+		
 	},
 
 	/**
@@ -1789,14 +1798,15 @@ var recebimentoFisicoController = $.extend(true, {
 	obterCabecalho : function() {
 
 		var dadosCabecalho = {
-				'nota.fornecedor':$("#novoFornecedor",recebimentoFisicoController.workspace).val(),
-				'nota.cnpj':$("#novoCnpj",recebimentoFisicoController.workspace).val(),
-				'nota.numero':$("#novoNumeroNota",recebimentoFisicoController.workspace).val(),
-				'nota.numeroNotaEnvio':$("#novoNumeroNotaEnvio",recebimentoFisicoController.workspace).val(),
-				'nota.serie':$("#novoSerieNota",recebimentoFisicoController.workspace).val(),
-				'nota.chaveAcesso':$("#novoChaveAcesso",recebimentoFisicoController.workspace).val(),
-				'nota.dataEmissao':$("#novoDataEmissao",recebimentoFisicoController.workspace).val(),
-				'nota.dataEntrada':$("#novoDataEntrada",recebimentoFisicoController.workspace).val(),
+				'nota.fornecedor':$("#novoFornecedor", recebimentoFisicoController.workspace).val(),
+				'nota.cnpj':$("#novoCnpj", recebimentoFisicoController.workspace).val(),
+				'nota.numero':$("#novoNumeroNota", recebimentoFisicoController.workspace).val(),
+				'nota.numeroNotaEnvio':$("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).val(),
+				'nota.serie':$("#novoSerieNota", recebimentoFisicoController.workspace).val(),
+				'nota.chaveAcesso':$("#novoChaveAcesso", recebimentoFisicoController.workspace).val(),
+				'nota.dataEmissao':$("#novoDataEmissao", recebimentoFisicoController.workspace).val(),
+				'nota.dataEntrada':$("#novoDataEntrada", recebimentoFisicoController.workspace).val(),
+				'nota.natureaOperacaoId':$("#recebimento-naturezaOperacao", recebimentoFisicoController.workspace).val(),
 				'nota.valorTotal': this.preparaValor($("#novoValorTotal",recebimentoFisicoController.workspace).val())};
 		return dadosCabecalho;
 	},
@@ -2472,11 +2482,13 @@ var recebimentoFisicoController = $.extend(true, {
         $("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).val("");
         $("#novoNfe", 			  recebimentoFisicoController.workspace).removeAttr("checked");
         $("#novoChaveAcesso", 	  recebimentoFisicoController.workspace).val("");
+        $("#recebimento-naturezaOperacao", 	  recebimentoFisicoController.workspace).val("");
         $("#novoDataEmissao", 	  recebimentoFisicoController.workspace).val("");
         $("#novoDataEntrada", 	  recebimentoFisicoController.workspace).val("");
         $("#novoValorTotal", 	  recebimentoFisicoController.workspace).val("0,00");
         $("#labelValorTotal",     recebimentoFisicoController.workspace).text("0,00");
         $("#labelValorTotalDesconto",     recebimentoFisicoController.workspace).text("0,00");
+
         recebimentoFisicoController.montaGridItens();
 	},
 	

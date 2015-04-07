@@ -96,7 +96,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private CFOPRepository cFOPRepository;
 	
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 	
 	@Autowired
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
@@ -286,7 +286,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setDataRecebimento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
-		NaturezaOperacao naturezaOperacao = tipoNotaFiscalRepository.obterNaturezaOperacao(distribuidorService.obter().getTipoAtividade(), TipoEmitente.FORNECEDOR, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false, false);
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.obterNaturezaOperacao(distribuidorService.obter().getTipoAtividade(), TipoEmitente.FORNECEDOR, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false, false);
 		
 		notaFiscal.setNaturezaOperacao(naturezaOperacao);
 		
@@ -401,7 +401,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Transactional
 	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
-		return tipoNotaFiscalRepository.obterNaturezasOperacoes(tipoOperacao);
+		return naturezaOperacaoRepository.obterNaturezasOperacoes(tipoOperacao);
 		
 	}
 	
@@ -417,7 +417,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Transactional
 	public List<NaturezaOperacao> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
-		return tipoNotaFiscalRepository.obterNaturezasOperacoes();
+		return naturezaOperacaoRepository.obterNaturezasOperacoes();
 	}
 	
 	        /**
