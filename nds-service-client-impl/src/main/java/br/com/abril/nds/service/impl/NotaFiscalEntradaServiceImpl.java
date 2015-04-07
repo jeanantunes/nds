@@ -125,14 +125,14 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		}
 		
 		//FIXME: Ajustar a funcionalidade de NF-e de Terceiros 
-		NaturezaOperacao tipoNotaFiscal = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoEmitente.COTA, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoEmitente.COTA, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
 
-		if (tipoNotaFiscal == null) {
+		if (naturezaOperacao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de nota fiscal não foi encontrado.");
 		}
 		
-		notaFiscal.setNaturezaOperacao(tipoNotaFiscal);
+		notaFiscal.setNaturezaOperacao(naturezaOperacao);
 
 		this.notaFiscalRepository.adicionar(notaFiscal); 
 	}

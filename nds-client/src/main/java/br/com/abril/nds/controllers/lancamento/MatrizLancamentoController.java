@@ -398,8 +398,7 @@ public class MatrizLancamentoController extends BaseController {
         
         this.verificarExecucaoInterfaces();
         
-        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
-                .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
             
@@ -408,8 +407,7 @@ public class MatrizLancamentoController extends BaseController {
         
         this.validarDatasConfirmacao(datasConfirmadas.toArray(new Date[] {}));
         
-        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento
-                .getMatrizLancamento();
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento.getMatrizLancamento();
         
         Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         

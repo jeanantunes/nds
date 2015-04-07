@@ -133,17 +133,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         for (final Date dataConfirmada : datasConfirmadas) {
             
-            final List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO = matrizLancamento
-                    .get(dataConfirmada);
+            final List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO = matrizLancamento.get(dataConfirmada);
             
-            if (listaProdutoLancamentoDTO == null
-                    || listaProdutoLancamentoDTO.isEmpty()) {
+            if (listaProdutoLancamentoDTO == null || listaProdutoLancamentoDTO.isEmpty()) {
                 
                 continue;
             }
             
-            Integer sequenciaMatriz = lancamentoRepository
-                    .obterProximaSequenciaMatrizPorData(dataConfirmada);
+            Integer sequenciaMatriz = lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
             
             this.ordenarProdutos(listaProdutoLancamentoDTO);
             
@@ -170,8 +167,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         
         if (!mapaLancamento.isEmpty()) {
             
-            this.atualizarLancamentos(matrizLancamentoRetorno, usuario,
-                    mapaLancamento, OperacaoMatrizLancamento.CONFIRMAR);
+            this.atualizarLancamentos(matrizLancamentoRetorno, usuario, mapaLancamento, OperacaoMatrizLancamento.CONFIRMAR);
         }
         
         return matrizLancamentoRetorno;
@@ -378,8 +374,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
     	
     	if(produtoEdicao!= null){
     		
-    		if(!produtoEdicao.isParcial() 
-    				&& novaData.compareTo(lancamento.getDataRecolhimentoDistribuidor())>=0){
+    		if(!produtoEdicao.isParcial() && novaData.compareTo(lancamento.getDataRecolhimentoDistribuidor()) >= 0){
         		
         		Date novaDataRecolhimento = DateUtil.adicionarDias(novaData, produtoEdicao.getPeb());
         		
@@ -644,8 +639,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
             final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
             final ProdutoLancamentoDTO produtoLancamento, final Date dataLancamento) {
         
-        List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento
-                .get(dataLancamento);
+        List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(dataLancamento);
         
         if (produtosLancamento == null) {
             
@@ -671,8 +665,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
         produtoLancamento.setDataLancamentoDistribuidor(novaData);
         produtoLancamento.setStatusLancamento(statusLancamento.toString());
         
-        List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento
-                .get(novaData);
+        List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
         
         if (produtosLancamento == null) {
             

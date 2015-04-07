@@ -136,14 +136,12 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
             final List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO = matrizLancamento
                     .get(dataConfirmada);
             
-            if (listaProdutoLancamentoDTO == null
-                    || listaProdutoLancamentoDTO.isEmpty()) {
+            if (listaProdutoLancamentoDTO == null || listaProdutoLancamentoDTO.isEmpty()) {
                 
                 continue;
             }
             
-            Integer sequenciaMatriz = lancamentoRepository
-                    .obterProximaSequenciaMatrizPorData(dataConfirmada);
+            Integer sequenciaMatriz = lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
             
             this.ordenarProdutos(listaProdutoLancamentoDTO);
             
@@ -170,8 +168,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
         
         if (!mapaLancamento.isEmpty()) {
             
-            this.atualizarLancamentos(matrizLancamentoRetorno, usuario,
-                    mapaLancamento, OperacaoMatrizLancamento.CONFIRMAR);
+            this.atualizarLancamentos(matrizLancamentoRetorno, usuario, mapaLancamento, OperacaoMatrizLancamento.CONFIRMAR);
         }
         
         return matrizLancamentoRetorno;
@@ -386,8 +383,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
             final Usuario usuario, final Map<Long, ProdutoLancamentoDTO> mapaLancamento,
             final OperacaoMatrizLancamento operacaoMatrizLancamento) {
         
-        final StatusLancamento proximoStatusLancamento = this
-                .getProximoStatusLancamentoPorOperacao(operacaoMatrizLancamento);
+        final StatusLancamento proximoStatusLancamento = this.getProximoStatusLancamentoPorOperacao(operacaoMatrizLancamento);
         
         final Set<Long> idsLancamento = mapaLancamento.keySet();
         
@@ -398,8 +394,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
         
         for (final Lancamento lancamento : listaLancamentos) {
             
-            final ProdutoLancamentoDTO produtoLancamento = mapaLancamento
-                    .get(lancamento.getId());
+            final ProdutoLancamentoDTO produtoLancamento = mapaLancamento.get(lancamento.getId());
             
             final Date novaData = produtoLancamento.getNovaDataLancamento();
             
@@ -425,8 +420,7 @@ public class MatrizLancamentoNovaServiceImpl implements MatrizLancamentoNovaServ
                         produtoLancamento.getStatus(), usuario);
             }else {
                 
-                this.alterarLancamento(produtoLancamento, lancamento, novaData,
-                        proximoStatusLancamento, usuario);
+                this.alterarLancamento(produtoLancamento, lancamento, novaData, proximoStatusLancamento, usuario);
             }
             
             this.montarMatrizLancamentosRetorno(matrizLancamentoRetorno,

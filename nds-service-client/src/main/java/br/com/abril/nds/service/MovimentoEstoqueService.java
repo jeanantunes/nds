@@ -48,11 +48,11 @@ public interface MovimentoEstoqueService {
 
 	
 	MovimentoEstoqueCota gerarMovimentoCota(
-	        Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, 
+	        Date dataLancamento, ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
 	        BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
 	        ValoresAplicados valoresAplicados, FormaComercializacao formaComercializacao, boolean isContribuinte, boolean isExigeNota);
 
-	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota, FormaComercializacao formaComercializacao);
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota, FormaComercializacao formaComercializacao);
 
 	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
 
@@ -112,7 +112,7 @@ public interface MovimentoEstoqueService {
 													   boolean validarTransfEstoqueDiferenca,
 													   Date dataLancamento, StatusIntegracao statusIntegracao);
 	
-	 MovimentoEstoqueCota gerarMovimentoCotaDiferenca(Date dataLancamento,Long idProdutoEdicao, 
+	 MovimentoEstoqueCota gerarMovimentoCotaDiferenca(Date dataLancamento, ProdutoEdicao produtoEdicao, 
 														Long idCota, Long idUsuario, 
 														BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 														Long idEstudoCota,

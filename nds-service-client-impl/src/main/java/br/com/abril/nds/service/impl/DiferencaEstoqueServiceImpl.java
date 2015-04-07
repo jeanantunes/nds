@@ -1393,7 +1393,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         Cota cota = rateioDiferenca.getCota();
                 
         return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
-                dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
+                dataLancamento, diferenca.getProdutoEdicao(), rateioDiferenca.getCota().getId(),
                 idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica, 
                 cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(),
                 cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
