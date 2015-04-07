@@ -303,7 +303,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					
 					//Lança movimento para restituir o saldo da cota ausente
 					this.movimentoEstoqueService.gerarMovimentoCota(cotaAusente.getData(), 
-							                                        movimento.getProdutoEdicao().getId(),
+							                                        movimento.getProdutoEdicao(),
 															        cotaAusente.getCota().getId(), 
 															        idUsuario, 
 															        qtdeARestaurarCotaAusenteSuplementar, 
@@ -417,7 +417,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					idUsuario, qtdeRateio, tipoMovimento);
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
-				data, produtoEdicao.getId(), cota.getId(), 
+				data, produtoEdicao, cota.getId(), 
 				idUsuario, qtdeRateio, tipoMovimentoCota, data, null, null, null, FormaComercializacao.CONSIGNADO);
 			
 			for (CotaAusente cotaAusente : cotasAusentes) {

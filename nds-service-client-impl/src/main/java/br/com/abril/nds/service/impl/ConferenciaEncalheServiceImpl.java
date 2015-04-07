@@ -3132,7 +3132,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				movimentoEstoqueService.gerarMovimentoCota(
 						lancamentoDTO.getDataDistribuidor(), 
-						produtoEdicao.getId(), 
+						produtoEdicao, 
 						idCota, 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 

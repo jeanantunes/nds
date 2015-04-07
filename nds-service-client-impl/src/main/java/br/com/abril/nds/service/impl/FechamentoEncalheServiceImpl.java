@@ -961,7 +961,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	private void gerarMovimentoFechamentoFiscalVendaTotal(final Date dataOperacao, final Cota cota,
 			final ChamadaEncalheCota chamadaEncalheCota, MovimentoEstoqueCota movimentoEstoqueCota) {
+		
 		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+		
 		MovimentoFechamentoFiscalCota mffc = new MovimentoFechamentoFiscalCota();
 		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mffc, movimentoEstoqueCota));
 		mffc.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
@@ -1102,7 +1104,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				movimentoEstoqueService.gerarMovimentoCota(
 						lancamentoDTO.getDataDistribuidor(), 
-						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId(), 
+						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
 						idCota, 
 						usuario.getId(), 
 						BigInteger.ZERO, 
@@ -1249,7 +1251,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         MovimentoEstoqueCota movimentoEstoqueCota = 
             this.movimentoEstoqueService.gerarMovimentoCota(proximoLancamentoPeriodo.getDataCriacao(), 
-                item.getIdProdutoEdicao(), item.getIdCota(), usuarioId, item.getQtde(), tipoMovimentoEstoque, 
+            		estudo.getProdutoEdicao(), item.getIdCota(), usuarioId, item.getQtde(), tipoMovimentoEstoque, 
                 dataProximoLancamento, dataOperacao, proximoLancamentoPeriodo.getId(), estudoCota.getId(), FormaComercializacao.CONSIGNADO);
         
         movimentoEstoqueCotaJuramentado.setMovimentoEstoqueCotaJuramentado(movimentoEstoqueCota);
