@@ -568,7 +568,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append(" inner join lancamento l on l.id = cel.LANCAMENTO_ID                                                                ");
     	sql.append(" left outer join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID                         ");
     	sql.append(" inner join cota c on c.id = cec.COTA_ID                                                                            ");
-    	sql.append(" inner join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.id                                         ");
+    	sql.append(" left outer join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.id                                         ");
     	sql.append(" inner join estoque_produto_cota epc on epc.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and epc.COTA_ID = cec.COTA_ID  ");
     	sql.append(" where 1 = 1                                                                                                        ");
     	sql.append(" and c.NUMERO_COTA = :numeroCota                                                                                    ");
