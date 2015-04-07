@@ -31,6 +31,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -42,8 +43,6 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusRecebimento;
-import br.com.abril.nds.model.fiscal.TipoDestinatario;
-import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -1265,12 +1264,12 @@ public class RecebimentoFisicoController extends BaseController {
     /**
      * Inclui na view os dados do combo de TipoNotaFiscal.
      */
-    private void carregarComboTipoNotaFiscal() {
+    private void carregarNaturezaOperacao() {
         
-        final List<NaturezaOperacao> listaTipoNotaFiscal = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
+        final List<NaturezaOperacao> listaNaturezaOperacao = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
         
-        if (listaTipoNotaFiscal != null) {
-            result.include("listaTipoNotaFiscal", listaTipoNotaFiscal);
+        if (listaNaturezaOperacao != null) {
+            result.include("listaTipoNotaFiscal", listaNaturezaOperacao);
         }
         
     }
@@ -1316,7 +1315,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         carregarComboCfop();
         
-        carregarComboTipoNotaFiscal();
+        carregarNaturezaOperacao();
         
         carregarComboTipoLancamento();
         
@@ -1574,6 +1573,10 @@ public class RecebimentoFisicoController extends BaseController {
         if (nota.getValorTotal()==null){
             throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Valor Total] é obrigatório!");
         }
+        
+        if (nota.getNatureaOperacaoId().equals(-1L)){
+            throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Natureza Operação] é obrigatório!");
+        }
     }
     
     /**
@@ -1724,8 +1727,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         notaFiscal.setFornecedor(fornecedor);
         
-        notaFiscal.setNaturezaOperacao(naturezaOperacaoService.obterNaturezaOperacao(
-        		distribuidorService.obter().getTipoAtividade(), TipoEmitente.FORNECEDOR, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA));
+        notaFiscal.setNaturezaOperacao(naturezaOperacaoService.obterPorId(nota.getNatureaOperacaoId()));
         
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
         
@@ -1766,5 +1768,20 @@ public class RecebimentoFisicoController extends BaseController {
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
     }
     
+    @Post
+	public void obterNaturezaOperacao(Long naturezaOperacaoId) {
+		
+		NotaFiscalTipoEmissaoEnum tipoEmissao = null;
+		if(naturezaOperacaoId != null && naturezaOperacaoId > 0) {
+			
+			tipoEmissao = this.naturezaOperacaoService.verificarRegimeEspecialNaturezaOperacao(naturezaOperacaoId);
+		}
+	
+		if(tipoEmissao != null) {
+			result.use(Results.json()).from(tipoEmissao, "tipoEmissaoRegimeEspecial").serialize();
+		} else {
+			result.use(Results.json()).from("", "tipoEmissaoRegimeEspecial").serialize();
+		}
+	}
     
 }
