@@ -152,6 +152,8 @@ public class ParametrosDistribuidorVO {
     private Integer numeroDiasNovaCobranca;
     private String assuntoEmailCobranca;
     private String mensagemEmailCobranca;
+    private String descricaoTaxaExtra;
+    private String percentualTaxaExtra;
     
     // Aba Aprovação
     // Frame Aprovação
@@ -1050,6 +1052,22 @@ public class ParametrosDistribuidorVO {
 	 */
 	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+
+	public String getDescricaoTaxaExtra() {
+		return descricaoTaxaExtra;
+	}
+
+	public void setDescricaoTaxaExtra(String descricaoTaxaExtra) {
+		this.descricaoTaxaExtra = descricaoTaxaExtra;
+	}
+
+	public String getPercentualTaxaExtra() {
+		return percentualTaxaExtra;
+	}
+
+	public void setPercentualTaxaExtra(String percentualTaxaExtra) {
+		this.percentualTaxaExtra = percentualTaxaExtra;
 	}
 
 	public boolean getUtilizaControleAprovacao() {

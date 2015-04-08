@@ -867,6 +867,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setNumeroDiasNovaCobranca(parametrosDistribuidor.getNumeroDiasNovaCobranca());
 		distribuidor.setAssuntoEmailCobranca(parametrosDistribuidor.getAssuntoEmailCobranca());
 		distribuidor.setMensagemEmailCobranca(parametrosDistribuidor.getMensagemEmailCobranca());
+		distribuidor.setDescricaoTaxaExtra(parametrosDistribuidor.getDescricaoTaxaExtra());
+		distribuidor.setPercentualTaxaExtra(parametrosDistribuidor.getPercentualTaxaExtra());
 		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
