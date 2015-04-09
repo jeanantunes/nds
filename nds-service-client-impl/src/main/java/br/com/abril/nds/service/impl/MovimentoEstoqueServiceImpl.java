@@ -1447,12 +1447,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         	mapaFornecedorCotas.get(fcf.getIdFornecedor()).add(fcf.getIdCota());
         }
         
-        if(produtoEdicao.getProduto().getIsRemessaDistribuicao()) {
-        	TipoMovimentoEstoque tipoMovimentoCota = this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_DISTRIBUICAO);
-        	movimentoEstoqueCota.setTipoMovimento(tipoMovimentoCota);
-        } else {
-        	movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
-        }
+    	movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
         
         movimentoEstoqueCota.setCota(new Cota(idCota));
         
@@ -1820,12 +1815,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         movimentoEstoqueCota.setDataCriacao(dataOperacao);
         movimentoEstoqueCota.setIdProdEd(produtoEdicao.getId());
         
-        if(produtoEdicao.getProduto().getIsRemessaDistribuicao()) {
-        	TipoMovimentoEstoque tipoMovimentoCota = this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE_DISTRIBUICAO);
-        	movimentoEstoqueCota.setTipoMovimentoId(tipoMovimentoCota.getId());
-        } else {
-        	movimentoEstoqueCota.setTipoMovimentoId(tipoMovimentoEstoque.getId());
-        }
+    	movimentoEstoqueCota.setTipoMovimentoId(tipoMovimentoEstoque.getId());
         
         movimentoEstoqueCota.setQtde(estudoCotaDTO.getQtdeEfetiva());
         movimentoEstoqueCota.setUsuarioId(idUsuario);
