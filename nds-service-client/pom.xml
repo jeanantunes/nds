@@ -18,7 +18,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>webservice</groupId>
+			<groupId>br.com.abril</groupId>
 			<artifactId>nds-ws-pessoacrp</artifactId>
 			<version>1.0</version>
 		</dependency>
