@@ -360,6 +360,14 @@
 					this.buildpager();
 					$('.pPageStat', this.pDiv).html(p.nomsg);
 					return false;
+				} else {
+					
+					$.each($('select option', this.pDiv), function(k, v) {
+						if(data.rows && (data.rows.length == v.value)) {
+							$(v).attr('selected','selected');
+						}
+					});
+					
 				}
 				p.pages = Math.ceil(p.total / p.rp);
 				if (p.dataType == 'xml') {

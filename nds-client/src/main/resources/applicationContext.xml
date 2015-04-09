@@ -84,7 +84,7 @@
 	<!-- Web Services -->
 	
 	<!-- FTF -->
-	<bean id="pessoaCRPService2StubBean" class="br.com.abril.axis2.PessoaCRPService_2Stub" >
+	<bean id="pessoaCRPService2Stub" class="br.com.abril.axis2.PessoaCRPService_2Stub" >
 	     <constructor-arg value="${pessoaCRPService}"/>
 	</bean>
 	<!-- /FTF -->
