@@ -37,6 +37,7 @@ public class NotaEnvio implements Serializable {
 
 	@Column(name = "CODIGO_NATUREZA_OPERACAO")
 	private Integer codigoNaturezaOperacao;
+	
 	@Column(name = "DESCRICAO_NATUREZA_OPERACAO")
 	private String descricaoNaturezaOperacao;
 

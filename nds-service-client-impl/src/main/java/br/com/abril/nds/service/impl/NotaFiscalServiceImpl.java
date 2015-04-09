@@ -455,12 +455,16 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
 
+		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+		
 		switch (tipoImpressao) {
 
 		case MODELO_1:
 		case MODELO_2:
-			if (notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() .getChaveAcesso() != null) {
-				if (!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+			if (notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null) {
+				if (!distribuidor.isPossuiRegimeEspecialDispensaInterna() || 
+					((cota.getParametrosCotaNotaFiscalEletronica() != null &&  
+					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false)) {
 					NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository
 							.buscarPorId(notaFiscal.getNotaFiscalInformacoes()
 									.getIdentificacao().getNaturezaOperacao()
