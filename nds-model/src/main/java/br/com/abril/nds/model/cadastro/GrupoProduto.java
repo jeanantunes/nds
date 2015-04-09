@@ -25,7 +25,8 @@ public enum GrupoProduto {
 	OUTROS(99,"Outros"),
 	VALE_DESCONTO(8,"Vale Desconto"),
 	CARTELA(9,"Cartela"),
-	COLECIONAVEL(10,"Colecionável");
+	COLECIONAVEL(10,"Colecionável"),
+	IMPRESSOS(99,"Impressos");
 	
 	private Integer codigo;
 	

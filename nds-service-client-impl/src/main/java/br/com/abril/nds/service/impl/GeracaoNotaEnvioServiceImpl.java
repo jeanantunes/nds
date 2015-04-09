@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1307,6 +1309,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 		
 		try {
+			
+			Endereco endereco = new Endereco();
+			BeanUtils.copyProperties(endereco, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco());
+
+			// BeanUtils.copyProperty(identificacaoEmitente, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente(), new String[] {"endereco"});
+			
 			BeanUtils.copyProperties(identificacaoEmitente, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente());
 		} catch (IllegalAccessException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoEmitente");

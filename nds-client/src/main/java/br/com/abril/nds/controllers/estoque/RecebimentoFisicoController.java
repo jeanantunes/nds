@@ -1718,11 +1718,17 @@ public class RecebimentoFisicoController extends BaseController {
         final NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
         
         notaFiscal.setNumeroNotaEnvio(nota.getNumeroNotaEnvio());
+        
         notaFiscal.setNumero(nota.getNumero());
+        
         notaFiscal.setSerie(nota.getSerie());
+        
         notaFiscal.setDataEmissao(nota.getDataEmissao());
+        
         notaFiscal.setDataExpedicao(nota.getDataEntrada());
+        
         notaFiscal.setValorInformado(CurrencyUtil.converterValor(nota.getValorTotal()));
+        
         notaFiscal.setChaveAcesso(nota.getChaveAcesso());
         
         notaFiscal.setFornecedor(fornecedor);
