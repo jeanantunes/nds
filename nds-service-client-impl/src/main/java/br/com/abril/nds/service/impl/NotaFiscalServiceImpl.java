@@ -450,42 +450,37 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 
 		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
+		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+		
+		gerarNotaEnvioAtravesNotaFiscal(notaFiscal.getId(), cota, notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao());
 
 		return notaFiscal;
 	}
 
 	@Transactional
-	public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
-		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+	public void gerarNotaEnvioAtravesNotaFiscal(Long notaFiscalId, Cota cota, NaturezaOperacao naturezaOperacao) {
+		
 		Distribuidor distribuidor = distribuidorRepository.obter();
-		
 		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
-		
 		switch (tipoImpressao) {
 
 		case MODELO_1:
 		case MODELO_2:
-			if (notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null) {
-				if (!distribuidor.isPossuiRegimeEspecialDispensaInterna() || 
-					((cota.getParametrosCotaNotaFiscalEletronica() != null &&  
-					cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false)) {
-					NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository
-							.buscarPorId(notaFiscal.getNotaFiscalInformacoes()
-									.getIdentificacao().getNaturezaOperacao()
-									.getId());
+			if (!distribuidor.isPossuiRegimeEspecialDispensaInterna() || 
+				((cota.getParametrosCotaNotaFiscalEletronica() != null &&  
+				cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false)) {
 
-					for (DistribuidorTipoNotaFiscal distribuidorTipoNotaFiscal : distribuidor.getTiposNotaFiscalDistribuidor()) {
-						if (distribuidorTipoNotaFiscal.getNaturezaOperacao().contains(naturezaOperacao)) {
+				for (DistribuidorTipoNotaFiscal distribuidorTipoNotaFiscal : distribuidor.getTiposNotaFiscalDistribuidor()) {
+					if (distribuidorTipoNotaFiscal.getNaturezaOperacao().contains(naturezaOperacao)) {
 
-							if (distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)
-									|| distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_PELA_COTA)
-									|| distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_VENDA)) {
+						if (distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)
+								|| distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_PELA_COTA)
+								|| distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_VENDA)) {
 
-								this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
-
-							}
+							this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscalRepository.buscarPorId(notaFiscalId));
 
 						}
+
 					}
 				}
 			}
