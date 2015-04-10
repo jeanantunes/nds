@@ -158,4 +158,5 @@ public interface NotaFiscalService {
 	Integer qtdeNota(Long idConferenciaCota);
 
 	void gerarNotaEnvioAtravesNotaFiscal(Long notaFiscalId, Cota cota, NaturezaOperacao naturezaOperacao);
+
 }

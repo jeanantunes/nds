@@ -23,6 +23,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -399,9 +400,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Override
 	@Transactional
-	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao, Distribuidor distribuidor) {
 		
-		return naturezaOperacaoRepository.obterNaturezasOperacoes(tipoOperacao);
+		return naturezaOperacaoRepository.obterNaturezaOperacaoAtividadeDestinatarioEmitente(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoEmitente.FORNECEDOR, tipoOperacao);
 		
 	}
 	
