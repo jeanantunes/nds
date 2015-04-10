@@ -201,12 +201,53 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 						listaDanfeWrapper.add(new DanfeWrapper(danfe));
 					}
 				}
-				
-					
 			}
 		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade()) || TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
 			LOGGER.info("PRESTADOR_SERVICO ..... ");
 			
+			if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+				
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
+					
+					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)){
+						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){
+								
+								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
+								
+								List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+								
+								for (NotaFiscal notaFiscal : notas) {
+									DanfeDTO danfe = montarDanfe(notaFiscal);
+									
+									if(danfe!=null) {
+										listaDanfeWrapper.add(new DanfeWrapper(danfe));
+									}
+								}
+								
+							}
+						}else{
+							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+						}
+					}
+				}
+				
+				
+			}else{
+				LOGGER.info("obter Nota de envio sem chave de acesso ");
+				/**
+				 * Nota de Envio Buscar quando houver chave de acesso
+				 */
+				List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+				
+				for (NotaFiscal notaFiscal : notas) {
+					DanfeDTO danfe = montarDanfe(notaFiscal);
+					
+					if(danfe!=null) {
+						listaDanfeWrapper.add(new DanfeWrapper(danfe));
+					}
+				}
+			}		
 			
 		}else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao comparar o tipo de atividade");
