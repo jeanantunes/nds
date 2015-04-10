@@ -39,6 +39,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -51,9 +52,22 @@ public class AssinaturaTest {
 	private PrivateKey privateKey;
 	private KeyInfo keyInfo;
 
+	@Test
+	public void assinaNFeXML() throws Exception {
+		
+		String caminhoDoCertificadoDoCliente = "/Users/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.pfx";
+		String senhaDoCertificadoDoCliente = "arutil14";
+		
+		String fileEnviNFe = this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237.xml";
+		String xmlEnviNFe = lerXML(fileEnviNFe);
+		String xmlEnviNFeAssinado = assinaEnviNFe(xmlEnviNFe, caminhoDoCertificadoDoCliente, senhaDoCertificadoDoCliente);
+		info("XML EnviNFe Assinado: " + xmlEnviNFeAssinado);
+	}
+	
 	public static void main(String[] args) {
 		try {
-			String caminhoDoCertificadoDoCliente = "C:/Users/wrpaiva/certificadoAR/certificado.pfx";
+//			String caminhoDoCertificadoDoCliente = "C:/Users/wrpaiva/certificadoAR/certificado.pfx";
+			String caminhoDoCertificadoDoCliente = "/Users/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.jks";
 			String senhaDoCertificadoDoCliente = "arutil14";
 			AssinaturaTest assinarXMLsCertfificadoA1 = new AssinaturaTest();
 
@@ -279,8 +293,7 @@ public class AssinaturaTest {
 		String linha = "";
 		StringBuilder xml = new StringBuilder();
 
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				new FileInputStream(fileXML)));
+		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileXML)));
 		while ((linha = in.readLine()) != null) {
 			xml.append(linha);
 		}
