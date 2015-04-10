@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -22,7 +23,7 @@ public interface RecebimentoFisicoService {
 	 
 	 List<CFOP> obterListaCFOP();
 	 
-	 List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
+	 List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao, Distribuidor distribuidor);
 	 
 	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual, Boolean pularValidacao);
 	 
