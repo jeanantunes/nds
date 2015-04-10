@@ -394,5 +394,25 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		return sqlQuery.list();
 
 	}
-}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<NaturezaOperacao> obterNaturezaOperacaoAtividadeDestinatarioEmitente(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" from NaturezaOperacao nat ")
+		   .append(" where nat.tipoAtividade = :tipoAtividade ")
+		   .append(" and nat.tipoEmitente = :tipoEmitente ")
+		   .append(" and nat.tipoDestinatario = :tipoDestinatario ")
+		   .append(" and nat.tipoOperacao = :tipoOperacao ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		
+		query.setParameter("tipoAtividade", tipoAtividade);
+		query.setParameter("tipoEmitente", tipoEmitente);
+		query.setParameter("tipoDestinatario", tipoDestinatario);;
+		query.setParameter("tipoOperacao", tipoOperacao);
+		
+		return query.list();
+	}
+}	

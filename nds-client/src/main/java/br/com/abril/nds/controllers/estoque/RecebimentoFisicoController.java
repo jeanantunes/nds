@@ -30,6 +30,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -1265,8 +1266,10 @@ public class RecebimentoFisicoController extends BaseController {
      * Inclui na view os dados do combo de TipoNotaFiscal.
      */
     private void carregarNaturezaOperacao() {
+    	
+    	Distribuidor distribuidor = distribuidorService.obter();
         
-        final List<NaturezaOperacao> listaNaturezaOperacao = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
+        final List<NaturezaOperacao> listaNaturezaOperacao = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA, distribuidor);
         
         if (listaNaturezaOperacao != null) {
             result.include("listaTipoNotaFiscal", listaNaturezaOperacao);
