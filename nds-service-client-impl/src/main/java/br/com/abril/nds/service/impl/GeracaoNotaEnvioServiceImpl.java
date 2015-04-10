@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +28,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -66,6 +66,7 @@ import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -134,6 +135,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private EstudoGeradoRepository estudoGeradoRepository;
+    
+    @Autowired
+    private PessoaRepository pessoaRepository;
     
     // Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
     // O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -1299,7 +1303,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		// populate de bean de nota de envio
 		this.populateIdentificacaoEmitente(notaFiscal, notaEnvio);
 		this.populateIdentificacaoDestinatario(notaFiscal, notaEnvio);
-		notaEnvio.setListaItemNotaEnvio(this.criarItensNotaEnvio(notaFiscal));
+		notaEnvioRepository.adicionar(notaEnvio);
+		notaEnvio.setListaItemNotaEnvio(this.criarItensNotaEnvio(notaEnvio, notaFiscal));
 		return notaEnvio;
 	}
 	
@@ -1310,12 +1315,29 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		try {
 			
-			Endereco endereco = new Endereco();
-			BeanUtils.copyProperties(endereco, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco());
-
-			// BeanUtils.copyProperty(identificacaoEmitente, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente(), new String[] {"endereco"});
+			Distribuidor distribuidor = distribuidorRepository.obter();
+			Endereco endereco = distribuidor.getEnderecoDistribuidor().getEndereco();
+			identificacaoEmitente.setNome(distribuidor.getJuridica().getNome());
+			Telefone telefone = null;
+			for(TelefoneDistribuidor td : distribuidor.getTelefones()) {
+				telefone = td.getTelefone();
+			}
 			
-			BeanUtils.copyProperties(identificacaoEmitente, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente());
+			Pessoa pessoa = distribuidor.getJuridica();
+			
+			endereco.setPessoa(pessoa);
+			
+			RegimeTributario regimeTributario = new RegimeTributario();
+			BeanUtils.copyProperties(regimeTributario, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getRegimeTributario());
+			
+			org.springframework.beans.BeanUtils.copyProperties(identificacaoEmitente, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente(), new String[] {"endereco", "telefone"});
+			
+			identificacaoEmitente.setDocumento(distribuidor.getJuridica().getDocumento().replace(".", "").replace("/", "").replace("-", ""));
+			identificacaoEmitente.setInscricaoEstadual(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual() == null ? "" : notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual());
+			identificacaoEmitente.setNome(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getNome());
+			identificacaoEmitente.setEndereco(endereco);
+			identificacaoEmitente.setTelefone(telefone);
+			
 		} catch (IllegalAccessException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoEmitente");
 		} catch (InvocationTargetException e) {
@@ -1330,23 +1352,41 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
 		
 		try {
-			BeanUtils.copyProperties(identificacaoDestinatario, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario());
-		} catch (IllegalAccessException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoDestinatario");
-		} catch (InvocationTargetException e) {
+			
+			Cota cota = cotaRepository.buscarPorId(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getId());
+			Endereco endereco = cota.getEnderecoPrincipal().getEndereco();
+			identificacaoDestinatario.setNome(cota.getPessoa().getNome());
+			identificacaoDestinatario.setNumeroCota(cota.getNumeroCota());
+			
+			org.springframework.beans.BeanUtils.copyProperties(identificacaoDestinatario, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente(), new String[] {"endereco"});
+			
+			if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento() == null) {
+				identificacaoDestinatario.setDocumento("");
+			} else {
+				identificacaoDestinatario.setDocumento(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento() == null ? "" : notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento());
+			}
+			
+			identificacaoDestinatario.setInscricaoEstadual(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual() == null ? "" : notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual());
+			identificacaoDestinatario.setNome(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getNome());
+			identificacaoDestinatario.setEndereco(endereco);
+			
+		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoDestinatario");
 		}
 		
 		notaEnvio.setDestinatario(identificacaoDestinatario);
 	}
 	
-	private List<ItemNotaEnvio> criarItensNotaEnvio(NotaFiscal notaFiscal){
+	private List<ItemNotaEnvio> criarItensNotaEnvio(NotaEnvio notaEnvio, NotaFiscal notaFiscal){
 		
 		List<ItemNotaEnvio> lisItemNotaEnvios = new ArrayList<>();
 		
-		ItemNotaEnvio itemNotaEnvio = new ItemNotaEnvio();
-		
+		ItemNotaEnvio itemNotaEnvio = null;
+		Integer i = 0;
 		for (DetalheNotaFiscal item : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			itemNotaEnvio = new ItemNotaEnvio();
+			ItemNotaEnvioPK itemNotaEnvioPK = new ItemNotaEnvioPK(notaEnvio, ++i);
+			itemNotaEnvio.setItemNotaEnvioPK(itemNotaEnvioPK);
 			itemNotaEnvio.setProdutoEdicao(item.getProdutoServico().getProdutoEdicao());
 			itemNotaEnvio.setCodigoProduto(item.getProdutoServico().getProdutoEdicao().getProduto().getCodigo());
 			itemNotaEnvio.setNumeroEdicao(item.getProdutoServico().getProdutoEdicao().getNumeroEdicao());

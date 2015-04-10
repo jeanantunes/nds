@@ -156,4 +156,6 @@ public interface NotaFiscalService {
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 
 	Integer qtdeNota(Long idConferenciaCota);
+
+	void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal);
 }
