@@ -76,7 +76,7 @@ public class AssinaturaTest {
 			 * fileEnviNFe = Caminho do Arquivo XML (EnviNFe) gerado;
 			 */
 			info("");
-			String fileEnviNFe = "C:/opt/parametros_nds/notas/exportado/NF-e-31-00000004.xml";
+			String fileEnviNFe = "C:/Users/wrpaiva/certificadoAR/teste.xml";
 			String xmlEnviNFe = lerXML(fileEnviNFe);
 			String xmlEnviNFeAssinado = assinarXMLsCertfificadoA1.assinaEnviNFe(
 					xmlEnviNFe, caminhoDoCertificadoDoCliente, senhaDoCertificadoDoCliente);
