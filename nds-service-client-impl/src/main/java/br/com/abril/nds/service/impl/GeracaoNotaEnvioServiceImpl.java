@@ -1334,7 +1334,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		identificacaoDestinatario.setInscricaoEstadual(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual());
 		identificacaoDestinatario.setNome(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getNome());
 		identificacaoDestinatario.setPessoaDestinatarioReferencia(distribuidorRepository.obter().getJuridica());
-		identificacaoDestinatario.setTelefone(cota.getTefefonePrincipal().getTelefone());
+		
+		if(cota.getTefefonePrincipal() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Telefone da cota ['" + cota.getNumeroCota() + "'] não pode ser nulo!");
+		} else {			
+			identificacaoDestinatario.setTelefone(cota.getTefefonePrincipal().getTelefone());
+		}
+		
 		identificacaoDestinatario.setNumeroCota(cota.getNumeroCota());
 		
 		notaEnvio.setDestinatario(identificacaoDestinatario);
