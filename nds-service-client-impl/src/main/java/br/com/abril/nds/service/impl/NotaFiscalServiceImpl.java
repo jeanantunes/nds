@@ -449,13 +449,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 
-		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
-
-		Distribuidor distribuidor = distribuidorRepository.obter();
-
 		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
 
+		return notaFiscal;
+	}
+
+	@Transactional
+	public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
 		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
 		
 		switch (tipoImpressao) {
 
@@ -491,8 +495,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		default:
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração da nota de envio!");
 		}
-
-		return notaFiscal;
 	}
 
 	/**
@@ -523,7 +525,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
 		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamento(StatusProcessamento.RETORNADA);
 
-		return this.notaFiscalRepository.merge(notaFiscal);
+		this.notaFiscalRepository.merge(notaFiscal);
+		this.notaFiscalRepository.flush();
+		return notaFiscal;
 	}
 
 	/*

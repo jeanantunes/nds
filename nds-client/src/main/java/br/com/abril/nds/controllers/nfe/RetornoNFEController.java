@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -113,7 +114,8 @@ public class RetornoNFEController extends BaseController {
 			switch (notaRetorno.getStatus()) {
 			
 			case AUTORIZADO:
-				this.notaFiscalService.autorizarNotaFiscal(notaRetorno);
+				NotaFiscal notaFiscal = this.notaFiscalService.autorizarNotaFiscal(notaRetorno);
+				this.notaFiscalService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
 				continue;
 			
 			case CANCELAMENTO_HOMOLOGADO:

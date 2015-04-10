@@ -135,7 +135,7 @@ public class EmitenteDestinatarioBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 		
 		if(distribuidor.getJuridica().getInscricaoEstadual() != null && !distribuidor.getJuridica().getInscricaoEstadual().isEmpty()){
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual().trim());			
 		}
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
@@ -224,7 +224,7 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
 			
 			if(pessoaJuridica.getInscricaoEstadual() != null && !pessoaJuridica.getInscricaoEstadual().isEmpty()){
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual().trim());
 			}
 			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
