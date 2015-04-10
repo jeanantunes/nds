@@ -450,12 +450,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 
 		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
-
+		this.gerarNotaEnvio(notaFiscal);
 		return notaFiscal;
 	}
 
-	@Transactional
-	public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
+	
+	private void gerarNotaEnvio(NotaFiscal notaFiscal) {
 		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
