@@ -114,8 +114,7 @@ public class RetornoNFEController extends BaseController {
 			switch (notaRetorno.getStatus()) {
 			
 			case AUTORIZADO:
-				NotaFiscal notaFiscal = this.notaFiscalService.autorizarNotaFiscal(notaRetorno);
-				this.notaFiscalService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
+				this.notaFiscalService.autorizarNotaFiscal(notaRetorno);
 				continue;
 			
 			case CANCELAMENTO_HOMOLOGADO:
