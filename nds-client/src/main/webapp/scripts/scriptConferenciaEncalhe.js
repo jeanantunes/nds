@@ -408,9 +408,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					width : 460,
 					modal : true,
 					buttons : {
-						"Sim" : function() {
+						"Sim" : function(e) {
 							
-							window.event.preventDefault();
+							var evt = e || window.event;
+							evt.preventDefault();
 							
 							ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
 							
@@ -423,9 +424,10 @@ var ConferenciaEncalhe = $.extend(true, {
 							ConferenciaEncalhe.numeroCotaEditavel(true);
 							
 						},
-						"Não" : function() {
+						"Não" : function(e) {
 							
-							window.event.preventDefault();
+							var evt = e || window.event;
+							evt.preventDefault();
 							
 							$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
 							
@@ -779,17 +781,19 @@ var ConferenciaEncalhe = $.extend(true, {
 							width : 400,
 							modal : true,
 							buttons : {
-								"Sim" : function() {
+								"Sim" : function(event) {
 									
-									window.event.preventDefault();
+									if(!event) { event = window.event; }
+									event.preventDefault();
 									
 									ConferenciaEncalhe.verificarValorTotalNotaFiscal();
 									
 									$("#dialog-confirmar", ConferenciaEncalhe.workspace).dialog("close");
 								},
-								"Não" : function() {
+								"Não" : function(event) {
 									
-									window.event.preventDefault();
+									if(!event) { event = window.event; }
+									event.preventDefault();
 									
 									$("#dialog-confirmar", ConferenciaEncalhe.workspace).dialog("close");
 								}
@@ -1185,9 +1189,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 877,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(event) {
 					
-					window.event.preventDefault();
+					if(!event) { event = window.event; }
+					event.preventDefault();
 					
 					var data = [{name: 'indConferenciaContingencia', value: false}];
 					
@@ -1224,9 +1229,10 @@ var ConferenciaEncalhe = $.extend(true, {
 						}, true, "idModalDadosNotaFiscal"
 					);
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(event) {
 					
-					window.event.preventDefault();
+					if(!event) { event = window.event; }
+					event.preventDefault();
 					
 					$(this).dialog("close");
 				}
@@ -1776,9 +1782,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(event) {
 					
-					window.event.preventDefault();
+					if(!event) { event = window.event; }
+					event.preventDefault();
 					
 					var data = [{name : "idConferenciaEncalhe", value : idConferenciaEncalhe}];
 					
@@ -1795,9 +1802,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					);
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(event) {
 					
-					window.event.preventDefault();
+					if(!event) { event = window.event; }
+					event.preventDefault();
 					
 					$(this).dialog("close");
 					$('#pesq_cota', ConferenciaEncalhe.workspace).focus();
@@ -1989,9 +1997,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Sim" : function() {
+				"Sim" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarNotaFiscal', null, 
 						function(result){
@@ -2012,10 +2021,11 @@ var ConferenciaEncalhe = $.extend(true, {
 						}
 					);
 				},
-				"Não" : function() {
+				"Não" : function(e) {
 					
-					window.event.preventDefault();
-					alert("xitão chegou !!!!!");
+					var evt = e || window.event;
+					evt.preventDefault();
+					
 					$("#dialog-alert", ConferenciaEncalhe.workspace).dialog("close");
 					
 					$("#qtdeExemplar", ConferenciaEncalhe.workspace).attr('disabled', 'disabled');
@@ -2060,17 +2070,19 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 750,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
 					ConferenciaEncalhe.isConfirmar = true;
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					confirmarPopup_notaFiscal();
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 					
@@ -2114,9 +2126,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 560,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					if ( $("#pesq_prod", ConferenciaEncalhe.workspace).val() != "" ){
 
@@ -2125,9 +2138,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					ConferenciaEncalhe.limparDadosProduto();
 					
@@ -2172,9 +2186,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 755,
 			modal : true,
 			buttons : {
-				"Fechar" : function() {
+				"Fechar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					$(this).dialog("close");
 				}
@@ -2224,9 +2239,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 600,
 			modal : true,
 			buttons : {
-				"Fechar" : function() {
+				"Fechar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					$(this).dialog("close");
 				}
@@ -2262,9 +2278,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			width : 460,
 			modal : true,
 			buttons : {
-				"Confirmar" : function() {
+				"Confirmar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
 					
 					var data = [{name: 'indConferenciaContingencia', value: false}];
 					
@@ -2297,9 +2314,11 @@ var ConferenciaEncalhe = $.extend(true, {
 						}, true, "idModalConfirmarSalvarConf"
 					);
 				},
-				"Cancelar" : function() {
+				"Cancelar" : function(e) {
 					
-					window.event.preventDefault();
+					var evt = e || window.event;
+					evt.preventDefault();
+					
 					ConferenciaEncalhe.processandoConferenciaEncalhe = false;
 					
 					$(this).dialog("close");
@@ -2433,9 +2452,10 @@ var ConferenciaEncalhe = $.extend(true, {
 							width : 460,
 							modal : true,
 							buttons : {
-								"Sim" : function() {
+								"Sim" : function(e) {
 									
-									window.event.preventDefault();
+									var evt = e || window.event;
+									evt.preventDefault();
 									
 									$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
 									
@@ -2451,9 +2471,10 @@ var ConferenciaEncalhe = $.extend(true, {
 									ConferenciaEncalhe.numeroCotaEditavel(true);
 									
 								},
-								"Não" : function() {
+								"Não" : function(e) {
 									
-									window.event.preventDefault();
+									var evt = e || window.event;
+									evt.preventDefault();
 									
 									$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
 									
@@ -2519,17 +2540,19 @@ var ConferenciaEncalhe = $.extend(true, {
 						width : 680,
 						modal : true,
 						buttons : {
-							"Confirmar" : function() {
+							"Confirmar" : function(e) {
 								
-								window.event.preventDefault();
+								var evt = e || window.event;
+								evt.preventDefault();
 								
 								confirmarVeificacaoCobrancaGerada();
 								
 								ConferenciaEncalhe.numeroCotaEditavel(true);
 							},
-							"Cancelar" : function(){
+							"Cancelar" : function(e) {
 							
-								window.event.preventDefault();
+								var evt = e || window.event;
+								evt.preventDefault();
 								
 								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
 							}
