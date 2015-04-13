@@ -67,9 +67,7 @@
 	<detail>
 		<band height="14">
 			<textField isBlankWhenNull="false">
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="411" y="0" width="45" height="14" uuid="ddbc251e-7ea8-4f65-8694-bc0c8b24c8f2">
-					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="411" y="0" width="45" height="14" uuid="ddbc251e-7ea8-4f65-8694-bc0c8b24c8f2"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="5" rightPadding="2">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>

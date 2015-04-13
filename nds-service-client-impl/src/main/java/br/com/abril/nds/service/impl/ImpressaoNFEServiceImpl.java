@@ -267,9 +267,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		
 		DanfeBuilder.carregarDanfeDadosTributarios(danfe, notaFiscal);
 		
-		DanfeBuilder.carregarDanfeDadosTransportadora(danfe, notaFiscal);
-		
 		DanfeBuilder.carregarDadosItensDanfe(danfe, notaFiscal);
+		
+		DanfeBuilder.carregarDanfeDadosTransportadora(danfe, notaFiscal);
 		
 		DanfeBuilder.carregarDadosDuplicatas(danfe, notaFiscal);
 		
