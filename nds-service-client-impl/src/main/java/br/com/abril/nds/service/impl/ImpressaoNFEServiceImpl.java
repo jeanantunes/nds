@@ -205,7 +205,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade()) || TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
 			LOGGER.info("PRESTADOR_SERVICO ..... ");
 			
-			if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
 				
 				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
 					

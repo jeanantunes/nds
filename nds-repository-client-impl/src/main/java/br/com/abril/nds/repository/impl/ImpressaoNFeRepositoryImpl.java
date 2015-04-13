@@ -87,11 +87,20 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append("select notaFiscal")
-		.append(" from NotaFiscal notaFiscal")
+		hql.append("select nf ")
+		.append(" from NotaFiscal nf ")
+		.append(" JOIN nf.notaFiscalInformacoes as nfi ")
+		.append(" JOIN nf.notaFiscalInformacoes.detalhesNotaFiscal as det ")
+		.append(" JOIN nfi.informacaoEletronica as infElet ")
+		.append(" JOIN infElet.retornoComunicacaoEletronica retComElet ")
+		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
+		.append(" JOIN nfi.identificacaoDestinatario as identDest")
+		.append(" JOIN nfi.identificacao as ident ")
+		.append(" JOIN ident.naturezaOperacao as natOp ")
 		.append(" where")
-		.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso is not null ")
-		.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal in (:numerosNotas) ");
+		.append(" infElet.chaveAcesso is not null ")
+		.append(" AND retComElet.protocolo is not null ")
+		.append(" AND ident.numeroDocumentoFiscal in (:numerosNotas) ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("numerosNotas", filtro.getNumerosNotas());
