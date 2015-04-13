@@ -291,7 +291,7 @@
 
 					<legend> Pesquisar Recebimento Físico</legend>
 
-					<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+					<table width="950" cellpadding="2" cellspacing="1" class="filtro">
 
 						<tr>
 
@@ -325,32 +325,21 @@
 							<td width="43"><input id="serie" type="text"
 								style="width: 30px;" maxlength="4"/>
 							</td>
-							<td width="110"><span class="bt_novos">
-								<a href="javascript:;"
-									onclick="recebimentoFisicoController.verificarNotaFiscalExistente();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a> </span>
+							<td width="70">
+								<span class="bt_novos">
+									<a href="javascript:;" onclick="recebimentoFisicoController.verificarNotaFiscalExistente();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a> 
+								</span>
 							</td>
-
 						</tr>
 						<tr>
-							<td colspan="7" height="26">
-
-								<label for="eNF">É uma NF-e?</label>
-
-								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left;  margin-left: 13px; margin-right: 10px; margin-top: 9px;" /> 
-
-								<span id="nfes" class="nfes"> 
-
-								Chave de Acesso: 
-
-								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
-								
-								</span>
-
+							<td colspan="8" height="26">
+								<label for="nfeChaveAcesso">Chave de Acesso</label>
+								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" 
+								onchange="recebimentoFisicoController.validarChaveAcesso('#chaveAcesso');"/>
 							</td>
 
 							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td></span></td>
+							
 						</tr>
 					</table>
 

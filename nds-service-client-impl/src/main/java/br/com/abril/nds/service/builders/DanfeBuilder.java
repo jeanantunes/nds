@@ -235,9 +235,7 @@ public class DanfeBuilder  implements Serializable {
 		String destinatarioCEP 					= "";
 		String destinatarioTelefone 			= "";
 		
-		if (indPessoaJuridica) {
-			destinatarioCNPJ = documento;
-		} 
+		destinatarioCNPJ = documento; 
 		
 		if(endereco!=null) {
 			
@@ -419,7 +417,7 @@ public class DanfeBuilder  implements Serializable {
 			valorUnitarioProduto = detalheNotaFiscal.getProdutoServico().getValorUnitario();
 			valorTotalProduto = detalheNotaFiscal.getProdutoServico().getValorTotalBruto();              
 			
-			CSTProduto 		= ""; //TODO obter campo                                   
+			CSTProduto 		= detalheNotaFiscal.getProdutoServico().getCst();                               
 			CSOSNProduto 	= ""; //TODO obter campo                                    
 			baseCalculoProduto 	= BigDecimal.ZERO;		//TODO obter campo           
 			aliquotaICMSProduto = BigDecimal.ZERO;  //TODO obter campo         

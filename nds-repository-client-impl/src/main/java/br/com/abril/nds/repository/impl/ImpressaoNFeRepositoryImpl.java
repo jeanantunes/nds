@@ -90,7 +90,6 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		hql.append("select nf ")
 		.append(" from NotaFiscal nf ")
 		.append(" JOIN nf.notaFiscalInformacoes as nfi ")
-		.append(" JOIN nf.notaFiscalInformacoes.detalhesNotaFiscal as det ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN infElet.retornoComunicacaoEletronica retComElet ")
 		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
