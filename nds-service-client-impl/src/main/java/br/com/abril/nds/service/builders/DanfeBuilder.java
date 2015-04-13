@@ -401,6 +401,7 @@ public class DanfeBuilder  implements Serializable {
 		BigDecimal valorICMSProduto 	= BigDecimal.ZERO;
 		BigDecimal aliquotaIPIProduto 	= BigDecimal.ZERO;
 		BigDecimal valorIPIProduto 		= BigDecimal.ZERO;
+		BigDecimal totalProduto         = BigDecimal.ZERO;
 		
 		for(DetalheNotaFiscal detalheNotaFiscal : detalhesNotaFiscal) {
 			
@@ -423,7 +424,7 @@ public class DanfeBuilder  implements Serializable {
 			valorICMSProduto 	= BigDecimal.ZERO;      //TODO obter campo     
 			aliquotaIPIProduto 	= BigDecimal.ZERO;      //TODO obter campo     
 			valorIPIProduto 	= BigDecimal.ZERO;  //TODO obter campo         
-			
+			totalProduto.add(valorTotalProduto);
 			
 			ItemDanfe item = new ItemDanfe();
 			
@@ -452,6 +453,9 @@ public class DanfeBuilder  implements Serializable {
 			}
 			listaItemDanfe.add(item);
 		}
+		
+		danfe.setValorProdutos(totalProduto);
+		danfe.setValorNF(totalProduto);
 		danfe.setItensDanfe(listaItemDanfe);
 	}
 	
