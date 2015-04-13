@@ -120,8 +120,19 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" LEFT OUTER JOIN ESTUDO estudo5_ ON lancamento2_.ESTUDO_ID=estudo5_.ID ");
 		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe6_ ON lancamento2_.ID=movimentoe6_.LANCAMENTO_ID ");
 		hql.append(" WHERE lancamento2_.STATUS <> :statusCancelado ");
-		hql.append(" AND produto4_.CODIGO=:codProduto ");
-		hql.append(" AND produtoedi3_.NUMERO_EDICAO=:edProduto ");
+		hql.append(" AND produto4_.CODIGO = :codProduto ");
+		hql.append(" AND produtoedi3_.NUMERO_EDICAO = :edProduto ");
+
+		if(filtro != null && filtro.getDataInicial() != null) {
+			
+			hql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR >= :dtInicial ");
+		}
+		
+		if(filtro != null && filtro.getDataFinal() != null) {
+			
+			hql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR <= :dtFinal ");
+		}
+		
 		hql.append(" GROUP BY periodolan0_.ID ");
 		hql.append(" ORDER BY periodolan0_.NUMERO_PERIODO ");
 		
