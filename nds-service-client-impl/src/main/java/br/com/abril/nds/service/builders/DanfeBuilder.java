@@ -307,8 +307,6 @@ public class DanfeBuilder  implements Serializable {
 		danfe.setValorOutro(valorOutro);
 		danfe.setValorIPI(valorIPI);
 		danfe.setValorNF(valorNF);
-
-		
 	}
 	
 	/**
