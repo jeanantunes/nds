@@ -757,6 +757,8 @@ public abstract class Util {
     
     public static boolean validarChaveAcesso(String chaveAcessoInformada) {
         
+    	boolean retorno = false;  
+    	
     	try {  
     		String cUF = chaveAcessoInformada.substring(0,2); // Código da UF do emitente do Documento Fiscal.  
             String dataAAMM = chaveAcessoInformada.substring(2,6); // Ano e Mês de emissão da NF-e.  
@@ -776,20 +778,16 @@ public abstract class Util {
             chave.append(nNF);  
             chave.append(tpEmis);  
             chave.append(cNF);  
-            chave.append(montarChaveAcesso(chave.toString()));              
+           retorno = montarChaveAcesso(chave.toString());              
             
 		} catch (Exception e) {  
 			LOGGER.error("Exception: "+ e.getMessage());  
 		}
-    	
-    	if(!chaveAcessoInformada.equals(chaveAcessoInformada)){
-    		return true;
-    	}
-    	
-        return false;
+    	    	
+        return retorno;
     }
     
-    public static int montarChaveAcesso(String chave) {  
+    public static boolean montarChaveAcesso(String chave) {  
         int total = 0;  
         int peso = 2;  
               
@@ -800,6 +798,6 @@ public abstract class Util {
                 peso = 2;  
         }  
         int resto = total % 11;  
-        return (resto == 0 || resto == 1) ? 0 : (11 - resto);  
+        return (resto == 0 || resto == 1) ? true : false;  
     }
 }

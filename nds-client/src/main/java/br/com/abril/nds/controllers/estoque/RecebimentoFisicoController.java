@@ -1793,4 +1793,22 @@ public class RecebimentoFisicoController extends BaseController {
 		}
 	}
     
+    @Post
+    @Path("/validarChaveAcesso")
+    public void validarChaveAcesso(final String chaveAcesso) {
+		
+    	if(chaveAcesso != null && !chaveAcesso.isEmpty()){
+    		if(chaveAcesso.length() < 44) {
+    			result.use(CustomJson.class).from(new ValidacaoException(TipoMensagem.WARNING, "A chave de acesso deve conter o tamanho de 44 caracteres!")).serialize();
+    		}
+    	}
+    	
+    	
+    	if(!Util.validarChaveAcesso(chaveAcesso)){
+    		result.use(CustomJson.class).from(new ValidacaoException(TipoMensagem.WARNING, "A chave de acesso invalida!")).serialize();
+    	} else {
+    		result.use(CustomJson.class).from(new ValidacaoException(TipoMensagem.SUCCESS, "Chave de a acesso validado com suceso")).serialize();
+    	}
+    	
+	}
 }

@@ -216,6 +216,26 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	},
 
+	validarChaveAcesso : function() {
+		
+		var chaveAcesso = $("#chaveAcesso", recebimentoFisicoController.workspace).val();
+		
+		$.postJSON(this.path + 'validarChaveAcesso', {chaveAcesso : chaveAcesso}, 
+		function(result) {
+			
+			var validacao = result.validacao;
+			
+			if(validacao.tipoMensagem == "WARNING") {
+				exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
+			}
+			
+			if(validacao.tipoMensagem == "SUCESS") {
+	            chaveAcesso.substring(22, 25); // Série do Documento Fiscal.
+	            chaveAcesso.substring(25, 33); // Número do Documento Fiscal.
+			}
+		});
+	},
+	
 	/**
 	 * SE UMA NOTA FOR ENCONTRADA, SERAO PESQUISADOS OS ITEM RELATIVOS A MESMA
 	 * E POPULADA A GRID, CASO CONTRARIO, SERA EXIBIDA POPUP PARA SE CADASTRAR UMA
@@ -267,8 +287,6 @@ var recebimentoFisicoController = $.extend(true, {
 			}
 			
 			if (result.chaveAcesso){
-				$("#eNF", recebimentoFisicoController.workspace).check();
-				recebimentoFisicoController.mostrar_nfes();
 				$("#chaveAcesso", recebimentoFisicoController.workspace).val(result.chaveAcesso);
 			}
 			
@@ -525,26 +543,6 @@ var recebimentoFisicoController = $.extend(true, {
 			$( "#effect:visible", recebimentoFisicoController.workspace).removeAttr("style" ).fadeOut();
 	
 		}, 1000 );
-	},	
-	
-	
-	/**
-	 * APRESENTA O CAMPO DE CHAVE DA NFE.
-	 */
-	mostrar_nfes : function(){
-		
-		if( $("#eNF", recebimentoFisicoController.workspace).attr('checked') == 'checked' ){
-			
-			$(".nfes", recebimentoFisicoController.workspace).show();
-			
-		}else{
-			
-			$(".nfes", recebimentoFisicoController.workspace).hide();
-			
-			$("#chaveAcesso", recebimentoFisicoController.workspace).val("");
-			
-		}
-
 	},
 	
 	/**
@@ -2625,5 +2623,4 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 	}
 }, BaseController);
-
 //@ sourceURL=recebimentoFisico.js
