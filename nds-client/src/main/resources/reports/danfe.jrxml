@@ -737,6 +737,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 				</elementGroup>
 				<textField>
 					<reportElement style="dados" x="496" y="103" width="308" height="16" uuid="7d22e0ed-5db8-4cf2-8f7e-216165634301"/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{protocolo}]]></textFieldExpression>
 				</textField>
 			</frame>
@@ -755,7 +756,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<reportElement style="borda" x="52" y="26" width="328" height="24" uuid="521ca114-6761-43d8-8c3f-6c830e435c33"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="734" y="51" width="78" height="24" uuid="833a052a-f215-4989-b792-7a352e2b64a8"/>
+					<reportElement style="borda" x="734" y="50" width="78" height="24" uuid="833a052a-f215-4989-b792-7a352e2b64a8"/>
 				</rectangle>
 				<rectangle>
 					<reportElement style="borda" x="734" y="2" width="78" height="24" uuid="c1b6fb21-026e-4256-a4de-a4458f5b59d5"/>
@@ -875,7 +876,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[DATA EMISSÃO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="644" y="27" width="86" height="6" uuid="49d345f4-40c6-4341-a918-4376d5d299cb"/>
+					<reportElement style="campoPequeno" x="644" y="28" width="86" height="6" uuid="49d345f4-40c6-4341-a918-4376d5d299cb"/>
 					<text><![CDATA[CEP]]></text>
 				</staticText>
 				<staticText>
@@ -901,7 +902,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[CNPJ / CPF]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="736" y="26" width="64" height="6" uuid="a0bcf1db-6bb5-4858-bbc5-f8afc7f515e2"/>
+					<reportElement style="campoPequeno" x="736" y="28" width="64" height="6" uuid="a0bcf1db-6bb5-4858-bbc5-f8afc7f515e2"/>
 					<textElement>
 						<font isBold="false"/>
 					</textElement>
@@ -920,7 +921,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[VALOR TOTAL DOS PRODUTOS]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="382" y="26" width="132" height="6" uuid="2703835f-e73b-46fd-b7d3-0bdae14daeb0"/>
+					<reportElement style="campoPequeno" x="382" y="28" width="132" height="6" uuid="2703835f-e73b-46fd-b7d3-0bdae14daeb0"/>
 					<text><![CDATA[BAIRRO / DISTRITO]]></text>
 				</staticText>
 				<staticText>
@@ -1074,6 +1075,7 @@ VOLUMES]]></text>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
 					<reportElement style="dados" x="736" y="58" width="73" height="16" uuid="ce086d46-988b-4aaf-8086-9cd7942e0383"/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{horaSaida}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
@@ -1082,6 +1084,7 @@ VOLUMES]]></text>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement style="dados" x="736" y="34" width="73" height="16" uuid="8fb6980d-676b-47e2-9007-bcabb285561a"/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{dataSaida}]]></textFieldExpression>
 				</textField>
 				<textField pattern="(##) ####-####">
@@ -1090,6 +1093,7 @@ VOLUMES]]></text>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement style="dados" x="736" y="9" width="73" height="16" uuid="cbe29ee8-676a-463f-975a-d057d7001bc4"/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{dataEmissao}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -1102,10 +1106,12 @@ VOLUMES]]></text>
 				</textField>
 				<textField pattern="#####-###" isBlankWhenNull="true">
 					<reportElement style="dados" x="644" y="34" width="86" height="16" uuid="a209a0e5-d0e1-44b2-8621-c2b3dcddf845"/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{destinatarioCEP}.substring( 0, 5 ) + "-" + $F{destinatarioCEP}.substring( 5, 8 )]]></textFieldExpression>
 				</textField>
 				<textField pattern="##.###.###/####-##" isBlankWhenNull="true">
 					<reportElement style="dados" x="600" y="9" width="131" height="16" uuid="e64aae44-77a0-43cd-9b10-9448486756b8"/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{destinatarioCNPJ}.length() == 14 ? $F{destinatarioCNPJ}.substring(0,2) + "." +
 $F{destinatarioCNPJ}.substring(2,5) + "." + $F{destinatarioCNPJ}.substring(5,8) + "/" +
 $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,14) : $F{destinatarioCNPJ}]]></textFieldExpression>
@@ -1296,11 +1302,11 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 				</rectangle>
 				<staticText>
 					<reportElement style="campoPequeno" x="592" y="77" width="79" height="6" uuid="41d6bc39-57d3-43e5-889a-e26fd7b91aa3"/>
-					<text><![CDATA[Valor do PIS]]></text>
+					<text><![CDATA[VALOR DO PIS]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="campoPequeno" x="593" y="101" width="79" height="6" uuid="f11eef80-805a-409a-831d-1efa11917bb4"/>
-					<text><![CDATA[valor do Cofins]]></text>
+					<text><![CDATA[VALOR DA COFINS]]></text>
 				</staticText>
 			</frame>
 		</band>

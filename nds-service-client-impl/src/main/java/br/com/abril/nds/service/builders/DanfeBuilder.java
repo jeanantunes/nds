@@ -289,13 +289,13 @@ public class DanfeBuilder  implements Serializable {
 		BigDecimal valorBaseICMSSubstituto 	= informacaoValoresTotais.getValorBaseCalculoICMSST();
 		BigDecimal valorICMSSubstituto 		= informacaoValoresTotais.getValorICMSST();
 		
-		BigDecimal valorProdutos 			= informacaoValoresTotais.getValorProdutos();
+		BigDecimal valorProdutos 			= notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().getValorProdutos();
 		
 		BigDecimal valorFrete 				= informacaoValoresTotais.getValorFrete();
 		BigDecimal valorSeguro 				= informacaoValoresTotais.getValorSeguro();
 		BigDecimal valorOutro 				= informacaoValoresTotais.getValorOutro();
 		BigDecimal valorIPI 				= informacaoValoresTotais.getValorIPI();
-		BigDecimal valorNF 					= informacaoValoresTotais.getValorNotaFiscal();
+		BigDecimal valorNF 					= notaFiscal.getNotaFiscalInformacoes().getNotaFiscalValoresCalculados().getValoresCalculados().getValorNF();
 		
 		danfe.setValorBaseICMS(valorBaseICMS);
 		danfe.setValorICMS(valorICMS);
