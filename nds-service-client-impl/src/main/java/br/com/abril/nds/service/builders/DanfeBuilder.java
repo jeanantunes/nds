@@ -74,7 +74,6 @@ public class DanfeBuilder  implements Serializable {
 		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
 		
 		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais().getTotaisISSQN();
-		InformacaoAdicional informacaoAdicional = notaFiscal.getNotaFiscalInformacoes().getInformacaoAdicional();
 		
 		int tipoNF = identificacao.getTipoOperacao().ordinal();
 		
@@ -106,8 +105,8 @@ public class DanfeBuilder  implements Serializable {
 		}
 		
 		String informacoesComplementares = "";
-		if(informacaoAdicional != null)
-			informacoesComplementares 	= informacaoAdicional.getInformacoesComplementares();
+		if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() != null)
+			informacoesComplementares = notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString();
 		
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo
