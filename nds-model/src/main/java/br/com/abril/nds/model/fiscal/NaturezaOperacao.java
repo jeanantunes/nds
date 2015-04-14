@@ -114,7 +114,7 @@ public class NaturezaOperacao implements Serializable {
 	            		@JoinColumn(table="NATUREZA_OPERACAO", name="NATUREZA_OPERACAO_ID", referencedColumnName="id", nullable=false)
 	                    },
 	            inverseJoinColumns=@JoinColumn(table="TRIBUTOS", name="TRIBUTO_ID", referencedColumnName="id"))
-	private List<Tributo> tipoNaturezaTributo;
+	private List<Tributo> tributosNaturezaOperacao;
 	
 	@Column(name = "NOTA_FISCAL_NUMERO_NF", length=60)
 	private Long notaFiscalNumeroNF;
@@ -292,12 +292,12 @@ public class NaturezaOperacao implements Serializable {
 		this.formaComercializacao = formaComercializacao;
 	}
 	
-	public List<Tributo> getTipoNaturezaTributo() {
-		return tipoNaturezaTributo;
+	public List<Tributo> getTributosNaturezaOperacao() {
+		return tributosNaturezaOperacao;
 	}
 	
-	public void setTipoNaturezaTributo(List<Tributo> tipoNaturezaTributo) {
-		this.tipoNaturezaTributo = tipoNaturezaTributo;
+	public void setTributosNaturezaOperacao(List<Tributo> tributosNaturezaOperacao) {
+		this.tributosNaturezaOperacao = tributosNaturezaOperacao;
 	}
 	
 	@Override

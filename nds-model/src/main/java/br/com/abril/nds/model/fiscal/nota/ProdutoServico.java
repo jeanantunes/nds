@@ -64,7 +64,7 @@ public class ProdutoServico implements Serializable {
 	@Column(name="CODIGO_BARRAS", length=14, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=1, tamanho=14), @NFEExport(secao=TipoSecao.I, posicao=10, tamanho=14)})
 	@XmlElement(name="cEAN")
-	private Long codigoBarras;
+	private String codigoBarras;
 	
 	/**
 	 * xProd
@@ -138,7 +138,7 @@ public class ProdutoServico implements Serializable {
 
 	@Transient
 	@XmlElement(name="cEANTrib")
-	private Long codigoBarrasXML;
+	private String codigoBarrasXML;
 	
 
 	@Transient
@@ -259,14 +259,14 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * @return the codigoBarras
 	 */
-	public Long getCodigoBarras() {
+	public String getCodigoBarras() {
 		return codigoBarras;
 	}
 
 	/**
 	 * @param codigoBarras the codigoBarras to set
 	 */
-	public void setCodigoBarras(Long codigoBarras) {
+	public void setCodigoBarras(String codigoBarras) {
 		this.codigoBarras = codigoBarras;
 		this.codigoBarrasXML = codigoBarras;
 	}
