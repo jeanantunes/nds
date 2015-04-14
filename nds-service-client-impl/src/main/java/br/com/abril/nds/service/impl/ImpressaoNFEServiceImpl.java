@@ -249,7 +249,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				}
 			}		
 			
-		}else{
+		} else {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao comparar o tipo de atividade");
 		}
 		
