@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="157"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
@@ -557,7 +557,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[DOCUMENTO AUXILIAR DE NOTA FISCAL ELETRÔNICA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="376" y="51" width="60" height="14" uuid="078dbf49-e538-4e2c-a434-27ddc89ec781"/>
+					<reportElement style="campoPequeno" x="370" y="51" width="60" height="14" uuid="078dbf49-e538-4e2c-a434-27ddc89ec781"/>
 					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="false"/>
@@ -565,7 +565,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[1 - SAÍDA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="376" y="38" width="60" height="14" uuid="571b45e7-971c-4492-a1fa-8d6b67a52891"/>
+					<reportElement style="campoPequeno" x="370" y="38" width="60" height="14" uuid="571b45e7-971c-4492-a1fa-8d6b67a52891"/>
 					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="false"/>
@@ -586,28 +586,28 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{tipoNF}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="campoPequeno" x="376" y="67" width="69" height="14" uuid="04c3c629-a280-4592-98eb-fd8aabf2c880"/>
+					<reportElement style="campoPequeno" x="370" y="66" width="69" height="14" uuid="04c3c629-a280-4592-98eb-fd8aabf2c880"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Nº " + $F{numeroNF}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="campoPequeno" x="430" y="85" width="24" height="10" uuid="0559acbd-8fd3-44a8-a250-286751b7ac1f"/>
+					<reportElement style="campoPequeno" x="434" y="81" width="35" height="14" uuid="0559acbd-8fd3-44a8-a250-286751b7ac1f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["FOLHA " + $V{PAGE_NUMBER} + " /"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="campoPequeno" x="376" y="85" width="35" height="10" uuid="77013cbe-5cb3-4ae0-ad55-a7273f44561c"/>
+					<reportElement style="campoPequeno" x="370" y="81" width="60" height="14" uuid="77013cbe-5cb3-4ae0-ad55-a7273f44561c"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["SÉRIE: " + $F{serie}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement style="campoPequeno" x="453" y="85" width="23" height="10" uuid="1683504b-32b2-4e9b-80ce-7d9d43ed37c3"/>
+					<reportElement style="campoPequeno" x="469" y="81" width="23" height="14" uuid="1683504b-32b2-4e9b-80ce-7d9d43ed37c3"/>
 					<textElement verticalAlignment="Middle">
 						<font size="6"/>
 					</textElement>
