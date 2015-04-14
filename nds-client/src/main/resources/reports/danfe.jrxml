@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
@@ -302,7 +302,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
 					<font size="50"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ambiente}.equals( "0" ) || $F{protocolo} == null ? "SEM VALOR FISCAL" : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ambiente}.equals( "2" ) || $F{protocolo} == null ? "SEM VALOR FISCAL" : ""]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement style="borda" positionType="Float" x="0" y="0" width="30" height="81" isPrintInFirstWholeBand="true" uuid="39801522-c7d3-4b0e-9800-8407d76bd58b"/>
@@ -509,28 +509,28 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</graphicElement>
 				</rectangle>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="119" y="2" width="246" height="34" uuid="d98f5e06-5df8-49ba-8382-ef0359f74061"/>
+					<reportElement style="dados" positionType="Float" x="148" y="2" width="220" height="34" uuid="d98f5e06-5df8-49ba-8382-ef0359f74061"/>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorNome}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="119" y="36" width="246" height="14" uuid="a78c5296-b8b9-4826-ba0c-d73ffa2efea1"/>
+					<reportElement style="dados" positionType="Float" x="148" y="36" width="220" height="14" uuid="a78c5296-b8b9-4826-ba0c-d73ffa2efea1"/>
 					<textElement>
 						<font size="8" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorLogradouro} + ", " + $F{emissorNumero} + " - " + $F{emissorBairro}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="119" y="53" width="246" height="14" uuid="17001980-4fff-49ff-8695-ba9217ea627d"/>
+					<reportElement style="dados" positionType="Float" x="148" y="53" width="220" height="14" uuid="17001980-4fff-49ff-8695-ba9217ea627d"/>
 					<textElement>
 						<font size="8" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorMunicipio} + " - " + $F{emissorUF}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="119" y="74" width="214" height="14" uuid="494f0dc1-9ccd-4c28-a9a3-18abbcb78aec"/>
+					<reportElement style="dados" positionType="Float" x="149" y="74" width="186" height="14" uuid="494f0dc1-9ccd-4c28-a9a3-18abbcb78aec"/>
 					<textElement>
 						<font size="8" isPdfEmbedded="true"/>
 					</textElement>
@@ -593,21 +593,21 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA["Nº " + $F{numeroNF}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="campoPequeno" x="415" y="85" width="24" height="10" uuid="0559acbd-8fd3-44a8-a250-286751b7ac1f"/>
+					<reportElement style="campoPequeno" x="430" y="85" width="24" height="10" uuid="0559acbd-8fd3-44a8-a250-286751b7ac1f"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="6"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["FOLHA " + $V{PAGE_NUMBER} + " /"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="campoPequeno" x="376" y="85" width="35" height="10" uuid="77013cbe-5cb3-4ae0-ad55-a7273f44561c"/>
 					<textElement verticalAlignment="Middle">
-						<font size="6"/>
+						<font size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["SÉRIE: " + $F{serie}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
-					<reportElement style="campoPequeno" x="438" y="85" width="23" height="10" uuid="1683504b-32b2-4e9b-80ce-7d9d43ed37c3"/>
+					<reportElement style="campoPequeno" x="453" y="85" width="23" height="10" uuid="1683504b-32b2-4e9b-80ce-7d9d43ed37c3"/>
 					<textElement verticalAlignment="Middle">
 						<font size="6"/>
 					</textElement>
@@ -688,7 +688,7 @@ $F{chave}.substring(36,40) + " " + $F{chave}.substring(40,44) + " " : "" ) : $F{
 					<reportElement style="borda" x="37" y="96" width="458" height="24" uuid="43784c2e-a73b-4026-9127-fb6458edc58e"/>
 				</rectangle>
 				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank" evaluationTime="Report">
-					<reportElement x="40" y="4" width="77" height="62" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
+					<reportElement x="40" y="4" width="108" height="84" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
 					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
 				<staticText>
@@ -913,7 +913,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[NOME / RAZÃO SOCIAL]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="465" y="77" width="98" height="6" uuid="969ad4ae-31ac-41bc-bbb9-215208fc989e"/>
+					<reportElement style="campoPequeno" x="465" y="77" width="122" height="6" uuid="969ad4ae-31ac-41bc-bbb9-215208fc989e"/>
 					<text><![CDATA[VALOR DO ICMS SUBST.]]></text>
 				</staticText>
 				<staticText>
@@ -1018,7 +1018,7 @@ VOLUMES]]></text>
 					<text><![CDATA[CÓDIGO ANTT]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="101" width="25" height="6" uuid="2671ebec-26ef-4f38-ac3e-c0fa78c5ee8d"/>
+					<reportElement style="campoPequeno" x="53" y="101" width="65" height="6" uuid="2671ebec-26ef-4f38-ac3e-c0fa78c5ee8d"/>
 					<text><![CDATA[VALOR DO FRETE]]></text>
 				</staticText>
 				<staticText>
@@ -1129,12 +1129,12 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					</textElement>
 					<textFieldExpression><![CDATA[$F{valorICMS} == null ? "0.00" : $F{valorICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="675" y="84" width="135" height="16" uuid="5c55655f-987b-4a65-8ea1-3c436f7fa0a7"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorProdutos}]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+				<textField pattern="###0.00" isBlankWhenNull="false">
 					<reportElement style="dados" x="320" y="84" width="141" height="16" uuid="600fdd42-42a0-4a3f-901d-0f080be9aabc"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorBaseICMSSubstituto} == null ? 0.00 : $F{valorBaseICMSSubstituto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
@@ -1144,7 +1144,7 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorOutro} == null ? "0.00" : $F{valorOutro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="677" y="107" width="132" height="16" uuid="cf5c6e6a-e105-43d5-8a68-a0c12cedf49c"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorNF}]]></textFieldExpression>
@@ -1159,7 +1159,7 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorSeguro} == null ? "0.00" : $F{valorSeguro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="60" y="107" width="88" height="16" uuid="03b1f69e-db56-4edf-b2d1-1faa79a9df35"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorFrete} == null ? "0.00" : $F{valorFrete}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
@@ -1225,7 +1225,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<textFieldExpression><![CDATA[$F{transportadoraEspecie}]]></textFieldExpression>
 				</textField>
 				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
-					<reportElement style="dados" x="491" y="84" width="71" height="16" uuid="eefab22d-7cdf-46d9-994f-d2bf9703d7db"/>
+					<reportElement style="dados" x="516" y="84" width="71" height="16" uuid="eefab22d-7cdf-46d9-994f-d2bf9703d7db"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorICMSSubstituto} == null ? 0.00 : $F{valorICMSSubstituto}.round(new MathContext(2, RoundingMode.HALF_EVEN)).toString()]]></textFieldExpression>
 				</textField>
@@ -1514,7 +1514,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 	<detail>
 		<band height="58">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="27" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="30" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
@@ -1632,17 +1632,17 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<reportElement style="campoPequeno" x="617" y="29" width="187" height="6" uuid="028cac12-6b25-4541-b9be-ed70017b86fc"/>
 					<text><![CDATA[RESERVADO AO FISCO]]></text>
 				</staticText>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="217" y="9" width="191" height="16" uuid="1d835e42-770c-4433-8d77-739b15db2a58"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{ISSQNTotal} != null ? $F{ISSQNTotal}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="417" y="9" width="194" height="16" uuid="89dac2ae-205f-4b43-90c1-e38db4a475c7"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{ISSQNBase} != null ? $F{ISSQNBase}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="616" y="9" width="195" height="16" uuid="f2dde265-045f-4ac7-a42f-718eeeabd3c6"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{ISSQNValor} != null ? $F{ISSQNValor}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
@@ -1654,7 +1654,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 				<textField isBlankWhenNull="true">
 					<reportElement style="dados" x="55" y="34" width="545" height="60" uuid="606b6f95-68c2-4b77-8f26-13caf8d81aad"/>
 					<textElement verticalAlignment="Top">
-						<font isItalic="false"/>
+						<font size="6" isItalic="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{informacoesComplementares}]]></textFieldExpression>
 				</textField>

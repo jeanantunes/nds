@@ -229,9 +229,9 @@ var recebimentoFisicoController = $.extend(true, {
 				exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
 			}
 			
-			if(validacao.tipoMensagem == "SUCESS") {
-	            chaveAcesso.substring(22, 25); // Série do Documento Fiscal.
-	            chaveAcesso.substring(25, 33); // Número do Documento Fiscal.
+			if(validacao.tipoMensagem == "SUCCESS") {
+				$("#serie", recebimentoFisicoController.workspace).val(chaveAcesso.substring(22, 25)); // Série do Documento Fiscal.
+				$("#notaFiscal", recebimentoFisicoController.workspace).val(chaveAcesso.substring(26, 35)); // Número do Documento Fiscal.
 			}
 		});
 	},

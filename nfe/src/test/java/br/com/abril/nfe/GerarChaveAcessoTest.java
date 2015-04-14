@@ -12,7 +12,7 @@ public class GerarChaveAcessoTest {
 	
 	@Test
 	public void montarChaveAcesso() throws Exception {
-		String chaveAcesso = "NFe42110585785244000199550010000000202000000050";
+		String chaveAcesso = "NFe35150411411415000174550210000000201000000203";
 		
 		try {  
             String cUF = "42"; // Código da UF do emitente do Documento Fiscal.  
@@ -48,7 +48,7 @@ public class GerarChaveAcessoTest {
 	
 	@Test
 	public void validarChaveAcesso() throws Exception {
-		String chaveAcessoInformada = "42110585785244000199550010000000202000000050";
+		String chaveAcessoInformada = "35150411411415000174550210000000201000000203";
 		
 		try {  
             String cUF = chaveAcessoInformada.substring(0,2); // Código da UF do emitente do Documento Fiscal.  
@@ -105,15 +105,7 @@ public class GerarChaveAcessoTest {
         }  
         return strPad;  
     }  
-  
-    /** 
-     * Log ERROR. 
-     * @param error 
-     */  
-    private static void error(String error) {  
-        System.out.println("| ERROR: " + error);  
-    }  
-  
+    
     /** 
      * Log INFO. 
      * @param info 
