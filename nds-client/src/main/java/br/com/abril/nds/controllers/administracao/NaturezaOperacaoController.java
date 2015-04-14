@@ -62,13 +62,10 @@ public class NaturezaOperacaoController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade,String>>();
+		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade, String>>();
 		
-		for(TipoAtividade atividade : TipoAtividade.values()){
-			listaAtividades.add(new ItemDTO<TipoAtividade, String>(atividade,atividade.getDescricao()));
-		}
-		
-		result.include("listaAtividades",listaAtividades);
+		listaAtividades.add(new ItemDTO<TipoAtividade, String>(distribuidorService.obter().getTipoAtividade(), distribuidorService.obter().getTipoAtividade().getDescricao()));
+		result.include("listaAtividades", listaAtividades);
 	}
 
 	private static final String FILTRO_CADASTRO_TIPO_NOTA_SESSION_ATTRIBUTE = "filtroCadastroTipoNota";

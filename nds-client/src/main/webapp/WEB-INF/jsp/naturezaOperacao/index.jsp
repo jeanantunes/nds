@@ -34,7 +34,7 @@ $(function(){
 					  	 </c:forEach>
 					   </select>
          		</td>
-	            <td width="74">Tipo de Nota:</td>
+	            <td width="74">Descrição:</td>
 	            <td width="200"><input type="text" name="tipoNota" id="tipoNota" style="width:200px;" class="campoDePesquisa" /></td>
 	         	<td width="411"><span id="btnPesquisar" class="bt_novos"><a href="javascript:;" class="botaoPesquisar" ><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
      		</tr>

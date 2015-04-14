@@ -1,6 +1,6 @@
 var cadastroTipoNotaController = $.extend(true, {
 
-	buscar: function(){
+	buscar: function() {
 		var operacao = $("#operacaoID", this.worspace).val();
 		var tipoNota = $("#tipoNota", this.workspace).val();
 		$(".tiposNotasGrid", this.worspace).flexOptions({
@@ -33,13 +33,7 @@ var cadastroTipoNotaController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},{
-				display : 'Processo',
-				name : 'processo',
-				width : 200,
-				sortable : false,
-				align : 'left'
-			},{
-				display : 'Tipo de Nota',
+				display : 'Descrição',
 				name : 'nopDescricao',
 				width : 390,
 				sortable : true,
