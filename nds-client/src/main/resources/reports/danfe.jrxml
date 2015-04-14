@@ -59,10 +59,11 @@
 	<parameter name="FAT_VENCIMENTO10" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="FAT_VALOR10" class="java.lang.Double" isForPrompting="false"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
-	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<queryString language="xPath">
 		<![CDATA[]]>
 	</queryString>
@@ -606,19 +607,19 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<textFieldExpression><![CDATA["SÉRIE: " + $F{serie}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Report">
-					<reportElement style="campoPequeno" x="469" y="81" width="23" height="14" uuid="1683504b-32b2-4e9b-80ce-7d9d43ed37c3"/>
-					<textElement verticalAlignment="Middle">
-						<font size="6"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
 				<rectangle>
 					<reportElement style="borda" x="368" y="0" width="444" height="96" uuid="a100921a-69a4-4a42-a446-e6a08f05eb43"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
+				<textField evaluationTime="Report">
+					<reportElement style="campoPequeno" x="469" y="81" width="23" height="14" uuid="1683504b-32b2-4e9b-80ce-7d9d43ed37c3"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
 				<componentElement>
 					<reportElement stretchType="RelativeToTallestObject" x="508" y="2" width="273" height="43" uuid="1c2fe946-2e67-4199-b798-2e60d8aeefe1"/>
 					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128C" drawText="false" checksumRequired="false" barHeight="103">
@@ -1098,7 +1099,7 @@ VOLUMES]]></text>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="dados" x="53" y="33" width="322" height="16" uuid="58685264-efbd-474b-a350-b9ed52f9e39a"/>
-					<textFieldExpression><![CDATA[$F{destinatarioLogradouro} != null ? $F{destinatarioLogradouro} : "" + ", " + $F{destinatarioNumero} != null ? $F{destinatarioNumero} : ""  + " " + $F{destinatarioComplemento} != null ? $F{destinatarioComplemento} : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{destinatarioLogradouro}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="dados" x="53" y="10" width="513" height="16" uuid="f35321ed-1502-4bd5-aa82-4ae96dd4e51a"/>
@@ -1109,14 +1110,12 @@ VOLUMES]]></text>
 					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{destinatarioCEP}.substring( 0, 5 ) + "-" + $F{destinatarioCEP}.substring( 5, 8 )]]></textFieldExpression>
 				</textField>
-				<textField pattern="##.###.###/####-##" isBlankWhenNull="true">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement style="dados" x="600" y="9" width="131" height="16" uuid="e64aae44-77a0-43cd-9b10-9448486756b8"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[$F{destinatarioCNPJ}.length() == 14 ? $F{destinatarioCNPJ}.substring(0,2) + "." +
-$F{destinatarioCNPJ}.substring(2,5) + "." + $F{destinatarioCNPJ}.substring(5,8) + "/" +
-$F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,14) : $F{destinatarioCNPJ}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{destinatarioCNPJ}]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00">
+				<textField pattern="###0.00">
 					<reportElement style="dados" x="67" y="84" width="64" height="16" uuid="afe4cdf9-5a17-4b51-894a-5253d31284ae"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorBaseICMS} == null ? 0.00 : $F{valorBaseICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN)).toString()]]></textFieldExpression>
@@ -1224,7 +1223,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<reportElement style="dados" x="101" y="182" width="78" height="16" uuid="9990ae02-1d6e-452e-aece-05a67498e52d"/>
 					<textFieldExpression><![CDATA[$F{transportadoraEspecie}]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="516" y="84" width="71" height="16" uuid="eefab22d-7cdf-46d9-994f-d2bf9703d7db"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorICMSSubstituto} == null ? 0.00 : $F{valorICMSSubstituto}.round(new MathContext(2, RoundingMode.HALF_EVEN)).toString()]]></textFieldExpression>
@@ -1514,7 +1513,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 	<detail>
 		<band height="58">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="58" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
+				<reportElement stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="30" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>

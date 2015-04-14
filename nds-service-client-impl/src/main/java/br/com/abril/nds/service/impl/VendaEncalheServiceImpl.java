@@ -1467,6 +1467,12 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				for(Lancamento l : lancamentos) {
 					
+					if(l.getDataLancamentoDistribuidor().equals(distribuidorService.obter().getDataOperacao())) {
+						
+						vendaBloqueada = true;
+						throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto está sendo lançado hoje. A venda não pode ser efetivada.");
+					}
+					
 					if(!produtoEdicao.isParcial() && !TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
 						
 						vendaBloqueada = true;

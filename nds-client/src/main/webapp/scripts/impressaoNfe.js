@@ -171,6 +171,13 @@ var impressaoNfeController = $.extend(true, {
 
 		impressaoNfeController.filtroNotasImprimirNFe = [];
 		
+		if(typeof($('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()) === 'undefined' 
+				|| $('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val() < 0) {
+			
+			exibirMensagemDialog("WARNING", ["Selecione a Natureza de Operação desejada."], "");
+			return;
+		}
+		
 		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()},
@@ -196,9 +203,7 @@ var impressaoNfeController = $.extend(true, {
 				'name' : 'filtro.codigosProdutos[]',
 				'value' : impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto']
 			});
-
 		}
-
 
 		$(".impressaoGrid", impressaoNfeController.workspace).flexOptions({
 			preProcess: impressaoNfeController.executarPreProcessamento,
