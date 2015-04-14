@@ -387,6 +387,7 @@ public class DanfeBuilder  implements Serializable {
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
+		Long produtoEdicao          = Long.valueOf(0);
 		String NCMProduto 			= "";
 		String CFOPProduto 			= "";
 		BigInteger quantidadeProduto = BigInteger.ZERO;
@@ -406,8 +407,8 @@ public class DanfeBuilder  implements Serializable {
 			String unidade = detalheNotaFiscal.getProdutoServico().getUnidade();
 					
 			codigoProduto 		= detalheNotaFiscal.getProdutoServico().getCodigoProduto().toString();
-			descricaoProduto 	= detalheNotaFiscal.getProdutoServico().getDescricaoProduto();
-			
+			descricaoProduto 	= detalheNotaFiscal.getProdutoServico().getDescricaoProduto().trim();
+			produtoEdicao       = detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao();
 			NCMProduto 			= detalheNotaFiscal.getProdutoServico().getNcm().toString();
 			CFOPProduto 		= detalheNotaFiscal.getProdutoServico().getCfop().toString();                            
 			
@@ -428,7 +429,7 @@ public class DanfeBuilder  implements Serializable {
 			
 			item.setCodigoProduto(codigoProduto);
 			item.setDescricaoProduto(descricaoProduto);
-			item.setProdutoEdicao(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+			item.setProdutoEdicao(produtoEdicao);
 			item.setNCMProduto(NCMProduto);
 			item.setCFOPProduto(CFOPProduto);
 			item.setUnidadeProduto(unidade);
