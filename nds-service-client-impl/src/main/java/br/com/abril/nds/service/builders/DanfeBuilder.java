@@ -30,7 +30,6 @@ import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
-import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
@@ -40,6 +39,8 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
+import br.com.caelum.stella.format.CNPJFormatter;
+import br.com.caelum.stella.format.CPFFormatter;
 
 public class DanfeBuilder  implements Serializable {
 	
@@ -164,7 +165,7 @@ public class DanfeBuilder  implements Serializable {
 		String emissorUF 			=   "";
 		String emissorCEP 			=   "";
 		
-		if(endereco!=null) {
+		if(endereco != null) {
 			
 			emissorLogradouro 	= endereco.getLogradouro();
 			emissorNumero 		= endereco.getNumero().toString();
@@ -183,7 +184,6 @@ public class DanfeBuilder  implements Serializable {
 			emissorTelefone = ddd + phone;	
 		}
 				
-		
 		emissorCEP = tratarCep(emissorCEP);
 		emissorTelefone = tratarTelefone(emissorTelefone);
 		
@@ -219,8 +219,6 @@ public class DanfeBuilder  implements Serializable {
 		NotaFiscalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
-		boolean indPessoaJuridica = false;
-		
 		String destinatarioCNPJ 				= "";
 		String destinatarioNome 				= identificacaoDestinatario.getNome();
 		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstadual();
@@ -236,7 +234,7 @@ public class DanfeBuilder  implements Serializable {
 		
 		destinatarioCNPJ = documento; 
 		
-		if(endereco!=null) {
+		if(endereco != null) {
 			
 			destinatarioLogradouro = endereco.getLogradouro();
 			destinatarioNumero	=	endereco.getNumero().toString();
@@ -245,6 +243,8 @@ public class DanfeBuilder  implements Serializable {
 			destinatarioMunicipio	=	 endereco.getCidade();
 			destinatarioUF	=	endereco.getUf();
 			destinatarioCEP	=	endereco.getCep();
+			
+			destinatarioLogradouro = destinatarioLogradouro +", "+ destinatarioNumero + (destinatarioComplemento != null ? ", "+ destinatarioComplemento : "");
 			
 		}
 		
@@ -260,7 +260,11 @@ public class DanfeBuilder  implements Serializable {
 		
 		destinatarioTelefone = tratarTelefone(destinatarioTelefone);
 		
-		danfe.setDestinatarioCNPJ(destinatarioCNPJ);
+		if(destinatarioCNPJ.length() >= 11) {			
+			danfe.setDestinatarioCNPJ(new CPFFormatter().format(destinatarioCNPJ));
+		} else { 
+			danfe.setDestinatarioCNPJ(new CNPJFormatter().format(destinatarioCNPJ));
+		}
 		danfe.setDestinatarioNome(destinatarioNome);
 		danfe.setDestinatarioInscricaoEstadual(destinatarioInscricaoEstadual);
 		danfe.setDestinatarioLogradouro(destinatarioLogradouro);
@@ -376,7 +380,6 @@ public class DanfeBuilder  implements Serializable {
 		danfe.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
 		danfe.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
 		
-		
 	}
 	
 	public static void carregarDadosItensDanfe(DanfeDTO danfe, NotaFiscal notaFiscal) {
@@ -443,12 +446,12 @@ public class DanfeBuilder  implements Serializable {
 			item.setValorICMSProduto(valorICMSProduto);
 			item.setAliquotaIPIProduto(aliquotaIPIProduto);
 			item.setValorIPIProduto(valorIPIProduto);
+			item.setInfAdProd(detalheNotaFiscal.getInfAdProd());
 			if(detalheNotaFiscal.getProdutoServicoPK() != null
 					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal() != null
 					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal().getNotaFiscalInformacoes() != null
 					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal().getNotaFiscalInformacoes().getInformacaoAdicional() != null) {
 				
-				//item.setInfoComplementar(detalheNotaFiscal.getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
 			}
 			listaItemDanfe.add(item);
 		}

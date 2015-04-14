@@ -37,7 +37,7 @@ public class ItemDanfe{
 	
 	private Long produtoEdicao;
 	
-	private String infoComplementar;
+	private String infAdProd;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -167,11 +167,12 @@ public class ItemDanfe{
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public String getInfoComplementar() {
-		return infoComplementar;
+	public String getInfAdProd() {
+		return infAdProd;
 	}
 
-	public void setInfoComplementar(String infoComplementar) {
-		this.infoComplementar = infoComplementar;
+	public void setInfAdProd(String infAdProd) {
+		this.infAdProd = infAdProd;
 	}
+
 }

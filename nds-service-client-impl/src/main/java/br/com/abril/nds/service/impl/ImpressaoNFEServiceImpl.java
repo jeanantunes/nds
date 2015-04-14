@@ -157,35 +157,37 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		// InputStream logoTipoDistribuidor = distribuidor.getLogotipoDistribuidor();  
 		if(TipoAtividade.MERCANTIL.equals(distribuidor.getTipoAtividade())) {
 			
-			if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 				
-				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
 					
-					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)){
+					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
-							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){
+							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 								
 								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
 								
 								List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
 								
 								for (NotaFiscal notaFiscal : notas) {
+									
 									DanfeDTO danfe = montarDanfe(notaFiscal);
 									
-									if(danfe!=null) {
+									if(danfe != null) {
+										
 										listaDanfeWrapper.add(new DanfeWrapper(danfe));
 									}
 								}
 								
 							}
-						}else{
+						} else {
 							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 						}
 					}
 				}
 				
+			} else {
 				
-			}else{
 				LOGGER.info("obter Nota de envio sem chave de acesso ");
 				/**
 				 * Nota de Envio Buscar quando houver chave de acesso
@@ -195,23 +197,26 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
 				
 				for (NotaFiscal notaFiscal : notas) {
+					
 					DanfeDTO danfe = montarDanfe(notaFiscal);
 					
-					if(danfe!=null) {
+					if(danfe != null) {
+						
 						listaDanfeWrapper.add(new DanfeWrapper(danfe));
 					}
 				}
 			}
-		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade()) || TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
+		} else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade()) || TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
+			
 			LOGGER.info("PRESTADOR_SERVICO ..... ");
 			
 			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
 				
 				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()){
 					
-					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)){
+					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
-							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)){
+							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 								
 								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
 								
@@ -226,14 +231,15 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								}
 								
 							}
-						}else{
+						} else {
+							
 							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 						}
 					}
 				}
 				
+			} else {
 				
-			}else{
 				LOGGER.info("obter Nota de envio sem chave de acesso ");
 				/**
 				 * Nota de Envio Buscar quando houver chave de acesso
@@ -249,7 +255,8 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				}
 			}		
 			
-		}else{
+		} else {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao comparar o tipo de atividade");
 		}
 		
@@ -257,6 +264,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	}
 
 	private DanfeDTO montarDanfe(NotaFiscal notaFiscal) {
+		
 		DanfeDTO danfe = new DanfeDTO();
 		
 		DanfeBuilder.carregarDanfeDadosPrincipais(danfe, notaFiscal);

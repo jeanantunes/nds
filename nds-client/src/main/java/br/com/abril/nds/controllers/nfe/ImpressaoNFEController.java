@@ -262,6 +262,7 @@ public class ImpressaoNFEController extends BaseController {
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 		
 		if(filtro.getNumerosNotas() == null) {
+			
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
 			throw new ValidacaoException(validacaoVO);
 		} 
@@ -307,7 +308,7 @@ public class ImpressaoNFEController extends BaseController {
 		
 		this.httpResponse.setContentType("application/pdf");
 
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+ nomeArquivo +".pdf");
 
 		OutputStream output;
 		try {
