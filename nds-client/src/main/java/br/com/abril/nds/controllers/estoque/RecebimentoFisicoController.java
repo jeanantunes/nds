@@ -344,8 +344,7 @@ public class RecebimentoFisicoController extends BaseController {
             
             indChaveAcessoInformada = true;
             
-            if(filtro.getChave() != null &&
-                    !filtro.getChave().matches(regraParaChaveAcesso)) {
+            if(filtro.getChave() != null && !filtro.getChave().matches(regraParaChaveAcesso)) {
                 
                 msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE + " dígitos.");
                 
@@ -1646,10 +1645,7 @@ public class RecebimentoFisicoController extends BaseController {
 				
 				if (!idFornecedor.equals(nota.getFornecedor())) {
                 
-                    throw new ValidacaoException(
-                            TipoMensagem.WARNING,
- "O fornecedor do ítem " + linha
-                            + " deve ser o mesmo fornecedor informado na nota!");
+                    throw new ValidacaoException(TipoMensagem.WARNING, "O fornecedor do ítem " + linha + " deve ser o mesmo fornecedor informado na nota!");
                 }
             }
         }

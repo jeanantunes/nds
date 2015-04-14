@@ -956,7 +956,7 @@ and tpt.tipo_produto_id = (select id from tipo_produto tp where grupo_produto = 
 
 alter table historico_titularidade_cota add column CONTRIBUINTE_ICMS tinyint(1) NULL after EMITE_NFE;
 
-alter table cota add column CONTRIBUINTE_ICMS tinyint(1) NULL after EMITE_NF_E;
+alter table cota add column CONTRIBUINTE_ICMS tinyint(1) default '0' NULL after EMITE_NF_E;
 
 alter table cota change EMITE_NF_E EXIGE_NF_E tinyint(1) default '0' NULL, change CONTRIBUINTE_ICMS CONTRIBUINTE_ICMS tinyint(1) default '0' NULL;
 
@@ -1246,3 +1246,18 @@ insert into `natureza_operacao_tributo`(`NATUREZA_OPERACAO_ID`,`TRIBUTO_ID`)valu
 update `ncm` set `ID`='7',`CODIGO`='49111090',`DESCRICAO`='OUTROS IMPRESSOS',`UNIDADE_MEDIDA`='UN' where `ID`='7';
 
 insert into `tipo_produto`(`ID`,`CODIGO`,`CODIGO_NBM`,`DESCRICAO`,`GRUPO_PRODUTO`,`NCM_ID`)values(NULL,'99','4911109900','OUTROS IMPRESSOS','IMPRESSOS','7');
+
+
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('1','24');
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('2','24');
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('3','24');
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('5','24');
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('7','24');
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('8','24');
+insert into `tipo_produto_tributacao` (`tributacao_id`, `tipo_produto_id`) values('10','24');
+
+
+update tributacao set cst='01' where id='5';
+update tributacao set cst='01' where id='7';
+update tributacao set cst='07' where id='9';
+update tributacao set cst='07' where id='11';

@@ -39,7 +39,19 @@ public class EmitenteDestinatarioBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 
 		String tipoLogradouro = "";
-		if(cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro() != null) {
+		if(cota.getEnderecoPrincipal() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s sem endereco principal.", cota.getNumeroCota())); 
+		}
+		
+		if(cota.getEnderecoPrincipal().getEndereco() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s sem endereço. ", cota.getNumeroCota())); 
+		}
+		
+		if(cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s sem Tipo Logradouro no endereço.", cota.getNumeroCota())); 
+		}
+		
+		if(cota.getEnderecoPrincipal().getEndereco() != null && cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro() != null) {
 			tipoLogradouro = cota.getEnderecoPrincipal().getEndereco().getTipoLogradouro();
 		}
 		
