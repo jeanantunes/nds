@@ -987,7 +987,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		ProdutoServico produtoServico = new ProdutoServico();
 
-		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao.getCodigoDeBarras()));
+		produtoServico.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
 		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getNomeComercial());
 		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getNcm().getCodigo());
@@ -1071,7 +1071,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		ProdutoServico produtoServico = new ProdutoServico();
 
-		produtoServico.setCodigoBarras(Long.valueOf(produtoEdicao.getCodigoDeBarras()));
+		produtoServico.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
 		produtoServico.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 		produtoServico.setDescricaoProduto(produtoEdicao.getProduto().getNomeComercial());
 		produtoServico.setNcm(produtoEdicao.getProduto().getTipoProduto().getNcm().getCodigo());
