@@ -90,14 +90,16 @@ public class DetalheNotaFiscal implements Serializable {
 		this.infAdProd = produtoServico.getProdutoEdicao() != null ? "Edição " + produtoServico.getProdutoEdicao().getNumeroEdicao().toString() : "";
 	}
 
+	public String getInfAdProd() {
+		return infAdProd != null ? infAdProd : produtoServico.getProdutoEdicao() != null ? "Edição " + produtoServico.getProdutoEdicao().getNumeroEdicao().toString() : "";
+	}
+
 	public Impostos getImpostos() {
 		return impostos;
 	}
 
 	public void setImpostos(Impostos impostos) {
 		this.impostos = impostos;
-		
-		
 	}
 
 	@Override

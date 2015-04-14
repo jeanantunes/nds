@@ -595,10 +595,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 
 		
 		// Tipo de Nota:		
-		if(filtro.getIdNaturezaOperacao() != null) {
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {
 			
 			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.id in (SELECT no.id ");
-			hql.append(" FROM NaturezaOperacao no").append(" JOIN no.tipoMovimento tm").append(" WHERE no.id in(:tipoNota))"); 
+			hql.append(" FROM NaturezaOperacao no")
+			.append(" JOIN no.tipoMovimento tm")
+			.append(" WHERE no.id in(:naturezaOperacao))"); 
 			
 		}
 		
@@ -662,7 +664,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		// tipo da nota fiscal		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
-			 query.setParameter("tipoNota", filtro.getIdNaturezaOperacao()); 
+			 query.setParameter("naturezaOperacao", filtro.getIdNaturezaOperacao()); 
 		}
 		
 		// forncedor id		
