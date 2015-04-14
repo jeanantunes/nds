@@ -87,11 +87,11 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		if(filtro.getTipoAtividade()!= null){
+		if(filtro.getTipoAtividade() != null) {
 			query.setParameter("tipoAtividade", filtro.getTipoAtividade());
 		}
 		
-		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
+		if(filtro.getTipoNota() != null && !filtro.getTipoNota().trim().isEmpty() ){
 			query.setParameter("tipoDescNota", "%" + filtro.getTipoNota() + "%");
 		}
 		
@@ -102,8 +102,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 			}
 
 			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao()
-						.getQtdResultadosPorPagina());
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
 		
@@ -165,31 +164,27 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		StringBuilder hql  = new StringBuilder();
 		
-		if(count){
+		if(count) {
 			
 			hql.append(" select no.id from NaturezaOperacao no ");
-		}
-		else{
+		} else {
+			
 			hql.append(" select no from NaturezaOperacao no ");
 		}
 		
-		if((filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty()) 
-				|| filtro.getTipoAtividade()!= null){
+		hql.append(" where 1 = 1 ");
+		
+		if(filtro.getTipoNota() != null && !filtro.getTipoNota().trim().isEmpty() ) {
 			
-			hql.append(" where ");
+			hql.append(" and upper(no.descricao) like(:tipoDescNota) ");
 		}
 		
-		if(filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty() ){
-			hql.append(" upper(no.descricao) like(:tipoDescNota) ");
-		}
-		
-		if(filtro.getTipoAtividade()!= null 
-				&& (filtro.getTipoNota()!= null && !filtro.getTipoNota().trim().isEmpty())){
-			hql.append(" AND ");
-		}
-		
-		if(filtro.getTipoAtividade()!= null){
-			hql.append("  no.tipoAtividade = :tipoAtividade ");
+		if(filtro.getTipoAtividade() != null) {
+			
+			hql.append(" and no.tipoAtividade = :tipoAtividade ");
+		} else {
+			
+			hql.append(" and no.tipoAtividade = (select d.tipoAtividade from Distribuidor d) ");
 		}
 		
 		hql.append(" group by no.descricao, no.tipoAtividade, no.cfopEstado, no.cfopOutrosEstados  ");
