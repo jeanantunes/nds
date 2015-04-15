@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -39,10 +42,13 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
+import br.com.abril.nds.service.impl.ImpressaoNFEServiceImpl;
 import br.com.caelum.stella.format.CNPJFormatter;
 import br.com.caelum.stella.format.CPFFormatter;
 
 public class DanfeBuilder  implements Serializable {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DanfeBuilder.class);
 	
 	/**
 	 * 
@@ -219,10 +225,15 @@ public class DanfeBuilder  implements Serializable {
 		NotaFiscalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
+		String destinatarioNome 				=  "";
 		String destinatarioCNPJ 				= "";
-		String destinatarioNome 				= identificacaoDestinatario.getNome();
-		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstadual();
 		
+		if (notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota() != null) {
+			destinatarioNome = String.format("%s - ", notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getNumeroCota().toString());
+		}
+		
+		destinatarioNome 						+=  identificacaoDestinatario.getNome();
+		String destinatarioInscricaoEstadual 	= identificacaoDestinatario.getInscricaoEstadual();
 		String destinatarioLogradouro 			= "";
 		String destinatarioNumero 				= "";
 		String destinatarioComplemento 			= "";
@@ -260,10 +271,11 @@ public class DanfeBuilder  implements Serializable {
 		
 		destinatarioTelefone = tratarTelefone(destinatarioTelefone);
 		
-		if(destinatarioCNPJ.length() >= 11) {			
-			danfe.setDestinatarioCNPJ(new CPFFormatter().format(destinatarioCNPJ));
-		} else { 
+		if(destinatarioCNPJ.length() > 11) {			
+			System.out.println("Valor do CNPJ"+ destinatarioCNPJ);
 			danfe.setDestinatarioCNPJ(new CNPJFormatter().format(destinatarioCNPJ));
+		} else { 
+			danfe.setDestinatarioCNPJ(new CPFFormatter().format(destinatarioCNPJ));
 		}
 		danfe.setDestinatarioNome(destinatarioNome);
 		danfe.setDestinatarioInscricaoEstadual(destinatarioInscricaoEstadual);

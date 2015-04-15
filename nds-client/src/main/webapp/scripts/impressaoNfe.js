@@ -324,7 +324,7 @@ var impressaoNfeController = $.extend(true, {
 			else
 				this.cell.notaImpressa = '';
 
-			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idCota +'" value="'+ this.cell.idCota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.numeroNota +')" />';
+			this.cell.sel = '<input type="checkbox" name="imprimirNFe" id="imprimirNFe_'+ this.cell.idNota +'" value="'+ this.cell.idNota + '" onclick="impressaoNfeController.adicionarAsNFesAImprimir(this.checked, '+ this.cell.numeroNota +')" />';
 		});
 
 		$(".grids", impressaoNfeController.workspace).show();

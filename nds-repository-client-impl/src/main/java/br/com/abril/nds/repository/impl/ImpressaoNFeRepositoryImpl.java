@@ -92,17 +92,14 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append(" JOIN nf.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN infElet.retornoComunicacaoEletronica retComElet ")
-		.append(" JOIN nfi.identificacaoEmitente as identEmit ")
-		.append(" JOIN nfi.identificacaoDestinatario as identDest")
 		.append(" JOIN nfi.identificacao as ident ")
-		.append(" JOIN ident.naturezaOperacao as natOp ")
 		.append(" where")
 		.append(" infElet.chaveAcesso is not null ")
 		.append(" AND retComElet.protocolo is not null ")
-		.append(" AND ident.numeroDocumentoFiscal in (:numerosNotas) ");
+		.append(" AND nf.id in (:idNotas) ");
 
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameterList("numerosNotas", filtro.getNumerosNotas());
+		query.setParameterList("idNotas", filtro.getNumerosNotas());
 		
 		return query.list();
 	}
@@ -573,7 +570,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
 		 */
 		StringBuilder hql = new StringBuilder("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
-			.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
+			.append(" notaFiscal.id ")
+			.append(", notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
 			.append(", notaFiscal.notaFiscalInformacoes.notaImpressa ")
 			.append(", cota ")
 			.append(", SUM(item.produtoServico.quantidade) ")
