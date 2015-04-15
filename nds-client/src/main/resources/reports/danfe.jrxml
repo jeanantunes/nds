@@ -723,7 +723,7 @@ $F{emissorCNPJ}.substring(2,5) + "." + $F{emissorCNPJ}.substring(5,8) + "/" +
 $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{emissorCNPJ}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="39" y="103" width="302" height="17" uuid="b6f89d8b-36e5-4b25-be63-8280a52511e0"/>
+					<reportElement style="dados" x="39" y="103" width="453" height="17" uuid="b6f89d8b-36e5-4b25-be63-8280a52511e0"/>
 					<textElement>
 						<font isPdfEmbedded="true"/>
 					</textElement>
@@ -910,7 +910,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[DATA ENTRADA / SAÍDA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="5" width="272" height="6" uuid="260143d2-b9b5-4459-ab31-c8ac9411f0bf"/>
+					<reportElement style="campoPequeno" x="55" y="5" width="272" height="6" uuid="260143d2-b9b5-4459-ab31-c8ac9411f0bf"/>
 					<text><![CDATA[NOME / RAZÃO SOCIAL]]></text>
 				</staticText>
 				<staticText>
@@ -1102,7 +1102,11 @@ VOLUMES]]></text>
 					<textFieldExpression><![CDATA[$F{destinatarioLogradouro}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="dados" x="53" y="10" width="513" height="16" uuid="f35321ed-1502-4bd5-aa82-4ae96dd4e51a"/>
+					<reportElement style="dados" x="55" y="10" width="543" height="16" uuid="f35321ed-1502-4bd5-aa82-4ae96dd4e51a"/>
+					<textElement>
+						<font isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioNome}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#####-###" isBlankWhenNull="true">
