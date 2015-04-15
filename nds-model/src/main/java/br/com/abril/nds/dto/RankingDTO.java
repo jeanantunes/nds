@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Comparator;
 
 public class RankingDTO implements Comparable<RankingDTO> {
 	

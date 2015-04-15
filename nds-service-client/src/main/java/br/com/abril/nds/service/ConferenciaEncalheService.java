@@ -59,7 +59,7 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return boolean
 	 */
-	public boolean isCotaEmiteNfe(Integer numeroCota);
+	public boolean isCotaExigeNfe(Integer numeroCota);
 	
 	/**
 	 * Obtém lista de debito crédito relativa a cobrança 
@@ -273,5 +273,9 @@ public interface ConferenciaEncalheService {
 	BigDecimal obterValorTotalReparteSemDesconto(Integer numeroCota,Date dataOperacao);
 
 	BigDecimal obterValorTotalReparte(Integer numeroCota, List<Date> datas);
+	
+	Cota validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota);
+
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota);
 	
 }

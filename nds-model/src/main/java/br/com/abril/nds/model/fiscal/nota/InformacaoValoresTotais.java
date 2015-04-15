@@ -6,11 +6,14 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Embeddable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class InformacaoValoresTotais implements Serializable {
 
 	/**

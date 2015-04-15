@@ -1,7 +1,6 @@
 package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
-import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Record;

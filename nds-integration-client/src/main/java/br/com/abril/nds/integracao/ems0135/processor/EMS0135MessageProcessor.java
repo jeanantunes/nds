@@ -23,20 +23,23 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -53,8 +56,7 @@ import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
-
-    
+	
     @Autowired
     private NdsiLoggerFactory ndsiLoggerFactory;
     
@@ -228,8 +230,16 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setEmitente(emitente);
         
-        notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO,
-                TipoUsuarioNotaFiscal.TREELOG, TipoUsuarioNotaFiscal.DISTRIBUIDOR));
+        Distribuidor distribuidor = distribuidorService.obter();
+        
+        // FIXME - Ajustar para obter a natureza de operação corretamente 
+        notafiscalEntrada.setNaturezaOperacao(
+        		obterNaturezaOperacao(
+        				TipoOperacao.ENTRADA
+        				, TipoEmitente.FORNECEDOR
+        				, TipoDestinatario.DISTRIBUIDOR
+        				, distribuidor.getTipoAtividade()
+        		));
         
         notafiscalEntrada.setEmitida(true);
         
@@ -276,6 +286,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                     produto.setPeb(35);
                     produto.setPeso(100L);
                     produto.setIsGeracaoAutomatica(false);
+                    produto.setIsRemessaDistribuicao(false);
                     produto.setFornecedores(fornecedores);
                     if(inputItem.getDesconto() != null) {
                         produto.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
@@ -611,20 +622,26 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         return (ProdutoEdicao) criteria.uniqueResult();
     }
     
-    private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente,
-            TipoUsuarioNotaFiscal destinatario) {
+    private NaturezaOperacao obterNaturezaOperacao(TipoOperacao tipoOperacao
+    		, TipoEmitente tipoEmitente
+    		, TipoDestinatario tipoDestinatario
+    		, TipoAtividade tipoAtividade) {
         
-        String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal "
-                + "and tipoNotaFiscal.emitente = :emitente and tipoNotaFiscal.destinatario = :destinatario "
-                + " group by tipoNotaFiscal.id  ";
+    	StringBuilder hql = new StringBuilder(" from NaturezaOperacao no ")
+    		.append(" where no.tipoOperacao = :tipoOperacao ")
+    		.append(" and no.tipoEmitente = :tipoEmitente ")
+    		.append(" and no.tipoDestinatario = :tipoDestinatario ")
+    		.append(" and no.tipoAtividade = :tipoAtividade ")
+    		.append(" group by no.id ");
         
-        Query query = getSession().createQuery(hql);
+        Query query = getSession().createQuery(hql.toString());
         
-        query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
-        query.setParameter("emitente", emitente);
-        query.setParameter("destinatario", destinatario);
+        query.setParameter("tipoOperacao", TipoOperacao.ENTRADA);
+        query.setParameter("tipoAtividade", tipoAtividade);
+        query.setParameter("tipoEmitente", tipoEmitente);
+        query.setParameter("tipoDestinatario", tipoDestinatario);
         
-        return (TipoNotaFiscal) query.uniqueResult();
+        return (NaturezaOperacao) query.uniqueResult();
     }
     
     private PessoaJuridica obterPessoaJuridica(String cnpj) {

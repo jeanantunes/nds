@@ -221,6 +221,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 
 	this.preencherGridBasesPesquisa = function(resultado){
+		console.log(resultado);
 		$.each(resultado, function(index,row){ 
 			T.processarLinhaPesquisaBases(index, row);
 		});
@@ -731,7 +732,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "codigoProduto", value : codProduto});
 		data.push({name : "numeroEdicao", value : numEdicao});
 		data.push({name : "idLancamento", value : $('#idLancamento',this.workspace).val()});
-		data.push({name : "dataLancamento", value: $('#dataLancamento',this.workspace).html()});
+		data.push({name : "dataLancamento", value: $('#dist-venda-media-dataLancamento',this.workspace).html()});
         //TODO adicionar numero periodo caso o idLancamento nao s
 
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {

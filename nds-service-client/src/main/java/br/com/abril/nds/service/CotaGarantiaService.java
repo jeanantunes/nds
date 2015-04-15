@@ -147,7 +147,7 @@ public interface CotaGarantiaService {
 	 * @param doc
 	 *            Documento de identificação do Fiador
 	 * @return
-	 * @see br.com.abril.nds.repository.FiadorRepository#buscarPorId(Long)
+	 * @see br.com.abril.nds.repository.FiadorRepository
 	 */
 	public Fiador getFiador(Long idFiador, String doc);
 

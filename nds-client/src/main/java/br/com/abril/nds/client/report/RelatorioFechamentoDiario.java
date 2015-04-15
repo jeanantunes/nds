@@ -14,7 +14,8 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.util.JasperUtil;

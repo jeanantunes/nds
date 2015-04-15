@@ -57,7 +57,7 @@ public class ConferenciaEncalhe implements Serializable {
 	@JoinColumn(name = "CHAMADA_ENCALHE_COTA_ID")
 	private ChamadaEncalheCota chamadaEncalheCota;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID")
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 
@@ -87,6 +87,13 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	@Column(name = "PRECO_CAPA_INFORMADO")
 	private BigDecimal precoCapaInformado;
+	
+	/**
+	 * Preco ccom desconto relativo ao item de nota fiscal de entrada
+	 * fornecida pela cota na operação de conferência de encalhe.
+	 */
+	@Column(name = "PRECO_COM_DESCONTO")
+	private BigDecimal precoComDesconto;
 	
 	/**
 	 * Quantidade replicada na coluna qtde em movimento_estoque_cota 
@@ -261,13 +268,31 @@ public class ConferenciaEncalhe implements Serializable {
 	public BigDecimal getPrecoCapaInformado() {
 		return precoCapaInformado;
 	}
-
+	
 	/**
 	 * Atribuí precoCapaInformado
 	 * @param precoCapaInformado 
 	 */
 	public void setPrecoCapaInformado(BigDecimal precoCapaInformado) {
 		this.precoCapaInformado = precoCapaInformado;
+	}
+	
+	/**
+	 * Obtém precoComDesconto
+	 *
+	 * @return BigDecimal
+	 */
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	
+	/**
+	 * Atribuí precoComDesconto
+	 * @return BigDecimal
+	 */
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
 	}
 
 	/**
@@ -312,4 +337,29 @@ public class ConferenciaEncalhe implements Serializable {
 		this.diaRecolhimento = diaRecolhimento;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConferenciaEncalhe other = (ConferenciaEncalhe) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		return true;
+	}
+	
 }

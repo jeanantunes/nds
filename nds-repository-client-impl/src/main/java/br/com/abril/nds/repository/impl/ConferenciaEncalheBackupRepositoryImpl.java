@@ -53,30 +53,37 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		
 		sql.append(" CONF_ENCALHE.ID_CONFERENCIA_ORIGINAL AS idConferenciaEncalhe, ");
 		
-		sql.append(" CONF_ENCALHE.DIA_RECOLHIMENTO AS dia,           			");
+		sql.append(" CONF_ENCALHE.DIA_RECOLHIMENTO AS dia,           			   ");
 		
-		sql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
+		sql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  	  	   ");
+		
+		sql.append(" CH_ENCALHE_COTA.PROCESSO_UTILIZA_NFE AS processoUtilizaNfe,   ");
 		
 		sql.append(" CASE WHEN (PROD_EDICAO.GRUPO_PRODUTO = :grupoProdutoCromo) THEN true ELSE false END as isContagemPacote, ");
 		
-		sql.append(" COALESCE(CH_ENCALHE_COTA.QTDE_PREVISTA, 0) AS qtdReparte, 	");
+		sql.append(" COALESCE(CH_ENCALHE_COTA.QTDE_PREVISTA, 0) AS qtdReparte, 	   ");
 		
-		sql.append(" CONF_ENCALHE.QTDE_INFORMADA AS qtdInformada,       		");
-		sql.append(" CONF_ENCALHE.PRECO_CAPA_INFORMADO AS precoCapaInformado,   ");
-		sql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
-		sql.append(" PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
+		sql.append(" CONF_ENCALHE.QTDE_INFORMADA AS qtdInformada,       		   ");
 		
-		sql.append(" PROD_EDICAO.CHAMADA_CAPA AS chamadaCapa,					");			
-		sql.append(" PESSOA_EDITOR.RAZAO_SOCIAL AS nomeEditor,					");			
-		sql.append(" PESSOA_FORNECEDOR.RAZAO_SOCIAL AS nomeFornecedor,			");			
+		sql.append(" CONF_ENCALHE.PRECO_CAPA_INFORMADO AS precoCapaInformado,      ");
 		
-		sql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM, ");
+		sql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		   ");
 		
-		sql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
-		sql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
-		sql.append(" PROD.CODIGO AS codigo,                                  ");
-		sql.append(" PROD.NOME AS nomeProduto,                               ");
-		sql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
+		sql.append(" PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		   ");
+		
+		sql.append(" PROD_EDICAO.CHAMADA_CAPA AS chamadaCapa,					   ");
+		
+		sql.append(" PESSOA_EDITOR.RAZAO_SOCIAL AS nomeEditor,					   ");
+		
+		sql.append(" PESSOA_FORNECEDOR.RAZAO_SOCIAL AS nomeFornecedor,			   ");			
+		
+		sql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM,                             ");
+		
+		sql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	       ");
+		sql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	       ");
+		sql.append(" PROD.CODIGO AS codigo,                                        ");
+		sql.append(" PROD.NOME AS nomeProduto,                                     ");
+		sql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,                    ");
 		
 		sql.append(" COALESCE(CONF_ENCALHE.PRECO_CAPA, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapa, ");
 		
@@ -159,7 +166,7 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		((SQLQuery)query).addScalar("pacotePadrao");
 		((SQLQuery)query).addScalar("observacao");
 		((SQLQuery)query).addScalar("juramentada");
-		
+		((SQLQuery)query).addScalar("processoUtilizaNfe", StandardBasicTypes.BOOLEAN);
 		
 		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.name());
 		

@@ -1,11 +1,20 @@
 package br.com.abril.nds.model.planejamento;
 
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigInteger;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 
 /**
  * Created with IntelliJ IDEA.
@@ -80,4 +89,49 @@ public class EstudoPDV implements Serializable {
     public void setReparte(BigInteger reparte) {
         this.reparte = reparte;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCota() == null) ? 0 : this.getCota().hashCode());
+		result = prime * result + ((this.getEstudo() == null) ? 0 : this.getEstudo().hashCode());
+		result = prime * result + ((this.getPdv() == null) ? 0 : this.getPdv().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstudoPDV other = (EstudoPDV) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getCota() == null) {
+			if (other.getCota() != null)
+				return false;
+		} else if (!this.getCota().equals(other.getCota()))
+			return false;
+		if (this.getEstudo() == null) {
+			if (other.getEstudo() != null)
+				return false;
+		} else if (!this.getEstudo().equals(other.getEstudo()))
+			return false;
+		if (this.getPdv() == null) {
+			if (other.getPdv() != null)
+				return false;
+		} else if (!this.getPdv().equals(other.getPdv()))
+			return false;
+		return true;
+	}
+    
+    
 }

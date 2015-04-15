@@ -5,32 +5,47 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.NotaFiscalTipoEmissaoRegimeEspecial;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.GeracaoNFeService;
+import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -42,6 +57,8 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 public class GeracaoNFeController extends BaseController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNFeController.class);
+	
 	@Autowired
 	private Result result;
 	
@@ -49,13 +66,16 @@ public class GeracaoNFeController extends BaseController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired 
-	private GeracaoNFeService geracaoNFeService;
+	private NFeService nfeService;
+	
+	@Autowired 
+	private NotaFiscalService notaFiscalService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 	
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -66,13 +86,53 @@ public class GeracaoNFeController extends BaseController {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
+	@Autowired
+	private HttpServletRequest request;
+	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService;
+	
+	private static final String FILTRO_SESSION_NOTA_FISCAL = "filtroNotaFiscal";
+	
 	@Path("/")
 	public void index() {
 		
-		result.include("fornecedores", fornecedorService
-				.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+		this.obterFornecedoresDestinatarios();
+		this.obterTodosFornecedoresAtivos();
+		this.iniciarComboRoteiro();
+		this.iniciarComboRota();
+		this.obterTiposDestinatarios();
+		this.iniciarComboBox();
+		this.iniciarTiposEmissaoRegimeEspecial();
 		
-		result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
+	}
+
+	private void obterTiposDestinatarios() {
+		result.include("tiposDestinatarios", new TipoDestinatario[] {TipoDestinatario.COTA, TipoDestinatario.DISTRIBUIDOR, TipoDestinatario.FORNECEDOR});
+	}
+	
+	private void obterFornecedoresDestinatarios() {
+		result.include("fornecedoresDestinatarios", fornecedorService.obterFornecedoresDestinatarios(SituacaoCadastro.ATIVO));
+	}
+
+	private void obterTodosFornecedoresAtivos() {
+		result.include("fornecedores", fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+	}
+	
+	private void iniciarTiposEmissaoRegimeEspecial() {
+		result.include("tiposEmissaoRegimeEspecial", NotaFiscalTipoEmissaoRegimeEspecial.values());
+	}
+	
+	/**
+     * Inicia o combo Box
+     */
+    private void iniciarComboBox() {
+
+    	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    }
+
+	private void iniciarComboRoteiro() {
+		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
 		
 		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
 		
@@ -84,6 +144,9 @@ public class GeracaoNFeController extends BaseController {
 		}
 		
 		result.include("roteiros", listRoteiro);
+	}
+
+	private void iniciarComboRota() {
 		
 		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
 		
@@ -97,55 +160,105 @@ public class GeracaoNFeController extends BaseController {
 		result.include("rotas", listRota);
 	}
 	
-	@Post("/busca.json")
-	public void busca(
-			Integer intervaloBoxDe, Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte,
-			List<Long> listIdFornecedor, Long tipoNotaFiscal,
-			Long idRoteiro, Long idRota,
-			String sortname, String sortorder, int rp, int page) {
+	@Post
+	public void verificarRegimeEspecialNaturezaOperacao(Long naturezaOperacaoId) {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
-		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
-		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
-		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
-				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, 
-						listIdFornecedor, tipoNotaFiscal, idRoteiro, idRota, sortname, sortorder, rp, page, null);
-		
-		if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
+		NotaFiscalTipoEmissaoEnum tipoEmissao = null;
+		if(naturezaOperacaoId != null && naturezaOperacaoId > 0) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			tipoEmissao = naturezaOperacaoService.verificarRegimeEspecialNaturezaOperacao(naturezaOperacaoId);
+		}
+	
+		if(tipoEmissao != null) {
+			result.use(Results.json()).from(tipoEmissao, "tipoEmissaoRegimeEspecial").serialize();
+		} else {
+			result.use(Results.json()).from("", "tipoEmissaoRegimeEspecial").serialize();
+		}
+	}
+	
+	@Post
+	@Transactional
+	public void pesquisar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page) {
+		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() < 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione uma Natureza de Operação.");
 		}
 		
-		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
+		//FIXME: vRaptor nao instanciou dentro do filtro 
+		filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
+		
+		List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
+		List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;
+		
+		Long totalRegistros = 0L;
+		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL, filtro);
+		
+		final PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		
+		filtro.setPaginacaoVO(paginacao);
+		
+		final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+		
+		switch (naturezaOperacao.getTipoDestinatario()) {
+		
+			case COTA:
+				cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
+				totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);			
+				break;
+				
+			case DISTRIBUIDOR:
+				cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);			
+				totalRegistros = nfeService.consultaCotaExemplareSumarizadoQtd(filtro, naturezaOperacao);
+				break;
+				
+			case FORNECEDOR:			
+				fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro, naturezaOperacao);
+				totalRegistros = nfeService.consultaFornecedorExemplaresSumarizadosQtd(filtro, naturezaOperacao);
+				break;
+			
+		}
+		
+		if(naturezaOperacao.getTipoDestinatario().equals(TipoDestinatario.FORNECEDOR)) {
+			if (fornecedorExemplaresDTOs == null || fornecedorExemplaresDTOs.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
+			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();			
+		} else {
+			if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
+			result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();
+		}
+	}
+
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+	    paginacao.setPaginaAtual(page);
+	    paginacao.setQtdResultadosPorPagina(rp);
+	    paginacao.setSortOrder(sortorder);
+	    paginacao.setSortColumn(sortname);
+		return paginacao;
 	}
 	
 	@Post("/buscaCotasSuspensas.json")
-	public void buscaCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
+	public void buscaCotasSuspensas(FiltroNFeDTO filtro, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(filtro.getIntervaloBoxInicial(), filtro.getIntervaloBoxFinal());
 		
-		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
+		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(filtro.getIntervalorCotaInicial(), filtro.getIntervalorCotaInicial());
 		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
+		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataInicial(), filtro.getDataFinal());
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs = 
-				geracaoNFeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
+		List<CotaExemplaresDTO> cotaExemplaresDTOs = nfeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
 						tipoNotaFiscal, null, null, sortname, sortorder, rp, page, SituacaoCadastro.SUSPENSO);
 		
 		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
 	}
 	
 	@Post("/hasCotasSuspensas.json")
-	public void hasCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
+	public void hasCotasSuspensas(Integer intervaloBoxDe, Integer intervaloBoxAte, Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor,Long tipoNotaFiscal){
 
 		boolean hasCotasSuspensas = false;
@@ -162,68 +275,72 @@ public class GeracaoNFeController extends BaseController {
 		result.use(CustomJson.class).from(hasCotasSuspensas).serialize();
 	}
 	
-	@Post("/gerar.json")
+	@Post
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
-	public void gerar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, 
-			Long tipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
-		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
-		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
-		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
+	public void gerarNotasFiscais(FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		
 		try {
-			this.geracaoNFeService.gerarNotaFiscal(intervaloBox, intervalorCota, intervaloDateMovimento, 
-					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas, null);
+
+			if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() < 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Selecione uma Natureza de Operação.");
+			}
 			
-		} catch (IOException ioe){
-			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
+			//FIXME: vRaptor nao instanciou dentro do filtro 
+			filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
+			
+			this.nfeService.gerarNotaFiscal(filtro);
+			
+		} catch (Exception e) {
+			
+			LOGGER.error("Erro ao gerar NF-e.", e);
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		} 
 		
-		result.use(CustomJson.class).from(true).serialize();
-	}
-	
-	@Post("/transferirSuplementar.json")
-	public void transferirSuplementar(List<Long> idsCota){
-		
-		//TODO
-		
-		result.use(CustomJson.class).from(true).serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "NF-e(s) gerada(s) com sucesso."), Constantes.PARAM_MSGS).serialize();
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
 		
-		List<ItemDTO<Long, String>> listaTipoNotaFiscal = 
-				this.tipoNotaFiscalService.carregarComboTiposNotasFiscais(
-						this.distribuidorService.tipoAtividade());
+		List<ItemDTO<Long, String>> listaTipoNotaFiscal = this.tipoNotaFiscalService.carregarComboNaturezasOperacoes(this.distribuidorService.tipoAtividade());
 		
 		return listaTipoNotaFiscal;
 	}
 	
-	public void exportar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal,String sortname,
-			String sortorder,FileType fileType) throws IOException {
+	@Post
+    @Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
+	public void exportar(final FiltroNFeDTO filtro, NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial, final String sortname, final String sortorder, final int rp, final int page, FileType fileType) throws IOException {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+	    List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
+        List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;
+	    
+        filtro.setNotaFiscalTipoEmissao(notaFiscalTipoEmissaoRegimeEspecial);
+        
+	    final NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
+	    
+	    switch (naturezaOperacao.getTipoDestinatario()) {
+        
+            case COTA:
+                cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);            
+                break;
+                
+            case DISTRIBUIDOR:
+                cotaExemplaresDTOs = nfeService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);            
+                break;
+                
+            case FORNECEDOR:            
+                fornecedorExemplaresDTOs = nfeService.consultaFornecedorExemplarSumarizado(filtro, naturezaOperacao);
+                break;        
+	    }
+	    
+	    if(cotaExemplaresDTOs != null ){
+	        FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, cotaExemplaresDTOs, CotaExemplaresDTO.class, this.httpServletResponse);
+	    } else if (fornecedorExemplaresDTOs != null) {
+	        FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, fornecedorExemplaresDTOs, FornecedorExemplaresDTO.class, this.httpServletResponse);
+	    } else {
+	        throw new ValidacaoException(TipoMensagem.WARNING ,"Problema ao expostar as informções para excel.");
+	    } 
 		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
-		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
-		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
-				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, listIdFornecedor, 
-						tipoNotaFiscal, null, null, sortname, sortorder, null, null, null);
-		
-		FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
-				cotaExemplaresDTOs, CotaExemplaresDTO.class,
-				this.httpServletResponse);
-		
-		result.use(Results.nothing());
+	    result.use(Results.nothing());
 		
 	}
 }

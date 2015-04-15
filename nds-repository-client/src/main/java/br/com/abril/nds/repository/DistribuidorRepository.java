@@ -11,7 +11,6 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -104,7 +103,7 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 
 	Integer qtdDiasLimiteParaReprogLancamento();
 
-	ObrigacaoFiscal obrigacaoFiscal();
+	boolean obrigacaoFiscal();
 
 	TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE();
 

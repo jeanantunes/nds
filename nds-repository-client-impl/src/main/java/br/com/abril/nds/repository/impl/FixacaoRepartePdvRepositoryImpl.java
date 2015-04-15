@@ -2,11 +2,11 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.pdv.PDV;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.repository.AbstractRepositoryModel;

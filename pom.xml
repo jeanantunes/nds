@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.abril</groupId>
@@ -403,6 +402,23 @@
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
 		</repository>
 		<repository>
+			<id>nexus3rd</id>
+			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/repositories/thirdparty/</url>
+		</repository>
+		<repository>
+			<id>repomaven</id>
+			<url>http://repo.maven.apache.org/maven2/</url>		
+		</repository>
+		<repository>
+			<id>mvnrepository</id>
+			<url>http://mvnrepository.com/artifact/</url>		
+		</repository>
+		<repository>
+			<id>thirdparty-releases</id>
+			<name>JBoss Thirdparty Releases</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+		</repository>
+		<repository>
 			<id>jrimum.org</id>
 			<url>http://jrimum.org/maven/content/groups/public/</url>
 			<snapshots>
@@ -489,6 +505,7 @@
 				<module>nds-model</module>
 				<module>nds-util</module>
 				<module>nds-common</module>
+				<module>nfe</module>
 				<module>nds-repository-client</module>
 				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>
@@ -501,7 +518,8 @@
 				<module>nds-server</module>
 				<module>nds-estudo-algoritmo</module>
 				<module>nds-homologador</module>
-				<!-- <module>nds-test</module> -->
+<!-- 			<module>nds-test</module> -->
+				<module>nds-ws-pessoacrp</module>
 			</modules>
 		</profile>
 
@@ -511,6 +529,7 @@
 				<module>nds-model</module>
 				<module>nds-util</module>
 				<module>nds-common</module>
+				<module>nfe</module>
 				<module>nds-repository-client</module>
 				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>

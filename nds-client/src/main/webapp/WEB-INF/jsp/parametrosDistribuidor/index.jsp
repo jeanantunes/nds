@@ -40,6 +40,11 @@
 	
 	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
 	bloquearItensEdicao(parametrosDistribuidorController.workspace);
+	
+	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
+	$('.camposEspecificosRegimeEspecial').hide();
+	</c:if>
+	
 </script>
 
 </head>
@@ -56,18 +61,9 @@
 	
 	<input type="hidden" id="tipoEnderecoHidden"
 		   value="${parametrosDistribuidor.endereco.tipoEndereco}" />
-		   
-    <input type="hidden" id="regimeTributarioHidden"
-		   value="${parametrosDistribuidor.regimeTributario}" />
-		   
-    <input type="hidden" id="obrigacaoFiscalHidden"
-		   value="${parametrosDistribuidor.obrigacaoFiscal}" />
-		  
+					   		  
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
-		   
-    <input type="hidden" id="impressaoInterfaceLEDHidden"
-		   value="${parametrosDistribuidor.impressaoInterfaceLED}" />
 		   
     <input type="hidden" id="impressaoNECADANFEHidden"
 		   value="${parametrosDistribuidor.impressaoNECADANFE}" />
@@ -80,7 +76,7 @@
 		   
 	<div class="areaBts">
 		<div class="area">
-		    <span class="bt_novos" id="btnSalvar"><a href="javascript:;" onclick="parametrosDistribuidorController.popup_confirm();" rel="tipsy" title="Salvar Parâmetros do Distribuidor"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
+		    <span class="bt_novos"><a isEdicao="true" href="javascript:;" onclick="parametrosDistribuidorController.popup_confirm();" rel="tipsy" title="Salvar Parâmetros do Distribuidor"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
@@ -88,18 +84,18 @@
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
 			<ul>
-				<li><a href="#tabCadastroFiscal">Cadastro / Fiscal</a></li>
+				<li><a href="#tabCadastro">Cadastro</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabDistribuicao">Distribuição</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
 				<li><a href="#tabContratos">Contratos e Garantias</a></li>
 			    <li><a href="#tabNegociacao">Negociação</a></li>
-			     <li><a href="#tabAprovacao">Aprovação</a></li>
+			    <li><a href="#tabFiscal">Fiscal</a></li>
+			    <li><a href="#tabAprovacao">Aprovação</a></li>
 			</ul>
-
-			<!--  Aba Cadastro / Fiscal -->
-            <jsp:include page="tabCadastroFiscal.jsp"/>
+			
+            <jsp:include page="tabCadastro.jsp"/>
 			
             <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
@@ -108,16 +104,20 @@
 			
 			<!-- Aba Distribuição -->
 			<jsp:include page="tabDistribuicao.jsp" />
-						
-			<jsp:include page="tabEmissao.jsp"></jsp:include>
 			
-		    <!-- Aba Contratos e Garantias  -->	
+			<jsp:include page="tabEmissao.jsp" />
+			
+			<jsp:include page="tabNegociacao.jsp" />
+
+			<jsp:include page="tabFiscal.jsp" />
+			
+		    <!-- Aba Contratos e Garantias  	-->
             <jsp:include page="tabContratosGarantias.jsp"/>
-            			
-			<jsp:include page="tabNegociacao.jsp"></jsp:include>
-		   
-		    <jsp:include page="tabAprovacao.jsp"></jsp:include>
-		    
+             
+            <%--
+            <jsp:include page="tabAprovacao.jsp" />
+            --%>
+						
 	   		<br clear="all" />
 		</div>
 	</fieldset>
@@ -136,9 +136,8 @@
 	</div>
 </form>
 
-<form id="confirmarParametrosDistribuidor">
-	<div id="dialog-confirm" title="Salvar Parâmetro do Distribuidor">
-		<p>Confirma os Parâmetros do Distribuidor?</p>
-	</div>
-</form>
+<div id="confirmarParametrosDistribuidor" title="Salvar Parâmetro do Distribuidor">
+	<p>Confirma os Parâmetros do Distribuidor?</p>
+</div>
+
 </body>

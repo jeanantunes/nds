@@ -74,20 +74,19 @@ public interface FechamentoEncalheService {
 	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
-	
+
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
 	
 	BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 
-	public abstract void realizarCobrancaCotas(Date dataOperacao, 
-			                                                   Usuario usuario,
-			                                                   List<CotaAusenteEncalheDTO> listaCotasAusentes, 
-			                                                   Cota cotaAusente) throws GerarCobrancaValidacaoException;
+	void realizarCobrancaCotas(Date dataOperacao, 
+									Usuario usuario,
+									List<CotaAusenteEncalheDTO> listaCotasAusentes, 
+									Cota cotaAusente) throws GerarCobrancaValidacaoException;
 
-	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
-			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
+	List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
 
 	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, boolean ignorarUnificacao);
 	

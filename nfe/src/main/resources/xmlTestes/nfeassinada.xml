@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+	<infNFe Id="NFe35150311411415000174550310000000041000000040"
+		versao="3.10">
+		<ide>
+			<cUF>35</cUF>
+			<cNF>00000004</cNF>
+			<natOp>Venda de Mercadoria Adquirida ou Recebida de Terceiros</natOp>
+			<indPag>2</indPag>
+			<mod>55</mod>
+			<serie>31</serie>
+			<nNF>4</nNF>
+			<dhEmi>2015-03-30T18:45:36-03:00</dhEmi>
+			<tpNF>1</tpNF>
+			<idDest>1</idDest>
+			<cMunFG>3550308</cMunFG>
+			<tpImp>2</tpImp>
+			<tpEmis>1</tpEmis>
+			<cDV>0</cDV>
+			<tpAmb>2</tpAmb>
+			<finNFe>1</finNFe>
+			<indFinal>0</indFinal>
+			<indPres>0</indPres>
+			<procEmi>3</procEmi>
+			<verProc>3.10.35</verProc>
+		</ide>
+		<emit>
+			<CNPJ>11411415000174</CNPJ>
+			<xNome>Ar Distribuidora de Publicacoes Ltda</xNome>
+			<xFant>AR DISTRIBUIDORA</xFant>
+			<enderEmit>
+				<xLgr>AVENIDA Engenheiro Roberto Zuccolo</xLgr>
+				<nro>135</nro>
+				<xBairro>
+					Jardim HumaitἯxBairro>
+					<cMun>3550308</cMun>
+					<xMun>SAO PAULO</xMun>
+					<UF>SP</UF>
+					<CEP>05307190</CEP>
+					<cPais>1058</cPais>
+					<xPais>Brasil</xPais>
+			</enderEmit>
+			<IE>147094953112</IE>
+			<IM>0</IM>
+			<CNAE>4618403</CNAE>
+			<CRT>3</CRT>
+		</emit>
+		<dest>
+			<CNPJ>99999999000191</CNPJ>
+			<xNome>NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL
+			</xNome>
+			<enderDest>
+				<xLgr>RUA MARIETA DA SILVA</xLgr>
+				<nro>175</nro>
+				<xCpl>Nڠ185</xCpl>
+				<xBairro>VILA GUILHERME</xBairro>
+				<cMun>3550308</cMun>
+				<xMun>SAO PAULO</xMun>
+				<UF>SP</UF>
+				<CEP>02066030</CEP>
+				<cPais>1058</cPais>
+				<xPais>Brasil</xPais>
+			</enderDest>
+			<indIEDest>9</indIEDest>
+		</dest>
+		<det nItem="1">
+			<prod>
+				<cProd>33286090</cProd>
+				<cEAN>9771809669002</cEAN>
+				<xProd>CARTA CAPITAL</xProd>
+				<NCM>49029000</NCM>
+				<CFOP>5115</CFOP>
+				<uCom>UN</uCom>
+				<qCom>1</qCom>
+				<vUnCom>8.9250</vUnCom>
+				<vProd>8.92</vProd>
+				<cEANTrib>9771809669002</cEANTrib>
+				<uTrib>UN</uTrib>
+				<qTrib>1</qTrib>
+				<vUnTrib>8.9250</vUnTrib>
+				<indTot>1</indTot>
+			</prod>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
+				<IPI>
+					<cEnq>99</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>0.00</vBC>
+						<pIPI>0.00</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
+				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0.00</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>0.15</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0.00</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>0.68</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
+			<infAdProd>Edicao 838</infAdProd>
+		</det>
+		<det nItem="2">
+			<prod>
+				<cProd>1000925100</cProd>
+				<cEAN>9771679251000</cEAN>
+				<xProd>TV NOVELAS</xProd>
+				<NCM>49029000</NCM>
+				<CFOP>5115</CFOP>
+				<uCom>UN</uCom>
+				<qCom>3</qCom>
+				<vUnCom>30.0000</vUnCom>
+				<vProd>90.00</vProd>
+				<cEANTrib>9771679251000</cEANTrib>
+				<uTrib>UN</uTrib>
+				<qTrib>3</qTrib>
+				<vUnTrib>30.0000</vUnTrib>
+				<indTot>1</indTot>
+			</prod>
+			<imposto>
+				<ICMS>
+					<ICMS40>
+						<orig>0</orig>
+						<CST>41</CST>
+					</ICMS40>
+				</ICMS>
+				<IPI>
+					<cEnq>99</cEnq>
+					<IPITrib>
+						<CST>99</CST>
+						<vBC>0.00</vBC>
+						<pIPI>0.00</pIPI>
+						<vIPI>0.00</vIPI>
+					</IPITrib>
+				</IPI>
+				<PIS>
+					<PISAliq>
+						<CST>01</CST>
+						<vBC>0.00</vBC>
+						<pPIS>1.65</pPIS>
+						<vPIS>1.49</vPIS>
+					</PISAliq>
+				</PIS>
+				<COFINS>
+					<COFINSAliq>
+						<CST>01</CST>
+						<vBC>0.00</vBC>
+						<pCOFINS>7.60</pCOFINS>
+						<vCOFINS>6.84</vCOFINS>
+					</COFINSAliq>
+				</COFINS>
+			</imposto>
+			<infAdProd>Edi褯 4000</infAdProd>
+		</det>
+		<total>
+			<ICMSTot>
+				<vBC>0</vBC>
+				<vICMS>0.00</vICMS>
+				<vICMSDeson>0</vICMSDeson>
+				<vBCST>0</vBCST>
+				<vST>0</vST>
+				<vProd>98.92</vProd>
+				<vFrete>0</vFrete>
+				<vSeg>0</vSeg>
+				<vDesc>0</vDesc>
+				<vII>0</vII>
+				<vIPI>0.00</vIPI>
+				<vPIS>0.00</vPIS>
+				<vCOFINS>0.00</vCOFINS>
+				<vOutro>0</vOutro>
+				<vNF>98.92</vNF>
+			</ICMSTot>
+		</total>
+		<transp>
+			<modFrete>0</modFrete>
+		</transp>
+		<infAdic>
+			<infCpl>NAO INCIDENCIA DO ICMS CONF. ART. 7, INCISO XIII DECRETO
+				45.490/00 - RICMS/SP</infCpl>
+		</infAdic>
+		<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+			<SignedInfo>
+				<CanonicalizationMethod
+					Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+				<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+				<Reference URI="#NFe35150311411415000174550310000000041000000040">
+					<Transforms>
+						<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+						<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+					</Transforms>
+					<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+					<DigestValue>txDQHhx60C0q/J0tshIe+O/KAE8=</DigestValue>
+				</Reference>
+			</SignedInfo>
+			<SignatureValue>e0G78JGe6pFkP/wH33uetPstxXG0UIo4t9hMnIRaO7RNwsBejdI7bw5dmHgv7kU5ycGP3m/QBwxVA7qN7NY79XlVnauJHTAtpYLcYJ3zVJbtkVK22amVxAsytHzlTtOgU6UYSCB9onhS+BWGeXM//3GnnhLgUOf2FzpV59F4YLKbsHMkQx2Q2cGdbyOKY/JORmnZKJrBk3RokoFAbnAJKpOUeRMyxqFCcUQYy179FiOPFOjgRqwgt0pPac7AnBAtc8miMBccWERJxaHIV2Jn3eoyC/6v/mqb+4EIdlaeooflkkiQvfSM26hSD+rOL0/grfuomP9D7jlG/SOQLdOlSA==
+			</SignatureValue>
+			<KeyInfo>
+				<X509Data>
+					<X509Certificate>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
+					</X509Certificate>
+				</X509Data>
+			</KeyInfo>
+		</Signature>
+	</infNFe>
+	<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+		<SignedInfo>
+			<CanonicalizationMethod
+				Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+			<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+			<Reference URI="#NFe35150311411415000174550310000000041000000040">
+				<Transforms>
+					<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+					<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+				</Transforms>
+				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+				<DigestValue>5ziRikirlLDAk6ZCF4WCrui5wx0=</DigestValue>
+			</Reference>
+		</SignedInfo>
+		<SignatureValue>r8tYuTu0AgToxNi+NKKf/68NtjURuR5Y5FAf1cwx68v4Gh/XMPzI2xwx6X/h00Bdi8/5lVrRsSYwoU6amqTwQk/JbzAjkfHs9J+s7iJQEpcKVYq8fSwNcxdW0+WAIDCi0+O5Wx80Be2UkXufLnj1zWwmBtsN1zgi7gF1/FVO5uuLZpo48tzaIaox4kCTJgPaRqaRRvvOKmI9ba7Z/Jq5tHrURup4udy9899Y41mOTtN9ni8Rov/CWR8o0Z5f0a3EaGJdJi1gMgUxBh3mKqegKz0/3Fuw9J1bojuqkA8I9pclIslN/+kIZaCI93cgk+TNw7Lie+BQNNZtNMMOYcIWpg==
+		</SignatureValue>
+		<KeyInfo>
+			<X509Data>
+				<X509Certificate>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
+				</X509Certificate>
+			</X509Data>
+		</KeyInfo>
+	</Signature>
+</NFe>

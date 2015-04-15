@@ -32,12 +32,12 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -80,7 +80,7 @@ public class ConsultaNotasController extends BaseController {
 	private FornecedorService fornecedorService;
 
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 
 	@Autowired
 	private NotaFiscalEntradaService notaFiscalService;
@@ -99,7 +99,7 @@ public class ConsultaNotasController extends BaseController {
 	}
 	
 	@Get
-	public void exportar(FileType fileType) throws IOException {
+	public void exportar(final FileType fileType) throws IOException {
 		
 		if (fileType == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
@@ -137,11 +137,11 @@ public class ConsultaNotasController extends BaseController {
 		
 	}
 
-	public void pesquisarDetalhesNotaFiscal(Long idNota, int page, int rp, String sortname, String sortorder) {
+	public void pesquisarDetalhesNotaFiscal(final Long idNota, final int page, final int rp, final String sortname, final String sortorder) {
 
-		PaginacaoVO paginacao = new PaginacaoVO(sortname, sortorder);
+		final PaginacaoVO paginacao = new PaginacaoVO(sortname, sortorder);
 		
-		DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota, paginacao);
+		final DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota, paginacao);
 
 		if (detalheNotaFiscal == null || detalheNotaFiscal.getItensDetalhados() == null
 									  || detalheNotaFiscal.getItensDetalhados().isEmpty()) {
@@ -196,7 +196,7 @@ public class ConsultaNotasController extends BaseController {
 		
 		if (filtroSessao.getIdTipoNotaFiscal() != null) {
 			
-			TipoNotaFiscal tipoNotaFiscal = 
+			NaturezaOperacao tipoNotaFiscal = 
 				this.tipoNotaFiscalService.obterPorId(filtroSessao.getIdTipoNotaFiscal());
 		
 			if (tipoNotaFiscal != null) {
@@ -223,8 +223,8 @@ public class ConsultaNotasController extends BaseController {
 			}
 		}
 
-		List<TipoNotaFiscal> tiposNotaFiscal = 
-				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
+		List<NaturezaOperacao> tiposNotaFiscal = 
+				this.tipoNotaFiscalService.obterNaturezasOperacoesPorTipoAtividadeDistribuidor();
 
 		this.result.include("fornecedores", fornecedoresDistribuicao);
 		this.result.include("tiposNotaFiscal", tiposNotaFiscal);

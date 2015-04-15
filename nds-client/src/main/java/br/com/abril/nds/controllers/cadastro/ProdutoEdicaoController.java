@@ -227,8 +227,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
- "Registros não encontrados."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Registros não encontrados."));
 		}
 	}
 	
@@ -569,7 +568,7 @@ public class ProdutoEdicaoController extends BaseController {
             if (maiorDataLancamento != null && dto.getDataLancamento() != null
 					&& dto.getDataLancamento().compareTo(maiorDataLancamento) <= 0) {
 				
-            	 listaMensagens.add("Data de redistribuição deve ser maior que ultima data de lançamento cadastrada!");
+            	listaMensagens.add("Data de redistribuição deve ser maior que ultima data de lançamento cadastrada!");
 			}
 		}
 		

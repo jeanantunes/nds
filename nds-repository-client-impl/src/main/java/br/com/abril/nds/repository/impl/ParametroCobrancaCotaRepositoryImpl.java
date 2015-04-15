@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;

@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
 @SuppressWarnings("serial")
 public class MixCotaProdutoDTO implements Serializable{
 	

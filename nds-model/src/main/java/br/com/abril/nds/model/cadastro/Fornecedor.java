@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -39,6 +41,7 @@ import br.com.abril.nds.model.cadastro.desconto.Desconto;
 @Entity
 @Table(name = "FORNECEDOR")
 @SequenceGenerator(name="FORNECEDOR_SEQ", initialValue = 1, allocationSize = 1)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Fornecedor implements Serializable {
 
 	private static final long serialVersionUID = -1534481069627822217L;

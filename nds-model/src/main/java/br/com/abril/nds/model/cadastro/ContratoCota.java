@@ -20,10 +20,13 @@ public class ContratoCota extends Contrato implements Serializable {
 	private static final long serialVersionUID = -2620583362349546771L;
 	@JsonBackReference
 	@OneToOne(optional = false)
+	
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
 	@Column(name = "EXIGE_DOC_SUSPENSAO", nullable = false)
 	private boolean exigeDocumentacaoSuspencao;
+	
 	@Column(name="RECEBIDO", nullable = true)
 	private Boolean recebido = false;
 	
@@ -50,5 +53,6 @@ public class ContratoCota extends Contrato implements Serializable {
 	public void setRecebido(boolean recebido) {
 		this.recebido = recebido;
 	}
-
+	
+	
 }

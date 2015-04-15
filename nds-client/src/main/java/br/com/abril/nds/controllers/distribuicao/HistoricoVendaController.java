@@ -371,12 +371,12 @@ public class HistoricoVendaController extends BaseController {
 		switch (componente) {
 		case TIPO_PONTO_DE_VENDA:
 			for(TipoPontoPDV tipo : pdvService.obterTiposPontoPDVPrincipal()){
-				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
+				resultList.add(new ItemDTO<Long, String>(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
 		case AREA_DE_INFLUENCIA:
 			for(AreaInfluenciaPDV tipo : pdvService.obterAreasInfluenciaPDV()){
-				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
+				resultList.add(new ItemDTO<Long, String>(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
 
@@ -387,7 +387,7 @@ public class HistoricoVendaController extends BaseController {
 			break;
 		case DISTRITO:
 			for(UfEnum tipo : UfEnum.values()){
-				resultList.add(new ItemDTO(tipo.getSigla(),tipo.getSigla()));
+				resultList.add(new ItemDTO<Long, String>(Long.valueOf(tipo.getSigla()),tipo.getSigla().toString()));
 			}
 			break;
 		case GERADOR_DE_FLUXO:

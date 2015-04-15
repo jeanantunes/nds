@@ -18,9 +18,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,6 +31,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 
 /**
  * Cadastro do Distribuidor
@@ -217,20 +220,29 @@ public class Distribuidor {
 	 */
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
-
+	
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
+	
+	@Column(name ="CNAE", nullable = false)
+	private String cnae;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = true)
 	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "OBRIGACAO_FISCAL", nullable = true)
-	private ObrigacaoFiscal obrigacaoFiscal;
+	@Column(name = "POSSUI_REGIME_ESPECIAL_DISPENSA_INTERNA", nullable = false)
+	private boolean possuiRegimeEspecialDispensaInterna;
 	
-	@Column(name = "REGIME_ESPECIAL", nullable = false)
-	private boolean regimeEspecial;
+	@Column(name = "NF_INFORMACOES_ADICIONAIS", nullable = true)
+	private String nfInformacoesAdicionais;
+	
+	@Column(name = "NUMERO_DISPOSITIVO_LEGAL")
+	private String numeroDispositivoLegal;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_LIMITE_VIGENCIA_REGIME_ESPECIAL")
+	private Date dataLimiteVigenciaRegimeEspecial;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
@@ -337,7 +349,21 @@ public class Distribuidor {
 	@Column(name = "PARAR_ACUM_DIVIDAS", nullable = false)
 	private boolean pararAcumuloDividas;
 	
-	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL)
+	@OrderBy("id")
+	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
+	
+	@OneToMany
+	@JoinTable(
+	            name="DISTRIBUIDOR_TIPOS_EMISSOES_NOTA_FISCAL",
+	            joinColumns={
+	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
+	@OrderBy("sequencia")
+	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
+
+	@OneToMany
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
 	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
@@ -345,6 +371,23 @@ public class Distribuidor {
 	
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
+	
+	@OneToOne
+	@JoinColumn(name="REGIME_TRIBUTARIO_ID")
+	private RegimeTributario regimeTributario;
+	
+	/**
+	 * Lista de naturezas de operacoes para Notas de Envio
+	 * Deve existir 1, e apenas 1, para cada tipo de Atividade
+	 */
+	@OneToMany
+	@JoinTable(
+	            name="NATUREZA_OPERACAO_NOTA_ENVIO",
+	            joinColumns={
+	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="NATUREZA_OPERACAO", name="NATUREZA_OPERACAO_ID", referencedColumnName="id"))
+	private Set<NaturezaOperacao> naturezasOperacoesNotasEnvio = new HashSet<NaturezaOperacao>();
 	
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
@@ -800,6 +843,14 @@ public class Distribuidor {
 			ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor) {
 		this.parametrosAprovacaoDistribuidor = parametrosAprovacaoDistribuidor;
 	}
+	
+	public String getCnae() {
+		return cnae;
+	}
+
+	public void setCnae(String cnae) {
+		this.cnae = cnae;
+	}
 
 	public TipoAtividade getTipoAtividade() {
 		return tipoAtividade;
@@ -809,20 +860,38 @@ public class Distribuidor {
 		this.tipoAtividade = tipoAtividade;
 	}
 
-	public ObrigacaoFiscal getObrigacaoFiscal() {
-		return obrigacaoFiscal;
+	public boolean isPossuiRegimeEspecialDispensaInterna() {
+		return (possuiRegimeEspecialDispensaInterna && dataLimiteVigenciaRegimeEspecial != null ? dataLimiteVigenciaRegimeEspecial.after(new Date()) : false);
 	}
 
-	public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
-		this.obrigacaoFiscal = obrigacaoFiscal;
+	public void setPossuiRegimeEspecialDispensaInterna(
+			boolean possuiRegimeEspecialDispensaInterna) {
+		this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
 	}
 
-	public boolean isRegimeEspecial() {
-		return regimeEspecial;
+	public String getNfInformacoesAdicionais() {
+		return nfInformacoesAdicionais;
 	}
 
-	public void setRegimeEspecial(boolean regimeEspecial) {
-		this.regimeEspecial = regimeEspecial;
+	public void setNfInformacoesAdicionais(String nfInformacoesAdicionais) {
+		this.nfInformacoesAdicionais = nfInformacoesAdicionais;
+	}
+
+	public String getNumeroDispositivoLegal() {
+		return numeroDispositivoLegal;
+	}
+
+	public void setNumeroDispositivoLegal(String numeroDispositivoLegal) {
+		this.numeroDispositivoLegal = numeroDispositivoLegal;
+	}
+
+	public Date getDataLimiteVigenciaRegimeEspecial() {
+		return dataLimiteVigenciaRegimeEspecial;
+	}
+
+	public void setDataLimiteVigenciaRegimeEspecial(
+			Date dataLimiteVigenciaRegimeEspecial) {
+		this.dataLimiteVigenciaRegimeEspecial = dataLimiteVigenciaRegimeEspecial;
 	}
 
 	public TipoImpressaoCE getTipoImpressaoCE() {
@@ -1056,18 +1125,6 @@ public class Distribuidor {
 	}
 
 	/**
-	 * Conforme esclarecido pela àrea de negócios qualquer
-	 * valor de {@link ObrigacaoFiscal} atribuído ao Distribuidor
-	 * indica que este possui obrigação fiscal.
-	 * 
-	 * @return true se o Distribuidor possui obrigação
-	 * fiscal, false caso contrário
-	 */
-	public boolean possuiObrigacaoFiscal() {
-	    return obrigacaoFiscal != null;
-	}
-
-	/**
 	 * @return the fechamentoDiarioEmAndamento
 	 */
 	public Boolean getFechamentoDiarioEmAndamento() {
@@ -1208,6 +1265,30 @@ public class Distribuidor {
 	public void setPararAcumuloDividas(boolean pararAcumuloDividas) {
 		this.pararAcumuloDividas = pararAcumuloDividas;
 	}
+
+	/**
+	 * @return
+	 */
+	public Set<DistribuidorTipoNotaFiscal> getTiposNotaFiscalDistribuidor() {
+		return tiposNotaFiscalDistribuidor;
+	}
+
+	/**
+	 * @param tiposNotaFiscalDistribuidor
+	 */
+	public void setTiposNotaFiscalDistribuidor(
+			Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor) {
+		this.tiposNotaFiscalDistribuidor = tiposNotaFiscalDistribuidor;
+	}
+
+	public Set<NotaFiscalTipoEmissao> getTiposEmissoesNotaFiscalDistribuidor() {
+		return tiposEmissoesNotaFiscalDistribuidor;
+	}
+
+	public void setTiposEmissoesNotaFiscalDistribuidor(
+			Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor) {
+		this.tiposEmissoesNotaFiscalDistribuidor = tiposEmissoesNotaFiscalDistribuidor;
+	}
 	
 	public List<DistribuidorClassificacaoCota> getListClassificacaoCota() {
 		return listClassificacaoCota;
@@ -1234,7 +1315,39 @@ public class Distribuidor {
             List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
+	
+	public RegimeTributario getRegimeTributario() {
+		return regimeTributario;
+	}
 
+	public void setRegimeTributario(RegimeTributario regimeTributario) {
+		this.regimeTributario = regimeTributario;
+	}
+
+	public List<TributoAliquota> getRegimeTributarioTributoAliquota() {
+		return regimeTributario != null ? regimeTributario.getTributosAliquotas() : null;
+	}
+	
+	public Set<NaturezaOperacao> getNaturezasOperacoesNotasEnvio() {
+		return naturezasOperacoesNotasEnvio;
+	}
+
+	public void setNaturezasOperacoesNotasEnvio(
+			Set<NaturezaOperacao> naturezasOperacoesNotasEnvio) {
+		this.naturezasOperacoesNotasEnvio = naturezasOperacoesNotasEnvio;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCodigo() == null) ? 0 : this.getCodigo().hashCode());
+		result = prime * result + ((this.getCodigoDistribuidorDinap() == null) ? 0 : this.getCodigoDistribuidorDinap().hashCode());
+		result = prime * result + ((this.getCodigoDistribuidorFC() == null) ? 0 : this.getCodigoDistribuidorFC().hashCode());
+		return result;
+	}
+	
 	public boolean isAceitaRecolhimentoParcialAtraso() {
 		return aceitaRecolhimentoParcialAtraso;
 	}
@@ -1243,5 +1356,130 @@ public class Distribuidor {
 			boolean aceitaRecolhimentoParcialAtraso) {
 		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Distribuidor other = (Distribuidor) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getCodigo() == null) {
+			if (other.getCodigo() != null)
+				return false;
+		} else if (!this.getCodigo().equals(other.getCodigo()))
+			return false;
+		if (this.getCodigoDistribuidorDinap() == null) {
+			if (other.getCodigoDistribuidorDinap() != null)
+				return false;
+		} else if (!this.getCodigoDistribuidorDinap()
+				.equals(other.getCodigoDistribuidorDinap()))
+			return false;
+		if (this.getCodigoDistribuidorFC() == null) {
+			if (other.getCodigoDistribuidorFC() != null)
+				return false;
+		} else if (!this.getCodigoDistribuidorFC().equals(other.getCodigoDistribuidorFC()))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Distribuidor [id=" + id + ", parametroCobrancaDistribuidor="
+				+ parametroCobrancaDistribuidor
+				+ ", parametrosRecolhimentoDistribuidor="
+				+ parametrosRecolhimentoDistribuidor
+				+ ", parametrosAprovacaoDistribuidor="
+				+ parametrosAprovacaoDistribuidor + ", codigo=" + codigo
+				+ ", dataOperacao=" + dataOperacao + ", juridica=" + juridica
+				+ ", fatorDesconto=" + fatorDesconto + ", politicasCobranca="
+				+ politicasCobranca + ", politicaSuspensao="
+				+ politicaSuspensao + ", telefones=" + telefones
+				+ ", parametrosDistribuidorEmissaoDocumentos="
+				+ parametrosDistribuidorEmissaoDocumentos
+				+ ", parametrosDistribuidorFaltasSobras="
+				+ parametrosDistribuidorFaltasSobras + ", aceitaJuramentado="
+				+ aceitaJuramentado + ", tipoContabilizacaoCE="
+				+ tipoContabilizacaoCE + ", supervisionaVendaNegativa="
+				+ supervisionaVendaNegativa + ", politicaChamadao="
+				+ politicaChamadao + ", capacidadeDistribuicao="
+				+ capacidadeDistribuicao + ", capacidadeRecolhimento="
+				+ capacidadeRecolhimento + ", numeroReprogramacoesLancamento="
+				+ numeroReprogramacoesLancamento + ", inicioSemana="
+				+ inicioSemanaRecolhimento + ", executaRecolhimentoParcial="
+				+ executaRecolhimentoParcial + ", preenchimentoAutomaticoPDV="
+				+ preenchimentoAutomaticoPDV + ", fatorRelancamentoParcial="
+				+ fatorRelancamentoParcial + ", valorConsignadoSuspensaoCotas="
+				+ valorConsignadoSuspensaoCotas
+				+ ", quantidadeDiasSuspensaoCotas="
+				+ quantidadeDiasSuspensaoCotas + ", parametroContratoCota="
+				+ parametroContratoCota + ", tiposGarantiasAceita="
+				+ tiposGarantiasAceita
+				+ ", requerAutorizacaoEncalheSuperaReparte="
+				+ requerAutorizacaoEncalheSuperaReparte
+				+ ", qntDiasReutilizacaoCodigoCota="
+				+ qntDiasReutilizacaoCodigoCota
+				+ ", utilizaSugestaoIncrementoCodigo="
+				+ utilizaSugestaoIncrementoCodigo
+				+ ", qtdDiasEncalheAtrasadoAceitavel="
+				+ qtdDiasEncalheAtrasadoAceitavel
+				+ ", qntDiasVencinemtoVendaEncalhe="
+				+ qntDiasVencinemtoVendaEncalhe + ", tipoAtividade="
+				+ tipoAtividade + ", possuiRegimeEspecialDispensaInterna="
+				+ possuiRegimeEspecialDispensaInterna
+				+ ", cnae =" + cnae
+				+ ", numeroDispositivoLegal=" + numeroDispositivoLegal
+				+ ", dataLimiteVigenciaRegimeEspecial="
+				+ dataLimiteVigenciaRegimeEspecial + ", tipoImpressaoCE="
+				+ tipoImpressaoCE + ", tipoImpressaoInterfaceLED="
+				+ tipoImpressaoInterfaceLED + ", arquivoInterfaceLedPicking1="
+				+ arquivoInterfaceLedPicking1
+				+ ", arquivoInterfaceLedPicking2="
+				+ arquivoInterfaceLedPicking2
+				+ ", arquivoInterfaceLedPicking3="
+				+ arquivoInterfaceLedPicking3 + ", tipoImpressaoNENECADANFE="
+				+ tipoImpressaoNENECADANFE + ", utilizaProcuracaoEntregadores="
+				+ utilizaProcuracaoEntregadores
+				+ ", informacoesComplementaresProcuracao="
+				+ informacoesComplementaresProcuracao + ", utilizaGarantiaPdv="
+				+ utilizaGarantiaPdv + ", parcelamentoDividas="
+				+ parcelamentoDividas + ", negociacaoAteParcelas="
+				+ negociacaoAteParcelas + ", utilizaControleAprovacao="
+				+ utilizaControleAprovacao + ", prazoFollowUp=" + prazoFollowUp
+				+ ", prazoAvisoPrevioValidadeGarantia="
+				+ prazoAvisoPrevioValidadeGarantia
+				+ ", qtdDiasLimiteParaReprogLancamento="
+				+ qtdDiasLimiteParaReprogLancamento
+				+ ", descontoCotaNegociacao=" + descontoCotaNegociacao
+				+ ", parametroEntregaBanca=" + parametroEntregaBanca
+				+ ", codigoDistribuidorDinap=" + codigoDistribuidorDinap
+				+ ", codigoDistribuidorFC=" + codigoDistribuidorFC
+				+ ", enderecoDistribuidor=" + enderecoDistribuidor
+				+ ", controleArquivoCobranca=" + controleArquivoCobranca
+				+ ", fechamentoDiarioEmAndamento="
+				+ fechamentoDiarioEmAndamento + ", aceitaBaixaPagamentoMaior="
+				+ aceitaBaixaPagamentoMaior + ", aceitaBaixaPagamentoMenor="
+				+ aceitaBaixaPagamentoMenor + ", aceitaBaixaPagamentoVencido="
+				+ aceitaBaixaPagamentoVencido + ", numeroDiasNovaCobranca="
+				+ numeroDiasNovaCobranca + ", assuntoEmailCobranca="
+				+ assuntoEmailCobranca + ", mensagemEmailCobranca="
+				+ mensagemEmailCobranca + ", pracaVeraneio=" + pracaVeraneio
+				+ ", interfacesMatrizExecucao=" + interfacesMatrizExecucao
+				+ ", dataInicioInterfacesMatrizExecucao="
+				+ dataInicioInterfacesMatrizExecucao + ", pararAcumuloDividas="
+				+ pararAcumuloDividas + ", tiposNotaFiscalDistribuidor="
+				+ tiposNotaFiscalDistribuidor
+				+ ", tiposEmissoesNotaFiscalDistribuidor="
+				+ tiposEmissoesNotaFiscalDistribuidor
+				+ ", listClassificacaoCota=" + listClassificacaoCota
+				+ ", gridDistribuicao=" + gridDistribuicao
+				+ ", listPercentualExcedente=" + listPercentualExcedente + "]";
+	}
 }

@@ -500,7 +500,8 @@ public class PDV implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCota() == null) ? 0 : this.getCota().hashCode());
 		return result;
 	}
 
@@ -513,17 +514,37 @@ public class PDV implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		PDV other = (PDV) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getCota() == null) {
+			if (other.getCota() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getCota().equals(other.getCota()))
+			return false;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
-	    return nome;
+		return "PDV [id=" + id + ", dataInclusao=" + dataInclusao + ", cota="
+				+ cota + ", status=" + status + ", enderecos=" + enderecos
+				+ ", telefones=" + telefones + ", nome=" + nome + ", contato="
+				+ contato + ", site=" + site + ", email=" + email
+				+ ", pontoReferencia=" + pontoReferencia
+				+ ", dentroOutroEstabelecimento=" + dentroOutroEstabelecimento
+				+ ", arrendatario=" + arrendatario
+				+ ", tipoEstabelecimentoPDV=" + tipoEstabelecimentoPDV
+				+ ", tamanhoPDV=" + tamanhoPDV + ", possuiSistemaIPV="
+				+ possuiSistemaIPV + ", qtdeFuncionarios=" + qtdeFuncionarios
+				+ ", porcentagemFaturamento=" + porcentagemFaturamento
+				+ ", licencaMunicipal=" + licencaMunicipal + ", periodos="
+				+ periodos + ", caracteristicas=" + caracteristicas
+				+ ", segmentacao=" + segmentacao + ", materiais=" + materiais
+				+ ", expositor=" + expositor + ", tipoExpositor="
+				+ tipoExpositor + ", geradorFluxoPDV=" + geradorFluxoPDV
+				+ ", rotas=" + rotas + "]";
 	}
-
 }

@@ -3,25 +3,13 @@ var entradaNFETerceirosController = $.extend(true, {
 	path : contextPath + "/nfe/entradaNFETerceiros/",
 	
 	init : function() {
-		$( "#dataInicial", this.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$( "#dataFinal", this.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
+		this.initInputs();
+		this.initFiltroDatas();
 		this.initEncalheNfeGrid();
 		this.initNotaRecebidaGrid();
 		this.initPesqProdutosNotaGrid();
 	},
 	
-	
-
 	cadastrarNota : function(idControleConferenciaEncalheCota){		
 
 		$.postJSON(
@@ -35,17 +23,11 @@ var entradaNFETerceirosController = $.extend(true, {
 					{ name: "idControleConferenciaEncalheCota", value: idControleConferenciaEncalheCota }
 				],
 				function(result) {
-
 					if (result.listaMensagens) {
-
-						exibirMensagem(
-							result.tipoMensagem, 
-							result.listaMensagens
-						);
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					}
 				},
-				null,
-				true
+				null, true
 			);
 	},
   
@@ -62,23 +44,42 @@ var entradaNFETerceirosController = $.extend(true, {
 	},
 	
 	pesquisarEncalhe : function(){
+		
 		$(".dadosFiltro", this.workspace).show();		
+		var mensagens = [];
+		
 		var status = $('#situacaoNfe', this.workspace).val();		
 
 		$("#btnRegistrarNFe").hide();
 		
 		if(status != ''){
+			
+			if($("#entradaNFETerceiros-dataInicial").val() == '' || $("#entradaNFETerceiros-dataFinal").val() == '') {
+				mensagens.push('A data de movimento não nula');
+				exibirMensagem('WARNING', mensagens);
+				return false;
+			} else {
+				var retorno = validarDatas($("#entradaNFETerceiros-dataInicial").val(), $("#entradaNFETerceiros-dataFinal").val());
+				
+				if(!retorno){			
+					mensagens.push('A data de movimento final não pode ser maior que a data inicial');
+					exibirMensagem('WARNING', mensagens);
+					return false;
+				}
+			}
+			
 			if(status == 'RECEBIDA'){
+				// inputadas manualmente no sistema
 				$("#btnRegistrarNFe").show();
 				this.pesquisarNotaRecebidas();		
-			}else{			
-				this.pesquisarNotasPendente();
+			}else if(status == 'PENDENTE_RECEBIMENTO') {			
+				this.pesquisarNotasPendentesRecebimento();
+			}else if (status == 'PENDENTE_EMISAO'){
+				this.pesquisarNotasPedenteEmissao();
 			}
 		}else{
-			exibirMensagem("WARNING", ["Escolha o status da nota"]);
-			
+			mensagens.push('["Escolha o status da nota"]');
 		}
-		
 	},
 	
 	pesquisarNotaRecebidas : function(){
@@ -86,22 +87,29 @@ var entradaNFETerceirosController = $.extend(true, {
 		var params = $("#form-pesquisa-nfe").serialize();
 		
 		$(".notaRecebidaGrid", this.workspace).flexOptions({
-			url: this.path + "pesquisarNotasRecebidas?" + params,
-			newp : 1
+			url: this.path + "pesquisarNotasRecebidas?" + params, newp : 1
 		});
 
 		$(".notaRecebidaGrid", this.workspace).flexReload();
 	},
 	
-	pesquisarNotasPendente : function(){
+	pesquisarNotasPendentesRecebimento : function(){
 		
 		var params = $("#form-pesquisa-nfe").serialize();
 		
 		$(".encalheNfeGrid", this.workspace).flexOptions({
-			url: this.path +"pesquisarNotasPendentes?" + params,
-			newp: 1
+			url: this.path +"pesquisarNotasPendentesRecebimento?" + params, newp: 1
 		});
-
+		$(".encalheNfeGrid", this.workspace).flexReload();		
+	},
+	
+	pesquisarNotasPedenteEmissao : function(){
+		
+		var params = $("#form-pesquisa-nfe").serialize();
+		
+		$(".encalheNfeGrid", this.workspace).flexOptions({
+			url: this.path +"pesquisarNotasPedenteEmissao?" + params, newp: 1
+		});
 		$(".encalheNfeGrid", this.workspace).flexReload();		
 	},
 	
@@ -142,19 +150,30 @@ var entradaNFETerceirosController = $.extend(true, {
 									 '\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
-				var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
-					   																		+row.cell.dataEncalhe+','
-					   																		+row.cell.chaveAcesso+','
-					   																		+row.cell.serie+','
-					   																		+row.cell.valorNota+','
-					   																		+row.cell.idControleConferenciaEncalheCota+','
-					   																		+row.cell.idNotaFiscalEntrada+');" style="cursor:pointer">' +
+				var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal(\''+row.cell.numeroNfe +'\',\''
+					   																		+ row.cell.dataEncalhe +'\',\''
+					   																		+ row.cell.chaveAcesso +'\',\''
+					   																		+ row.cell.serie +'\',\''
+					   																		+ row.cell.valorNota +'\',\''
+					   																		+ row.cell.idControleConferenciaEncalheCota +'\',\''
+					   																		+ row.cell.idNotaFiscalEntrada +'\');" style="cursor:pointer">' +
 							   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 		                         '</a>';
 
 			   row.cell.acao = linkLancamento + linkCadastro;
 			});
-		
+			
+			$.each(resultado.rows, function(index, row) {
+
+				var valorNota = floatToPrice(row.cell.valorNota);
+				var valorReal = floatToPrice(row.cell.valorReal);
+				var diferenca = floatToPrice(row.cell.diferenca);
+				
+				row.cell.valorNota = valorNota;
+				row.cell.valorReal = valorReal;
+				row.cell.diferenca = diferenca;
+			});
+			
 		}
 		
 		$(".grids", this.workspace).show();
@@ -174,15 +193,7 @@ var entradaNFETerceirosController = $.extend(true, {
 			return resultado;
 		}
 
-		$.each(resultado.rows, function(index, row) {
-
-			var inputQtdeInfo  = "<input type='text' name='inputQtdeInfo' style='text-align:center' size='5' value='" + row.cell.qtdInformada + "' />";
-			var inputPrecoCapa = "<input type='text' name='inputPrecoCapa' style='text-align:right' size='10' value='" + row.cell.precoCapaFormatado + "' />";
-
-			row.cell.qtdInformada = inputQtdeInfo;
-			row.cell.precoCapaFormatado = inputPrecoCapa;
-		});
-
+		
 		return resultado;
 	},
 	
@@ -300,7 +311,6 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 
 		$(".pesquisarProdutosNotaGrid", entradaNFETerceirosController.workspace).flexReload();
-	
 		$( "#dialog-dadosNotaFiscal", this.workspace ).dialog({
 			resizable: false,
 			height:'auto',
@@ -317,8 +327,8 @@ var entradaNFETerceirosController = $.extend(true, {
 				}
 			},
 			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form")
+			     
 		});	
-		      
 	},
 	
 	popup_confirmar : function() {
@@ -517,6 +527,53 @@ var entradaNFETerceirosController = $.extend(true, {
 		});
 	},
 	
+	initInputs : function() {
+		
+		$("#entrada-terceiros-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#entrada-terceiros-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6
+		}).multiselect("checkAll");
+		
+		$("#selFornecedor", entradaNFETerceirosController.workspace).click(function() {
+			$(".menu_fornecedor", entradaNFETerceirosController.workspace).show().fadeIn("fast");
+		});
+
+		$(".menu_fornecedor", entradaNFETerceirosController.workspace).mouseleave(function() {
+			$(".menu_fornecedor", entradaNFETerceirosController.workspace).hide();
+		});
+		
+	},
+	
+	initFiltroDatas : function() {
+		
+		$.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor', null, 
+				function(result) {
+					$("#entradaNFETerceiros-dataInicial", this.workspace).val(result);
+					
+					$("#entradaNFETerceiros-dataFinal", this.workspace).val(result);
+		        }
+		);
+		
+		$( "#entradaNFETerceiros-dataInicial", this.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#entradaNFETerceiros-dataFinal", this.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$('#entradaNFETerceiros-dataInicial', entradaNFETerceirosController.workspace).mask("99/99/9999");
+		
+		$('#entradaNFETerceiros-dataFinal', entradaNFETerceirosController.workspace).mask("99/99/9999");
+	},
+	
+	
 	initPesqProdutosNotaGrid : function() {
 		$(".pesquisarProdutosNotaGrid", this.workspace).flexigrid({
 			preProcess: this.executarPreProcessamentoProdutosNotaFiscal,
@@ -584,3 +641,4 @@ var entradaNFETerceirosController = $.extend(true, {
 	}
 	
 }, BaseController);
+//@ sourceURL=entradaNFETerceiros.js

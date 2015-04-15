@@ -175,7 +175,7 @@ public class EstoqueProduto implements Serializable {
 		this.qtdeGanho = qtdeGanho;
 	}
 
-    public BigInteger getQtdeJuramentado() {
+	public BigInteger getQtdeJuramentado() {
         return qtdeJuramentado;
     }
 
@@ -183,4 +183,35 @@ public class EstoqueProduto implements Serializable {
         this.qtdeJuramentado = qtdeJuramentado;
     }
 
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstoqueProduto other = (EstoqueProduto) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+			return false;
+		return true;
+	}
+    
 }

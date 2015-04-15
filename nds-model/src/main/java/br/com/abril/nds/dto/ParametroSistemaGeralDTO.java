@@ -25,8 +25,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	private static final long serialVersionUID = -7477289076396360578L;
 	
 
-	private Map<TipoParametroSistema, String> params = 
-			new HashMap<TipoParametroSistema, String>();
+	private Map<TipoParametroSistema, String> params = new HashMap<TipoParametroSistema, String>();
 	
 	/** Data da Operação Corrente (usado apenas para exibição). */
 	private String dtOperacaoCorrente;
@@ -385,21 +384,6 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public void setPathNfeExportacao(String pathNfeExportacao) {
 		this.params.put(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO, pathNfeExportacao);
 	}
-
-	/**
-	 * @return the nfeDpec
-	 */
-	public String getNfeDpec() {
-		return this.getParametroSistemaString(TipoParametroSistema.NFE_DPEC);
-	}
-
-	/**
-	 * @param nfeDpec
-	 *            the nfeDpec to set
-	 */
-	public void setNfeDpec(String nfeDpec) {
-		this.params.put(TipoParametroSistema.NFE_DPEC, Boolean.valueOf(nfeDpec) ? "TRUE" : "FALSE");
-	}
 	
 	/**
 	 * @return pathImageCapa
@@ -442,6 +426,78 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	 */
 	public void setPathContrato(String pathContrato) {
 		this.params.put(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO, pathContrato);
+	}
+	
+	public String getNfeInformacoesAmbiente() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_AMBIENTE);
+	}
+	
+	public void setNfeInformacoesAmbiente(String nfeInformacoesAmbiente) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_AMBIENTE, nfeInformacoesAmbiente);
+	}
+	
+	public String getNfeInformacoesFormatoImpressao() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO);
+	}
+	
+	public void setNfeInformacoesFormatoImpressao(String nfeInformacoesFormatoImpressao) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_FORMATO_IMPRESSAO, nfeInformacoesFormatoImpressao);
+	}
+	
+	public String getNfeInformacoesModeloDocumento() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO);
+	}
+	
+	public void setNfeInformacoesModeloDocumento(String nfeInformacoesModeloDocumento) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_MODELO_DOCUMENTO, nfeInformacoesModeloDocumento);
+	}
+	
+	public String getNfeInformacoesTipoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR);
+	}
+	
+	public void setNfeInformacoesTipoEmissor(String nfeInformacoesTipoEmissor) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_TIPO_EMISSOR, nfeInformacoesTipoEmissor);
+	}
+	
+	public String getNfeInformacoesVersaoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR);
+	}
+	
+	public void setNfeInformacoesVersaoEmissor(String nfeInformacoesVersaoEmissor) {
+		this.params.put(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR, nfeInformacoesVersaoEmissor);
+	}
+	
+	public void setFtfCodigoEstabelecimentoEmissor(String ftfCodigoEstabelecimentoEmissor) {
+		this.params.put(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR, ftfCodigoEstabelecimentoEmissor);
+	}
+	
+	public String getFtfCodigoEstabelecimentoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR);
+	}
+	
+	public void setFtfCnpjEstabelecimentoEmissor(String ftfCnpjEstabelecimentoEmissor) {
+		this.params.put(TipoParametroSistema.FTF_CNPJ_ESTABELECIMENTO_EMISSOR, ftfCnpjEstabelecimentoEmissor);
+	}
+	
+	public String getFtfCnpjEstabelecimentoEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CNPJ_ESTABELECIMENTO_EMISSOR);
+	}
+    
+	public void setFtfCodigoLocal(String ftfCodigoLocal) {
+		this.params.put(TipoParametroSistema.FTF_CODIGO_LOCAL, ftfCodigoLocal);
+	}
+	
+	public String getFtfCodigoLocal() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_LOCAL);
+	}
+	
+	public void setFtfCodigoCentroEmissor(String ftfCodigoCentroEmissor) {
+		this.params.put(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR, ftfCodigoCentroEmissor);
+	}
+	
+	public String getFtfCodigoCentroEmissor() {
+		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR);
 	}
 	
 	/**

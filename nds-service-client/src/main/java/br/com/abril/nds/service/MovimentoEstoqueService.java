@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
@@ -13,12 +14,14 @@ import br.com.abril.nds.dto.MovimentoEstoqueDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -45,11 +48,11 @@ public interface MovimentoEstoqueService {
 
 	
 	MovimentoEstoqueCota gerarMovimentoCota(
-	        Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, 
+	        Date dataLancamento, ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
 	        BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
-	        ValoresAplicados valoresAplicados);
+	        ValoresAplicados valoresAplicados, FormaComercializacao formaComercializacao, boolean isContribuinte, boolean isExigeNota);
 
-	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota, FormaComercializacao formaComercializacao);
 
 	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
 
@@ -109,11 +112,11 @@ public interface MovimentoEstoqueService {
 													   boolean validarTransfEstoqueDiferenca,
 													   Date dataLancamento, StatusIntegracao statusIntegracao);
 	
-	 MovimentoEstoqueCota gerarMovimentoCotaDiferenca(Date dataLancamento,Long idProdutoEdicao, 
+	 MovimentoEstoqueCota gerarMovimentoCotaDiferenca(Date dataLancamento, ProdutoEdicao produtoEdicao, 
 														Long idCota, Long idUsuario, 
 														BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 														Long idEstudoCota,
-														boolean isMovimentoDiferencaAutomatico);
+														boolean isMovimentoDiferencaAutomatico, boolean isContribuinte, boolean isExigeNota);
 
     /**
 	 * Obtem Objeto com Lista de movimentos de estoque referentes à reparte e Map de edicoes com saidas e entradas diversas
@@ -129,9 +132,9 @@ public interface MovimentoEstoqueService {
 													Date dataLancamento, StatusIntegracao statusIntegracao,
 													Origem origem, boolean isFaltaDirecionadaCota);
 	
-	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
-			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
-			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico);
+	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Distribuidor distribuidor, Date dataLancamento, ProdutoEdicao produtoEdicao, 
+			Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, 
+			Date dataOperacao, Long idLancamento, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico, EstudoCotaDTO estudoCotaDTO);
 
 	
 	

@@ -15,7 +15,7 @@
 	<context:annotation-config />
 	<context:property-placeholder
 		location="classpath:nds-client.properties, classpath:prophecies.properties"
-		ignore-unresolvable="true" />
+		ignore-unresolvable="false" />
 	<context:component-scan base-package="br.com.abril.nds" />
 
 	<!-- TOMCAT -->
@@ -35,17 +35,62 @@
 
 	<util:properties id="properties" location="classpath:nds-client.properties" />
 	<util:properties id="queries" location="classpath:/query.properties" />
-	<util:properties id="query_estudo"
-		location="classpath:/query-estudo.properties" />
+	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
 
 	<!-- 
 	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler" />
  	-->
  	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+		
+	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
+	
+	<!-- 
+	    Beans de assinatura 
+	-->
+	<bean id="signatureFactory" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSigantureFactoryBean">
+	    <property name="providerName" value="jsr105Provider" />
+	    <property name="providerClassName" value="org.jcp.xml.dsig.internal.dom.XMLDSigRI" />
+	</bean>
+	
+    <bean id="keyInfoBuilder" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeKeyInfoBuilder" />	
+	
+    <bean id="signatureHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSignatureHandler" />	
+	
+	<bean id="signatureBuilder" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSignatureBuilder" />
+	
+	<bean id="nFeFileReader" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeFileReader" />
+	
+	<bean id="keyStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
+		<property name="location" value="file:${security.certificate.location}" />  
+	</bean>
+	
+	<bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.SimpleSecurityHandlerBean">
+		<property name="keyStore" ref="keyStore"/>
+	</bean>
 
-	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl" />
-
+	<!-- <bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.Pkcs12SecurityHandlerBean">
+		<property name="location" value="${secutiry.certificate.location}"/>  
+	</bean> -->
+	
+	<!-- 
+	    DOM builder factory 
+	-->
+	<bean id="documentBuilderFactory" class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="validating" value="true" />
+		<property name="namespaceAware" value="true" />
+	</bean>
+	
+	<!-- Web Services -->
+	
+	<!-- FTF -->
+	<bean id="pessoaCRPService2Stub" class="br.com.abril.axis2.PessoaCRPService_2Stub" >
+	     <constructor-arg value="${pessoaCRPService}"/>
+	</bean>
+	<!-- /FTF -->
+	
+	<!-- /Web Services -->	
+	
 	<!-- MASTER -->
 	<!-- 
 	<bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" />
@@ -53,18 +98,24 @@
 
 	<!-- F2 -->
 	<!-- Descomentar abaixo para ligar o bloqueador -->
-	<!--
-	<bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />
-	-->
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="br.com.abril.nds.model" />
-
+		<property name="packagesToScan"> 
+			<list>
+		    	<value>br.com.abril.nds.model</value>
+		      	<value>br.com.abril.nfe.model</value>
+		    </list>
+		
+		</property>
+				
 		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+			<props>			
+				
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>  				
 				<prop key="hibernate.show_sql">true</prop>
+			    <prop key="hibernate.generate_statistics">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.jdbc.batch_size">50</prop>
 				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
@@ -76,9 +127,11 @@
 				<!-- CACHE -->
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.cache.use_query_cache">true</prop>
-				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
-				</prop>
-
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+				<prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</prop>
+				<prop key="hibernate.generate_statistics">false</prop>
+				 
 				<!-- c3p0 -->
 				<prop key="hibernate.c3p0.max_size">10</prop>
 				<prop key="hibernate.c3p0.min_size">2</prop>

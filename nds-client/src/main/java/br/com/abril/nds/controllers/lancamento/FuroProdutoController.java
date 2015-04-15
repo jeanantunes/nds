@@ -76,7 +76,6 @@ public class FuroProdutoController extends BaseController {
 		FuroProdutoDTO furoProdutoDTO = null;
 		try {
 			furoProdutoDTO = produtoEdicaoService.obterProdutoEdicaoPorCodigoEdicaoDataLancamento(codigo, produto, edicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento), false);
-			
 		} catch (Exception e) {
 			
 			if (e instanceof ValidacaoException){
@@ -225,8 +224,7 @@ public class FuroProdutoController extends BaseController {
     }
 
 	@Post
-	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
-			Long idLancamento) throws Exception {
+	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) throws Exception {
 		
 		this.validarData(codigoProduto, idProdutoEdicao, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData));
 
@@ -234,9 +232,7 @@ public class FuroProdutoController extends BaseController {
 		
 		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 		
-		this.furoProdutoService.validarFuroProduto(codigoProduto, 
-				idProdutoEdicao, idLancamento, 
-				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), getUsuarioLogado().getId());
+		this.furoProdutoService.validarFuroProduto(codigoProduto, idProdutoEdicao, idLancamento, new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), getUsuarioLogado().getId());
 
 		boolean produtoExpedido = this.furoProdutoService.verificarProdutoExpedido(idLancamento);
 		
@@ -252,8 +248,7 @@ public class FuroProdutoController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO)
-	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
-			Long idLancamento) throws Exception{
+	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, Long idLancamento) throws Exception{
 		
 		verificarExecucaoInterfaces();
 		
@@ -261,12 +256,12 @@ public class FuroProdutoController extends BaseController {
 		
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
-					idProdutoEdicao, idLancamento, 
-					new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), getUsuarioLogado().getId());
+			        idProdutoEdicao, 
+			        idLancamento, 
+			        new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(novaData), 
+			        getUsuarioLogado().getId());
 			
-			result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), 
-					Constantes.PARAM_MSGS).recursive().serialize();
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e){
 			if (e instanceof ValidacaoException){
 				throw e;

@@ -45,12 +45,12 @@
    		
    		<legend> Geração de Nota de Envio</legend>
     	<form>
-    	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+    	<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">
   			<tbody>
   				<tr>
     				<td>Fornecedor:</td>
-    				<td style="width: 243px; ">
-    					<select id="geracaoNotaEnvio-filtro-selectFornecedores" multiple="multiple" style="width:200px">
+    				<td style="width: 288px; ">
+    					<select id="geracaoNotaEnvio-filtro-selectFornecedores" multiple="multiple" style="width:280px">
 							<c:forEach items="${fornecedores}" var="fornecedor">
 								<option value="${fornecedor.key}">${fornecedor.value}</option>
 							</c:forEach>
@@ -58,7 +58,7 @@
     				</td>
     				
     				<td style="width: 111px; ">Data Movimento:</td>
-    				<td style="width: 240px; ">
+    				<td style="width: 280px; ">
     					<input type="text" id="geracaoNotaEnvio-filtro-movimentoDe" name ="movimentoDe" style="width:76px;" class="input-date">
      						&nbsp;&nbsp;Até&nbsp;
       					<input type="text" id="geracaoNotaEnvio-filtro-movimentoAte" name ="movimentoAte" style="width:76px;" class="input-date">

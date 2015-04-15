@@ -37,5 +37,49 @@
     	<property name="configLocation" value="classpath:quartz.properties"/>
         <property name="jobFactory" ref="jobFactoryBean"/>
 	</bean>
+		
+	<!-- 
+	    Beans de assinatura 
+	-->
+	<bean id="signatureFactory" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSigantureFactoryBean">
+	    <property name="providerName" value="jsr105Provider" />
+	    <property name="providerClassName" value="org.jcp.xml.dsig.internal.dom.XMLDSigRI" />
+	</bean>
+	
+    <bean id="keyInfoBuilder" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeKeyInfoBuilder" />	
+	
+    <bean id="signatureHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSignatureHandler" />	
+	
+	<bean id="signatureBuilder" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeSignatureBuilder" />
+	
+	<bean id="nFeFileReader" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeFileReader" />
+	
+	<bean id="keyStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
+		<property name="location" value="file:${security.certificate.location}" />  
+	</bean>
+	
+	<bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.SimpleSecurityHandlerBean">
+		<property name="keyStore" ref="keyStore"/>
+	</bean>
+
+	<!-- <bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.Pkcs12SecurityHandlerBean">
+		<property name="location" value="${security.certificate.location}"/>  
+	</bean> -->
+	
+	<!-- 
+	    DOM builder factory 
+	-->
+	<bean id="documentBuilderFactory" class="javax.xml.parsers.DocumentBuilderFactory" factory-method="newInstance">
+		<property name="validating" value="true" />
+		<property name="namespaceAware" value="true" />
+	</bean>
+	
+	<!-- Web Services -->
+	
+	<!-- FTF -->
+	<bean id="pessoaCRPService2StubBean" class="br.com.abril.axis2.PessoaCRPService_2Stub" >
+	     <constructor-arg value="${pessoaCRPService}"/>
+	</bean>
+	<!-- /FTF -->
 	
 </beans>

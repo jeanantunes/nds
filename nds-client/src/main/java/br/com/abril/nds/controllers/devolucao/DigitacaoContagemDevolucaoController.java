@@ -91,18 +91,19 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+    private DistribuidorService distribuidorService;
+    
+    @Autowired
+    private ProdutoEdicaoService produtoEdicaoService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
 
 	private static final String LISTA_EDICOES_FECHADAS = "listaEdicoesFechadas";
 	
-	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
+	private List<ItemDTO<Long, String>> listaFornecedoresCombo = null;
 	
 	@Path("/")
 	public void index(){
@@ -116,19 +117,15 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		carregarComboFornecedores();
 	}
 	
-	
-	        /**
+	/**
      * Método responsável por carregar o combo de fornecedores.
      */
 	private void carregarComboFornecedores() {
-		
+	    listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
 		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresNaoUnificados();
 		
-		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
-		
 		for (Fornecedor fornecedor : listaFornecedor) {
-			listaFornecedoresCombo.add(
-				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
 		}
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
@@ -138,6 +135,11 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, 
 			Long idDestinatario, String sortorder, String sortname, int page, int rp){
+
+		//FIXME: Validar a lista que nao esta populada
+		//if(listaFornecedoresCombo == null || listaFornecedoresCombo.isEmpty()){
+		//	throw new ValidacaoException(TipoMensagem.WARNING, "Não existe fornecedor terceiro cadastrado!");
+		//}
 		
 		Intervalo<Date> periodo = null;
 
@@ -194,8 +196,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			Integer numeroSemana = SemanaUtil.getSemana(anoSemanaConferenciaEncalhe);
 			
-			Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
-				numeroSemana, inicioSemana, anoBase);
+			Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, inicioSemana, anoBase);
 			
 			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 			
@@ -396,7 +397,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = null;
 		
-		if (replicarTodos){
+		if (replicarTodos) {
 			
 			FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 			
@@ -409,14 +410,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			filtro.setPaginacao(null);
 			
-			listaContagemDevolucaoDTO = 
-				contagemDevolucaoService.obterListaContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
+			listaContagemDevolucaoDTO = contagemDevolucaoService.obterListaContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
 			
 			filtro.setPaginacao(paginacaoVO);
 			
 			listaContagemDevolucaoDTO.addAll(0, this.obterListaEdicoesFechadas());
 			
-			for (ContagemDevolucaoDTO dto : listaContagemDevolucaoDTO){
+			for (ContagemDevolucaoDTO dto : listaContagemDevolucaoDTO) {
 				
 				dto.setDiferenca(BigInteger.ZERO);
 				dto.setQtdNota(dto.getQtdDevolucao());
@@ -424,12 +424,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 		} else {
 			
-			listaContagemDevolucaoDTO = 
-					getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+			listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		}
 		
-		this.contagemDevolucaoService.inserirListaContagemDevolucao(
-				listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
+		this.contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -503,7 +501,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			digitacaoContagemDevolucaoVO.setQtdNota( (dto.getQtdNota()==null)?"":String.valueOf(dto.getQtdNota().intValue()));
 			
-			if(dto.getQtdNota()==null) {
+			if(dto.getQtdNota() == null) {
 				digitacaoContagemDevolucaoVO.setDiferenca("");
 			} else {
 				digitacaoContagemDevolucaoVO.setDiferenca(String.valueOf( (dto.getDiferenca() == null)?BigDecimal.ZERO.intValue():dto.getDiferenca().intValue()));
@@ -535,7 +533,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		ContagemDevolucaoDTO contagemDevolucaoDTO = null;
 		List<ContagemDevolucaoDTO> listaResultadosDto = new ArrayList<ContagemDevolucaoDTO>();
 		
-		for(DigitacaoContagemDevolucaoVO vo: listaContagemDevolucaoVOs){
+		for(DigitacaoContagemDevolucaoVO vo: listaContagemDevolucaoVOs) {
 			
 			contagemDevolucaoDTO = new ContagemDevolucaoDTO();
 
@@ -567,8 +565,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
      */
 	private void tratarFiltro(FiltroDigitacaoContagemDevolucaoDTO filtro) {
 
-		FiltroDigitacaoContagemDevolucaoDTO filtroResumoSession = 
-				(FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroDigitacaoContagemDevolucaoDTO filtroResumoSession = (FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroResumoSession != null && !filtroResumoSession.equals(filtro)) {
 
@@ -632,7 +629,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		validacao.setTipoMensagem(TipoMensagem.ERROR);
 		
-		if(!mensagensErro.isEmpty()){
+		if(!mensagensErro.isEmpty()) {
 			
 			validacao.setListaMensagens(mensagensErro);
 			throw new ValidacaoException(validacao);
@@ -703,11 +700,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 	
 	
-	public void pesquisaEdicoesFechadas(String sortorder, String sortname,int page, int rp){
+	public void pesquisaEdicoesFechadas(String sortorder, String sortname,int page, int rp) {
 		
 		
-		FiltroDigitacaoContagemDevolucaoDTO filtro = 
-				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -721,5 +717,5 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
-	}
+	}		
 }

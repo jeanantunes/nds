@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.movimentacao;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -31,9 +32,11 @@ import br.com.abril.nds.util.export.Exportable;
 @Entity
 @Table(name = "DEBITO_CREDITO_COTA")
 @SequenceGenerator(name="DEBITO_CREDITO_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class DebitoCreditoCota {
-    
-    @Id
+public class DebitoCreditoCota implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @Column(name="ID")
     @GeneratedValue(generator = "DEBITO_CREDITO_COTA_SEQ")
     private Long id;

@@ -46,6 +46,8 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
@@ -60,6 +62,7 @@ import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
@@ -80,6 +83,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     
     @Autowired
     private DistribuidorRepository distribuidorRepository;
+    
+    @Autowired
+    private PessoaRepository pessoaRepository;
     
     @Autowired
     private DescontoService descontoService;
@@ -1195,14 +1201,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         if (novoEndereco.getCep() != null) {
             novoEndereco.setCep(novoEndereco.getCep().replace("-", ""));
         }
-        if (novoEndereco.getCodigoUf() == null
-                && novoEndereco.getCodigoCidadeIBGE() != null) {
+        if (novoEndereco.getCodigoUf() == null && novoEndereco.getCodigoCidadeIBGE() != null) {
             if (novoEndereco.getCodigoCidadeIBGE().toString().length() > 2) {
-                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE()
-                        .toString().substring(0, 2));
+                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE());
             } else {
-                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE()
-                        .toString());
+                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE());
             }
         }
         // enderecoRepository.adicionar(novoEndereco);
@@ -1274,4 +1277,96 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         
         return listaIdCotas;
     }
+
+    @Transactional
+    public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
+		
+		popularNotaEnvioAtravesNotaFiscal(notaFiscal);
+		
+	}
+	
+	private NotaEnvio popularNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal){
+		
+		NotaEnvio notaEnvio = new NotaEnvio();
+		notaEnvio.setNotaFiscalID(notaFiscal.getId());
+		notaEnvio.setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso());
+		notaEnvio.setDataEmissao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
+		notaEnvio.setNotaImpressa(false);
+		
+		this.populateIdentificacaoEmitente(notaFiscal, notaEnvio);
+		this.populateIdentificacaoDestinatario(notaFiscal, notaEnvio);
+		notaEnvioRepository.adicionar(notaEnvio);
+		notaEnvio.setListaItemNotaEnvio(this.criarItensNotaEnvio(notaFiscal, notaEnvio));
+		return notaEnvio;
+	}
+	
+	private void populateIdentificacaoEmitente(NotaFiscal notaFiscal, NotaEnvio notaEnvio){
+		
+		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		Telefone telefone = null;
+		for(TelefoneDistribuidor td : distribuidor.getTelefones()) {
+			telefone = td.getTelefone();
+		}
+
+		identificacaoEmitente.setDocumento(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento());
+		identificacaoEmitente.setEndereco(distribuidor.getEnderecoDistribuidor().getEndereco());
+		identificacaoEmitente.setInscricaoEstadual(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual());
+		identificacaoEmitente.setNome(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getNome());
+		identificacaoEmitente.setPessoaEmitenteReferencia(distribuidorRepository.obter().getJuridica());
+		identificacaoEmitente.setTelefone(telefone);
+		
+		notaEnvio.setEmitente(identificacaoEmitente);
+	}
+	
+	private void populateIdentificacaoDestinatario(NotaFiscal notaFiscal, NotaEnvio notaEnvio){
+		
+		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
+		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+
+		identificacaoDestinatario.setDocumento(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento());
+		identificacaoDestinatario.setEndereco(cota.getEnderecoPrincipal().getEndereco());
+		identificacaoDestinatario.setInscricaoEstadual(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual());
+		identificacaoDestinatario.setNome(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getNome());
+		identificacaoDestinatario.setPessoaDestinatarioReferencia(distribuidorRepository.obter().getJuridica());
+		
+		if(cota.getTefefonePrincipal() == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Telefone da cota ['" + cota.getNumeroCota() + "'] não pode ser nulo!");
+		} else {			
+			identificacaoDestinatario.setTelefone(cota.getTefefonePrincipal().getTelefone());
+		}
+		
+		identificacaoDestinatario.setNumeroCota(cota.getNumeroCota());
+		
+		notaEnvio.setDestinatario(identificacaoDestinatario);
+	}
+	
+	private List<ItemNotaEnvio> criarItensNotaEnvio(NotaFiscal notaFiscal, NotaEnvio notaEnvio) {
+		
+		List<ItemNotaEnvio> lisItemNotaEnvios = new ArrayList<>();
+		
+		ItemNotaEnvio itemNotaEnvio = null;
+		
+		Integer i = 0;
+		for (DetalheNotaFiscal item : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			itemNotaEnvio = new ItemNotaEnvio();
+			ItemNotaEnvioPK itemPK = new ItemNotaEnvioPK(notaEnvio, ++i);
+			
+			itemNotaEnvio.setItemNotaEnvioPK(itemPK);
+			itemNotaEnvio.setProdutoEdicao(item.getProdutoServico().getProdutoEdicao());
+			itemNotaEnvio.setCodigoProduto(item.getProdutoServico().getProdutoEdicao().getProduto().getCodigo());
+			itemNotaEnvio.setNumeroEdicao(item.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+			itemNotaEnvio.setPublicacao(item.getProdutoServico().getProdutoEdicao().getProduto().getNome());
+			itemNotaEnvio.setDesconto(item.getProdutoServico().getProdutoEdicao().getDesconto());
+			itemNotaEnvio.setReparte(item.getProdutoServico().getQuantidade());
+			itemNotaEnvio.setPrecoCapa(item.getProdutoServico().getProdutoEdicao().getPrecoVenda());
+			lisItemNotaEnvios.add(itemNotaEnvio);
+		}
+		
+		return lisItemNotaEnvios;
+		
+	}
+    
 }

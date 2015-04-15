@@ -187,6 +187,14 @@ public interface FornecedorService {
 	Origem obterOrigemCadastroFornecedor(Long idFornecedor);
 
 	List<Fornecedor> obterFornecedoresDesc();
+
+	/**
+	 * Obtem os fornecedores que podem ser destinatarios das Notas Fiscais,
+	 * podendo ser passado null se nao desejar filtrar por situacao de cadastro
+	 * @param situacaoCadastro
+	 * @return
+	 */
+	List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacaoCadastro);
 	
 	List<ItemDTO<Long, String>> obterFornecedoresUnificados();
 	

@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -14,7 +16,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
-
+@XmlTransient
 @MappedSuperclass
 public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	
@@ -57,7 +59,10 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 			@NFEWhen(condition = NFEConditions.ICMS_70, export = @NFEExport(secao = TipoSecao.N09, posicao = 0, tamanho = 1)),
 			@NFEWhen(condition = NFEConditions.ICMS_90, export = @NFEExport(secao = TipoSecao.N10, posicao = 0, tamanho = 1))
 	})
-	protected Origem origem;
+	protected OrigemProduto origem;
+	
+	@Transient
+	protected String aOrig;
 	
 	/**
 	 * modBC
@@ -81,6 +86,7 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * @return the percentualReducao
 	 */
+	@XmlTransient
 	public BigDecimal getPercentualReducao() {
 		return percentualReducao;
 	}
@@ -95,15 +101,17 @@ public abstract class ICMSBase extends ImpostoProduto implements Serializable {
 	/**
 	 * @return the origem
 	 */
-	public Origem getOrigem() {
+	@XmlTransient
+	public OrigemProduto getOrigem() {
 		return origem;
 	}
 
 	/**
 	 * @param origem the origem to set
 	 */
-	public void setOrigem(Origem origem) {
+	public void setOrigem(OrigemProduto origem) {
 		this.origem = origem;
+		this.aOrig = String.valueOf(origem.getId());
 	}
 
 	/**

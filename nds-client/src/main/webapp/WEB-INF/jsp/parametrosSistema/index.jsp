@@ -3,10 +3,8 @@
 <head>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
-<script language="text/javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
-<script language="javascript" type="text/javascript" 
-	src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroSistema.js"></script>
 
 <script type="text/javascript">
@@ -14,7 +12,6 @@
 $(function(){
 	parametroSistemaController.init();
 	bloquearItensEdicao(parametroSistemaController.workspace);
-	
 });
 	
 </script>
@@ -105,12 +102,6 @@ $(function(){
 										<input disabled="disabled" type="text" name="dto.pathMdcImportacao" id="pathMdcImportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcImportacao}" />
 									</td>
 								</tr>
-								<tr>
-									<td>Interface MDC Exporta&ccedil;&atilde;o:</td>
-									<td>
-										<input disabled="disabled" type="text" name="dto.pathMdcExportacao" id="pathMdcExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcExportacao}" />
-									</td>
-								</tr>
 							</table>
 						</td>
 							
@@ -160,20 +151,6 @@ $(function(){
 									</td>
 								</tr>
 								<tr>
-									<td>NF-e em DPEC:</td>
-									<td>
-										<c:choose>
-											<c:when test='${parametroSistemaGeralDTO.nfeDpec == "TRUE"}'>
-												<input type="checkbox" id="nfeDpec" name="nfeDpec" checked="checked" value="TRUE" class="checkboxNfeDpec"/> 
-											</c:when>
-											<c:otherwise>
-												<input type="checkbox" id="nfeDpec" name="nfeDpec" value="TRUE" class="checkboxNfeDpec"/>
-											</c:otherwise>
-										</c:choose>
-										<input type="hidden" name="dto.nfeDpec" id="nfeDpecHidden" />
-									</td>
-								</tr>
-								<tr>
 									<td>Imagem Capa:</td>
 									<td><input type="text" name="dto.pathImageCapa" id="pathImageCapa" style="width:220px;" value="${parametroSistemaGeralDTO.pathImageCapa}" /></td>
 								</tr>
@@ -184,6 +161,12 @@ $(function(){
 								<tr>
 									<td>Data Opera&ccedil;&atilde;o Corrente:</td>
 									<td><input type="text" name="dto.dtOperacaoCorrente" id="dtOperacaoCorrente" style="width:100px; text-align:center;" disabled="disabled" value="${parametroSistemaGeralDTO.dtOperacaoCorrente}" /></td>
+								</tr>
+								<tr>
+									<td>Interface MDC Exporta&ccedil;&atilde;o:</td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.pathMdcExportacao" id="pathMdcExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcExportacao}" />
+									</td>
 								</tr>
 								<%--
 								Funcionalidade desabilitada ate a criação das rotinas de expurgo
@@ -203,8 +186,113 @@ $(function(){
 			</table>
 		</fieldset>
 		
+		<fieldset class="fieldFiltro">
+			<legend>Parâmetros NF-e</legend>
+			<table width="950" border="0" cellpadding="2" cellspacing="2">
+				<thead />
+				<tbody>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td width="164">Ambiente: </td>
+									<td width="294">
+										<select name="dto.nfeInformacoesAmbiente" id="nfeInformacoesAmbiente" style="width:220px;">
+											<c:forEach  var="tipoAmbiente" items="${tiposAmbientes}">
+												<option value="${tipoAmbiente.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesAmbiente == tipoAmbiente.key}">selected="selected"</c:if>>${tipoAmbiente.value}</option>
+											</c:forEach>											
+										</select>
+									</td>	
+								</tr>
+								<tr>
+									<td>Formato Impressão:</td>
+									<td>
+										<select name="dto.nfeInformacoesFormatoImpressao" id="nfeInformacoesFormatoImpressao" style="width:220px;">
+											<c:forEach  var="formatoImpressao" items="${formatosImpressao}">
+												<option value="${formatoImpressao.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesFormatoImpressao == formatoImpressao.key}">selected="selected"</c:if>>${formatoImpressao.value}</option>
+											</c:forEach>											
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Modelo Documento Fiscal: </td>
+									<td>
+										<input type="text" name="dto.nfeInformacoesModeloDocumento" id="nfeInformacoesModeloDocumento" style="width:220px;" maxlength="5" value="${parametroSistemaGeralDTO.nfeInformacoesModeloDocumento}" />
+									</td>
+								</tr>
+							</table>
+						</td>
+							
+						<td valign="top">
+							<table>
+								<tr>
+									<td>Tipo do Emissor de NF-e:</td>
+									<td>
+										<select name="dto.nfeInformacoesTipoEmissor" id="nfeInformacoesTipoEmissor" style="width:220px;">
+											<c:forEach var="processoEmissaoNFe" items="${processosEmissaoNFe}">
+												<option value="${processoEmissaoNFe.key}" <c:if test="${parametroSistemaGeralDTO.nfeInformacoesTipoEmissor == processoEmissaoNFe.key}">selected="selected"</c:if>>${processoEmissaoNFe.value}</option>
+											</c:forEach>											
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Versão do Emissor:</td>
+									<td>
+										<input type="text" name="dto.nfeInformacoesVersaoEmissor" id="nfeInformacoesVersaoEmissor" style="width:220px;" maxlength="10" value="${parametroSistemaGeralDTO.nfeInformacoesVersaoEmissor}"/>
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+			
+		</fieldset>
+		
+		<c:if test="${utilizaFTF}">
+		<fieldset class="fieldFiltro">
+			<legend>FTF</legend>
+		
+			<table width="950" border="0" cellpadding="2" cellspacing="2">
+				<thead />
+				<tbody>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td> C&oacute;digo do Estabelecimento Emissor:</td>
+									<td> <input id="ftfCodigoEstabelecimentoEmissor" name="dto.ftfCodigoEstabelecimentoEmissor" value="${parametroSistemaGeralDTO.ftfCodigoEstabelecimentoEmissor}" type="text" /> </td>
+								</tr>
+								<tr>
+									<td>CNPJ Estabelecimento Emissor:</td>
+									<td> <input id="ftfCnpjEstabelecimentoEmissor" name="dto.ftfCnpjEstabelecimentoEmissor" value="${parametroSistemaGeralDTO.ftfCnpjEstabelecimentoEmissor}" type="text" /></td>
+								</tr>
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr>
+									<td> C&oacute;digo local:</td>
+									<td> <input id="ftfCodigoLocal" name="dto.ftfCodigoLocal" value="${parametroSistemaGeralDTO.ftfCodigoLocal}" type="text" /> </td>
+								</tr>
+								<tr>
+									<td> C&oacute;digo do Centro Emissor: </td>
+									<td><input id="ftfCodigoCentroEmissor" name="dto.ftfCodigoCentroEmissor" value="${parametroSistemaGeralDTO.ftfCodigoCentroEmissor}" type="text" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+		</fieldset>
+		</c:if>
+		
 		<div class="linha_separa_fields">&nbsp;</div>
-
 
 </form>
 </body>

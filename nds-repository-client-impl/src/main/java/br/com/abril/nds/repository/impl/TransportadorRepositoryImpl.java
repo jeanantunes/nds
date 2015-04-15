@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.CotaAtendidaTransportadorVO;
 import br.com.abril.nds.dto.ConsultaTransportadorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaTransportadorDTO;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Transportador;
 import br.com.abril.nds.repository.AbstractRepositoryModel;

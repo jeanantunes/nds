@@ -268,4 +268,35 @@ public class Estudo implements Serializable  {
     public String getDadosVendaMedia() {
         return dadosVendaMedia;
     }
+    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Estudo other = (Estudo) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getEstudoCotas() == null) {
+			if (other.getEstudoCotas() != null)
+				return false;
+		} else if (!this.getEstudoCotas().equals(other.getEstudoCotas()))
+			return false;
+		return true;
+	}
+
 }

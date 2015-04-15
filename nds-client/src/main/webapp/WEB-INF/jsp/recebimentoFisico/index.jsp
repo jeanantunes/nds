@@ -291,7 +291,7 @@
 
 					<legend> Pesquisar Recebimento Físico</legend>
 
-					<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+					<table width="950" cellpadding="2" cellspacing="1" class="filtro">
 
 						<tr>
 
@@ -325,33 +325,21 @@
 							<td width="43"><input id="serie" type="text"
 								style="width: 30px;" maxlength="4"/>
 							</td>
-							<td width="110"><span class="bt_novos">
-								<a href="javascript:;"
-									onclick="recebimentoFisicoController.verificarNotaFiscalExistente();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a> </span>
+							<td width="70">
+								<span class="bt_novos">
+									<a href="javascript:;" onclick="recebimentoFisicoController.verificarNotaFiscalExistente();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a> 
+								</span>
 							</td>
-
 						</tr>
 						<tr>
-							<td colspan="7" height="26">
-
-								<label for="eNF">É uma NF-e?</label>
-
-								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left;  margin-left: 13px; margin-right: 10px;
-    margin-top: 9px;" /> 
-
-								<span id="nfes" class="nfes"> 
-
-								Chave de Acesso: 
-
-								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
-								
-							</span>
-
+							<td colspan="8" height="26">
+								<label for="nfeChaveAcesso">Chave de Acesso</label>
+								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" 
+								onchange="recebimentoFisicoController.validarChaveAcesso('#chaveAcesso');"/>
 							</td>
 
 							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td></span></td>
+							
 						</tr>
 					</table>
 
@@ -449,54 +437,48 @@
 			        </td>
 
 			    </tr>
-
-
 			    <tr style="width: 25%">
-
-			       <td>Nota Envio:</td>
-				  
-				  <td colspan="1">
-					<input id="novoNumeroNotaEnvio" type="text" style="width: 100px;"/>
-				  </td>
-
-			      
-			      
-				  <td colspan="1">
-				  
+				  	<td colspan="1">
 						<label for="novoNfe">NF-e:</label>
-						
 						<input  type="checkbox" name="checkbox8" id="novoNfe" 
 								onchange="recebimentoFisicoController.mostrar_chave_acesso_nova();" 
 								style="float: left;  margin-left: 13px; margin-right: 10px;
     							margin-top: 9px;" /> 
-						
-				  </td>
-				  
-					<td colspan="5">
+				  	</td>
+					<td colspan="4">
 						<span id="nfesNovo" class="nfesNovo">
 							Chave de Acesso:
 							<input type="text" maxlength="44" style="width: 365px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
 						</span>
 					</td>
+					<td>Natureza Operacao:</td>
+					<td>
+						<select id="recebimento-naturezaOperacao" name="recebimento-naturezaOperacao" style="width: 250px;">
+							<option value="-1" selected="selected">Selecione</option>
+							<c:forEach var="natureza" items="${listaTipoNotaFiscal}">
+								<option value="${natureza.id}">${natureza.cfopEstado} - ${natureza.descricao}</option>
+							</c:forEach>
+							
+						</select>
+					</td>
 			    </tr>
-
-
 			    <tr style="width: 25%">
-
 			      <td>Data Emissão:</td>
 			      <td>
 			          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
 			      </td>
-
 			      <td>Data Entrada:</td>
 			      <td>
 			          <input type="text" id="novoDataEntrada" name="novoDataEntrada" style="width:100px " />
 			      </td>
-
 			      <td>Valor Total R$:</td>
 			      <td>
 			          <input maxlength="17" type="text" style="width:100px; text-align:right; " id="novoValorTotal" name="novoValorTotal"/>
 			      </td>
+			      <td>Nota Envio:</td>
+				  <td>
+					<input id="novoNumeroNotaEnvio" type="text" style="width: 100px;"/>
+				  </td>
 			    </tr>
 
 			    </table>

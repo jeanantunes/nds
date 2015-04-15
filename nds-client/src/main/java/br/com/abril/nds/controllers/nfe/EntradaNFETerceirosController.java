@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
+import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros.TipoNota;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -27,13 +28,13 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.CFOPService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntradaNFETerceirosService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PessoaJuridicaService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -75,44 +76,62 @@ public class EntradaNFETerceirosController extends BaseController {
 	private NotaFiscalEntradaService notaFiscalEntradaService;
 	
 	@Autowired
+    private NotaFiscalService notaFiscalService;
+	
+	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	@Autowired
 	private PessoaJuridicaService pessoaJuridicaService;
 	
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
-	
-	@Autowired
-	private CFOPService cfopService;
+	private NaturezaOperacaoService tipoNotaFiscalService;
 	
 	@Autowired
 	private CotaService cotaService;
 	
 	@Path("/")
 	public void index(){
-		carregarComboStatusNota();
+		this.carregarComboStatusNota();
+		this.carregarFornecedores();
+		this.carregarTipoNota();
+	}
+
+	private void carregarFornecedores() {
 		
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();
 		result.include("listFornecedores", listFornecedores);
+		
 	}
-
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void carregarComboStatusNota() {
 		
-	List<ItemDTO<String, String>> comboStatusNota = new ArrayList<ItemDTO<String, String>>();
+		List<ItemDTO<String, String>> comboStatusNota = new ArrayList<ItemDTO<String, String>>();
 		
 		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.RECEBIDA.name(), StatusNotaFiscalEntrada.RECEBIDA.getDescricao()));
 		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO.name(), StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO.getDescricao()));
 		comboStatusNota.add(new ItemDTO(StatusNotaFiscalEntrada.PENDENTE_EMISAO.name(), StatusNotaFiscalEntrada.PENDENTE_EMISAO.getDescricao()));
 
 		result.include("comboStatusNota", comboStatusNota);
-		
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void carregarTipoNota() {
+        
+        List<ItemDTO<String, String>> tiposNotas = new ArrayList<ItemDTO<String, String>>();
+        
+        tiposNotas.add(new ItemDTO(TipoNota.TODAS.name(), TipoNota.TODAS.getDescricao()));
+        tiposNotas.add(new ItemDTO(TipoNota.ENTRADA.name(), TipoNota.ENTRADA.getDescricao()));
+        tiposNotas.add(new ItemDTO(TipoNota.SAIDA.name(), TipoNota.SAIDA.getDescricao()));
+
+        result.include("tiposNotas", tiposNotas);
+        
+    }
 	
 	@Post
 	@Path("/pesquisarNotasRecebidas")
-	public void pesquisarNotasRecebidas(FiltroEntradaNFETerceiros filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarNotasRecebidas(final FiltroEntradaNFETerceiros filtro, final String sortorder, final String sortname, final int page, int rp){
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -120,63 +139,36 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = efetuarConsultaNotasRecebidas(filtro);
+		final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = consultarNotasRecebidas(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> efetuarConsultaNotasRecebidas(FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> consultarNotasRecebidas(final FiltroEntradaNFETerceiros filtro) {
 		
-		List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = this.entradaNFETerceirosService.buscarNFNotasRecebidas(filtro, true);
+		final List<ConsultaEntradaNFETerceirosRecebidasDTO> notasRecebidas = this.entradaNFETerceirosService.consultarNotasRecebidas(filtro, true);
 
-		Integer tamanhoListaNotasRecebidas = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
+		final Integer qtdeNotasRecebidas = this.entradaNFETerceirosService.qtdeNotasRecebidas(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();
 		
-		if(listaNotasRecebidas.size() == 0){
+		if(notasRecebidas == null || notasRecebidas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		/*List<ConsultaEntradaNFETerceirosRecebidasDTO> listaNotasRecebidas = new ArrayList<ConsultaEntradaNFETerceirosRecebidasDTO>();
-		
-		ConsultaEntradaNFETerceirosRecebidasDTO nota1 = new ConsultaEntradaNFETerceirosRecebidasDTO();
-		nota1.setChaveAcesso("chaveAcesso");
-		nota1.setContemDiferenca(Integer.valueOf(1));
-		nota1.setDataEmissao(new Date());
-		nota1.setNome("Victor Henrique");
-		nota1.setNumeroNota(Long.valueOf("12231"));
-		nota1.setSerie("192837456");
-		nota1.setTipoNotaFiscal("SAIDA");
-		nota1.setValorNota(new BigDecimal(9090));
-		
-		ConsultaEntradaNFETerceirosRecebidasDTO nota2 = new ConsultaEntradaNFETerceirosRecebidasDTO();
-		nota2.setChaveAcesso("chaveAcesso2");
-		nota2.setContemDiferenca(Integer.valueOf(0));
-		nota2.setDataEmissao(new Date());
-		nota2.setNome("Victor Henrique");
-		nota2.setNumeroNota(Long.valueOf(445566));
-		nota2.setSerie("910293758921");
-		nota2.setTipoNotaFiscal("SAIDA");
-		nota2.setValorNota(new BigDecimal(9090));
-		
-		listaNotasRecebidas.add(nota1);
-		listaNotasRecebidas.add(nota2);
-		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosRecebidasDTO>>();*/
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasRecebidas));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(notasRecebidas));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(tamanhoListaNotasRecebidas);
+		tableModel.setTotal(qtdeNotasRecebidas);
 		
 		return tableModel;
 	}
 	
 	@Post
-	@Path("/pesquisarNotasPendentes")
-	public void pesquisarNotasPendentes(FiltroEntradaNFETerceiros filtro, String sortorder, String sortname, int page, int rp){
+	@Path("/pesquisarNotasPendentesRecebimento")
+	public void pesquisarNotasPendentesRecebimento(final FiltroEntradaNFETerceiros filtro, final String sortorder, final String sortname, final int page, final int rp){
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -184,17 +176,16 @@ public class EntradaNFETerceirosController extends BaseController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = efetuarConsultaNotasPendentes(filtro);
+		final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = consultaNotasPendentesRecebimento(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> efetuarConsultaNotasPendentes(FiltroEntradaNFETerceiros filtro) {
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> consultaNotasPendentesRecebimento(final FiltroEntradaNFETerceiros filtro) {
 
+		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, true);
 
-		List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, true);
-
-		Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.buscarTodasNFNotas(filtro);
+		Integer quantidade = this.entradaNFETerceirosService.qtdeNotasPendentesRecebimento(filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
 		
@@ -202,65 +193,61 @@ public class EntradaNFETerceirosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		/*List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
-		
-		ConsultaEntradaNFETerceirosPendentesDTO nota1 = new ConsultaEntradaNFETerceirosPendentesDTO();
-		nota1.setChaveAcesso("1234");
-		nota1.setDataEncalhe(new Date());
-		nota1.setDiferenca(new BigDecimal(444));
-//		nota1.setIdNotaFiscalEntrada(Long.valueOf(15));
-		nota1.setNome("Victor Montanher");
-		nota1.setNumeroCota(Integer.valueOf(1234));
-		nota1.setNumeroNfe(Long.valueOf(778899));
-		nota1.setSerie("4356");
-		nota1.setStatus("APROVADO");
-		nota1.setTipoNotaFiscal("Entrada");
-		nota1.setValorNota(new BigDecimal(999));
-		nota1.setValorReal(new BigDecimal(999));
-		
-		ConsultaEntradaNFETerceirosPendentesDTO nota2 = new ConsultaEntradaNFETerceirosPendentesDTO();
-		nota2.setChaveAcesso("9876");
-		nota2.setDataEncalhe(new Date());
-		nota2.setDiferenca(new BigDecimal(444));
-//		nota2.setIdNotaFiscalEntrada(Long.valueOf(15));
-		nota2.setNome("Victor Henrique Montanher");
-		nota2.setNumeroCota(Integer.valueOf(1234));
-		nota2.setNumeroNfe(Long.valueOf(778899));
-		nota2.setSerie("4356");
-		nota2.setStatus("APROVADO");
-		nota2.setTipoNotaFiscal("Complementar");
-		nota2.setValorNota(new BigDecimal(999));
-		nota2.setValorReal(new BigDecimal(999));
-		
-		listaNotasPendentes.add(nota1);
-		listaNotasPendentes.add(nota2);
-		
-		TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();*/
-		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentes));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(tamanhoListaNotasPendentes);
+		tableModel.setTotal(quantidade);
 		
 		return tableModel;
 	}
 	
+	@Post
+    @Path("/pesquisarNotasPedenteEmissao")
+    public void pesquisarNotasPedenteEmissao(final FiltroEntradaNFETerceiros filtro, final String sortorder, final String sortname, final int page, final int rp){
+        
+        filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+        
+        this.validarEntrada(filtro);
+        
+        this.tratarFiltro(filtro);
+        
+        final TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = consultaNotasPendentesEmissao(filtro);
+        
+        result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
+	
+	private TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> consultaNotasPendentesEmissao(final FiltroEntradaNFETerceiros filtro) {
+
+        List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentesEmissao = this.entradaNFETerceirosService.consultaNotasPendentesEmissao(filtro, true);
+
+        Integer tamanhoListaNotasPendentes = this.entradaNFETerceirosService.qtdeNotasPendentesEmissao(filtro);
+        
+        TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEntradaNFETerceirosPendentesDTO>>();
+        
+        if(listaNotasPendentesEmissao.size() == 0){
+            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+        }
+        
+        tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNotasPendentesEmissao));
+        
+        tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+        
+        tableModel.setTotal(tamanhoListaNotasPendentes);
+        
+        return tableModel;
+    }
 	
 	@Path("/pesquisarItensPorNota")
-	public void pesquisarItensPorNota(long idControleConferencia,String sortorder, String sortname, int page, int rp){
+	public void pesquisarItensPorNota(final long idControleConferencia, final String sortorder, final String sortname, final int page, final int rp){
 		
-		Integer total = this.entradaNFETerceirosService.buscarTodasItensPorNota(idControleConferencia);
+		final Integer total = this.notaFiscalService.qtdeNota(idControleConferencia);
 		
 		if (total <= 0) {		
-
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-			
 		}
-		List<ItemNotaFiscalPendenteDTO> listItemNota = this.entradaNFETerceirosService.buscarItensPorNota  (
-						idControleConferencia, sortname,
-						Ordenacao.valueOf(sortorder.toUpperCase()), page
-								* rp - rp, rp);
+		
+		final List<ItemNotaFiscalPendenteDTO> listItemNota = this.notaFiscalService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
 		
 		result.use(FlexiGridJson.class).from(listItemNota).page(page).total(total).serialize();
 		
@@ -270,16 +257,17 @@ public class EntradaNFETerceirosController extends BaseController {
 	@Post
 	@Path("/cadastrarNota")
 	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS_ALTERACAO)	
-	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota, Long idControleConferenciaEncalheCota){
+	public void cadastrarNota(final NotaFiscalEntradaCota nota, final Integer numeroCota, final Long idControleConferenciaEncalheCota){
+	    
 		this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
 
-		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
+		final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
 		
-		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
+		result.use(Results.json()).from(validacao, "result").recursive().serialize();
 		
 	}
 	
-	private void validarEntrada(FiltroEntradaNFETerceiros filtro) {
+	private void validarEntrada(final FiltroEntradaNFETerceiros filtro) {
 				
 		if (filtro.getCota() != null && filtro.getCota().getNumeroCota() != null) {
 			Cota cota = notaFiscalEntradaService.obterPorNumerDaCota(filtro.getCota().getNumeroCota());
@@ -292,9 +280,7 @@ public class EntradaNFETerceirosController extends BaseController {
 			filtro.setCota(null);
 		}
 		
-		if (filtro.getFornecedor() != null
-				&& filtro.getFornecedor().getId() != null
-				&& filtro.getFornecedor().getId() > 0) {
+		if (filtro.getFornecedor() != null  && filtro.getFornecedor().getId() != null && filtro.getFornecedor().getId() > 0) {
 			Fornecedor fornecedor = notaFiscalEntradaService.obterFornecedorPorID(filtro.getFornecedor().getId());
 			if (fornecedor != null) {
 				filtro.setFornecedor(fornecedor);
@@ -310,7 +296,7 @@ public class EntradaNFETerceirosController extends BaseController {
 		}
 	}
 	
-	private void tratarFiltro(FiltroEntradaNFETerceiros filtroAtual) {
+	private void tratarFiltro(final FiltroEntradaNFETerceiros filtroAtual) {
 
 		FiltroEntradaNFETerceiros filtroSession = (FiltroEntradaNFETerceiros) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
@@ -324,7 +310,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	}
 	
 	@Get
-	public void exportar(FileType fileType) throws IOException {
+	public void exportar(final FileType fileType) throws IOException {
 		
 		FiltroEntradaNFETerceiros filtro = (FiltroEntradaNFETerceiros) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSULTA);
 		
@@ -335,18 +321,16 @@ public class EntradaNFETerceirosController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}*/
 			
-			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
+			FileExporter.to("consulta_notas_recebidas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
 		}else{
 			
-			//List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
-			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
+			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.consultaNotasPendentesRecebimento(filtro, false);
+			// List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
 			/*if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}*/
 			
-			FileExporter.to("consulta_notas_pendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
+			FileExporter.to("notasPendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
 			
 		}
 			
@@ -356,7 +340,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	@Post
 	@Path("/buscarCotaPorNumero")
-	public void buscarCotaPorNumero(Integer numeroCota) {
+	public void buscarCotaPorNumero(final Integer numeroCota) {
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
@@ -378,7 +362,7 @@ public class EntradaNFETerceirosController extends BaseController {
 			nomeCota = ((PessoaJuridica) pessoa).getRazaoSocial();
 		}
 
-		this.result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
+		result.use(Results.json()).from(nomeCota, "result").recursive().serialize();
 	}
 
 }

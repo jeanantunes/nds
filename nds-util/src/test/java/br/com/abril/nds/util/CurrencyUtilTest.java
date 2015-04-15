@@ -23,5 +23,4 @@ public class CurrencyUtilTest {
 		String expected = "um mil e duzentos e trinta e quatro reais e cinquenta e nove centavos";
 		Assert.assertEquals(expected, extenso);
 	}
-
 }

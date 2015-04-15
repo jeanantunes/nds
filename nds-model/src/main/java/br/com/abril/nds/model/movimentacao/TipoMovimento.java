@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.movimentacao;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -16,8 +18,13 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "TP_MOVIMENTO_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
-public abstract class TipoMovimento {
+public abstract class TipoMovimento implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2534609323819976781L;
+
 	@Id
 	@GeneratedValue(generator = "TP_MOVIMENTO_SEQ")
 	@Column(name = "ID")

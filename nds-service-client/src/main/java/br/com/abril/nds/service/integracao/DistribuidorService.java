@@ -8,7 +8,6 @@ import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -17,10 +16,11 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 
 public interface DistribuidorService {
 	
-	public Distribuidor obter ();
+	public Distribuidor obter();
 	
 	public boolean isDistribuidor(Integer codigo);
 	
@@ -72,7 +72,7 @@ public interface DistribuidorService {
 
 	Integer qtdDiasLimiteParaReprogLancamento();
 
-	ObrigacaoFiscal obrigacaoFiscal();
+	boolean obrigacaoFiscal(NaturezaOperacao naturezaOperacao, Distribuidor distribuidor);
 
 	TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE();
 
@@ -173,6 +173,10 @@ public interface DistribuidorService {
 	boolean isConferenciaCegaRecebimentoFisico();
 	
 	boolean isConferenciaCegaFechamentoEncalhe();
+	
+	Set<NaturezaOperacao> obterNaturezasOperacoesNotasEnvio();
+
+	Distribuidor obterParaNFe();
 
     Integer obterNumeroSemana(Date data);
 }

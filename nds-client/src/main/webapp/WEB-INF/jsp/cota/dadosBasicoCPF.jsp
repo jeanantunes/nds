@@ -3,7 +3,7 @@
  <form name="formDadosBasicoCpf" id="formDadosBasicoCpf">
  <fieldset style="width:880px!important; margin:5px;">
  <legend>Dados Cadastrais</legend>
- <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;">
+ <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;" border="0">
    <tr>
      <td><strong>Cota:</strong></td>
      <td>
@@ -115,8 +115,8 @@
    <tr>
      <td>E-mail NF-e:</td>
       <td><input type="text" style="width:230px " maxlength="200" name="cotaDTO.emailNF" id="emailNFCPF" onblur="MANTER_COTA.validarEmail('#emailNFCPF')" /></td>
-      <td>Emite NF-e?</td>
-      <td><input type="checkbox" name="cotaDTO.emiteNFE" id="emiteNFECPF" /></td>
+      <td></td>
+      <td>Exige Nota fiscal?&nbsp; <input type="checkbox" name="cotaDTO.exigeNFE" id="exigeNFE" style="width:20px"/></td>
    </tr>
    <tr>
      <td>Status:</td>

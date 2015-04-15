@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.CST;
-import br.com.abril.nds.model.fiscal.nota.Tributacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.TributacaoRepository;
 
@@ -26,20 +26,20 @@ import br.com.abril.nds.repository.TributacaoRepository;
  */
 @Repository
 public class TributacaoRepositoryImpl extends
-		AbstractRepositoryModel<Tributacao, Long> implements
+		AbstractRepositoryModel<NotaFiscalTributacao, Long> implements
 		TributacaoRepository {
 
 	public TributacaoRepositoryImpl() {
-		super(Tributacao.class);
+		super(NotaFiscalTributacao.class);
 	}
 
 	@Override
-	public Tributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao,
+	public NotaFiscalTributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao,
 			String ufOrigem, String ufDestino, int naturezaOperacao,
 			String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia,
 			String cstICMS) {
 
-		Criteria criteria = getSession().createCriteria(Tributacao.class);
+		Criteria criteria = getSession().createCriteria(NotaFiscalTributacao.class);
 
 		criteria.add(eq("codigoEmpresa", codigoEmpresa))
 				.add(eq("tipoOperacao", tipoOperacao.getSimpleValue()))				
@@ -54,19 +54,19 @@ public class TributacaoRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		criteria.addOrder(Order.desc("dataVigencia"));
-		return (Tributacao) criteria.uniqueResult();
+		return (NotaFiscalTributacao) criteria.uniqueResult();
 
 	}
 	
 	
 	
 	@Override
-	public Tributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao,
+	public NotaFiscalTributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao,
 			List<String> ufs, int naturezaOperacao,
 			String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia,
 			String cstICMS) {
 
-		Criteria criteria = getSession().createCriteria(Tributacao.class);
+		Criteria criteria = getSession().createCriteria(NotaFiscalTributacao.class);
 
 		criteria.add(eq("codigoEmpresa", codigoEmpresa))
 				.add(eq("tipoOperacao", tipoOperacao.getSimpleValue()))				
@@ -81,17 +81,17 @@ public class TributacaoRepositoryImpl extends
 		criteria.setMaxResults(1);
 
 		criteria.addOrder(Order.desc("dataVigencia"));
-		return (Tributacao) criteria.uniqueResult();
+		return (NotaFiscalTributacao) criteria.uniqueResult();
 
 	}
 
 	@Override
-	public Tributacao tributacaoDefault(String codigoEmpresa,
+	public NotaFiscalTributacao tributacaoDefault(String codigoEmpresa,
 			TipoOperacao tipoOperacao, String ufOrigem, String ufDestino,
 			int naturezaOperacao, String codigoNaturezaOperacao,
 			String codigoNBM, Date dataVigencia) {
 
-		Tributacao tributacao = new Tributacao();
+		NotaFiscalTributacao tributacao = new NotaFiscalTributacao();
 		tributacao.setCodigoEmpresa(codigoEmpresa);
 		tributacao.setTipoOperacao(tipoOperacao.getSimpleValue());
 		tributacao.setUfDestino(ufDestino);

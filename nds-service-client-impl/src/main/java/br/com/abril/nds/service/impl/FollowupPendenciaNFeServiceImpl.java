@@ -12,18 +12,21 @@ import br.com.abril.nds.repository.FollowupPendenciaNFeRepository;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 
 @Service
-public class FollowupPendenciaNFeServiceImpl implements
-		FollowupPendenciaNFeService {
+public class FollowupPendenciaNFeServiceImpl implements FollowupPendenciaNFeService {
 	
 	@Autowired
 	private FollowupPendenciaNFeRepository followupPendenciaNFeRepository;
 
 	@Override
 	@Transactional
-	public List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(
-			FiltroFollowupPendenciaNFeDTO filtro) {
-		 
-		return this.followupPendenciaNFeRepository.obterConsignadosParaChamadao(filtro);
+	public List<ConsultaFollowupPendenciaNFeDTO> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+		return this.followupPendenciaNFeRepository.consultaPendenciaNFEEncalhe(filtro);
+	}
+
+	@Override
+	@Transactional
+	public Long qtdeRegistrosPendencias(FiltroFollowupPendenciaNFeDTO filtro) {
+		return this.followupPendenciaNFeRepository.qtdeRegistrosPendencias(filtro);
 	}
 
 }

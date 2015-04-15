@@ -99,7 +99,6 @@ public class ConfirmacaoExpedicaoController extends BaseController{
     // = "Há matriz de lançamento confirmada.";
 		
 	protected static final String STATUS_EXPEDICAO = "statusExpedicao";
-	
 		/**
 		 * Construtor
 		 * 

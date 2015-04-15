@@ -849,7 +849,6 @@ public class CotaController extends BaseController {
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
-
 	
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}

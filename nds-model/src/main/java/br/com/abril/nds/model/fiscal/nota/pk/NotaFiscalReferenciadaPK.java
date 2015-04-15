@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.fiscal.nota.pk;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -29,15 +28,14 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	 */
 	@Column(name="CHAVE_ACESSO", length=44, nullable=false)
 	@NFEExport(secao = TipoSecao.B13, posicao = 0, tamanho = 44)
-	private BigInteger chaveAcesso;
+	private String chaveAcesso;
 	
 	public NotaFiscalReferenciadaPK() {
 	}
 	
 	
 
-	public NotaFiscalReferenciadaPK(NotaFiscal notaFiscal,
-			BigInteger chaveAcesso) {
+	public NotaFiscalReferenciadaPK(NotaFiscal notaFiscal, String chaveAcesso) {
 		super();
 		this.notaFiscal = notaFiscal;
 		this.chaveAcesso = chaveAcesso;
@@ -62,14 +60,14 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	/**
 	 * @return the chaveAcesso
 	 */
-	public BigInteger getChaveAcesso() {
+	public String getChaveAcesso() {
 		return chaveAcesso;
 	}
 
 	/**
 	 * @param chaveAcesso the chaveAcesso to set
 	 */
-	public void setChaveAcesso(BigInteger chaveAcesso) {
+	public void setChaveAcesso(String chaveAcesso) {
 		this.chaveAcesso = chaveAcesso;
 	}
 

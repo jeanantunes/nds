@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -11,6 +15,8 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlTransient
 @MappedSuperclass
 public abstract class Imposto implements Serializable {
 
@@ -18,7 +24,9 @@ public abstract class Imposto implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 536918061402194564L;
-
+	
+	
+	
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.ICMS_00, export = @NFEExport(secao = TipoSecao.N02, posicao = 1, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.ICMS_10, export = @NFEExport(secao = TipoSecao.N03, posicao = 1, tamanho = 2)),
@@ -32,6 +40,7 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB, export = @NFEExport(secao = TipoSecao.O07, posicao = 0, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.IPI_NAO_TRIB, export = @NFEExport(secao = TipoSecao.O08, posicao = 0, tamanho = 2))
 	})
+	@Transient
 	protected String cst;
 	
 	@NFEWhens(value = {
@@ -49,6 +58,8 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB, export = @NFEExport(secao = TipoSecao.O07, posicao = 1)),
 			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 2))
 	})
+	//@XmlElement(name="vICMS")
+	@Transient
 	protected BigDecimal valor;
 	
 	@NFEWhens(value = {
@@ -66,6 +77,8 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB_ALIQ, export = @NFEExport(secao = TipoSecao.O10, posicao = 0)),
 			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 0))
 	})
+	@XmlTransient
+	@Transient
 	protected BigDecimal valorBaseCalculo;
 	
 	@NFEWhens(value = {
@@ -82,11 +95,13 @@ public abstract class Imposto implements Serializable {
 			@NFEWhen(condition = NFEConditions.IPI_TRIB_ALIQ, export = @NFEExport(secao = TipoSecao.O10, posicao = 1)),
 			@NFEWhen(condition = NFEConditions.ISSQN, export = @NFEExport(secao = TipoSecao.U, posicao = 1))
 	})
+	@Transient
 	protected BigDecimal aliquota;
 
 	/**
 	 * @return the cst
 	 */
+	@XmlTransient
 	public String getCst() {
 		return cst;
 	}
@@ -115,6 +130,7 @@ public abstract class Imposto implements Serializable {
 	/**
 	 * @return the valorBaseCalculo
 	 */
+	@XmlTransient
 	public BigDecimal getValorBaseCalculo() {
 		return valorBaseCalculo;
 	}
@@ -129,6 +145,7 @@ public abstract class Imposto implements Serializable {
 	/**
 	 * @return the aliquota
 	 */
+	@XmlTransient
 	public BigDecimal getAliquota() {
 		return aliquota;
 	}
@@ -139,5 +156,5 @@ public abstract class Imposto implements Serializable {
 	public void setAliquota(BigDecimal aliquota) {
 		this.aliquota = aliquota;
 	}
-	
+
 }

@@ -18,6 +18,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -28,6 +31,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "BOX")
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Box implements Serializable {
     
     /**
@@ -143,15 +147,9 @@ public class Box implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		result = prime * result + ((cotas == null) ? 0 : cotas.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-		result = prime * result
-				+ ((roteirizacao == null) ? 0 : roteirizacao.hashCode());
-		result = prime * result + ((tipoBox == null) ? 0 : tipoBox.hashCode());
-		result = prime * result
-				+ ((usuarios == null) ? 0 : usuarios.hashCode());
+		result = prime * result + ((this.getCodigo() == null) ? 0 : getCodigo().hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : getId().hashCode());
+		result = prime * result + ((this.getNome() == null) ? 0 : getNome().hashCode());
 		return result;
 	}
 
@@ -164,38 +162,22 @@ public class Box implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Box other = (Box) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
+		if (this.getCodigo() == null) {
+			if (other.getCodigo() != null)
 				return false;
-		} else if (!codigo.equals(other.codigo))
+		} else if (!this.getCodigo().equals(other.getCodigo()))
 			return false;
-		if (cotas == null) {
-			if (other.cotas != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!cotas.equals(other.cotas))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getNome() == null) {
+			if (other.getNome() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getNome().equals(other.getNome()))
 			return false;
-		if (nome == null) {
-			if (other.nome != null)
-				return false;
-		} else if (!nome.equals(other.nome))
-			return false;
-		if (roteirizacao == null) {
-			if (other.roteirizacao != null)
-				return false;
-		} else if (!roteirizacao.equals(other.roteirizacao))
-			return false;
-		if (tipoBox != other.tipoBox)
-			return false;
-		if (usuarios == null) {
-			if (other.usuarios != null)
-				return false;
-		} else if (!usuarios.equals(other.usuarios))
-			return false;
+		
 		return true;
 	}
 }

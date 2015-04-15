@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.SQLQuery;

@@ -76,6 +76,9 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private BigDecimal valorDesconto;
 	
+	private String formaComercializacao;
+	
+	private boolean cotaContribuinteExigeNF;
 	
 	public MovimentoEstoqueCotaDTO() {
 	}
@@ -329,6 +332,22 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 		this.valorDesconto = valorDesconto;
 	}
 
+	public String getFormaComercializacao() {
+		return formaComercializacao;
+	}
+
+	public void setFormaComercializacao(String formaComercializacao) {
+		this.formaComercializacao = formaComercializacao;
+	}
+
+	public boolean isCotaContribuinteExigeNF() {
+		return cotaContribuinteExigeNF;
+	}
+
+	public void setCotaContribuinteExigeNF(boolean cotaContribuinteExigeNF) {
+		this.cotaContribuinteExigeNF = cotaContribuinteExigeNF;
+	}
+
 	public Long getIdFornecedor() {
 		return idFornecedor;
 	}
@@ -336,7 +355,5 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
-	
-	
 	
 }

@@ -1,33 +1,84 @@
 package br.com.abril.nds.model.cadastro;
 
-public enum Processo {
-	
-	ENVIO("Envio de repartes"),
-	VENDA("Venda"),
-	ENTRADA_ENCALHE("Entrada do encalhe"),
-	FALTA_REPARTE("Faltas do reparte"),
-	SOBRA_REPARTE("Sobras do reparte"),
-	FALTA_ENCALHE("Faltas do encalhe"),
-	SOBRA_ENCALHE("Sobras do encalhe"),
-	CALCELADA("Cancelada"),
+import java.io.Serializable;
 
-	GERACAO_NF_E("Geração NF-e"),
-	LANCAMENTO_FALTA_SOBRA("Lançamento faltas e sobra"),
-	VENDA_SUPLEMENTAR("Venda de Suplementar"),
-	FECHAMENTO_ENCALHE("Fechamento de Encalhe"),
-	DEVOLUCAO_AO_FORNECEDOR("Devolução ao Fornecedor"), 
-	DEVOLUCAO_ENCALHE("Nota da Devolução do Encalhe"),
-	CONSIGNACAO_REPARTE_NORMAL("Consignação do Reparte Normal"),
-	NOTA_LANCAMENTO("Nota de Lançamento (NE/NECA)");
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+@Entity
+@Table(name="PROCESSO")
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+public class Processo implements Serializable {
 	
-	private String processo;
 	
-	Processo(String processo) {
-		this.processo = processo;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4114782712143161860L;
+
+	@Id
+	@GeneratedValue
+	@Column(name="ID")
+	private Long id;
+	
+	@Column(name="NOME")
+	private String nome;
+
+	@Column(name="DESCRICAO")
+	private String descricao;
+
+	public Long getId() {
+		return id;
 	}
-	
-	public String getDescricao(){
-		return this.processo;
+
+	public void setId(Long id) {
+		this.id = id;
 	}
-	
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Processo other = (Processo) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 }

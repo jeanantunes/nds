@@ -31,12 +31,13 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -49,6 +50,7 @@ import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.RegimeTributarioService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -89,6 +91,9 @@ public class ParametrosDistribuidorController extends BaseController {
     private ParametrosDistribuidorService parametrosDistribuidorService;
     
     @Autowired
+	private RegimeTributarioService regimeTributarioService;
+    
+    @Autowired
     private HttpSession session;
     
     @Autowired
@@ -119,48 +124,70 @@ public class ParametrosDistribuidorController extends BaseController {
     @Path("/")
     public void index() {
         
-        this.limparLogoSessao();
-        
-        result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
-        result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
-        result.include("fornecedores", fornecedorService.obterFornecedores());
-        result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
-        result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
-        
         this.buscarLogoArmazenarSessao();
         
         session.removeAttribute(COTAS_SELECIONADAS);
         session.removeAttribute(MUNICIPIOS_SELECIONADOS);
+        
+        this.limparLogoSessao();
+		
+		ParametrosDistribuidorVO parametrosDistribuidor = parametrosDistribuidorService.getParametrosDistribuidor();
+		
+		result.include("parametrosDistribuidor", parametrosDistribuidor);
+		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
+		result.include("fornecedores", fornecedorService.obterFornecedores());
+		result.include("listaTipoPrestador", this.carregarComboTipoPrestador());
+		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
+		result.include("listaTiposNotaFiscal", parametrosDistribuidorService.obterTiposNotaFiscalDistribuidor());
+		result.include("listaTiposEmissaoNotaFiscal", parametrosDistribuidorService.obterTiposEmissoesNotaFiscalDistribuidor());
+		result.include("listaEstadosAnuencia", parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor());
+		
+		boolean possuiDistribuicaoOutrosEstados = (parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor()
+														.contains(parametrosDistribuidorService.getParametrosDistribuidor().getEndereco().getUf()) 
+														&& parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor().size() > 1);
+		result.include("possuiDistribuicaoOutrosEstados", possuiDistribuicaoOutrosEstados);
+				
+		this.buscarLogoArmazenarSessao();
+		
+		session.removeAttribute(COTAS_SELECIONADAS);
+		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
+        
     }
     
-    private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
-        
-        final List<ItemDTO<TipoAtividade, String>> listaRegimeTributario = new ArrayList<ItemDTO<TipoAtividade, String>>();
-        
-        listaRegimeTributario.add(new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_SERVICO,
-                TipoAtividade.PRESTADOR_SERVICO.getDescricao()));
-        
-        listaRegimeTributario.add(new ItemDTO<TipoAtividade, String>(TipoAtividade.MERCANTIL, TipoAtividade.MERCANTIL
-                .getDescricao()));
-        
-        return listaRegimeTributario;
-    }
+    private List<ItemDTO<TipoAtividade, String>> carregarComboTipoPrestador() {
+
+		List<ItemDTO<TipoAtividade, String>> listaTipoPrestador =
+			new ArrayList<ItemDTO<TipoAtividade, String>>();
+		
+		listaTipoPrestador.add(
+			new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_SERVICO,
+											   TipoAtividade.PRESTADOR_SERVICO.getDescricao()));
+		
+		listaTipoPrestador.add(
+			new ItemDTO<TipoAtividade, String>(TipoAtividade.MERCANTIL,
+											   TipoAtividade.MERCANTIL.getDescricao()));
+		
+		listaTipoPrestador.add(
+				new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_FILIAL,
+												   TipoAtividade.PRESTADOR_FILIAL.getDescricao()));
+		
+		return listaTipoPrestador;
+	}
     
-    private List<ItemDTO<ObrigacaoFiscal, String>> carregarComboObrigacaoFiscal() {
-        
-        final List<ItemDTO<ObrigacaoFiscal, String>> listaObrigacaoFiscal = new ArrayList<ItemDTO<ObrigacaoFiscal, String>>();
-        
-        listaObrigacaoFiscal.add(new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.COTA_TOTAL,
-                ObrigacaoFiscal.COTA_TOTAL.getDescricao()));
-        
-        listaObrigacaoFiscal.add(new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.COTA_NFE_VENDA,
-                ObrigacaoFiscal.COTA_NFE_VENDA.getDescricao()));
-        
-        listaObrigacaoFiscal.add(new ItemDTO<ObrigacaoFiscal, String>(ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR,
-                ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR.getDescricao()));
-        
-        return listaObrigacaoFiscal;
-    }
+    private List<ItemDTO<Long, String>>  carregarComboRegimeTributario() {
+		
+		List<RegimeTributario> regimesTributarios = regimeTributarioService.obterRegimesTributarios();
+		List<ItemDTO<Long, String>> listaRegimesTributarios = new ArrayList<ItemDTO<Long, String>>();
+		
+		for(RegimeTributario re : regimesTributarios) {
+			ItemDTO<Long, String> reKV = new ItemDTO<Long, String>();
+			reKV.setKey(Long.valueOf(re.getCodigo()));
+			reKV.setValue(re.getDescricao());
+			listaRegimesTributarios.add(reKV);
+		}
+		
+		return listaRegimesTributarios;
+	}
     
     private void buscarLogoArmazenarSessao() {
         
@@ -439,12 +466,11 @@ public class ParametrosDistribuidorController extends BaseController {
         if (vo.getRegimeTributario() == null) {
             erros.add("É necessário informar o campo Regime Tributário!");
         }
-        if (vo.getObrigacaoFiscal() == null) {
-            erros.add("É necessário informar o campo Obrigação Fiscal!");
-        }
+        
         if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
             erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
         }
+        
         if (vo.getCapacidadeManuseioHomemHoraRecolhimento() == null) {
             erros.add("É necessário informar a Capacidade de Manuseio no Recolhimento!");
         }
@@ -745,6 +771,14 @@ public class ParametrosDistribuidorController extends BaseController {
         
         TIPO_COTA, MUNICIPIO;
     }
+    
+    @Post
+	public void obterTributosPeloRegimeTributario(Long regimeTributarioId) {
+		
+		List<TributoAliquotaDTO> tributos = regimeTributarioService.obterTributosPeloRegimeTributario(regimeTributarioId);
+		
+		result.use(Results.json()).withoutRoot().from(tributos).serialize();	
+	}
     
     @Get
     public void obterDataEfetivacao(){

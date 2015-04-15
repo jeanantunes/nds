@@ -1,31 +1,29 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
-@SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+@XmlRootElement(name="NFe", namespace="http://www.portalfiscal.inf.br/nfe") 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class NotaFiscal implements Serializable {
 	
 	/**
@@ -37,87 +35,20 @@ public class NotaFiscal implements Serializable {
 	 * ID
 	 */
 	@Id
-	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@NFEExport(secao = TipoSecao.B, posicao = 1, mascara="00000000")
+	@XmlTransient
 	private Long id;
 	
-	/**
-	 * IDE
-	 */
 	@Embedded
-	@NFEExportType
-	private Identificacao identificacao;
+	@XmlElement(name="infNFe")
+	private NotaFiscalInformacoes notaFiscalInformacoes;
 	
-	/**
-	 * EMIT
-	 */
-	@Embedded
-	@NFEExportType
-	private IdentificacaoEmitente identificacaoEmitente;
+	@XmlTransient
+	@OneToOne
+	@JoinColumn(name="USUARIO_ID", nullable=false)
+	private Usuario usuario;
 	
-	/**
-	 * DEST
-	 */
-	@Embedded
-	@NFEExportType
-	private IdentificacaoDestinatario identificacaoDestinatario;
-	
-	/**
-	 * DET -> PROD
-	 */
-	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
-	@NFEExportType
-	private List<ProdutoServico> produtosServicos;
-	
-	/**
-	 * TOTAL
-	 */
-	@Embedded
-	@NFEExportType(secaoPadrao = TipoSecao.W)
-	private InformacaoValoresTotais informacaoValoresTotais;
-	
-	/**
-	 * TRANSP
-	 */
-	@Embedded
-	@NFEExportType
-	private InformacaoTransporte informacaoTransporte;
-	
-		
-	/**
-	 * INFADIC
-	 */
-	@Embedded
-	@NFEExportType
-	private InformacaoAdicional informacaoAdicional;
-	
-	/**
-	 * Informações da comunicação eletrônica.
-	 */
-	@Embedded
-	@NFEExportType
-	private InformacaoEletronica informacaoEletronica;
-	
-	/**
-	 * Status de processamento interno da nota fiscal
-	 */
-	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS_PROCESSAMENTO_INTERNO")
-	private StatusProcessamentoInterno statusProcessamentoInterno;
-	
-	@ElementCollection
-	@JoinTable(name = "NOTA_FISCAL_PROCESSO", 
-			joinColumns = {@JoinColumn(name = "NOTA_FISCAL_ID", referencedColumnName="ID")})
-	@Column(name = "PROCESSO")
-	@Enumerated(EnumType.STRING)
-	private Set<Processo> processos;
-	
-	@Column(name = "CONDICAO", nullable = true)
-	@Enumerated(EnumType.STRING)
-	private Condicao condicao;
-	
-	@Column(name = "NOTA_IMPRESSA", nullable = false)
-	private boolean notaImpressa;
 	
 	/**
 	 * Construtor padrão.
@@ -140,177 +71,55 @@ public class NotaFiscal implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the identificacao
-	 */
-	public Identificacao getIdentificacao() {
-		return identificacao;
+	public NotaFiscalInformacoes getNotaFiscalInformacoes() {
+		return notaFiscalInformacoes;
 	}
 
-	/**
-	 * @param identificacao the identificacao to set
-	 */
-	public void setIdentificacao(Identificacao identificacao) {
-		this.identificacao = identificacao;
+	public void setNotaFiscalInformacoes(NotaFiscalInformacoes notaFiscalInformacoes) {
+		this.notaFiscalInformacoes = notaFiscalInformacoes;
 	}
 
-	/**
-	 * @return the identificacaoEmitente
-	 */
-	public IdentificacaoEmitente getIdentificacaoEmitente() {
-		return identificacaoEmitente;
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
-	/**
-	 * @param identificacaoEmitente the identificacaoEmitente to set
-	 */
-	public void setIdentificacaoEmitente(IdentificacaoEmitente identificacaoEmitente) {
-		this.identificacaoEmitente = identificacaoEmitente;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	/**
-	 * @return the identificacaoDestinatario
+	/*
+	 * 
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
-	public IdentificacaoDestinatario getIdentificacaoDestinatario() {
-		return identificacaoDestinatario;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getNotaFiscalInformacoes() == null) ? 0 :this.getNotaFiscalInformacoes().hashCode());
+		return result;
 	}
 
-	/**
-	 * @param identificacaoDestinatario the identificacaoDestinatario to set
-	 */
-	public void setIdentificacaoDestinatario(
-			IdentificacaoDestinatario identificacaoDestinatario) {
-		this.identificacaoDestinatario = identificacaoDestinatario;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NotaFiscal other = (NotaFiscal) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getNotaFiscalInformacoes() == null) {
+			if (other.getNotaFiscalInformacoes() != null)
+				return false;
+		} else if (!this.getNotaFiscalInformacoes().equals(other.getNotaFiscalInformacoes()))
+			return false;
+		return true;
 	}
-
-	/**
-	 * @return the produtosServicos
-	 */
-	public List<ProdutoServico> getProdutosServicos() {
-		return produtosServicos;
-	}
-
-	/**
-	 * @param produtosServicos the produtosServicos to set
-	 */
-	public void setProdutosServicos(List<ProdutoServico> produtosServicos) {
-		this.produtosServicos = produtosServicos;
-	}
-
-	/**
-	 * @return the informacaoValoresTotais
-	 */
-	public InformacaoValoresTotais getInformacaoValoresTotais() {
-		return informacaoValoresTotais;
-	}
-
-	/**
-	 * @param informacaoValoresTotais the informacaoValoresTotais to set
-	 */
-	public void setInformacaoValoresTotais(
-			InformacaoValoresTotais informacaoValoresTotais) {
-		this.informacaoValoresTotais = informacaoValoresTotais;
-	}
-
-	/**
-	 * @return the informacaoTransporte
-	 */
-	public InformacaoTransporte getInformacaoTransporte() {
-		return informacaoTransporte;
-	}
-
-	/**
-	 * @param informacaoTransporte the informacaoTransporte to set
-	 */
-	public void setInformacaoTransporte(InformacaoTransporte informacaoTransporte) {
-		this.informacaoTransporte = informacaoTransporte;
-	}
-
-	
-
-	/**
-	 * @return the informacaoAdicional
-	 */
-	public InformacaoAdicional getInformacaoAdicional() {
-		return informacaoAdicional;
-	}
-
-	/**
-	 * @param informacaoAdicional the informacaoAdicional to set
-	 */
-	public void setInformacaoAdicional(InformacaoAdicional informacaoAdicional) {
-		this.informacaoAdicional = informacaoAdicional;
-	}
-
-	/**
-	 * @return the informacaoEletronica
-	 */
-	public InformacaoEletronica getInformacaoEletronica() {
-		return informacaoEletronica;
-	}
-
-	/**
-	 * @param informacaoEletronica the informacaoEletronica to set
-	 */
-	public void setInformacaoEletronica(InformacaoEletronica informacaoEletronica) {
-		this.informacaoEletronica = informacaoEletronica;
-	}
-
-	/**
-	 * @return the statusProcessamentoInterno
-	 */
-	public StatusProcessamentoInterno getStatusProcessamentoInterno() {
-		return statusProcessamentoInterno;
-	}
-
-	/**
-	 * @param statusProcessamentoInterno the statusProcessamentoInterno to set
-	 */
-	public void setStatusProcessamentoInterno(
-			StatusProcessamentoInterno statusProcessamentoInterno) {
-		this.statusProcessamentoInterno = statusProcessamentoInterno;
-	}
-
-	/**
-	 * @return the processos
-	 */
-	public Set<Processo> getProcessos() {
-		return processos;
-	}
-
-	/**
-	 * @param processos the processos to set
-	 */
-	public void setProcessos(Set<Processo> processos) {
-		this.processos = processos;
-	}
-
-	/**
-	 * @return the condicao
-	 */
-	public Condicao getCondicao() {
-		return condicao;
-	}
-
-	/**
-	 * @param condicao the condicao to set
-	 */
-	public void setCondicao(Condicao condicao) {
-		this.condicao = condicao;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isNotaImpressa() {
-		return notaImpressa;
-	}
-
-	/**
-	 * @param notaImpressa
-	 */
-	public void setNotaImpressa(boolean notaImpressa) {
-		this.notaImpressa = notaImpressa;
-	}
-	
 }

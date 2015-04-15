@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>br.com.abril</groupId>
+		<artifactId>nds</artifactId>
+		<version>1.0</version>
+	</parent>
+	<artifactId>nfe</artifactId>
+	<name>NDS - NF-e</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-util</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-common</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nfe-ws</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<!--<dependency>
+			<groupId>br.com.abril.nfeschema</groupId>
+			<artifactId>schema</artifactId>
+			<version>3.10</version>
+			<scope>compile</scope>
+		</dependency> -->
+	</dependencies>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.7</version>
+					<executions>
+						<!-- Execution for generating the xmlbeans classes and .xsb It is used 
+							instead of xmlbeans-maven-plugin because this plugin does not support wsdl 
+							files. See http://jira.codehaus.org/browse/MXMLBEANS-42 -->
+						<execution>
+							<id>xmlbeans-source-code-generation</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<configuration>
+								<tasks>
+									<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+										fork="true">
+										<arg
+											line="
+                                                -javasource 1.7
+                                                -srconly
+                                                -src src/main/java 
+                                                -d target/generated-sources/xmlbeans
+                                                src/main/resources/xsd/v3.10" />
+										<classpath refid="maven.dependency.classpath" />
+										<classpath refid="maven.compile.classpath" />
+										<classpath refid="maven.runtime.classpath" />
+									</java>
+								</tasks>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

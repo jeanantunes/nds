@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -72,7 +73,7 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@Column(name = "QTDE", nullable = false)
 	private BigInteger qtde;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscalEntrada notaFiscal;
 	
@@ -386,5 +387,41 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-		
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getNotaFiscal() == null) ? 0 : this.getNotaFiscal().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ItemNotaFiscalEntrada other = (ItemNotaFiscalEntrada) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId() .equals(other.getId()))
+			return false;
+		if (this.getNotaFiscal() == null) {
+			if (other.getNotaFiscal() != null)
+				return false;
+		} else if (!this.getNotaFiscal().equals(other.getNotaFiscal()))
+			return false;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+			return false;
+		return true;
+	}
 }

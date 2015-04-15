@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.estoque;
 
+import br.com.abril.nds.enums.Dominio;
+
 
 
 /**
@@ -165,6 +167,11 @@ public enum GrupoMovimentoEstoque  {
 	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 	
 	/**
+	 * Distribuicao do reparte cota
+	 */
+	RECEBIMENTO_REPARTE_DISTRIBUICAO(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
 	 * Recebimento do reparte do tipo conta firme pela cota
 	 */
 	RECEBIMENTO_REPARTE_CONTA_FIRME(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
@@ -274,12 +281,12 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 *
 	 */
-	NIVELAMENTO_SAIDA(OperacaoEstoque.SAIDA,Dominio.COTA, TipoEstoque.LANCAMENTO),
+	NIVELAMENTO_SAIDA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 	
 	/**
 	 * 
 	 */
-	NIVELAMENTO_ENTRADA(OperacaoEstoque.ENTRADA,Dominio.COTA, TipoEstoque.LANCAMENTO),
+	NIVELAMENTO_ENTRADA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 
 	/**
 	 * Estorno da cota para notas de envio.
@@ -422,20 +429,6 @@ public enum GrupoMovimentoEstoque  {
 	 */
 	public TipoEstoque getTipoEstoque() {
 		return tipoEstoque;
-	}
-
-	/**
-	 * Domínio do movimento estoque
-	 * 
-	 * @author francisco.garcia
-	 *
-	 */
-	public static enum Dominio {
-		
-		DISTRIBUIDOR, 
-		
-		COTA;
-		
 	}
 
 }

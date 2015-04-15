@@ -17,9 +17,11 @@ public abstract class AssociacaoEndereco {
 	@JoinColumn(name = "ENDERECO_ID")
 	@Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.MERGE})
 	private Endereco endereco;
+	
 	@Column(name = "TIPO_ENDERECO", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TipoEndereco tipoEndereco;
+	
 	@Column(name = "PRINCIPAL", nullable = false)
 	private boolean principal;
 	

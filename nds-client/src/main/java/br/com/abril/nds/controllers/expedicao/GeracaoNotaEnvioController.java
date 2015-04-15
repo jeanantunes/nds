@@ -52,7 +52,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
 public class GeracaoNotaEnvioController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNotaEnvioController.class);	
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNotaEnvioController.class); 
 
     @Autowired
     private Result result;
@@ -98,12 +98,14 @@ public class GeracaoNotaEnvioController extends BaseController {
         this.iniciarComboRota();
 
         this.iniciarComboRoteiro();
+
     }
 
     /**
      * Inicia o combo Roteiro
      */
     private void iniciarComboRoteiro() {
+    	
         result.include("roteiros", this.roteirizacaoService.getComboTodosRoteiros());
     }
 
@@ -111,6 +113,7 @@ public class GeracaoNotaEnvioController extends BaseController {
      * Inicia o combo Rota
      */
     private void iniciarComboRota() {
+
         result.include("rotas", this.roteirizacaoService.getComboTodosRotas());
     }
 
@@ -118,20 +121,22 @@ public class GeracaoNotaEnvioController extends BaseController {
      * Inicia o combo Box
      */
     private void iniciarComboBox() {
+
         result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
     }
 
     @Post
     public void obterDataDistribuidor(){
-        this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
+
+    	this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
     }
 
     @Post
     public void pesquisar(Integer intervaloBoxDe, Integer intervaloBoxAte,
-	    Integer intervaloCotaDe, Integer intervaloCotaAte,
-	    Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-	    List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
-	    String sortname, String sortorder, int rp, int page) {
+        Integer intervaloCotaDe, Integer intervaloCotaAte,
+        Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
+        List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
+        String sortname, String sortorder, int rp, int page) {
 
     	if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
     	    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
@@ -167,6 +172,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		    hasCotasAusentes = true;
 	
 		result.use(CustomJson.class).from(hasCotasAusentes).serialize();
+
     }
 
     @Post
@@ -182,6 +188,7 @@ public class GeracaoNotaEnvioController extends BaseController {
         FileExporter.to("nota-envio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,this.httpServletResponse);
 
         result.use(Results.nothing());
+
     }
 
     @Post
@@ -194,6 +201,7 @@ public class GeracaoNotaEnvioController extends BaseController {
         this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(parametrosRecolhimentoDistribuidor, listaIdCotas, filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência de reparte para suplementar realizada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+
     }
 
     @Post
@@ -203,9 +211,10 @@ public class GeracaoNotaEnvioController extends BaseController {
 		session.setAttribute(COTAS_ID, listaIdCotas);
 	
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração de NE."), Constantes.PARAM_MSGS).recursive().serialize();
+
     }
 
-    private byte[] getNotas(){
+    private byte[] getNotas() throws Exception{
 
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 	
@@ -231,40 +240,41 @@ public class GeracaoNotaEnvioController extends BaseController {
 		}
 	
 		return notasGeradas;
+
     }
 
     @Post
     public void getArquivoNotaEnvio() {
 
-		try {
-			
-		    byte[] notasGeradas = this.getNotas();
-	
-		    if (notasGeradas != null) {
-	
-				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-		
-				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-		
-				OutputStream output;
-		
-				output = this.httpResponse.getOutputStream();
-		
-				output.write(notasGeradas);
-		
-				httpResponse.getOutputStream().close();
-		
-				session.setAttribute(COTAS_ID, null);
-		
-				result.use(Results.nothing());
-		    }
-		} catch (ValidacaoException e) {
+        try {
+            
+            byte[] notasGeradas = this.getNotas();
+    
+            if (notasGeradas != null) {
+    
+                DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+        
+                this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+        
+                OutputStream output;
+        
+                output = this.httpResponse.getOutputStream();
+        
+                output.write(notasGeradas);
+        
+                httpResponse.getOutputStream().close();
+        
+                session.setAttribute(COTAS_ID, null);
+        
+                result.use(Results.nothing());
+            }
+        } catch (ValidacaoException e) {
             LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
-		    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-		} catch (Exception e) {
+            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+        } catch (Exception e) {
             LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
-		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
-		}
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+        }
     }
 
     /**
@@ -281,14 +291,15 @@ public class GeracaoNotaEnvioController extends BaseController {
         }
 
         return filtro;
+
     }
 
 
     private FiltroConsultaNotaEnvioDTO setFiltroNotaEnvioSessao(Integer intervaloBoxDe, Integer intervaloBoxAte,
-	    Integer intervaloCotaDe, Integer intervaloCotaAte,
-	    Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-	    List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
-	    String sortname, String sortorder, int rp, int page) {
+        Integer intervaloCotaDe, Integer intervaloCotaAte,
+        Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
+        List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
+        String sortname, String sortorder, int rp, int page) {
 
         Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
 
@@ -319,23 +330,24 @@ public class GeracaoNotaEnvioController extends BaseController {
         session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
 
         return filtroConsultaNotaEnvioDTO;
+
     }
 
     @Get
     public void visualizarNE() {
 
-    	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+        FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 
-    	List<NotaEnvio> notaEnvio = null;
+        List<NotaEnvio> notaEnvio = null;
 
-    	if(filtro.getIntervaloCota().getDe() != null) {
-    		notaEnvio = geracaoNotaEnvioService.visualizar(filtro);
+        if(filtro.getIntervaloCota().getDe() != null) {
+            notaEnvio = geracaoNotaEnvioService.visualizar(filtro);
 
-    	} else {
+        } else {
             result.include("errorMessage", "É necessário informar o número da Cota.");
-    	}
+        }
 
-    	String dataRecolhimento = null;
+        String dataRecolhimento = null;
 
     	if (filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte())) {
     		dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());

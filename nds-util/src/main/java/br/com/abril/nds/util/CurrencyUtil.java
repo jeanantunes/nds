@@ -245,12 +245,20 @@ public abstract class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal arredondarValorParaDuasCasas(final BigDecimal valor) {
-
-		BigDecimal valorArredondado = valor.setScale(2, RoundingMode.HALF_EVEN);
+		BigDecimal valorArredondado = valor.setScale(2, RoundingMode.HALF_UP);
 
 		return valorArredondado;
 	}
 
+	public static BigDecimal truncateDecimal(final BigDecimal valor, int numberofDecimals) {
+	    if (valor.doubleValue() > 0.0) {
+	        return new BigDecimal(String.valueOf(valor)).setScale(numberofDecimals, BigDecimal.ROUND_FLOOR);
+	    } else {
+	        return new BigDecimal(String.valueOf(valor)).setScale(numberofDecimals, BigDecimal.ROUND_CEILING);
+	    }
+	
+	}
+	
 	/**
 	 * Metodo padrao para arredondamentos com 4 casas
 	 * 
@@ -258,9 +266,9 @@ public abstract class CurrencyUtil {
 	 * @return
 	 */
 	public static BigDecimal arredondarValorParaQuatroCasas(final BigDecimal valor) {
-
-		BigDecimal valorArredondado = valor.setScale(4, RoundingMode.HALF_EVEN);
-
+		
+		BigDecimal valorArredondado = valor.setScale(4, RoundingMode.HALF_UP);
+		
 		return valorArredondado;
 	}
 	
@@ -295,4 +303,5 @@ public abstract class CurrencyUtil {
 		
 		return total;
 	}
+
 }

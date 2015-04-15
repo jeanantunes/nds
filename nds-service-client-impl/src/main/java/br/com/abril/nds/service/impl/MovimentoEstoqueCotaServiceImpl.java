@@ -16,14 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.TransferenciaReparteSuplementarDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -88,12 +91,12 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Override
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, 
-			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
+			NaturezaOperacao tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
 			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
-						parametrosRecolhimentoDistribuidor, idCota, tipoNotaFiscal.getGrupoNotaFiscal(), listaGrupoMovimentoEstoques, periodo, 
+						parametrosRecolhimentoDistribuidor, idCota, null, listaGrupoMovimentoEstoques, periodo, 
 						listaFornecedores, listaProdutos);
 		
 		listaMovimentoEstoqueCota = filtrarMovimentosQueJaPossuemNotas(listaMovimentoEstoqueCota,tipoNotaFiscal);
@@ -109,12 +112,14 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 * @return movimentos que não possuem nota
 	 */
 	private List<MovimentoEstoqueCota> filtrarMovimentosQueJaPossuemNotas(
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, TipoNotaFiscal tipoNotaFiscal) {
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, NaturezaOperacao tipoNotaFiscal) {
 		
 		List<MovimentoEstoqueCota> listaMovimentosFiltrados = new ArrayList<MovimentoEstoqueCota>();
 		
 		if (listaMovimentoEstoqueCota != null) {
 			
+			//FIXME: Obter pela flag de nota emitida
+			/*
 			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 				
 				List<ProdutoServico> listaProdutoServico = movimentoEstoqueCota.getListaProdutoServicos();
@@ -127,7 +132,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 					
 						NotaFiscal notaFiscal = produtoServico.getProdutoServicoPK().getNotaFiscal();
 					
-						TipoNotaFiscal tipoNota = notaFiscal.getIdentificacao().getTipoNotaFiscal();
+						NaturezaOperacao tipoNota = notaFiscal.getIdentificacao().getTipoNotaFiscal();
 					
 						if (tipoNota.equals(tipoNotaFiscal)) {
 							possuiNota = true;
@@ -142,6 +147,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 					listaMovimentosFiltrados.add(movimentoEstoqueCota);
 				}
 			}
+			*/
 		}
 		
 		return listaMovimentosFiltrados;
@@ -167,7 +173,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	public void transferirReparteParaSuplementar(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
 												 List<Long> idsCota, Intervalo<Date> periodo,
 												 List<Long> listaIdFornecedores, List<Long> listaIdProduto, 
-												 TipoNotaFiscal tipoNotaFiscal) {
+												 NaturezaOperacao tipoNotaFiscal) {
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
@@ -192,9 +198,14 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 			mapaEstornoEnvioCota = new HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO>();
 
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
-					this.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, idCota, tipoNotaFiscal, 
-							listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.obterMovimentoEstoqueCotaPor(
+					parametrosRecolhimentoDistribuidor, 
+					idCota, 
+					tipoNotaFiscal, 
+					listaGrupoMovimentoEstoque, 
+					periodo, 
+					listaIdFornecedores, 
+					listaIdProduto);
 
 			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 
@@ -255,8 +266,8 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			ProdutoEdicao produtoEdicao = entry.getKey();
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
-				null, produtoEdicao.getId(), cota.getId(), usuario.getId(), 
-					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null);
+				null, produtoEdicao, cota.getId(), usuario.getId(), 
+					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
 		}
 	}
 
@@ -317,19 +328,18 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			this.tipoMovimentoEstoqueRepository.
 				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
 		
-		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
-		
-		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
+		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 			
-			for (MovimentoEstoqueCota movimentoEstoqueCota : produtoServico.getListaMovimentoEstoqueCota()) {
+			for (OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 				
-				ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
+				MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
+				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
 				
 				Usuario usuario = this.usuarioService.getUsuarioLogado();
 				
 				this.movimentoEstoqueService.gerarMovimentoEstoque(
 					produtoEdicao.getId(), usuario.getId(), 
-						movimentoEstoqueCota.getQtde(), tipoMovimento);
+						mec.getQtde(), tipoMovimento);
 				
 			}
 			

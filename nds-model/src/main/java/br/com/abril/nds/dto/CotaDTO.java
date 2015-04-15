@@ -1,7 +1,5 @@
 package br.com.abril.nds.dto;
 
-import br.com.abril.nds.model.cadastro.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
+import br.com.abril.nds.model.cadastro.EstadoCivil;
+import br.com.abril.nds.model.cadastro.Sexo;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 
 public class CotaDTO implements Serializable {
 
@@ -42,7 +47,8 @@ public class CotaDTO implements Serializable {
     private String inscricaoEstadual;
     private String inscricaoMunicipal;
     private String emailNF;
-    private boolean emiteNFE;
+    private boolean exigeNFE;
+    private boolean contribuinteICMS;
     private Date inicioPeriodo;
     private Date fimPeriodo;
     private Integer historicoPrimeiraCota;
@@ -426,17 +432,17 @@ public class CotaDTO implements Serializable {
     }
 
     /**
-     * @return the emiteNFE
+     * @return the exigeNFE
      */
-    public boolean isEmiteNFE() {
-        return emiteNFE;
+    public boolean isExigeNFE() {
+        return exigeNFE;
     }
 
     /**
-     * @param emiteNFE the emiteNFE to set
+     * @param exigeNFE the exigeNFE to set
      */
-    public void setEmiteNFE(boolean emiteNFE) {
-        this.emiteNFE = emiteNFE;
+    public void setExigeNFE(boolean exigeNFE) {
+        this.exigeNFE = exigeNFE;
     }
 
     /**
@@ -782,4 +788,12 @@ public class CotaDTO implements Serializable {
     public void setFxQuantidadeExemplares(Integer fxQuantidadeExemplares) {
         this.fxQuantidadeExemplares = fxQuantidadeExemplares;
     }
+
+	public boolean isContribuinteICMS() {
+		return contribuinteICMS;
+	}
+
+	public void setContribuinteICMS(boolean contribuinteICMS) {
+		this.contribuinteICMS = contribuinteICMS;
+	}
 }

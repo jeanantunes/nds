@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.fiscal;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -18,8 +19,8 @@ public abstract class NotaFiscal implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	
-	@Column(name = "NATUREZA_OPERACAO")
-	private	String naturezaOperacao;
+	@Column(name = "DESCRICAO_NATUREZA_OPERACAO")
+	private	String descricaoNaturezaOperacao;
 	
 	@Column(name = "FORMA_PAGAMENTO")
 	private	String formaPagamento;
@@ -163,8 +164,8 @@ public abstract class NotaFiscal implements Serializable {
 	protected BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_NF_ID")
-	protected TipoNotaFiscal tipoNotaFiscal;
+	@JoinColumn(name = "NATUREZA_OPERACAO_ID")
+	protected NaturezaOperacao naturezaOperacao;
 	
 	@Column(name = "VALOR_INFORMADO", nullable = true)
 	protected BigDecimal valorInformado;
@@ -245,12 +246,12 @@ public abstract class NotaFiscal implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public TipoNotaFiscal getTipoNotaFiscal() {
-		return tipoNotaFiscal;
+	public NaturezaOperacao getNaturezaOperacao() {
+		return naturezaOperacao;
 	}
 
-	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
+	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
 	}
 
 	public BigDecimal getValorBruto() {
@@ -349,16 +350,16 @@ public abstract class NotaFiscal implements Serializable {
 	 *
 	 * @return String
 	 */
-	public String getNaturezaOperacao() {
-		return naturezaOperacao;
+	public String getDescricaoNaturezaOperacao() {
+		return descricaoNaturezaOperacao;
 	}
 
 	/**
 	 * Atribuí naturezaOperacao
 	 * @param naturezaOperacao 
 	 */
-	public void setNaturezaOperacao(String naturezaOperacao) {
-		this.naturezaOperacao = naturezaOperacao;
+	public void setNaturezaOperacao(String descricaoNaturezaOperacao) {
+		this.descricaoNaturezaOperacao = descricaoNaturezaOperacao;
 	}
 
 	/**
@@ -1046,6 +1047,45 @@ public abstract class NotaFiscal implements Serializable {
 
 	public void setValorInformado(BigDecimal valorInformado) {
 		this.valorInformado = valorInformado;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getNumero() == null) ? 0 : this.getNumero().hashCode());
+		result = prime * result + ((this.getSerie() == null) ? 0 : this.getSerie().hashCode());
+		result = prime * result + ((this.getChaveAcesso() == null) ? 0 : this.getChaveAcesso().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NotaFiscal other = (NotaFiscal) obj;
+		if (this.getSerie() == null) {
+			if (other.getSerie() != null)
+				return false;
+		} else if (!this.getSerie().equals(other.getSerie()))
+			return false;
+		if (this.getNumero() == null) {
+			if (other.getNumero() != null)
+				return false;
+		} else if (!this.getNumero().equals(other.getNumero()))
+			return false;
+		if (this.getChaveAcesso() == null) {
+			if (other.getChaveAcesso() != null)
+				return false;
+		} else if (!this.getChaveAcesso().equals(other.getChaveAcesso()))
+			return false;
+		
+		
+		return true;
 	}
 	
 	

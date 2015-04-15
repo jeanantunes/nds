@@ -18,6 +18,15 @@
 
 	<dependencies>
 		<dependency>
+	          <groupId>org.apache.axis2</groupId>
+	          <artifactId>axis2</artifactId>
+	          <version>1.6.2</version>
+	    </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>    
+		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.6.3</version>
@@ -29,6 +38,10 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javassist</groupId>
@@ -49,6 +62,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-security</artifactId>
+			<version>2.1.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.samaxes.filter</groupId>
@@ -487,6 +505,7 @@
 				</plugins>
 			</build>
 		</profile>
+				
 		<profile>
 			<id>nds-client-homolog-f2</id>
 			<properties>
@@ -536,6 +555,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>qa</id>
 			<properties>

@@ -47,8 +47,8 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	
 	@Export(label="Série")
 	private Integer serie;
-
 	
+	private String numeroDocumento;
 	
 	private PaginacaoVO paginacao;
 	
@@ -267,6 +267,7 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+	
 	/**
 	 * Obtém serie
 	 *
@@ -275,6 +276,7 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public Integer getSerie() {
 		return serie;
 	}
+	
 	/**
 	 * Atribuí serie
 	 * @param serie 
@@ -283,4 +285,11 @@ public class FiltroMonitorNfeDTO implements Serializable {
 		this.serie = serie;
 	}
 	
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+	
+	public void setNumeroDocumento(String tipoDocumento) {
+		this.numeroDocumento = tipoDocumento;
+	}
 }

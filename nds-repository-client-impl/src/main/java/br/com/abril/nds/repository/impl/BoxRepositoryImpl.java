@@ -51,9 +51,9 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		}
 		criteria.addOrder(Order.asc("codigo"));
 		
+		criteria.setCacheable(true);
+		
 		return criteria.list();
-		
-		
 	}
 	
     /**
@@ -511,7 +511,9 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
         Query query = getSession().createQuery(hql);
 	
 	    query.setParameter("roteiroId", roteiroId);
-	
+	    
+	    query.setCacheable(true);
+	    
 	    return query.list();
 	}
 

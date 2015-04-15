@@ -6,6 +6,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
+
 			$('input[id^="digitacao-contagem-dataDe"]', digitacaoContagemDevolucaoController.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -49,7 +50,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 			$(".areaBts", digitacaoContagemDevolucaoController.workspace).hide();
 			
-			$("#digitacao-contagem-dataDe", digitacaoContagemDevolucaoController.workspace).focus();
+			$("#digitacaoContagemDevolucao-dataDe", digitacaoContagemDevolucaoController.workspace).focus();
 			
 			this.montaGridEdicoesFechadas();
 			
@@ -481,10 +482,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 												  qtdNota:qtdNota,
 												  valorTotalComDesconto:totalComDesconto};
 				
-					if (diferenca) {
-						
-						digitacaoContagemDevolucao.diferenca =diferenca;
-					}
+				if (!isNaN(diferenca)) {
+					
+					digitacaoContagemDevolucao.diferenca = diferenca;
+				}
 
 				listaDigitacaoContagemDevolucao.push(digitacaoContagemDevolucao);
 			});

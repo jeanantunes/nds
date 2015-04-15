@@ -106,7 +106,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
  * {@link br.com.abril.nds.model.estoque.Diferenca}
  * 
  * @author Discover Technology
- * 
+ *
  */
 @Service
 public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
@@ -1373,7 +1373,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         return grupoMovimentoEstoque;
     }
     
-	                                    /*
+    /*
      * Efetua a geração do movimento de estoque do rateio da diferença para
      * cota.
      */
@@ -1389,10 +1389,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         final Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null)
                 ? rateioDiferenca.getEstudoCota().getId() : null;
+        
+        Cota cota = rateioDiferenca.getCota();
                 
         return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
-                dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
-                idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica);
+                dataLancamento, diferenca.getProdutoEdicao(), rateioDiferenca.getCota().getId(),
+                idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica, 
+                cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(),
+                cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
     }
     
 	                                    /*

@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="PessoaCRPService" targetNamespace="http://abril.ebo.pessoadetalhe.v1/" xmlns:WL5G3N5="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N4="http://abril.ebo.pessoadetalhe.v1/" xmlns:WL5G3N3="http://canonico.abril.com.br/v1/Comum/CabecalhoAbril" xmlns:WL5G3N2="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:WL5G3N0="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N1="http://abril.ebo.pessoadetalhe.v1/types/">
+<wsp:Policy orawsp:provides="{http://docs.oasis-open.org/ns/opencsa/sca/200903}authentication, {http://docs.oasis-open.org/ns/opencsa/sca/200903}clientAuthentication, {http://docs.oasis-open.org/ns/opencsa/sca/200903}clientAuthentication.message, {http://schemas.oracle.com/ws/2006/01/policy}token.usernamePassword" wsu:Id="wss_username_token_service_policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sp:SupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+<wsp:Policy>
+<sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+<wsp:Policy>
+<sp:WssUsernameToken10/>
+</wsp:Policy>
+</sp:UsernameToken>
+</wsp:Policy>
+</sp:SupportingTokens>
+</wsp:Policy>
+    <wsdl:types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://abril.ebo.pessoadetalhe.v1/types/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:WL5G3N1="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:WL5G3N2="http://canonico.abril.com.br/v1/Comum/CabecalhoAbril" xmlns:WL5G3N3="http://abril.ebo.pessoadetalhe.v1/types/" xmlns:WL5G3N6="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:cabecalhoAbril="http://canonico.abril.com.br/v1/Comum/CabecalhoAbril" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://abril.ebo.pessoadetalhe.v1/types/" xmlns:tns0="http://abril.ebo.pessoadetalhe.v1/types/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <xsd:import namespace="http://canonico.abril.com.br/v1/Comum/CabecalhoAbril" schemaLocation="https://testsoa.abril.com.br:443/extranet/Cadastro/PessoaCRPProxyEV1?SCHEMA%2FCanonico%2Fv1%2FComum%2FCabecalhoAbril"/>
+            <xsd:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" schemaLocation="https://testsoa.abril.com.br:443/extranet/Cadastro/PessoaCRPProxyEV1?SCHEMA%2Fextranet%2FCadastro%2FContratos%2Foasis-200401-wss-wssecurity-secext-1.0_CHOPPED"/>
+            <xsd:complexType name="adicionarAlterarCliente">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="pessoa" nillable="false" type="tns:PessoaINType"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="PessDet" nillable="false" type="tns:PessoaDetalheINType"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="papel" nillable="false" type="tns:PapelPessoaINType"/>
+                    <xsd:element maxOccurs="unbounded" minOccurs="1" name="documento" type="tns:DocumentoPessoaINType"/>
+                    <xsd:element maxOccurs="unbounded" minOccurs="1" name="endereco" type="tns:EnderecoPessoaINType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PessoaINType">
+                <xsd:sequence>
+                    <xsd:element name="codigoTipoPessoa" nillable="false" type="long"/>
+                    <xsd:element name="nome" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PapelPessoaINType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" nillable="false" type="long"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PessoaDetalheINType">
+                <xsd:sequence>
+                    <xsd:element name="codigoTipoContribuinte" nillable="false" type="long"/>
+                    <xsd:element name="codigoSistema" nillable="false" type="string"/>
+                    <xsd:element name="nomeAbreviado" nillable="true" type="string"/>
+                    <xsd:element name="ddi" nillable="true" type="string"/>
+                    <xsd:element name="ddd" nillable="true" type="string"/>
+                    <xsd:element name="telefone" nillable="true" type="string"/>
+                    <xsd:element name="ramal" nillable="true" type="string"/>
+                    <xsd:element name="fax" nillable="true" type="string"/>
+                    <xsd:element name="email" nillable="true" type="string"/>
+                    <xsd:element name="url" nillable="true" type="string"/>
+                    <xsd:element name="emailFaturamento" nillable="true" type="string"/>
+                    <xsd:element name="usuarioInclusao" nillable="false" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="false" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoPessoaGl" nillable="true" type="string"/>
+                    <xsd:element name="indAtividadeIndustrial" nillable="true" type="string"/>
+                    <xsd:element name="grupoNaturezaJuridica" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="DocumentoPessoaINType">
+                <xsd:sequence>
+                    <xsd:element name="numeroDocumento" nillable="false" type="string"/>
+                    <xsd:element name="tipoDocumento" nillable="false" type="long"/>
+                    <xsd:element name="sglUfIE" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="EnderecoPessoaINType">
+                <xsd:sequence>
+                    <xsd:element name="codigoLocalidade" nillable="false" type="string"/>
+                    <xsd:element name="tipoLogradouro" nillable="false" type="string"/>
+                    <xsd:element name="endereco" nillable="false" type="string"/>
+                    <xsd:element name="numero" nillable="false" type="string"/>
+                    <xsd:element name="tipoEndereco" nillable="false" type="string"/>
+                    <xsd:element name="complemento" nillable="true" type="string"/>
+                    <xsd:element name="bairro" nillable="false" type="string"/>
+                    <xsd:element name="cep" nillable="false" type="string"/>
+                    <xsd:element name="enderecoCompleto" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="adicionarAlterarClienteResponse">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" name="codigoPessoaDetalhe" nillable="false" type="long"/>
+                    <xsd:element minOccurs="1" name="codigoErro" nillable="false" type="integer"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="documentos" type="tns:DocumentosErro"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="enderecos" type="tns:EnderecosErro"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="DocumentosErro">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="documento" type="tns:DocumentoErro"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="DocumentoErro">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="numeroDocumento" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="false" type="integer"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="EnderecosErro">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="endereco" type="tns:Erro"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Erro">
+                <xsd:sequence>
+                    <xsd:element name="codigoErro" nillable="false" type="integer"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="MensagemErroDto">
+                <xsd:sequence>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoMensagem" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterBloqueio">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterBloqueioResponse">
+                <xsd:sequence>
+                    <xsd:element name="result" nillable="true" type="tns:BloqueioPessoaType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="BloqueioPessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" type="long"/>
+                    <xsd:element name="nome" nillable="true" type="string"/>
+                    <xsd:element name="codigoMotivo" nillable="true" type="long"/>
+                    <xsd:element name="nomeMotivo" nillable="true" type="string"/>
+                    <xsd:element name="descricaoMotivo" nillable="true" type="string"/>
+                    <xsd:element name="dataInicioVigencia" nillable="true" type="string"/>
+                    <xsd:element name="dataFimVigencia" nillable="true" type="string"/>
+                    <xsd:element name="dataValidade" nillable="true" type="dateTime"/>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterContaCorrente">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterContaCorrenteResponse">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="result" nillable="true" type="tns:ContaCorrenteType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ContaCorrenteType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" nillable="true" type="long"/>
+                    <xsd:element name="codigoAgencia" nillable="true" type="string"/>
+                    <xsd:element name="digitoAgencia" nillable="true" type="string"/>
+                    <xsd:element name="nomeAgencia" nillable="true" type="string"/>
+                    <xsd:element name="numeroConta" nillable="true" type="string"/>
+                    <xsd:element name="digitoConta" nillable="true" type="string"/>
+                    <xsd:element name="codigoBanco" nillable="true" type="string"/>
+                    <xsd:element name="nomeBanco" nillable="true" type="string"/>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="indContaPrincipal" nillable="true" type="int"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterContratante">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterContratanteResponse">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="result" nillable="true" type="tns:ContratantePessoaType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ContratantePessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" nillable="true" type="long"/>
+                    <xsd:element name="numeroDocumento" nillable="true" type="string"/>
+                    <xsd:element name="tipoDocumento" nillable="true" type="long"/>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterDadosFiscais">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterDadosFiscaisResponse">
+                <xsd:sequence>
+                    <xsd:element name="result" nillable="true" type="tns:PessoaDto"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PessoaDto">
+                <xsd:sequence>
+                    <xsd:element name="pessoa" nillable="true" type="tns:PessoaType"/>
+                    <xsd:element name="pessoaDetalhe" nillable="true" type="tns:PessoaDetalheType"/>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="documento" nillable="true" type="tns:DocumentoPessoaType"/>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="endereco" nillable="true" type="tns:EnderecoPessoaType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" nillable="true" type="long"/>
+                    <xsd:element name="nome" nillable="true" type="string"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="DocumentoPessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="tipoDocumento" nillable="true" type="long"/>
+                    <xsd:element name="nomeTipoDocumento" nillable="true" type="string"/>
+                    <xsd:element name="numeroDocumento" nillable="true" type="string"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PessoaDetalheType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" type="long"/>
+                    <xsd:element name="nomeAbreviado" nillable="true" type="string"/>
+                    <xsd:element name="codigoTipoContribuinte" nillable="true" type="long"/>
+                    <xsd:element name="nomeTipoContribuinte" nillable="true" type="string"/>
+                    <xsd:element name="ddi" nillable="true" type="string"/>
+                    <xsd:element name="ddd" nillable="true" type="string"/>
+                    <xsd:element name="telefone" nillable="true" type="string"/>
+                    <xsd:element name="fax" nillable="true" type="string"/>
+                    <xsd:element name="ramal" nillable="true" type="string"/>
+                    <xsd:element name="email" nillable="true" type="string"/>
+                    <xsd:element name="url" nillable="true" type="string"/>
+                    <xsd:element name="emailFaturamento" nillable="true" type="string"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="indAtividadeIndustrial" nillable="true" type="string"/>
+                    <xsd:element name="codigoPessoaGl" nillable="true" type="string"/>
+                    <xsd:element name="grupoNaturezaJuridica" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="EnderecoPessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="endereco" nillable="true" type="string"/>
+                    <xsd:element name="complemento" nillable="true" type="string"/>
+                    <xsd:element name="numero" nillable="true" type="string"/>
+                    <xsd:element name="tipoEndereco" nillable="true" type="string"/>
+                    <xsd:element name="nomeTipoEndereco" nillable="true" type="string"/>
+                    <xsd:element name="codigoLocalidade" nillable="true" type="string"/>
+                    <xsd:element name="nomeLocalidade" nillable="true" type="string"/>
+                    <xsd:element name="codigoPais" nillable="true" type="string"/>
+                    <xsd:element name="nomePais" nillable="true" type="string"/>
+                    <xsd:element name="tipoLogradouro" nillable="true" type="string"/>
+                    <xsd:element name="nomeTipoLogradouro" nillable="true" type="string"/>
+                    <xsd:element name="cep" nillable="true" type="string"/>
+                    <xsd:element name="siglaUf" nillable="true" type="string"/>
+                    <xsd:element name="nomeUf" nillable="true" type="string"/>
+                    <xsd:element name="codigoUf" nillable="true" type="long"/>
+                    <xsd:element name="codigoIbge" nillable="true" type="long"/>
+                    <xsd:element name="bairro" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="string"/>
+                    <xsd:element name="dataAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioAlteracao" nillable="true" type="string"/>
+                    <xsd:element name="dataExclusao" nillable="true" type="string"/>
+                    <xsd:element name="usuarioExclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterFormaPagto">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterFormaPagtoResponse">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="result" nillable="true" type="tns:FormaPagamentoType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="FormaPagamentoType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" nillable="true" type="string"/>
+                    <xsd:element name="nome" nillable="true" type="string"/>
+                    <xsd:element name="codigoSistema" nillable="true" type="string"/>
+                    <xsd:element name="tipoDocumento" nillable="true" type="string"/>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterPapel">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterPapelResponse">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="result" nillable="true" type="tns:PapelPessoaType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="PapelPessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigo" nillable="true" type="long"/>
+                    <xsd:element name="nome" nillable="true" type="string"/>
+                    <xsd:element name="codigoCategoria" nillable="true" type="long"/>
+                    <xsd:element name="nomeCategoria" nillable="true" type="string"/>
+                    <xsd:element name="codigoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterProtocolo">
+                <xsd:sequence>
+                    <xsd:element name="codTipoDoc" nillable="false" type="int"/>
+                    <xsd:element name="numDoc" nillable="false" type="string"/>
+                    <xsd:element name="codSistema" nillable="false" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="obterProtocoloResponse">
+                <xsd:sequence>
+                    <xsd:element name="result" nillable="true" type="tns:ProtocoloPessoaType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ProtocoloPessoaType">
+                <xsd:sequence>
+                    <xsd:element name="codigoSistema" nillable="true" type="string"/>
+                    <xsd:element name="nomeBairro" nillable="true" type="string"/>
+                    <xsd:element name="numDocumentoIE" nillable="true" type="string"/>
+                    <xsd:element name="codigoProtocolo" nillable="true" type="long"/>
+                    <xsd:element name="numeroProtocolo" nillable="true" type="string"/>
+                    <xsd:element name="codigoLocalidade" nillable="true" type="long"/>
+                    <xsd:element name="origemLocalidade" nillable="true" type="string"/>
+                    <xsd:element name="dataInicioVigencia" nillable="true" type="string"/>
+                    <xsd:element name="dataConsulta" nillable="true" type="string"/>
+                    <xsd:element name="dataFimVigencia" nillable="true" type="string"/>
+                    <xsd:element name="cep" nillable="true" type="string"/>
+                    <xsd:element name="codigoStatusSefaz" nillable="true" type="long"/>
+                    <xsd:element name="codigoStatusReceita" nillable="true" type="long"/>
+                    <xsd:element name="nomeStatusSefaz" nillable="true" type="string"/>
+                    <xsd:element name="nomeStatusReceita" nillable="true" type="string"/>
+                    <xsd:element name="numDocumentoSuframa" nillable="true" type="string"/>
+                    <xsd:element name="ufDocumento" nillable="true" type="string"/>
+                    <xsd:element name="codigoTipoLogradouro" nillable="true" type="string"/>
+                    <xsd:element name="dataInclusao" nillable="true" type="dateTime"/>
+                    <xsd:element name="dataStatus" nillable="true" type="dateTime"/>
+                    <xsd:element name="descricaoMensagemStatus" nillable="true" type="string"/>
+                    <xsd:element name="usuarioInclusao" nillable="true" type="string"/>
+                    <xsd:element name="codigoTipoEndereco" nillable="true" type="long"/>
+                    <xsd:element name="endereco" nillable="true" type="string"/>
+                    <xsd:element name="numEndereco" nillable="true" type="string"/>
+                    <xsd:element name="complemento" nillable="true" type="string"/>
+                    <xsd:element name="ufEndereco" nillable="true" type="string"/>
+                    <xsd:element name="infAcaoNomPessoa" nillable="true" type="string"/>
+                    <xsd:element name="infAcaoIndCorp" nillable="true" type="long"/>
+                    <xsd:element name="infAcaoCodAcesServ" nillable="true" type="long"/>
+                    <xsd:element name="infAcaoDescricaoErro" nillable="true" type="string"/>
+                    <xsd:element name="infAcaoPessoaDetalhe" nillable="true" type="long"/>
+                    <xsd:element name="infAcaoCodigoErro" nillable="true" type="long"/>
+                    <xsd:element name="codigoErro" nillable="true" type="int"/>
+                    <xsd:element name="descricaoErro" nillable="true" type="string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="adicionarAlterarClienteElement" type="tns:adicionarAlterarCliente"/>
+            <xsd:element name="adicionarAlterarClienteResponseElement" type="tns:adicionarAlterarClienteResponse"/>
+            <xsd:element name="obterBloqueioElement" type="tns:obterBloqueio"/>
+            <xsd:element name="obterBloqueioResponseElement" type="tns:obterBloqueioResponse"/>
+            <xsd:element name="obterContaCorrenteElement" type="tns:obterContaCorrente"/>
+            <xsd:element name="obterContaCorrenteResponseElement" type="tns:obterContaCorrenteResponse"/>
+            <xsd:element name="obterContratanteElement" type="tns:obterContratante"/>
+            <xsd:element name="obterContratanteResponseElement" type="tns:obterContratanteResponse"/>
+            <xsd:element name="obterDadosFiscaisElement" type="tns:obterDadosFiscais"/>
+            <xsd:element name="obterDadosFiscaisResponseElement" type="tns:obterDadosFiscaisResponse"/>
+            <xsd:element name="obterFormaPagtoElement" type="tns:obterFormaPagto"/>
+            <xsd:element name="obterFormaPagtoResponseElement" type="tns:obterFormaPagtoResponse"/>
+            <xsd:element name="obterPapelElement" type="tns:obterPapel"/>
+            <xsd:element name="obterPapelResponseElement" type="tns:obterPapelResponse"/>
+            <xsd:element name="obterProtocoloElement" type="tns:obterProtocolo"/>
+            <xsd:element name="obterProtocoloResponseElement" type="tns:obterProtocoloResponse"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="PessoaCRPServicePortType_adicionarAlterarCliente">
+        <wsdl:part name="parameters" element="WL5G3N1:adicionarAlterarClienteElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_adicionarAlterarClienteResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:adicionarAlterarClienteResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterBloqueio">
+        <wsdl:part name="parameters" element="WL5G3N1:obterBloqueioElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterBloqueioResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterBloqueioResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterContaCorrente">
+        <wsdl:part name="parameters" element="WL5G3N1:obterContaCorrenteElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterContaCorrenteResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterContaCorrenteResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterContratante">
+        <wsdl:part name="parameters" element="WL5G3N1:obterContratanteElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterContratanteResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterContratanteResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterDadosFiscais">
+        <wsdl:part name="parameters" element="WL5G3N1:obterDadosFiscaisElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterDadosFiscaisResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterDadosFiscaisResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterFormaPagto">
+        <wsdl:part name="parameters" element="WL5G3N1:obterFormaPagtoElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterFormaPagtoResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterFormaPagtoResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterPapel">
+        <wsdl:part name="parameters" element="WL5G3N1:obterPapelElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterPapelResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterPapelResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterProtocolo">
+        <wsdl:part name="parameters" element="WL5G3N1:obterProtocoloElement"/>
+    </wsdl:message>
+    <wsdl:message name="PessoaCRPServicePortType_obterProtocoloResponse">
+        <wsdl:part name="parameters" element="WL5G3N1:obterProtocoloResponseElement"/>
+    </wsdl:message>
+    <wsdl:message name="Header">
+        <wsdl:part name="Security" element="WL5G3N2:Security"/>
+        <wsdl:part name="CabecalhoAbrilValue" element="WL5G3N3:cabecalhoAbril"/>
+    </wsdl:message>
+    <wsdl:portType name="PessoaCRPService">
+        <wsdl:operation name="adicionarAlterarCliente">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_adicionarAlterarCliente"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_adicionarAlterarClienteResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterBloqueio">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterBloqueio"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterBloqueioResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterContaCorrente">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterContaCorrente"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterContaCorrenteResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterContratante">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterContratante"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterContratanteResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterDadosFiscais">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterDadosFiscais"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterDadosFiscaisResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterFormaPagto">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterFormaPagto"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterFormaPagtoResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterPapel">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterPapel"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterPapelResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="obterProtocolo">
+            <wsdl:input message="WL5G3N4:PessoaCRPServicePortType_obterProtocolo"/>
+            <wsdl:output message="WL5G3N4:PessoaCRPServicePortType_obterProtocoloResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PessoaCRPServiceSoapHttp" type="WL5G3N4:PessoaCRPService">
+        <WL5G3N5:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsp:PolicyReference URI="#wss_username_token_service_policy" wsdl:required="false" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"/>
+        <wsdl:operation name="adicionarAlterarCliente">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//adicionarAlterarCliente"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterBloqueio">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterBloqueio"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterContaCorrente">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterContaCorrente"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterContratante">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterContratante"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterDadosFiscais">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterDadosFiscais"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterFormaPagto">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterFormaPagto"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterPapel">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterPapel"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="obterProtocolo">
+            <WL5G3N5:operation soapAction="http://abril.ebo.pessoadetalhe.v1//obterProtocolo"/>
+            <wsdl:input>
+                <WL5G3N5:header message="WL5G3N4:Header" part="Security" use="literal"/>
+                <WL5G3N5:header message="WL5G3N4:Header" part="CabecalhoAbrilValue" use="literal"/>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N5:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PessoaCRPService_2">
+        <wsdl:port name="PessoaCRPService_pt" binding="WL5G3N4:PessoaCRPServiceSoapHttp">
+            <WL5G3N5:address location="https://testsoa.abril.com.br:443/extranet/Cadastro/PessoaCRPProxyEV1"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -558,4 +558,17 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterUFsCotas() {
+		
+		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
+		criteria.createAlias("endereco", "endereco", JoinType.INNER_JOIN);		
+		criteria.add(Restrictions.isNotNull("endereco.uf"));
+		criteria.setProjection(Projections.groupProperty("endereco.uf"));
+		
+		return criteria.list();
+		
+	}
+
 }

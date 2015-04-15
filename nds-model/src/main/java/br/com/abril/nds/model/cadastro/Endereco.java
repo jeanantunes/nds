@@ -103,7 +103,7 @@ public class Endereco implements Serializable, Cloneable {
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.B, posicao = 0))
 	})
-	private String codigoUf;
+	private Integer codigoUf;
 	
 	@JsonBackReference
 	@ManyToOne
@@ -116,7 +116,7 @@ public class Endereco implements Serializable, Cloneable {
 	public Endereco(String bairro, String cep,
             Integer codigoCidadeIBGE, String cidade, String complemento,
             String tipoLogradouro, String logradouro, String numero, String uf,
-            String codigoUf, Pessoa pessoa) {
+            Integer codigoUf, Pessoa pessoa) {
         this.bairro = bairro;
         this.cep = cep;
         this.codigoCidadeIBGE = codigoCidadeIBGE;
@@ -260,14 +260,14 @@ public class Endereco implements Serializable, Cloneable {
 	/**
 	 * @return the codigoUf
 	 */
-	public String getCodigoUf() {
+	public Integer getCodigoUf() {
 		return codigoUf;
 	}
 
 	/**
 	 * @param codigoUf the codigoUf to set
 	 */
-	public void setCodigoUf(String codigoUf) {
+	public void setCodigoUf(Integer codigoUf) {
 		this.codigoUf = codigoUf;
 	}
 	

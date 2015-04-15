@@ -69,20 +69,24 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	@Override
 	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Long idLancamento, Long idProdutoEdicao) {
 			
-		String hql = " select estudoCota.id as id, " 
-				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
-				   + " cota.id as idCota, "
-				   + " estudoCota.tipoEstudo as tipoEstudo ,"
-				   +"  fornecedor.id as idFornecedorPadraoCota "
-				   + " from EstudoCota estudoCota "
-				   + " join estudoCota.estudo estudo "
-				   + " join estudoCota.cota cota "
-				   + " join estudo.produtoEdicao produtoEdicao "
-				   + " left join cota.parametroCobranca.fornecedorPadrao fornecedor "
-				   + " where estudo.lancamentoID = :idLancamento " 
-				   + " and produtoEdicao.id = :idProdutoEdicao";
+		StringBuilder hql = new StringBuilder(" select estudoCota.id as id, ") 
+			.append(" estudoCota.qtdeEfetiva as qtdeEfetiva, ")
+			.append(" cota.id as idCota, ")
+			.append(" estudoCota.tipoEstudo as tipoEstudo, ")
+			.append(" CASE WHEN cota.devolveEncalhe is not null THEN cota.devolveEncalhe ELSE false END as devolveEncalhe, ")
+			.append(" CASE WHEN (cota.parametrosCotaNotaFiscalEletronica.contribuinteICMS = true or cota.parametrosCotaNotaFiscalEletronica.exigeNotaFiscalEletronica = true) ")
+			.append(" 	THEN true ELSE false END as cotaContribuinteExigeNotaFiscal, ")
+			.append(" cota.tipoCota as tipoCota, ")
+			.append(" fornecedor.id as idFornecedorPadraoCota ")
+			.append(" from EstudoCota estudoCota ")
+			.append(" join estudoCota.estudo estudo ")
+			.append(" join estudoCota.cota cota ")
+			.append(" join estudo.produtoEdicao produtoEdicao ")
+			.append(" left join cota.parametroCobranca.fornecedorPadrao fornecedor ")
+			.append(" where estudo.lancamentoID = :idLancamento ") 
+			.append(" and produtoEdicao.id = :idProdutoEdicao ");
 		
-		Query query = super.getSession().createQuery(hql);
+		Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("idLancamento", idLancamento);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setResultTransformer(Transformers.aliasToBean(EstudoCotaDTO.class));
@@ -92,7 +96,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@Override
 	public EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota) {
-			
+
 		String hql = " from EstudoCota estudoCota "
 				   + " where estudoCota.estudo.dataLancamento= :dataLancamento " 
 				   + " and estudoCota.estudo.produtoEdicao.id= :idProdutoEdicao " 

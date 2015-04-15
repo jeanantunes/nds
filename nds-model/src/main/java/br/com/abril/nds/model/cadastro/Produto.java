@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -32,7 +33,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.util.export.Exportable;
-
 
 /**
  * @author francisco.garcia
@@ -72,7 +72,7 @@ public class Produto implements Serializable {
 	@Column(name = "NOME_COMERCIAL")
 	private String nomeComercial;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 
 	@Enumerated(EnumType.STRING)
@@ -180,9 +180,9 @@ public class Produto implements Serializable {
 	@Column(name = "GERACAO_AUTOMATICA", nullable = true, columnDefinition="boolean default false")
 	private Boolean isGeracaoAutomatica = false;
 	
-	//@JoinColumn(name = "EDITOR_ID")
-//	@OneToMany
-//	@JoinTable(name = "PRODUTO_EDICAO")
+	@Column(name = "REMESSA_DISTRIBUICAO", nullable = true, columnDefinition="boolean default false")
+	private Boolean isRemessaDistribuicao = false;
+	
 	@OneToMany(mappedBy = "produto")
 	private List<ProdutoEdicao> produtoEdicao;
 	
@@ -283,36 +283,6 @@ public class Produto implements Serializable {
 			}
 			return fornecedor;
 		}
-	}
-	
-	@Override
-	public String toString() {
-		return new StringBuilder(codigo).append("-").append(nome).toString();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Produto other = (Produto) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
-				return false;
-		} else if (!codigo.equals(other.codigo))
-			return false;
-		return true;
 	}
 
 	/**
@@ -632,13 +602,26 @@ public class Produto implements Serializable {
 	public void setProdutoEdicao(List<ProdutoEdicao> produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
+
+	@Override
+	public String toString() {
+		return new StringBuilder(codigo).append("-").append(nome).toString();
+	}
 	
 	public Boolean getIsGeracaoAutomatica() {
 		return isGeracaoAutomatica;
 	}
-
+	
 	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
+	
+	public Boolean getIsRemessaDistribuicao() {
+		return isRemessaDistribuicao;
+	}
+
+	public void setIsRemessaDistribuicao(Boolean isRemessaDistribuicao) {
+		this.isRemessaDistribuicao = isRemessaDistribuicao;
 	}
 
 	public String getCodigoICD() {
@@ -648,5 +631,35 @@ public class Produto implements Serializable {
 	public void setCodigoICD(String codigoICD) {
 		this.codigoICD = codigoICD;			
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCodigo() == null) ? 0 : this.getCodigo().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Produto other = (Produto) obj;
+		if (this.getCodigo() == null) {
+			if (other.getCodigo() != null)
+				return false;
+		} else if (!this.getCodigo().equals(other.getCodigo()))
+			return false;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 }

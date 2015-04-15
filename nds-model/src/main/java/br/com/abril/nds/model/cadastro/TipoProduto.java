@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -57,6 +58,12 @@ public class TipoProduto implements Serializable {
 	
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="tipoProduto")
 	private List<Produto> listaProdutos;
+	
+	@OneToMany(fetch=FetchType.EAGER)
+	@JoinTable(name = "tipo_produto_tributacao", 
+	joinColumns = {@JoinColumn(name = "tipo_produto_id")}, 
+	inverseJoinColumns = {@JoinColumn(name = "tributacao_id")})
+	private List<Tributacao> produtoTributacao;
 	
 	public Long getId() {
 		return id;
@@ -108,6 +115,14 @@ public class TipoProduto implements Serializable {
 
 	public List<Produto> getListaProdutos() {
 		return listaProdutos;
+	}
+
+	public List<Tributacao> getProdutoTributacao() {
+		return produtoTributacao;
+	}
+
+	public void setProdutoTributacao(List<Tributacao> produtoTributacao) {
+		this.produtoTributacao = produtoTributacao;
 	}
 	
 }

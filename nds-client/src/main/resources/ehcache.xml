@@ -3,7 +3,7 @@
 <ehcache>
 
 	<defaultCache 
-		maxElementsInMemory="100" 
+		maxElementsInMemory="10000" 
 		eternal="false"
 		timeToIdleSeconds="120" 
 		timeToLiveSeconds="120" 
@@ -12,10 +12,58 @@
 	
 	<cache
     	name="br.com.abril.nds.model.cadastro.Feriado"
-    	maxElementsInMemory="1000"
+    	maxElementsInMemory="10000"
     	eternal="false"
     	timeToIdleSeconds="300"
     	timeToLiveSeconds="600"
  	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.fiscal.NaturezaOperacao"
+	    maxElementsInMemory="10000"
+	    eternal="true"
+	    timeToIdleSeconds="300"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Roteiro"
+	    maxElementsInMemory="10000"
+	    eternal="true"
+	    timeToIdleSeconds="300"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Rota"
+	    maxElementsInMemory="10000"
+	    eternal="true"
+	    timeToIdleSeconds="300"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Roteirizacao"
+	    maxElementsInMemory="10000"
+	    eternal="true"
+	    timeToIdleSeconds="300"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Fornecedor"
+	    maxElementsInMemory="10000"
+	    eternal="true"
+	    timeToIdleSeconds="300"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro"
+	    maxElementsInMemory="10000"
+	    eternal="true"
+	    timeToIdleSeconds="300"
+	    overflowToDisk="true"
+	/>
 	
 </ehcache>

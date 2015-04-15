@@ -46,7 +46,7 @@
 
 <body>
 
-	<form action="/administracao/cadastroTipoNota"
+	<form action="/administracao/naturezaOperacao"
 		id="dialog-excluirCota_form">
 		<div id="dialog-excluirCota" title="Atenção" style="display: none">
 			<p>Confirmar exclusão Desconto ?</p>
@@ -54,12 +54,12 @@
 	</form>
 
 	<!-- Modal de inclusão de novo desconto Geral  -->
-	<form action="/administracao/cadastroTipoNota" id="dialog-geral_form">
+	<form action="/administracao/naturezaOperacao" id="dialog-geral_form">
 		<jsp:include page="novoDescontoGeral.jsp" />
 	</form>
 
 	<!-- Modal de inclusão de novo desconto Especifico  -->
-	<form action="/administracao/cadastroTipoNota"
+	<form action="/administracao/naturezaOperacao"
 		id="dialog-especifico_form">
 		<jsp:include page="novoDescontoEspecifico.jsp" />
 	</form>
@@ -74,7 +74,7 @@
 	<jsp:include page="novoDescontoProduto.jsp" />
 
 
-	<form action="/administracao/cadastroTipoNota"
+	<form action="/administracao/naturezaOperacao"
 		id="dialog-fornecedores_form">
 		<div id="dialog-fornecedores" title="Fornecedores"
 			style="display: none;">
@@ -94,7 +94,7 @@
 		</div>
 	</form>
 
-	<form action="/administracao/cadastroTipoNota"
+	<form action="/administracao/naturezaOperacao"
 		id="dialog_consulta_tipo_desconto_form">
 		<div class="areaBts">
 			<div class="area">

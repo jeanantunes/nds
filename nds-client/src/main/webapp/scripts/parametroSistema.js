@@ -5,11 +5,12 @@ var parametroSistemaController = $.extend(true, {
 		$("#dtOperacaoCorrente").mask("99/99/9999");
 		
 		$("#frequenciaExpurgo").numeric();
+		
+		$("#ftfCnpjEstabelecimentoEmissor", this.workspace).mask("99.999.999/9999-99");
 	},
 	
 	salvar: function() {
 		
-		$("#nfeDpecHidden", this.workspace).val($('#nfeDpec', this.workspace).is(":checked"));
 		$("#autenticaEmailHidden", this.workspace).val($('#autenticaEmail', this.workspace).is(":checked"));
 		
 		var formData = $("#formParametroSistema", this.workspace).serializeArray();
@@ -22,8 +23,20 @@ var parametroSistemaController = $.extend(true, {
 				if (tipoMensagem && listaMensagens) {
 					exibirMensagem(tipoMensagem, listaMensagens, "");
 				}
+				
+				$(".tipsy").hide();
+				
+				$('.ui-tabs-selected .ui-icon-close').click();
+				
+				$("#menu_principal ul li ul li a[href^='"+ parametroSistemaController.path.substring(0, parametroSistemaController.path.length - 1) +"']").click();
+				
 		},
 		null,true);
-	}
+		
+		
+		
+		//setTimeout($("#menu_principal ul li ul li a[href^='"+ this.path.substring(0, this.path.length - 1) +"']").click(), 200);
+				
+	},
 	
 }, BaseController);

@@ -58,7 +58,7 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@JoinColumn(name = "CFOP_ID")
 	protected CFOP cfop;
 	
-	@OneToMany(mappedBy = "notaFiscal", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy="notaFiscal", cascade={CascadeType.ALL})
 	protected List<ItemNotaFiscalEntrada> itens = new ArrayList<ItemNotaFiscalEntrada>();	
 	
 	@Column(name = "DATA_RECEBIMENTO")
@@ -144,5 +144,41 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	public void setStatusRecebimento(StatusRecebimento statusRecebimento) {
 		this.statusRecebimento = statusRecebimento;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getNumeroNotaEnvio() == null) ? 0 : this.getNumeroNotaEnvio().hashCode());
+		result = prime * result + ((this.getOrigem() == null) ? 0 : this.getOrigem().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NotaFiscalEntrada other = (NotaFiscalEntrada) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getNumeroNotaEnvio() == null) {
+			if (other.getNumeroNotaEnvio() != null)
+				return false;
+		} else if (!this.getNumeroNotaEnvio().equals(other.getNumeroNotaEnvio()))
+			return false;
+		if (this.getOrigem() != other.getOrigem())
+			return false;
+		return true;
+	}
+	
+	
 	
 }

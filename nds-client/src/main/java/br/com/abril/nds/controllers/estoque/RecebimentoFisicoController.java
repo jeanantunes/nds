@@ -30,29 +30,31 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusRecebimento;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -109,7 +111,7 @@ public class RecebimentoFisicoController extends BaseController {
     private ProdutoService produtoService;
     
     @Autowired
-    private TipoNotaFiscalService tipoNotaService;
+    private NaturezaOperacaoService naturezaOperacaoService;
     
     @Autowired
     private Validator validator;
@@ -342,8 +344,7 @@ public class RecebimentoFisicoController extends BaseController {
             
             indChaveAcessoInformada = true;
             
-            if(filtro.getChave() != null &&
-                    !filtro.getChave().matches(regraParaChaveAcesso)) {
+            if(filtro.getChave() != null && !filtro.getChave().matches(regraParaChaveAcesso)) {
                 
                 msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE + " dígitos.");
                 
@@ -1263,12 +1264,14 @@ public class RecebimentoFisicoController extends BaseController {
     /**
      * Inclui na view os dados do combo de TipoNotaFiscal.
      */
-    private void carregarComboTipoNotaFiscal() {
+    private void carregarNaturezaOperacao() {
+    	
+    	Distribuidor distribuidor = distribuidorService.obter();
         
-        final List<TipoNotaFiscal> listaTipoNotaFiscal = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
+        final List<NaturezaOperacao> listaNaturezaOperacao = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA, distribuidor);
         
-        if (listaTipoNotaFiscal != null) {
-            result.include("listaTipoNotaFiscal", listaTipoNotaFiscal);
+        if (listaNaturezaOperacao != null) {
+            result.include("listaTipoNotaFiscal", listaNaturezaOperacao);
         }
         
     }
@@ -1314,7 +1317,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         carregarComboCfop();
         
-        carregarComboTipoNotaFiscal();
+        carregarNaturezaOperacao();
         
         carregarComboTipoLancamento();
         
@@ -1572,6 +1575,10 @@ public class RecebimentoFisicoController extends BaseController {
         if (nota.getValorTotal()==null){
             throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Valor Total] é obrigatório!");
         }
+        
+        if (nota.getNatureaOperacaoId().equals(-1L)){
+            throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Natureza Operação] é obrigatório!");
+        }
     }
     
     /**
@@ -1638,10 +1645,7 @@ public class RecebimentoFisicoController extends BaseController {
 				
 				if (!idFornecedor.equals(nota.getFornecedor())) {
                 
-                    throw new ValidacaoException(
-                            TipoMensagem.WARNING,
- "O fornecedor do ítem " + linha
-                            + " deve ser o mesmo fornecedor informado na nota!");
+                    throw new ValidacaoException(TipoMensagem.WARNING, "O fornecedor do ítem " + linha + " deve ser o mesmo fornecedor informado na nota!");
                 }
             }
         }
@@ -1713,19 +1717,22 @@ public class RecebimentoFisicoController extends BaseController {
         final NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
         
         notaFiscal.setNumeroNotaEnvio(nota.getNumeroNotaEnvio());
+        
         notaFiscal.setNumero(nota.getNumero());
+        
         notaFiscal.setSerie(nota.getSerie());
+        
         notaFiscal.setDataEmissao(nota.getDataEmissao());
+        
         notaFiscal.setDataExpedicao(nota.getDataEntrada());
+        
         notaFiscal.setValorInformado(CurrencyUtil.converterValor(nota.getValorTotal()));
+        
         notaFiscal.setChaveAcesso(nota.getChaveAcesso());
         
         notaFiscal.setFornecedor(fornecedor);
         
-        final long codigoTipoNotaFiscalRemessaMercadoriaConsignacao = 5L;
-        
-        notaFiscal.setTipoNotaFiscal(
-                tipoNotaService.obterPorId(codigoTipoNotaFiscalRemessaMercadoriaConsignacao));
+        notaFiscal.setNaturezaOperacao(naturezaOperacaoService.obterPorId(nota.getNatureaOperacaoId()));
         
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
         
@@ -1766,5 +1773,38 @@ public class RecebimentoFisicoController extends BaseController {
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
     }
     
+    @Post
+	public void obterNaturezaOperacao(Long naturezaOperacaoId) {
+		
+		NotaFiscalTipoEmissaoEnum tipoEmissao = null;
+		if(naturezaOperacaoId != null && naturezaOperacaoId > 0) {
+			
+			tipoEmissao = this.naturezaOperacaoService.verificarRegimeEspecialNaturezaOperacao(naturezaOperacaoId);
+		}
+	
+		if(tipoEmissao != null) {
+			result.use(Results.json()).from(tipoEmissao, "tipoEmissaoRegimeEspecial").serialize();
+		} else {
+			result.use(Results.json()).from("", "tipoEmissaoRegimeEspecial").serialize();
+		}
+	}
     
+    @Post
+    @Path("/validarChaveAcesso")
+    public void validarChaveAcesso(final String chaveAcesso) {
+		
+    	if(chaveAcesso != null && !chaveAcesso.isEmpty()){
+    		if(chaveAcesso.length() < 44) {
+    			result.use(CustomJson.class).from(new ValidacaoException(TipoMensagem.WARNING, "A chave de acesso deve conter o tamanho de 44 caracteres!")).serialize();
+    		}
+    	}
+    	
+    	
+    	if(!Util.validarChaveAcesso(chaveAcesso)){
+    		result.use(CustomJson.class).from(new ValidacaoException(TipoMensagem.WARNING, "A chave de acesso invalida!")).serialize();
+    	} else {
+    		result.use(CustomJson.class).from(new ValidacaoException(TipoMensagem.SUCCESS, "Chave de a acesso validado com suceso")).serialize();
+    	}
+    	
+	}
 }

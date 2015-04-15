@@ -7,25 +7,25 @@ var EmissaoCEController = $.extend(true, {
 		
 		var _this = this;
 		
-		$("#emissaoce-dataDe", this.workspace).mask("99/99/9999");
+		$("#emissaoCE-dataDe", this.workspace).mask("99/99/9999");
 		
-		$( "#emissaoce-dataDe" , this.workspace).datepicker({
+		$( "#emissaoCE-dataDe" , this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$("#emissaoce-dataAte", this.workspace).mask("99/99/9999");
+		$("#emissaoCE-dataAte", this.workspace).mask("99/99/9999");
 		
-		$( "#emissaoce-dataAte" , this.workspace).datepicker({
+		$( "#emissaoCE-dataAte" , this.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});		
 		
-		$("#cotaDe", this.workspace).numeric();
+		$("#emissaoCE-cotaDe", this.workspace).numeric();
 		
-		$("#cotaAte", this.workspace).numeric();
+		$("#emissaoCE-cotaAte", this.workspace).numeric();
 		
 		$(".bt_novos", this.workspace).hide();
 		
@@ -176,14 +176,14 @@ var EmissaoCEController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'filtro.dtRecolhimentoDe',		value: this.get("emissaoce-dataDe")});
-		data.push({name:'filtro.dtRecolhimentoAte',		value: this.get("emissaoce-dataAte")});
-		data.push({name:'filtro.codigoBoxDe',			value: this.get("boxDe")});
-		data.push({name:'filtro.codigoBoxAte',			value: this.get("boxAte")});
-		data.push({name:'filtro.numCotaDe',				value: this.get("cotaDe")});
-		data.push({name:'filtro.numCotaAte',			value: this.get("cotaAte")});
-		data.push({name:'filtro.idRoteiro',				value: this.get("emissaoCERoteiro")});
-		data.push({name:'filtro.idRota',				value: this.get("emissaoCERota")});
+		data.push({name:'filtro.dtRecolhimentoDe',		value: this.get("emissaoCE-dataDe")});
+		data.push({name:'filtro.dtRecolhimentoAte',		value: this.get("emissaoCE-dataAte")});
+		data.push({name:'filtro.codigoBoxDe',			value: this.get("emissaoCE-boxDe")});
+		data.push({name:'filtro.codigoBoxAte',			value: this.get("emissaoCE-boxAte")});
+		data.push({name:'filtro.numCotaDe',				value: this.get("emissaoCE-cotaDe")});
+		data.push({name:'filtro.numCotaAte',			value: this.get("emissaoCE-cotaAte")});
+		data.push({name:'filtro.idRoteiro',				value: this.get("emissaoCE-Roteiro")});
+		data.push({name:'filtro.idRota',				value: this.get("emissaoCE-Rota")});
 		data.push({name:'filtro.capa',					value: this.get("capa")});
 		data.push({name:'filtro.personalizada',			value: this.get("personalizada")});
 		
@@ -358,16 +358,16 @@ var EmissaoCEController = $.extend(true, {
 	carregarComboRoteiro : function () {
 
 		var codigoBoxDe, codigoBoxAte;
-		codigoBoxDe = $('#boxDe', this.workspace).val();
-		codigoBoxAte= $('#boxAte', this.workspace).val();
+		codigoBoxDe = $('#emissaoCE-boxDe', this.workspace).val();
+		codigoBoxAte= $('#emissaoCE-boxAte', this.workspace).val();
 		
 		if(codigoBoxAte != '' && codigoBoxDe == '') {
-			$('#boxAte', this.workspace).val('');
+			$('#emissaoCE-boxAte', this.workspace).val('');
         	return;
 		}
 		
 		if(codigoBoxAte != '' && codigoBoxDe > codigoBoxAte) {
-			$('#boxAte', this.workspace).val('');
+			$('#emissaoCE-boxAte', this.workspace).val('');
 			tipoMensagem = 'WARNING';
 			listaMensagens = [];
 			listaMensagens[0] = "Favor escolher o código de box 'De' antes do 'Até'.";
@@ -390,12 +390,12 @@ var EmissaoCEController = $.extend(true, {
 		        	return;
 		        } 
 		        
-		        $('#emissaoCERota', this.workspace).empty();
-		        $("#emissaoCERoteiro > option", this.workspace).remove();
-		        $('#emissaoCERoteiro', this.workspace)
+		        $('#emissaoCE-Rota', this.workspace).empty();
+		        $("#emissaoCE-Roteiro > option", this.workspace).remove();
+		        $('#emissaoCE-Roteiro', this.workspace)
             	.append('<option value=""></option>');
                 $.each(result, function(index, row){
-                        $('#emissaoCERoteiro', this.workspace)
+                        $('#emissaoCE-Roteiro', this.workspace)
                         	.append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
                     }
                 );
@@ -407,14 +407,14 @@ var EmissaoCEController = $.extend(true, {
     
     carregarComboRota : function () {
 
-    	$('#emissaoCERota', this.workspace).empty();
-    	idRoteiro = $('#emissaoCERoteiro', this.workspace).val();
+    	$('#emissaoCE-Rota', this.workspace).empty();
+    	idRoteiro = $('#emissaoCE-Roteiro', this.workspace).val();
 
         $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRota', { 'roteiroId' : idRoteiro },
             function(result) {
-        		$('#emissaoCERota', this.workspace).append('<option value=""></option>');
+        		$('#emissaoCE-Rota', this.workspace).append('<option value=""></option>');
                 $.each(result, function(index, row){
-                        $('#emissaoCERota', this.workspace).append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
+                        $('#emissaoCE-Rota', this.workspace).append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
                     }
                 );
 

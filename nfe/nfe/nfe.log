@@ -1,0 +1,36 @@
+13:39:59,359 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+13:39:59,757 DEBUG NotaFiscalV200Test:34 - Validando: C:/opt/nfeassinada.xml
+13:39:59,803 ERROR NotaFiscalV200Test:37 - Exception: /home/sergio/Projects/DGB/NDS/nfe/C:/opt/nfeassinada.xml (No such file or directory)
+13:39:59,806 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+13:39:59,842 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+13:39:59,859 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+13:39:59,898 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+13:39:59,925 DEBUG NotaFiscalV310Test:50 - Schema: src/main/resources/xsd/v3.10/cancNFe_v3.10.xsd
+13:39:59,959 ERROR NotaFiscalV310Test:56 - Exception: schema_reference.4: Failed to read schema document 'file:/home/sergio/Projects/DGB/NDS/nfe/src/main/resources/xsd/v3.10/cancNFe_v3.10.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
+13:39:59,961 DEBUG NotaFiscalV310Test:31 - Schema: src/main/resources/xsd/v3.10/nfe_v3.10.xsd
+13:40:00,326 DEBUG NotaFiscalV310Test:34 - Validando: /home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/nfeassinada.xml
+13:40:00,401 ERROR NotaFiscalV310Test:37 - Exception: cvc-pattern-valid: Value '2.00' is not facet-valid with respect to pattern '3\.10' for type 'TVerNFe'.
+19:39:28,222 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+19:39:28,599 DEBUG NotaFiscalV200Test:34 - Validando: C:/opt/nfeassinada.xml
+19:39:28,605 ERROR NotaFiscalV200Test:37 - Exception: /home/sergio/Projects/DGB/NDS/nfe/C:/opt/nfeassinada.xml (No such file or directory)
+19:39:28,609 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+19:39:28,654 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+19:39:28,667 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+19:39:28,713 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+19:39:28,725 DEBUG NotaFiscalV310Test:50 - Schema: src/main/resources/xsd/v3.10/cancNFe_v3.10.xsd
+19:39:28,746 ERROR NotaFiscalV310Test:56 - Exception: schema_reference.4: Failed to read schema document 'file:/home/sergio/Projects/DGB/NDS/nfe/src/main/resources/xsd/v3.10/cancNFe_v3.10.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
+19:39:28,748 DEBUG NotaFiscalV310Test:31 - Schema: src/main/resources/xsd/v3.10/nfe_v3.10.xsd
+19:39:29,128 DEBUG NotaFiscalV310Test:34 - Validando: /home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/nfeassinada.xml
+19:39:29,167 ERROR NotaFiscalV310Test:37 - Exception: cvc-pattern-valid: Value '2.00' is not facet-valid with respect to pattern '3\.10' for type 'TVerNFe'.
+19:48:05,765 DEBUG NotaFiscalV200Test:50 - Schema: src/main/resources/xsd/v2.00/cancNFe_v2.00.xsd
+19:48:06,005 DEBUG NotaFiscalV200Test:53 - Validando: src/main/resources/xmlTestes/solicitacaoCancNFe.xml
+19:48:06,031 DEBUG NotaFiscalV200Test:69 - Schema: src/main/resources/xsd/v2.00/retCancNFe_v2.00.xsd
+19:48:06,109 DEBUG NotaFiscalV200Test:72 - Validando: src/main/resources/xmlTestes/retornoCancNFe.xml
+19:48:06,117 DEBUG NotaFiscalV200Test:31 - Schema: src/main/resources/xsd/v2.00/nfe_v2.00.xsd
+19:48:06,394 DEBUG NotaFiscalV200Test:34 - Validando: C:/opt/nfeassinada.xml
+19:48:06,397 ERROR NotaFiscalV200Test:37 - Exception: /home/sergio/Projects/DGB/NDS/nfe/C:/opt/nfeassinada.xml (No such file or directory)
+19:48:06,406 DEBUG NotaFiscalV310Test:50 - Schema: src/main/resources/xsd/v3.10/cancNFe_v3.10.xsd
+19:48:06,462 ERROR NotaFiscalV310Test:56 - Exception: schema_reference.4: Failed to read schema document 'file:/home/sergio/Projects/DGB/NDS/nfe/src/main/resources/xsd/v3.10/cancNFe_v3.10.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
+19:48:06,466 DEBUG NotaFiscalV310Test:31 - Schema: src/main/resources/xsd/v3.10/nfe_v3.10.xsd
+19:48:07,033 DEBUG NotaFiscalV310Test:34 - Validando: /home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/nfeassinada.xml
+19:48:07,036 ERROR NotaFiscalV310Test:37 - Exception: cvc-pattern-valid: Value '2.00' is not facet-valid with respect to pattern '3\.10' for type 'TVerNFe'.

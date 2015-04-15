@@ -171,7 +171,9 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	private int quantidadeItensFechamentoEncalhe(
-			String dataEncalhe, Long fornecedorId, Long boxId,
+			String dataEncalhe, 
+			Long fornecedorId, 
+			Long boxId,
 			Boolean aplicaRegraMudancaTipo) {
 		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
@@ -196,11 +198,11 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (aplicaRegraMudancaTipo && boxId == null){
 				
-				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
-				
-				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-				
-				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtroRevomecao);
+			FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
+			
+			filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+			
+			fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtroRevomecao);
 				
 		} 
 		
@@ -243,12 +245,10 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.getSession().removeAttribute("listaDeGrid");
 		
-        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"),
-                "result").recursive().serialize();
+        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
-	private List<FechamentoFisicoLogicoDTO> mergeItensFechamento(List<FechamentoFisicoLogicoDTO> fechamentosBanco,
-																 List<FechamentoFisicoLogicoDTO> fechamentoTela) {
+	private List<FechamentoFisicoLogicoDTO> mergeItensFechamento(List<FechamentoFisicoLogicoDTO> fechamentosBanco, List<FechamentoFisicoLogicoDTO> fechamentoTela) {
 		
 		if (fechamentoTela == null) {
 			

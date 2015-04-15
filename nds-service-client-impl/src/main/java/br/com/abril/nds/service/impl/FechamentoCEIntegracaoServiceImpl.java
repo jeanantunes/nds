@@ -47,6 +47,10 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalFechamentoCEI;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
@@ -349,8 +353,17 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
 				totalMargemApurado = totalMargemApurado.add(itemFo.getValorMargemApurado());
 				totalMargemInformado = totalMargemInformado.add(itemFo.getValorMargemInformado());
-				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(),0L)));
-				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(),0L)));	
+				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(), 0L)));
+				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(), 0L)));	
+				
+				//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
+				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalFechamentoCEI());
+
+				MovimentoFechamentoFiscal mff = new MovimentoFechamentoFiscalFornecedor();
+				mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()));
+				
 			}
 			
 			cef.setTotalCreditoApurado(totalCreditoApurado);
