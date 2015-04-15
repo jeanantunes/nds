@@ -1,11 +1,11 @@
 package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
@@ -41,13 +41,21 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 	@Override
 	public ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota) {
 		
-		Query query = 
-			this.getSession().createQuery(
-				"select p from ParametroCobrancaCota p where p.cota.numeroCota = :numeroCota");
+		Query query = this.getSession().createQuery("select p from ParametroCobrancaCota p where p.cota.numeroCota = :numeroCota");
 		
 		query.setParameter("numeroCota", numeroCota);
 		
 		return (ParametroCobrancaCota) query.uniqueResult();
+	}
+	
+	@Override
+	public Cota obterCotaPorParametroCobranca(ParametroCobrancaCota parametroCobrancaCota) {
+		
+		Query query = this.getSession().createQuery("select c from Cota c where c.parametroCobranca = :parametroCobrancaCota");
+		
+		query.setParameter("parametroCobrancaCota", parametroCobrancaCota);
+		
+		return (Cota) query.uniqueResult();
 	}
 
 	@Override

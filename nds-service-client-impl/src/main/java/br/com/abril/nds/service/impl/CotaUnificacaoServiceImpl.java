@@ -73,19 +73,19 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		}
 		
 		//adiciona novas cotas na centralização
-		for (Integer numeroCota : numeroCotasCentralizadas){
+		for (Integer numeroCota : numeroCotasCentralizadas) {
 			
 			Cota novaCotaCentralizada = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
+			novaCotaCentralizada.setParametroCobranca(null);
+			cotaRepository.merge(novaCotaCentralizada);
 			
 			cotaUnificacao.adicionarCota(novaCotaCentralizada);
 			
 			//apaga forma de cobrança da cota que acaba de ser unificada
-			ParametroCobrancaCota p = 
-				this.parametroCobrancaCotaRepository.obterParametroCobrancaCotaPorCota(numeroCota);
+			ParametroCobrancaCota p = this.parametroCobrancaCotaRepository.obterParametroCobrancaCotaPorCota(numeroCota);
 			
-			if (p != null){
+			if (p != null) {
 				
-				p.setCota(null);
 				this.parametroCobrancaCotaRepository.alterar(p);
 			}
 		}

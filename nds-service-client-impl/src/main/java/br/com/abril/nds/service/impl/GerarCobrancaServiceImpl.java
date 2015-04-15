@@ -393,21 +393,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     	
     	List<FormaCobranca> fcs = mapFormasCobrancaFornecedor.get(fornecedorAnterior);
     	
-        for (FormaCobranca fc : fcs){
+        for (FormaCobranca fc : fcs) {
         	
-        	if (fc.getParametroCobrancaCota()!=null && 
-        	        fc.getParametroCobrancaCota().getCota() != null){
+        	if (fc.getParametroCobrancaCota() != null && cota != null) {
         		
-        		if (fc.getParametroCobrancaCota().getCota() != null && fc.getParametroCobrancaCota().getCota().equals(cota)){
+        		if (cota != null) {
         			
         		    return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
         		}    
         	}
         }
         
-        for (FormaCobranca fc : fcs){
+        for (FormaCobranca fc : fcs) {
 
-        	if (fc.getPoliticaCobranca()!=null){
+        	if (fc.getPoliticaCobranca() != null) {
         		
         		return (fc.getFornecedores().contains(fornecedorAtual) && !fornecedorAtual.equals(fornecedorAnterior));
         	}
