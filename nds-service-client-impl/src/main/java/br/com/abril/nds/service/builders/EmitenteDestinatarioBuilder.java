@@ -23,6 +23,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaFisica;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
+import br.com.abril.nds.util.StringUtil;
 
 public class EmitenteDestinatarioBuilder {
 
@@ -48,14 +49,14 @@ public class EmitenteDestinatarioBuilder {
 			.append(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
 		
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(logradouro.toString());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(StringUtil.limparString(logradouro.toString()));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(cota.getEnderecoPrincipal().getEndereco().getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(StringUtil.limparString(cota.getEnderecoPrincipal().getEndereco().getComplemento()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(StringUtil.limparString(cota.getEnderecoPrincipal().getEndereco().getBairro()));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(cota.getEnderecoPrincipal().getEndereco().getCep());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(cota.getEnderecoPrincipal().getEndereco().getCidade());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(StringUtil.limparString(cota.getEnderecoPrincipal().getEndereco().getCidade()));
 		//FIXME: Ajustar para trazer o codigo do municipio
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(cota.getEnderecoPrincipal().getEndereco().getCodigoCidadeIBGE());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(cota.getEnderecoPrincipal().getEndereco().getUf());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
 		//FIXME: Ajustar os campos codigo e nome do pais
@@ -93,14 +94,14 @@ public class EmitenteDestinatarioBuilder {
 		.append(" ")
 		.append(fornecedor.getEnderecoPrincipal().getEndereco().getLogradouro());
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(logradouro.toString());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(StringUtil.limparString(logradouro.toString()));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(fornecedor.getEnderecoPrincipal().getEndereco().getNumero());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(fornecedor.getEnderecoPrincipal().getEndereco().getComplemento());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(fornecedor.getEnderecoPrincipal().getEndereco().getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(StringUtil.limparString(fornecedor.getEnderecoPrincipal().getEndereco().getComplemento()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(StringUtil.limparString(fornecedor.getEnderecoPrincipal().getEndereco().getBairro()));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(fornecedor.getEnderecoPrincipal().getEndereco().getCep().replaceAll("-", ""));
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(fornecedor.getEnderecoPrincipal().getEndereco().getCidade());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(StringUtil.limparString(fornecedor.getEnderecoPrincipal().getEndereco().getCidade()));
 		//FIXME: Ajustar para trazer o codigo do municipio
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(fornecedor.getEnderecoPrincipal().getEndereco().getCodigoCidadeIBGE());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(fornecedor.getEnderecoPrincipal().getEndereco().getUf());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
 		//FIXME: Ajustar os campos codigo e nome do pais
@@ -179,14 +180,14 @@ public class EmitenteDestinatarioBuilder {
 		.append(" ")
 		.append(endereco.getLogradouro());
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(logradouro.toString());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(StringUtil.limparString(logradouro.toString()));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(endereco.getNumero());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(endereco.getComplemento());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(endereco.getBairro());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(StringUtil.limparString(endereco.getComplemento()));
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(StringUtil.limparString(endereco.getBairro()));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(endereco.getCep());
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(endereco.getCidade());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(StringUtil.limparString(endereco.getCidade()));
 		//FIXME: Ajustar para trazer o codigo do municipio
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L); // 3550308L 
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE()); // 3550308L 
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(endereco.getUf());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L); // 35L
 		//FIXME: Ajustar os campos codigo e nome do pais
