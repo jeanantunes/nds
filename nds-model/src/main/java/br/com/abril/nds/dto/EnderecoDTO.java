@@ -34,7 +34,7 @@ public class EnderecoDTO implements Serializable {
 
     private String uf;
 
-    private String codigoUf;
+    private Integer codigoUf;
     
     public EnderecoDTO() {
     }    
@@ -42,7 +42,7 @@ public class EnderecoDTO implements Serializable {
     public EnderecoDTO(String bairro, String cep,
             Integer codigoCidadeIBGE, String cidade, String complemento,
             String tipoLogradouro, String logradouro, String numero, String uf,
-            String codigoUf) {
+            Integer codigoUf) {
         this.bairro = bairro;
         this.cep = cep;
         this.codigoCidadeIBGE = codigoCidadeIBGE;
@@ -135,11 +135,11 @@ public class EnderecoDTO implements Serializable {
         this.codigoCidadeIBGE = codigoCidadeIBGE;
     }
 
-    public String getCodigoUf() {
+    public Integer getCodigoUf() {
         return codigoUf;
     }
 
-    public void setCodigoUf(String codigoUf) {
+    public void setCodigoUf(Integer codigoUf) {
         this.codigoUf = codigoUf;
     }
     

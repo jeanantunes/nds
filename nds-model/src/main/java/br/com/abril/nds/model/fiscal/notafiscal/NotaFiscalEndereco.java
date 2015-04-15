@@ -103,11 +103,11 @@ public class NotaFiscalEndereco implements Serializable {
 	
 	@XmlTransient
 	@Column(name="CODIGO_UF")
-	private Long codigoUf;
+	private Integer codigoUf;
 	
 	@Column(name = "CODIGO_PAIS", length=20)
 	@XmlElement(name="cPais")
-	private Long codigoPais;
+	private Integer codigoPais;
 	
 	@Column(name = "PAIS", length=60)
 	@XmlElement(name="xPais")
@@ -181,11 +181,11 @@ public class NotaFiscalEndereco implements Serializable {
 		this.tipoLogradouro = tipoLogradouro;
 	}
 
-	public Long getCodigoUf() {
+	public Integer getCodigoUf() {
 		return codigoUf;
 	}
 
-	public void setCodigoUf(Long codigoUf) {
+	public void setCodigoUf(Integer codigoUf) {
 		this.codigoUf = codigoUf;
 	}
 
@@ -205,11 +205,11 @@ public class NotaFiscalEndereco implements Serializable {
 		this.cep = cep;
 	}
 
-	public Long getCodigoPais() {
+	public Integer getCodigoPais() {
 		return codigoPais;
 	}
 
-	public void setCodigoPais(Long codigoPais) {
+	public void setCodigoPais(Integer codigoPais) {
 		this.codigoPais = codigoPais;
 	}
 
