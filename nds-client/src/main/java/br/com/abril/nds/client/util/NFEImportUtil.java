@@ -2,7 +2,6 @@ package br.com.abril.nds.client.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +10,6 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -80,14 +78,16 @@ public abstract class NFEImportUtil {
         
         try {
         
-	        if (validarSchemaXML(XSD_NFE, arquivo, schemaPath)){
+	        if (validarSchemaXML(XSD_NFE, arquivo, schemaPath)) {
 	        	context = JAXBContext.newInstance(TNFe.class);
 	            unmarshaller = context.createUnmarshaller();
 	            
 	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
 	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
 	            
-	        } else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)){
+	            return retornoNFEDTO;
+	            
+	        } else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)) {
 	        	
 	        	//context = JAXBContext.newInstance(TNfeProc.class);
 	            //unmarshaller = context.createUnmarshaller();
@@ -101,14 +101,16 @@ public abstract class NFEImportUtil {
 			   
 				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
 	            
-	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath)){
+				return retornoNFEDTO;
+				
+	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath)) {
 	        	
 	        	context = JAXBContext.newInstance(TProcCancNFe.class);
                 unmarshaller = context.createUnmarshaller();
                 final TRetCancNFe retornoCancelamentoNFe = (TRetCancNFe) unmarshaller.unmarshal(arquivo);
                 retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(retornoCancelamentoNFe);
-	        	
-	        } else{
+                return retornoNFEDTO;
+	        } else {
 	        	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
 	        }
 	        
@@ -116,8 +118,6 @@ public abstract class NFEImportUtil {
             LOGGER.error(e.getMessage(), e);
             throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
         }
-        
-        return retornoNFEDTO;
     }
     
     /**

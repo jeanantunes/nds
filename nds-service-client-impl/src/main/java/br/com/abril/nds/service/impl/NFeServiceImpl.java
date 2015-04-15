@@ -515,7 +515,7 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		// if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		
 		return notas;
 	}

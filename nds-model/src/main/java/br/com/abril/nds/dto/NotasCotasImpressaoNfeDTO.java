@@ -15,8 +15,9 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 		super();
 	}
 	
-	public NotasCotasImpressaoNfeDTO(Long numeroNota, Boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
+	public NotasCotasImpressaoNfeDTO(Long idNota, Long numeroNota, Boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
 		super();
+		this.idNota = idNota;
 		this.numeroNota = numeroNota;
 		this.notaImpressa = notaImpressa;
 		this.idCota = c.getId();
@@ -32,6 +33,8 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 	 */
 	private static final long serialVersionUID = 5371527354389347503L;
 
+	private Long idNota;
+	
 	@Export(label="Núm. Nota", alignment=Alignment.LEFT)
 	private Long numeroNota;
 	
@@ -54,6 +57,14 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 	private BigDecimal vlrTotalDesconto;
 	
 	private boolean notaImpressa;
+	
+	public Long getIdNota() {
+		return idNota;
+	}
+
+	public void setIdNota(Long idNota) {
+		this.idNota = idNota;
+	}
 
 	public Long getNumeroNota() {
 		return numeroNota;
