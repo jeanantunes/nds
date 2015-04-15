@@ -1201,14 +1201,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         if (novoEndereco.getCep() != null) {
             novoEndereco.setCep(novoEndereco.getCep().replace("-", ""));
         }
-        if (novoEndereco.getCodigoUf() == null
-                && novoEndereco.getCodigoCidadeIBGE() != null) {
+        if (novoEndereco.getCodigoUf() == null && novoEndereco.getCodigoCidadeIBGE() != null) {
             if (novoEndereco.getCodigoCidadeIBGE().toString().length() > 2) {
-                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE()
-                        .toString().substring(0, 2));
+                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE());
             } else {
-                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE()
-                        .toString());
+                novoEndereco.setCodigoUf(novoEndereco.getCodigoCidadeIBGE());
             }
         }
         // enderecoRepository.adicionar(novoEndereco);

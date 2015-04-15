@@ -78,7 +78,7 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
      * Código da UF do endereço
      */
     @Column(name = "ENDERECO_CODIGO_UF", length = 2)
-    private String codigoUf;
+    private Integer codigoUf;
     
     /**
      * Tipo do endereço
@@ -99,7 +99,7 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     public HistoricoTitularidadeCotaEndereco(
             String bairro, String cep, Integer codigoCidadeIBGE, String cidade,
             String complemento, String tipoLogradouro, String logradouro,
-            String numero, String uf, String codigoUf,
+            String numero, String uf, Integer codigoUf,
             TipoEndereco tipoEndereco, boolean principal) {
         this.bairro = bairro;
         this.cep = cep;
@@ -245,14 +245,14 @@ public class HistoricoTitularidadeCotaEndereco implements Serializable {
     /**
      * @return the codigoUf
      */
-    public String getCodigoUf() {
+    public Integer getCodigoUf() {
         return codigoUf;
     }
 
     /**
      * @param codigoUf the codigoUf to set
      */
-    public void setCodigoUf(String codigoUf) {
+    public void setCodigoUf(Integer codigoUf) {
         this.codigoUf = codigoUf;
     }
 

@@ -41,26 +41,6 @@ public class NotaFiscalTransportadorBuilder {
 		*/
 		if(transportadores == null || transportadores.isEmpty()) {
 			
-			//notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setDocumento("");	
-			//notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setNome("");
-			/*
-			if(endereco == null){
-				endereco = new NotaFiscalEndereco();
-			}
-			endereco.setBairro("   ");
-			endereco.setLogradouro("     ");
-			endereco.setCep("    ");
-			endereco.setNumero("    ");
-			endereco.setCodigoCidadeIBGE(0L);
-			endereco.setCidade("     ");
-			endereco.setCodigoPais(0L);
-			endereco.setCodigoUf(0L);
-			endereco.setComplemento("    ");
-			endereco.setPais("       ");
-			endereco.setTipoLogradouro("    ");
-			endereco.setUf("");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setEndereco(endereco);
-			*/
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(0);
 		} else {
 			
@@ -86,17 +66,17 @@ public class NotaFiscalTransportadorBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setLogradouro("Kenkiti Shinomoto");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCep("08250000");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setNumero("158");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(3550308L);
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoCidadeIBGE(3550308);
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCidade("Sãp Paulo");
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(30L);
-			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(20L);
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoPais(30);
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setCodigoUf(20);
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setComplemento("XXXX");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setPais("Brasil");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setTipoLogradouro("Rua");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco().setUf("SP");
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setModalidadeFrete(1);
 			
-		}else{
+		} else {
 
 			for (EnderecoTransportador enderecoTransportador : enderecoTransportadores){
 				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getEndereco() == null){
@@ -109,10 +89,10 @@ public class NotaFiscalTransportadorBuilder {
 					endereco.setBairro(enderecoTransportador.getEndereco().getBairro());
 					endereco.setCep(enderecoTransportador.getEndereco().getCep());
 					endereco.setNumero(enderecoTransportador.getEndereco().getNumero());
-					endereco.setCodigoCidadeIBGE(Long.valueOf(enderecoTransportador.getEndereco().getCodigoCidadeIBGE()));
+					endereco.setCodigoCidadeIBGE(enderecoTransportador.getEndereco().getCodigoCidadeIBGE());
 					endereco.setCidade(enderecoTransportador.getEndereco().getCidade());
-					endereco.setCodigoPais(0L);
-					endereco.setCodigoUf(35L); //Long.valueOf(enderecoTransportador.getEndereco().getCodigoUf()));
+					endereco.setCodigoUf(enderecoTransportador.getEndereco().getCodigoUf()); //Long.valueOf(enderecoTransportador.getEndereco().getCodigoUf()));
+					endereco.setCodigoPais(1058);
 					endereco.setComplemento(enderecoTransportador.getEndereco().getComplemento());
 					endereco.setPais("Brasil");
 					endereco.setTipoLogradouro(enderecoTransportador.getEndereco().getTipoLogradouro());
