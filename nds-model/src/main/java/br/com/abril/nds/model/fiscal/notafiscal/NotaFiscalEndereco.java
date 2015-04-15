@@ -74,7 +74,7 @@ public class NotaFiscalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao = TipoSecao.E05, posicao = 4))
 	})
 	@XmlElement(name="cMun")
-	private Long codigoCidadeIBGE;
+	private Integer codigoCidadeIBGE;
 	
 	@Column(name = "CIDADE", length=60)
 	@NFEWhens(value = {
@@ -189,11 +189,11 @@ public class NotaFiscalEndereco implements Serializable {
 		this.codigoUf = codigoUf;
 	}
 
-	public Long getCodigoCidadeIBGE() {
+	public Integer getCodigoCidadeIBGE() {
 		return codigoCidadeIBGE;
 	}
 
-	public void setCodigoCidadeIBGE(Long codigoCidadeIBGE) {
+	public void setCodigoCidadeIBGE(Integer codigoCidadeIBGE) {
 		this.codigoCidadeIBGE = codigoCidadeIBGE;
 	}
 
