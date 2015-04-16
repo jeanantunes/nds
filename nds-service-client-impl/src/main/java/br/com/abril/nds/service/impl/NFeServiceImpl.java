@@ -63,6 +63,7 @@ import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.nota.InfAdicWrapper;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -515,7 +516,9 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		if(true) throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		if(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor().equals(TipoAmbiente.HOMOLOGACAO)) {			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
+		}
 		
 		return notas;
 	}

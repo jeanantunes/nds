@@ -272,7 +272,6 @@ public class DanfeBuilder  implements Serializable {
 		destinatarioTelefone = tratarTelefone(destinatarioTelefone);
 		
 		if(destinatarioCNPJ.length() > 11) {			
-			System.out.println("Valor do CNPJ"+ destinatarioCNPJ);
 			danfe.setDestinatarioCNPJ(new CNPJFormatter().format(destinatarioCNPJ));
 		} else { 
 			danfe.setDestinatarioCNPJ(new CPFFormatter().format(destinatarioCNPJ));
