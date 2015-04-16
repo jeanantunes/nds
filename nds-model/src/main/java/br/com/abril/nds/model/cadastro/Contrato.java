@@ -44,7 +44,6 @@ public abstract class Contrato implements Serializable {
 	@Column(name = "AVISO_PREVIO_RESCISAO")
 	private Integer avisoPrevioRescisao;
 	
-	
 	public Long getId() {
 		return id;
 	}

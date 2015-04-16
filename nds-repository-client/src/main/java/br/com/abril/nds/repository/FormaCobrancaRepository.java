@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 
@@ -19,20 +20,19 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
  */
 public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
-	
 	FormaCobranca obterPorTipoEBanco(TipoCobranca tipo, Banco banco);
 	
 	List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipo);
 	
 	List<FormaCobrancaDefaultVO> obterFormaCobrancaDefault();
 
-	List<FormaCobranca> obterFormasCobrancaCota(Cota cota);
+	List<FormaCobranca> obterFormasCobrancaCota(ParametroCobrancaCota parametroCobrancaCota);
 	
 	int obterQuantidadeFormasCobrancaCota(Cota cota);
 	
 	void desativarFormaCobranca(long idFormaCobranca);
 
-	List<FormaCobranca> obterPorCota(Long idCota, Long idFormaCobranca);
+	List<FormaCobranca> obterPorCota(ParametroCobrancaCota parametroCobrancaCota, Long idFormaCobranca);
 	
 	List<FormaCobranca> obterPorDistribuidor(Long idDistribuidor, Long idFormaCobranca);
 
@@ -60,10 +60,10 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	/**
 	 * Obtem FormaCobranca principal da Cota
-	 * @param idCota
+	 * @param parametroCobrancaCota
 	 * @return FormaCobranca
 	 */
-	FormaCobranca obterFormaCobranca(Long idCota);
+	FormaCobranca obterFormaCobranca(ParametroCobrancaCota parametroCobrancaCota);
 	
 	/**
 	 * Obtem FormaCobranca principal do Distribuidor

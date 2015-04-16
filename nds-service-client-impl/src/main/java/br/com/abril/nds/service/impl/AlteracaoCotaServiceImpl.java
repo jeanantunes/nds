@@ -134,29 +134,22 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 			FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
 
 		// Sugere Suspensao
-		cota.setSugereSuspensao(filtroAlteracaoCotaDTO
-				.getFiltroModalFinanceiro().getIsSugereSuspensao());
+		cota.setSugereSuspensao(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIsSugereSuspensao());
 
 		if (cota.getParametroCobranca() == null) {
 			cota.setParametroCobranca(new ParametroCobrancaCota());
-			cota.getParametroCobranca().setCota(cota);
 		}
 		// Fator Vencimento
 		if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIdVencimento() != null) {
-			cota.getParametroCobranca().setFatorVencimento(
-					filtroAlteracaoCotaDTO.getFiltroModalFinanceiro()
-							.getIdVencimento());
+			cota.getParametroCobranca().setFatorVencimento(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIdVencimento());
 		}
 
 		try {
 			// Valor Minimo
 			if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo() != null
-					&& !filtroAlteracaoCotaDTO.getFiltroModalFinanceiro()
-							.getVrMinimo().isEmpty()) {
+					&& !filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo().isEmpty()) {
 
-				cota.setValorMinimoCobranca(
-						CurrencyUtil.converterValor(filtroAlteracaoCotaDTO
-								.getFiltroModalFinanceiro().getVrMinimo()));
+				cota.setValorMinimoCobranca(CurrencyUtil.converterValor(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getVrMinimo()));
 			}
 
 			// Suspensao = true -> Cria Politica de Suspensao
