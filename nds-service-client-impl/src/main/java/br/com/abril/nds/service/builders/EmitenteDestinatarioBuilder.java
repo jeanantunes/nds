@@ -205,7 +205,7 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial().trim());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
 
-			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(TipoAmbiente.HOMOLOGACAO)){
+			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {
 				
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial().trim());
 				
@@ -228,7 +228,7 @@ public class EmitenteDestinatarioBuilder {
 		} else if (pessoa instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;
 			
-			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(TipoAmbiente.HOMOLOGACAO)){
+			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {
 				
 				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome().trim());
 			} else {
