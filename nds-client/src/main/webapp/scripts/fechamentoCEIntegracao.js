@@ -2,7 +2,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	itensCEIntegracao : [],
 	
-	init : function(){
+	init : function() {
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
 		fechamentoCEIntegracaoController.buscarNumeroSemana();
@@ -391,7 +391,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
 		
-		if (eval(reparte) < eval(venda)) {
+		if (!isNaN(reparte) && eval(reparte) < eval(venda)) {
 			
 			exibirMensagem('WARNING', ["A quantidade de venda não pode exceder a quantidade do reparte!"]);
 			
@@ -409,6 +409,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			return;
 		}
+		
 		$("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(reparte - venda);
 		
 		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque);
