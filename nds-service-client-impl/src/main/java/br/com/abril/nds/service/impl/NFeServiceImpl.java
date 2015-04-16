@@ -516,7 +516,7 @@ public class NFeServiceImpl implements NFeService {
 			this.notaFiscalService.exportarNotasFiscais(notas);
 		}
 		
-		if(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor().equals(TipoAmbiente.HOMOLOGACAO)) {			
+		if(parametrosSistema.get("NFE_INFORMACOES_AMBIENTE").getValor().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não gravar!!!!");
 		}
 		
