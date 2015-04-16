@@ -386,8 +386,9 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		
 		// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
 		ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
-		parametroCobrancaCota.setCota(cota);
+		cota.setParametroCobranca(parametroCobrancaCota);
 		
+		getSession().merge(cota);
 		getSession().persist(parametroCobrancaCota);
 		
 		if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {

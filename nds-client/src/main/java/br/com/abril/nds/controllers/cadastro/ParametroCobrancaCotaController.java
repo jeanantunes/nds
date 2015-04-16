@@ -630,8 +630,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);
         
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),
-                                                        Constantes.PARAM_MSGS).recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."), Constantes.PARAM_MSGS).recursive().serialize();
     }
     
     /**

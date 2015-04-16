@@ -652,32 +652,31 @@ public class FiadorServiceImpl implements FiadorService {
 	 * 
 	 * @param cota
 	 */
-	private void adicionarCotaGarantiaAssociacao(Fiador fiador, Cota cota){
+	private void adicionarCotaGarantiaAssociacao(Fiador fiador, Cota cota) {
 		
 		CotaGarantia cotaGarantia = cota.getCotaGarantia();
 		
-		if (cotaGarantia == null){
+		if (cotaGarantia == null) {
 			
 			CotaGarantiaFiador cotaGarantiaFiador = new CotaGarantiaFiador();
 			cotaGarantiaFiador.setData(Calendar.getInstance().getTime());
-			cotaGarantiaFiador.setCota(cota);
 			cotaGarantiaFiador.setFiador(fiador);
 			
 			cotaGarantiaRepository.adicionar(cotaGarantiaFiador);
-		}
-		
-		else{
+			cota.setCotaGarantia(cotaGarantiaFiador);
+			cotaRepository.merge(cota);
+		} else {
 			
 			if (cotaGarantia instanceof CotaGarantiaFiador) {
 			
 				CotaGarantiaFiador cotaGarantiaFiador = (CotaGarantiaFiador) cotaGarantia;
 				cotaGarantiaFiador.setData(Calendar.getInstance().getTime());
-				cotaGarantiaFiador.setCota(cota);
 				cotaGarantiaFiador.setFiador(fiador);
 				
 				cotaGarantiaRepository.alterar(cotaGarantiaFiador);
-			}
-			else{
+				cota.setCotaGarantia(cotaGarantiaFiador);
+				cotaRepository.merge(cota);
+			} else {
 				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 						"A cota ["+cota.getNumeroCota()+"] já possui uma garantia diferente de [Fiador] cadastrada.\nDirija-se ao cadastro da [Cota] caso queira alterar o [Tipo] da garantia da cota para [Fiador]."));
@@ -685,11 +684,11 @@ public class FiadorServiceImpl implements FiadorService {
 		}
 	}
 	
-	private void processarCotasAssociadas(Fiador fiador,
-			List<Cota> listaCotasAssociar, Set<Long> listaCotasDesassociar) {
+	private void processarCotasAssociadas(Fiador fiador, List<Cota> listaCotasAssociar, Set<Long> listaCotasDesassociar) {
 		
-		if (listaCotasDesassociar != null){
-			for (Long idCota : listaCotasDesassociar){
+		if (listaCotasDesassociar != null) {
+			
+			for (Long idCota : listaCotasDesassociar) {
 				
 				Cota cota = this.cotaRepository.buscarPorId(idCota);
 				

@@ -3,7 +3,6 @@ package br.com.abril.nds.model.cadastro.garantia;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -14,14 +13,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 
 
@@ -49,11 +45,6 @@ public abstract class CotaGarantia implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@OneToOne(optional = false, cascade=CascadeType.DETACH)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
-	
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA")
 	private Date data;
@@ -68,14 +59,6 @@ public abstract class CotaGarantia implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Cota getCota() {
-		return cota;
-	}
-
-	public void setCota(Cota cota) {
-		this.cota = cota;
 	}
 
 	public Date getData() {

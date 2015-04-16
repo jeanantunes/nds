@@ -425,26 +425,22 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 	@Transactional
 	@Override
-	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota)
-			throws ValidacaoException, InstantiationException, IllegalAccessException {
-		CotaGarantiaFiador cotaGarantiaFiador = prepareCotaGarantia(idCota,
-				CotaGarantiaFiador.class);
+	public CotaGarantiaFiador salvaFiador(Long idFiador, Long idCota) throws ValidacaoException, InstantiationException, IllegalAccessException {
+		CotaGarantiaFiador cotaGarantiaFiador = prepareCotaGarantia(idCota, CotaGarantiaFiador.class);
 		
 		cotaGarantiaFiador.setTipoGarantia(TipoGarantia.FIADOR);
 	
 		Fiador fiador = fiadorRepository.buscarPorId(idFiador);
 
 		if (fiador == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Fiador " + idFiador + " não existe."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Fiador " + idFiador + " não existe."));
 		}
 		cotaGarantiaFiador.setFiador(fiador);
 		cotaGarantiaFiador.setData(new Date());
 		
 		this.setFiadorCota(idCota, fiador);
 		
-		return (CotaGarantiaFiador) cotaGarantiaRepository
-				.merge(cotaGarantiaFiador);
+		return (CotaGarantiaFiador) cotaGarantiaRepository.merge(cotaGarantiaFiador);
 
 	}
 
@@ -454,12 +450,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	 * @throws ValidacaoException
 	 */
 	private Cota getCota(Long idCota) throws ValidacaoException {
+		
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 
 		if (cota == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Cota " + idCota + " não encontrada."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada."));
 		}
+		
 		return cota;
 	}
 	
@@ -469,15 +466,16 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			IllegalAccessException {
 
 		CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		Cota cota = getCota(idCota);
 		
-		if(cotaGarantia != null && cotaGarantia.getClass() != type){
+		if(cotaGarantia != null && cotaGarantia.getClass() != type) {
 			cotaGarantiaRepository.remover(cotaGarantia);
 			cotaGarantia = null;
 		}
 		
 		if (cotaGarantia == null) {			
 			cotaGarantia = type.newInstance();
-			cotaGarantia.setCota(getCota(idCota));			
+			cota.setCotaGarantia(cotaGarantia);	
 		}
 
 		return (T) cotaGarantia;
@@ -654,20 +652,24 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(long idCota){
+	public NotaPromissoriaDTO getDadosImpressaoNotaPromissoria(long idCota) {
+		
 		NotaPromissoriaDTO dto = new NotaPromissoriaDTO();
 		
+		Cota cota = cotaRepository.buscarPorId(idCota);
 		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
-		if(cotaGarantiaNotaPromissoria == null){
+		if(cotaGarantiaNotaPromissoria == null) {
+			
 			throw new RuntimeException("Nota Promissória não cadastrada para esta cota.");
 		}
-		if(cotaGarantiaNotaPromissoria.getCota().getPessoa() instanceof PessoaJuridica){
-			dto.setDocumentoEmitente(Util.adicionarMascaraCNPJ(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
-		}else{
-			dto.setDocumentoEmitente(Util.adicionarMascaraCPF(cotaGarantiaNotaPromissoria.getCota().getPessoa().getDocumento()));
+		
+		if(cota.getPessoa() instanceof PessoaJuridica) {
+			dto.setDocumentoEmitente(Util.adicionarMascaraCNPJ(cota.getPessoa().getDocumento()));
+		} else {
+			dto.setDocumentoEmitente(Util.adicionarMascaraCPF(cota.getPessoa().getDocumento()));
 		}
 		
-		dto.setNomeEmitente(cotaGarantiaNotaPromissoria.getCota().getPessoa().getNome());
+		dto.setNomeEmitente(cota.getPessoa().getNome());
 		dto.setNotaPromissoria(cotaGarantiaNotaPromissoria.getNotaPromissoria());
 		
 		EnderecoCota enderecoCota =  enderecoCotaRepository.getPrincipal(idCota);
@@ -716,16 +718,17 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		CotaGarantiaOutros cotaGarantiaOutros = new CotaGarantiaOutros();
 		
-		cotaGarantiaOutros.setCota(getCota(idCota));
 		cotaGarantiaOutros.setData(new Date());
 		cotaGarantiaOutros.setOutros(listaOutros);
 		
-		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository
-				.merge(cotaGarantiaOutros);
+		cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantiaRepository.merge(cotaGarantiaOutros);
 		
 		cotaGarantiaOutros.setTipoGarantia(TipoGarantia.OUTROS);
 		
 		this.setFiadorCota(idCota, null);
+		Cota cota = getCota(idCota);
+		cota.setCotaGarantia(cotaGarantiaOutros);
+		cotaRepository.merge(cota);
 		
 		return cotaGarantiaOutros;
 		
