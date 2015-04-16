@@ -230,21 +230,19 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 											  TipoFormaCobranca tipoFormaCobranca, 
 											  List<Integer> diasDoMes) {
 
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCota(
-				idCota, idFormaCobranca);
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCota(cota.getParametroCobranca(), idFormaCobranca);
 
 		for (FormaCobranca itemFormaCobranca : formas) {
 
 			for (int i = 0; i < idFornecedores.size(); i++) {
 
-				Fornecedor fornecedor = this.fornecedorService
-						.obterFornecedorPorId(idFornecedores.get(i));
+				Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
 
 				if (itemFormaCobranca.getFornecedores().contains(fornecedor)) {
 
 					if (tipoFormaCobranca.equals(TipoFormaCobranca.DIARIA)
-							|| itemFormaCobranca.getTipoFormaCobranca().equals(
-									TipoFormaCobranca.DIARIA)) {
+							|| itemFormaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)) {
 
 						return false;
 					}
@@ -297,8 +295,8 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 											   Boolean sexta, 
 											   Boolean sabado) {
 
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCota(
-				idCota, idFormaCobranca);
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCota(cota.getParametroCobranca(), idFormaCobranca);
 
 		for (FormaCobranca itemFormaCobranca : formas) {
 
@@ -590,8 +588,8 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
 
-		FormaCobranca formaCobranca = this.formaCobrancaRepository
-				.obterFormaCobranca(idCota);
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(cota.getParametroCobranca());
 
 		return formaCobranca;
 	}
@@ -630,10 +628,8 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	@Transactional
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota) {
 		
-		Long idCota = this.cotaRepository.obterIdPorNumeroCota(numeroCota);
-		
-		FormaCobranca formaCobranca = this.formaCobrancaRepository
-				.obterFormaCobranca(idCota);
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(cota.getParametroCobranca());
 
 		return formaCobranca;
 	}

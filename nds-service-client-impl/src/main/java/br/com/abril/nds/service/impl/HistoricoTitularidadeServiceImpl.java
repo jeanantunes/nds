@@ -90,6 +90,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.repository.DescontoCotaRepository;
 import br.com.abril.nds.repository.DescontoProdutoRepository;
+import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
 
 /**
@@ -106,6 +107,9 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 	
 	@Autowired
 	private DescontoCotaRepository descontoCotaRepository;
+	
+	@Autowired
+	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
 
 	/**
 	 * {@inheritDoc}
@@ -1258,12 +1262,12 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 			return null;
 		}
 
-		HistoricoTitularidadeCotaFinanceiro historicoTitularidadeCotaFinanceiro = 
-				new HistoricoTitularidadeCotaFinanceiro();
+		Cota cota = parametroCobrancaCotaRepository.obterCotaPorParametroCobranca(parametroCobrancaCota);
+		HistoricoTitularidadeCotaFinanceiro historicoTitularidadeCotaFinanceiro = new HistoricoTitularidadeCotaFinanceiro();
 		
 		historicoTitularidadeCotaFinanceiro.setFatorVencimento(parametroCobrancaCota.getFatorVencimento());
-		historicoTitularidadeCotaFinanceiro.setPoliticaSuspensao(parametroCobrancaCota.getCota().getPoliticaSuspensao());
-		historicoTitularidadeCotaFinanceiro.setValorMininoCobranca(parametroCobrancaCota.getCota().getValorMinimoCobranca());
+		historicoTitularidadeCotaFinanceiro.setPoliticaSuspensao(cota.getPoliticaSuspensao());
+		historicoTitularidadeCotaFinanceiro.setValorMininoCobranca(cota.getValorMinimoCobranca());
 		historicoTitularidadeCotaFinanceiro.setFormasPagamento(gerarHistoricoTitularidadeCotaFormaPagamentos(parametroCobrancaCota.getFormasCobrancaCota()));
 		
 		return historicoTitularidadeCotaFinanceiro;
