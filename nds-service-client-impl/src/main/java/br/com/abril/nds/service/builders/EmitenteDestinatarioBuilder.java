@@ -20,6 +20,7 @@ import br.com.abril.nds.model.fiscal.nota.CPFDestinatario;
 import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaFisica;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
@@ -204,7 +205,17 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial().trim());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
 
+			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(TipoAmbiente.HOMOLOGACAO)){
+				
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial().trim());
+				
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
+			}
+			
+			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaJuridica());
+			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaJuridica.getRazaoSocial());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaJuridica.getEmail());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaJuridica.getId());
@@ -216,14 +227,20 @@ public class EmitenteDestinatarioBuilder {
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
 		} else if (pessoa instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) pessoa;
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome().trim());
+			
+			if(!notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getTipoAmbiente().equals(TipoAmbiente.HOMOLOGACAO)){
+				
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome().trim());
+			} else {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
+			}
+			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaFisica.getEmail());
 
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setPessoaDestinatarioReferencia(new NotaFiscalPessoaFisica());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setNome(pessoaFisica.getNome());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setEmail(pessoaFisica.getEmail());
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getPessoaDestinatarioReferencia().setIdPessoaOriginal(pessoaFisica.getId());
-//			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual("");
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setIndicadorDestinatario(9);
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
