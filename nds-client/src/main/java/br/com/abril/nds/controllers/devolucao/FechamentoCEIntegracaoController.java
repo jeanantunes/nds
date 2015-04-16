@@ -273,6 +273,11 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
+		if(filtro == null || filtro.getPaginacao() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido. Por favor, refaça a pesquisa.");
+		}
+		
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		filtro.getPaginacao().setPaginaAtual(null);
 		
