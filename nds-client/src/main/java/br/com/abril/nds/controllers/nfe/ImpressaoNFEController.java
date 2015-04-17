@@ -164,13 +164,12 @@ public class ImpressaoNFEController extends BaseController {
 		}
 		
 		// tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
-
+		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
 
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 
 		result.use(FlexiGridJson.class).from(listaCotasImpressaoNFe).page(page).total(listaCotasImpressaoNFe.size()).serialize();
-		//result.use(Results.json()).withoutRoot().from(tableModel).serialize();
 
 	}
 	
