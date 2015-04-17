@@ -244,7 +244,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	@Override
-	public NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE) {
+	public NotaFiscal buscarNotaFiscalChaveAcesso(String chaveAcesso) {
 
 		StringBuffer sql = new StringBuffer("");
 		
@@ -252,16 +252,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN nfi.identificacao as ident ")
-		.append(" WHERE")
-		.append(" ident.numeroDocumentoFiscal = :numeroNotaFiscal ");
-		
+		.append(" WHERE 1 = 1");
+	
 		sql.append(" AND infElet.chaveAcesso = :chaveAcesso ");
 		
 		Query query = this.getSession().createQuery(sql.toString());
-
 				
-		query.setParameter("numeroNotaFiscal", dadosRetornoNFE.getNumeroNotaFiscal());
-		query.setParameter("chaveAcesso", dadosRetornoNFE.getChaveAcesso());
+		query.setParameter("chaveAcesso", chaveAcesso);
 
 		return (NotaFiscal) query.uniqueResult();
 

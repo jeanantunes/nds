@@ -494,8 +494,7 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * @param listaMovimentoEstoqueCota the listaMovimentoEstoqueCota to set
 	 */
-	public void setListaMovimentoEstoqueCota(
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
+	public void setListaMovimentoEstoqueCota(List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
 		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
 	}
 
