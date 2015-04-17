@@ -587,9 +587,9 @@
 		
 		data.push({name:'filtro.dataLancamento',	value: T.get("dataLancamento")});
 		data.push({name:'filtro.tipoConsulta',		value: T.get("tipoConsulta")});
-		data.push({name:'filtro.box',				value: T.get("box")});
+		data.push({name:'filtro.box',				value: T.get("mapa-abastecimento-box")});
 		data.push({name:'filtro.rota',				value: T.get("rota")});
-		data.push({name:'filtro.roteiro',				value: T.get("roteiro")});
+		data.push({name:'filtro.roteiro',			value: T.get("roteiro")});
 		
 		$.each(T.produtosSelecionados, function(index, row) {
 			data.push({name:'filtro.codigosProduto[' + index + ']',	value: row.id.split('_')[0]});
@@ -685,7 +685,7 @@
 		
 		if(T.get('tipoConsulta') == 'ROTA'){
 			$.postJSON(contextPath +'/mapaAbastecimento/buscarRoteiroPorBox',
-					{idBox:T.get("box")},
+					{idBox:T.get("mapa-abastecimento-box")},
 					function(result) {
 						var comboRota =  montarComboBoxCustomJson(result.rotas, true,'Selecione...');
 						$('#rota', _workspace).html(comboRota);
