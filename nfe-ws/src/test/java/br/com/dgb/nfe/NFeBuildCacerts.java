@@ -41,10 +41,10 @@ public class NFeBuildCacerts {
     }
 
     public static File gerarCacerts(String host, int port) throws Exception {
-            char[] passphrase = "arutil14".toCharArray();
+            char[] passphrase = "changeit".toCharArray();
 
         File file = new File(JSSECACERTS);
-        if (file.isFile() == false) {
+        if (file.isFile() == true) {
             char SEP = File.separatorChar;
             File dir = new File(System.getProperty("java.home") + SEP + "lib" + SEP + "security");
             file = new File(dir, JSSECACERTS);
