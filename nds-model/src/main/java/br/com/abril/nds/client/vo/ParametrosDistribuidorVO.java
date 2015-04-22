@@ -1,5 +1,6 @@
 package br.com.abril.nds.client.vo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
@@ -153,7 +154,7 @@ public class ParametrosDistribuidorVO {
     private String assuntoEmailCobranca;
     private String mensagemEmailCobranca;
     private String descricaoTaxaExtra;
-    private String percentualTaxaExtra;
+    private BigDecimal percentualTaxaExtra;
     
     // Aba Aprovação
     // Frame Aprovação
@@ -1062,11 +1063,11 @@ public class ParametrosDistribuidorVO {
 		this.descricaoTaxaExtra = descricaoTaxaExtra;
 	}
 
-	public String getPercentualTaxaExtra() {
+	public BigDecimal getPercentualTaxaExtra() {
 		return percentualTaxaExtra;
 	}
 
-	public void setPercentualTaxaExtra(String percentualTaxaExtra) {
+	public void setPercentualTaxaExtra(BigDecimal percentualTaxaExtra) {
 		this.percentualTaxaExtra = percentualTaxaExtra;
 	}
 

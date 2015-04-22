@@ -182,14 +182,15 @@ function checkDescontoSelecionado() {
 
 			<tr>
 				<td>Descrição:</td>
-				<td><input type="text" maxlength="50" size="35" name="parametrosDistribuidor.descricaoTaxaExtra" id="descricaoTaxaExtra" /></td>
+				<td><input type="text" maxlength="50" size="35"
+					name="parametrosDistribuidor.descricaoTaxaExtra"
+					value="${parametrosDistribuidor.descricaoTaxaExtra}"
+					id="descricaoTaxaExtra" /></td>
 				<td>Percentual:</td>
-				<td><input
-					name="parametrosDistribuidor.percentualTaxaExtra"
+				<td><input name="parametrosDistribuidor.percentualTaxaExtra"
 					id="percentualTaxaExtra"
-					type="text"
-					size="3"
-					maxlength="3" /></td>
+					value="${parametrosDistribuidor.percentualTaxaExtra}" 
+					type="text" size="5" maxlength="5" /></td>
 			</tr>
 
 		</table>

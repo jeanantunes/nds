@@ -327,7 +327,7 @@ public class Distribuidor {
 	private String descricaoTaxaExtra;
 	
 	@Column(name = "PERCENTUAL_TAXA_EXTRA")
-	private String percentualTaxaExtra;
+	private BigDecimal percentualTaxaExtra;
 	
 	@Column(name = "PRACA_VERANEIO")
 	private boolean pracaVeraneio;
@@ -1179,11 +1179,11 @@ public class Distribuidor {
 		this.descricaoTaxaExtra = descricaoTaxaExtra;
 	}
 
-	public String getPercentualTaxaExtra() {
+	public BigDecimal getPercentualTaxaExtra() {
 		return percentualTaxaExtra;
 	}
 
-	public void setPercentualTaxaExtra(String percentualTaxaExtra) {
+	public void setPercentualTaxaExtra(BigDecimal percentualTaxaExtra) {
 		this.percentualTaxaExtra = percentualTaxaExtra;
 	}
 
