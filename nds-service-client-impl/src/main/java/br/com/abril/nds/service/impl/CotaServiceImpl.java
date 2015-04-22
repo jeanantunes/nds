@@ -1017,10 +1017,9 @@ public class CotaServiceImpl implements CotaService {
         dto.setTipoDistribuicaoCota(cotaRepository.obterTipoDistribuicao(idCota).name());
         dto.setRecebeComplementar(parametroDistribuicaoCota.getRecebeComplementar());
         
-       ParametroCobrancaDistribuicaoCota parametro = 
-        		parametroCobrancaDistribuicaoCotaRepository.obterParametroPorCota(cota.getId());
+        ParametroCobrancaDistribuicaoCota parametro = cota.getParametroCobrancaDistribuicaoCota();
         
-        if(parametro!= null){
+        if(parametro != null) {
         	  
         	  dto.setDiaCobranca(parametro.getDiaCobranca());
               dto.setDiaSemanaCobranca(parametro.getDiaSemanaCobranca());
@@ -1217,7 +1216,6 @@ public class CotaServiceImpl implements CotaService {
     	
     	ModalidadeCobranca modalidadeCobranca = dto.getModalidadeCobranca();
     	
-    	parametro.setCota(cota);
     	parametro.setDiaCobranca(dto.getDiaCobranca());
     	parametro.setDiaSemanaCobranca(dto.getDiaSemanaCobranca());
     	parametro.setModalidadeCobranca(modalidadeCobranca);
@@ -1227,6 +1225,7 @@ public class CotaServiceImpl implements CotaService {
     	parametro.setTaxaFixa(dto.getTaxaFixa());
     	parametro.setBaseCalculo(dto.getBaseCalculo());
  
+    	cota.setParametroCobrancaDistribuicaoCota(parametro);
     	parametroCobrancaDistribuicaoCotaRepository.merge(parametro);
 	}
 
@@ -1908,8 +1907,8 @@ public class CotaServiceImpl implements CotaService {
             
             baseReferenciaCota.setInicioPeriodo(cotaDto.getInicioPeriodo());
             baseReferenciaCota.setFinalPeriodo(cotaDto.getFimPeriodo());
-            baseReferenciaCota.setCota(cota);
             
+            cota.setBaseReferenciaCota(baseReferenciaCota);
             baseReferenciaCota = baseReferenciaCotaRepository.merge(baseReferenciaCota);
         }
         

@@ -3,6 +3,7 @@ package br.com.abril.nds.model.cadastro;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -31,11 +31,7 @@ public class ParametroCobrancaCota implements Serializable {
 
 	@OneToMany(mappedBy="parametroCobrancaCota")
 	private Set<FormaCobranca> formasCobrancaCota = new HashSet<FormaCobranca>();
-	
-	@OneToOne
-	@JoinColumn(name = "COTA_ID", unique = true)
-	private Cota cota;
-	
+		
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
 	
@@ -52,14 +48,6 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Cota getCota() {
-		return cota;
-	}
-
-	public void setCota(Cota cota) {
-		this.cota = cota;
 	}
 
 	public Integer getFatorVencimento() {
