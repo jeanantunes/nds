@@ -102,6 +102,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idNotas", filtro.getNumerosNotas());
+		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
 		
 		return query.list();
 	}
