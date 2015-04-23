@@ -18,7 +18,8 @@ public class NotaFiscalV310Test {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(NotaFiscalV310Test.class);
 
-	private static String xmlFile = "C:/Users/wrpaiva/Desktop/NFE/nfeassinada_v3.xml";
+//	private static String xmlFile = "C:/Users/wrpaiva/Desktop/NFE/nfeassinada_v3.xml";
+	private String xmlFile = this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237-assinada.xml";
 	private String versaoNFE = "3.10";
 	
 	@Test
@@ -38,8 +39,18 @@ public class NotaFiscalV310Test {
 		}
 
 	}
-
+	
 	@Test
+	public void validadorXMLExterno() {
+		
+		String schemaFile = "src/main/resources/xsd/v"+ versaoNFE +"/nfe_v"+ versaoNFE +".xsd";
+		String xmlStr = this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237-assinada2.xml";
+		
+		ValidateXML validador = new ValidateXML();
+		System.out.println(validador.validate(new File(xmlStr), schemaFile));
+	}
+
+//	@Test
 	public void validateXMLRetorno() throws Exception {
 
 		try {

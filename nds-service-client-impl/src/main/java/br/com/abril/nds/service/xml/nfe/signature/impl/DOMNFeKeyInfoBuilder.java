@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
+import javax.xml.crypto.dsig.keyinfo.KeyName;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.slf4j.Logger;
@@ -33,5 +34,12 @@ public class DOMNFeKeyInfoBuilder implements KeyInfoBuilder {
 		return keyInfo;
 	}
 
+	public KeyInfo newKeyInfo(String alias) {
+		KeyInfoFactory kif = signatureFactory.getKeyInfoFactory();
+		KeyName kn = kif.newKeyName(alias);
+		KeyInfo keyInfo = kif.newKeyInfo(Collections.singletonList(kn));
+		logger.debug("Elemento <KeyInfo ...> preparado para assinatura.");
+		return keyInfo;
+	}
 
 }

@@ -3,20 +3,34 @@ package br.com.abril.nfe;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.xml.crypto.AlgorithmMethod;
+import javax.xml.crypto.KeySelector;
+import javax.xml.crypto.KeySelectorException;
+import javax.xml.crypto.KeySelectorResult;
+import javax.xml.crypto.XMLCryptoContext;
+import javax.xml.crypto.XMLStructure;
+import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
@@ -26,11 +40,14 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
+import javax.xml.crypto.dsig.keyinfo.KeyName;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -41,10 +58,16 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.inf.portalfiscal.nfe.util.XmlDomUtils;
+
 public class AssinaturaTest {
+
 	private static final String INFINUT = "infInut";
 	private static final String INFCANC = "infCanc";
 	// private static final String NFE = "NFe";
@@ -52,21 +75,140 @@ public class AssinaturaTest {
 	private PrivateKey privateKey;
 	private KeyInfo keyInfo;
 
-	@Test
+	//	@Test
 	public void assinaNFeXML() throws Exception {
-		
+
 		String caminhoDoCertificadoDoCliente = "/Users/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.pfx";
 		String senhaDoCertificadoDoCliente = "arutil14";
-		
+
 		String fileEnviNFe = this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237.xml";
 		String xmlEnviNFe = lerXML(fileEnviNFe);
 		String xmlEnviNFeAssinado = assinaEnviNFe(xmlEnviNFe, caminhoDoCertificadoDoCliente, senhaDoCertificadoDoCliente);
 		info("XML EnviNFe Assinado: " + xmlEnviNFeAssinado);
 	}
-	
+
+//	@Test
+	public void assinarXML() throws Exception {
+
+		File xmlFile = new File(this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237.xml");
+		File signatureFile = new File(this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237-assinada2.xml");;
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		DocumentBuilder builder = dbf.newDocumentBuilder();
+		Document doc = builder.parse(new FileInputStream(xmlFile));
+
+		String caminhoDoCertificadoDoCliente = "/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.jks";
+		String senhaDoCertificadoDoCliente = "arutil14";
+
+		InputStream entrada = new FileInputStream(caminhoDoCertificadoDoCliente);
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		try {
+			keyStore.load(entrada, senhaDoCertificadoDoCliente.toCharArray());
+		} catch (IOException e) {
+			throw new Exception("Senha do Certificado Digital incorreta ou Certificado inválido.");
+		}
+
+		KeyStore.PrivateKeyEntry pkEntry = null;
+		Enumeration<String> aliasesEnum = keyStore.aliases();
+		String alias = "";
+		while (aliasesEnum.hasMoreElements()) {
+			alias = (String) aliasesEnum.nextElement();
+			if (keyStore.isKeyEntry(alias)) {
+				pkEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias,
+						new KeyStore.PasswordProtection(senhaDoCertificadoDoCliente.toCharArray()));
+				privateKey = pkEntry.getPrivateKey();
+				break;
+			}
+		}
+
+		X509Certificate cert = (X509Certificate) pkEntry.getCertificate();
+		info("SubjectDN: " + cert.getSubjectDN().toString());
+
+		XMLSignatureFactory signatureFactory = XMLSignatureFactory.getInstance("DOM");
+		KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
+		List<X509Certificate> x509Content = new ArrayList<X509Certificate>();
+
+		x509Content.add(cert);
+		X509Data x509Data = keyInfoFactory.newX509Data(x509Content);
+		keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data));
+		
+		PrivateKey key = (PrivateKey) keyStore.getKey(alias, senhaDoCertificadoDoCliente.toCharArray());
+
+		DOMSignContext dsc = new DOMSignContext(key, doc.getDocumentElement());
+		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+
+		Reference ref = fac.newReference("", fac.newDigestMethod(DigestMethod.SHA1, null), 
+				Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure) null)), 
+				null, null);
+		/*SignedInfo si = fac.newSignedInfo(
+				fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE, (XMLStructure) null), 
+				fac.newSignatureMethod(SignatureMethod.DSA_SHA1, null), Collections.singletonList(ref));*/
+		
+		SignedInfo si = fac.newSignedInfo
+                (fac.newCanonicalizationMethod
+                  (CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+                    (C14NMethodParameterSpec) null),
+                  fac.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+                  Collections.singletonList(ref)); 
+
+		KeyInfoFactory kif = fac.getKeyInfoFactory();
+		KeyName kn = kif.newKeyName(alias);
+		KeyInfo ki = kif.newKeyInfo(Collections.singletonList(kn));
+
+		XMLSignature signature = fac.newXMLSignature(si, ki);
+		signature.sign(dsc);
+
+		OutputStream os = new FileOutputStream(signatureFile);
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer trans = tf.newTransformer();
+		trans.transform(new DOMSource(doc), new StreamResult(os));
+		os.flush();
+		os.close();
+	}
+
+	@Test
+	public void verificarAssinatura() throws Exception {
+
+		File xmlFile = new File(this.getClass().getClassLoader().getResource("").getPath()+ "../../src/main/resources/xmlTestes/NF-e-21-00000237-assinada2.xml");
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		DocumentBuilder builder = dbf.newDocumentBuilder();
+		Document doc = builder.parse(new FileInputStream(xmlFile));
+
+		NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+		if (nl.getLength() == 0) {
+			throw new Exception("Cannot find Signature element");
+		}
+
+		//		String caminhoDoCertificadoDoCliente = "/Users/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.jks";
+		String caminhoDoCertificadoDoCliente = "/home/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.jks";
+		String senhaDoCertificadoDoCliente = "arutil14";
+
+		InputStream entrada = new FileInputStream(caminhoDoCertificadoDoCliente);
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		try {
+			keyStore.load(entrada, senhaDoCertificadoDoCliente.toCharArray());
+		} catch (IOException e) {
+			System.out.println(e);
+			throw new Exception("Senha do Certificado Digital incorreta ou Certificado inválido.");
+		}
+
+		DOMValidateContext valContext = new DOMValidateContext(new KeyNameKeySelector(keyStore), nl.item(0));
+		XMLSignatureFactory factory = XMLSignatureFactory.getInstance("DOM");
+		XMLSignature signature = factory.unmarshalXMLSignature(valContext);
+
+		try {
+			System.out.println(signature.validate(valContext));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
 		try {
-//			String caminhoDoCertificadoDoCliente = "C:/Users/wrpaiva/certificadoAR/certificado.pfx";
+			//			String caminhoDoCertificadoDoCliente = "C:/Users/wrpaiva/certificadoAR/certificado.pfx";
 			String caminhoDoCertificadoDoCliente = "/Users/sergio/Dropbox/DGB/NDS/Modelagem/NF-e/Certificados/ARSP/certificadodigitalarsp2014.jks";
 			String senhaDoCertificadoDoCliente = "arutil14";
 			AssinaturaTest assinarXMLsCertfificadoA1 = new AssinaturaTest();
@@ -166,9 +308,9 @@ public class AssinaturaTest {
 		NodeList elements = document.getElementsByTagName("infNFe");
 		org.w3c.dom.Element el = (org.w3c.dom.Element) elements.item(indexNFe);
 		String id = el.getAttribute("Id");
-		
+
 		el.setIdAttribute("Id", true);  
-		
+
 		Reference ref = fac.newReference("#" + id,
 				fac.newDigestMethod(DigestMethod.SHA1, null), transformList,
 				null, null);
@@ -188,7 +330,7 @@ public class AssinaturaTest {
 
 	private String assinaCancelametoInutilizacao(String xml,
 			String certificado, String senha, String tagCancInut)
-			throws Exception {
+					throws Exception {
 		Document document = documentFactory(xml);
 
 		XMLSignatureFactory signatureFactory = XMLSignatureFactory
@@ -207,8 +349,8 @@ public class AssinaturaTest {
 		SignedInfo si = signatureFactory.newSignedInfo(signatureFactory
 				.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
 						(C14NMethodParameterSpec) null), signatureFactory
-				.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
-				Collections.singletonList(ref));
+						.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+						Collections.singletonList(ref));
 
 		XMLSignature signature = signatureFactory.newXMLSignature(si, keyInfo);
 
@@ -220,7 +362,7 @@ public class AssinaturaTest {
 
 	private ArrayList<Transform> signatureFactory(
 			XMLSignatureFactory signatureFactory)
-			throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+					throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
 		ArrayList<Transform> transformList = new ArrayList<Transform>();
 		TransformParameterSpec tps = null;
 		Transform envelopedTransform = signatureFactory.newTransform(
@@ -234,7 +376,7 @@ public class AssinaturaTest {
 	}
 
 	private Document documentFactory(String xml) throws SAXException,
-			IOException, ParserConfigurationException {
+	IOException, ParserConfigurationException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		Document document = factory.newDocumentBuilder().parse(
@@ -318,6 +460,73 @@ public class AssinaturaTest {
 	 */
 	private static void info(String info) {
 		System.out.println("| INFO: " + info);
+	}
+
+	//tato třída slouží k nalezení veřejného klíče použitelného k odkryptování podpisu
+	private static class KeyNameKeySelector extends KeySelector {
+		protected KeyStore keyStore;
+
+		public KeyNameKeySelector(KeyStore keyStore) {
+			super();
+			this.keyStore = keyStore;
+		}
+
+		//tato metoda je volána knihovnou
+		public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, 
+				AlgorithmMethod method, XMLCryptoContext context) throws KeySelectorException {
+
+			if (keyInfo == null) {
+				throw new KeySelectorException("Null KeyInfo object!");
+			}
+			SignatureMethod sm = (SignatureMethod) method;
+			List list = keyInfo.getContent();
+
+			for (int i = 0; i < list.size(); i++) {
+				XMLStructure xmlStructure = (XMLStructure) list.get(i);
+				//my hledáme klíč podle jména (aliasu)
+				if (xmlStructure instanceof KeyName) {
+					try {
+						//natáhnem veřejný klíč z keystoru
+						Certificate certificate = keyStore.getCertificate(((KeyName) xmlStructure).getName());
+						PublicKey pk = certificate.getPublicKey();
+						//ověříme, že v podpisu je stejný algoritmus jako používá klíč
+						if (algEquals(sm.getAlgorithm(), pk.getAlgorithm())) {
+							return new SimpleKeySelectorResult(pk);
+						}
+					} catch (KeyStoreException kse) {
+						throw new KeySelectorException(kse);
+					}
+				}
+			}
+			throw new KeySelectorException("No KeyValue element found!");
+		}
+
+		//pouze porovnává algoritmy
+		static boolean algEquals(String algURI, String algName) {
+			if (algName.equalsIgnoreCase("DSA") 
+					&& algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1)) {
+				return true;
+			} else if (algName.equalsIgnoreCase("RSA") 
+					&& algURI.equalsIgnoreCase(SignatureMethod.RSA_SHA1)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		//jenom holder pro klíč
+		private static class SimpleKeySelectorResult implements KeySelectorResult {
+			private Key pk;
+
+			SimpleKeySelectorResult(Key pk) {
+				this.pk = pk;
+			}
+
+			public Key getKey() {
+				return pk;
+			}
+		}
+
 	}
 
 }
