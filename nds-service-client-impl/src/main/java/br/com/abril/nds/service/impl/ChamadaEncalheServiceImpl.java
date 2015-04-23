@@ -835,7 +835,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 
 			if(endereco != null) {
 				dto.setEndereco( (endereco.getTipoLogradouro() != null ? endereco.getTipoLogradouro().toUpperCase().trim() + ": " :"")
-									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + endereco.getNumero().trim());
+									+ endereco.getLogradouro().toUpperCase().trim()  + ", " + (endereco.getNumero() != null ? endereco.getNumero() : ""));
 				dto.setUf(endereco.getUf().trim());
 				dto.setCidade(endereco.getCidade().trim());
 				dto.setUf(endereco.getUf().trim());
