@@ -2199,8 +2199,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
 							controleConferenciaEncalheCota.getCota().getNumeroCota());
 			
-			if (!cotaUnificadora && !cotaUnificada){
-			
+			if (!cotaUnificadora && !cotaUnificada) {
 				
 				FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(controleConferenciaEncalheCota.getCota().getId()
 										, null, controleConferenciaEncalheCota.getDataOperacao());
