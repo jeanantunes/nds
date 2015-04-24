@@ -479,7 +479,7 @@ public class EnderecoController extends BaseController {
         final List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
         for (final EnderecoAssociacaoDTO item : listaExibir){
             
-            if (item.getEndereco().getCep().equals(enderecoAssociacao.getEndereco().getCep())&&(item.getEndereco().getNumero().equals(enderecoAssociacao.getEndereco().getNumero()))){
+            if (item.getEndereco().getCep().equals(enderecoAssociacao.getEndereco().getCep()) && (item.getEndereco().getNumero() != null && item.getEndereco().getNumero().equals(enderecoAssociacao.getEndereco().getNumero()))){
                 
                 throw new ValidacaoException(TipoMensagem.WARNING, "Endereço já cadastrado.");
             }

@@ -95,8 +95,8 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 			KeyInfo keyInfo = keyInfoBuilder.newKeyInfo(certificate);
 			DOMSignContext dsc = new DOMSignContext(privateKey, parentElement);
 			XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, keyInfo);
-			signature.sign(dsc);
 			logger.debug(" Primeiro digest value encontrado  {}", ((Reference) signature.getSignedInfo().getReferences().get(0)).getDigestValue());
+			signature.sign(dsc);
 			//logger.debug(" Primeiro digest value encontrado  {}", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getHere());
 			InputStreamReader isr = new InputStreamReader(signature.getSignedInfo().getCanonicalizedData());
 			char[] cbuf = new char[1024];

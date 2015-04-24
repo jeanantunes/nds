@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -713,7 +714,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF();
 					String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
 
-					signatureHandler.sign(new DOMStructure(root), "infNFe");
 
 					OutputStream os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
 					TransformerFactory tf = TransformerFactory.newInstance();
@@ -726,6 +726,26 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					os.flush();
 					os.close();
 					ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
+					
+					// Instantiate the document to be signed.   
+					DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();   
+					dbf.setNamespaceAware(true);   
+					Document doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml")));   
+
+					NodeList elementos = doc.getElementsByTagName("infNFe");
+					Element elo = (Element) elementos.item(0);
+					elo.setIdAttribute("Id", true);
+					
+					signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");
+					
+					os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					tf = TransformerFactory.newInstance();
+					trans = null;
+
+					trans = tf.newTransformer();
+					trans.transform(new DOMSource(doc), new StreamResult(os));
+
+					
 				} catch (ParserConfigurationException e) {
 					LOGGER.error("Erro ao gerar XML", e);
 					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar XML.");

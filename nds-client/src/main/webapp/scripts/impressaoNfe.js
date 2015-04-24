@@ -707,7 +707,7 @@ var impressaoNfeController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "idCota",
+			sortname : "idNota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

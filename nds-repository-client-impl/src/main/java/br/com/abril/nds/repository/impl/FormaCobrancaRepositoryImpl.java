@@ -83,20 +83,15 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		
-		hql.append(" select f from FormaCobranca f ");		
-
-		hql.append(" join f.parametroCobrancaCota pcc ");
-		
+		hql.append(" select f from Cota c ");		
+		hql.append(" join c.parametroCobranca pcc ");
+		hql.append(" join pcc.formasCobrancaCota f ");
 		hql.append(" left join f.fornecedores fnc ");
-		
 		hql.append(" left join f.concentracaoCobrancaCota ccc ");
-		
 		hql.append(" where f.ativa = :indAtiva ");
+		hql.append(" and c.id = :idCota ");
 		
-		hql.append(" and pcc.cota.id = :idCota ");
-		
-		if (idFornecedor!=null){
+		if (idFornecedor != null) {
 		
 		    hql.append(" and fnc.id = :idFornecedor ");
 		}
@@ -115,7 +110,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         
         query.setParameter("idCota", idCota);
         
-        if (idFornecedor!=null){
+        if (idFornecedor != null) {
         	
             query.setParameter("idFornecedor", idFornecedor);
         }

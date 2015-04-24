@@ -3,7 +3,9 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
@@ -79,6 +82,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 
 	@Autowired 
 	private NaturezaOperacaoRepository naturezaOperacaoRepository;
+
+	@Autowired
+    private RoteirizacaoRepository roteirizacaoRepository;
 	
 	@Transactional
 	public List<ProdutoDTO> obterProdutosExpedicaoConfirmada(FiltroImpressaoNFEDTO filtro) {
@@ -244,7 +250,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				/**
 				 * Nota de Envio Buscar quando houver chave de acesso
 				 */
-				List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+				List<NotaFiscal> notas = ordenarNotasEnvioPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
 				
 				for (NotaFiscal notaFiscal : notas) {
 					DanfeDTO danfe = montarDanfe(notaFiscal);
@@ -258,10 +264,52 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		} else {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao comparar o tipo de atividade");
 		}
-		
+
 		return DanfeBuilder.gerarDocumentoIreport(listaDanfeWrapper, false, obterDiretorioReports(), logoDistribuidor);
 	}
 
+    /**
+	* Ordena a lista de Notas de Fiscais por Roteirização.
+	* 
+	* @param notasFiscais - lista de notas fiscais
+	* 
+	* @return List<NotaFiscal>
+	*/
+	private List<NotaFiscal> ordenarNotasEnvioPorRoteirizacao(final List<NotaFiscal> notasFiscais) {
+	
+		final Map<Integer, List<NotaFiscal>> mapaNotasFiscaisPorCota = new HashMap<Integer, List<NotaFiscal>>();
+		
+		for (final NotaFiscal ne : notasFiscais) {
+		
+			final Integer numeroCota = ne.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getNumeroCota();
+		
+			List<NotaFiscal> nes = mapaNotasFiscaisPorCota.get(numeroCota);
+		
+			if (nes == null) {
+		
+				nes = new ArrayList<NotaFiscal>();
+			}
+		
+			nes.add(ne);
+		
+			mapaNotasFiscaisPorCota.put(numeroCota, nes);
+		}
+	
+		final List<Integer> numerosCotaOrdenadosPelaRoteirizacao = roteirizacaoRepository.obterNumerosCotaOrdenadosRoteirizacao();
+	
+		final List<NotaFiscal> notasFiscaisOrdenadas = new ArrayList<>();
+	
+		for (final Integer numeroCota : numerosCotaOrdenadosPelaRoteirizacao) {
+	
+			if (mapaNotasFiscaisPorCota.containsKey(numeroCota)) {
+	
+				notasFiscaisOrdenadas.addAll(mapaNotasFiscaisPorCota.get(numeroCota));
+			}
+		}
+	
+		return notasFiscaisOrdenadas;
+	}
+	
 	private DanfeDTO montarDanfe(NotaFiscal notaFiscal) {
 		
 		DanfeDTO danfe = new DanfeDTO();

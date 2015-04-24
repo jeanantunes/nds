@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
@@ -96,10 +97,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append(" where")
 		.append(" infElet.chaveAcesso is not null ")
 		.append(" AND retComElet.protocolo is not null ")
+		.append(" AND retComElet.statusRetornado = :statusNFe ")
 		.append(" AND nf.id in (:idNotas) ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("idNotas", filtro.getNumerosNotas());
+		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
 		
 		return query.list();
 	}
@@ -570,7 +573,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
 		 */
 		StringBuilder hql = new StringBuilder("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
-			.append(" notaFiscal.id ")
+			.append(" notaFiscal.id as idNota")
 			.append(", notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
 			.append(", notaFiscal.notaFiscalInformacoes.notaImpressa ")
 			.append(", cota ")
@@ -589,8 +592,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
 			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
 			.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
-			.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ");
-
+			.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ")
+			.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
+		
 		
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {
@@ -640,7 +644,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" group by notaFiscal.id ");
 		}
 		
-		if(!isCount && !isPagination){
+		if(isCount && isPagination){
 			if(filtro.getPaginacao()!=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
 			}
@@ -653,6 +657,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
+		
+		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
 		
 		// Data Movimento:	...  Até   ...
 		if (filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {

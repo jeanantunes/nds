@@ -16,6 +16,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.commons.httpclient.protocol.Protocol;
 
+import br.com.abril.nfe.integracao.NfeConsulta2Stub;
 import br.com.abril.nfe.integracao.NfeRecepcao2Stub;
 
 public class NFeRecepcao {
@@ -39,14 +40,14 @@ public class NFeRecepcao {
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfeinutilizacao/NfeInutilizacao2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfeconsulta/NfeConsulta2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfestatusservico/NfeStatusServico2.asmx");
-            File file = new File("C:/Users/wrpaiva/certificadoAR/certificado.pfx");
+            File file = new File("C:/Users/wrpaiva/certificadoAR/CertificadosHomologacaoNFe2013.pfx");
             X509Certificate certificate = null;
 
             if (file.exists()) {
                 try {
                     KeyStore keyStore = KeyStore.getInstance("PKCS12");
                     InputStream is = new FileInputStream(file);
-                    String senha = "arutil14";
+                    String senha = "changeit";
                     keyStore.load(is, senha.toCharArray());
                     is.close();
 
@@ -92,9 +93,9 @@ public class NFeRecepcao {
         	            }
                     }
 
-                    NfeRecepcao2Stub.NfeDadosMsg dadosMsg = new NfeRecepcao2Stub.NfeDadosMsg();
+                    NfeConsulta2Stub.NfeDadosMsg dadosMsg = new NfeConsulta2Stub.NfeDadosMsg();
                     dadosMsg.setExtraElement(ome);
-                    NfeRecepcao2Stub.NfeCabecMsg nfeCabecMsg = new NfeRecepcao2Stub.NfeCabecMsg();
+                    NfeConsulta2Stub.NfeCabecMsg nfeCabecMsg = new NfeConsulta2Stub.NfeCabecMsg();
                     /**
                      * Código do Estado.
                      */
@@ -105,11 +106,11 @@ public class NFeRecepcao {
                      */
                     nfeCabecMsg.setVersaoDados("3.10");
 
-                    NfeRecepcao2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeRecepcao2Stub.NfeCabecMsgE();
+                    NfeConsulta2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeConsulta2Stub.NfeCabecMsgE();
                     nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
 
-                    NfeRecepcao2Stub stub = new NfeRecepcao2Stub(url.toString());
-                    NfeRecepcao2Stub.NfeRecepcaoLote2Result result = stub.nfeRecepcaoLote2(dadosMsg, nfeCabecMsgE);
+                    NfeConsulta2Stub stub = new NfeConsulta2Stub(url.toString());
+                    NfeConsulta2Stub.NfeConsultaNF2Result result = stub.nfeConsultaNF2(dadosMsg, nfeCabecMsgE);
 
                     System.out.println(result.getExtraElement().toString());
                     
