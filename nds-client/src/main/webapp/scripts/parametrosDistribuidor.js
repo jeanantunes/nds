@@ -47,8 +47,7 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 
 	recarregarDiasDistribuidorFornecedorGrid: function() {
-		$.postJSON(
-				parametrosDistribuidorController.path + "recarregarDiasDistribuidorFornecedorGrid", 
+		$.postJSON(parametrosDistribuidorController.path + "recarregarDiasDistribuidorFornecedorGrid", 
 			null,
 			function (resultado) {
 				if (resultado.mensagens) {
@@ -93,8 +92,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.endereco.complemento', value: $('#complemento', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
-			//{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()}, 
-			{name:'parametrosDistribuidor.endereco.uf', value: "SP"}, 
+			{name:'parametrosDistribuidor.endereco.uf', value: $('#DISTRIBUIDORuf', this.workspace).val()}, 
 			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val() != undefined ? $('#codigoCidadeIBGE', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val() != undefined ? $('#codigoBairro', this.workspace).val() : ''},
 			

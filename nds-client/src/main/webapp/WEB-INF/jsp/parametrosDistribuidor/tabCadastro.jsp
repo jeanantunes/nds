@@ -112,7 +112,7 @@
 				</td>
 				<td>UF:</td>
 				<td>
-					<select style="width: 50px" id="uf" name="uf"></select>
+					<select style="width: 50px" id="DISTRIBUIDORuf" name="uf"></select>
 				</td>
 			</tr>
 			<tr>
@@ -123,6 +123,9 @@
 						   onkeyup="endereco.autoCompletarLocalidades();"
 						   onblur="endereco.autoCompletarLocalidades(true);"
 						   maxlength="60"/>
+					<input type="hidden" id="codigoCidadeIBGE" name="codigoCidadeIBGE"
+						   value="${parametrosDistribuidor.endereco.codigoCidadeIBGE}"
+						   />
 				</td>
 			</tr>
 			<tr>

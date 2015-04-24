@@ -36,7 +36,7 @@
 	
 	parametrosDistribuidorController.init();
 	
-	var endereco = new Endereco("", "");
+	var endereco = new Endereco("DISTRIBUIDOR", "");
 	
 	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
 	bloquearItensEdicao(parametrosDistribuidorController.workspace);
