@@ -3,6 +3,7 @@ package br.com.abril.nds.model.fiscal.nota;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -14,6 +15,7 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -487,8 +489,10 @@ public class Identificacao implements Serializable {
 	private Date horaSaidaEntrada;
 	
 	@Transient
-	@XmlElement(name="NFref")
-	private NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWapper;
+//	@XmlElement(name="NFref")
+//	private NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWapper;
+	@XmlElements(value={ @XmlElement(name="NFref") })
+	private List<NotaFiscalReferenciada> listReferenciadas;
 	
 	/**
 	 * dhCont
@@ -626,12 +630,12 @@ public class Identificacao implements Serializable {
 		this.horaSaidaEntrada = horaSaidaEntrada;
 	}
 
-	public NotaFiscalReferenciadaWrapper getNotaFiscalReferenciada() {
-		return notaFiscalReferenciadaWapper;
+	public List<NotaFiscalReferenciada> getListReferenciadas() {
+		return listReferenciadas;
 	}
 
-	public void setNotaFiscalReferenciada(NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWapper) {
-		this.notaFiscalReferenciadaWapper = notaFiscalReferenciadaWapper;
+	public void setListReferenciadas(List<NotaFiscalReferenciada> listReferenciadas) {
+		this.listReferenciadas = listReferenciadas;
 	}
 
 	/**

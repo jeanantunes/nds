@@ -19,7 +19,7 @@ public class NotaFiscalReferenciadaWrapper implements Serializable {
 	private static final long serialVersionUID = 2313535449916955751L;
 	
 	@OneToMany(mappedBy="pk.notaFiscal", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	@XmlElements(value={ @XmlElement(name="refNFe") })
+	@XmlElements(value={ @XmlElement(name="NFref") })
 	private List<NotaFiscalReferenciada> listReferenciadas;
 
 	public List<NotaFiscalReferenciada> getListReferenciadas() {

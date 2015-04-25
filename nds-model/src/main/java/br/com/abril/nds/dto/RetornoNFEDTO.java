@@ -31,6 +31,8 @@ public class RetornoNFEDTO implements Serializable {
 	
 	private Date dataRecebimento;
 	
+	private String tpEvento;
+	
 	public Long getIdNota() {
 		return idNota;
 	}
@@ -135,4 +137,13 @@ public class RetornoNFEDTO implements Serializable {
 	public void setCpfCnpj(String cpfCnpj) {
 		this.cpfCnpj = cpfCnpj;
 	}
+
+	public String getTpEvento() {
+		return tpEvento;
+	}
+
+	public void setTpEvento(String tpEvento) {
+		this.tpEvento = tpEvento;
+	}
+	
 }

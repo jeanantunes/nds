@@ -166,9 +166,9 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		if(((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
-			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()));
+			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs());
 		} else {
-			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()));
+			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()).abs());
 		}
 		
 		produtoServico.setValorUnitario(valorUnitario);

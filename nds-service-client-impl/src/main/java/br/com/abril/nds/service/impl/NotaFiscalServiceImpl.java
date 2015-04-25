@@ -75,6 +75,9 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoFiscal;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.OrigemItem;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
@@ -87,7 +90,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaWrapper;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
@@ -283,7 +285,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				if (dadosRetornoNFE.getStatus().equals(StatusRetornado.CANCELAMENTO_HOMOLOGADO)) {
 					notaFiscal = this.notaFiscalRepository.obterChaveAcesso(dadosRetornoNFE);
 				} else {
-					notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
+					notaFiscal = this.notaFiscalRepository.buscarNotaFiscalChaveAcesso(dadosRetornoNFE.getChaveAcesso());
 				}
 
 				if (notaFiscal != null) {
@@ -320,34 +322,40 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional(rollbackFor = Exception.class)
 	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 
-		System.out
-				.println("Realizar a solicitação de um pedido de cancelamento da nota");
+		System.out.println("Realizar a solicitação de um pedido de cancelamento da nota");
 
 		// validar se a nota fiscal emitida esta no prazo de 24 horas
-		if (Util.diferencaEntreDatasEmDias(
-				dadosRetornoNFE.getDataRecebimento(), new Date()) > 1) {
-			throw new ValidacaoException(
-					TipoMensagem.ERROR,
-					"O cancelamento da nota não pode ser realizado, a data ultrapassa o prazo limite de 24 horas.");
+		if (Util.diferencaEntreDatasEmDias(dadosRetornoNFE.getDataRecebimento(), new Date()) > 1) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "O cancelamento da nota não pode ser realizado, a data ultrapassa o prazo limite de 24 horas.");
 		}
 
-		NotaFiscal notaFiscal = this.notaFiscalRepository
-				.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
-
-		this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalChaveAcesso(dadosRetornoNFE.getChaveAcesso());
+		if(notaFiscal != null && notaFiscal.getNotaFiscalInformacoes() != null && notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal() != null) {
+			
+			for(DetalheNotaFiscal detNF : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+				
+				for(OrigemItemNotaFiscal origemItem : detNF.getProdutoServico().getOrigemItemNotaFiscal()) {
+					if(origemItem.getOrigem().equals(OrigemItem.MOVIMENTO_ESTOQUE_COTA)) {
+						
+						MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) origemItem).getMovimentoEstoqueCota();
+						mec.setNotaFiscalEmitida(false);
+					}
+				}
+			}
+		}
+		
+//		this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
 
 	}
 
-	private void gerarArquivoSolicitacaoCancelamento(NotaFiscal notaFiscal)
-			throws TransformerFactoryConfigurationError {
+	private void gerarArquivoSolicitacaoCancelamento(NotaFiscal notaFiscal) throws TransformerFactoryConfigurationError {
 		try {
+			
 			Document document = this.criarDocumentoCancelamento(notaFiscal);
-			ParametroSistema diretorioSaida = parametroSistemaService
-					.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
-			String numeroNF = notaFiscal.getNotaFiscalInformacoes()
-					.getIdentificacao().getNumeroDocumentoFiscal().toString();
-			String serieNF = notaFiscal.getNotaFiscalInformacoes()
-					.getIdentificacao().getSerie().toString();
+			ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
+			String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNumeroDocumentoFiscal().toString();
+			String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
 
 			OutputStream os2 = new FileOutputStream(diretorioSaida.getValor()
 					+ "/" + "NF-e-Solicitacao-Cancelamento" + serieNF + "-"
@@ -814,12 +822,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 		identificacao.setTipoEmissao(TipoEmissao.NORMAL);
 
-		if(identificacao.getNotaFiscalReferenciada() == null) {
-			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
-			notaFiscalReferenciadaWrapper.setListReferenciadas(listNotaFiscalReferenciada);
-			identificacao.setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
+		if(identificacao.getListReferenciadas() == null) {
+			identificacao.setListReferenciadas(new ArrayList<NotaFiscalReferenciada>());
 		} else {
-			identificacao.getNotaFiscalReferenciada().setListReferenciadas(listNotaFiscalReferenciada);
+			identificacao.setListReferenciadas(listNotaFiscalReferenciada);
 		}
 		
 		return identificacao;

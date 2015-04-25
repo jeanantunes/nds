@@ -44,7 +44,7 @@ public class NotaFiscalReferenciada implements Serializable {
 	 * refCTe
 	 */
 	@Column(name="CHAVE_ACESSO_CTE", length=44, nullable=false)
-	@XmlElement(name="refCTe")
+	@XmlElement(name="refNFe")
 	private String chaveAcessoCTe;
 
 	@Embedded

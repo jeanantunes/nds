@@ -219,8 +219,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setCodigoDistribuidorDinap(distribuidor.getCodigoDistribuidorDinap());
 		parametrosDistribuidor.setCodigoDistribuidorFC(distribuidor.getCodigoDistribuidorFC());
 		
-		parametrosDistribuidor.setEndereco(
-			this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
+		parametrosDistribuidor.setEndereco(this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
 		
 		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
@@ -356,34 +355,24 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	        
 	        if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
 	            parametrosDistribuidor.setUtilizaChequeCaucao(true);
-	            parametrosDistribuidor
-	            .setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
+	            parametrosDistribuidor.setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
 	            parametrosDistribuidor.setUtilizaFiador(true);
-	            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
 	            parametrosDistribuidor.setUtilizaImovel(true);
-	            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
 	            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
-	            parametrosDistribuidor
-	            .setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
+	            parametrosDistribuidor.setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
 	            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
-	            parametrosDistribuidor
-	            .setValidadeNotaPromissoria(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeNotaPromissoria(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-	           
-	            parametrosDistribuidor
-	            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeAntecedenciaValidade(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
 	            parametrosDistribuidor.setUtilizaOutros(true);
-	            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita.getValor());
 	        }
 	    }
 	    
@@ -604,7 +593,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCep(enderecoVO.getCep());
 		endereco.setTipoLogradouro(enderecoVO.getTipoLogradouro());
 		endereco.setLogradouro(enderecoVO.getLogradouro());
-		endereco.setNumero((enderecoVO.getNumero().trim().isEmpty()) ? null : enderecoVO.getNumero());
+		endereco.setNumero((enderecoVO.getNumero() == null || enderecoVO.getNumero().trim().isEmpty()) ? null : enderecoVO.getNumero());
 		endereco.setComplemento(enderecoVO.getComplemento());
 		endereco.setBairro(enderecoVO.getBairro());
 		endereco.setCidade(enderecoVO.getLocalidade());
@@ -651,8 +640,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		enderecoVO.setLocalidade(endereco.getCidade());
 		enderecoVO.setUf(endereco.getUf());
 		
-		enderecoVO.setCodigoCidadeIBGE(
-			(endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());
+		enderecoVO.setCodigoCidadeIBGE((endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());
 		
 		return enderecoVO;
 	}

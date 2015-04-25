@@ -69,7 +69,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaNFE;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaWrapper;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -1365,23 +1364,21 @@ public class NFeServiceImpl implements NFeService {
 			
 			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPeloItensNotas(produtoEdicoesIds, tipoDestinatario);				
 
-			NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWrapper = null;
 			if(notaFiscalDTOs != null ) {
-				notaFiscalReferenciadaWrapper = new NotaFiscalReferenciadaWrapper();
 				for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {
 					notaReferenciada = new NotaFiscalReferenciada();
-					if(notaReferenciada.getNotaFiscalReferenciadaNFE() == null){
+					notaReferenciada.setChaveAcessoCTe(notaFiscalDTO.getChaveAcesso());
+					/*if(notaReferenciada.getNotaFiscalReferenciadaNFE() == null){
 						NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE = new NotaFiscalReferenciadaNFE();
 						notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
 						
 					}
-					
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setCodigoUF(notaFiscalDTO.getCodigoUF());
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setCnpj(notaFiscalDTO.getCnpj());
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setDataEmissao(notaFiscalDTO.getDataEmissao());
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setModelo(notaFiscalDTO.getModelo());
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setNumeroDocumentoFiscal(notaFiscalDTO.getNumero());
-					notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(String.valueOf(notaFiscalDTO.getSerie()));
+					notaReferenciada.getNotaFiscalReferenciadaNFE().setSerie(String.valueOf(notaFiscalDTO.getSerie()));*/
 					
 					NotaFiscalReferenciadaPK pk = new NotaFiscalReferenciadaPK();
 					pk.setChaveAcesso(notaFiscalDTO.getChaveAcesso());
@@ -1389,10 +1386,9 @@ public class NFeServiceImpl implements NFeService {
 					notaReferenciada.setPk(pk);
 					listaNotaFiscalReferenciadas.add(notaReferenciada);
 						
-					notaFiscalReferenciadaWrapper.setListReferenciadas(new ArrayList<>(listaNotaFiscalReferenciadas));
 				}
 				
-				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setNotaFiscalReferenciada(notaFiscalReferenciadaWrapper);
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setListReferenciadas(new ArrayList<NotaFiscalReferenciada>(listaNotaFiscalReferenciadas));
 			}			
 
 		}

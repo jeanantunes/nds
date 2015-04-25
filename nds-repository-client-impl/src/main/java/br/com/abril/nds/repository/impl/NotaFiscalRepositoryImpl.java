@@ -244,7 +244,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 
 	@Override
-	public NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE) {
+	public NotaFiscal buscarNotaFiscalChaveAcesso(String chaveAcesso) {
 
 		StringBuffer sql = new StringBuffer("");
 		
@@ -252,16 +252,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN nfi.identificacao as ident ")
-		.append(" WHERE")
-		.append(" ident.numeroDocumentoFiscal = :numeroNotaFiscal ");
-		
+		.append(" WHERE 1 = 1");
+	
 		sql.append(" AND infElet.chaveAcesso = :chaveAcesso ");
 		
 		Query query = this.getSession().createQuery(sql.toString());
-
 				
-		query.setParameter("numeroNotaFiscal", dadosRetornoNFE.getNumeroNotaFiscal());
-		query.setParameter("chaveAcesso", dadosRetornoNFE.getChaveAcesso());
+		query.setParameter("chaveAcesso", chaveAcesso);
 
 		return (NotaFiscal) query.uniqueResult();
 
@@ -326,7 +323,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" mec.cota.id as idCota, ");
 		hql.append(" mec.cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
-		hql.append(" SUM(case when tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN mec.qtde ELSE -mec.qtde END) as exemplares, ");
+		hql.append(" SUM(case when tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada THEN mec.qtde ELSE -mec.qtde END) as exemplares, ");
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto, "); 	
 		hql.append(" mec.cota.situacaoCadastro as situacaoCadastro, ");
@@ -444,7 +441,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
-		.append(" JOIN mec.lancamento lancamento ")
+		.append(" LEFT OUTER JOIN mec.lancamento lancamento ")
 		.append(" JOIN mec.cota cota ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" LEFT JOIN cota.box box ")

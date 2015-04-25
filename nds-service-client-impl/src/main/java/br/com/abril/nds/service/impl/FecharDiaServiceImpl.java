@@ -1772,6 +1772,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		String dir = ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator;
 		File diretorio = new File(dir); 
+		
+		if(diretorio == null || diretorio.listFiles() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, Arrays.asList(
+					String.format("O diretório %s não existe.", diretorio),
+					"É necessário criá-lo com permissões de leitura e escrita."));
+		}
+
 		for(File input : diretorio.listFiles()) {
 			if(input.isDirectory()) continue;			
 			input.delete();

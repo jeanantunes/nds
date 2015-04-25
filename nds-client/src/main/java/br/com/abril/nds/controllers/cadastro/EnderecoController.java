@@ -261,7 +261,6 @@ public class EnderecoController extends BaseController {
         
         validarExistenciaEnderecoPrincipal(enderecoAssociacao);
         
-        
         if (enderecoAssociacao.getEndereco() != null && enderecoAssociacao.getEndereco().getCep() != null) {
             
             enderecoAssociacao.getEndereco().setCep(retirarFormatacaoCep(enderecoAssociacao.getEndereco().getCep()));
@@ -271,14 +270,13 @@ public class EnderecoController extends BaseController {
         
         final List<EnderecoAssociacaoDTO> listaExibir = this.obterEnderecosSessaoExibir();
         
-        
         if (enderecoAssociacao.getId() != null){
             
             boolean alteracao = false;
             
-            for (int index = 0 ; index < listaEnderecoAssociacao.size() ; index++){
+            for (int index = 0 ; index < listaEnderecoAssociacao.size() ; index++) {
                 
-                if (listaEnderecoAssociacao.get(index).getId().equals(enderecoAssociacao.getId())){
+                if (listaEnderecoAssociacao.get(index).getId().equals(enderecoAssociacao.getId())) {
                     
                     listaEnderecoAssociacao.set(index, enderecoAssociacao);
                     
@@ -288,16 +286,16 @@ public class EnderecoController extends BaseController {
                 }
             }
             
-            if (!alteracao){
+            if (!alteracao) {
                 
                 listaEnderecoAssociacao.add(enderecoAssociacao);
             }
             
             alteracao = false;
             
-            for (int index = 0 ; index < listaExibir.size() ; index++){
+            for (int index = 0 ; index < listaExibir.size() ; index++) {
                 
-                if (listaExibir.get(index).getId().equals(enderecoAssociacao.getId())){
+                if (listaExibir.get(index).getId().equals(enderecoAssociacao.getId())) {
                     
                     listaExibir.set(index, enderecoAssociacao);
                     
@@ -307,7 +305,7 @@ public class EnderecoController extends BaseController {
                 }
             }
             
-            if (!alteracao){
+            if (!alteracao) {
                 
                 listaExibir.add(enderecoAssociacao);
             }
@@ -331,7 +329,7 @@ public class EnderecoController extends BaseController {
         
         session.setAttribute(ENDERECO_PENDENTE, Boolean.TRUE);
         
-        this.pesquisarEnderecos(tela,null, null);
+        this.pesquisarEnderecos(tela, null, null);
     }
     
 	                    /**

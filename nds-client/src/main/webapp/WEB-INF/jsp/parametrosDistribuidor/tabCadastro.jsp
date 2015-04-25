@@ -103,7 +103,7 @@
 				<td>CEP:</td>
 				<td width="180">
 					<input type="text" style="float: left; margin-right: 5px;" 
-						   id="cep" name="cep"
+						   id="DISTRIBUIDORcep" name="cep"
 						   value="${parametrosDistribuidor.endereco.cep}"
 						   maxlength="9" />
 					<span class="classPesquisar" title="Pesquisar Cep.">
@@ -112,7 +112,7 @@
 				</td>
 				<td>UF:</td>
 				<td>
-					<select style="width: 50px" id="uf" name="uf"></select>
+					<select style="width: 50px" id="DISTRIBUIDORuf" name="uf"></select>
 				</td>
 			</tr>
 			<tr>
@@ -123,6 +123,9 @@
 						   onkeyup="endereco.autoCompletarLocalidades();"
 						   onblur="endereco.autoCompletarLocalidades(true);"
 						   maxlength="60"/>
+					<input type="hidden" id="DISTRIBUIDORcodigoCidadeIBGE" name="codigoCidadeIBGE"
+						   value="${parametrosDistribuidor.endereco.codigoCidadeIBGE}"
+						   />
 				</td>
 			</tr>
 			<tr>

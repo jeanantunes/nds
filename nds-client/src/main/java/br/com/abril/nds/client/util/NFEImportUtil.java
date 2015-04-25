@@ -2,8 +2,6 @@ package br.com.abril.nds.client.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.xml.XMLConstants;
@@ -14,6 +12,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -23,9 +22,11 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
-import br.inf.portalfiscal.nfe.TProcCancNFe;
+import br.com.abril.nds.util.StringUtil;
+import br.inf.portalfiscal.nfe.v310.TEvento;
 import br.inf.portalfiscal.nfe.v310.TNFe;
 import br.inf.portalfiscal.nfe.v310.TNfeProc;
+import br.inf.portalfiscal.nfe.v310.TProcEvento;
 import br.inf.portalfiscal.nfe.v310.TRetCancNFe;
 
 /**
@@ -48,12 +49,12 @@ public abstract class NFEImportUtil {
     /**
      * Constante com caminho do arquivo do xsd do POJO TNfeProc
      */
-    private static final String XSD_PPROC_NFE = "/procNFe_v";
+    private static final String XSD_PROC_NFE = "/procNFe_v";
     
     /**
      * Constante com caminho do arquivo do xsd do POJO TProcCancNFe
      */
-    private static final String XSD_PROC_CANC_NFE = "/retCancNFe_v";
+    private static final String XSD_PROC_CANC_NFE = "/procEventoCancNFe_v";
     
     /**
      * Constante da quantidade de dígitos da chave acesso.
@@ -78,37 +79,31 @@ public abstract class NFEImportUtil {
         
         try {
         
-	        if (validarSchemaXML(XSD_NFE, arquivo, schemaPath)) {
+	        if (validarSchemaXML(XSD_NFE, arquivo, schemaPath, null)) {
+	        	
 	        	context = JAXBContext.newInstance(TNFe.class);
 	            unmarshaller = context.createUnmarshaller();
-	            
 	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
 	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
 	            
 	            return retornoNFEDTO;
 	            
-	        } else if(validarSchemaXML(XSD_PPROC_NFE, arquivo, schemaPath)) {
+	        } else if(validarSchemaXML(XSD_PROC_NFE, arquivo, schemaPath, null)) {
 	        	
-	        	//context = JAXBContext.newInstance(TNfeProc.class);
-	            //unmarshaller = context.createUnmarshaller();
-	        	//final TNfeProc nfeProc = (TNfeProc) unmarshaller.unmarshal(arquivo);
-	            
 				context = JAXBContext.newInstance(TNfeProc.class);  
-			   
 				unmarshaller = context.createUnmarshaller();  
-			   
 				TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(arquivo), TNfeProc.class).getValue();  
-			   
 				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
 	            
 				return retornoNFEDTO;
 				
-	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath)) {
+	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath, "1.00")) {
 	        	
-	        	context = JAXBContext.newInstance(TProcCancNFe.class);
+	        	context = JAXBContext.newInstance(TProcEvento.class);
                 unmarshaller = context.createUnmarshaller();
-                final TRetCancNFe retornoCancelamentoNFe = (TRetCancNFe) unmarshaller.unmarshal(arquivo);
-                retornoNFEDTO = NFEImportUtil.retornoNFeCancNFe(retornoCancelamentoNFe);
+                TProcEvento retornoCancelamentoNFe = unmarshaller.unmarshal(new StreamSource(arquivo), TProcEvento.class).getValue();
+                retornoNFEDTO = NFEImportUtil.retornoNFeEnvEvento(retornoCancelamentoNFe);
+                
                 return retornoNFEDTO;
 	        } else {
 	        	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
@@ -187,16 +182,8 @@ public abstract class NFEImportUtil {
             final String chaveAcesso = nfeProc.getNFe().getInfNFe().getId().substring(3);
             final Long protocolo = Long.parseLong(nfeProc.getProtNFe().getInfProt().getNProt());
             
-            Date dataRecebimento = null;
-            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-            
-        	try {
-        		dataRecebimento = dateParser.parse(nfeProc.getProtNFe().getInfProt().getDhRecbto());
-
-        	} catch (ParseException e) {
-        		throw new ValidacaoException(TipoMensagem.ERROR, "Erro na conversão da date recebida nfe");
-        	}
-            
+//            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+            Date dataRecebimento = nfeProc.getProtNFe().getInfProt().getDhRecbto().toGregorianCalendar().getTime();
             
             final String motivo = null;
             
@@ -255,23 +242,72 @@ public abstract class NFEImportUtil {
     }
     
     /**
-     * Metodo por validar o schema de xml
+     * Obtém os dados de Retorno do Arquivo da NFe Cancelada.
      * 
-     * @param versao
-     * @param tipoSchema
+     * @param procEventoNFe
+     * @return
+     * @throws ProcessamentoNFEException
      */
-	public static boolean validarSchemaXML(final String tipoSchema, final File arquivo, final String schemaPàth) {
+    private static RetornoNFEDTO retornoNFeEnvEvento(final TProcEvento procEventoNFe) throws ProcessamentoNFEException {
+    	
+        final RetornoNFEDTO retornoNFEDTO = new RetornoNFEDTO();
+        
+        if (procEventoNFe != null && procEventoNFe.getEvento() != null) {
+            
+        	TEvento evento = procEventoNFe.getEvento();
+        		
+        	evento.getInfEvento().getTpEvento();
+    		final Long idNotaFiscal = null;
+    		final String cpfCnpj = evento.getInfEvento().getCNPJ() != null && !StringUtil.isEmpty(evento.getInfEvento().getCNPJ()) ? evento.getInfEvento().getCNPJ() : evento.getInfEvento().getCPF();
+    		final String chaveAcesso = evento.getInfEvento().getChNFe();
+    		final Long protocolo = Long.parseLong(evento.getInfEvento().getDetEvento().getNProt());
+    		
+    		Date dataRecebimento = null;
+			dataRecebimento = new DateTime(evento.getInfEvento().getDhEvento()).toDate();
+    		
+    		retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
+    		retornoNFEDTO.setCpfCnpj(cpfCnpj);
+    		retornoNFEDTO.setChaveAcesso(chaveAcesso);
+    		retornoNFEDTO.setProtocolo(protocolo);
+    		retornoNFEDTO.setDataRecebimento(dataRecebimento);
+    		retornoNFEDTO.setMotivo(evento.getInfEvento().getDetEvento().getDescEvento() +" / "+ evento.getInfEvento().getDetEvento().getXJust());
+    		retornoNFEDTO.setTpEvento(evento.getInfEvento().getTpEvento());
+
+    		StatusRetornado status = StatusRetornado.AUTORIZADO;
+    		switch (evento.getInfEvento().getTpEvento()) {
+			case "110111":
+				
+				status = StatusRetornado.CANCELAMENTO_HOMOLOGADO;
+				break;
+
+			default:
+				break;
+			}
+    		retornoNFEDTO.setStatus(status);
+        	
+        } else {
+        	
+            throw new ProcessamentoNFEException();
+        }
+        return retornoNFEDTO;
+    }
+    
+    /**
+     * Metodo por validar o schema de xml
+     * @param tipoSchema
+     * @param versao TODO
+     * @param versao
+     */
+	public static boolean validarSchemaXML(final String tipoSchema, final File arquivo, final String schemaPath, String versao) {
 		
 		boolean retorno = false; 
 		
-		
 		try {
 			
-			final String schemaFile = schemaPàth+"xsdnfe/v"+ versaoNFE + tipoSchema + versaoNFE + ".xsd";
-			//String xmlFile = "src/main/resources/xmlGerado.xml";
+			final String schemaFile = schemaPath+"xsdnfe/v"+ (versao != null ? versao : versaoNFE) + tipoSchema + (versao != null ? versao : versaoNFE) + ".xsd";
 			final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			
-			if(LOGGER.isDebugEnabled()){				
+			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Schema: "+ schemaFile);
 			}
 			final Schema schema = factory.newSchema(new File(schemaFile));

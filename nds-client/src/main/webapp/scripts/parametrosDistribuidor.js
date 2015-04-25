@@ -47,8 +47,7 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 
 	recarregarDiasDistribuidorFornecedorGrid: function() {
-		$.postJSON(
-				parametrosDistribuidorController.path + "recarregarDiasDistribuidorFornecedorGrid", 
+		$.postJSON(parametrosDistribuidorController.path + "recarregarDiasDistribuidorFornecedorGrid", 
 			null,
 			function (resultado) {
 				if (resultado.mensagens) {
@@ -86,16 +85,15 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.codigoDistribuidorFC', value: $('#codigoDistribuidorFC', this.workspace).val()},
 			
 			{name:'parametrosDistribuidor.endereco.tipoEndereco', value: $('#tipoEndereco', this.workspace).val()},
-			{name:'parametrosDistribuidor.endereco.cep', value: $('#cep', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.cep', value: $('#DISTRIBUIDORcep', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.tipoLogradouro', value: $('#tipoLogradouro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.logradouro', value: $('#logradouro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.numero', value: $('#numero', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.complemento', value: $('#complemento', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
-			//{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()}, 
-			{name:'parametrosDistribuidor.endereco.uf', value: "SP"}, 
-			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val() != undefined ? $('#codigoCidadeIBGE', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.endereco.uf', value: $('#DISTRIBUIDORuf', this.workspace).val()}, 
+			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#DISTRIBUIDORcodigoCidadeIBGE', this.workspace).val() != undefined ? $('#DISTRIBUIDORcodigoCidadeIBGE', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val() != undefined ? $('#codigoBairro', this.workspace).val() : ''},
 			
 			{name:'parametrosDistribuidor.numeroTelefone', value: $('#numeroTelefone', this.workspace).val()},
