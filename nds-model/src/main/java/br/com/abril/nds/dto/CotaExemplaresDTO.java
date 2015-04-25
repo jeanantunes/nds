@@ -137,7 +137,7 @@ public class CotaExemplaresDTO implements Serializable {
 	 * @return the exemplares
 	 */
 	public void setExemplares(BigInteger exemplares) {
-		this.exemplares = exemplares;
+		this.exemplares = exemplares != null ? exemplares.abs() : exemplares;
 	}
 	
 	/**
