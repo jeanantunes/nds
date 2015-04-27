@@ -68,7 +68,6 @@ import br.com.abril.nds.model.fiscal.nota.InfAdicWrapper;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciadaNFE;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -1362,7 +1361,8 @@ public class NFeServiceImpl implements NFeService {
 				produtoEdicoesIds.add(detalhe.getProdutoServico().getProdutoEdicao().getId());
 			}
 			
-			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPeloItensNotas(produtoEdicoesIds, tipoDestinatario);				
+			Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
+			List<NotaFiscalDTO> notaFiscalDTOs = this.notaFiscalRepository.obterNotasPelosItensNotas(produtoEdicoesIds, tipoDestinatario, cota);				
 
 			if(notaFiscalDTOs != null ) {
 				for (NotaFiscalDTO notaFiscalDTO : notaFiscalDTOs) {

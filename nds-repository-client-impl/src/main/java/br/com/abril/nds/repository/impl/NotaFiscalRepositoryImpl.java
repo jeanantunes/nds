@@ -1214,7 +1214,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds, TipoDestinatario tipoDestinatario) {
+	public List<NotaFiscalDTO> obterNotasPelosItensNotas(List<Long> produtoEdicoesIds, TipoDestinatario tipoDestinatario, Cota cota) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
@@ -1228,7 +1228,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" ident.dataEmissao as dataEmissao ");
 		
 		if(tipoDestinatario.equals(TipoDestinatario.DISTRIBUIDOR)) {
-			montarQueryNotasDistribuidor(hql);			
+			montarQueryNotasDistribuidor(hql, cota);			
 		} else {
 			montarQueryNotasFornecedor(hql);
 		}
@@ -1239,6 +1239,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
+		if(tipoDestinatario.equals(TipoDestinatario.DISTRIBUIDOR) && cota != null) {
+			query.setParameter("cota", cota);
+		}
+		
 		if(produtoEdicoesIds != null) {
 			query.setParameterList("produtoEdicoesIds", produtoEdicoesIds);
 		}
@@ -1248,7 +1252,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return query.list();
 	}
 
-	private void montarQueryNotasDistribuidor(StringBuffer hql) {
+	private void montarQueryNotasDistribuidor(StringBuffer hql, Cota cota) {
 		hql.append(" FROM NotaFiscal as notaFiscal")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes as nfi ")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as det ")
@@ -1264,6 +1268,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN prd.produtoEdicao as pe ")
 		.append(" WHERE 1=1 ")
 		.append(" AND ident.numeroDocumentoFiscal is not null ");
+		
+		if(cota != null) {
+			hql.append(" AND identDest.cota = :cota ");
+		}
 	}
 	
 	private void montarQueryNotasFornecedor(StringBuffer hql) {

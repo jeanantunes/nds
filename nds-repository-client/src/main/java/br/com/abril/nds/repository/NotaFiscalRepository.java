@@ -91,6 +91,6 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	List<MovimentoFechamentoFiscal> obterMovimentosFechamentosFiscaisCota(FiltroNFeDTO filtro);
 	
-	List<NotaFiscalDTO> obterNotasPeloItensNotas(List<Long> produtoEdicoesIds, TipoDestinatario tipoDestinatario);
+	List<NotaFiscalDTO> obterNotasPelosItensNotas(List<Long> produtoEdicoesIds, TipoDestinatario tipoDestinatario, Cota cota);
 
 }
