@@ -78,7 +78,7 @@ public class Assinador {
 					factorySignature.newSignatureMethod(SignatureMethod.RSA_SHA1, null), Collections.singletonList(ref));
 
 			KeyStore ks = KeyStore.getInstance("PKCS12");
-			ks.load(new FileInputStream("C:\\Users\\wrpaiva\\certificadoAR\\certificado.pfx"), "arutil14".toCharArray());
+			ks.load(new FileInputStream("C:\\Users\\wrpaiva\\certificadoAR\\certificado.pfx"), "arsp15".toCharArray());
 
 			Enumeration aliasesEnum = ks.aliases();
 			String alias = "";
