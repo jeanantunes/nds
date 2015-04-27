@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -297,8 +296,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             movimentoFinanceiroCotaMerged = movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
             
-            gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO
-                    .getTipoEdicao());
+            gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
             
             if (movimentosEstoqueCota != null) {
                 
@@ -390,8 +388,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 
             } else {
                 
-                fornecedor = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca()
-                        .getFornecedorPadrao();
+                fornecedor = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca().getFornecedorPadrao();
             }
         }
         
@@ -795,7 +792,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 		
 		final List<String> grupoMovimentoFinaceiros = Arrays.asList(
 				GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name(),
-				GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
+				GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name(),
+				GrupoMovimentoFinaceiro.TAXA_EXTRA.name());
 		
 		
 		this.movimentoEstoqueCotaRepository.updateByIdConsolidadoAndGrupos(
@@ -804,7 +802,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 		
 		this.historicoMovimentoFinanceiroCotaRepository.removeByIdConsolidadoAndGrupos(idConsolidado, grupoMovimentoFinaceiros);
 		
-		final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceirosNegocioacao = Arrays.asList(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO/*TODO: GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO*/);
+		/*TODO: GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO*/
+		final List<GrupoMovimentoFinaceiro> grupoMovimentoFinaceirosNegocioacao = Arrays.asList(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
 		
 		this.negociacaoDividaRepository.updateValorDividaValorMovimento(idConsolidado,grupoMovimentoFinaceirosNegocioacao);
 		
@@ -1511,6 +1510,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             		                      dataOperacao, 
             		                      usuario);
             
+            BigDecimal percentualTaxaExtra = distribuidorService.obter().getPercentualTaxaExtra();
+            if(percentualTaxaExtra != null) {
+            	
+            	gerarMovimentoFincaneiroCotaTaxaExtra(cota, fornecedor,
+						dataOperacao, usuario,
+						valorTotalEncalheOperacaoConferenciaEncalhe,
+						percentualTaxaExtra);
+            }
         }
     }
 
@@ -1519,32 +1526,83 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 			final Usuario usuario,
 			BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe,
 			BigDecimal percentualTaxaExtra) {
+		
 		String motivo = dataOperacao +" - "+ distribuidorService.obter().getDescricaoTaxaExtra();
 		BigDecimal valor = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroTaxaExtra = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.TAXA_EXTRA);
-		Calendar c = Calendar.getInstance();
-		c.setTime(dataOperacao);
-		c.add(Calendar.DAY_OF_MONTH, 1);
-		Date dataVencimento = c.getTime();
 		
-		final MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+    	List<MovimentoFinanceiroCota> movimentosFinanceiros = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(cota.getId(), dataOperacao, Arrays.asList(cota.getTipoCota()));
+    	MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = null;
+    	if(movimentosFinanceiros != null && !movimentosFinanceiros.isEmpty()) {
+    		
+    		for(MovimentoFinanceiroCota mfc : movimentosFinanceiros) {
+    			
+    			if(mfc.getTipoMovimento().equals(tipoMovimentoFinanceiroTaxaExtra) && mfc.getFornecedor().equals(fornecedor)) {
+    				
+    				movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+    				movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(mfc.getId());
+    	    		movimentoFinanceiroCotaDTO.setCota(mfc.getCota());
+    	    		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) mfc.getTipoMovimento());
+    	    		movimentoFinanceiroCotaDTO.setUsuario(mfc.getUsuario());
+    	    		movimentoFinanceiroCotaDTO.setValor(valor);
+    	    		movimentoFinanceiroCotaDTO.setMotivo(motivo);
+    	    		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+    	    		movimentoFinanceiroCotaDTO.setBaixaCobranca(mfc.getBaixaCobranca());
+    	    		movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacao);
+    	    		movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacao);
+    	    		movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
+    	    		movimentoFinanceiroCotaDTO.setObservacao(mfc.getObservacao());
+    	    		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.ALTERACAO);
+    	    		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(mfc.getTipoMovimento().isAprovacaoAutomatica());
+    	    		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+    	    		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+    	    		movimentoFinanceiroCotaDTO.setMovimentos(null);
+
+    	    		break;
+    			}
+    		} 
+    		
+    		if(movimentoFinanceiroCotaDTO == null) {
+    			
+    			movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+        		movimentoFinanceiroCotaDTO.setCota(cota);
+        		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiroTaxaExtra);
+        		movimentoFinanceiroCotaDTO.setUsuario(usuario);
+        		movimentoFinanceiroCotaDTO.setValor(valor);
+        		movimentoFinanceiroCotaDTO.setMotivo(motivo);
+        		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+        		movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+        		movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacao);
+        		movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacao);
+        		movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
+        		movimentoFinanceiroCotaDTO.setObservacao(null);
+        		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+        		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(tipoMovimentoFinanceiroTaxaExtra.isAprovacaoAutomatica());
+        		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+        		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+        		movimentoFinanceiroCotaDTO.setMovimentos(null);
+    		}
+    	} else {
+    		
+    		movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+    		movimentoFinanceiroCotaDTO.setCota(cota);
+    		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiroTaxaExtra);
+    		movimentoFinanceiroCotaDTO.setUsuario(usuario);
+    		movimentoFinanceiroCotaDTO.setValor(valor);
+    		movimentoFinanceiroCotaDTO.setMotivo(motivo);
+    		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
+    		movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+    		movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacao);
+    		movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacao);
+    		movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
+    		movimentoFinanceiroCotaDTO.setObservacao(null);
+    		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+    		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(tipoMovimentoFinanceiroTaxaExtra.isAprovacaoAutomatica());
+    		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+    		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+    		movimentoFinanceiroCotaDTO.setMovimentos(null);
+    	}
 		
-		movimentoFinanceiroCotaDTO.setCota(cota);
-		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiroTaxaExtra);
-		movimentoFinanceiroCotaDTO.setUsuario(usuario);
-		movimentoFinanceiroCotaDTO.setValor(valor);
-		movimentoFinanceiroCotaDTO.setMotivo(motivo);
-		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
-		movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
-		movimentoFinanceiroCotaDTO.setDataVencimento(dataVencimento);
-		movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacao);
-		movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacao);
-		movimentoFinanceiroCotaDTO.setObservacao(null);
-		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
-		movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
-		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
-		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
-		movimentoFinanceiroCotaDTO.setMovimentos(null);
 		
 		this.gerarMovimentoFinanceiroCota(movimentoFinanceiroCotaDTO, null);
 	}
@@ -1648,8 +1706,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         
         // MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR
         // FORNECEDOR
-        final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this
-                .obterMovimentosEstoqueEstorno(cota.getId(), datas);
+        final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this.obterMovimentosEstoqueEstorno(cota.getId(), datas);
         
         // TODOS OS FORNECEDORES ENVOLVIDOS
         final Set<Long> fornecedoresId = new HashSet<Long>();

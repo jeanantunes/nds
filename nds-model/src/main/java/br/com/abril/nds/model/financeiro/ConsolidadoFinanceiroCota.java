@@ -71,7 +71,7 @@ public class ConsolidadoFinanceiroCota implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToMany(cascade=CascadeType.REMOVE)
+	@ManyToMany(cascade=CascadeType.ALL)
 	@JoinTable(name = "CONSOLIDADO_MVTO_FINANCEIRO_COTA",
 			   joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
 			   inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID", unique = true)})
