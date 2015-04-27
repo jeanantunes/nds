@@ -2106,7 +2106,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private Set<String> gerarCobranca(final ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
 		
-		if(	controleConferenciaEncalheCota.getId() != null) {
+		if(controleConferenciaEncalheCota.getId() != null) {
 			
 			final StatusOperacao statusAtualOperacaoConfEnc = 
 					controleConferenciaEncalheCotaRepository.obterStatusControleConferenciaEncalheCota(
@@ -2123,7 +2123,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
         		                                                                                          controleConferenciaEncalheCota.getDataOperacao());
         
-		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)){
+		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)) {
 			
 			
 			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
@@ -2147,11 +2147,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
             // se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
-			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
-					controleConferenciaEncalheCota.getCota().getNumeroCota()),
+			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(controleConferenciaEncalheCota.getCota().getNumeroCota()),
 					
-					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
-							controleConferenciaEncalheCota.getCota().getNumeroCota());
+					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(controleConferenciaEncalheCota.getCota().getNumeroCota());
 			
 			if (!cotaUnificadora && !cotaUnificada) {
 				

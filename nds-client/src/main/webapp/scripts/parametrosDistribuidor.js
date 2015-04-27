@@ -175,6 +175,9 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.assuntoEmailCobranca', value: $('#assuntoEmailCobranca', this.workspace).val() != undefined ? $('#assuntoEmailCobranca', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val() != undefined ? $('#mensagemEmailCobranca', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.descricaoTaxaExtra', value: $('#descricaoTaxaExtra', this.workspace).val() != undefined ? $('#descricaoTaxaExtra', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.percentualTaxaExtra', value: $('#percentualTaxaExtra', this.workspace).val() != undefined ? $('#percentualTaxaExtra', this.workspace).val() : ''},
+			
 			
 			{name:'parametrosDistribuidor.pararAcumuloDividas', value: $('#pararAcumuloDividas', this.workspace).val() != undefined ? $('#pararAcumuloDividas', this.workspace).val() : ''},
 			
@@ -580,6 +583,12 @@ var parametrosDistribuidorController = $.extend(true, {
 			 precision:0
 		});
 		
+		$("#percentualTaxaExtra", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
 		$("#tipoEndereco", this.workspace).val($("#tipoEnderecoHidden").val());
 		$("#regimeTributario", this.workspace).val($("#regimeTributarioHidden").val());
 		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
@@ -601,13 +610,12 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		parametrosDistribuidorController.utilizaContratoCotasListener();
 		
-		
 		$("#tabDistribuidor", this.workspace).tabs({
-			show: function(event,ui){
+			show: function(event, ui) {
 				var btnSalvar = $('#btnSalvar', this.workspace);
-				if(ui.index == 2){
+				if(ui.index == 2) {
 					btnSalvar.hide();
-				}else{
+				} else {
 					btnSalvar.show();
 				}
 			}
@@ -615,10 +623,10 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		parametrosDistribuidorController.alternarControleAprovacao();
 		
-		if ($("#_parametrosDistribuidorimpressaoNECADANFE", this.workspace).val() == "MODELO_1"){
+		if ($("#_parametrosDistribuidorimpressaoNECADANFE", this.workspace).val() == "MODELO_1") {
 			
 			$("#impressaoNECADANFEMODELO1", this.workspace).check();
-		} else if ($("#_parametrosDistribuidorimpressaoNECADANFE", this.workspace).val() == "MODELO_2"){
+		} else if ($("#_parametrosDistribuidorimpressaoNECADANFE", this.workspace).val() == "MODELO_2") {
 			
 			$("#impressaoNECADANFEMODELO2", this.workspace).check();
 		} else {
@@ -627,7 +635,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		}
 		
 		
-		if ($("#_parametrosDistribuidorimpressaoCE", this.workspace).val() == "MODELO_1"){
+		if ($("#_parametrosDistribuidorimpressaoCE", this.workspace).val() == "MODELO_1") {
 			
 			$("#impressaoCEModelo1", this.workspace).check();
 		} else {
@@ -635,10 +643,10 @@ var parametrosDistribuidorController = $.extend(true, {
 			$("#impressaoCEModelo2", this.workspace).check();
 		}
 		
-		if ($("#_parametrosDistribuidorimpressaoInterfaceLED", this.workspace).val() == "MODELO_1"){
+		if ($("#_parametrosDistribuidorimpressaoInterfaceLED", this.workspace).val() == "MODELO_1") {
 			
 			$("#interfaceLEDMODELO1", this.workspace).check();
-		} else if ($("#_parametrosDistribuidorimpressaoInterfaceLED", this.workspace).val() == "MODELO_2"){
+		} else if ($("#_parametrosDistribuidorimpressaoInterfaceLED", this.workspace).val() == "MODELO_2") {
 			
 			$("#interfaceLEDMODELO2", this.workspace).check();
 		} else {

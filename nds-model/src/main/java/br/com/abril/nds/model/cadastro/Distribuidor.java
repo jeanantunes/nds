@@ -323,6 +323,12 @@ public class Distribuidor {
 	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
 	private String mensagemEmailCobranca;
 	
+	@Column(name = "DESCRICAO_TAXA_EXTRA")
+	private String descricaoTaxaExtra;
+	
+	@Column(name = "PERCENTUAL_TAXA_EXTRA")
+	private BigDecimal percentualTaxaExtra;
+	
 	@Column(name = "PRACA_VERANEIO")
 	private boolean pracaVeraneio;
 
@@ -1163,6 +1169,22 @@ public class Distribuidor {
 	 */
 	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+
+	public String getDescricaoTaxaExtra() {
+		return descricaoTaxaExtra;
+	}
+
+	public void setDescricaoTaxaExtra(String descricaoTaxaExtra) {
+		this.descricaoTaxaExtra = descricaoTaxaExtra;
+	}
+
+	public BigDecimal getPercentualTaxaExtra() {
+		return percentualTaxaExtra;
+	}
+
+	public void setPercentualTaxaExtra(BigDecimal percentualTaxaExtra) {
+		this.percentualTaxaExtra = percentualTaxaExtra;
 	}
 
 	public boolean isPracaVeraneio() {

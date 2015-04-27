@@ -651,8 +651,7 @@ public class ContaCorrenteCotaController extends BaseController {
     public void consultarDebitoCreditoCota(Long idConsolidado, Date data, Integer numeroCota, String sortname,
             String sortorder) {
         
-        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
-                numeroCota, sortorder, sortname);
+        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data, numeroCota, sortorder, sortname);
         
         this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
     }
@@ -660,8 +659,7 @@ public class ContaCorrenteCotaController extends BaseController {
     public void exportarDebitoCreditoCota(FileType fileType, Long idConsolidado, Date data, Integer numeroCota,
             String sortname, String sortorder) throws IOException {
         
-        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
-                numeroCota, sortorder, sortname);
+        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data, numeroCota, sortorder, sortname);
         
         FileExporter.to("debito-credito", fileType).inHTTPResponse(this.getNDSFileHeader(),
                 this.obterFiltroExportacao(), movs, DebitoCreditoCota.class, this.httpServletResponse);

@@ -1366,9 +1366,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @param dataOperacao
 	 * @return ConsolidadoFinanceiroCota
 	 */
-	private ConsolidadoFinanceiroCota montarConsolidadoFinanceiro(Cota cota,
-								                                  List<MovimentoFinanceiroCota> movimentos,
-								                                  Date dataOperacao){
+	private ConsolidadoFinanceiroCota montarConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, Date dataOperacao) {
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
@@ -1383,16 +1381,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovConsignado = BigDecimal.ZERO;
 		BigDecimal vlMovPendente = BigDecimal.ZERO;
 
-		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
+		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos) {
 			
 			if (!movimentoFinanceiroCota.getCota().getId().equals(cota.getId())) {
 				
 				continue;
 			}
 			
-			GrupoMovimentoFinaceiro tipoMovimentoFinanceiro =
-				((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento())
-					.getGrupoMovimentoFinaceiro();
+			GrupoMovimentoFinaceiro tipoMovimentoFinanceiro = ((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro();
 
 			switch (tipoMovimentoFinanceiro) {
 			
@@ -1407,7 +1403,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case VENDA_TOTAL:
 				case NEGOCIACAO_COMISSAO:
 				case DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR:
-				case DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR:	
+				case DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR:
+				case TAXA_EXTRA:
 					
 					vlMovFinanDebitoCredito = this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
 					
@@ -1914,7 +1911,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
 				
-                if (excluiFinanceiro && mfcs!=null && !mfcs.isEmpty()){
+                if(excluiFinanceiro && mfcs != null && !mfcs.isEmpty()) {
 					
 			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(consolidado.getId());
 				}
