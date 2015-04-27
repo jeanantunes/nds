@@ -1349,11 +1349,13 @@ public class NFeServiceImpl implements NFeService {
 	
 	private void gerarNotaFiscalReferenciada(List<NotaFiscal> notaFiscais, TipoDestinatario tipoDestinatario) {
 		
-		Set<NotaFiscalReferenciada> listaNotaFiscalReferenciadas = new HashSet<>();
-		
 		NotaFiscalReferenciada notaReferenciada = null;
 		
 		for (NotaFiscal notaFiscal : notaFiscais) {
+			
+			Set<NotaFiscalReferenciada> listaNotaFiscalReferenciadas = new HashSet<>();
+			
+			listaNotaFiscalReferenciadas = new HashSet<>();
 			
 			List<Long> produtoEdicoesIds = new ArrayList<>();
  			
