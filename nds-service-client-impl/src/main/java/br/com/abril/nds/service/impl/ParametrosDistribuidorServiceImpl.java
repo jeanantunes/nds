@@ -411,6 +411,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setAssuntoEmailCobranca(distribuidor.getAssuntoEmailCobranca());
 		parametrosDistribuidor.setMensagemEmailCobranca(distribuidor.getMensagemEmailCobranca());
 		
+		parametrosDistribuidor.setDescricaoTaxaExtra(distribuidor.getDescricaoTaxaExtra());
+		parametrosDistribuidor.setPercentualTaxaExtra(distribuidor.getPercentualTaxaExtra());
+		
 		// Aprovação
 		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
 		
@@ -876,7 +879,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		else
 			distribuidor.setDescontoCotaNegociacao(BigDecimal.ZERO);
 		
-		if (parametrosDistribuidor.getNegociacaoAteParcelas() !=null && !parametrosDistribuidor.getNegociacaoAteParcelas().isEmpty()) {
+		if (parametrosDistribuidor.getNegociacaoAteParcelas() != null && !parametrosDistribuidor.getNegociacaoAteParcelas().isEmpty()) {
 			distribuidor.setNegociacaoAteParcelas(CurrencyUtil.converterValor(parametrosDistribuidor.getNegociacaoAteParcelas()).intValueExact());
 		} else {
 			distribuidor.setNegociacaoAteParcelas(null);
@@ -888,11 +891,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setNumeroDiasNovaCobranca(parametrosDistribuidor.getNumeroDiasNovaCobranca());
 		distribuidor.setAssuntoEmailCobranca(parametrosDistribuidor.getAssuntoEmailCobranca());
 		distribuidor.setMensagemEmailCobranca(parametrosDistribuidor.getMensagemEmailCobranca());
+		distribuidor.setDescricaoTaxaExtra(parametrosDistribuidor.getDescricaoTaxaExtra());
+		distribuidor.setPercentualTaxaExtra(parametrosDistribuidor.getPercentualTaxaExtra());
 		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
-		if (parametrosDistribuidor.getUtilizaControleAprovacao()){
+		if (parametrosDistribuidor.getUtilizaControleAprovacao()) {
 		    
 			this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
 		}

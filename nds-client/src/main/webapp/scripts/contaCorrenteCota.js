@@ -158,7 +158,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			
-		}else{			
+		} else {			
 			$.each(data.rows, function(index, value) {	
 				
 				var dataRaizPostergado =  value.cell.dataRaiz;	

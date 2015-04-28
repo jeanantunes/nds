@@ -114,7 +114,8 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,
 						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO,
 						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR,
-						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR
+						GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR,
+						GrupoMovimentoFinaceiro.TAXA_EXTRA
 					)
 				);
 		
