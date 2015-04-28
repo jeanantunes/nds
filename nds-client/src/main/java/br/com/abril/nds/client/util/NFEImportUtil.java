@@ -182,8 +182,7 @@ public abstract class NFEImportUtil {
             final String chaveAcesso = nfeProc.getNFe().getInfNFe().getId().substring(3);
             final Long protocolo = Long.parseLong(nfeProc.getProtNFe().getInfProt().getNProt());
             
-//            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-            Date dataRecebimento = nfeProc.getProtNFe().getInfProt().getDhRecbto().toGregorianCalendar().getTime();
+            Date dataRecebimento = new DateTime(nfeProc.getProtNFe().getInfProt().getDhRecbto()).toDate();
             
             final String motivo = null;
             
