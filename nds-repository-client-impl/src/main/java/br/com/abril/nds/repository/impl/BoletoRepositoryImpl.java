@@ -356,7 +356,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		Criteria criteria = super.getSession().createCriteria(Boleto.class);
 		
-		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
+		criteria.add(Restrictions.or(Restrictions.eq("nossoNumero", nossoNumero), Restrictions.eq("nossoNumeroCompleto", nossoNumero)));
 		
 		if (apenasBoletoPagavel) {
 			

@@ -295,9 +295,7 @@ public abstract class Util {
         }
     }
     
-    public static String calcularDigitoVerificador(String nossoNumero,
-            final String codigoCedente,
-            final Date dataVencimento) {
+    public static String calcularDigitoVerificador(String nossoNumero, final String codigoCedente, final Date dataVencimento) {
         
         if (nossoNumero == null || codigoCedente == null || dataVencimento == null) {
             
@@ -310,12 +308,11 @@ public abstract class Util {
         
         primeiroDigito = Util.calcularDigito(nossoNumero);
         
-        nossoNumero += primeiroDigito + segundoDigito;
+        nossoNumero += primeiroDigito +""+ segundoDigito;
         
         final String dataVencimentoFormatada = DateUtil.formatarData(dataVencimento, "ddMMyy");
         
-        String somaValores =
-                Util.obterSomaValores(nossoNumero, codigoCedente, dataVencimentoFormatada);
+        String somaValores = Util.obterSomaValores(nossoNumero, codigoCedente, dataVencimentoFormatada);
         
         somaValores = Util.padLeft(somaValores, "0", nossoNumero.length());
         
@@ -654,15 +651,13 @@ public abstract class Util {
     
     public static Object getValuePath(final Object obj,final String path){
         
-        
         final String[] pathList = path.split("\\.");
         
         String att = null;
-        if(pathList.length==0){
+        if(pathList.length==0) {
             att=path;
-        }else{
+        } else {
             att = pathList[0];
-            
         }
         
         final Method[] declaredMethods = obj.getClass().getDeclaredMethods();
@@ -674,21 +669,20 @@ public abstract class Util {
             }
         }
         
-        if(getM==null){
+        if(getM == null) {
             return null;
         }
         
-        Object result =null;
+        Object result = null;
         try {
             result = getM.invoke(obj, null);
-        } catch (IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(e.getMessage(), e);
         }
         
-        if(pathList.length==1){
+        if(pathList.length == 1) {
             return result;
-        }else{
+        } else {
             
             return getValuePath(result,path.substring(path.indexOf(".")+1));
         }
@@ -696,42 +690,38 @@ public abstract class Util {
     
     public static Object getReturnTypePath(final Object obj,final String path){
         
-        
         final String[] pathList = path.split("\\.");
         
         String att = null;
-        if(pathList.length==0){
-            att=path;
-        }else{
+        if(pathList.length == 0) {
+            att = path;
+        } else {
             att = pathList[0];
-            
         }
         
         final Method[] declaredMethods = obj.getClass().getDeclaredMethods();
         
         Method getM = null;
         for (final Method method : declaredMethods) {
-            if(method.getName().equals("get"+toFirstUpperCase(att))){
+            if(method.getName().equals("get"+toFirstUpperCase(att))) {
                 getM = method;
             }
         }
         
-        if(getM==null){
+        if(getM == null) {
             return null;
         }
         
         Object result =null;
         try {
             result = getM.invoke(obj, null);
-        } catch (IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(e.getMessage(), e);
         }
         
-        if(pathList.length==1){
+        if(pathList.length == 1) {
             return getM.getReturnType();
-        }else{
-            
+        } else {
             return getValuePath(result,path.substring(path.indexOf(".")+1));
         }
     }
