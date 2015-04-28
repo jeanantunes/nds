@@ -265,23 +265,17 @@ public class BoletoServiceImpl implements BoletoService {
         
         final ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
         
-        resumoBaixaBoletos.setQuantidadePrevisao(
-                boletoRepository.obterQuantidadeBoletosPrevistos(data).intValue());
+        resumoBaixaBoletos.setQuantidadePrevisao(boletoRepository.obterQuantidadeBoletosPrevistos(data).intValue());
         
-        resumoBaixaBoletos.setQuantidadeLidos(
-                boletoRepository.obterQuantidadeBoletosLidos(data).intValue());
+        resumoBaixaBoletos.setQuantidadeLidos(boletoRepository.obterQuantidadeBoletosLidos(data).intValue());
         
-        resumoBaixaBoletos.setQuantidadeBaixados(
-                boletoRepository.obterQuantidadeBoletosBaixados(data).intValue());
+        resumoBaixaBoletos.setQuantidadeBaixados(boletoRepository.obterQuantidadeBoletosBaixados(data).intValue());
         
-        resumoBaixaBoletos.setQuantidadeRejeitados(
-                boletoRepository.obterQuantidadeBoletosRejeitados(data).intValue());
+        resumoBaixaBoletos.setQuantidadeRejeitados(boletoRepository.obterQuantidadeBoletosRejeitados(data).intValue());
         
-        resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
-                boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
+        resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
         
-        resumoBaixaBoletos.setQuantidadeInadimplentes(
-                boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
+        resumoBaixaBoletos.setQuantidadeInadimplentes(boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
         
         BigDecimal valorTotalBancario = boletoRepository.obterValorTotalBancario(data);
         
@@ -289,9 +283,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         resumoBaixaBoletos.setValorTotalBancario(valorTotalBancario.setScale(2, RoundingMode.HALF_EVEN));
         
-        final List<ControleBaixaBancaria> listaControleBaixa =
-                controleBaixaRepository.obterListaControleBaixaBancaria(
-                        data, StatusControle.CONCLUIDO_SUCESSO);
+        final List<ControleBaixaBancaria> listaControleBaixa = controleBaixaRepository.obterListaControleBaixaBancaria(data, StatusControle.CONCLUIDO_SUCESSO);
         
         final boolean possuiDiversasBaixas = (listaControleBaixa.size() > 1);
         
@@ -312,9 +304,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         final Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
         
-        final Banco banco = bancoRepository.obterBanco(arquivoPagamento.getCodigoBanco(),
-                arquivoPagamento.getNumeroAgencia(),
-                arquivoPagamento.getNumeroConta());
+        final Banco banco = bancoRepository.obterBanco(arquivoPagamento.getCodigoBanco(), arquivoPagamento.getNumeroAgencia(), arquivoPagamento.getNumeroConta());
         
         if (banco == null) {
             
@@ -326,17 +316,12 @@ public class BoletoServiceImpl implements BoletoService {
         if (controleBaixa != null && controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Já foi realizada baixa automática para a data de pagamento informada e banco " + banco.getNome()
-                    + "!");
+                    String.format("Já foi realizada baixa automática para a data de pagamento informada e banco %s!", banco.getNome()));
         }
         
-        if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
-                || valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
+        if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null || valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
             
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Valor financeiro inválido! A soma dos valores dos boletos pagos "
-                            +
-                    "deve ser igual ao valor informado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Valor financeiro inválido! A soma dos valores dos boletos pagos deve ser igual ao valor informado!");
         }
         
         controleBaixaService.alterarControleBaixa(StatusControle.INICIADO, dataOperacao, dataPagamento, usuario, banco);
@@ -352,30 +337,28 @@ public class BoletoServiceImpl implements BoletoService {
                     
                 	boolean ignorarDataPagamento = true;
             		try {
-            			if (pagamento != null && pagamento.getNossoNumero() != null && Integer.parseInt(pagamento.getNossoNumero()) > 0) {
+            			if (pagamento != null && pagamento.getNossoNumero() != null && Long.parseLong(pagamento.getNossoNumero().trim()) > 0) {
             				ignorarDataPagamento = false;
             			}
             		} catch (NumberFormatException nfe) {
             			
+            			LOGGER.error("Erro ao fazer parse do Nosso Número.", nfe);
+            			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Erro ao fazer parse do Nosso Número: %s", pagamento.getNossoNumero()));
             		}
             		
             		if (!ignorarDataPagamento) {
             			
             			this.baixarBoleto(TipoBaixaCobranca.AUTOMATICA, pagamento, usuario,
-            					arquivoPagamento.getNomeArquivo(),
-            					dataNovoMovimento, resumoBaixaBoletos, banco,
-            					dataPagamento);
+            					arquivoPagamento.getNomeArquivo(), dataNovoMovimento, resumoBaixaBoletos, banco, dataPagamento);
             		}
                 	
                 }
                 
-                controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO,
-                        dataOperacao, dataPagamento, usuario, banco);
+                controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO, dataOperacao, dataPagamento, usuario, banco);
                 
             } else {
                 
-                controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-                        dataOperacao, dataPagamento, usuario, banco);
+                controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS, dataOperacao, dataPagamento, usuario, banco);
             }
             
             resumoBaixaBoletos.setNomeArquivo(arquivoPagamento.getNomeArquivo());
@@ -394,9 +377,7 @@ public class BoletoServiceImpl implements BoletoService {
                 
             } else {
                 
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Falha ao processar a baixa automática: "
-                                + e.getMessage());
+                throw new ValidacaoException(TipoMensagem.WARNING, "Falha ao processar a baixa automática: "+ e.getMessage());
             }
         }
     }
@@ -654,9 +635,7 @@ public class BoletoServiceImpl implements BoletoService {
      * @param valorPago
      * @param dataPagamento
      */
-    private void gerarBaixaBoletoAntecipado(final BoletoAntecipado boletoAntecipado,
-            final PagamentoDTO pagamento,
-            final Date dataPagamento){
+    private void gerarBaixaBoletoAntecipado(final BoletoAntecipado boletoAntecipado, final PagamentoDTO pagamento, final Date dataPagamento) {
         
         final TipoMovimentoFinanceiro tipoMovimento = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.CREDITO);
         
@@ -669,8 +648,7 @@ public class BoletoServiceImpl implements BoletoService {
         movimento.setTipoMovimentoFinanceiro(tipoMovimento);
         movimento.setUsuario(usuario);
         movimento.setDataOperacao(dataOperacao);
-        movimento.setValor(
-                pagamento.getValorPagamento().subtract(pagamento.getValorDesconto()).add(pagamento.getValorJuros()).add(pagamento.getValorMulta()));
+        movimento.setValor(pagamento.getValorPagamento().subtract(pagamento.getValorDesconto()).add(pagamento.getValorJuros()).add(pagamento.getValorMulta()));
         movimento.setDataCriacao(Calendar.getInstance().getTime());
         movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
         movimento.setDataVencimento(DateUtil.adicionarDias(dataOperacao,1));
@@ -717,22 +695,18 @@ public class BoletoServiceImpl implements BoletoService {
             // Verifica se boleto consta em boletos antecipados - em branco
             final BoletoAntecipado boletoAntecipado = boletoAntecipadoRepository.obterBoletoAntecipadoPorNossoNumero(pagamento.getNossoNumero());
             
-            if (boletoAntecipado != null){
+            if (boletoAntecipado != null) {
                 
                 boletoAntecipado.setTipoBaixa(tipoBaixaCobranca);
                 
-                this.gerarBaixaBoletoAntecipado(boletoAntecipado,
-                        pagamento,
-                        dataPagamento);
+                this.gerarBaixaBoletoAntecipado(boletoAntecipado, pagamento, dataPagamento);
                 
                 return null;
-            }
-            else{
+            } else {
                 
                 if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
                     
-                    baixarBoletoNaoEncontrado(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-                            dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
+                    baixarBoletoNaoEncontrado(tipoBaixaCobranca, pagamento, usuario, nomeArquivo, dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
                     
                 } else {
                     

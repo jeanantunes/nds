@@ -1722,24 +1722,22 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				Util.gerarNossoNumero(
 					cota.getNumeroCota(), 
 					cobranca.getDataEmissao(), 
-					banco!=null?banco.getNumeroBanco():"0",
+					banco != null ? banco.getNumeroBanco() : "0",
 					fornecedor != null ? fornecedor.getId() : null,
 					novaDivida.getId(),
-					banco!=null?banco.getAgencia():0,
-					banco!=null?banco.getConta():0,
+					banco != null ? banco.getAgencia() : 0,
+					banco != null ? banco.getConta() : 0,
 					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null);
 			
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 			
 			String digitoVerificador =
-				Util.calcularDigitoVerificador(
-					nossoNumero, banco!=null?banco.getCodigoCedente():"0", cobranca.getDataVencimento());
+				Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento());
 			
 			cobranca.setDigitoNossoNumero(digitoVerificador);
 			
-			cobranca.setNossoNumeroCompleto(
-				nossoNumero + ((digitoVerificador != null) ? digitoVerificador : ""));
+			cobranca.setNossoNumeroCompleto(nossoNumero + ((digitoVerificador != null) ? digitoVerificador : ""));
 			
 			cobranca.setValor(novaDivida.getValor());
 			
