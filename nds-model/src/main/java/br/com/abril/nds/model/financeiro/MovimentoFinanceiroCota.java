@@ -33,7 +33,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany(mappedBy="movimentoFinanceiroCota")
+	@OneToMany(mappedBy="movimentoFinanceiroCota", cascade=CascadeType.DETACH)
 	private List<MovimentoEstoqueCota> movimentos;
 	
 	@Column(name = "OBSERVACAO")

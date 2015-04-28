@@ -1,6 +1,8 @@
 package br.com.abril.nds.client.vo;
 
+
 import java.util.Date;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.RegimeTributarioDTO;
@@ -164,6 +166,8 @@ public class ParametrosDistribuidorVO {
     private Integer numeroDiasNovaCobranca;
     private String assuntoEmailCobranca;
     private String mensagemEmailCobranca;
+    private String descricaoTaxaExtra;
+    private BigDecimal percentualTaxaExtra;
     
     // Aba Aprovação
     // Frame Aprovação
@@ -1084,6 +1088,22 @@ public class ParametrosDistribuidorVO {
 	 */
 	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+
+	public String getDescricaoTaxaExtra() {
+		return descricaoTaxaExtra;
+	}
+
+	public void setDescricaoTaxaExtra(String descricaoTaxaExtra) {
+		this.descricaoTaxaExtra = descricaoTaxaExtra;
+	}
+
+	public BigDecimal getPercentualTaxaExtra() {
+		return percentualTaxaExtra;
+	}
+
+	public void setPercentualTaxaExtra(BigDecimal percentualTaxaExtra) {
+		this.percentualTaxaExtra = percentualTaxaExtra;
 	}
 
 	public boolean getUtilizaControleAprovacao() {
