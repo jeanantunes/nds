@@ -251,4 +251,8 @@ public class Banco implements Serializable {
 		return serialVersionUID;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		return this.id.equals(((Banco) obj).id);
+	}
 }
