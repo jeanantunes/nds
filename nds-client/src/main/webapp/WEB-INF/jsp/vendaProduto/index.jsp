@@ -108,7 +108,7 @@ $(function(){
               </td>
               <td>Classificação:</td>
               <td colspan="3">
-           		<select name="select2" id="selectClassificacao" style="width:200px;">
+           		<select name="select2" id="venda-produto-selectClassificacao" style="width:200px;">
                		<option selected="selected">Selecione...</option>
                		<c:forEach items="${listaClassificacao}" var="classificacao">
 								<option value="${classificacao.key}">${classificacao.value}</option>

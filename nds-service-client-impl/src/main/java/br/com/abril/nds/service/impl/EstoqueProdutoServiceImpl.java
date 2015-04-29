@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,12 +19,12 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.EstoqueProdutoFila;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoFilaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -65,6 +66,8 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRespository;
 	
+	@Autowired
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
@@ -274,31 +277,31 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	 
 	 @Override
 	 @Transactional
-	 public void atualizarEstoqueProdutoCota(){
+	 public void atualizarEstoqueProdutoCota() {
 	     
 	     final List<EstoqueProdutoFilaDTO> epfs = this.estoqueProdutoFilaRepository.buscarTodosEstoqueProdutoFila();
 	     
-	     for (EstoqueProdutoFilaDTO epf : epfs){
+	     for (EstoqueProdutoFilaDTO epf : epfs) {
 	         
 	         boolean atualizaReg = true;
 	         
-	         if (OperacaoEstoque.SAIDA.equals(epf.getOperacaoEstoque())){
+	         if (OperacaoEstoque.SAIDA.equals(epf.getOperacaoEstoque())) {
 	             
 	             epf.setQtde(epf.getQtde().negate());
 	         }
 	         
 	         EstoqueProduto ep = this.obterEstoqueProdutoParaAtualizar(epf.getIdProdutoEdicao());
 	         
-	         if (ep == null){
+	         if (ep == null) {
 	             
 	             ep = new EstoqueProduto();
 	             ep.setProdutoEdicao(produtoEdicaoRespository.buscarPorId(epf.getIdProdutoEdicao()));
 	         }
 	         
-	         switch(epf.getTipoEstoque()){
+	         switch(epf.getTipoEstoque()) {
 	             case DEVOLUCAO_ENCALHE:
 	                 
-	                 if (ep.getQtdeDevolucaoEncalhe() == null){
+	                 if (ep.getQtdeDevolucaoEncalhe() == null) {
 	                     
 	                     ep.setQtdeDevolucaoEncalhe(epf.getQtde());
 	                 } else {
@@ -309,7 +312,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	             break;
 	             case JURAMENTADO:
                     
-	                 if (ep.getQtdeJuramentado() == null){
+	                 if (ep.getQtdeJuramentado() == null) {
 	                     
 	                     ep.setQtdeJuramentado(epf.getQtde());
 	                 } else {
@@ -320,7 +323,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
                  break;
                  case SUPLEMENTAR:
                      
-                     if (ep.getQtdeSuplementar() == null){
+                     if (ep.getQtdeSuplementar() == null) {
                          
                          ep.setQtdeSuplementar(epf.getQtde());
                      } else {
@@ -336,7 +339,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
                      break;
 	         }
 	         
-	         if (atualizaReg){
+	         if (atualizaReg) {
 	             
 	             this.saveOrUpdate(ep);
 	         }
@@ -345,4 +348,15 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	     }
 	}
 	 
+	@Override
+	@Transactional
+	public BigDecimal obterVendaBaseadoNoEstoque(Long idProdutoEdicao){
+		return estoqueProdutoCotaRepository.obterVendaBaseadoNoEstoque(idProdutoEdicao);
+	}
+	
+	@Transactional
+	@Override
+	public BigDecimal obterVendaCotaBaseadoNoEstoque(Long idProdutoEdicao, Integer numeroCota){
+		return estoqueProdutoCotaRepository.obterVendaCotaBaseadoNoEstoque(idProdutoEdicao, numeroCota);
+	}
 }

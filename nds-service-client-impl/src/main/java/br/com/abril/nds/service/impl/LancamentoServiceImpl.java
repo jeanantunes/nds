@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -35,6 +36,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -43,6 +45,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -73,6 +76,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
@@ -329,20 +335,18 @@ public class LancamentoServiceImpl implements LancamentoService {
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
 			Integer initialResult, Integer maxResults) {
-		return lancamentoRepository.obterLancamentoInformeRecolhimento(
-				idFornecedor, dataInicioRecolhimento, dataFimRecolhimento,
-				orderBy, ordenacao, initialResult, maxResults);
+		return lancamentoRepository.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, orderBy, ordenacao, initialResult, maxResults);
 	}
 	
 	@Override
 	@Transactional(readOnly=true)
-	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
 		}
 		
-		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao);
+		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao, dataLimiteLancamento);
 	}
 	
 	@Override
@@ -358,6 +362,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		return lancamentoRepository.obterLancamentosDaEdicao(idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
@@ -369,7 +384,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
+	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
@@ -379,7 +394,7 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
 		}
 		
-		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota);
+		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataLimiteLancamento);
 	}
 	
 	@Override
@@ -451,27 +466,36 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     @Transactional(readOnly = false)
     public void removerLancamento(Long id) {
+    	
         if (id == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "Id do lançamento deve ser especificado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Id do lançamento deve ser especificado.");
         }
         
         Lancamento lancamento = lancamentoRepository.buscarPorId(id);
         if (lancamento == null) {
-            throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não existe ou ja foi excluido.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não existe ou ja foi excluido.");
         }
         
-        if (lancamento.getNumeroLancamento() == 1) {
+        List<EstudoGerado> estudosGerados = estudoGeradoRepository.obterPorLancamentoId(id);
+        if(estudosGerados != null && !estudosGerados.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não pode ser excluído por já ter Estudo.");
+        }
+        
+        if (lancamento.getEstudo() != null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não pode ser excluído por já ter Estudo.");
+        }
+        
+        if (lancamento.getNumeroLancamento() != null && lancamento.getNumeroLancamento() == 1) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Não é perdido excluir o lançamento número 1.");
         }
         
         if (lancamento.getPeriodoLancamentoParcial() != null
                 && TipoLancamentoParcial.PARCIAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Este Lançamento é parcial e não pode ser excluido. Consulte a tela de parciais.");
+        	
+            throw new ValidacaoException(TipoMensagem.WARNING, "Este Lançamento é parcial e não pode ser excluido. Consulte a tela de parciais.");
         }
         if (!STATUS_LANCAMENTOS_REMOVIVEL.contains(lancamento.getStatus())) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "O status deste Lançamento é "
-                    + lancamento.getStatus().getDescricao() + " e não pode ser removido.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O status deste Lançamento é "+ lancamento.getStatus().getDescricao() +" e não pode ser removido.");
         }
         this.lancamentoRepository.remover(lancamento);
     }
@@ -572,21 +596,28 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
     @Transactional
-    public void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento) {
+    public void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento, boolean alterarStatusLancamento) {
         
         Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
         
-        Integer numeroPeriodo = (lancamento.getPeriodoLancamentoParcial() != null)
-                                    ? lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo() : null;
+        Integer numeroPeriodo = (lancamento.getPeriodoLancamentoParcial() != null) ? lancamento.getPeriodoLancamentoParcial().getNumeroPeriodo() : null;
         
-        List<Lancamento> redistribuicoes =
-            this.lancamentoRepository.obterRedistribuicoes(idProdutoEdicao, numeroPeriodo);
+        List<Lancamento> redistribuicoes = this.lancamentoRepository.obterRedistribuicoes(idProdutoEdicao, numeroPeriodo);
         
         for (Lancamento redistribuicao : redistribuicoes) {
             
             redistribuicao.setDataRecolhimentoDistribuidor(dataRecolhimento);
-            redistribuicao.setStatus(lancamento.getStatus());
+            if(alterarStatusLancamento && LancamentoHelper.getStatusLancamentosPreExpedicao().contains(redistribuicao.getStatus())) {
+            	
+            	throw new ValidacaoException(TipoMensagem.WARNING, 
+            			String.format("Existe redistribuição não expedida para o produto %s / %s.<br />Exclua para continuar."
+            					, lancamento.getProdutoEdicao().getProduto().getCodigo(), lancamento.getProdutoEdicao().getNumeroEdicao()));
+            }
             
+            if(alterarStatusLancamento) {
+            	
+            	redistribuicao.setStatus(lancamento.getStatus());
+            }
             
             this.lancamentoRepository.merge(redistribuicao);
         }
@@ -614,9 +645,8 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 	
 	@Transactional
-	public Date obterDataLancamentoValido(Date dataLancamento,Long idFornecedor){
+	public Date obterDataLancamentoValido(Date dataLancamento, Long idFornecedor) {
 		
-	
 		List<Long> lista = new ArrayList<Long>();
 		Distribuidor distribuidor = distribuidorService.obter();
 		
@@ -643,7 +673,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			 lista.add(new Long(1));
 			 
 			 if(dinap.isEmpty()) {
-				 dinap.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+				 dinap.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 			 
 			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinap);
@@ -652,8 +682,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 			 lista.add(new Long(2));
 			 
-			 if(fc.isEmpty()){
-				 fc.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+			 if(fc.isEmpty()) {
+				 fc.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 			 
 			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, fc);
@@ -664,7 +694,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			 lista.add(new Long(2));
 				 
 			 if(dinapFC.isEmpty()) {
-				dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValido(lista));
+				dinapFC.addAll(lancamentoRepository.obterDatasLancamentoValidas());
 			 }
 				 
 			 dataLancamento = this.obterDataLancamentoValida(dataLancamento, dinapFC);
@@ -673,51 +703,35 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return dataLancamento;
 	}
 	
-	private Date obterDataLancamentoValida(Date dataLancamento,LinkedList<Date> listaDatas){
-		
-		Date anterior;
-		Date posterior;
+	private Date obterDataLancamentoValida(Date dataLancamento, LinkedList<Date> listaDatas){
+
 		Date operacao;
-		long qtAnterior;
-		long qtPosterior;
-		
-		if(listaDatas==null || listaDatas.isEmpty()){
-		 
-		  operacao = distribuidorService.obterDataOperacaoDistribuidor();
-		  
-		  if(dataLancamento.before(operacao)){
-			return operacao;
-		  }else{
+
+		if(listaDatas==null || listaDatas.isEmpty()) {
+
+			operacao = distribuidorService.obterDataOperacaoDistribuidor();
+
+			if(dataLancamento.before(operacao)) {
+				return operacao;
+			} else {
+				return dataLancamento;
+			}
+		} else if(listaDatas.contains(dataLancamento)) {
 			return dataLancamento;
-		  }
-		}else if(listaDatas.contains(dataLancamento)){
-		  return dataLancamento;
-		}else if(dataLancamento.before(listaDatas.getFirst())){
-		  return listaDatas.getFirst();
-		}else{
+		} else if(dataLancamento.before(listaDatas.getFirst())) {
+			return listaDatas.getFirst();
+		} else {
 
-			for(int i =0;i<listaDatas.size();i++) {
-				if(i>0 && i<listaDatas.size() && dataLancamento.after(listaDatas.get(i-1)) 
-						&& dataLancamento.before(listaDatas.get(i+1))){
+			for(int i = 0; i < listaDatas.size(); i++) {
+				if(i > 0 && i < listaDatas.size() && dataLancamento.before(listaDatas.get(i))) {
 
-					anterior   = listaDatas.get(i-1);
-					posterior  = listaDatas.get(i+1);
-
-					qtAnterior = dataLancamento.getTime() - anterior.getTime();
-					qtPosterior = posterior.getTime() - dataLancamento.getTime();
-
-					if(qtAnterior<qtPosterior){
-						return anterior;  
-					}else{
-						return posterior;
-					}
-
+					return listaDatas.get(i);
 				}
 			}
 
 			dataLancamento =  listaDatas.getFirst();
 
-		  return dataLancamento;
+			return dataLancamento;
 		}
 		
 	}

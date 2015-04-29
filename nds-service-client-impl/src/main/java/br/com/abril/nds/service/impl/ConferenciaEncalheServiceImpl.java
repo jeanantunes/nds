@@ -124,7 +124,6 @@ import br.com.abril.nds.repository.SlipRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.repository.impl.FeriadoRepositoryImpl;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -570,7 +569,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
 		
 	}
-
 	
 	private class DiaSemanaRecolhimento {
 		
@@ -582,8 +580,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	    /**
+	/**
      * Valida a existência de chamada de encalhe de acordo com a cota de
      * operação diferenciada e produtoEdicao cuja dataRecolhimento esteja dentro
      * da faixa aceitavel para cota de operação diferenciada.
@@ -1097,9 +1094,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Override
     public BigDecimal obterValorTotalDesconto(final Integer numeroCota, final Date dataOperacao) {
 		
-		BigDecimal reparte =
-			chamadaEncalheCotaRepository.obterTotalDescontoDaChamaEncalheCota(
-				numeroCota, dataOperacao, false, false);
+		BigDecimal reparte = chamadaEncalheCotaRepository.obterTotalDescontoDaChamaEncalheCota(numeroCota, dataOperacao, false, false);
 		
 		if (reparte == null) {
 			
@@ -1821,18 +1816,45 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional
-	public void criarBackupConferenciaEncalhe(Usuario usuario, Cota cota, final List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	public void criarBackupConferenciaEncalhe(Usuario usuario
+			, InfoConferenciaEncalheCota infoConferenciaEncalheCota
+			, ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
-		this.sinalizarInicioProcessoEncalhe(cota.getNumeroCota(), usuario);
+		this.sinalizarInicioProcessoEncalhe(controleConferenciaEncalheCota.getCota().getNumeroCota(), usuario);
 
 		Date dataCriacao = new Date();
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		limparBackupAnterior(cota.getNumeroCota(), dataOperacao);
+		limparBackupAnterior(controleConferenciaEncalheCota.getCota().getNumeroCota(), dataOperacao);
 		
-		for(ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
-			criarNovoRegistroBackupConferenciaEncalhe(conf, cota, dataCriacao, dataOperacao);
+		List<Date> datasRecolhimento = new ArrayList<Date>();
+		datasRecolhimento.add(dataOperacao);
+		List<ConferenciaEncalheDTO>	listaConferenciaEncalheCompleta = obterListaConferenciaEncalheContingencia(
+					dataOperacao, 
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
+					datasRecolhimento, new ArrayList<ConferenciaEncalheDTO>(infoConferenciaEncalheCota.getListaConferenciaEncalhe()));
+		
+		if(listaConferenciaEncalheCompleta!=null && !listaConferenciaEncalheCompleta.isEmpty()) {
+			
+			carregarDiaRecolhimento(controleConferenciaEncalheCota.getCota().getNumeroCota(), dataOperacao, listaConferenciaEncalheCompleta);
+			
+		}
+		
+		List<Long> produtoEdicoesIdsConferidos = new ArrayList<Long>();
+		
+		for(ConferenciaEncalheDTO conf : infoConferenciaEncalheCota.getListaConferenciaEncalhe()) {
+			produtoEdicoesIdsConferidos.add(conf.getIdProdutoEdicao());
+		}
+		
+		for(ConferenciaEncalheDTO conf : listaConferenciaEncalheCompleta) {
+			if(!produtoEdicoesIdsConferidos.contains(conf.getIdProdutoEdicao())) {
+				infoConferenciaEncalheCota.getListaConferenciaEncalhe().add(conf);
+			}
+		}
+		
+		for(ConferenciaEncalheDTO conf : infoConferenciaEncalheCota.getListaConferenciaEncalhe()) {
+			criarNovoRegistroBackupConferenciaEncalhe(conf, controleConferenciaEncalheCota.getCota(), dataCriacao, dataOperacao);
 		}
 		
 	}
@@ -1925,7 +1947,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, isolation=Isolation.READ_COMMITTED)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
@@ -1936,9 +1958,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-
-		final List<Long> listaIdConferenciaEncalheParaExclusao = 
-				obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
+		
+		List<Long> listaIdConferenciaEncalheParaExclusao = obterIdConferenciasParaExclusao(controleConfEncalheCota.getId(), listaConferenciaEncalhe);
 		
 		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
 				                                listaConferenciaEncalhe, 
@@ -2085,7 +2106,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private Set<String> gerarCobranca(final ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
 		
-		if(	controleConferenciaEncalheCota.getId() != null) {
+		if(controleConferenciaEncalheCota.getId() != null) {
 			
 			final StatusOperacao statusAtualOperacaoConfEnc = 
 					controleConferenciaEncalheCotaRepository.obterStatusControleConferenciaEncalheCota(
@@ -2102,7 +2123,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
         		                                                                                          controleConferenciaEncalheCota.getDataOperacao());
         
-		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)){
+		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)) {
 			
 			
 			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
@@ -2126,14 +2147,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
             // se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
-			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
-					controleConferenciaEncalheCota.getCota().getNumeroCota()),
+			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(controleConferenciaEncalheCota.getCota().getNumeroCota()),
 					
-					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
-							controleConferenciaEncalheCota.getCota().getNumeroCota());
+					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(controleConferenciaEncalheCota.getCota().getNumeroCota());
 			
-			if (!cotaUnificadora && !cotaUnificada){
-			
+			if (!cotaUnificadora && !cotaUnificada) {
 				
 				FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(controleConferenciaEncalheCota.getCota().getId()
 										, null, controleConferenciaEncalheCota.getDataOperacao());
@@ -2273,22 +2291,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				obterControleConferenciaEncalheCotaAtualizado(controleConfEncalheCota, statusOperacao, usuario);
 		
-		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = 
-				obterMapaTipoMovimentoEstoque();
+		final Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = obterMapaTipoMovimentoEstoque();
 		
 		final boolean validarExemplaresComZero =false;
 		
 		for(final ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
-			
 
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota(), 
 					dataOperacao, indConferenciaContingencia, validarExemplaresComZero);
-				
 			
-			
-			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
+			if(conferenciaEncalheDTO.getIdConferenciaEncalhe() != null) {
 
 				atualizarRegistroConferenciaEncalhe(
 						cota,
@@ -2853,11 +2867,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		conferenciaEncalheRepository.remover(conferenciaEncalhe);
 		
-		if(movimentoEstoqueCota!=null){
+		if(movimentoEstoqueCota != null) {
+			
 			excluirRegistroMovimentoEstoqueCota(movimentoEstoqueCota);
 		}
 		
-		if(movimentoEstoque!=null){
+		if(movimentoEstoque != null) {
+			
 			movimentoEstoqueService.excluirRegistroMovimentoEstoqueDeEncalhe(cota, movimentoEstoque);
 		}
 		
@@ -3245,7 +3261,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							+ conferenciaEncalheDTO.getNomeProduto()
 							+ " - "
 							+ conferenciaEncalheDTO.getNumeroEdicao()
- + "] no estoque da cota, insuficiente para movimentação.");
+							+ "] no estoque da cota, insuficiente para movimentação.");
 		}
 	}
 
@@ -3445,7 +3461,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao);
+		List<Date> datasRecolhimentoValidas = lancamentoRepository.obterDatasRecolhimentoValidas();
+		
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataOperacao, datasRecolhimentoValidas);
 	}
 	
 	@Transactional

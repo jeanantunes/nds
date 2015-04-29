@@ -13,7 +13,7 @@ public class NdsProfiler {
 	
 	private static final int START_TIME_POSITION_COLON = 170;
 	
-	@Around("execution(* br.com.abril.nds.repository.*.*(..))")
+	@Around("execution(* br.com.abril.nds.repository.*.*(..)) || execution(* br.com.abril.nds.dao.*.*(..))")
 	public Object profileRepository(ProceedingJoinPoint pjp) throws Throwable {
 		
 		long start = System.currentTimeMillis();

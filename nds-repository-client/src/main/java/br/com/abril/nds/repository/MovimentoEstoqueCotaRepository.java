@@ -144,7 +144,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
 	/**
-<<<<<<< HEAD
 	 * Obtém o somatorio do campo qtde do Movimento de Estoque da cota pelo Tipo de Movimento.
 	 * 
 	 * @param periodo
@@ -499,7 +498,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public void adicionarEmLoteDTO(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
 	
-	List<CotaReparteDTO> obterReparte(Set<Long> idsLancamento);
+	List<CotaReparteDTO> obterReparte(Set<Long> idsLancamento, Long cotaId);
 
 	public abstract void updateByIdConsolidadoAndGrupos(Long idConsolidado, List<String> grupoMovimentoFinaceiros,
 			String motivo, Long movimentoFinanceiroCota, StatusEstoqueFinanceiro statusEstoqueFinanceiro);

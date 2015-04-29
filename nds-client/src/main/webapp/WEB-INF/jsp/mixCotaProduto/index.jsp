@@ -12,11 +12,13 @@
 		         		<img src="images/ico_salvar.gif" hspace="5" border="0" />
 		         	</a>
 		         </span>
-		         <span class="bt_novos" id="btExcluirTudoCota">
-		         	<a href="javascript:mixCotaProdutoController.excluirTodos();" rel="tipsy" title="Excluir Todos">
+		         
+		          <span class="bt_novos" id="btExcluirTudoCota">
+		         	<a href="javascript:mixCotaProdutoController.excluirTodosPorCota();" rel="tipsy" title="Excluir Todos">
 		         		<img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />
 		         	</a>
 		         </span>
+		         
 				 <span class="bt_novos" id="btCopiaMix">
 				 	<a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()" rel="tipsy" title="C&oacute;pia de Mix">
 				 		<img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />
@@ -46,10 +48,11 @@
          		</span>
 				
 				<span class="bt_novos" id="btExcluirTudoProduto">
-					<a href="javascript:mixCotaProdutoController.excluirTodos();" rel="tipsy" title="Excluir Todos" >
+					<a href="javascript:mixCotaProdutoController.excluirTodosPorProduto();" rel="tipsy" title="Excluir Todos" >
 						<img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />
 					</a>
 				</span>
+				
 				<span class="bt_novos" id="btCopiaMix">
 					<a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()" rel="tipsy" title="C&oacute;pia de Mix">
 						<img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />

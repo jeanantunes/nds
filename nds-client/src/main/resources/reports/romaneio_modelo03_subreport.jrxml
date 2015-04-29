@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo03_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="03a9c3d6-f4db-49a6-b733-8546a7e683c9">
-	<property name="ireport.zoom" value="0.9090909090909141"/>
+	<property name="ireport.zoom" value="5.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Crosstab Data Text" hAlign="Center"/>
@@ -127,7 +127,7 @@
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="40" height="14" backcolor="#999999" uuid="1704dee5-1e11-4e59-bdaa-4b65874a7efa"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="40" height="14" backcolor="#DEDEDE" uuid="1704dee5-1e11-4e59-bdaa-4b65874a7efa"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -135,13 +135,13 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="136" height="14" backcolor="#999999" uuid="033af370-f7d3-4294-8b88-e776af4fc3d0"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="136" height="14" backcolor="#DEDEDE" uuid="033af370-f7d3-4294-8b88-e776af4fc3d0"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -149,13 +149,13 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="216" y="0" width="205" height="14" backcolor="#999999" uuid="346f8358-c928-45c6-8cb0-db9974ffb13e"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="216" y="0" width="205" height="14" backcolor="#DEDEDE" uuid="346f8358-c928-45c6-8cb0-db9974ffb13e"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -163,13 +163,13 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Endereço]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="421" y="0" width="42" height="14" backcolor="#999999" uuid="1191f2e7-a847-48a9-a4dc-def9707aaeca">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="421" y="0" width="42" height="14" backcolor="#DEDEDE" uuid="1191f2e7-a847-48a9-a4dc-def9707aaeca">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_0} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -184,7 +184,7 @@
 				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_0}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="463" y="0" width="42" height="14" backcolor="#999999" uuid="53a07423-a638-4ee3-9726-39935b1b7af8">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="463" y="0" width="42" height="14" backcolor="#DEDEDE" uuid="53a07423-a638-4ee3-9726-39935b1b7af8">
 					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_1} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -307,7 +307,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="505" y="0" width="148" height="14" backcolor="#999999" uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="505" y="0" width="148" height="14" backcolor="#DEDEDE" uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -323,7 +323,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999" uuid="6e7f9867-3d28-4a4b-b546-009599533ae3"/>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#DEDEDE" uuid="6e7f9867-3d28-4a4b-b546-009599533ae3"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -337,7 +337,7 @@
 				<text><![CDATA[ Nº NE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="653" y="0" width="149" height="14" backcolor="#999999" uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="653" y="0" width="149" height="14" backcolor="#DEDEDE" uuid="1b4aadeb-488d-4e17-81d4-810554ba93f4">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -353,7 +353,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="674" y="0" width="128" height="14" backcolor="#999999" uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="674" y="0" width="128" height="14" backcolor="#DEDEDE" uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -369,7 +369,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="107" height="14" backcolor="#999999" uuid="e2a3bdf5-4169-449c-8f9b-281c90df3cc3">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="0" width="107" height="14" backcolor="#DEDEDE" uuid="e2a3bdf5-4169-449c-8f9b-281c90df3cc3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -385,7 +385,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="716" y="0" width="86" height="14" backcolor="#999999" uuid="de240d24-bbb0-405f-b0b2-c91e097ae629">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="716" y="0" width="86" height="14" backcolor="#DEDEDE" uuid="de240d24-bbb0-405f-b0b2-c91e097ae629">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -401,7 +401,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="737" y="0" width="65" height="14" backcolor="#999999" uuid="9b5ec60e-e0b1-42b2-8d3b-ad3fd6698871">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="737" y="0" width="65" height="14" backcolor="#DEDEDE" uuid="9b5ec60e-e0b1-42b2-8d3b-ad3fd6698871">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -417,7 +417,7 @@
 				<text><![CDATA[Assinatura]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="127" height="14" backcolor="#999999" uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="547" y="0" width="127" height="14" backcolor="#DEDEDE" uuid="58dd105b-9019-41f3-884e-2b3ccfa13ee3">
 					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0">
@@ -444,7 +444,7 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
@@ -457,7 +457,7 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
@@ -472,6 +472,7 @@
 				</box>
 				<textElement verticalAlignment="Middle">
 					<font isStrikeThrough="false"/>
+					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>

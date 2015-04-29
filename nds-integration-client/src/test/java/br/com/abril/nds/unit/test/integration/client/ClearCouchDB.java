@@ -34,8 +34,8 @@ public class ClearCouchDB {
 //			view.startKey(new Object[] {RouteInterface.EMS0110.getName(), null});
 //			view.endKey(RouteInterface.EMS0110.getName(), "");
 			
-			view.startKey("EMS3100", null);
-			view.endKey("EMS3100", "");
+			view.startKey("EMS0136", null);
+			view.endKey("EMS0136", "");
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
 

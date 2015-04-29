@@ -109,7 +109,7 @@
 	    <label>Confirma Box de Encalhe: </label>
 	    <select name="boxes" style="width:150px;" id="boxLogado">
 			<c:forEach var="item" items="${boxes}">
-		       <option value="${item.id}">${item.nome}</option>
+		       <option value="${item.id}" <c:if test="${idBoxLogado == item.id}">selected</c:if>>${item.nome}</option>
 		    </c:forEach>
 	    </select>
 	</fieldset>
@@ -132,9 +132,6 @@
             		<input name="pesq_prod" type="text" 
             			   id="pesq_prod" style="width:200px; float:left; margin-right:5px;"
             			   onkeypress="return disableEnterKey(event);"/>
-	                <span class="classPesquisar">
-	                	<a href="javascript:;" onclick="mostrar_produtos();">&nbsp;</a>
-	                </span>
             	</td>
           	</tr>
         </table>

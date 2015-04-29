@@ -66,11 +66,20 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO AS precoCapa,");
 		
-		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' ");
-		hql.append("		then ");
+		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' then ");
 		hql.append("			 COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(" ) ");
-		hql.append("		else	");	
-		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
+		hql.append("		 when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'FINAL' then ");
+		hql.append("			 COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ");
+		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA, 0)");
+		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");		
+		hql.append("			   ) ");
+		hql.append("			), 0) ");
+		hql.append("		else ");	
+		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA, 0) ");
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
 		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
 		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");

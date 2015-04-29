@@ -98,7 +98,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 	},
 	
-	atribuirAtalhos: function(){
+	atribuirAtalhos: function() {
 		$(document.body).unbind();
 		
 		var permissaoAlteracao = ($('#permissaoAlteracao',workspace).val()=="true");
@@ -127,43 +127,61 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 		}));
 		
+		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8', ConferenciaEncalheCont.salvarConferencia));
 		
-		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8',function() {
-			if(!permissaoAlteracao){
-				exibirAcessoNegado();
-				return;
-			}
-			if (!ConferenciaEncalheCont.modalAberta){
-				
-				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-				
+		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9', ConferenciaEncalheCont.finalizarConferencia));
+		
+	},
+	
+	salvarConferencia : function() {
+		
+		if(!permissaoAlteracao) {
+			exibirAcessoNegado();
+			return;
+		}
+		if (!ConferenciaEncalheCont.modalAberta) {
+			
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
 				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-				
-				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
-				}, 1000);
-				
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.salvarConferencia');
+				return;
 			}
 			
-		}));
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.popup_salvarInfos);
+			}, 1000);
+			
+		};
 		
-		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			if(!permissaoAlteracao){
-				exibirAcessoNegado();
-				return;
-			}
-			if (!ConferenciaEncalheCont.modalAberta){
+	},
+	
+	finalizarConferencia: function() {
+		if(!permissaoAlteracao){
+			exibirAcessoNegado();
+			return;
+		}
+		if (!ConferenciaEncalheCont.modalAberta) {
 
-				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
-				
+			if(document.activeElement != undefined && document.activeElement.id != undefined && document.activeElement.id.indexOf('qtdExemplaresGrid_') > -1) {
+				elNdx = $(document.activeElement).attr('elIndex');
 				$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
-				
-				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
-				}, 1000);
+				ConferenciaEncalheCont.verificarPermissaoSuperVisor(elNdx, 'keydown.finalizarConferencia');
+				return;
 			}
 			
-		}));
+			ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
+			
+			$("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).focus();
+			
+			setTimeout(function() {
+				ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
+			}, 1000);
+		};
 		
 	},
 	
@@ -584,7 +602,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
 					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + 
-						'" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + 
+						'" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+ index +', window.event);" elIndex="'+ index +'" id="qtdExemplaresGrid_'+ index + 
 						'" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" '+
 						' onchange="ConferenciaEncalheCont.valorAnteriorInput = this.defaultValue;ConferenciaEncalheCont.verificarPermissaoSuperVisor('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
@@ -697,18 +715,20 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 		});
 		
-		var param = serializeArrayToPost('listaConferenciaEncalhe', 
-				data);
+		var param = serializeArrayToPost('listaConferenciaEncalhe', data);
 		
 		param.indConferenciaContingencia = true;
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
 				param, 
-				function(result){
+				function(result) {
 			
-					executarPosAtualizacaoGrid();
+					if(executarPosAtualizacaoGrid) {
+						
+						executarPosAtualizacaoGrid();
+					}
 			
-				}, function(){
+				}, function() {
 					
 					var data = [
 								  {name: 'numeroCota', 			value : $("#contingencia-numeroCota", ConferenciaEncalheCont.workspace).val()}, 
@@ -747,7 +767,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValores", 
 			data, 
-			function(result){
+			function(result) {
 			
 			    $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(result.conf.qtdExemplar);
 			
@@ -763,35 +783,46 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				if(focusOnInput) {
 					
-					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
-					
-					setTimeout(function(){
-						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
-					},1);
+					if($("#qtdExemplaresGrid_"+ (index + 1))) {
+						
+						setTimeout(function() {
+							$("#qtdExemplaresGrid_"+ (index + 1)).focus();
+						}, 1);
+					} else if($("#qtdExemplaresGrid_"+ (index - 1))) {
+						
+						setTimeout(function() {
+							$("#qtdExemplaresGrid_"+ (index - 1)).focus();
+						}, 1);
+					} else {
+						
+						setTimeout(function() {
+							$("#contingencia-numeroCota").focus();
+						}, 1);
+					}
 					
 				}
 				
 			},
 			function(result) {
 
-				if (result.mensagens){
+				if (result.mensagens) {
 
 					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 					
 					var position = $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val().length;
 					
-					setTimeout(function(){
+					setTimeout(function() {
 						$("#qtdExemplaresGrid_" + index).focus().selectRange(0, position);
-					},1);
+					}, 1);
 					
 				}
 			}, null, null, false
 		);
 	},
 	
-	verificarPermissaoSuperVisor : function(index){
+	verificarPermissaoSuperVisor : function(index, caller) {
 		
-		if(ConferenciaEncalheCont.processandoConferenciaEncalhe){
+		if(ConferenciaEncalheCont.processandoConferenciaEncalhe) {
 			return;
 		}
 		
@@ -803,19 +834,21 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
 			data, 
-			function(result){
+			function(result) {
 				
-				if (result && result.result != ""){
+				if (result && result.result != "") {
 					
 					ConferenciaEncalheCont.resetValue = true;
 					
-					if (result[0]){
+					if (result[0]) {
 						
 						exibirMensagem('WARNING', [result[1]]);
 						ConferenciaEncalheCont.resetValue = false;
 						ConferenciaEncalheCont.atualizarValores(index);
 						ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 					} else {
+						
+						ConferenciaEncalheCont.removerAtalhos();
 						
 						$("#msgSupervisor", ConferenciaEncalheCont.workspace).text(result[1]);
 						
@@ -828,11 +861,20 @@ var ConferenciaEncalheCont = $.extend(true, {
 								"Ok": function() {
 									
 									ConferenciaEncalheCont.resetValue = false;
-									ConferenciaEncalheCont.autenticarSupervisor(index);
+									ConferenciaEncalheCont.autenticarSupervisor(index, caller);
 									
 								},
 								"Cancelar": function() {
+									
+									ConferenciaEncalheCont.atribuirAtalhos();
+									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+									
+									if($('#dialog-autenticar-supervisor input')) {
+										
+										$('#dialog-autenticar-supervisor input').val('');
+									}
+									
 									$(this).dialog("close");
 								}
 							},
@@ -850,16 +892,23 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 							},
 							
-							close: function(){
+							close: function() {
 								
-								if (ConferenciaEncalheCont.resetValue){
+								if (ConferenciaEncalheCont.resetValue) {
+									
+									ConferenciaEncalheCont.atribuirAtalhos();
 									
 									$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 									
 									setTimeout(function(){
 										$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).select();
-									},1);
+									}, 1);
 									
+								}
+								
+								if($('#dialog-autenticar-supervisor input')) {
+									
+									$('#dialog-autenticar-supervisor input').val('');
 								}
 								
 								ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
@@ -869,6 +918,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 				} else {
 					ConferenciaEncalheCont.atualizarValores(index);
+					
+					if(caller && caller == 'keydown.salvarConferencia') {
+						ConferenciaEncalheCont.salvarConferencia();
+					} else if(caller && caller == 'keydown.finalizarConferencia') {
+						ConferenciaEncalheCont.finalizarConferencia();
+					}
+					
 					ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter();
 				}
 			}, null, null, null, false
@@ -884,10 +940,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
 			
-			exibirMensagem(
-				'WARNING', 
-				['Usuário e senha são obrigatórios.']
-			);
+			exibirMensagem('WARNING', ['Usuário e senha são obrigatórios.']);
 			
 			ConferenciaEncalheCont.resetValue = true;
 			
@@ -914,44 +967,55 @@ var ConferenciaEncalheCont = $.extend(true, {
 					return;
 				}
 				
-				if (index){
+				if (index) {
+					
 					ConferenciaEncalheCont.atualizarValores(index, true);
+										
+					setTimeout(function() {
+						ConferenciaEncalheCont.atualizarValoresGridInteira();
+					}, 1000);
 				}
 				
-				if (callback){
-					callback(paramCallback, keepDialog);
+				if(callback && callback == 'keydown.salvarConferencia') {
+					ConferenciaEncalheCont.salvarConferencia();
+				} else if(callback && callback == 'keydown.finalizarConferencia') {
+					ConferenciaEncalheCont.finalizarConferencia();
 				}
+				
+				ConferenciaEncalheCont.removerAtalhos();
+				ConferenciaEncalheCont.atribuirAtalhos();
 				
 				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
+				
 				return;
 			},
-			function (){
+			function () {
+				
 				ConferenciaEncalheCont.resetValue = true;
 			}
 		);
 	},
 	
-	enterOnSupervisorModal : function(event){
+	enterOnSupervisorModal : function(event) {
 		
-		if (event && event.keyCode == 13){
+		if (event && event.keyCode == 13) {
 			
 			$(".ui-dialog-buttonpane button:contains('Ok')", ConferenciaEncalheCont.workspace).click();
 		}
 	},
 	
-	numeroCotaEditavel : function(r){
+	numeroCotaEditavel : function(r) {
 		
-		if (r==false){
+		if (r==false) {
 			
 			$("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', true);
-		}
-		else{
+		} else {
 			
 			$("#contingencia-numeroCota",ConferenciaEncalheCont.workspace).attr('readonly', false);
 		}
 	},
 	
-	inicializarAutoCompleteSugestaoProdutoEdicao: function(){
+	inicializarAutoCompleteSugestaoProdutoEdicao: function() {
 		
 		var functionBuscaProduto = function(url, term, successCallback) { 
 		
@@ -1740,6 +1804,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
+					ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
+					
 					$(this).dialog("close");
 				}
 
@@ -1755,9 +1821,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			},
 			
-			close : function(){
+			close : function() {
 				
+				ConferenciaEncalheCont.processandoConferenciaEncalhe = false;
 				ConferenciaEncalheCont.modalAberta = false;
+				
 			},
 			form: $("#dialog-salvar", this.workspace).parents("form")			
 		});

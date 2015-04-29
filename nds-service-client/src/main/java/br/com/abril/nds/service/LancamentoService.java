@@ -83,9 +83,10 @@ public interface LancamentoService {
      * Obtém o último Lancamento de determinado ProdutoEdicao
      * 
      * @param idProdutoEdicao - Id do ProdutoEdicao
+	         * @param dataLimiteLancamento TODO
      * @return Lancamento
      */
-	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento);
 	
 	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 	
@@ -149,7 +150,7 @@ public interface LancamentoService {
 
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 
-	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota, Date dataLimiteLancamento);
 	
 	Date getMaiorDataLancamento(Long idProdutoEdicao);
 	
@@ -185,7 +186,7 @@ public interface LancamentoService {
 	
 	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
 
-	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento);
+	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento, boolean alterarStatusLancamento);
 	
 	void reajustarNumerosLancamento(PeriodoLancamentoParcial periodo);
 	
@@ -196,6 +197,8 @@ public interface LancamentoService {
 	StatusLancamento obterStatusDoPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 
 	public abstract boolean isRedistribuicao(String codigoProduto, Long numeroEdicao);
+	
+	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
 	
 }
  

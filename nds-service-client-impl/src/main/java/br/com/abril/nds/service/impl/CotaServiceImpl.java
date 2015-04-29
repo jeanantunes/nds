@@ -135,6 +135,7 @@ import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
@@ -285,6 +286,9 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired
     private AssociacaoVeiculoMotoristaRotaRepository motoristaRotaRepository;
+    
+    @Autowired
+    private EstoqueProdutoService estoqueProdutoService;
     
     @Transactional(readOnly = true)
     @Override
@@ -1014,10 +1018,9 @@ public class CotaServiceImpl implements CotaService {
         dto.setTipoDistribuicaoCota(cotaRepository.obterTipoDistribuicao(idCota).name());
         dto.setRecebeComplementar(parametroDistribuicaoCota.getRecebeComplementar());
         
-       ParametroCobrancaDistribuicaoCota parametro = 
-        		parametroCobrancaDistribuicaoCotaRepository.obterParametroPorCota(cota.getId());
+        ParametroCobrancaDistribuicaoCota parametro = cota.getParametroCobrancaDistribuicaoCota();
         
-        if(parametro!= null){
+        if(parametro != null) {
         	  
         	  dto.setDiaCobranca(parametro.getDiaCobranca());
               dto.setDiaSemanaCobranca(parametro.getDiaSemanaCobranca());
@@ -1214,7 +1217,6 @@ public class CotaServiceImpl implements CotaService {
     	
     	ModalidadeCobranca modalidadeCobranca = dto.getModalidadeCobranca();
     	
-    	parametro.setCota(cota);
     	parametro.setDiaCobranca(dto.getDiaCobranca());
     	parametro.setDiaSemanaCobranca(dto.getDiaSemanaCobranca());
     	parametro.setModalidadeCobranca(modalidadeCobranca);
@@ -1224,6 +1226,7 @@ public class CotaServiceImpl implements CotaService {
     	parametro.setTaxaFixa(dto.getTaxaFixa());
     	parametro.setBaseCalculo(dto.getBaseCalculo());
  
+    	cota.setParametroCobrancaDistribuicaoCota(parametro);
     	parametroCobrancaDistribuicaoCotaRepository.merge(parametro);
 	}
 
@@ -1231,13 +1234,15 @@ public class CotaServiceImpl implements CotaService {
     @Transactional(readOnly = true)
     public CotaDTO obterDadosCadastraisCota(final Long idCota){
         
-        if (idCota == null){
+        if (idCota == null) {
+        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
         }
         
         final Cota cota  = cotaRepository.buscarPorId(idCota);
         
-        if (cota == null){
+        if (cota == null) {
+        	
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
         }
         
@@ -1250,6 +1255,7 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
         cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
+        cotaDTO.setUtilizaIPV(cota.isUtilizaIPV());
         
         if (cota.getTipoDistribuicaoCota() != null) {
             cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
@@ -1460,7 +1466,7 @@ public class CotaServiceImpl implements CotaService {
         
         Cota cota  = null;
         
-        if(cotaDto.getIdCota()!= null){
+        if(cotaDto.getIdCota() != null) {
             cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
         }
         
@@ -1469,7 +1475,7 @@ public class CotaServiceImpl implements CotaService {
         boolean incluirPDV = false;
         // Flag indica criação de uma nova cota
         boolean newCota = false;
-        if(cota == null){
+        if(cota == null) {
             cota = new Cota();
             cota.setInicioAtividade(dataOperacao);
             cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
@@ -1492,6 +1498,8 @@ public class CotaServiceImpl implements CotaService {
         cota.setNumeroCota(cotaDto.getNumeroCota());
         
         cota.setTipoCota(cotaDto.getTipoCotaFinanceiro());
+        
+        cota.setUtilizaIPV(cotaDto.isUtilizaIPV());
         
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
@@ -1526,7 +1534,8 @@ public class CotaServiceImpl implements CotaService {
         
         processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
         
-        if(incluirPDV){
+        if(incluirPDV) {
+        	
             persisteDadosPDV(cota, cotaDto);
         }
         
@@ -1815,7 +1824,7 @@ public class CotaServiceImpl implements CotaService {
         if ( pessoa instanceof  PessoaJuridica  ){
             
             ((PessoaJuridica) pessoa).setCnpj(cotaDto.getNumeroCnpj().replace(".", "").replace("-", "").replace("/", "").trim());
-            ((PessoaJuridica) pessoa).setInscricaoEstadual(cotaDto.getInscricaoEstadual());
+            ((PessoaJuridica) pessoa).setInscricaoEstadual(cotaDto.getInscricaoEstadual() != null ? cotaDto.getInscricaoEstadual().trim() : "");
             ((PessoaJuridica) pessoa).setInscricaoMunicipal(cotaDto.getInscricaoMunicipal());
             ((PessoaJuridica) pessoa).setNomeFantasia(cotaDto.getNomeFantasia());
             ((PessoaJuridica) pessoa).setRazaoSocial(cotaDto.getRazaoSocial());
@@ -1899,8 +1908,8 @@ public class CotaServiceImpl implements CotaService {
             
             baseReferenciaCota.setInicioPeriodo(cotaDto.getInicioPeriodo());
             baseReferenciaCota.setFinalPeriodo(cotaDto.getFimPeriodo());
-            baseReferenciaCota.setCota(cota);
             
+            cota.setBaseReferenciaCota(baseReferenciaCota);
             baseReferenciaCota = baseReferenciaCotaRepository.merge(baseReferenciaCota);
         }
         
@@ -2763,8 +2772,21 @@ public class CotaServiceImpl implements CotaService {
                 final ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(
                         produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
                 
-                if (dto != null) {
+                if (dto != null && dto.getId() != null) {
+
+                	if(dto.getStatusLancamento() != null && dto.getStatusLancamento().equalsIgnoreCase("FECHADO") && 
+                			(dto.getQtdeVendas() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+                		
+                		BigDecimal venda = estoqueProdutoService.obterVendaCotaBaseadoNoEstoque(dto.getId(), analiseHistoricoDTO.getNumeroCota()); 
+                		
+                		if(venda != null){
+                			dto.setQtdeVendas(venda.toBigInteger());
+                		}
+                		
+                	}
+                	
                     qtdEdicaoVendida++;
+                    
                     if (i == 0) {
                         if(dto.getReparte() != null){
                             analiseHistoricoDTO.setEd1Reparte(dto.getReparte().intValue());

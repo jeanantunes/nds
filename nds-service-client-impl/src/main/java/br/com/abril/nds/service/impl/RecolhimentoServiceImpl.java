@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +79,8 @@ import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
  */
 @Service
 public class RecolhimentoServiceImpl implements RecolhimentoService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RecolhimentoServiceImpl.class);
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -137,11 +141,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 			}
 		  } catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-			e.printStackTrace();
+			  
+			  LOGGER.error("", e);
 		  } catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-			e.printStackTrace();
+			  
+			  LOGGER.error("", e);
 		  }
 		  
 		  return matrizCopia;
@@ -153,56 +157,53 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Override
 	@Transactional(readOnly = true)
 	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer anoNumeroSemana,
-																 List<Long> listaIdsFornecedores,
-																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean forcarBalanceamento) {
-		
-		RecolhimentoDTO dadosRecolhimento =
-			this.obterDadosRecolhimento(anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento, forcarBalanceamento);
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO =
-			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-		
-		
-		if(balanceamentoRecolhimentoDTO!=null && balanceamentoRecolhimentoDTO.getMatrizRecolhimento()!=null){
-		  
-		  TreeMap<Date, List<ProdutoRecolhimentoDTO>> copiaMatriz = copiarMatriz(balanceamentoRecolhimentoDTO.getMatrizRecolhimento());
-			
-		  Date dataMatriz;
-		  List <ProdutoRecolhimentoDTO> listaProdutos;
-		
-		  for(Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimentoDTO.getMatrizRecolhimento().entrySet()){
-			
-			dataMatriz = entry.getKey();
-			listaProdutos = entry.getValue();
-			
-			if(listaProdutos!=null && !listaProdutos.isEmpty()){
-				
-			 for(ProdutoRecolhimentoDTO prDTO :listaProdutos){
-				
-				if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz) 
-						&& prDTO.getStatusLancamento().compareTo(StatusLancamento.EXPEDIDO)==0
-						){
-					//remove e insere no dia certo 
+			List<Long> listaIdsFornecedores,
+			TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
+			boolean forcarBalanceamento) {
 
-					if(copiaMatriz.containsKey(prDTO.getDataRecolhimentoPrevista())){
-						
-						copiaMatriz.get(dataMatriz).remove(prDTO);
-						prDTO.setNovaData(prDTO.getDataRecolhimentoPrevista());
-						copiaMatriz.get(prDTO.getDataRecolhimentoPrevista()).add(prDTO);
+		RecolhimentoDTO dadosRecolhimento = this.obterDadosRecolhimento(anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento, forcarBalanceamento);
+
+		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
+
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO = balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+
+		if(balanceamentoRecolhimentoDTO != null && balanceamentoRecolhimentoDTO.getMatrizRecolhimento() != null) {
+
+			TreeMap<Date, List<ProdutoRecolhimentoDTO>> copiaMatriz = copiarMatriz(balanceamentoRecolhimentoDTO.getMatrizRecolhimento());
+
+			Date dataMatriz;
+			List <ProdutoRecolhimentoDTO> listaProdutos;
+
+			for(Entry<Date, List<ProdutoRecolhimentoDTO>> entry : balanceamentoRecolhimentoDTO.getMatrizRecolhimento().entrySet()){
+
+				dataMatriz = entry.getKey();
+				listaProdutos = entry.getValue();
+
+				if(listaProdutos != null && !listaProdutos.isEmpty()) {
+
+					for(ProdutoRecolhimentoDTO prDTO : listaProdutos) {
+
+						/*
+						if(prDTO!=null && dataMatriz!=null && prDTO.getDataRecolhimentoPrevista().after(dataMatriz) 
+								&& prDTO.getStatusLancamento().compareTo(StatusLancamento.EXPEDIDO)==0
+								){
+							//remove e insere no dia certo 
+		
+							if(copiaMatriz.containsKey(prDTO.getDataRecolhimentoPrevista())){
+		
+								copiaMatriz.get(dataMatriz).remove(prDTO);
+								prDTO.setNovaData(prDTO.getDataRecolhimentoPrevista());
+								copiaMatriz.get(prDTO.getDataRecolhimentoPrevista()).add(prDTO);
+							}
+						}*/
+
 					}
 				}
-				
-			 }
+
 			}
-			
-		  }
-		  balanceamentoRecolhimentoDTO.setMatrizRecolhimento(copiaMatriz);
+			balanceamentoRecolhimentoDTO.setMatrizRecolhimento(copiaMatriz);
 		}
-		
+
 		return balanceamentoRecolhimentoDTO;
 	}
 
@@ -211,7 +212,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Usuario usuario, BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO) {
+	public void salvarBalanceamentoRecolhimento(Usuario usuario, BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO, StatusLancamento statusLancamento, Date dataPesquisa) {
 		
 		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = balanceamentoRecolhimentoDTO.getMatrizRecolhimento();
 		
@@ -224,6 +225,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		Set<Long> idsLancamento = new TreeSet<Long>();
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
+			
+			//if(dataPesquisa==null || dataPesquisa.equals(entry.getKey())){
 			
 			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
 			
@@ -251,19 +254,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					for (Long idLancamento : produtoRecolhimento.getIdsLancamentosAgrupados()) {
 						
-						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
-							balanceamentoRecolhimentoDTO.getProdutosRecolhimentoAgrupados(), idLancamento);
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(balanceamentoRecolhimentoDTO.getProdutosRecolhimentoAgrupados(), idLancamento);
 						
 						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
 						
-						this.montarInformacoesSalvarBalanceamento(
-							mapaRecolhimentos, idsLancamento, produtoRecolhimentoAgrupado);
+						this.montarInformacoesSalvarBalanceamento(mapaRecolhimentos, idsLancamento, produtoRecolhimentoAgrupado);
 					}
 				}
+			//}
 			}
 		}
 		
-		this.atualizarLancamentos(idsLancamento, usuario, mapaRecolhimentos, StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
+		this.atualizarLancamentos(idsLancamento, usuario, mapaRecolhimentos, statusLancamento, null);
 	}
 
 	private void montarInformacoesSalvarBalanceamento(
@@ -278,8 +280,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	private boolean isProdutoAgrupado(ProdutoRecolhimentoDTO produtoRecolhimento) {
 		
-		return (produtoRecolhimento.isProdutoAgrupado()
-					&& produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty());
+		return (produtoRecolhimento.isProdutoAgrupado() && produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty());
 	}
 	
 	/**
@@ -429,49 +430,33 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
 			
-			boolean gerarHistoricoLancamento = false;
-			
-			HistoricoLancamento historicoLancamento = null;
-			
 			for (Lancamento lancamento : listaLancamentos) {
-				
-				gerarHistoricoLancamento = !(lancamento.getStatus().equals(statusLancamento));
 				
 				produtoRecolhimento = mapaLancamentoRecolhimento.get(lancamento.getId());
 				
 				Date novaData = produtoRecolhimento.getNovaData();
 				
-				lancamento.setStatus(statusLancamento);
+				if(statusLancamento != null) {
+					
+				  lancamento.setStatus(statusLancamento);
+				}
+				
 				lancamento.setDataStatus(new Date());
 				lancamento.setUsuario(usuario);		
 				
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
 				
-				if (lancamento.getPeriodoLancamentoParcial() != null){
+				if (lancamento.getPeriodoLancamentoParcial() != null) {
 				
 				    this.parciaisService.alterarRecolhimento(lancamento, novaData);
 				}
 				
 				this.lancamentoRepository.merge(lancamento);
 
-				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData);
+				this.lancamentoService.atualizarRedistribuicoes(lancamento, novaData, (statusLancamento != null));
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento, lancamento, novaData);
 				
-				if (gerarHistoricoLancamento) {
-				
-					historicoLancamento = new HistoricoLancamento();
-					
-					historicoLancamento.setLancamento(lancamento);
-					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
-					historicoLancamento.setStatusNovo(lancamento.getStatus());
-					historicoLancamento.setDataEdicao(new Date());
-					historicoLancamento.setResponsavel(usuario);
-					
-                    // TODO: geração de historico desativada devido a criação de
-                    // trigger para realizar essa geração.
-					//this.historicoLancamentoRepository.merge(historicoLancamento);
-				}
 			}
 		}
 	}
@@ -584,7 +569,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
 			
-			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento);
+			List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idsLancamento, null);
 
 			List<ChamadaEncalhe> listaChamadaEncalhe = this.chamadaEncalheRepository.obterChamadasEncalheLancamentos(idsLancamento, false);
 
@@ -693,23 +678,21 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			return;
 		}
 		
-		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), 
-				                                                 cota.isDevolveEncalhe());
+		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
-		if (!criarCahamadaEncalheCota){
+		if (!criarCahamadaEncalheCota) {
 		
 		    return;
 		}
 		
-		ChamadaEncalheCota chamadaEncalheCota =
-			this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
+		ChamadaEncalheCota chamadaEncalheCota = this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
 		
 		if (chamadaEncalheCota == null) {
+			
 			chamadaEncalheCota = new ChamadaEncalheCota();
 		}
 		
-		BigInteger qtdPrevistaExistente =
-			chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+		BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
 			
 		qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
 		
@@ -727,8 +710,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
-		
-		// this.chamadaEncalheRepository.merge(chamadaEncalhe);
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe,
@@ -1611,9 +1592,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	private void removerChamadaEncalheCotaEChamadaEncalhe(List<Long> listaIdChamadaEncalheRemover){
 		
-        this.chamadaEncalheCotaRepository.removerChamadaEncalheCotaPorIdsChamadaEncalhe(listaIdChamadaEncalheRemover);
-		
-        this.chamadaEncalheRepository.removerChamadaEncalhePorIds(listaIdChamadaEncalheRemover);
+		if(!listaIdChamadaEncalheRemover.isEmpty() && listaIdChamadaEncalheRemover.size() > 0 ){
+			
+			this.chamadaEncalheCotaRepository.removerChamadaEncalheCotaPorIdsChamadaEncalhe(listaIdChamadaEncalheRemover);
+			
+			this.chamadaEncalheRepository.removerChamadaEncalhePorIds(listaIdChamadaEncalheRemover);
+		}
 	}
 	
 	@Transactional
@@ -1642,7 +1626,65 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
             	reimpressao = true;
 			}
 			
-			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+			//lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+            lancamento.setStatus(StatusLancamento.EXPEDIDO);
+			
+			lancamento.setUsuario(usuario);
+
+			Set<ChamadaEncalhe> ces = lancamento.getChamadaEncalhe();
+			
+            for (ChamadaEncalhe ce : ces){
+			    
+				if(ce.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)){
+				    
+					listaIdChamadaEncalheRemover.add(ce.getId());
+				}
+			}
+
+			this.lancamentoRepository.alterar(lancamento);
+		}
+        
+        this.removerChamadaEncalheCotaEChamadaEncalhe(listaIdChamadaEncalheRemover);
+
+		if(recolhimento && reimpressao){
+            return "Existem lançamentos que já se econtram em processo de recolhimento!  A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
+		}else if(recolhimento){
+            return "Existem lançamentos que já se econtram em processo de recolhimento!";
+		}else if(reimpressao){
+            return "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
+		}else{
+			return "";
+		}
+	}
+	
+	@Transactional
+	public String cadeadoMatriz(List<Date> datasConfirmadas, Usuario usuario) {
+		
+		this.validarReaberturaMatriz(
+			datasConfirmadas, this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterRecolhimentosEmBalanceamentoRecolhimento(datasConfirmadas);
+
+		List<Long> listaIdChamadaEncalheRemover = new ArrayList<Long>();
+
+		boolean recolhimento = false;
+		
+		boolean reimpressao = false;
+
+		for(Lancamento lancamento: lancamentos) {
+			
+            if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
+				
+            	recolhimento = true;
+			}
+            
+            if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+        		
+            	reimpressao = true;
+			}
+			
+			//lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+            lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
 			
 			lancamento.setUsuario(usuario);
 
@@ -1733,4 +1775,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
         
         return new Intervalo<Date>(dataInicioSemanaAnterior, dataFimSemanaAnterior);
     }
+	@Override
+	public void salvarBalanceamentoRecolhimento(Usuario idUsuario,
+			BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public List<Lancamento> obterRecolhimentosEmBalanceamentoRecolhimento(
+			List<Date> datasConfirmadas) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

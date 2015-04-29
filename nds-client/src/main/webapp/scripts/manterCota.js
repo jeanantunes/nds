@@ -411,7 +411,7 @@ var MANTER_COTA = $.extend(true, {
         }else if(idCombo == "#classificacaoSelecionada"){
         	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionada" style="width:300px;" disabled="disabled">';
         	var fim = '</select>';
-        	$("#selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
+        	$("#manter-selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
 
         }else{
         	$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);        	
@@ -1217,8 +1217,9 @@ var COTA_CNPJ = $.extend(true, {
         $("#inscricaoEstadual", this.workspace).val(result.inscricaoEstadual);
         $("#inscricaoMunicipal", this.workspace).val(result.inscricaoMunicipal);
         $("#emailNF", this.workspace).val(result.emailNF);
-        $("#exigeNFE", this.workspace).attr("checked", (result.exigeNFE == true)?"checked":null);
-        $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true)?"checked":null);
+        $("#exigeNFE", this.workspace).attr("checked", (result.exigeNFE == true) ? "checked" : null);
+        $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true) ? "checked" : null);
+        $("#utilizaIPV", this.workspace).attr("checked", (result.utilizaIPV == true) ? "checked" : null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
@@ -1267,8 +1268,9 @@ var COTA_CNPJ = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoCotaFinanceiro", value: $("#tipoCotaFinanceiro", this.workspace).val()});
         formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
-
+        
         var existeCota = false;
         for (var i = 0; i < formData.length; i++) {
         	if (formData[i].value == 'cotaDTO.numeroCota') {
@@ -1449,8 +1451,9 @@ var COTA_CPF = $.extend(true, {
         $("#nacionalidade", this.workspace).val(result.nacionalidade);
         $("#natural", this.workspace).val(result.natural);
         $("#emailNFCPF", this.workspace).val(result.emailNF);
-        $("#exigeNFE", this.workspace).attr("checked", (result.exigeNFE == true)?"checked":null);
-        $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true)?"checked":null);
+        $("#exigeNFE", this.workspace).attr("checked", (result.exigeNFE == true) ? "checked" : null);
+        $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true) ? "checked" : null);
+        $("#utilizaIPV", this.workspace).attr("checked", (result.utilizaIPV == true) ? "checked" : null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         

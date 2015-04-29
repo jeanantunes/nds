@@ -637,6 +637,4 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		return (Util.nvl(quantidade, BigInteger.ZERO).longValue() > 0);
 	}
-
 }
-

@@ -49,16 +49,34 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.idLancamento = lancamentoSelecionado.idLancamento;
 		distribuicaoManual.reparteTotal = lancamentoSelecionado.lancto;
 		this.atualizarTotalDistribuido(0);
-		$('#repGeral').html($('#repDistribuir').text());
+		$('#distrinuicao-manual-repGeral').html($('#distrinuicao-manual-repDistribuir').text());
 		
 		distribuicaoManual.isSolicitarSenhaReparte = true;
 		distribuicaoManual.isSolicitarSenhaCotaSuspensa = true;
 		
 		distribuicaoManual.focusRight("#numeroCotaGrid"+(distribuicaoManual.rowCount - 1));
+		
+		distribuicaoManual.verificarICD();
+	},
+	
+	verificarICD : function(){
+		$.postJSON(
+	            pathTela + "/distribuicaoManual/verificarICD", 
+	            [{name : "codProduto" , value : $('#distrinuicao-manual-codigoProduto').text()}],
+	            function(result) {
+	            },
+	            function(result){
+	            	//distribuicaoManual.voltar();
+	            	setTimeout(function() { 
+		            	$(".ui-tabs-selected").find("span").click();
+		    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+	    			}, 500);
+	            }
+	            );
 	},
 	
 	voltar : function() {
-		var idEstudo = $('#estudo').text();
+		var idEstudo = $('#distrinuicao-manual-estudo').text();
 		
 		if (!idEstudo) {
 			distribuicaoManual.confirmar("#dialog-voltar", function() {
@@ -108,7 +126,7 @@ var distribuicaoManual = $.extend(true, {
 	
 	atualizarTotalDistribuido : function(valor) {
 		totalDistribuido = valor;
-		$('#totalDistribuido').html(valor);
+		$('#distrinuicao-manual-totalDistribuido').html(valor);
 	},
 
 	somarReparteDistribuido : function(index) {
@@ -193,9 +211,9 @@ var distribuicaoManual = $.extend(true, {
 			if (repCota <= repDistrib) {
 				$("#percEstoqueGrid"+ index, distribuicaoManual.workspace).html(((repCota / totalGeral) * 100).toFixed(2).replace('.', ','));
 				totalDistribuido += repCota;
-				$('#totalDistribuido').html(totalDistribuido);
+				$('#distrinuicao-manual-totalDistribuido').html(totalDistribuido);
 				repDistrib -= repCota;
-				$('#repDistribuir').html(repDistrib);
+				$('#distrinuicao-manual-repDistribuir').html(repDistrib);
 			} else {
 				$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
 				exibirMensagemDialog('WARNING', ['Você não possui saldo suficiente para distribuir essa quantidade para a cota, reveja os valores.'], '');
@@ -444,8 +462,8 @@ var distribuicaoManual = $.extend(true, {
 	conferirTotais : function() {
 		var totalGeral = parseInt($("#reparteInicial").val());
 		var totalDistribuido = distribuicaoManual.somarReparteDistribuido(-1);
-		$('#totalDistribuido').html(totalDistribuido);
-		$('#repDistribuir').html(totalGeral - totalDistribuido);
+		$('#distrinuicao-manual-totalDistribuido').html(totalDistribuido);
+		$('#distrinuicao-manual-repDistribuir').html(totalGeral - totalDistribuido);
 		
 	},
 	
@@ -530,8 +548,8 @@ var distribuicaoManual = $.extend(true, {
 			var data = [];
 			data.push({name: 'estudoDTO.produtoEdicaoId', value: $('#idProdutoEdicao').val()});
 			data.push({name: 'estudoDTO.reparteDistribuir', value: $('#reparteInicial').val()});
-			data.push({name: 'estudoDTO.reparteDistribuido', value: $('#totalDistribuido').text()});
-			data.push({name: 'estudoDTO.dataLancamento', value: $('#dataLancamento').html()});
+			data.push({name: 'estudoDTO.reparteDistribuido', value: $('#distrinuicao-manual-totalDistribuido').text()});
+			data.push({name: 'estudoDTO.dataLancamento', value: $('#distrinuicao-manual-dataLancamento').html()});
 			data.push({name: 'estudoDTO.lancamentoId', value: distribuicaoManual.idLancamento});
 			data.push({name: 'estudoDTO.reparteTotal', value: distribuicaoManual.reparteTotal});
 			
@@ -545,7 +563,7 @@ var distribuicaoManual = $.extend(true, {
 			$.postJSON(contextPath +"/distribuicaoManual/gravarEstudo",
 					data,
 					function(result){
-						$('#estudo').html(result.long);
+						$('#distrinuicao-manual-estudo').html(result.long);
 						distribuicaoManual.bloquearCampos();
 						
 						if(typeof(matrizDistribuicao)=="object"){
@@ -561,7 +579,7 @@ var distribuicaoManual = $.extend(true, {
 					}, true, null
 			);
 		};
-		if (parseInt($('#repDistribuir').html()) > 0) {
+		if (parseInt($('#distrinuicao-manual-repDistribuir').html()) > 0) {
 			distribuicaoManual.confirmar("#dialog-saldo", callbackFunction, function() {
 				console.log(distribuicaoManual.rowCount);
 				setTimeout(function() { $('#numeroCotaGrid'+ (distribuicaoManual.rowCount - 1), distribuicaoManual.workspace).focus(); }, 100);
@@ -586,12 +604,12 @@ var distribuicaoManual = $.extend(true, {
 	
 	analisar : function() {
 		//testa se registro selecionado possui estudo gerado
-		if ($('#estudo').html() == null || $('#estudo').html() == "") {
+		if ($('#distrinuicao-manual-estudo').html() == null || $('#distrinuicao-manual-estudo').html() == "") {
 			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
 			return;
 		} else {
 			// Deve ir direto para EMS 2031
-			matrizDistribuicao.redirectToTelaAnalise($('#estudo').html());
+			matrizDistribuicao.redirectToTelaAnalise($('#distrinuicao-manual-estudo').html());
 		}
 	},
 	
@@ -628,7 +646,7 @@ var distribuicaoManual = $.extend(true, {
 		
 		$('#produtoEdicaoIdXLS').val($('#idProdutoEdicao').val());
 		$('#reparteDistribuirXLS').val($('#reparteInicial').val());
-		$('#reparteDistribuidoXLS').val($('#totalDistribuido').text());
+		$('#reparteDistribuidoXLS').val($('#distrinuicao-manual-totalDistribuido').text());
 		$('#dataLancamentoXLS').val($('#dataLancamento').html());
 		$('#lancamentoIdXLS').val(distribuicaoManual.idLancamento);
 		$('#reparteTotalXLS').val(distribuicaoManual.reparteTotal);
@@ -654,7 +672,7 @@ var distribuicaoManual = $.extend(true, {
 
 	        			exibirMensagem(tipoMensagem, [""+listaMensagens]); 
 	        			
-	        			$('#estudo').html(responseText.long);
+	        			$('#distrinuicao-manual-estudo').html(responseText.long);
 	        			$("#distbManual_gerarEstudo").hide();
 	        			$("#distbManual_importacao").hide();
 	        			$("#distbManual_cancelar").hide();

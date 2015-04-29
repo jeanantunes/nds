@@ -14,9 +14,11 @@ import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -29,7 +31,7 @@ import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 public interface MovimentoEstoqueService {
 
-    void transferirEstoqueProdutoEdicaoParcialParaLancamento(Long idProdutoEdicao, Usuario usuario);
+    void transferirEstoqueProdutoEdicaoParcial(Long idProdutoEdicao, Usuario usuario);
 	
     void transferirEstoqueProdutoChamadaoParaRecolhimento(Long idProdutoEdicao, Usuario usuario);
     
@@ -120,12 +122,12 @@ public interface MovimentoEstoqueService {
 	 */
 	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
 
-	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao,
-													Long idUsuario, BigInteger quantidade,
-													TipoMovimentoEstoque tipoMovimentoEstoque,
+	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Diferenca diferenca,
+													Long idUsuario, TipoMovimentoEstoque tipoMovimentoEstoque,
 													boolean isMovimentoDiferencaAutomatica,
-													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
-													StatusIntegracao statusIntegracao, Origem origem, boolean isFaltaDirecionadaCota);
+													boolean validarTransfEstoqueDiferenca,
+													Date dataLancamento, StatusIntegracao statusIntegracao,
+													Origem origem, boolean isFaltaDirecionadaCota);
 	
 	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 

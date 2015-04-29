@@ -214,10 +214,6 @@ var produtoEdicaoController =$.extend(true,  {
 			this.value = this.value.toUpperCase();
 		});
 		
-		$('#produtoEdicaoController-nomeComercialProduto').keyup(function(){
-			this.value = this.value.toUpperCase();
-		});
-			
 		$(".bonificacoesGrid",this.workspace).flexigrid({
 			dataType : 'xml',
 			colModel : [ {
@@ -388,27 +384,27 @@ var produtoEdicaoController =$.extend(true,  {
 				sortable : false,
 				align : 'center'
 			},{ 
-				display : 'Lancto Previsto',
-				name : 'dataLancamentoPrevista',
-				width : 100,
-				sortable : false,
-				align : 'center'
-			},{ 
 				display : 'Lancto Real',
 				name : 'dataLancamentoDistribuidor',
 				width : 80,
 				sortable : false,
 				align : 'center'
 			},{
-				display : 'Recolhimento Previsto',
-				name : 'dataRecolhimentoPrevista',
-				width : 120,
-				sortable : false,
-				align : 'center'
-			},{
 				display : 'Recolhimento Real',
 				name : 'dataRecolhimentoDistribuidor',
 				width : 100,
+				sortable : false,
+				align : 'center'
+			},{ 
+				display : 'Lancto Previsto',
+				name : 'dataLancamentoPrevista',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			},{
+				display : 'Recolhimento Previsto',
+				name : 'dataRecolhimentoPrevista',
+				width : 120,
 				sortable : false,
 				align : 'center'
 			},{
@@ -496,7 +492,7 @@ var produtoEdicaoController =$.extend(true,  {
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);				
 			$(".grids",produtoEdicaoController.workspace).hide();
-		}else{
+		} else {
 
 			var nProduto = '';
 			var cProduto = '';
@@ -806,7 +802,10 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-comprimento").val(result.comprimento);
 							$("#produtoEdicaoController-espessura").val(result.espessura);
 							$("#produtoEdicaoController-chamadaCapa").val(result.chamadaCapa);
+							
 							$('#produtoEdicaoController-parcial').val(result.parcial + "");
+							$('#produtoEdicaoController-parcial option[value='+ (result.parcial + "") +']').attr('selected','selected');
+							
 							$('#produtoEdicaoController-boletimInformativo').val(result.boletimInformativo);
 //							$('#produtoEdicaoController-semanaRecolhimento').val(result.semanaRecolhimento);
 							if (result.dataRecolhimentoReal || result.dataRecolhimentoPrevisto) {
@@ -905,8 +904,8 @@ var produtoEdicaoController =$.extend(true,  {
 		var bloquear = (bloquearOrigemInterface || bloquearRedistribuicao);
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamentoPrevisto", bloquearOrigemInterface);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamento", !bloquearOrigemInterface);
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", bloquear);
@@ -923,7 +922,7 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-largura", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-comprimento", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-espessura", bloquear);
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-boletimInformativo", bloquear);
+//		produtoEdicaoController.bloquearCampo("produtoEdicaoController-boletimInformativo", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-descricaoDesconto", bloquear);
 
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-pacotePadrao", bloquearRedistribuicao);
@@ -932,7 +931,14 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-chamadaCapa", bloquearRedistribuicao);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peso", bloquearRedistribuicao);
 		
-//		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
+		if($("#produtoEdicaoController-parcial option:selected").val() == "true") {
+			
+			$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", true);
+		} else {
+			
+			$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", false);
+		}
+		
 		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
 		
 		//Segmentação
@@ -971,6 +977,7 @@ var produtoEdicaoController =$.extend(true,  {
 				}
 			});
 			
+			/*
 			if(bloquearCamposReparte) {
 				$("#produtoEdicaoController-repartePrevisto", produtoEdicaoController.workspace).attr("disabled", "disabled");
 				$("#produtoEdicaoController-repartePromocional", produtoEdicaoController.workspace).attr("disabled", "disabled");
@@ -978,7 +985,7 @@ var produtoEdicaoController =$.extend(true,  {
 				$("#produtoEdicaoController-repartePrevisto", produtoEdicaoController.workspace).removeAttr("disabled");
 				$("#produtoEdicaoController-repartePromocional", produtoEdicaoController.workspace).removeAttr("disabled");
 			}
-			
+			*/
 		}
 		
 		$.each(result.rows, function(index, row) {

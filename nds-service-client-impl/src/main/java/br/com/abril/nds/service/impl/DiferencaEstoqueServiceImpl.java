@@ -73,6 +73,7 @@ import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
@@ -396,14 +397,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                         diferencaRedirecionada.isAutomatica(),
                         validarTransfEstoqueDiferenca, dataLancamento, null);
         
-        final LancamentoDiferenca lancamentoDiferenca =
-                this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, null);
+        final LancamentoDiferenca lancamentoDiferenca = this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, null);
         
         diferencaRedirecionada.setLancamentoDiferenca(lancamentoDiferenca);
         
         diferencaRedirecionada = diferencaEstoqueRepository.merge(diferencaRedirecionada);
         
-        this.processarTransferenciaEstoque(diferencaRedirecionada,diferencaRedirecionada.getResponsavel().getId(), null);
+        this.processarTransferenciaEstoque(diferencaRedirecionada, diferencaRedirecionada.getResponsavel().getId(), null);
     }
     
     private Diferenca redirecionarDiferencaEstoque(final BigInteger qntDiferenca,final Diferenca diferenca){
@@ -651,17 +651,19 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         if (cota != null) {
             
-            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(diferenca.getProdutoEdicao().getId(), cota.getId());
+            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(diferenca.getProdutoEdicao().getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
             
             if(ultimoLancamento == null) {
-            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId());
+            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), distribuidorService.obterDataOperacaoDistribuidor());
             }
             
         } else {
             
-            ultimoLancamento =
-                    lancamentoService.obterUltimoLancamentoDaEdicao(
-                            diferenca.getProdutoEdicao().getId());
+            ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), distribuidorService.obterDataOperacaoDistribuidor());
+            
+            if(ultimoLancamento == null) {
+            	ultimoLancamento = lancamentoService.obterUltimoLancamentoDaEdicao(diferenca.getProdutoEdicao().getId(), null);
+            }
         }
         
         return ultimoLancamento;
@@ -753,6 +755,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             return;
         }
         
+        if (TipoEstoque.SUPLEMENTAR.equals(diferenca.getTipoEstoque())) {
+            
+            return;
+        }
         
         if (TipoEstoque.GANHO.equals(diferenca.getTipoEstoque())) {
             
@@ -1211,7 +1217,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
                 idProdutoEdicao, dataNotaEnvio, numeroCota);
     }
     
-	                                    /*
+	/*
      * Efetua a geração da movimentação de estoque para diferença.
      */
     private MovimentoEstoque gerarMovimentoEstoque(final Diferenca diferenca, final Long idUsuario,
@@ -1223,10 +1229,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         final TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
         
-        this.tratarDiferencasDirecionadasParaCota(
-            diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica,
-            validarTransfEstoqueDiferenca, dataLancamento, origem
-        );
+        this.tratarDiferencasDirecionadasParaCota(diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, origem);
 
         StatusIntegracao statusIntegracao = null;
         
@@ -1296,10 +1299,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         }
 
         return movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
-                diferenca.getProdutoEdicao().getId(), idUsuario,
-                diferenca.getQtde(), tipoMovimentoEstoque,
-                isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, 
-                statusIntegracao, origem, TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.equals(tipoDiferenca));
+                diferenca, idUsuario,
+                tipoMovimentoEstoque, isAprovacaoAutomatica,
+                validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, 
+                origem, TipoDiferenca.FALTA_EM_DIRECIONADA_COTA.equals(tipoDiferenca));
     }
     
     private void tratarDiferencasDirecionadasParaCota(final Diferenca diferenca,
@@ -1709,28 +1712,27 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
     @Transactional(readOnly = true)
     public boolean validarProdutoEmRecolhimento(final ProdutoEdicao produtoEdicao){
         
-        if(produtoEdicao == null){
+        if(produtoEdicao == null) {
+        	
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto não encontrada."));
         }
         
         Lancamento lancamento = null;
         
-        if(produtoEdicao.isParcial()){
-            
-            lancamento = lancamentoRepository.obterLancamentoParcialFinal(produtoEdicao.getId());
-            
-        }else{
-            
-            lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
-        }
+        lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
         
-        if(lancamento!= null
-                && Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO,
+        if(lancamento != null && !TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
+                && Arrays.asList(
+                		StatusLancamento.PLANEJADO,
+                		StatusLancamento.CONFIRMADO,
+                		StatusLancamento.FURO,
+                		StatusLancamento.EM_BALANCEAMENTO,
+                		StatusLancamento.BALANCEADO_RECOLHIMENTO,
                         StatusLancamento.EM_RECOLHIMENTO,
                         StatusLancamento.RECOLHIDO,
                         StatusLancamento.FECHADO).contains(lancamento.getStatus())){
             
-            return false;
+        	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("Ação não permitida. Lançamento com status {%s}.", lancamento.getStatus().name())));
         }
         
         return true;

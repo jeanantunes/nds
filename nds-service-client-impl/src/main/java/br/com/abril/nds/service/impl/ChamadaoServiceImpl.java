@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
+import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -27,7 +28,6 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -39,6 +39,7 @@ import br.com.abril.nds.repository.ChamadaoRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
@@ -75,6 +76,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	protected EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Autowired
+	protected MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
 	protected ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
@@ -95,8 +99,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		ConsultaChamadaoDTO consultaChamadaoDTO = new ConsultaChamadaoDTO();
 		
-		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(
-			this.chamadaoRepository.obterConsignadosParaChamadao(filtro));
+		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(this.chamadaoRepository.obterConsignadosParaChamadao(filtro));
 		
 		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(filtro));
 		
@@ -106,8 +109,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		if (consultaChamadaoDTO.getResumoConsignadoCotaChamadao() != null) {
 			
-			consultaChamadaoDTO.getResumoConsignadoCotaChamadao()
-				.setQtdProdutosTotal(quantidadeTotalConsignados);
+			consultaChamadaoDTO.getResumoConsignadoCotaChamadao().setQtdProdutosTotal(quantidadeTotalConsignados);
 		}
 		
 		return consultaChamadaoDTO;
@@ -326,12 +328,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 * @param dataChamadao - data do chamadão
 	 * @param cota - cota
 	 */
-	private void gerarChamadaEncalhe(ConsignadoCotaChamadaoDTO consignadoCotaChamadao,
-									 Date dataChamadao, Cota cota) {
+	private void gerarChamadaEncalhe(ConsignadoCotaChamadaoDTO consignadoCotaChamadao, Date dataChamadao, Cota cota) {
 		
 		ProdutoEdicao produtoEdicao =
-			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				consignadoCotaChamadao.getCodigoProduto(), consignadoCotaChamadao.getNumeroEdicao());
+			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(consignadoCotaChamadao.getCodigoProduto(), consignadoCotaChamadao.getNumeroEdicao());
 		
 		Long idCota = cota.getId();
 		Long idProdutoEdicao = produtoEdicao.getId();
@@ -341,14 +341,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			this.tratarChamadaEncalheCotaExistente(idCota, idProdutoEdicao, dataChamadao);
 		}
 		
-		ChamadaEncalhe chamadaEncalhe =
-			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
-				produtoEdicao, dataChamadao, TipoChamadaEncalhe.CHAMADAO);
+		ChamadaEncalhe chamadaEncalhe = this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(produtoEdicao, dataChamadao, TipoChamadaEncalhe.CHAMADAO);
 		
 		if (chamadaEncalhe == null) {
-			chamadaEncalhe =
-					this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
-						produtoEdicao, dataChamadao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+			chamadaEncalhe = this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(produtoEdicao, dataChamadao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 		}
 		
 		if (chamadaEncalhe == null) {
@@ -364,33 +360,46 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		}
 		
 		Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
-		
-		Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
-		
 		if (lancamentos == null || lancamentos.isEmpty()) {
-			lancamentos = new HashSet<Lancamento>();
+			
+			Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
+			if(lancamento != null) {
+				
+				lancamentos = new HashSet<Lancamento>(
+						lancamentoRepository.obterLancamentosProdutoEdicaoPorDataLancamentoOuDataRecolhimento(produtoEdicao, null, lancamento.getDataRecolhimentoPrevista()));
+			}
 		}
-		
-		lancamentos.add(lancamento);
 		
 		chamadaEncalhe.setLancamentos(lancamentos);
 		
 		chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 		
-
-		EstoqueProdutoCota estoqueProdutoCota =
-				this.estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
-					produtoEdicao.getId(), cota.getId());
-			
 		BigInteger qtdPrevista = BigInteger.ZERO;
-		
-		if (estoqueProdutoCota != null) {
+		if(consignadoCotaChamadao != null && consignadoCotaChamadao.getReparte() != null) {
 			
-			qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
-				estoqueProdutoCota.getQtdeDevolvida());
+			qtdPrevista = consignadoCotaChamadao.getReparte();
+		} else {
+			
+			List<Lancamento> lancamentosEdicao = lancamentoRepository.obterLancamentosDaEdicao(produtoEdicao.getId());
+			Set<Long> idsLancamentos = new HashSet<Long>();
+			if(lancamentosEdicao != null) {
+				for(Lancamento l : lancamentosEdicao) {
+					idsLancamentos.add(l.getId());
+				}
+			} else {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, String.format("Lancamento não encontrado para %s.", produtoEdicao.toString()));
+			}
+			
+			List<CotaReparteDTO> cotasRepartes = movimentoEstoqueCotaRepository.obterReparte(idsLancamentos, cota.getId());
+			
+			if(cotasRepartes != null && !cotasRepartes.isEmpty()) {
+				for(CotaReparteDTO cr : cotasRepartes) {
+					qtdPrevista = qtdPrevista.add(cr.getReparte());
+				}
+			}
 		}
 
-		
 		if(BigInteger.ZERO.compareTo(qtdPrevista) < 0) {
 
 			ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();

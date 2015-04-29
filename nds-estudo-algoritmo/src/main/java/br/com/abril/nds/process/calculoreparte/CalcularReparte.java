@@ -58,7 +58,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Cálculos do percentual de excedente
 	calcularPercentualExcedente(estudo);
 
-	minimoMaximo.executar(estudo);
+	if(estudo.isUsarMix()){
+		minimoMaximo.executar(estudo);
+	}
+	
 
 	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar reparte calculado
 	ajustarReparteCalculado(estudo);
@@ -203,9 +206,16 @@ public class CalcularReparte extends ProcessoAbstrato {
     }
 
     public void ajustarReparteCalculado(EstudoTransient estudo) {
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(cota.getReparteCalculado())), estudo);
-	}
+		for (CotaEstudo cota : estudo.getCotas()) {
+			
+			BigInteger reparteArredondado = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(cota.getReparteCalculado()));
+			
+			if(reparteArredondado.compareTo(cota.getReparteMinimo()) < 0){
+				cota.setReparteCalculado(cota.getReparteMinimo(), estudo);
+			}else{
+				cota.setReparteCalculado(reparteArredondado, estudo);
+			}
+		}
     }
 
     private boolean temEdicaoBaseFechada(EstudoTransient estudo) {
@@ -284,32 +294,42 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte
 	// (exceto repartes fixados (FX), quantidades MAXIMAS E MINIMAS (MM) e bancas com MIX (MX)).
 	BigInteger reparte = BigInteger.ONE;
+	BigInteger excessaoDoTratamento = BigInteger.ZERO;
+
 	if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
 	    reparte = estudo.getPacotePadrao();
 	}
+		
 		while (estudo.getReparteDistribuir().compareTo(reparte) >= 0 || estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0) {
 		    for (CotaEstudo cota : cotas) {
 				if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 					ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
 					    if (estudo.getReparteDistribuir().compareTo(reparte) >= 0) {
-						cota.setReparteCalculado(cota.getReparteCalculado().add(reparte), estudo);
+					    	cota.setReparteCalculado(cota.getReparteCalculado().add(reparte), estudo);
 					    } else if ((estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0)) {
-					    	if(cota.getReparteCalculado().compareTo(cota.getReparteMinimoFinal()) > 0){
-					    		cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
-					    	}
-					    } else {
-					    	break;
-					    }
+							    	if(cota.getReparteCalculado().compareTo(cota.getReparteMinimoFinal()) > 0){
+							    		cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
+							    	}
+					    		} else {
+					    			break;
+					    		}
 				}
+				
 				if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 0) {
 				    break;
 				}
+				
 		    }
 		    
 		    if(cotas.size() == 0){
 		    	break;
 		    }
+
+		    if(excessaoDoTratamento.compareTo(estudo.getReparteDistribuir()) == 0){
+		    	break;
+		    }
 		    
+		    excessaoDoTratamento = estudo.getReparteDistribuir();
 		}
     }
 }

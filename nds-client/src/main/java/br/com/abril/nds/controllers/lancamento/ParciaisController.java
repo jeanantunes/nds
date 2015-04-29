@@ -242,7 +242,6 @@ public class ParciaisController extends BaseController {
 	 */	
 	private TableModel<CellModelKeyValue<PeriodoParcialDTO>> efetuarConsultaPeriodos(FiltroParciaisDTO filtro) {
 		
-		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
 		
 		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
@@ -370,13 +369,15 @@ public class ParciaisController extends BaseController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 
-	private void validarDatasPeriodoLancamento(Date lancamento,
-			Date recolhimento) {
-		if( recolhimento == null )
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Recolhimento não válida.");
+	private void validarDatasPeriodoLancamento(Date lancamento, Date recolhimento) {
 		
-		if(DateUtil.isDataInicialMaiorDataFinal(lancamento, recolhimento))
+		if( recolhimento == null ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Recolhimento não válida.");
+		}
+		
+		if(DateUtil.isDataInicialMaiorDataFinal(lancamento, recolhimento)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lançamento é inferior a de Recolhimento");
+		}	
 	}
 		
 	/**

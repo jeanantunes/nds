@@ -1250,9 +1250,10 @@ var fecharDiaController =  $.extend(true, {
 			);
 	},
 	
-	iniciarResumoEncalhe : function(){
+	iniciarResumoEncalhe : function() {
+		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
-				function(result){
+				function(result) {
 					$("#totalEncalheLogico", fecharDiaController.workspace).html(result.totalLogicoFormatado);
 					$("#totalEncalheFisico", fecharDiaController.workspace).html(result.totalFisicoFormatado);
 					$("#totalEncalheJuramentada", fecharDiaController.workspace).html(result.totalJuramentadoFormatado);
@@ -1264,12 +1265,14 @@ var fecharDiaController =  $.extend(true, {
 			);
 	},
 	
-	iniciarResumoSuplementar : function(){
+	iniciarResumoSuplementar : function() {
+		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
-				function(result){
+				function(result) {
 					$("#totalSuplementarEstoqueLogico", fecharDiaController.workspace).html(result.totalEstoqueLogicoFormatado);
 					$("#totalSuplementarTransferencia", fecharDiaController.workspace).html(result.totalTransferenciaFormatado);
 					$("#totalSuplementarVenda", fecharDiaController.workspace).html(result.totalVendaFormatado);
+					$("#totalInventario", fecharDiaController.workspace).html(result.totalInventarioFormatado);
 					$("#totalValorAlteracaoPreco", fecharDiaController.workspace).html(result.totalAlteracaoPrecoFormatado);
 					$("#totalSuplementarSaldo", fecharDiaController.workspace).html(result.saldoFormatado);
 				}

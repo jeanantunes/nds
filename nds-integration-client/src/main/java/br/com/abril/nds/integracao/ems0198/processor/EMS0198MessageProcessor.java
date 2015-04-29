@@ -1,6 +1,10 @@
 package br.com.abril.nds.integracao.ems0198.processor;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,9 +12,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
@@ -24,14 +29,11 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.ftfutil.FTFParser;
 import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Detalhe;
-import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Header;
-import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Trailer;
 import br.com.abril.nds.integracao.ems0198.outbound.EMS198HeaderDTO;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
-import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -61,7 +63,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	private Date dataLctoDistrib;
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+	//private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 	
 	private int quantidadeArquivosGerados = 0;
 	
@@ -82,7 +84,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0198Detalhe outDetalhe = createDetalhes(cec);
 				
-				print.println(fixedFormatManager.export(outDetalhe));
+				//print.println(fixedFormatManager.export(outDetalhe));
+				print.write(fixedFormatManager.export(outDetalhe), 0, 196);
+				print.print("\r\n");
+					//print(fixedFormatManager.export(outDetalhe)+"\n");
 			}
 			print.flush();
 			print.close();
@@ -90,7 +95,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		this.quantidadeArquivosGerados = cotasRecolhimento == null ? 0 : cotasRecolhimento.size();
+		
+		compactarArquivos(message);
 	}
+	
 	
 	
 // ## Conforme alinhado com César Marracho, há a necessidade de manter a impletação antiga, para uma possível retorno ao layout antigo	
@@ -143,6 +151,69 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 //	}
 
 
+	private void compactarArquivos(Message message) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+		String dir = message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER +File.separator;
+		File diretorio = new File(dir); 
+		FileOutputStream fos = null;
+		ZipOutputStream zipOut = null;
+		FileInputStream fis = null;
+		try {
+			
+			fos = new FileOutputStream(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) 
+						+ File.separator + ENCALHE_FOLDER + File.separator +"zip"+ File.separator +"encalhe-"+ sdf.format(dataLctoDistrib) +".zip");
+			zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+			for(File input : diretorio.listFiles()) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				fis = new FileInputStream(input);
+				ZipEntry ze = new ZipEntry(input.getName());
+				System.out.println("Zipping the file: "+input.getName());
+				zipOut.putNextEntry(ze);
+				byte[] tmp = new byte[4 * 1024];
+				int size = 0;
+				while((size = fis.read(tmp)) != -1) {
+					
+					zipOut.write(tmp, 0, size);
+				}
+				zipOut.flush();
+				fis.close();
+			}
+			
+			zipOut.close();
+			
+			for(File input : diretorio.listFiles()) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				input.delete();
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			LOGGER.error("Falha ao obter arquivo.", e);
+		} catch (IOException e) {
+			
+			LOGGER.error("IOException", e);
+		} finally {
+			try {
+				
+				if(fos != null) { 
+					fos.close();
+				}
+			} catch(Exception ex) {
+
+				LOGGER.error("Falha ao fechar arquivo.", ex);
+			}
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<IpvRecolhimentoDTO> listRecolhimento(Message message, String idCota){
 		
@@ -183,6 +254,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("      pdv.PONTO_PRINCIPAL = true ");
 		sql.append("      and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		sql.append("      and c.id = :idCota ");
+		sql.append("      and c.UTILIZA_IPV = :true ");
 		sql.append("      order by c.NUMERO_COTA, ce.PRODUTO_EDICAO_ID ");
 		
 		
@@ -190,6 +262,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		query.setParameter("dataRecolhimento", this.dataLctoDistrib);
 		query.setParameter("idCota", idCota);
+		query.setParameter("true", true);
 		
 		query.addScalar("codDistribuidor", StandardBasicTypes.STRING);
 		query.addScalar("codJornaleiro", StandardBasicTypes.STRING);
@@ -240,11 +313,13 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("   join pdv on pdv.COTA_ID = cota.ID ");
 		sql.append("  where pdv.PONTO_PRINCIPAL = true  ");
 		sql.append(" 		and ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		sql.append(" 		and cota.UTILIZA_IPV = :true ");
 		sql.append(" 		group by cota.NUMERO_COTA ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString()); 
 		
 		query.setParameter("dataRecolhimento", this.dataLctoDistrib);
+		query.setParameter("true", true);
 		
 		query.addScalar("cotaId", StandardBasicTypes.STRING);
 		query.addScalar("numCota", StandardBasicTypes.STRING);
@@ -300,8 +375,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		try {
 			detalhe = ftfParser.parseArquivo(dto);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			LOGGER.error("Erro no parse do arquivo.", e);
 		}
 		
 		outDetalhe.setDetalhes(detalhe);
@@ -309,7 +384,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		return outDetalhe;
 	}
 
-	
+	/*
 	private List<ChamadaEncalheCota> findListPDV(Message message) {
 
 		StringBuilder sql = new StringBuilder();
@@ -374,7 +449,6 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 						
 	}
 	
-	
 	private void criaHeader(PrintWriter print, Integer numeroCota, String nome, Date data) {
 
 		EMS0198Header outheader = new EMS0198Header();
@@ -386,7 +460,9 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		print.println(fixedFormatManager.export(outheader));
 		
 	}
+	 */
 	
+	/*
 	private void criaTrailer(PrintWriter print, Integer numeroCota,	Integer quantidadeRegistros) {
 
 		EMS0198Trailer outtrailer = new EMS0198Trailer();
@@ -395,13 +471,15 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		outtrailer.setQuantidadeRegistros(quantidadeRegistros.toString());
 		
 		print.println(fixedFormatManager.export(outtrailer));
-
+*/
 		                /*
          * A quantidade de arquivos gerados é incrementado aqui pois
          * considera-se que o arquivo foi gerado corretamente.
          */
+	/*
 		this.quantidadeArquivosGerados++;
 	}
+*/
 
 //	private void criaDetalhes(PrintWriter print, ChamadaEncalheCota cec) {
 //		

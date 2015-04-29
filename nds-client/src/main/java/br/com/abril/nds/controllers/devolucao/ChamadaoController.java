@@ -297,8 +297,7 @@ public class ChamadaoController extends BaseController {
 		
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
-		FiltroChamadaoDTO filtro  = 
-			this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor, idEditor, chamadaEncalhe, sortorder, sortname, page, rp);
+		FiltroChamadaoDTO filtro = this.carregarFiltroPesquisa(numeroCota, dataChamadao, idFornecedor, idEditor, chamadaEncalhe, sortorder, sortname, page, rp);
 		
 		ConsultaChamadaoDTO consultaChamadaoDTO = null;
 		
@@ -312,8 +311,7 @@ public class ChamadaoController extends BaseController {
 		}
 		
 		
-		if (consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO() == null || 
-				consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().isEmpty()) {
+		if (consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO() == null || consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			
@@ -340,9 +338,7 @@ public class ChamadaoController extends BaseController {
 								  boolean chamarTodos, List<Long> idsIgnorados,
 								  String novaDataChamadaoFormatada,boolean reprogramacao) {
 		
-		FiltroChamadaoDTO filtroSessao =
-			(FiltroChamadaoDTO) 
-				this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
+		FiltroChamadaoDTO filtroSessao = (FiltroChamadaoDTO) this.session.getAttribute(FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE);
 		
 		FiltroChamadaoDTO filtro  = 
 			this.configurarFiltroTela(filtroSessao.getNumeroCota(),
@@ -351,8 +347,7 @@ public class ChamadaoController extends BaseController {
 									  filtroSessao.getIdEditor(),
 									  filtroSessao.isChamadaEncalhe());
 		
-		this.validarDadosConfirmarChamadao(
-			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe(),reprogramacao);
+		this.validarDadosConfirmarChamadao(listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe(), reprogramacao);
 		
 		Date novaDataChamadao = null;
 		
@@ -361,12 +356,9 @@ public class ChamadaoController extends BaseController {
 			novaDataChamadao = DateUtil.parseDataPTBR(novaDataChamadaoFormatada);
 		}
 		
-		this.chamadaoService.confirmarChamadao(
-			listaChamadao, filtro, chamarTodos, idsIgnorados, getUsuarioLogado(), novaDataChamadao);
+		this.chamadaoService.confirmarChamadao(listaChamadao, filtro, chamarTodos, idsIgnorados, getUsuarioLogado(), novaDataChamadao);
 		
-		result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
-							"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"), "result").recursive().serialize();
 	}
 
 	/**

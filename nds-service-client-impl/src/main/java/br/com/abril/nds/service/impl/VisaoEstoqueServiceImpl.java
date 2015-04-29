@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -205,8 +206,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	@Transactional
 	public void atualizarInventarioEstoque(List<VisaoEstoqueTransferenciaDTO> invetarioAtualizar, TipoEstoque tipoEstoque, Usuario usuario) {
 		
-		if (invetarioAtualizar == null 
-				|| invetarioAtualizar.isEmpty()) {
+		if (invetarioAtualizar == null || invetarioAtualizar.isEmpty()) {
 			
 			return;
 		}
@@ -220,13 +220,11 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 
 			Diferenca diferenca = new Diferenca();
 
-			ProdutoEdicao produtoEdicao = 
-				this.produtoEdicaoRepository.buscarPorId(dto.getProdutoEdicaoId());
+			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(dto.getProdutoEdicaoId());
 			
 			if (produtoEdicao == null) {
 				
-				throw new ValidacaoException(
-					TipoMensagem.ERROR, "Não foi encontrado o produto/edição para inventário de estoque!");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado o produto/edição para inventário de estoque!");
 			}
 			
 			BigInteger qtdeDiferenca = new BigInteger(dto.getQtde().toString());
@@ -249,7 +247,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				statusAprovacao = StatusAprovacao.PERDA;
 			}
 			
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao, null);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao, Origem.INVENTARIO);
 		}
 	}
 

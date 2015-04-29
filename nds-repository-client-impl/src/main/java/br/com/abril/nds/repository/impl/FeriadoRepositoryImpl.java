@@ -382,7 +382,7 @@ public class FeriadoRepositoryImpl extends
             query.setParameter("localidade", localidade);
             query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.MUNICIPAL.name()));
         } else {
-            query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.ESTADUAL.name(), TipoFeriado.FEDERAL.name()));
+            query.setParameterList("tipoFeriado", Arrays.asList(TipoFeriado.MUNICIPAL.name(), TipoFeriado.ESTADUAL.name(), TipoFeriado.FEDERAL.name()));
         }
         
         return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;

@@ -74,7 +74,7 @@ function popup_mudar_base() {
 	for ( var i = 6; i > 0; i--) {
 		var e = $("#edicao"+i).text();
 		if(!!e && e!="" && e!="-" && e!=""){
-			rows.push({cell:{codigo:$("#codigoProduto").text(),produto:$("#nomeProduto").text(),edicao:e}});
+			rows.push({cell:{codigo:$("#analise-normal-codigoProduto").text(),produto:$("#analise-normal-nomeProduto").text(),edicao:e}});
 		}
 	}
 	

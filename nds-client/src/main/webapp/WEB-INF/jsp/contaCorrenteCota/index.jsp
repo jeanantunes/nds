@@ -260,7 +260,7 @@
               </td>
               <td width="41">Nome:</td>
               <td width="240">
-              	<input type="text" name="cc-nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#cc-nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cc-cota', '#cc-nomeCota');" style="width:230px;"/>
+              	<input type="text" name="cc-nomeCota" id="cc-nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#cc-nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cc-cota', '#cc-nomeCota');" style="width:230px;"/>
               	<input type="hidden" name="nomeCotaHidden" id="nomeCotaHidden"/>
               </td>
               
@@ -269,13 +269,13 @@
               <td width="53">Período:</td>
               
               <td width="199">
-              		<input type="text" name="periodoContaDe" id="periodoContaDe" style="width:80px;"/>
+              		<input type="text" name="cc-periodoContaDe" id="cc-periodoContaDe" style="width:80px;" value="${dataDe}" />
               </td>
               
               <td width="22">Até:</td>
               
               <td width="199">
-              		<input type="text" name="periodoContaAte" id="periodoContaAte" style="width:80px;" >
+              		<input type="text" name="cc-periodoContaAte" id="cc-periodoContaAte" style="width:80px;" value="${dataAte}" />
               </td>
               
               <td width="518">
@@ -318,8 +318,8 @@
       				<td><img src="${pageContext.request.contextPath}/images/hammer.png" alt="Dívida Negociada"></td>
       				<td>Dívida Negociada</td>
       			
-      				<td><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" alt="Dívida Postergada"></td>
-      				<td>Dívida Postergada</td>
+      				<td><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" alt="Valor Postergado"></td>
+      				<td>Valor Postergado</td>
       			
       				<td><img src="${pageContext.request.contextPath}/images/seta_sobe.gif" alt="Dívida Acumulada"></td>
       				<td>Dívida Acumulada</td>

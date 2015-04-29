@@ -375,7 +375,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" 0 AS qtdInformada, ");
 		hql.append(" 0 AS valorTotal, ");
 		
-		hql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapaInformado, ");
+		hql.append(" COALESCE(MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapaInformado, ");
 
 		hql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, 0) AS precoComDesconto, ");
 
@@ -521,8 +521,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota, final String codigoBarras, final Date dataOperacao) {
-		
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(final Integer numeroCota
+			, final String codigoBarras, final Date dataOperacao, List<Date> datasRecolhimentoValidas) {
 		
 		final StringBuilder hql = new StringBuilder(" select produtoEdicao.id as chave, ");
 		hql.append(" produtoEdicao.codigoDeBarras as value, ");
@@ -533,7 +533,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 			.append(" inner join cec.cota cota					 		")
 			.append(" inner join ce.produtoEdicao produtoEdicao 		")
 			.append(" inner join produtoEdicao.produto produto			")
-			.append(" inner join produto.fornecedores fornecedor  		")
 			.append(" inner join produtoEdicao.lancamentos lancamentos 	")
 			
 			.append(" where ");
@@ -544,7 +543,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 			
 			hql.append(" and upper(produtoEdicao.codigoDeBarras) like upper(:codigoBarras) ");
 			
-			hql.append(" and ce.dataRecolhimento = :dataOperacao ");
+			
+			hql.append(" and (ce.dataRecolhimento = :dataOperacao ");
+			
+			if(!datasRecolhimentoValidas.isEmpty()) {
+				hql.append(" 	or ce.dataRecolhimento in (:datasRecolhimentoValidas) ");
+			}
+			hql.append(" ) ");
 			
 			hql.append(" group by produtoEdicao.id			")
 			   .append(" order by produto.nome asc,			")
@@ -555,12 +560,15 @@ public class ConferenciaEncalheRepositoryImpl extends
 		if(codigoBarras!=null && !codigoBarras.trim().isEmpty()) {
 			
 			query.setParameter("codigoBarras", codigoBarras + "%" );
-			
 		}
 		
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("lancamentoFechado", StatusLancamento.FECHADO);
 		query.setParameter("dataOperacao", dataOperacao);
+		
+		if(!datasRecolhimentoValidas.isEmpty()) {
+			query.setParameterList("datasRecolhimentoValidas", datasRecolhimentoValidas);
+		}
 		
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		

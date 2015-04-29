@@ -182,8 +182,12 @@ $(function(){
                     <td width="60" style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteMinimoEstudo"></td>
                   </tr>
                   <tr>
+                    <!-- 
                     <td style="border-bottom:1px solid #ccc;">Sobra:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReservaTecnica"></td>
+                     -->
+					<td height="19" style="border-bottom:1px solid #ccc;">Reparte Distribuido:</td>
+                    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteDistribuida"></td>
                     <td style="border-bottom:1px solid #ccc;">Cota Compl:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvComplementar"></td>
                     <td style="border-bottom:1px solid #ccc;">Abrangência:</td>
@@ -191,8 +195,12 @@ $(function(){
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoAbrangenciaEstudo"></td>
                   </tr>
                   <tr>
+                    <!-- 
                     <td height="19" style="border-bottom:1px solid #ccc;">Reparte Distribuido:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteDistribuida"></td>
+                     -->
+                    <td height="19" style="border-bottom:1px solid #ccc;"></td>
+                    <td style="border-bottom:1px solid #ccc;"></td>
                     <td style="border-bottom:1px solid #ccc;">Rep. Médio Cota:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteMedioCota"></td>
                     <td colspan="3" style="border-bottom:1px solid #ccc;" id="fieldSetResumoAbrangenciaVendaPercent"></td>

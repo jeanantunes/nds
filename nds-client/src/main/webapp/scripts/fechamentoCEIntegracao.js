@@ -2,7 +2,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	itensCEIntegracao : [],
 	
-	init : function(){
+	init : function() {
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
 		fechamentoCEIntegracaoController.buscarNumeroSemana();
@@ -78,7 +78,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			});
 	},
 	
-	salvarCE:function(){
+	salvarCE : function() {
 		
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/salvarCE',
 				 fechamentoCEIntegracaoController.getItensAlteradosCE(),
@@ -118,7 +118,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		} 
 	},
 	
-	getItensAlteradosCE:function(){
+	getItensAlteradosCE : function() {
 		
 		var itens = [];
 		
@@ -215,7 +215,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		});		
 	},
 	
-	aplicarNumericCampo:function(){
+	aplicarNumericCampo : function() {
 		
 		$('input[id^="inputEncalhe"]', fechamentoCEIntegracaoController.workspace).numeric();
 		$('input[id^="inputVenda"]', fechamentoCEIntegracaoController.workspace).numeric();
@@ -334,8 +334,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		if (eval(reparte) < eval(encalhe)) {
 			
-			exibirMensagem(
-				'WARNING', ["A quantidade de encalhe não pode exceder a quantidade do reparte!"]);
+			exibirMensagem('WARNING', ["A quantidade de encalhe não pode exceder a quantidade do reparte!"]);
 			
 			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
 				
@@ -352,21 +351,19 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			return;
 		}
 		
-		$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(venda);
+		$("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
 		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
 		
-		fechamentoCEIntegracaoController.atualizarDiferenca(encalhe,idItemCeIntegracao);
+		fechamentoCEIntegracaoController.atualizarDiferenca(encalhe, idItemCeIntegracao);
 		
 		diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
-		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(
-			idItemCeIntegracao, encalhe, venda,diferenca,estoque);
+		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda,diferenca,estoque);
 		
-		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(
-			idItemCeIntegracao, encalhe, venda);
+		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
 	},
 	
-	atualizarDiferenca:function(encalhe,idItemCeIntegracao){
+	atualizarDiferenca : function(encalhe,idItemCeIntegracao) {
 		
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
@@ -377,7 +374,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	tratarAlteracaoVenda : function(idItemCeIntegracao, campo) {
 		
-		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo,"Venda")){
+		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo, "Venda")){
 			return;
 		}
 		
@@ -387,20 +384,40 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var encalhe = $("#encalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
 		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
 		
-		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(
-			idItemCeIntegracao, encalhe, venda, diferenca, estoque);
+		if (!isNaN(reparte) && eval(reparte) < eval(venda)) {
+			
+			exibirMensagem('WARNING', ["A quantidade de venda não pode exceder a quantidade do reparte!"]);
+			
+			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+				
+				if(itemCEIntegracao.id == idItemCeIntegracao) {
+					
+					var venda = itemCEIntegracao.venda;
+					
+					$("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
+					
+					return false;
+				}
+			});
+			
+			return;
+		}
 		
-		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(
-			idItemCeIntegracao, encalhe, venda);
+		$("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(reparte - venda);
+		
+		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque);
+		
+		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
 	},
 	
-	atualizarItensCEIntegracao : function(idItemCeIntegracao, encalhe, venda,diferenca, estoque) {
+	atualizarItensCEIntegracao : function(idItemCeIntegracao, encalhe, venda, diferenca, estoque) {
 		
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
 			
@@ -459,6 +476,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						{id: row.cell.idItemCeIntegracao, encalhe: row.cell.encalhe, venda: row.cell.venda,alteracao:false});
 					
 					var isParcial = row.cell.tipoFormatado == 'PARCIAL';
+					var isFinal = row.cell.tipoFormatado == 'FINAL';
 					
 					var colunaReparte;
 					
@@ -489,7 +507,32 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
 							row.cell.idItemCeIntegracao + ', this)"/>';
 						
-					} else {
+					} else if (isFinal) {
+							
+						colunaReparte =
+							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.reparte) ? row.cell.reparte : "") +
+							'</span>';
+						
+						colunaEncalhe =
+							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
+							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
+							' tabindex="' + (++index) +'"' +
+							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							row.cell.idItemCeIntegracao + ', this)"/>';
+							
+							colunaVenda =
+								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
+								' value="' + row.cell.venda + '" size="5px"' +
+								' tabindex="' + (++index) +'"' +
+								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
+								row.cell.idItemCeIntegracao + ', this)"/>';
+							
+						} else {
 						
 						colunaReparte =
 							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +

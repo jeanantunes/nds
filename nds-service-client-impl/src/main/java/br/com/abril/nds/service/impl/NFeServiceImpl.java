@@ -275,9 +275,10 @@ public class NFeServiceImpl implements NFeService {
                         && o1.getEstudoCota().getEstudo() != null && o2.getEstudoCota().getEstudo() != null) {
                     if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() < o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
                         return -1;
-                    }
-                    if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() > o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
+                    } else if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() > o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
                         return 1;
+                    } else {
+                    	return 0;
                     }
                 }
                 if(o1 != null && o2 != null && o1.getEstudoCota() != null) {
@@ -527,6 +528,7 @@ public class NFeServiceImpl implements NFeService {
             item.setValorUnitarioProduto(valorUnitarioProduto);
             item.setValorTotalProduto(valorTotalProduto);
             item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
+            item.setPercentualDesconto(itemNotaEnvio.getDesconto().setScale(2));
             item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
             item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
             

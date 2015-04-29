@@ -539,8 +539,7 @@ var mixCotaProdutoController = $.extend(true, {
 		return  components;
 	},
 	
-	
-	excluirTodos: function(){
+	excluirTodosPorCota: function() {
 		$("#dialog-excluirTodos").dialog({
 			resizable: false,
 			height:'auto',
@@ -548,7 +547,36 @@ var mixCotaProdutoController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$.postJSON(contextPath + '/distribuicao/mixCotaProduto/excluirTodos','undefined',mixCotaProdutoController.exclusaoTodosSucesso, mixCotaProdutoController.exclusaoMixProdutoaErro);
+					params = [];
+					params.push({'name': 'numeroCota', 'value': $('#codigoCotaMix').val()});
+					$.postJSON(contextPath + '/distribuicao/mixCotaProduto/excluirTodosPorCota'
+							, params
+							, mixCotaProdutoController.exclusaoTodosSucesso
+							, mixCotaProdutoController.exclusaoMixProdutoaErro);
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			},
+		});
+	},
+	
+	excluirTodosPorProduto: function() {
+		$("#dialog-excluirTodos").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					params = [];
+					params.push({'name': 'codigoICD', 'value': $('#codigoProdutoMix').val()});
+					$.postJSON(contextPath + '/distribuicao/mixCotaProduto/excluirTodosPorProduto'
+							, params
+							, mixCotaProdutoController.exclusaoTodosSucesso
+							, mixCotaProdutoController.exclusaoMixProdutoaErro);
 					
 					$(this).dialog("close");
 				},
@@ -1422,7 +1450,6 @@ var mixCotaProdutoController = $.extend(true, {
 						}
 						
 						var data = [];
-//						console.log(type);
 						data.push({name:"copiaMix.tipoCopia",	value: type.toUpperCase()});
 						data.push({name:"copiaMix.cotaNumeroOrigem",	value: $("#cotaOrigemInput").val()});
 						data.push({name:"copiaMix.nomeCotaOrigem",	value: $("#nomeCotaOrigemInput").val()});
@@ -1437,8 +1464,15 @@ var mixCotaProdutoController = $.extend(true, {
 						modal = this;
 						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/gerarCopiaMix',  data, 
 								function(result){
-								$(modal).dialog("close");
-										exibirMensagem("WARNING",result.listaMensagens);
+									$(modal).dialog("close");
+									exibirMensagem("WARNING",result.listaMensagens);
+									
+									if(type=='cota'){
+										mixCotaProdutoController.pesquisarPorCota();
+									}else if(type=='produto'){
+										mixCotaProdutoController.pesquisarPorProduto();
+									}
+									
 								},
 								function(result){ });
 					},

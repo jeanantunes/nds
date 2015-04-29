@@ -16,14 +16,14 @@ public class EstudoProdutoEdicaoBaseServiceImpl implements EstudoProdutoEdicaoBa
 	@Autowired
 	private EstudoProdutoEdicaoBaseRepository estudoProdutoEdicaoBaseRepository;
 	
-	@Transactional
 	@Override
+	@Transactional
 	public List<EdicaoBaseEstudoDTO> obterEdicoesBase(Long estudoId) {
 		return estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudoId);
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public void copiarEdicoesBase(Long idOrigem, Long estudoDividido) {
 		estudoProdutoEdicaoBaseRepository.copiarEdicoesBase(idOrigem, estudoDividido);
 		

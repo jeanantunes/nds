@@ -12,23 +12,28 @@
 
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
-    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+//    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+
     var estudoCopiado = $("#reparteCopiado").val();
     
-    if(estudoCopiado != "" ){
+    if(estudoCopiado != "" ) {
     	$("#tdEstudoCopiado").show();
     	$("#spanReparteCopiado").text(estudoCopiado);
-    }else{
+    } else {
+    	
     	$("#tdEstudoCopiado").hide();
     }
-  });
+    
+});
 
-function mostraDados_analiseParcial(){
+function mostraDados_analiseParcial() {
+	
 	analiseParcialController.montarDadosDetalhesEdicoesBases();
-	}
-function escondeDados_analiseParcial(){
+}
+function escondeDados_analiseParcial() {
+	
 	$('.detalhesDados-analiseParcial').hide();
-	}
+}
 	
 </script>
 
@@ -151,6 +156,10 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
 			<input type="hidden" id="tipoClassificacaoProdutoDescricao" value="${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}" />
 			<input type="hidden" id="numeroPeriodo" value="${lancamento.periodoLancamentoParcial.numeroPeriodo}" />
+			<input type="hidden" id="dataLancamentoParcial1" value="${parcial0}" />
+			<input type="hidden" id="dataLancamentoParcial2" value="${parcial1}" />
+			<input type="hidden" id="dataLancamentoParcial3" value="${parcial2}" />
+			
 			
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
@@ -643,6 +652,10 @@ table.dadosTab { margin-left: 370px;}
 
     <div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
+	</div>
+	
+	<div id="dialog-confirmacao-cota-suspensa" title="Confirmação Cota suspensa" style="display: none; width: auto; min-height: 30px; height: 30px" >
+		<p>Cota Suspensa, deseja adicionar?</p>
 	</div>
 
     <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>

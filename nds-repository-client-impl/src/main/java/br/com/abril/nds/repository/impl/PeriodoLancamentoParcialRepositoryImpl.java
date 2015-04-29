@@ -51,6 +51,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" lancamento2_.DATA_REC_PREVISTA AS dataRecolhimentoPrevista, ");
 		hql.append(" produtoedi3_.ORIGEM AS origem, ");
 		hql.append(" lancamento2_.ID AS idLancamento, ");
+		hql.append(" lancamento2_.STATUS AS statusLancamento, ");
 		hql.append(" periodolan0_.ID AS idPeriodo, ");
 
 		hql.append(" (SELECT coalesce(sum(CASE tipomovime11_.OPERACAO_ESTOQUE WHEN 'ENTRADA' THEN movimentoe10_.QTDE ELSE (movimentoe10_.QTDE*-1) END), 0) ");
@@ -119,8 +120,19 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" LEFT OUTER JOIN ESTUDO estudo5_ ON lancamento2_.ESTUDO_ID=estudo5_.ID ");
 		hql.append(" LEFT OUTER JOIN MOVIMENTO_ESTOQUE_COTA movimentoe6_ ON lancamento2_.ID=movimentoe6_.LANCAMENTO_ID ");
 		hql.append(" WHERE lancamento2_.STATUS <> :statusCancelado ");
-		hql.append(" AND produto4_.CODIGO=:codProduto ");
-		hql.append(" AND produtoedi3_.NUMERO_EDICAO=:edProduto ");
+		hql.append(" AND produto4_.CODIGO = :codProduto ");
+		hql.append(" AND produtoedi3_.NUMERO_EDICAO = :edProduto ");
+
+		if(filtro != null && filtro.getDataInicial() != null) {
+			
+			hql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR >= :dtInicial ");
+		}
+		
+		if(filtro != null && filtro.getDataFinal() != null) {
+			
+			hql.append(" AND lancamento2_.DATA_LCTO_DISTRIBUIDOR <= :dtFinal ");
+		}
+		
 		hql.append(" GROUP BY periodolan0_.ID ");
 		hql.append(" ORDER BY periodolan0_.NUMERO_PERIODO ");
 		
@@ -139,6 +151,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		((SQLQuery) query).addScalar("dataLancamentoPrevista", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("dataRecolhimentoPrevista", StandardBasicTypes.DATE);
 		((SQLQuery) query).addScalar("idLancamento", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("statusLancamento", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("idPeriodo", StandardBasicTypes.LONG);
 		((SQLQuery) query).addScalar("origem");
 		
@@ -357,11 +370,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+		hql.append(" select min(periodo) from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamentos lancamento join lancamento.produtoEdicao produtoEdicao ")
-			.append(" where lancamento.dataLancamentoDistribuidor = ")
-			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamentos l join l.produtoEdicao e where e.id = :idProdutoEdicao and l.tipoLancamento=:tipoLancamento  ) ")
-			.append(" and produtoEdicao.id =:idProdutoEdicao ")
+			.append(" where produtoEdicao.id =:idProdutoEdicao ")
 			.append(" and lancamento.tipoLancamento=:tipoLancamento ");
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -375,12 +386,10 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+		hql.append(" select max(periodo) from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamentos lancamento join lancamento.produtoEdicao produtoEdicao ")
-			.append(" where lancamento.dataLancamentoDistribuidor = ")
-			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamentos l join l.produtoEdicao e where e.id = :idProdutoEdicao and l.tipoLancamento=:tipoLancamento  ) ")
-			.append(" and produtoEdicao.id =:idProdutoEdicao ")
-			.append(" and lancamento.tipoLancamento=:tipoLancamento");
+			.append(" where produtoEdicao.id = :idProdutoEdicao ")
+			.append(" and lancamento.tipoLancamento = :tipoLancamento");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -685,7 +694,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		sql.append(" Lancamento l ");
 		sql.append(" where l.periodoLancamentoParcial.lancamentoParcial.id = :idLancamentoParcial ");
 		sql.append(" and l.tipoLancamento = :tipoLancamento ");
-		sql.append(" order by l.dataRecolhimentoDistribuidor asc ");
+		sql.append(" order by l.dataLancamentoDistribuidor asc ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 		

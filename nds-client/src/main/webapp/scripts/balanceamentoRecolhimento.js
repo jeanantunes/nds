@@ -94,6 +94,35 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		);
 	},
 	
+	pesquisarLoad : function(resultado) {
+		
+		
+		dataHolder.clearAction('matrizRecolhimentoDataHolder', 
+			function(){
+				balanceamentoRecolhimentoController.fecharGridBalanceamento();
+				
+				$.postJSON(
+					contextPath + "/devolucao/balanceamentoMatriz/pesquisar", 
+					balanceamentoRecolhimentoController.obterParametrosPesquisa(),
+					function(result) {
+						
+
+					  balanceamentoRecolhimentoController.tratarRetornoPesquisa(result);
+					},
+					function() {
+						balanceamentoRecolhimentoController.showResumo(false);
+					}
+				);
+				if(resultado!=null){
+				  exibirMensagem(
+					resultado.tipoMensagem, 
+					resultado.listaMensagens
+				  );
+				}
+			}
+		);
+	},
+	
 	tratarRetornoPesquisa : function(result) {
 		
 		balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
@@ -130,6 +159,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					balanceamentoRecolhimentoController.habilitarLink(
 						"linkReabrirMatriz", balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost
 					);
+					
+					balanceamentoRecolhimentoController.habilitarLink(
+							"linkBloquearDia", balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaCadeadoPost
+						);
 				}
 				
 				if (eval($("#bloquearBotoes", balanceamentoRecolhimentoController.workspace).val())) {
@@ -227,7 +260,16 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				rows += '<div class="box_resumo">';
 			}
 			
-			rows += '<label>' + '<spam id="dataResumo">' + resumo.dataFormatada + '</spam>';
+			rows += '<label id="labelData'+resumo.dataFormatada.replace(/\//g, "")+'" class="labelDataLancamento">' + '<spam id="dataResumo" align=>' + resumo.dataFormatada ;
+			
+			if (resumo.statusResumo == "EM_BALANCEAMENTO_RECOLHIMENTO") {
+			 	rows+= '<img src="' + contextPath + '/images/ico_bloqueado.gif" width="15" height="15" border="0" title="" align="left" />';  
+			}else if (resumo.statusResumo == "BALANCEADO_RECOLHIMENTO") {
+			 	rows+= '<img src="' + contextPath + '/images/ico_check.gif" width="15" height="15" border="0" title="" align="left" />';   
+			//} else if (resumo.statusResumo == "EM_RECOLHIMENTO") {
+			 	//rows+= '<img src="' + contextPath + '/images/ico_salvar.gif" width="15" height="15" border="0" title="" align="left" />';   
+			} else{
+			}
 			
 			if (!resumo.bloquearVisualizacao) {
 			
@@ -236,7 +278,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				rows += '</a>';
 			}
 			
-			rows += '</label>';
+			rows += '</spam></label>';
 			rows += '<span class="span_1">Qtde. Títulos:</span>';
 			rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';
 			
@@ -309,6 +351,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.bloquearLink("linkConfiguracaoInicial", balanceamentoRecolhimentoController.workspace);
 		balanceamentoRecolhimentoController.bloquearLink("linkReprogramar", balanceamentoRecolhimentoController.workspace);
 		balanceamentoRecolhimentoController.bloquearLink("linkReabrirMatriz", balanceamentoRecolhimentoController.workspace);
+		balanceamentoRecolhimentoController.bloquearLink("linkBloquearDia", balanceamentoRecolhimentoController.workspace);
 	},
 	
 	habilitarLinks : function() {
@@ -320,6 +363,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.confirmacaoConfiguracaoInicial(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
 		balanceamentoRecolhimentoController.habilitarLink("linkReabrirMatriz", balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost);
+		balanceamentoRecolhimentoController.habilitarLink("linkBloquearDia", balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaCadeadoPost);
 	},
 	
 	bloquearLink : function(idLink) {
@@ -340,6 +384,22 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
+		
+		var dataPesquisa = $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+		
+		if (data!=null){
+			$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val(data);
+			$.each($('.labelDataLancamento'), function(k, v) {
+			 $(v).css('font-size', '11px').css('color', '#01649E');
+		    });
+		  $("#labelData"+ data.replace(/\//g, ""), balanceamentoRecolhimentoController.workspace).css("font-size", "11px");
+		  $("#labelData"+ data.replace(/\//g, ""), balanceamentoRecolhimentoController.workspace).css("color", "red");
+		} else {
+				if($("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val()) {
+					$("#labelData"+ $("#dataResumo", balanceamentoRecolhimentoController.workspace).val().replace(/\//g, ""), balanceamentoRecolhimentoController.workspace).css("font-size", "11px");
+					$("#labelData"+ $("#dataResumo", balanceamentoRecolhimentoController.workspace).val().replace(/\//g, ""), balanceamentoRecolhimentoController.workspace).css("color", "red");
+				}
+			}
 		
 		dataHolder.clearAction('matrizRecolhimentoDataHolder',function(){
 			
@@ -367,6 +427,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexReload();
 			
 		});
+		
+		balanceamentoRecolhimentoController.carregarDiaSemana();
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -824,7 +886,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				width : 33,
 				sortable : false,
 				align : 'center'
-			}],
+			},{
+				display : 'Status',
+				name : 'statusLancamento',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			} ],
 			sortname : "nomeProduto",
 			sortorder : "asc",
 			usepager : true,
@@ -847,16 +915,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				$("#dialog-confirm-balanceamento", balanceamentoRecolhimentoController.workspace).dialog("close");
 
-				if (result) {
-				   
-					var tipoMensagem = result.tipoMensagem;
-				   	var listaMensagens = result.listaMensagens;
-				   
-				   	if (tipoMensagem && listaMensagens) {
-					   
-				    	exibirMensagem(tipoMensagem, listaMensagens);
-			       	}
-        	   	}
+				
+				balanceamentoRecolhimentoController.pesquisarLoad(result);
 				
 				balanceamentoRecolhimentoController.verificarBloqueioBotoes();
 			},
@@ -930,9 +990,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	salvar : function() {
 		
+      dataPesquisa = $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+     
+		
+       var params = new Array();
+		
+	   params.push({name:'dataPesquisa', value: dataPesquisa});
+		
+		
 		$.postJSON(
-			contextPath + "/devolucao/balanceamentoMatriz/salvar"
+			contextPath + "/devolucao/balanceamentoMatriz/salvar",
+			params
 		);
+		
+		//balanceamentoRecolhimentoController.pesquisarLoad(null);
 	},
 	
 	voltarConfiguracaoInicial : function() {
@@ -961,6 +1032,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			}
 		);
+		balanceamentoRecolhimentoController.pesquisarLoad(null);
 	},
 	
 	reprogramarSelecionados : function() {
@@ -1024,8 +1096,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 						mensagemValidacaoReprogramacao = "A data escolhida é uma data já confirmada. Você deseja continuar?";
 					}
 					
-					$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace)
-						.html(mensagemValidacaoReprogramacao);
+					$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace).html(mensagemValidacaoReprogramacao);
 					
 					$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
 						resizable: false,
@@ -1146,8 +1217,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 								mensagemValidacaoReprogramacao = "A data escolhida é uma data já confirmada. Você deseja continuar?";
 							}
 							
-							$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace)
-								.html(mensagemValidacaoReprogramacao);
+							$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace).html(mensagemValidacaoReprogramacao);
 							
 							$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
 								resizable: false,
@@ -1278,11 +1348,39 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		);		
 	},
 	
+    obterDatasConfirmadasParaReaberturaCadeadoPost: function() {
+    	
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReaberturaCadeadoPost", 
+			null,
+			function(result) {
+				
+				if (result==null && result.length == 0) {
+					
+					balanceamentoRecolhimentoController.bloquearLink("linkBloquearDia", balanceamentoRecolhimentoController.workspace);
+					
+				} else {
+				
+
+					balanceamentoRecolhimentoController.popularPopupCadeadoMatrizes(result);
+					
+					//balanceamentoRecolhimentoController.popularPopupReaberturaMatrizes(result);
+					
+					balanceamentoRecolhimentoController.abrirPopupCadeadoMatriz();
+					
+					//balanceamentoRecolhimentoController.abrirPopupReabrirMatriz();
+				}
+			}
+		);		
+	},
+
 	validarLancamentoParaReabertura: function() {
 	 $.postJSON(contextPath + "/devolucao/balanceamentoMatriz/validarLancamentoParaReabertura", null,function(result) {});
 	},
 	
 	abrirPopupReabrirMatriz : function() {
+		
 		
 		var exec = false;
 	
@@ -1312,14 +1410,69 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			],
 			beforeClose: function() {
-				if(exec){
-				  exec =false;
+				if(exec) {
+				  exec = false;
 				  balanceamentoRecolhimentoController.validarLancamentoParaReabertura();
 				}
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
 		    },
 		    form: $("#form-reabrir-matriz", balanceamentoRecolhimentoController.workspace)
 		});
+	},
+
+	abrirPopupCadeadoMatriz : function() {
+		
+		var exec = false;
+		
+	
+		$( "#dialog-cadeado-matriz", balanceamentoRecolhimentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogReaberturaBtnConfirmar",
+			    	text: "Bloquear",
+			    	click: function() {
+					
+			    		exec =true;
+			    		balanceamentoRecolhimentoController.cadeadoMatriz();
+
+			    	}
+			    },
+			    {
+			    	id: "dialogReaberturaBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
+			beforeClose: function() {
+				if(exec) {
+				  exec = false;
+				}
+				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
+		    },
+		    form: $("#form-cadeado-matriz", balanceamentoRecolhimentoController.workspace)
+		});
+	},
+
+	popularPopupCadeadoMatrizes: function(result) {
+		
+		var conteudo = '';
+		
+		$(result).each(function(index, value) {
+			conteudo += '<tr class="class_linha_1"><td name=dataReabertura_'+index+' >';
+			conteudo += value;
+			conteudo += '</td>';
+			conteudo += '<td align="center"><input name=checkMatrizReabertura type="checkbox" value="' + value + '" /></td>';
+			conteudo += '</tr>';
+		});
+		
+		$("#tableCadeadoMatrizConfirmada", balanceamentoRecolhimentoController.workspace).html(conteudo);
 	},
 	
 	popularPopupReaberturaMatrizes: function(result) {
@@ -1339,6 +1492,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	reabrirMatriz: function() {
 
+
 		var params = new Array();
 		
 		$("input[name='checkMatrizReabertura']:checked").each(function(index, value) {
@@ -1350,17 +1504,41 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			contextPath + "/devolucao/balanceamentoMatriz/reabrirMatriz",
 			params,
 			function(result) {
+				
 				$("#dialog-reabrir-matriz").dialog("close");
-				exibirMensagem(
-					result.tipoMensagem, 
-					result.listaMensagens
-				);
+				
+				balanceamentoRecolhimentoController.pesquisarLoad(result);
 				
 				balanceamentoRecolhimentoController.verificarBloqueioBotoes();
+				
 			}
 		);
 	},
 	
+	cadeadoMatriz: function() {
+
+		var params = new Array();
+		
+		$("input[name='checkMatrizReabertura']:checked").each(function(index, value) {
+			
+			params.push({name: 'datasReabertura['+index+']', value: value.value});
+		});
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/cadeadoMatriz",
+			params,
+			function(result) {
+				
+				$("#dialog-cadeado-matriz").dialog("close");
+				
+				balanceamentoRecolhimentoController.pesquisarLoad(result);
+				
+				balanceamentoRecolhimentoController.verificarBloqueioBotoes();
+				
+			}
+		);
+	},
+
 	obterConfirmacaoBalanceamento : function() {
 
 		

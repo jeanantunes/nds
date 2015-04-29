@@ -14,6 +14,8 @@ public interface PessoaService {
 	List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar);
 	
 	PessoaFisica buscarPessoaFisicaPorId(Long idPessoa);
+	
+	Pessoa buscarPessoaPorId(Long idPessoa);
 
 	PessoaFisica buscarPessoaPorCPF(String cpf, boolean isFiador, String cpfConjuge);
 

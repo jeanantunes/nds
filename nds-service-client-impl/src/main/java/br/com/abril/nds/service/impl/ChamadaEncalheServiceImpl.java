@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -334,18 +335,14 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<Long> idsProdutoEdicao = new ArrayList<>();
 		
+		if(cota != null && cota.getProdutos() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados produtos para a Cota selecionada.");
+		}
 		
 		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
 			
 			idsProdutoEdicao.add(produtoDTO.getIdProdutoEdicao());
-			
-			// if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
-				// produtoDTO.setQuantidadeDevolvida(null);
-				// produtoDTO.setQuantidadeDev(null);
-			// } else {
-				//produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
-				//produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
-			//}
 			
 			produtoDTO.setQuantidadeDevolvida((produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
 			produtoDTO.setQuantidadeDev((produtoDTO.getQuantidadeDevolvida() == null) ? null : produtoDTO.getQuantidadeDevolvida().intValue());
@@ -873,20 +870,22 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			String periodoRecolhimento = null;
 			
 			if(mapGPS != null && !mapGPS.isEmpty()) {
-				if (mapGPS.containsKey(dto.getIdCota())){
+				
+				if (mapGPS.containsKey(dto.getIdCota())) {
 					
-				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte())?
-					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()):
-					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe())+" à "+DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
-				}
-				else{
+				    periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()) ? 
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
+					                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+				
+				} else {
 					
 					periodoRecolhimento = dto.getDataRecolhimento();
 				}	
 			} else {
-				periodoRecolhimento = dto.getDataRecolhimento();
+				periodoRecolhimento = filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()) ? 
+	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) : 
+	                      DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) +" à "+ DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
 			}
-			
 			
 			dto.setPeriodoRecolhimento(periodoRecolhimento);
 			
@@ -969,6 +968,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
         
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+        parameters.put("REPORT_LOCALE", new Locale("pt", "BR"));
         
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }

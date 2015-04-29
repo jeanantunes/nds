@@ -24,6 +24,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
 import br.com.abril.nds.client.job.AjusteReparteJob;
 import br.com.abril.nds.client.job.AtualizaEstoqueJob;
 import br.com.abril.nds.client.job.FixacaoReparteJob;
@@ -31,6 +32,8 @@ import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.client.job.RankingFaturamentoJob;
 import br.com.abril.nds.client.job.RankingSegmentoJob;
 import br.com.abril.nds.client.job.RegiaoJob;
+import br.com.abril.nds.service.SemaforoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -77,8 +80,14 @@ public class ApplicationContextListener implements ServletContextListener {
 			
 			final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
 			
+			BloqueioConferenciaEncalheComponent bloqueioConferenciaEncalheComponent = springContext.getBean(BloqueioConferenciaEncalheComponent.class);
+			bloqueioConferenciaEncalheComponent.limparSessionsConferenciaCotaUsuario();
+			
+			DistribuidorService distribuidorService = (DistribuidorService) springContext.getBean("distribuidorServiceImpl");
+			SemaforoService semaforoService = (SemaforoService) springContext.getBean("semaforoServiceImpl");
+			semaforoService.atualizarStatusProcessoEncalheIniciadoEm(distribuidorService.obterDataOperacaoDistribuidor());
+			
 			SchedulerFactoryBean schedulerFactoryBean =	springContext.getBean(SchedulerFactoryBean.class);
-			 
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);

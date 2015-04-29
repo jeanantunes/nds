@@ -113,7 +113,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 
 		sql.append("   select  qtdReparteDistribuidor, ");
 		sql.append("   (qtdReparteDistribuidor - qtdReparteADistribuir) AS qtdSobraEstudo, ");
-		sql.append("   (qtdReparteADistribuir - qtdReparteDistribuidoEstudo) AS saldo, ");
+		sql.append("   (qtdReparteDistribuidor - qtdReparteDistribuidoEstudo) AS saldo, ");
 		sql.append("   qtdReparteDistribuidoEstudo, ");
 		sql.append("   CAST(qtdCotasAtivas AS UNSIGNED INTEGER) as qtdCotasAtivas, ");
 		sql.append("   CAST(qtdCotasRecebemReparte AS UNSIGNED INTEGER) as qtdCotasRecebemReparte, ");
@@ -135,19 +135,21 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   sum(case when ecg.CLASSIFICACAO='CP' then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append("   sum(case when c.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end)*count(distinct c.ID) / count(c.ID) as qtdCotasAtivasParaCalculo, ");
 		sql.append("   (select count(*) from COTA where SITUACAO_CADASTRO='ATIVO') as qtdCotasAtivas, ");
-		sql.append("   sum(case when ecg.REPARTE is not null then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
+		sql.append("   sum(case when ecg.REPARTE > 0 then 1 else 0 end)*count(distinct ecg.ID) / count(ecg.ID) as qtdCotasRecebemReparte, ");
 		sql.append("   COUNT(DISTINCT (CASE WHEN epc.qtde_recebida - epc.qtde_devolvida > 0 THEN epc.cota_id ELSE NULL END)) as qtdCotasQueVenderam, ");
 
-		sql.append("   CASE WHEN eg.LIBERADO = 1 THEN  				");
-		sql.append("   CASE WHEN (estp.QTDE IS NULL OR estp.QTDE=0) ");
-		sql.append("   THEN CASE WHEN plp.NUMERO_PERIODO=1  		");
-		sql.append("   THEN ((l.REPARTE)-l.REPARTE_PROMOCIONAL)  	");
-		sql.append("   ELSE CASE WHEN l.REPARTE=0  	  ");
-		sql.append("   THEN eg.QTDE_REPARTE  		  ");
-		sql.append("   ELSE l.REPARTE END END 		  ");
-		sql.append("   ELSE estp.qtde END	 		  ");
-		sql.append("   ELSE 0				 		  ");
-		sql.append("   END AS qtdReparteDistribuidor, ");
+//		sql.append("   CASE WHEN eg.LIBERADO = 1 THEN  				");
+//		sql.append("   CASE WHEN (estp.QTDE IS NULL OR estp.QTDE=0) ");
+//		sql.append("   THEN CASE WHEN plp.NUMERO_PERIODO=1  		");
+//		sql.append("   THEN ((l.REPARTE)-l.REPARTE_PROMOCIONAL)  	");
+//		sql.append("   ELSE CASE WHEN l.REPARTE=0  	  ");
+//		sql.append("   THEN eg.QTDE_REPARTE  		  ");
+//		sql.append("   ELSE l.REPARTE END END 		  ");
+//		sql.append("   ELSE estp.qtde END	 		  ");
+//		sql.append("   ELSE 0				 		  ");
+//		sql.append("   END AS qtdReparteDistribuidor, ");
+		
+		sql.append("   eg.reparte_distribuir AS qtdReparteDistribuidor, ");
 		
 
 		sql.append("   est.ABRANGENCIA AS abrangenciaSugerida, ");
@@ -297,7 +299,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append(" 				((lc.REPARTE)-lc.REPARTE_PROMOCIONAL)  ");
 		sql.append("			else lc.REPARTE ");
 		sql.append(" 		end ");
-		sql.append(" 	else estp.qtde ");
+		sql.append(" 	else (estp.QTDE + estp.QTDE_SUPLEMENTAR + estp.QTDE_DEVOLUCAO_ENCALHE) ");
 		sql.append(" end ");
 		
 		sql.append(" From estudo_gerado eg ");
@@ -344,6 +346,19 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		BigInteger count = (BigInteger) query.uniqueResult();
 		
 		return count.longValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EstudoGerado> obterPorLancamentoId(Long idLancamento) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("from EstudoGerado eg ")
+		.append(" where eg.lancamentoID = :idLancamento ");
+		
+		Query q = getSession().createQuery(hql.toString());
+        q.setParameter("idLancamento", idLancamento);
+        return (List<EstudoGerado>) q.list();		
 	}
 	
 }

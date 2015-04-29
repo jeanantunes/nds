@@ -111,8 +111,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(filtroConsultaMixCotaDTO.getCota());
 		
-		if(cota==null)
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
+		if(cota == null) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
+		}
 		
 		boolean tipoAlternativo = cota.getTipoDistribuicaoCota() != null && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
 		
@@ -199,8 +201,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Override
 	@Transactional
 	public void excluirTodos() {
-		mixCotaProdutoRepository.excluirTodos();
 		
+		mixCotaProdutoRepository.excluirTodos();
 	}
 
 	@Override
@@ -217,6 +219,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		this.mixCotaProdutoRepository.removerPorIdCota(idCota);
 	}
 	
+	@Override
+	@Transactional
+	public void excluirMixProdutoPorCodigoICD(String codigoICD) {
+		
+		this.mixCotaProdutoRepository.removerProdutoPorCodigoICD(codigoICD);
+	}
 	
 	@Override
 	@Transactional
@@ -313,6 +321,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 		TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
+		
+		if(!produtoService.isIcdValido(prd.getCodigoICD())){
+			return "Produto ["+prd.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.";
+		}
 		
 		loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
 			if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
@@ -436,6 +448,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoICD());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
+			if(!produtoService.isIcdValido(prd.getCodigoICD())){
+				mensagens.add("Produto ["+prd.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+				mixCotaProdutoDTO.setItemValido(false);
+				continue;
+			}
+			
 			if(obterSegmentosNaoRecebidosCadastradosNaCota==null || obterSegmentosNaoRecebidosCadastradosNaCota.isEmpty()){
 				mixCotaProdutoDTO.setItemValido(Boolean.TRUE);
 			}else{
@@ -452,15 +470,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
                                 + tipoSegProd.getDescricao());
 						mixCotaProdutoDTO.setItemValido(false);
 						
-						
 					}
-					
 				}
 			}
-			
-			
-			
-			
 		}
 		
 		
@@ -513,9 +525,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " dados da cota devem ser preenchidos";
 		}
 		
-		if (StringUtils.isEmpty(mixCotaProdutoDTO.getCodigoICD())) {
+		if (!produtoService.isIcdValido(mixCotaProdutoDTO.getCodigoICD())) {
 			
-			return obterStringMensagemValidacaoCota(mixCotaProdutoDTO) + " dados do produto devem ser preenchidos";
+			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " Produto com Código ICD inválido, ajuste-o no Cadastro de Produto.";
 		}
 	
 		if (mixCotaProdutoDTO.getReparteMinimo() == null) {
@@ -581,19 +593,14 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		List<TipoClassificacaoProduto> classificacaoList = this.tipoClassificacaoProdutoRepository.buscarTodos();
 		
-		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : mixCotaProdutoDTOList) {
-			
-			
 			
 			if (!mixCotaProdutoDTO.isItemValido()) {
 				
 				continue;
 			}
-			
-
 			
 			Cota cota = cotaService.obterPorNumeroDaCota(Integer.valueOf(mixCotaProdutoDTO.getNumeroCota()));
 			
@@ -636,13 +643,38 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			FiltroConsultaMixPorCotaDTO fMixCota = new FiltroConsultaMixPorCotaDTO();
 			fMixCota.setCota(copiaMix.getCotaNumeroOrigem());
 			
+			FiltroConsultaMixPorCotaDTO cotaDestinoMix = new FiltroConsultaMixPorCotaDTO();
+			cotaDestinoMix.setCota(copiaMix.getCotaNumeroDestino());
 	
 			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaMix.getCotaNumeroDestino());
 			
 			List<MixCotaDTO> mixCotaOrigem = pesquisarPorCota(fMixCota);
+			
+			List<MixCotaDTO> mixCotaDestino = pesquisarPorCota(cotaDestinoMix);
+			
+			List<MixCotaDTO> mixJaCadastrados = new ArrayList<>();
+			
 			if(mixCotaOrigem==null || mixCotaOrigem.isEmpty()){
                 throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
 			}
+			
+			if(mixCotaDestino != null){
+				for (MixCotaDTO mixOrigem : mixCotaOrigem) {
+					for (MixCotaDTO mixDestino : mixCotaDestino) {
+						if(mixOrigem.getCodigoICD().equals(mixDestino.getCodigoICD()) && mixOrigem.getTipoClassificacaoProdutoID().compareTo(mixDestino.getTipoClassificacaoProdutoID()) == 0){
+							mixJaCadastrados.add(mixOrigem);
+						}
+					}
+				}
+				
+				mixCotaOrigem.removeAll(mixJaCadastrados);
+				mixJaCadastrados.clear();
+			}
+			
+			if(mixCotaOrigem.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não há nenhum MIX válido para efetuar a cópia.");
+			}
+			
 			for (MixCotaDTO mixCotaDTO : mixCotaOrigem) {
 				mixCotaDTO.setIdCota(new BigInteger(cotaDestino.getId().toString()));
 			}
@@ -662,6 +694,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoDestino());
 			
 			fMixProduto.setCodigoProduto(produtoOrigem.getCodigoICD());
+			
+			if(!produtoService.isIcdValido(produtoDestino.getCodigoICD())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Produto ["+produtoDestino.getNomeComercial()+"]: Código ICD inválido, ajuste-o no Cadastro de Produto.");
+			}
 			
 			List<MixProdutoDTO> mixProdutoOrigem = pesquisarPorProduto(fMixProduto);
 			if(mixProdutoOrigem==null || mixProdutoOrigem.isEmpty()){

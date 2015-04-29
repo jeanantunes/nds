@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +53,7 @@ import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -73,6 +76,9 @@ public class ContaCorrenteCotaController extends BaseController {
     
     @Autowired
     private Result result;
+    
+    @Autowired
+    private DistribuidorService distribuidorService;
     
     @Autowired
     private CotaService cotaService;
@@ -106,6 +112,17 @@ public class ContaCorrenteCotaController extends BaseController {
     
     @Path("/")
     public void index() {
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    	
+    	Calendar c = Calendar.getInstance();
+    	c.setTime(distribuidorService.obterDataOperacaoDistribuidor());
+    	c.add(Calendar.DAY_OF_MONTH, -10);
+    	result.include("dataDe", sdf.format(c.getTime()));
+    	
+    	c.setTime(distribuidorService.obterDataOperacaoDistribuidor());
+    	c.add(Calendar.DAY_OF_MONTH, 3);
+    	result.include("dataAte", sdf.format(c.getTime()));
     }
     
     /**
@@ -132,11 +149,9 @@ public class ContaCorrenteCotaController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         }
         
-        List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService
-                .obterContaCorrente(filtroViewContaCorrenteCotaDTO);
+        List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
         
-        result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue())
-                .serialize();
+        result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
     }
     
     /**
@@ -202,8 +217,8 @@ public class ContaCorrenteCotaController extends BaseController {
         
         request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO, filtro);
         
-        List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
-                .obterMovimentoEstoqueCotaConsignado(filtro);
+        List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
+        
         if (listaConsignadoCota != null) {
             Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
             
@@ -636,8 +651,7 @@ public class ContaCorrenteCotaController extends BaseController {
     public void consultarDebitoCreditoCota(Long idConsolidado, Date data, Integer numeroCota, String sortname,
             String sortorder) {
         
-        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
-                numeroCota, sortorder, sortname);
+        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data, numeroCota, sortorder, sortname);
         
         this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
     }
@@ -645,8 +659,7 @@ public class ContaCorrenteCotaController extends BaseController {
     public void exportarDebitoCreditoCota(FileType fileType, Long idConsolidado, Date data, Integer numeroCota,
             String sortname, String sortorder) throws IOException {
         
-        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data,
-                numeroCota, sortorder, sortname);
+        List<DebitoCreditoCota> movs = this.contaCorrenteCotaService.consultarDebitoCreditoCota(idConsolidado, data, numeroCota, sortorder, sortname);
         
         FileExporter.to("debito-credito", fileType).inHTTPResponse(this.getNDSFileHeader(),
                 this.obterFiltroExportacao(), movs, DebitoCreditoCota.class, this.httpServletResponse);

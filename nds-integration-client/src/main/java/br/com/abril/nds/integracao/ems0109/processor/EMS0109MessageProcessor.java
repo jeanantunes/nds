@@ -66,8 +66,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		} else {
 
-			this.atualizaProdutoConformeInput(produto, editor, tipoProduto,
-					message);
+			this.atualizaProdutoConformeInput(produto, editor, tipoProduto, message);
 		}
 	}
 
@@ -93,8 +92,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("select editor from Editor editor ");
+		sql.append(" select editor from Editor editor ");
 		sql.append(" where editor.codigo = :codigoEditor ");
+		sql.append(" and editor.ativo = true ");
 
 		Query query = this.getSession().createQuery(sql.toString());
 
@@ -174,7 +174,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
     
     private TipoSegmentoProduto findTipoSegmentoProdutoPorNome(String nome) {
 	    Criteria criteria = this.getSession().createCriteria(TipoSegmentoProduto.class);
-	    criteria.add(Restrictions.ge("descricao", nome));
+	    criteria.add(Restrictions.like("descricao", "%"+nome+"%"));
 	    //FIXME remover assim que as arquivos pub vierem com a descricao do segmento completa
 	    criteria.setMaxResults(1);
 	    
@@ -213,8 +213,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	    return tipoSegmentoProduto;
 	}
 	
-	private void criarProdutoConformeInput(Message message, Editor editor,
-			TipoProduto tipoProduto) {
+	private void criarProdutoConformeInput(Message message, Editor editor, TipoProduto tipoProduto) {
+		
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
 		Produto produto = new Produto();
@@ -238,8 +238,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
 
-		DescontoLogistica descontoLogistica =
-		        this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,
+		DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterDescontoLogisticaVigente(tipoDescontoInt,
 		                                                                    fornecedor.getId(),
 		                                                                    input.getDataGeracaoArquivo());
 
@@ -248,6 +247,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		produto.setCodigoContexto(input.getContextoPublicacao());
 		produto.setNomeComercial(input.getNomePublicacao());
 		produto.setEditor(editor);
+		
 		if (null != PeriodicidadeProduto.getByOrdem(input.getPeriodicidade())) {
 			produto.setPeriodicidade(PeriodicidadeProduto.getByOrdem(input.getPeriodicidade()));
 		} else {
@@ -265,10 +265,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		    
 		} else {
 			
-			if(input.getCodigoPublicacao().substring(0,1).equals("0")){
-			  produto.setCodigoICD(input.getCodigoPublicacao().substring(2,8));
-			}else {
-			 produto.setCodigoICD(input.getCodigoPublicacao().substring(0,6));
+			if(input.getCodigoPublicacao().substring(0,1).equals("0")) {
+				produto.setCodigoICD(input.getCodigoPublicacao().substring(2,8));
+			} else {
+				produto.setCodigoICD(input.getCodigoPublicacao().substring(0,6));
 			}
 		}
 		
@@ -286,15 +286,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				) 
 		);
 		
-		
-		if(input.getSegmento()!=null && !input.getSegmento().trim().equals("")){
-	     try {
-		   produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
-	     }catch(NumberFormatException ex){
-	      produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
-	     }
-		}else{
-		 produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));	
+		if(input.getSegmento()!=null && !input.getSegmento().trim().equals("")) {
+			try {
+				produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+			} catch(NumberFormatException ex) {
+				produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+			}
+		} else{
+			produto.setTipoSegmentoProduto(getTipoSegmento(new Long(9)));	
 		}
 		
 		String codigoSituacaoTributaria = input.getCodigoSituacaoTributaria();
@@ -308,7 +307,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			produto.setDescontoLogistica(descontoLogistica);
 
-		}else{
+		} else {
 			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
 		}
 
@@ -348,13 +347,11 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
 	
 	
-	private void atualizaProdutoConformeInput(Produto produto, Editor editor,
-			TipoProduto tipoProduto, Message message) {
+	private void atualizaProdutoConformeInput(Produto produto, Editor editor, TipoProduto tipoProduto, Message message) {
 
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
-		String codigoDistribuidor = 
-	            message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+		String codigoDistribuidor = message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
 		Fornecedor fornecedor = this.findFornecedor(Integer.parseInt(codigoDistribuidor));
 		
@@ -631,9 +628,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			segmento = tipoSegmentoProduto.getDescricao();
 		}
 		
-		if (input.getSegmento() != null && !input.getSegmento().trim().equals("") 
-				&& !Objects.equal(segmento, input.getSegmento())) {
-		    
+		if (input.getSegmento() != null && !input.getSegmento().trim().equals("") && !Objects.equal(segmento, input.getSegmento())) {
             
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -644,10 +639,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                     );
         
             try {
-     		   produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
-     	     }catch(NumberFormatException ex){
-     	      produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
-     	     }
+            	produto.setTipoSegmentoProduto(getTipoSegmento(new Long(input.getSegmento())));
+     	    } catch(NumberFormatException ex) {
+     	    	produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
+     	    }
 		}
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();

@@ -9,6 +9,8 @@ import java.util.TreeSet;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
@@ -92,6 +94,8 @@ public interface RecolhimentoService {
 	
 	String reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
 	
+	String cadeadoMatriz(List<Date> datasConfirmadas, Usuario usuario);
+	
 	/**
 	 * Obtém as datas de recolhimento dos fornecedores informados.
 	 */
@@ -100,6 +104,12 @@ public interface RecolhimentoService {
 
 	public void validarLancamentoParaReabertura(List<Date> datasConfirmadas);
 	
+	public List<Lancamento> obterRecolhimentosEmBalanceamentoRecolhimento(List<Date> datasConfirmadas);
+	
 	public boolean existeRecolhimentoBalanceado(Date dataRecolhimento);
+
+	void salvarBalanceamentoRecolhimento(Usuario usuario,
+			BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO,
+			StatusLancamento statusLancamento,Date dataPesquisa);
 	
 }

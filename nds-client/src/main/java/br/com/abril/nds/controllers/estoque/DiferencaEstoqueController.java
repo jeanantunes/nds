@@ -167,10 +167,7 @@ public class DiferencaEstoqueController extends BaseController {
         
         this.limparSessao();
         
-        result.include(
-                "dataAtual",
-                DateUtil.formatarDataPTBR(
-                        distribuidorService.obterDataOperacaoDistribuidor()));
+        result.include("dataAtual", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
         
         result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO));
     }
@@ -2699,7 +2696,6 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         if(numeroEdicao == null) {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
         }
-        
         
         final ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
         

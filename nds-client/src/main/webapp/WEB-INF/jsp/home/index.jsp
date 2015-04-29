@@ -1,4 +1,7 @@
 <jsp:useBean id="random" class="java.util.Random" scope="application" />
+<jsp:useBean id="date" class="java.util.Date"/>
+<fmt:formatDate var="time" value="${date}" pattern="HHmm"/>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -14,7 +17,7 @@
 <link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy.css" />
 <link rel="stylesheet" type="text/css" href="scripts/tooltip/tipsy-docs.css" />
 
-<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 
 <script language="javascript" type="text/javascript" src="scripts/jwerty/jwerty.js"></script>

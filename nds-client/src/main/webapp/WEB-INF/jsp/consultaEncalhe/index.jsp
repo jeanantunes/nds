@@ -6,6 +6,8 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/consultaEncalhe.js"></script>
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+
 <script language="javascript" type="text/javascript">
 
 var pesquisaCotaConsultaEncalhe = new PesquisaCota(ConsultaEncalhe.workspace);
@@ -45,10 +47,9 @@ $(function(){
 
 		<legend> Consulta Encalhe </legend>
 
-		<table  border="0" cellpadding="2" cellspacing="1" class="filtro" style="width:950px;">
-		
+		<table border="0" cellpadding="2" cellspacing="1" class="filtro" style="width:950px;">
+					
 			<tr>
-			
 				<td width="46">Per&iacute;odo:</td>
 				
 				<td width="113">
@@ -74,12 +75,10 @@ $(function(){
 				
 				</td>
 				
-				<td width="28">
+				<td width="25">
 					Cota:
 				</td>
-				
-				<td width="90">
-
+				<td width="25">
 					<input 	type="text" 
 							maxlength="17"
 							id="consulta-encalhe-cota" onchange="pesquisaCotaConsultaEncalhe.pesquisarPorNumeroCota('#consulta-encalhe-cota', '#consulta-encalhe-nomeCota');" 
@@ -87,11 +86,8 @@ $(function(){
 				
 				</td>
 				
-				<td width="37">Nome:</td>
-				
-				<td width="138">
-
-		            <input type="text"
+				<td width="25" colspan="2">Nome:
+					<input type="text"
 		            maxlength="255" 
 		            name="consulta-encalhe-nomeCota" 
 		            id="consulta-encalhe-nomeCota" 
@@ -100,15 +96,43 @@ $(function(){
 		            style="width:130px;"/>
 					
 				</td>
+			</tr>
+			<tr>
+				<td>Box:</td>
+    			<td width="91">
+					<select id="consulta-encalhe-box" style="width:80px;">
+						<option selected="selected"> </option>	    
+						<c:forEach items="${listaBoxes}" var="box">
+							<option value="${box.key}" >${box.value}</option>
+						</c:forEach>
+					</select>
+				</td>	
+				
+				<td width="43">C&oacute;digo:</td>
+				<td width="123" >
+			    	<input type="text" name="consulta-encalhe-codigoProduto" id="consulta-encalhe-codigoProduto"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="10"
+						   onkeyup="this.value = this.value.replace(/[^0-9\.]/g,'');"
+						   onchange="ConsultaEncalhe.pesquisarPorCodigoProduto('#consulta-encalhe-codigoProduto', '#consulta-encalhe-produto', '', false,
+								   									   ConsultaEncalhe.pesquisarProdutosSuccessCallBack);" />
+				</td>
+				<td width="55">Produto:</td>
+				<td colspan="2">
+					<input type="text" name="consulta-encalhe-produto" id="consulta-encalhe-produto" style="width: 222px;" maxlength="255"/>
+				</td>
+				
+				<td>Edi&ccedil;&atilde;o:</td>
+				<td width="90">
+		        	<input type="text" name="consulta-encalhe-edicao" id="consulta-encalhe-edicao" style="width:80px;"/>
+		        </td>
 				
 				<td width="107">
 					<span class="bt_novos">
 						<a href="javascript:;" onclick="ConsultaEncalhe.pesquisar()"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 					</span>
 				</td>
-			</tr>
+			</tr>	
 		</table>
-
 	</fieldset>
 	
 	<div class="linha_separa_fields">&nbsp;</div>

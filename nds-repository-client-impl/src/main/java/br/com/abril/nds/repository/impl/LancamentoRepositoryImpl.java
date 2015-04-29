@@ -767,22 +767,48 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
+	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select lancamento ")
-				.append(" from Lancamento lancamento ")
-				.append(" where lancamento.id = ")
-				.append(" (select max(lancamentoMaxDate.id) ")
-				.append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
-				.append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ");
-
+		hql.append(" select max(lancamento) ")
+			.append(" from Lancamento lancamento ")
+			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		if(dataLimiteLancamento != null) {
+			hql.append(" and lancamento.dataLancamentoDistribuidor = ( ");
+			hql.append(" select max(lancamento.dataLancamentoDistribuidor) ")
+			.append(" from Lancamento lancamento ")
+			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento ) ");
+		}
+		
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		query.setMaxResults(1);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
+		
+		Lancamento l = (Lancamento) query.uniqueResult();
+		
+		if(l != null) return l;
+		
+		hql = new StringBuilder();
+			hql.append(" select min(lancamento) ")
+			.append(" from Lancamento lancamento ")
+			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		if(dataLimiteLancamento != null) {
+			hql.append(" and lancamento.dataLancamentoDistribuidor > :dataLimiteLancamento ");
+		}
+			hql.append(" ) ");
+		
+		query = getSession().createQuery(hql.toString());
 
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
+		
 		return (Lancamento) query.uniqueResult();
 	}
 	
@@ -806,8 +832,7 @@ public class LancamentoRepositoryImpl extends
     }
 
 	@Override
-	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(
-			Long idProdutoEdicao, Long idCota) {
+	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -815,20 +840,29 @@ public class LancamentoRepositoryImpl extends
 				.append(" from MovimentoEstoqueCota mec ")
 				.append(" join mec.produtoEdicao.lancamentos lancamento ")
 				.append(" join mec.cota cota ")
-				.append(" where lancamento.dataLancamentoPrevista = ")
+				.append(" where lancamento.dataLancamentoDistribuidor = ")
 				.append(" (")
-				.append("   select max(lancamentoMaxDate.dataLancamentoPrevista) ")
+				.append("   select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
 				.append("   from MovimentoEstoqueCota mecMaxDate ")
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ")
-				.append("   and cotaMaxDate.id = :idCota ").append(" ) ")
-				.append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ")
-				.append(" and cota.id=:idCota ");
+				.append("   and cotaMaxDate.id = :idCota  ");
+		
+		if(dataLimiteLancamento != null) {
+				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
+		}
+		
+				hql.append(" ) ")
+				.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ")
+				.append(" and cota.id = :idCota ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
 
 		query.setParameter("idCota", idCota);
 		
@@ -909,7 +943,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa,		");
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
 		hql.append(" produtoEdicao.precoVenda as precoVenda, 		");
-
+		hql.append(" produtoEdicao.pacotePadrao as pacotePadrao, 		");
 		hql.append(" (CASE WHEN produtoEdicao.origem = :origemInterface ");
 		hql.append(" THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
 		hql.append(" ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
@@ -929,8 +963,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" editorPessoaJuridica.razaoSocial as nomeEditor		");
 
-		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor,
-				dataInicioRecolhimento, dataFimRecolhimento));
+		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento));
 
 		hql.append(" order by ");
 
@@ -950,10 +983,7 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
-		query.setParameterList("statusLancamento",
-                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-                        StatusLancamento.EM_RECOLHIMENTO, 
-                        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
 		query.setParameter("origemInterface", Origem.INTERFACE);
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 		
@@ -964,8 +994,7 @@ public class LancamentoRepositoryImpl extends
 			query.setFirstResult(initialResult);
 		}
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				InformeEncalheDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformeEncalheDTO.class));
 
 		return query.list();
 
@@ -981,8 +1010,7 @@ public class LancamentoRepositoryImpl extends
 	 * 
 	 * @return String
 	 */
-	private String getHQLObtemLancamentoInformeRecolhimento(Long idFornecedor,
-			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
+	private String getHQLObtemLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
 
 		StringBuffer hql = new StringBuffer();
 
@@ -1021,20 +1049,15 @@ public class LancamentoRepositoryImpl extends
 			query.setParameter("idFornecedor", idFornecedor);
 		}
 
-		query.setParameter("dataInicioRecolhimento",
-				dataInicioRecolhimento.getTime());
+		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 
-		query.setParameterList("statusLancamento",
-                Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-                        StatusLancamento.EM_RECOLHIMENTO, 
-                        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
 		
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
 		return hql.toString();
-
 	}
 
 	/*
@@ -1409,9 +1432,8 @@ public class LancamentoRepositoryImpl extends
 	}
 
 	@Override
-	public Lancamento obterLancamentoProdutoPorDataLancamentoOuDataRecolhimento(
-			ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista,
-			Date dataRecolhimentoPrevista) {
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosProdutoEdicaoPorDataLancamentoOuDataRecolhimento(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataRecolhimentoPrevista) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -1429,7 +1451,6 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		Query query = getSession().createQuery(sql.toString());
-		query.setMaxResults(1);
 		query.setParameter("produtoEdicao", produtoEdicao.getId());
 
 		if (dataLancamentoPrevista != null) {
@@ -1437,11 +1458,10 @@ public class LancamentoRepositoryImpl extends
 		}
 
 		if (dataRecolhimentoPrevista != null) {
-			query.setParameter("dataRecolhimentoPrevista",
-					dataRecolhimentoPrevista);
+			query.setParameter("dataRecolhimentoPrevista", dataRecolhimentoPrevista);
 		}
 
-		return (Lancamento) query.uniqueResult();
+		return (List<Lancamento>) query.list();
 	}
 
 	@Override
@@ -1993,7 +2013,7 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataBase", dataBase);
-		query.setParameter("statusRecolhido",StatusLancamento.RECOLHIDO);
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
 		query.setParameter("grupoRecolhimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
 
 		return query.list();
@@ -2361,6 +2381,8 @@ public class LancamentoRepositoryImpl extends
 		List<StatusLancamento> statusLancamento = new ArrayList<>();
 
 		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_RECOLHIMENTO);
 
 		query.setParameterList("datasConfirmadas", datasConfirmadas);
 		query.setParameterList("statusLancamento", statusLancamento);
@@ -2368,6 +2390,30 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRecolhimentosEmBalanceamentoRecolhimento(
+			List<Date> datasConfirmadas) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+
+		statusLancamento.add(StatusLancamento.EXPEDIDO);
+
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+
+		return query.list();
+	}
+	
 	public Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe) {
 
 		StringBuilder hql = new StringBuilder();
@@ -2691,9 +2737,8 @@ public class LancamentoRepositoryImpl extends
         
         return query.list();
     }
-    
 
-    public List<Date> obterDatasLancamentoValido(List<Long> idFornecedor) {
+    public List<Date> obterDatasLancamentoValidas() {
 
     	StringBuilder hql = new StringBuilder();
     	
@@ -2705,25 +2750,59 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b ");
     	hql.append(" ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c ");
     	hql.append(" ORDER BY n) a ) b ");
-    	hql.append(" where b.dt not in (select distinct data from feriado where tipo_feriado = 'FEDERAL' and ind_opera = 0) ");
+    	hql.append(" where 1 = 1 ");
+    	hql.append(" and concat(month(b.dt), day(b.dt)) not in (select distinct concat(month(data), day(data)) from feriado where ind_opera = 0 and ind_repete_anualmente = 1) ");
+    	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'FEDERAL' and ind_opera = 0) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select dtd from ( ");
-    	hql.append(" select max(data_lcto_distribuidor) dtd , (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
-    	hql.append(" from lancamento ");
-    	hql.append(" where status in(:lancamentosPreExpedicao) ");
-    	hql.append(" group by data_lcto_distribuidor ) a ");
-    	hql.append(" where st = 0) ");
-    	hql.append(" and b.sm    in (select dia_semana  ");
-    	hql.append(" from distribuicao_fornecedor  ");
-    	hql.append(" where operacao_distribuidor = 'DISTRIBUICAO'  ");
-    	//hql.append(" and fornecedor_id in (:idFornecedor)  ");
-    	hql.append(" ) order by dt  ");
+    	hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+    	hql.append(" 	from ( ");
+    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		from lancamento l ");
+    	hql.append(" 		where status in(:lancamentosPreExpedicao) ");
+    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+    	hql.append(" 		union ");
+    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		from lancamento l ");
+    	hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
+    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+    	hql.append(" 		group by data_lcto_distribuidor ");
+    	hql.append(" 	) rs ) a ");
+    	hql.append(" 	where st = 0) ");
+    	hql.append(" and b.sm    in (select distinct dia_semana ");
+    	hql.append(" 	from distribuicao_fornecedor ");
+    	hql.append(" 	where operacao_distribuidor = 'DISTRIBUICAO' ");
+    	hql.append(" ) ");
+    	hql.append(" and (dt in (select dtd from ( ");
+		hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+		hql.append(" 	from ( ");
+		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		from lancamento l ");
+		hql.append(" 		where status in(:lancamentosPreExpedicao) ");
+		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+		hql.append(" 		union ");
+		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		from lancamento l ");
+		hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
+		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+		hql.append(" 		group by data_lcto_distribuidor ");
+		hql.append(" 	) rs ");
+		hql.append(" 	) a ");
+		hql.append(" 	where st = 1 ");
+		hql.append(" ) or (select count(0) from lancamento l where l.DATA_LCTO_DISTRIBUIDOR = dt) = 0) ");
+    	hql.append(" order by dt ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
-        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreExpedicao());
-
+        
+        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreBalanceamentoString());
+        
+        List<String> statusLancamentoPosBalanceamento = new ArrayList<>();
+        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
+        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("lancamentosPosBalanceamentoLancamento", statusLancamentoPosBalanceamento);
+    	
     	return query.list();
     }
     
@@ -2824,4 +2903,36 @@ public class LancamentoRepositoryImpl extends
 		return count != null && count.compareTo(BigInteger.ZERO) > 0;
 
 	}
+	
+	public List<Date> obterDatasRecolhimentoValidas() {
+
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select dtd                                                                         ");
+	    hql.append(" from                                                                               ");
+	    hql.append("     (  select distinct l.data_rec_distrib dtd,                                     ");
+	    hql.append("         (case when status in ('EM_RECOLHIMENTO') then 1 else 0 end) st             ");
+	    hql.append("     from lancamento l                                                              ");
+	    hql.append("     inner join                                                                     ");
+	    hql.append("         (                                                                          ");
+	    hql.append("             SELECT distinct data_rec_distrib                                       ");
+	    hql.append("             from lancamento l                                                      ");
+	    hql.append("             inner join                                                             ");
+	    hql.append("                 (                                                                  ");
+	    hql.append("                     select distinct data_rec_distrib dtd                           ");
+	    hql.append("                     from lancamento                                                ");
+	    hql.append("                     where status in (:produtosEmRecolhimento)                      ");
+	    hql.append("                 ) rs1 on rs1.dtd = l.data_rec_distrib                              ");
+	    hql.append("             ) rs2 on rs2.data_rec_distrib = l.data_rec_distrib                     ");
+	    hql.append("             where (                                                                ");
+	    hql.append("               case when status in (:produtosEmRecolhimento) then 1 else 0 end) = 1 ");
+	    hql.append("             ) rs1                                                                  ");
+    	
+        Query query = getSession().createSQLQuery(hql.toString());
+        
+        query.setParameterList("produtosEmRecolhimento", Arrays.asList(StatusLancamento.EM_RECOLHIMENTO.name()));
+
+    	return query.list();
+    }
+	
 }

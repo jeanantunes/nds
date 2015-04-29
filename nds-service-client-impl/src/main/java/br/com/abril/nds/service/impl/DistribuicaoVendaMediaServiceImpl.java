@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.DistribuicaoVendaMediaService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,6 +25,9 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     
     @Autowired
     private LancamentoRepository lancamentoRepository;
+    
+    @Autowired
+    private EstoqueProdutoService estoqueProdutoService;
     
     /**
      * @param filtro
@@ -41,6 +47,8 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     		
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(filtro);
     	}
+    	
+    	tratarVendaZero(prodEdicaoParabaseEstudo);
     	
     	return prodEdicaoParabaseEstudo;
     }
@@ -84,8 +92,23 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
     	}
     	
+    	tratarVendaZero(prodEdicaoParabaseEstudo);
+    	
     	return prodEdicaoParabaseEstudo;
     	
     }
+
+	private void tratarVendaZero(List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo) {
+		
+		for (ProdutoEdicaoVendaMediaDTO peVendaMediaDTO : prodEdicaoParabaseEstudo) {
+			if((peVendaMediaDTO.getStatus() != null && peVendaMediaDTO.getStatus().equalsIgnoreCase("FECHADO")) 
+					&& (peVendaMediaDTO.getVenda() == null || peVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)) {
+				
+				BigDecimal vendas = estoqueProdutoService.obterVendaBaseadoNoEstoque(peVendaMediaDTO.getId().longValue());
+				peVendaMediaDTO.setVenda(vendas != null ? vendas.toBigInteger() : BigInteger.valueOf(0));
+			}
+		}
+		
+	}
 
 }

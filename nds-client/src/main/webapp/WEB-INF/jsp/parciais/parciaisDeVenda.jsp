@@ -5,7 +5,7 @@
 
 		<legend>Parciais de Venda</legend>
 
-	    <table class="parciaisVendaGrid"></table>
+	    <table class="parcial-parciaisVendaGrid"></table>
 
 	    <span class="bt_novos" title="Gerar Arquivo">
 	    	<a href="${pageContext.request.contextPath}/parciais/exportarDetalhesVenda?fileType=XLS">
