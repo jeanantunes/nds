@@ -1,42 +1,62 @@
-package br.com.abril.nds.integracao.model;
+package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 
-import com.ancientprogramming.fixedformat4j.annotation.Field;
-import com.ancientprogramming.fixedformat4j.annotation.Record;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+@Entity
+@Table(name = "DESTINO_ENCALHE")
+public class DestinoEncalhe implements Serializable {
 
-/**
- * Importação de arquivos do tipo "<i>Bandeiras</i>."
- */
-@Record
-public class EMS0139Input extends IntegracaoDocument implements Serializable {
-	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7669913155208995341L;
+	private static final long serialVersionUID = -915449470804760670L;
 
+	@Id
+	@GeneratedValue
+	@Column(name = "ID")
+	private Long id;
+	
+	@Column(name = "CODIGO_DISTRIBUIDOR", nullable = false)	
 	private String codigoDistribuidor;
 
+	@Column(name = "SEMANA_RECOLHIMENTO", nullable = false)
 	private String semanaRecolhimento;
 
-	private Long situacaoAtendimentoDDE;
+	@Column(name = "SITUACAO_ATENDIMENTO_DDE", nullable = false)
+	private String situacaoAtendimentoDDE;
 
+	@Column(name = "CODIGO_PRODUTO", nullable = false)
 	private String codigoProduto;
 
+	@Column(name = "NUMERO_EDICAO", nullable = false)
 	private Long numeroEdicao;
 	
+	@Column(name = "NOME_COMERCIAL", nullable = false)
 	private String nomeComercial;
 
+	@Column(name = "NOME_DESTINO_DDE", nullable = false)
 	private String nomeDestinoDDE;
 
+	@Column(name = "NUMERO_PRIORIDADE_ATENDIMENTO_DDE", nullable = false)
 	private Long numeroPrioridadeAtendimentoDDE;
 
+	@Column(name = "TIPO_ATENDIMENTO_DDE", nullable = false)
 	private String tipoAtendimentoDDE;
 
-	@Field(offset=0, length=6)
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
@@ -45,7 +65,6 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 
-	@Field(offset=8, length=6)
 	public String getSemanaRecolhimento() {
 		return semanaRecolhimento;
 	}
@@ -54,16 +73,14 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.semanaRecolhimento = semanaRecolhimento;
 	}
 
-	@Field(offset=15, length=10)
-	public Long getSituacaoAtendimentoDDE() {
+	public String getSituacaoAtendimentoDDE() {
 		return situacaoAtendimentoDDE;
 	}
 
-	public void setSituacaoAtendimentoDDE(Long situacaoAtendimentoDDE) {
+	public void setSituacaoAtendimentoDDE(String situacaoAtendimentoDDE) {
 		this.situacaoAtendimentoDDE = situacaoAtendimentoDDE;
 	}
 
-	@Field(offset=26, length=8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -72,16 +89,14 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.codigoProduto = codigoProduto;
 	}
 
-	@Field(offset=35, length=4)
 	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
-	
+
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
-	
-	@Field(offset=40, length=45)
+
 	public String getNomeComercial() {
 		return nomeComercial;
 	}
@@ -90,7 +105,6 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.nomeComercial = nomeComercial;
 	}
 
-	@Field(offset=86, length=20)
 	public String getNomeDestinoDDE() {
 		return nomeDestinoDDE;
 	}
@@ -99,7 +113,6 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.nomeDestinoDDE = nomeDestinoDDE;
 	}
 
-	@Field(offset=107, length=2)
 	public Long getNumeroPrioridadeAtendimentoDDE() {
 		return numeroPrioridadeAtendimentoDDE;
 	}
@@ -108,7 +121,6 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.numeroPrioridadeAtendimentoDDE = numeroPrioridadeAtendimentoDDE;
 	}
 
-	@Field(offset=110, length=84)
 	public String getTipoAtendimentoDDE() {
 		return tipoAtendimentoDDE;
 	}
@@ -116,5 +128,5 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 	public void setTipoAtendimentoDDE(String tipoAtendimentoDDE) {
 		this.tipoAtendimentoDDE = tipoAtendimentoDDE;
 	}
-
+	
 }
