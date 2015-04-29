@@ -20,7 +20,7 @@
 	<style>
 
 		#resultadoIntegracao{display:none;}
-        #tableBaixaManual, #tableBaixaAuto, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
+        #tableBaixaManual, #tableBaixaAuto, #tableBaixaConsolidada, #extratoBaixaManual, #porNossoNumero, #porCota, #dialog-divida{display:none;}
         #dialog-baixa-dividas,#dialog-detalhes-divida, #bancoDividas, #labelBanco{display:none;}
         #dialog-confirma-baixa-numero,#dialog-confirma-baixa,#dialog-confirma-pendente,#dialog-postergar{display:none;}
         
@@ -90,10 +90,12 @@
               <td width="115">Tipo de Baixa:</td>
               <td colspan="3"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="8%"><input type="radio" name="baixaFinanceira" id="radioBaixaAutomatica" onclick="baixaFinanceiraController.mostrarBaixaAuto();" /></td>
-                  <td width="63%">Automatica</td>
-                  <td width="7%"><input type="radio" name="baixaFinanceira" id="radioBaixaManual" onclick="baixaFinanceiraController.mostrarBaixaManual();"/></td>
-                  <td width="22%">Manual</td>
+                  <td><input type="radio" name="baixaFinanceira" id="radioBaixaAutomatica" onclick="baixaFinanceiraController.mostrarBaixa('AUTOMATICA');" /></td>
+                  <td>Autom&aacute;tica</td>
+                  <td><input type="radio" name="baixaFinanceira" id="radioBaixaManual" onclick="baixaFinanceiraController.mostrarBaixa('MANUAL');"/></td>
+                  <td>Manual</td>
+                  <td><input type="radio" name="baixaFinanceira" id="radioBaixaConsolidada" onclick="baixaFinanceiraController.mostrarBaixa('CONSOLIDADA');"/></td>
+                  <td>Consolidada</td>
                 </tr>
               </table></td>
               <td width="112">&nbsp;</td>
@@ -204,6 +206,39 @@
         </table>
         
         <!--  -->
+        
+        <!-- BAIXA CONSOLIDADA -->
+		
+		<form action="<c:url value='/financeiro/baixa/realizarBaixaConsolidada' />" id="formBaixaConsolidada"
+			  method="post" enctype="multipart/form-data" >
+		
+			<input type="hidden" name="formUploadAjaxConsolidada" value="true" />
+			<input type="hidden" id="dataHidden" value="10/10/2012" />
+		
+			<table width="950" border="0" cellpadding="2" cellspacing="1"
+				   class="filtro" id="tableBaixaConsolidada">
+				
+					<tr>
+						<td width="140">Data Pagamento:</td>
+						<td width="200">
+							<input type="text" name="data" id="dataBaixaConsolidada"
+								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
+						</td>
+						<td width="65">Arquivo:</td>
+						<td colspan="3">
+							
+							<input name="uploadedFile" type="file" id="uploadedFileConsolidada" size="25" />
+							
+						</td>
+						
+						<td width="111">
+							<span class="bt_integrar" title="Integrar" id="btnIntegrar" >
+								<a href="javascript:;" onclick="baixaFinanceiraController.integrarCobrancaConsolidada();">Integrar</a>
+							</span>
+						</td>
+					</tr>			
+			</table>
+		</form>
         
         
 	</fieldset>
@@ -509,5 +544,44 @@
     
     </form>
     
-    <!--  -->
+    <!-- Resumo baixa consolidada  - MANTER, POIS AINDA SERÁ FINALIZADO
+		<div id="dialog-baixaConsolidada" title="Resumo baixa consolidada"style="display: none;">
+			<fieldset style="width: 500px !important;">
+				<legend>An&aacute;lise do arquivo importado:</legend>
+
+			<table border="0" cellpadding="2" cellspacing="1">
+				
+				<tr>
+					<td width="110px" align="center"><strong>Nome do arquivo:</strong></td>
+					<td><span id="nomeArquivo"></span></td>
+				</tr>
+				
+				<tr>
+					&nbsp;
+				</tr>
+				
+				<tr>
+					<td align="center"><strong>Banco:</strong></td>
+					<td><span id="banco"></span></td>
+				</tr>
+				
+				<tr>
+					&nbsp;
+				</tr>
+				
+				<tr>
+					<td align="center"><strong>Total de baixas:</strong></td>
+					<td><span id="totalBaixas"></span></td>
+				</tr>
+				
+				<tr>
+					<td align="center"><strong>Valor total:</strong></td>
+					<td><span id="vlrTotal"></span></td>
+				</tr>
+				
+			</table>
+
+		</fieldset>
+		</div>
+    -->
 </body>

@@ -149,5 +149,16 @@ public interface CobrancaService {
 	 * @param dataPagamento
 	 */
 	void validarDataPagamentoCobranca(List<Long> idCobrancas, Date dataPagamento) throws ValidacaoException;
+
+	public abstract List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(
+			Date dataOperacaoDistribuidor);
+
+	public abstract void processarExportacaoCobranca(Date dataDistribuicaoDistribuidor);
+
+	public abstract void processarCobrancaConsolidada(Date dataOperacaoDistribuidor);
+
+	public abstract Cobranca obterCobrancaPorNossoNumeroConsolidado(String nossoNumeroConsolidado);
+
+	public abstract Long qtdCobrancasConsolidadasBaixadas(Date dataOperacao);
 	
 }
