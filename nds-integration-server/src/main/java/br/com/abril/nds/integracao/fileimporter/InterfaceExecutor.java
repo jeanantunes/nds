@@ -568,17 +568,19 @@ public class InterfaceExecutor {
 			String nomeUsuario,
 			InterfaceExecucao interfaceExecucao) throws Exception {
 
-				
 //		FileReader in = new FileReader(arquivo);
 //		Scanner scanner = new Scanner(in);
 //		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? StandardCharsets.ISO_8859_1.toString() : StandardCharsets.UTF_8.toString());
+		
+		if(interfaceEnum == null) {
+			
+			throw new Exception("Parâmetro necessário está nulo.");
+		}
 		
 		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? "iso-8859-1" : "utf-8");
 		
 		int linhaArquivo = 0;
 		IntegracaoDocumentMaster<?> docM = null;
-		
-		
 		
 		while (scanner.hasNextLine()) {
 			
@@ -590,10 +592,10 @@ public class InterfaceExecutor {
 				continue;
 			} 
 			
-			try{
+			try {
 				
-				if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.SIMPLES ) {
-					
+				switch (interfaceEnum.getTipoInterfaceEnum()) {
+				case SIMPLES:
 					IntegracaoDocument doc = (IntegracaoDocument) this.ffm.load(interfaceEnum.getClasseLinha(), linha);
 					
 					doc.setTipoDocumento(interfaceEnum.name());
@@ -603,9 +605,10 @@ public class InterfaceExecutor {
 					doc.setNomeUsuarioExtracao(nomeUsuario);
 						
 					couchDbClient.save(doc);
-					
-				} else if (interfaceEnum.getTipoInterfaceEnum() == TipoInterfaceEnum.DETALHE_INLINE) {
+					break;
 
+				case DETALHE_INLINE:
+					
 					IntegracaoDocumentDetail docD = (IntegracaoDocumentDetail) this.ffm.load(interfaceEnum.getClasseDetail(), linha);
 					
 					if (((IntegracaoDocumentMaster<?>) this.ffm.load(interfaceEnum.getClasseMaster(), linha)).sameObject(docM)) {
@@ -624,7 +627,14 @@ public class InterfaceExecutor {
 						docM.setNomeUsuarioExtracao(nomeUsuario);
 						docM.addItem(docD);				
 					}
+					break;
+					
+				default:
+					break;
 				}
+				
+					
+
 				
 			} catch(IllegalArgumentException | com.ancientprogramming.fixedformat4j.format.ParseException pe) {
 				
