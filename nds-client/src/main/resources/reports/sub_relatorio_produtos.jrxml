@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos" printOrder="Horizontal" pageWidth="842" pageHeight="592" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="0de048fa-a620-44b6-bcb1-d2441005639e">
 	<property name="ireport.zoom" value="2.9230756500000017"/>
-	<property name="ireport.x" value="1423"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="68"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -67,8 +67,29 @@
 	<field name="valorUnitarioProduto" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[valorUnitarioProduto]]></fieldDescription>
 	</field>
+	<background>
+		<band height="70">
+			<rectangle>
+				<reportElement style="borda_1" stretchType="RelativeToBandHeight" mode="Opaque" x="-15" y="1" width="15" height="69" uuid="0a7989c2-ec5b-44f6-808e-14f82f3cbe9e"/>
+			</rectangle>
+			<staticText>
+				<reportElement style="campoPequeno" stretchType="RelativeToBandHeight" x="-27" y="0" width="27" height="70" uuid="c19fbf4e-0683-454b-82d4-dffe9c2c889d"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font size="4" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DADOS DO PRODUTO/SERVIÇO]]></text>
+			</staticText>
+		</band>
+	</background>
 	<detail>
-		<band height="16">
+		<band height="70" splitType="Stretch">
 			<rectangle>
 				<reportElement style="borda_1" x="0" y="0" width="759" height="16" uuid="2f6dd3c5-e319-43e1-b681-6f5440f9e5fb"/>
 			</rectangle>
@@ -236,14 +257,4 @@
 			</textField>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="1">
-			<line>
-				<reportElement x="0" y="0" width="760" height="1" uuid="1154f695-4d50-4e75-a289-de7b0215ea0b"/>
-				<graphicElement>
-					<pen lineWidth="0.25"/>
-				</graphicElement>
-			</line>
-		</band>
-	</pageFooter>
 </jasperReport>

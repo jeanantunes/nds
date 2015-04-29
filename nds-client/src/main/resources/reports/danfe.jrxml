@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="355"/>
+	<property name="ireport.y" value="410"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -503,9 +503,9 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 		</band>
 	</background>
 	<title>
-		<band height="146">
+		<band height="144">
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="812" height="146" uuid="67494b23-ed04-4a14-98af-5739982c1a2d"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="812" height="144" uuid="67494b23-ed04-4a14-98af-5739982c1a2d"/>
 				<rectangle>
 					<reportElement style="borda_1" x="37" y="0" width="331" height="96" uuid="2bf62f7e-c59f-4b8d-aca3-10e92517a864"/>
 					<graphicElement>
@@ -763,7 +763,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 		<band height="203">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.intValue() == 1]]></printWhenExpression>
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="2" width="812" height="201" uuid="bdc7cc8a-ce2d-4560-a5b0-c99f906d1317"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="812" height="201" uuid="bdc7cc8a-ce2d-4560-a5b0-c99f906d1317"/>
 				<rectangle>
 					<reportElement style="borda_1" x="52" y="2" width="545" height="24" uuid="720dc73c-5156-4aec-ba01-5aecd0d4bb1b"/>
 				</rectangle>
@@ -1005,7 +1005,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[FRETE POR CONTA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="444" y="126" width="66" height="6" uuid="f014dc1b-c7ca-4d20-b10e-55f25406c61d"/>
+					<reportElement style="campoPequeno" x="444" y="124" width="66" height="6" uuid="f014dc1b-c7ca-4d20-b10e-55f25406c61d"/>
 					<text><![CDATA[CÓDIGO ANTT]]></text>
 				</staticText>
 				<staticText>
@@ -1079,7 +1079,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{dataSaida}]]></textFieldExpression>
 				</textField>
 				<textField pattern="(##) ####-####">
-					<reportElement style="dados" x="456" y="56" width="105" height="16" uuid="df24c5f6-4627-4bee-9613-d7de231c1a0d"/>
+					<reportElement style="dados" x="456" y="54" width="105" height="16" uuid="df24c5f6-4627-4bee-9613-d7de231c1a0d"/>
 					<textFieldExpression><![CDATA[$F{destinatarioTelefone}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
@@ -1264,7 +1264,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
  REMETENTE]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="borda_1" x="37" y="74" width="15" height="48" uuid="56f6bab1-ede6-49b4-b115-ec92bc867151"/>
+					<reportElement style="borda_1" x="37" y="75" width="15" height="48" uuid="56f6bab1-ede6-49b4-b115-ec92bc867151"/>
 				</rectangle>
 				<staticText>
 					<reportElement style="campoPequeno" x="37" y="76" width="15" height="48" uuid="f79e6ecf-b50a-4a3d-a33c-9733c4be0b43"/>
@@ -1349,7 +1349,7 @@ VOLUMES]]></text>
 	<columnHeader>
 		<band height="13" splitType="Stretch">
 			<rectangle>
-				<reportElement style="borda_1" x="37" y="0" width="775" height="13" uuid="6739ad77-3e06-4061-84fd-ba459259ccee"/>
+				<reportElement style="borda_1" x="52" y="0" width="760" height="13" uuid="6739ad77-3e06-4061-84fd-ba459259ccee"/>
 			</rectangle>
 			<staticText>
 				<reportElement style="campoPequeno" x="52" y="0" width="38" height="13" uuid="4cf2c54d-a4fc-443f-80f0-3e164e0d456a"/>
@@ -1537,23 +1537,6 @@ VOLUMES]]></text>
 	</columnHeader>
 	<detail>
 		<band height="58" splitType="Stretch">
-			<rectangle>
-				<reportElement style="borda_1" mode="Opaque" x="37" y="0" width="15" height="58" uuid="f6dd7a2c-5b73-4b2a-acf9-6150a125d8b0"/>
-			</rectangle>
-			<staticText>
-				<reportElement style="campoPequeno" positionType="Float" stretchType="RelativeToBandHeight" x="37" y="0" width="15" height="58" uuid="545f6369-c02c-4745-b398-8cd41ecfc851"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
-					<font size="4" isBold="true" isItalic="false"/>
-				</textElement>
-				<text><![CDATA[DADOS DO PRODUTO/SERVIÇO]]></text>
-			</staticText>
 			<subreport>
 				<reportElement stretchType="RelativeToBandHeight" x="52" y="0" width="760" height="30" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
