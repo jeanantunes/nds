@@ -195,7 +195,7 @@ public class RetornoNFEController extends BaseController {
 							
 				} 
 				
-				if (arquivoAux.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso()) && arquivoRetorno.getTpEvento().equals("110111")) {
+				if (arquivoAux.getChaveAcesso().equals(arquivoRetorno.getChaveAcesso()) && (arquivoRetorno.getTpEvento() != null && arquivoRetorno.getTpEvento().equals("110111"))) {
 				
 					arquivoRetorno = this.processarNotaCancelamento(arquivoAux, arquivoRetorno);
 				}
