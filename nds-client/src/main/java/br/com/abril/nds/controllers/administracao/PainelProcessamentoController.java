@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
@@ -87,6 +88,9 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private HttpServletResponse httpServletResponse;
+    
+    @Autowired
+    private CobrancaService cobrancaService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -548,6 +552,31 @@ public class PainelProcessamentoController extends BaseController {
         result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.SUCCESS,
                 "Execução da geração de ranking de segmento foi realizada com sucesso"), "result").recursive().serialize();
+    }
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void exportarCobranca() {
+    	
+    	Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+        
+    	this.cobrancaService.processarExportacaoCobranca(dataDistribuicaoDistribuidor);
+    	
+    	result.use(Results.json()).from(
+            new ValidacaoVO(TipoMensagem.SUCCESS,
+                "Cobranças exportadas com sucesso!"), "result").recursive().serialize();
+    }
+    
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void processarCobrancaConsolidada() {
+    	
+    	Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+        
+    	this.cobrancaService.processarCobrancaConsolidada(dataDistribuicaoDistribuidor);
+    	
+    	result.use(Results.json()).from(
+            new ValidacaoVO(TipoMensagem.SUCCESS,
+                "Cobranças exportadas com sucesso!"), "result").recursive().serialize();
     }
     
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
