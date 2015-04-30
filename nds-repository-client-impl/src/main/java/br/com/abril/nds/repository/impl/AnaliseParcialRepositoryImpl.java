@@ -562,24 +562,43 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	StringBuilder sql = new StringBuilder();
                                                                                                                                         
     	sql.append(" select ");
-    	sql.append(" mec.produto_edicao_id produtoEdicaoId ");
-    	sql.append(" , case when cec.QTDE_PREVISTA is not null then sum(cec.QTDE_PREVISTA) else sum(if(tm.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) end reparte ");
-    	sql.append(" , sum(cec.QTDE_PREVISTA - coe.QTDE) venda ");
+    	sql.append(" mec.produto_edicao_id produtoEdicaoId, ");
+    	
+    	sql.append(" cast(sum( case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.QTDE else -mec.QTDE end ) as unsigned int) AS reparte,  ");
+    	
+    	sql.append("          (case when l.status IN (:statusLancFechadoRecolhido)  ");
+    	sql.append("            then   ");
+    	sql.append("             cast(sum(   ");
+    	sql.append("               CASE   ");
+    	sql.append("                   WHEN tm.OPERACAO_ESTOQUE = 'ENTRADA'   ");
+    	sql.append("                   THEN   ");
+    	sql.append("                     mec.QTDE   ");
+    	sql.append("                   ELSE   ");
+    	sql.append("                     -mec.QTDE   ");
+    	sql.append("               END)   ");
+    	sql.append("               - (select sum(mecEncalhe.qtde)   ");
+    	sql.append("                   from lancamento lanc   ");
+    	sql.append("                   LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID   ");
+    	sql.append("                   LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID   ");
+    	sql.append("                   LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID   ");
+    	sql.append("                   LEFT JOIN cota cota on cota.id = cec.COTA_ID   ");
+    	sql.append("                   LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID   ");
+    	sql.append("                   LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID   ");
+    	sql.append(" 	              WHERE lanc.id = l.id and cota.id = c.id) AS UNSIGNED INT)   ");
+    	sql.append(" 	        else   ");
+    	sql.append("             null   ");
+    	sql.append("             end) as venda ");
+    	
     	sql.append(" from movimento_estoque_cota mec ");
     	sql.append(" inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ");
     	sql.append(" inner join cota c on c.id = mec.COTA_ID ");
     	sql.append(" inner join lancamento l on mec.lancamento_id = l.id ");
-    	sql.append(" inner join estoque_produto_cota epc on epc.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and epc.COTA_ID = mec.COTA_ID ");
-    	sql.append(" left outer join chamada_encalhe ce on ce.produto_edicao_id = mec.produto_edicao_id ");
-    	sql.append(" left outer join chamada_encalhe_cota cec on mec.cota_id = cec.cota_id and ce.id = cec.CHAMADA_ENCALHE_ID ");
-    	sql.append(" left outer join chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.ID and l.id = cel.LANCAMENTO_ID ");                                     
     	sql.append(" left outer join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
-    	sql.append(" left outer join conferencia_encalhe coe on coe.CHAMADA_ENCALHE_COTA_ID = cec.id ");
     	sql.append(" where 1 = 1                                                                                                        ");
     	sql.append(" and c.NUMERO_COTA = :numeroCota                                                                                    ");
     	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)                                                                     ");
     	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)                                                                         ");
-    	sql.append(" group by mec.PRODUTO_EDICAO_ID, ce.id                                                                               ");
+    	sql.append(" group by mec.PRODUTO_EDICAO_ID");
     	
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
@@ -589,6 +608,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setParameter("numeroCota", numeroCota);
         query.setParameterList("produtoEdicaoId", listProdutoEdicaoId);
         query.setParameterList("lancamentosPosExpedicao", LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
