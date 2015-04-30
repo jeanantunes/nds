@@ -41,6 +41,40 @@ DEVOLVE_ENCALHE boolean
 ;
 */
 
+
+create table HVND_AUX2 (
+COD_COTA_HVCT INT,
+cod_produto VARCHAR(8),
+num_edicao INT,
+PRECO FLOAT,
+QTDE_REPARTE_HVCT INT,
+QTDE_ENCALHE_HVCT INT,
+DATA_LANCAMENTO_STR VARCHAR(10),
+DATA_RECOLHIMENTO_STR VARCHAR(10),
+STATUS CHAR(1),
+CONSIGNADO boolean,
+DEVOLVE_ENCALHE boolean,
+COD_COTA_DP_HVCT INT,
+COD_COTA_FC_HVCT INT,
+NUMERO_PERIODO INT,
+PARCIAL_NORMAL CHAR,
+produto_edicao_id BIGINT
+) ENGINE=MEMORY
+;
+
+/*
+create table cesar (
+cod_produto VARCHAR(8),
+num_edicao INT,
+produto_edicao_id int
+) ENGINE=MEMORY
+;
+
+
+LOAD DATA INFILE '/opt/rollout/load_files/CESAR.TXT' INTO TABLE CESAR COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+*/
+
+
 create table HVND (
 COD_COTA_HVCT INT,
 cod_produto VARCHAR(8),
@@ -54,27 +88,94 @@ STATUS CHAR(1),
 CONSIGNADO boolean,
 DEVOLVE_ENCALHE boolean,
 COD_COTA_DP_HVCT INT,
-COD_COTA_FC_HVCT INT
+COD_COTA_FC_HVCT INT,
+NUMERO_PERIODO INT,
+PARCIAL_NORMAL CHAR,
+produto_edicao_id bigint
 ) ENGINE=MEMORY
 ;
 
+
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_3.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_4.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+/*
+update cesar h,produto_edicao pe, produto p 
+set h.produto_edicao_id = pe.id
+where p.id = pe.produto_id 
+and p.codigo = h.cod_produto 
+and pe.numero_edicao = h.num_edicao;
+
+update hvnd h,produto_edicao pe, produto p 
+set h.produto_edicao_id = pe.id
+where p.id = pe.produto_id 
+and p.codigo = h.cod_produto 
+and pe.numero_edicao = h.num_edicao;
+
+delete from HVND where produto_edicao_id in (select distinct produto_edicao_id from cesar);
+*/
+-- A VISTA
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_AVISTA.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
+
+update HVND set CONSIGNADO =0 ; -- where consignado is null or consignado <> 1;
+
+
+-- CONSIGNADO (Parcial Normal)
 -- LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
-update HVND set CONSIGNADO =1;
+update HVND set PARCIAL_NORMAL ='N';
+update HVND set CONSIGNADO =1 where consignado is null;
 
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_3.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_AVISTA.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
+/*
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR1.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR2.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR3.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR4.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR5.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR6.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR7.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR8.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR9.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR10.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR11.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR12.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR13.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR14.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR15.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR16.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR17.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR18.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+*/
 
-update HVND set CONSIGNADO =0 where CONSIGNADO is null;
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR19.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+update HVND set PARCIAL_NORMAL ='P' where PARCIAL_NORMAL is null;
+
+update HVND set CONSIGNADO =1 where status = 'A' and PARCIAL_NORMAL ='P';
+update HVND set CONSIGNADO =0 where status = 'F' and PARCIAL_NORMAL ='P';
+
+
 update HVND set DEVOLVE_ENCALHE =1;
 update HVND set COD_COTA_HVCT =COD_COTA_FC_HVCT;
 
 update produto_edicao
 set DATA_DESATIVACAO = null
 where DATA_DESATIVACAO = '00-00-0000';
+
+insert into HVND_AUX2 (
+select distinct * from hvnd);
+
+truncate table hvnd;
+
+insert into HVND (
+select distinct * from HVND_AUX2);
+
+drop table HVND_AUX2;
 
 -- FIXME FAZER UPDATE AQUI DAS COTAS QUE NAO DEVOLVEM ENCALHE
 -- ESSAS COTAS DEVERAM SER CRIADAS NO ARQUIVO carga_inicial.sql do respectivo distribuidor
@@ -84,7 +185,7 @@ ADD COLUMN DATA_LANCAMENTO DATE,
 ADD COLUMN DATA_RECOLHIMENTO DATE,
 -- ADD COLUMN cod_produto VARCHAR(8),
 -- ADD COLUMN num_edicao INT,
-ADD COLUMN produto_edicao_id bigint,
+-- ADD COLUMN produto_edicao_id bigint,
 ADD COLUMN cota_id bigint AFTER STATUS;
 
 update HVND set 
@@ -371,6 +472,152 @@ select 'CARGA_LANCAMENTO_MDC: ',sysdate(); -- Log
 select 'LANCAMENTO: ',count(*) from LANCAMENTO;
 
 -- Garante que não tenha nenhum movimento para as cotas / distribuidor sem lançamento
+-- PARCIAIS CONSIG = 3
+
+
+insert into lancamento_parcial (
+LANCAMENTO_INICIAL,RECOLHIMENTO_FINAL,STATUS,PRODUTO_EDICAO_ID)
+(select 
+min(data_lancamento),
+max(data_recolhimento),
+max('PROJETADO'),
+produto_edicao_id
+from HVND 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id order by produto_edicao_id);
+
+
+DROP TABLE IF EXISTS periodo_lancamento_parcial_aux;
+
+create table periodo_lancamento_parcial_aux (
+ID  bigint(20) NOT NULL AUTO_INCREMENT,
+STATUS varchar(255),
+TIPO varchar(255), 
+LANCAMENTO_PARCIAL_ID bigint(20),
+NUMERO_PERIODO int(11),
+DATA_CRIACAO date,
+DATA_LANCAMENTO date,
+DATA_RECOLHIMENTO date,
+PRODUTO_EDICAO_ID bigint,
+PRIMARY KEY (`ID`));
+
+/*
+set @i = 0; 
+
+insert into periodo_lancamento_parcial_aux (
+STATUS,TIPO,LANCAMENTO_PARCIAL_ID,DATA_LANCAMENTO,DATA_RECOLHIMENTO,PRODUTO_EDICAO_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select a.*,@i := @i+1  as NUMERO_PERIODO,sysdate() from (
+select 
+'PROJETADO',
+'PARCIAL',
+(select id from lancamento_parcial lp where lp.produto_edicao_id = h.produto_edicao_id),
+data_lancamento, 
+data_recolhimento,
+produto_edicao_id
+from HVND h 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id,data_lancamento, data_recolhimento
+order by produto_edicao_id
+) a);
+
+
+
+insert into periodo_lancamento_parcial_aux (
+NUMERO_PERIODO,STATUS,TIPO,LANCAMENTO_PARCIAL_ID,DATA_LANCAMENTO,DATA_RECOLHIMENTO,PRODUTO_EDICAO_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select 
+NUMERO_PERIODO,
+'PROJETADO',
+'PARCIAL',
+(select id from lancamento_parcial lp where lp.produto_edicao_id = h.produto_edicao_id),
+data_lancamento, 
+data_recolhimento,
+produto_edicao_id
+from HVND h 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id,data_lancamento, data_recolhimento
+order by produto_edicao_id
+);
+*/
+insert into periodo_lancamento_parcial_aux (
+STATUS,TIPO,LANCAMENTO_PARCIAL_ID,DATA_LANCAMENTO,DATA_RECOLHIMENTO,PRODUTO_EDICAO_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select 
+'PROJETADO',
+'PARCIAL',
+(select id from lancamento_parcial lp where lp.produto_edicao_id = h.produto_edicao_id),
+min(data_lancamento), 
+data_recolhimento,
+produto_edicao_id,
+NUMERO_PERIODO,
+sysdate()
+from HVND h 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id,NUMERO_PERIODO	
+order by produto_edicao_id
+);
+
+
+insert into periodo_lancamento_parcial (STATUS,TIPO,LANCAMENTO_PARCIAL_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select STATUS,TIPO,LANCAMENTO_PARCIAL_ID,
+1+NUMERO_PERIODO - (select min(NUMERO_PERIODO) from periodo_lancamento_parcial_aux aux where aux.LANCAMENTO_PARCIAL_ID = aux2.LANCAMENTO_PARCIAL_ID),
+DATA_CRIACAO
+from periodo_lancamento_parcial_aux aux2 order by id);
+
+update periodo_lancamento_parcial p,periodo_lancamento_parcial_aux a
+set a.numero_periodo = p.numero_periodo
+where a.id = p.id;  
+
+update lancamento l,periodo_lancamento_parcial_aux p
+set l.periodo_lancamento_parcial_id = p.id, 
+    l.data_lcto_distribuidor = p.data_lancamento,
+    l.data_lcto_prevista = p.data_lancamento,
+    l.data_rec_distrib = p.data_recolhimento,
+    l.data_rec_prevista = p.data_recolhimento,
+    l.status = 'FECHADO'
+where l.produto_edicao_id = p.produto_edicao_id 
+and p.numero_periodo =1;
+
+insert into lancamento
+(alterado_interface,
+data_criacao,
+data_lcto_distribuidor,
+data_lcto_prevista,
+data_rec_distrib,
+data_rec_prevista,
+data_status,
+status,
+tipo_lancamento,
+produto_edicao_id,
+periodo_lancamento_parcial_id,
+numero_lancamento)
+(select 
+true,
+date(sysdate()),
+h.data_lancamento,
+h.data_lancamento,
+h.data_recolhimento,
+h.data_recolhimento,
+date(sysdate()),
+'FECHADO',
+'LANCAMENTO',
+h.produto_edicao_id,
+(select min(id) from periodo_lancamento_parcial_aux plx where plx.produto_edicao_id = h.produto_edicao_id and plx.data_recolhimento = h.data_recolhimento),-- id,
+1
+from HVND h,lancamento l-- periodo_lancamento_parcial_aux 
+where h.PARCIAL_NORMAL ='P' -- produto_edicao_id not in (select produto_edicao_id from lancamento)
+and l.produto_edicao_id = h.produto_edicao_id
+-- and numero_periodo > 1
+-- and h.produto_edicao_id = 8
+and h.data_lancamento <> l.data_lcto_distribuidor 
+-- and h.data_recolhimento <> l.data_rec_distrib
+group by h.produto_edicao_id,h.data_lancamento,h.data_recolhimento);
+
+
+update produto_edicao set parcial =1 where id in(select distinct produto_edicao_id from periodo_lancamento_parcial_aux);
+
+-- DROP TABLE IF EXISTS periodo_lancamento_parcial_aux;
+
+
+-- Garante que não tenha nenhum movimento para as cotas / distribuidor sem lançamento
 insert into lancamento
 (alterado_interface,
 data_criacao,
@@ -395,11 +642,14 @@ date(sysdate()),
 produto_edicao_id
 from HVND 
 where produto_edicao_id not in (select produto_edicao_id from lancamento)
+and PARCIAL_NORMAL <> 'P'
 group by produto_edicao_id);
 
 select 'LANCAMENTO (HVND): ',count(*) from LANCAMENTO;
 
 select 'LANCAMENTO: ',sysdate(); -- Log
+
+update HVND set CONSIGNADO =0 where consignado = 3;
 
 
 --
@@ -1224,7 +1474,10 @@ update lancamento
 set status = 'EXPEDIDO'
 where status = 'EM_BALANCEAMENTO_RECOLHIMENTO';
 
+
+ALTER TABLE HVND ENGINE=InnoDB;
+
 select 'FIM: ',sysdate(); -- Log
 
-
+-- drop table hvnd;
 
