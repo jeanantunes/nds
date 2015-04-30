@@ -760,7 +760,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 		</band>
 	</title>
 	<pageHeader>
-		<band height="203">
+		<band height="201">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.intValue() == 1]]></printWhenExpression>
 			<frame>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="812" height="201" uuid="bdc7cc8a-ce2d-4560-a5b0-c99f906d1317"/>
@@ -1538,7 +1538,7 @@ VOLUMES]]></text>
 	<detail>
 		<band height="58" splitType="Stretch">
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="52" y="0" width="760" height="30" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
+				<reportElement positionType="Float" x="52" y="0" width="760" height="58" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
