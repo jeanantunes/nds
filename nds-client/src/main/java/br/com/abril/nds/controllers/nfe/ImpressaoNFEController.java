@@ -34,6 +34,7 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -256,7 +257,7 @@ public class ImpressaoNFEController extends BaseController {
 				NotasCotasImpressaoNfeDTO.class, this.httpResponse);
 
 	}
-
+	
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 		
@@ -268,9 +269,17 @@ public class ImpressaoNFEController extends BaseController {
 		
 		byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 		
-		escreverArquivoParaResponse(report, "danfe");
+		try {
+			this.escreverArquivoParaResponse(report, "danfe");
+		} catch (ValidacaoException e) {
+            
+            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+        } catch (Exception e) {
+            
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
+        }
 		
-		result.use(Results.json()).withoutRoot();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	/**
@@ -311,10 +320,21 @@ public class ImpressaoNFEController extends BaseController {
 
 		OutputStream output;
 		try {
+			
 			output = this.httpResponse.getOutputStream();
+			
 			output.write(arquivo);
+
+			this.httpResponse.getOutputStream().flush();
+			
 			this.httpResponse.getOutputStream().close();
+			
 			result.use(Results.nothing());
+			
+			if(!this.httpResponse.isCommitted()) {
+				System.out.println("olá");
+			}
+			
 		} catch (IOException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar relatorio");
 		}
