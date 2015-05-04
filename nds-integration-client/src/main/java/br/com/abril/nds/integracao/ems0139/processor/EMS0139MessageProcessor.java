@@ -59,6 +59,8 @@ public class EMS0139MessageProcessor extends AbstractRepository implements Messa
                 );
             return ;
         }
+        
+        getSession().merge(destinoEncalhe);
 	}
 
 	@Override
