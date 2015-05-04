@@ -425,6 +425,26 @@ var painelProcessamentoController = $.extend(true, {
 		);
 	},
 	
+	exportarCobranca : function() {
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/exportarCobranca",
+				null,
+				function (resultado) {
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	}
+		);
+	},
+	
+	processarCobrancaConsolidada : function() {
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/processarCobrancaConsolidada",
+				null,
+				function (resultado) {
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	}
+		);
+	},
+	
 	reprocessarInterfacesEmOrdem : function() {
 		
 		$( "#dialog-excutarInterfacesEmOrdem" ).dialog({
