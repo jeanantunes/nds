@@ -416,7 +416,7 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#botoesExportacao", baixaFinanceiraController.workspace).hide();
 	},
 	
-    //BAIXA MANUAL--------------------------------------
+    //------- BAIXA MANUAL --------
     
     //POPUPS
     popup_detalhes : function (codigo, isBoletoAntecipado) {
@@ -571,18 +571,6 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 	},
 
-    mostrarBaixaManual : function() {
-		
-    	baixaFinanceiraController.limparCamposBaixaManual();
-		
-		$('#resultadoIntegracao', baixaFinanceiraController.workspace).hide();
-		$('#tableBaixaAuto', baixaFinanceiraController.workspace).hide();
-		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
-		$('#tableBaixaManual', baixaFinanceiraController.workspace).show();
-		
-		baixaFinanceiraController.tipoBaixa = 'MANUAL';
-	},
-	
 	dividaManualNossoNumero : function() {
 		
 		$('#porCota', baixaFinanceiraController.workspace).hide();
@@ -1065,7 +1053,7 @@ var baixaFinanceiraController = $.extend(true, {
     	};
 		
 		$.postJSON(contextPath + "/financeiro/baixa/baixaManualBoleto",param,
-				   function() {baixaFinanceiraController.mostrarBaixaManual();});
+				   function() {baixaFinanceiraController.mostrarBaixa('MANUAL');});
 	},
 	
 	
@@ -1414,24 +1402,8 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 	},
 
 	
-	//-----------------------------------------------------
-	
+	//----------- BAIXA AUTOMATICA ----------------
 
-	//BAIXA AUTOMATICA-------------------------------------
-
-	mostrarBaixaAuto : function() {
-		
-		baixaFinanceiraController.resetarCamposBaixaAutomatica();
-
-		$(".area", baixaFinanceiraController.workspace).hide();
-		
-		$('#tableBaixaManual', baixaFinanceiraController.workspace).hide();
-		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
-		$('#tableBaixaAuto', baixaFinanceiraController.workspace).show();
-		
-		baixaFinanceiraController.tipoBaixa = 'AUTOMATICA';
-	},
-	
 	integrar : function() {
 		
 		$('#formBaixaAutomatica', baixaFinanceiraController.workspace).submit();
@@ -1687,6 +1659,142 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		if(!keepDadosAposBaixa) {
 			$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
 		}
+	},
+	
+	//-----------------------------------------------------
+	
+	
+	//------ Baixa CONSOLIDADA ------
+	
+	integrarCobrancaConsolidada : function() {
+		
+//		$('#formBaixaConsolidada', baixaFinanceiraController.workspace).submit();
+		
+		 $('#formBaixaConsolidada', baixaFinanceiraController.workspace).ajaxSubmit({
+   		   
+		      success: function(responseText, statusText, xhr, $form) { 
+		    	  
+		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+		          var tipoMensagem = mensagens.tipoMensagem;
+		          var listaMensagens = mensagens.listaMensagens;
+
+		          if (tipoMensagem && listaMensagens) {
+		           
+		           if (tipoMensagem != 'SUCCESS') {
+		            
+		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+		           }
+		           exibirMensagem(tipoMensagem, listaMensagens); 
+		          }
+		      }, 
+		      type: 'POST',
+		      dataType: 'json',
+	   });
+	},
+	
+	limparCamposBaixaConsolidada : function() {
+		
+		$("#dataBaixaConsolidada", baixaFinanceiraController.workspace).datepicker(
+				"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
+		);
+		
+		$("#uploadedFileConsolidada", baixaFinanceiraController.workspace).val("");
+	}, 
+	
+	//-----------------------------------------------------
+	
+	// ------- View Radio Cobranca -------
+	
+	mostrarBaixa : function(tipoBaixa) {
+		
+		switch(tipoBaixa) {
+	    
+			case 'AUTOMATICA':
+		    	
+		    	baixaFinanceiraController.resetarCamposBaixaAutomatica();
+	
+				$(".area", baixaFinanceiraController.workspace).hide();
+				
+				baixaFinanceiraController.hideFiltroManual();
+				baixaFinanceiraController.hideFiltroConsolidado();
+								
+				$('#tableBaixaAuto', baixaFinanceiraController.workspace).show();
+				
+				baixaFinanceiraController.tipoBaixa = 'AUTOMATICA';
+
+			break;
+			
+		    case 'MANUAL':
+		    	
+		    	baixaFinanceiraController.limparCamposBaixaManual();
+				
+		    	baixaFinanceiraController.hideFiltroAutomatico();
+		    	baixaFinanceiraController.hideFiltroConsolidado();
+		    	
+				$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
+				$('#tableBaixaManual', baixaFinanceiraController.workspace).show();
+				
+				baixaFinanceiraController.tipoBaixa = 'MANUAL';
+			
+	        break;
+	        
+		    case 'CONSOLIDADA':
+		        
+		    	baixaFinanceiraController.limparCamposBaixaConsolidada();
+				
+		    	baixaFinanceiraController.hideFiltroManual();
+		    	baixaFinanceiraController.hideFiltroAutomatico();
+		    	
+		    	$('#tableBaixaConsolidada', baixaFinanceiraController.workspace).show();
+		    	
+				baixaFinanceiraController.tipoBaixa = 'CONSOLIDADA';
+	    	
+	        break;
+		}
+		
+	},
+	
+	/* RESUMO BAIXA CONSOLIDADA - MANTER, POIS AINDA SERÁ FINALIZADO
+	analisarBaixaConsolidada : function() {
+		
+		$("#dialog-baixaConsolidada").dialog({
+			resizable : false,
+			height : 450,
+			width : 550,
+			modal : true,
+			open:function(){
+			},
+			buttons : {
+				"Confirmar" : function() {
+					
+				}
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	},
+	
+		$("#banco").html("<fieldset><td> <strong> Nome: </strong> 1 - itau </td> </br><td> <strong> Qtd baixas: </strong> 104 </td> </br><td> 
+		<strong> Valor baixas: </strong> 232994,90 </td> </br></fieldset><fieldset><td> <strong> Nome: </strong> 1 - itau </td> </br><td> 
+		<strong> Qtd baixas: </strong> 104 </td> </br><td> <strong> Valor baixas: </strong> 232994,90 </td> </br></fieldset><fieldset><td> 
+		<strong> Nome: </strong> 1 - itau </td> </br><td> <strong> Qtd baixas: </strong> 104 </td> </br><td> <strong> Valor baixas: 
+		</strong> 232994,90 </td> </br></fieldset>");
+	
+	*/
+	
+	hideFiltroManual : function() {
+		$('#tableBaixaManual', baixaFinanceiraController.workspace).hide();
+		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
+	},
+	
+	hideFiltroAutomatico : function() {
+		$('#resultadoIntegracao', baixaFinanceiraController.workspace).hide();
+		$('#tableBaixaAuto', baixaFinanceiraController.workspace).hide();
+	},
+	
+	hideFiltroConsolidado : function() {
+		$('#tableBaixaConsolidada', baixaFinanceiraController.workspace).hide();
 	},
 	
 	//-----------------------------------------------------
