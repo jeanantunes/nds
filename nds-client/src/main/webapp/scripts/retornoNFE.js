@@ -88,13 +88,8 @@ var retornoNFEController  = $.extend(true, {
 		
 		$.postJSON(this.path + 'confirmar.json', null, function(data) {
 
-			var tipoMensagem = data.tipoMensagem;
-			var listaMensagens = data.listaMensagens;
-
-			if (tipoMensagem && listaMensagens) {
-				exibirMensagem(tipoMensagem, listaMensagens, "");
-			} 
-
+			retornoNFEController.exibirMensagemSucesso(data);
+			
 			_this.limparTabela();
 			
 		});
@@ -121,5 +116,14 @@ var retornoNFEController  = $.extend(true, {
 		
 	},
 
+	exibirMensagemSucesso: function (result){
+		
+		var tipoMensagem = result.tipoMensagem;
+		var listaMensagens = result.listaMensagens;
+		if (tipoMensagem && listaMensagens) {
+			exibirMensagem(tipoMensagem, listaMensagens);
+		}
+	},
+	
 }, BaseController);
 //@ sourceURL=retornoNFE.js
