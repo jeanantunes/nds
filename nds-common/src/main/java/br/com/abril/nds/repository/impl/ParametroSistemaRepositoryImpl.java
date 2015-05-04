@@ -77,6 +77,7 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.FTF_CNPJ_ESTABELECIMENTO_EMISSOR);
 		lst.add(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR);
 		lst.add(TipoParametroSistema.FTF_CODIGO_LOCAL);
+		lst.add(TipoParametroSistema.NFE_PATH_CERTIFICADO);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 
 		Query query = this.getSession().createQuery(hql);
@@ -182,6 +183,7 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.FTF_CODIGO_LOCAL);
 		lst.add(TipoParametroSistema.FTF_INDEX_FILENAME);
 		lst.add(TipoParametroSistema.NFE_LIMITAR_QTDE_ITENS);
+		lst.add(TipoParametroSistema.NFE_PATH_CERTIFICADO);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 		
 		Query query = this.getSession().createQuery(hql);
