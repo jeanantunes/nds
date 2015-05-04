@@ -21,7 +21,7 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "NOTA_FISCAL_ID", insertable=false, updatable=false)
+	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscal notaFiscal;
 	
 	/**
