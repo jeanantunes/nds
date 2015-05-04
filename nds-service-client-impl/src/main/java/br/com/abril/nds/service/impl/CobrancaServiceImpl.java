@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.PostConstruct;
+
+import org.lightcouch.CouchDbClient;
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,11 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.DetalhesDividaVO;
+import br.com.abril.nds.dto.ExportarCobrancaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
@@ -60,14 +66,23 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigDecimalUtil;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
+	
+	private static final String DB_NAME = "exportacao_cobranca";
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
@@ -107,6 +122,29 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	private NegociacaoDividaService negociacaoDividaService;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+	
+	private CouchDbClient couchDbClient;
+	
+	@PostConstruct
+	public void initCouchDbClient() {
+		
+		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
+			.setDbName(DB_NAME)
+			.setCreateDbIfNotExist(true)
+			.setProtocol(couchDbProperties.getProtocol())
+			.setHost(couchDbProperties.getHost())
+			.setPort(couchDbProperties.getPort())
+			.setUsername(couchDbProperties.getUsername())
+			.setPassword(couchDbProperties.getPassword())
+			.setMaxConnections(100)
+			.setConnectionTimeout(500);
+	
+		this.couchDbClient = new CouchDbClient(properties);
+
+	}
 	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -1262,4 +1300,125 @@ public class CobrancaServiceImpl implements CobrancaService {
             throw new ValidacaoException(TipoMensagem.WARNING, "A Data de Pagamento não pode ser menor que a Data de Emissão dos itens selecionados");
         }
     }
+	
+	@Transactional
+	@Override
+	public List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacaoDistribuidor){
+		return this.cobrancaRepository.obterCobrancasEfetuadaNaDataOperacaoDistribuidor(dataOperacaoDistribuidor);
+	}
+	
+	@Override
+	@Transactional
+	public void processarExportacaoCobranca(Date dataOperacaoDistribuidor){
+
+		List<ExportarCobrancaDTO> cobrancas = this.cobrancaRepository.obterCobrancasNaDataDeOperacaoDoDistribuidor(dataOperacaoDistribuidor);
+		
+		// popular cobrancas fake para teste
+		/*
+		for (int i = 1; i <= 10; i++) {
+			ExportarCobrancaDTO cobrancafk_ = new ExportarCobrancaDTO();
+			
+			Date data = DateUtil.parseData("01/04/2015", Constantes.DATE_PATTERN_PT_BR);
+			
+			cobrancafk_.setCod_jornaleiro(i);
+			cobrancafk_.setData_operacao(data);
+			cobrancafk_.setVlr_cobranca(new BigDecimal(10*i));
+			cobrancafk_.setVlr_credito(new BigDecimal(10*i));
+			cobrancafk_.setVlr_encalhe(new BigDecimal(10*i));
+			cobrancafk_.setVlr_juros(new BigDecimal(10*i));
+			cobrancafk_.setVlr_multa(new BigDecimal(10*i));
+			cobrancafk_.setVlr_nro_atr(new BigDecimal(10*i));
+			cobrancafk_.setVlr_outros(new BigDecimal(10*i));
+			cobrancafk_.setVlr_pagto_diverg(new BigDecimal(10*i));
+			cobrancafk_.setVlr_pendencia(new BigDecimal(10*i));
+			cobrancafk_.setVlr_postergado(new BigDecimal(10*i));
+			cobrancafk_.setVlr_total(new BigDecimal(10*i));
+			
+			cobrancas.add(cobrancafk_);
+		}
+		*/
+		
+		if(cobrancas == null || cobrancas.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças na data de operação corrente.");
+		}
+		
+		Gson gson = new Gson();
+		JsonArray jA = new JsonArray();
+		
+		for (ExportarCobrancaDTO cobranca : cobrancas) {
+			
+			JsonElement jElement = new JsonParser().parse(gson.toJson(cobranca)); 
+			jA.add(jElement);
+		}
+		
+		JsonObject json = new JsonObject();
+		
+		String dataFormatada = DateUtil.formatarData(dataOperacaoDistribuidor, Constantes.DATE_PATTERN_PT_BR_FOR_FILE);
+
+		String docName = "cobrancas_"+dataFormatada;
+		
+		try {
+			
+			JsonObject jsonDoc = couchDbClient.find(JsonObject.class, docName);
+
+			this.couchDbClient.remove(jsonDoc);
+		} catch (NoDocumentException e) {
+
+		}
+		
+		json.addProperty("_id", docName);
+		json.add(dataFormatada, jA);
+		
+		this.couchDbClient.save(json); 
+		
+	}
+	
+	@Transactional
+	@Override
+	public void processarCobrancaConsolidada(Date dataOperacaoDistribuidor){
+		
+		String dataFormatada = DateUtil.formatarData(dataOperacaoDistribuidor, Constantes.DATE_PATTERN_PT_BR_FOR_FILE);
+		
+		String docName = "cobrancas_"+dataFormatada;
+		JsonObject jsonDoc = new JsonObject();
+		try {
+			jsonDoc = couchDbClient.find(JsonObject.class, docName);
+		} catch (NoDocumentException e) {
+
+		}
+		
+		if(jsonDoc == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas.");
+		}
+		
+		Gson gson = new Gson();
+
+		JsonArray jaCobrancas = jsonDoc.getAsJsonArray(dataFormatada);
+		
+		List<ExportarCobrancaDTO> cobrancas = new ArrayList<>(); 
+		
+		for (JsonElement jsonElement : jaCobrancas) {
+			ExportarCobrancaDTO cobranca = gson.fromJson(jsonElement, ExportarCobrancaDTO.class);
+			cobrancas.add(cobranca);
+		}
+		
+		for (ExportarCobrancaDTO cobranca : cobrancas) {
+			if(cobranca.getCotaProcessada() == true && cobranca.getNossoNumero() != null){
+				this.cobrancaRepository.updateNossoNumero(dataOperacaoDistribuidor, cobranca.getCod_jornaleiro(), cobranca.getNossoNumero());
+			}
+		}
+		
+	}
+	
+	@Override
+	@Transactional
+	public Cobranca obterCobrancaPorNossoNumeroConsolidado (String nossoNumeroConsolidado){
+		return this.cobrancaRepository.obterCobrancaPorNossoNumeroConsolidado(nossoNumeroConsolidado);
+	}
+	
+	@Transactional
+	@Override
+	public Long qtdCobrancasConsolidadasBaixadas (Date dataOperacao){
+		return this.cobrancaRepository.qtdCobrancasConsolidadasBaixadas(dataOperacao);
+	}
 }

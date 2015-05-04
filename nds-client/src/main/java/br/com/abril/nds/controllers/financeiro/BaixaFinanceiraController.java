@@ -30,6 +30,7 @@ import br.com.abril.nds.client.vo.baixaboleto.BaixaBoletoRejeitadoVO;
 import br.com.abril.nds.client.vo.baixaboleto.BaixaTotalBancarioVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.BaixaBancariaConsolidadaDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -43,6 +44,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDe
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -50,6 +52,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoAntecipado;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BaixaCobrancaService;
@@ -57,8 +60,10 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
+import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.service.LeitorArquivoBaixaFinanConsolidadaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -121,6 +126,11 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	@Autowired
 	private LeitorArquivoBancoService leitorArquivoBancoService;
+	@Autowired
+	private ControleBaixaBancariaService controleBaixaService;
+	
+	@Autowired
+	private LeitorArquivoBaixaFinanConsolidadaService leitorArquivoBaixaFinanConsolidada;
 	
 	@Autowired
 	private DividaService dividaService;
@@ -190,6 +200,77 @@ public class BaixaFinanceiraController extends BaseController {
 		result.use(PlainJSONSerialization.class).from(resumoBaixaBoletos, "result").recursive().serialize();
 	}
 	
+	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
+	public void realizarBaixaConsolidada(Date data, UploadedFile uploadedFile) {
+		
+		validarEntradaDados(uploadedFile);
+		
+		List<BaixaBancariaConsolidadaDTO> baixas = new ArrayList<>();
+		
+		List<Banco> bancos = new ArrayList<>();
+		
+		Integer qtdBaixasArquivo = 0;
+		Long qtdBaixasExecutadas = 0L;
+		
+		Cobranca cobranca;
+		
+		try {
+		
+			//Grava o arquivo em disco e retorna o File do arquivo
+			File fileArquivoBanco = gravarArquivoTemporario(uploadedFile);
+			
+			baixas = this.leitorArquivoBaixaFinanConsolidada.obterPagamentosParaBaixa(fileArquivoBanco, uploadedFile.getFileName());
+			
+			qtdBaixasArquivo = baixas.size();
+
+			for (BaixaBancariaConsolidadaDTO baixaBancaria : baixas) {
+				
+				cobranca = cobrancaService.obterCobrancaPorNossoNumeroConsolidado(baixaBancaria.getNossoNumeroConsolidado());
+				
+				PagamentoDTO pagamento = new PagamentoDTO();
+				
+				pagamento.setDataPagamento(baixaBancaria.getDataPagamento());
+				pagamento.setNossoNumero(cobranca.getNossoNumero());
+				pagamento.setNumeroRegistro(null);
+				
+				//TODO REMOVER DIVISÃO POR 100 - OPERAÇÃO INSERIDA A FIM DE TESTES...
+				pagamento.setValorPagamento(baixaBancaria.getValorPago().divide(new BigDecimal(100)));
+				pagamento.setValorJuros(BigDecimal.ZERO);
+				pagamento.setValorMulta(BigDecimal.ZERO);
+				pagamento.setValorDesconto(BigDecimal.ZERO);
+				
+				boletoService.baixarBoleto(TipoBaixaCobranca.CONSOLIDADA, pagamento, getUsuarioLogado(), null, baixaBancaria.getDataPagamento(), null, null, baixaBancaria.getDataPagamento());
+				
+				if(!bancos.contains(cobranca.getBanco())){
+					bancos.add(cobranca.getBanco());
+				}
+			}
+
+			qtdBaixasExecutadas = cobrancaService.qtdCobrancasConsolidadasBaixadas(data);
+			
+		} finally {
+			
+            // Deleta os arquivos dentro do diretório temporário
+			deletarArquivoTemporario();
+			
+			if((qtdBaixasArquivo.compareTo(qtdBaixasExecutadas.intValue()) != 0) && (bancos.size() > 0) && (qtdBaixasExecutadas > 0)){
+				for (Banco bank : bancos) {
+					controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS, this.distribuidorService.obterDataOperacaoDistribuidor(), data, getUsuarioLogado(), bank);
+				}
+			}
+		}
+		
+		
+		if((qtdBaixasArquivo.compareTo(qtdBaixasExecutadas.intValue()) == 0) && (bancos.size() > 0)){
+			for (Banco bank : bancos) {
+				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO, this.distribuidorService.obterDataOperacaoDistribuidor(), data, getUsuarioLogado(), bank);
+			}
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo processado corretamente.\n\r Total de baixas: " +qtdBaixasExecutadas),"result").recursive().serialize();
+	}
+
 	@Post
 	public void mostrarResumoBaixaFinanceira(Date data) {
 		
@@ -444,25 +525,39 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		//Valida se o arquivo foi anexado
-		if (uploadedFile == null) {
-			
-            listaMensagens.add("O preenchimento do campo [Arquivo] é obrigatório!");
-		}
+		validarValorFinanceiro(valorFinanceiro, listaMensagens);
 		
+		validarFile(uploadedFile, listaMensagens);
+		
+		validarListaMensagens(listaMensagens);
+	}
+	
+	private void validarEntradaDados(UploadedFile uploadedFile) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		validarFile(uploadedFile, listaMensagens);
+		
+		validarListaMensagens(listaMensagens);
+	}
+
+	private void validarValorFinanceiro(BigDecimal valorFinanceiro,
+			List<String> listaMensagens) {
 		//Valida se o valor financeiro foi informado
 		if (valorFinanceiro == null) {
 			
-            listaMensagens.add("O preenchimento do campo [Valor Financeiro] é obrigatório!");
+			listaMensagens.add("O preenchimento do campo [Valor Financeiro] é obrigatório!");
 		} else {
 			
-            // Valida se o valor financeiro é maior que 0
+			// Valida se o valor financeiro é maior que 0
 			if (valorFinanceiro.compareTo(BigDecimal.ZERO) <= 0) {
-			
+				
 				listaMensagens.add("O campo [Valor Financeiro] deve ser maior que 0!");
 			}
 		}
-		
+	}
+
+	private void validarListaMensagens(List<String> listaMensagens) {
 		if (!listaMensagens.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO();
@@ -471,6 +566,14 @@ public class BaixaFinanceiraController extends BaseController {
 			validacao.setListaMensagens(listaMensagens);
 			
 			throw new ValidacaoException(validacao);
+		}
+	}
+
+	private void validarFile(UploadedFile uploadedFile, List<String> listaMensagens) {
+		//Valida se o arquivo foi anexado
+		if (uploadedFile == null) {
+			
+            listaMensagens.add("O preenchimento do campo [Arquivo] é obrigatório!");
 		}
 	}
 	
