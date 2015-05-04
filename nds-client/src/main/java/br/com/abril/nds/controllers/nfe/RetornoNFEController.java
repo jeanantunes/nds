@@ -131,7 +131,7 @@ public class RetornoNFEController extends BaseController {
 		
 		this.limparSessao();
 		
-		this.result.use(Results.json()).from("OK").serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Retorno efetuado com sucesso."), "result").recursive().serialize();
 	}
 	
 	/**

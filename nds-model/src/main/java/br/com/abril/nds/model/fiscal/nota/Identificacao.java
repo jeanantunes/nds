@@ -5,10 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -488,9 +491,7 @@ public class Identificacao implements Serializable {
 	@Column(name = "HORA_SAIDA_ENTRADA", nullable = true)
 	private Date horaSaidaEntrada;
 	
-	@Transient
-//	@XmlElement(name="NFref")
-//	private NotaFiscalReferenciadaWrapper notaFiscalReferenciadaWapper;
+	@OneToMany(mappedBy="pk.notaFiscal", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@XmlElements(value={ @XmlElement(name="NFref") })
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	

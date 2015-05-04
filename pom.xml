@@ -398,12 +398,12 @@
 	<repositories>
 		<repository>
 			<id>nexus</id>
-			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
+			<url>http://10.129.28.111:8080/nexus-2.3.1-01/content/groups/public/</url>
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
 		</repository>
 		<repository>
 			<id>nexus3rd</id>
-			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/repositories/thirdparty/</url>
+			<url>http://10.129.28.111:8080/nexus-2.3.1-01/content/repositories/thirdparty/</url>
 		</repository>
 		<repository>
 			<id>repomaven</id>
