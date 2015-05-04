@@ -8,7 +8,8 @@ package br.com.abril.nds.util;
 public enum TipoBaixaCobranca {
 	
 	AUTOMATICA("Automática"),
-	MANUAL("Manual");
+	MANUAL("Manual"),
+	CONSOLIDADA("Consolidada");
 	
 	private String descricao;
 	
