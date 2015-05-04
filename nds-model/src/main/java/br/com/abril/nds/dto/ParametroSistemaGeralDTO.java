@@ -468,6 +468,14 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.NFE_INFORMACOES_VERSAO_EMISSOR, nfeInformacoesVersaoEmissor);
 	}
 	
+	public void setNfePathCertficado(String nfePathCertficado) {
+		this.params.put(TipoParametroSistema.NFE_PATH_CERTIFICADO, nfePathCertficado);
+	}
+	
+	public String getNfePathCertficado() {
+		return this.getParametroSistemaString(TipoParametroSistema.NFE_PATH_CERTIFICADO);
+	}
+	
 	public void setFtfCodigoEstabelecimentoEmissor(String ftfCodigoEstabelecimentoEmissor) {
 		this.params.put(TipoParametroSistema.FTF_CODIGO_ESTABELECIMENTO_EMISSOR, ftfCodigoEstabelecimentoEmissor);
 	}

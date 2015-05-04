@@ -242,8 +242,10 @@ $(function(){
 									</td>
 								</tr>
 								<tr>
-									<td></td>
-									<td></td>
+									<td>Caminho do Certificado NF-e:</td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.nfePathCertficado" id="nfePathCertficado" style="width:220px;" maxlength="10" value="${parametroSistemaGeralDTO.nfePathCertficado}"/>
+									</td>
 								</tr>
 							</table>
 						</td>
