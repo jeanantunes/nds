@@ -66,7 +66,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		
 		
-		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor);
+		CouchDbClient couchDbClient = this.getCouchDBClient(distribuidor, true);
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		
@@ -262,7 +262,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 
 		
 		if (!input.getItem().isEmpty()) {
-			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor());
+			CouchDbClient cdbc = this.getCouchDBClient(input.getCodigoDistribuidor(), true);
 			input.setTipoDocumento("EMS0128");
 			
 			cdbc.save(input);

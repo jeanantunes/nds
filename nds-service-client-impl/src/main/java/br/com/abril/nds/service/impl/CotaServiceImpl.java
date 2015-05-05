@@ -307,6 +307,7 @@ public class CotaServiceImpl implements CotaService {
     @Override
     @Transactional(readOnly = true)
     public Cota obterPorNumeroDaCota(final Integer numeroCota) {
+    	
         return cotaRepository.obterPorNumeroDaCota(numeroCota);
     }
     
