@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.util.TipoSecao;
@@ -19,7 +20,7 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	 */
 	private static final long serialVersionUID = -4373797568382146166L;
 	
-	
+	@XmlTransient
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscal notaFiscal;

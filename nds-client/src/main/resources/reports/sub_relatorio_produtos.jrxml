@@ -70,10 +70,10 @@
 	<background>
 		<band height="70">
 			<rectangle>
-				<reportElement style="borda_1" stretchType="RelativeToBandHeight" mode="Opaque" x="-15" y="1" width="15" height="69" uuid="0a7989c2-ec5b-44f6-808e-14f82f3cbe9e"/>
+				<reportElement style="borda_1" stretchType="RelativeToTallestObject" mode="Opaque" x="-15" y="1" width="15" height="69" isPrintWhenDetailOverflows="true" uuid="0a7989c2-ec5b-44f6-808e-14f82f3cbe9e"/>
 			</rectangle>
 			<staticText>
-				<reportElement style="campoPequeno" stretchType="RelativeToBandHeight" x="-27" y="0" width="27" height="70" uuid="c19fbf4e-0683-454b-82d4-dffe9c2c889d"/>
+				<reportElement style="campoPequeno" stretchType="RelativeToTallestObject" x="-27" y="0" width="27" height="70" isPrintWhenDetailOverflows="true" uuid="c19fbf4e-0683-454b-82d4-dffe9c2c889d"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0"/>
@@ -84,7 +84,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
 					<font size="4" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[DADOS DO PRODUTO/SERVIÇO]]></text>
+				<text><![CDATA[DADOS DO PRODUTO / SERVIÇO]]></text>
 			</staticText>
 		</band>
 	</background>
