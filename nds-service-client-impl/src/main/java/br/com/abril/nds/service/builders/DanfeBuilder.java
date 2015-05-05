@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.DanfeDTO;
 import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.ItemDanfe;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.NotaRecebidaEnum;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -37,6 +38,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
@@ -111,17 +113,21 @@ public class DanfeBuilder  implements Serializable {
 			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
 		}
 		
-		String informacoesComplementares = "";
-		if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() != null)
-			informacoesComplementares = notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString();
 		
+		StringBuffer informacoesComplementares = new StringBuffer();
+		if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() != null)
+			informacoesComplementares.append(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString());
+		
+		for (NotaFiscalReferenciada referenciada : identificacao.getListReferenciadas()) {
+			referenciada.getChaveAcessoCTe();
+		}
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo
 		
 		danfe.setISSQNTotal(ISSQNTotal);
 		danfe.setISSQNBase(ISSQNBase);
 		danfe.setISSQNValor(ISSQNValor);
-		danfe.setInformacoesComplementares(informacoesComplementares);
+		danfe.setInformacoesComplementares(informacoesComplementares.toString());
 		danfe.setNumeroFatura(numeroFatura);
 		danfe.setValorFatura(valorFatura);
 		danfe.setNaturezaOperacao(naturezaOperacao);
