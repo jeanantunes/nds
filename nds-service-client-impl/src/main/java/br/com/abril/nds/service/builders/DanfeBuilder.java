@@ -115,12 +115,15 @@ public class DanfeBuilder  implements Serializable {
 		
 		
 		StringBuffer informacoesComplementares = new StringBuffer();
+		
+		for (NotaFiscalReferenciada referenciada : identificacao.getListReferenciadas()) {
+			String notaReferenciacada = "NFe referenciada - " + referenciada.getChaveAcessoCTe() + "#";
+			
+			informacoesComplementares.append(notaReferenciacada);
+		}
 		if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() != null)
 			informacoesComplementares.append(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString());
 		
-		for (NotaFiscalReferenciada referenciada : identificacao.getListReferenciadas()) {
-			referenciada.getChaveAcessoCTe();
-		}
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo
 		
