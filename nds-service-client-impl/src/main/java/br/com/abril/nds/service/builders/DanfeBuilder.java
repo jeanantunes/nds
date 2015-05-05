@@ -121,6 +121,7 @@ public class DanfeBuilder  implements Serializable {
 			
 			informacoesComplementares.append(notaReferenciacada);
 		}
+		
 		if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() != null)
 			informacoesComplementares.append(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString());
 		
