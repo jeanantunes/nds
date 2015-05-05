@@ -1242,8 +1242,7 @@ ConsolidadoFinanceiroRepository {
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<DebitoCreditoCota> buscarMovFinanPorCotaEData(
-            final Long idCota, final List<Date> datas, final Long idFornecedor) {
+    public List<DebitoCreditoCota> buscarMovFinanPorCotaEData(final Long idCota, final List<Date> datas, final Long idFornecedor) {
         
         final StringBuilder hql = new StringBuilder("select new ");
         hql.append(DebitoCreditoCota.class.getCanonicalName())

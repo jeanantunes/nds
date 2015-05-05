@@ -163,7 +163,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 						ce.setBaseDeDados(database);
 						ce.setUsuarioBaseDeDados(username);
 	
-						cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
+						cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString(), true);
 						cdbc.save(ce);
 					} catch(Exception e) {
 	                    LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);

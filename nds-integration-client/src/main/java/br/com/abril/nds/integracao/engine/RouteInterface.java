@@ -37,7 +37,8 @@ public enum RouteInterface {
 	EMS0185(185, "EMS0185"),
 	EMS0197(197, "EMS0197"),
 	EMS0198(198, "EMS0198"),
-	EMS2021(2021, "EMS2021");
+	EMS2021(2021, "EMS2021"),
+	EMS3100(3100, "EMS3100");
 	
 	private Integer id;
 	

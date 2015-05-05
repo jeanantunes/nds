@@ -30,13 +30,14 @@ public class CouchDBRepositoryImpl {
 
 	/**
 	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
+	 * @param isDBDistribuidor TODO
 	 * 
 	 * @return client
 	 */
-	public CouchDbClient getCouchDBClient(String codDistribuidor) {
+	public CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor) {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(codDistribuidor, 8, "0"),
+				isDBDistribuidor ? "db_" + StringUtils.leftPad(sufixoNomeDB, 8, "0") : sufixoNomeDB,
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),
