@@ -2042,7 +2042,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		slip = this.documentoCobrancaService.gerarSlipDTOCobranca(controleConfEncalheCota.getId(), true);
 		
-		if (slip != null){
+		if(slip != null) {
 		    
 		    for (DebitoCreditoCota d : slip.getListaComposicaoCobranca()){
 	            d.setSlip(slip);

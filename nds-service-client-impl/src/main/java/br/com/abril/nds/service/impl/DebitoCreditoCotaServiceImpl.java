@@ -345,8 +345,15 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
 		final List<DebitoCreditoCota> outrosDebitoCreditoDoConsolidado =
-		        this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(
-		                cota.getId(), datas, idFornecedor);
+		        this.consolidadoFinanceiroRepository.buscarMovFinanPorCotaEData(cota.getId(), datas, idFornecedor);
+		
+		if(outrosDebitoCreditoDoConsolidado != null) {
+			for(DebitoCreditoCota dc : outrosDebitoCreditoDoConsolidado) {
+				if(GrupoMovimentoFinaceiro.TAXA_EXTRA.equals(dc.getTipoMovimento())) {
+					dc.setObservacoes(distribuidorService.obter().getDescricaoTaxaExtra() +" ("+ DateUtil.formatarDataPTBR(dc.getDataLancamento()) +")");
+				}
+			}
+		}
 		
 		if(outrosDebitoCreditoDoConsolidado!=null && !outrosDebitoCreditoDoConsolidado.isEmpty()) {
 			listaDebitoCreditoCompleta.addAll(outrosDebitoCreditoDoConsolidado);
