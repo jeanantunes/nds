@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="410"/>
+	<property name="ireport.y" value="242"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -1005,7 +1005,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[FRETE POR CONTA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="444" y="124" width="66" height="6" uuid="f014dc1b-c7ca-4d20-b10e-55f25406c61d"/>
+					<reportElement style="campoPequeno" x="444" y="128" width="66" height="6" uuid="f014dc1b-c7ca-4d20-b10e-55f25406c61d"/>
 					<text><![CDATA[CÓDIGO ANTT]]></text>
 				</staticText>
 				<staticText>
@@ -1536,38 +1536,31 @@ VOLUMES]]></text>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="58" splitType="Stretch">
+		<band height="58" splitType="Immediate">
+			<rectangle>
+				<reportElement style="borda_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="37" y="0" width="15" height="58" isPrintWhenDetailOverflows="true" uuid="254a817c-b5d5-4794-b2b8-dd684c53e46e"/>
+			</rectangle>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="0" width="15" height="58" isPrintWhenDetailOverflows="true" uuid="9429c4b4-877d-410a-aa31-6580bf244eac"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font size="4" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DADOS DO PRODUTO / SERVIÇO]]></text>
+			</staticText>
 			<subreport>
-				<reportElement positionType="Float" x="52" y="0" width="760" height="58" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="58" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="7">
-			<line>
-				<reportElement x="37" y="0" width="775" height="1" uuid="8e21b73b-5fa8-437b-ad19-4cc43321423a"/>
-				<graphicElement>
-					<pen lineWidth="0.25" lineStyle="Solid"/>
-				</graphicElement>
-			</line>
-			<textField>
-				<reportElement style="campoPequeno" x="1" y="2" width="293" height="5" uuid="b9286f05-5957-4480-805c-a87bd91ec13c"/>
-				<textElement>
-					<font size="5" isBold="true" isItalic="false" isUnderline="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{versao} != null ? "VERSÃO DO SISTEMA EMISSOR DA NFE: " + $F{versao}.toUpperCase() : ""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="campoPequeno" x="294" y="2" width="270" height="5" uuid="92b7f899-ce89-4754-8c3d-8043eb4ef322"/>
-				<textElement textAlignment="Right">
-					<font size="5" isBold="true" isItalic="false" isUnderline="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["DANFE GERADO EM OPENFE.COM.BR"]]></textFieldExpression>
-			</textField>
-		</band>
-	</columnFooter>
 	<pageFooter>
 		<band height="98" splitType="Stretch">
 			<frame>
