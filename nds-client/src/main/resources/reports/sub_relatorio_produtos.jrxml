@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos" printOrder="Horizontal" pageWidth="842" pageHeight="592" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="0de048fa-a620-44b6-bcb1-d2441005639e">
 	<property name="ireport.zoom" value="2.9230756500000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="68"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -68,25 +68,7 @@
 		<fieldDescription><![CDATA[valorUnitarioProduto]]></fieldDescription>
 	</field>
 	<background>
-		<band height="70">
-			<rectangle>
-				<reportElement style="borda_1" stretchType="RelativeToTallestObject" mode="Opaque" x="-15" y="1" width="15" height="69" isPrintWhenDetailOverflows="true" uuid="0a7989c2-ec5b-44f6-808e-14f82f3cbe9e"/>
-			</rectangle>
-			<staticText>
-				<reportElement style="campoPequeno" stretchType="RelativeToTallestObject" x="-27" y="0" width="27" height="70" isPrintWhenDetailOverflows="true" uuid="c19fbf4e-0683-454b-82d4-dffe9c2c889d"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
-					<font size="4" isBold="true" isItalic="false"/>
-				</textElement>
-				<text><![CDATA[DADOS DO PRODUTO / SERVIÇO]]></text>
-			</staticText>
-		</band>
+		<band height="70"/>
 	</background>
 	<detail>
 		<band height="70" splitType="Stretch">
@@ -101,7 +83,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
 			</textField>
@@ -123,7 +105,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement>
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NCMProduto}]]></textFieldExpression>
 			</textField>
@@ -134,7 +116,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CSTProduto}]]></textFieldExpression>
 			</textField>
@@ -145,7 +127,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unidadeProduto}]]></textFieldExpression>
 			</textField>
@@ -156,7 +138,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CFOPProduto}]]></textFieldExpression>
 			</textField>
@@ -167,66 +149,66 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="8"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidadeProduto}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="###0.00" isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" x="456" y="0" width="37" height="16" uuid="6fb36432-b5e4-4862-89f7-3da6287d413e"/>
 				<box topPadding="2" leftPadding="2" rightPadding="1">
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorUnitarioProduto}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="###0.00" isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" x="493" y="0" width="45" height="16" uuid="763a5587-16d0-4d4e-af61-75dccf292f84"/>
 				<box topPadding="2" leftPadding="2" rightPadding="1">
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorTotalProduto}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="###0.00" isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" x="538" y="0" width="42" height="16" uuid="7ee159ef-6446-4e04-9bfd-f3bfc5f70a8e"/>
 				<box topPadding="2" leftPadding="2" rightPadding="1">
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{baseCalculoProduto}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="###0.00" isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" x="580" y="0" width="45" height="16" uuid="f020dfd9-ab67-46b7-8026-ebe4a4f93625"/>
 				<box topPadding="2" leftPadding="2" rightPadding="1">
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorICMSProduto}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="###0.00" isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" x="625" y="0" width="45" height="16" uuid="dc24f0d4-02bc-4433-af32-ec55161a5ee6"/>
 				<box topPadding="2" leftPadding="2" rightPadding="1">
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorIPIProduto}]]></textFieldExpression>
@@ -238,7 +220,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aliquotaICMSProduto} != null ? $F{aliquotaICMSProduto}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
@@ -250,7 +232,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font size="8"/>
+					<font size="6"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{aliquotaIPIProduto} != null ? $F{aliquotaIPIProduto}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
