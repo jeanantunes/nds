@@ -1489,17 +1489,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             // GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE
             // ENCALHE(CREDITO) PARA COTA DO TIPO A_VISTA
             
-            valorTotalEncalheOperacaoConferenciaEncalhe = this
-                    .obterValorMovimentosEstoqueEncalhe(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
+            valorTotalEncalheOperacaoConferenciaEncalhe = this.obterValorMovimentosEstoqueEncalhe(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
             
-            if ((valorTotalEncalheOperacaoConferenciaEncalhe == null)
-                    || (valorTotalEncalheOperacaoConferenciaEncalhe.floatValue() <= 0)) {
+            if ((valorTotalEncalheOperacaoConferenciaEncalhe == null) || (valorTotalEncalheOperacaoConferenciaEncalhe.floatValue() <= 0)) {
                 
                 return;
             }
             
-            tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
-                    .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+            tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
             
             this.gerarMovimentoFinanceiro(cota, 
             		                      fornecedor, 
@@ -1528,8 +1525,13 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 			BigDecimal percentualTaxaExtra) {
 		
 		String motivo = dataOperacao +" - "+ distribuidorService.obter().getDescricaoTaxaExtra();
-		BigDecimal valor = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
+		BigDecimal valor = BigDecimal.ZERO; 
+//				valorTotalEncalheOperacaoConferenciaEncalhe.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroTaxaExtra = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.TAXA_EXTRA);
+		if(tipoMovimentoFinanceiroTaxaExtra == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Tipo de Movimento '%s' não encontrado.", GrupoMovimentoFinaceiro.TAXA_EXTRA.name()));
+		}
 		
     	List<MovimentoFinanceiroCota> movimentosFinanceiros = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(cota.getId(), dataOperacao, Arrays.asList(cota.getTipoCota()));
     	MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = null;
@@ -1544,7 +1546,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     	    		movimentoFinanceiroCotaDTO.setCota(mfc.getCota());
     	    		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro((TipoMovimentoFinanceiro) mfc.getTipoMovimento());
     	    		movimentoFinanceiroCotaDTO.setUsuario(mfc.getUsuario());
-    	    		movimentoFinanceiroCotaDTO.setValor(valor);
     	    		movimentoFinanceiroCotaDTO.setMotivo(motivo);
     	    		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
     	    		movimentoFinanceiroCotaDTO.setBaixaCobranca(mfc.getBaixaCobranca());
@@ -1559,6 +1560,13 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     	    		movimentoFinanceiroCotaDTO.setMovimentos(null);
 
     	    		break;
+    			} else {
+    				GrupoMovimentoFinaceiro grupoMovimentoFinanceiro = ((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro();
+    				if(grupoMovimentoFinanceiro.equals(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE)) {
+    					valor = valor.add(mfc.getValor());
+    				} else if(grupoMovimentoFinanceiro.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE)) {
+    					valor = valor.subtract(mfc.getValor());
+    				}
     			}
     		} 
     		
@@ -1568,7 +1576,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         		movimentoFinanceiroCotaDTO.setCota(cota);
         		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiroTaxaExtra);
         		movimentoFinanceiroCotaDTO.setUsuario(usuario);
-        		movimentoFinanceiroCotaDTO.setValor(valor);
         		movimentoFinanceiroCotaDTO.setMotivo(motivo);
         		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
         		movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
@@ -1581,6 +1588,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
         		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
         		movimentoFinanceiroCotaDTO.setMovimentos(null);
+    		}
+    		
+    		if(movimentoFinanceiroCotaDTO != null) {
+    			
+    			valor = valor.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
+    			movimentoFinanceiroCotaDTO.setValor(valor);
     		}
     	} else {
     		
@@ -1602,7 +1615,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
     		movimentoFinanceiroCotaDTO.setMovimentos(null);
     	}
-		
 		
 		this.gerarMovimentoFinanceiroCota(movimentoFinanceiroCotaDTO, null);
 	}
