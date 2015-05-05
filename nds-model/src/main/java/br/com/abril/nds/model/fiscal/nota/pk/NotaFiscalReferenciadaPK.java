@@ -20,7 +20,6 @@ public class NotaFiscalReferenciadaPK implements Serializable {
 	 */
 	private static final long serialVersionUID = -4373797568382146166L;
 	
-	@XmlTransient
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscal notaFiscal;

@@ -200,10 +200,10 @@ public class NaturezaOperacaoController extends BaseController {
 		
 	    List<ItemDTO<Long, String>> naturezasOperacoes = null;
 	    
-	    if(TipoEmitente.COTA.equals(tipoEmitente) &&  TipoDestinatario.DISTRIBUIDOR.equals(tipoDestinatario)){
+	    if(TipoEmitente.COTA.equals(tipoEmitente) && TipoDestinatario.DISTRIBUIDOR.equals(tipoDestinatario)) {
 	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, true, true);
-	    } else{
-	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, true);
+	    } else {
+	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, false);
 	    }
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
