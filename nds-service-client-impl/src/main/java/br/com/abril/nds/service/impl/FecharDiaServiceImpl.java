@@ -629,7 +629,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional(readOnly = true)
 	public ResumoFechamentoDiarioConsignadoDTO obterResumoConsignado(Date dataFechamento) {
 		
-		if(false && this.isDiaComFechamentoRealizado(dataFechamento)){
+		if(this.isDiaComFechamentoRealizado(dataFechamento)) {
 			
 			return this.obterResumoConsignadoComFechamentoProcessado(dataFechamento);
 		}
