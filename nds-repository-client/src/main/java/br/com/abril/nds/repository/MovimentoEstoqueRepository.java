@@ -69,4 +69,6 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	
 	BigDecimal obterValorConsignadoDeVendaEncalheSuplementar(final Date dataMovimentacao );
 
+	BigDecimal obterValorAlteracoesPrecosExpedicoesAnteriores(Date dataFechamento);
+
 }
