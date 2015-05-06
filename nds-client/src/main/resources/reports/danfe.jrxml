@@ -693,8 +693,8 @@ WWW.NFE.FAZENDA.GOV.BR/PORTAL OU NO SITE DA SEFAZ AUTORIZADORA]]></text>
 				<rectangle>
 					<reportElement style="borda_1" x="37" y="96" width="458" height="24" uuid="43784c2e-a73b-4026-9127-fb6458edc58e"/>
 				</rectangle>
-				<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" onErrorType="Blank" evaluationTime="Report">
-					<reportElement x="40" y="4" width="60" height="54" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
+				<image scaleImage="RetainShape" hAlign="Left" vAlign="Top">
+					<reportElement x="40" y="4" width="169" height="91" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
 					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
 				<staticText>
