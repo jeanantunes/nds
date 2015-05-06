@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="306"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -27,10 +27,6 @@
 	<style name="borda_1" mode="Transparent" forecolor="#000000" fill="Solid" radius="3" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Verdana" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="false">
 		<pen lineWidth="0.25"/>
 	</style>
-	<parameter name="Logo" class="java.lang.String" isForPrompting="false">
-		<parameterDescription><![CDATA[Local onde está  a imagem do logo da empresa.]]></parameterDescription>
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
 	<parameter name="FAT_NUMERO1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="FAT_VENCIMENTO1" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="FAT_VALOR1" class="java.lang.Double" isForPrompting="false"/>
@@ -697,7 +693,7 @@ WWW.NFE.FAZENDA.GOV.BR/PORTAL OU NO SITE DA SEFAZ AUTORIZADORA]]></text>
 				<rectangle>
 					<reportElement style="borda_1" x="37" y="96" width="458" height="24" uuid="43784c2e-a73b-4026-9127-fb6458edc58e"/>
 				</rectangle>
-				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank" evaluationTime="Report">
+				<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" onErrorType="Blank" evaluationTime="Report">
 					<reportElement x="40" y="4" width="60" height="54" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
 					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
@@ -1137,7 +1133,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorOutro} == null ? "0,00" : $F{valorOutro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0,00" isBlankWhenNull="true">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="677" y="107" width="132" height="16" uuid="cf5c6e6a-e105-43d5-8a68-a0c12cedf49c"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorNF}]]></textFieldExpression>
@@ -1586,7 +1582,7 @@ VOLUMES]]></text>
 				<textElement>
 					<font size="4" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Verdana"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{versao} != null ? "SISTEMA EMISSOR DA NFE: " + $F{versao}.toUpperCase() : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{versao} != null ? "SISTEMA EMISSOR DA NFE: " + $F{versao} : ""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="campoPequeno" x="520" y="4" width="289" height="5" uuid="8bd3dd00-8914-43d7-b661-016df627ad9c"/>

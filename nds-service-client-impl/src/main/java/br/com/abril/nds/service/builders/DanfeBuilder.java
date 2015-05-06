@@ -45,6 +45,7 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.service.impl.ImpressaoNFEServiceImpl;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.caelum.stella.format.CNPJFormatter;
 import br.com.caelum.stella.format.CPFFormatter;
 
@@ -559,7 +560,7 @@ public class DanfeBuilder  implements Serializable {
 				inputStream = new ByteArrayInputStream(new byte[0]);
 			}
 			
-			parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+			parameters.put("LOGO_DISTRIBUIDOR", JasperUtil.getImagemRelatorio(inputStream));
 			
 			return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		} catch (JRException jre) {
