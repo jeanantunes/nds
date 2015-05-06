@@ -7,6 +7,7 @@
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
 	<field name="danfes" class="java.util.List"/>
 	<detail>
 		<band height="600" splitType="Stretch">
@@ -47,6 +48,9 @@
 				<subreportParameter name="FAT_VENCIMENTO5"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="FAT_NUMERO1"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{danfes})]]></dataSourceExpression>
