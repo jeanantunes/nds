@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.DanfeDTO;
 import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.ItemDanfe;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.NotaRecebidaEnum;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -37,12 +38,14 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.service.impl.ImpressaoNFEServiceImpl;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.caelum.stella.format.CNPJFormatter;
 import br.com.caelum.stella.format.CPFFormatter;
 
@@ -111,9 +114,17 @@ public class DanfeBuilder  implements Serializable {
 			ISSQNValor 				= valoresTotaisISSQN.getValorISS();
 		}
 		
-		String informacoesComplementares = "";
+		
+		StringBuffer informacoesComplementares = new StringBuffer();
+		
+		for (NotaFiscalReferenciada referenciada : identificacao.getListReferenciadas()) {
+			String notaReferenciacada = "NFe referenciada - " + referenciada.getChaveAcessoCTe() + "#";
+			
+			informacoesComplementares.append(notaReferenciacada);
+		}
+		
 		if(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper() != null)
-			informacoesComplementares = notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString();
+			informacoesComplementares.append(notaFiscal.getNotaFiscalInformacoes().getInfAdicWrapper().getInformacoesAdicionais().toString());
 		
 		String numeroFatura 				=  "";//TODO obter campo
 		BigDecimal valorFatura 				= BigDecimal.ZERO; //TODO obter campo
@@ -121,7 +132,7 @@ public class DanfeBuilder  implements Serializable {
 		danfe.setISSQNTotal(ISSQNTotal);
 		danfe.setISSQNBase(ISSQNBase);
 		danfe.setISSQNValor(ISSQNValor);
-		danfe.setInformacoesComplementares(informacoesComplementares);
+		danfe.setInformacoesComplementares(informacoesComplementares.toString());
 		danfe.setNumeroFatura(numeroFatura);
 		danfe.setValorFatura(valorFatura);
 		danfe.setNaturezaOperacao(naturezaOperacao);
@@ -549,7 +560,7 @@ public class DanfeBuilder  implements Serializable {
 				inputStream = new ByteArrayInputStream(new byte[0]);
 			}
 			
-			parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+			parameters.put("LOGO_DISTRIBUIDOR", JasperUtil.getImagemRelatorio(inputStream));
 			
 			return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		} catch (JRException jre) {

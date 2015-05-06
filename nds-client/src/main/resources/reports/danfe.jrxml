@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="242"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -27,10 +27,6 @@
 	<style name="borda_1" mode="Transparent" forecolor="#000000" fill="Solid" radius="3" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Verdana" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="false">
 		<pen lineWidth="0.25"/>
 	</style>
-	<parameter name="Logo" class="java.lang.String" isForPrompting="false">
-		<parameterDescription><![CDATA[Local onde está  a imagem do logo da empresa.]]></parameterDescription>
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
 	<parameter name="FAT_NUMERO1" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="FAT_VENCIMENTO1" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="FAT_VALOR1" class="java.lang.Double" isForPrompting="false"/>
@@ -64,7 +60,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream">
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
@@ -309,7 +305,7 @@
 				<textFieldExpression><![CDATA[$F{ambiente}.equals( "2" ) || $F{protocolo} == null ? "SEM VALOR FISCAL" : ""]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement style="borda_1" positionType="Float" x="0" y="0" width="30" height="81" isPrintInFirstWholeBand="true" uuid="39801522-c7d3-4b0e-9800-8407d76bd58b"/>
+				<reportElement style="borda_1" positionType="Float" x="0" y="1" width="30" height="80" isPrintInFirstWholeBand="true" uuid="39801522-c7d3-4b0e-9800-8407d76bd58b"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
@@ -507,7 +503,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 			<frame>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="812" height="144" uuid="67494b23-ed04-4a14-98af-5739982c1a2d"/>
 				<rectangle>
-					<reportElement style="borda_1" x="37" y="0" width="331" height="96" uuid="2bf62f7e-c59f-4b8d-aca3-10e92517a864"/>
+					<reportElement style="borda_1" x="37" y="1" width="331" height="95" uuid="2bf62f7e-c59f-4b8d-aca3-10e92517a864"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
@@ -541,7 +537,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA["CEP: " + $F{emissorCEP}.substring(0,5) + "-" + $F{emissorCEP}.substring(5,8)]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement style="borda_1" x="368" y="0" width="127" height="96" uuid="c76728ef-b6a6-434e-b9ea-f7f0b8f1a9d7"/>
+					<reportElement style="borda_1" x="368" y="1" width="127" height="95" uuid="c76728ef-b6a6-434e-b9ea-f7f0b8f1a9d7"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
@@ -630,10 +626,10 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</jr:barbecue>
 				</componentElement>
 				<rectangle>
-					<reportElement style="borda_1" x="495" y="46" width="317" height="20" uuid="36f3bcce-e046-4ce5-83b8-53ace5dc4144"/>
+					<reportElement style="borda_1" x="495" y="51" width="317" height="20" uuid="36f3bcce-e046-4ce5-83b8-53ace5dc4144"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="campoPequeno" x="496" y="48" width="37" height="17" uuid="d5580469-6bf2-4d2e-887e-dc3438df5d00"/>
+					<reportElement style="campoPequeno" x="496" y="53" width="37" height="17" uuid="d5580469-6bf2-4d2e-887e-dc3438df5d00"/>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.0"/>
@@ -647,7 +643,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[CHAVE DE ACESSO ]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="534" y="48" width="278" height="17" uuid="5745bd23-1a2d-464b-9867-2d24524884e9"/>
+					<reportElement style="dados" x="534" y="53" width="278" height="17" uuid="5745bd23-1a2d-464b-9867-2d24524884e9"/>
 					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 						<pen lineWidth="0.25"/>
 						<topPen lineWidth="0.0"/>
@@ -697,8 +693,8 @@ WWW.NFE.FAZENDA.GOV.BR/PORTAL OU NO SITE DA SEFAZ AUTORIZADORA]]></text>
 				<rectangle>
 					<reportElement style="borda_1" x="37" y="96" width="458" height="24" uuid="43784c2e-a73b-4026-9127-fb6458edc58e"/>
 				</rectangle>
-				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank" evaluationTime="Report">
-					<reportElement x="40" y="4" width="78" height="84" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
+				<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" onErrorType="Blank" evaluationTime="Report">
+					<reportElement x="40" y="4" width="60" height="54" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
 					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
 				<staticText>
@@ -751,7 +747,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{protocolo}]]></textFieldExpression>
 				</textField>
 				<rectangle>
-					<reportElement style="borda_1" x="495" y="0" width="317" height="96" uuid="f3559cb7-fcbf-43f6-a5ab-fb5c0775c307"/>
+					<reportElement style="borda_1" x="495" y="1" width="317" height="95" uuid="f3559cb7-fcbf-43f6-a5ab-fb5c0775c307"/>
 					<graphicElement>
 						<pen lineWidth="0.25"/>
 					</graphicElement>
@@ -1114,13 +1110,13 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorBaseICMS} == null ? 0.00 : $F{valorBaseICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN)).toString()]]></textFieldExpression>
 				</textField>
-				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" mode="Transparent" x="167" y="84" width="106" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b2876445-2aab-4c33-b02f-df03150c3e6e"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="styled">
 						<font fontName="Arial" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{valorICMS} == null ? "0.00" : $F{valorICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{valorICMS} == null ? "0,00" : $F{valorICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="675" y="84" width="135" height="16" uuid="5c55655f-987b-4a65-8ea1-3c436f7fa0a7"/>
@@ -1133,9 +1129,9 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{valorBaseICMSSubstituto} == null ? 0.00 : $F{valorBaseICMSSubstituto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
-					<reportElement style="dados" x="394" y="107" width="114" height="16" uuid="c451a13a-9c0d-478d-b100-ed11fa72a071"/>
+					<reportElement style="dados" x="391" y="107" width="114" height="16" uuid="c451a13a-9c0d-478d-b100-ed11fa72a071"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{valorOutro} == null ? "0.00" : $F{valorOutro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{valorOutro} == null ? "0,00" : $F{valorOutro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="677" y="107" width="132" height="16" uuid="cf5c6e6a-e105-43d5-8a68-a0c12cedf49c"/>
@@ -1143,24 +1139,24 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{valorNF}]]></textFieldExpression>
 				</textField>
 				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
-					<reportElement style="dados" x="524" y="107" width="65" height="16" uuid="325d25c5-5ebe-438b-b45b-5ff71c4b42af"/>
+					<reportElement style="dados" x="522" y="107" width="65" height="16" uuid="325d25c5-5ebe-438b-b45b-5ff71c4b42af"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{valorIPI} == null ? "0.00" : $F{valorIPI}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{valorIPI} == null ? "0,00" : $F{valorIPI}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
 					<reportElement style="dados" x="166" y="107" width="90" height="16" uuid="3db4a659-5a18-4f25-baa1-ba8fc1ee0e91"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{valorSeguro} == null ? "0.00" : $F{valorSeguro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{valorSeguro} == null ? "0,00" : $F{valorSeguro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="60" y="107" width="88" height="16" uuid="03b1f69e-db56-4edf-b2d1-1faa79a9df35"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{valorFrete} == null ? "0.00" : $F{valorFrete}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{valorFrete} == null ? "0,00" : $F{valorFrete}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="267" y="107" width="90" height="16" uuid="a1d2e9ef-33ee-4bee-9850-a8c47d7ab1e7"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{valorDesconto} == null ? "0.00" : $F{valorDesconto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{valorDesconto} == null ? "0,00" : $F{valorDesconto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="dados" x="53" y="134" width="217" height="16" uuid="cc09af28-ea47-47e3-8b2a-f7bd6f1a17ff"/>
@@ -1204,12 +1200,14 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<reportElement style="dados" x="279" y="158" width="332" height="16" uuid="844c58b9-75c8-47a1-83b6-0c7108251427"/>
 					<textFieldExpression><![CDATA[$F{transportadoraMunicipio}]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.0000;(-###0.0000)" isBlankWhenNull="true">
-					<reportElement style="dados" x="497" y="180" width="170" height="18" uuid="0bbcf10b-6ad2-4020-8af9-7865c9a3860a"/>
-					<textFieldExpression><![CDATA[$F{transportadoraPesoBruto} != null ? $F{transportadoraPesoBruto}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
+				<textField pattern="###0.00;(-###0.00)" isBlankWhenNull="false">
+					<reportElement style="dados" x="497" y="182" width="170" height="18" uuid="0bbcf10b-6ad2-4020-8af9-7865c9a3860a"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{transportadoraPesoBruto} != null ? $F{transportadoraPesoBruto}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : ""]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.0000;(-###0.0000)" isBlankWhenNull="true">
+				<textField pattern="###0.00;(-###0.00)" isBlankWhenNull="false">
 					<reportElement style="dados" x="673" y="181" width="134" height="18" uuid="ef1daf18-a0ca-41ba-9e40-b25f1ac6ba12"/>
+					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{transportadoraPesoLiquido} != null ? $F{transportadoraPesoLiquido}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : ""]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
@@ -1238,11 +1236,11 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 					<textFieldExpression><![CDATA[$F{transportadoraANTT}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="185" y="183" width="105" height="16" uuid="18b25982-04e1-4b88-b53e-e196e096be98"/>
+					<reportElement style="dados" x="185" y="182" width="105" height="16" uuid="18b25982-04e1-4b88-b53e-e196e096be98"/>
 					<textFieldExpression><![CDATA[$F{transportadoraMarca}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="296" y="183" width="190" height="16" uuid="09ea4a4e-0a5b-408a-a794-6498afd1ddd9"/>
+					<reportElement style="dados" x="296" y="182" width="190" height="16" uuid="09ea4a4e-0a5b-408a-a794-6498afd1ddd9"/>
 					<textFieldExpression><![CDATA[$F{transportadoraNumeracao}]]></textFieldExpression>
 				</textField>
 				<rectangle>
@@ -1264,7 +1262,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
  REMETENTE]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="borda_1" x="37" y="75" width="15" height="48" uuid="56f6bab1-ede6-49b4-b115-ec92bc867151"/>
+					<reportElement style="borda_1" x="37" y="76" width="15" height="48" uuid="56f6bab1-ede6-49b4-b115-ec92bc867151"/>
 				</rectangle>
 				<staticText>
 					<reportElement style="campoPequeno" x="37" y="76" width="15" height="48" uuid="f79e6ecf-b50a-4a3d-a33c-9733c4be0b43"/>
@@ -1343,6 +1341,16 @@ VOLUMES]]></text>
 					<reportElement style="campoPequeno" x="593" y="101" width="79" height="6" uuid="f11eef80-805a-409a-831d-1efa11917bb4"/>
 					<text><![CDATA[VALOR DA COFINS]]></text>
 				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="605" y="83" width="65" height="16" uuid="2f83e7f1-9eb9-4d76-894b-2c777c0a41eb"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorIPI} == null ? "0,00" : $F{valorIPI}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+					<reportElement style="dados" x="605" y="107" width="65" height="16" uuid="6b00ede2-1134-44ee-bcad-888375da846a"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{valorIPI} == null ? "0,00" : $F{valorIPI}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</pageHeader>
@@ -1522,7 +1530,7 @@ VOLUMES]]></text>
 				<text><![CDATA[ALIQ. ICMS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="campoPequeno" x="767" y="0" width="45" height="13" uuid="716b0b18-aab4-4b0b-b334-69fbc41ce49c"/>
+				<reportElement style="campoPequeno" x="767" y="0" width="44" height="13" uuid="716b0b18-aab4-4b0b-b334-69fbc41ce49c"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<leftPen lineWidth="0.0"/>
@@ -1536,12 +1544,12 @@ VOLUMES]]></text>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="58" splitType="Immediate">
+		<band height="58">
 			<rectangle>
 				<reportElement style="borda_1" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="37" y="0" width="15" height="58" isPrintWhenDetailOverflows="true" uuid="254a817c-b5d5-4794-b2b8-dd684c53e46e"/>
 			</rectangle>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="0" width="15" height="58" isPrintWhenDetailOverflows="true" uuid="9429c4b4-877d-410a-aa31-6580bf244eac"/>
+				<reportElement style="campoPequeno" positionType="Float" stretchType="RelativeToTallestObject" x="37" y="0" width="15" height="58" isPrintWhenDetailOverflows="true" uuid="9429c4b4-877d-410a-aa31-6580bf244eac"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0"/>
@@ -1555,12 +1563,36 @@ VOLUMES]]></text>
 				<text><![CDATA[DADOS DO PRODUTO / SERVIÇO]]></text>
 			</staticText>
 			<subreport>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="58" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="52" y="0" width="760" height="58" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
+	<columnFooter>
+		<band height="10">
+			<line>
+				<reportElement x="53" y="2" width="758" height="1" uuid="4e4ceb4f-ccc4-424b-abac-0d14ae6cf71d"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="campoPequeno" x="53" y="4" width="467" height="5" uuid="19f4d975-bec7-4c1b-a887-d29860b2d521"/>
+				<textElement>
+					<font size="4" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Verdana"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{versao} != null ? "SISTEMA EMISSOR DA NFE: " + $F{versao} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="campoPequeno" x="520" y="4" width="289" height="5" uuid="8bd3dd00-8914-43d7-b661-016df627ad9c"/>
+				<textElement textAlignment="Right">
+					<font size="4" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Verdana"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DANFE GERADO POR X9TEC.COM.BR"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
 	<pageFooter>
 		<band height="98" splitType="Stretch">
 			<frame>
@@ -1608,7 +1640,7 @@ VOLUMES]]></text>
 					<text><![CDATA[RESERVADO AO FISCO]]></text>
 				</staticText>
 				<textField pattern="###0.00" isBlankWhenNull="true">
-					<reportElement style="dados" x="217" y="9" width="191" height="16" uuid="1d835e42-770c-4433-8d77-739b15db2a58"/>
+					<reportElement style="dados" x="220" y="9" width="191" height="16" uuid="1d835e42-770c-4433-8d77-739b15db2a58"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{ISSQNTotal} != null ? $F{ISSQNTotal}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
 				</textField>
@@ -1618,12 +1650,13 @@ VOLUMES]]></text>
 					<textFieldExpression><![CDATA[$F{ISSQNBase} != null ? $F{ISSQNBase}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00" isBlankWhenNull="true">
-					<reportElement style="dados" x="616" y="9" width="195" height="16" uuid="f2dde265-045f-4ac7-a42f-718eeeabd3c6"/>
+					<reportElement style="dados" x="620" y="9" width="188" height="16" uuid="f2dde265-045f-4ac7-a42f-718eeeabd3c6"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{ISSQNValor} != null ? $F{ISSQNValor}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : null]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="dados" x="54" y="9" width="155" height="16" uuid="98c2923d-0d0c-4da1-874a-3659a06ba7bc"/>
+					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{emissorInscricaoMunicipal}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
@@ -1631,7 +1664,7 @@ VOLUMES]]></text>
 					<textElement verticalAlignment="Top">
 						<font size="6" isItalic="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{informacoesComplementares}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{informacoesComplementares}.replace("#", "\n")]]></textFieldExpression>
 				</textField>
 				<rectangle>
 					<reportElement style="borda_1" x="38" y="1" width="15" height="24" uuid="54b48a01-b770-4ef1-8487-83b3ec254f05"/>
