@@ -11,7 +11,10 @@
 	<properties>
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.springframework.version>3.1.2.RELEASE</org.springframework.version>
+		<org.springframework.version>4.0.6.RELEASE</org.springframework.version>
+		<org.springframework.security.version>3.2.5.RELEASE</org.springframework.security.version>
+		<br.com.caelum.vraptor.version>3.5.3</br.com.caelum.vraptor.version>
+		<org.hibernate.version>4.2.15.Final</org.hibernate.version>
 	</properties>
 
 	<dependencyManagement>
@@ -47,11 +50,11 @@
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
-			<dependency>
-				<groupId>javassist</groupId>
+			<!-- <dependency>
+				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.12.1.GA</version>
-			</dependency>
+				<version>3.18.2-GA</version>
+			</dependency> -->
 			<dependency>
 				<artifactId>dom4j</artifactId>
 				<groupId>dom4j</groupId>
@@ -62,6 +65,11 @@
 				<artifactId>xml-apis</artifactId>
 				<version>1.0.b2</version>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>br.com.caelum</groupId>
+				<artifactId>vraptor</artifactId>
+				<version>${br.com.caelum.vraptor.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -124,18 +132,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
-				<version>4.1.7.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-validator</artifactId>
-				<version>4.2.0.Final</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-entitymanager</artifactId>
-				<version>4.1.0.Final</version>
+				<version>${org.hibernate.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

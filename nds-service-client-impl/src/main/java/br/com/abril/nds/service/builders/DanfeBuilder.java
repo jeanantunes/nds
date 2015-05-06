@@ -547,10 +547,9 @@ public class DanfeBuilder  implements Serializable {
 			
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
-			
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
-			
 			parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
+			parameters.put("LOGO_DISTRIBUIDOR", logoTipoDistribuidor);
 			
 			return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		} catch (JRException jre) {

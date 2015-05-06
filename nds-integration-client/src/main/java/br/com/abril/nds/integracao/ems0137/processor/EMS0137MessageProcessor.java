@@ -88,7 +88,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 				
 			}
 			
-			dbClient = getCouchDBClient(codigoDistribuidor);
+			dbClient = getCouchDBClient(codigoDistribuidor, true);
 			
 			ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(message, input);
 			

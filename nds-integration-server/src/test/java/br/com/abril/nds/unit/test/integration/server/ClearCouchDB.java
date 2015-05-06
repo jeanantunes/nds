@@ -1,6 +1,5 @@
 package br.com.abril.nds.unit.test.integration.server;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.lightcouch.CouchDbClient;
@@ -13,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.model.canonic.EMS0127Input;
+import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager="transactionManager")
@@ -31,11 +30,12 @@ public class ClearCouchDB {
 			
 			View view = couchDbClient.view("importacao/porTipoDocumento");
 			
-			view.key("EMS0135");
+			view.startKey("EMS3100", null);
+			view.endKey("EMS3100", "");
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
-			
-			ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0127Input.class);
+
+			ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, EMS0110Input.class);
 	
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 				
@@ -50,7 +50,7 @@ public class ClearCouchDB {
 	private CouchDbClient getCouchDBClient() {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad("6248116", 8, "0"),
+				"db_extratificador",
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),

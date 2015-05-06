@@ -90,7 +90,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 
-				CouchDbClient couchDbClient = this.getCouchDBClient(StringUtils.leftPad(distribuidor, 8, "0"));
+				CouchDbClient couchDbClient = this.getCouchDBClient(StringUtils.leftPad(distribuidor, 8, "0"), true);
 										
 				View view = couchDbClient.view("importacao/porTipoDocumento");
 								

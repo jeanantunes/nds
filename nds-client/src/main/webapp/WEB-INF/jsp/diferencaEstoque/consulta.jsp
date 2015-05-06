@@ -64,7 +64,6 @@
   			<tr>
     			<td width="59" title="tooltip teste">Código:</td>
     			<td colspan="3">
-    			
     				<input type="text" name="diferenca-estoque-codigo" id="diferenca-estoque-codigo"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="255"
 						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#diferenca-estoque-codigo', '#diferenca-estoque-produto', '#diferenca-estoque-edicao', false,

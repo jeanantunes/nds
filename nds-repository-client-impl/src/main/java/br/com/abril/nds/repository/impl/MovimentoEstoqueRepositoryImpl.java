@@ -341,6 +341,38 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		return (BigDecimal) query.uniqueResult();
 	}
 	
+	public BigDecimal obterValorAlteracoesPrecosExpedicoesAnteriores(Date dataFechamento) {
+		
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select sum(mec.qtde * (hapv.VALOR_ATUAL - hapv.VALOR_ANTIGO)) VALOR_EXPEDIDO                                      ");
+		sql.append(" from movimento_estoque_cota mec                                                                                   ");
+		sql.append(" inner join historico_alteracao_preco_venda hapv on hapv.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID                 ");
+		sql.append(" inner join produto_edicao pe on pe.id = hapv.PRODUTO_EDICAO_ID                                                    ");
+		sql.append(" where 1 = 1                                                                                                       ");
+		sql.append(" and hapv.data_operacao = :dataMovimento                                                                           ");
+		sql.append(" and mec.PRODUTO_EDICAO_ID not in (                                                                                ");
+		sql.append(" 	select distinct produtoEdicao_.ID                                                                              ");
+		sql.append(" 	from EXPEDICAO expedicao                                                                                       ");
+		sql.append(" 	inner join LANCAMENTO lancamento on expedicao.ID=lancamento.EXPEDICAO_ID                                       ");
+		sql.append(" 	inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID                     ");
+		sql.append(" 	inner join PRODUTO produto_ on produtoEdicao_.PRODUTO_ID=produto_.ID                                           ");
+		sql.append(" 	where                                                                                                          ");
+		sql.append(" 		lancamento.STATUS <> :statusFuro                                                                                ");
+		sql.append(" 		and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
+		sql.append(" 		and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado                                       ");
+		sql.append(" )                                                                                                                 ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("VALOR_EXPEDIDO",StandardBasicTypes.BIG_DECIMAL);
+		
+		query.setParameter("dataMovimento", dataFechamento);
+		query.setParameter("statusFuro", StatusLancamento.FURO.name());
+		query.setParameter("formaComercializacaoConsignado", FormaComercializacao.CONSIGNADO.name());
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 
 	/**
 	 * Obtem valor total de Consignado ou AVista da data
