@@ -60,7 +60,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image" isForPrompting="false">
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
@@ -620,7 +620,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement stretchType="RelativeToTallestObject" x="508" y="2" width="273" height="43" uuid="1c2fe946-2e67-4199-b798-2e60d8aeefe1"/>
+					<reportElement stretchType="RelativeToTallestObject" x="536" y="5" width="273" height="43" uuid="1c2fe946-2e67-4199-b798-2e60d8aeefe1"/>
 					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128C" drawText="false" checksumRequired="false" barHeight="103">
 						<jr:codeExpression><![CDATA[$F{chave}]]></jr:codeExpression>
 					</jr:barbecue>
