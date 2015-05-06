@@ -36,8 +36,4 @@ public class DanfeWrapper implements Serializable {
 	public void setDanfes(List<DanfeDTO> danfes) {
 		this.danfes = danfes;
 	}
-	
-	
-	
-	
 }
