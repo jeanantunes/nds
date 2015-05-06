@@ -15,18 +15,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.dto.DanfeDTO;
 import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.ItemDanfe;
-import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.NotaRecebidaEnum;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -44,8 +44,6 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
-import br.com.abril.nds.service.impl.ImpressaoNFEServiceImpl;
-import br.com.abril.nds.util.JasperUtil;
 import br.com.caelum.stella.format.CNPJFormatter;
 import br.com.caelum.stella.format.CPFFormatter;
 
@@ -553,14 +551,6 @@ public class DanfeBuilder  implements Serializable {
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 			
 			parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
-			
-			InputStream inputStream = logoTipoDistribuidor;
-			
-			if(inputStream == null) {
-				inputStream = new ByteArrayInputStream(new byte[0]);
-			}
-			
-			parameters.put("LOGO_DISTRIBUIDOR", JasperUtil.getImagemRelatorio(inputStream));
 			
 			return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		} catch (JRException jre) {
