@@ -279,7 +279,7 @@ public class ImpressaoNFEController extends BaseController {
             result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
         }
 		
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo gerado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	/**

@@ -60,9 +60,6 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image" isForPrompting="false">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
 	<queryString language="xPath">
 		<![CDATA[]]>
 	</queryString>
@@ -286,6 +283,9 @@
 		<fieldDescription><![CDATA[versao]]></fieldDescription>
 	</field>
 	<field name="destinatarioPais" class="java.lang.String"/>
+	<field name="logo" class="java.io.InputStream">
+		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
 	<group name="nomeDestinatario" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{destinatarioNome}]]></groupExpression>
 		<groupHeader>
@@ -620,7 +620,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement stretchType="RelativeToTallestObject" x="508" y="2" width="273" height="43" uuid="1c2fe946-2e67-4199-b798-2e60d8aeefe1"/>
+					<reportElement stretchType="RelativeToTallestObject" x="536" y="5" width="273" height="43" uuid="1c2fe946-2e67-4199-b798-2e60d8aeefe1"/>
 					<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128C" drawText="false" checksumRequired="false" barHeight="103">
 						<jr:codeExpression><![CDATA[$F{chave}]]></jr:codeExpression>
 					</jr:barbecue>
@@ -693,10 +693,6 @@ WWW.NFE.FAZENDA.GOV.BR/PORTAL OU NO SITE DA SEFAZ AUTORIZADORA]]></text>
 				<rectangle>
 					<reportElement style="borda_1" x="37" y="96" width="458" height="24" uuid="43784c2e-a73b-4026-9127-fb6458edc58e"/>
 				</rectangle>
-				<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" onErrorType="Blank" evaluationTime="Report">
-					<reportElement x="40" y="4" width="60" height="54" uuid="28735df0-844f-46fe-b22a-318d650c789e"/>
-					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
-				</image>
 				<staticText>
 					<reportElement style="campoPequeno" x="39" y="98" width="262" height="6" uuid="0a7f8559-de6a-4c78-a972-4abea8989f23"/>
 					<text><![CDATA[NATUREZA DA OPERAÇÃO]]></text>
@@ -752,6 +748,16 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 						<pen lineWidth="0.25"/>
 					</graphicElement>
 				</rectangle>
+				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true">
+					<reportElement x="52" y="21" width="60" height="54" uuid="b0e8ba93-885e-44c4-a4c9-ba82b115cb3a"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<imageExpression><![CDATA[$F{logo}]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>
