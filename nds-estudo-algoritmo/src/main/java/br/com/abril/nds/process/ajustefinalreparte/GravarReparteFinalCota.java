@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.ajustefinalreparte;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,17 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
     		if(cota.getClassificacao().in(ClassificacaoCota.CotaMixSemMinMax)){
     			cota.setClassificacao(ClassificacaoCota.CotaMix);
     		}
+    		
+    		if(cota.getClassificacao().in(ClassificacaoCota.SemClassificacao)){
+    			if(cota.getReparteCalculado() == null || cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0){
+    				if((cota.getVendaMediaNominal().compareTo(BigDecimal.ZERO) > 0 || cota.getVendaMediaCorrigida().compareTo(BigDecimal.ZERO) > 0)){
+    					cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
+    					cota.setReparteCalculado(BigInteger.ZERO);
+    				}
+    			}
+    		}
+    		
+    		
     	}
 
     	estudo.setDataLancamento(estudo.getProdutoEdicaoEstudo().getDataLancamento());
