@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos" printOrder="Horizontal" pageWidth="842" pageHeight="592" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="0de048fa-a620-44b6-bcb1-d2441005639e">
 	<property name="ireport.zoom" value="2.9230756500000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="24"/>
+	<property name="ireport.y" value="15"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -72,9 +72,6 @@
 	</background>
 	<detail>
 		<band height="70" splitType="Stretch">
-			<rectangle>
-				<reportElement style="borda_1" mode="Transparent" x="0" y="0" width="758" height="16" uuid="2f6dd3c5-e319-43e1-b681-6f5440f9e5fb"/>
-			</rectangle>
 			<textField isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="38" height="16" uuid="c39ba4dd-ad70-4c6d-b19e-b24e2d92b0e8"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="5" rightPadding="1">
@@ -98,6 +95,9 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricaoProduto} + " - " + $F{infAdProd}]]></textFieldExpression>
 			</textField>
+			<rectangle>
+				<reportElement style="borda_1" mode="Transparent" x="0" y="0" width="758" height="16" uuid="2f6dd3c5-e319-43e1-b681-6f5440f9e5fb"/>
+			</rectangle>
 			<textField isBlankWhenNull="false">
 				<reportElement stretchType="RelativeToBandHeight" x="281" y="0" width="45" height="16" uuid="f1808261-99a3-490e-8f0e-d25796b2909e"/>
 				<box topPadding="2" leftPadding="2" rightPadding="1">
