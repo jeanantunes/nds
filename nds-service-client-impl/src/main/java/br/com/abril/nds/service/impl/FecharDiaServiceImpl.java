@@ -629,7 +629,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional(readOnly = true)
 	public ResumoFechamentoDiarioConsignadoDTO obterResumoConsignado(Date dataFechamento) {
 		
-		if(this.isDiaComFechamentoRealizado(dataFechamento)){
+		if(false && this.isDiaComFechamentoRealizado(dataFechamento)){
 			
 			return this.obterResumoConsignadoComFechamentoProcessado(dataFechamento);
 		}
@@ -695,6 +695,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
         BigDecimal valorExpedidoAlteracaoPreco = Util.nvl(
         		movimentoEstoqueRepository.obterSaldoDeReparteExpedido(dataFechamento, true), BigDecimal.ZERO);
+        
+        BigDecimal valorAlteracoesPrecosExpedicoesAnteriores = Util.nvl(
+        		movimentoEstoqueRepository.obterValorAlteracoesPrecosExpedicoesAnteriores(dataFechamento), BigDecimal.ZERO);
+        valorExpedidoAlteracaoPreco = valorExpedidoAlteracaoPreco.add(valorAlteracoesPrecosExpedicoesAnteriores);
 
         resumoConsignado.setValorAVista(valorSaidaExpedicaoAVistaDevolveEncalhe);
         
