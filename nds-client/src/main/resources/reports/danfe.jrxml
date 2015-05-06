@@ -60,7 +60,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="LOGO_DISTRIBUIDOR" class="java.lang.String" isForPrompting="false">
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString language="xPath">
