@@ -1141,27 +1141,7 @@ var analiseParcialController = $.extend(true, {
 
 
         $('#liberar').click(function(event){
-            
-        	setTimeout(function(){
-        	
-	        	if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
-	            	var id = $('#estudoId').val();
-	            		$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
-	            				[{name : 'estudoId', value : id}],
-	            				
-	            				function(result) {
-	            					analiseParcialController.liberarEstudo();
-			            		},
-			            		function(result) {
-			            			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
-			            		},
-			            		null
-	            		);
-	            		
-	            }
-	            event.preventDefault();
-	            
-        	},1500);
+        	analiseParcialController.verificarDivergenciaReparte();
         });
         
         $('#naoLiberar').click(function(event){
@@ -1200,30 +1180,36 @@ var analiseParcialController = $.extend(true, {
             analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             return false;
     	} else {
-    		if(analiseParcialController.verificarDivergenciaReparte()) {
-    			return true;
-    		} else {
-    			analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
-    			return false;
-    		}
+    		return true;
+    		
     	}
     },
     
     verificarDivergenciaReparte : function(){
-    	var reparteEstudo = $('#total_reparte_estudo_cabecalho').text();
-    	var reparteDistribuido = $('#total_reparte_sugerido').text();
     	
-    	if(reparteEstudo != undefined && reparteDistribuido != undefined){
-    		if(reparteEstudo != reparteDistribuido){
-    			var novoReparte = reparteEstudo - reparteDistribuido;
-    			$('#saldo_reparte').text(novoReparte);
-    			return false;
-    		}else{
-    			return true;
-    		}
-    	}else{
-    		return true;
-    	}
+    	var id = $('#estudoId').val();
+		
+    	$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
+				[{name : 'estudoId', value : id}],
+				
+				function(result) {
+		        	if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
+		        		analiseParcialController.liberarEstudo();
+		            }
+			            
+        		},
+        		function(result) {
+        			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
+        			
+        			var estudo = $('#estudoId').val();
+                	
+	            	$("#ordenarPorDe").val('');
+	            	$("#ordenarPorAte").val('');
+	            	analiseParcialController.filtroDefault(estudo, "reparte", "");
+        			
+        		},
+        		null
+		);
     },
     
     liberarEstudo : function(){
