@@ -100,7 +100,7 @@ public class DanfeBuilder  implements Serializable {
 		
 		String ambiente 	= ""; //TODO obter campo
 		
-		String versao		= ""; //TODO obter campo
+		String versao		= identificacao.getVersaoSistemaEmissao();
 
 		    BigDecimal ISSQNTotal 				= BigDecimal.ZERO;
 		    BigDecimal ISSQNBase 				= BigDecimal.ZERO;
