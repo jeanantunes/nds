@@ -44,11 +44,11 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA", nullable = false)
-	private Date data;
+	private Date data = new Date();
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO", nullable = false)
-	private Date dataCriacao;
+	private Date dataCriacao = new Date();
 	
 	@Column(name = "NOTA_FISCAL_DEVOLUCAO_SIMBOLICA_EMITIDA")
 	private boolean notaFiscalDevolucaoSimbolicaEmitida;
@@ -97,7 +97,7 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 	}
 
 	public Date getDataCriacao() {
-		return dataCriacao;
+		return dataCriacao != null ? dataCriacao : new Date();
 	}
 
 	public void setDataCriacao(Date dataCriacao) {
@@ -108,8 +108,7 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 		return desobrigaNotaFiscalDevolucaoSimbolica;
 	}
 
-	public void setDesobrigaNotaFiscalDevolucaoSimbolica(
-			boolean desobrigaNotaFiscalDevolucaoSimbolica) {
+	public void setDesobrigaNotaFiscalDevolucaoSimbolica(boolean desobrigaNotaFiscalDevolucaoSimbolica) {
 		this.desobrigaNotaFiscalDevolucaoSimbolica = desobrigaNotaFiscalDevolucaoSimbolica;
 	}
 
@@ -125,8 +124,7 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 		return notaFiscalDevolucaoSimbolicaEmitida;
 	}
 
-	public void setNotaFiscalDevolucaoSimbolicaEmitida(
-			boolean notaFiscalDevolucaoSimbolicaEmitida) {
+	public void setNotaFiscalDevolucaoSimbolicaEmitida(boolean notaFiscalDevolucaoSimbolicaEmitida) {
 		this.notaFiscalDevolucaoSimbolicaEmitida = notaFiscalDevolucaoSimbolicaEmitida;
 	}
 	
@@ -174,8 +172,7 @@ public abstract class MovimentoFechamentoFiscal implements Serializable {
 		return origemMovimentoFechamentoFiscal;
 	}
 
-	public void setOrigemMovimentoFechamentoFiscal(
-			List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal) {
+	public void setOrigemMovimentoFechamentoFiscal(List<OrigemItemMovFechamentoFiscal> origemMovimentoFechamentoFiscal) {
 		this.origemMovimentoFechamentoFiscal = origemMovimentoFechamentoFiscal;
 	}
 	

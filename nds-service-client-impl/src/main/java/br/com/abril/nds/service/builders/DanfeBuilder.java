@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.builders;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -558,4 +557,4 @@ public class DanfeBuilder  implements Serializable {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar o arquivo..."+ e.getMessage());
 		}
 	}
-}		
+}
