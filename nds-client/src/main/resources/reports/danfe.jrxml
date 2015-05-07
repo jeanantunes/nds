@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.9965000000000035"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="511"/>
+	<property name="ireport.y" value="945"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -1365,17 +1365,17 @@ VOLUMES]]></text>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="112">
+		<band height="108">
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="52" y="0" width="760" height="30" isPrintWhenDetailOverflows="true" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
 			<rectangle>
-				<reportElement style="borda_1" positionType="Float" stretchType="RelativeToBandHeight" x="36" y="0" width="15" height="112" isPrintWhenDetailOverflows="true" uuid="b9710530-9c1c-4429-88db-8d32a5fbe15a"/>
+				<reportElement style="borda_1" positionType="Float" stretchType="RelativeToBandHeight" x="36" y="0" width="15" height="108" isPrintWhenDetailOverflows="true" uuid="b9710530-9c1c-4429-88db-8d32a5fbe15a"/>
 			</rectangle>
 			<staticText>
-				<reportElement style="campoPequeno" positionType="Float" stretchType="RelativeToBandHeight" x="36" y="0" width="15" height="112" isPrintWhenDetailOverflows="true" uuid="545179d4-2c98-4b56-90e9-b48b024109d6"/>
+				<reportElement style="campoPequeno" positionType="Float" stretchType="RelativeToBandHeight" x="36" y="0" width="15" height="108" isPrintWhenDetailOverflows="true" uuid="545179d4-2c98-4b56-90e9-b48b024109d6"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0"/>
@@ -1389,82 +1389,82 @@ VOLUMES]]></text>
 				<text><![CDATA[DADOS DO PRODUTO / SERVIÇO]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement style="borda_1" positionType="Float" stretchType="RelativeToBandHeight" x="52" y="0" width="760" height="112" isPrintWhenDetailOverflows="true" uuid="4e090445-70c8-4b73-b298-e88f2bc6cc7b"/>
+				<reportElement style="borda_1" positionType="Float" stretchType="RelativeToBandHeight" x="52" y="0" width="760" height="108" isPrintWhenDetailOverflows="true" uuid="4e090445-70c8-4b73-b298-e88f2bc6cc7b"/>
 			</rectangle>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="90" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="a8cd4309-1f43-42a1-8fc6-cdea03bde3dd"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="90" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="a8cd4309-1f43-42a1-8fc6-cdea03bde3dd"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="333" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="e8549140-ec3d-4caf-859c-eb8dca0a85c0"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="333" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="e8549140-ec3d-4caf-859c-eb8dca0a85c0"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="378" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="780f7bf5-dfa9-4951-a6ba-e2f8e7562b37"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="378" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="780f7bf5-dfa9-4951-a6ba-e2f8e7562b37"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="409" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="3e25c8ef-a2cd-45af-a0c8-15e12747e5ed"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="409" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="3e25c8ef-a2cd-45af-a0c8-15e12747e5ed"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="440" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="7cc40755-2e20-4d24-be29-2db5672710cf"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="440" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="7cc40755-2e20-4d24-be29-2db5672710cf"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="463" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="1f89a919-7417-4198-ac28-92a4874fd5a6"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="463" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="1f89a919-7417-4198-ac28-92a4874fd5a6"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="509" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="58f48bda-b108-44b5-864b-2bb89806a094"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="509" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="58f48bda-b108-44b5-864b-2bb89806a094"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="546" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="da390215-6889-4764-a65a-329c56bd9d73"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="546" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="da390215-6889-4764-a65a-329c56bd9d73"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="591" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="a83dbb05-9f07-4ddf-938e-d8a2f155ddf0"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="591" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="a83dbb05-9f07-4ddf-938e-d8a2f155ddf0"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="632" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="6557e717-b613-40cb-b60b-e3b87c397d5e"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="632" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="6557e717-b613-40cb-b60b-e3b87c397d5e"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="677" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="cb51e3b8-0193-4ee8-972b-f8f69106eaf2"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="677" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="cb51e3b8-0193-4ee8-972b-f8f69106eaf2"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="722" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="bfac6e1f-cc1b-4f16-9831-a411563e162d"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="722" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="bfac6e1f-cc1b-4f16-9831-a411563e162d"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="767" y="0" width="1" height="112" isPrintWhenDetailOverflows="true" uuid="d3f52ab7-d5c9-4089-9b64-3809450ee5b0"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="767" y="0" width="1" height="108" isPrintWhenDetailOverflows="true" uuid="d3f52ab7-d5c9-4089-9b64-3809450ee5b0"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
@@ -1472,9 +1472,9 @@ VOLUMES]]></text>
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="110">
+		<band height="108">
 			<frame>
-				<reportElement style="borda_1" positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="812" height="110" isRemoveLineWhenBlank="true" uuid="74004850-083c-4c81-bf5b-104cab808f49"/>
+				<reportElement style="borda_1" positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="812" height="108" isRemoveLineWhenBlank="true" uuid="74004850-083c-4c81-bf5b-104cab808f49"/>
 				<rectangle>
 					<reportElement style="borda_1" x="53" y="9" width="162" height="24" uuid="bba3a257-848e-46b4-b75d-e070396d1eb7"/>
 				</rectangle>
