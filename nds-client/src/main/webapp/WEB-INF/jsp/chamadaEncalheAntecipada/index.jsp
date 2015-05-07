@@ -204,7 +204,7 @@
 					<input class="campoDePesquisa" type="checkbox" id="checkCE" name="checkCE">
 				</td>
 	
-			  	<td>Com CE</td>
+			  	<td>Programado</td>
 			  	
 			  	<td align="right">
 					<input class="campoDePesquisa" type="checkbox" id="checkRecolhimentoFinal" name="checkRecolhimentoFinal">
