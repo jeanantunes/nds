@@ -178,9 +178,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								for (NotaFiscal notaFiscal : notas) {
 									
 									DanfeDTO danfe = montarDanfe(notaFiscal);
-									
-									if(danfe != null) {
-										
+									if(danfe != null) {										
 										listaDanfeWrapper.add(new DanfeWrapper(danfe));
 									}
 								}
@@ -205,9 +203,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				for (NotaFiscal notaFiscal : notas) {
 					
 					DanfeDTO danfe = montarDanfe(notaFiscal);
-					
-					if(danfe != null) {
-						
+					if(danfe != null) {						
 						listaDanfeWrapper.add(new DanfeWrapper(danfe));
 					}
 				}
@@ -230,7 +226,6 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								
 								for (NotaFiscal notaFiscal : notas) {
 									DanfeDTO danfe = montarDanfe(notaFiscal);
-									
 									if(danfe!=null) {
 										listaDanfeWrapper.add(new DanfeWrapper(danfe));
 									}
@@ -254,7 +249,6 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				
 				for (NotaFiscal notaFiscal : notas) {
 					DanfeDTO danfe = montarDanfe(notaFiscal);
-					danfe.setLogo(logoDistribuidor);
 					if(danfe!=null) {
 						listaDanfeWrapper.add(new DanfeWrapper(danfe));
 					}
