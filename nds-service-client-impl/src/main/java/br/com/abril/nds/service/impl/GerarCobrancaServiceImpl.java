@@ -606,7 +606,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								  vlMovFinanTotal, 
 								  vlMovPostergado);
 
-		if (!consolidadosCota.isEmpty()){
+		if(!consolidadosCota.isEmpty()) {
 		
 			this.gerarDividaCobrancaSemCentralizacao(usuario, 
 				                                     dataOperacao, 

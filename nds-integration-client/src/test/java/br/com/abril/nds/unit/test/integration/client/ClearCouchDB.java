@@ -54,7 +54,7 @@ public class ClearCouchDB {
 	private CouchDbClient getCouchDBClient() {
 		
 		return new CouchDbClient(
-				"db_" + StringUtils.leftPad("6248116", 8, "0"),
+				"db_" + StringUtils.leftPad("06248116", 8, "0"),
 				true,
 				couchDbProperties.getProtocol(),
 				couchDbProperties.getHost(),

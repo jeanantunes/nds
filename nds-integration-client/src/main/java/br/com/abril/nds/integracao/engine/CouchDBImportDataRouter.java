@@ -67,7 +67,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		
 		String codigoDistribuidor = ((CouchDBImportRouteTemplate) inputModel).getCodigoDistribuidor();
 		
-		CouchDbClient couchDbClient = this.getCouchDBClient(codigoDistribuidor);
+		CouchDbClient couchDbClient = this.getCouchDBClient(codigoDistribuidor, true);
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		

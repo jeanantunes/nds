@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.engine;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,52 +40,42 @@ public class DBImportDataRouter extends AbstractRepository implements ContentBas
 
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
 
-		List<String> codDistribuidores = new ArrayList<>();
+		final String codDistribuidor = inputModel.getCodigoDistribuidor();
 		
-		codDistribuidores.add(this.distribuidorService.obter().getCodigoDistribuidorDinap());
-		codDistribuidores.add(this.distribuidorService.obter().getCodigoDistribuidorFC());
+		final AtomicReference<Object> tempVar = new AtomicReference<Object>();
+		// Processamento a ser executado ANTES do processamento principal:
 		
-		for (final String codDistribuidor : codDistribuidores) {
-		
-			final AtomicReference<Object> tempVar = new AtomicReference<Object>();
-			// Processamento a ser executado ANTES do processamento principal:
+		TransactionTemplate template = new TransactionTemplate(transactionManager);		
+		template.execute(new TransactionCallback<Void>() {
 			
-			TransactionTemplate template = new TransactionTemplate(transactionManager);		
-			template.execute(new TransactionCallback<Void>() {
+			@Override
+			public Void doInTransaction(TransactionStatus status) {
 				
-				@Override
-				public Void doInTransaction(TransactionStatus status) {
+				messageProcessor.preProcess(tempVar);
+		
+				for (Object o : (List<Object>)tempVar.get() ) {
+						
+					final Message message = new Message();
+					message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
+					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+					message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), codDistribuidor);
+					message.setTempVar(tempVar);
+									
+					message.setBody(o);
 					
-					messageProcessor.preProcess(tempVar);
-			
-					for (Object o : (List<Object>)tempVar.get() ) {
-							
-						final Message message = new Message();
-						message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
-						message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
-						message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), codDistribuidor);
-						message.setTempVar(tempVar);
+					try {
+						messageProcessor.processMessage(message);	
+					} catch(Exception e) {
+						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+					}
 										
-						message.setBody(o);
-						
-						try {
-													
-							messageProcessor.processMessage(message);	
-								
-						} catch(Exception e) {
-							ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-
-						}
-						
-											
-					}		
-                    // Processamento a ser executado APÓS o processamento
-                    // principal:
-					messageProcessor.posProcess(tempVar);
-					return null;
-				}
-			});
-		}
+				}		
+                // Processamento a ser executado APÓS o processamento
+                // principal:
+				messageProcessor.posProcess(tempVar);
+				return null;
+			}
+		});
 	}
 		
 }
