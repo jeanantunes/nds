@@ -27,7 +27,7 @@ public class HistoricoAlteracaoPrecoVenda {
 	
 	@Temporal(value=TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO", nullable = false)
-	private Date dataCriacao;
+	private Date dataCriacao = new Date();
 	
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_OPERACAO", nullable = false)
