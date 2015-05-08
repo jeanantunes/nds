@@ -59,7 +59,7 @@ public class NotaEnvio implements Serializable {
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "itemNotaEnvioPK.notaEnvio")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
 	
-	@Column(name = "NOTA_FISCAL_ID", nullable = false)
+	@Column(name = "NOTA_FISCAL_ID", nullable = true)
 	private Long notaFiscalID;
 
 	/**
