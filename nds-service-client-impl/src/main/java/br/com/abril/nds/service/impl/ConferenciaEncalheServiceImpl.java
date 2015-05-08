@@ -2405,8 +2405,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Date dataOperacao,
 			final Date dataRecolhimentoReferencia, final Usuario usuario) {
 		
-	
-		
 		Long idMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.findIdByIdConferenciaEncalhe(conferenciaEncalheDTO.getIdConferenciaEncalhe());
 		Long idMovimentoEstoque = null;
 
