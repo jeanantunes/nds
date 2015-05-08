@@ -148,7 +148,7 @@
 		<form id="form-ProdutosNaoBalanceadosAposConfirmacaoMatriz">
 			<div id="dialogProdutosDeOutraSemana" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 				<jsp:include page="../messagesDialog.jsp" />
-				<p>Os seguintes produtos estão com a semanda de recolhimento diferente da semana de recolhimento do fornecedor:</p>
+				<p>Os seguintes produtos estão com a semana de recolhimento diferente da semana de recolhimento do fornecedor:</p>
 				<br>
 				<p><span id="descDialogProdutosDeOutraSemana"></span></p>
 			</div>
