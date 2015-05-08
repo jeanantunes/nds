@@ -600,6 +600,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
     	
+    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) < 0)) {
+    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é menor que estoque disponível!");
+    	}
+    	
     	
     	if(validacao == null) {
     		validacao = new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
