@@ -1993,7 +1993,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, isolation=Isolation.READ_COMMITTED)
+	@Transactional(rollbackFor={Exception.class}, isolation=Isolation.READ_COMMITTED)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
@@ -2019,13 +2019,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 
-		try {
-		
-			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
-		} catch(final GerarCobrancaValidacaoException e) {
-			
-			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
-		}
+		nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
 
 		final ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 
