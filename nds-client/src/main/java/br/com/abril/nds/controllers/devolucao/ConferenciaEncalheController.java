@@ -1722,7 +1722,17 @@ public class ConferenciaEncalheController extends BaseController {
 	private void salvarConferenciaCota(InfoConferenciaEncalheCota infoConferenciaEncalheCota,
 			                           final ControleConferenciaEncalheCota controleConfEncalheCota,
 			                           final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave, final boolean indConferenciaContingencia){
-			
+		
+		if (controleConfEncalheCota.getDataOperacao() == null) {
+		    
+			controleConfEncalheCota.setDataOperacao(this.distribuidorService.obterDataOperacaoDistribuidor());
+		}
+		
+        if (controleConfEncalheCota.getUsuario() == null) {
+        	
+			controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
+		}
+		
 		this.conferenciaEncalheService.criarBackupConferenciaEncalhe(getUsuarioLogado(), infoConferenciaEncalheCota, controleConfEncalheCota);
 		
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
@@ -2158,7 +2168,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.use(CustomMapJson.class).put("result", dados).serialize();
 			
 		} else {
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result").recursive().serialize();
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada."), "result").recursive().serialize();
 		}
 	}
 
