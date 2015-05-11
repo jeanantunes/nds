@@ -336,7 +336,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		}
 		query.setParameter("grupoMovimentoEnvioJornaleiroJuramentado", GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name());
 		
-		query.addScalar("VALOR_EXPEDIDO",StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("VALOR_EXPEDIDO", StandardBasicTypes.BIG_DECIMAL);
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -345,8 +345,10 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select sum(mec.qtde * (hapv.VALOR_ATUAL - hapv.VALOR_ANTIGO)) VALOR_EXPEDIDO                                      ");
+		sql.append(" select sum((case when tm.operacao_estoque = 'ENTRADA' then mec.QTDE else -mec.QTDE end) *                         ");
+		sql.append(" (hapv.VALOR_ATUAL - hapv.VALOR_ANTIGO)) VALOR_EXPEDIDO                                                            ");
 		sql.append(" from movimento_estoque_cota mec                                                                                   ");
+		sql.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                                     ");
 		sql.append(" inner join historico_alteracao_preco_venda hapv on hapv.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID                 ");
 		sql.append(" inner join produto_edicao pe on pe.id = hapv.PRODUTO_EDICAO_ID                                                    ");
 		sql.append(" where 1 = 1                                                                                                       ");
@@ -358,7 +360,7 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 		sql.append(" 	inner join PRODUTO_EDICAO produtoEdicao_ on lancamento.PRODUTO_EDICAO_ID=produtoEdicao_.ID                     ");
 		sql.append(" 	inner join PRODUTO produto_ on produtoEdicao_.PRODUTO_ID=produto_.ID                                           ");
 		sql.append(" 	where                                                                                                          ");
-		sql.append(" 		lancamento.STATUS <> :statusFuro                                                                                ");
+		sql.append(" 		lancamento.STATUS <> :statusFuro                                                                           ");
 		sql.append(" 		and lancamento.DATA_LCTO_DISTRIBUIDOR between date_add(:dataMovimento, interval -1 day) and :dataMovimento ");
 		sql.append(" 		and produto_.FORMA_COMERCIALIZACAO = :formaComercializacaoConsignado                                       ");
 		sql.append(" )                                                                                                                 ");
