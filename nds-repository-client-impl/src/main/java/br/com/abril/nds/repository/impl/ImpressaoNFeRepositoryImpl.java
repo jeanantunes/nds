@@ -35,10 +35,14 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@SuppressWarnings("unchecked")
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select distinct new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(ident.numeroDocumentoFiscal, ")
-		   .append(" nfi.notaImpressa, cota, coalesce(SUM(prd.quantidade), 0), coalesce(SUM(prd.valorTotalBruto), 0), ")
-		   .append(" coalesce(SUM(prd.valorUnitario), 0) ) ");
+		StringBuilder sql = new StringBuilder("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
+		.append(" nf.id as idNota")
+		.append(", ident.numeroDocumentoFiscal ")
+		.append(", nfi.notaImpressa ")
+		.append(", cota ")
+		.append(", SUM(prd.quantidade) ")
+		.append(", SUM(prd.valorTotalBruto) ")
+		.append(", coalesce(SUM(prd.valorDesconto), 0)) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
