@@ -346,27 +346,31 @@
 						           	
 						           	<c:if test="${dado.idProdutoEdicao != null}">
 						           	
-							           	<table name="tab6" class="pulaFolha" style="border:1px solid #000; margin-top:5px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;" 
-							           			align="center" width="1000" border="0" align="center" cellpadding="2" 
-							           			cellspacing="0">
+							           	<table name="tab6" class="pulaFolha" align="center" width="1000" border="0" align="center">
 							        	<tr>
 							        	
 							        	<c:set value="true" var="tableImagemAberta"></c:set>
 							        </c:if>
 						        </c:if>
 						        
+								<c:set var="indexImg" value="${indexImg + 1}"></c:set>
+				        		
 				        		<c:if test="${dado.idProdutoEdicao != null}">
+									
 									<td align="center">
 										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
-										<img src="<c:url value='/capa/tratarNoImage/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
+										
+										 <img src="<c:url value='/capa/tratarNoImage/${dado.idProdutoEdicao}'></c:url>" width="92" height="138"></img>
 									<td>
+
+									<c:if test="${indexImg % 9 == 0 && dado != null}">
+										
+										</tr><tr>
+									</c:if>
+
 								</c:if>
 								
-								<c:set var="indexImg" value="${indexImg + 1}"></c:set>
 								
-								<c:if test="${indexImg % 5 == 0 && dado.idProdutoEdicao != null}">
-									</tr><tr>
-								</c:if>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
