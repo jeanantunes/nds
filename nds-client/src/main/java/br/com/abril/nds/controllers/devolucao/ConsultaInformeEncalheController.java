@@ -314,11 +314,21 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         int qtdReg = 0;
         
-        int quebra = TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas()) ? 35 : 41;
+        int quebra = 0;
+
+        int qtdImg = 0;
+        		
+        
+        if(tipoImpressao.getCapas().equals(TipoImpressaoInformeEncalheDTO.Capas.FIM)){
+        	quebra = TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas()) ? 72 : 41;
+        	qtdImg = 72;
+        	
+        }else{
+        	quebra = TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas()) ? 35 : 41;
+        	qtdImg = 35;
+        }
         
         int indexImg = 0;
-        
-        final int qtdImg = 35;
         
         int imgAdd = 0;
         
