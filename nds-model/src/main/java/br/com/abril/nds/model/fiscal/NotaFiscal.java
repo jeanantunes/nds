@@ -154,13 +154,13 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name = "CHAVE_ACESSO")
 	protected String chaveAcesso;
 	
-	@Column(name = "VALOR_BRUTO", nullable = false)
+	@Column(name = "VALOR_BRUTO", nullable = true)
 	protected BigDecimal valorBruto;
 	
-	@Column(name = "VALOR_LIQUIDO", nullable = false)
+	@Column(name = "VALOR_LIQUIDO", nullable = true)
 	protected BigDecimal valorLiquido;
 	
-	@Column(name = "VALOR_DESCONTO", nullable = false)
+	@Column(name = "VALOR_DESCONTO", nullable = true)
 	protected BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
