@@ -2631,10 +2631,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				movimentoEstoque,
 				chamadaEncalheCota);
 		
-		if(chamadaEncalheCota.getQtdePrevista().subtract(movimentoEstoqueCota.getQtde()).longValue() < 0) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "A quantidade do encalhe está negativa!");
-		}
-		
 		List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
 		MovimentoFechamentoFiscalCota mff = new MovimentoFechamentoFiscalCota();
 		listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalMEC(mff, movimentoEstoqueCota));

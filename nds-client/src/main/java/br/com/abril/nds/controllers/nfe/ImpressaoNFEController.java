@@ -242,14 +242,13 @@ public class ImpressaoNFEController extends BaseController {
 		
 		filtro.setPaginacao(null);
 		
-		List<NotasCotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
-
+		List<NotasCotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.obterNotafiscalImpressao(filtro);
 		
 		if(listaNFeDTO == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado nenhum item");
 		}
 		
-		FileExporter.to("cotas", fileType).inHTTPResponse(
+		FileExporter.to("nota-fiscal-impressa", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				null, 
 				null, 
