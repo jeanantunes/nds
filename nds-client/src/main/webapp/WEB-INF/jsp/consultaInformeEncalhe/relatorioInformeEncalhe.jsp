@@ -360,7 +360,7 @@
 									<td align="center">
 										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
 										
-										 <img src="<c:url value='/capa/tratarNoImage/${dado.idProdutoEdicao}'></c:url>" width="92" height="138"></img>
+										 <img src="<c:url value='/capa/tratarNoImage/${dado.idProdutoEdicao}'></c:url>" width="102" height="139"></img>
 									<td>
 
 									<c:if test="${indexImg % 9 == 0 && dado != null}">
