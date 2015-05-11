@@ -2201,8 +2201,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 					gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
 													           controleConferenciaEncalheCota.getUsuario().getId());
-				}
-				else{
+				} else {
 				
 					gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
 													   controleConferenciaEncalheCota.getUsuario().getId(), 
@@ -2216,7 +2215,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final boolean isConferenciaRealizada = this.controleConferenciaEncalheCotaRepository.isConferenciaEncalheCotaFinalizada(controleConferenciaEncalheCota.getCota().getId(), 
 					                                                                                                                controleConferenciaEncalheCota.getDataOperacao());
 			
-			if(isConferenciaRealizada){
+			if(isConferenciaRealizada) {
 
                 // EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
 			    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
