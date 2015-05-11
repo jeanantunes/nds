@@ -351,11 +351,14 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		!(estudo.getDistribuicaoVendaMediaDTO() != null && estudo.getDistribuicaoVendaMediaDTO().getAbrangencia() != null &&
 		estudo.getReparteMinimo() != null)) {
 	    
-	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
-	    } else if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+	    if(cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0){
+	    	if (totalReparte.compareTo(BigDecimal.ZERO) == 0) {
+	    		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
+	    	} else if (totalVenda.compareTo(BigDecimal.ZERO) == 0) {
+	    		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+	    	}
 	    }
+		
 	}
 	if (estudo.isUsarFixacao() && cota.getReparteFixado() != null && !cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 	    

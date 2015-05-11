@@ -83,9 +83,9 @@ public enum GrupoMovimentoFinaceiro {
 	
 	NEGOCIACAO_COMISSAO(OperacaoFinaceira.DEBITO, "Comissão Negociação"),
 	
-	DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR(OperacaoFinaceira.DEBITO,"Débito Taxa de Entrega - Transportador"),
+	DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR(OperacaoFinaceira.DEBITO, "Débito Taxa de Entrega - Transportador"),
 	
-	DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR(OperacaoFinaceira.DEBITO,"Débito Taxa de Entrega - Entregador"),
+	DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR(OperacaoFinaceira.DEBITO, "Débito Taxa de Entrega - Entregador"),
 	
 	TAXA_EXTRA(OperacaoFinaceira.DEBITO, "Taxa Extra");
 	

@@ -1057,9 +1057,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
             
         } catch(final Exception e) {
             
-            throw new ValidacaoException(TipoMensagem.ERROR,
-                    "Erro ao carregar logotipo do distribuidor no documento de cobrança");
-            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao carregar logotipo do distribuidor no documento de cobrança");
         }
         
         final List<DebitoCreditoCota> listaComposicaoCobranca =
