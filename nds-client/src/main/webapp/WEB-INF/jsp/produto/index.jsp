@@ -147,7 +147,7 @@
 										<tr>
 											<td>N&atilde;o Necessita CE Integra&ccedil;&atilde;o</td>
 												<td style="width:100px;">
-													<input type="checkbox" id="selRemessaDistribuicao" name="selRemessaDistribuicao" style="float: left; margin-right: 25px;" />
+													<input type="checkbox" id="selSemCeIntegracao" name="selSemCeIntegracao" style="float: left; margin-right: 25px;" />
 											</td>
 										<tr>
 									</table>

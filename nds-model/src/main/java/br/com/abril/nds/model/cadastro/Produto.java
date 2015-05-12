@@ -180,8 +180,8 @@ public class Produto implements Serializable {
 	@Column(name = "GERACAO_AUTOMATICA", nullable = true, columnDefinition="boolean default false")
 	private Boolean isGeracaoAutomatica = false;
 	
-	@Column(name = "REMESSA_DISTRIBUICAO", nullable = true, columnDefinition="boolean default false")
-	private Boolean isRemessaDistribuicao = false;
+	@Column(name = "SEM_CE_INTEGRACAO", nullable = true, columnDefinition="boolean default false")
+	private Boolean isSemCeIntegracao = false;
 	
 	@OneToMany(mappedBy = "produto")
 	private List<ProdutoEdicao> produtoEdicao;
@@ -616,12 +616,12 @@ public class Produto implements Serializable {
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
 	}
 	
-	public Boolean getIsRemessaDistribuicao() {
-		return isRemessaDistribuicao;
+	public Boolean getIsSemCeIntegracao() {
+		return isSemCeIntegracao;
 	}
 
-	public void setIsRemessaDistribuicao(Boolean isRemessaDistribuicao) {
-		this.isRemessaDistribuicao = isRemessaDistribuicao;
+	public void setIsSemCeIntegracao(Boolean isSemCeIntegracao) {
+		this.isSemCeIntegracao = isSemCeIntegracao;
 	}
 
 	public String getCodigoICD() {

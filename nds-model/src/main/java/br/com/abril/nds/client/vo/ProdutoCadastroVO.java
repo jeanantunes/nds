@@ -61,7 +61,7 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private Boolean isGeracaoAutomatica;
 	
-	private Boolean isRemessaDistribuicao;
+	private Boolean isSemCeIntegracao;
 	
 	private Long idTipoSegmentoProduto;
 	
@@ -80,7 +80,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String formaFisica, 
 			Long idTipoSegmentoProduto, 
 			Origem origem, 
-			Boolean isGeracaoAutomatica, Boolean isRemessaDistribuicao) {
+			Boolean isGeracaoAutomatica, Boolean isSemCeIntegracao) {
 		
 		this.id = id;
 		this.codigo = codigo;
@@ -104,7 +104,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
 		this.origem = origem;
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
-		this.isRemessaDistribuicao = isRemessaDistribuicao;
+		this.isSemCeIntegracao = isSemCeIntegracao;
 	}
 
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
@@ -119,8 +119,8 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		TributacaoFiscal tributacaoFiscal = produto.getTributacaoFiscal();
 		
-		long idDesconto = produto.getDescontoLogistica() != null ? 
-				produto.getDescontoLogistica().getId() : 0L;
+		long idDesconto = produto.getDescontoLogistica() != null ? produto.getDescontoLogistica().getId() : 0L;
+		
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), 
 			produto.getCodigo(),
@@ -142,7 +142,7 @@ public class ProdutoCadastroVO implements Serializable {
 			(produto.getTipoSegmentoProduto()!=null)?produto.getTipoSegmentoProduto().getId():null,
 			produto.getOrigem(),
 			produto.getIsGeracaoAutomatica(),
-			produto.getIsRemessaDistribuicao()
+			produto.getIsSemCeIntegracao()
 			);
 		
 		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
@@ -442,12 +442,12 @@ public class ProdutoCadastroVO implements Serializable {
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
 	}
 
-	public Boolean getIsRemessaDistribuicao() {
-		return isRemessaDistribuicao;
+	public Boolean getIsSemCeIntegracao() {
+		return isSemCeIntegracao;
 	}
 
-	public void setIsRemessaDistribuicao(Boolean isRemessaDistribuicao) {
-		this.isRemessaDistribuicao = isRemessaDistribuicao;
+	public void setIsSemCeIntegracao(Boolean isSemCeIntegracao) {
+		this.isSemCeIntegracao = isSemCeIntegracao;
 	}
 
 	public Long getIdTipoSegmentoProduto() {

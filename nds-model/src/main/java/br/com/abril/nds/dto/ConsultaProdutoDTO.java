@@ -42,7 +42,8 @@ public class ConsultaProdutoDTO implements Serializable {
 
 	@Export(label="Periodicidade", alignment=Alignment.CENTER, widthPercent=10)
 	private PeriodicidadeProduto periodicidade;
-
+	
+	private boolean isSemCeIntegracao;
 	
 	/**
 	 * Construtor Padrão
@@ -191,5 +192,13 @@ public class ConsultaProdutoDTO implements Serializable {
 	 */
 	public void setPeriodicidade(PeriodicidadeProduto periodicidade) {
 		this.periodicidade = periodicidade;
+	}
+
+	public boolean isSemCeIntegracao() {
+		return isSemCeIntegracao;
+	}
+
+	public void setSemCeIntegracao(boolean isSemCeIntegracao) {
+		this.isSemCeIntegracao = isSemCeIntegracao;
 	}
 }

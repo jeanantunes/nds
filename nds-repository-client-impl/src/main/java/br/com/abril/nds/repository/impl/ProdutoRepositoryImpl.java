@@ -153,7 +153,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql.append(" produto.peb as peb,  						");
 		hql.append(" produto.pacotePadrao as pacotePadrao, 		");
 		hql.append(" coalesce(descontoLogistica.percentualDesconto, produto.desconto, 0) as percentualDesconto, ");
-		hql.append(" produto.periodicidade as periodicidade 	");
+		hql.append(" produto.periodicidade as periodicidade, 	");
+		hql.append(" produto.isSemCeIntegracao as isSemCeIntegracao 	");
 		
 		try {
 			
