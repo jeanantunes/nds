@@ -217,15 +217,15 @@ public abstract class Util {
             final Long idDivida,
             final Long agencia,
             final Long contaCorrente,
-            final Integer carteira){
+            final Integer carteira) {
         
-        final String codSacado = Util.padLeft(numeroCota.toString(), "0", 4);
+        final String codSacado = Util.padLeft(numeroCota.toString(), "0", 5);
         
         final String auxData = DateUtil.formatarData(dtGeracao, "ddMMyy");
         
         final NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
         
-        if (nomeBanco == null){
+        if (nomeBanco == null) {
             
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
         }
@@ -308,7 +308,7 @@ public abstract class Util {
         
         primeiroDigito = Util.calcularDigito(nossoNumero);
         
-        nossoNumero += primeiroDigito +""+ segundoDigito;
+        nossoNumero = new StringBuilder(nossoNumero).append(primeiroDigito).append(segundoDigito).toString();
         
         final String dataVencimentoFormatada = DateUtil.formatarData(dataVencimento, "ddMMyy");
         
