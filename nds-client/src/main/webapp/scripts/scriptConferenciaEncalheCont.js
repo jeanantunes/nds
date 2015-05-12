@@ -252,8 +252,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 						buttons : {
 							"Sim" : function() {
 								
-								ConferenciaEncalheCont.excluirNotasFiscaisPorReabertura(data);
-								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
@@ -322,7 +320,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 		function(result){
 			if(result.IND_COTA_EXIGE_NFE) {
 				fnCotaExigeNfe();
-			} 
+				ConferenciaEncalheCont.excluirNotasFiscaisPorReabertura(data);
+			} else {
+				return;
+			}
 		});
 	},
 	
