@@ -22,7 +22,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 
 	private String semanaRecolhimento;
 
-	private Long situacaoAtendimentoDDE;
+	private String situacaoAtendimentoDDE;
 
 	private String codigoProduto;
 
@@ -36,7 +36,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 
 	private String tipoAtendimentoDDE;
 
-	@Field(offset=0, length=6)
+	@Field(offset=1, length=7)
 	public String getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
@@ -45,7 +45,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 
-	@Field(offset=8, length=6)
+	@Field(offset=9, length=6)
 	public String getSemanaRecolhimento() {
 		return semanaRecolhimento;
 	}
@@ -54,16 +54,16 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.semanaRecolhimento = semanaRecolhimento;
 	}
 
-	@Field(offset=15, length=10)
-	public Long getSituacaoAtendimentoDDE() {
+	@Field(offset=16, length=10)
+	public String getSituacaoAtendimentoDDE() {
 		return situacaoAtendimentoDDE;
 	}
 
-	public void setSituacaoAtendimentoDDE(Long situacaoAtendimentoDDE) {
+	public void setSituacaoAtendimentoDDE(String situacaoAtendimentoDDE) {
 		this.situacaoAtendimentoDDE = situacaoAtendimentoDDE;
 	}
 
-	@Field(offset=26, length=8)
+	@Field(offset=27, length=8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -72,7 +72,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.codigoProduto = codigoProduto;
 	}
 
-	@Field(offset=35, length=4)
+	@Field(offset=36, length=4)
 	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
@@ -81,7 +81,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.numeroEdicao = numeroEdicao;
 	}
 	
-	@Field(offset=40, length=45)
+	@Field(offset=41, length=45)
 	public String getNomeComercial() {
 		return nomeComercial;
 	}
@@ -90,7 +90,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.nomeComercial = nomeComercial;
 	}
 
-	@Field(offset=86, length=20)
+	@Field(offset=87, length=20)
 	public String getNomeDestinoDDE() {
 		return nomeDestinoDDE;
 	}
@@ -99,7 +99,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.nomeDestinoDDE = nomeDestinoDDE;
 	}
 
-	@Field(offset=107, length=2)
+	@Field(offset=108, length=2)
 	public Long getNumeroPrioridadeAtendimentoDDE() {
 		return numeroPrioridadeAtendimentoDDE;
 	}
@@ -108,7 +108,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.numeroPrioridadeAtendimentoDDE = numeroPrioridadeAtendimentoDDE;
 	}
 
-	@Field(offset=110, length=84)
+	@Field(offset=111, length=84)
 	public String getTipoAtendimentoDDE() {
 		return tipoAtendimentoDDE;
 	}
