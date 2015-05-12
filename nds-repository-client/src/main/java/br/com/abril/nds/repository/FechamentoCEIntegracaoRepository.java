@@ -20,4 +20,6 @@ public interface FechamentoCEIntegracaoRepository {
 	FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCEIntegracao(Long idChamadaEncalheForncecdor);
 	
 	List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracaoComDiferenca(FiltroFechamentoCEIntegracaoDTO filtro) ;
+
+	BigInteger countItensFechamentoSemCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 }

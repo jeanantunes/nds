@@ -23,6 +23,8 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private String semana;
 	
+	private String comboCeIntegracao;
+	
 	private PaginacaoVO paginacao;
 	
 	private ColunaOrdenacaoFechamentoCEIntegracao ordenacaoColuna;
@@ -138,6 +140,14 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	public void setCodigoDistribuidorFornecdor(Integer codigoDistribuidorFornecdor) {
 		this.codigoDistribuidorFornecdor = codigoDistribuidorFornecdor;
 	}
+	
+	public String getComboCeIntegracao() {
+		return comboCeIntegracao;
+	}
+
+	public void setComboCeIntegracao(String comboCeIntegracao) {
+		this.comboCeIntegracao = comboCeIntegracao;
+	}
 
 	@Override
 	public int hashCode() {
@@ -170,8 +180,4 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 			return false;
 		return true;
 	}
-
-	
-
-	
 }
