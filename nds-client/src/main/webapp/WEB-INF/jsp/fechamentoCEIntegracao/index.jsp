@@ -131,10 +131,6 @@
 							<option value="COM">Com CE</option>
 							<option value="SEM">Sem CE</option>
 							<option value="AMBOS">Ambos</option>
-							
-							<option value="AMBAS">Emitidas e a emitir</option>
-      						<option value="EMITIDAS">Emitidas</option>
-      						<option value="AEMITIR">A emitir</option>
 						</select>
 					</td>
 					<td style="width:20px;">
