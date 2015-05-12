@@ -9,17 +9,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "BASE_REFERENCIA_COTA", uniqueConstraints = { @UniqueConstraint(columnNames = {"COTA_ID" })})
+@Table(name = "BASE_REFERENCIA_COTA")
 @SequenceGenerator(name="BASE_REFERENCIA_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class BaseReferenciaCota implements Serializable {
 	
@@ -29,11 +26,7 @@ public class BaseReferenciaCota implements Serializable {
 	@GeneratedValue(generator = "BASE_REFERENCIA_COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
-	
-	@OneToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
-	
+
 	@Temporal(TemporalType.DATE)
 	@Column(name="INICIO_PERIODO")
 	private Date inicioPeriodo;
@@ -57,20 +50,6 @@ public class BaseReferenciaCota implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the cota
-	 */
-	public Cota getCota() {
-		return cota;
-	}
-
-	/**
-	 * @param cota the cota to set
-	 */
-	public void setCota(Cota cota) {
-		this.cota = cota;
 	}
 
 	/**

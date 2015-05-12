@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+import br.com.abril.nds.dto.ExportarCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -111,4 +112,13 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
      * @return
      */
     List<Cobranca> obterCobrancasDataEmissaoMaiorQue(Date dataPagamento, List<Long> idCobrancas);
+
+	public abstract List<ExportarCobrancaDTO> obterCobrancasNaDataDeOperacaoDoDistribuidor(Date dataOperacao);
+
+	public abstract void updateNossoNumero(Date dataOperacao, Integer numeroCota,
+			Integer nossoNumero);
+
+	public abstract Cobranca obterCobrancaPorNossoNumeroConsolidado(String nossoNumero);
+
+	public abstract Long qtdCobrancasConsolidadasBaixadas(Date dataOperacao);
 }

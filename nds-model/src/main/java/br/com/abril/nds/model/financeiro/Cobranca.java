@@ -59,6 +59,9 @@ public abstract class Cobranca {
 	@Column(name = "NOSSO_NUMERO_COMPLETO", nullable = true, unique = true)
 	protected String nossoNumeroCompleto;
 	
+	@Column(name = "NOSSO_NUMERO_CONSOLIDADO", nullable = true)
+	protected String nossoNumeroConsolidado;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_EMISSAO", nullable = false)
 	protected Date dataEmissao;
@@ -339,5 +342,14 @@ public abstract class Cobranca {
 	 */
 	public void setCobrancaCentralizacao(CobrancaCentralizacao cobrancaCentralizacao) {
 		this.cobrancaCentralizacao = cobrancaCentralizacao;
-	}	
+	}
+
+	public String getNossoNumeroConsolidado() {
+		return nossoNumeroConsolidado;
+	}
+
+	public void setNossoNumeroConsolidado(String nossoNumeroConsolidado) {
+		this.nossoNumeroConsolidado = nossoNumeroConsolidado;
+	}
+	
 }

@@ -84,7 +84,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			query.setParameter("postergado", postergado);
 		}
 		
-		query.setParameter("grupoMovimentoEnvioReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEnvioReparte", Arrays.asList(
+				GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()
+				, GrupoMovimentoEstoque.COMPRA_ENCALHE.name()
+				, GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name())
+			);
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -110,7 +114,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			query.setParameter("postergado", postergado);
 		}
 		
-		query.setParameter("grupoMovimentoEnvioReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEnvioReparte", Arrays.asList(
+				GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()
+				, GrupoMovimentoEstoque.COMPRA_ENCALHE.name()
+				, GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name())
+			);
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -121,9 +129,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Date dataOperacao,
 			Boolean conferido, Boolean postergado) {
 		
-		Query query = 
-				this.getSession().createSQLQuery(
-						this.getSqlValor(conferido, postergado, REPARTE_SEM_DESCONTO));
+		Query query = this.getSession().createSQLQuery(this.getSqlValor(conferido, postergado, REPARTE_SEM_DESCONTO));
 
 		query.setParameterList("datas", Arrays.asList(dataOperacao));
 		
@@ -137,7 +143,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			query.setParameter("postergado", postergado);
 		}
 		
-		query.setParameter("grupoMovimentoEnvioReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameterList("grupoMovimentoEnvioReparte", Arrays.asList(
+				GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()
+				, GrupoMovimentoEstoque.COMPRA_ENCALHE.name()
+				, GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name())
+			);
 		
 		return (BigDecimal) query.uniqueResult();
 	}
@@ -214,7 +224,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 								CHAMADA_ENCALHE.PRODUTO_EDICAO_ID = MEC.PRODUTO_EDICAO_ID)                           ");
 		
 		sql.append(" 						INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID AND ");
-		sql.append(" 						TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioReparte ) ");
+		sql.append(" 						TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEnvioReparte) ) ");
 		
 		sql.append(" 						WHERE ");
 		sql.append(" 							CHAMADA_ENCALHE_COTA.COTA_ID = (SELECT ID FROM COTA WHERE NUMERO_COTA = :numeroCota) AND ");
@@ -229,7 +239,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 			MEC.DATA = MOVCOTA.DATA AND MEC.COTA_ID = MOVCOTA.COTA_ID ");
 		sql.append(" 		)                                                                                                            ");
 		sql.append(" 		INNER JOIN TIPO_MOVIMENTO ON ( TIPO_MOVIMENTO.ID = MEC.TIPO_MOVIMENTO_ID AND ");
-		sql.append(" 		TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEnvioReparte ) ");
+		sql.append(" 		TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEnvioReparte) ) ");
 		sql.append(" 		GROUP BY MEC.PRODUTO_EDICAO_ID                                                                               ");
 		sql.append(" 	)                                                                                                                ");
 		sql.append(" AS PRECOS_DE_REPARTE ON (CH_ENCALHE.PRODUTO_EDICAO_ID = PRECOS_DE_REPARTE.PRODUTO_EDICAO_ID)                        ");

@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -62,6 +63,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -1374,8 +1376,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			quantidadeProdutoAlterada = qntProdutoNovo.subtract(qntProdutoAtual);
 			
-			tipoMovimento = 
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoCompra);
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoCompra);
 		}
 
 		// Se a quantidade de produto nova informada for menor que a quantidade
@@ -1384,8 +1385,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			quantidadeProdutoAlterada = qntProdutoAtual.subtract(qntProdutoNovo);
 			
-			tipoMovimento = 
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstrnoCompra);
+			tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstrnoCompra);
 		}
 
 		if (tipoMovimento == null) {
@@ -1394,8 +1394,14 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 					"Não foi encontrado tipo de movimento de estoque para compra e estorno de encalhe suplementar!");
 		}
 
-		movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, 
-				tipoMovimento, dataOperacao, null);
+		Lancamento l = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataOperacao);
+    	Date dataLancamento = null;
+    	if(l != null) {
+    		
+    		dataLancamento = l.getDataLancamentoDistribuidor();
+    	}
+		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, idProdutoEdicao,idCota, idUsuario, quantidadeProdutoAlterada, tipoMovimento, dataOperacao, null);
+		
 	}
 
 	@Override
@@ -1415,17 +1421,18 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			if(produtoEdicao.getLancamentos() != null && !produtoEdicao.getLancamentos().isEmpty()) {
 				
 				List<StatusLancamento> statusLancamentos = new ArrayList<StatusLancamento>();
+				statusLancamentos.add(StatusLancamento.EXPEDIDO);
+				statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.EM_RECOLHIMENTO);
 				statusLancamentos.add(StatusLancamento.RECOLHIDO);
-				statusLancamentos.add(StatusLancamento.EXPEDIDO);
 				statusLancamentos.add(StatusLancamento.FECHADO);
 				
 				List<Lancamento> lancamentos = new ArrayList<Lancamento>(produtoEdicao.getLancamentos());
 				Collections.sort(lancamentos, new Comparator<Lancamento>() {
 					@Override
 					public int compare(Lancamento o1, Lancamento o2) {
-						if(o1 != null && o2 != null) {
+						if(o1 != null && o2 != null && o1.getDataRecolhimentoDistribuidor() != null) {
 							o1.getDataRecolhimentoDistribuidor().compareTo(o2.getDataRecolhimentoDistribuidor());
 						}
 						if(o1 != null && o2 == null) {
@@ -1439,11 +1446,29 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				});
 				
 				for(Lancamento l : lancamentos) {
-					if(l.getDataRecolhimentoDistribuidor().getTime() <= distribuidorService.obterDataOperacaoDistribuidor().getTime()) {
-						if(!statusLancamentos.contains(l.getStatus())) {
-							vendaBloqueada = true;
-							throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
+					
+					if(l.getDataLancamentoDistribuidor().equals(distribuidorService.obter().getDataOperacao())) {
+						
+						vendaBloqueada = true;
+						throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto está sendo lançado hoje. A venda não pode ser efetivada.");
+					}
+					
+					if(!produtoEdicao.isParcial() && !TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
+						
+						vendaBloqueada = true;
+						throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
+					} else if(produtoEdicao.isParcial()) {
+						
+						Lancamento lancAtual = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+						if(l.getDataLancamentoDistribuidor().compareTo(lancAtual.getDataLancamentoDistribuidor()) <= 0) {
+							
+							if(!TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
+								
+								vendaBloqueada = true;
+								throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
+							}
 						}
+						
 					}
 				}
 			}
@@ -1452,8 +1477,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 			EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
 			
-			if(estoqueProduto == null){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Não existe produto disponível em estoque para venda!");
+			if(estoqueProduto == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não existe produto disponível em estoque para venda!");
 			}
 			
 			TipoVendaEncalhe tipoVendaEncalhe = this.obterTipoVenda(estoqueProduto);
@@ -1480,7 +1506,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				
 				vendaEncalheDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));				
 				vendaEncalheDTO.setCodigoBarras(produtoEdicao.getCodigoDeBarras());
-				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao,tipoVendaEncalhe,produtoComFormaComercializacaoContaFirme));
+				vendaEncalheDTO.setFormaVenda(this.obterFormaComercializacaoVenda(produtoEdicao, tipoVendaEncalhe, produtoComFormaComercializacaoContaFirme));
 				vendaEncalheDTO.setTipoVendaEncalhe(tipoVendaEncalhe);
 				vendaEncalheDTO.setProdutoContaFirme(produtoComFormaComercializacaoContaFirme);
 			} else {
@@ -1492,7 +1518,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return vendaEncalheDTO;
 	}
 
-	private FormaComercializacao obterFormaComercializacaoVenda(ProdutoEdicao produtoEdicao,TipoVendaEncalhe tipoVendaEncalhe, boolean produtoComFormaComercializacaoContaFirme) {
+	private FormaComercializacao obterFormaComercializacaoVenda(ProdutoEdicao produtoEdicao, TipoVendaEncalhe tipoVendaEncalhe, boolean produtoComFormaComercializacaoContaFirme) {
 		
 		FormaComercializacao formaComercializacao = null;
 		
@@ -1505,7 +1531,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				return FormaComercializacao.CONTA_FIRME;
 			}
 			
-			if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)){
+			if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)) {
 				
 				formaComercializacao = FormaComercializacao.CONSIGNADO;
 			} else {
@@ -1529,12 +1555,10 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return formaComercializacao;
 	}
 	
-	private boolean isVendaSuplementarConsignadoCota(ProdutoEdicao produtoEdicao, 
-			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel){
+	private boolean isVendaSuplementarConsignadoCota(ProdutoEdicao produtoEdicao, Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 		
-		List<ChamadaEncalhe> chamadas = 
-				chamadaEncalheRepository.obterChamadasEncalhe(
-						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, null) ;
+		Lancamento lancamento = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+		List<ChamadaEncalhe> chamadas = chamadaEncalheRepository.obterChamadasEncalhe(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, null, Arrays.asList(lancamento)) ;
 		
 		if(chamadas.isEmpty()) {
 			return true;

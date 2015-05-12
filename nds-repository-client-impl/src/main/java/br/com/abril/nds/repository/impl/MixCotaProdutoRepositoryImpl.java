@@ -43,9 +43,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
  */
 
 @Repository
-public class MixCotaProdutoRepositoryImpl extends
-		AbstractRepositoryModel<MixCotaProduto, Long> implements
-		MixCotaProdutoRepository {
+public class MixCotaProdutoRepositoryImpl extends AbstractRepositoryModel<MixCotaProduto, Long> implements MixCotaProdutoRepository {
 
 	@Autowired
 	private RepartePDVRepository repartePDVRepository;
@@ -376,6 +374,18 @@ public class MixCotaProdutoRepositoryImpl extends
 				
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
+		
+		query.executeUpdate();
+	}
+	
+	public void removerProdutoPorCodigoICD(String codigoICD) {
+
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append("delete from MixCotaProduto m where m.codigoICD = :codigoICD ");
+				
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("codigoICD", codigoICD);
 		
 		query.executeUpdate();
 	}

@@ -243,9 +243,10 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" left join lancam.produtoEdicao AS prodEdicao ");
 				hql.append(" left join prodEdicao.produto AS produto ");
 				
-				hql.append(" WHERE ");
+				hql.append(" WHERE 1 = 1");
 				
-				hql.append(" produto.codigoICD = :COD_PRODUTO ");			
+				hql.append(" AND produto.codigoICD = :COD_PRODUTO ");
+				hql.append(" AND lancam.dataLancamentoDistribuidor <> (select max(l.dataLancamentoDistribuidor) from Lancamento l) ");
 
 				hql.append(this.getSqlWhereBuscarProdutos(filtro));
 				
@@ -254,6 +255,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				Query query = super.getSession().createQuery(hql.toString());
 				
 				query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
+
 				this.paramsDinamicosBuscarProdutos(query, filtro);
 				
 				query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoNMaiores_ProdutoDTO.class));

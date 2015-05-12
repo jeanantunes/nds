@@ -111,8 +111,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(filtroConsultaMixCotaDTO.getCota());
 		
-		if(cota==null)
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
+		if(cota == null) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
+		}
 		
 		boolean tipoAlternativo = cota.getTipoDistribuicaoCota() != null && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
 		
@@ -199,8 +201,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Override
 	@Transactional
 	public void excluirTodos() {
-		mixCotaProdutoRepository.excluirTodos();
 		
+		mixCotaProdutoRepository.excluirTodos();
 	}
 
 	@Override
@@ -217,6 +219,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		this.mixCotaProdutoRepository.removerPorIdCota(idCota);
 	}
 	
+	@Override
+	@Transactional
+	public void excluirMixProdutoPorCodigoICD(String codigoICD) {
+		
+		this.mixCotaProdutoRepository.removerProdutoPorCodigoICD(codigoICD);
+	}
 	
 	@Override
 	@Transactional
@@ -585,19 +593,14 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		List<TipoClassificacaoProduto> classificacaoList = this.tipoClassificacaoProdutoRepository.buscarTodos();
 		
-		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : mixCotaProdutoDTOList) {
-			
-			
 			
 			if (!mixCotaProdutoDTO.isItemValido()) {
 				
 				continue;
 			}
-			
-
 			
 			Cota cota = cotaService.obterPorNumeroDaCota(Integer.valueOf(mixCotaProdutoDTO.getNumeroCota()));
 			

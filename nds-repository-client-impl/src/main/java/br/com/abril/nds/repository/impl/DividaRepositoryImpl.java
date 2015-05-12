@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -921,22 +920,22 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         sql.append("		and baixaCobranca.DATA_BAIXA = :dataFechamento ");
         sql.append("		and cobranca_.STATUS_COBRANCA=:statusPago ");
         sql.append("		and cobranca_.TIPO_COBRANCA =  cobranca0_.TIPO_COBRANCA ");
-        sql.append("		and divida_.STATUS<> :pendenteInadimplente)  as total, ");	   	
-        sql.append("	  (select COALESCE(sum(cobranca_.VALOR),0) ");
+        sql.append("		and divida_.STATUS not in (:pendenteInadimplente))  as total, ");	   	
+        sql.append("	  (select COALESCE(sum(cobranca_.VALOR), 0) ");
         sql.append("		from COBRANCA cobranca_ join DIVIDA divida_ on divida_.ID = cobranca_.DIVIDA_ID "); 
         sql.append("        join baixa_cobranca baixaCobranca on baixaCobranca.COBRANCA_ID = cobranca_.ID ");
         sql.append("		where cobranca_.DT_VENCIMENTO < :dataFechamento ");
         sql.append("		and baixaCobranca.DATA_BAIXA = :dataFechamento ");
-        sql.append("		and cobranca_.STATUS_COBRANCA= :statusPago ");
-        sql.append("		and cobranca_.TIPO_COBRANCA =  cobranca0_.TIPO_COBRANCA ");
-        sql.append("		and divida_.STATUS<> :pendenteInadimplente )  as valorPago, ");
+        sql.append("		and cobranca_.STATUS_COBRANCA = :statusPago ");
+        sql.append("		and cobranca_.TIPO_COBRANCA = cobranca0_.TIPO_COBRANCA ");
+        sql.append("		and divida_.STATUS not in (:pendenteInadimplente) )  as valorPago, ");
 		sql.append("  sum(cobranca0_.VALOR)  as inadimplencia ");
 		sql.append("  from ");
 		sql.append("        COBRANCA cobranca0_ join DIVIDA divida1_ on cobranca0_.DIVIDA_ID=divida1_.ID "); 
 		sql.append("  where ");
-		sql.append("       cobranca0_.DT_VENCIMENTO<:dataFechamento ");
-		sql.append("       and cobranca0_.STATUS_COBRANCA=:statusNaoPago ");
-		sql.append("       and divida1_.STATUS<> :pendenteInadimplente ");
+		sql.append("       cobranca0_.DT_VENCIMENTO < :dataFechamento ");
+		sql.append("       and cobranca0_.STATUS_COBRANCA = :statusNaoPago ");
+		sql.append("       and divida1_.STATUS not in (:pendenteInadimplente) ");
 		sql.append("  group by cobranca0_.TIPO_COBRANCA ");
         
         SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -952,7 +951,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         
         query.setParameter("statusPago", StatusCobranca.PAGO.name());
         
-        query.setParameter("pendenteInadimplente", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+        query.setParameterList("pendenteInadimplente", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA.name(), StatusDivida.POSTERGADA.name()));
         
         query.setResultTransformer(Transformers.aliasToBean(SumarizacaoDividasDTO.class));
         
@@ -1086,7 +1085,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         } else {
             
             hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ")
-            .append("	and cobranca.divida.status != :pendenteInadimplente	");
+            .append("	and cobranca.divida.status not in (:pendenteInadimplente) ");
         }
         
         if (!count) {
@@ -1098,7 +1097,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
         query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO);
         
         if (!TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)) {
-            query.setParameter("pendenteInadimplente", StatusDivida.PENDENTE_INADIMPLENCIA);
+            query.setParameterList("pendenteInadimplente", Arrays.asList(StatusDivida.PENDENTE_INADIMPLENCIA, StatusDivida.POSTERGADA));
         }
         
         if (!count && paginacao != null) {

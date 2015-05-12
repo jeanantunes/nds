@@ -158,7 +158,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 	}
 	
-	private FechamentoCEIntegracaoVO renderizarPesquisa(FechamentoCEIntegracaoDTO dto, FiltroFechamentoCEIntegracaoDTO filtro){
+	private FechamentoCEIntegracaoVO renderizarPesquisa(FechamentoCEIntegracaoDTO dto, FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>>();
 
@@ -273,6 +273,11 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
+		if(filtro == null || filtro.getPaginacao() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido. Por favor, refaça a pesquisa.");
+		}
+		
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		filtro.getPaginacao().setPaginaAtual(null);
 		
@@ -329,17 +334,14 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigDecimal venda) {
 		
-		FiltroFechamentoCEIntegracaoDTO filtro =
-			(FiltroFechamentoCEIntegracaoDTO)
-				session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		filtro.setPaginacao(null);
 		filtro.setIdItemChamadaEncalheFornecedor(idItemChamadaFornecedor);
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
-		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
-			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro, venda);
+		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro, venda);
 		
 		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
 		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
@@ -353,22 +355,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
 	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens ){
 		
-		if(itens!= null && !itens.isEmpty()){
+		if(itens != null && !itens.isEmpty()) {
 			
 			fechamentoCEIntegracaoService.salvarCE(itens);
 		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Informações salvas com sucesso."),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informações salvas com sucesso."), "result").recursive().serialize();
 	}
 	
 
 	private Map<Long,ItemFechamentoCEIntegracaoDTO> obterMapItensCE(List<ItemFechamentoCEIntegracaoDTO> itens){
 		
-		if(itens == null || itens.isEmpty()){
+		if(itens == null || itens.isEmpty()) {
+			
 			return new HashMap<Long, ItemFechamentoCEIntegracaoDTO>();
 		}
 		
-		Map<Long,ItemFechamentoCEIntegracaoDTO> mapItensCE = Maps.uniqueIndex(itens, new Function<ItemFechamentoCEIntegracaoDTO,Long>() {
+		Map<Long,ItemFechamentoCEIntegracaoDTO> mapItensCE = Maps.uniqueIndex(itens, new Function<ItemFechamentoCEIntegracaoDTO, Long>() {
 			
 			@Override
 			public Long apply(ItemFechamentoCEIntegracaoDTO item) {

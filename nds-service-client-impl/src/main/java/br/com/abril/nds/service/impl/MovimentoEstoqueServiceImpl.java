@@ -720,11 +720,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     	
     }
     
-    
     @Transactional
-    public void transferirEstoqueProdutoEdicaoParcialParaLancamento(
-    		Long idProdutoEdicao,
-            Usuario usuario) {
+    public void transferirEstoqueProdutoEdicaoParcial(Long idProdutoEdicao, Usuario usuario) {
     	
     	EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
     	

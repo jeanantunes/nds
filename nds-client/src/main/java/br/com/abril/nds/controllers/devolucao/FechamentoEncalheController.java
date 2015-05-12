@@ -162,8 +162,7 @@ public class FechamentoEncalheController extends BaseController {
                     .recursive().serialize();
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
-					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, 
-							aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
+					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
 
 			this.getSession().setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
 			
@@ -653,16 +652,13 @@ public class FechamentoEncalheController extends BaseController {
 			@SuppressWarnings("unchecked")
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 			
-			Set<String> nossoNumero = this.fechamentoEncalheService.encerrarOperacaoEncalhe(
-					dataEncalhe, getUsuarioLogado(), filtroSessao, 
-					listaEncalhe, true);
+			Set<String> nossoNumero = this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe, true);
 			
 			this.session.setAttribute(SET_NOSSO_NUMERO, nossoNumero);
 			
 		} catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-                    "Erro ao tentar encerrar a operação de encalhe!"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"));
 		}
 		
         this.result.use(Results.json()).from(

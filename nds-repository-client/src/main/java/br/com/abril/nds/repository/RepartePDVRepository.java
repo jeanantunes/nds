@@ -20,6 +20,8 @@ public interface RepartePDVRepository  extends Repository<RepartePDV, Long> {
 	public List<RepartePDV> buscarPorIdMix(Long id);
 	
 	List<RepartePDV> buscarPorCota(Long idCota);
+	
+	List<RepartePDV> buscarPorProduto(Long produtoId);
 
     public boolean verificarRepartePdv(Integer numeroCota, String codigoProduto);
 	

@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -82,20 +83,15 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		
-		hql.append(" select f from FormaCobranca f ");		
-
-		hql.append(" join f.parametroCobrancaCota pcc ");
-		
+		hql.append(" select f from Cota c ");		
+		hql.append(" join c.parametroCobranca pcc ");
+		hql.append(" join pcc.formasCobrancaCota f ");
 		hql.append(" left join f.fornecedores fnc ");
-		
 		hql.append(" left join f.concentracaoCobrancaCota ccc ");
-		
 		hql.append(" where f.ativa = :indAtiva ");
+		hql.append(" and c.id = :idCota ");
 		
-		hql.append(" and pcc.cota.id = :idCota ");
-		
-		if (idFornecedor!=null){
+		if (idFornecedor != null) {
 		
 		    hql.append(" and fnc.id = :idFornecedor ");
 		}
@@ -114,7 +110,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         
         query.setParameter("idCota", idCota);
         
-        if (idFornecedor!=null){
+        if (idFornecedor != null) {
         	
             query.setParameter("idFornecedor", idFornecedor);
         }
@@ -197,39 +193,28 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 	/**
 	 * Obtem FormaCobranca principal da Cota
-	 * @param idCota
+	 * @param parametroCobrancaCota
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Long idCota) {
-		
+	public FormaCobranca obterFormaCobranca(ParametroCobrancaCota parametroCobrancaCota) {
 		
         StringBuilder hql = new StringBuilder();
 		
-		
 		hql.append(" select f from FormaCobranca f ");		
-
 		hql.append(" join f.parametroCobrancaCota pcc ");
-		
 		hql.append(" where f.ativa = :indAtiva ");
-		
 		hql.append(" and f.principal = :principal ");
-		
-		hql.append(" and pcc.cota.id = :idCota ");
-
+		hql.append(" and pcc = :parametroCobrancaCota ");
 
 		Query query = super.getSession().createQuery(hql.toString());
-		
         
         query.setParameter("indAtiva", true);
-        
         query.setParameter("principal", true);
+        query.setParameter("parametroCobrancaCota", parametroCobrancaCota);
         
-        query.setParameter("idCota", idCota);
-             
-        
+        //FIXME: Tirar esse lixo do código
         query.setMaxResults(1);
-        
         
         return (FormaCobranca) query.uniqueResult();
 	}
@@ -330,13 +315,13 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterFormasCobrancaCota(Cota cota) {
+	public List<FormaCobranca> obterFormasCobrancaCota(ParametroCobrancaCota parametroCobrancaCota) {
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select f from FormaCobranca f ");		
-		hql.append(" where f.parametroCobrancaCota.cota = :pCota ");
+		hql.append(" where f.parametroCobrancaCota = :parametroCobrancaCota ");
 		hql.append(" and f.ativa = true ");
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("pCota", cota);
+        query.setParameter("parametroCobrancaCota", parametroCobrancaCota);
         return query.list();
 	}
 	
@@ -376,12 +361,15 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 */
 	@Override
 	public int obterQuantidadeFormasCobrancaCota(Cota cota) {
+		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select f from FormaCobranca f ");		
-		hql.append(" where f.parametroCobrancaCota.cota = :pCota ");
+		hql.append(" where f.parametroCobrancaCota = :parametroCobrancaCota ");
 		hql.append(" and f.ativa = true ");
+		
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("pCota", cota);
+        query.setParameter("parametroCobrancaCota", cota.getParametroCobranca());
+        
         return query.list().size();
 	}
 	
@@ -403,29 +391,29 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 	/**
 	 * Obtem lista de Formas de Cobrança por Cota
-	 * @param idCota
+	 * @param parametroCobrancaCota
 	 * @param idFormaCobranca
 	 * @return List<formaCobranca>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterPorCota(Long idCota, Long idFormaCobranca) {
+	public List<FormaCobranca> obterPorCota(ParametroCobrancaCota parametroCobrancaCota, Long idFormaCobranca) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select f from FormaCobranca f");		
-		hql.append(" where f.parametroCobrancaCota.cota.id = :pIdCota ");
+		hql.append(" where f.parametroCobrancaCota = :parametroCobrancaCota ");
 		hql.append(" and f.ativa = :pAtiva ");
 		
-		if (idFormaCobranca!=null){
+		if (idFormaCobranca != null) {
 		    hql.append(" and f.id <> :pIdFormaCobranca ");
 		}
 		
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("pIdCota", idCota);
+        query.setParameter("parametroCobrancaCota", parametroCobrancaCota);
         query.setParameter("pAtiva", true);
         
-        if (idFormaCobranca!=null){
+        if (idFormaCobranca != null) {
         	query.setParameter("pIdFormaCobranca", idFormaCobranca);
         }
         

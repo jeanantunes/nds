@@ -9,8 +9,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -58,10 +56,6 @@ public class ParametroCobrancaDistribuicaoCota implements Serializable {
     @Column(name = "PERCENTUAL_FATURAMENTO", precision=18, scale=4)
     private BigDecimal percentualFaturamento;
     
-    @OneToOne
-	@JoinColumn(name = "COTA_ID", unique = true)
-	private Cota cota;
-
 	public Long getId() {
 		return id;
 	}
@@ -124,14 +118,6 @@ public class ParametroCobrancaDistribuicaoCota implements Serializable {
 
 	public void setPercentualFaturamento(BigDecimal percentualFaturamento) {
 		this.percentualFaturamento = percentualFaturamento;
-	}
-
-	public Cota getCota() {
-		return cota;
-	}
-
-	public void setCota(Cota cota) {
-		this.cota = cota;
 	}
 
 	public DiaSemana getDiaSemanaCobranca() {

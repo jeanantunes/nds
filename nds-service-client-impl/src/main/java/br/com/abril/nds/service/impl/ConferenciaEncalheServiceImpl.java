@@ -1094,9 +1094,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Override
     public BigDecimal obterValorTotalDesconto(final Integer numeroCota, final Date dataOperacao) {
 		
-		BigDecimal reparte =
-			chamadaEncalheCotaRepository.obterTotalDescontoDaChamaEncalheCota(
-				numeroCota, dataOperacao, false, false);
+		BigDecimal reparte = chamadaEncalheCotaRepository.obterTotalDescontoDaChamaEncalheCota(numeroCota, dataOperacao, false, false);
 		
 		if (reparte == null) {
 			
@@ -1949,7 +1947,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, timeout = 900, isolation= Isolation.READ_COMMITTED)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class, isolation=Isolation.READ_COMMITTED)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			final ControleConferenciaEncalheCota controleConfEncalheCota, 
 			final List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
@@ -2044,7 +2042,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		slip = this.documentoCobrancaService.gerarSlipDTOCobranca(controleConfEncalheCota.getId(), true);
 		
-		if (slip != null){
+		if(slip != null) {
 		    
 		    for (DebitoCreditoCota d : slip.getListaComposicaoCobranca()){
 	            d.setSlip(slip);
@@ -2108,7 +2106,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private Set<String> gerarCobranca(final ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
 		
-		if(	controleConferenciaEncalheCota.getId() != null) {
+		if(controleConferenciaEncalheCota.getId() != null) {
 			
 			final StatusOperacao statusAtualOperacaoConfEnc = 
 					controleConferenciaEncalheCotaRepository.obterStatusControleConferenciaEncalheCota(
@@ -2125,7 +2123,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         final List<Date> datasRecolhimento = this.grupoService.obterDatasRecolhimentoOperacaoDiferenciada(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
         		                                                                                          controleConferenciaEncalheCota.getDataOperacao());
         
-		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)){
+		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)) {
 			
 			
 			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
@@ -2149,14 +2147,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
             // se a cota for unificadora ou unificada não pode gerar cobrança
             // nesse ponto
-			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
-					controleConferenciaEncalheCota.getCota().getNumeroCota()),
+			final boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(controleConferenciaEncalheCota.getCota().getNumeroCota()),
 					
-					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
-							controleConferenciaEncalheCota.getCota().getNumeroCota());
+					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(controleConferenciaEncalheCota.getCota().getNumeroCota());
 			
-			if (!cotaUnificadora && !cotaUnificada){
-			
+			if (!cotaUnificadora && !cotaUnificada) {
 				
 				FormaCobranca fc = formaCobrancaService.obterFormaCobrancaCota(controleConferenciaEncalheCota.getCota().getId()
 										, null, controleConferenciaEncalheCota.getDataOperacao());

@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.Semaforo;
+import br.com.abril.nds.model.estoque.StatusProcessoEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.SemaforoRepository;
 
@@ -51,6 +52,34 @@ public class SemaforoRepositoryImpl extends
 		query.setParameter("data", data);
 		
 		return query.list();
+	}
+	
+	@Override
+	public void atualizarStatusProcessoEncalheIniciadoEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" update Semaforo s");
+		hql.append(" set s.statusProcessoEncalhe = :statusInterrompido ");
+		hql.append(" where s.statusProcessoEncalhe = :statusIniciado ");
+		if(data != null) {
+			
+			hql.append(" and s.dataOperacao = :data ");
+		} else {
+			
+			hql.append(" and s.dataOperacao = (select dataOperacao from Distribuidor) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if(data != null) {
+			
+			query.setParameter("data", data);
+		}
+		query.setParameter("statusInterrompido", StatusProcessoEncalhe.INTERROMPIDO);
+		query.setParameter("statusIniciado", StatusProcessoEncalhe.INICIADO);
+		
+		query.executeUpdate();
 	}
 
 }

@@ -69,6 +69,9 @@ public class Cota implements Serializable {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
 	
+	@Column(name = "UTILIZA_IPV", nullable = false)
+	private boolean utilizaIPV;
+	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
 	
@@ -94,8 +97,8 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota")
 	private Set<TelefoneCota> telefones = new HashSet<TelefoneCota>();
 	
-	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota")
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="CONTRATO_ID")
 	private ContratoCota contratoCota;
 	
 	@OneToOne
@@ -109,7 +112,8 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
-	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota")
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "PARAMETRO_COBRANCA_ID")
 	private ParametroCobrancaCota parametroCobranca;
 
 	@Enumerated(EnumType.STRING)
@@ -122,7 +126,8 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
 	
-	@OneToOne(fetch=FetchType.LAZY, mappedBy="cota")
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "PARAMETRO_COBRANCA_DISTRIBUICAO_COTA_ID")
 	private ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota;
 	
 	@ManyToOne(fetch=FetchType.LAZY, optional = true)
@@ -174,7 +179,8 @@ public class Cota implements Serializable {
 	@Embedded
 	private ParametrosCotaNotaFiscalEletronica parametrosCotaNotaFiscalEletronica;
 	
-	@OneToOne(fetch=FetchType.LAZY, mappedBy = "cota",cascade={CascadeType.REMOVE})
+	@OneToOne(cascade={CascadeType.REMOVE})
+	@JoinColumn(name="BASE_REFERENCIA_COTA_ID")
 	private BaseReferenciaCota baseReferenciaCota;
 	
 	@OneToMany(mappedBy = "cota",cascade={CascadeType.REMOVE})
@@ -198,7 +204,8 @@ public class Cota implements Serializable {
 	/** 
 	 * Referente a garantias da cota.
 	 */
-	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="COTA_GARANTIA_ID")
 	private CotaGarantia cotaGarantia;
 	
 	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
@@ -268,6 +275,16 @@ public class Cota implements Serializable {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 	
+	public boolean isUtilizaIPV() {
+		return utilizaIPV;
+	}
+
+
+	public void setUtilizaIPV(boolean utilizaIPV) {
+		this.utilizaIPV = utilizaIPV;
+	}
+
+
 	public PoliticaSuspensao getPoliticaSuspensao() {
 		return politicaSuspensao;
 	}
@@ -717,17 +734,13 @@ public class Cota implements Serializable {
 		this.cotasUnificacao = cotasUnificacao;
 	}
 
-
 	public ParametroCobrancaDistribuicaoCota getParametroCobrancaDistribuicaoCota() {
 		return parametroCobrancaDistribuicaoCota;
 	}
-
 
 	public void setParametroCobrancaDistribuicaoCota(
 			ParametroCobrancaDistribuicaoCota parametroCobrancaDistribuicaoCota) {
 		this.parametroCobrancaDistribuicaoCota = parametroCobrancaDistribuicaoCota;
 	}
-	
-	
 	
 }

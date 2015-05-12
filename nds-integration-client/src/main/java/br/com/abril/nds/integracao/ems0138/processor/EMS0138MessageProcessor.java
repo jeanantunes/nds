@@ -66,7 +66,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			cdbc = this.getCouchDBClient(codigoDistribuidor);
+			cdbc = this.getCouchDBClient(codigoDistribuidor, true);
 			cdbc.save(notasCEIntegracao);
 			
 		} catch(Exception e) {

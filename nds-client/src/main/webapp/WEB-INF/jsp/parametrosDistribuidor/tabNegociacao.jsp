@@ -174,4 +174,25 @@ function checkDescontoSelecionado() {
 			
 		</table>
  </fieldset>
+	<fieldset
+		style="width: 420px !important; margin-bottom: 5px; margin-left: 10px;">
+		<legend>Taxa Extra</legend>
+
+		<table width="393" border="0" cellspacing="1" cellpadding="1">
+
+			<tr>
+				<td>Descrição:</td>
+				<td><input type="text" maxlength="50" size="35"
+					name="parametrosDistribuidor.descricaoTaxaExtra"
+					value="${parametrosDistribuidor.descricaoTaxaExtra}"
+					id="descricaoTaxaExtra" /></td>
+				<td>Percentual:</td>
+				<td><input name="parametrosDistribuidor.percentualTaxaExtra"
+					id="percentualTaxaExtra"
+					value="${parametrosDistribuidor.percentualTaxaExtra}" 
+					type="text" size="5" maxlength="5" /></td>
+			</tr>
+
+		</table>
+	</fieldset>
 </div>

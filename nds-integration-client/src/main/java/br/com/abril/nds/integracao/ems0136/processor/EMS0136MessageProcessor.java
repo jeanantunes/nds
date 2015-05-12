@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0136.processor;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,8 +42,7 @@ import br.com.abril.nds.util.DateUtil;
 import com.google.common.collect.ImmutableList;
 
 @Component
-public class EMS0136MessageProcessor extends AbstractRepository implements
-		MessageProcessor {
+public class EMS0136MessageProcessor extends AbstractRepository implements MessageProcessor {
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -85,17 +86,18 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		EMS0136Input input = (EMS0136Input) message.getBody();
 		
-		if(!this.validarCodigoDistribuidor(message, input)){
+		if(!this.validarCodigoDistribuidor(message, input)) {
+			
 			return;
 		}
 
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicaoValidado(message,input);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicaoValidado(message, input);
 		
-		if(produtoEdicao == null){
+		if(produtoEdicao == null) {
 			return;
 		}
 
-		this.tratarDatasInput(input, produtoEdicao,message);
+		this.tratarDatasInput(input, produtoEdicao, message);
 
 		LancamentoHelper helper = this.tratarLancamentosExistentes(produtoEdicao, input);
 		
@@ -104,7 +106,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return;
 		}
 
-		LancamentoParcial lancamentoParcial = this.tratarLancamentoParciall(input, produtoEdicao);
+		LancamentoParcial lancamentoParcial = this.tratarLancamentoParcial(input, produtoEdicao);
 		
 		PeriodoLancamentoParcial periodo = this.tratarPeriodo(lancamentoParcial, input);
 		
@@ -128,29 +130,40 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return true;
 	}
 
-	private ProdutoEdicao obterProdutoEdicaoValidado(Message message,EMS0136Input input) {
+	private ProdutoEdicao obterProdutoEdicaoValidado(Message message, EMS0136Input input) {
 		
 		String codigoProduto = input.getCodigoProduto();
 		Long numeroEdicao = input.getEdicaoCapa();
 		
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,numeroEdicao);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto, numeroEdicao);
 	
 		if (produtoEdicao == null) {
 			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Produto "
-					+ codigoProduto + " Edição " + numeroEdicao
-					+" não encontrado.");
+					"Produto "+ codigoProduto + " Edição " + numeroEdicao +" não encontrado.");
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(input.getDataHoraExtracao());
+			c.add(Calendar.DAY_OF_MONTH, 40);
+			if(c.getTime().compareTo(new Date()) < 0) {
+				
+				input.setErro(null);
+			} else {
+				
+				input.setErro("Produto "+ codigoProduto + " Edição " + numeroEdicao +" não encontrado.");
+			}
+				
 			return null;
 		}
 		
+		input.setErro(null);
 		produtoEdicao.setParcial(true);
 
 		return produtoEdicao;
 	}
 	
-	private ProdutoEdicao obterProdutoEdicao(String codigoProduto,Long numeroEdicao) {
+	private ProdutoEdicao obterProdutoEdicao(String codigoProduto, Long numeroEdicao) {
 		
 		try {
 
@@ -165,6 +178,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return (ProdutoEdicao) criteria.uniqueResult();
 
 		} catch (Exception e) {
+			
 			throw new RuntimeException(e);
 		}
 	}
@@ -187,7 +201,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		LancamentoParcial lp = produtoEdicao.getLancamentoParcial();
 
-		if (lp != null && input.getNumeroPeriodo() > lp.getPeriodoFinal().getNumeroPeriodo()) {
+		if(((lp != null && lp.getPeriodoFinal() == null) || (lp != null && input.getNumeroPeriodo() > lp.getPeriodoFinal().getNumeroPeriodo()))) {
 
 			return helper;
 		}
@@ -211,8 +225,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				helper.addLancamentoManter(lancamentoAtual);
 
 			} else if (LANCAMENTO_ABERTO.contains(lancamentoAtual.getStatus())) {
+				
 				helper.addLancamentosRemover(lancamentoAtual);
 			} else {
+				
 				helper.addLancamentoManter(lancamentoAtual);
 			}
 		}
@@ -238,11 +254,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private LancamentoParcial tratarLancamentoParciall(EMS0136Input input,ProdutoEdicao produtoEdicao) {
+	private LancamentoParcial tratarLancamentoParcial(EMS0136Input input,ProdutoEdicao produtoEdicao) {
 		
 		LancamentoParcial lancamentoParcial = produtoEdicao.getLancamentoParcial(); //this.consultarLancalmentoParcial(produtoEdicao);
 		
-		if(lancamentoParcial == null){
+		if(lancamentoParcial == null) {
 			
 			lancamentoParcial = this.criarNovoLancamentoParcial(produtoEdicao, input, input.getDataLancamento(), input.getDataRecolhimento());			
 		}
@@ -252,7 +268,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return lancamentoParcial;
 	}
 
-	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicao produtoEdicao, EMS0136Input input, Date dataLancamento, Date dataRecolhimento){
+	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicao produtoEdicao, EMS0136Input input, Date dataLancamento, Date dataRecolhimento) {
 
 		LancamentoParcial parcial = new LancamentoParcial();
 		
@@ -282,32 +298,26 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return status;
 	}
 
-	private void tratarDatasInput(EMS0136Input input, ProdutoEdicao produtoEdicao,Message message) {
-
+	private void tratarDatasInput(EMS0136Input input, ProdutoEdicao produtoEdicao, Message message) {
 
 		Date dataOriginal = input.getDataLancamento();
-		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal,produtoEdicao.getProduto().getFornecedor().getId());
-		
-		
-		Date dataLancamento = this.getProximaDataUtil(dataSugerida, produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.DISTRIBUICAO);
-		dataLancamento = lancamentoService.obterDataLancamentoValido(dataLancamento,produtoEdicao.getProduto().getFornecedor().getId());
+		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
 		
 		Date dataRecolhimento = this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO);
 		
-		if(dataOriginal.compareTo(dataLancamento)!=0){
+		if(dataOriginal.compareTo(dataSugerida) != 0) {
 			
 			 this.ndsiLoggerFactory.getLogger().logWarning(message,
 			 		 EventoExecucaoEnum.INF_DADO_ALTERADO,
-					 "Alteração da Data Lcto Distribuidor"
-							+ " de  " + DateUtil.formatarDataPTBR(dataOriginal)
-							+ " para  " + DateUtil.formatarDataPTBR(dataSugerida)
-							+ " Produto "+produtoEdicao.getProduto().getCodigo()
-							+ " Edição " + produtoEdicao.getNumeroEdicao());
-			
+					 "Alteração da Data Lcto Distribuidor (Arquivo)"
+							+" de "+ DateUtil.formatarDataPTBR(dataOriginal)
+							+" para "+ DateUtil.formatarDataPTBR(dataSugerida)
+							+" Produto "+ produtoEdicao.getProduto().getCodigo()
+							+" Edição "+ produtoEdicao.getNumeroEdicao());
 			 
 		}
 		
-		input.setDataLancamento(dataLancamento);
+		input.setDataLancamento(dataSugerida);
 		input.setDataRecolhimento(dataRecolhimento);
 	}
 	
@@ -353,30 +363,27 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		PeriodoLancamentoParcial periodo = parcial.getPeriodoPorNumero(input.getNumeroPeriodo()); 
 
-		PeriodoLancamentoParcial ultimoPeriodo = parcial.getPeriodoFinal();
-
-		if (ultimoPeriodo != null && (ultimoPeriodo.equals(periodo) || ultimoPeriodo.after(periodo))) {
-			ultimoPeriodo.setTipo(input.getTipoRecolhimento() == "P" ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
-			return periodo;
-		} 
-
-		ultimoPeriodo.setTipo(input.getTipoRecolhimento() == "P" ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
-		
 		if (periodo == null) {
 			
-			Integer numeroNovoPeriodo = 1;
+			periodo = this.criarNovoPeriodoLancamento(parcial, input.getNumeroPeriodo()
+					, input.getTipoRecolhimento().equals("P") ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL, dataRecolhimento);
 			
-			if(ultimoPeriodo.getNumeroPeriodo() != null){
-				
-				numeroNovoPeriodo = ultimoPeriodo.getNumeroPeriodo() + 1;
-			}
-			
-			return this.criarNovoPeriodoLancamento(parcial, numeroNovoPeriodo, input.getTipoRecolhimento() == "P" ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL, dataRecolhimento);
+			parcial.getPeriodos().add(periodo);
+			return periodo;
 		}
 		
-		periodo.setNumeroPeriodo(input.getNumeroPeriodo());
-		periodo.setTipo(ultimoPeriodo.getTipo());
-		parcial.getPeriodos().add(periodo);
+		PeriodoLancamentoParcial ultimoPeriodo = parcial.getPeriodoFinal();
+
+		if(ultimoPeriodo == null) {
+			
+			return periodo;
+		}
+		
+		if (ultimoPeriodo != null && (ultimoPeriodo.equals(periodo) || ultimoPeriodo.after(periodo))) {
+			ultimoPeriodo.setTipo(input.getTipoRecolhimento().equals("P") ? TipoLancamentoParcial.PARCIAL : TipoLancamentoParcial.FINAL);
+			return periodo;
+		} 
+		
 		return periodo;
 	}
 
@@ -401,11 +408,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return pParcial;
 	}
 
-	private Lancamento tratarLancamento(
-			ProdutoEdicao produtoEdicao, 
-			PeriodoLancamentoParcial periodo,
-			LancamentoHelper helper,
-			EMS0136Input input) {
+	private Lancamento tratarLancamento(ProdutoEdicao produtoEdicao, PeriodoLancamentoParcial periodo, LancamentoHelper helper, EMS0136Input input) {
 		
 		Date dataLancamento = input.getDataLancamento();
 		Date dataRecolhimento = input.getDataRecolhimento();
@@ -419,22 +422,21 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return first;
 		}
 		
-		if (periodo.getPrimeiroLancamento() != null) {
+		if (periodo != null && periodo.getPrimeiroLancamento() != null) {
 			
 			return periodo.getPrimeiroLancamento();
 		}
 
-		Lancamento novoLancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao);
+		Lancamento novoLancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao, periodo);
 		
-		novoLancamento.setPeriodoLancamentoParcial(periodo);
-
 		return novoLancamento;
 	}
 	
-	private Lancamento criarNovoLancamento(Date dataRecolhimento,Date dataLancamento,ProdutoEdicao produtoEdicao){
+	private Lancamento criarNovoLancamento(Date dataRecolhimento, Date dataLancamento, ProdutoEdicao produtoEdicao, PeriodoLancamentoParcial periodo) {
 
 		Lancamento lancamento = new Lancamento();
 
+		lancamento.setPeriodoLancamentoParcial(periodo);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);
@@ -442,9 +444,18 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
 		
 		try {
-			//lancamento.setDataLancamentoDistribuidor(getDiaMatrizAberta(input.getDataLancamento(),dataRecolhimento,message,codigoProduto,edicao));
+			
+			if(periodo != null && periodo.getNumeroPeriodo() > 1) {
+				Calendar c = Calendar.getInstance();
+				c.setTime(dataLancamento);
+				int fatorRelParc = distribuidorService.obter().getFatorRelancamentoParcial();
+				c.add(Calendar.DAY_OF_MONTH, (fatorRelParc > 2 ? fatorRelParc - 2 : 0)); //2 é o Fator de Relancamento Parcial do PRODIN
+				dataLancamento = c.getTime();
+			}
+			
 			lancamento.setDataLancamentoDistribuidor(lancamentoService.obterDataLancamentoValido(dataLancamento, produtoEdicao.getProduto().getFornecedor().getId()));
 		} catch (Exception e) {
+			
 		}
 		
 		lancamento.setProdutoEdicao(produtoEdicao);
@@ -491,7 +502,55 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	}
 
 	@Override
-	public void posProcess(Object tempVar) { }
+	public void posProcess(Object tempVar) {
+		
+		atualizarLancamentosSemPeriodoFinal();
+	}
+	
+	private void atualizarLancamentosSemPeriodoFinal() {
+		
+		StringBuilder sql = new StringBuilder();
+		try {                                                                                                    
+			sql.append( " update periodo_lancamento_parcial plp                                                        ")
+				.append(" inner join lancamento_parcial lp on lp.ID = plp.LANCAMENTO_PARCIAL_ID                        ")
+				.append(" inner join lancamento l on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID                          ")
+				.append(" inner join produto_edicao pe on pe.id = l.PRODUTO_EDICAO_ID                                  ")
+				.append(" inner join produto p on p.id = pe.PRODUTO_ID                                                 ")
+				.append(" inner join (                                                                                 ")
+				.append(" 	select max(numero_periodo) numPeriodoFinal, l.PRODUTO_EDICAO_ID                            ")
+				.append(" 	from lancamento l                                                                          ")
+				.append(" 	inner join produto_edicao pe on pe.id = l.PRODUTO_EDICAO_ID                                ")
+				.append(" 	inner join produto p on p.id = pe.PRODUTO_ID                                               ")
+				.append(" 	inner join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID      ")
+				.append(" 	inner join lancamento_parcial lp on lp.ID = plp.LANCAMENTO_PARCIAL_ID                      ")
+				.append(" 	where 1 = 1                                                                                ")
+				.append(" 	and l.status not in (:statusLancamento)                                                    ")
+				.append(" 	and plp.TIPO = :parcial                                                                    ")
+				.append(" 	and l.produto_edicao_id not in (                                                           ")
+				.append(" 		select distinct l.PRODUTO_EDICAO_ID                                                    ")
+				.append("		from lancamento l                                                                      ")
+				.append("		inner join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID  ")
+				.append("		inner join lancamento_parcial lp on lp.ID = plp.LANCAMENTO_PARCIAL_ID                  ")
+				.append("		where 1 = 1                                                                            ")
+				.append("		and l.status not in (:statusLancamento)                                                ")
+				.append("		and plp.TIPO = :final                                                                  ")
+				.append(" 	)                                                                                          ")
+				.append(" 	group by l.PRODUTO_EDICAO_ID                                                               ")
+				.append(" ) rs1 on rs1.numPeriodoFinal = plp.numero_periodo and rs1.PRODUTO_EDICAO_ID = pe.id          ")
+				.append(" set plp.tipo = :final                                                                        ");
+			
+			SQLQuery q = getSession().createSQLQuery(sql.toString());
+			q.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.FECHADO.name()));
+			q.setParameter("parcial", "PARCIAL");
+			q.setParameter("final", "FINAL");
+			
+			q.executeUpdate();
+
+		} catch (Exception e) {
+			
+			throw new RuntimeException(e);
+		}
+	}
 
 	final class LancamentoHelper {
 		

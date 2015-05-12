@@ -11,7 +11,6 @@ var analiseParcialController = $.extend(true, {
     inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" nmCota="#nmCota" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" qtdPDV="#qtdPDV" quantidadeAjuste="#quantidadeAjuste" value="#value" idrowGrid="#idrow" percentualVenda="#percVenda"  class="reparteSugerido" onkeydown="onlyNumeric(event);" />',
     tipoExibicao : 'NORMAL',
     
-                                     
     totalizarEdicoesBasesDadosEdicoes : function(indice, reparte, venda){
     	
     	if (edicoesBaseDadosEdicoes[indice] != undefined){ 
@@ -236,24 +235,14 @@ var analiseParcialController = $.extend(true, {
                     $dialog.find('#fxDataAlteracao').text(result.fxDataAlteracao ? result.fxDataAlteracao.$ : '');
                     $fixacao.show();
                 }
+                
+                $('#dialog-cotas-detalhes').dialog( "open" );
         });
 
 
         $("#cotasDetalhesGrid").flexOptions({ params: [{name: 'numeroCota', value: numeroCota},
                                                        {name: 'estudoId', value: $('#estudoId').val()}] }).flexReload();
 
-        $("#dialog-cotas-detalhes").dialog({
-            escondeHeader: false,
-            resizable : false,
-            height : 560,
-            width : 740,
-            modal : true,
-            buttons : {
-                "Fechar" : function() {
-                    $(this).dialog("close");
-                }
-            }
-        });
     },
 
     somarTotais : function() {
@@ -945,6 +934,20 @@ var analiseParcialController = $.extend(true, {
 
     init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
     	
+    	$("#dialog-cotas-detalhes").dialog({
+	   		autoOpen: false,
+            escondeHeader: false,
+            resizable : false,
+            height : 560,
+            width : 740,
+            modal : true,
+            buttons : {
+                "Fechar" : function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    	
     	$('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
         $("#cotasQueNaoEntraramNoEstudo_cota").change(function(){
@@ -1138,27 +1141,7 @@ var analiseParcialController = $.extend(true, {
 
 
         $('#liberar').click(function(event){
-            
-        	setTimeout(function(){
-        	
-	        	if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
-	            	var id = $('#estudoId').val();
-	            		$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
-	            				[{name : 'estudoId', value : id}],
-	            				
-	            				function(result) {
-	            					analiseParcialController.liberarEstudo();
-			            		},
-			            		function(result) {
-			            			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
-			            		},
-			            		null
-	            		);
-	            		
-	            }
-	            event.preventDefault();
-	            
-        	},1500);
+        	analiseParcialController.verificarDivergenciaReparte();
         });
         
         $('#naoLiberar').click(function(event){
@@ -1197,30 +1180,36 @@ var analiseParcialController = $.extend(true, {
             analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             return false;
     	} else {
-    		if(analiseParcialController.verificarDivergenciaReparte()) {
-    			return true;
-    		} else {
-    			analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
-    			return false;
-    		}
+    		return true;
+    		
     	}
     },
     
     verificarDivergenciaReparte : function(){
-    	var reparteEstudo = $('#total_reparte_estudo_cabecalho').text();
-    	var reparteDistribuido = $('#total_reparte_sugerido').text();
     	
-    	if(reparteEstudo != undefined && reparteDistribuido != undefined){
-    		if(reparteEstudo != reparteDistribuido){
-    			var novoReparte = reparteEstudo - reparteDistribuido;
-    			$('#saldo_reparte').text(novoReparte);
-    			return false;
-    		}else{
-    			return true;
-    		}
-    	}else{
-    		return true;
-    	}
+    	var id = $('#estudoId').val();
+		
+    	$.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/verificacoesParaLiberarEstudo',
+				[{name : 'estudoId', value : id}],
+				
+				function(result) {
+		        	if(analiseParcialController.verificacoesParaLiberarEstudo()) {                
+		        		analiseParcialController.liberarEstudo();
+		            }
+			            
+        		},
+        		function(result) {
+        			analiseParcialController.exibirMsg(result.tipoMensagem, result.listaMensagens);
+        			
+        			var estudo = $('#estudoId').val();
+                	
+	            	$("#ordenarPorDe").val('');
+	            	$("#ordenarPorAte").val('');
+	            	analiseParcialController.filtroDefault(estudo, "reparte", "");
+        			
+        		},
+        		null
+		);
     },
     
     liberarEstudo : function(){

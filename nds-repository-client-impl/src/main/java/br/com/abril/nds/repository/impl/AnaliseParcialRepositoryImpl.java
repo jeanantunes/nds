@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
+import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
@@ -364,7 +365,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date) {
 
         StringBuilder sql = new StringBuilder();
@@ -409,7 +409,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @SuppressWarnings("unchecked")
     @Override
-//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao) {
 
         StringBuilder sql = new StringBuilder();
@@ -523,7 +522,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId) {
 
         StringBuilder sql = new StringBuilder();
@@ -559,20 +557,49 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select epc.produto_edicao_id produtoEdicaoId, ");
-        sql.append("       coalesce(epc.qtde_recebida, 0) reparte, ");
-        sql.append("       case when l.status in (:statusLanc) then ");
-        sql.append("        coalesce(epc.qtde_recebida - epc.qtde_devolvida, 0) ");
-        sql.append("       else null end venda ");
-        sql.append("  from estoque_produto_cota epc ");
-        sql.append("  join cota c on c.id = epc.cota_id and c.numero_cota = :numeroCota ");
-        sql.append("  join lancamento l on l.produto_edicao_id = epc.produto_edicao_id ");
-        sql.append(" where epc.produto_edicao_id in (:produtoEdicaoId) ");
-        sql.append(" group by epc.produto_edicao_id ");
-
+        
+    	StringBuilder sql = new StringBuilder();
+                                                                                                                                        
+    	sql.append(" select ");
+    	sql.append(" mec.produto_edicao_id produtoEdicaoId, ");
+    	
+    	sql.append(" cast(sum( case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.QTDE else -mec.QTDE end ) as unsigned int) AS reparte,  ");
+    	
+    	sql.append("          (case when l.status IN (:statusLancFechadoRecolhido)  ");
+    	sql.append("            then   ");
+    	sql.append("             cast(sum(   ");
+    	sql.append("               CASE   ");
+    	sql.append("                   WHEN tm.OPERACAO_ESTOQUE = 'ENTRADA'   ");
+    	sql.append("                   THEN   ");
+    	sql.append("                     mec.QTDE   ");
+    	sql.append("                   ELSE   ");
+    	sql.append("                     -mec.QTDE   ");
+    	sql.append("               END)   ");
+    	sql.append("               - (select sum(mecEncalhe.qtde)   ");
+    	sql.append("                   from lancamento lanc   ");
+    	sql.append("                   LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID   ");
+    	sql.append("                   LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID   ");
+    	sql.append("                   LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID   ");
+    	sql.append("                   LEFT JOIN cota cota on cota.id = cec.COTA_ID   ");
+    	sql.append("                   LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID   ");
+    	sql.append("                   LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID   ");
+    	sql.append(" 	              WHERE lanc.id = l.id and cota.id = c.id) AS UNSIGNED INT)   ");
+    	sql.append(" 	        else   ");
+    	sql.append("             null   ");
+    	sql.append("             end) as venda ");
+    	
+    	sql.append(" from movimento_estoque_cota mec ");
+    	sql.append(" inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ");
+    	sql.append(" inner join cota c on c.id = mec.COTA_ID ");
+    	sql.append(" inner join lancamento l on mec.lancamento_id = l.id ");
+    	sql.append(" left outer join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+    	sql.append(" where 1 = 1                                                                                                        ");
+    	sql.append(" and c.NUMERO_COTA = :numeroCota                                                                                    ");
+    	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)                                                                     ");
+    	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)                                                                         ");
+    	sql.append(" group by mec.PRODUTO_EDICAO_ID");
+    	
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
                 .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
@@ -580,9 +607,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         query.setParameter("numeroCota", numeroCota);
         query.setParameterList("produtoEdicaoId", listProdutoEdicaoId);
-        query.setParameterList("statusLanc", 
-                Arrays.asList(
-                        StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+        query.setParameterList("lancamentosPosExpedicao", LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
@@ -591,7 +617,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo) {
         StringBuilder sql = new StringBuilder();
         sql.append("select pe.id produtoEdicaoId, ");
@@ -633,7 +658,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
 
-//    @Transactional
     @Override
     public void atualizaReparteCota(Long estudoId, Integer numeroCota, Long reparteSubtraido) {
 
@@ -654,7 +678,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
 
     @Override
-//    @Transactional
     public void atualizaClassificacaoCota(Long estudoId, Integer numeroCota, String classificacaoCota) {
 
         StringBuilder sql = new StringBuilder();
@@ -672,7 +695,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.executeUpdate();
     }
 
-//    @Transactional
     @Override
     public void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido) {
 
@@ -688,7 +710,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
 
     @Override
-//    @Transactional
     public void liberar(Long id) {
         SQLQuery query = getSession().createSQLQuery("update estudo_gerado set liberado = 1 where id = ? ");
         query.setLong(0, id);
@@ -697,7 +718,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-//    @Transactional(readOnly = true)
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
        
     	StringBuilder sql = new StringBuilder();
