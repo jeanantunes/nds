@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO.ColunaOrdenac
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -136,20 +137,21 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("/pesquisaPrincipal")
-	public void pesquisaPrincipal(String semana, Long idFornecedor, String sortorder, String sortname, int page, int rp){
+	public void pesquisaPrincipal(String semana, Long idFornecedor, String comboCEIntegracao, String sortorder, String sortname, int page, int rp){
 		
 		validarAnoSemana(semana);
 		
 		FiltroFechamentoCEIntegracaoDTO filtroCE = new FiltroFechamentoCEIntegracaoDTO();
 		filtroCE.setSemana(semana);
 		filtroCE.setIdFornecedor(idFornecedor);
+		filtroCE.setComboCeIntegracao(comboCEIntegracao);
 		
 		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		filtroCE.setOrdenacaoColuna(Util.getEnumByStringValue(ColunaOrdenacaoFechamentoCEIntegracao.values(),sortname));
 		
 		this.tratarFiltro(filtroCE);
-
+		
 		FechamentoCEIntegracaoDTO fechamentoCEIntegracao = fechamentoCEIntegracaoService.obterCEIntegracaoFornecedor(filtroCE); 
 		
 		FechamentoCEIntegracaoVO retornoPesquisa = renderizarPesquisa(fechamentoCEIntegracao, filtroCE);

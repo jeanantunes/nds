@@ -586,4 +586,23 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			
 		return query.list();
 	}
+
+	@Override
+	public BigInteger countItensFechamentoSemCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" COUNT(ITEM_CH_ENC_FORNECEDOR.ID) ");
+		
+		hql.append(this.obterHqlFrom(filtro));
+		
+		Query query = getSession().createSQLQuery(hql.toString());
+		
+		this.aplicarParametros(filtro, query);
+		
+		return (BigInteger) query.uniqueResult();
+		
+	}
 }

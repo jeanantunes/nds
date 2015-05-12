@@ -125,7 +125,28 @@
 				  	<td width="151">
 				  		<input type="text" id="semana" name="semana" />
 				  	</td>
-			  		<td width="433"><span id="btnPesquisar"><a href="javascript:;" class="botaoPesquisar" ><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+			  		<td style="width:100px;">
+						<select id="combo-fechamentoCe-integracao" style="width:130px;">
+							<option value="-1" selected="selected">Selecione</option>
+							<option value="COM">Com CE</option>
+							<option value="SEM">Sem CE</option>
+							<option value="AMBOS">Ambos</option>
+							
+							<option value="AMBAS">Emitidas e a emitir</option>
+      						<option value="EMITIDAS">Emitidas</option>
+      						<option value="AEMITIR">A emitir</option>
+						</select>
+					</td>
+					<td style="width:20px;">
+						
+					</td>
+					<td width="333">
+			  			<span id="btnPesquisar">
+			  				<a href="javascript:;" class="botaoPesquisar" >
+			  					<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+			  				</a>
+			  			</span>
+			  		</td>
 				</tr>
 			</table>
 

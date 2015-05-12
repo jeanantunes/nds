@@ -617,13 +617,22 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	pesquisaPrincipal : function(){
 		var idFornecedor = $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val();
 		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
+		
+		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "-1") {
+			exibirMensagem('WARNING', ['Favor selecionar um item na combo!']);
+			return;
+		} 
+		
+		var semana = $("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
+		
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
 			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
 			dataType : 'json',
 			params: [
 			         {name:'idFornecedor' , value:idFornecedor},
-			         {name:'semana' , value:semana}
-			         ]		         
+			         {name:'semana' , value:semana},
+			         {name:'semana' , value:comboCeIntegracao}
+			        ]		         
 		});
 		
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();

@@ -711,13 +711,35 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
         }
-        
-        filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
-        
-        filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
+	    
+	    filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+	    filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
-		final BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
+	    BigInteger qntItens = BigInteger.ZERO;
+	    
+	    switch (filtro.getComboCeIntegracao()) {
 		
+			case "COM":
+			
+				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
+					
+				break;
+
+			case "SEM":
+				
+				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoSemCeIntegracao(filtro);
+				
+				break;
+			
+			case "AMBOS":	
+				
+				break;
+				
+			default:
+			break;
+		
+		}
+	    		
 		if(qntItens.compareTo(BigInteger.ZERO) == 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
