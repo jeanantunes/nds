@@ -574,7 +574,10 @@ var ConferenciaEncalhe = $.extend(true, {
 		function(result){
 			if(result.IND_COTA_EXIGE_NFE) {
 				fnCotaExigeNfe();
-			} 
+				ConferenciaEncalhe.excluirNotasFiscaisPorReabertura(data);
+			} else {
+				return;
+			}
 		});
 	},
 	
@@ -611,7 +614,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							if(!event) { event = window.event; }
 							event.preventDefault();
 							
-							ConferenciaEncalhe.excluirNotasFiscaisPorReabertura(data);
+							ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_alert);
 							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
@@ -2620,7 +2623,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			function(result){
 				
 				if (typeof result.RET_NFE_DIGITADA != 'undefined' && result.RET_NFE_DIGITADA){
-					ConferenciaEncalhe.popup_notaFiscal();
+					if(result.IND_COTA_EXIGE_NFE){						
+						ConferenciaEncalhe.popup_notaFiscal();
+					}
+					
 				}
 				
 				if (result.mensagens){
