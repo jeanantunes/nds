@@ -915,8 +915,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     @Override
     @Transactional
-    public Long atualizarEstoqueProduto(final TipoMovimentoEstoque tipoMovimentoEstoque,
-            final MovimentoEstoque movimentoEstoque) {
+    public Long atualizarEstoqueProduto(final TipoMovimentoEstoque tipoMovimentoEstoque, final MovimentoEstoque movimentoEstoque) {
         
     	return atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, false, true, null);
         
@@ -1008,6 +1007,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		estoqueProdutoFilaRepository.insert(cota.getId(), idProdutoEdicao, movimentoEstoqueDTO.getGrupoMovimentoEstoque().getTipoEstoque(), operacaoEstoque, diferencaQtdItens);
 	}
     
+    @SuppressWarnings("unused")
 	private Long atualizarEstoqueProduto(final TipoMovimentoEstoque tipoMovimentoEstoque,
             final MovimentoEstoque movimentoEstoque, final boolean isImportacao,
             final boolean validarTransfEstoqueDiferenca, TipoEstoque tipoEstoqueDirecionamento) {
@@ -1048,8 +1048,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             
             case LANCAMENTO:
                 
-                novaQuantidade = isOperacaoEntrada ? estoqueProduto.getQtde().add(qntMovimento) :
-                    estoqueProduto.getQtde().subtract(qntMovimento);
+                novaQuantidade = isOperacaoEntrada ? estoqueProduto.getQtde().add(qntMovimento) : estoqueProduto.getQtde().subtract(qntMovimento);
                 
                 estoqueProduto.setQtde(novaQuantidade);
                 
@@ -1059,8 +1058,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final BigInteger qtdeDanificado = estoqueProduto.getQtdeDanificado() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDanificado();
                 
-                novaQuantidade = isOperacaoEntrada ? qtdeDanificado.add(qntMovimento) :
-                    qtdeDanificado.subtract(qntMovimento);
+                novaQuantidade = isOperacaoEntrada ? qtdeDanificado.add(qntMovimento) : qtdeDanificado.subtract(qntMovimento);
                 
                 estoqueProduto.setQtdeDanificado(novaQuantidade);
                 
@@ -1080,12 +1078,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 	
                 	novaQuantidade = qtdeEstoqueProdutoEncalhe.subtract(qntMovimento);
                 } else {
-                	
+                	/*
                 	if(movimentoEstoque.getOrigem() != null || qtdeEstoqueProdutoSuplementar.longValue() > 0) {
                 		
                 		if(qtdeEstoqueProdutoSuplementar.longValue() > 0) {
                 			
-                			//FIXME: Refatorar nome para ser relacionado a transferencia de suplementar para recolhimento
                 			transferirEstoqueProdutoChamadaoParaRecolhimento(estoqueProduto.getProdutoEdicao().getId(), movimentoEstoque.getUsuario());
                 			
                 			qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
@@ -1095,13 +1092,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 			qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(movimentoEstoque, estoqueProduto, qntMovimento);		
                 		}
                 	}
+                	*/
                 
                 	if(!isOperacaoEntrada && qtdeEstoqueProdutoEncalhe.subtract(qntMovimento).longValue() >= 0) {
                 		
                 		novaQuantidade = qtdeEstoqueProdutoEncalhe.subtract(qntMovimento);
                 	} else {
                 		
-                		novaQuantidade = isOperacaoEntrada ? qtdeEstoqueProdutoTotal.add(qntMovimento) : qtdeEstoqueProdutoTotal.subtract(qntMovimento);
+                		novaQuantidade = isOperacaoEntrada ? qtdeEstoqueProdutoEncalhe.add(qntMovimento) : qtdeEstoqueProdutoEncalhe.subtract(qntMovimento);
                 	}
                 }
                 

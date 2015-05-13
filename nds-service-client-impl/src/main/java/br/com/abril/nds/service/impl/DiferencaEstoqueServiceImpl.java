@@ -732,10 +732,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
             operacaoFinaceira = OperacaoFinaceira.DEBITO;
         }
         
-        return
-                tipoMovimentoFinanceiroService
-                .obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(
-                        grupoMovimentoFinaceiro, operacaoFinaceira);
+        return tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(grupoMovimentoFinaceiro, operacaoFinaceira);
     }
     
     private void processarTransferenciaEstoque(final Diferenca diferenca, final Long idUsuario, final Origem origem) {
