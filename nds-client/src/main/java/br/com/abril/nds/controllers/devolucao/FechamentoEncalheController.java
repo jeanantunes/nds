@@ -731,7 +731,6 @@ public class FechamentoEncalheController extends BaseController {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 		}
 		
-		
 		ValidacaoVO validacaoCotaConferenciaNaoFinalizada = getValidacaoCotaConferenciaNaoFinalizada(dataEncalhe);
 		
 		if(validacaoCotaConferenciaNaoFinalizada != null) {
@@ -763,8 +762,7 @@ public class FechamentoEncalheController extends BaseController {
 			@SuppressWarnings("unchecked")
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 			
-			Set<String> nossoNumero = this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, 
-					listaEncalhe, true);
+			Set<String> nossoNumero = this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe, true);
 			
 			this.session.setAttribute(SET_NOSSO_NUMERO, nossoNumero);
 			
