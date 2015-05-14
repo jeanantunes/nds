@@ -8,6 +8,7 @@ import br.com.abril.nds.model.cadastro.Veiculo;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.TransportadorWrapper;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 
 public class NotaFiscalTransportadorBuilder {
@@ -26,11 +27,11 @@ public class NotaFiscalTransportadorBuilder {
 			notaFiscal.getNotaFiscalInformacoes().setInformacaoTransporte(new InformacaoTransporte());
 		}
 		
-		/*
+		
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper() == null){
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setTransportadorWrapper(new TransportadorWrapper());
 		}
-		
+		/*
 		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().getVeiculo() == null){
 			notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getTransportadorWrapper().setVeiculo(new br.com.abril.nds.model.fiscal.nota.Veiculo());
 		}
