@@ -74,7 +74,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		/**
 			Monta as colunas do grid em função do perfil de usuário logado no sistema 
 		**/
-		montarColunas: function (){
+		montarColunas : function (){
 			
 			if(digitacaoContagemDevolucaoController.isRoleOperador()){
 				return digitacaoContagemDevolucaoController.montarColunasPerfilOperador();
@@ -294,7 +294,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			Se itens  selecionados, limpa todos os valores de exemplar de nota.
 			Se itens não selecionados, replica todos os valores para os campos exemplares de nota. 
 		**/
-		checkAllReplicarValor: function (todos, checkgroupName) {
+		checkAllReplicarValor : function (todos, checkgroupName) {
 			
 			$(".chBoxReplicar").attr("checked", todos.checked);
 			

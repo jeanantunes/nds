@@ -20,16 +20,16 @@ public class NotaFiscalTelefone implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@Column(name = "TIPO_TELEFONE", nullable = false)
+	@Column(name = "TIPO_TELEFONE", nullable = true)
 	private String tipoTelefone;
 	
-	@Column(name = "DDI", nullable = false)
+	@Column(name = "DDI", nullable = true)
 	private String DDI;
 	
-	@Column(name = "DDD", nullable = false)
+	@Column(name = "DDD", nullable = true)
 	private String DDD;
 	
-	@Column(name = "NUMERO", nullable = false)
+	@Column(name = "NUMERO", nullable = true)
 	private String numero;
 	
 	@Column(name = "RAMAL", nullable = true)

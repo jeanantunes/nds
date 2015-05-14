@@ -7,6 +7,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		fechamentoCEIntegracaoController.bindButtons();
 		fechamentoCEIntegracaoController.buscarNumeroSemana();
 		fechamentoCEIntegracaoController.esconderBotoes();
+		
+		this.replicar = {
+			all:false,
+			list:[]
+		};
 
 	},
 	
@@ -301,6 +306,84 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				width : 80,
 				sortable : false,
 				align : 'right'
+			}],
+			sortname : "sequencial",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180
+		});
+		
+		$(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
+			onSuccess: function() {
+				bloquearItensEdicao(fechamentoCEIntegracaoController.workspace);
+				fechamentoCEIntegracaoController.aplicarNumericCampo();
+			},
+			preProcess : fechamentoCEIntegracaoController.fechamentoSemCeGridPreProcess,
+			dataType : 'json',
+			colModel : [{
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Preço Capa R$',
+				name : 'precoCapa',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Exemplar Devolução',
+				name : 'qtdDevolucao',
+				width : 110,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Total c/ Desc.R$',
+				name : 'valorTotalComDesconto',
+				width : 100,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Total R$',
+				name : 'valorVendaFormatado',
+				width : 80,
+				sortable : false,
+				align : 'right'
+			}, {
+				display : 'Exemplar Nota',
+				name : 'venda',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Diferença',
+				name : 'diferenca',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			},{
+				display : 'Replicar Qtde',
+				name : 'replicarQtde',
+				width : 70,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "sequencial",
 			sortorder : "asc",
@@ -614,8 +697,239 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 
 	},
 	
+	
+	fechamentoSemCeGridPreProcess : function(resultado) {
+		
+		if (resultado.mensagens) {
+			
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			
+			$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+			
+			fechamentoCEIntegracaoController.esconderBotoes();
+			
+			return resultado;
+			
+		} else {
+			
+			if (!resultado.semanaFechada) {
+
+				fechamentoCEIntegracaoController.itensCEIntegracao = [];
+				
+				var checked = '';
+				
+				$.each(resultado.listaFechamento.rows, function(index, row) {
+					
+					var id = index;
+					
+					fechamentoCEIntegracaoController.itensCEIntegracao.push(
+						{id: row.cell.idItemCeIntegracao, encalhe: row.cell.encalhe, venda: row.cell.venda,alteracao:false});
+					
+					var isParcial = row.cell.tipoFormatado == 'PARCIAL';
+					var isFinal = row.cell.tipoFormatado == 'FINAL';
+					
+					var colunaReparte;
+					
+					var colunaEncalhe;
+					
+					var colunaVenda;
+					
+					var valorDiferenca = 0;
+					
+					if (isParcial) {
+						
+						colunaReparte =
+							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.reparte) ? (row.cell.reparte = "0") ? "***" : row.cell.reparte : "***") +
+							'</span>';
+						
+						colunaEncalhe =
+							'<span id="encalhe' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.encalhe) ? (row.cell.encalhe = "0" ) ? "***" : row.cell.encalhe: "***") +
+							'</span>';
+						
+						colunaVenda =
+							' <input isEdicao="true" type="text" name="inputVenda"' +
+							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
+							' value="' + row.cell.venda + '" size="5px"' +
+							' tabindex="' + (++index) +'"' +
+							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
+							row.cell.idItemCeIntegracao + ', this)"/>';
+						
+					} else if (isFinal) {
+							
+						colunaReparte =
+							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.reparte) ? row.cell.reparte : "") +
+							'</span>';
+						
+						colunaEncalhe =
+							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
+							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
+							' tabindex="' + (++index) +'"' +
+							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							row.cell.idItemCeIntegracao + ', this)"/>';
+							
+							colunaVenda =
+								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
+								' value="' + row.cell.venda + '" size="5px"' +
+								' tabindex="' + (++index) +'"' +
+								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
+								row.cell.idItemCeIntegracao + ', this)"/>';
+							
+						} else {
+						
+						colunaReparte =
+							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.reparte) ? row.cell.reparte : "") +
+							'</span>';
+						
+						colunaEncalhe =
+							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
+							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
+							' tabindex="' + (++index) +'"' +
+							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							row.cell.idItemCeIntegracao + ', this)"/>';
+						
+						colunaVenda =
+							' <input isEdicao="true" type="text" name="inputVenda"' +
+							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
+							' value="' + row.cell.venda + '" size="5px"' +
+							' tabindex="' + (++index) +'"' +
+							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
+							row.cell.idItemCeIntegracao + ', this)"/>';
+
+						if(row.cell.diferenca == undefined){
+							valorDiferenca = row.cell.encalhe - row.cell.estoque ;
+						}
+
+					}
+					
+					var colunaEstoque =
+						'<span id="estoque' + row.cell.idItemCeIntegracao + '">' +
+							row.cell.estoque +
+						'</span>';
+					
+					var colunaDiferenca =
+							'<span id="diferenca' + row.cell.idItemCeIntegracao + '">' +
+							valorDiferenca +
+							'</span>';
+					
+					var colunaPrecoCapa =
+						'<span id="precoCapa' + row.cell.idItemCeIntegracao + '">' +
+							row.cell.precoCapaFormatado +
+						'</span>';
+					
+					var colunaValorVenda =
+						'<span id="valorVenda' + row.cell.idItemCeIntegracao + '">' +
+							row.cell.valorVendaFormatado +
+						'</span>';
+					
+					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+id+
+					'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+id
+					+'" onclick="fechamentoCEIntegracaoController.replicarValor(\''+id+'\')"/>';
+					
+					row.cell.replicarQtde = inputCheckReplicarValor;
+					
+					
+					//Altera cor do valor da quantidade, caso seja um valo negativo
+					if (row.cell.diferenca < 0){
+						corDif = 'color:red';
+					}
+					
+					row.cell.estoque = colunaEstoque;
+					row.cell.diferenca = colunaDiferenca;
+					row.cell.reparte = colunaReparte;
+					row.cell.encalhe = colunaEncalhe;					
+					row.cell.venda = colunaVenda;
+					row.cell.precoCapaFormatado = colunaPrecoCapa;
+					row.cell.valorVendaFormatado = colunaValorVenda;
+
+				});
+				
+				$.each(resultado.listaFechamento.rows, function(index, row) {
+					
+					if(row.cell.diferenca == undefined){
+						row.cell.diferenca = 0;
+					}
+				});
+				
+			} else {
+				
+				$.each(resultado.listaFechamento.rows, function(index, row) {
+					
+					if(row.cell.diferenca == undefined){
+						row.cell.diferenca = 0;
+					}
+				});
+			}
+			
+			fechamentoCEIntegracaoController.popularTotal(resultado);
+			fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
+			
+			$(".grids", fechamentoCEIntegracaoController.workspace).show();
+			
+			fechamentoCEIntegracaoController.mostrarBotoes();
+			
+			return resultado.listaFechamento;
+			
+		};
+
+	},
+	
+	replicarValor:function(id) {
+		
+		if ($("#ch" + id, fechamentoCEIntegracaoController.workspace).is(":checked")){
+			$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val(
+				$("#qtdDevolucao_" + id, fechamentoCEIntegracaoController.workspace).text()
+			);
+			
+			$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("0");
+		} else {
+			
+			$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("");
+			
+			$("#sel", fechamentoCEIntegracaoController.workspace).attr("checked",false);
+			
+			var valorAux = 
+				$("#valorExemplarNotaAux" + id, fechamentoCEIntegracaoController.workspace).val();
+			
+			if (valorAux || valorAux == "0"){
+				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val(valorAux);
+				
+				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text(
+					parseInt($("#qtdDevolucao_" + id, fechamentoCEIntegracaoController.workspace).text())-
+					valorAux
+				);
+				
+			} else {
+				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val("");
+				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("");
+			}
+		}
+		
+		if(this.replicar.list.indexOf(id) >= 0) {
+			this.replicar.list.splice(this.replicar.list.indexOf(id), 1);
+		}
+		
+		if(this.replicar.all ^ $("#ch" + id, this.workspace).is(":checked")) {
+			this.replicar.list.push(id);
+		}
+	},
+	
+	
 	pesquisaPrincipal : function(){
+		
 		var idFornecedor = $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val();
+		
 		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
 		
 		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "-1") {
@@ -623,19 +937,36 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			return;
 		} 
 		
-		var semana = $("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
+		var comboCEIntegracao = $("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
 		
-		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
-			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
-			dataType : 'json',
-			params: [
-			         {name:'idFornecedor' , value:idFornecedor},
-			         {name:'semana' , value:semana},
-			         {name:'semana' , value:comboCeIntegracao}
-			        ]		         
-		});
+		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "COM") {
+			$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
+				url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
+				dataType : 'json',
+				params: [
+				         {name:'idFornecedor' , value:idFornecedor},
+				         {name:'semana' , value:semana},
+				         {name:'comboCEIntegracao' , value:comboCEIntegracao}
+				        ]		         
+			});
+			$($(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
+			$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();
+		} else {
+			
+			$(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
+				url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
+				dataType : 'json',
+				params: [
+				         {name:'idFornecedor' , value:idFornecedor},
+				         {name:'semana' , value:semana},
+				         {name:'comboCEIntegracao' , value:comboCEIntegracao}
+				        ]		         
+			});
+			$($(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
+			$(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();
+			
+		}
 		
-		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();
 		
 	},
 	
@@ -646,7 +977,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		$(".tabelaTotal", fechamentoCEIntegracaoController.workspace).show();
 	},
 	
-	validarPerdaGanho:function(){
+	validarPerdaGanho : function(){
 		
 		fechamentoCEIntegracaoController.initGridPerdasGanho();
 		
@@ -759,7 +1090,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			);
 	},
 	
-	initGridPerdasGanho:function(){
+	initGridPerdasGanho : function(){
 		
 		$(".perdaGanhoGrid", fechamentoCEIntegracaoController.workspace).flexigrid({			
 			preProcess : fechamentoCEIntegracaoController.perdaGanhoGridPreProcess,
@@ -860,6 +1191,5 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				true
 			);
 	}
-	
 }, BaseController);
 //@ sourceURL=scriptFechamentoCEIntegracao.js
