@@ -145,7 +145,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial(), parcialPossuiRedistribuicao));
             
             for (AnaliseParcialDTO item : lista) {
-                item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
+                
+            	item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
                 int contadorParciais = 1;
                 
