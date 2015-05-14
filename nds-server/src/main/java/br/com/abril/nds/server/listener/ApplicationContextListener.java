@@ -66,16 +66,14 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		
-		final WebApplicationContext springContext = 
-			WebApplicationContextUtils.getWebApplicationContext(
-				servletContextEvent.getServletContext());
+		final WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
 		
-		SchedulerFactoryBean schedulerFactoryBean =
-			springContext.getBean(SchedulerFactoryBean.class);
+		SchedulerFactoryBean schedulerFactoryBean = springContext.getBean(SchedulerFactoryBean.class);
 		 
 		Scheduler scheduler = schedulerFactoryBean.getScheduler();
 		
 		this.agendarIntegracaoOperacionalDistribuidor(scheduler);
+		
 	}
 	
 	    /*
