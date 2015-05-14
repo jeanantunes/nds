@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	
+	<beans:bean id="ajaxAwareAuthenticationEntryPoint" class="br.com.abril.nds.authentication.AjaxAwareAuthenticationEntryPoint">
+		<beans:constructor-arg name="loginFormUrl" value="/login.jsp"/>
+	</beans:bean>
+	
+	<http entry-point-ref="ajaxAwareAuthenticationEntryPoint">
+		<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?error=1"  />
+		<logout logout-success-url="/login.jsp" />
+
+		<intercept-url pattern="/images/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/scripts/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/css/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/login.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY" />
+	</http>
+	
+	
+	<global-method-security pre-post-annotations="enabled" />
+	
+	<beans:bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
+	
+	<beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
+		<beans:property name="basenames"> 
+			<beans:list> 
+			<beans:value>messages</beans:value> 
+		</beans:list> 
+		</beans:property> 
+	</beans:bean> 	
+	
+</beans:beans>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<http auto-config="true">
+		<custom-filter position="PRE_AUTH_FILTER" ref="webgateFilter" />
+	</http>
+
+	<jdbc-user-service role-prefix="none" data-source-ref="dataSource"
+		users-by-username-query="SELECT usuario_login, usuario_senha, 'true' as enable FROM usuario WHERE usuario_login=?"
+		authorities-by-username-query="SELECT u.usuario_login, pg.permissao FROM usuario u, permissao pg, grupo_permissao gp, grupo_usuario gu WHERE u.usuario_id = gu.usuario_id AND gu.grupo_id = gp.grupo_id AND pg.permissao_id = gp.permissao_id AND NOT EXISTS ( SELECT 1 FROM usuario_excecao_permissao up WHERE u.usuario_login = ? AND u.usuario_id = up.usuario_id AND pg.permissao_id = up.permissao_id AND gu.grupo_id = up.grupo_id )" />
+	
+	<authentication-manager>
+		<authentication-provider ref="preauthAuthProvider" />		
+	</authentication-manager>
+
+	<beans:bean id="webgateFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+		<beans:property name="principalRequestHeader" value="SM_USER" />
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+	</beans:bean>
+
+	<beans:bean id="preauthAuthProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+		<beans:property name="preAuthenticatedUserDetailsService">
+			<beans:bean id="userDetailsServiceWrapper"
+				class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+				<beans:property name="userDetailsService" ref="userDetailsService" />
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+			
+	<beans:import resource="applicationContext-security-common.xml" />
+</beans:beans>
