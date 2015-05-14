@@ -63,7 +63,17 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private boolean integracaoNFEAprovado;
 	
-	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";
+	private String desconto;
+	
+	private String qtdDevolucao;
+	
+	private String qtdNota;
+	
+	private String valorTotal;
+	
+	private String valorTotalComDesconto;
+	
+	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";		
 	
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	public String getReparteFormatado(){
@@ -230,6 +240,47 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	public void setEstoque(BigInteger estoque) {
 		this.estoque = estoque;
 	}
+
+	public String getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(String desconto) {
+		this.desconto = desconto;
+	}
+
+	public String getQtdDevolucao() {
+		return qtdDevolucao;
+	}
+
+	public void setQtdDevolucao(String qtdDevolucao) {
+		this.qtdDevolucao = qtdDevolucao;
+	}
+
+	public String getQtdNota() {
+		return qtdNota;
+	}
+
+	public void setQtdNota(String qtdNota) {
+		this.qtdNota = qtdNota;
+	}
+
+	public String getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(String valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
+	public String getValorTotalComDesconto() {
+		return valorTotalComDesconto;
+	}
+
+	public void setValorTotalComDesconto(String valorTotalComDesconto) {
+		this.valorTotalComDesconto = valorTotalComDesconto;
+	}
+	
 	
 	
 }

@@ -153,6 +153,11 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
 	}
 	
+	@Transactional(readOnly=true)
+	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoSemCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoSemCEIntegracao(filtro);
+	}
+	
 	@Transactional
 	public byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca) {
 		
@@ -717,47 +722,42 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 	    BigInteger qntItens = BigInteger.ZERO;
 	    
+	    final FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
+	    
 	    switch (filtro.getComboCeIntegracao()) {
 		
 			case "COM":
 			
 				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
-					
+				fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoCeIntegracao(filtro));
 				break;
 
 			case "SEM":
 				
 				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoSemCeIntegracao(filtro);
+				fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoSemCEIntegracao(filtro));
 				
 				break;
-			
-			case "AMBOS":	
-				
-				break;
-				
+
 			default:
 			break;
 		
 		}
+	    
+	    fechamentoCEIntegracaoDTO.setConsolidado(this.obterConsolidadoCE(filtro));
 	    		
 		if(qntItens.compareTo(BigInteger.ZERO) == 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		final FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
-	
 		fechamentoCEIntegracaoDTO.setQntItensCE(qntItens.intValue());
-		
-		fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoCeIntegracao(filtro));
-		
-		fechamentoCEIntegracaoDTO.setConsolidado(this.obterConsolidadoCE(filtro));
 		
 		fechamentoCEIntegracaoDTO.setSemanaFechada(this.verificarStatusSemana(filtro));
 		
 		return fechamentoCEIntegracaoDTO;
 	}
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro, BigDecimal qntVenda) {
@@ -795,12 +795,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
             throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
         }
         
-        filtro.setPeriodoRecolhimento(
-                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+        filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
         
         filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
-		return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+        if(filtro.getComboCeIntegracao().equals("SEM")) {        	
+        	return this.fechamentoCEIntegracaoRepository.buscarConsolidadoSemCeIntegracao(filtro);
+        } else {
+        	return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);        	
+        }
+        
 	}
 
 	@Override
