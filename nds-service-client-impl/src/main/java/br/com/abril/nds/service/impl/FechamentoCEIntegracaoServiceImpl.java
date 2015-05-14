@@ -735,6 +735,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			case "SEM":
 				
 				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoSemCeIntegracao(filtro);
+				
+				if(qntItens == null) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+				}
+				
 				fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoSemCEIntegracao(filtro));
 				
 				break;

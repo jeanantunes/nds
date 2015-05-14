@@ -26,7 +26,7 @@ public class InformacaoTransporte implements Serializable {
 	/**
 	 * modFrete
 	 */
-	@Column(name="MODALIDADE_FRETE", length=1, nullable=false)
+	@Column(name="MODALIDADE_FRETE", length=1, nullable=true)
 	@NFEExport(secao = TipoSecao.X, posicao = 0)
 	@XmlElement(name="modFrete")
 	private Integer modalidadeFrete;
