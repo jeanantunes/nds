@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	
+	<authentication-manager>
+		<authentication-provider>
+			<password-encoder hash="md5" />
+			
+			<jdbc-user-service role-prefix="" data-source-ref="dataSource"
+				users-by-username-query="SELECT login, senha, 'true' as enable FROM USUARIO WHERE login=?"
+				authorities-by-username-query="select distinct * from (
+					(select u.login, gpp.permissao_id from USUARIO u 
+					    join USUARIO_GRUPO_PERMISSAO usp on (u.id = usp.usuario_id)
+					    join GRUPO_PERMISSAO_PERMISSAO gpp on (gpp.permissao_grupo_id = usp.gruposPermissoes_ID) where u.conta_ativa = 1 )
+					union all
+					(select u.login, up.permissao_id from USUARIO_PERMISSAO up join USUARIO u on up.usuario_id = u.id where u.conta_ativa = 1 )
+					) uni
+					where uni.login=?" />
+			
+		</authentication-provider>
+	</authentication-manager>
+	
+	<beans:import resource="applicationContext-security-common.xml"/>
+</beans:beans>
