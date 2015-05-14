@@ -24,91 +24,91 @@ public class InformacaoValoresTotais implements Serializable {
 	/**
 	 * vBC
 	 */
-	@Column(name="VL_BC_ICMS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_BC_ICMS", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=0, tamanho=15)
 	private BigDecimal valorBaseCalculoICMS = BigDecimal.ZERO;
 	
 	/**
 	 * vICMS
 	 */
-	@Column(name="VL_TOTAL_ICMS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_ICMS", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=1, tamanho=15)
-	private BigDecimal valorICMS= BigDecimal.ZERO;
+	private BigDecimal valorICMS = BigDecimal.ZERO;
 	
 	/**
 	 * vBCST
 	 */
-	@Column(name="VL_BC_ICMS_ST", nullable=false, precision=18, scale=4)
+	@Column(name="VL_BC_ICMS_ST", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=2, tamanho=15)
-	private BigDecimal valorBaseCalculoICMSST= BigDecimal.ZERO;
+	private BigDecimal valorBaseCalculoICMSST = BigDecimal.ZERO;
 	
 	/**
 	 * vST
 	 */
-	@Column(name="VL_TOTAL_ICMS_ST", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_ICMS_ST", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=3, tamanho =15)
-	private BigDecimal valorICMSST= BigDecimal.ZERO;
+	private BigDecimal valorICMSST = BigDecimal.ZERO;
 
 	/**
 	 * vProd
 	 */
-	@Column(name="VL_TOTAL_PRODUTOS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_PRODUTOS", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=4, tamanho =15)
-	private BigDecimal valorProdutos= BigDecimal.ZERO;
+	private BigDecimal valorProdutos = BigDecimal.ZERO;
 	
 	/**
 	 * vFrete
 	 */
-	@Column(name="VL_TOTAL_FRETE", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_FRETE", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=5, tamanho =15)
 	private BigDecimal valorFrete= BigDecimal.ZERO;
 	
 	/**
 	 * vSeg
 	 */
-	@Column(name="VL_TOTAL_SEGURO", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_SEGURO", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=6, tamanho =15)
 	private BigDecimal valorSeguro= BigDecimal.ZERO;
 	
 	/**
 	 * vDesc
 	 */
-	@Column(name="VL_TOTAL_DESCONTO", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_DESCONTO", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=7, tamanho =15)
 	private BigDecimal valorDesconto= BigDecimal.ZERO;
 	
 	/**
 	 * vIPI
 	 */
-	@Column(name="VL_TOTAL_IPI", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_IPI", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=9, tamanho =15)
 	private BigDecimal valorIPI= BigDecimal.ZERO;
 	
 	/**
 	 * vPIS
 	 */
-	@Column(name="VL_TOTAL_PIS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_PIS", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=10, tamanho =15)
 	private BigDecimal valorPIS= BigDecimal.ZERO;
 	
 	/**
 	 * vCOFINS
 	 */
-	@Column(name="VL_TOTAL_COFINS", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_COFINS", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=11, tamanho =15)
 	private BigDecimal valorCOFINS= BigDecimal.ZERO;
 	
 	/**
 	 * vOutro
 	 */
-	@Column(name="VL_TOTAL_OUTRO", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_OUTRO", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=12, tamanho =15)
 	private BigDecimal valorOutro= BigDecimal.ZERO;
 	
 	/**
 	 * vNF
 	 */
-	@Column(name="VL_TOTAL_NF", nullable=false, precision=18, scale=4)
+	@Column(name="VL_TOTAL_NF", nullable=true, precision=18, scale=4)
 	@NFEExport(secao=TipoSecao.W02, posicao=13, tamanho =15)
 	private BigDecimal valorNotaFiscal= BigDecimal.ZERO;
 	

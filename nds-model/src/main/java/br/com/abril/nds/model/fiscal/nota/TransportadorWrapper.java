@@ -58,12 +58,11 @@ public class TransportadorWrapper implements Serializable {
 	@Transient
 	private String enderecoXML;
 	
-	@OneToOne(optional=false, fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(optional=true, fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name="ENDERECO_ID_TRANS")
 	@NFEExportType
 	@XmlTransient
 	private NotaFiscalEndereco endereco;
-	
 	
 	/**
 	 * xMun

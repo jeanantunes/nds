@@ -21,7 +21,6 @@
 		<intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY" />
 	</http>
 	
-	
 	<global-method-security pre-post-annotations="enabled" />
 	
 	<beans:bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
