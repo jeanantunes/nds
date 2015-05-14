@@ -41,10 +41,10 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 	@Export(label="Id Cota", alignment=Alignment.LEFT)
 	private Long idCota;
 	
-	@Export(label="Id Cota", alignment=Alignment.LEFT)
+	@Export(label="Núm Cota", alignment=Alignment.LEFT)
 	private Integer numeroCota;
 	
-	@Export(label="Cota", alignment=Alignment.LEFT)
+	@Export(label="Nome Cota", alignment=Alignment.LEFT)
 	private String nomeCota;
 	
 	@Export(label="Total de Exemplares", alignment=Alignment.LEFT)

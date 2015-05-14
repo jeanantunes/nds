@@ -39,8 +39,7 @@
 	    	<table class="perdaGanhoGrid"></table>
 		</div>
 	</form>
-	
-	
+		
     <div class="areaBts">
     	<div class="area">
     		
@@ -130,7 +129,6 @@
 							<option value="-1" selected="selected">Selecione</option>
 							<option value="COM">Com CE</option>
 							<option value="SEM">Sem CE</option>
-							<option value="AMBOS">Ambos</option>
 						</select>
 					</td>
 					<td style="width:20px;">
@@ -153,7 +151,8 @@
        	  <legend> Fechamento CE</legend>
           
 	        <div class="grids" style="display:none;">
-	          <table class="fechamentoCeGrid"></table>
+	          	<table class="fechamentoCeGrid"></table>
+	          	<table class="fechamentoSemCeGrid"></table>
 	       		<div class="linha_separa_fields">&nbsp;</div>
 				<br clear="all" />
 				<div class="tabelaTotal" style="display:none;">
