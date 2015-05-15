@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
@@ -70,6 +71,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.CouchDBRepository;
 import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
 import br.com.abril.nds.repository.DistribuidorGridDistribuicaoRepository;
 import br.com.abril.nds.repository.DistribuidorPercentualExcedenteRepository;
@@ -108,7 +110,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
 	
-	private static final String DB_NAME = "db_parametro_distribuidor";
+//	private static final String DB_NAME = "db_parametro_distribuidor";
 	
 	@Autowired
 	DistribuidorClassificacaoCotaRepository classificacaoCotaRepository;
@@ -121,9 +123,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
-
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private ParametroContratoCotaRepository parametroContratoCotaRepository;
@@ -156,18 +155,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private MovimentoRepository movimentoRepository ;
 	
 	@Autowired
-	private CouchDbProperties couchDbProperties;
-	
-	private CouchDbClient couchDbClient;
-	
-	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
 	@Autowired
 	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
-	
-	@Autowired
-	private GrupoPermissaoService grupoPermissaoService;
 	
 	@Autowired
 	private RegimeTributarioRepository regimeTributarioRepository;
@@ -175,11 +166,26 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@Autowired
 	private TributoAliquotaRepository tributoAliquotaRepository;
 	
+	@Resource(name="couchDBRepositoryImpl")
+	private CouchDBRepository couchDBRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private GrupoPermissaoService grupoPermissaoService;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+	
+	private CouchDbClient couchDbClient;
+	
 	@PostConstruct
 	public void initCouchDbClient() {
 		
+		/*
 		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
-			.setDbName(DB_NAME)
+			.setDbName(distribuidorService.obter().getCodigoDistribuidorDinap())
 			.setCreateDbIfNotExist(true)
 			.setProtocol(couchDbProperties.getProtocol())
 			.setHost(couchDbProperties.getHost())
@@ -188,9 +194,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			.setPassword(couchDbProperties.getPassword())
 			.setMaxConnections(100)
 			.setConnectionTimeout(500);
+			
 	
 		this.couchDbClient = new CouchDbClient(properties);
-
+		*/
+		
+		this.couchDbClient = couchDBRepository.getCouchDBClient(distribuidorService.obter().getCodigoDistribuidorDinap(), true);
 	}
 
 	/* (non-Javadoc)
@@ -459,11 +468,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
         parametrosDistribuidor.setComplementarAutomatico(gridDistribuicao.isComplementarAutomatico());
         parametrosDistribuidor.setPercentualMaximoFixacao(gridDistribuicao.getPercentualMaximoFixacao());
         
-
         // Aba Distribuição - Grid Classificação Cota
         List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO = new ArrayList<>();
-        List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
         /*
+        List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
+        
         if (listClassificacaoCota != null) {
                 for (DistribuidorClassificacaoCota classificacaoCota : listClassificacaoCota) {
                         DistribuidorClassificacaoCotaVO classificacaoCotaVO = new DistribuidorClassificacaoCotaVO();
@@ -1294,8 +1303,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueDevolucaoFornecedor() {
 		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 		
 		return gruposMovimentoEstoque;
 	}
@@ -1340,8 +1348,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			this.tipoMovimentoFinanceiroRepository.merge(tipoMovimentoFinanceiro);
 		}
 	}
-
-	
 	
 	private void salvarLogo(InputStream imgLogotipo, String imgContentType) {
 		
@@ -1361,8 +1367,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		try {
 		
-			jsonObject =
-				couchDbClient.find(JsonObject.class, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name());
+			jsonObject = couchDbClient.find(JsonObject.class, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name());
 		
 		} catch (NoDocumentException e) {
 			
