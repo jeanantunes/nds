@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.envio.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.envio.nota.NotaEnvioEndereco;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
@@ -684,13 +686,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             final NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null : itemNotaEnvioPK.getNotaEnvio();
             
-            if (notaEnvio != null){
+            if (notaEnvio != null) {
                 
                 itensNotasEnvioExistentes.add(ine);
                 
                 if (!novasNotasEnvio.contains(notaEnvio)) {
                     
-                    notaEnvio.setDestinatario(destinatarioAtualizado);
+//                    notaEnvio.setDestinatario(destinatarioAtualizado);
                     
                     novasNotasEnvio.add(notaEnvio);
                 }
@@ -1116,14 +1118,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             }
         }
         
-        try {
-            
-            destinatario.setEndereco(cloneEndereco(enderecoPdv.getEndereco()));
-        } catch (final CloneNotSupportedException e) {
-            final String msg = "Erro ao adicionar o endereço do Emitente!";
-            LOGGER.error(msg, e);
-            throw new ValidacaoException(TipoMensagem.WARNING, msg);
-        }
+        NotaEnvioEndereco enderecoDestinatario = new NotaEnvioEndereco();
+		BeanUtils.copyProperties(enderecoPdv.getEndereco(), enderecoDestinatario, "id");
+		destinatario.setEndereco(enderecoDestinatario);
         
         if (cota.getPessoa() instanceof PessoaJuridica) {
             
@@ -1194,8 +1191,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
         return false;
     }
     
-    private Endereco cloneEndereco(final Endereco endereco)
-            throws CloneNotSupportedException {
+    private Endereco cloneEndereco(final Endereco endereco) throws CloneNotSupportedException {
         final Endereco novoEndereco = endereco.clone();
         
         if (novoEndereco.getCep() != null) {
@@ -1236,7 +1232,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
             
             this.validarRoteirizacaoCota(filtro, listaIdCotas);
             
-            listaNotaEnvio = this.gerar(listaIdCotas, filtro, null,null, null);
+            listaNotaEnvio = this.gerar(listaIdCotas, filtro, null, null, null);
         } finally {
             TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
         }
@@ -1327,7 +1323,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
 
 		identificacaoDestinatario.setDocumento(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getDocumento().getDocumento());
-		identificacaoDestinatario.setEndereco(cota.getEnderecoPrincipal().getEndereco());
+		NotaEnvioEndereco enderecoDestinatario = new NotaEnvioEndereco();
+		BeanUtils.copyProperties(cota.getEnderecoPrincipal().getEndereco(), enderecoDestinatario, "id");
+		
+		identificacaoDestinatario.setEndereco(enderecoDestinatario);
 		identificacaoDestinatario.setInscricaoEstadual(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getInscricaoEstadual());
 		identificacaoDestinatario.setNome(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getNome());
 		identificacaoDestinatario.setPessoaDestinatarioReferencia(distribuidorRepository.obter().getJuridica());

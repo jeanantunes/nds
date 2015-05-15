@@ -2,13 +2,13 @@ package br.com.abril.nds.model.envio.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 @Embeddable
@@ -19,7 +19,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	private static final long serialVersionUID = 5209755233911222853L;
 	
-	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
 	private Pessoa pessoaDestinatarioReferencia;
@@ -27,31 +26,18 @@ public class IdentificacaoDestinatario implements Serializable {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
-	
-	/**
-	 * CNPJ CPF
-	 */
 	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)	
 	private String documento;
 	
-	/**
-	 * xNome
-	 */	
 	@Column(name="NOME_DESTINATARIO", nullable=false, length=60)
 	private String nome;
 	
-
-	
-	/**
-	 * IE
-	 */
 	@Column(name="IE_DESTINATARIO", nullable=true, length=20)
 	private String inscricaoEstadual;
 	
-	
-	
 	@Column(name = "CODIGO_BOX")
 	private Integer codigoBox;
+	
 	@Column(name = "NOME_BOX")
 	private String nomeBox;
 	
@@ -61,10 +47,9 @@ public class IdentificacaoDestinatario implements Serializable {
 	@Column(name = "DESCRICAO_ROTA")
 	private String descricaoRota;
 	
-	
-	@ManyToOne(optional=false)
+	@ManyToOne(optional=false, cascade=CascadeType.ALL)
 	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
-	private Endereco endereco;
+	private NotaEnvioEndereco endereco;
 	
 	@OneToOne(optional=true)
 	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
@@ -129,14 +114,14 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @return the endereco
 	 */
-	public Endereco getEndereco() {
+	public NotaEnvioEndereco getEndereco() {
 		return endereco;
 	}
 
 	/**
 	 * @param endereco the endereco to set
 	 */
-	public void setEndereco(Endereco endereco) {
+	public void setEndereco(NotaEnvioEndereco endereco) {
 		this.endereco = endereco;
 	}
 
@@ -224,6 +209,5 @@ public class IdentificacaoDestinatario implements Serializable {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	
 	
 }
