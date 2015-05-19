@@ -41,6 +41,40 @@ DEVOLVE_ENCALHE boolean
 ;
 */
 
+
+create table HVND_AUX2 (
+COD_COTA_HVCT INT,
+cod_produto VARCHAR(8),
+num_edicao INT,
+PRECO FLOAT,
+QTDE_REPARTE_HVCT INT,
+QTDE_ENCALHE_HVCT INT,
+DATA_LANCAMENTO_STR VARCHAR(10),
+DATA_RECOLHIMENTO_STR VARCHAR(10),
+STATUS CHAR(1),
+CONSIGNADO boolean,
+DEVOLVE_ENCALHE boolean,
+COD_COTA_DP_HVCT INT,
+COD_COTA_FC_HVCT INT,
+NUMERO_PERIODO INT,
+PARCIAL_NORMAL CHAR,
+produto_edicao_id BIGINT
+) ENGINE=MEMORY
+;
+
+/*
+create table cesar (
+cod_produto VARCHAR(8),
+num_edicao INT,
+produto_edicao_id int
+) ENGINE=MEMORY
+;
+
+
+LOAD DATA INFILE '/opt/rollout/load_files/CESAR.TXT' INTO TABLE CESAR COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+*/
+
+
 create table HVND (
 COD_COTA_HVCT INT,
 cod_produto VARCHAR(8),
@@ -54,27 +88,116 @@ STATUS CHAR(1),
 CONSIGNADO boolean,
 DEVOLVE_ENCALHE boolean,
 COD_COTA_DP_HVCT INT,
-COD_COTA_FC_HVCT INT
+COD_COTA_FC_HVCT INT,
+NUMERO_PERIODO INT,
+PARCIAL_NORMAL CHAR,
+produto_edicao_id bigint
 ) ENGINE=MEMORY
 ;
 
+
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_3.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_4.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_5.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_6.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+/*
+update cesar h,produto_edicao pe, produto p 
+set h.produto_edicao_id = pe.id
+where p.id = pe.produto_id 
+and p.codigo = h.cod_produto 
+and pe.numero_edicao = h.num_edicao;
+
+update hvnd h,produto_edicao pe, produto p 
+set h.produto_edicao_id = pe.id
+where p.id = pe.produto_id 
+and p.codigo = h.cod_produto 
+and pe.numero_edicao = h.num_edicao;
+
+delete from HVND where produto_edicao_id in (select distinct produto_edicao_id from cesar);
+*/
+-- A VISTA
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_AVISTA.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
+
+update HVND set CONSIGNADO =0 ; -- where consignado is null or consignado <> 1;
+
+
+-- CONSIGNADO (Parcial Normal)
 -- LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
-update HVND set CONSIGNADO =1;
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL3.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_3.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_AVISTA.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
+update HVND set PARCIAL_NORMAL ='N';
+update HVND set CONSIGNADO =1 where consignado is null;
 
-update HVND set CONSIGNADO =0 where CONSIGNADO is null;
+-- FIXME AJUSTE CESAR / AJUSTE PARA O RIO, REMOVER ASSIM QUE POSSIVEL
+/*
+update hvnd set PARCIAL_NORMAL ='P' where cod_produto = '43059101' and num_edicao = '2014';
+update hvnd set PARCIAL_NORMAL ='P' where cod_produto = '46813001' and num_edicao = '0001';
+update hvnd set PARCIAL_NORMAL ='P' where cod_produto = '48742001' and num_edicao = '0001';
+update hvnd set PARCIAL_NORMAL ='P' where cod_produto = '46821001' and num_edicao = '0001';
+*/
+
+/*
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR1.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR2.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR3.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR4.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR5.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR6.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR7.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR8.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR9.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR10.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR11.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR12.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR13.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR14.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR15.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR16.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR17.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR18.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+*/
+
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR19.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR20.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR21.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR24.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR25.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+update HVND set PARCIAL_NORMAL ='P' where PARCIAL_NORMAL is null;
+
+update HVND set CONSIGNADO =1 where status = 'A' and PARCIAL_NORMAL ='P';
+update HVND set CONSIGNADO =0 where status = 'F' and PARCIAL_NORMAL ='P';
+
+
 update HVND set DEVOLVE_ENCALHE =1;
 update HVND set COD_COTA_HVCT =COD_COTA_FC_HVCT;
 
 update produto_edicao
 set DATA_DESATIVACAO = null
 where DATA_DESATIVACAO = '00-00-0000';
+
+insert into HVND_AUX2 (
+select distinct * from hvnd);
+
+truncate table hvnd;
+
+insert into HVND (
+select distinct * from HVND_AUX2);
+
+drop table HVND_AUX2;
+
+
+-- FIXME RIO (Cotas inexistentes)
+delete from hvnd where COD_COTA_HVCT in (10, 821,9999);
 
 -- FIXME FAZER UPDATE AQUI DAS COTAS QUE NAO DEVOLVEM ENCALHE
 -- ESSAS COTAS DEVERAM SER CRIADAS NO ARQUIVO carga_inicial.sql do respectivo distribuidor
@@ -84,7 +207,7 @@ ADD COLUMN DATA_LANCAMENTO DATE,
 ADD COLUMN DATA_RECOLHIMENTO DATE,
 -- ADD COLUMN cod_produto VARCHAR(8),
 -- ADD COLUMN num_edicao INT,
-ADD COLUMN produto_edicao_id bigint,
+-- ADD COLUMN produto_edicao_id bigint,
 ADD COLUMN cota_id bigint AFTER STATUS;
 
 update HVND set 
@@ -105,6 +228,25 @@ DATA_RECOLHIMENTO = STR_TO_DATE(DATA_RECOLHIMENTO_STR, '%d/%m/%Y');
 -- delete from hvnd where cod_produto = '28681001' and num_edicao = 1013;
 -- delete from hvnd where cod_produto = '27801001' and num_edicao = 192;
 -- #######################################################
+
+-- FIXME -- CESAR RIO
+/*
+update hvnd set consignado = 0 
+where cod_produto = '43059101' and num_edicao = '2014'
+and data_recolhimento < sysdate();
+
+update hvnd set consignado = 0 
+where cod_produto = '46813001' and num_edicao = '0001'
+and data_recolhimento < sysdate();
+
+update hvnd set consignado = 0 
+where cod_produto = '48742001' and num_edicao = '0001'
+and data_recolhimento < sysdate();
+
+update hvnd set consignado = 0 
+where cod_produto = '46821001' and num_edicao = '0001'
+and data_recolhimento < sysdate();
+*/
 
 update HVND h,produto_edicao pe, produto p 
 set h.produto_edicao_id = pe.id
@@ -172,10 +314,103 @@ where (ppe.codigo is null or ppe.numero_edicao is null);
 select '*** HVND produto_edicao_id nulos: ';
 select count(*) from HVND where produto_edicao_id is null;
 
-select 'CONSIGNADO: ',sum(preco*qtde_reparte_hvct) from HVND ; -- where status = 'A';
+select 'CONSIGNADO: ',sum(preco*(qtde_reparte_hvct - qtde_encalhe_hvct)) from HVND ; -- where status = 'A';
 select 'BALANCEADO: ',sum(preco*qtde_reparte_hvct) from HVND where data_recolhimento <> '0000-00-00' and status = 'A'; 
 select 'EXPEDIDO  : ',sum(preco*qtde_reparte_hvct) from HVND where data_recolhimento = '0000-00-00' and status = 'A';
 select 'FECHADO   : ',sum(preco* (qtde_reparte_hvct-qtde_encalhe_hvct)) from HVND where status = 'F';
+
+--
+-- Validacoes com o arquivo do Everaldo
+--
+
+DROP TABLE IF EXISTS CONSIGNADO; 
+DROP TABLE IF EXISTS CONSIGNADO_CONCAT; 
+DROP TABLE IF EXISTS HVND_CONCAT; 
+
+create table CONSIGNADO (
+COD_COTA_HVCT INT,
+nome_produto VARCHAR(255),
+cod_produto VARCHAR(8),
+num_edicao INT,
+DATA_LANCAMENTO_STR VARCHAR(10),
+PRECO FLOAT,
+F1 FLOAT,
+QTDE_REPARTE_HVCT FLOAT,
+F2 FLOAT,
+F3 FLOAT
+) 
+;
+
+LOAD DATA INFILE '/opt/rollout/load_files/CONSIGNADO.TXT' INTO TABLE CONSIGNADO COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+
+create table CONSIGNADO_CONCAT (
+F1 varchar(255),
+F2 varchar(255));
+
+insert into CONSIGNADO_CONCAT 
+select CONCAT(
+-- DATA_LANCAMENTO_STR,
+cod_produto,
+num_edicao,
+COD_COTA_HVCT
+) ,
+sum(preco * qtde_reparte_hvct)
+from consignado
+group by CONCAT(
+cod_produto,
+num_edicao,
+COD_COTA_HVCT)
+;
+
+ALTER TABLE `CONSIGNADO_CONCAT` ADD INDEX `F1` (`F1` ASC);
+
+create table HVND_CONCAT (
+F1 varchar(255),
+F2 varchar(255));
+
+
+insert into HVND_CONCAT 
+select distinct CONCAT(
+-- DATA_LANCAMENTO_STR,
+cod_produto,
+num_edicao,
+COD_COTA_HVCT 
+),
+sum(preco * (qtde_reparte_hvct - qtde_encalhe_hvct)) from hvnd  where consignado = 1
+group by concat(
+cod_produto,
+num_edicao,
+COD_COTA_HVCT)
+;
+
+
+ALTER TABLE `HVND_CONCAT` ADD INDEX `F1` (`F1` ASC);
+
+
+select 'NAO ESTAO NA HVND: ',sysdate(); -- Log 
+select f1,f2 from CONSIGNADO_CONCAT
+where f1 not in 
+(select f1 from HVND_CONCAT) ; -- 130
+
+select 'ESTAO NA HVND MAS NAO ESTAO NO CONSIGNADO: ',sysdate(); -- Log 
+select f1,f2 from HVND_CONCAT
+where f1 not in 
+(select f1 from CONSIGNADO_CONCAT)
+and f2<>0;
+
+select '**** QUANTIDADES DIFERENTES ',sysdate(); -- Log 
+select
+ h.f1 as chave, 
+CAST(h.f2 as DECIMAL(22,8)) as hvnd,
+CAST(c.f2 as DECIMAL(22,8)) as consignado 
+from CONSIGNADO_CONCAT c,HVND_CONCAT h
+where h.f1= c.f1
+and h.f2<>c.f2;
+
+
+-- DROP TABLE IF EXISTS CONSIGNADO; 
+-- DROP TABLE IF EXISTS CONSIGNADO_CONCAT; 
+-- DROP TABLE IF EXISTS HVND_CONCAT; 
 
 select 'HVND: ',sysdate(); -- Log 
 
@@ -183,6 +418,40 @@ select 'HVND: ',sysdate(); -- Log
 -- 
 -- ESTQBOX
 --
+
+
+-- Cod_Sisfil | código | edição | descrição | entrada | saída | preco | saldo | recolhimento
+-- 584992|48802001|1|COPA AMERICA 2015-E.C        |1513827.0|1190715.0|1.0|323112.0|18/05/2015|
+DROP TABLE IF EXISTS ESTQSISFIL;
+
+create table ESTQSISFIL (
+cod_sisfil int,
+produto varchar(8),
+edicao int,
+nome_produto varchar(45),
+entrada decimal(18,2),
+saida decimal(18,2),
+preco decimal(10,2),
+saldo decimal(18,2),
+data_str varchar(10),
+data date,
+produto_edicao_id int) 
+ ENGINE=MEMORY
+;
+
+LOAD DATA INFILE '/opt/rollout/load_files/ESTQSISFIL.NEW' INTO TABLE ESTQSISFIL COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+
+
+update ESTQSISFIL stq,produto_edicao pe, produto p 
+set stq.produto_edicao_id = pe.id
+where p.id = pe.produto_id 
+and p.codigo = produto 
+and pe.numero_edicao = edicao;
+
+update ESTQSISFIL set 
+DATA= STR_TO_DATE(DATA_STR, '%d/%m/%Y');
+
+
 
 DROP TABLE IF EXISTS ESTQBOX;
 
@@ -258,24 +527,41 @@ select 'ESTQMOV: ',sysdate(); -- Log
 DROP TABLE IF EXISTS MOV_CRED;
 
 create table MOV_CRED (
-linha_inicial varchar(1), 
-data varchar(8),
+-- linha_inicial varchar(1), 
+data varchar(10),
 numero_cota int,
 tipo_credito int,
 desc_credito varchar(255),
-valor varchar(11)) 
+valor varchar(11),
+motivo varchar(255),
+tipo char(1)) 
 ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/opt/rollout/load_files/ARQCD08.NEW' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/ARQCD08.NEW' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/MOV_DEB_CRED.TXT' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+
+delete from MOV_CRED where tipo = 'D';
 
 ALTER TABLE MOV_CRED
-ADD COLUMN valor_decimal decimal(11,2),
+ADD COLUMN valor_decimal decimal(11,4),
 ADD COLUMN data_real date,
 ADD COLUMN cota_id bigint AFTER valor;
 
-update mov_cred set valor_decimal = (cast(valor as decimal(12.2))/100), data_real = str_to_date(data, '%Y%m%d'), cota_id = (
-select c.id from cota c where c.numero_cota = mov_cred.numero_cota);
+
+update mov_cred set -- valor_decimal = (cast(valor as decimal(12.4))/100), 
+-- data_real = str_to_date(data, '%Y%m%d'), 
+data_real = str_to_date(data, '%d/%m/%Y'),
+cota_id = (select c.id from cota c where c.numero_cota = mov_cred.numero_cota);
+
+
+
+ALTER TABLE MOV_CRED MODIFY valor DECIMAL(18,2);
+
+update MOV_CRED set valor_decimal = valor;
+
+update mov_cred set valor_decimal = valor_decimal*-1
+where valor_decimal < 0;
 
 update MOV_CRED mc,cota c set mc.cota_id = c.id
 where mc.numero_cota=c.numero_cota;
@@ -291,24 +577,39 @@ select 'MOV_CRED: ',sysdate(); -- Log
 DROP TABLE IF EXISTS MOV_DEB;
 
 create table MOV_DEB (
-linha_inicial varchar(1),
-data varchar(8),
+-- linha_inicial varchar(1),
+data varchar(10),
 numero_cota int,
 tipo_debito int,
 desc_debito varchar(255),
-valor varchar(11)) 
+valor varchar(11),
+motivo varchar(255),
+tipo char(1)) 
 ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/opt/rollout/load_files/ARQDB97.NEW' INTO TABLE MOV_DEB COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/MOV_DEB_CRED.TXT' INTO TABLE MOV_DEB COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+
+delete from MOV_DEB where tipo = 'C';
 
 ALTER TABLE MOV_DEB
-ADD COLUMN valor_decimal decimal(11,2),
+ADD COLUMN valor_decimal decimal(11,4),
 ADD COLUMN data_real date,
 ADD COLUMN cota_id bigint AFTER valor;
 
-update mov_deb set valor_decimal = (cast(valor as decimal(12.2))/100), data_real = str_to_date(data, '%Y%m%d'), cota_id = (
-select c.id from cota c where c.numero_cota = mov_deb.numero_cota);
+
+update mov_deb set -- valor_decimal = (cast(valor as decimal(12.4))/100), 
+-- data_real = str_to_date(data, '%Y%m%d'), 
+data_real = str_to_date(data, '%d/%m/%Y'),
+cota_id = (select c.id from cota c where c.numero_cota = mov_deb.numero_cota);
+
+
+ALTER TABLE MOV_DEB MODIFY valor DECIMAL(18,2);
+
+update MOV_DEB set valor_decimal = valor;
+
+update mov_deb set valor_decimal = valor_decimal*-1
+where valor_decimal < 0;
 
 update MOV_DEB md,cota c set md.cota_id = c.id
 where md.numero_cota=c.numero_cota;
@@ -371,6 +672,152 @@ select 'CARGA_LANCAMENTO_MDC: ',sysdate(); -- Log
 select 'LANCAMENTO: ',count(*) from LANCAMENTO;
 
 -- Garante que não tenha nenhum movimento para as cotas / distribuidor sem lançamento
+-- PARCIAIS CONSIG = 3
+
+
+insert into lancamento_parcial (
+LANCAMENTO_INICIAL,RECOLHIMENTO_FINAL,STATUS,PRODUTO_EDICAO_ID)
+(select 
+min(data_lancamento),
+max(data_recolhimento),
+max('PROJETADO'),
+produto_edicao_id
+from HVND 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id order by produto_edicao_id);
+
+
+DROP TABLE IF EXISTS periodo_lancamento_parcial_aux;
+
+create table periodo_lancamento_parcial_aux (
+ID  bigint(20) NOT NULL AUTO_INCREMENT,
+STATUS varchar(255),
+TIPO varchar(255), 
+LANCAMENTO_PARCIAL_ID bigint(20),
+NUMERO_PERIODO int(11),
+DATA_CRIACAO date,
+DATA_LANCAMENTO date,
+DATA_RECOLHIMENTO date,
+PRODUTO_EDICAO_ID bigint,
+PRIMARY KEY (`ID`));
+
+/*
+set @i = 0; 
+
+insert into periodo_lancamento_parcial_aux (
+STATUS,TIPO,LANCAMENTO_PARCIAL_ID,DATA_LANCAMENTO,DATA_RECOLHIMENTO,PRODUTO_EDICAO_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select a.*,@i := @i+1  as NUMERO_PERIODO,sysdate() from (
+select 
+'PROJETADO',
+'PARCIAL',
+(select id from lancamento_parcial lp where lp.produto_edicao_id = h.produto_edicao_id),
+data_lancamento, 
+data_recolhimento,
+produto_edicao_id
+from HVND h 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id,data_lancamento, data_recolhimento
+order by produto_edicao_id
+) a);
+
+
+
+insert into periodo_lancamento_parcial_aux (
+NUMERO_PERIODO,STATUS,TIPO,LANCAMENTO_PARCIAL_ID,DATA_LANCAMENTO,DATA_RECOLHIMENTO,PRODUTO_EDICAO_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select 
+NUMERO_PERIODO,
+'PROJETADO',
+'PARCIAL',
+(select id from lancamento_parcial lp where lp.produto_edicao_id = h.produto_edicao_id),
+data_lancamento, 
+data_recolhimento,
+produto_edicao_id
+from HVND h 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id,data_lancamento, data_recolhimento
+order by produto_edicao_id
+);
+*/
+insert into periodo_lancamento_parcial_aux (
+STATUS,TIPO,LANCAMENTO_PARCIAL_ID,DATA_LANCAMENTO,DATA_RECOLHIMENTO,PRODUTO_EDICAO_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select 
+'PROJETADO',
+'PARCIAL',
+(select id from lancamento_parcial lp where lp.produto_edicao_id = h.produto_edicao_id),
+min(data_lancamento), 
+data_recolhimento,
+produto_edicao_id,
+NUMERO_PERIODO,
+sysdate()
+from HVND h 
+where PARCIAL_NORMAL = 'P'
+group by produto_edicao_id,NUMERO_PERIODO	
+order by produto_edicao_id
+);
+
+
+insert into periodo_lancamento_parcial (STATUS,TIPO,LANCAMENTO_PARCIAL_ID,NUMERO_PERIODO,DATA_CRIACAO)
+(select STATUS,TIPO,LANCAMENTO_PARCIAL_ID,
+1+NUMERO_PERIODO - (select min(NUMERO_PERIODO) from periodo_lancamento_parcial_aux aux where aux.LANCAMENTO_PARCIAL_ID = aux2.LANCAMENTO_PARCIAL_ID),
+DATA_CRIACAO
+from periodo_lancamento_parcial_aux aux2 order by id);
+
+update periodo_lancamento_parcial p,periodo_lancamento_parcial_aux a
+set a.numero_periodo = p.numero_periodo
+where a.id = p.id;  
+
+update lancamento l,periodo_lancamento_parcial_aux p
+set l.periodo_lancamento_parcial_id = p.id, 
+    l.data_lcto_distribuidor = p.data_lancamento,
+    l.data_lcto_prevista = p.data_lancamento,
+    l.data_rec_distrib = p.data_recolhimento,
+    l.data_rec_prevista = p.data_recolhimento,
+    l.status = 'FECHADO'
+where l.produto_edicao_id = p.produto_edicao_id 
+and p.numero_periodo =1;
+
+insert into lancamento
+(alterado_interface,
+data_criacao,
+data_lcto_distribuidor,
+data_lcto_prevista,
+data_rec_distrib,
+data_rec_prevista,
+data_status,
+status,
+tipo_lancamento,
+produto_edicao_id,
+periodo_lancamento_parcial_id,
+numero_lancamento)
+(select 
+true,
+date(sysdate()),
+h.data_lancamento,
+h.data_lancamento,
+h.data_recolhimento,
+h.data_recolhimento,
+date(sysdate()),
+'FECHADO',
+'LANCAMENTO',
+h.produto_edicao_id,
+(select min(id) from periodo_lancamento_parcial_aux plx where plx.produto_edicao_id = h.produto_edicao_id and plx.data_recolhimento = h.data_recolhimento),-- id,
+1
+from HVND h,lancamento l-- periodo_lancamento_parcial_aux 
+where h.PARCIAL_NORMAL ='P' -- produto_edicao_id not in (select produto_edicao_id from lancamento)
+and l.produto_edicao_id = h.produto_edicao_id
+-- and numero_periodo > 1
+-- and h.produto_edicao_id = 8
+and h.data_lancamento <> l.data_lcto_distribuidor 
+-- and h.data_recolhimento <> l.data_rec_distrib
+group by h.produto_edicao_id,h.data_lancamento,h.data_recolhimento);
+
+
+update produto_edicao set parcial =1 where id in(select distinct produto_edicao_id from periodo_lancamento_parcial_aux);
+
+-- DROP TABLE IF EXISTS periodo_lancamento_parcial_aux;
+
+
+-- Garante que não tenha nenhum movimento para as cotas / distribuidor sem lançamento
 insert into lancamento
 (alterado_interface,
 data_criacao,
@@ -390,17 +837,21 @@ data_lancamento,
 data_recolhimento,
 data_recolhimento,
 date(sysdate()),
-'EXPEDIDO',
+
+-- Incluir um case para verificar se o lancamente eh expedido ou fechado 
+case when status='F' then 'FECHADO' else 'EXPEDIDO' end,
 'LANCAMENTO',
 produto_edicao_id
 from HVND 
 where produto_edicao_id not in (select produto_edicao_id from lancamento)
+and PARCIAL_NORMAL <> 'P'
 group by produto_edicao_id);
 
 select 'LANCAMENTO (HVND): ',count(*) from LANCAMENTO;
 
 select 'LANCAMENTO: ',sysdate(); -- Log
 
+update HVND set CONSIGNADO =0 where consignado = 3;
 
 --
 -- CARGA_LANCAMENTO_MDC
@@ -427,6 +878,21 @@ STR_TO_DATE(clm.data_real_recolto_rcpr,'%d/%m/%Y'))
 where clm.produto_edicao_id = l.produto_edicao_id
 and l.status in ('CONFIRMADO', 'FECHADO', 'PLANEJADO');
 
+-- FIXME Cesar adaptacao
+create temporary table atualiza_lcto (produto_edicao_id int, lacto date);
+
+insert into atualiza_lcto
+select distinct a.produto_edicao_id, a.DATA_LANCAMENTO
+from hvnd a
+where a.PARCIAL_NORMAL = 'N';
+
+update lancamento a, atualiza_lcto b
+set data_lcto_distribuidor = lacto,
+    data_lcto_prevista = lacto
+where a.PRODUTO_EDICAO_ID = b.produto_edicao_id;
+
+-- 
+
 -- ATUALIZA REC PELA PEB
 
 update lancamento
@@ -451,13 +917,13 @@ INSERT INTO movimento_financeiro_cota
 (APROVADO_AUTOMATICAMENTE,DATA_APROVACAO,MOTIVO,STATUS,DATA,DATA_CRIACAO,APROVADOR_ID,TIPO_MOVIMENTO_ID,
 USUARIO_ID,LANCAMENTO_MANUAL,COTA_ID,OBSERVACAO,VALOR,fornecedor_id)	
 (select true,data_real,'CARGA','APROVADO',data_real,
-data_real,null,22,1,true,cota_id,concat('CARGA INICIAL - ', desc_credito),valor_decimal,1 -- Default DINAP 
+data_real,null,22,1,true,cota_id,concat('CARGA INICIAL - ', desc_credito,' - ',motivo),valor_decimal,1 -- Default DINAP 
 from MOV_CRED where cota_id is not null);
 
 INSERT INTO movimento_financeiro_cota
 (APROVADO_AUTOMATICAMENTE,DATA_APROVACAO,MOTIVO,STATUS,DATA,DATA_CRIACAO,APROVADOR_ID,TIPO_MOVIMENTO_ID,USUARIO_ID,LANCAMENTO_MANUAL,
 COTA_ID,OBSERVACAO, valor,fornecedor_id)
-(select true,data_real,'CARGA','APROVADO',data_real,data_real,null,23,1,true,cota_id,concat('CARGA INICIAL - ', desc_debito),valor_decimal,1
+(select true,data_real,'CARGA','APROVADO',data_real,data_real,null,23,1,true,cota_id,concat('CARGA INICIAL - ', desc_debito,' - ',motivo),valor_decimal,1
 from MOV_DEB where cota_id is not null);
 
 select 'MOVIMENTO_FINANCEIRO_COTA: ',sysdate(); -- Log
@@ -470,8 +936,8 @@ select 'MOVIMENTO_FINANCEIRO_COTA: ',sysdate(); -- Log
 -- Insere os estoque de produtos das cotas baseados no arquivo HVND.TXT
 INSERT INTO estoque_produto_cota (QTDE_DEVOLVIDA, QTDE_RECEBIDA, COTA_ID, PRODUTO_EDICAO_ID)
 ( select
-csv.QTDE_ENCALHE_HVCT,
-csv.QTDE_REPARTE_HVCT,
+sum(csv.QTDE_ENCALHE_HVCT),
+sum(csv.QTDE_REPARTE_HVCT),
 c.id,
 csv.produto_edicao_id
 from HVND csv,cota c
@@ -503,6 +969,20 @@ CREATE TABLE `estoque_produto_memoria` (
   UNIQUE KEY `PRODUTO_EDICAO_ID` (`PRODUTO_EDICAO_ID`)) 
  ENGINE=MEMORY 
 DEFAULT CHARSET=utf8;
+
+
+
+
+-- SISFIL
+-- Insere estoque do distribuidor baseado no arquivo ESTQBOX.NEW
+insert into estoque_produto_memoria (QTDE, QTDE_DEVOLUCAO_ENCALHE, QTDE_SUPLEMENTAR, PRODUTO_EDICAO_ID)
+select 
+0 as QTDE,  -- 150 Rio, 60 Canpinas 
+sum(case when data <= sysdate() then saldo else 0 end) as QTDE_DEVOLUCAO_ENCALHE, -- 181 Rio, 70 Campinas
+sum(case when data > sysdate() then saldo else 0 end) as QTDE_SUPLEMENTAR, -- (140,142) Rio, 80 Campinas
+produto_edicao_id 
+from ESTQSISFIL
+group by 4;
 
 -- Insere estoque do distribuidor baseado no arquivo ESTQBOX.NEW
 insert into estoque_produto_memoria (QTDE, QTDE_DEVOLUCAO_ENCALHE, QTDE_SUPLEMENTAR, PRODUTO_EDICAO_ID)
@@ -562,13 +1042,14 @@ CREATE TABLE `movimento_estoque_cota_memoria` (
   PRIMARY KEY (`id`)) ENGINE=MEMORY 
 ;
 
-
+/*
 INSERT INTO MOVIMENTO_ESTOQUE_COTA_MEMORIA
 (DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,LANCAMENTO_ID,status_estoque_financeiro)
 (select 
-min(h.data_recolhimento),
+h.data_recolhimento, -- min(h.data_recolhimento),
+-- trocar por data_recolhimento do hvnd e agrupar por data
 26,
-epc.QTDE_DEVOLVIDA,
+sum(epc.QTDE_DEVOLVIDA), -- incluir sum a agrupar
 epc.produto_edicao_id,
 epc.cota_id,
 epc.id,
@@ -581,15 +1062,36 @@ and l.produto_edicao_id =h.produto_edicao_id
 and epc.PRODUTO_EDICAO_ID = l.produto_edicao_id 
 and h.status = 'F'
 and h.produto_edicao_id is not null
-group by 2,3,5,6,7);
+group by 1,2,4,5,6,7,8);
+*/
 
+-- Novo insert do tipo 26 (encalhe) somente quando a praca tem parciais
+
+INSERT INTO MOVIMENTO_ESTOQUE_COTA_MEMORIA
+(DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,status_estoque_financeiro)
+(select 
+h.data_recolhimento,
+26,
+h.QTDE_ENCALHE_HVCT, 
+epc.produto_edicao_id,
+epc.cota_id,
+epc.id,
+1
+from estoque_produto_cota epc, HVND h
+where epc.cota_id = h.cota_id
+and epc.PRODUTO_EDICAO_ID = h.produto_edicao_id 
+and h.status = 'F'
+group by 1,2,3,5,6,7);
+
+/*
 -- Insere movimentos de estoque cota de reparte (tipo 21) baseado no estoque de produtos da cota (onde a quantidade recebida > 0)
 INSERT INTO MOVIMENTO_ESTOQUE_COTA_MEMORIA
 (DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,LANCAMENTO_ID,status_estoque_financeiro)
 (select 
-min(h.data_lancamento),
+h.data_lancamento, -- min(h.data_lancamento),
+-- trocar por data_recolhimento do hvnd e agrupar por data
 21,
-epc.QTDE_RECEBIDA,
+sum(epc.QTDE_RECEBIDA), -- incluir sum e agrupar
 h.produto_edicao_id,
 epc.cota_id,
 epc.id,
@@ -602,7 +1104,53 @@ and l.produto_edicao_id =h.produto_edicao_id
 and epc.PRODUTO_EDICAO_ID = l.produto_edicao_id 
 and epc.qtde_recebida > 0
 and h.produto_edicao_id is not null
-group by 2,3,5,6);
+group by 1,2,4,5,6,7,8);
+*/
+
+-- Novo insert do tipo 21 (Reparte) somente quando a praca tem parciais
+
+
+INSERT INTO MOVIMENTO_ESTOQUE_COTA_MEMORIA
+(DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,LANCAMENTO_ID,status_estoque_financeiro)
+(select 
+h.data_lancamento,
+21,
+h.QTDE_REPARTE_HVCT,
+h.produto_edicao_id,
+epc.cota_id,
+epc.id,
+l.ID,
+case when h.status ='A' then 0 else 1 end
+from estoque_produto_cota epc,HVND h,lancamento l
+where epc.produto_edicao_id = h.produto_edicao_id
+and epc.cota_id = h.cota_id
+and l.produto_edicao_id = h.produto_edicao_id 
+and l.DATA_LCTO_DISTRIBUIDOR = h.DATA_LANCAMENTO 
+and epc.PRODUTO_EDICAO_ID = l.produto_edicao_id 
+and epc.qtde_recebida > 0
+and h.parcial_normal = 'P'
+group by 1,2,3,4,5,6,7,8);
+
+INSERT INTO MOVIMENTO_ESTOQUE_COTA_MEMORIA
+(DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,LANCAMENTO_ID,status_estoque_financeiro)
+(select 
+h.data_lancamento,
+21,
+h.QTDE_REPARTE_HVCT,
+h.produto_edicao_id,
+epc.cota_id,
+epc.id,
+l.ID,
+case when h.status ='A' then 0 else 1 end
+from estoque_produto_cota epc,HVND h,lancamento l
+where epc.produto_edicao_id = h.produto_edicao_id
+and epc.cota_id = h.cota_id
+and l.produto_edicao_id = h.produto_edicao_id 
+-- and l.DATA_LCTO_DISTRIBUIDOR = h.DATA_LANCAMENTO 
+and epc.PRODUTO_EDICAO_ID = l.produto_edicao_id 
+and epc.qtde_recebida > 0
+and h.parcial_normal = 'N'
+group by 1,2,3,4,5,6,7,8);
 
 
 select 'MOVIMENTO_ESTOQUE_COTA: ',sysdate(); -- Log
@@ -652,7 +1200,7 @@ ENGINE=MEMORY
 INSERT INTO movimento_estoque_memoria
 (DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID)
 (select 
-min(mec.data), -- min(mec.data_recolhimento),
+mec.data, -- min(mec.data), -- min(mec.data_recolhimento),
 31,
 sum(mec.QTDE),
 mec.PRODUTO_EDICAO_ID,
@@ -660,7 +1208,7 @@ ep.ID
 from movimento_estoque_cota_memoria mec,estoque_produto_memoria ep
 where ep.produto_edicao_id = mec.produto_edicao_id
 and mec.tipo_movimento_id = 26
-group by 2,4,5
+group by 1,2,4,5
 having sum(mec.QTDE) > 0);
 
 select 'MOVIMENTO_ESTOQUE 31: ',sysdate(); -- Log
@@ -669,7 +1217,7 @@ select 'MOVIMENTO_ESTOQUE 31: ',sysdate(); -- Log
 INSERT INTO movimento_estoque_memoria
 (DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID)
 (select 
-min(mec.data), -- min(mec.data_lancamento),
+mec.data, -- min(mec.data), -- min(mec.data_lancamento),
 13,
 sum(mec.QTDE),
 mec.PRODUTO_EDICAO_ID,
@@ -677,7 +1225,7 @@ ep.ID
 from movimento_estoque_cota_memoria mec,estoque_produto_memoria ep
 where ep.produto_edicao_id = mec.produto_edicao_id
 and mec.tipo_movimento_id = 21
-group by 2,4,5
+group by 1,2,4,5
 having sum(mec.QTDE) > 0);
 
 select 'MOVIMENTO_ESTOQUE 13: ',sysdate(); -- Log
@@ -687,7 +1235,7 @@ select 'MOVIMENTO_ESTOQUE 13: ',sysdate(); -- Log
 INSERT INTO movimento_estoque_memoria
 (DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID)
 (select 
-min(mec.data), -- min(mec.data_lancamento),
+mec.data, -- min(mec.data), -- min(mec.data_lancamento),
 20,
 sum(mec.qtde),
 mec.PRODUTO_EDICAO_ID,
@@ -695,7 +1243,7 @@ null
 from movimento_estoque_cota_memoria mec
 where mec.tipo_movimento_id = 21
 and mec.QTDE > 0
-group by 2,4,5);
+group by 1,2,4,5);
 
 select '1 MOVIMENTO_ESTOQUE 20: ',sysdate(); -- Log
 
@@ -765,7 +1313,7 @@ select distinct(mec.produto_edicao_id) from movimento_estoque_cota_memoria mec, 
 where mec.tipo_movimento_id = 26 
 and mec.produto_edicao_id = p.produto_edicao_id 
 and p.qtde_devolucao_encalhe > 0 
-) group by 2,3,4,5);
+) group by 1,2,3,4,5); -- agrupar tambem pela data
 
 INSERT INTO movimento_estoque_memoria 
 (DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID)
@@ -831,6 +1379,24 @@ update movimento_estoque_memoria set data =
 where data = '0000-00-00'
 and TIPO_MOVIMENTO_ID in (13,20);
 
+-- FIXME
+/*
+INSERT INTO movimento_estoque_memoria
+(DATA,TIPO_MOVIMENTO_ID,QTDE,PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID)
+(select 
+mec.data, -- min(mec.data), -- min(mec.data_lancamento),
+13,
+sum(mec.QTDE),
+mec.PRODUTO_EDICAO_ID,
+ep.ID
+from movimento_estoque_cota_memoria mec,estoque_produto_memoria ep
+where ep.produto_edicao_id = mec.produto_edicao_id
+-- and  ep.produto_edicao_id = 30715
+and mec.tipo_movimento_id = 21
+and mec.data not in(select distinct data from movimento_estoque_memoria where produto_edicao_id = ep.produto_edicao_id and data <> '0000-00-00')
+group by 1,2,4,5
+having sum(mec.QTDE) > 0);
+*/
 
 select 'ATUALIZACAO 2: ',sysdate(); -- Log 
 -- 
@@ -972,12 +1538,12 @@ select 'MATERIALIZADO - ESTOQUE_PRODUTO: ',count(*) from estoque_produto; -- Log
 insert into movimento_estoque_cota (
 ID,APROVADO_AUTOMATICAMENTE,DATA_APROVACAO,STATUS,DATA,DATA_CRIACAO,TIPO_MOVIMENTO_ID,USUARIO_ID,
 QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,ORIGEM,APROVADOR_ID,LANCAMENTO_ID,status_estoque_financeiro,
-PRECO_COM_DESCONTO,PRECO_VENDA,VALOR_DESCONTO)
+PRECO_COM_DESCONTO,PRECO_VENDA,VALOR_DESCONTO,FORMA_COMERCIALIZACAO)
 (select 
 id,true,date(sysdate()),'APROVADO',DATA,date(sysdate()),TIPO_MOVIMENTO_ID,1,
 QTDE,PRODUTO_EDICAO_ID,COTA_ID,ESTOQUE_PROD_COTA_ID,'CARGA_INICIAL',1,LANCAMENTO_ID,
 IF(STATUS_ESTOQUE_FINANCEIRO=1,'FINANCEIRO_PROCESSADO','FINANCEIRO_NAO_PROCESSADO'),
-PRECO_COM_DESCONTO,PRECO_VENDA,VALOR_DESCONTO
+PRECO_COM_DESCONTO,PRECO_VENDA,VALOR_DESCONTO,'CONSIGNADO'
 from movimento_estoque_cota_memoria);
 
 drop table movimento_estoque_cota_memoria;
@@ -992,12 +1558,13 @@ ID,true,date(sysdate()),'CARGA','APROVADO',DATA,date(sysdate()),TIPO_MOVIMENTO_I
 PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID,'CARGA_INICIAL'
 from movimento_estoque_memoria);
 
+/*
 update  movimento_estoque_memoria m, lancamento l
 set m.DATA = l.DATA_LCTO_DISTRIBUIDOR
 where l.produto_edicao_id = m.produto_edicao_id 
 and m.data = '0000-00-00'
 and m.TIPO_MOVIMENTO_ID in (13,20);
-
+*/
 
 drop table movimento_estoque_memoria;
 
@@ -1029,12 +1596,12 @@ select 'MATERIALIZACAO FIM: ',sysdate(); -- Log
 -- 
 -- CONFERENCIA_ENCALHE
 --
-
+/*
 insert into CONFERENCIA_ENCALHE
 (data, preco_capa_informado, qtde, qtde_informada, 
 chamada_encalhe_cota_id, controle_conferencia_encalhe_cota_id,
 movimento_estoque_id, movimento_estoque_cota_id, produto_edicao_id,juramentada)
-(select data_recolhimento, pe.preco_previsto, mec.qtde, mec.qtde,
+(select distinct data_recolhimento, pe.preco_previsto, mec.qtde, mec.qtde,
 cec.id, ccec.id, me.id, mec.id, mec.produto_edicao_id,0
 from 
 movimento_estoque_cota mec, 
@@ -1056,8 +1623,10 @@ and cec.chamada_encalhe_id = ce.id
 and cec.cota_id = mec.cota_id
 and cce.data = me.data
 and ccec.ctrl_conf_encalhe_id = cce.id
-and ccec.cota_id = mec.cota_id);
+and ccec.cota_id = mec.cota_id
 
+);
+*/
 select 'CONFERENCIA_ENCALHE: ',sysdate(); -- Log
 
 -- 
@@ -1084,7 +1653,7 @@ insert into HVND_AUX
 select distinct produto_edicao_id from HVND where data_recolhimento <> '0000-00-00' and status = 'A';
 
 update lancamento
-set status = 'EM_BALANCEAMENTO_RECOLHIMENTO'
+set status = 'EXPEDIDO'  -- 'EM_BALANCEAMENTO_RECOLHIMENTO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
 truncate table HVND_AUX;
@@ -1100,6 +1669,7 @@ where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 truncate table HVND_AUX;
 
 -- F = FECHADO (EM_RECOLHIMENTO)
+/*
 insert into HVND_AUX
 select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento >= DATE_SUB(sysdate(),INTERVAL 7 DAY);
 
@@ -1108,7 +1678,7 @@ set status = 'EM_RECOLHIMENTO'
 where PRODUTO_EDICAO_ID in (select produto_edicao_id from HVND_AUX);
 
 truncate table HVND_AUX;
-
+*/
 -- F = FECHADO
 insert into HVND_AUX
 select distinct produto_edicao_id from HVND where status = 'F' and data_recolhimento < DATE_SUB(sysdate(),INTERVAL 7 DAY);
@@ -1140,7 +1710,7 @@ from lancamento l
 where l.status = 'CONFIRMADO'
 and l.produto_edicao_id not in (select distinct produto_edicao_id from HVND_AUX2)
 and l.DATA_REC_PREVISTA <> '0000-00-00'
-and l.DATA_REC_PREVISTA < '2014-10-10';
+and l.DATA_REC_PREVISTA < '2015-04-10';
 
 update lancamento
 set status = 'FECHADO'
@@ -1152,6 +1722,48 @@ DROP TABLE HVND_AUX2;
 update lancamento
 set DATA_REC_DISTRIB = DATA_REC_PREVISTA
 where DATA_REC_DISTRIB = '0001-01-01';
+
+update lancamento
+set data_lcto_distribuidor = data_lcto_prevista
+where data_lcto_distribuidor = '3000-01-01';
+
+update lancamento
+set DATA_REC_PREVISTA = (select adddate(DATA_LCTO_DISTRIBUIDOR, peb)
+from produto_edicao
+where produto_edicao.id = lancamento.produto_edicao_id limit 1)
+WHERE (DATA_REC_DISTRIB = '0000-00-00' or DATA_REC_DISTRIB = NULL)
+or (DATA_REC_PREVISTA = '0000-00-00' or DATA_REC_PREVISTA = NULL);
+
+update lancamento
+set DATA_REC_distrib = (select adddate(DATA_LCTO_DISTRIBUIDOR, peb)
+from produto_edicao
+where produto_edicao.id = lancamento.produto_edicao_id limit 1)
+WHERE (DATA_REC_DISTRIB = '0000-00-00' or DATA_REC_DISTRIB = NULL)
+or (DATA_REC_PREVISTA = '0000-00-00' or DATA_REC_PREVISTA = NULL);
+
+update lancamento
+set status = 'EXPEDIDO'
+where EXPEDICAO_ID is not null
+and DATA_REC_DISTRIB > '2015-04-30'
+and status in ('FECHADO', 'CONFIRMADO');
+
+update lancamento
+set status = 'CONFIRMADO'
+where DATA_LCTO_DISTRIBUIDOR > sysdate()
+and status in ('FECHADO', 'EXPEDIDO','EM_RECOLHIMENTO');
+
+
+update lancamento set status= 'FECHADO'
+where status in ('CONFIRMADO','PLANEJADO')
+and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 20 DAY)
+and DATA_REC_DISTRIB <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
+
+ -- ----------- --
+update lancamento set DATA_LCTO_DISTRIBUIDOR= '3000-01-01'
+where status in ('CONFIRMADO','PLANEJADO')
+and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
+
+
 
 select 'ATUALIZACOES LANCAMENTOS: ',sysdate(); -- Log
 
@@ -1187,15 +1799,7 @@ INSERT INTO fechamento_diario_consolidado_suplementar
 ('1', '0', '0', '0', '0', '1');
 
 
-update lancamento set status= 'FECHADO'
-where status in ('CONFIRMADO','PLANEJADO')
-and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 20 DAY)
-and DATA_REC_DISTRIB <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
 
- -- ----------- --
-update lancamento set DATA_LCTO_DISTRIBUIDOR= '3000-01-01'
-where status in ('CONFIRMADO','PLANEJADO')
-and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
 
 
 
@@ -1203,8 +1807,10 @@ and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
 -- ****************************************************************
 --
 
+/*
 update movimento_estoque set data = 
-(select min(l.DATA_LCTO_DISTRIBUIDOR) from lancamento l where l.produto_edicao_id = movimento_estoque.produto_edicao_id)
+(select min(l.DATA_LCTO_DISTRIBUIDOR) 
+from lancamento l where l.produto_edicao_id = movimento_estoque.produto_edicao_id)
 and data = '0000-00-00'
 and TIPO_MOVIMENTO_ID in (13,20);
 
@@ -1219,12 +1825,12 @@ set m.DATA = l.DATA_LCTO_DISTRIBUIDOR
 where l.produto_edicao_id = m.produto_edicao_id 
 and m.data = '0000-00-00'
 and m.TIPO_MOVIMENTO_ID in (13,20);
+*/
 
-update lancamento
-set status = 'EXPEDIDO'
-where status = 'EM_BALANCEAMENTO_RECOLHIMENTO';
+
+ALTER TABLE HVND ENGINE=InnoDB;
 
 select 'FIM: ',sysdate(); -- Log
 
-
+-- drop table hvnd;
 

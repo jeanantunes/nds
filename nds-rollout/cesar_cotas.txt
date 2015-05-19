@@ -1,0 +1,219 @@
+insert into pessoa (TIPO,CNPJ,INSC_ESTADUAL,INSC_MUNICIPAL,RAZAO_SOCIAL,NOME,SOCIO_PRINCIPAL)
+select distinct 
+tipoPessoa,
+cnpj,
+inscrEstadual,
+inscrMunicipal,
+trim(nomeJornaleiro),
+trim(nomeJornaleiro),
+0
+from CARGA_MDC_COTA2 
+where tipoPessoa ='J'
+and cnpj not in (select distinct cnpj from pessoa where tipo = 'J')
+group by cnpj;
+
+
+insert into pessoa (TIPO,CPF,RAZAO_SOCIAL,NOME,SOCIO_PRINCIPAL)
+select distinct tipoPessoa,cpf,nomeJornaleiro,nomeJornaleiro,0
+from CARGA_MDC_COTA2 
+where tipoPessoa ='F'
+and cpf not in (select distinct cpf from pessoa where tipo = 'F')
+group by cpf;
+
+
+
+insert into cota (INICIO_ATIVIDADE,INICIO_TITULARIDADE,NUMERO_COTA,POSSUI_CONTRATO,
+SITUACAO_CADASTRO,SUGERE_SUSPENSAO,SUGERE_SUSPENSAO_DISTRIBUIDOR,PESSOA_ID,TIPO_COTA,TIPO_DISTRIBUICAO_COTA,
+recebe_complementar,recebe_recolhe_parciais )
+select distinct
+(select data_operacao from distribuidor),
+sysdate(),
+codigoCota,
+0,
+CASE
+WHEN situacaoCota = 1 then 'ATIVO'
+WHEN situacaoCota = 2 then 'SUSPENSO'
+WHEN situacaoCota = 3 then 'PENDENTE'
+WHEN situacaoCota = 4 then 'INATIVO'
+WHEN situacaoCota = 5 then 'PENDENTE'
+ELSE 'PENDENTE' -- FIXME Nao deveria entrar no else
+END,
+1,
+1,
+p.id,
+IF(condPrazoPagamento = 'S','CONSIGNADO','A_VISTA'),
+'CONVENCIONAL',
+1,
+1
+from CARGA_MDC_COTA2 c,pessoa p
+where (p.cnpj = c.cnpj or p.cpf = c.cpf)
+and c.codigoCota not in(select codigoCota from CARGA_MDC_COTA);
+
+
+insert into COTA_FORNECEDOR
+SELECT c.id, f.id FROM COTA c, FORNECEDOR f
+where f.id in (1,2,16) 
+and c.id not in (select cota_id from COTA_FORNECEDOR);
+
+
+insert into historico_situacao_cota
+(DATA_EDICAO, TIPO_EDICAO, RESTAURADO, PROCESSADO, DATA_FIM_VALIDADE,DATA_INICIO_VALIDADE,
+DESCRICAO,MOTIVO,NOVA_SITUACAO,SITUACAO_ANTERIOR,USUARIO_ID,COTA_ID)
+select now(),
+'ALTERACAO', null, 1, null, DATE(sysdate()), 'CARGA', 'OUTROS', situacao_cadastro, situacao_cadastro, 1, id
+from cota a
+where id not in (select cota_id from historico_situacao_cota);
+
+
+-- FIXME Endereco
+insert into endereco (BAIRRO,CEP,CIDADE,CODIGO_BAIRRO,CODIGO_CIDADE_IBGE,CODIGO_UF,
+COMPLEMENTO,LOGRADOURO,NUMERO,TIPO_LOGRADOURO,UF,PESSOA_ID)
+select 
+'',
+cep,
+trim(municipio),
+codBairro,
+codCidadeIbge,
+21,-- ufEditor,
+NULL,
+trim(endereco),
+numLogradouro,
+NULL,
+siglaUf,
+(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota limit 1)
+from carga_mdc_cota2
+where codigoCota not in (select codigoCota from carga_mdc_cota);
+
+-- FIXME Endereco Cota
+insert into endereco_cota (PRINCIPAL,TIPO_ENDERECO,ENDERECO_ID,COTA_ID)
+select * from (
+select distinct
+1,
+'COMERCIAL',
+(select ed.id from cota ct,endereco ed where ct.numero_cota = codigoCota and ct.pessoa_id = ed.pessoa_id limit 1) as ED_ID,
+(select ct.id from cota ct where ct.numero_cota = codigoCota limit 1) as ct_id
+from carga_mdc_cota2
+where codigoCota not in (select codigoCota from carga_mdc_cota)) a
+where a.ed_id not in (select endereco_id from endereco_cota);
+
+
+-- Telefone
+insert into telefone (DDD,NUMERO,PESSOA_ID)
+select distinct cmc.ddd,cmc.telefone,pes.id 
+from carga_mdc_cota2 cmc,pessoa pes
+where (cmc.cnpj = pes.cnpj or cmc.cpf = pes.cpf)
+and cmc.cnpj not in (select cnpj from carga_mdc_cota2)
+and cmc.cpf not in (select cpf from carga_mdc_cota2);
+
+
+-- Telefone Cota
+insert into telefone_cota (PRINCIPAL,TIPO_TELEFONE,TELEFONE_ID,COTA_ID)
+select distinct 
+1,
+IF(tipoPessoa = 'J','COMERCIAL','RESIDENCIAL'),
+tel.id,
+ct.id
+from carga_mdc_cota2 cmc,pessoa pes,cota ct,telefone tel
+where (cmc.cnpj = pes.cnpj or cmc.cpf = pes.cpf)
+and pes.id = ct.pessoa_id
+and ct.numero_cota = cmc.codigoCota
+and ct.pessoa_id = tel.pessoa_id
+and cmc.codigoCota not in (select codigoCota from carga_mdc_cota);
+
+update pdv set linha = null;
+
+
+insert into pdv (ARRENDATARIO,BALCAO_CENTRAL,PONTO_PRINCIPAL,POSSUI_CARTAO_CREDITO,
+POSSUI_COMPUTADOR,POSSUI_LUMINOSO,DENTRO_OUTRO_ESTABELECIMENTO,NOME,PONTO_REFERENCIA,
+PORCENTAGEM_FATURAMENTO,POSSUI_SISTEMA_IPV,QTDE_FUNCIONARIOS,STATUS_PDV,COTA_ID,TIPO_PONTO_PDV_ID,LINHA)
+select 
+0,
+0,
+0, 
+0,
+0,
+0,
+0,
+(select nome from pessoa where id = (select pessoa_id from cota where numero_cota = codigoCota limit 1)),
+pontoReferencia,
+0,
+0,
+0,
+'ATIVO',
+(select id from cota where numero_cota = codigoCota limit 1),
+CAST(tipoPontoVenda AS UNSIGNED),
+linha
+from CARGA_MDC_BANCA2 where codigoCota  in (select numero_cota from cota) 
+and codigoCota not in (select codigoCota from CARGA_MDC_BANCA);
+
+update pdv pdv,
+(select min(id) as id from pdv group by cota_id) pr
+set pdv.ponto_principal = 1 
+where pdv.id =pr.id
+and pdv.linha is not null;
+
+
+
+update endereco set linha = null;
+
+-- Endereco
+insert into endereco (BAIRRO,CEP,CIDADE,CODIGO_BAIRRO,CODIGO_CIDADE_IBGE,CODIGO_UF,
+COMPLEMENTO,LOGRADOURO,NUMERO,TIPO_LOGRADOURO,UF,PESSOA_ID,LINHA)
+select 
+'',
+cep,
+trim(nomeMunicipio),
+codBairro,
+NULL,
+21,-- ufEditor,
+NULL,
+trim(endereco),
+NULL, -- FIXME
+NULL,
+siglaUf,
+(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota limit 1),
+linha
+from carga_mdc_banca2 
+where codigoCota not in (select codigoCota from carga_mdc_banca);
+
+-- Endereco PDV
+insert into endereco_pdv (PRINCIPAL,TIPO_ENDERECO,ENDERECO_ID,PDV_ID)
+select distinct
+1,
+'COMERCIAL',
+ed.id,
+pdv.id
+from carga_mdc_banca2 ca, cota co , endereco ed,pdv pdv
+where ca.codigoCota = co.numero_cota
+and co.id = pdv.cota_id
+and ca.linha = ed.linha
+and ca.linha = pdv.linha
+and pdv.linha = ed.linha
+and co.pessoa_id = ed.pessoa_id
+and ed.id not in(select endereco_id from endereco_cota)
+and ca.codigoCota  in (select numero_cota from cota) 
+and ca.codigoCota not in (select codigoCota from carga_mdc_banca);
+
+
+-- Telefone
+insert into telefone (DDD,NUMERO,PESSOA_ID)
+select distinct cmc.ddd,cmc.telefone,pes.id 
+from carga_mdc_banca2 cmc,pessoa pes,cota ct
+where cmc.codigoCota = ct.numero_cota
+and ct.pessoa_id = pes.id
+and cmc.codigoCota not in (select codigoCota from carga_mdc_banca);
+
+-- Telefone Banca - PDV
+insert into telefone_pdv (PRINCIPAL,TIPO_TELEFONE,TELEFONE_ID,PDV_ID)
+select distinct 
+PONTO_PRINCIPAL,
+IF(pes.tipo = 'J','COMERCIAL','RESIDENCIAL'),
+tel.id,
+p.id
+from carga_mdc_banca2 cmc,pessoa pes,cota ct,pdv p,telefone tel
+where cmc.codigoCota = ct.numero_cota
+and ct.pessoa_id = pes.id
+and p.cota_id = ct.id
+and tel.pessoa_id = p.id
+and cmc.codigoCota not in (select codigoCota from carga_mdc_banca);
+
