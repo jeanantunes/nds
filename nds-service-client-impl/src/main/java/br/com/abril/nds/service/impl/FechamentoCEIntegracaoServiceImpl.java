@@ -460,6 +460,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		this.processaCE(filtro, itensAlterados, chamadasFornecedor);
 	}
+
+	
 	
 	private Diferenca processarDiferenca(ItemChamadaEncalheFornecedor item, 
 										 Usuario usuario,
@@ -1047,4 +1049,50 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		return null;
 	}
+
+	@Override
+	@Transactional
+	public void fecharSemCE(List<ItemFechamentoCEIntegracaoDTO> itens) {
+		System.out.println("okkk ");
+		
+		final Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for (ItemFechamentoCEIntegracaoDTO itemSemCe : itens) {
+			
+			 ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(itemSemCe.getCodigoProduto(), itemSemCe.getNumeroEdicao());
+			
+			this.gerarMovimentoEstoqueDevolucaoSemCEIntegracao(itemSemCe, dataOperacao, produtoEdicao);
+		}
+		
+	}
+	
+	/**
+     * Cria Movimento de Estoque de Devolução de Encalhe Fornecedor
+     * 
+     * @param itemFo
+     * @param dataOperacao
+     */
+    private void gerarMovimentoEstoqueDevolucaoSemCEIntegracao(ItemFechamentoCEIntegracaoDTO itemSemCe, Date dataOperacao, ProdutoEdicao produtoEdicao){
+    	
+		BigInteger quantidadeEncalhe = itemSemCe.getEncalhe();
+		
+		if (quantidadeEncalhe.compareTo(BigInteger.ZERO) == 0) {
+			
+			return;
+		}
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+    	
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), 
+				                                           usuario.getId(), 
+				                                           quantidadeEncalhe,
+				                                           tipoMovimentoEstoque,
+				                                           Origem.TRANSFERENCIA_DEVOLUCAO_FORNECEDOR);
+    }
+    
+	
 }
