@@ -115,13 +115,20 @@ function Endereco(paramTela, paramMessage) {
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 				'</a>';
 
-		retorno += '<span style="width: 80px; border: 0px; background-color: inherit;" readonly="readonly"> ' +
+		if (!this.readonly) {
+			retorno += '<a href="javascript:;" isEdicao="true" class="acaoExclusao" onclick="'+paramTela+'.confirmarExclusaoEndereco(' + idEndereco + ')" ' +
+			' style="cursor:pointer;border:0px;margin:5px" title="Excluir endereço">' +
+			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+			'</a>';
+		}
+		
+		/*retorno += '<span style="width: 80px; border: 0px; background-color: inherit;" readonly="readonly"> ' +
 				'<a href="javascript:;" isEdicao="false" id="linkBloquearExclusao" ' +
 					' style="cursor:pointer;border:0px;margin:5px;cursor:default;opacity:0.4" title="Excluir endereço">' +
 					'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 					'</a></span>';
 			
-		this.bloquearLink("linkBloquearExclusao");
+		this.bloquearLink("linkBloquearExclusao");*/
 		
 		/*
 		if(principal == "true") {
@@ -187,6 +194,7 @@ function Endereco(paramTela, paramMessage) {
 	
 	this.incluirNovoEndereco = function () {
 
+		$('.tipsy').hide();
 		var formData = $("#"+paramTela+"formEnderecos :input", Endereco.workspace).serializeArray();
 		$.each(formData, function(index, row) {
 			row.value = row.value.toString().toUpperCase();

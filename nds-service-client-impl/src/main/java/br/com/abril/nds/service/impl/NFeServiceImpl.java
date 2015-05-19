@@ -228,9 +228,9 @@ public class NFeServiceImpl implements NFeService {
 	}
 	
 	private NfeImpressaoDTO obterDadosNENECA(final NotaEnvio ne) {
+		
 		final NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
 
-		//TODO: concluir
 		final NotaEnvio notaEnvio = notaEnvioRepository.buscarPorId(ne.getNumero()); 
 
 		if(notaEnvio == null) {

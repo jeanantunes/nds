@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.envio.nota.NotaEnvioEndereco;
 
 public class NecaBuilder  implements Serializable {
 	
@@ -183,7 +184,7 @@ public class NecaBuilder  implements Serializable {
 		String codigoRota			= notaEnvio.getDestinatario().getCodigoRota();
 		String descricaoRota 		= notaEnvio.getDestinatario().getDescricaoRota();
 		
-		Endereco endereco = notaEnvio.getDestinatario().getEndereco();
+		NotaEnvioEndereco endereco = notaEnvio.getDestinatario().getEndereco();
 		Telefone telefone = notaEnvio.getDestinatario().getTelefone();
 
 		String destinatarioCNPJ = documento;

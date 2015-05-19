@@ -182,7 +182,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
         query.addScalar("logradouro", StandardBasicTypes.STRING);
         query.addScalar("numero", StandardBasicTypes.STRING);
         query.addScalar("uf", StandardBasicTypes.STRING);
-        query.addScalar("codigoUf", StandardBasicTypes.STRING);
+        query.addScalar("codigoUf", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(Endereco.class));
         
