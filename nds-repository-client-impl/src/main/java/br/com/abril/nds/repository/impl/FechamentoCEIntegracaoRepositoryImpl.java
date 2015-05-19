@@ -683,25 +683,19 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    PROD_EDICAO.PRECO_VENDA AS precoCapa,");
 		
-		hql.append("    MOV_EST.QTDE AS reparte, ");		
+		hql.append("    COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS reparte, ");		
 				
 		hql.append("  ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE AS qtdDevolucao, ");
 				
-		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS venda,");
+		hql.append("  COALESCE(PROD_EDICAO.PRECO_VENDA - (PROD_EDICAO.PRECO_VENDA * PROD_EDICAO.DESCONTO / 100) , 0) * COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) AS valorTotalComDesconto,");
 		
-		hql.append(" COALESCE(MOV_EST.QTDE, 0) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS valorVenda,");
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS valorTotal, ");
 		
 		hql.append(" ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE AS reparte, ");
 		
-		hql.append("	+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
-		hql.append("	+ COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) ");	
-		hql.append("	AS estoque, ");
-		
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) AS estoque, ");
 
-		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
-		hql.append(" + COALESCE(ESTOQUE_PROD.QTDE, 0) ");
-		hql.append(" + COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");
-		hql.append(" + COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) AS encalhe, ");
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS encalhe, ");
 		
 		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS diferenca ");
 		
@@ -716,10 +710,10 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 						.addScalar("nomeProduto", StandardBasicTypes.STRING)
 						.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 						.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL)
-						.addScalar("qtdDevolucao", StandardBasicTypes.STRING)
-						.addScalar("valorVenda", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER)
-						.addScalar("venda", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("valorTotalComDesconto", StandardBasicTypes.BIG_DECIMAL)
 						.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("estoque", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER)

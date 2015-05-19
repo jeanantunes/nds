@@ -136,6 +136,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				itens.push({name:"itens[" + index + "].venda",value:itemCEIntegracao.venda});
 				itens.push({name:"itens[" + index + "].diferenca",value:itemCEIntegracao.diferenca});
 				itens.push({name:"itens[" + index + "].estoque",value:itemCEIntegracao.estoque});
+				
+				if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "SEM") {
+					
+					itens.push({name:"itens[" + index + "].codigoProduto", value:itemCEIntegracao.codigoProduto});
+					itens.push({name:"itens[" + index + "].nomeProduto", value:itemCEIntegracao.nomeProduto});
+					itens.push({name:"itens[" + index + "].numeroEdicao", value:itemCEIntegracao.numeroEdicao});
+					itens.push({name:"itens[" + index + "].precoCapa", value:itemCEIntegracao.precoCapa});
+					itens.push({name:"itens[" + index + "].isProdutoSemCe", value:true});
+				}
+				
 			}
 		});
 		
@@ -344,7 +354,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'precoCapaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -356,7 +366,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Total c/ Desc.R$',
-				name : 'valorTotalComDesconto',
+				name : 'valorTotalComDescontoFormatado',
 				width : 100,
 				sortable : false,
 				align : 'right'
@@ -446,11 +456,96 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
 	},
 	
-	atualizarDiferenca : function(encalhe,idItemCeIntegracao) {
+	
+	tratarAlteracaoEncalheSemCE : function(idItemCeIntegracao, campo) {
+		
+		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo,"Encalhe")){
+			return;
+		}
+		
+		var encalhe = campo.value;
+		
+		var reparte = $("#qtdeDevolucao" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		var diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
-		var valorDiferenca = eval(encalhe) - eval(estoque);
+		var codigoProduto = $("#codigoProduto" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		var nomeProduto = $("#nomeProduto" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		var numeroEdicao = $("#numeroEdicao" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+
+		var venda = encalhe;
+		
+		var valorVenda = venda * priceToFloat(precoCapa);
+		
+		var valorVendaFormatado = floatToPrice(valorVenda);
+		
+		if (eval(reparte) < eval(encalhe)) {
+			
+			exibirMensagem('WARNING', ["A quantidade de encalhe não pode exceder a quantidade do reparte!"]);
+			
+			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+				
+				if(itemCEIntegracao.id == idItemCeIntegracao) {
+					
+					var encalhe = itemCEIntegracao.encalhe;
+					
+					$("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(encalhe);
+					
+					return false;
+				}
+			});
+			
+			return;
+		}
+		
+		$("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
+		
+		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
+		
+		fechamentoCEIntegracaoController.atualizarDiferenca(encalhe, idItemCeIntegracao);
+		
+		diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "COM") {
+			
+			fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque);
+			fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
+		
+		} else {
+			
+			fechamentoCEIntegracaoController.atualizarItensCEIntegracaoSemCE(idItemCeIntegracao, encalhe, venda, diferenca, estoque, codigoProduto, nomeProduto, numeroEdicao, precoCapa);
+			
+		}
+		
+		
+		
+	},
+	
+	atualizarDiferenca : function(encalhe,idItemCeIntegracao) {
+		
+		var estoque = 0;
+		
+		var valorDiferenca = 0;
+		 
+		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "COM") {
+			
+			estoque = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			
+			valorDiferenca = eval(encalhe) - eval(estoque);
+			
+		} else {
+			
+			estoque = $("#qtdeDevolucao" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			
+			valorDiferenca = eval(estoque) - eval(encalhe);
+			
+		}
 		
 		$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
 	},
@@ -511,6 +606,27 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				itemCEIntegracao.diferenca = diferenca;
 				itemCEIntegracao.estoque = estoque;
 				itemCEIntegracao.alteracao = true;
+				
+				return false;
+			}
+		});
+	},
+	
+	atualizarItensCEIntegracaoSemCE : function(idItemCeIntegracao, encalhe, venda, diferenca, estoque, codigoProduto, nomeProduto, numeroEdicao, precoCapa) {
+		
+		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+			
+			if(itemCEIntegracao.id == idItemCeIntegracao) {
+				
+				itemCEIntegracao.codigoProduto = codigoProduto;
+				itemCEIntegracao.nomeProduto = nomeProduto;
+				itemCEIntegracao.numeroEdicao = numeroEdicao;
+				itemCEIntegracao.encalhe = encalhe;
+				itemCEIntegracao.venda = venda;
+				itemCEIntegracao.diferenca = diferenca;
+				itemCEIntegracao.estoque = estoque;
+				itemCEIntegracao.alteracao = true;
+				itemCEIntegracao.precoCapa = precoCapa;
 				
 				return false;
 			}
@@ -635,7 +751,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'<span id="venda' + row.cell.idItemCeIntegracao + '">' +
 								row.cell.venda +
 							'</span>';
-						
+					
+						colunaQtdeDevolucao =	
+							'<span id="qtdeDevolucao' + row.cell.idItemCeIntegracao + '">' +
+								row.cell.qtdeDevolucao +
+							'</span>';
 
 						if(row.cell.diferenca == undefined){
 							valorDiferenca = row.cell.encalhe - row.cell.estoque ;
@@ -736,6 +856,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					
 					var valorDiferenca = 0;
 					
+					var colunaCodigoProduto = 0;
+					
+					var colunaNomeProduto = null;
+					
+					var colunaNumeroEdicao = 0;
+					
 					if (isParcial) {
 						
 						colunaReparte =
@@ -758,7 +884,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.idItemCeIntegracao + ', this)"/>';
 						
 					} else if (isFinal) {
-							
+												
 						colunaReparte =
 							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
 								((row.cell.reparte) ? row.cell.reparte : "") +
@@ -784,28 +910,43 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							
 						} else {
 						
-						colunaReparte =
-							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
-								((row.cell.reparte) ? row.cell.reparte : "") +
-							'</span>';
+							colunaCodigoProduto =
+								'<span id="codigoProduto' + row.cell.idItemCeIntegracao + '">' +
+									((row.cell.codigoProduto) ? row.cell.codigoProduto : "") +
+								'</span>';
+
+							colunaNomeProduto =
+								'<span id="nomeProduto' + row.cell.idItemCeIntegracao + '">' +
+									((row.cell.nomeProduto) ? row.cell.nomeProduto : "") +
+								'</span>';
+							
+							colunaNumeroEdicao =
+								'<span id="numeroEdicao' + row.cell.idItemCeIntegracao + '">' +
+									((row.cell.numeroEdicao) ? row.cell.numeroEdicao : "") +
+								'</span>';
+							
+							colunaReparte =
+								'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+									((row.cell.reparte) ? row.cell.reparte : "") +
+								'</span>';
 						
-						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
-							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
-							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
-							' tabindex="' + (++index) +'"' +
-							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
-							row.cell.idItemCeIntegracao + ', this)"/>';
-						
-						colunaVenda =
-							' <input isEdicao="true" type="text" name="inputVenda"' +
-							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
-							' value="' + row.cell.venda + '" size="5px"' +
-							' tabindex="' + (++index) +'"' +
-							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
-							row.cell.idItemCeIntegracao + ', this)"/>';
+							colunaEncalhe =
+								' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+								' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
+								' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
+								' tabindex="' + (++index) +'"' +
+								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+								row.cell.idItemCeIntegracao + ', this)"/>';
+							
+							colunaVenda =
+								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
+								' value="' + row.cell.encalhe + '" size="5px"' +
+								' tabindex="' + (++index) +'"' +
+								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalheSemCE(' +
+								row.cell.idItemCeIntegracao + ', this)"/>';
 
 						if(row.cell.diferenca == undefined){
 							valorDiferenca = row.cell.encalhe - row.cell.estoque ;
@@ -833,12 +974,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.valorVendaFormatado +
 						'</span>';
 					
+					colunaQtdeDevolucao =	
+						'<span id="qtdeDevolucao' + row.cell.idItemCeIntegracao + '">' +
+							row.cell.qtdDevolucao +
+						'</span>';
+					
 					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+id+
 					'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+id
 					+'" onclick="fechamentoCEIntegracaoController.replicarValor(\''+id+'\')"/>';
 					
 					row.cell.replicarQtde = inputCheckReplicarValor;
-					
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if (row.cell.diferenca < 0){
@@ -852,15 +997,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					row.cell.venda = colunaVenda;
 					row.cell.precoCapaFormatado = colunaPrecoCapa;
 					row.cell.valorVendaFormatado = colunaValorVenda;
-
+					row.cell.qtdDevolucao = colunaQtdeDevolucao;
+					row.cell.codigoProduto = colunaCodigoProduto;
+					row.cell.nomeProduto = colunaNomeProduto;
+					row.cell.numeroEdicao = colunaNumeroEdicao;
+					
 				});
 				
-				$.each(resultado.listaFechamento.rows, function(index, row) {
-					
-					if(row.cell.diferenca == undefined){
-						row.cell.diferenca = 0;
-					}
-				});
 				
 			} else {
 				
@@ -873,11 +1016,14 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}
 			
 			fechamentoCEIntegracaoController.popularTotal(resultado);
+			
 			fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
 			
 			$(".grids", fechamentoCEIntegracaoController.workspace).show();
 			
 			fechamentoCEIntegracaoController.mostrarBotoes();
+			
+			$("#btnSalvarCE", fechamentoCEIntegracaoController.workspace).hide();
 			
 			return resultado.listaFechamento;
 			
@@ -885,11 +1031,89 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 
 	},
 	
+	verificarDataFechamentoCE : function(fechada) {
+		
+		$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
+		
+		$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).unbind("click");
+		
+		$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).unbind("click");
+		
+		$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
+		
+		$("#btnSalvarCE", fechamentoCEIntegracaoController.workspace).unbind("click");
+		
+		$("#btnImpressaoCE", fechamentoCEIntegracaoController.workspace).unbind("click");
+		
+		if (fechada) {					
+			
+			$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			
+			$("#imagemSalvarCE", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			
+			$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+			
+			$("#imagemImpressaoBoleto", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+			
+			$("#imagemImprimirCE", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+			
+			$("#imagemGerarNotaCE", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+			
+			$("#btnReabertura", fechamentoCEIntegracaoController.workspace).click(function() {
+				fechamentoCEIntegracaoController.reabrirCeIntegracao();
+			});
+			
+			$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).click(function() {
+				fechamentoCEIntegracaoController.geraBoleto('BOLETO');
+			});
+			
+			$("#btnImpressaoCE", fechamentoCEIntegracaoController.workspace).click(function() {
+				fechamentoCEIntegracaoController.imprimirCE();
+			});
+			
+		} else {
+			
+			$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			
+			$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+			
+			$("#imagemSalvarCE", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+			
+			$("#imagemImpressaoBoleto", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			
+			$("#imagemImprimirCE", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			
+			$("#imagemGerarNotaCE", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+			
+			if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "SEM") {
+				
+				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.popupConfirmacaoFechamrentoSemCE();
+				});
+			} else {
+				
+				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.validarPerdaGanho();
+				});
+				
+			}
+			
+			$("#btnSalvarCE", fechamentoCEIntegracaoController.workspace).click(function() {
+				fechamentoCEIntegracaoController.popupConfirmacao();
+			});
+		}
+		
+		$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).click(function() {
+			fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO');
+		});
+	},
+	
+	
 	replicarValor:function(id) {
 		
 		if ($("#ch" + id, fechamentoCEIntegracaoController.workspace).is(":checked")){
 			$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val(
-				$("#qtdDevolucao_" + id, fechamentoCEIntegracaoController.workspace).text()
+				$("#qtdeDevolucao" + id, fechamentoCEIntegracaoController.workspace).text()
 			);
 			
 			$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("0");
@@ -900,14 +1124,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			$("#sel", fechamentoCEIntegracaoController.workspace).attr("checked",false);
 			
 			var valorAux = 
-				$("#valorExemplarNotaAux" + id, fechamentoCEIntegracaoController.workspace).val();
+				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val();
 			
 			if (valorAux || valorAux == "0"){
 				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val(valorAux);
 				
 				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text(
-					parseInt($("#qtdDevolucao_" + id, fechamentoCEIntegracaoController.workspace).text())-
-					valorAux
+					parseInt($("#qtdeDevolucao" + id, fechamentoCEIntegracaoController.workspace).text()) - valorAux
 				);
 				
 			} else {
@@ -987,8 +1210,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var parametros = fechamentoCEIntegracaoController.getItensAlteradosCE();
 		
-		parametros.push({name:'idFornecedor' , value:idFornecedor});
 		parametros.push({name:'semana' , value:semana});
+		
+		parametros.push({name:'idFornecedor' , value:idFornecedor});
 		
 		$(".perdaGanhoGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
 			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisarPerdaGanho',
@@ -1010,10 +1234,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			$("#dialog-perdas-ganhos-Fechamento", fechamentoCEIntegracaoController.workspace).hide();
 			
 			return resultado;
-		}
-		else{
+		} else {
 			
-			if(resultado.rows.length > 0){
+			if(resultado.rows.length > 0) {
 				
 				fechamentoCEIntegracaoController.popupPerdaGanho();
 				
@@ -1021,8 +1244,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				$("#dialog-perdas-ganhos-Fechamento", fechamentoCEIntegracaoController.workspace).show();
 				
 				return resultado;
-			}
-			else{
+			} else {
 				
 				$(".perdaGanhoGrid", fechamentoCEIntegracaoController.workspace).hide();
 				$("#dialog-perdas-ganhos-Fechamento", fechamentoCEIntegracaoController.workspace).hide();
@@ -1074,6 +1296,29 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		});	
 	},
 	
+	
+	popupConfirmacaoFechamrentoSemCE : function() {
+		
+		$( "#dialog-Confirmacao-Fechamento-SemCe", fechamentoCEIntegracaoController.workspace).dialog({
+			resizable: false,
+			height:150,
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					fechamentoCEIntegracaoController.fecharCE();
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-Confirmacao-Fechamento-SemCe", fechamentoCEIntegracaoController.workspace).parents("form")
+		});	
+	},
+	
 	fecharCE : function(){
 		
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/fecharCE',
@@ -1090,7 +1335,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			);
 	},
 	
-	initGridPerdasGanho : function(){
+	initGridPerdasGanho : function() {
 		
 		$(".perdaGanhoGrid", fechamentoCEIntegracaoController.workspace).flexigrid({			
 			preProcess : fechamentoCEIntegracaoController.perdaGanhoGridPreProcess,
