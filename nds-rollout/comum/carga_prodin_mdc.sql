@@ -371,6 +371,10 @@ codigoICD=SUBSTR(@linha,260,6),
 segmento=SUBSTR(@linha,266,30),
 fornecedorId=2; 
 
+
+update CARGA_PRODIN_PUB 
+set codigoICD = substring(codigoProduto,1,6);
+
 select 'CARGA_PRODIN_PUB:',count(*) from CARGA_PRODIN_PUB; -- Log 
 
 
@@ -1115,6 +1119,7 @@ select 'EDITOR - TELEFONE_EDITOR:',count(*) from TELEFONE_EDITOR; -- Log
 -- ########################################################################################################################################
 
 
+
 -- CARGA_PRODIN_PUB
 insert into produto (DATA_CRIACAO,ATIVO,CODIGO,COD_CONTEXTO,DATA_DESATIVACAO,
 desconto,COMPRIMENTO,ESPESSURA,LARGURA,fase,FORMA_COMERCIALIZACAO,LANCAMENTO_IMEDIATO,
@@ -1544,7 +1549,7 @@ select 'PRODUTO - DESCONTO:',count(*) from PRODUTO; -- Log
 --
 
 insert into produto_fornecedor
-select p.id,f.id from produto p , carga_prodin_pub c, fornecedor f
+select distinct p.id,f.id from produto p , carga_prodin_pub c, fornecedor f
 where p.codigo = c.codigoProduto
 and f.cod_interface = c.codigoDistribuidor;
 
