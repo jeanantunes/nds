@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
@@ -16,5 +18,7 @@ public interface DistribuicaoVendaMediaRepository {
     List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao, boolean usarICD);
 
 	List<ProdutoEdicaoVendaMediaDTO> pesquisarEdicoesBasesParaLancamentoParcial(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean isFindByICD);
+
+	Date obterDataLancamentoValidaParaParcialConsolidada(BigInteger idProduto, BigInteger numeroEdicao);
 
 }
