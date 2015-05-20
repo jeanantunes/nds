@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -307,6 +309,27 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
 	return query.list();
    }
+    
+    
+    @Override
+	public Date obterDataLancamentoValidaParaParcialConsolidada(BigInteger idProduto, BigInteger numeroEdicao) {
+    	
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select l.DATA_LCTO_DISTRIBUIDOR   ");
+		sql.append(" from lancamento l   ");
+		sql.append(" where PRODUTO_EDICAO_ID = (select pe.id from produto_edicao pe where pe.NUMERO_EDICAO = :numeroEdicao and pe.PRODUTO_ID = :idProd)  ");
+		sql.append(" and l.DATA_LCTO_DISTRIBUIDOR <> '3000/01/01'  ");
+		sql.append(" order by l.DATA_LCTO_DISTRIBUIDOR desc limit 1  ");
+		
+    	SQLQuery query = getSession().createSQLQuery(sql.toString());
+    	
+    	query.setParameter("idProd", idProduto);
+    	query.setParameter("numeroEdicao", numeroEdicao);
+    	
+    	return (Date) query.uniqueResult();
+	}
+    
 
     private String ordenarConsulta(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
 
