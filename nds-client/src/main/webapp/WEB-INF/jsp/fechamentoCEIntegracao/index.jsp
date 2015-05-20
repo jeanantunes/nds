@@ -34,6 +34,12 @@
 		</div>
 	</form>
 	
+	<form id="idFormConfirmacaoFechamentoSemCe">
+		<div id="dialog-Confirmacao-Fechamento-SemCe" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja efetuar o fechamento </p>
+		</div>
+	</form>
+	
 	<form id="idFormPerdaGanhos">
 		<div id="dialog-perdas-ganhos-Fechamento" title="Diferença(s) Fechamento CE - Integração" style="display:none;">
 	    	<table class="perdaGanhoGrid"></table>

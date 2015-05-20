@@ -54,4 +54,6 @@ public interface FechamentoCEIntegracaoService {
 	FechamentoCEIntegracaoDTO obterDiferencaCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtroCE,Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlteradosFechamento);
 	
 	FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCE(FiltroFechamentoCEIntegracaoDTO filtro);
+
+	void fecharSemCE(List<ItemFechamentoCEIntegracaoDTO> itens);
 }
