@@ -1049,7 +1049,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		conferenciaEncalhe.setQtde(BigInteger.ZERO);
 		
-		conferenciaEncalhe.setData(new Date());
+		conferenciaEncalhe.setData(dataOperacao);
 		
 		conferenciaEncalhe.setDiaRecolhimento(diaRecolhimento);
 		

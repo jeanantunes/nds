@@ -3251,7 +3251,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		conferenciaEncalhe.setQtde(conferenciaEncalheDTO.getQtdExemplar());
 		
-		conferenciaEncalhe.setData(dataCriacao);
+		conferenciaEncalhe.setData(dataOperacao);
 		
 		conferenciaEncalhe.setDiaRecolhimento(diaRecolhimento);
 		
