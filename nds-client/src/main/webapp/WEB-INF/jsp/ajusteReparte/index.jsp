@@ -247,7 +247,7 @@ $(function(){
 								</td>
 								<td width="30">Nome:</td>
 								<td width="398">
-									<input name="nomeCota" id="nomeCotaEditar" type="text" style="width: 160px;" 
+									<input name="nomeCota" id="nomeCotaEditar" type="text" style="width: 160px;" />
 					</td></tr>
 							</table>
 

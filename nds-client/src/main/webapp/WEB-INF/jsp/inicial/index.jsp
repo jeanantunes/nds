@@ -28,7 +28,7 @@ $(function() {
 		<div class="box_home saudacao">
 		   	<img src="${pageContext.request.contextPath}/images/logo_sistema.png" alt="Novo Distrib" class="logoHome" />
 		
-		    <h1>Seja bem-vindo ao NOVO DISTRIB</h1>
+		    <h1>Seja bem-vindo ao STG</h1>
 		    
 			<div class="linha_separa_fields">&nbsp;</div>
 			<br clear="all">
