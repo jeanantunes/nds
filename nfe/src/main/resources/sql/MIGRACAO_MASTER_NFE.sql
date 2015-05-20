@@ -1257,6 +1257,8 @@ insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('8',
 insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('10','24');
 
 
+-- Ajuste recentes na nota fiscal eletronica!!
+
 update tributacao set cst='01' where id='5';
 update tributacao set cst='01' where id='7';
 update tributacao set cst='07' where id='9';
@@ -1282,3 +1284,5 @@ update natureza_operacao set TIPO_OPERACAO='ENTRADA' where ID='26';
 update tributacao set cst='01' where id='8';
 
 update tributacao set cst='01' where id='10';
+
+insert into natureza_operacao_tipo_movimento`(`NATUREZA_OPERACAO_ID`,`TIPO_MOVIMENTO_ID`)values('36','31');
