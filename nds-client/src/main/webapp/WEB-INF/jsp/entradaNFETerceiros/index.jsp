@@ -1,6 +1,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distrib</title>
+<title>STG-Sistema Treelog de Gestão</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/entradaNFETerceiros.js"></script>
