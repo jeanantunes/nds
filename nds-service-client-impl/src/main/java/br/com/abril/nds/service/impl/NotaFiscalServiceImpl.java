@@ -1719,6 +1719,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		validarFiltrosNFe(filtro);
 		
+		naturezaOperacao = this.naturezaOperacaoRepository.buscarPorId(naturezaOperacao.getId());
+		
 		List<TipoMovimento> itensMovimentosFiscais = obterMovimentosFiscaisNaturezaOperacao(naturezaOperacao);
 		
 		if(itensMovimentosFiscais.size() > 0) {
