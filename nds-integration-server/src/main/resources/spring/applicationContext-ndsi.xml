@@ -15,17 +15,14 @@
 	
 	<context:annotation-config/>
 	
-	<!-- <util:properties id="queries" location="classpath:query.properties" /> -->
-	
 	<context:component-scan base-package="br.com.abril.nds"/>
 		
 	<task:annotation-driven/>
 	
-	<task:executor id="executorWithPoolSizeRange"
-	               pool-size="5-25"
-	               queue-capacity="100"/>
+	<task:executor id="executorWithPoolSizeRange" pool-size="5-25" queue-capacity="100"/>
 	
 	<import resource="applicationContext-ndsi-persistence.xml" />
 	
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
+	
 </beans>

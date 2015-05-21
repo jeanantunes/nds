@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class ExtratificacaoItem implements Serializable {
+public class ExtratificacaoItem extends Extratificacao implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 122019743830797196L;
+
 	private BigInteger idCota;
 	
 	private Integer numeroCota;

@@ -11,10 +11,12 @@ import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 
-public class CouchDBRepositoryImpl {
+@Repository
+public class CouchDBDAO implements CouchDBRepository {
 	
 	public static final String DB_NAME  =  "correios";
 	
@@ -24,13 +26,11 @@ public class CouchDBRepositoryImpl {
 	@SuppressWarnings("unused")
 	private CouchDbConnector couchDbConnector;
 
-	public CouchDBRepositoryImpl() {
+	public CouchDBDAO() {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.CouchDBRepository#getCouchDBClient(java.lang.String, boolean)
-	 */
+	@Override
 	public CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor) {
 		
 		return new CouchDbClient(
@@ -44,10 +44,7 @@ public class CouchDBRepositoryImpl {
 		);
 	}
 	
-	//@PostConstruct
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.CouchDBRepository#initCouchDbClient()
-	 */
+	@Override
 	public void initCouchDbClient() throws MalformedURLException {
 		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
                 .url(

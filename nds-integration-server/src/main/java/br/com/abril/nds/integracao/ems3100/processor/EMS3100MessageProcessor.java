@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
@@ -21,9 +19,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.model.canonic.Extratificacao;
+import br.com.abril.nds.integracao.model.canonic.ExtratificacaoItem;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
-import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.repository.AbstractRepository;
@@ -35,34 +32,11 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS3100MessageProcessor.class);
 	
 	@Autowired
-	private SessionFactory sessionFactoryGfs;
-	
-	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
-	
-	@Autowired
-	private IcdObjectService icdObjectService;
 	
 	private String diretorio;
 	
 	private String pastaInterna;
-
-	protected Session getSessionGfs() {
-		
-		Session session = null;
-		try {
-			session = sessionFactoryGfs.getCurrentSession();
-		} catch(Exception e) {
-            LOGGER.error("Erro ao obter sessão do Hibernate.", e);
-		}
-		
-		if(session == null) {
-			session = sessionFactoryGfs.openSession();
-		}
-		
-		return session;
-		
-	}
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -89,7 +63,7 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 
 				CouchDbClient couchDbClient = this.getCouchDBClient(StringUtils.leftPad(distribuidor, 8, "0"), true);
-										
+
 				View view = couchDbClient.view("importacao/porTipoDocumento");
 								
 				view.startKey(new Object[] {InterfaceEnum.EMS3100.name(), null});
@@ -98,11 +72,11 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 				view.includeDocs(true);
 
 				try { 
-					ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, Extratificacao.class);
+					ViewResult<Object[], Void, ?> result = view.queryView(Object[].class, Void.class, ExtratificacaoItem.class);
 					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 						
-						Extratificacao doc = (Extratificacao) row.getDoc();
-						Extratificacao docServer = new Extratificacao(); 
+						ExtratificacaoItem doc = (ExtratificacaoItem) row.getDoc();
+						ExtratificacaoItem docServer = new ExtratificacaoItem(); 
 						BeanUtils.copyProperties(doc, docServer, "_rev", "_id");
 						
 						couchDbExtratificador.save(docServer);
