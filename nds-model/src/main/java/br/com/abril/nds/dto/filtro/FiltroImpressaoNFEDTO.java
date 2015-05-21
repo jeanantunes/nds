@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -56,6 +57,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private ColunaOrdenacaoImpressaoNFE ordenacaoColuna;
 
+	private NaturezaOperacao naturezaOperacao;
+	
 	public enum ColunaOrdenacaoImpressaoNFE {
 
 		COTA("cota");
@@ -355,5 +358,13 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	public void setListIdFornecedor(List<Long> listIdFornecedor) {
 		this.listIdFornecedor = listIdFornecedor;
+	}
+
+	public NaturezaOperacao getNaturezaOperacao() {
+		return naturezaOperacao;
+	}
+
+	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
 	}
 }

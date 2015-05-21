@@ -1257,6 +1257,8 @@ insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('8',
 insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('10','24');
 
 
+-- Ajuste recentes na nota fiscal eletronica!!
+
 update tributacao set cst='01' where id='5';
 update tributacao set cst='01' where id='7';
 update tributacao set cst='07' where id='9';
@@ -1276,3 +1278,13 @@ insert into parametro_sistema (ID, TIPO_PARAMETRO_SISTEMA, VALOR) values('59','N
 insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('36','0','0','0','0','0','0','Devolução de Remessa para Distribuição','5949','6949',NULL,'PRESTADOR_FILIAL','DISTRIBUIDOR','FORNECEDOR','ENTRADA','CONSIGNADO','36','0','2015-05-05 13:21:00','2015-05-05 13:21:00','root@10.37.8.143');
 
 alter table produto change REMESSA_DISTRIBUICAO SEM_CE_INTEGRACAO tinyint(1) default '0' NULL ;
+
+update natureza_operacao set TIPO_OPERACAO='ENTRADA' where ID='26';
+
+update tributacao set cst='01' where id='8';
+
+update tributacao set cst='01' where id='10';
+
+insert into natureza_operacao_tipo_movimento(NATUREZA_OPERACAO_ID,TIPO_MOVIMENTO_ID)values('36','66');
+
+update natureza_operacao set TIPO_OPERACAO='SAIDA' where ID='36';

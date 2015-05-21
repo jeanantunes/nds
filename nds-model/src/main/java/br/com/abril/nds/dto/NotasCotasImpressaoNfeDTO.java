@@ -28,6 +28,17 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 		this.totalExemplares = totalExemplares;
 	}
 
+	public NotasCotasImpressaoNfeDTO(Long idNota, Long numeroNota, Boolean notaImpressa, String nomeFornecedor,BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
+		super();
+		this.idNota = idNota;
+		this.numeroNota = numeroNota;
+		this.notaImpressa = notaImpressa;
+		this.nomeCota = nomeFornecedor;
+		this.vlrTotal = vlrTotal.setScale(2, BigDecimal.ROUND_DOWN);;
+		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100")))).setScale(2, BigDecimal.ROUND_DOWN);;
+		this.totalExemplares = totalExemplares;
+	}
+	
 	/**
 	 * 
 	 */

@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.DistribuicaoVendaMediaService;
 import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 @Transactional(readOnly = true)
@@ -48,7 +50,7 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(filtro);
     	}
     	
-    	tratarVendaZero(prodEdicaoParabaseEstudo);
+    	tratarVendaZeroEDataLancamento(prodEdicaoParabaseEstudo);
     	
     	return prodEdicaoParabaseEstudo;
     }
@@ -92,23 +94,33 @@ public class DistribuicaoVendaMediaServiceImpl implements DistribuicaoVendaMedia
     		prodEdicaoParabaseEstudo = distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao, idClassificacao, usarICD);
     	}
     	
-    	tratarVendaZero(prodEdicaoParabaseEstudo);
+    	tratarVendaZeroEDataLancamento(prodEdicaoParabaseEstudo);
     	
     	return prodEdicaoParabaseEstudo;
     	
     }
 
-	private void tratarVendaZero(List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo) {
+	private void tratarVendaZeroEDataLancamento(List<ProdutoEdicaoVendaMediaDTO> prodEdicaoParabaseEstudo) {
 		
 		for (ProdutoEdicaoVendaMediaDTO peVendaMediaDTO : prodEdicaoParabaseEstudo) {
+			
 			if((peVendaMediaDTO.getStatus() != null && peVendaMediaDTO.getStatus().equalsIgnoreCase("FECHADO")) 
 					&& (peVendaMediaDTO.getVenda() == null || peVendaMediaDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)) {
 				
 				BigDecimal vendas = estoqueProdutoService.obterVendaBaseadoNoEstoque(peVendaMediaDTO.getId().longValue());
 				peVendaMediaDTO.setVenda(vendas != null ? vendas.toBigInteger() : BigInteger.valueOf(0));
 			}
+			
+			if(peVendaMediaDTO.getDataLancamentoFormatada().equalsIgnoreCase("01/01/3000") && peVendaMediaDTO.isParcialConsolidado() == true){
+				
+				Date dataValida = distribuicaoVendaMediaRepository.obterDataLancamentoValidaParaParcialConsolidada(peVendaMediaDTO.getIdProduto(), peVendaMediaDTO.getNumeroEdicao());
+				
+				if(dataValida != null){
+					peVendaMediaDTO.setDataLancamentoFormatada(DateUtil.formatarDataPTBR(dataValida));
+				}
+				
+			}
 		}
-		
 	}
 
 }

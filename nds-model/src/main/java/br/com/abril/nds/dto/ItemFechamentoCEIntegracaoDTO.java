@@ -65,15 +65,19 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private String desconto;
 	
-	private String qtdDevolucao;
+	private BigInteger qtdDevolucao;
 	
 	private String qtdNota;
 	
-	private String valorTotal;
+	private BigDecimal valorTotal;
 	
-	private String valorTotalComDesconto;
+	private BigDecimal valorTotalComDesconto;
+	
+	private String valorTotalComDescontoFormatado;
 	
 	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";		
+	
+	private boolean isProdutoSemCe = false;
 	
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	public String getReparteFormatado(){
@@ -249,11 +253,11 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 		this.desconto = desconto;
 	}
 
-	public String getQtdDevolucao() {
+	public BigInteger getQtdDevolucao() {
 		return qtdDevolucao;
 	}
 
-	public void setQtdDevolucao(String qtdDevolucao) {
+	public void setQtdDevolucao(BigInteger qtdDevolucao) {
 		this.qtdDevolucao = qtdDevolucao;
 	}
 
@@ -265,22 +269,37 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 		this.qtdNota = qtdNota;
 	}
 
-	public String getValorTotal() {
+	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
 
-	public void setValorTotal(String valorTotal) {
+	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+		this.valorVendaFormatado = CurrencyUtil.formatarValor(valorTotal);
 	}
 
-	public String getValorTotalComDesconto() {
+	public BigDecimal getValorTotalComDesconto() {
 		return valorTotalComDesconto;
 	}
 
-	public void setValorTotalComDesconto(String valorTotalComDesconto) {
+	public void setValorTotalComDesconto(BigDecimal valorTotalComDesconto) {
 		this.valorTotalComDesconto = valorTotalComDesconto;
+		this.valorTotalComDescontoFormatado = CurrencyUtil.formatarValor(valorTotalComDesconto);
 	}
-	
-	
-	
+
+	public String getValorTotalComDescontoFormatado() {
+		return valorTotalComDescontoFormatado;
+	}
+
+	public void setValorTotalComDescontoFormatado(String valorTotalComDescontoFormatado) {
+		this.valorTotalComDescontoFormatado = valorTotalComDescontoFormatado;
+	}
+
+	public boolean isProdutoSemCe() {
+		return isProdutoSemCe;
+	}
+
+	public void setProdutoSemCe(boolean isProdutoSemCe) {
+		this.isProdutoSemCe = isProdutoSemCe;
+	}
 }

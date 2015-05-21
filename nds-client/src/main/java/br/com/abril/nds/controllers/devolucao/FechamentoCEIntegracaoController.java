@@ -204,7 +204,11 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		fechamentoCEIntegracaoService.fecharCE(filtro, this.obterMapItensCE(itens));
+		if(filtro.getComboCeIntegracao().equals("COM")){ 
+			fechamentoCEIntegracaoService.fecharCE(filtro, this.obterMapItensCE(itens));
+		} else {
+			fechamentoCEIntegracaoService.fecharSemCE(itens);
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
@@ -341,7 +345,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		filtro.setIdItemChamadaEncalheFornecedor(idItemChamadaFornecedor);
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
-		
+			
 		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro, venda);
 		
 		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
@@ -354,7 +358,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Post
 	@Path("/salvarCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens ){
+	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens){
 		
 		if(itens != null && !itens.isEmpty()) {
 			
@@ -453,8 +457,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> tableModel = 
 				new TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>>();
 		
-		List<ItemFechamentoCEIntegracaoDTO> itensCE = 
-				PaginacaoUtil.paginarEmMemoria(fechamentoCEIntegracao.getItensFechamentoCE(),filtroCE.getPaginacao());
+		List<ItemFechamentoCEIntegracaoDTO> itensCE = PaginacaoUtil.paginarEmMemoria(fechamentoCEIntegracao.getItensFechamentoCE(),filtroCE.getPaginacao());
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensCE));
 		

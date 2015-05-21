@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distrib</title>
+<title>STG-Sistema Treelog de Gestão</title>
 <link rel="stylesheet" type="text/css" href="css/NDS.css" />
 
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
