@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
@@ -166,7 +165,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@Autowired
 	private TributoAliquotaRepository tributoAliquotaRepository;
 	
-	@Resource(name="couchDBRepositoryImpl")
+	@Autowired
 	private CouchDBRepository couchDBRepository;
 	
 	@Autowired
