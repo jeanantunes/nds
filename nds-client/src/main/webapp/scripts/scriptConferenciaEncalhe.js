@@ -616,6 +616,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.ifCotaExigeNfe(data, ConferenciaEncalhe.popup_alert);
 							
+							ConferenciaEncalhe.configurarAtalhos();
+							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
 							ConferenciaEncalhe.carregarListaConferencia(data);

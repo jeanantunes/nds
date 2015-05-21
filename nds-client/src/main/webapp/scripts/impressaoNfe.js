@@ -169,6 +169,8 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	pesquisar : function() {
 
+		impressaoNfeController.initFlexiGrids();
+		
 		impressaoNfeController.filtroNotasImprimirNFe = [];
 		
 		var tipoDestinatario = $("input[name='tipoDestinatario']:checked").val();
@@ -214,10 +216,11 @@ var impressaoNfeController = $.extend(true, {
 				dataType : 'json',
 				params: params
 			});
+			$(".impressaoGrid", impressaoNfeController.workspace).parent().parent().hide();
+			$(".grids", impressaoNfeController.workspace).hide();
 			
 			$(".impressaoGridFornecedor", impressaoNfeController.workspace).flexReload();
-			
-			$(".impressaoGrid", impressaoNfeController.workspace).parent().parent().hide();
+			$(".impressaoGridFornecedor", impressaoNfeController.workspace).parent().parent().show();
 			
 		} else {
 			
@@ -228,11 +231,14 @@ var impressaoNfeController = $.extend(true, {
 				params: params
 			});
 			
-			$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
-			$(".impressaoGridFornecedor", impressaoNfeController.workspace).parent().hide();
+			$(".impressaoGridFornecedor", impressaoNfeController.workspace).parent().parent().hide();
+			$(".grids", impressaoNfeController.workspace).hide();
 			
+			$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
+			$(".impressaoGrid", impressaoNfeController.workspace).parent().parent().show();
 		}
 		
+		$(".grids", impressaoNfeController.workspace).show();
 		
 		$(".areaBts", impressaoNfeController.workspace).show();
 		

@@ -467,7 +467,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Distribuidor distribuidor =  distribuidorService.obter();
 		
-		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			
 			return true;
 			
