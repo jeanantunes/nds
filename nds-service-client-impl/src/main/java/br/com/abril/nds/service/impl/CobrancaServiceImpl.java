@@ -1309,7 +1309,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Override
 	@Transactional
-	public void processarExportacaoCobranca(Date dataOperacaoDistribuidor){
+	public String processarExportacaoCobranca(Date dataOperacaoDistribuidor){
 
 		List<ExportarCobrancaDTO> cobrancas = this.cobrancaRepository.obterCobrancasNaDataDeOperacaoDoDistribuidor(dataOperacaoDistribuidor);
 		
@@ -1321,7 +1321,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			Date data = DateUtil.parseData("01/04/2015", Constantes.DATE_PATTERN_PT_BR);
 			
 			cobrancafk_.setCod_jornaleiro(i);
-			cobrancafk_.setData_operacao(data);
+			//cobrancafk_.setData_operacao(data);
 			cobrancafk_.setVlr_cobranca(new BigDecimal(10*i));
 			cobrancafk_.setVlr_credito(new BigDecimal(10*i));
 			cobrancafk_.setVlr_encalhe(new BigDecimal(10*i));
@@ -1337,6 +1337,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			cobrancas.add(cobrancafk_);
 		}
 		*/
+		
 		
 		if(cobrancas == null || cobrancas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças na data de operação corrente.");
@@ -1370,12 +1371,13 @@ public class CobrancaServiceImpl implements CobrancaService {
 		json.add(dataFormatada, jA);
 		
 		this.couchDbClient.save(json); 
+		return "Exportado "+cobrancas.size();
 		
 	}
 	
 	@Transactional
 	@Override
-	public void processarCobrancaConsolidada(Date dataOperacaoDistribuidor){
+	public String processarCobrancaConsolidada(Date dataOperacaoDistribuidor){
 		
 		String dataFormatada = DateUtil.formatarData(dataOperacaoDistribuidor, Constantes.DATE_PATTERN_PT_BR_FOR_FILE);
 		
@@ -1401,12 +1403,17 @@ public class CobrancaServiceImpl implements CobrancaService {
 			ExportarCobrancaDTO cobranca = gson.fromJson(jsonElement, ExportarCobrancaDTO.class);
 			cobrancas.add(cobranca);
 		}
-		
+		int atu=0;
+		int proc=0;
 		for (ExportarCobrancaDTO cobranca : cobrancas) {
+			proc++;
 			if(cobranca.getCotaProcessada() == true && cobranca.getNossoNumero() != null){
+				atu++;
 				this.cobrancaRepository.updateNossoNumero(dataOperacaoDistribuidor, cobranca.getCod_jornaleiro(), cobranca.getNossoNumero());
 			}
 		}
+		
+		return " Processados:"+proc+" Atualizados:"+atu;
 		
 	}
 	

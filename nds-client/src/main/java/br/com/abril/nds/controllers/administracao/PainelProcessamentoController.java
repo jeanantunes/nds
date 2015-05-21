@@ -559,11 +559,11 @@ public class PainelProcessamentoController extends BaseController {
     	
     	Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
         
-    	this.cobrancaService.processarExportacaoCobranca(dataDistribuicaoDistribuidor);
+    	String msg=this.cobrancaService.processarExportacaoCobranca(dataDistribuicaoDistribuidor);
     	
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.SUCCESS,
-                "Cobranças exportadas com sucesso!"), "result").recursive().serialize();
+                "Cobranças exportadas com sucesso! "+msg), "result").recursive().serialize();
     }
     
     
@@ -572,11 +572,11 @@ public class PainelProcessamentoController extends BaseController {
     	
     	Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
         
-    	this.cobrancaService.processarCobrancaConsolidada(dataDistribuicaoDistribuidor);
+    	String msg=this.cobrancaService.processarCobrancaConsolidada(dataDistribuicaoDistribuidor);
     	
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.SUCCESS,
-                "Cobranças exportadas com sucesso!"), "result").recursive().serialize();
+                "Cobranças processadas com sucesso!"+msg), "result").recursive().serialize();
     }
     
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
