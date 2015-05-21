@@ -176,7 +176,6 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		return hql.toString();
 	}
 	
-	
 	/**
 	 * Incluir uma virgula (separador) para os critérios de order by.<br>
 	 * Caso não haja consulta HQL não incluirá nada, retornando o próprio
