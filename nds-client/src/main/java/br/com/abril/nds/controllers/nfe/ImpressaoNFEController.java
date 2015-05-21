@@ -157,9 +157,11 @@ public class ImpressaoNFEController extends BaseController {
 		
 		verificarFiltro(filtro);
 
+		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = new ArrayList<NotasCotasImpressaoNfeDTO>();
+		
 		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
 		
-		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
+		listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
 
 		if(listaCotasImpressaoNFe == null || listaCotasImpressaoNFe.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");

@@ -1288,3 +1288,4 @@ update tributacao set cst='01' where id='10';
 insert into natureza_operacao_tipo_movimento(NATUREZA_OPERACAO_ID,TIPO_MOVIMENTO_ID)values('36','66');
 
 update natureza_operacao set TIPO_OPERACAO='SAIDA' where ID='36';
+update natureza_operacao set GERAR_NOTAS_REFERENCIADAS='1' where ID='36';
