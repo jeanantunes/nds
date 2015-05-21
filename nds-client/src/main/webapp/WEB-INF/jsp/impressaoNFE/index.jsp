@@ -171,6 +171,7 @@
 		
 			<table class="impressaoGrid"></table>
 
+			<table class="impressaoGridFornecedor"></table>
 			<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input
 				type="checkbox" id="selTodasAsNotas" name="Todos" onclick="impressaoNfeController.checkTodasAsNotas();" style="float: left; margin-right: 30px;" /></span>
 		</div>
