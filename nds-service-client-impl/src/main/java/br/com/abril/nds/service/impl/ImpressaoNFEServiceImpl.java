@@ -149,16 +149,27 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Override
 	@Transactional
 	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro) {
+		
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.buscarPorId(filtro.getIdNaturezaOperacao());
+		
+		filtro.setNaturezaOperacao(naturezaOperacao);
+		
 		return this.impressaoNFeRepository.obterNotafiscalImpressao(filtro);
 	}
 
 	@Override
 	@Transactional
 	public byte[] imprimirNFe(FiltroImpressaoNFEDTO filtro) {
+		
 		LOGGER.info("Metodo responsavel pela impressão de NFE...");
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
+		
+		filtro.setNaturezaOperacao(naturezaOperacao);
+		
 		List<DanfeWrapper> listaDanfeWrapper = new ArrayList<DanfeWrapper>();
+		
 		Distribuidor distribuidor = this.distribuidorService.obter();
+		
 		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
 		// InputStream logoTipoDistribuidor = distribuidor.getLogotipoDistribuidor();  
 		if(TipoAtividade.MERCANTIL.equals(distribuidor.getTipoAtividade())) {
@@ -245,7 +256,21 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				/**
 				 * Nota de Envio Buscar quando houver chave de acesso
 				 */
-				List<NotaFiscal> notas = ordenarNotasEnvioPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
+				
+				List<NotaFiscal> notas = null; 
+				
+				switch (naturezaOperacao.getTipoDestinatario()) {
+				
+					case COTA:
+					case DISTRIBUIDOR:
+					                 
+						notas = ordenarNotasEnvioPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
+						break;
+	                
+					case FORNECEDOR:            
+						notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+						break;        
+				}
 				
 				for (NotaFiscal notaFiscal : notas) {
 					DanfeDTO danfe = montarDanfe(notaFiscal);

@@ -718,6 +718,8 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
+			montaChaveAcesso(notaFiscal);
+			
 			// obter os estoques
 			filtro.setIdCota(estoque.getId());
 			List<EstoqueProduto> estoqueProdutos = this.notaFiscalRepository.obterEstoques(filtro);

@@ -171,6 +171,8 @@ var impressaoNfeController = $.extend(true, {
 
 		impressaoNfeController.filtroNotasImprimirNFe = [];
 		
+		var tipoDestinatario = $("input[name='tipoDestinatario']:checked").val();
+		
 		if(typeof($('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()) === 'undefined' 
 				|| $('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val() < 0) {
 			
@@ -196,7 +198,6 @@ var impressaoNfeController = $.extend(true, {
 			});
 		}
 		
-		
 		for(var i = 0; i < impressaoNfeController.filtroProdutos.length; i++) {
 
 			params.push({
@@ -204,15 +205,34 @@ var impressaoNfeController = $.extend(true, {
 				'value' : impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto']
 			});
 		}
-
-		$(".impressaoGrid", impressaoNfeController.workspace).flexOptions({
-			preProcess: impressaoNfeController.executarPreProcessamento,
-			url: contextPath + "/nfe/impressaoNFE/pesquisarImpressaoNFE",
-			dataType : 'json',
-			params: params
-		});
-
-		$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
+		
+		if(tipoDestinatario == "FORNECEDOR"){
+			
+			$(".impressaoGridFornecedor", impressaoNfeController.workspace).flexOptions({
+				preProcess: impressaoNfeController.executarPreProcessamento,
+				url: contextPath + "/nfe/impressaoNFE/pesquisarImpressaoNFE",
+				dataType : 'json',
+				params: params
+			});
+			
+			$(".impressaoGridFornecedor", impressaoNfeController.workspace).flexReload();
+			
+			$(".impressaoGrid", impressaoNfeController.workspace).parent().parent().hide();
+			
+		} else {
+			
+			$(".impressaoGrid", impressaoNfeController.workspace).flexOptions({
+				preProcess: impressaoNfeController.executarPreProcessamento,
+				url: contextPath + "/nfe/impressaoNFE/pesquisarImpressaoNFE",
+				dataType : 'json',
+				params: params
+			});
+			
+			$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
+			$(".impressaoGridFornecedor", impressaoNfeController.workspace).parent().hide();
+			
+		}
+		
 		
 		$(".areaBts", impressaoNfeController.workspace).show();
 		
@@ -423,8 +443,21 @@ var impressaoNfeController = $.extend(true, {
 	 * Marca todas as cotas do grid
 	 */
 	checkTodasAsNotas : function() {
+		
+		var tipoDestinatario = $("input[name='tipoDestinatario']:checked").val();
 
-		var inputs = $('.impressaoGrid :checkbox', impressaoNfeController.workspace);
+		var inputs = null;
+		
+		if(tipoDestinatario == "FORNECEDOR"){
+			
+			inputs = $('.impressaoGridFornecedor :checkbox', impressaoNfeController.workspace);
+			
+		} else {
+			
+			inputs = $('.impressaoGrid :checkbox', impressaoNfeController.workspace);
+			
+		}
+		
 
 		inputs.each(function(index) {
 			if(this.id != "selTodasAsNotas") {
@@ -551,10 +584,20 @@ var impressaoNfeController = $.extend(true, {
 	adicionarAsNFesAImprimir : function(checked, idNotaFiscal) {
 		
 		//Verifica se ainda esta na mesma pagina, se nao, atualiza a pagina atual e limpa as cotas selecionadas na pagina anterior
-		if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGrid").flexGetPageNumber()) {
-			impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGrid").flexGetPageNumber();
-			impressaoNfeController.filtroNotasImprimirNFe = [];
-		}
+		var tipoDestinatario = $("input[name='tipoDestinatario']:checked").val();
+		
+		if(tipoDestinatario == "FORNECEDOR") {
+			if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGridFornecedor").flexGetPageNumber()) {
+				impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGridFornecedor").flexGetPageNumber();
+				impressaoNfeController.filtroNotasImprimirNFe = [];
+			}
+		} else {			
+			if(impressaoNfeController.paginaAtualPesquisarGrid != $(".impressaoGrid").flexGetPageNumber()) {
+				impressaoNfeController.paginaAtualPesquisarGrid = $(".impressaoGrid").flexGetPageNumber();
+				impressaoNfeController.filtroNotasImprimirNFe = [];
+			}
+		} 
+		
 		
 		arrayOrdenado = impressaoNfeController.filtroNotasImprimirNFe.sort();
 		
@@ -718,6 +761,64 @@ var impressaoNfeController = $.extend(true, {
 			/*onChangePage : function(ctype) {
 				impressaoNfeController.filtroNotasImprimirNFe = [];
 			},*/
+		});
+		
+		$(".impressaoGridFornecedor", impressaoNfeController.workspace).flexigrid({
+			preProcess : null,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Nota',
+				name : 'numeroNota',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome do Forncedor',
+				name : 'nomeCota',
+				width : 340,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Total Exemplares',
+				name : 'totalExemplares',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Total R$',
+				name : 'vlrTotal',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Total Desc. R$',
+				name : 'vlrTotalDesconto',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Impressão',
+				name : 'notaImpressa',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '',
+				name : 'sel',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "idNota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rpOptions: [10, 15, 20, 30, 50],
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180,
+			
 		});
 	},
 	
