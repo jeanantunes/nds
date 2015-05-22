@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_chamada_encalhe_esc" pageWidth="346" pageHeight="842" columnWidth="346" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="8c114182-af00-4c58-a66b-a3af9b62ec09">
-	<property name="ireport.zoom" value="2.143588810000002"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="14"/>
 	<style name="campoPequeno" backcolor="#C0C0C0" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -11,11 +11,11 @@
 	<style name="linha">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{COLUMN_COUNT} % 2 == 1]]></conditionExpression>
-			<style backcolor="#F0F0F0"/>
+			<style backcolor="#FFFFFF"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{COLUMN_COUNT} % 2 == 0]]></conditionExpression>
-			<style backcolor="#F8F8F8"/>
+			<style backcolor="#FFFFFF"/>
 		</conditionalStyle>
 	</style>
 	<style name="linhaCodProduto" fontSize="8">
@@ -198,7 +198,7 @@
 	<columnHeader>
 		<band height="37">
 			<staticText>
-				<reportElement uuid="759f7a5b-d2a8-4747-a221-6872476749a2" style="cabecalho" mode="Opaque" x="282" y="0" width="34" height="23"/>
+				<reportElement uuid="759f7a5b-d2a8-4747-a221-6872476749a2" style="cabecalho" mode="Opaque" x="282" y="0" width="34" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -211,7 +211,7 @@
 				<text><![CDATA[Rep.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="90d40e22-98f6-4c13-9b50-e8fcef88bf45" style="cabecalho" mode="Opaque" x="170" y="0" width="30" height="23"/>
+				<reportElement uuid="90d40e22-98f6-4c13-9b50-e8fcef88bf45" style="cabecalho" mode="Opaque" x="170" y="0" width="30" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -225,7 +225,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="93072681-933d-4944-ba61-29552e690b6d" style="cabecalho" mode="Opaque" x="74" y="0" width="96" height="23"/>
+				<reportElement uuid="93072681-933d-4944-ba61-29552e690b6d" style="cabecalho" mode="Opaque" x="74" y="0" width="96" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -238,7 +238,7 @@
 				<text><![CDATA[Produto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="afb120fd-875b-4aa4-b313-8755ec11a652" style="cabecalho" mode="Opaque" x="246" y="0" width="36" height="23"/>
+				<reportElement uuid="afb120fd-875b-4aa4-b313-8755ec11a652" style="cabecalho" mode="Opaque" x="246" y="0" width="36" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -252,7 +252,7 @@
 				<text><![CDATA[Preço Desc R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3e228258-78bc-4315-bdda-0f3ee170eb62" style="cabecalho" mode="Opaque" x="21" y="0" width="53" height="23"/>
+				<reportElement uuid="3e228258-78bc-4315-bdda-0f3ee170eb62" style="cabecalho" mode="Opaque" x="21" y="0" width="53" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -266,7 +266,7 @@
 				<text><![CDATA[Código]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3d6fc597-7f6b-4219-8e9a-f35071079385" style="cabecalho" mode="Opaque" x="0" y="0" width="21" height="23" forecolor="#000000"/>
+				<reportElement uuid="3d6fc597-7f6b-4219-8e9a-f35071079385" style="cabecalho" mode="Opaque" x="0" y="0" width="21" height="23" forecolor="#000000" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -279,7 +279,7 @@
 				<text><![CDATA[Seq]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="5c01e645-7a95-4765-9846-a60af46ded8b" style="cabecalho" mode="Opaque" x="0" y="23" width="346" height="14"/>
+				<reportElement uuid="5c01e645-7a95-4765-9846-a60af46ded8b" style="cabecalho" mode="Opaque" x="0" y="23" width="346" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -293,7 +293,7 @@
 				<text><![CDATA[Código de Barras]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c467c433-481c-4fcc-8c16-6f8bfab913ce" style="cabecalho" mode="Opaque" x="200" y="0" width="14" height="23"/>
+				<reportElement uuid="c467c433-481c-4fcc-8c16-6f8bfab913ce" style="cabecalho" mode="Opaque" x="200" y="0" width="14" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -306,7 +306,7 @@
 				<text><![CDATA[TR]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3e44b5e5-9fd2-41d1-a005-aacdf32e5068" style="cabecalho" mode="Opaque" x="214" y="0" width="32" height="23"/>
+				<reportElement uuid="3e44b5e5-9fd2-41d1-a005-aacdf32e5068" style="cabecalho" mode="Opaque" x="214" y="0" width="32" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -321,7 +321,7 @@
 Lancto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a583bd49-3082-4131-91d9-2ecb0d25381e" style="cabecalho" mode="Opaque" x="316" y="0" width="30" height="23"/>
+				<reportElement uuid="a583bd49-3082-4131-91d9-2ecb0d25381e" style="cabecalho" mode="Opaque" x="316" y="0" width="30" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -334,7 +334,7 @@ Lancto]]></text>
 				<text><![CDATA[Qtde Dev]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="32eec0ba-a5e0-4a95-95f6-fd7077a18419" style="cabecalho" mode="Opaque" x="246" y="23" width="36" height="14"/>
+				<reportElement uuid="32eec0ba-a5e0-4a95-95f6-fd7077a18419" style="cabecalho" mode="Opaque" x="246" y="23" width="36" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -348,7 +348,7 @@ Lancto]]></text>
 				<text><![CDATA[CAPA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3e6bd35a-0a4b-471e-be43-14f58b0efc8f" style="cabecalho" mode="Opaque" x="282" y="23" width="34" height="14"/>
+				<reportElement uuid="3e6bd35a-0a4b-471e-be43-14f58b0efc8f" style="cabecalho" mode="Opaque" x="282" y="23" width="34" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -402,24 +402,10 @@ Lancto]]></text>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="8"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 					<paragraph rightIndent="2"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="a25d2915-d848-4c81-8a39-ccebeeef0c70" style="linha" mode="Opaque" x="74" y="0" width="96" height="15"/>
-				<box topPadding="0" bottomPadding="5">
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="8"/>
-					<paragraph lineSpacing="Fixed" leftIndent="2"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="aa30862e-2c1e-48fc-b355-7451d037e7b3" style="linha" mode="Opaque" x="316" y="0" width="30" height="16"/>
@@ -434,8 +420,22 @@ Lancto]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{quantidadeDevolvida} != null && $F{quantidadeDevolvida}.intValue() > 0) ? $F{quantidadeDevolvida} : ""]]></textFieldExpression>
 			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a25d2915-d848-4c81-8a39-ccebeeef0c70" style="linha" mode="Opaque" x="74" y="0" width="96" height="16" backcolor="#FFFFFF"/>
+				<box topPadding="0" bottomPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph lineSpacing="Fixed" leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="d78c8616-98c6-4acb-9fc1-ee61aa734a76" style="linha" mode="Opaque" x="0" y="0" width="21" height="16"/>
+				<reportElement uuid="d78c8616-98c6-4acb-9fc1-ee61aa734a76" style="linha" mode="Opaque" x="0" y="0" width="21" height="16" forecolor="#000000" backcolor="#E3E3E3"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
