@@ -11,8 +11,7 @@ import br.com.abril.nds.model.integracao.InterfaceExecucao;
 
 @Repository
 @Transactional("transactionManager")
-public class InterfaceExecucaoRepositoryImpl extends AbstractRepositoryModel<InterfaceExecucao, Long>
-		implements InterfaceExecucaoRepository {
+public class InterfaceExecucaoRepositoryImpl extends AbstractRepositoryModel<InterfaceExecucao, Long> implements InterfaceExecucaoRepository {
 
 	public InterfaceExecucaoRepositoryImpl() {
 		super(InterfaceExecucao.class);

@@ -18,14 +18,13 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.canonic.Extratificacao;
 import br.com.abril.nds.integracao.model.canonic.ExtratificacaoItem;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
-public class EMS3100MessageProcessor extends AbstractRepository implements MessageProcessor  {
+public class EMS3100MessageProcessor extends AbstractRepository implements MessageProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS3100MessageProcessor.class);
 	
@@ -58,31 +57,27 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 		
-		Extratificacao extratificacao = new Extratificacao();
-		
-		extratificacao.setCodigoDistribuidor(codigoDistribuidor);
-		
 		CouchDbClient cdbc = null;
 		
 		try {
 			
 			cdbc = this.getCouchDBClient(codigoDistribuidor, true);
+			Date dataCriacao = new Date();
+			for(ExtratificacaoItem item : itens) {
+				
+				item.setTipoDocumento("EMS3100");
+				item.setDataOperacao(dataOperacao);
+				item.setCodigoDistribuidor(codigoDistribuidor);
+				item.setDataCriacao(dataCriacao);
+			}
 			
-			extratificacao.setTipoDocumento("EMS3100");
-			
-			extratificacao.setDataOperacao(dataOperacao);
-			
-			extratificacao.setCodigoDistribuidor(codigoDistribuidor);
-			
-			extratificacao.setDataCriacao(new Date());
-			
-			extratificacao.setItens(itens);
-			
-			cdbc.save(extratificacao);
+			cdbc.bulk(itens, true);
 			
 		} catch(Exception e) {
-            LOGGER.error("Erro executando importação do Extificado do movimento estoque cota.", e);
+			
+            LOGGER.error("Erro executando importação do Extratificado do movimento estoque cota.", e);
 		} finally {
+			
 			if (cdbc != null) {
 				cdbc.shutdown();
 			}			

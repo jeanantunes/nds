@@ -111,11 +111,11 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
-		if (endereco == null){
+		if (endereco == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Endereço é obrigatório.");
 		}
 		
-		if (tipoEndereco == null){
+		if (tipoEndereco == null) {
 			
             listaMensagens.add("O preenchimento do campo [Tipo Endereço] é obrigatório.");
 		}

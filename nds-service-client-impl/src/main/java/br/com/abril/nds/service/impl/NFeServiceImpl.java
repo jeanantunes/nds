@@ -228,9 +228,9 @@ public class NFeServiceImpl implements NFeService {
 	}
 	
 	private NfeImpressaoDTO obterDadosNENECA(final NotaEnvio ne) {
+		
 		final NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
 
-		//TODO: concluir
 		final NotaEnvio notaEnvio = notaEnvioRepository.buscarPorId(ne.getNumero()); 
 
 		if(notaEnvio == null) {
@@ -558,6 +558,12 @@ public class NFeServiceImpl implements NFeService {
 			
 			montaChaveAcesso(notaFiscal);
 			
+			if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
+			
 			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
 			
 			// obter os movimentos de cada cota
@@ -718,6 +724,16 @@ public class NFeServiceImpl implements NFeService {
 			
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
+			montaChaveAcesso(notaFiscal);
+			
+			if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
+			
 			// obter os estoques
 			filtro.setIdCota(estoque.getId());
 			List<EstoqueProduto> estoqueProdutos = this.notaFiscalRepository.obterEstoques(filtro);
@@ -777,6 +793,14 @@ public class NFeServiceImpl implements NFeService {
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
 			montaChaveAcesso(notaFiscal);
+			
+			if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) {
+				notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+			}
+			
+			notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(3, 47));
+			
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(Long.valueOf(notaFiscal.getNotaFiscalInformacoes().getIdNFe().substring(46, 47)));
 			
 			// obter os movimentos de fechamentos fiscais
 			filtro.setIdCota(fornecedor.getId());

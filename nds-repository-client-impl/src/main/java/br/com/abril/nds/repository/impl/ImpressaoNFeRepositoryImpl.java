@@ -576,14 +576,35 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		/**
 		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
 		 */
-		StringBuilder hql = new StringBuilder("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
-			.append(" notaFiscal.id as idNota")
-			.append(", notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
-			.append(", notaFiscal.notaFiscalInformacoes.notaImpressa ")
-			.append(", cota ")
-			.append(", SUM(item.produtoServico.quantidade) ")
-			.append(", SUM(item.produtoServico.valorTotalBruto) ")
-			.append(", coalesce(SUM(item.produtoServico.valorDesconto), 0)) ");
+		StringBuilder hql = new StringBuilder();
+		
+		switch (filtro.getNaturezaOperacao().getTipoDestinatario()) {
+			case COTA:
+			case DISTRIBUIDOR:
+				
+				hql.append("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
+				.append(" notaFiscal.id as idNota")
+				.append(", notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
+				.append(", notaFiscal.notaFiscalInformacoes.notaImpressa ")
+				.append(", cota ")
+				.append(", SUM(item.produtoServico.quantidade) ")
+				.append(", SUM(item.produtoServico.valorTotalBruto) ")
+				.append(", coalesce(SUM(item.produtoServico.valorDesconto), 0)) ");
+			break;
+	
+			case FORNECEDOR:            
+				
+				hql.append("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
+				.append(" notaFiscal.id as idNota")
+				.append(", notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
+				.append(", notaFiscal.notaFiscalInformacoes.notaImpressa ")
+				.append(", pj.nome ")
+				.append(", SUM(item.produtoServico.quantidade) ")
+				.append(", SUM(item.produtoServico.valorTotalBruto) ")
+				.append(", coalesce(SUM(item.produtoServico.valorDesconto), 0)) ");
+				
+			break;        
+		}
 		
 		Query query = queryConsultaImpressaoParameters(queryConsultaImpressaoNfe(filtro, hql, true, true, true), filtro);
 		
@@ -593,12 +614,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	
 	private StringBuilder queryConsultaImpressaoNfe(FiltroImpressaoNFEDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
 		
-		hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
-			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
-			.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
-			.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ")
-			.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
-		
+		montarHqlNaturezaOperacacao(filtro, hql);
 		
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {
@@ -657,6 +673,34 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return hql;
 	}
 	
+	private StringBuilder montarHqlNaturezaOperacacao(FiltroImpressaoNFEDTO filtro, StringBuilder hql) {
+		
+		switch (filtro.getNaturezaOperacao().getTipoDestinatario()) {
+			case COTA:
+			case DISTRIBUIDOR:
+				
+				hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
+					.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
+					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
+					.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ")
+					.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
+				     
+				
+			break;
+    
+			case FORNECEDOR:            
+				
+				hql.append(" FROM NotaFiscal as notaFiscal ")
+					.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
+					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
+					.append(" WHERE notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
+				
+			break;        
+		}
+		
+		return hql;
+	}
+
 	private Query queryConsultaImpressaoParameters(StringBuilder hql, FiltroImpressaoNFEDTO filtro) {
 		
 		// Realizar a consulta e converter ao objeto cota exemplares.

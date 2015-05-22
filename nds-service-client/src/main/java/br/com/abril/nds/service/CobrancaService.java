@@ -153,9 +153,9 @@ public interface CobrancaService {
 	public abstract List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(
 			Date dataOperacaoDistribuidor);
 
-	public abstract void processarExportacaoCobranca(Date dataDistribuicaoDistribuidor);
+	public abstract String processarExportacaoCobranca(Date dataDistribuicaoDistribuidor);
 
-	public abstract void processarCobrancaConsolidada(Date dataOperacaoDistribuidor);
+	public abstract String processarCobrancaConsolidada(Date dataOperacaoDistribuidor);
 
 	public abstract Cobranca obterCobrancaPorNossoNumeroConsolidado(String nossoNumeroConsolidado);
 

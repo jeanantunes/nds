@@ -29,11 +29,11 @@ INSERT INTO `fornecedor` VALUES
 LOCK TABLES `endereco` WRITE;
 /*!40000 ALTER TABLE `endereco` DISABLE KEYS */;   -- select * from endereco
 INSERT INTO `endereco` VALUES 
-('1', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 1),
-('2', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 2),
--- ('3', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '3', 'Rua', 'SP', 3),
--- ('4', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '4', 'Rua', 'SP', 4),
-('16', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 16);
+('1', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 1,NULL),
+('2', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 2,NULL),
+-- ('3', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '3', 'Rua', 'SP', 3,NULL),
+-- ('4', 'Alterar', '00000000', 'Campinas', NULL, NULL, NULL, NULL,'Alterar', '4', 'Rua', 'SP', 4,NULL),
+('16', 'Novo Osasco', '06045-390', 'Osasco', NULL, NULL, NULL, NULL,'Dr. Kenkiti Shimomoto', '1678', 'Av.', 'SP', 16,NULL);
 /*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -927,16 +927,6 @@ INSERT INTO `tipo_garantia_aceita` VALUES
 /*!40000 ALTER TABLE `tipo_garantia_aceita` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- tipo_nota_fiscal
---
-
-LOCK TABLES `tipo_nota_fiscal` WRITE;
-/*!40000 ALTER TABLE `tipo_nota_fiscal` DISABLE KEYS */;
-INSERT INTO `tipo_nota_fiscal` VALUES 
-(1,0,'NF-e Entrada em Devolução de Remessa em Consignação ','COTA','DISTRIBUIDOR','NF_DEVOLUCAO_REMESSA_CONSIGNACAO',0,'NF-e Entrada em Devolução de Remessa em Consignação ',1,'PRESTADOR_SERVICO','ENTRADA',3,4),(2,0,'Entrada de Devolução Simbólica de Mercadoria Vendida Remetida anteriormente em consignação','COTA','DISTRIBUIDOR','NF_DEVOLUCAO_SIMBOLICA',0,'Entrada de Devolução Simbólica de Mercadoria Vendida Remetida anteriormente em consignação',2,'PRESTADOR_SERVICO','ENTRADA',5,6),(3,0,'Venda de Mercadoria remetida anteriormente em Consignação','COTA','DISTRIBUIDOR','NF_VENDA',0,'Venda de Mercadoria remetida anteriormente em Consignação',3,'PRESTADOR_SERVICO','SAIDA',7,8),(4,0,'Venda de Mercadoria remetida anteriormente em Consignação','DISTRIBUIDOR','TREELOG','NF_VENDA',0,'Venda de Mercadoria remetida anteriormente em Consignação',4,'PRESTADOR_SERVICO','SAIDA',7,8),(5,0,'Remessa de Mercadoria em Consignação','DISTRIBUIDOR','TREELOG','NF_REMESSA_MERCADORIA_CONSIGNACAO',0,'Remessa de Mercadoria em Consignação',5,'PRESTADOR_SERVICO','SAIDA',1,2),(6,0,'Remessa de Mercadoria em Consignação','COTA','DISTRIBUIDOR','NF_REMESSA_MERCADORIA_CONSIGNACAO',0,'Remessa de Mercadoria em Consignação',6,'PRESTADOR_SERVICO','SAIDA',1,2),(7,0,'Devolução de Mercadoria Recebida em Consignação','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO',0,'Devolução de Mercadoria Recebida em Consignação',7,'PRESTADOR_SERVICO','SAIDA',15,16),(8,0,'Devolução de Mercadoria Recebida em Consignação','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO',0,'Devolução de Mercadoria Recebida em Consignação',8,'PRESTADOR_SERVICO','SAIDA',15,16),(9,0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_SIMBOLICA',0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação',9,'PRESTADOR_SERVICO','ENTRADA',17,18),(10,0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_SIMBOLICA',0,'Devolução Simbólica de Mercadoria Vendida recebida anteriormente em Consignação',10,'PRESTADOR_SERVICO','ENTRADA',17,18),(11,0,'Venda de Mercadoria recebida anteriormente em Consignação','COTA','TREELOG','NF_VENDA',0,'Venda de Mercadoria recebida anteriormente em Consignação',12,'PRESTADOR_SERVICO','SAIDA',13,14),(12,0,'NF-e de Entrada de Retorno de Remessa para Distribuição','COTA','DISTRIBUIDOR','NF_ENTRADA_RETORNO_REMESSA_DISTRIBUICAO',0,'NF-e de Entrada de Retorno de Remessa para Distribuição',11,'PRESTADOR_SERVICO','ENTRADA',11,12),(13,0,'NF-e de Devolução de Remessa para Distribuição','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',12,'PRESTADOR_SERVICO','SAIDA',9,10),(14,0,'NF-e de Devolução de Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',12,'PRESTADOR_SERVICO','SAIDA',9,10),(15,0,'NF-E Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_REMESSA_DISTRIBUICAO',0,'NF-E Remessa para Distribuição',17,'PRESTADOR_SERVICO','SAIDA',9,10),(16,0,'NF-E Remessa para Distribuição','COTA','DISTRIBUIDOR','NF_REMESSA_DISTRIBUICAO',0,'NF-E Remessa para Distribuição',17,'PRESTADOR_SERVICO','SAIDA',9,10),(17,0,'NF-E Remessa para Distribuição','DISTRIBUIDOR','TREELOG','NF_REMESSA_DISTRIBUICAO',0,'NF-E Remessa para Distribuição',17,'PRESTADOR_SERVICO','SAIDA',9,10),(18,1,'NF-E Transferência de Remessa para Distribuição','DISTRIBUIDOR','TREELOG','NF_REMESSA_CONSIGNACAO',0,'NF-E Transferência de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(19,1,'NF-E Transferência de Remessa para Distribuição','COTA','DISTRIBUIDOR','NF_REMESSA_CONSIGNACAO',0,'NF-E Transferência de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(20,1,'NF-e Retorno de Distribuição','DISTRIBUIDOR','COTA','NF_RETORNO_REMESSA_DISTRIBUICAO',0,'NF-e Retorno de Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(21,1,'NF-e Retorno de Distribuição','TREELOG','DISTRIBUIDOR','NF_RETORNO_REMESSA_DISTRIBUICAO',0,'NF-e Retorno de Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(22,1,'NF-e de Remessa para Distribuição (NECA / Danfe)','COTA','DISTRIBUIDOR','NF_REMESSA_DISTRIBUICAO',0,'NF-e de Remessa para Distribuição (NECA / Danfe)',1,'PRESTADOR_FILIAL','SAIDA',9,10),(23,1,'NF-e de Remessa para Distribuição (NECA / Danfe)','DISTRIBUIDOR','TREELOG','NF_REMESSA_DISTRIBUICAO',0,'NF-e de Remessa para Distribuição (NECA / Danfe)',1,'PRESTADOR_FILIAL','SAIDA',9,10),(24,1,'NF-e de Devolução de Remessa para Distribuição','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(25,1,'NF-e de Devolução de Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_REMESSA_DISTRIBUICAO',0,'NF-e de Devolução de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',9,10),(26,1,'NF-e de Entrada de Retorno de Remessa para Distribuição','DISTRIBUIDOR','COTA','NF_DEVOLUCAO_ENCALHE',0,'NF-e de Entrada de Retorno de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',11,12),(27,1,'NF-e de Entrada de Retorno de Remessa para Distribuição','TREELOG','DISTRIBUIDOR','NF_DEVOLUCAO_ENCALHE',0,'NF-e de Entrada de Retorno de Remessa para Distribuição',1,'PRESTADOR_FILIAL','SAIDA',11,12),(28,1,'Venda de Mercadoria recebida anteriormente em Consignação','COTA','DISTRIBUIDOR','NF_VENDA',0,'Venda de Mercadoria recebida anteriormente em Consignação',1,'PRESTADOR_FILIAL','SAIDA',13,14),(29,1,'Venda de Mercadoria recebida anteriormente em Consignação','DISTRIBUIDOR','TREELOG','NF_VENDA',0,'Venda de Mercadoria recebida anteriormente em Consignação',1,'PRESTADOR_FILIAL','SAIDA',13,14);
-/*!40000 ALTER TABLE `tipo_nota_fiscal` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- endereco_distribuidor
@@ -1066,6 +1056,14 @@ INSERT INTO `feriado` VALUES
 /*!40000 ALTER TABLE `feriado` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS CARGA_ESTQMOV_TIPO_MOVIMENTO;
+
+create table CARGA_ESTQMOV_TIPO_MOVIMENTO (
+ID smallint,
+DESCRICAO VARCHAR(30),
+TIPO_MOVIMENTO_ID smallint,
+PRIMARY KEY (ID));
+
 LOCK TABLES `CARGA_ESTQMOV_TIPO_MOVIMENTO` WRITE;
 /*!40000 ALTER TABLE `CARGA_ESTQMOV_TIPO_MOVIMENTO` DISABLE KEYS */;
 insert into CARGA_ESTQMOV_TIPO_MOVIMENTO values
@@ -1089,6 +1087,13 @@ insert into CARGA_ESTQMOV_TIPO_MOVIMENTO values
 /*!40000 ALTER TABLE `CARGA_ESTQMOV_TIPO_MOVIMENTO` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS CARGA_ESTQMOV_ORIGEM_DESTINO;
+
+create table CARGA_ESTQMOV_ORIGEM_DESTINO (
+ID VARCHAR(5),
+DESCRICAO VARCHAR(30),
+PRIMARY KEY (ID));
+
 LOCK TABLES `CARGA_ESTQMOV_ORIGEM_DESTINO` WRITE;
 /*!40000 ALTER TABLE `CARGA_ESTQMOV_ORIGEM_DESTINO` DISABLE KEYS */;
 insert into CARGA_ESTQMOV_ORIGEM_DESTINO values
@@ -1098,6 +1103,383 @@ insert into CARGA_ESTQMOV_ORIGEM_DESTINO values
 ('99996','Digitação');
 /*!40000 ALTER TABLE `CARGA_ESTQMOV_ORIGEM_DESTINO` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- NFE
+
+INSERT INTO distribuidor_nota_fiscal_tipo_emissao (DESCRICAO, SEQUENCIA, TIPO_EMISSAO_ENUM) VALUES ('Desobriga Emissão', 1, 'DESOBRIGA_EMISSAO');
+INSERT INTO distribuidor_nota_fiscal_tipo_emissao (DESCRICAO, SEQUENCIA, TIPO_EMISSAO_ENUM) VALUES ('Consolida emissão a Jornaleiros Diversos', 2, 'CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS');
+INSERT INTO distribuidor_nota_fiscal_tipo_emissao (DESCRICAO, SEQUENCIA, TIPO_EMISSAO_ENUM) VALUES ('Consolida emissão por Destinatário', 3, 'CONSOLIDA_EMISSAO_POR_DESTINATARIO');
+
+-- ==========================================================================
+
+INSERT INTO distribuidor_nota_fiscal_tipos (DESCRICAO, NOME_CAMPO_TELA, GRUPO_NOTA_FISCAL, DISTRIBUIDOR_ID) VALUES ('Nota Fiscal de Remessa para a Cota', 'notaFiscalEnvioCota', 'NOTA_FISCAL_ENVIO_PARA_COTA', 1);
+INSERT INTO distribuidor_nota_fiscal_tipos (DESCRICAO, NOME_CAMPO_TELA, GRUPO_NOTA_FISCAL, DISTRIBUIDOR_ID) VALUES ('Nota Fiscal de Devolução pela Cota', 'notaFiscalDevolucaoCota', 'NOTA_FISCAL_DEVOLUCAO_PELA_COTA', 1);
+INSERT INTO distribuidor_nota_fiscal_tipos (DESCRICAO, NOME_CAMPO_TELA, GRUPO_NOTA_FISCAL, DISTRIBUIDOR_ID) VALUES ('Nota Fiscal de Venda', 'notaFiscalVenda', 'NOTA_FISCAL_VENDA', 1);
+INSERT INTO distribuidor_nota_fiscal_tipos (DESCRICAO, NOME_CAMPO_TELA, GRUPO_NOTA_FISCAL, DISTRIBUIDOR_ID) VALUES ('Nota Fiscal de Devolução ao Fornecedor', 'notaFiscalDevolucaoFornecedor', 'NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR', 1);
+INSERT INTO distribuidor_nota_fiscal_tipos (DESCRICAO, NOME_CAMPO_TELA, GRUPO_NOTA_FISCAL, DISTRIBUIDOR_ID) VALUES ('Nota Fiscal Simbólica de Venda ao Fornecedor', 'notaFiscalSimbolicaVendaFornecedor', 'NOTA_FISCAL_SIMBOLICA_VENDA_FORNECEDOR', 1);
+
+-- ==========================================================================
+
+INSERT INTO distribuidor_tipos_emissoes_nota_fiscal (DISTRIBUIDOR_ID, NOTA_FISCAL_TIPO_EMISSAO_ID, SEQUENCIA) VALUES ('1', '1', 1);
+INSERT INTO distribuidor_tipos_emissoes_nota_fiscal (DISTRIBUIDOR_ID, NOTA_FISCAL_TIPO_EMISSAO_ID, SEQUENCIA) VALUES ('1', '2', 2);
+INSERT INTO distribuidor_tipos_emissoes_nota_fiscal (DISTRIBUIDOR_ID, NOTA_FISCAL_TIPO_EMISSAO_ID, SEQUENCIA) VALUES ('1', '3', 3);
+
+-- ==========================================================================
+
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('1', '1');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('1', '2');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('1', '3');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('2', '1');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('2', '2');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('2', '3');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('3', '1');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('3', '2');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('3', '3');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('4', '1');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('4', '3');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('5', '1');
+INSERT INTO distribuidor_nota_fiscal_tipos_tipo_emissao (NOTA_FISCAL_TIPO_ID, NOTA_FISCAL_TIPO_EMISSAO_ID) VALUES ('5', '3');
+
+-- ==========================================================================
+
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('1','0','0','0','1','1','1','Entrada em Devolução de Remessa em Consignação ','1918','2918',NULL,'MERCANTIL','COTA','DISTRIBUIDOR','ENTRADA','CONSIGNADO','1','0','2015-03-03 13:21:00','2015-03-27 14:46:58','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('2','0','1','0','1','1','1','Entrada de Devolução Simbólica de Mercadoria Vendida Remetida Anteriormente em Consignação','1919','2919',NULL,'MERCANTIL','COTA','DISTRIBUIDOR','ENTRADA','CONSIGNADO','2','0','2015-03-03 13:21:00','2015-03-30 18:02:17','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('3','1','0','1','1','1','0','Venda de Mercadoria remetida anteriormente em Consignação','5114','6114',NULL,'MERCANTIL','DISTRIBUIDOR','COTA','SAIDA','CONSIGNADO','3','20','2015-03-03 13:21:00','2015-04-07 11:36:56','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('5','0','0','1','0','0','0','Remessa de Mercadoria em Consignação Mercantil ou Industrial','5917','6917',NULL,'MERCANTIL','DISTRIBUIDOR','COTA','SAIDA','CONSIGNADO','5','122','2015-03-03 13:21:00','2015-04-08 13:57:07','root@10.37.28.63');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('7','0','0','0','0','0','0','Devolução de Mercadoria Recebida em Consignação','5918','6918',NULL,'MERCANTIL','DISTRIBUIDOR','FORNECEDOR','SAIDA','CONSIGNADO','6','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('9','0','0','0','0','0','0','Devolução Simbólica de Mercadoria Vendida Recebida Anteriormente em Consignação','5919','6919',NULL,'MERCANTIL','DISTRIBUIDOR','FORNECEDOR','ENTRADA','CONSIGNADO','8','0','2015-03-03 13:21:00','2015-03-30 18:03:15','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('11','0','0','0','0','0','0','Venda de Mercadoria adquirida ou recebida de terceiros','5115','6115','','PRESTADOR_SERVICO','DISTRIBUIDOR','COTA','SAIDA','CONTA_FIRME','10','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('12','0','0','0','0','0','0','Entrada de Retorno de Remessa para Distribuição','1949','2949','','PRESTADOR_SERVICO','COTA','DISTRIBUIDOR','ENTRADA','CONSIGNADO','11','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('13','0','0','0','0','0','0','Devolução de Remessa para Distribuição','5949','6949',NULL,'PRESTADOR_SERVICO','DISTRIBUIDOR','FORNECEDOR','SAIDA','CONSIGNADO','12','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('14','0','0','0','0','0','0','Devolução de Remessa para Distribuição','5949','6949',NULL,'PRESTADOR_SERVICO','COTA','DISTRIBUIDOR','SAIDA','CONSIGNADO','13','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('16','0','0','0','0','0','0','Remessa para Distribuição','5949','6949',NULL,'PRESTADOR_SERVICO','DISTRIBUIDOR','COTA','SAIDA','CONSIGNADO','15','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('22','0','0','1','0','1','0','Remessa para Distribuição (NECA / Danfe)','5949','6949',NULL,'PRESTADOR_FILIAL','DISTRIBUIDOR','COTA','SAIDA','CONSIGNADO','21','18','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('26','1','0','0','1','1','1','Entrada de Retorno de Remessa para Distribuição','1949','2949',NULL,'PRESTADOR_FILIAL','COTA','DISTRIBUIDOR','SAIDA','CONSIGNADO','25','9','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('28','1','0','1','0','1','0','Venda de Mercadoria recebida anteriormente em Consignação','5115','6115',NULL,'PRESTADOR_FILIAL','DISTRIBUIDOR','COTA','SAIDA','CONSIGNADO','27','9','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('30','0','0','0','0','0','0','Remessa para Distribuição','5949','6949',NULL,'PRESTADOR_FILIAL','FORNECEDOR','DISTRIBUIDOR','ENTRADA','CONSIGNADO','99','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('31','0','0','0','0','0','0','Devolução de Remessa para Distribuição','5949','6949',NULL,'PRESTADOR_FILIAL','COTA','DISTRIBUIDOR','ENTRADA','CONSIGNADO','29','0','2015-03-03 13:21:00','2015-03-03 13:21:00','root@10.37.8.143');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('32','0','0','0','0','0','0','Remessa de Mercadoria em Consignação Mercantil ou Industrial','5917','6917',NULL,'MERCANTIL','FORNECEDOR','DISTRIBUIDOR','ENTRADA','CONSIGNADO','98','0','2015-03-03 14:35:25','2015-03-30 18:03:38','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('33','0','0','1','1','1','0','Venda de Mercadoria Adquirida ou Recebida de Terceiros','5115','6115',NULL,'MERCANTIL','DISTRIBUIDOR','COTA','SAIDA','CONTA_FIRME','31','10','2015-03-17 19:43:36','2015-04-01 10:36:35','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('34','0','0','0','0','0','0','Devolução de Mercadoria Recebida em Consignação','5918','6918',NULL,'MERCANTIL','COTA','DISTRIBUIDOR','SAIDA','CONSIGNADO','33','0','2015-03-19 21:13:40','2015-03-23 17:01:59','root@10.180.17.44');
+insert into natureza_operacao (ID, NOTA_FISCAL_VENDA_CONSIGNADO, NOTA_FISCAL_DEVOLUCAO_SIMBOLICA, GERAR_COTA_CONTRIBUINTE_ICMS, GERAR_COTA_EXIGE_NFE, GERAR_COTA_NAO_EXIGE_NFE, GERAR_NOTAS_REFERENCIADAS, DESCRICAO, CFOP_ESTADO, CFOP_OUTROS_ESTADOS, CFOP_EXTERIOR, TIPO_ATIVIDADE, TIPO_EMITENTE, TIPO_DESTINATARIO, TIPO_OPERACAO, FORMA_COMERCIALIZACAO, NOTA_FISCAL_SERIE, NOTA_FISCAL_NUMERO_NF, DATA_CRIACAO, LAST_UPDATE_TIME, USUARIO_LOGADO) values('35','0','0','1','1','1','0','Remessa para Distribuição','5949','6949',NULL,'MERCANTIL','DISTRIBUIDOR','COTA','SAIDA','CONSIGNADO','34','10','2015-04-07 09:41:44','2015-04-08 13:58:25','root@10.37.28.63');
+
+-- ==========================================================================
+
+INSERT INTO tipo_movimento (TIPO, APROVACAO_AUTOMATICA, DESCRICAO, GRUPO_MOVIMENTO_ESTOQUE, INCIDE_DIVIDA, INCIDE_JURAMENTADO, OPERACAO_ESTOQUE) VALUES ('FISCAL', '1', 'Devolução de Encalhe - Cota', 'CONTRAPARTIDA_DEVOLUCAO_ENCALHE_COTA', '0', '0', 'ENTRADA');
+INSERT INTO tipo_movimento (TIPO, APROVACAO_AUTOMATICA, DESCRICAO, INCIDE_DIVIDA, INCIDE_JURAMENTADO, OPERACAO_ESTOQUE) VALUES ('FISCAL', '1', 'Devolução de Encalhe - Distribuidor', '0', '0', 'SAIDA');
+
+-- ==========================================================================
+
+INSERT INTO natureza_operacao_tipo_movimento(NATUREZA_OPERACAO_ID, TIPO_MOVIMENTO_ID)
+VALUES (3,1), (3,4), (5,6), (5,9)
+	, (5,18), (5,21), (1,26), (22,6)
+	, (22,9), (22,18), (22,21), (9,(select (id + 1) from tipo_movimento tm where tm.GRUPO_MOVIMENTO_ESTOQUE = 'CONTRAPARTIDA_DEVOLUCAO_ENCALHE_COTA'))
+	, (3,(select id from tipo_movimento tm where tm.GRUPO_MOVIMENTO_ESTOQUE = 'CONTRAPARTIDA_DEVOLUCAO_ENCALHE_COTA')), (28,(select id from tipo_movimento tm where tm.GRUPO_MOVIMENTO_ESTOQUE = 'CONTRAPARTIDA_DEVOLUCAO_ENCALHE_COTA')), (7,66), (13,66)
+	, (30,66), (26,26), (31, 66);
+
+
+INSERT INTO DISTRIBUIDOR_TIPO_NOTA_NATUREZA_OPERACAO (TIPO_NOTA_ID, NATUREZA_OPERACAO_ID) 
+VALUES ('1', '5'), ('1', '22'), ('2', '26'), ('4', '30'), ('3', '28');
+
+-- ==========================================================================
+
+update fornecedor f set FORNECEDOR_UNIFICADOR_ID = 16 where f.id in (1, 2);
+
+-- ==========================================================================
+
+insert into pessoa (TIPO, ID, EMAIL, APELIDO, CPF, DATA_NASCIMENTO, ESTADO_CIVIL, NACIONALIDADE, NATURALIDADE, NOME, ORGAO_EMISSOR, RG, SEXO, SOCIO_PRINCIPAL, UF_ORGAO_EMISSOR, CNPJ, INSC_ESTADUAL, INSC_MUNICIPAL, NOME_FANTASIA, RAZAO_SOCIAL, PESSOA_ID_CONJUGE) values('J','3882','jornaleiro@jornaleiro.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'10.438.248/0001-23','000000000000','99.999-9','Jornaleiro Diversos','Jornaleiro Diversos',NULL);
+
+-- ==========================================================================
+
+
+INSERT INTO REGIME_TRIBUTARIO (CODIGO, DESCRICAO, ATIVO) VALUES ('1', 'Lucro Real', true);
+INSERT INTO REGIME_TRIBUTARIO (CODIGO, DESCRICAO, ATIVO) VALUES ('2', 'Lucro Presumido', true);
+INSERT INTO REGIME_TRIBUTARIO (CODIGO, DESCRICAO, ATIVO) VALUES ('3', 'Simples Nacional', true);
+
+-- ==========================================================================
+
+INSERT INTO tributos (nome, DESCRICAO) VALUES ('PIS', 'PIS');
+INSERT INTO tributos (nome, DESCRICAO) VALUES ('COFINS', 'COFINS');
+INSERT INTO tributos (nome, DESCRICAO) VALUES ('ICMS', 'ICMS');
+INSERT INTO tributos (nome, DESCRICAO) VALUES ('IPI', 'IPI');
+INSERT INTO tributos (nome, DESCRICAO) VALUES ('SIMPLES', 'SIMPLES');
+
+INSERT INTO tributos_aliquotas (TRIBUTO_ID, tipo_aliquota, VALOR) VALUES (1, 'PERCENTUAL', '1.65');
+INSERT INTO tributos_aliquotas (TRIBUTO_ID, tipo_aliquota, VALOR) VALUES (2, 'PERCENTUAL', '7.60');
+INSERT INTO tributos_aliquotas (TRIBUTO_ID, tipo_aliquota, VALOR) VALUES (1, 'PERCENTUAL', '0.65');
+INSERT INTO tributos_aliquotas (TRIBUTO_ID, tipo_aliquota, VALOR) VALUES (2, 'PERCENTUAL', '3');
+INSERT INTO tributos_aliquotas (TRIBUTO_ID, tipo_aliquota, VALOR) VALUES (5, 'PERCENTUAL', '6');
+INSERT INTO tributos_aliquotas (TRIBUTO_ID, TIPO_ALIQUOTA, VALOR) VALUES (3, 'PERCENTUAL', '0');
+
+INSERT INTO regime_tributario_tributo_aliquota (regime_tributario_id, tributo_aliquota_id) VALUES (1, 1);
+INSERT INTO regime_tributario_tributo_aliquota (regime_tributario_id, tributo_aliquota_id) VALUES (1, 2);
+INSERT INTO regime_tributario_tributo_aliquota (regime_tributario_id, tributo_aliquota_id) VALUES (2, 3);
+INSERT INTO regime_tributario_tributo_aliquota (regime_tributario_id, tributo_aliquota_id) VALUES (2, 4);
+INSERT INTO regime_tributario_tributo_aliquota (regime_tributario_id, tributo_aliquota_id) VALUES (3, 5);
+
+INSERT INTO cst_a (codigo, descricao) VALUES (0, 'Nacional');
+INSERT INTO cst_a (codigo, descricao) VALUES (1, 'Estrangeira - Importação direta');
+INSERT INTO cst_a (codigo, descricao) VALUES (2, 'Estrangeira - Adquirida no mercado interno');
+
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '00', 'ENTRADA_SAIDA', 'Tributada integralmente');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '10', 'ENTRADA_SAIDA', 'Tributada e com cobrança do ICMS por substituição tributária');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '20', 'ENTRADA_SAIDA', 'Com redução de base de cálculo');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '30', 'ENTRADA_SAIDA', 'Isenta ou não tributada e com cobrança do ICMS por substituição tributária');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '40', 'ENTRADA_SAIDA', 'Isenta');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '41', 'ENTRADA_SAIDA', 'Não Tributada');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '50', 'ENTRADA_SAIDA', 'Suspensão');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '51', 'ENTRADA_SAIDA', 'Diferimento');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '60', 'ENTRADA_SAIDA', 'ICMS cobrado anteriormente por substituição tributária');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '70', 'ENTRADA_SAIDA', 'Com redução de base de cálculo e cobrança do ICMS por substituição tributária');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES (3, '90', 'ENTRADA_SAIDA', 'Outras');
+
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '00', 'ENTRADA', 'Entrada com recuperação de crédito');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '01', 'ENTRADA', 'Entrada tributada com alíquota zero');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '02', 'ENTRADA', 'Entrada isenta');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '03', 'ENTRADA', 'Entrada não-tributada');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '04', 'ENTRADA', 'Entrada imune');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '05', 'ENTRADA', 'Entrada com suspensão');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '49', 'ENTRADA', 'Outras entradas');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '50', 'SAIDA', 'Saída tributada');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '51', 'SAIDA', 'Saída tributada com alíquota zero');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '52', 'SAIDA', 'Saída isenta');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '53', 'SAIDA', 'Saída não-tributada');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '54', 'SAIDA', 'Saída imune');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '55', 'SAIDA', 'Saída com suspensão');
+INSERT INTO cst (tributo_id, codigo, tipo_operacao, descricao) VALUES ('4', '99', 'SAIDA', 'Outras saídas');
+
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','01', 'Operação Tributável com Alíquota Básica');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','02', 'Operação Tributável com Alíquota Diferenciada');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','03', 'Operação Tributável com Alíquota por Unidade de Medida de Produto');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','04', 'Operação Tributável Monofásica – Revenda a Alíquota Zero');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','05', 'Operação Tributável por Substituição Tributária');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','06', 'Operação Tributável a Alíquota Zero');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','07', 'Operação Isenta da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','08', 'Operação sem Incidência da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','09', 'Operação com Suspensão da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'SAIDA','49', 'Outras Operações de Saída');
+
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '50', 'Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '51', 'Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '52', 'Operação com Direito a Crédito – Vinculada Exclusivamente a Receita de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '53', 'Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '54', 'Operação com Direito a Crédito – Vinculada a Receitas Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '55', 'Operação com Direito a Crédito – Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '56', 'Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '60', 'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '61', 'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '62', 'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '63', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '64', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '65', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '66', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '67', 'Crédito Presumido – Outras Operações');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '70', 'Operação de Aquisição sem Direito a Crédito');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '71', 'Operação de Aquisição com Isenção');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '72', 'Operação de Aquisição com Suspensão');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '73', 'Operação de Aquisição a Alíquota Zero');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '74', 'Operação de Aquisição sem Incidência da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '75', 'Operação de Aquisição por Substituição Tributária');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '98', 'Outras Operações de Entrada');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('1', 'ENTRADA', '99', 'Outras Operações');
+
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','01', 'Operação Tributável com Alíquota Básica');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','02', 'Operação Tributável com Alíquota Diferenciada');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','03', 'Operação Tributável com Alíquota por Unidade de Medida de Produto');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','04', 'Operação Tributável Monofásica – Revenda a Alíquota Zero');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','05', 'Operação Tributável por Substituição Tributária');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','06', 'Operação Tributável a Alíquota Zero');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','07', 'Operação Isenta da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','08', 'Operação sem Incidência da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','09', 'Operação com Suspensão da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'SAIDA','49', 'Outras Operações de Saída');
+
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '50', 'Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '51', 'Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '52', 'Operação com Direito a Crédito – Vinculada Exclusivamente a Receita de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '53', 'Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '54', 'Operação com Direito a Crédito – Vinculada a Receitas Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '55', 'Operação com Direito a Crédito – Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '56', 'Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '60', 'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '61', 'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '62', 'Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '63', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '64', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '65', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '66', 'Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '67', 'Crédito Presumido – Outras Operações');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '70', 'Operação de Aquisição sem Direito a Crédito');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '71', 'Operação de Aquisição com Isenção');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '72', 'Operação de Aquisição com Suspensão');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '73', 'Operação de Aquisição a Alíquota Zero');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '74', 'Operação de Aquisição sem Incidência da Contribuição');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '75', 'Operação de Aquisição por Substituição Tributária');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '98', 'Outras Operações de Entrada');
+insert into cst (tributo_id, tipo_operacao, codigo, descricao) values('2', 'ENTRADA', '99', 'Outras Operações');
+
+-- ==========================================================================
+
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('ICMS', '0', '41', 'ENTRADA_SAIDA', '0', '0', '1');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('IPI', '0', '49', 'ENTRADA', '0', '0', '1');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('IPI', '0', '99', 'SAIDA', '0', '0', '1');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('PIS', '0', '70', 'ENTRADA', '0', '0', '0');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('PIS', '0', '01', 'SAIDA', '0', '0', '0');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('COFINS', '0', '70', 'ENTRADA', '0', '0', '0');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('COFINS', '0', '01', 'SAIDA', '0', '0', '0');
+
+INSERT INTO tipo_produto_tributacao
+SELECT t.id tributacao_id, tp.id AS tipo_produto_id
+FROM tipo_produto tp, tributacao t;
+
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('PIS', '0', '74', 'ENTRADA', '0', '0', '1');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('PIS', '0', '07', 'SAIDA', '0', '0', '1');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('COFINS', '0', '74', 'ENTRADA', '0', '0', '1');
+INSERT INTO tributacao (tributo, cst_a, cst, tipo_operacao, base_calculo, valor_aliquota, isento_nao_tributado) VALUES ('COFINS', '0', '07', 'SAIDA', '0', '0', '1');
+
+update tipo_produto_tributacao tpt
+set tributacao_id = (select id from tributacao t where tributo = 'PIS' and t.isento_nao_tributado = true and tipo_operacao = 'ENTRADA')
+where tributacao_id = (select id from tributacao t where tributo = 'PIS' and t.isento_nao_tributado = false and tipo_operacao = 'ENTRADA')
+and tpt.tipo_produto_id = (select id from tipo_produto tp where grupo_produto = 'LIVRO');
+
+update tipo_produto_tributacao tpt
+set tributacao_id = (select id from tributacao t where tributo = 'PIS' and t.isento_nao_tributado = true and tipo_operacao = 'SAIDA')
+where tributacao_id = (select id from tributacao t where tributo = 'PIS' and t.isento_nao_tributado = false and tipo_operacao = 'SAIDA')
+and tpt.tipo_produto_id = (select id from tipo_produto tp where grupo_produto = 'LIVRO');
+
+update tipo_produto_tributacao tpt
+set tributacao_id = (select id from tributacao t where tributo = 'COFINS' and t.isento_nao_tributado = true and tipo_operacao = 'ENTRADA')
+where tributacao_id = (select id from tributacao t where tributo = 'COFINS' and t.isento_nao_tributado = false and tipo_operacao = 'ENTRADA')
+and tpt.tipo_produto_id = (select id from tipo_produto tp where grupo_produto = 'LIVRO');
+
+update tipo_produto_tributacao tpt
+set tributacao_id = (select id from tributacao t where tributo = 'COFINS' and t.isento_nao_tributado = true and tipo_operacao = 'SAIDA')
+where tributacao_id = (select id from tributacao t where tributo = 'COFINS' and t.isento_nao_tributado = false and tipo_operacao = 'SAIDA')
+and tpt.tipo_produto_id = (select id from tipo_produto tp where grupo_produto = 'LIVRO');
+
+UPDATE cota 
+SET CONTRIBUINTE_ICMS = CASE WHEN CONTRIBUINTE_ICMS IS NULL THEN 0 ELSE CONTRIBUINTE_ICMS END,
+EXIGE_NF_E = CASE WHEN EXIGE_NF_E IS NULL THEN 0 ELSE EXIGE_NF_E END;
+
+UPDATE historico_titularidade_cota set CONTRIBUINTE_ICMS = 0;
+
+update cota c inner join pessoa p on p.id = c.PESSOA_ID set c.CONTRIBUINTE_ICMS = false where p.TIPO = 'F' and c.CONTRIBUINTE_ICMS = true;
+
+INSERT INTO parametro_sistema (TIPO_PARAMETRO_SISTEMA, VALOR) VALUES
+('PATH_INTERFACE_NFE_EXPORTACAO_FTF', '/opt/parametros_nds/ftf/saida'),
+('PATH_INTERFACE_NFE_IMPORTACAO_FTF', '/opt/parametros_nds/ftf/entrada'),
+('FTF_INDEX_FILENAME', 1),
+('FTF_CODIGO_ESTABELECIMENTO_EMISSOR', 1),
+('FTF_CNPJ_ESTABELECIMENTO_EMISSOR', '09.516.147/0001-03'),
+('FTF_CODIGO_LOCAL', 1),
+('FTF_CODIGO_CENTRO_EMISSOR', 1),
+('NFE_LIMITAR_QTDE_ITENS', 900)
+;
+
+UPDATE parametro_sistema SET VALOR = '/opt/parametros_nds/notas/importado' WHERE TIPO_PARAMETRO_SISTEMA = 'PATH_INTERFACE_NFE_IMPORTACAO';
+UPDATE parametro_sistema SET VALOR = '/opt/parametros_nds/notas/exportado' WHERE TIPO_PARAMETRO_SISTEMA = 'PATH_INTERFACE_NFE_EXPORTACAO';
+
+
+insert into processo (NOME,DESCRICAO) values ('ENVIO', 'Envio de repartes');
+insert into processo (NOME,DESCRICAO) values ('VENDA', 'Venda');
+insert into processo (NOME,DESCRICAO) values ('ENTRADA_ENCALHE', 'Entrada do encalhe');
+insert into processo (NOME,DESCRICAO) values ('FALTA_REPARTE', 'Faltas do reparte');
+insert into processo (NOME,DESCRICAO) values ('FALTA_ENCALHE', 'Faltas do encalhe');
+insert into processo (NOME,DESCRICAO) values ('SOBRA_ENCALHE', 'Sobras do encalhe');
+insert into processo (NOME,DESCRICAO) values ('CANCELADA', 'Cancelada');
+insert into processo (NOME,DESCRICAO) values ('GERACAO_NF_E', 'Geração NF-e');
+insert into processo (NOME,DESCRICAO) values ('LANCAMENTO_FALTA_SOBRA','Lançamento faltas e sobra');
+insert into processo (NOME,DESCRICAO) values ('VENDA_SUPLEMENTAR', 'Venda de Suplementar');
+insert into processo (NOME,DESCRICAO) values ('FECHAMENTO_ENCALHE', 'Fechamento de Encalhe');
+insert into processo (NOME,DESCRICAO) values ('DEVOLUCAO_AO_FORNECEDOR', 'Devolução ao Fornecedor');
+insert into processo (NOME,DESCRICAO) values ('DEVOLUCAO_ENCALHE', 'Nota da Devolução do Encalhe');
+insert into processo (NOME,DESCRICAO) values ('CONSIGNACAO_REPARTE_NORMAL', 'Consignação do Reparte Normal');
+insert into processo (NOME,DESCRICAO) values ('NOTA_LANCAMENTO', 'Nota de Lançamento (NE/NECA)');
+
+-- ==========================================================================
+
+insert into parametros_ftf_geracao 
+	(NOME, CODIGO_CENTRO_EMISSOR, CODIGO_ESTABELECIMENTO_EMISSOR_GFF, CNPJ_EMISSOR, CNPJ_DESTINATARIO, ESTABELECIMENTO, TIPO_PEDIDO, CODIGO_SOLICITANTE, CODIGO_UNIDADE_OPERACIONAL, MENSAGEM, CODIGO_NATUREZA_OPERACAO_FTF, NATUREZA_OPERACAO_ID, CFOP_ID)
+values
+	('Remessa Treelog Santos x Jornaleiros', '008', '07', '61438248004625', 'FTFTREELOG0046 (CRP 5826042)', 'TREELOG_046', '2', 'SIST_NDI', '', 'Procedimento Autorizado por Regime Especial – Processo UA 51257-371143/2009', '957', 22, 9);
+
+-- ==========================================================================
+
+insert into parametros_ftf_geracao 
+	(NOME, CODIGO_CENTRO_EMISSOR, CODIGO_ESTABELECIMENTO_EMISSOR_GFF, CNPJ_EMISSOR, CNPJ_DESTINATARIO, ESTABELECIMENTO, TIPO_PEDIDO, CODIGO_SOLICITANTE, CODIGO_UNIDADE_OPERACIONAL, MENSAGEM, CODIGO_NATUREZA_OPERACAO_FTF, NATUREZA_OPERACAO_ID, CFOP_ID)
+values
+	('Devolução globalizada Treelog Santos x Jornaleiros', '008', '07', '61438248004625', 'FTFTREELOG0046 (CRP 5826042)', 'TREELOG_046', '5', 'SIST_NDI', '', 'Procedimento Autorizado por Regime Especial – Processo UA 51257-371143/2009', '1355', 26, 11);
+
+-- ==========================================================================
+
+insert into parametros_ftf_geracao 
+	(NOME, CODIGO_CENTRO_EMISSOR, CODIGO_ESTABELECIMENTO_EMISSOR_GFF, CNPJ_EMISSOR, CNPJ_DESTINATARIO, ESTABELECIMENTO, TIPO_PEDIDO, CODIGO_SOLICITANTE, CODIGO_UNIDADE_OPERACIONAL, MENSAGEM, CODIGO_NATUREZA_OPERACAO_FTF, NATUREZA_OPERACAO_ID, CFOP_ID)
+values
+	('Venda globalizada Treelog x Jornaleiros', '023', '07', '61438248000123', 'FTFTREELOG0001 (CRP 5826077)', 'DINAP09', '2', 'SIST_NDI', 'FISC_DINAP', '', '288', 28, 13);
+
+-- ==========================================================================
+
+insert into parametros_ftf_geracao 
+	(NOME, CODIGO_CENTRO_EMISSOR, CODIGO_ESTABELECIMENTO_EMISSOR_GFF, CNPJ_EMISSOR, CNPJ_DESTINATARIO, ESTABELECIMENTO, TIPO_PEDIDO, CODIGO_SOLICITANTE, CODIGO_UNIDADE_OPERACIONAL, MENSAGEM, CODIGO_NATUREZA_OPERACAO_FTF, NATUREZA_OPERACAO_ID, CFOP_ID)
+values
+	('Remessa Treelog Santos x Jornaleiros', '008', '07', '61438248004625', '', 'TREELOG_046', '2', 'SIST_NDI', '', 'Procedimento Autorizado por Regime Especial – Processo UA 51257-371143/2009', '957', 22, 9);
+
+-- ==========================================================================
+
+insert into parametros_ftf_geracao 
+	(NOME, CODIGO_CENTRO_EMISSOR, CODIGO_ESTABELECIMENTO_EMISSOR_GFF, CNPJ_EMISSOR, CNPJ_DESTINATARIO, ESTABELECIMENTO, TIPO_PEDIDO, CODIGO_SOLICITANTE, CODIGO_UNIDADE_OPERACIONAL, MENSAGEM, CODIGO_NATUREZA_OPERACAO_FTF, NATUREZA_OPERACAO_ID, CFOP_ID)
+values
+	('Devolução globalizada Treelog Santos x Jornaleiros', '008', '07', '61438248004625', '', 'TREELOG_046', '5', 'SIST_NDI', '', 'Procedimento Autorizado por Regime Especial – Processo UA 51257-371143/2009', '1355', 26, 11);
+
+-- ==========================================================================
+
+insert into parametros_ftf_geracao 
+	(NOME, CODIGO_CENTRO_EMISSOR, CODIGO_ESTABELECIMENTO_EMISSOR_GFF, CNPJ_EMISSOR, CNPJ_DESTINATARIO, ESTABELECIMENTO, TIPO_PEDIDO, CODIGO_SOLICITANTE, CODIGO_UNIDADE_OPERACIONAL, MENSAGEM, CODIGO_NATUREZA_OPERACAO_FTF, NATUREZA_OPERACAO_ID, CFOP_ID)
+values
+	('Venda globalizada Treelog x Jornaleiros', '023', '07', '61438248000123', '', 'DINAP09', '2', 'SIST_NDI', 'FISC_DINAP', '', '288', 28, 13);
+	
+-- ==========================================================================	
+update grupo_permissao_permissao set PERMISSAO_ID = 'ROLE_ADMINISTRACAO_NATUREZA_OPERACAO' where PERMISSAO_ID = 'ROLE_ADMINISTRACAO_TIPO_NOTA';
+update grupo_permissao_permissao set PERMISSAO_ID = 'ROLE_ADMINISTRACAO_NATUREZA_OPERACAO_ALTERACAO' where PERMISSAO_ID = 'ROLE_ADMINISTRACAO_TIPO_NOTA_ALTERACAO';
+
+-- ==========================================================================
+update natureza_operacao set ID='5',GERAR_COTA_CONTRIBUINTE_ICMS='1' where ID='5';
+
+update ncm set ID='1',CODIGO='49029000',DESCRICAO='REVISTAS',UNIDADE_MEDIDA='UN' where ID='1';
+update ncm set ID='2',CODIGO='49019100',DESCRICAO='FASCICULO',UNIDADE_MEDIDA='UN' where ID='2';
+update ncm set ID='3',CODIGO='49019000',DESCRICAO='LIVROS',UNIDADE_MEDIDA='UN' where ID='3';
+update ncm set ID='4',CODIGO='48205000',DESCRICAO='CROMO',UNIDADE_MEDIDA='UN' where ID='4';
+update ncm set ID='5',CODIGO='49030000',DESCRICAO='LIVRO ILUSTRADO',UNIDADE_MEDIDA='UN' where ID='5';
+update ncm set ID='6',CODIGO='85243100',DESCRICAO='CD',UNIDADE_MEDIDA='UN' where ID='6';
+update ncm set ID='7',CODIGO='49111090',DESCRICAO='CARTAZ',UNIDADE_MEDIDA='UN' where ID='7';
+
+INSERT INTO tipo_movimento (TIPO, ID, APROVACAO_AUTOMATICA, DESCRICAO, GRUPO_MOVIMENTO_ESTOQUE, INCIDE_DIVIDA, INCIDE_JURAMENTADO, OPERACAO_ESTOQUE, GRUPO_MOVIMENTO_FINANCEIRO, OPERACAO_FINANCEIRA) VALUES
+('ESTOQUE', 226, 1, 'Recebimento Reparte Distribuicao',  'RECEBIMENTO_REPARTE_DISTRIBUICAO', 1, 0, 'ENTRADA', NULL, NULL );
+
+
+insert into natureza_operacao_tributo(NATUREZA_OPERACAO_ID,TRIBUTO_ID)values('33','1');
+
+insert into natureza_operacao_tributo(NATUREZA_OPERACAO_ID,TRIBUTO_ID)values('33','2');
+
+update ncm set ID='7',CODIGO='49111090',DESCRICAO='OUTROS IMPRESSOS',UNIDADE_MEDIDA='UN' where ID='7';
+
+insert into tipo_produto(ID,CODIGO,CODIGO_NBM,DESCRICAO,GRUPO_PRODUTO,NCM_ID)values(NULL,'99','4911109900','OUTROS IMPRESSOS','IMPRESSOS','7');
+
+
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('1','24');
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('2','24');
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('3','24');
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('5','24');
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('7','24');
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('8','24');
+insert into tipo_produto_tributacao (tributacao_id, tipo_produto_id) values('10','24');
+
+
+update tributacao set cst='01' where id='5';
+update tributacao set cst='01' where id='7';
+update tributacao set cst='07' where id='9';
+update tributacao set cst='07' where id='11';
+
 
 -- ######################################################################################################################################################################################
 

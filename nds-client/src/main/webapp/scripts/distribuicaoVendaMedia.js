@@ -134,6 +134,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		if(row.venda == undefined){
 			row.venda = '';
 		}
+		if(row.dataLancamentoFormatada == '01/01/3000'){
+			row.dataLancamentoFormatada = '';
+		}
 		
 		if ((row.reparte && row.venda) && (row.reparte != 0 && row.venda != 0)) {
 			row.percentualVenda = floatToPrice(row.venda * 100 / row.reparte); 

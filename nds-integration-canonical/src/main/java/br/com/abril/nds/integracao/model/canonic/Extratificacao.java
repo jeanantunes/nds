@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class Extratificacao implements Serializable {
 	
@@ -22,11 +23,13 @@ public class Extratificacao implements Serializable {
 	
 	private String codigoDistribuidor;
 	
+	@JsonSerialize
+	@JsonDeserialize
 	private Date dataCriacao;
 	
+	@JsonSerialize
+	@JsonDeserialize
 	private Date dataOperacao;
-
-	private List<ExtratificacaoItem> itens;
 
 	public String getTipoDocumento() {
 		return tipoDocumento;
@@ -68,14 +71,6 @@ public class Extratificacao implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public List<ExtratificacaoItem> getItens() {
-		return itens;
-	}
-
-	public void setItens(List<ExtratificacaoItem> itens) {
-		this.itens = itens;
 	}
 
 }

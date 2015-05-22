@@ -120,7 +120,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" INNER join ESTUDO_COTA estudo_cota_ on estudo_.ID = estudo_cota_.ESTUDO_ID                    ");
 		hql.append(" INNER join COTA cota_ on cota_.ID=estudo_cota_.COTA_ID                                        ");
 		hql.append(" left outer join BOX box_ on cota_.BOX_ID=box_.ID                                              ");
-		hql.append(" INNER JOIN PDV pdvs_ on pdvs_.COTA_ID  = cota_.ID                                             ");
+		hql.append(" INNER JOIN PDV pdvs_ on pdvs_.COTA_ID = cota_.ID                                             ");
 		hql.append(" left outer join ESTUDO_PDV estpdv_ on pdvs_.ID = estpdv_.PDV_ID and cota_.ID = estpdv_.cota_id and estpdv_.ESTUDO_ID = estudo_.ID                               ");
 		hql.append(" INNER JOIN ENDERECO_PDV epdv on epdv.PDV_ID = pdvs_.id                                        ");
 		hql.append(" INNER JOIN ENDERECO endereco_ on epdv.ENDERECO_ID = endereco_.ID                              ");
@@ -131,7 +131,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" INNER JOIN NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID   ");
 		hql.append(" where ");
 		hql.append(" cota_.NUMERO_COTA=notaenvio_.NUMERO_COTA ");
-		// hql.append(" and enderecoPDV_.PRINCIPAL = :pontoPrincipal ");
+		hql.append(" and epdv.PRINCIPAL = :pontoPrincipal and pdvs_.ponto_principal = :pontoPrincipal ");
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
 		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
@@ -175,7 +175,6 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 
 		return hql.toString();
 	}
-	
 	
 	/**
 	 * Incluir uma virgula (separador) para os critérios de order by.<br>
@@ -250,7 +249,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		
 		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO.name());
 		
-		// query.setParameter("pontoPrincipal", true);
+		query.setParameter("pontoPrincipal", true);
 		
 		query.setParameter("juramentado", TipoEstudoCota.JURAMENTADO.name());
 	
