@@ -3,8 +3,8 @@
 	<property name="ireport.zoom" value="1.000000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
 	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
@@ -68,7 +68,7 @@
 	<pageHeader>
 		<band height="67">
 			<subreport>
-				<reportElement x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true" uuid="08b9b537-259e-413a-9f48-b8c6baf8bfeb"/>
+				<reportElement uuid="08b9b537-259e-413a-9f48-b8c6baf8bfeb" x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -101,7 +101,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true" uuid="c42feef6-ae7f-427c-84e1-d7adf92c1cc1"/>
+				<reportElement uuid="c42feef6-ae7f-427c-84e1-d7adf92c1cc1" x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>

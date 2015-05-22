@@ -2958,13 +2958,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			final Cota cota, 
 			final Date dataOperacao, final boolean indConferenciaContingencia, boolean validarExemplarZero) {
 		
-		if(validarExemplarZero){
+		if(validarExemplarZero) {
 			
 			if (!indConferenciaContingencia &&
-					(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
+					(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
-				
 			}
 		}
 
