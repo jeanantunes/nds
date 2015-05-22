@@ -1594,7 +1594,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     		}
     		
 			valor = valor.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
-			movimentoFinanceiroCotaDTO.setValor(valor.setScale(2));
+			movimentoFinanceiroCotaDTO.setValor(CurrencyUtil.truncateDecimal(valor, 2));
 
     	} else {
     		
