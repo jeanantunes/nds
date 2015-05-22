@@ -292,7 +292,7 @@ public class Identificacao implements Serializable {
 
 	@Column(name="NOTA_FISCAL_CODIGO_UF")
 	@XmlElement(name="cUF")
-	private Long codigoUf;
+	private Integer codigoUf;
 	
 	@Column(name="NOTA_FISCAL_CODIGO_NF", length=9)
 	@XmlElement(name="cNF")
@@ -739,11 +739,11 @@ public class Identificacao implements Serializable {
 		this.naturezaOperacao = naturezaOperacao;
 	}
 
-	public Long getCodigoUf() {
+	public Integer getCodigoUf() {
 		return codigoUf;
 	}
 
-	public void setCodigoUf(Long codigoUf) {
+	public void setCodigoUf(Integer codigoUf) {
 		this.codigoUf = codigoUf;
 	}
 

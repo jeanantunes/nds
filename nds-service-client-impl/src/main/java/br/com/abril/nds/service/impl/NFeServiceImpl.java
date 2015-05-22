@@ -597,7 +597,12 @@ public class NFeServiceImpl implements NFeService {
 				NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal);
 				notasFiscais.add(notaFiscal);
 			}
-		}	
+		}
+		
+		if(naturezaOperacao.isGerarNotasReferenciadas()) {
+			
+			this.gerarNotaFiscalReferenciada(notasFiscais, naturezaOperacao.getTipoDestinatario());
+		}
 		
 	}
 
