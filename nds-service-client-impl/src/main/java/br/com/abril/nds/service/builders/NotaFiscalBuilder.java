@@ -246,7 +246,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
 		//FIXME: Ajustar codigo de UF do cadastro
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
 		
 		//FIXME: Ajustar codigo de municipio do cadastro
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
@@ -302,7 +302,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
 		
 		//FIXME: Ajustar codigo de UF do cadastro
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35L); //Long.valueOf(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf())); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setCodigoUf(35); //Long.valueOf(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf())); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoUf());
 		
 		//FIXME: Ajustar codigo de municipio do cadastro
 		if(distribuidor.getEnderecoDistribuidor().isPrincipal()) {

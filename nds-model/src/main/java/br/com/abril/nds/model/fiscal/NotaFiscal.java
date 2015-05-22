@@ -17,7 +17,6 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 public abstract class NotaFiscal implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
 	
 	@Column(name = "DESCRICAO_NATUREZA_OPERACAO")
 	private	String descricaoNaturezaOperacao;
