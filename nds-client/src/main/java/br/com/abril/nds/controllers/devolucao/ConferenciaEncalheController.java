@@ -1460,12 +1460,13 @@ public class ConferenciaEncalheController extends BaseController {
 	public boolean verificarPermissaoSupervisorProduto(final String qtdExemplares,
 											 final String usuario, 
 											 final String senha, 
-											 final Long produtoEdicaoId){
+											 final Long produtoEdicaoId) {
 		if (produtoEdicaoId != null) {
 			 
 			 final ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
 			 
-			 if(produtoEdicao == null){
+			 if(produtoEdicao == null) {
+				 
 				 throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição não encontrado.");
 			 }
 			 
@@ -1473,7 +1474,7 @@ public class ConferenciaEncalheController extends BaseController {
 			 dto.setIdProdutoEdicao(produtoEdicaoId);
 			 dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			 
-		 	 BigInteger qtdeEncalhe =  this.obterQuantidadeEncalhe(qtdExemplares,dto);
+		 	 BigInteger qtdeEncalhe =  this.obterQuantidadeEncalhe(qtdExemplares, dto);
 		 	
 		     if (this.isEncalheExcedendoReparte(qtdeEncalhe, dto, false)) {
 		         
