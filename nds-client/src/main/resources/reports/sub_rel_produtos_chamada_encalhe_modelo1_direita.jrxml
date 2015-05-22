@@ -11,11 +11,11 @@
 	<style name="linha">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{COLUMN_COUNT} % 2 == 1]]></conditionExpression>
-			<style backcolor="#F0F0F0"/>
+			<style backcolor="#FFFFFF"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{COLUMN_COUNT} % 2 == 0]]></conditionExpression>
-			<style backcolor="#F8F8F8"/>
+			<style backcolor="#FFFFFF"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="NUMERO_CHAMADA_ENCALHE" class="java.lang.String"/>
@@ -180,7 +180,7 @@
 	<columnHeader>
 		<band height="37">
 			<staticText>
-				<reportElement uuid="89adafc8-20c3-43d1-a880-1f68d3953f3e" style="cabecalho" mode="Opaque" x="206" y="0" width="32" height="23"/>
+				<reportElement uuid="89adafc8-20c3-43d1-a880-1f68d3953f3e" style="cabecalho" mode="Opaque" x="206" y="0" width="32" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -193,7 +193,7 @@
 				<text><![CDATA[Qtde Dev]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3ae69c54-6a76-4c68-a007-73125dad6012" style="cabecalho" mode="Opaque" x="57" y="23" width="47" height="14"/>
+				<reportElement uuid="3ae69c54-6a76-4c68-a007-73125dad6012" style="cabecalho" mode="Opaque" x="57" y="23" width="47" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -207,7 +207,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="18199441-43e9-4007-a362-09d16c33358b" style="cabecalho" mode="Opaque" x="57" y="0" width="113" height="23"/>
+				<reportElement uuid="18199441-43e9-4007-a362-09d16c33358b" style="cabecalho" mode="Opaque" x="57" y="0" width="113" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -220,7 +220,7 @@
 				<text><![CDATA[Produto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="a3086589-784b-4e77-86e9-279d47f1fcc0" style="cabecalho" mode="Opaque" x="104" y="23" width="66" height="14"/>
+				<reportElement uuid="a3086589-784b-4e77-86e9-279d47f1fcc0" style="cabecalho" mode="Opaque" x="104" y="23" width="66" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -234,7 +234,7 @@
 				<text><![CDATA[Preço Desc R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="dd2aa9cf-d37d-4f0d-a55b-ef8e64d0e569" style="cabecalho" mode="Opaque" x="0" y="0" width="57" height="23"/>
+				<reportElement uuid="dd2aa9cf-d37d-4f0d-a55b-ef8e64d0e569" style="cabecalho" mode="Opaque" x="0" y="0" width="57" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -247,7 +247,7 @@
 				<text><![CDATA[Seq]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="97fc27c6-614c-4e66-b8f6-c4e1c0dc35fb" style="cabecalho" mode="Opaque" x="0" y="23" width="57" height="14"/>
+				<reportElement uuid="97fc27c6-614c-4e66-b8f6-c4e1c0dc35fb" style="cabecalho" mode="Opaque" x="0" y="23" width="57" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -261,7 +261,7 @@
 				<text><![CDATA[Código]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="01138a79-19ee-450d-b7e3-0d8701e7bb1d" style="cabecalho" mode="Opaque" x="170" y="23" width="68" height="14"/>
+				<reportElement uuid="01138a79-19ee-450d-b7e3-0d8701e7bb1d" style="cabecalho" mode="Opaque" x="170" y="23" width="68" height="14" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -275,7 +275,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b6d9dd56-85d9-4120-96be-eed260929c87" style="cabecalho" mode="Opaque" x="170" y="0" width="36" height="23"/>
+				<reportElement uuid="b6d9dd56-85d9-4120-96be-eed260929c87" style="cabecalho" mode="Opaque" x="170" y="0" width="36" height="23" backcolor="#E3E3E3"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -292,7 +292,7 @@
 	<detail>
 		<band height="31">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="89349eee-6c01-4b94-a5b3-c035cc93ec1e" style="linha" mode="Opaque" x="0" y="0" width="57" height="15"/>
+				<reportElement uuid="89349eee-6c01-4b94-a5b3-c035cc93ec1e" style="linha" mode="Opaque" x="0" y="0" width="57" height="15" backcolor="#E3E3E3"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -333,7 +333,7 @@
 				<textFieldExpression><![CDATA[$F{edicao}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="6b62f953-e2c5-45b6-8845-7f00457daf1c" style="linha" mode="Opaque" x="0" y="15" width="57" height="16"/>
+				<reportElement uuid="6b62f953-e2c5-45b6-8845-7f00457daf1c" style="linha" mode="Opaque" x="0" y="15" width="57" height="16" backcolor="#FFFFFF"/>
 				<box topPadding="0" bottomPadding="5">
 					<pen lineStyle="Double"/>
 					<topPen lineWidth="0.25" lineStyle="Solid"/>
@@ -383,7 +383,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidadeReparte}]]></textFieldExpression>
 			</textField>
