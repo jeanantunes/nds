@@ -27,7 +27,6 @@ var EmissaoCEController = $.extend(true, {
 		
 		$("#emissaoCE-cotaAte", this.workspace).numeric();
 		
-		$(".bt_novos", this.workspace).hide();
 		
 		$("#imprimirCE").click(function(){
 			
@@ -165,7 +164,6 @@ var EmissaoCEController = $.extend(true, {
 			dataType : 'json',
 			params:data,
 			preProcess: this.processaRetornoPesquisa,
-			onSuccess: function() {$(".bt_novos", this.workspace).show();}
 		});
 		
 		$(".ceEmissaoGrid", this.workspace).flexReload();
