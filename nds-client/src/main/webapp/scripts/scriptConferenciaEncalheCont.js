@@ -254,9 +254,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
-								ConferenciaEncalheCont.carregarListaConferencia(data);
-								
 								ConferenciaEncalheCont.ifCotaExigeNfe(data, ConferenciaEncalheCont.popup_alert);
+
+								ConferenciaEncalheCont.carregarListaConferencia(data);
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(false);
 							},
