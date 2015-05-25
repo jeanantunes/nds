@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="591" pageHeight="842" columnWidth="591" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="7de11dee-12a2-456c-a4a4-c9817c298944">
 	<property name="ireport.zoom" value="2.5657905911535352"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="15"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
 		<pen lineWidth="0.25"/>
@@ -467,7 +467,7 @@
 					<font size="7"/>
 					<paragraph lineSpacing="Single" leftIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{nomeComercial} == null || $F{nomeComercial}.equals("")) ? $F{nomeProduto} : $F{nomeComercial}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{nomeComercial} == null || $F{nomeComercial}.equals("")) ? $F{nomeProduto}.toUpperCase() : $F{nomeComercial}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="1ae44d0e-4257-48e9-bc5d-0b6815ab5a6e" mode="Opaque" x="238" y="0" width="38" height="22"/>
