@@ -78,17 +78,8 @@ public abstract class NFEImportUtil {
         Unmarshaller unmarshaller;
         
         try {
-        
-	        if (validarSchemaXML(XSD_NFE, arquivo, schemaPath, null)) {
-	        	
-	        	context = JAXBContext.newInstance(TNFe.class);
-	            unmarshaller = context.createUnmarshaller();
-	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
-	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
-	            
-	            return retornoNFEDTO;
-	            
-	        } else if(validarSchemaXML(XSD_PROC_NFE, arquivo, schemaPath, null)) {
+        	
+        	if(validarSchemaXML(XSD_PROC_NFE, arquivo, schemaPath, null)) {
 	        	
 				context = JAXBContext.newInstance(TNfeProc.class);  
 				unmarshaller = context.createUnmarshaller();  
@@ -97,6 +88,15 @@ public abstract class NFEImportUtil {
 	            
 				return retornoNFEDTO;
 				
+	        } else if (validarSchemaXML(XSD_NFE, arquivo, schemaPath, null)) {
+	        	
+	        	context = JAXBContext.newInstance(TNFe.class);
+	            unmarshaller = context.createUnmarshaller();
+	            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
+	            retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);
+	            
+	            return retornoNFEDTO;
+	            
 	        } else if(validarSchemaXML(XSD_PROC_CANC_NFE, arquivo, schemaPath, "1.00")) {
 	        	
 	        	context = JAXBContext.newInstance(TProcEvento.class);
@@ -105,6 +105,7 @@ public abstract class NFEImportUtil {
                 retornoNFEDTO = NFEImportUtil.retornoNFeEnvEvento(retornoCancelamentoNFe);
                 
                 return retornoNFEDTO;
+                
 	        } else {
 	        	 throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
 	        }
