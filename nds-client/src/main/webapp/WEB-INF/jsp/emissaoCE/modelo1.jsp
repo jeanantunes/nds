@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>STG-Sistema Treelog de Gestão</title>
+<title>STG - Sistema Treelog de Gestão</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
