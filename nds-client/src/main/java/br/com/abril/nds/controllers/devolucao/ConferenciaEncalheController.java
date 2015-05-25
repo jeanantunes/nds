@@ -1493,18 +1493,16 @@ public class ConferenciaEncalheController extends BaseController {
 			final String usuario, final String senha, final boolean indConferenciaContingencia,
 			final Long produtoEdicaoId, final boolean indPesquisaProduto){
 		
-		if (qtdExemplares == null){
+		if (qtdExemplares == null) {
 		
 			qtdExemplares = this.session.getAttribute(QTD).toString();
 			this.session.setAttribute(QTD,"");
 		}
 		
-		if (qtdExemplares == null){
+		if (qtdExemplares == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de exemplares.");
 		}
-		
-		
 		
 		boolean isVendaNegativaProduto = false; 
 		
@@ -1519,7 +1517,7 @@ public class ConferenciaEncalheController extends BaseController {
             final boolean supervisor = (boolean) (this.session.getAttribute("usuarioSupervisor") != null ? this.session.getAttribute("usuarioSupervisor") : false);
             //usuarioService.isSupervisor();
             
-            if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)){
+            if (!this.verificarProdutoJaConferido(listaConferencia, produtoEdicaoId, idConferencia)) {
                 
                 ProdutoEdicaoDTO pDto = null;
                 
@@ -1546,7 +1544,7 @@ public class ConferenciaEncalheController extends BaseController {
                     
                     String qtdJaInformada = null;
                     
-                    if (indPesquisaProduto){
+                    if (indPesquisaProduto) {
                         
                         qtdJaInformada = dto.getQtdInformada() == null ? this.obterQuantidadeEncalheDaString(qtdExemplares).toString() : 
                             dto.getQtdInformada().add(this.obterQuantidadeEncalheDaString(qtdExemplares)).toString();
@@ -1614,7 +1612,7 @@ public class ConferenciaEncalheController extends BaseController {
 										        final ConferenciaEncalheDTO dto,
 										        boolean supervisor) {
 		
-    	this.session.setAttribute(QTD,qtdExemplares);
+    	this.session.setAttribute(QTD, qtdExemplares);
     	
 		BigInteger qtdeEncalhe = this.obterQuantidadeEncalhe(qtdExemplares, dto);
 		
@@ -1656,7 +1654,7 @@ public class ConferenciaEncalheController extends BaseController {
 		return qtdeEncalhe;
 	}
 
-	private void validarAutenticidadeSupervisor(final String usuario,final String senha) {
+	private void validarAutenticidadeSupervisor(final String usuario, final String senha) {
 		
 		final boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
 		
@@ -2087,7 +2085,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			final Set<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave = obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 		
-			for (final ConferenciaEncalheDTO dto : listaConferenciaEncalheCotaToSave){			
+			for (final ConferenciaEncalheDTO dto : listaConferenciaEncalheCotaToSave) {			
 				dto.setOcultarItem(false);
 			}
 			
