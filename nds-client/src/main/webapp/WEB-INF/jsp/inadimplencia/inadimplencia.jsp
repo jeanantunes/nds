@@ -7,7 +7,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/inadimplencia.js"></script>
 
-<title>STG-Sistema Treelog de Gestão</title>
+<title>STG - Sistema Treelog de Gestão</title>
 
 
 <script language="javascript" type="text/javascript">

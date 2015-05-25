@@ -1,7 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>STG-Sistema Treelog de Gestão</title>
+<title>STG - Sistema Treelog de Gestão</title>
+
+<link rel="shortcut icon" type="image/png" href="images/favicon.ico"/>
 <link rel="stylesheet" type="text/css" href="css/NDS.css" />
 
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
@@ -44,7 +46,7 @@
       <div class="bg_login">
         <table width="549"  align="center" cellpadding="0" cellspacing="0">
           <tr  >
-            <td width="28%"  height="140px" align="right"  ><img src="images/logo1_stg.jpg" width="270" height="144" alt="STG"  /></td>
+            <td width="28%"  height="140px" align="right"  ><img src="images/logo_stg.jpg" width="270" height="144" alt="STG"  /></td>
             <td width="65%" style="border:1px solid #d6d6d6; background:#FFF;"><table width="70%"  align="center" cellpadding="2" cellspacing="2" id="tabLogin">
               <tr>
                 <td>&nbsp;</td>

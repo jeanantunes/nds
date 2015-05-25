@@ -7,7 +7,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmaExpedicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-dateFormat/jquery.dateFormat-1.0.js"></script>
 
-<title>STG-Sistema Treelog de Gestão</title>
+<title>STG - Sistema Treelog de Gestão</title>
 
 <script type="text/javascript">
 	

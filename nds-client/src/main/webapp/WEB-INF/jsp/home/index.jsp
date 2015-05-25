@@ -6,8 +6,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>STG-Sistema Treelog de Gestão</title>
+<title>STG - Sistema Treelog de Gestão</title>
 
+<link rel="shortcut icon" type="image/png" href="images/favicon.ico"/>
 <link href="css/menu_superior.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="css/novo_distrib.css" />
 <link rel="stylesheet" type="text/css" href="css/NDS.css" />
@@ -459,7 +460,7 @@
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
 }
-#btnVersao{font-size:10px; font-weight:normal;margin-left:5px; text-decoration:none!important;}
+#btnVersao{ font-size: 10px; font-weight: normal; margin-left: 5px; text-decoration: none!important; }
 </style>
 </head>
 <body onresize="redimensionarWorkspace();">

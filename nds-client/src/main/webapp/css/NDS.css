@@ -77,10 +77,8 @@ a{color:#000;}
 .titAplicacao h1{font-size:16px; margin:0px 0px 10px 0px;}
 .titAplicacao h2{font-size:12px; margin:0px; font-weight:normal;}
 .titAplicacao h3{font-size:10px; margin:5px 0px 0px 0px; font-weight:bold;}
-.sub-header{
-	margin:auto auto;
-}
-.logo{ background:url(../images/logo_distrib.gif) no-repeat left top; width:75px; height:25px;  float:left;}
+.sub-header{ margin:auto auto; }
+.logo{ background:url(../images/logo_stg_home.png) no-repeat left top; width:75px; height:25px; float:left; margin-left: 10px; }
 
 .usuario{float:right;}
 .usuario label{
