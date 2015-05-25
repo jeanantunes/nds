@@ -194,8 +194,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	
 	private String getOrderBy(FiltroRomaneioDTO filtro, boolean isImpressao) {
 		
-		if(filtro.getPaginacao() == null 
-				|| filtro.getPaginacao().getSortColumn() == null) {
+		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null) {
+			
 			return "";
 		}
 		
@@ -227,11 +227,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.insert(0, ", ");
 			}
 			
-			if(filtro.getIdBox()!= null && filtro.getIdBox() <= 0){
-				hql.insert(0, "  roteiro_.ordem asc, rotas_.ordem  ");
-			}
-			else
-			{
+			if(filtro.getIdBox() == null) {
+				hql.insert(0, " roteiro_.ordem asc, rotas_.ordem ");
+			} else {
 				hql.insert(0, " box_.codigo asc, rota_.ordem, rotas_.ordem ");
 			}
 			
@@ -423,14 +421,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				.addScalar("nomeRota",StandardBasicTypes.STRING)
 				.addScalar("endereco",StandardBasicTypes.STRING);
 		
-		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
+		if(filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()){
 			
 			if(filtro.getProdutos().size() == 1) {
 				
 				query.addScalar("pacote",StandardBasicTypes.BIG_INTEGER)
 					 .addScalar("quebra",StandardBasicTypes.BIG_INTEGER)
 					 .addScalar("reparteTotal",StandardBasicTypes.BIG_INTEGER);
-			}else{
+			} else {
 				
 				qtdProdutos = Math.min(filtro.getProdutos().size(), QUANTIDADE_MAX_PRODUTOS_POR_RELATORIO);
 				
