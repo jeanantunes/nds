@@ -581,10 +581,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		final Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		final ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = null; 
+		try {
+			
+			controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
+		} catch (Exception e) {
+			
+			LOGGER.error("Verificar a duplicidade de conferência.", e);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter a Conferência de Encalhe. Contate o Administrador do sistema.");
+		}
 		
 		if(controleConferenciaEncalheCota != null && StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())) {
+			
 			return true;
 		}
 		
@@ -2281,7 +2289,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	private void removerItensConferenciaEncallhe(final Cota cota, final List<Long> listaIdConferenciaEncalheParaExclusao) {
 		
-		if(listaIdConferenciaEncalheParaExclusao!=null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
+		if(listaIdConferenciaEncalheParaExclusao != null && !listaIdConferenciaEncalheParaExclusao.isEmpty()) {
 			
 			for(final Long idConferenciaEncalheExclusao : listaIdConferenciaEncalheParaExclusao) {
 				excluirRegistroConferenciaEncalhe(cota, idConferenciaEncalheExclusao);
@@ -2519,7 +2527,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			movimentoEstoqueService.atualizarMovimentoEstoqueDeEncalhe(cota, movimentoEstoqueDTO, conferenciaEncalheDTO.getQtdExemplar(), conferenciaEncalheDTO.getIdProdutoEdicao());
 			
 		} else {	
-		
 
 			chamadaEncalheCota = null;
 			
