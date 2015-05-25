@@ -78,7 +78,7 @@
 			<tr>
 				<td>Roteiro:</td>
 				<td>
-					<select name="idRoteiro" id="idRoteiro" style="width: 200px; font-size: 11px !important" onchange="impressaoNfeController.carregarRotas();">
+					<select name="impressaoNfe-filtro-idRoteiro" id="impressaoNfe-filtro-idRoteiro" style="width: 200px; font-size: 11px !important" onchange="impressaoNfeController.carregarRotas();">
 						<option value="-1">Selecione...</option>
 						<c:forEach items="${roteiros}" var="roteiro">
 							<option value="${roteiro.key }">${roteiro.value }</option>
@@ -88,7 +88,7 @@
 				<td>Rota:</td>
 				<td>
 					<div id="rotaContainer">
-						<select name="idRota" id="idRota" style="width: 200px; font-size: 11px !important">
+						<select name="impressaoNfe-filtro-idRota" id="impressaoNfe-filtro-idRota" style="width: 200px; font-size: 11px !important">
 							<option value="-1">Selecione...</option>
 							<c:forEach items="${rotas}" var="rota">
 								<option value="${rota.key }">${rota.value }</option>
@@ -97,18 +97,21 @@
 					</div>
 				</td>
 				<td>Tipo Emissão:</td>
-				<td><select name="tipoEmissao" id="tipoEmissao" style="width: 210px; font-size: 11px !important">
+				<td>
+					<select name="impressaoNfe-filtro-tipoEmissao" id="impressaoNfe-filtro-tipoEmissao" style="width: 210px; font-size: 11px !important">
 						<option selected="selected">Selecione...</option>
 						<c:forEach items="${tipoEmissao}" var="tipoEmissao">
 							<option value="${tipoEmissao}">${tipoEmissao.descricao}</option>
 						</c:forEach>
 
-				</select></td>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<td>Cota de:</td>
-				<td><input type="text" name="idCotaInicial" id="idCotaInicial" style="width: 80px;" /> &nbsp;Até&nbsp; <input
-					type="text" name="idCotaFinal" id="idCotaFinal" style="width: 80px;" />
+				<td>
+					<input type="text" name="impressaoNfe-filtro-idCotaInicial" id="impressaoNfe-filtro-idCotaInicial" style="width: 60px;" /> &nbsp;Até&nbsp; 
+					<input type="text" name="impressaoNfe-filtro-idCotaFinal" id="impressaoNfe-filtro-idCotaFinal" style="width: 60px;" />
 				</td>
 
 				<td>Intervalo Box:</td>

@@ -78,21 +78,24 @@ var impressaoNfeController = $.extend(true, {
 	
 	desabilitarFiltro : function() {
 		
-		$("#idRoteiro").attr('disabled', 'disabled');
-		$("#idRota").attr('disabled', 'disabled');
-		$("#idCotaInicial").attr('disabled', 'disabled');
-		$("#idCotaFinal").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-idRoteiro").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-idRota").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-idCotaInicial").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-idCotaFinal").attr('disabled', 'disabled');
+		
+		$("#impressaoNfe-filtro-inputIntervaloBoxDe", impressaoNfeController.workspace).val("-1");
 		$("#impressaoNfe-filtro-inputIntervaloBoxDe").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-inputIntervaloBoxAte", impressaoNfeController.workspace).val("-1");
 		$("#impressaoNfe-filtro-inputIntervaloBoxAte").attr('disabled', 'disabled');
 		
 	},
 	
 	habilitarFiltro : function() {
 		
-		$("#idRoteiro").removeAttr('disabled');
-		$("#idRota").removeAttr('disabled');
-		$("#idCotaInicial").removeAttr('disabled');
-		$("#idCotaFinal").removeAttr('disabled');
+		$("#impressaoNfe-filtro-idRoteiro").removeAttr('disabled');
+		$("#impressaoNfe-filtro-idRota").removeAttr('disabled');
+		$("#impressaoNfe-filtro-idCotaInicial").removeAttr('disabled');
+		$("#impressaoNfe-filtro-idCotaFinal").removeAttr('disabled');
 		$("#impressaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');;
 		$("#impressaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');;
 		
@@ -215,10 +218,10 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idCotaInicial', value:$('#idCotaInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idCotaFinal', value:$('#idCotaFinal', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRoteiro', value:$('#impressaoNfe-filtro-idRoteiro option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRota', value:$('#impressaoNfe-filtro-idRota option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaInicial', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaFinal', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idBoxInicial', value:$('#impressaoNfe-filtro-inputIntervaloBoxDe', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idBoxFinal', value:$('#impressaoNfe-filtro-inputIntervaloBoxAte', impressaoNfeController.workspace).val()}
 		           	];
@@ -278,7 +281,7 @@ var impressaoNfeController = $.extend(true, {
 	 */
 	carregarRotas : function() {
 		$.postJSON(contextPath + "/nfe/impressaoNFE/carregarRotasImpressaoNFE"
-				, {idRoteiro: $('#idRoteiro', impressaoNfeController.workspace).val()}
+				, {idRoteiro: $('#impressaoNfe-filtro-idRoteiro', impressaoNfeController.workspace).val()}
 		, function(data) {
 
 			var tipoMensagem = data.tipoMensagem;
@@ -288,11 +291,11 @@ var impressaoNfeController = $.extend(true, {
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 
-			$('#idRota').find('option').remove().end();
+			$('#impressaoNfe-filtro-idRota').find('option').remove().end();
 
-			$("#idRota").append($("<option />").val(-1).text("Selecione..."));
+			$("#impressaoNfe-filtro-idRota").append($("<option />").val(-1).text("Selecione..."));
 			$.each(data, function(index, item) {
-				$("#idRota").append($("<option />").val(item["key"]["$"]).text(item["value"]["$"]));
+				$("#impressaoNfe-filtro-idRota").append($("<option />").val(item["key"]["$"]).text(item["value"]["$"]));
 			});
 		}
 		);
@@ -415,12 +418,12 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.dataMovimentoInicial', value:$('#impressaoNfe-dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#impressaoNfe-dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idCotaInicial', value:$('#idCotaInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idCotaFinal', value:$('#idCotaFinal', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idBoxInicial', value:$('#idBoxInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idBoxFinal', value:$('#idBoxFinal', impressaoNfeController.workspace).val()}
+		           	{name:'filtro.idRoteiro', value:$('#impressaoNfe-filtro-idRoteiro option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idRota', value:$('#impressaoNfe-filtro-idRota option:selected', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaInicial', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idCotaFinal', value:$('#impressaoNfe-filtro-idCotaInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxInicial', value:$('#impressaoNfe-filtro-inputIntervaloBoxDe', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxFinal', value:$('#impressaoNfe-filtro-inputIntervaloBoxAte', impressaoNfeController.workspace).val()}
 		           	];
 		
 		
