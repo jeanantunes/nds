@@ -649,7 +649,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     public void salvarProdutoEdicao(
             final ProdutoEdicaoDTO dto, final String codigoProduto, final String contentType, 
             final InputStream imgInputStream, final boolean istrac29, final ModoTela modoTela) {
-        
+    
         ProdutoEdicao produtoEdicao = null;
         
         boolean indDataLancamentoAlterada = true;
@@ -661,6 +661,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     		Lancamento lancamento = lService.obterPrimeiroLancamentoDaEdicao(dto.getId());
         	
     		if(lancamento != null) {
+    			
         		indDataLancamentoAlterada = isDataLancamentoAlterada(dto, lancamento);
         		indDataRecolhimentoAlterada = isDataRecolhimentoAlterada(dto, lancamento);
         		indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento);
@@ -712,6 +713,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         this.validarRegimeRecolhimento(dto, lancamentos, produtoEdicao, indDataRecolhimentoAlterada);
 
         Lancamento lancamento = null;
+      
         if(indDataLancamentoAlterada || indDataRecolhimentoAlterada) {
         	if(indDataLancamentoAlterada) {
         		
@@ -725,7 +727,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         		
         		dto.setNumeroLancamento(lancamento.getNumeroLancamento());
         	}
+        
         	lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+        	
+        } else { // atualizar reparte_previsto, 
+        	// obter ultima lancamento
+        	lancamento = this.obterLancamento(dto, produtoEdicao, true);
+        	lancamento = this.salvarLancamentoReparte(lancamento, dto, produtoEdicao, usuario);
         	
         }
         
@@ -883,7 +891,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                 
                 lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
                 lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
-                
+               
                 lancamentoParcialRepository.merge(lancamentoParcial);
             }
             
@@ -1036,7 +1044,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
      */
     
     private ProdutoEdicao salvarProdutoEdicao(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao) {
-        
+       
         // 01) Validações:
         this.validarProdutoEdicao(dto, produtoEdicao);
         
@@ -1150,6 +1158,32 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         return produtoEdicao;
     }
     
+    /**
+* Salva o lançamento, quando nao houve mudanca de datas
+* salvar box Reparte: reparte_previsto,exp venda e promocional
+* @param lancamento
+* @param dto
+* @param produtoEdicao
+* @param usuario
+*/
+private Lancamento salvarLancamentoReparte(Lancamento lancamento, final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao, final Usuario usuario) {
+
+final BigInteger repartePromocional = dto.getRepartePromocional() == null ? BigInteger.ZERO : dto.getRepartePromocional();
+
+if ( dto.getRepartePrevisto() != null) {
+	lancamento.setReparte(dto.getRepartePrevisto());
+	}
+
+	lancamento.setRepartePromocional(repartePromocional);
+	lancamento.setUsuario(usuario);
+	
+	lancamento = lancamentoRepository.merge(lancamento);
+
+	produtoEdicaoRepository.alterar(produtoEdicao);
+	
+	return lancamento;
+}
+    
 	                                        /**
      * Salva o lançamento.
      * 
@@ -1159,7 +1193,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
      * @param usuario
      */
     private Lancamento salvarLancamento(Lancamento lancamento, final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao, final Usuario usuario) {
-        
+       
         lancamento.setNumeroLancamento(dto.getNumeroLancamento());
 
         if(dto.getDataLancamento()!=null){
@@ -1171,11 +1205,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         if(dto.getDataRecolhimentoDistribuidor()!=null){
             lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoDistribuidor());
         }
-        
+       ;
         final BigInteger repartePromocional = dto.getRepartePromocional() == null ? BigInteger.ZERO : dto.getRepartePromocional();
         
         if (lancamento.getId() == null || dto.getRepartePrevisto() != null) {
-            
             lancamento.setReparte(dto.getRepartePrevisto());
         }
         
