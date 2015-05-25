@@ -76,13 +76,42 @@ var impressaoNfeController = $.extend(true, {
 		$(".areaBts", impressaoNfeController.workspace).hide();
 	},
 	
+	desabilitarFiltro : function() {
+		
+		$("#idRoteiro").attr('disabled', 'disabled');
+		$("#idRota").attr('disabled', 'disabled');
+		$("#idCotaInicial").attr('disabled', 'disabled');
+		$("#idCotaFinal").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-inputIntervaloBoxDe").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-inputIntervaloBoxAte").attr('disabled', 'disabled');
+		
+	},
+	
+	habilitarFiltro : function() {
+		
+		$("#idRoteiro").removeAttr('disabled');
+		$("#idRota").removeAttr('disabled');
+		$("#idCotaInicial").removeAttr('disabled');
+		$("#idCotaFinal").removeAttr('disabled');
+		$("#impressaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');;
+		$("#impressaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');;
+		
+		
+	},
+	
 	verificarTipoDestinatario : function(element) {
 		
 		if(element.value != "FORNECEDOR") {
 			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
 			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+			
+			impressaoNfeController.habilitarFiltro();
+			
 		} else {
+			
+			impressaoNfeController.desabilitarFiltro();
 			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+		
 		}
 		
 		var emitente = '';
