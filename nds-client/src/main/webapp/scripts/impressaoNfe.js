@@ -190,8 +190,8 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idCotaInicial', value:$('#idCotaInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idCotaFinal', value:$('#idCotaFinal', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idBoxInicial', value:$('#idBoxInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idBoxFinal', value:$('#idBoxFinal', impressaoNfeController.workspace).val()}
+		           	{name:'filtro.idBoxInicial', value:$('#impressaoNfe-filtro-inputIntervaloBoxDe', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.idBoxFinal', value:$('#impressaoNfe-filtro-inputIntervaloBoxAte', impressaoNfeController.workspace).val()}
 		           	];
 		
 		if ($('#impressaoNfe-filtro-selectFornecedoresDestinatarios').val()) {
