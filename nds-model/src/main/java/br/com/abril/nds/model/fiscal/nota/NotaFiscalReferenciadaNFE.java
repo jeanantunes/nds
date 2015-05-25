@@ -31,7 +31,7 @@ public class NotaFiscalReferenciadaNFE implements Serializable {
 	@Column(name="CODIGO_UF", nullable=false, length=2)
 	@NFEExport(secao = TipoSecao.B14, posicao = 0)
 	@XmlElement(name="cUF")
-	private Long codigoUF;
+	private Integer codigoUF;
 	
 	/**
 	 * AAMM
@@ -81,14 +81,14 @@ public class NotaFiscalReferenciadaNFE implements Serializable {
 	/**
 	 * @return the codigoUF
 	 */
-	public Long getCodigoUF() {
+	public Integer getCodigoUF() {
 		return codigoUF;
 	}
 
 	/**
 	 * @param codigoUF the codigoUF to set
 	 */
-	public void setCodigoUF(Long codigoUF) {
+	public void setCodigoUF(Integer codigoUF) {
 		this.codigoUF = codigoUF;
 	}
 

@@ -682,10 +682,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 				hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
+					.append(" JOIN cota.box as box ")
 					.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ")
 					.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
-				     
-				
 			break;
     
 			case FORNECEDOR:            

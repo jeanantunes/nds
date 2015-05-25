@@ -1218,18 +1218,28 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select ");
-		hql.append(" infElet.chaveAcesso as chaveAcesso, ");
-		hql.append(" doc.documento as cnpj, ");
-		hql.append(" ident.codigoUf as codigoUF, ");
-		hql.append(" ident.serie as serie, ");
-		hql.append(" ident.modeloDocumentoFiscal as modelo,  ");
-		hql.append(" ident.numeroDocumentoFiscal as numero,  ");
-		hql.append(" ident.dataEmissao as dataEmissao ");
-		
 		if(tipoDestinatario.equals(TipoDestinatario.DISTRIBUIDOR)) {
+			hql.append(" select ");
+			hql.append(" infElet.chaveAcesso as chaveAcesso, ");
+			hql.append(" doc.documento as cnpj, ");
+			hql.append(" ident.codigoUf as codigoUF, ");
+			hql.append(" ident.serie as serie, ");
+			hql.append(" ident.modeloDocumentoFiscal as modelo,  ");
+			hql.append(" ident.numeroDocumentoFiscal as numero,  ");
+			hql.append(" ident.dataEmissao as dataEmissao ");
+			
 			montarQueryNotasDistribuidor(hql, cota);			
 		} else {
+			
+			hql.append(" select ");
+			hql.append(" notaFiscal.chaveAcesso as chaveAcesso, ");
+			hql.append(" notaFiscal.serie as serie, ");
+			hql.append(" emit.cnpj as cnpj, ");
+			hql.append(" endereco.codigoUf as codigoUF, ");
+			hql.append(" '55' as modelo,  ");
+			hql.append(" notaFiscal.numero as numero,  ");
+			hql.append(" notaFiscal.dataEmissao as dataEmissao ");
+			
 			montarQueryNotasFornecedor(hql);
 		}
 		
@@ -1245,6 +1255,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		if(produtoEdicoesIds != null) {
 			query.setParameterList("produtoEdicoesIds", produtoEdicoesIds);
+		}
+		
+		if(tipoDestinatario.equals(TipoDestinatario.FORNECEDOR)) {
+			query.setParameter("true", true);
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscalDTO.class));
@@ -1277,13 +1291,17 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	private void montarQueryNotasFornecedor(StringBuffer hql) {
 		
 		hql.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
-		.append(" join notaFiscal.tipoNotaFiscal tipoNotaFiscal	")
-		.append(" join notaFiscal.itens i 			")
-		.append(" join i.produtoEdicao pe			")
-		.append(" join pe.produto p					")
-		.append(" join p.fornecedores f				")
-		.append(" WHERE 1=1 ")
-		.append(" AND notaFiscal.numero is not null ");
+		   .append(" join notaFiscal.emitente emit ")
+		   .append(" join notaFiscal.itens i 			")
+		   .append(" join notaFiscal.fornecedor f ")
+		   .append(" join f.enderecos enderecos ")
+		   .append(" join enderecos.endereco endereco ")
+		// .append(" join notaFiscal.tipoNotaFiscal tipoNotaFiscal	")
+		   .append(" join i.produtoEdicao pe			")
+		   .append(" join pe.produto p					")
+		   .append(" WHERE 1=1 ")
+		   .append(" AND notaFiscal.numero is not null ")
+		   .append(" AND enderecos.principal = :true ");
 	}
 
 	@Override

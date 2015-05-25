@@ -20,10 +20,12 @@ public class EnderecoFornecedor extends AssociacaoEndereco implements Serializab
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3672502344760050081L;
+	
 	@Id
 	@GeneratedValue(generator = "ENDERECO_FORN_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedor;
