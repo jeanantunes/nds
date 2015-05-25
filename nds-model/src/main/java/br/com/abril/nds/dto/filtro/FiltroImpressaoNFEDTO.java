@@ -31,9 +31,9 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private Long idCotaFinal;
 
-	private Long idBoxInicial;
+	private Integer idBoxInicial;
 
-	private Long idBoxFinal;
+	private Integer idBoxFinal;
 
 	private Long idRoteiro;
 
@@ -244,19 +244,19 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.idCotaFinal = idCotaFinal;
 	}
 
-	public Long getIdBoxInicial() {
+	public Integer getIdBoxInicial() {
 		return idBoxInicial;
 	}
 
-	public void setIdBoxInicial(Long idBoxInicial) {
+	public void setIdBoxInicial(Integer idBoxInicial) {
 		this.idBoxInicial = idBoxInicial;
 	}
 
-	public Long getIdBoxFinal() {
+	public Integer getIdBoxFinal() {
 		return idBoxFinal;
 	}
 
-	public void setIdBoxFinal(Long idBoxFinal) {
+	public void setIdBoxFinal(Integer idBoxFinal) {
 		this.idBoxFinal = idBoxFinal;
 	}
 

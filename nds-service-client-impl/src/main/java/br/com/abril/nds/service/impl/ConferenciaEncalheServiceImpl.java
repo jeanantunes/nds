@@ -50,6 +50,8 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
@@ -466,14 +468,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public boolean isCotaExigeNfe(final Integer numeroCota) {
 
 		Distribuidor distribuidor =  distribuidorService.obter();
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			
-			return true;
+			Pessoa pessoa = cota.getPessoa();
 			
+			if(pessoa != null){
+				if(pessoa instanceof PessoaFisica){
+					return false;
+				} else {
+					return true;
+				}
+			} 
+				
+			return true;	
 		} else {
-			
-			final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+			cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			if (cota == null) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");

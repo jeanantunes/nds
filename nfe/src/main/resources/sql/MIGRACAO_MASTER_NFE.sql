@@ -1264,9 +1264,6 @@ update tributacao set cst='01' where id='7';
 update tributacao set cst='07' where id='9';
 update tributacao set cst='07' where id='11';
 
-
-ALTER TABLE nota_envio CHANGE COLUMN NOTA_FISCAL_ID NOTA_FISCAL_ID BIGINT(20) NULL DEFAULT NULL  ;
-
 ALTER TABLE nota_envio CHANGE COLUMN NOTA_FISCAL_ID NOTA_FISCAL_ID BIGINT(20) NULL DEFAULT NULL  ;‏
 ‎ 
 ALTER TABLE nota_fiscal_novo ADD COLUMN INDICADOR_DESTINATARIO BIGINT(11) NULL  AFTER ENDERECO_ID_EMITENTE ;‏
