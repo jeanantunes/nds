@@ -30,7 +30,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
-public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable, Serializable {
+public class MovimentoEstoqueCota extends AbstractMovimentoEstoque implements Cloneable, Serializable {
 	
 	@Embedded
 	private ValoresAplicados valoresAplicados;
