@@ -979,9 +979,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.qtdDevolucao +
 						'</span>';
 					
-					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+id+
-					'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+id
-					+'" onclick="fechamentoCEIntegracaoController.replicarValor(\''+id+'\')"/>';
+					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+row.cell.idItemCeIntegracao+
+					'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+row.cell.idItemCeIntegracao
+					+'" onclick="fechamentoCEIntegracaoController.replicarValor(\''+row.cell.idItemCeIntegracao+'\')"/>';
 					
 					row.cell.replicarQtde = inputCheckReplicarValor;
 					
@@ -1112,7 +1112,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	replicarValor:function(id) {
 		
 		if ($("#ch" + id, fechamentoCEIntegracaoController.workspace).is(":checked")){
-			$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val(
+			$("#inputVenda" + id, fechamentoCEIntegracaoController.workspace).val(
 				$("#qtdeDevolucao" + id, fechamentoCEIntegracaoController.workspace).text()
 			);
 			
@@ -1124,17 +1124,17 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			$("#sel", fechamentoCEIntegracaoController.workspace).attr("checked",false);
 			
 			var valorAux = 
-				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val();
+				$("#inputVenda" + id, fechamentoCEIntegracaoController.workspace).val();
 			
 			if (valorAux || valorAux == "0"){
-				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val(valorAux);
+				$("#inputVenda" + id, fechamentoCEIntegracaoController.workspace).val(valorAux);
 				
 				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text(
 					parseInt($("#qtdeDevolucao" + id, fechamentoCEIntegracaoController.workspace).text()) - valorAux
 				);
 				
 			} else {
-				$("#valorExemplarNota" + id, fechamentoCEIntegracaoController.workspace).val("");
+				$("#inputVenda" + id, fechamentoCEIntegracaoController.workspace).val("");
 				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("");
 			}
 		}
