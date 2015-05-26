@@ -1389,11 +1389,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         Cota cota = rateioDiferenca.getCota();
                 
+        boolean contribuinteICMS = !distribuidorService.obter().isPossuiRegimeEspecialDispensaInterna() ? true : cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS();
+        boolean exigeNFe = !distribuidorService.obter().isPossuiRegimeEspecialDispensaInterna() ? true : cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica();
         return movimentoEstoqueService.gerarMovimentoCotaDiferenca(
                 dataLancamento, diferenca.getProdutoEdicao(), rateioDiferenca.getCota().getId(),
                 idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica, 
-                cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(),
-                cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
+                contribuinteICMS,
+                exigeNFe);
     }
     
 	                                    /*
