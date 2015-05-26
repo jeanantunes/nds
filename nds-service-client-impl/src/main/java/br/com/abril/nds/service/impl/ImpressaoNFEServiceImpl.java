@@ -264,7 +264,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 					case COTA:
 					case DISTRIBUIDOR:
 					                 
-						notas = ordenarNotasEnvioPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
+						notas = ordenarNotasFiscaisPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
 						break;
 	                
 					case FORNECEDOR:            
@@ -294,24 +294,24 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	* 
 	* @return List<NotaFiscal>
 	*/
-	private List<NotaFiscal> ordenarNotasEnvioPorRoteirizacao(final List<NotaFiscal> notasFiscais) {
+	private List<NotaFiscal> ordenarNotasFiscaisPorRoteirizacao(final List<NotaFiscal> notasFiscais) {
 	
 		final Map<Integer, List<NotaFiscal>> mapaNotasFiscaisPorCota = new HashMap<Integer, List<NotaFiscal>>();
 		
-		for (final NotaFiscal ne : notasFiscais) {
+		for (final NotaFiscal nfe : notasFiscais) {
 		
-			final Integer numeroCota = ne.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getNumeroCota();
+			final Integer numeroCota = nfe.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getNumeroCota();
 		
-			List<NotaFiscal> nes = mapaNotasFiscaisPorCota.get(numeroCota);
+			List<NotaFiscal> nfes = mapaNotasFiscaisPorCota.get(numeroCota);
 		
-			if (nes == null) {
+			if (nfes == null) {
 		
-				nes = new ArrayList<NotaFiscal>();
+				nfes = new ArrayList<NotaFiscal>();
 			}
+			
+			nfes.add(nfe);
 		
-			nes.add(ne);
-		
-			mapaNotasFiscaisPorCota.put(numeroCota, nes);
+			mapaNotasFiscaisPorCota.put(numeroCota, nfes);
 		}
 	
 		final List<Integer> numerosCotaOrdenadosPelaRoteirizacao = roteirizacaoRepository.obterNumerosCotaOrdenadosRoteirizacao();

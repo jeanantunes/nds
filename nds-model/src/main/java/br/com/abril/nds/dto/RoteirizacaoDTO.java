@@ -87,9 +87,7 @@ public class RoteirizacaoDTO implements Serializable{
         this.boxDisponiveis.addAll(boxDisponiveis);
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
-	
     
-
     /**
 	 * @return the id
 	 */
@@ -173,10 +171,8 @@ public class RoteirizacaoDTO implements Serializable{
 	public List<RoteiroRoteirizacaoDTO> getRoteirosNovasRotasTransferidas() {
 		return roteirosNovasRotasTransferidas;
 	}
-
-
-
-	    /**
+	
+	/**
      * Adiciona uma rota que pertence a outra roteirização e teve PDVs
      * adicionados
      * 
@@ -190,7 +186,6 @@ public class RoteirizacaoDTO implements Serializable{
     	
     	this.rotasNovosPDVsTransferidos.add(rotaDTO);
     }
-
     
     public RoteiroRoteirizacaoDTO obterRoteirosNovasRotasTransferidas(Roteiro roteiro, List<Rota> listaRotasExistentes) {
     	
