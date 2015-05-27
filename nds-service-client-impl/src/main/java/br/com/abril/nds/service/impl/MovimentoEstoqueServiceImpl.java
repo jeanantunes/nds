@@ -840,15 +840,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
               movimentoEstoque.setUsuario(new Usuario(idUsuario));
               movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
               movimentoEstoque.setQtde(quantidade);
-              movimentoEstoque.setOrigem(origem);
               
+              if(origem != null){            	  
+            	  movimentoEstoque.setOrigem(origem);
+              }
               
               if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica) {
                   
                   movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
                   movimentoEstoque.setAprovador(new Usuario(idUsuario));
                   movimentoEstoque.setDataAprovacao(distribuidorService.obterDataOperacaoDistribuidor());
-                  
                   
               }
           }
@@ -1126,7 +1127,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 		? qtdeDevolucaoFornecedor.add(qntMovimento)
                 				:qtdeDevolucaoFornecedor.subtract(qntMovimento);
                 
-                estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade);
+                estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade.negate());
                 
                 break;
                 
