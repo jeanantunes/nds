@@ -1,5 +1,10 @@
 var PainelMonitorNFE = $.extend(true, {
-
+	
+	/**
+	 * path de geração de nfe
+	 */
+	path : contextPath + '/nfe/painelMonitorNFe/',
+	
 	init : function() {
 
 		var colunas = PainelMonitorNFE.obterColModel();
@@ -15,7 +20,7 @@ var PainelMonitorNFE = $.extend(true, {
 			colModel : colunas,
 			preProcess: PainelMonitorNFE.executarPreProcessamento,
 			dataType : 'json',
-			sortname : "codigo",
+			sortname : "numero",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -23,6 +28,9 @@ var PainelMonitorNFE = $.extend(true, {
 			showTableToggleBtn : true,
 			width : 960
 		});
+		
+		this.initFiltroDatas();
+		this.initInputs();
 		
 		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({
 			showOn: "button",
@@ -32,7 +40,6 @@ var PainelMonitorNFE = $.extend(true, {
 		});
 		
 		$('#dataInicial', PainelMonitorNFE.workspace).mask("99/99/9999");	
-	
 		
 		$('#dataFinal', PainelMonitorNFE.workspace).datepicker({
 			showOn: "button",
@@ -46,6 +53,80 @@ var PainelMonitorNFE = $.extend(true, {
 		$(".grids", PainelMonitorNFE.workspace).hide();
 		
 	    $(".bt_arq", PainelMonitorNFE.workspace).hide();
+	    
+	    $(document).ready(function() {
+	    	if($("input:radio[name='painelNfe-radioTipoDoc']:checked").val()=="cnpj"){
+				$("input[id=painelNfe-documento]").mask("99.999.999/9999-99");
+		                $("#painelNfe-documento").text('Digite o CNPJ:');
+			} else {
+				$("input[id=painelNfe-documento]").mask("999.999.999-99");
+                $(this).attr('checked', false);
+			}
+
+	    });
+	    
+	    params = [];
+	    params.push({name: 'tipoEmitente', value: 'DISTRIBUIDOR'});
+		params.push({name: 'tipoDestinatario', value: 'COTA'});
+		
+		$.postJSON(contextPath + '/administracao/naturezaOperacao/obterNaturezasOperacoesPorEmitenteDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#painelNfe-filtro-naturezaOperacao").empty();
+			
+			$('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
+			
+			$.each(data.rows, function (i, row) {
+			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+	},
+	
+	initFiltroDatas : function(){
+		
+	    $.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor',
+				null, 
+				function(result) {
+			
+					$("#dataInicial", this.workspace).val(result);
+					
+					$("#dataFinal", this.workspace).val(result);
+		        }
+		); 
+	},
+	
+	initInputs : function() {
+		
+		
+		$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		
+		$("#painelNfe-filtro-selectFornecedores").multiselect({
+			selectedList : 6
+		}).multiselect("checkAll");
+		
+		$("#selFornecedor", PainelMonitorNFE.workspace).click(function() {
+			$(".menu_fornecedor", PainelMonitorNFE.workspace).show().fadeIn("fast");
+		});
+
+		$(".menu_fornecedor", PainelMonitorNFE.workspace).mouseleave(function() {
+			$(".menu_fornecedor", PainelMonitorNFE.workspace).hide();
+		});
+		
 	},
 	
 	pesquisar: function() {
@@ -53,35 +134,36 @@ var PainelMonitorNFE = $.extend(true, {
 		var box = $("#box", PainelMonitorNFE.workspace).val();
 		var dataInicial = $("#dataInicial", PainelMonitorNFE.workspace).val();
 		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
-		var tipoDocumento = $('input:radio[name=radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
+		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
-		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
+		var tipoNfe = $("#painelNfe-filtro-naturezaOperacao", PainelMonitorNFE.workspace).val();
 		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
 		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
 		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
 		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		var nrDocumento	= $("#painelNfe-documento", PainelMonitorNFE.workspace).val();
 		
-		var formData = [
-		        {name:'box', value: box },
-		        {name:'dataInicial', value: dataInicial },
-		        {name:'dataFinal', value: dataFinal },
-		        {name:'tipoDocumento', value: tipoDocumento },
-		        {name:'documento', value: documento },
-		        {name:'tipoNfe', value: tipoNfe },
-		        {name:'numeroInicial', value: numeroInicial },
-		        {name:'numeroFinal', value: numeroFinal },
-		        {name:'chaveAcesso', value: chaveAcesso },
-		        {name:'situacaoNfe', value: situacaoNfe },
-		        {name:'serieNfe',    value: serieNfe}
+		var params = [
+		        {name:'filtro.box', value: box },
+		        {name:'filtro.dataInicial', value: dataInicial },
+		        {name:'filtro.dataFinal', value: dataFinal },
+		        {name:'filtro.documentoPessoa', value: documentoPessoa },
+		        {name:'filtro.documento', value: documento },
+		        {name:'filtro.tipoNfe', value: tipoNfe },
+		        {name:'filtro.numeroNotaInicial', value: numeroInicial },
+		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
+		        {name:'filtro.chaveAcesso', value: chaveAcesso },
+		        {name:'filtro.situacaoNfe', value: situacaoNfe },
+		        {name:'filtro.serie',    value: serieNfe},
+		        {name:'filtro.numeroDocumento', value: nrDocumento}
 		];
 		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexOptions({
-			url: contextPath + "/nfe/painelMonitorNFe/pesquisar",
-			params: formData
+			url: this.path + 'pesquisar', params: params
 		});
 		
-		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();;
+		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();
 	},
 	
 	limparCheck:function (id){
@@ -109,7 +191,7 @@ var PainelMonitorNFE = $.extend(true, {
 
 			var linha = $(value);
 			
-			var colunaSelecao = linha.find("td")[11];
+			var colunaSelecao = linha.find("td")[9];
 			
 			$(colunaSelecao).find("div").find('input[name="checkgroup"]', PainelMonitorNFE.workspace).attr("checked",true);
 			
@@ -124,7 +206,7 @@ var PainelMonitorNFE = $.extend(true, {
 
 			var linha = $(value);
 
-			var colunaSelecao = linha.find("td")[11];
+			var colunaSelecao = linha.find("td")[9];
 			
 			$(colunaSelecao).find("div").find('input[name="checkgroup"]', PainelMonitorNFE.workspace).attr("checked",false);
 			
@@ -216,6 +298,55 @@ var PainelMonitorNFE = $.extend(true, {
 		
 	},
 
+	exportar : function() {
+		document.cookie="username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
+		var box = $("#box", PainelMonitorNFE.workspace).val();
+		var dataInicial = $("#dataInicial", PainelMonitorNFE.workspace).val();
+		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
+		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
+		var documento = $("#documento", PainelMonitorNFE.workspace).val();
+		var tipoNfe = $("#painelNfe-filtro-naturezaOperacao", PainelMonitorNFE.workspace).val();
+		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
+		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
+		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
+		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
+		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		var nrDocumento	= $("#painelNfe-documento", PainelMonitorNFE.workspace).val();
+		
+		var params = [
+		        {name:'filtro.box', value: box },
+		        {name:'filtro.dataInicial', value: dataInicial },
+		        {name:'filtro.dataFinal', value: dataFinal },
+		        {name:'filtro.documentoPessoa', value: documentoPessoa },
+		        {name:'filtro.documento', value: documento },
+		        {name:'filtro.tipoNfe', value: tipoNfe },
+		        {name:'filtro.numeroNotaInicial', value: numeroInicial },
+		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
+		        {name:'filtro.chaveAcesso', value: chaveAcesso },
+		        {name:'filtro.situacaoNfe', value: situacaoNfe },
+		        {name:'filtro.serie',    value: serieNfe},
+		        {name:'filtro.numeroDocumento', value: nrDocumento}
+		];
+		
+		var preparingFileModal = $("#preparing-file-modal").dialog({ modal: true });
+		
+		$.fileDownload(this.path+"exportar?fileType=XLS", {
+			data: params, 
+		    httpMethod: "GET",
+		    successCallback: function (url) {
+		    	console.log('success');
+		    	$("#preparing-file-modal").dialog('close');
+		    },
+		    failCallback: function (responseHtml, url) {
+		        preparingFileModal.dialog('close');
+		        $("#error-modal").dialog({ modal: true });
+		    }
+		    
+		});
+		
+		$("#preparing-file-modal").dialog('close');
+	},
+	
 	
 	imprimirDanfeUnica : function(lineId) {
 		
@@ -227,6 +358,66 @@ var PainelMonitorNFE = $.extend(true, {
 				window.location = contextPath + "/nfe/painelMonitorNFe/imprimirDanfes" ;
 			}		
 		);
+		
+	},
+	
+	verificarRadioCnpjCpf : function() {
+		
+         $('input[id=painelNfe-documento]').unmask();//Remove a mascara
+         if($("input:radio[name='painelNfe-radioTipoDoc']:checked").val()=="cpf"){//Acaso seja CPF
+                $("input[id=painelNfe-documento]").mask("999.999.999-99");
+                $("#painelNfe-documento").text('Digite o CPF:');
+         } else {//Acaso seja Cnpj
+                $("input[id=painelNfe-documento]").mask("99.999.999/9999-99");
+                $("#painelNfe-documento").text('Digite o CNPJ:');
+         }
+		
+	},
+	
+	verificarTipoDestinatario : function(element) {
+		if(element.value != "FORNECEDOR") {
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		} else {
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+		}
+		
+		var emitente = '';
+		if(element.value == 'COTA') {
+			emitente = 'DISTRIBUIDOR';
+		} else if(element.value == 'DISTRIBUIDOR') {
+			emitente = 'COTA';
+		} else if(element.value == 'FORNECEDOR') {
+			emitente = 'DISTRIBUIDOR';
+		}
+		
+		params = [];
+		params.push({name: 'tipoEmitente', value: emitente});
+		params.push({name: 'tipoDestinatario', value: element.value});
+		
+		$.postJSON(contextPath + '/administracao/naturezaOperacao/obterNaturezasOperacoesPorEmitenteDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#painelNfe-filtro-naturezaOperacao").empty();
+			
+			$('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+		        value: '-1',
+		        text : 'Selecione...'
+		    }));
+			
+			$.each(data.rows, function (i, row) {
+			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
 		
 	},
 	
@@ -264,14 +455,8 @@ var PainelMonitorNFE = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'CNPJ Remetente',
+				display : 'CNPJ / CPF Remetente',
 				name : 'cnpjRemetente',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'CPF Remetente',
-				name : 'cpfRemetente',
 				width : 100,
 				sortable : true,
 				align : 'left'
@@ -284,13 +469,7 @@ var PainelMonitorNFE = $.extend(true, {
 			}, {
 				display : 'Tipo NF-e',
 				name : 'tipoNfe',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Movimento Integração',
-				name : 'movimentoIntegracao',
-				width : 140,
+				width : 220,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -308,8 +487,7 @@ var PainelMonitorNFE = $.extend(true, {
 			} ];	
 			
 			return colModel;
-	}
+	},
 	
 }, BaseController);
-
-//@ sourceURL=PainelNFE.js
+//@ sourceURL=painelMonitorNFE.js

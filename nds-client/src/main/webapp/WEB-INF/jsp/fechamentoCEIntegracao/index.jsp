@@ -1,7 +1,7 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distrib</title>
+<title>STG - Sistema Treelog de Gestão</title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoCEIntegracao.js"></script>
@@ -34,13 +34,18 @@
 		</div>
 	</form>
 	
+	<form id="idFormConfirmacaoFechamentoSemCe">
+		<div id="dialog-Confirmacao-Fechamento-SemCe" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja efetuar o fechamento </p>
+		</div>
+	</form>
+	
 	<form id="idFormPerdaGanhos">
 		<div id="dialog-perdas-ganhos-Fechamento" title="Diferença(s) Fechamento CE - Integração" style="display:none;">
 	    	<table class="perdaGanhoGrid"></table>
 		</div>
 	</form>
-	
-	
+		
     <div class="areaBts">
     	<div class="area">
     		
@@ -125,7 +130,23 @@
 				  	<td width="151">
 				  		<input type="text" id="semana" name="semana" />
 				  	</td>
-			  		<td width="433"><span id="btnPesquisar"><a href="javascript:;" class="botaoPesquisar" ><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+			  		<td style="width:100px;">
+						<select id="combo-fechamentoCe-integracao" style="width:130px;">
+							<option value="-1" selected="selected">Selecione</option>
+							<option value="COM">Com CE</option>
+							<option value="SEM">Sem CE</option>
+						</select>
+					</td>
+					<td style="width:20px;">
+						
+					</td>
+					<td width="333">
+			  			<span id="btnPesquisar">
+			  				<a href="javascript:;" class="botaoPesquisar" >
+			  					<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+			  				</a>
+			  			</span>
+			  		</td>
 				</tr>
 			</table>
 
@@ -136,7 +157,8 @@
        	  <legend> Fechamento CE</legend>
           
 	        <div class="grids" style="display:none;">
-	          <table class="fechamentoCeGrid"></table>
+	          	<table class="fechamentoCeGrid"></table>
+	          	<table class="fechamentoSemCeGrid"></table>
 	       		<div class="linha_separa_fields">&nbsp;</div>
 				<br clear="all" />
 				<div class="tabelaTotal" style="display:none;">

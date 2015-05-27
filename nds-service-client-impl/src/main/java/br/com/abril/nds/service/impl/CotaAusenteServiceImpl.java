@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -302,12 +303,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					
 					//Lança movimento para restituir o saldo da cota ausente
 					this.movimentoEstoqueService.gerarMovimentoCota(cotaAusente.getData(), 
-							                                        movimento.getProdutoEdicao().getId(),
+							                                        movimento.getProdutoEdicao(),
 															        cotaAusente.getCota().getId(), 
 															        idUsuario, 
 															        qtdeARestaurarCotaAusenteSuplementar, 
 															        tipoMovimentoCota,
-																	dataOperacaoDistribuidor, null);
+																	dataOperacaoDistribuidor, null, FormaComercializacao.CONSIGNADO, false, false);
 				}	
 			}	
 		}
@@ -416,8 +417,8 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					idUsuario, qtdeRateio, tipoMovimento);
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
-				data, produtoEdicao.getId(), cota.getId(), 
-				idUsuario, qtdeRateio, tipoMovimentoCota, data, null, null, null);
+				data, produtoEdicao, cota.getId(), 
+				idUsuario, qtdeRateio, tipoMovimentoCota, data, null, null, null, FormaComercializacao.CONSIGNADO);
 			
 			for (CotaAusente cotaAusente : cotasAusentes) {
 				

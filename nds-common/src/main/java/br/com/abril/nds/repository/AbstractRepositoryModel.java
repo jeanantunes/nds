@@ -138,6 +138,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	
 	protected Session getSession() {
 		try {
+			
 			return sessionFactory.getCurrentSession();
 		} catch (Exception e) {
 			LOGGER.error("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n", e);
@@ -158,6 +159,5 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			
 		}
 	}
-	
 	
 }

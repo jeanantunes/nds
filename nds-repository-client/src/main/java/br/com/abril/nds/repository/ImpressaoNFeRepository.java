@@ -64,5 +64,7 @@ public interface ImpressaoNFeRepository extends Repository<NotaFiscal, Long>  {
 	 * @return
 	 */
 	public List<Produto> buscarProdutosParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
+
+	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro);
 	
 }

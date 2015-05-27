@@ -36,5 +36,6 @@ public class ContratoCota extends Contrato implements Serializable {
 	public void setRecebido(boolean recebido) {
 		this.recebido = recebido;
 	}
-
+	
+	
 }

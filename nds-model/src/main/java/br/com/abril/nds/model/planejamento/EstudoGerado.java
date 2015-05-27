@@ -23,17 +23,19 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.hibernate.annotations.*;
-
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @SuppressWarnings("serial")
@@ -318,12 +320,38 @@ public class EstudoGerado implements Serializable {
         this.abrangencia = abrangencia;
     }
 
-	public BigInteger getReparteTotal() {
+    public BigInteger getReparteTotal() {
 		return reparteTotal;
 	}
 
 	public void setReparteTotal(BigInteger reparteTotal) {
 		this.reparteTotal = reparteTotal;
+	}
+    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstudoGerado other = (EstudoGerado) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		
+		return true;
 	}
 
 	public Boolean getMinMaxMix() {

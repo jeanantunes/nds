@@ -11,15 +11,18 @@ import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -894,6 +897,33 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.addScalar("quantidade",StandardBasicTypes.LONG);
 		
 		return (Long) query.uniqueResult();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ChamadaEncalheCotaDTO> buscarPorChamadaEncalhe(ChamadaEncalhe ce) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select cec.id as id, cec.CHAMADA_ENCALHE_ID as numeroChamadaEncalhe, ")
+			.append(" c.NUMERO_COTA as numeroCota, c.Id as idCota, c.EXIGE_NF_E as exigeNFE, c.CONTRIBUINTE_ICMS as contribuinteICMS ")
+			.append(" from chamada_encalhe_cota cec ")
+			.append(" inner join cota c on c.id = cec.COTA_ID ")
+			.append(" where cec.chamada_encalhe_id = :ceId ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("ceId", ce.getId());
+		
+		query.setResultTransformer(Transformers.aliasToBean(ChamadaEncalheCotaDTO.class));
+		query.addScalar("id", StandardBasicTypes.LONG);
+		query.addScalar("numeroChamadaEncalhe", StandardBasicTypes.LONG);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("exigeNFE", StandardBasicTypes.BOOLEAN);
+		query.addScalar("contribuinteICMS", StandardBasicTypes.BOOLEAN);
+		
+		return query.list();
 	}
 	
 	/**

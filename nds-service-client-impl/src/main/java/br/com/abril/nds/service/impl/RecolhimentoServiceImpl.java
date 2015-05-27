@@ -617,7 +617,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 					
-					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), usuario);
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), usuario);
 				}
 			}
 		}
@@ -671,6 +671,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe,
 										 Date dataLctoDistribuidor,
+										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario) {
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
@@ -700,6 +701,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		chamadaEncalheCota.setProcessoUtilizaNfe(cotaContribuinteExigeNF);
 		chamadaEncalheCota.setUsuario(usuario);
 		
 		chamadaEncalheCota = this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);

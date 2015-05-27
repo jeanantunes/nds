@@ -108,19 +108,19 @@ LOAD DATA INFILE '/opt/rollout/load_files/00000001.edi' INTO TABLE CARGA_PRODIN_
 codDistribuidor=SUBSTR(@linha,1,7),
 tipoOperacao=SUBSTR(@linha,26,1),
 codigoEditor=SUBSTR(@linha,28,7),	
-nomeEditor=SUBSTR(@linha,35,35),	
+nomeEditor=TRIM(SUBSTR(@linha,35,35)),	
 tipoLogradouroEditor=SUBSTR(@linha,73,5),	
-logradouroEditor=SUBSTR(@linha,78,30),
+logradouroEditor=TRIM(SUBSTR(@linha,78,30)),
 numeroEditor=SUBSTR(@linha,108,5),	
 complementoEditor=SUBSTR(@linha,113,10),	
-cidadeEditor=SUBSTR(@linha,133, 30),
+cidadeEditor=TRIM(SUBSTR(@linha,133, 30)),
 ufEditor=SUBSTR(@linha,163,2),
 cepEditor=SUBSTR(@linha,165,8),
 tipoLogradouroEntrega=SUBSTR(@linha,173,5),	
 logradouroEntrega=SUBSTR(@linha,178,20),	
 numeroEntrega=SUBSTR(@linha,208,5),
 complementoEntrega=SUBSTR(@linha,213,20),	
-cidadeEntrega=SUBSTR(@linha,233,30),
+cidadeEntrega=TRIM(SUBSTR(@linha,233,30)),
 ufEntrega=SUBSTR(@linha,263,2),
 cepEntrega=SUBSTR(@linha,265,8),	
 dddContato=SUBSTR(@linha,273,4),	
@@ -129,16 +129,16 @@ dddEditor=SUBSTR(@linha,285,4),
 telefoneEditor=SUBSTR(@linha,289,8),	
 dddFax=SUBSTR(@linha,297,4),
 telefoneFax=SUBSTR(@linha,301,8),
-inscricaoMunicipal=SUBSTR(@linha,315,12),
+inscricaoMunicipal=TRIM(SUBSTR(@linha,315,12)),
 tipoPessoa=SUBSTR(@linha,327,1),
-nomeContato=SUBSTR(@linha,328,30),
+nomeContato=TRIM(SUBSTR(@linha,328,30)),
 status=SUBSTR(@linha,361,1),
 cpf=SUBSTR(@linha,367,12),
 rg=SUBSTR(@linha,379,15),
 orgaoEmissor=SUBSTR(@linha,394,10),
 ufOrgaoEmissor=SUBSTR(@linha,404,2),
 cnpj=SUBSTR(@linha,406,14),
-inscricaoEstadual=SUBSTR(@linha,420,20),
+inscricaoEstadual=TRIM(SUBSTR(@linha,420,20)),
 bairroEditor=SUBSTR(@linha,440,5),
 bairroEntrega=SUBSTR(@linha,445,5);
 
@@ -147,9 +147,9 @@ LOAD DATA INFILE '/opt/rollout/load_files/00000002.edi' INTO TABLE CARGA_PRODIN_
 codDistribuidor=SUBSTR(@linha,1,7),
 tipoOperacao=SUBSTR(@linha,26,1),
 codigoEditor=SUBSTR(@linha,28,7),	
-nomeEditor=SUBSTR(@linha,35,35),	
+nomeEditor=TRIM(SUBSTR(@linha,35,35)),	
 tipoLogradouroEditor=SUBSTR(@linha,73,5),	
-logradouroEditor=SUBSTR(@linha,78,30),
+logradouroEditor=TRIM(SUBSTR(@linha,78,30)),
 numeroEditor=SUBSTR(@linha,108,5),	
 complementoEditor=SUBSTR(@linha,113,10),	
 cidadeEditor=SUBSTR(@linha,133, 30),
@@ -161,7 +161,7 @@ numeroEntrega=SUBSTR(@linha,208,5),
 complementoEntrega=SUBSTR(@linha,213,20),	
 cidadeEntrega=SUBSTR(@linha,233,30),
 ufEntrega=SUBSTR(@linha,263,2),
-cepEntrega=SUBSTR(@linha,265,8),	
+cepEntrega=TRIM(SUBSTR(@linha,265,8)),	
 dddContato=SUBSTR(@linha,273,4),	
 telefoneContato=SUBSTR(@linha,277,8),
 dddEditor=SUBSTR(@linha,285,4),
@@ -177,7 +177,7 @@ rg=SUBSTR(@linha,379,15),
 orgaoEmissor=SUBSTR(@linha,394,10),
 ufOrgaoEmissor=SUBSTR(@linha,404,2),
 cnpj=SUBSTR(@linha,406,14),
-inscricaoEstadual=SUBSTR(@linha,420,20),
+inscricaoEstadual=TRIM(SUBSTR(@linha,420,20)),
 bairroEditor=SUBSTR(@linha,440,5),
 bairroEntrega=SUBSTR(@linha,445,5);
 
@@ -256,7 +256,7 @@ dataGeracaoArquivo=SUBSTR(@linha,8,8),
 codContexto=SUBSTR(@linha,26,2),
 codigoFornecedor=SUBSTR(@linha,28,7),
 codigoProduto=SUBSTR(@linha,35,8), 
-nome=SUBSTR(@linha,43,30),
+nome=TRIM(SUBSTR(@linha,43,30)),
 peb=SUBSTR(@linha,73,3), 
 pacotePadrao=SUBSTR(@linha,76,5), 
 condicaoTransmissaoHistograma=SUBSTR(@linha,81,1), 
@@ -317,7 +317,7 @@ dataGeracaoArquivo=SUBSTR(@linha,8,8),
 codContexto=SUBSTR(@linha,26,2),
 codigoFornecedor=SUBSTR(@linha,28,7),
 codigoProduto=SUBSTR(@linha,35,8), 
-nome=SUBSTR(@linha,43,30),
+nome=TRIM(SUBSTR(@linha,43,30)),
 peb=SUBSTR(@linha,73,3), 
 pacotePadrao=SUBSTR(@linha,76,5), 
 condicaoTransmissaoHistograma=SUBSTR(@linha,81,1), 
@@ -370,6 +370,10 @@ subGrupoEditorial=SUBSTR(@linha,257,3),
 codigoICD=SUBSTR(@linha,260,6),
 segmento=SUBSTR(@linha,266,30),
 fornecedorId=2; 
+
+
+update CARGA_PRODIN_PUB 
+set codigoICD = substring(codigoProduto,1,6);
 
 select 'CARGA_PRODIN_PUB:',count(*) from CARGA_PRODIN_PUB; -- Log 
 
@@ -618,7 +622,7 @@ select 'CARGA_MDC_PRODUTO:',count(*) from CARGA_MDC_PRODUTO; -- Log
 DROP TABLE IF EXISTS CARGA_MDC_COTA;
 
 create table CARGA_MDC_COTA (
-codigoCota VARCHAR(4),
+codigoCota VARCHAR(5),
 nomeJornaleiro VARCHAR(30),
 qtdeCotas VARCHAR(4),
 endereco VARCHAR(40),
@@ -627,7 +631,7 @@ municipio VARCHAR(20),
 siglaUF VARCHAR(2),
 cep VARCHAR(8),
 ddd VARCHAR(4),
-telefone VARCHAR(7),
+telefone VARCHAR(8),
 situacaoCota VARCHAR(1),
 condPrazoPagamento VARCHAR(1),
 codBox VARCHAR(3),
@@ -641,10 +645,14 @@ numLogradouro VARCHAR(6),
 codCidadeIbge VARCHAR(7),
 inscrEstadual VARCHAR(20),
 inscrMunicipal VARCHAR(15),
+cotaDP VARCHAR(5),
+cotaFC VARCHAR(5),
+situacao_anterior VARCHAR (1),
+data_alteracao_cota VARCHAR (12),
 KEY codigoCota (codigoCota)) 
 -- ENGINE=MEMORY
 ;
-
+/*
 LOAD DATA INFILE '/opt/rollout/load_files/COTA.NEW' INTO TABLE CARGA_MDC_COTA CHARACTER SET UTF8
 (@linha) SET 
 codigoCota=SUBSTR(@linha,1,4),
@@ -670,27 +678,133 @@ numLogradouro=SUBSTR(@linha,152,6),
 codCidadeIbge=SUBSTR(@linha,158,7),
 inscrEstadual=SUBSTR(@linha,165,20),
 inscrMunicipal=SUBSTR(@linha,185,15);
+*/
 
+LOAD DATA INFILE '/opt/rollout/load_files/COTA.NEW' INTO TABLE CARGA_MDC_COTA CHARACTER SET UTF8
+(@linha) SET 
+-- codigoCota=SUBSTR(@linha,211,5),
+codigoCota=SUBSTR(@linha,221,5),
+nomeJornaleiro=SUBSTR(@linha,5,30),
+qtdeCotas=SUBSTR(@linha,35,4),
+endereco=SUBSTR(@linha,39,40),
+codBairro=SUBSTR(@linha,79,5),
+municipio=SUBSTR(@linha,84,20),
+siglaUF=SUBSTR(@linha,104,2),
+cep=SUBSTR(@linha,106,8),
+ddd=SUBSTR(@linha,114,4),
+telefone=SUBSTR(@linha,226,8),
+situacaoCota=SUBSTR(@linha,125,1),
+condPrazoPagamento=SUBSTR(@linha,126,1),
+codBox=SUBSTR(@linha,127,3),
+codTipoBox=SUBSTR(@linha,130,1),
+repartePDV=SUBSTR(@linha,131,1),
+codCapataz=SUBSTR(@linha,132,5),
+cpf=SUBSTR(@linha,137,11),
+cnpj=SUBSTR(@linha,148,14),
+tipoPessoa=SUBSTR(@linha,162,1),
+numLogradouro=SUBSTR(@linha,163,6),
+codCidadeIbge=SUBSTR(@linha,169,7),
+inscrEstadual=SUBSTR(@linha,176,20),
+inscrMunicipal=SUBSTR(@linha,196,15),
+cotaDP=SUBSTR(@linha,216,5),
+cotaFC=SUBSTR(@linha,221,5),
+situacao_anterior=SUBSTR(@linha,234,1),
+data_alteracao_cota=SUBSTR(@linha,235,12);
+
+
+/*-- RIO
+LOAD DATA INFILE '/opt/rollout/load_files/COTA.NEW' INTO TABLE CARGA_MDC_COTA CHARACTER SET UTF8
+(@linha) SET 
+-- codigoCota=SUBSTR(@linha,211,5),
+codigoCota=SUBSTR(@linha,217,5),
+nomeJornaleiro=SUBSTR(@linha,5,30),
+qtdeCotas=1,
+endereco=SUBSTR(@linha,35,40),
+codBairro=SUBSTR(@linha,75,5),
+municipio=SUBSTR(@linha,80,20),
+siglaUF=SUBSTR(@linha,100,2),
+cep=SUBSTR(@linha,102,8),
+ddd=SUBSTR(@linha,110,4),
+telefone=SUBSTR(@linha,222,8),
+situacaoCota=SUBSTR(@linha,121,1),
+condPrazoPagamento=SUBSTR(@linha,122,1),
+codBox=SUBSTR(@linha,123,3),
+codTipoBox=SUBSTR(@linha,126,1),
+repartePDV=SUBSTR(@linha,127,1),
+codCapataz=SUBSTR(@linha,128,5),
+cpf=SUBSTR(@linha,133,11),
+cnpj=SUBSTR(@linha,144,14),
+tipoPessoa=SUBSTR(@linha,158,1),
+numLogradouro=SUBSTR(@linha,159,6),
+codCidadeIbge=SUBSTR(@linha,165,7),
+inscrEstadual=TRIM(SUBSTR(@linha,172,20)),
+inscrMunicipal=TRIM(SUBSTR(@linha,192,15)),
+cotaDP=SUBSTR(@linha,212,5),
+cotaFC=SUBSTR(@linha,217,5),
+situacao_anterior=SUBSTR(@linha,222,1),
+data_alteracao_cota=SUBSTR(@linha,223,13);
+*/
 select 'CARGA_MDC_COTA:',count(*) from CARGA_MDC_COTA; -- Log
+
+--  CARGA_MDC_BANCA
+DROP TABLE IF EXISTS CARGA_MDC_COTA_TEL;
+
+create table CARGA_MDC_COTA_TEL (
+codigoCota VARCHAR(5),
+codigoDP VARCHAR(5),
+codigoFC VARCHAR(5),
+ddd VARCHAR(4),
+telefone VARCHAR(8),
+KEY codigoCota (codigoCota)) 
+-- ENGINE=MEMORY
+;
+
+LOAD DATA INFILE '/opt/rollout/load_files/COTA_TEL.NEW' INTO TABLE CARGA_MDC_COTA_TEL CHARACTER SET UTF8
+(@linha) SET 
+-- codigoCota=SUBSTR(@linha,1,5),
+codigoCota=SUBSTR(@linha,11,5),
+codigoDP=SUBSTR(@linha,6,5),
+codigoFC=SUBSTR(@linha,11,5),
+ddd=SUBSTR(@linha,16,4),
+telefone=SUBSTR(@linha,20,8);
+
+UPDATE CARGA_MDC_COTA c,CARGA_MDC_COTA_TEL t 
+set c.telefone = t.telefone
+where c.codigoCota = t.codigoCota;
+
+UPDATE CARGA_MDC_COTA c,CARGA_MDC_COTA_TEL t 
+set c.ddd = t.ddd
+where c.codigoCota = t.codigoCota;
+
+
+-- FIX
+update CARGA_MDC_COTA set cpf = null where tipoPessoa ='J';
+update CARGA_MDC_COTA set cnpj = null where tipoPessoa ='F';
+
 
 --  CARGA_MDC_BANCA
 DROP TABLE IF EXISTS CARGA_MDC_BANCA;
 
 create table CARGA_MDC_BANCA (
-codigoCota VARCHAR(4),
+codigoCota VARCHAR(5),
 endereco VARCHAR(40),
 codBairro VARCHAR(5),
 nomeMunicipio VARCHAR(20),
 siglaUF VARCHAR(2),
 cep VARCHAR(8),
 ddd VARCHAR(4),
-telefone VARCHAR(7),
+telefone VARCHAR(8),
 tipoPontoVenda VARCHAR(2),
 pontoReferencia VARCHAR(40),
+cotaDP VARCHAR(5),
+cotaFC VARCHAR(5),
+linha bigint(20) NOT NULL AUTO_INCREMENT,
+PRIMARY KEY (linha),
 KEY codigoCota (codigoCota)) 
 -- ENGINE=MEMORY
 ;
 
+/*
 LOAD DATA INFILE '/opt/rollout/load_files/BANCA.NEW' INTO TABLE CARGA_MDC_BANCA CHARACTER SET UTF8
 (@linha) SET 
 codigoCota=SUBSTR(@linha,1,4),
@@ -703,8 +817,55 @@ ddd=SUBSTR(@linha,80,4),
 telefone=SUBSTR(@linha,84,7),
 tipoPontoVenda=SUBSTR(@linha,91,2),
 pontoReferencia=SUBSTR(@linha,93,40);
+*/
+
+LOAD DATA INFILE '/opt/rollout/load_files/BANCA.NEW' INTO TABLE CARGA_MDC_BANCA CHARACTER SET UTF8
+(@linha) SET 
+-- codigoCota=SUBSTR(@linha,133,5),
+codigoCota=SUBSTR(@linha,143,5),
+endereco=SUBSTR(@linha,5,40),
+codBairro=SUBSTR(@linha,45,5),
+nomeMunicipio=SUBSTR(@linha,50,20),
+siglaUF=SUBSTR(@linha,70,2),
+cep=SUBSTR(@linha,72,8),
+ddd=SUBSTR(@linha,80,4),
+telefone=SUBSTR(@linha,148,8),
+tipoPontoVenda=SUBSTR(@linha,91,2),
+pontoReferencia=SUBSTR(@linha,93,40),
+cotaDP=SUBSTR(@linha,138,5),
+cotaFC=SUBSTR(@linha,143,5);
 
 select 'CARGA_MDC_BANCA:',count(*) from CARGA_MDC_BANCA; -- Log
+
+--  CARGA_MDC_BANCA
+DROP TABLE IF EXISTS CARGA_MDC_BANCA_TEL;
+
+create table CARGA_MDC_BANCA_TEL (
+codigoCota VARCHAR(5),
+codigoDP VARCHAR(5),
+codigoFC VARCHAR(5),
+ddd VARCHAR(4),
+telefone VARCHAR(8),
+KEY codigoCota (codigoCota)) 
+-- ENGINE=MEMORY
+;
+
+LOAD DATA INFILE '/opt/rollout/load_files/BANCA_TEL.NEW' INTO TABLE CARGA_MDC_BANCA_TEL CHARACTER SET UTF8
+(@linha) SET 
+-- codigoCota=SUBSTR(@linha,1,5),
+codigoCota=SUBSTR(@linha,11,5),
+codigoDP=SUBSTR(@linha,6,5),
+codigoFC=SUBSTR(@linha,11,5),
+ddd=SUBSTR(@linha,16,4),
+telefone=SUBSTR(@linha,20,8);
+
+UPDATE CARGA_MDC_BANCA b,CARGA_MDC_BANCA_TEL t 
+set b.telefone = t.telefone
+where b.codigoCota = t.codigoCota;
+
+UPDATE CARGA_MDC_BANCA b,CARGA_MDC_BANCA_TEL t 
+set b.ddd = t.ddd
+where b.codigoCota = t.codigoCota;
 
 --  CARGA_MDC_MATRIZ
 DROP TABLE IF EXISTS CARGA_MDC_MATRIZ;
@@ -958,6 +1119,7 @@ select 'EDITOR - TELEFONE_EDITOR:',count(*) from TELEFONE_EDITOR; -- Log
 -- ########################################################################################################################################
 
 
+
 -- CARGA_PRODIN_PUB
 insert into produto (DATA_CRIACAO,ATIVO,CODIGO,COD_CONTEXTO,DATA_DESATIVACAO,
 desconto,COMPRIMENTO,ESPESSURA,LARGURA,fase,FORMA_COMERCIALIZACAO,LANCAMENTO_IMEDIATO,
@@ -1126,7 +1288,7 @@ ALGORITMO_ID,DESCONTO_LOGISTICA_ID,EDITOR_ID,TIPO_PRODUTO_ID,DESCRICAO_DESCONTO,
 TIPO_SEGMENTO_PRODUTO_ID,DESCONTO_ID,codigo_icd,GRUPO_EDITORIAL,geracao_automatica,
 FORMA_FISICA,SUB_GRUPO_EDITORIAL)
 select distinct
-IF(dataGeracaoArquivo = '00000000',sysdate(),str_to_date(dataGeracaoArquivo,'%Y%m%d')),
+sysdate(), -- IF(dataGeracaoArquivo = '00000000',sysdate(),str_to_date(dataGeracaoArquivo,'%Y%m%d')),
 1,-- IF(status ='A',1,0), 
 codigoProduto,
 CAST(codContexto AS UNSIGNED),
@@ -1387,7 +1549,7 @@ select 'PRODUTO - DESCONTO:',count(*) from PRODUTO; -- Log
 --
 
 insert into produto_fornecedor
-select p.id,f.id from produto p , carga_prodin_pub c, fornecedor f
+select distinct p.id,f.id from produto p , carga_prodin_pub c, fornecedor f
 where p.codigo = c.codigoProduto
 and f.cod_interface = c.codigoDistribuidor;
 
@@ -1767,6 +1929,7 @@ select distinct
 sysdate(),
 codigoCota,
 0,
+/*
 CASE
 WHEN situacaoCota = 1 then 'ATIVO'
 WHEN situacaoCota = 2 then 'SUSPENSO'
@@ -1774,6 +1937,15 @@ WHEN situacaoCota = 3 then 'PENDENTE'
 WHEN situacaoCota = 4 then 'INATIVO'
 WHEN situacaoCota = 5 then 'PENDENTE'
 ELSE 'PENDENTE' -- FIXME Nao deveria entrar no else
+END,
+*/
+CASE
+WHEN situacaoCota = 1 then 'ATIVO'
+WHEN situacaoCota = 2 then 'SUSPENSO'
+WHEN situacaoCota = 3 then 'INATIVO'
+WHEN situacaoCota = 4 then 'PENDENTE'
+WHEN situacaoCota = 5 then 'SUSPENSO'
+ELSE 'SUSPENSO' -- FIXME Nao deveria entrar no else
 END,
 1,
 1,
@@ -1787,6 +1959,7 @@ where (p.cnpj = c.cnpj or p.cpf = c.cpf);
 
 select 'COTA:',count(*) from COTA; -- Log
 
+/*
 insert into cota (INICIO_ATIVIDADE,INICIO_TITULARIDADE,NUMERO_COTA,POSSUI_CONTRATO,
 SITUACAO_CADASTRO,SUGERE_SUSPENSAO,SUGERE_SUSPENSAO_DISTRIBUIDOR,PESSOA_ID,TIPO_COTA)
 select distinct
@@ -1803,6 +1976,7 @@ END ,
 from CARGA_MDC_BANCA 
 where codigoCota not in (select numero_cota from cota);
 
+*/
 select 'COTA + BANCA:',count(*) from COTA; -- Log
 
 insert into COTA_FORNECEDOR
@@ -1849,12 +2023,13 @@ select 'ENDERECO (COTA):',count(*) from ENDERECO; -- Log
 
 -- FIXME Endereco Cota
 insert into endereco_cota (PRINCIPAL,TIPO_ENDERECO,ENDERECO_ID,COTA_ID)
+select * from (
 select 
-1,
-'COMERCIAL',
-(select ed.id from cota ct,endereco ed where ct.numero_cota = codigoCota and ct.pessoa_id = ed.pessoa_id limit 1),
-(select ct.id from cota ct where ct.numero_cota = codigoCota limit 1)
-from carga_mdc_cota;
+1 AS PRINCIPAL,
+'COMERCIAL' AS TIPO_ENDERECO,
+(select ed.id from cota ct,endereco ed where ct.numero_cota = codigoCota and ct.pessoa_id = ed.pessoa_id limit 1) as ENDERECO_ID,
+(select ct.id from cota ct where ct.numero_cota = codigoCota limit 1) AS COTA_ID
+from carga_mdc_cota) a where a.ENDERECO_ID is not null and a.COTA_ID is not null;
 
 select 'ENDERECO_COTA:',count(*) from ENDERECO_COTA; -- Log
 
@@ -1887,9 +2062,12 @@ select 'TELEFONE_COTA:',count(*) from TELEFONE_COTA; -- Log
 -- BANCA - PDV
 --
 
+-- ALTER TABLE pdv
+-- ADD COLUMN LINHA bigint(20);
+
 insert into pdv (ARRENDATARIO,BALCAO_CENTRAL,PONTO_PRINCIPAL,POSSUI_CARTAO_CREDITO,
 POSSUI_COMPUTADOR,POSSUI_LUMINOSO,DENTRO_OUTRO_ESTABELECIMENTO,NOME,PONTO_REFERENCIA,
-PORCENTAGEM_FATURAMENTO,POSSUI_SISTEMA_IPV,QTDE_FUNCIONARIOS,STATUS_PDV,COTA_ID,TIPO_PONTO_PDV_ID)
+PORCENTAGEM_FATURAMENTO,POSSUI_SISTEMA_IPV,QTDE_FUNCIONARIOS,STATUS_PDV,COTA_ID,TIPO_PONTO_PDV_ID,LINHA)
 select 
 0,
 0,
@@ -1905,8 +2083,9 @@ pontoReferencia,
 0,
 'ATIVO',
 (select id from cota where numero_cota = codigoCota limit 1),
-CAST(tipoPontoVenda AS UNSIGNED)
-from CARGA_MDC_BANCA;
+1, -- CAST(tipoPontoVenda AS UNSIGNED),
+linha
+from CARGA_MDC_BANCA where codigoCota  in (select numero_cota from cota) ;
 
 update pdv pdv,
 (select min(id) as id from pdv group by cota_id) pr
@@ -1915,9 +2094,12 @@ where pdv.id =pr.id;
 
 select 'BANCA|PDV:',count(*) from PDV; -- Log
 
+-- ALTER TABLE endereco
+-- ADD COLUMN LINHA bigint(20);
+
 -- Endereco
 insert into endereco (BAIRRO,CEP,CIDADE,CODIGO_BAIRRO,CODIGO_CIDADE_IBGE,CODIGO_UF,
-COMPLEMENTO,LOGRADOURO,NUMERO,TIPO_LOGRADOURO,UF,PESSOA_ID)
+COMPLEMENTO,LOGRADOURO,NUMERO,TIPO_LOGRADOURO,UF,PESSOA_ID,LINHA)
 select 
 '',
 cep,
@@ -1930,17 +2112,27 @@ trim(endereco),
 NULL, -- FIXME
 NULL,
 siglaUf,
-(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota limit 1)
+(select ct.pessoa_id from cota ct where ct.numero_cota = codigoCota limit 1),
+linha
 from carga_mdc_banca;
 
 -- Endereco PDV
 insert into endereco_pdv (PRINCIPAL,TIPO_ENDERECO,ENDERECO_ID,PDV_ID)
-select 
+select distinct
 1,
 'COMERCIAL',
-(select ed.id from cota ct,endereco ed where ct.numero_cota = codigoCota and ct.pessoa_id = ed.pessoa_id limit 1),
-(select pdv.id from pdv where pdv.cota_id = (select ct.id from cota ct where ct.numero_cota = codigoCota limit 1) limit 1)
-from carga_mdc_banca;
+ed.id,
+pdv.id
+from carga_mdc_banca ca, cota co , endereco ed,pdv pdv
+where ca.codigoCota = co.numero_cota
+and co.id = pdv.cota_id
+and ca.linha = ed.linha
+and ca.linha = pdv.linha
+and pdv.linha = ed.linha
+and co.pessoa_id = ed.pessoa_id
+and ed.id not in(select endereco_id from endereco_cota)
+and ca.codigoCota  in (select numero_cota from cota) ;
+
 
 -- Telefone
 insert into telefone (DDD,NUMERO,PESSOA_ID)
@@ -1967,41 +2159,86 @@ and tel.pessoa_id = p.id;
 -- ####################################################################
 
 -- Normalizacao de endereços (verificar os que faltam) e os tipos logradouro
+
+
+update endereco set tipo_logradouro = 'TRAVESSA'  where upper(substr(logradouro,1,8)) in ('TRAVESSA');
+
+update endereco set logradouro = substring( logradouro,8) 
+where upper(substring(logradouro,1,8)) in ('TRAVESSA');
+
+update endereco set tipo_logradouro = 'ALAMEDA'  where upper(substr(logradouro,1,7)) in ('ALAMEDA');
+update endereco set tipo_logradouro = 'AVENIDA'  where upper(substr(logradouro,1,7)) in ('AVENIDA');
+update endereco set tipo_logradouro = 'RODOVIA'  where upper(substr(logradouro,1,7)) in ('RODOVIA');
+update endereco set tipo_logradouro = 'VIADUTO'  where upper(substr(logradouro,1,7)) in ('VIADUTO');
+update endereco set tipo_logradouro = 'ESTRADA'  where upper(substr(logradouro,1,7)) in ('ESTRADA');
+
+update endereco set logradouro = substring( logradouro,7) 
+where upper(substring(logradouro,1,7)) in ('ALAMEDA','AVENIDA','RODOVIA','VIADUTO','ESTRADA');
+
+
+update endereco set tipo_logradouro = 'LARGO'    where upper(substr(logradouro,1,5)) in ('LARGO');
+update endereco set tipo_logradouro = 'PRAÇA'    where upper(substr(logradouro,1,5)) in ('PRACA','PRAÇA');
+
+update endereco set logradouro = substring( logradouro,5) 
+where upper(substring(logradouro,1,5)) in ('LARGO','PRACA','PRAÇA');
+
+update endereco set tipo_logradouro = 'ESTRADA'  where upper(substr(logradouro,1,4)) in ('EST ');
+
+update endereco set logradouro = substring( logradouro,4) 
+where upper(substring(logradouro,1,4)) in ('EST ');
+
+
+-- 3 caracteres
 update endereco set tipo_logradouro = 'RUA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('Rua','R. ','R..','Rua');
+where upper(substr(logradouro,1,3)) in ('R. ','R..','RUA');
 
 update endereco set tipo_logradouro = 'AVENIDA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('Av.','A. ','A..');
+where upper(substr(logradouro,1,3)) in ('AV.','A. ','A..','AV ');
 
 update endereco set tipo_logradouro = 'PRAÇA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('PC.','PCA ','P..');
+where upper(substr(logradouro,1,3)) in ('PC.','PCA','P..','PÇA','PC ','PÇ ');
 
 update endereco set tipo_logradouro = 'ESTRADA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('ES.');
+where upper(substr(logradouro,1,3)) in ('ES.','ES ');
 
 update endereco set tipo_logradouro = 'LARGO'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('LR.');
+where upper(substr(logradouro,1,3)) in ('LR.','LR ');
 
 update endereco set tipo_logradouro = 'RODOVIA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('RO.');
+where upper(substr(logradouro,1,3)) in ('RO.','RO ','ROD');
 
-update endereco set tipo_logradouro = 'ALAMENDA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('AL.');
+update endereco set tipo_logradouro = 'ALAMEDA'
+where upper(substr(logradouro,1,3)) in ('AL.','AL ');
 
 update endereco set tipo_logradouro = 'TRAVESSA'
-where tipo_logradouro is null
-and substr(logradouro,1,3) in ('TR.','TV.');
+where upper(substr(logradouro,1,3)) in ('TR.','TV.','TR ','TV ');
 
-update endereco set logradouro=substring( logradouro,5) 
-where logradouro <> '   ' 
-and substring( logradouro,1,3) in ('Rua','PC.','AV.','RUA','ES.','R..','LR.','RO.','AL.','TR.','TV.');
+update endereco set logradouro = substring( logradouro,4) 
+where upper(substring( logradouro,1,3)) in (
+'R. ','R..','RUA',
+'AV.','A. ','A..','AV ',
+'PC.','PCA','P..','PÇA','PC ','PÇ ',
+'ES.','ES ',
+'LR.','LR ',
+'RO.','RO ','ROD'
+'AL.','AL ',
+'TR.','TV.','TR ','TV ');
+
+update endereco set tipo_logradouro = 'AVENIDA'  where upper(substr(logradouro,1,2)) in ('A.','A:');
+update endereco set tipo_logradouro = 'RUA' 	 where upper(substr(logradouro,1,2)) in ('R.','R:','R ');
+update endereco set tipo_logradouro = 'VIADUTO'  where upper(substr(logradouro,1,2)) in ('VD');
+
+update endereco set logradouro = substring( logradouro,1) 
+where substring(logradouro,1,1) in (' ','.',':','-','_',',');
+
+update endereco set logradouro = substring( logradouro,1) 
+where substring(logradouro,1,1) in (' ','.',':','-','_',',');
+
+
+
+
+-- FIXME Verificar os nulos
+
 
 -- FIXME Remover isso assim que possivel
 update telefone t
@@ -2028,7 +2265,7 @@ where e.TIPO_LOGRADOURO in ('PRUA', 'TRUA')
 
 select 'FIM CARGA_PRODIN_MDC',sysdate(); -- Log
 
-
+ 
 
 
 

@@ -13,8 +13,7 @@ public class CabecalhoNotaDTO {
 	private Date dataEmissao;
 	private Date dataEntrada;
 	private String valorTotal;
-	
-	
+	private Long natureaOperacaoId;
 	
 	public Long getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
@@ -137,6 +136,14 @@ public class CabecalhoNotaDTO {
 		this.valorTotal = valorTotal;
 	}
 
+	public Long getNatureaOperacaoId() {
+		return natureaOperacaoId;
+	}
+	
+	public void setNatureaOperacaoId(Long natureaOperacaoId) {
+		this.natureaOperacaoId = natureaOperacaoId;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -173,6 +180,4 @@ public class CabecalhoNotaDTO {
 			return false;
 		return true;
 	}
-	
-	
 }

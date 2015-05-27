@@ -55,6 +55,9 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
+import br.com.abril.nds.enums.Dominio;
+import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -69,6 +72,7 @@ import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
+import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCota;
 import br.com.abril.nds.model.cadastro.HistoricoNumeroCotaPK;
@@ -117,6 +121,7 @@ import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
+import br.com.abril.nds.repository.FlagPendenteAtivacaoRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
@@ -281,6 +286,9 @@ public class CotaServiceImpl implements CotaService {
     @Autowired
     private CotaBaseService cotaBaseService;
     
+    @Autowired
+    private FlagPendenteAtivacaoRepository flagPendenteAtivacaoRepository;
+
     @Autowired
     private ParametroCobrancaDistribuicaoCotaRepository parametroCobrancaDistribuicaoCotaRepository;
     
@@ -1244,33 +1252,48 @@ public class CotaServiceImpl implements CotaService {
         if (cota == null) {
         	
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
-        }
-        
-        final CotaDTO cotaDTO = new CotaDTO();
-        cotaDTO.setIdCota(cota.getId());
-        cotaDTO.setNumeroCota(cota.getNumeroCota());
-        cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
-        cotaDTO.setDataInclusao(cota.getInicioAtividade());
-        cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
-        cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica() != null ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false);
-        cotaDTO.setStatus(cota.getSituacaoCadastro());
-        cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
-        cotaDTO.setUtilizaIPV(cota.isUtilizaIPV());
-        
-        if (cota.getTipoDistribuicaoCota() != null) {
-            cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
-            cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
-        }
-        
-        this.atribuirInicioEFimPeriodoCota(cotaDTO, cota.getId());
-        this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
-        this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
-        
-        processarTitularidadeCota(cota, cotaDTO);
-        
-        cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
-        cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
-        
+		}
+		
+		final CotaDTO cotaDTO = new CotaDTO();
+		cotaDTO.setIdCota(cota.getId());
+		cotaDTO.setNumeroCota(cota.getNumeroCota());
+		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
+		cotaDTO.setDataInclusao(cota.getInicioAtividade());
+		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null) ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica() : "");
+		
+		FlagPendenteAtivacao flagContribuinte = flagPendenteAtivacaoRepository.obterPor(Flag.COTA_CONTRIBUINTE_ICMS, cotaDTO.getIdCota());
+		FlagPendenteAtivacao flagExigeNFe = flagPendenteAtivacaoRepository.obterPor(Flag.COTA_EXIGE_NF_E, cotaDTO.getIdCota());
+		
+		if(flagExigeNFe != null) {
+			cotaDTO.setExigeNFE(flagExigeNFe.isValor());
+		} else {
+			cotaDTO.setExigeNFE((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica() : false);
+		}
+		
+		if(flagContribuinte != null) {
+			cotaDTO.setContribuinteICMS(flagContribuinte.isValor());
+		} else {
+			cotaDTO.setContribuinteICMS((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() != null) ? cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS() : false);
+		}
+		
+		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		cotaDTO.setTipoCotaFinanceiro(cota.getTipoCota());
+		cotaDTO.setUtilizaIPV(cota.isUtilizaIPV());
+		
+		if (cota.getTipoDistribuicaoCota() != null) {
+		    cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
+		    cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
+		}
+		
+		this.atribuirInicioEFimPeriodoCota(cotaDTO, cota.getId());
+		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
+		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
+		
+		processarTitularidadeCota(cota, cotaDTO);
+		
+		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
+		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
+		
         return cotaDTO;
     }
     
@@ -1424,55 +1447,57 @@ public class CotaServiceImpl implements CotaService {
         }
         
         if (cotaComDebitos(idCota)){
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "A [Cota] possui dívidas em aberto e não pode ser excluída!");
-        }
-        
-        final Cota cota  = cotaRepository.buscarPorId(idCota);
-        
-        try{
-            
-            for (final HistoricoSituacaoCota hist : cota.getHistoricos()){
-                
-                historicoSituacaoCotaRepository.remover(hist);
-            }
-            
-            cotaRepository.remover(cota);
-            
-        } catch (final DataIntegrityViolationException e) {
-            LOGGER.error(e.getMessage(), e);
-            
-            throw new ValidacaoException(TipoMensagem.ERROR, "Exclusão não permitida, registro possui dependências!");
-            
-        }
-    }
-    
-    @Override
-    @Transactional(readOnly=true)
-    public Integer gerarNumeroSugestaoCota(){
-        
-        return cotaRepository.gerarSugestaoNumeroCota();
-    }
-    
-    @Override
-    @Transactional
-    public Long salvarCota(final CotaDTO cotaDto){
-        
-        validarParametrosObrigatoriosCota(cotaDto);
-        
-        validarFormatoDados(cotaDto);
-        
-        validarHistoricoCotaBase(cotaDto);
-        
-        Cota cota  = null;
-        
-        if(cotaDto.getIdCota() != null) {
-            cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
-        }
-        
-        final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-        
-        boolean incluirPDV = false;
+
+            throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
+		}
+		
+		Cota cota  = cotaRepository.buscarPorId(idCota);
+	
+		try{	
+			
+			for (HistoricoSituacaoCota hist : cota.getHistoricos()){
+				
+				this.historicoSituacaoCotaRepository.remover(hist);
+			}
+			
+			cotaRepository.remover(cota);
+			
+		}catch (RuntimeException e) {
+			
+			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+                throw new ValidacaoException(TipoMensagem.ERROR, "Exclusão não permitida, registro possui dependências!");
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Integer gerarNumeroSugestaoCota(){
+	
+		return cotaRepository.gerarSugestaoNumeroCota();
+	}
+	
+	@Override
+	@Transactional
+	public Long salvarCota(CotaDTO cotaDto){
+		
+		validarParametrosObrigatoriosCota(cotaDto);
+		
+		validarFormatoDados(cotaDto);
+		
+		validarHistoricoCotaBase(cotaDto);
+		
+		Cota cota  = null;
+		
+		if(cotaDto.getIdCota()!= null){
+			cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
+		}
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		boolean incluirPDV = false;
+
+
         // Flag indica criação de uma nova cota
         boolean newCota = false;
         if(cota == null) {
@@ -1661,51 +1686,83 @@ public class CotaServiceImpl implements CotaService {
      * @param cota
      * @param cotaDTO
      */
-    private void persisteDadosPDV(final Cota cota,final CotaDTO cotaDTO) {
-        
-        if(cota.getPdvs() == null || cota.getPdvs().isEmpty()){
-            
-            final PDV pdv = new PDV();
-            pdv.setCaracteristicas(new CaracteristicasPDV());
-            pdv.getCaracteristicas().setPontoPrincipal(Boolean.TRUE);
-            pdv.setDataInclusao(new Date());
-            pdv.setCota(cota);
-            
-            if( TipoPessoa.JURIDICA.equals(cotaDTO.getTipoPessoa())){
-                
-                pdv.setNome(cotaDTO.getRazaoSocial());
-            }
-            else {
-                
-                pdv.setNome(cotaDTO.getNomePessoa());
-            }
-            
-            pdvRepository.adicionar(pdv);
-        }
-    }
-    
-    /**
+	private void persisteDadosPDV(Cota cota,CotaDTO cotaDTO) {
+		
+		if(cota.getPdvs() == null || cota.getPdvs().isEmpty()){
+			
+			PDV pdv = new PDV();
+			pdv.setCaracteristicas(new CaracteristicasPDV());
+			pdv.getCaracteristicas().setPontoPrincipal(Boolean.TRUE);
+			pdv.setDataInclusao(new Date());
+			pdv.setCota(cota);
+			
+			if( TipoPessoa.JURIDICA.equals(cotaDTO.getTipoPessoa())){
+				
+				pdv.setNome(cotaDTO.getRazaoSocial());
+			}
+			else {
+				
+				pdv.setNome(cotaDTO.getNomePessoa());
+			}
+			
+			pdvRepository.adicionar(pdv);
+		}
+	}
+	
+	/**
      * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota
      * 
      * @param cota
      * @param cotaDto
      * @return ParametrosCotaNotaFiscalEletronica
      */
-    private ParametrosCotaNotaFiscalEletronica getParamNFE(final Cota cota, final CotaDTO cotaDto){
-        
-        ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica();
-        
-        if(paramNFE == null){
-            paramNFE = new ParametrosCotaNotaFiscalEletronica();
-        }
-        
-        paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
-        paramNFE.setEmiteNotaFiscalEletronica(cotaDto.isEmiteNFE());
-        
-        return paramNFE;
-    }
+	private ParametrosCotaNotaFiscalEletronica getParamNFE(Cota cota, CotaDTO cotaDto){
+		
+		ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica(); 
+	    
+	    if(paramNFE == null) {
+	    	paramNFE = new ParametrosCotaNotaFiscalEletronica();
+	    }
+	    		
+	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
+	    // Parametro ajustado ao fechar o dia para nao impactar em cenarios do decorrer do dia
+	    //paramNFE.setExigeNotaFiscalEletronica(cotaDto.isExigeNFE());
+	    //paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
+	    
+	    
+	    FlagPendenteAtivacao flagCotaExigeNFe = 
+	    		flagPendenteAtivacaoRepository.obterPor(Flag.COTA_EXIGE_NF_E, cotaDto.getIdCota());
+	    
+	    FlagPendenteAtivacao flagCotaContribuinteICMS = 
+	    		flagPendenteAtivacaoRepository.obterPor(Flag.COTA_CONTRIBUINTE_ICMS, cotaDto.getIdCota());
+	    
+	    if(flagCotaExigeNFe == null) {
+	    	
+	    	flagCotaExigeNFe = new FlagPendenteAtivacao(Flag.COTA_EXIGE_NF_E, Flag.COTA_EXIGE_NF_E.getDescricao()
+	    					, Dominio.COTA, cotaDto.isExigeNFE(), cotaDto.getIdCota());
+	    } else {
+	    	
+	    	flagCotaExigeNFe.setValor(cotaDto.isExigeNFE());
+	    }
+	    
+	    
+	    if(flagCotaContribuinteICMS == null) {
+	    	
+	    	flagCotaContribuinteICMS = 
+	    			new FlagPendenteAtivacao(Flag.COTA_CONTRIBUINTE_ICMS, Flag.COTA_CONTRIBUINTE_ICMS.getDescricao()
+	    					, Dominio.COTA, cotaDto.isContribuinteICMS(), cotaDto.getIdCota());
+	    } else {
+	    	
+	    	flagCotaContribuinteICMS.setValor(cotaDto.isContribuinteICMS());
+	    }
+	    
+	    flagPendenteAtivacaoRepository.merge(flagCotaExigeNFe);
+	    flagPendenteAtivacaoRepository.merge(flagCotaContribuinteICMS);
+	    
+	    return paramNFE;
+	}
     
-    /**
+	/**
      * Validas as informações referente ao cadasto de uma nova cota.
      * 
      * @param cotaDto
@@ -1780,7 +1837,7 @@ public class CotaServiceImpl implements CotaService {
             }
         }
         
-        if(cotaDto.isEmiteNFE()){
+        if(cotaDto.isExigeNFE()){
             if(cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty()){
                 mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
             }
@@ -2281,6 +2338,12 @@ public class CotaServiceImpl implements CotaService {
         }
         
         return listaCotas;
+    }
+    
+    @Override
+    @Transactional
+    public List<Cota> obterConjuntoCota(FiltroNFeDTO filtro) {
+        return cotaRepository.obterConjuntoCota(filtro);
     }
     
     /**

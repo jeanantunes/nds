@@ -30,6 +30,7 @@ public interface Repository<T, K extends Serializable> {
 	
 	T merge(T entity);
 
+	@SuppressWarnings("unchecked")
 	public abstract void removerPorId(K... id);
 
 	void flush();

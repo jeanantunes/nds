@@ -54,8 +54,8 @@
     <tr>
       <td>E-mail NF-e:</td>
       <td><input type="text" style="width:230px" maxlength="200" name="cotaDTO.emailNF" id="emailNF" onblur="MANTER_COTA.validarEmail('#emailNF')" /></td>
-      <td>Emite NF-e?</td>
-      <td><input type="checkbox" name="cotaDTO.emiteNFE" id="emiteNFE" /></td>
+      <td>&Eacute; contr. do ICMS?&nbsp;<input type="checkbox" name="cotaDTO.contribuinteICMS" id="contribuinteICMS" onclick="MANTER_COTA.validarCotaContribuinteICMS()" onchange="MANTER_COTA.validarCotaContribuinteICMS()" /> </td>
+      <td>Exige Nota fiscal?&nbsp;<input type="checkbox" name="cotaDTO.exigeNFE" id="exigeNFE" /></td>
     </tr>
     <tr>
       <td>Status:</td>

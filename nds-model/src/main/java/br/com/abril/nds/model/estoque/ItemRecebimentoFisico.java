@@ -116,7 +116,9 @@ public class ItemRecebimentoFisico implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getItemNotaFiscal() == null) ? 0 : this.getItemNotaFiscal().hashCode());
+		result = prime * result + ((this.getRecebimentoFisico() == null) ? 0 : this.getRecebimentoFisico().hashCode());
 		return result;
 	}
 
@@ -129,13 +131,21 @@ public class ItemRecebimentoFisico implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ItemRecebimentoFisico other = (ItemRecebimentoFisico) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getItemNotaFiscal() == null) {
+			if (other.getItemNotaFiscal() != null)
+				return false;
+		} else if (!this.getItemNotaFiscal().equals(other.getItemNotaFiscal()))
+			return false;
+		if (this.getRecebimentoFisico() == null) {
+			if (other.getRecebimentoFisico() != null)
+				return false;
+		} else if (!this.getRecebimentoFisico().equals(other.getRecebimentoFisico()))
 			return false;
 		return true;
 	}
-	
-	
 }

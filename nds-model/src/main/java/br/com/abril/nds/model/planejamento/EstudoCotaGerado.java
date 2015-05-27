@@ -28,175 +28,149 @@ import br.com.abril.nds.model.cadastro.Cota;
 @SequenceGenerator(name="ESTUDO_COTA_GERADO_SEQ", initialValue = 1, allocationSize = 1)
 public class EstudoCotaGerado implements Serializable {
 
-    private static final long serialVersionUID = -2730755900853136814L;
+	private static final long serialVersionUID = -2730755900853136814L;
 
-    @Id
-    @GeneratedValue(generator = "ESTUDO_COTA_GERADO_SEQ")
-    @Column(name = "ID")
-    private Long id;
+	@Id
+	@GeneratedValue(generator = "ESTUDO_COTA_GERADO_SEQ")
+	@Column(name = "ID")
+	private Long id;
 
-    @Column(name = "QTDE_PREVISTA")
-    private BigInteger qtdePrevista;
+	@Column(name = "QTDE_PREVISTA")
+	private BigInteger qtdePrevista;
 
-    @Column(name = "QTDE_EFETIVA")
-    private BigInteger qtdeEfetiva;
+	@Column(name = "QTDE_EFETIVA")
+	private BigInteger qtdeEfetiva;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ESTUDO_ID")
-    private EstudoGerado estudo;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ESTUDO_ID")
+	private EstudoGerado estudo;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "COTA_ID")
     private Cota cota;
 
-    @Column(name = "REPARTE_MINIMO")
-    private BigInteger reparteMinimo;
+	@Column(name = "REPARTE_MINIMO")
+	private BigInteger reparteMinimo;
 
-    @Column(name = "REPARTE")
-    private BigInteger reparte;
-    
-    @Column(name="TIPO_ESTUDO",columnDefinition="VARCHAR(20) default 'NORMAL'")
+	@Column(name = "REPARTE")
+	private BigInteger reparte;
+
+	@Column(name="TIPO_ESTUDO",columnDefinition="VARCHAR(20) default 'NORMAL'")
 	@Enumerated(EnumType.STRING)
 	private TipoEstudoCota tipoEstudo;
 
-    @Column(name = "CLASSIFICACAO")
-    private String classificacao;
-    
-    @Column(name = "VENDA_MEDIA_NOMINAL")
-    private BigDecimal vendaMediaNominal;
-    
-    @Column(name = "REPARTE_JURAMENTADO_A_FATURAR")
-    private BigInteger reparteJuramentadoAFaturar;
-    
-    @Column(name = "QUANTIDADE_PDVS")
-    private Integer quantidadePDVS;
-    
-    @Column(name = "REPARTE_MAXIMO")
-    private BigInteger reparteMaximo;
-    
-    @Column(name = "VENDA_MEDIA_MAIS_N")
-    private Integer vendaMediaMaisN;
-    
-    @Column(name = "INDICE_CORRECAO_TENDENCIA")
-    private BigDecimal indiceCorrecaoTendencia;
-    
-    @Column(name = "INDICE_VENDA_CRESCENTE")
-    private BigDecimal indiceVendaCrescente;
-    
-    @Column(name = "PERCENTUAL_ENCALHE_MAXIMO")
-    private BigDecimal percentualEncalheMaximo;
-    
-    @Column(name = "MIX")
-    private Integer mix;
-    
-    @Column(name = "VENDA_MEDIA")
-    private BigDecimal vendaMedia;
-    
-    @Column(name = "COTA_NOVA")
-    private Boolean cotaNova;
-    
-    @Column(name = "REPARTE_INICIAL")
-    private BigInteger reparteInicial;
+	@Column(name = "CLASSIFICACAO")
+	private String classificacao;
 
-    public EstudoCotaGerado() {
+	@Column(name = "VENDA_MEDIA_NOMINAL")
+	private BigDecimal vendaMediaNominal;
 
-    }
+	@Column(name = "REPARTE_JURAMENTADO_A_FATURAR")
+	private BigInteger reparteJuramentadoAFaturar;
 
-    public EstudoCotaGerado(Long id) {
-	this.id=id;
-    }
+	@Column(name = "QUANTIDADE_PDVS")
+	private Integer quantidadePDVS;
 
-    public Long getId() {
-	return id;
-    }
+	@Column(name = "REPARTE_MAXIMO")
+	private BigInteger reparteMaximo;
 
-    public void setId(Long id) {
-	this.id = id;
-    }
+	@Column(name = "VENDA_MEDIA_MAIS_N")
+	private Integer vendaMediaMaisN;
 
-    public BigInteger getQtdePrevista() {
-	return qtdePrevista;
-    }
+	@Column(name = "INDICE_CORRECAO_TENDENCIA")
+	private BigDecimal indiceCorrecaoTendencia;
 
-    public void setQtdePrevista(BigInteger qtdePrevista) {
-	this.qtdePrevista = qtdePrevista;
-    }
+	@Column(name = "INDICE_VENDA_CRESCENTE")
+	private BigDecimal indiceVendaCrescente;
 
-    public BigInteger getQtdeEfetiva() {
-	return qtdeEfetiva;
-    }
+	@Column(name = "PERCENTUAL_ENCALHE_MAXIMO")
+	private BigDecimal percentualEncalheMaximo;
 
-    public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
-	this.qtdeEfetiva = qtdeEfetiva;
-    }
+	@Column(name = "MIX")
+	private Integer mix;
 
-    public EstudoGerado getEstudo() {
-	return estudo;
-    }
+	@Column(name = "VENDA_MEDIA")
+	private BigDecimal vendaMedia;
 
-    public void setEstudo(EstudoGerado estudo) {
-	this.estudo = estudo;
-    }
+	@Column(name = "COTA_NOVA")
+	private Boolean cotaNova;
 
-    public Cota getCota() {
-	return cota;
-    }
+	@Column(name = "REPARTE_INICIAL")
+	private BigInteger reparteInicial;
 
-    public void setCota(Cota cota) {
-	this.cota = cota;
-    }
+	public EstudoCotaGerado() {
 
-    public String getClassificacao() {
-	return classificacao;
-    }
+	}
 
-    public void setClassificacao(String classificacao) {
-	this.classificacao = classificacao;
-    }
+	public EstudoCotaGerado(Long id) {
+		this.id=id;
+	}
 
-    public BigInteger getReparte() {
-	return reparte;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setReparte(BigInteger reparte) {
-	this.reparte = reparte;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public BigInteger getReparteMinimo() {
-	return reparteMinimo;
-    }
+	public BigInteger getQtdePrevista() {
+		return qtdePrevista;
+	}
 
-    public void setReparteMinimo(BigInteger reparteMinimo) {
-	this.reparteMinimo = reparteMinimo;
-    }
+	public void setQtdePrevista(BigInteger qtdePrevista) {
+		this.qtdePrevista = qtdePrevista;
+	}
 
-	@Override
-    public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((id == null) ? 0 : id.hashCode());
-	return result;
-    }
+	public BigInteger getQtdeEfetiva() {
+		return qtdeEfetiva;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	EstudoCotaGerado other = (EstudoCotaGerado) obj;
-	
-	if(id==null && other.id==null)
-		return false;
-	
-	if (id!=null && !id.equals(other.id))
-	    return false;
-	return true;
-    }
-    
-    public TipoEstudoCota getTipoEstudo() {
+	public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
+		this.qtdeEfetiva = qtdeEfetiva;
+	}
+
+	public EstudoGerado getEstudo() {
+		return estudo;
+	}
+
+	public void setEstudo(EstudoGerado estudo) {
+		this.estudo = estudo;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	public BigInteger getReparteMinimo() {
+		return reparteMinimo;
+	}
+
+	public void setReparteMinimo(BigInteger reparteMinimo) {
+		this.reparteMinimo = reparteMinimo;
+	}
+
+	public TipoEstudoCota getTipoEstudo() {
 		return tipoEstudo;
 	}
 
@@ -298,5 +272,31 @@ public class EstudoCotaGerado implements Serializable {
 
 	public void setReparteInicial(BigInteger reparteInicial) {
 		this.reparteInicial = reparteInicial;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstudoCotaGerado other = (EstudoCotaGerado) obj;
+
+		if(this.getId()==null && other.id==null)
+			return false;
+
+		if (this.getId() !=null && !this.getId().equals(other.id))
+			return false;
+		return true;
 	}
 }

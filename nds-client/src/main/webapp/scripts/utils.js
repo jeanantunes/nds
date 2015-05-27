@@ -270,7 +270,7 @@ function montarTextoMensagem(campoTexto, mensagens) {
 			campoTexto.append('</br>');
 		}
 		
-		campoTexto.append(value);
+		campoTexto.append(value.replace(/\n/g, '<br />'));
 	});
 }
 
@@ -870,54 +870,71 @@ function insertTelaAnalise(divToHide, divToShow, estudo){
 	
 }
 
-   /**
-    * Ordena o Table Model considerando a coluna informada
-    */
-    function obterTableModelOrdenado(tableModel, col){
+/**
+ * @returns intervalo de datas validos (true) ou invalidos (false)
+ */
+function validarDatas(dataInicial, dataFinal) {
 	
-	    var sizeTableModel = tableModel.rows.length;
+	var dataSemFormatacao_1 = parseInt(dataInicial.split("/")[2].toString() + dataInicial.split("/")[1].toString() + dataInicial.split("/")[0].toString());
+	var dataSemFormatacao_2 = parseInt(dataFinal.split("/")[2].toString() + dataFinal.split("/")[1].toString() + dataFinal.split("/")[0].toString());
+	 
+	 if (dataSemFormatacao_2 >= dataSemFormatacao_1){
+	   return true;
+	 }else{
+		 return false;		
+	 }
+    
+    return false;
+}
 
-        var rows_tm = tableModel.rows;
-	  
-	    var tm_ordenado = {
-	    		               page : tableModel.page,
-			                   rows : new Array(),
-			                   total : tableModel.total
-	                      };
-	  
-	    while (tm_ordenado.rows.length < sizeTableModel){
+/**
+* Ordena o Table Model considerando a coluna informada
+*/
+function obterTableModelOrdenado(tableModel, col){
 
-	        var size_tm = rows_tm.length;
-	    	  
-	    	var valorMaior = '0';
-	
-	    	var i = 0;
-	    	  
-	    	var i_remove = -1;
-	    	  
-	    	while (i < size_tm) {
-	    		  
-	            row = rows_tm[i];
-	    		  
-	    		cell = row.cell;		
-	
-	    		if (cell[col] > valorMaior){
-	    			  
-	    	        valorMaior = cell[col];
-	
-	    			i_remove = i; 
-	    		}
-	    		  
-				i++;
-	    	}
-	    	  
-	    	tm_ordenado.rows.push(rows_tm[i_remove]);
-	    	  
-	        rows_tm.splice(i_remove,1);
-	    }		
-	    
-	    return tm_ordenado;
-    }
+    var sizeTableModel = tableModel.rows.length;
+
+    var rows_tm = tableModel.rows;
+  
+    var tm_ordenado = {
+    		               page : tableModel.page,
+		                   rows : new Array(),
+		                   total : tableModel.total
+                      };
+  
+    while (tm_ordenado.rows.length < sizeTableModel){
+
+        var size_tm = rows_tm.length;
+    	  
+    	var valorMaior = '0';
+
+    	var i = 0;
+    	  
+    	var i_remove = -1;
+    	  
+    	while (i < size_tm) {
+    		  
+            row = rows_tm[i];
+    		  
+    		cell = row.cell;		
+
+    		if (cell[col] > valorMaior){
+    			  
+    	        valorMaior = cell[col];
+
+    			i_remove = i; 
+    		}
+    		  
+			i++;
+    	}
+    	  
+    	tm_ordenado.rows.push(rows_tm[i_remove]);
+    	  
+        rows_tm.splice(i_remove,1);
+    }		
+    
+    return tm_ordenado;
+}
 
 //simply visual, let's you know when the correct iframe is selected
 /*$(window).on("focus", function(e) {

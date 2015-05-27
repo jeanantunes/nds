@@ -1120,10 +1120,7 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
         
         this.validarEntradaDadosPesquisa(dataInicial, dataFinal);
         
-        final FiltroConsultaDiferencaEstoqueDTO filtro =
-                this.carregarFiltroPesquisa(codigoProduto, idFornecedor,
-                        dataInicial, dataFinal, tipoDiferenca, numeroCota, nomeCota,
-                        sortorder, sortname, page, rp);
+        final FiltroConsultaDiferencaEstoqueDTO filtro = this.carregarFiltroPesquisa(codigoProduto, idFornecedor, dataInicial, dataFinal, tipoDiferenca, numeroCota, nomeCota, sortorder, sortname, page, rp);
         
         final List<Diferenca> listaDiferencas = diferencaEstoqueService.obterDiferencas(filtro);
         

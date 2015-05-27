@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -22,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -69,7 +70,7 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "CTRL_CONF_ENCALHE_ID")
 	private ControleConferenciaEncalhe controleConferenciaEncalhe;
 
-	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "controleConferenciaEncalheCota", cascade=CascadeType.ALL)
 	private List<NotaFiscalEntradaCota> notaFiscalEntradaCota = new ArrayList<NotaFiscalEntradaCota>();
 	
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
@@ -86,6 +87,12 @@ public class ControleConferenciaEncalheCota {
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 
+	@Column(name="PROCESSO_UTILIZA_NFE")
+	private boolean processoUtilizaNfe;
+	
+	@Column(name="NFE_DIGITADA")
+	private boolean nfeDigitada;
+	
 	/**
 	 * Obtém id
 	 * 
@@ -268,6 +275,22 @@ public class ControleConferenciaEncalheCota {
 		this.box = box;
 	}
 
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
+	}
+
+	public boolean isNfeDigitada() {
+		return nfeDigitada;
+	}
+
+	public void setNfeDigitada(boolean nfeDigitada) {
+		this.nfeDigitada = nfeDigitada;
+	}
+
 	/**
 	 * @return the numeroSlip
 	 */
@@ -315,9 +338,9 @@ public class ControleConferenciaEncalheCota {
 		if (notaFiscalEntradaCota != null && !notaFiscalEntradaCota.isEmpty()) {
 			for (NotaFiscalEntradaCota notaFiscal : notaFiscalEntradaCota) {
 				if (notaFiscal != null
-						&& notaFiscal.getTipoNotaFiscal() != null
-						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
-						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
+						&& notaFiscal.getNaturezaOperacao() != null) {
+//						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
+//						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
 
 					return notaFiscal;
 

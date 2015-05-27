@@ -1,10 +1,12 @@
 package br.com.abril.nds.model.aprovacao;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -14,9 +16,14 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @MappedSuperclass
-public abstract class Aprovacao {
+public abstract class Aprovacao implements Serializable {
 	
-	@ManyToOne(optional = true)
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -225924432753902717L;
+
+	@ManyToOne(fetch=FetchType.LAZY, optional = true)
 	@JoinColumn(name = "APROVADOR_ID")
 	private Usuario aprovador;
 	

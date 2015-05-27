@@ -47,6 +47,10 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalFechamentoCEI;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
@@ -147,6 +151,11 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
 		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
+	}
+	
+	@Transactional(readOnly=true)
+	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoSemCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoSemCEIntegracao(filtro);
 	}
 	
 	@Transactional
@@ -349,8 +358,17 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
 				totalMargemApurado = totalMargemApurado.add(itemFo.getValorMargemApurado());
 				totalMargemInformado = totalMargemInformado.add(itemFo.getValorMargemInformado());
-				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(),0L)));
-				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(),0L)));	
+				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeDevolucaoApurada(), 0L)));
+				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf(Util.nvl(itemFo.getQtdeVendaApurada(), 0L)));	
+				
+				//TODO: Ajustar os movimentos fiscais ao fechar a CE Integracao				
+				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+				listaOrigemMovsFiscais.add(new OrigemItemMovFechamentoFiscalFechamentoCEI());
+
+				MovimentoFechamentoFiscal mff = new MovimentoFechamentoFiscalFornecedor();
+				mff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+        		mff.setQtde(BigInteger.valueOf(itemFo.getQtdeEnviada() - itemFo.getQtdeDevolucaoApurada()));
+				
 			}
 			
 			cef.setTotalCreditoApurado(totalCreditoApurado);
@@ -442,6 +460,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		this.processaCE(filtro, itensAlterados, chamadasFornecedor);
 	}
+
+	
 	
 	private Diferenca processarDiferenca(ItemChamadaEncalheFornecedor item, 
 										 Usuario usuario,
@@ -698,31 +718,54 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
         }
-        
-        filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
-        
-        filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
+	    
+	    filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+	    filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
-		final BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
+	    BigInteger qntItens = BigInteger.ZERO;
+	    
+	    final FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
+	    
+	    switch (filtro.getComboCeIntegracao()) {
 		
+			case "COM":
+			
+				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
+				fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoCeIntegracao(filtro));
+				break;
+
+			case "SEM":
+				
+				qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoSemCeIntegracao(filtro);
+				
+				if(qntItens == null) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+				}
+				
+				fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoSemCEIntegracao(filtro));
+				
+				break;
+
+			default:
+			break;
+		
+		}
+	    
+	    fechamentoCEIntegracaoDTO.setConsolidado(this.obterConsolidadoCE(filtro));
+	    		
 		if(qntItens.compareTo(BigInteger.ZERO) == 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		final FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
-	
 		fechamentoCEIntegracaoDTO.setQntItensCE(qntItens.intValue());
-		
-		fechamentoCEIntegracaoDTO.setItensFechamentoCE(this.buscarItensFechamentoCeIntegracao(filtro));
-		
-		fechamentoCEIntegracaoDTO.setConsolidado(this.obterConsolidadoCE(filtro));
 		
 		fechamentoCEIntegracaoDTO.setSemanaFechada(this.verificarStatusSemana(filtro));
 		
 		return fechamentoCEIntegracaoDTO;
 	}
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro, BigDecimal qntVenda) {
@@ -760,12 +803,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
             throw new ValidacaoException(TipoMensagem.WARNING, "Semana é obrigatório");
         }
         
-        filtro.setPeriodoRecolhimento(
-                this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
+        filtro.setPeriodoRecolhimento(this.recolhimentoService.getPeriodoRecolhimento(Integer.parseInt(filtro.getSemana())));
         
         filtro.setCodigoDistribuidorFornecdor(this.getCodigoFornecedorInterface(filtro));
 		
-		return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+        if(filtro.getComboCeIntegracao().equals("SEM")) {        	
+        	return this.fechamentoCEIntegracaoRepository.buscarConsolidadoSemCeIntegracao(filtro);
+        } else {
+        	return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);        	
+        }
+        
 	}
 
 	@Override
@@ -1002,4 +1049,50 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		return null;
 	}
+
+	@Override
+	@Transactional
+	public void fecharSemCE(List<ItemFechamentoCEIntegracaoDTO> itens) {
+		System.out.println("okkk ");
+		
+		final Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for (ItemFechamentoCEIntegracaoDTO itemSemCe : itens) {
+			
+			 ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(itemSemCe.getCodigoProduto(), itemSemCe.getNumeroEdicao());
+			
+			this.gerarMovimentoEstoqueDevolucaoSemCEIntegracao(itemSemCe, dataOperacao, produtoEdicao);
+		}
+		
+	}
+	
+	/**
+     * Cria Movimento de Estoque de Devolução de Encalhe Fornecedor
+     * 
+     * @param itemFo
+     * @param dataOperacao
+     */
+    private void gerarMovimentoEstoqueDevolucaoSemCEIntegracao(ItemFechamentoCEIntegracaoDTO itemSemCe, Date dataOperacao, ProdutoEdicao produtoEdicao){
+    	
+		BigInteger quantidadeEncalhe = itemSemCe.getEncalhe();
+		
+		if (quantidadeEncalhe.compareTo(BigInteger.ZERO) == 0) {
+			
+			return;
+		}
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+    	
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(produtoEdicao.getId(), 
+				                                           usuario.getId(), 
+				                                           quantidadeEncalhe,
+				                                           tipoMovimentoEstoque,
+				                                           Origem.TRANSFERENCIA_DEVOLUCAO_FORNECEDOR);
+    }
+    
+	
 }

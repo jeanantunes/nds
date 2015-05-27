@@ -32,6 +32,7 @@ import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DiferencaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
@@ -44,6 +45,8 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
+import br.com.abril.nds.enums.Dominio;
+import br.com.abril.nds.enums.Flag;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -52,8 +55,11 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.FlagPendenteAtivacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -87,12 +93,17 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
@@ -119,11 +130,13 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsignadoRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
+import br.com.abril.nds.repository.FlagPendenteAtivacaoRepository;
 import br.com.abril.nds.repository.HistoricoEstoqueProdutoRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -140,11 +153,13 @@ import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
@@ -306,6 +321,21 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService; 
+	
+	@Autowired
+	private FlagPendenteAtivacaoRepository flagPendenteAtivacaoRepository; 
+	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
@@ -777,7 +807,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
 		if(this.isDiaComFechamentoRealizado(data)){
 			
-			return  fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_RECEBER);
+			return fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_RECEBER);
 		}
 			
 		return dividaService.sumarizacaoDividasReceberEm(data);
@@ -792,7 +822,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
     	if(this.isDiaComFechamentoRealizado(data)){
     		
-    		return  fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_VENCER);
+    		return fechamentoDiarioResumoConsolidadoDividaRepository.sumarizacaoDividas(data, TipoDivida.DIVIDA_A_VENCER);
     	}
     		
     	return dividaService.sumarizacaoDividasVencerApos(data);
@@ -992,7 +1022,40 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
     		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
     	}
+    	
+    	ajustarFlagsCota();
+    	
     }
+
+	private void ajustarFlagsCota() {
+		
+		List<FlagPendenteAtivacao> flagsPendentesAtivacao = flagPendenteAtivacaoRepository.obterPor(Dominio.COTA);
+    	
+    	for(FlagPendenteAtivacao fpa : flagsPendentesAtivacao) {
+    		
+    		Cota cota = cotaRepository.buscarPorId(fpa.getIdAlterado());
+    		if(cota == null) {
+    			continue;
+    		}
+    		
+    		if(cota.getParametrosCotaNotaFiscalEletronica() != null) {
+    			if(fpa.getFlag().equals(Flag.COTA_EXIGE_NF_E)) {
+    				cota.getParametrosCotaNotaFiscalEletronica().setExigeNotaFiscalEletronica(fpa.isValor());
+    			}
+    			
+    			if(fpa.getFlag().equals(Flag.COTA_CONTRIBUINTE_ICMS)) {
+    				cota.getParametrosCotaNotaFiscalEletronica().setContribuinteICMS(fpa.isValor());
+    			}
+    		}
+    		
+    		cotaRepository.merge(cota);
+    		
+    	}
+    	
+    	for(FlagPendenteAtivacao fpa : flagsPendentesAtivacao) {
+    		flagPendenteAtivacaoRepository.remover(fpa);
+    	}
+	}
     
     private Date liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
     	
@@ -1713,6 +1776,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		String dir = ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator;
 		File diretorio = new File(dir); 
+		
+		if(diretorio == null || diretorio.listFiles() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, Arrays.asList(
+					String.format("O diretório %s não existe.", diretorio),
+					"É necessário criá-lo com permissões de leitura e escrita."));
+		}
+
 		for(File input : diretorio.listFiles()) {
 			if(input.isDirectory()) continue;			
 			input.delete();
@@ -1797,12 +1868,54 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
 		
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoService.obterNaturezaOperacaoDevolucaoSimbolica(TipoDestinatario.DISTRIBUIDOR);
+		boolean desobrigaEmissaoDevolucaoSimbolica = false;
+		if(naturezaOperacao != null) {
+			
+			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+				
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+					if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+						if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+							desobrigaEmissaoDevolucaoSimbolica = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		naturezaOperacao = naturezaOperacaoService.obterNaturezaOperacaoVendaConsignado(TipoDestinatario.COTA);
+		boolean desobrigaEmissaoVendaConsignado = false;
+		if(naturezaOperacao != null) {
+			
+			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+				
+				for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+					if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+						if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+							desobrigaEmissaoVendaConsignado = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
 		for (Lancamento lancamento : lancamentos) {
 			
 			lancamento.setStatus(StatusLancamento.RECOLHIDO);
 			lancamento.setUsuario(usuario);
 			
 			this.lancamentoRepository.merge(lancamento);
+			
+			movimentoFechamentoFiscalRepository.atualizarMovimentosFechamentosFiscaisPorLancamento(
+					lancamento.getId(), 
+					desobrigaEmissaoDevolucaoSimbolica, 
+					desobrigaEmissaoVendaConsignado);
+			
 		}
 	}
 	

@@ -16,7 +16,7 @@ public class LogFuncionalAspect {
 	
 	@SuppressWarnings("rawtypes")
 	@Around(value = "@annotation(logFuncional)", argNames = "joinPoint, logFuncional")
-	public Object logar(ProceedingJoinPoint joinPoint,LogFuncional logFuncional) throws Throwable {
+	public Object logar(ProceedingJoinPoint joinPoint, LogFuncional logFuncional) throws Throwable {
 		
 		if (logFuncional == null) {
 			

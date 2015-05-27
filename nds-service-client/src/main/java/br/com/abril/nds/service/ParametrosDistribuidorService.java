@@ -2,8 +2,11 @@ package br.com.abril.nds.service;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 
 /**
@@ -37,4 +40,20 @@ public interface ParametrosDistribuidorService {
 	public InputStream getLogotipoDistribuidor();
 	
 	public ControleConferenciaEncalhe obterControleConferenciaEncalhe(Date dataOperacao);
+	
+	/**
+	 * @return
+	 */
+	public List<DistribuidorTipoNotaFiscal> obterTiposNotaFiscalDistribuidor();
+
+	/**
+	 * @return
+	 */
+	public List<NotaFiscalTipoEmissao> obterTiposEmissoesNotaFiscalDistribuidor();
+
+	/**
+	 * @return
+	 */
+	public List<String> obterEstadosAtendidosPeloDistribuidor();
+	
 }

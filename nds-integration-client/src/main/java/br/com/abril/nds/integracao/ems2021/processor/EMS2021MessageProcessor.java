@@ -1,33 +1,16 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang.StringUtils;
-import org.lightcouch.CouchDbClient;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS2021Input;
-import br.com.abril.nds.integracao.model.canonic.EMS2021InputItem;
-import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.integracao.Message;
-import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
-import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.service.EstrategiaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {

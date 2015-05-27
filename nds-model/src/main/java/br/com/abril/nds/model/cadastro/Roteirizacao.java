@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,6 +18,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -24,6 +27,7 @@ import org.hibernate.annotations.CascadeType;
 @Entity
 @Table(name = "ROTEIRIZACAO")
 @SequenceGenerator(name="ROTEIRIZACAO_SEQ", initialValue = 1, allocationSize = 1)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Roteirizacao implements Serializable{
 
 
@@ -41,7 +45,7 @@ public class Roteirizacao implements Serializable{
 	@JoinColumn(name = "BOX_ID", unique = true)
 	private Box box;
 	
-	@OneToMany(orphanRemoval = true)
+	@OneToMany(orphanRemoval = true, fetch=FetchType.LAZY)
 	@JoinColumn( name="ROTEIRIZACAO_ID")
 	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE})
 	@OrderBy("ordem ASC")
@@ -139,4 +143,41 @@ public class Roteirizacao implements Serializable{
         }
         return null;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getBox() == null) ? 0 : this.getBox().hashCode());
+		result = prime * result + ((this.getRoteiros() == null) ? 0 : this.getRoteiros().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Roteirizacao other = (Roteirizacao) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getBox() == null) {
+			if (other.getBox() != null)
+				return false;
+		} else if (!this.getBox().equals(other.getBox()))
+			return false;
+		if (this.getRoteiros() == null) {
+			if (other.getRoteiros() != null)
+				return false;
+		} else if (!this.getRoteiros().equals(other.getRoteiros()))
+			return false;
+		return true;
+	}
 }

@@ -23,6 +23,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private int pacotePadrao;
 	
+	private boolean processoUtilizaNfe;
+	
 	private boolean possuiBrinde;
 	
 	private boolean parcialNaoFinal;
@@ -69,6 +71,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	
 	private String codigoDeBarras;
+	
+	private Date dataLancamento;
 	
 	private Date dataRecolhimento;
 	
@@ -144,6 +148,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
+	}
+
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
 	}
 
 	public Date getDataRecolhimento() {
@@ -276,6 +288,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setPacotePadrao(int pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
 	}
 
 	public boolean isPossuiBrinde() {

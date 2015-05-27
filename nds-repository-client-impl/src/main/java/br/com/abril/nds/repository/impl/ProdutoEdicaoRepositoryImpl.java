@@ -412,6 +412,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         if (statusLancamento != null) {
         	
 			query.setParameter("situacaoLancamento", statusLancamento.name());
+			query.setParameter("situacaoLancamentoInner", statusLancamento.name());
 		}	
 		
 		if (!StringUtil.isEmpty(codigoProduto)) {
@@ -482,6 +483,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("       where ");
 		
 		sql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
+		if (statusLancamento != null  )
+			 sql.append("   and l.STATUS = :situacaoLancamentoInner");
 		
 		sql.append("   ) ");
 		
@@ -559,6 +562,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("       where ");
 		
 		hql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
+		
+		if (statusLancamento != null  )
+			 hql.append("   and l.STATUS = :situacaoLancamentoInner");
 		
 		hql.append("   ) ");
 		

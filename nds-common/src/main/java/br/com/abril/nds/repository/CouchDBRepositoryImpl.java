@@ -28,11 +28,8 @@ public class CouchDBRepositoryImpl {
 		
 	}
 
-	/**
-	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
-	 * @param isDBDistribuidor TODO
-	 * 
-	 * @return client
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.CouchDBRepository#getCouchDBClient(java.lang.String, boolean)
 	 */
 	public CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor) {
 		
@@ -48,6 +45,9 @@ public class CouchDBRepositoryImpl {
 	}
 	
 	//@PostConstruct
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.repository.CouchDBRepository#initCouchDbClient()
+	 */
 	public void initCouchDbClient() throws MalformedURLException {
 		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
                 .url(

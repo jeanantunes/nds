@@ -39,8 +39,7 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 		ParametroSistemaGeralDTO dto = new ParametroSistemaGeralDTO();
 		dto.setParametrosSistema(lst);
 		
-		dto.setDtOperacaoCorrente(DateUtil.formatarDataPTBR(
-				this.distribuidorService.obterDataOperacaoDistribuidor()));
+		dto.setDtOperacaoCorrente(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		return dto;
 	}

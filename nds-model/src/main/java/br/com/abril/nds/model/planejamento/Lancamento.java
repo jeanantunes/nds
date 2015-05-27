@@ -460,8 +460,10 @@ public class Lancamento implements Serializable {
 			
 			this.status = StatusLancamento.CONFIRMADO;
 		}
-	}
 
+	}
+	
+	
 	/**
 	 * Caso o lançamento seja parcial, será necessário reajustar os próximos períodos para se adequar
 	 * à nova data de recolhimento. <br/>
@@ -524,12 +526,14 @@ public class Lancamento implements Serializable {
 							 StatusLancamento.RECOLHIDO,
 							 StatusLancamento.FECHADO).contains(this.status);
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getNumeroLancamento() == null) ? 0 : this.getNumeroLancamento().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
 		return result;
 	}
 
@@ -542,10 +546,20 @@ public class Lancamento implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Lancamento other = (Lancamento) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getNumeroLancamento() == null) {
+			if (other.getNumeroLancamento() != null)
+				return false;
+		} else if (!this.getNumeroLancamento().equals(other.getNumeroLancamento()))
+			return false;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
 			return false;
 		return true;
 	}

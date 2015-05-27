@@ -2,8 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
-
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;

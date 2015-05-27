@@ -22,6 +22,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -52,6 +54,7 @@ public class EstudoCota implements Serializable {
     private BigInteger qtdeEfetiva;
 
     @ManyToOne(optional = false)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "ESTUDO_ID")
     private Estudo estudo;
 
@@ -144,35 +147,35 @@ public class EstudoCota implements Serializable {
     }
 
     public EstudoCota(Long id) {
-	this.id=id;
+    	this.id=id;
     }
 
     public Long getId() {
-	return id;
+    	return id;
     }
 
     public void setId(Long id) {
-	this.id = id;
+    	this.id = id;
     }
 
     public BigInteger getQtdePrevista() {
-	return qtdePrevista;
+    	return qtdePrevista;
     }
 
     public void setQtdePrevista(BigInteger qtdePrevista) {
-	this.qtdePrevista = qtdePrevista;
+    	this.qtdePrevista = qtdePrevista;
     }
 
     public BigInteger getQtdeEfetiva() {
-	return qtdeEfetiva;
+    	return qtdeEfetiva;
     }
 
     public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
-	this.qtdeEfetiva = qtdeEfetiva;
+    	this.qtdeEfetiva = qtdeEfetiva;
     }
 
     public Estudo getEstudo() {
-	return estudo;
+    	return estudo;
     }
 
     public void setEstudo(Estudo estudo) {
@@ -180,93 +183,67 @@ public class EstudoCota implements Serializable {
     }
 
     public Cota getCota() {
-	return cota;
+    	return cota;
     }
 
     public void setCota(Cota cota) {
-	this.cota = cota;
+    	this.cota = cota;
     }
 
     public Set<RateioDiferenca> getRateiosDiferenca() {
-	return rateiosDiferenca;
+    	return rateiosDiferenca;
     }
 
     public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
-	this.rateiosDiferenca = rateiosDiferenca;
+    	this.rateiosDiferenca = rateiosDiferenca;
     }
 
     public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
-	return movimentosEstoqueCota;
+    	return movimentosEstoqueCota;
     }
 
     public void setMovimentosEstoqueCota(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
-	this.movimentosEstoqueCota = movimentosEstoqueCota;
+    	this.movimentosEstoqueCota = movimentosEstoqueCota;
     }
 
     /**
      * @return the itemNotaEnvios
      */
     public List<ItemNotaEnvio> getItemNotaEnvios() {
-	return itemNotaEnvios;
+    	return itemNotaEnvios;
     }
 
     /**
      * @param itemNotaEnvios the itemNotaEnvios to set
      */
     public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
-	this.itemNotaEnvios = itemNotaEnvios;
+    	this.itemNotaEnvios = itemNotaEnvios;
     }
 
     public String getClassificacao() {
-	return classificacao;
+    	return classificacao;
     }
 
     public void setClassificacao(String classificacao) {
-	this.classificacao = classificacao;
+    	this.classificacao = classificacao;
     }
 
     public BigInteger getReparte() {
-	return reparte;
+    	return reparte;
     }
 
     public void setReparte(BigInteger reparte) {
-	this.reparte = reparte;
+    	this.reparte = reparte;
     }
 
     public BigInteger getReparteMinimo() {
-	return reparteMinimo;
+    	return reparteMinimo;
     }
 
     public void setReparteMinimo(BigInteger reparteMinimo) {
-	this.reparteMinimo = reparteMinimo;
+    	this.reparteMinimo = reparteMinimo;
     }
 
-    @Override
-    public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((id == null) ? 0 : id.hashCode());
-	return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	EstudoCota other = (EstudoCota) obj;
-	
-	if(id==null && other.id==null)
-		return false;
-	
-	if (id!=null && !id.equals(other.id))
-	    return false;
-	return true;
-    }
-    
     public TipoEstudoCota getTipoEstudo() {
 		return tipoEstudo;
 	}
@@ -362,5 +339,41 @@ public class EstudoCota implements Serializable {
 	public void setCotaNova(Boolean cotaNova) {
 		this.cotaNova = cotaNova;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getEstudo() == null) ? 0 : this.getEstudo().hashCode());
+		result = prime * result + ((this.getMovimentosEstoqueCota() == null) ? 0 : this.getMovimentosEstoqueCota().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstudoCota other = (EstudoCota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getCota() == null) {
+			if (other.getCota() != null)
+				return false;
+		} else if (!this.getCota().equals(other.getCota()))
+			return false;
+		if (this.getEstudo() == null) {
+			if (other.getEstudo() != null)
+				return false;
+		} else if (!this.getEstudo().equals(other.getEstudo()))
+			return false;
+		return true;
+	}
 }

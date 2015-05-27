@@ -15,6 +15,7 @@ import br.com.abril.nds.util.export.Exportable;
 public class ItemNotaFiscalPendenteDTO implements Serializable {
 
 	private static final long serialVersionUID = 4238499960020175179L;
+	
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigoProduto;
 	

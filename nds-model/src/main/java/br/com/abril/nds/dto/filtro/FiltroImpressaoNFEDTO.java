@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -30,15 +31,17 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private Long idCotaFinal;
 
-	private Long idBoxInicial;
+	private Integer idBoxInicial;
 
-	private Long idBoxFinal;
+	private Integer idBoxFinal;
 
 	private Long idRoteiro;
 
 	private Long idRota;
 
 	private Long idTipoEmissao;
+
+	private Long idNaturezaOperacao;
 
 	private List<Long> idsFornecedores;
 
@@ -47,11 +50,15 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	private List<Long> idsCotas;
 	
 	private List<Long> numerosNotas;
+	
+	private List<Long> listIdFornecedor;
 
 	private PaginacaoVO paginacao;
 
 	private ColunaOrdenacaoImpressaoNFE ordenacaoColuna;
 
+	private NaturezaOperacao naturezaOperacao;
+	
 	public enum ColunaOrdenacaoImpressaoNFE {
 
 		COTA("cota");
@@ -146,20 +153,6 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		}
 
 		return (erros != null && erros.size() > 0) ? erros : null;
-
-		//TODO : Sérgio : Verificar se necessita validação
-		/*
-		if( this.getDataEmissao() == null ) {
-			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
-		if( this.getIdRoteiro() != null ) { }
-		if( this.getIdRota() != null ) { }
-		if( this.getIdTipoEmissao() != null ) { }
-		if( this.getIdsFornecedores() != null ) { }
-		if( this.getIdsProdutos() != null ) { }
-		if( this.getPaginacao() != null ) { }
-		if( this.getOrdenacaoColuna() != null) { }
-		 */
-
 	}
 
 	/*
@@ -251,19 +244,19 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.idCotaFinal = idCotaFinal;
 	}
 
-	public Long getIdBoxInicial() {
+	public Integer getIdBoxInicial() {
 		return idBoxInicial;
 	}
 
-	public void setIdBoxInicial(Long idBoxInicial) {
+	public void setIdBoxInicial(Integer idBoxInicial) {
 		this.idBoxInicial = idBoxInicial;
 	}
 
-	public Long getIdBoxFinal() {
+	public Integer getIdBoxFinal() {
 		return idBoxFinal;
 	}
 
-	public void setIdBoxFinal(Long idBoxFinal) {
+	public void setIdBoxFinal(Integer idBoxFinal) {
 		this.idBoxFinal = idBoxFinal;
 	}
 
@@ -351,4 +344,27 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
+	public Long getIdNaturezaOperacao() {
+		return idNaturezaOperacao;
+	}
+
+	public void setIdNaturezaOperacao(Long idNaturezaOperacao) {
+		this.idNaturezaOperacao = idNaturezaOperacao;
+	}
+
+	public List<Long> getListIdFornecedor() {
+		return listIdFornecedor;
+	}
+
+	public void setListIdFornecedor(List<Long> listIdFornecedor) {
+		this.listIdFornecedor = listIdFornecedor;
+	}
+
+	public NaturezaOperacao getNaturezaOperacao() {
+		return naturezaOperacao;
+	}
+
+	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
+	}
 }

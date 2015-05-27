@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.model.estoque;
 import java.util.Date;
 
@@ -16,6 +15,11 @@ import br.com.abril.nds.model.movimentacao.FuroProduto;
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE")
 public class MovimentoEstoque extends AbstractMovimentoEstoque {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8922062664013183350L;
 
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ITEM_REC_FISICO_ID")
@@ -119,4 +123,6 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 		this.furoProduto = furoProduto;
 	}
 	
+	
+
 }

@@ -2,10 +2,36 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/followUpSistema.js"></script>
+
+<style type="text/css">
+#followup-dialog-nfe, #followup-dialog-dadosNotaFiscal {
+	display: none;
+}
+
+.dados,.dadosFiltro,.nfes {
+	display: none;
+}
+
+#dialog-novo,#dialog-alterar,#dialog-excluir,#dialog-rejeitar,#dialog-confirm
+	{
+	display: none;
+	font-size: 12px;
+}
+
+fieldset label {
+	width: auto;
+	margin-bottom: 0px !important;
+}
+
+#followup-dialog-dadosNotaFiscal fieldset {
+	width: 810px !important;
+}
+</style>
+
 </head>
 
 <body>
-
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 	<div class="areaBts">
 		<div class="area">
@@ -211,10 +237,89 @@
             <br />
 
 		</div>
-        <br clear="all" />	
-      </fieldset>
-      </div>
-      <div class="linha_separa_fields">&nbsp;</div>
+        <br clear="all" />
+		<form id="form-followup-nfe">
+			<div id="followup-dialog-nfe" title="NF-e">
+				<fieldset style="width: 310px !important;">
+					<legend>Incluir NF-e</legend>
+					<table width="280" border="0" cellspacing="1" cellpadding="0">
+						<tr>
+							<td width="84">Cota:</td>
+							<td width="193">
+								<input type="text" id="followupCotaCadastroNota" name="followupCotaCadastroNota" style="width: 80px; float: left; margin-right: 5px;" /> 
+								<span class="classPesquisar">
+									<a href="javascript:;" onclick="entradaNFETerceirosController.pesquisarCotaCadastroNota();">&nbsp;</a>
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td>Nome:</td>
+							<td>
+								<input type="text" name="followupNomeCotaCadastroNota" id="followupNomeCotaCadastroNota" />
+							</td>
+						</tr>
+						<tr>
+							<td>NF-e:</td>
+							<td>
+								<input type="text" name="followupNumeroNotaCadastroNota" id="followupNumeroNotaCadastroNota" />
+							</td>
+						</tr>
+						<tr>
+							<td>Série:</td>
+							<td>
+								<input type="text" name="followupSerieNotaCadastroNota" id="followupSerieNotaCadastroNota" />
+							</td>
+						</tr>
+						<tr>
+							<td>Chave-Acesso:</td>
+							<td>
+								<input type="text" name="followupChaveAcessoCadastroNota" id="followupChaveAcessoCadastroNota" />
+							</td>
+						</tr>
+						<tr>
+							<td>Valor Nota R$:</td>
+							<td>
+								<input type="text" name="followupValorNotaCadastroNota" id="followupValorNotaCadastroNota" />
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+				</div>
+			</form>
+			<form id="form-followup-dadosNotaFiscal">
+				<div id="followup-dialog-dadosNotaFiscal" title="Dados da Nota Fiscal">
+					<fieldset>
+						<legend>Nota Fiscal</legend>
+						<table width="670" border="0" cellspacing="1" cellpadding="1" style="color: #666;">
+							<tr>
+								<td width="133">Núm. Nota Fiscal:</td>
+								<td width="307" id="followupNumeroNotaFiscalPopUp"></td>
+								<td width="106">Série:</td>
+								<td width="111" id="followupSerieNotaFiscalPopUp"></td>
+							</tr>
+							<tr>
+								<td>Data:</td>
+								<td id="followupDataNotaFiscalPopUp"></td>
+								<td>Valor Total R$:</td>
+								<td id="followupValorNotaFiscalPopUp"></td>
+							</tr>
+							<tr>
+								<td>Chave de Acesso:</td>
+								<td colspan="3" id="followupChaveAcessoNotaFiscalPopUp"></td>
+							</tr>
+						</table>
+					</fieldset>
+					<br clear="all" /> <br />
+
+					<fieldset>
+						<legend>Produtos Nota Fiscal</legend>
+						<table class="pesquisarProdutosNotaGrid"></table>
+					</fieldset>
+				</div>
+			</form>
+		</fieldset>
+	</div>
+	<div class="linha_separa_fields">&nbsp;</div>
 
 <script>
 	$(function(){

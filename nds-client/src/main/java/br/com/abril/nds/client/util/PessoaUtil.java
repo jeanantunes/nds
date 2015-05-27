@@ -20,26 +20,18 @@ public class PessoaUtil {
 
 	/**
 	 * Obtém o nome de exibição de acordo com o tipo de pessoa.
-	 * 
 	 * Se for Física retorna o nome e se for jurídica retorna a Razão Social.
-	 * 
-	 * @param pessoa
-	 *            - pessoa
-	 * 
+	 * @param pessoa - pessoa
 	 * @return Nome para exibição
 	 */
-	public static String obterNomeExibicaoPeloTipo(Pessoa pessoa) {
+	public static String obterNomeExibicaoPeloTipo(final Pessoa pessoa) {
 		return obterNomeExibicaoPeloTipo(pessoa, true);
 	}
 	
 	/**
 	 * Obtém o nome de exibição de acordo com o tipo de pessoa.
-	 * 
 	 * Se for Física retorna o apelido e se for jurídica retorna a nome fantasia.
-	 * 
-	 * @param pessoa
-	 *            - pessoa
-	 * 
+	 * @param pessoa - pessoa
 	 * @return Nome para exibição
 	 */
 	public static String obterApelidoExibicaoPeloTipo(Pessoa pessoa) {
@@ -48,17 +40,12 @@ public class PessoaUtil {
 
 	/**
 	 * Obtém o nome de exibição de acordo com o tipo de pessoa.
-	 * 
 	 * Se for Física retorna o nome e se for jurídica retorna a Razão Social.
-	 * 
-	 * @param pessoa
-	 *            - pessoa
-	 * @param inclueSufixo - indica se deve ser incluido o sufixo ao nome <code>" (PF)"</code> para pessoa física ou <code>" (PJ)"</code> para jurídica
-	 * 
+	 * @param pessoa - pessoa
+	 * @param inclueSufixo- indica se deve ser incluido o sufixo ao nome <code>" (PF)"</code> para pessoa física ou <code>" (PJ)"</code> para jurídica
 	 * @return Nome para exibição
 	 */
-	public static String obterNomeExibicaoPeloTipo(Pessoa pessoa,
-			boolean inclueSufixo) {
+	public static String obterNomeExibicaoPeloTipo(final Pessoa pessoa, final boolean inclueSufixo) {
 		String nomeExibicao = null;
 		String sufixo = null;
 	
@@ -96,7 +83,7 @@ public class PessoaUtil {
 	 * 
 	 * @return Nome para exibição
 	 */
-	public static String obterApelidoExibicaoPeloTipo(Pessoa pessoa,boolean inclueSufixo) {
+	public static String obterApelidoExibicaoPeloTipo(final Pessoa pessoa, final boolean inclueSufixo) {
 		
 		String nomeExibicao = null;
 		String sufixo = null;
@@ -133,7 +120,7 @@ public class PessoaUtil {
 	 * 
 	 * @return Nome de exibição sem o sufixo de tipo de pessoa
 	 */
-	public static String removerSufixoDeTipo(String nomeExibicao) {
+	public static String removerSufixoDeTipo(final String nomeExibicao) {
 
 		if (nomeExibicao != null && !nomeExibicao.trim().isEmpty()) {
 

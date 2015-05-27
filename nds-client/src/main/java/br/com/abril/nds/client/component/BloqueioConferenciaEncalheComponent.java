@@ -163,5 +163,4 @@ public class BloqueioConferenciaEncalheComponent {
 			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Impossível limpar as sessões no Banco de Dados."));
 		}
 	}
-
 }

@@ -21,10 +21,11 @@ select 'Inicio: ',sysdate(); -- Log
 
 -- 
 -- HVND
---
+-- 100;38138001;1;19.9;4;4;02/01/2013;17/04/2013;F;1;1;100;90100;
 
 DROP TABLE IF EXISTS HVND; 
 
+/*
 create table HVND (
 COD_COTA_HVCT INT,
 COD_PRODUTO_HVCT VARCHAR(12),
@@ -38,15 +39,42 @@ CONSIGNADO boolean,
 DEVOLVE_ENCALHE boolean
 ) ENGINE=MEMORY
 ;
+*/
 
-LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\r\n';
+create table HVND (
+COD_COTA_HVCT INT,
+cod_produto VARCHAR(8),
+num_edicao INT,
+PRECO FLOAT,
+QTDE_REPARTE_HVCT INT,
+QTDE_ENCALHE_HVCT INT,
+DATA_LANCAMENTO_STR VARCHAR(10),
+DATA_RECOLHIMENTO_STR VARCHAR(10),
+STATUS CHAR(1),
+CONSIGNADO boolean,
+DEVOLVE_ENCALHE boolean,
+COD_COTA_DP_HVCT INT,
+COD_COTA_FC_HVCT INT
+) ENGINE=MEMORY
+;
+
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 update HVND set CONSIGNADO =1;
 
-LOAD DATA INFILE '/opt/rollout/load_files/HVND_AVISTA.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_3.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_AVISTA.TXT' INTO TABLE HVND COLUMNS TERMINATED BY ';' LINES TERMINATED BY ';\n';
 
 update HVND set CONSIGNADO =0 where CONSIGNADO is null;
 update HVND set DEVOLVE_ENCALHE =1;
+update HVND set COD_COTA_HVCT =COD_COTA_FC_HVCT;
+
+update produto_edicao
+set DATA_DESATIVACAO = null
+where DATA_DESATIVACAO = '00-00-0000';
 
 -- FIXME FAZER UPDATE AQUI DAS COTAS QUE NAO DEVOLVEM ENCALHE
 -- ESSAS COTAS DEVERAM SER CRIADAS NO ARQUIVO carga_inicial.sql do respectivo distribuidor
@@ -54,22 +82,22 @@ update HVND set DEVOLVE_ENCALHE =1;
 ALTER TABLE HVND
 ADD COLUMN DATA_LANCAMENTO DATE,
 ADD COLUMN DATA_RECOLHIMENTO DATE,
-ADD COLUMN cod_produto VARCHAR(8),
-ADD COLUMN num_edicao INT,
+-- ADD COLUMN cod_produto VARCHAR(8),
+-- ADD COLUMN num_edicao INT,
 ADD COLUMN produto_edicao_id bigint,
 ADD COLUMN cota_id bigint AFTER STATUS;
 
 update HVND set 
-cod_produto=substring(COD_PRODUTO_HVCT, -12, 8), 
-num_edicao=substring(COD_PRODUTO_HVCT, -4),
+-- cod_produto=substring(COD_PRODUTO_HVCT, -12, 8), 
+-- num_edicao=substring(COD_PRODUTO_HVCT, -4),
 DATA_LANCAMENTO = STR_TO_DATE(DATA_LANCAMENTO_STR, '%d/%m/%Y'),
 DATA_RECOLHIMENTO = STR_TO_DATE(DATA_RECOLHIMENTO_STR, '%d/%m/%Y');
 
-ALTER TABLE HVND 
-DROP COD_PRODUTO_HVCT, 
+-- ALTER TABLE HVND 
+-- DROP COD_PRODUTO_HVCT, 
 -- DROP PRECO, 
-DROP DATA_LANCAMENTO_STR,
-DROP DATA_RECOLHIMENTO_STR;
+-- DROP DATA_LANCAMENTO_STR,
+-- DROP DATA_RECOLHIMENTO_STR;
 
 
 -- ##################### FIXME    #######################
@@ -83,6 +111,27 @@ set h.produto_edicao_id = pe.id
 where p.id = pe.produto_id 
 and p.codigo = h.cod_produto 
 and pe.numero_edicao = h.num_edicao;
+
+create table HVND_NULOS (
+COD_COTA_HVCT INT,
+cod_produto VARCHAR(8),
+num_edicao INT,
+PRECO FLOAT,
+QTDE_REPARTE_HVCT INT,
+QTDE_ENCALHE_HVCT INT,
+DATA_LANCAMENTO_STR VARCHAR(10),
+DATA_RECOLHIMENTO_STR VARCHAR(10),
+STATUS CHAR(1),
+CONSIGNADO boolean,
+DEVOLVE_ENCALHE boolean,
+COD_COTA_DP_HVCT INT,
+COD_COTA_FC_HVCT INT
+) -- ENGINE=MEMORY
+;
+
+insert into HVND_NULOS 
+select COD_COTA_HVCT,cod_produto,num_edicao,preco,QTDE_REPARTE_HVCT,QTDE_ENCALHE_HVCT,DATA_LANCAMENTO_STR,
+DATA_RECOLHIMENTO_STR,STATUS,CONSIGNADO,DEVOLVE_ENCALHE,COD_COTA_DP_HVCT,COD_COTA_FC_HVCT from HVND where produto_edicao_id is null;
 
 delete from HVND where produto_edicao_id is null;
 
@@ -774,8 +823,13 @@ and TIPO_MOVIMENTO_ID = 26;
 
 update movimento_estoque_memoria set data = 
 (select min(l.DATA_REC_DISTRIB) from lancamento l where l.produto_edicao_id = movimento_estoque_memoria.produto_edicao_id)
-and data = '0000-00-00'
+where data = '0000-00-00'
 and TIPO_MOVIMENTO_ID = 31;
+
+update movimento_estoque_memoria set data = 
+(select min(l.DATA_LCTO_DISTRIBUIDOR) from lancamento l where l.produto_edicao_id = movimento_estoque_memoria.produto_edicao_id)
+where data = '0000-00-00'
+and TIPO_MOVIMENTO_ID in (13,20);
 
 
 select 'ATUALIZACAO 2: ',sysdate(); -- Log 
@@ -891,7 +945,7 @@ set epc.valor_Desconto = car.DESCONTO
 where car.NUMERO_COTA = c.NUMERO_COTA
   and epc.cota_id = c.id;
 
-update movimento_estoque_cota_memoria set valor_Desconto = 25 where valor_Desconto is null; -- 25 = Campinas,Santos / 30 = Rio
+update movimento_estoque_cota_memoria set valor_Desconto = 30 where valor_Desconto is null; -- 25 = Campinas,Santos / 30 = Rio
 update movimento_estoque_cota_memoria set preco_com_Desconto = preco_venda - (preco_venda * valor_desconto/100);
 
 select 'MOVIMENTO_ESTOQUE_COTA (PRECOS): ',sysdate(); -- Log
@@ -900,6 +954,8 @@ select 'MOVIMENTO_ESTOQUE_COTA (PRECOS): ',sysdate(); -- Log
 -- MATERIALIZA as TABELAS
 --
 select 'MATERIALIZACAO INICIO: ',sysdate(); -- Log
+
+-- drop table hvnd;
 
 insert into estoque_produto
 (ID,QTDE,QTDE_DANIFICADO,QTDE_DEVOLUCAO_ENCALHE,QTDE_DEVOLUCAO_FORNECEDOR,QTDE_SUPLEMENTAR,QTDE_PERDA,
@@ -936,13 +992,20 @@ ID,true,date(sysdate()),'CARGA','APROVADO',DATA,date(sysdate()),TIPO_MOVIMENTO_I
 PRODUTO_EDICAO_ID,ESTOQUE_PRODUTO_ID,'CARGA_INICIAL'
 from movimento_estoque_memoria);
 
+update  movimento_estoque_memoria m, lancamento l
+set m.DATA = l.DATA_LCTO_DISTRIBUIDOR
+where l.produto_edicao_id = m.produto_edicao_id 
+and m.data = '0000-00-00'
+and m.TIPO_MOVIMENTO_ID in (13,20);
+
+
 drop table movimento_estoque_memoria;
 
 select 'MATERIALIZADO - MOVIMENTO_ESTOQUE: ',count(*) from movimento_estoque; -- Log
 
-ALTER TABLE HVND ENGINE=InnoDB;
+-- ALTER TABLE HVND ENGINE=InnoDB;
 
-select 'MATERIALIZADO - HVND: ',count(*) from hvnd; -- Log
+-- select 'MATERIALIZADO - HVND: ',count(*) from hvnd; -- Log
 
 ALTER TABLE ESTQBOX ENGINE=InnoDB;
 
@@ -1140,6 +1203,26 @@ and DATA_LCTO_DISTRIBUIDOR <= DATE_SUB(sysdate(),INTERVAL 12 DAY);
 -- ****************************************************************
 --
 
+update movimento_estoque set data = 
+(select min(l.DATA_LCTO_DISTRIBUIDOR) from lancamento l where l.produto_edicao_id = movimento_estoque.produto_edicao_id)
+and data = '0000-00-00'
+and TIPO_MOVIMENTO_ID in (13,20);
+
+update  movimento_estoque m, lancamento l
+set m.DATA = l.DATA_LCTO_DISTRIBUIDOR
+where l.produto_edicao_id = m.produto_edicao_id 
+and m.data = '0000-00-00'
+and m.TIPO_MOVIMENTO_ID in (13,20);
+
+update  movimento_estoque_cota m, lancamento l
+set m.DATA = l.DATA_LCTO_DISTRIBUIDOR
+where l.produto_edicao_id = m.produto_edicao_id 
+and m.data = '0000-00-00'
+and m.TIPO_MOVIMENTO_ID in (13,20);
+
+update lancamento
+set status = 'EXPEDIDO'
+where status = 'EM_BALANCEAMENTO_RECOLHIMENTO';
 
 select 'FIM: ',sysdate(); -- Log
 

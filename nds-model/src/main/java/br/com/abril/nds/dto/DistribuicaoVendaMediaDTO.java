@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.ComponentesPDV;
+
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 public class DistribuicaoVendaMediaDTO {

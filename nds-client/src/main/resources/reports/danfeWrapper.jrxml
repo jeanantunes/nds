@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfeWrapper" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f4fc39f8-9686-4c32-92c1-45f43032ec25">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfeWrapper" pageWidth="842" pageHeight="600" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f4fc39f8-9686-4c32-92c1-45f43032ec25">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="10"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
 	<field name="danfes" class="java.util.List"/>
 	<detail>
-		<band height="842" splitType="Stretch">
+		<band height="600" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="f44f7049-e37c-4daf-82b1-496497b1ab9e" x="0" y="0" width="595" height="842"/>
+				<reportElement uuid="f44f7049-e37c-4daf-82b1-496497b1ab9e" x="0" y="0" width="842" height="600"/>
 				<subreportParameter name="IND_EMISSAO_DEPEC">
 					<subreportParameterExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -47,6 +48,9 @@
 				<subreportParameter name="FAT_VENCIMENTO5"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="FAT_NUMERO1"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{danfes})]]></dataSourceExpression>

@@ -18,6 +18,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 @Entity
 @Table(name = "ROTA")
 @SequenceGenerator(name = "ROTA_SEQ", initialValue = 1, allocationSize = 1)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Rota implements Serializable {
 
 	/**
@@ -270,5 +273,41 @@ public class Rota implements Serializable {
 			List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota) {
 		this.associacoesVeiculoMotoristaRota = associacoesVeiculoMotoristaRota;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getRotaPDVs() == null) ? 0 : this.getRotaPDVs().hashCode());
+		result = prime * result + ((this.getRoteiro() == null) ? 0 : this.getRoteiro().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Rota other = (Rota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getRotaPDVs() == null) {
+			if (other.getRotaPDVs() != null)
+				return false;
+		} else if (!this.getRotaPDVs().equals(other.getRotaPDVs()))
+			return false;
+		if (this.getRoteiro() == null) {
+			if (other.getRoteiro() != null)
+				return false;
+		} else if (!this.getRoteiro().equals(other.getRoteiro()))
+			return false;
+		return true;
+	}
 }

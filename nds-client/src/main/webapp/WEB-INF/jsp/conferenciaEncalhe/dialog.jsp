@@ -199,7 +199,7 @@
 				<td style="width: 101px; text-align: center;" id="somatorioQtdRecebida"></td>
 				<td style="width: 80px;"></td>
 				<td style="width: 80px;"></td>
-				<td style="width: 60px; text-align: right;" id="somatorioTotal"></td>
+				<td style="width: 60px; text-align: right;" id="somatorioTotalFinalNfe"></td>
 				<td style="width: 30px;"></td>
 		  	</tr>
 		</table>
@@ -218,10 +218,10 @@
 	<p><strong>Insira os dados da Nota Fiscal</strong></p>
 	<table width="670" border="0" cellspacing="1" cellpadding="1">
 		<tr>
-			<td width="119">N&uacute;. Nota Fiscal:</td>
-		    <td width="321"><input isEdicao="true" type="text" id="numNotaFiscal" style="width:200px;" /></td>
+			<td width="119">N&uacute;m. Nota Fiscal:</td>
+		    <td width="321"><input isEdicao="true" type="text" id="numNotaFiscal" style="width:200px;" maxlength="10" /></td>
 		    <td width="106">S&eacute;rie:</td>
-		    <td width="111"><input isEdicao="true" type="text" id="serieNotaFiscal" style="width:80px;" /></td>
+		    <td width="111"><input isEdicao="true" type="text" id="serieNotaFiscal" style="width:80px;" maxlength="3" /></td>
   		</tr>
   		<tr>
 		    <td>Data:</td>
@@ -230,23 +230,6 @@
 		    <td>
 		    	<input isEdicao="true" type="text" id="conferencia-valorNotaFiscal" style="width:80px; text-align:right;" />
 		    </td>
-		</tr>
-		<tr>
-			<td>NF-e:</td>
-			<td>
-				<table width="300" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-				    
-				        <td width="26"><input isEdicao="true" type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalhe.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
-				        <td width="71" valign="bottom">Sim</td>
-				        <td width="20"><input isEdicao="true" type="radio"  onchange="ConferenciaEncalhe.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
-				        <td width="183" valign="bottom">N&atilde;o</td>
-	      			
-	      			</tr>
-	    		</table>
-	    	</td>
-	    	<td>&nbsp;</td>
-	    	<td>&nbsp;</td>
 		</tr>
 		
 		<tr>
@@ -257,7 +240,7 @@
 					    	Chave de Acesso:
 					    </td>
 				    	<td colspan="3">
-				    		<input isEdicao="true" type="text" id="chaveAcessoNFE" style="width:510px;" />
+				    		<input isEdicao="true" type="text" id="chaveAcessoNFE" maxlength="44" style="width:510px;" />
 				    	</td>
 					</table>
 				</div>

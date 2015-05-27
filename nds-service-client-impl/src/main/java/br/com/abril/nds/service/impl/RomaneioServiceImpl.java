@@ -90,9 +90,8 @@ public class RomaneioServiceImpl implements RomaneioService {
 		return this.produtoEdicaoRepository.buscarProdutosLancadosData(data);
 	}
 	
-	
-	@Transactional
 	@Override
+	@Transactional
 	public byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, FileType fileType) throws URISyntaxException, JRException {
 		
 		if (filtro != null) {
@@ -102,14 +101,14 @@ public class RomaneioServiceImpl implements RomaneioService {
 			List<RomaneioModelo01DTO> lstRelatorio = new ArrayList<RomaneioModelo01DTO>();
 			
 			// Formata os romaneios para o relatório:
-			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()){
+			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()) {
 				
 				Long idRota = null;
 				Long idRoteiro = null;
 				Long idBox = null;
 				
 				RomaneioModelo01DTO dto = null;
-				for (RomaneioDTO romaneio : lstRomaneioDTO){
+				for (RomaneioDTO romaneio : lstRomaneioDTO) {
 					
 					if (idBox != null && idBox.equals(romaneio.getIdBox())
 							&& idRoteiro.equals(romaneio.getIdRoteiro())
@@ -160,7 +159,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 					
 					Long idProdutoEdicao = filtro.getProdutos().get(0);
 					ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-					for (RomaneioModelo01DTO dto :lstRelatorio) {
+					for (RomaneioModelo01DTO dto : lstRelatorio) {
 						
 						dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 						dto.setNomeProduto(this.tratarNomeProdutoEdicao(produtoEdicao));
@@ -178,7 +177,6 @@ public class RomaneioServiceImpl implements RomaneioService {
 					for (Long idEdicao : filtro.getProdutos()) {
 						
 						nomesProduto.add(this.tratarNomeProdutoEdicao(this.produtoEdicaoRepository.buscarPorId(idEdicao)));
-						
 					}
 					
 					qtdColunasProduto = nomesProduto.size();

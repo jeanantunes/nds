@@ -182,7 +182,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
         query.addScalar("logradouro", StandardBasicTypes.STRING);
         query.addScalar("numero", StandardBasicTypes.STRING);
         query.addScalar("uf", StandardBasicTypes.STRING);
-        query.addScalar("codigoUf", StandardBasicTypes.STRING);
+        query.addScalar("codigoUf", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(Endereco.class));
         
@@ -556,6 +556,19 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		query.setParameter("cidade", cidade);
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterUFsCotas() {
+		
+		Criteria criteria = getSession().createCriteria(EnderecoCota.class);
+		criteria.createAlias("endereco", "endereco", JoinType.INNER_JOIN);		
+		criteria.add(Restrictions.isNotNull("endereco.uf"));
+		criteria.setProjection(Projections.groupProperty("endereco.uf"));
+		
+		return criteria.list();
+		
 	}
 
 }

@@ -6,24 +6,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
+import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.Processo;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Condicao;
-import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Inteface do serviço de Nota Fiscal.
@@ -63,7 +63,7 @@ public interface NotaFiscalService {
 	 * 
 	 * @param dadosRetornoNFE - dados de retorno da nota fiscal
 	 */
-	void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
+	NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Cancela uma nota fiscal.
@@ -105,7 +105,7 @@ public interface NotaFiscalService {
 	 * @return lista de itens para nota fiscal
 	 */
 	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
-			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, TipoNotaFiscal tipoNotaFiscal);
+			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, NaturezaOperacao tipoNotaFiscal);
 	
 	/**
 	 * Cria uma nota fiscal referenciada a partir de uma nota fiscal
@@ -131,14 +131,7 @@ public interface NotaFiscalService {
 	 */
 	List<NotaFiscalReferenciada> obterNotasReferenciadas(List<ItemNotaFiscalSaida> listaItensNotaFiscal); 
 
-	/**
-	 * Retorna um PDF com as Notas de Envio passadas como argumento
-	 * 
-	 * @param notasEnvio
-	 * @return
-	 */
-	byte[] imprimirNotasEnvio(List<NotaEnvio> notasEnvio);
-
+	/*
 	public abstract Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
 			Cota cota, List<ItemNotaFiscalSaida> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
@@ -147,9 +140,23 @@ public interface NotaFiscalService {
 			Fornecedor fornecedor, List<ItemNotaFiscalSaida> listItemNotaFiscal, InformacaoTransporte transporte, InformacaoAdicional informacaoAdicional, List<NotaFiscalReferenciada> listNotaFiscalReferenciada,
 			Set<Processo> processos, Condicao condicao);
 
-	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
-			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
+	*/
+	void exportarNotasFiscais(Long... idNotaFiscals) throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
 
+	List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
 
-		
+	Long consultaCotaExemplaresSumarizadoQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
+
+	List<FornecedorExemplaresDTO> consultaFornecedorExemplaresSumarizados(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
+	
+	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroNFeDTO filtro, NaturezaOperacao naturezaOperacao);
+	
+	List<TipoMovimento> obterMovimentosFiscaisNaturezaOperacao(NaturezaOperacao naturezaOperacao);
+	
+	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
+
+	Integer qtdeNota(Long idConferenciaCota);
+
+	void gerarNotaEnvioAtravesNotaFiscal(Long notaFiscalId, Cota cota, NaturezaOperacao naturezaOperacao);
+
 }

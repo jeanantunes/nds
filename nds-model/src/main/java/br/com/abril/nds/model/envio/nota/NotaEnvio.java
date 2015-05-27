@@ -37,6 +37,7 @@ public class NotaEnvio implements Serializable {
 
 	@Column(name = "CODIGO_NATUREZA_OPERACAO")
 	private Integer codigoNaturezaOperacao;
+	
 	@Column(name = "DESCRICAO_NATUREZA_OPERACAO")
 	private String descricaoNaturezaOperacao;
 
@@ -57,6 +58,9 @@ public class NotaEnvio implements Serializable {
 
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "itemNotaEnvioPK.notaEnvio")
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
+	
+	@Column(name = "NOTA_FISCAL_ID", nullable = true)
+	private Long notaFiscalID;
 
 	/**
 	 * @return the numero
@@ -184,6 +188,14 @@ public class NotaEnvio implements Serializable {
 		this.notaImpressa = notaImpressa;
 	}
 
+	public Long getNotaFiscalID() {
+		return notaFiscalID;
+	}
+
+	public void setNotaFiscalID(Long notaFiscalID) {
+		this.notaFiscalID = notaFiscalID;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -219,5 +231,6 @@ public class NotaEnvio implements Serializable {
 		} else if (!this.getNumero().equals(other.getNumero()))
 			return false;
 		return true;
+
 	}
 }

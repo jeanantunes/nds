@@ -17,8 +17,8 @@ public class RetornoComunicacaoEletronica implements Serializable {
 	private static final long serialVersionUID = 5252804668668107697L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
-	private Status status;
+	@Column(name = "STATUS_RETORNADO")
+	private StatusRetornado statusRetornado;
 		
 	@Column(name = "PROTOCOLO", length = 20)
 	private Long protocolo;
@@ -39,15 +39,15 @@ public class RetornoComunicacaoEletronica implements Serializable {
 	/**
 	 * @return the status
 	 */
-	public Status getStatus() {
-		return status;
+	public StatusRetornado getStatusRetornado() {
+		return statusRetornado;
 	}
 
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setStatusRetornado(StatusRetornado statusRetornado) {
+		this.statusRetornado = statusRetornado;
 	}
 
 	/**

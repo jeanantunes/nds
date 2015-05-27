@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.ConsultaFollowupDistribuicaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
+import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupChamadaoDTO;
@@ -28,7 +29,9 @@ import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupStatusCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
@@ -36,6 +39,8 @@ import br.com.abril.nds.service.FollowupDistribuicaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
+import br.com.abril.nds.service.NotaFiscalEntradaService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -44,6 +49,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -93,6 +99,13 @@ public class FollowupController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private NotaFiscalEntradaService notaFiscalEntradaService;
+	
+	@Autowired
+    private NotaFiscalService notaFiscalService;
+    
+	
 	private static final String FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroFollowupConsignados";
 	private static final String FILTRO_FOLLOWUP_PENDENCIA_NFE_SESSION_ATTRIBUTE = "filtroFollowupPendenciaNFE";
 	private static final String FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE = "filtroFollowupCadastro";
@@ -124,8 +137,7 @@ public class FollowupController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(
-			FiltroFollowupChamadaoDTO filtro) {
+	private TableModel<CellModelKeyValue<ConsultaFollowupChamadaoDTO>> efetuarConsultaChamadao(FiltroFollowupChamadaoDTO filtro) {
 		
 		List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
 		
@@ -174,8 +186,7 @@ public class FollowupController extends BaseController {
 		session.setAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE, filtroNegociacao);
 	}
 
-	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(
-			FiltroFollowupNegociacaoDTO filtroNegociacao) {
+	private TableModel<CellModelKeyValue<ConsultaFollowupNegociacaoDTO>> efetuarConsultaDadosNegociacao(FiltroFollowupNegociacaoDTO filtroNegociacao) {
 		
 		Long totalRegistros = this.followupnegociacaoService.obterQuantidadeNegociacaoFollowup(filtroNegociacao);
 		
@@ -340,7 +351,7 @@ public class FollowupController extends BaseController {
 		
 		this.tratarFiltroPendenciaNFE(filtroPendenciaNFEEncalhe);
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = efetuarConsultaDadosPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
+		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = consultaPendenciaNFEEncalhe(filtroPendenciaNFEEncalhe);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();		
 	}
@@ -384,25 +395,26 @@ public class FollowupController extends BaseController {
 	
 	
 	
-	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> efetuarConsultaDadosPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+	private TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro) {
+
+	    TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
 		
-		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+		Long qtdeRegistrosPendencias = followuppendencianfeService.qtdeRegistrosPendencias(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupPendenciaNFeDTO>>();
-		
-		Integer totalRegistros = listasdependencias.size();
-		
-		if(totalRegistros == 0){
+		if(qtdeRegistrosPendencias == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Pendencias NF-e Encalhe: Não foram encontrados resultados para Follow Up.");
 		}
+		
+		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.consultaPendenciaNFEEncalhe(filtro);
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listasdependencias));
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(15);
+		tableModel.setTotal(qtdeRegistrosPendencias.intValue());
 		
 		return tableModel;
+		
 	}
 
 	private void recuperarParametros(FiltroFollowupChamadaoDTO filtro) {
@@ -463,7 +475,6 @@ public class FollowupController extends BaseController {
 		
 	/**
 	 * Imprime Negociacao
-	 * 
 	 * @param fileType
 	 * @throws IOException
 	 */
@@ -485,8 +496,7 @@ public class FollowupController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, 
-				lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
+		FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
@@ -526,21 +536,22 @@ public class FollowupController extends BaseController {
 	 */
 	@Get
 	public void imprimirPendenciasNFe(FileType fileType) throws IOException {
-		FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
-		if (filtro != null) {
+		
+	    FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+		
+	    if (filtro != null) {
 			removePaginacao(filtro.getPaginacao());
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao imprimir arquivo");
 		}
 		
-		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+		List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.consultaPendenciaNFEEncalhe(filtro);
 		
 		if(listasdependencias.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
-				listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
+		FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
@@ -552,9 +563,10 @@ public class FollowupController extends BaseController {
 	 * @throws IOException
 	 */
 	@Get
-	public void imprimirAlteracaoStatusCota(FileType fileType)
-			throws IOException {
+	public void imprimirAlteracaoStatusCota(FileType fileType) throws IOException {
+	    
 		FiltroFollowupStatusCotaDTO filtro = (FiltroFollowupStatusCotaDTO) session.getAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE);
+		
 		if (filtro != null) {
 			removePaginacao(filtro.getPaginacao());
 		} else {
@@ -634,6 +646,35 @@ public class FollowupController extends BaseController {
 		result.nothing();
 	}
 
+	@Post
+    @Path("/cadastrarNota")
+    @Rules(Permissao.ROLE_NFE_ENTRADA_NFE_FOLLWOUP_ALTERACAO)  
+    public void cadastrarNota(final NotaFiscalEntradaCota nota, final Integer numeroCota, final Long idControleConferenciaEncalheCota){
+        this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
+
+        final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro efetuado com sucesso.");
+        
+        result.use(Results.json()).from(validacao, "result").recursive().serialize();
+        
+    }
+	
+	@Path("/pesquisarItensPorNota")
+    public void pesquisarItensPorNota(final long idControleConferencia, final String sortorder, final String sortname, final int page, final int rp){
+        
+        final Integer total = this.notaFiscalService.qtdeNota(idControleConferencia);
+        
+        if (total <= 0) {       
+
+            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+            
+        }
+        
+        final List<ItemNotaFiscalPendenteDTO> listItemNota = this.notaFiscalService.buscarItensPorNota(idControleConferencia, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
+        
+        result.use(FlexiGridJson.class).from(listItemNota).page(page).total(total).serialize();
+        
+    }
+	
 	/**
 	 * Remove os valores da paginação
 	 * 

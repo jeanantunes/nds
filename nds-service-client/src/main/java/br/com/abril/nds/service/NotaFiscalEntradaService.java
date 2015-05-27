@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -46,6 +47,7 @@ public interface NotaFiscalEntradaService {
 	 */
 	Fornecedor obterFornecedorPorID(Long idFornecedor);
 
-	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
-			Long idPessoaJuridica, Date dataEmissao);
+	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio, Long idPessoaJuridica, Date dataEmissao);
+	
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota);
 }

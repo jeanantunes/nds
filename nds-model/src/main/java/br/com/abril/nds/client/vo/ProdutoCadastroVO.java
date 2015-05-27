@@ -61,6 +61,8 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private Boolean isGeracaoAutomatica;
 	
+	private Boolean isSemCeIntegracao;
+	
 	private Long idTipoSegmentoProduto;
 	
 	private Long idTipoClassifProduto;
@@ -78,7 +80,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String formaFisica, 
 			Long idTipoSegmentoProduto, 
 			Origem origem, 
-			Boolean isGeracaoAutomatica) {
+			Boolean isGeracaoAutomatica, Boolean isSemCeIntegracao) {
 		
 		this.id = id;
 		this.codigo = codigo;
@@ -102,6 +104,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
 		this.origem = origem;
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
+		this.isSemCeIntegracao = isSemCeIntegracao;
 	}
 
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
@@ -116,8 +119,8 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		TributacaoFiscal tributacaoFiscal = produto.getTributacaoFiscal();
 		
-		long idDesconto = produto.getDescontoLogistica() != null ? 
-				produto.getDescontoLogistica().getId() : 0L;
+		long idDesconto = produto.getDescontoLogistica() != null ? produto.getDescontoLogistica().getId() : 0L;
+		
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), 
 			produto.getCodigo(),
@@ -138,7 +141,8 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",											
 			(produto.getTipoSegmentoProduto()!=null)?produto.getTipoSegmentoProduto().getId():null,
 			produto.getOrigem(),
-			produto.getIsGeracaoAutomatica()
+			produto.getIsGeracaoAutomatica(),
+			produto.getIsSemCeIntegracao()
 			);
 		
 		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
@@ -436,6 +440,14 @@ public class ProdutoCadastroVO implements Serializable {
 
 	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
+
+	public Boolean getIsSemCeIntegracao() {
+		return isSemCeIntegracao;
+	}
+
+	public void setIsSemCeIntegracao(Boolean isSemCeIntegracao) {
+		this.isSemCeIntegracao = isSemCeIntegracao;
 	}
 
 	public Long getIdTipoSegmentoProduto() {

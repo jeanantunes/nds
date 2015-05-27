@@ -29,7 +29,5 @@ public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrad
 
 	List<ItemDTO<Long, String>> obterListaFornecedorNotaFiscal(List<Long> listaIdNotaFiscal);
 
-	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
-			Long idPessoaJuridica, Date dataEmissao);
-	
+	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio, Long idPessoaJuridica, Date dataEmissao);
 }

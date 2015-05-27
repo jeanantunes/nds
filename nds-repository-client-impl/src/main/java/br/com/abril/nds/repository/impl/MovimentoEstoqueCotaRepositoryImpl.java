@@ -69,8 +69,8 @@ import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Status;
-import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
+import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
@@ -1754,7 +1754,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("  	desconto_logistica desconto_logistica_prod  ");
         sql.append("  	on ( PROD.DESCONTO_LOGISTICA_ID = desconto_logistica_prod.id ) ");
         
-        sql.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	");
+        sql.append(" LEFT JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	");
         sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
         sql.append(" ) ");
         
@@ -1770,9 +1770,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" WHERE (EP.QTDE != 0 ");
         sql.append(" OR EP.QTDE_SUPLEMENTAR != 0 ");
         sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
-           
-       	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+        
+        if(filtro.getIdFornecedor() != null){
+        	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID IN ( :idFornecedor )");
+        } else {
+        	sql.append(" AND PROD_FORNEC.FORNECEDORES_ID NOT IN ( ")
+        	.append(" SELECT ID FROM FORNECEDOR forn ")
+        	.append(" WHERE forn.SITUACAO_CADASTRO = 'ATIVO' ")
+        	.append(" AND forn.FORNECEDOR_UNIFICADOR_ID IS NOT NULL ")
+        	.append(" UNION ")
+        	.append(" SELECT FORNECEDOR_UNIFICADOR_ID FROM FORNECEDOR forn ")
+        	.append(" WHERE forn.SITUACAO_CADASTRO = 'ATIVO' ")
+        	.append(" AND FORNECEDOR_UNIFICADOR_ID IS NOT NULL ) ");
 
+        }
+           
         sql.append(" GROUP BY PROD_EDICAO.ID ");
 
         sql.append(" HAVING ("+qtdDevolucaoSubQuery+" > 0) ");
@@ -1879,8 +1891,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
         }
        
-       	query.setParameterList("idFornecedor", filtro.getFornecedores());
-
+        if(filtro.getIdFornecedor() != null){
+        	query.setParameterList("idFornecedor", filtro.getFornecedores());
+        }
+        
         return query;
         
     }
@@ -1898,18 +1912,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final String hql = getConsultaListaContagemDevolucao(filtro, indBuscaTotalParcial, false);
         
         final Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, indBuscaTotalParcial, false);
-        
-        if(filtro.getPaginacao()!=null) {
-            
-            if(filtro.getPaginacao().getPosicaoInicial()!=null) {
-                query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-            }
-            
-            if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-                query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-            }
-            
-        }
         
         return query.list();
         
@@ -1970,9 +1972,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         .append("	where ");
         
-        if( filtro.getIdFornecedor() != null ) {
-            sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor AND ");
-        }
+        sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor AND ");
         
         sql.append(" ITEM_CH_ENC_FORNECEDOR.DATA_RECOLHIMENTO BETWEEN :dataInicial AND :dataFinal ")
         
@@ -1986,9 +1986,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         
-        if(filtro.getIdFornecedor() != null) {
-            query.setParameter("idFornecedor", filtro.getIdFornecedor());
-        }
+        query.setParameter("idFornecedor", filtro.getIdFornecedor());
         
         final BigDecimal valor = (BigDecimal) query.uniqueResult();
         
@@ -3239,8 +3237,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             final Query query = getSession().createQuery(sql.toString());
             
             query.setParameter("status", StatusAprovacao.APROVADO);
-            query.setParameter("statusNFe", Status.CANCELAMENTO_HOMOLOGADO);
-            query.setParameter("statusInterno", StatusProcessamentoInterno.NAO_GERADA);
+            query.setParameter("statusNFe", StatusRetornado.CANCELAMENTO_HOMOLOGADO);
+            query.setParameter("statusInterno", StatusProcessamento.NAO_GERADA);
             query.setParameter("idCota", idCota);
             query.setParameter("grupoNotaFiscal", grupoNotaFiscal);
             
@@ -3545,6 +3543,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public List<MovimentoEstoqueCota> obterPorLancamento(final Long idLancamento) {
         
+
         final String hql = " select movimento from MovimentoEstoqueCota movimento "
                 + " join movimento.lancamento lancamento "
                 + " where lancamento.id = :idLancamento ";
@@ -3741,14 +3740,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 .append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ")
                 .append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
                 .append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
-                .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, ID) ")
+                .append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, FORMA_COMERCIALIZACAO, COTA_CONTRIBUINTE_EXIGE_NF, GERAR_COTA_EXIGE_NFE, ID) ")
                 .append("values ")
                 .append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
                 .append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
                 .append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, ")
                 .append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
                 .append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
-                .append(":precoComDesconto, :precoVenda, :valorDesconto, -1) ");
+                .append(":precoComDesconto, :precoVenda, :valorDesconto, :formaComercializacao, :cotaContribuinteExigeNF, true, -1) ");
                 
                 final SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
                 
@@ -3772,7 +3771,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final Query query = this.getSession().createQuery(hql.toString());
         query.setParameter("idEstudo", idEstudo);
         
-        
     }
     
     @SuppressWarnings("unchecked")
@@ -3782,6 +3780,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder sql = new StringBuilder();
         
         sql.append(" select cota as cota, ");
+        sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
         sql.append(" sum( ");
         sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'ENTRADA') ");
         sql.append(" 	then (mec.qtde) ");
@@ -3968,8 +3967,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             .executeUpdate();
     }
     
-    @SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
     public List<MovimentoEstoqueCota> obterMovimentosComProdutoContaFirme(final Long idLancamento){
     	
     	StringBuilder hql = new StringBuilder();
@@ -3986,8 +3985,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	return query.list();
     }
-    
-    @Override
+
+	@Override
     public void atualizarPrecoProdutoExpedido(final Long idProdutoEdicao, final BigDecimal precoProduto){
     	
     	StringBuilder sql = new StringBuilder();
@@ -4028,6 +4027,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     	
     	query.executeUpdate();
     }
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCota> obterMovimentosEstoqueCotaPorIds(List<Long> idsMEC) {
+		
+		StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select mec from MovimentoEstoqueCota mec ")
+    		.append(" where mec.id in (:idsMEC) ");
+    	
+    	Query query = getSession().createQuery(hql.toString());
+    	
+    	query.setParameterList("idsMEC", idsMEC);
+    	
+    	return query.list();
+	}
     
     public BigDecimal obterValorExpedicaoCotaAVista(final Date dataMovimentacao, Boolean devolveEncalhe, boolean precoCapaHistoricoAlteracao){
     	

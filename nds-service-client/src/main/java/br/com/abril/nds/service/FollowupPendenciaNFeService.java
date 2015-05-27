@@ -6,5 +6,8 @@ import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.filtro.FiltroFollowupPendenciaNFeDTO;
 
 public interface FollowupPendenciaNFeService {
-	List<ConsultaFollowupPendenciaNFeDTO> obterPendencias(FiltroFollowupPendenciaNFeDTO filtro);
+	
+	List<ConsultaFollowupPendenciaNFeDTO> consultaPendenciaNFEEncalhe(FiltroFollowupPendenciaNFeDTO filtro);
+
+	Long qtdeRegistrosPendencias(FiltroFollowupPendenciaNFeDTO filtro);
 }

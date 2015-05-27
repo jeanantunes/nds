@@ -363,8 +363,8 @@ public enum Permissao {
 	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO("Geracao De Arquivos",									    Permissao.ROLE_ADMINISTRACAO, true),
 	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO, true, null),
 	
-	ROLE_ADMINISTRACAO_TIPO_NOTA_ALTERACAO("Tipos de NF-e",													Permissao.ROLE_ADMINISTRACAO, true),
-	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_TIPO_NOTA_ALTERACAO, true, null),
+	ROLE_ADMINISTRACAO_NATUREZA_OPERACAO_ALTERACAO("Naturezas de Operações",								Permissao.ROLE_ADMINISTRACAO, true),
+	ROLE_ADMINISTRACAO_NATUREZA_OPERACAO("Naturezas de Operações",									  	   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_NATUREZA_OPERACAO_ALTERACAO, true, null),
 	
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO("Parâmetros de Sistema",	          					Permissao.ROLE_ADMINISTRACAO, true),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO, true, null),
@@ -373,8 +373,11 @@ public enum Permissao {
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO, true, null),
 	
 	ROLE_ADMINISTRACAO_HELP_ALTERACAO("Help",									          					Permissao.ROLE_ADMINISTRACAO, true),
-	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_HELP_ALTERACAO, false, null);
+	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   	Permissao.ROLE_ADMINISTRACAO, ROLE_ADMINISTRACAO_HELP_ALTERACAO, false, null),
 
+	ROLE_NFE_ENTRADA_NFE_FOLLWOUP_ALTERACAO("Entrada de NF-e Followup",										Permissao.ROLE_NFE, true),
+	ROLE_NFE_ENTRADA_NFE_FOLLWOUP("Entrada de NF-e Followup",											   	Permissao.ROLE_NFE, ROLE_NFE_ENTRADA_NFE_FOLLWOUP_ALTERACAO, true, null);
+	
 	private String descricao;
 	private Permissao permissaoPai;
 	private Permissao permissaoAlteracao;

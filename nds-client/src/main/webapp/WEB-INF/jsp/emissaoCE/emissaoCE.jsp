@@ -82,19 +82,19 @@
     <td width="113">
     
 <!-- Dt Recolhimento de -->    
-<input id="emissaoce-dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
+<input id="emissaoCE-dataDe"  value="${data}" name="dtRecolhimentoDe" type="text" style="width:70px;"/></td>
 
     <td width="28" colspan="-1" align="center">Até</td>
     <td width="130">
     
 <!-- Dt Recolhimento até -->
-<input id="emissaoce-dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
+<input id="emissaoCE-dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
 
     <td>Intervalo Box:</td>
     <td width="91">
 
 <!-- Box de -->     
-<select id="boxDe" name="jumpMenu" style="width:80px;" onchange="EmissaoCEController.carregarComboRoteiro(this.value)">
+<select id="emissaoCE-boxDe" name="jumpMenu" style="width:80px;" onchange="EmissaoCEController.carregarComboRoteiro(this.value)">
 	<option selected="selected"> </option>	    
 	<c:forEach items="${listaBoxes}" var="box">
 		<option value="${box.key}" >${box.value}</option>
@@ -106,7 +106,7 @@
     <td width="91">
     
 <!-- Box até --> 	
-<select id="boxAte" name="jumpMenu2" style="width:80px;" onchange="EmissaoCEController.carregarComboRoteiro(this.value)">
+<select id="emissaoCE-boxAte" name="jumpMenu2" style="width:80px;" onchange="EmissaoCEController.carregarComboRoteiro(this.value)">
   	<option selected="selected"> </option>
 	<c:forEach items="${listaBoxes}" var="box">
 		<option value="${box.key}">${box.value}</option>
@@ -118,13 +118,13 @@
     <td width="68">
 
 <!-- Cota De -->    
-<input id="cotaDe" type="text" style="width:60px;"/></td>
+<input id="emissaoCE-cotaDe" type="text" style="width:60px;"/></td>
 
     <td width="30" align="center">Até</td>
     <td width="104">
     
 <!-- Cota Até -->
-<input id="cotaAte" type="text" style="width:60px;"/></td>
+<input id="emissaoCE-cotaAte" type="text" style="width:60px;"/></td>
 
   </tr>
   <tr>
@@ -133,7 +133,7 @@
     
 
 <!-- Roteiro --> 	
-<select id="emissaoCERoteiro"  style="width:100px;" onchange="EmissaoCEController.carregarComboRota(this.value)">
+<select id="emissaoCE-Roteiro"  style="width:100px;" onchange="EmissaoCEController.carregarComboRota(this.value)">
     <option selected="selected"> </option>
 	<%-- <c:forEach items="${listaRoteiros}" var="roteiro">
 		<option value="${roteiro.key}">${roteiro.value}</option>
@@ -146,7 +146,7 @@
     <td>
 
 <!-- Rota --> 	
-<select id="emissaoCERota" name="select" style="width:130px;">
+<select id="emissaoCE-Rota" name="select" style="width:130px;">
     <option selected="selected"> </option>
     <%-- <c:forEach items="${listaRotas}" var="rota">
 		<option value="${rota.key}">${rota.value}</option>

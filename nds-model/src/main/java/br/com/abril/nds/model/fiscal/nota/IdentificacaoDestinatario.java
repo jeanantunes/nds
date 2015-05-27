@@ -2,56 +2,100 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
-import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.Pessoa;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
+@XmlType(name="NotaFiscalIdentificacaoDestinatario")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class IdentificacaoDestinatario implements Serializable {
 
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = -3558149602330018787L;
-	
-	@ManyToOne(optional = true)
+
+	@XmlTransient
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
-	private Pessoa pessoaDestinatarioReferencia;
+	private NotaFiscalPessoa pessoaDestinatarioReferencia;
+
+	@XmlTransient
+	@Enumerated(EnumType.STRING)
+	@Column(name="TIPO_DESTINATARIO")
+	private TipoDestinatario tipoDestinatario;
 	
+	@XmlTransient
+	@JoinColumn(name="COTA_ID")
+	@OneToOne(optional=true, cascade=CascadeType.ALL)
+	private Cota cota;
 	
 	/**
 	 * CNPJ CPF
 	 */
-	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
-	private String documento;
+	@Embedded
+	@XmlElements(value = {
+        @XmlElement(name="CPF", type=CPFDestinatario.class),
+        @XmlElement(name="CNPJ", type=CNPJDestinatario.class)
+    })
+	private DocumentoDestinatario documento;
 	
 	/**
 	 * xNome
 	 */	
 	@Column(name="NOME_DESTINATARIO", nullable=false, length=60)
 	@NFEExport(secao=TipoSecao.E, posicao=0, tamanho=60)
+	@XmlElement(name="xNome")
 	private String nome;
 	
 	/**
 	 * xFant
 	 */
 	@Column(name="NOME_FANTASIA_DESTINATARIO", nullable=true, length=60)
+	@XmlElement(name="xFant")
 	private String nomeFantasia;
+	
+	@OneToOne(optional=false, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
+	@NFEExportType
+	@XmlElement(name="enderDest")
+	private NotaFiscalEndereco endereco;
+
+	/**
+	 * indIEDest
+	 */
+	@Column(name="INDICADOR_DESTINATARIO", nullable=true, length=14)
+	@XmlElement(name="indIEDest")
+	private int indicadorDestinatario;
 	
 	/**
 	 * IE
 	 */
 	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
 	@NFEExport(secao=TipoSecao.E, posicao=1, tamanho=14)
+	@XmlElement(name="IE")
 	private String inscricaoEstadual;
 	
 	/**
@@ -64,42 +108,49 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * EMAIL
 	 */
+	@XmlTransient
 	@Column(name="EMAIL_DESTINATARIO", nullable=true, length=60)
 	private String email;
 	
-	@OneToOne(optional=false)
-	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
-	@NFEExportType
-	private Endereco endereco;
-	
-	@OneToOne(optional=true)
-	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
+	@OneToOne(optional=true, fetch=FetchType.LAZY)
+	@JoinColumn(name="TELEFONE_ID_DESTINATARIO", updatable=true, insertable=true)
 	@NFEExportType
 	private Telefone telefone;
-	
-	
 	
 	/**
 	 * Construtor padrão.
 	 */
 	public IdentificacaoDestinatario() {
 	}
-
 	
-	public Pessoa getPessoaDestinatarioReferencia() {
+	public NotaFiscalPessoa getPessoaDestinatarioReferencia() {
 		return pessoaDestinatarioReferencia;
 	}
-
 	
-	public void setPessoaDestinatarioReferencia(Pessoa pessoaDestinatarioReferencia) {
+	public void setPessoaDestinatarioReferencia(NotaFiscalPessoa pessoaDestinatarioReferencia) {
 		this.pessoaDestinatarioReferencia = pessoaDestinatarioReferencia;
 	}
 
+	public TipoDestinatario getTipoDestinatario() {
+		return tipoDestinatario;
+	}
+
+	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		this.tipoDestinatario = tipoDestinatario;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
 
 	/**
 	 * @return the documento
 	 */
-	public String getDocumento() {
+	public DocumentoDestinatario getDocumento() {
 		return documento;
 	}
 
@@ -107,7 +158,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @param documento the documento to set
 	 */
-	public void setDocumento(String documento) {
+	public void setDocumento(DocumentoDestinatario documento) {
 		this.documento = documento;
 	}
 
@@ -142,7 +193,20 @@ public class IdentificacaoDestinatario implements Serializable {
 	public void setNomeFantasia(String nomeFantasia) {
 		this.nomeFantasia = nomeFantasia;
 	}
+	
+	/**
+	 * @return the indicadorDestinatario
+	 */
+	public int getIndicadorDestinatario() {
+		return indicadorDestinatario;
+	}
 
+	/**
+	 * @param indicadorDestinatario the indicadorDestinatario to set
+	 */
+	public void setIndicadorDestinatario(int indicadorDestinatario) {
+		this.indicadorDestinatario = indicadorDestinatario;
+	}
 
 	/**
 	 * @return the inscricaoEstadual
@@ -150,7 +214,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	public String getInscricaoEstadual() {
 		return inscricaoEstadual;
 	}
-
 
 	/**
 	 * @param inscricaoEstadual the inscricaoEstadual to set
@@ -195,7 +258,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @return the endereco
 	 */
-	public Endereco getEndereco() {
+	public NotaFiscalEndereco getEndereco() {
 		return endereco;
 	}
 
@@ -203,7 +266,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @param endereco the endereco to set
 	 */
-	public void setEndereco(Endereco endereco) {
+	public void setEndereco(NotaFiscalEndereco endereco) {
 		this.endereco = endereco;
 	}
 

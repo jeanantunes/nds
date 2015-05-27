@@ -30,8 +30,7 @@ import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
-public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements
-		FechamentoCEIntegracaoRepository {
+public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalhe, FechamentoEncalhePK> implements FechamentoCEIntegracaoRepository {
 	
 	@Autowired
 	private ChamadaEncalheFornecedorRepository chamadaEncalheFornecedorRepository;
@@ -279,6 +278,29 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		return (FechamentoCEIntegracaoConsolidadoDTO) query.uniqueResult();
 	}
 	
+	@Override
+	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoSemCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" SUM(COALESCE(PROD_EDICAO.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA, 0) * (MOV_EST.QTDE )) AS totalBruto, ");
+		
+		hql.append(" SUM(COALESCE(PROD_EDICAO.DESCONTO, 0)) AS totalDesconto ");
+		
+		hql.append(this.obterHqlFromSemCE(filtro));
+		
+		Query  query = getSession().createSQLQuery(hql.toString())
+						.addScalar("totalBruto", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("totalDesconto", StandardBasicTypes.BIG_DECIMAL)
+						.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoConsolidadoDTO.class));
+		
+		this.aplicarParametrosSemCE(filtro, query);
+		
+		return (FechamentoCEIntegracaoConsolidadoDTO) query.uniqueResult();
+	}
+	
 	private String obterHqlFrom(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		StringBuilder hql = montarSqlFrom();
@@ -303,6 +325,32 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		return hql.toString();
 	}
 
+	private String obterHqlFromSemCE(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		StringBuilder hql = montarSqlFromSemCE();
+		
+		hql.append(" WHERE ");
+		hql.append(" PROD.SEM_CE_INTEGRACAO = :semIntegracaoCE  ");
+		hql.append(" AND ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE > 0  ");
+		hql.append(" GROUP BY  PROD.ID ");
+		
+		return hql.toString();
+	}
+	
+	private StringBuilder montarSqlFromSemCE() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" FROM PRODUTO_EDICAO PROD_EDICAO ");
+		hql.append(" INNER JOIN PRODUTO PROD ON (PROD.ID = PROD_EDICAO.PRODUTO_ID ) ");
+		hql.append(" INNER JOIN ESTOQUE_PRODUTO ESTOQUE_PROD ON (ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID) ");
+		hql.append(" INNER JOIN MOVIMENTO_ESTOQUE MOV_EST ON (ESTOQUE_PROD.ID = MOV_EST.ESTOQUE_PRODUTO_ID) ");
+		hql.append(" INNER JOIN PRODUTO_FORNECEDOR PRODFORN ON (PRODFORN.PRODUTO_ID = PROD.ID) ");
+		hql.append(" INNER JOIN FORNECEDOR FORNEC ON (PRODFORN.FORNECEDORES_ID = FORNEC.ID ) ");
+		
+		return hql;
+	}
+	
 	private StringBuilder montarSqlFrom() {
 		
 		StringBuilder hql = new StringBuilder();
@@ -429,6 +477,12 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		}
 	}
 	
+	private void aplicarParametrosSemCE(FiltroFechamentoCEIntegracaoDTO filtro, Query query) {
+		
+		query.setParameter("semIntegracaoCE", true);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		 
@@ -586,4 +640,99 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			
 		return query.list();
 	}
+
+	@Override
+	public BigInteger countItensFechamentoSemCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" COUNT(DISTINCT PROD_EDICAO.PRODUTO_ID) ");
+		
+		hql.append(this.obterHqlFromSemCE(filtro));
+		
+		Query query = getSession().createSQLQuery(hql.toString());
+		
+		this.aplicarParametrosSemCE(filtro, query);
+		
+		return (BigInteger) query.uniqueResult();
+		
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoSemCEIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append("    PROD_EDICAO.ID AS idProdutoEdicao, ");
+		
+		hql.append("    MOV_EST.ID AS sequencial, ");
+		
+		hql.append("	FORNEC.ID AS idItemCeIntegracao, ");
+		
+		hql.append("    PROD.CODIGO AS codigoProduto, ");
+		
+		hql.append("    PROD.NOME AS nomeProduto, ");
+		
+		hql.append("    PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao, ");
+		
+		hql.append("    PROD_EDICAO.PRECO_VENDA AS precoCapa,");
+		
+		hql.append("    COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS reparte, ");		
+				
+		hql.append("  (COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE, 0)  ");
+		hql.append("  + COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)) AS qtdDevolucao, ");
+		hql.append("  COALESCE(PROD_EDICAO.PRECO_VENDA - (PROD_EDICAO.PRECO_VENDA * PROD_EDICAO.DESCONTO / 100) , 0) * (COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE, 0) + COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0))  AS valorTotalComDesconto,");
+		
+		hql.append(" (COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE, 0) + COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS valorTotal, ");
+		
+		hql.append(" ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE AS reparte, ");
+		
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) AS estoque, ");
+
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS encalhe, ");
+		
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS diferenca ");
+		
+		hql.append(this.obterHqlFromSemCE(filtro));
+		
+		hql.append(obterOrdenacao(filtro));
+		
+		Query  query = getSession().createSQLQuery(hql.toString())
+						.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
+						.addScalar("codigoProduto", StandardBasicTypes.STRING)
+						.addScalar("idItemCeIntegracao",StandardBasicTypes.LONG)
+						.addScalar("nomeProduto", StandardBasicTypes.STRING)
+						.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+						.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("valorTotalComDesconto", StandardBasicTypes.BIG_DECIMAL)
+						.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("estoque", StandardBasicTypes.BIG_INTEGER)
+						.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER)
+						.setResultTransformer(Transformers.aliasToBean(ItemFechamentoCEIntegracaoDTO.class));	
+		
+		this.aplicarParametrosSemCE(filtro, query);
+		
+		if(filtro.getPaginacao()!=null) {
+			
+			if(filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+			
+		return query.list();
+	}
+	
 }

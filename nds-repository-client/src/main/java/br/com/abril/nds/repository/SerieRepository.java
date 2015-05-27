@@ -12,4 +12,6 @@ public interface SerieRepository extends Repository<Serie, Integer> {
 	 */
 	public abstract  Long next(int numeroSerie);
 
+	abstract Long obterNumeroSerieNota();
+
 }

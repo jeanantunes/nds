@@ -2,14 +2,15 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
@@ -36,6 +37,8 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 	private PaginacaoVO paginacao;
 	
 	private ColunaOrdenacaoRomaneio ordenacaoColuna;
+	
+	private List<Fornecedor> listIdFornecedor;
 	
 	public enum ColunaOrdenacaoConsultaNFEEncalheTramamento {
 
@@ -65,7 +68,7 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 		
 		TODAS("Todas"),
 		ENTRADA("Entrada"),
-		COMPLEMENTAR("Complementar");
+		SAIDA("Saida");
 		
 		private String descricao;
 		
@@ -182,5 +185,11 @@ public class FiltroEntradaNFETerceiros implements Serializable{
 		this.tipoNota = tipoNota;
 	}
 
+	public List<Fornecedor> getListIdFornecedor() {
+		return listIdFornecedor;
+	}
 
+	public void setListIdFornecedor(List<Fornecedor> listIdFornecedor) {
+		this.listIdFornecedor = listIdFornecedor;
+	}
 }

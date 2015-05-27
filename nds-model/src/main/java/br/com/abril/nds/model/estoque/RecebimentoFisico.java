@@ -113,4 +113,40 @@ public class RecebimentoFisico implements Serializable {
 		this.statusConfirmacao = statusConfirmacao;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getNotaFiscal() == null) ? 0 : this.getNotaFiscal().hashCode());
+		result = prime * result + ((this.getStatusConfirmacao() == null) ? 0 : this.getStatusConfirmacao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RecebimentoFisico other = (RecebimentoFisico) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getNotaFiscal() == null) {
+			if (other.getNotaFiscal() != null)
+				return false;
+		} else if (!this.getNotaFiscal().equals(other.getNotaFiscal()))
+			return false;
+		if (this.getStatusConfirmacao() != other.getStatusConfirmacao())
+			return false;
+		return true;
+	}
+
+	
+	
 }

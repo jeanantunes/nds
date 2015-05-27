@@ -217,15 +217,15 @@ public abstract class Util {
             final Long idDivida,
             final Long agencia,
             final Long contaCorrente,
-            final Integer carteira){
+            final Integer carteira) {
         
-        final String codSacado = Util.padLeft(numeroCota.toString(), "0", 4);
+        final String codSacado = Util.padLeft(numeroCota.toString(), "0", 5);
         
         final String auxData = DateUtil.formatarData(dtGeracao, "ddMMyy");
         
         final NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
         
-        if (nomeBanco == null){
+        if (nomeBanco == null) {
             
             return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
         }
@@ -295,9 +295,7 @@ public abstract class Util {
         }
     }
     
-    public static String calcularDigitoVerificador(String nossoNumero,
-            final String codigoCedente,
-            final Date dataVencimento) {
+    public static String calcularDigitoVerificador(String nossoNumero, final String codigoCedente, final Date dataVencimento) {
         
         if (nossoNumero == null || codigoCedente == null || dataVencimento == null) {
             
@@ -310,12 +308,11 @@ public abstract class Util {
         
         primeiroDigito = Util.calcularDigito(nossoNumero);
         
-        nossoNumero += primeiroDigito + segundoDigito;
+        nossoNumero = new StringBuilder(nossoNumero).append(primeiroDigito).append(segundoDigito).toString();
         
         final String dataVencimentoFormatada = DateUtil.formatarData(dataVencimento, "ddMMyy");
         
-        String somaValores =
-                Util.obterSomaValores(nossoNumero, codigoCedente, dataVencimentoFormatada);
+        String somaValores = Util.obterSomaValores(nossoNumero, codigoCedente, dataVencimentoFormatada);
         
         somaValores = Util.padLeft(somaValores, "0", nossoNumero.length());
         
@@ -654,15 +651,13 @@ public abstract class Util {
     
     public static Object getValuePath(final Object obj,final String path){
         
-        
         final String[] pathList = path.split("\\.");
         
         String att = null;
-        if(pathList.length==0){
+        if(pathList.length==0) {
             att=path;
-        }else{
+        } else {
             att = pathList[0];
-            
         }
         
         final Method[] declaredMethods = obj.getClass().getDeclaredMethods();
@@ -674,21 +669,20 @@ public abstract class Util {
             }
         }
         
-        if(getM==null){
+        if(getM == null) {
             return null;
         }
         
-        Object result =null;
+        Object result = null;
         try {
             result = getM.invoke(obj, null);
-        } catch (IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(e.getMessage(), e);
         }
         
-        if(pathList.length==1){
+        if(pathList.length == 1) {
             return result;
-        }else{
+        } else {
             
             return getValuePath(result,path.substring(path.indexOf(".")+1));
         }
@@ -696,42 +690,38 @@ public abstract class Util {
     
     public static Object getReturnTypePath(final Object obj,final String path){
         
-        
         final String[] pathList = path.split("\\.");
         
         String att = null;
-        if(pathList.length==0){
-            att=path;
-        }else{
+        if(pathList.length == 0) {
+            att = path;
+        } else {
             att = pathList[0];
-            
         }
         
         final Method[] declaredMethods = obj.getClass().getDeclaredMethods();
         
         Method getM = null;
         for (final Method method : declaredMethods) {
-            if(method.getName().equals("get"+toFirstUpperCase(att))){
+            if(method.getName().equals("get"+toFirstUpperCase(att))) {
                 getM = method;
             }
         }
         
-        if(getM==null){
+        if(getM == null) {
             return null;
         }
         
         Object result =null;
         try {
             result = getM.invoke(obj, null);
-        } catch (IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOGGER.error(e.getMessage(), e);
         }
         
-        if(pathList.length==1){
+        if(pathList.length == 1) {
             return getM.getReturnType();
-        }else{
-            
+        } else {
             return getValuePath(result,path.substring(path.indexOf(".")+1));
         }
     }
@@ -753,5 +743,51 @@ public abstract class Util {
         final URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
         
         return urlDanfe;
+    }
+    
+    public static boolean validarChaveAcesso(String chaveAcessoInformada) {
+        
+    	boolean retorno = false;  
+    	
+    	try {  
+    		String cUF = chaveAcessoInformada.substring(0,2); // Código da UF do emitente do Documento Fiscal.  
+            String dataAAMM = chaveAcessoInformada.substring(2,6); // Ano e Mês de emissão da NF-e.  
+            String cnpjCpf = chaveAcessoInformada.substring(6, 20); // CNPJ do emitente.  
+            String mod = chaveAcessoInformada.substring(20, 22); // Modelo do Documento Fiscal.  
+            String serie = chaveAcessoInformada.substring(22, 25); // Série do Documento Fiscal.  
+            String nNF = chaveAcessoInformada.substring(25, 33); // Número do Documento Fiscal.  
+            String tpEmis = chaveAcessoInformada.substring(33, 35); // Forma de emissão da NF-e  
+            String cNF = chaveAcessoInformada.substring(35, 43); // Código Numérico que compõe a Chave de Acesso.  
+              
+            StringBuilder chave = new StringBuilder();  
+            chave.append(cUF);  
+            chave.append(dataAAMM);  
+            chave.append(cnpjCpf);  
+            chave.append(mod);  
+            chave.append(serie);  
+            chave.append(nNF);  
+            chave.append(tpEmis);  
+            chave.append(cNF);  
+           retorno = montarChaveAcesso(chave.toString());              
+            
+		} catch (Exception e) {  
+			LOGGER.error("Exception: "+ e.getMessage());  
+		}
+    	    	
+        return retorno;
+    }
+    
+    public static boolean montarChaveAcesso(String chave) {  
+        int total = 0;  
+        int peso = 2;  
+              
+        for (int i = 0; i < chave.length(); i++) {  
+            total += (chave.charAt((chave.length()-1) - i) - '0') * peso;  
+            peso ++;  
+            if (peso == 10)  
+                peso = 2;  
+        }  
+        int resto = total % 11;  
+        return (resto == 0 || resto == 1) ? true : false;  
     }
 }

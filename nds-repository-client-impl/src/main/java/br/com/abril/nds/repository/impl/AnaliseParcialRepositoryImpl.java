@@ -594,10 +594,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append(" inner join cota c on c.id = mec.COTA_ID ");
     	sql.append(" inner join lancamento l on mec.lancamento_id = l.id ");
     	sql.append(" left outer join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
-    	sql.append(" where 1 = 1                                                                                                        ");
-    	sql.append(" and c.NUMERO_COTA = :numeroCota                                                                                    ");
-    	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)                                                                     ");
-    	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)                                                                         ");
+    	sql.append(" where 1 = 1");
+    	sql.append(" and c.NUMERO_COTA = :numeroCota");
+    	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)");
+    	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)");
+    	sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
     	sql.append(" group by mec.PRODUTO_EDICAO_ID");
     	
         Query query = getSession().createSQLQuery(sql.toString())

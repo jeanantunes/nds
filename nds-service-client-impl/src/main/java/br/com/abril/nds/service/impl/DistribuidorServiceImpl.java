@@ -19,9 +19,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Feriado;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FeriadoRepository;
@@ -77,6 +79,23 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public Distribuidor obter() {
 		return distribuidorRepository.obter();
+	}
+	
+	@SuppressWarnings("unused")
+	@Override
+	@Transactional
+	public Distribuidor obterParaNFe() {
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		Object o = distribuidor.getNaturezasOperacoesNotasEnvio() != null ? distribuidor.getNaturezasOperacoesNotasEnvio().isEmpty() : null;
+		Object o2 = distribuidor.getRegimeTributarioTributoAliquota() != null ? distribuidor.getRegimeTributarioTributoAliquota().isEmpty() : null;
+		if(distribuidor.getTiposNotaFiscalDistribuidor() != null && !distribuidor.getTiposNotaFiscalDistribuidor().isEmpty() ) {
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if(dtnf.getNaturezaOperacao() != null) {
+					dtnf.getNaturezaOperacao().isEmpty();				
+				}
+			}
+		}
+		return distribuidor;
 	}
 
 	@Override
@@ -273,9 +292,17 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ObrigacaoFiscal obrigacaoFiscal() {
+	public boolean obrigacaoFiscal(NaturezaOperacao naturezaOperacao, Distribuidor distribuidor) {
 		
-		return this.distribuidorRepository.obrigacaoFiscal();
+		for(DistribuidorTipoNotaFiscal dtnf :  distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)) {
+				if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+					return false;
+				}
+		
+			}
+		}	
+		return true;
 	}
 
 	@Override
@@ -724,6 +751,16 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
 	}
+
+	@Override
+	@Transactional
+	public Set<NaturezaOperacao> obterNaturezasOperacoesNotasEnvio() {
+		
+		if(this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio() != null) {
+			this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio().isEmpty();
+		}
+		return this.distribuidorRepository.obter().getNaturezasOperacoesNotasEnvio();
+    }
 	
 	@Override
 	@Transactional(readOnly=true)

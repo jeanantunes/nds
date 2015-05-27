@@ -9,7 +9,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distrib</title>
+<title>STG - Sistema Treelog de GestÃ£o</title>
 
 <base href="<c:url value="/"/>" />
 

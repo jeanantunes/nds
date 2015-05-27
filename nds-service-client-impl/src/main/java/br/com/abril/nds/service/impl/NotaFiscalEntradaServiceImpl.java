@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.DetalheNotaFiscalDTO;
+import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
@@ -22,23 +23,25 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -59,13 +62,13 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 	
 	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
+	private NaturezaOperacaoService naturezaOperacaoService;
 	
 	@Autowired
 	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
@@ -104,10 +107,6 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		TipoAtividade tipoAtividade = this.distribuidorService.tipoAtividade();
 
-		GrupoNotaFiscal grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO;
-		
-		boolean isContribuinte = true;
-
 		notaFiscal.setCota(cota);
 		notaFiscal.setDataEmissao(new Date());
 		notaFiscal.setDataExpedicao(new Date());
@@ -121,24 +120,19 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 			ControleConferenciaEncalheCota conferenciaEncalheCota = this.conferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 
-			if (conferenciaEncalheCota != null 
-					&& conferenciaEncalheCota.getNotaFiscalEntradaCota() != null 
-					&& !conferenciaEncalheCota.getNotaFiscalEntradaCota().isEmpty()) {
-				
-				grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR;
-			}
-
 			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
+			
 		}
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
+		//FIXME: Ajustar a funcionalidade de NF-e de Terceiros 
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, TipoEmitente.COTA, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA);
 
-		if (tipoNotaFiscal == null) {
+		if (naturezaOperacao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de nota fiscal não foi encontrado.");
 		}
 		
-		notaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
+		notaFiscal.setNaturezaOperacao(naturezaOperacao);
 
 		this.notaFiscalRepository.adicionar(notaFiscal); 
 	}
@@ -275,10 +269,18 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	}
 
 	@Override
-	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
-			Long idPessoaJuridica, Date dataEmissao) {
+	@Transactional
+	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio, Long idPessoaJuridica, Date dataEmissao) {
 		
-		return this.notaFiscalEntradaRepository.existeNotaFiscalEntradaFornecedor(numeroNotaEnvio,
-				idPessoaJuridica, dataEmissao);
+		return this.notaFiscalEntradaRepository.existeNotaFiscalEntradaFornecedor(numeroNotaEnvio, idPessoaJuridica, dataEmissao);
+	}
+	
+	@Override
+	@Transactional
+	public void excluirNotasFiscaisPorReabertura(final InfoConferenciaEncalheCota infoConfereciaEncalheCota) {
+		if(infoConfereciaEncalheCota.getNotaFiscalEntradaCota() != null) {
+			this.notaFiscalEntradaRepository.remover(infoConfereciaEncalheCota.getNotaFiscalEntradaCota());			
+		}
+		
 	}
 }

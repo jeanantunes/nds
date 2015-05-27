@@ -2,7 +2,6 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,10 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -22,6 +20,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @Entity
 @SequenceGenerator(name = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class EncargoFinanceiro implements Serializable {
 
 	/**
@@ -33,13 +32,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@GeneratedValue(generator = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", strategy = GenerationType.TABLE)
 	@Column(name = "ID")
 	private Long id;
-	
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumns({
-        @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
-        @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
-    })
-	private ProdutoServico produtoServico;
 	
 	@Embedded
 	@NFEExportType(secaoPadrao = TipoSecao.Q)
@@ -56,7 +48,7 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@Embedded
 	@NFEExportType
 	private COFINSST cofinsSt;
-
+	
 	/**
 	 * @return the id
 	 */
@@ -98,21 +90,35 @@ public abstract class EncargoFinanceiro implements Serializable {
 	public void setCofins(COFINS cofins) {
 		this.cofins = cofins;
 	}
+
+	/**
+	 * @return the pisSt
+	 */
+	public PISST getPisSt() {
+		return pisSt;
+	}
+
+	/**
+	 * @param pisSt the pisSt to set
+	 */
+	public void setPisSt(PISST pisSt) {
+		this.pisSt = pisSt;
+	}
+
+	/**
+	 * @return the cofinsSt
+	 */
+	public COFINSST getCofinsSt() {
+		return cofinsSt;
+	}
+
+	/**
+	 * @param cofinsSt the cofinsSt to set
+	 */
+	public void setCofinsSt(COFINSST cofinsSt) {
+		this.cofinsSt = cofinsSt;
+	}
 	
-	/**
-	 * @return the produtoServico
-	 */
-	public ProdutoServico getProdutoServico() {
-		return produtoServico;
-	}
-
-	/**
-	 * @param produtoServico the produtoServico to set
-	 */
-	public void setProdutoServico(ProdutoServico produtoServico) {
-		this.produtoServico = produtoServico;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -142,34 +148,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the pisSt
-	 */
-	public PISST getPisSt() {
-		return pisSt;
-	}
-
-	/**
-	 * @param pisSt the pisSt to set
-	 */
-	public void setPisSt(PISST pisSt) {
-		this.pisSt = pisSt;
-	}
-
-	/**
-	 * @return the cofinsSt
-	 */
-	public COFINSST getCofinsSt() {
-		return cofinsSt;
-	}
-
-	/**
-	 * @param cofinsSt the cofinsSt to set
-	 */
-	public void setCofinsSt(COFINSST cofinsSt) {
-		this.cofinsSt = cofinsSt;
 	}
 
 }

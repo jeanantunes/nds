@@ -144,6 +144,12 @@
 													<input type="checkbox" class="habilitarCampoInterface" id="selGeracaoAuto" name="selGeracaoAuto" style="float: left; margin-right: 25px;" />
 											</td>
 										<tr>
+										<tr>
+											<td>N&atilde;o Necessita CE Integra&ccedil;&atilde;o</td>
+												<td style="width:100px;">
+													<input type="checkbox" id="selSemCeIntegracao" name="selSemCeIntegracao" style="float: left; margin-right: 25px;" />
+											</td>
+										<tr>
 									</table>
 								</fieldset>
 							</td>
@@ -331,7 +337,7 @@
 				</td>
 				<td>Geração Automática:</td>
 				<td style="width:100px;">
-					<select id="comboGeracaoAutomatica" style="width:65px;">
+					<select id="produto-comboGeracaoAutomatica" style="width:65px;">
 						<option value="-1" selected="selected"></option>
 						<option value="0">Sim</option>
 						<option value="1">Não</option>

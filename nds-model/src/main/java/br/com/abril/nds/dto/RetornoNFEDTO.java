@@ -1,8 +1,9 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.model.fiscal.nota.Status;
+import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 
 /**
  * Value Object que representa os retornos dos arquivos de nota fiscal eletrônica . 
@@ -10,29 +11,42 @@ import br.com.abril.nds.model.fiscal.nota.Status;
  * @author Discover Technology
  *
  */
-public class RetornoNFEDTO {
+public class RetornoNFEDTO implements Serializable {
 
-	private Long idNotaFiscal;
+	private static final long serialVersionUID = 9039066467977718266L;
+	
+	private Long idNota;
+	
+	private Long numeroNotaFiscal;
+	
 	private String cpfCnpj;
+	
 	private String chaveAcesso;
-	private Status status;
+	
+	private StatusRetornado status;
+	
 	private Long protocolo;
+	
 	private String motivo;
+	
 	private Date dataRecebimento;
-
-	/**
-	 * @return the idNotaFiscal
-	 */
-	public Long getIdNotaFiscal() {
-		return idNotaFiscal;
+	
+	private String tpEvento;
+	
+	public Long getIdNota() {
+		return idNota;
 	}
 
-	/**
-	 * @param idNotaFiscal
-	 *            the idNotaFiscal to set
-	 */
-	public void setIdNotaFiscal(Long idNotaFiscal) {
-		this.idNotaFiscal = idNotaFiscal;
+	public void setIdNota(Long idNota) {
+		this.idNota = idNota;
+	}
+
+	public Long getNumeroNotaFiscal() {
+		return numeroNotaFiscal;
+	}
+
+	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+		this.numeroNotaFiscal = numeroNotaFiscal;
 	}
 
 	/**
@@ -53,7 +67,7 @@ public class RetornoNFEDTO {
 	/**
 	 * @return the status
 	 */
-	public Status getStatus() {
+	public StatusRetornado getStatus() {
 		return status;
 	}
 
@@ -61,7 +75,7 @@ public class RetornoNFEDTO {
 	 * @param status
 	 *            the status to set
 	 */
-	public void setStatus(Status status) {
+	public void setStatus(StatusRetornado status) {
 		this.status = status;
 	}
 
@@ -123,4 +137,13 @@ public class RetornoNFEDTO {
 	public void setCpfCnpj(String cpfCnpj) {
 		this.cpfCnpj = cpfCnpj;
 	}
+
+	public String getTpEvento() {
+		return tpEvento;
+	}
+
+	public void setTpEvento(String tpEvento) {
+		this.tpEvento = tpEvento;
+	}
+	
 }

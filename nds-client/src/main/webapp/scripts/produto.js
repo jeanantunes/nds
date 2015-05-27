@@ -413,6 +413,7 @@ var produtoController = $.extend(true, {
 						$("#comboPeriodicidade", produtoController.workspace).val(result.periodicidade);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
 						$("#selGeracaoAuto", produtoController.workspace).attr('checked', result.isGeracaoAutomatica);
+						$("#selSemCeIntegracao", produtoController.workspace).attr('checked', result.isSemCeIntegracao);
 						$("#comboTipoSegmento", produtoController.workspace).val(result.idTipoSegmentoProduto);
 						$("#comboClassifProd", produtoController.workspace).val(result.idTipoClassifProduto);
 
@@ -634,6 +635,7 @@ var produtoController = $.extend(true, {
 		$("#comboTipoSegmento", this.workspace).val("");
 		
 		$("#selGeracaoAuto", produtoController.workspace).attr('checked', false);
+		$("#selSemCeIntegracao", produtoController.workspace).attr('checked', false);
 	},
 	
 	salvarProduto : function() {
@@ -664,7 +666,9 @@ var produtoController = $.extend(true, {
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.desconto",value:$("#produto-percentualDesconto", produtoController.workspace).val()},
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
-
+        			   
+        			   {name:"produto.isSemCeIntegracao",value:(produtoController.formatarCampoGeracaoAutomatica("#selSemCeIntegracao"))},
+        			   
         			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
         			   {name:"produto.tipoSegmentoProduto.descricao",value:$("#comboTipoSegmento :checked", produtoController.workspace).text()},
         			 

@@ -82,6 +82,9 @@ public class ConferenciaEncalheBackup implements Serializable {
 	@Column(name="PRECO_COM_DESCONTO")
 	private BigDecimal precoComDesconto;
 	
+	@Column(name = "PROCESSO_UTILIZA_NFE", nullable = false)
+	private boolean processoUtilizaNfe;
+	
 	public Long getId() {
 		return id;
 	}
@@ -202,4 +205,11 @@ public class ConferenciaEncalheBackup implements Serializable {
 		this.idConferenciaOriginal = idConferenciaOriginal;
 	}
 
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
+	}
 }

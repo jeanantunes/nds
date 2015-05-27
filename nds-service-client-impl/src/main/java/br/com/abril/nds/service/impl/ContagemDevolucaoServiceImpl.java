@@ -38,13 +38,18 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalheParcial;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Condicao;
+import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalDevolucaoFornecedor;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
@@ -60,11 +65,14 @@ import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.MovimentoFechamentoFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
+import br.com.abril.nds.repository.ProcessoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.TipoMovimentoFiscalRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
@@ -118,7 +126,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
@@ -140,9 +148,18 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+
+	@Autowired
+	private ProcessoRepository processoRepository;
 	
 	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
+	
+	@Autowired
+	private MovimentoFechamentoFiscalRepository movimentoFechamentoFiscalRepository;
+	
+	@Autowired
+	private TipoMovimentoFiscalRepository tipoMovimentoFiscalRepository;
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
@@ -461,13 +478,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	public void confirmarContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
 		
 		confirmarValoresContagemDevolucao(listaContagemDevolucao, usuario);
-		
-        // FIXME: ajustar função de confirmar para geração de notas ou impressão
-        // de CE de acordo com a obrigação fiscal.
-		gerarNotasFiscaisPorFornecedor(listaContagemDevolucao, usuario, false);
-		
 	}
-	
 	
 	private void confirmarValoresContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) {
 		
@@ -801,7 +812,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			return;
 		}
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
+		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterNaturezaOperacao(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 
 		if(tipoNotaFiscal == null) {
             throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
@@ -811,15 +822,20 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		InformacaoTransporte transporte = new InformacaoTransporte();
 		
-		transporte.setModalidadeFrente(0);
+		transporte.setModalidadeFrete(0);
 		
 		InformacaoAdicional informacaoAdicional = new InformacaoAdicional();
 		
+		
+		Processo processo = this.processoRepository.buscarPeloNome("DEVOLUCAO_AO_FORNECEDOR");
+		
 		Set<Processo> processos = new HashSet<Processo>(1);		
+		processos.add(processo);
 		
-		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
+		Long idNota = null; 
 		
-		Long idNota = notaFiscalService.emitiNotaFiscal(
+		/*
+		notaFiscalService.emitiNotaFiscal(
 				tipoNotaFiscal.getId(), 
 				new Date(), 
 				fornecedor, 
@@ -829,6 +845,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				null, 
 				processos, 
 				Condicao.DEVOLUCAO_ENCALHE);
+		*/
 		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
@@ -855,18 +872,155 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 		
+		List<Fornecedor> fornecedores = null;
+				
 		for ( ContagemDevolucaoDTO contagem : listaContagemDevolucao ) {
 			
-			if (contagem.getQtdNota()==null){
+			if (contagem.getQtdNota() == null){
 				
 				continue;
 			}
 			
-			movimentoEstoqueService.gerarMovimentoEstoque(contagem.getIdProdutoEdicao(), idUsuario, contagem.getQtdNota(), tipoMovimentoDevolucaoEncalhe);
+			if(listaContagemDevolucao != null && listaContagemDevolucao.size() > 0) {
+				
+				fornecedores = fornecedorService.obterFornecedoresPorProduto(contagem.getCodigoProduto(), null);
+			}
+			
+			Fornecedor fornecedor = null;
+			if(fornecedores != null && fornecedores.size() > 0) {
+				fornecedor = fornecedores.iterator().next();
+			}
+			
+			MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(contagem.getIdProdutoEdicao(), idUsuario, contagem.getQtdNota(), tipoMovimentoDevolucaoEncalhe);
+
+			gerarMovimentoFechamentoFiscalFornecedor(tipoMovimentoDevolucaoEncalhe, contagem, fornecedor, movimentoEstoque);
+		}
+	}
+
+	private MovimentoFechamentoFiscalFornecedor gerarMovimentoFechamentoFiscalFornecedor(
+			TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe, ContagemDevolucaoDTO contagem, Fornecedor fornecedor,
+			MovimentoEstoque movimentoEstoque) {
+		
+		MovimentoFechamentoFiscalFornecedor mfff = movimentoFechamentoFiscalRepository.buscarPorProdutoEdicaoTipoMovimentoEstoque(new ProdutoEdicao(contagem.getIdProdutoEdicao()), tipoMovimentoDevolucaoEncalhe);
+		
+		Set<MovimentoEstoque> movimentos = movimentoEstoque.getProdutoEdicao().getMovimentoEstoques();
+		
+		BigInteger qtdeDevSimb = BigInteger.ZERO;
+		for(MovimentoEstoque me : movimentos) {
+			if(((TipoMovimentoEstoque) me.getTipoMovimento()).getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.RECEBIMENTO_FISICO)) {
+				qtdeDevSimb = qtdeDevSimb.add(me.getQtde());
+			} 
+			
+			if(((TipoMovimentoEstoque) me.getTipoMovimento()).getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)) {
+				qtdeDevSimb = qtdeDevSimb.subtract(me.getQtde());
+			}
+		}
+		
+		if(qtdeDevSimb.intValue() > 0) {
+			
+			if(mfff == null) {
+				
+				List<OrigemItemMovFechamentoFiscal> listaOrigemMovsFiscais = new ArrayList<>();
+				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdf = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
+				oimffdf.setMovimento(movimentoEstoque);
+				listaOrigemMovsFiscais.add(oimffdf);
+				
+				BigDecimal precoVenda = null;
+				BigDecimal precoComDesconto = null;
+				BigDecimal valorDesconto = null;
+				
+				if(movimentoEstoque != null && movimentoEstoque.getProdutoEdicao() != null) {
+					
+					precoVenda = movimentoEstoque.getProdutoEdicao().getPrecoVenda();
+					
+					if(movimentoEstoque.getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
+						
+						valorDesconto = movimentoEstoque.getProdutoEdicao().getDesconto();
+						if(valorDesconto == null && movimentoEstoque.getProdutoEdicao().getProduto() != null) {
+							valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDesconto();
+						}
+						
+					} else {
+						
+						if(movimentoEstoque.getProdutoEdicao().getDescontoLogistica() != null) {
+							valorDesconto = movimentoEstoque.getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
+							if(valorDesconto == null 
+									&& movimentoEstoque.getProdutoEdicao().getProduto() != null
+									&& movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica() != null) {
+								valorDesconto = movimentoEstoque.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto();
+							}
+						}
+						
+					}
+					
+					if(valorDesconto != null && precoVenda != null) {
+						precoComDesconto = precoVenda.multiply(valorDesconto).divide(BigDecimal.valueOf(100));
+					}
+					
+				}
+				
+				validarValoresAplicados(movimentoEstoque, precoVenda, precoComDesconto, valorDesconto);
+				
+				ValoresAplicados valoresAplicados = new ValoresAplicados(precoVenda, precoComDesconto, valorDesconto);
+				
+				mfff = new MovimentoFechamentoFiscalFornecedor();
+				mfff.setOrigemMovimentoFechamentoFiscal(listaOrigemMovsFiscais);
+				mfff.setQtde(contagem.getQtdNota());
+				mfff.setValoresAplicados(valoresAplicados);
+				mfff.setNotaFiscalLiberadaEmissao(true);
+				mfff.setData(distribuidorService.obterDataOperacaoDistribuidor());
+				mfff.setTipoMovimento(tipoMovimentoFiscalRepository.buscarTiposMovimentoFiscalPorTipoOperacao(OperacaoEstoque.SAIDA));
+				mfff.setFornecedor(fornecedor);
+				mfff.setProdutoEdicao(new ProdutoEdicao(contagem.getIdProdutoEdicao()));
+				mfff.setTipoDestinatario(TipoDestinatario.FORNECEDOR);
+				mfff.setNotaFiscalDevolucaoSimbolicaEmitida(false);
+				mfff.setDesobrigaNotaFiscalDevolucaoSimbolica(false);
+				oimffdf.setMovimentoFechamentoFiscal(mfff);
+				
+				movimentoFechamentoFiscalRepository.adicionar(mfff);
+				
+			} else {
+				
+				OrigemItemMovFechamentoFiscalDevolucaoFornecedor oimffdv = new OrigemItemMovFechamentoFiscalDevolucaoFornecedor();
+				oimffdv.setMovimento(movimentoEstoque);
+				mfff.getOrigemMovimentoFechamentoFiscal().add(oimffdv);
+				mfff.setQtde(mfff.getQtde().add(movimentoEstoque.getQtde()));
+				oimffdv.setMovimentoFechamentoFiscal(mfff);
+				
+				movimentoFechamentoFiscalRepository.alterar(mfff);
+			}
+			
+		}
+		
+		return mfff;
+	}
+
+	private void validarValoresAplicados(MovimentoEstoque movimentoEstoque,
+			BigDecimal precoVenda, BigDecimal precoComDesconto,
+			BigDecimal valorDesconto) {
+		if(precoVenda == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					String.format("Erro ao obter o preço de venda do produto: %s / %s"
+							, movimentoEstoque.getProdutoEdicao().getProduto().getCodigo()
+							, movimentoEstoque.getProdutoEdicao().getNumeroEdicao()));
+		}
+		
+		if(precoComDesconto == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					String.format("Erro ao obter o preço com desconto do produto: %s / %s"
+							, movimentoEstoque.getProdutoEdicao().getProduto().getCodigo()
+							, movimentoEstoque.getProdutoEdicao().getNumeroEdicao()));
+		}
+		
+		if(valorDesconto == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					String.format("Erro ao obter o valor do desconto do produto: %s / %s"
+							, movimentoEstoque.getProdutoEdicao().getProduto().getCodigo()
+							, movimentoEstoque.getProdutoEdicao().getNumeroEdicao()));
 		}
 	}
 	
-	        /**
+	/**
      * Obtém uma lista de contagem devolução com as qtndes de itens sumarizadas
      * agrupando por produto edicao.
      * 
@@ -1038,8 +1192,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		List<ContagemDevolucaoDTO> listaAgrupadaContagemDevolucao = 
 				obterListaContagemDevolucaoTotalAgrupado(listaContagemDevolucao, null, false, StatusAprovacao.APROVADO);
 		
-		TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		TipoMovimentoEstoque tipoMovimentoDevolucaoEncalhe = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 		
 		TipoMovimentoEstoque tipoMovimentoSobraEmReparte = null;
 		
@@ -1065,11 +1218,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					tipoMovimentoPerda,
 					tipoMovimentoSobraEmReparte);
 			
-			movimentoEstoqueService.gerarMovimentoEstoque(
+			MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(
 					item.getIdProdutoEdicao(),
 					usuario.getId(),
 					item.getQtdNota(),
 					tipoMovimentoDevolucaoEncalhe);
+			
+			for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
+				
+				gerarMovimentoFechamentoFiscalFornecedor(tipoMovimentoDevolucaoEncalhe, contagem
+						, movimentoEstoque.getProdutoEdicao().getProduto().getFornecedor(), movimentoEstoque);
+			}
 		}
 	}
 	

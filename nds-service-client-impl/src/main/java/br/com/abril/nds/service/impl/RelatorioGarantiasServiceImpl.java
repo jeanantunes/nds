@@ -9,8 +9,6 @@ import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.TipoGarantia;
-import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.service.RelatorioGarantiasService;
 import br.com.abril.nds.vo.ValidacaoVO;

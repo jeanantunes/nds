@@ -63,7 +63,21 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private boolean integracaoNFEAprovado;
 	
-	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";
+	private String desconto;
+	
+	private BigInteger qtdDevolucao;
+	
+	private String qtdNota;
+	
+	private BigDecimal valorTotal;
+	
+	private BigDecimal valorTotalComDesconto;
+	
+	private String valorTotalComDescontoFormatado;
+	
+	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";		
+	
+	private boolean isProdutoSemCe = false;
 	
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	public String getReparteFormatado(){
@@ -230,6 +244,62 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	public void setEstoque(BigInteger estoque) {
 		this.estoque = estoque;
 	}
-	
-	
+
+	public String getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(String desconto) {
+		this.desconto = desconto;
+	}
+
+	public BigInteger getQtdDevolucao() {
+		return qtdDevolucao;
+	}
+
+	public void setQtdDevolucao(BigInteger qtdDevolucao) {
+		this.qtdDevolucao = qtdDevolucao;
+	}
+
+	public String getQtdNota() {
+		return qtdNota;
+	}
+
+	public void setQtdNota(String qtdNota) {
+		this.qtdNota = qtdNota;
+	}
+
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
+		this.valorVendaFormatado = CurrencyUtil.formatarValor(valorTotal);
+	}
+
+	public BigDecimal getValorTotalComDesconto() {
+		return valorTotalComDesconto;
+	}
+
+	public void setValorTotalComDesconto(BigDecimal valorTotalComDesconto) {
+		this.valorTotalComDesconto = valorTotalComDesconto;
+		this.valorTotalComDescontoFormatado = CurrencyUtil.formatarValor(valorTotalComDesconto);
+	}
+
+	public String getValorTotalComDescontoFormatado() {
+		return valorTotalComDescontoFormatado;
+	}
+
+	public void setValorTotalComDescontoFormatado(String valorTotalComDescontoFormatado) {
+		this.valorTotalComDescontoFormatado = valorTotalComDescontoFormatado;
+	}
+
+	public boolean isProdutoSemCe() {
+		return isProdutoSemCe;
+	}
+
+	public void setProdutoSemCe(boolean isProdutoSemCe) {
+		this.isProdutoSemCe = isProdutoSemCe;
+	}
 }

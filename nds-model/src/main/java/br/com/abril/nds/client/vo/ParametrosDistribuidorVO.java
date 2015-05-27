@@ -1,9 +1,12 @@
 package br.com.abril.nds.client.vo;
 
+
+import java.util.Date;
 import java.math.BigDecimal;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.dto.RegimeTributarioDTO;
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -28,13 +31,23 @@ public class ParametrosDistribuidorVO {
     // Frame Endereço
     private EnderecoVO endereco = new EnderecoVO();
     // Frame Fiscal
-    private TipoAtividade regimeTributario;
-    private ObrigacaoFiscal obrigacaoFiscal;
-    private boolean regimeEspecial;
+    private RegimeTributarioDTO regimeTributario;
+    
+    private TipoAtividade tipoAtividade;
+    
+    private boolean possuiRegimeEspecialDispensaInterna;
+    
+    private String nfInformacoesAdicionais;
+    
+	private String numeroDispositivoLegal;
+	
+	private Date dataLimiteVigenciaRegimeEspecial;
     
     private String numeroTelefone;
     
     private String numeroDDD;
+  
+    private String cnae;
     
     // -= Aba Operação =-
     // Frame Parciais / Matriz de Lançamento
@@ -177,6 +190,9 @@ public class ParametrosDistribuidorVO {
     private Integer chamadaoDiasSuspensao;
     private String chamadaoValorConsignado;
     
+    private List<TiposNotasFiscaisParametrosVO> tiposNotasFiscais;
+    private List<TributoAliquotaDTO> tributosAliquotas;
+
     // Aba Distribuição
     // Grid Distribuição
 	private boolean geracaoAutomaticaEstudo;
@@ -306,40 +322,59 @@ public class ParametrosDistribuidorVO {
     /**
      * @return the regimeTributario
      */
-    public TipoAtividade getRegimeTributario() {
+    public RegimeTributarioDTO getRegimeTributario() {
         return regimeTributario;
     }
 
     /**
      * @param regimeTributario the regimeTributario to set
      */
-    public void setRegimeTributario(TipoAtividade regimeTributario) {
+    public void setRegimeTributario(RegimeTributarioDTO regimeTributario) {
         this.regimeTributario = regimeTributario;
     }
-
-    /**
-     * @return the obrigacaoFiscal
-     */
-    public ObrigacaoFiscal getObrigacaoFiscal() {
-        return obrigacaoFiscal;
-    }
-
-    /**
-     * @param obrigacaoFiscal the obrigacaoFiscal to set
-     */
-    public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
-        this.obrigacaoFiscal = obrigacaoFiscal;
-    }
     
-    public boolean getRegimeEspecial() {
-        return regimeEspecial;
+    public TipoAtividade getTipoAtividade() {
+		return tipoAtividade;
+	}
+
+	public void setTipoAtividade(TipoAtividade tipoAtividade) {
+		this.tipoAtividade = tipoAtividade;
+	}
+
+	public boolean isPossuiRegimeEspecialDispensaInterna() {
+        return possuiRegimeEspecialDispensaInterna;
     }
 
-    public void setRegimeEspecial(boolean regimeEspecial) {
-        this.regimeEspecial = regimeEspecial;
+    public void setPossuiRegimeEspecialDispensaInterna(boolean possuiRegimeEspecialDispensaInterna) {
+        this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
     }
 
-    /**
+    public String getNfInformacoesAdicionais() {
+		return nfInformacoesAdicionais;
+	}
+
+	public void setNfInformacoesAdicionais(String nfInformacoesAdicionais) {
+		this.nfInformacoesAdicionais = nfInformacoesAdicionais;
+	}
+
+	public String getNumeroDispositivoLegal() {
+		return numeroDispositivoLegal;
+	}
+
+	public void setNumeroDispositivoLegal(String numeroDispositivoLegal) {
+		this.numeroDispositivoLegal = numeroDispositivoLegal;
+	}
+
+	public Date getDataLimiteVigenciaRegimeEspecial() {
+		return dataLimiteVigenciaRegimeEspecial;
+	}
+
+	public void setDataLimiteVigenciaRegimeEspecial(
+			Date dataLimiteVigenciaRegimeEspecial) {
+		this.dataLimiteVigenciaRegimeEspecial = dataLimiteVigenciaRegimeEspecial;
+	}
+
+	/**
      * @return the endereco
      */
     public EnderecoVO getEndereco() {
@@ -1288,6 +1323,30 @@ public class ParametrosDistribuidorVO {
 
 	public void setNumeroDDD(String numeroDDD) {
 		this.numeroDDD = numeroDDD;
+	}
+	
+	public String getCnae() {
+		return cnae;
+	}
+
+	public void setCnae(String cnae) {
+		this.cnae = cnae;
+	}
+
+	public List<TiposNotasFiscaisParametrosVO> getTiposNotasFiscais() {
+		return tiposNotasFiscais;
+	}
+
+	public void setTiposNotasFiscais(List<TiposNotasFiscaisParametrosVO> tiposNotasFiscais) {
+		this.tiposNotasFiscais = tiposNotasFiscais;
+	}
+	
+	public List<TributoAliquotaDTO> getTributosAliquotas() {
+		return tributosAliquotas;
+	}
+
+	public void setTributosAliquotas(List<TributoAliquotaDTO> tributosAliquotas) {
+		this.tributosAliquotas = tributosAliquotas;
 	}
 
 	public boolean isGeracaoAutomaticaEstudo() {

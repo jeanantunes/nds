@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.util.upload.XlsMapper;
 
@@ -12,10 +13,17 @@ public class EstudoCotaDTO implements Serializable {
 	private static final long serialVersionUID = 1031571090326764200L;
 	
 	private Long id;
+	
 	private Long idCota;
 	private Long idFornecedorPadraoCota;
 	private TipoEstudoCota tipoEstudo;
 	
+	private boolean devolveEncalhe;
+	
+	private TipoCota tipoCota;
+	
+	private boolean cotaContribuinteExigeNotaFiscal;
+
 	private Cota cota;
 	
 	@XlsMapper(value="cota")
@@ -60,6 +68,30 @@ public class EstudoCotaDTO implements Serializable {
 		this.tipoEstudo = tipoEstudo;
 	}
 
+	public boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	public void setDevolveEncalhe(boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
+	}
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
+	}
+
+	public boolean isCotaContribuinteExigeNotaFiscal() {
+		return cotaContribuinteExigeNotaFiscal;
+	}
+
+	public void setCotaContribuinteExigeNotaFiscal(boolean cotaContribuinteExigeNotaFiscal) {
+		this.cotaContribuinteExigeNotaFiscal = cotaContribuinteExigeNotaFiscal;
+	}
+		
 	public Long getIdFornecedorPadraoCota() {
 		return idFornecedorPadraoCota;
 	}
@@ -67,7 +99,7 @@ public class EstudoCotaDTO implements Serializable {
 	public void setIdFornecedorPadraoCota(Long idFornecedorPadraoCota) {
 		this.idFornecedorPadraoCota = idFornecedorPadraoCota;
 	}
-
+	
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -83,5 +115,4 @@ public class EstudoCotaDTO implements Serializable {
 	public void setCota(Cota cota) {
 		this.cota = cota;
 	}
-	
 }

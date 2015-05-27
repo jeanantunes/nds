@@ -21,7 +21,6 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -40,9 +39,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
 @Repository
-public class DistribuidorRepositoryImpl extends
-		AbstractRepositoryModel<Distribuidor, Long> implements
-		DistribuidorRepository {
+public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements DistribuidorRepository {
 
 	public DistribuidorRepositoryImpl() {
 		super(Distribuidor.class);
@@ -52,9 +49,8 @@ public class DistribuidorRepositoryImpl extends
 	public Distribuidor obter() {
 		String hql = "from Distribuidor";
 		Query query = getSession().createQuery(hql);
-		@SuppressWarnings("unchecked")
-		List<Distribuidor> distribuidores = query.list();
-		return distribuidores.isEmpty() ? null : distribuidores.get(0);
+		 
+		return (Distribuidor) query.uniqueResult();
 	}
 
 	@Override
@@ -203,8 +199,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public DiaSemana buscarInicioSemanaLancamento() {
 		
-		return (DiaSemana) 
-				this.getSession().createQuery("select inicioSemanaLancamento from Distribuidor").uniqueResult();
+		return (DiaSemana) this.getSession().createQuery("select inicioSemanaLancamento from Distribuidor").uniqueResult();
 	}
 
 	@Override
@@ -216,17 +211,13 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public BigDecimal obterDescontoCotaNegociacao(){
 		
-		return (BigDecimal) 
-				this.getSession().createQuery(
-						"select descontoCotaNegociacao from Distribuidor").uniqueResult();
+		return (BigDecimal) this.getSession().createQuery("select descontoCotaNegociacao from Distribuidor").uniqueResult();
 	}
 	
 	@Override
 	public boolean utilizaGarantiaPdv(){
 		
-		Boolean utilizaGarantiaPdv = 
-				(Boolean) this.getSession().createQuery(
-						"select utilizaGarantiaPdv from Distribuidor").uniqueResult();
+		Boolean utilizaGarantiaPdv = (Boolean) this.getSession().createQuery("select utilizaGarantiaPdv from Distribuidor").uniqueResult();
 		
 		return utilizaGarantiaPdv == null ? false : utilizaGarantiaPdv;
 	}
@@ -234,9 +225,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public boolean aceitaJuramentado(){
 		
-		Boolean aceitaJuramentado =
-				(Boolean) this.getSession().createQuery(
-						"select aceitaJuramentado from Distribuidor").uniqueResult();
+		Boolean aceitaJuramentado = (Boolean) this.getSession().createQuery("select aceitaJuramentado from Distribuidor").uniqueResult();
 		
 		return aceitaJuramentado == null ? false : aceitaJuramentado;
 	}
@@ -244,9 +233,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public int qtdDiasEncalheAtrasadoAceitavel(){
 		
-		Integer qtd = (Integer)
-				this.getSession().createQuery(
-						"select qtdDiasEncalheAtrasadoAceitavel from Distribuidor").uniqueResult();
+		Integer qtd = (Integer) this.getSession().createQuery("select qtdDiasEncalheAtrasadoAceitavel from Distribuidor").uniqueResult();
 		
 		return qtd == null ? 0 : qtd;
 	}
@@ -388,11 +375,9 @@ public class DistribuidorRepositoryImpl extends
 	}
 
 	@Override
-	public ObrigacaoFiscal obrigacaoFiscal() {
+	public boolean obrigacaoFiscal() {
 		
-		return (ObrigacaoFiscal)
-				this.getSession().createQuery(
-						"select obrigacaoFiscal from Distribuidor").uniqueResult();
+		return (!(boolean) this.getSession().createQuery("select possuiRegimeEspecialDispensaInterna from Distribuidor").uniqueResult());
 	}
 
 	@Override
@@ -420,9 +405,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public String codigoDistribuidorDinap() {
 		
-		return (String)
-				this.getSession().
-				createQuery("select codigoDistribuidorDinap from Distribuidor").uniqueResult();
+		return (String) this.getSession().createQuery("select codigoDistribuidorDinap from Distribuidor").uniqueResult();
 	}
 
 	@Override
@@ -444,9 +427,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public TipoContabilizacaoCE tipoContabilizacaoCE() {
 		
-		return (TipoContabilizacaoCE)
-				this.getSession().
-				createQuery("select tipoContabilizacaoCE from Distribuidor").uniqueResult();
+		return (TipoContabilizacaoCE) this.getSession().createQuery("select tipoContabilizacaoCE from Distribuidor").uniqueResult();
 	}
 
 	@Override
@@ -505,20 +486,14 @@ public class DistribuidorRepositoryImpl extends
 
 	@Override
 	public Boolean regimeEspecial() {
-		
-		Boolean regimeEspecial = 
-				(Boolean) this.getSession().createQuery(
-						"select regimeEspecial from Distribuidor").uniqueResult();
-		
+		Boolean regimeEspecial = (Boolean) this.getSession().createQuery("select possuiRegimeEspecialDispensaInterna from Distribuidor").uniqueResult();
 		return regimeEspecial == null ? false : regimeEspecial;
 	}
 
 	@Override
 	public TipoAtividade tipoAtividade() {
 		
-		return (TipoAtividade)
-				this.getSession().
-				createQuery("select tipoAtividade from Distribuidor").uniqueResult();
+		return (TipoAtividade) this.getSession().createQuery("select tipoAtividade from Distribuidor").uniqueResult();
 	}
 
 	@Override
@@ -547,8 +522,8 @@ public class DistribuidorRepositoryImpl extends
 				createQuery("select d.juridica.cnpj from Distribuidor d").uniqueResult();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuidorEmissaoDocumentos(){
 		
 		return (List<ParametrosDistribuidorEmissaoDocumento>)

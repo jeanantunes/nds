@@ -1,5 +1,5 @@
 <head>
-<title>NDS - Novo Distrib</title>
+<title>STG - Sistema Treelog de Gestão</title>
 
 <script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/endereco.js"></script>

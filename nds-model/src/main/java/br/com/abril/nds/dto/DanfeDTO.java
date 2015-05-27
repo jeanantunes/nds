@@ -81,6 +81,8 @@ public class DanfeDTO implements Serializable{
 
 	private String destinatarioTelefone;
 
+	private String destinatarioPais;
+	
 	private BigDecimal valorBaseICMS;
 
 	private BigDecimal valorICMS;
@@ -153,6 +155,8 @@ public class DanfeDTO implements Serializable{
 	
 	private List<Duplicata> faturas;
 
+	private java.io.InputStream logo;
+	
 	public String getNaturezaOperacao() {
 		return naturezaOperacao;
 	}
@@ -442,6 +446,14 @@ public class DanfeDTO implements Serializable{
 	public void setDestinatarioTelefone(String destinatarioTelefone) {
 		this.destinatarioTelefone = destinatarioTelefone;
 	}
+	
+	public String getDestinatarioPais() {
+		return destinatarioPais;
+	}
+
+	public void setDestinatarioPais(String destinatarioPais) {
+		this.destinatarioPais = destinatarioPais;
+	}
 
 	public BigDecimal getValorBaseICMS() {
 		return valorBaseICMS;
@@ -730,5 +742,13 @@ public class DanfeDTO implements Serializable{
 
 	public void setFaturas(List<Duplicata> faturas) {
 		this.faturas = faturas;
+	}
+
+	public java.io.InputStream getLogo() {
+		return logo;
+	}
+
+	public void setLogo(java.io.InputStream logo) {
+		this.logo = logo;
 	}
 }

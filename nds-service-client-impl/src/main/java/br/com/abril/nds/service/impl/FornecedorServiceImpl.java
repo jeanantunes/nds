@@ -368,12 +368,11 @@ public class FornecedorServiceImpl implements FornecedorService {
 	}
 	
 
-	@Transactional(readOnly=true)
 	@Override
+	@Transactional(readOnly=true)
 	public List<ItemDTO<Long, String>> obterFornecedoresIdNome(
 			SituacaoCadastro situacao, Boolean inferface) {
-		return fornecedorRepository
-				.obterFornecedoresIdNome(situacao, inferface);
+		return fornecedorRepository.obterFornecedoresIdNome(situacao, inferface);
 	}
 
 	@Override
@@ -791,6 +790,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		return this.fornecedorRepository.obterFornecedoresDesc();
 	}
+
+	@Override
+	@Transactional
+	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacaoCadastro) {
+		return this.fornecedorRepository.obterFornecedoresDestinatarios(situacaoCadastro);
+	}
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -806,6 +811,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 		
 		return listaFornecedoresCombo;
+
 	}
 	
 	@Override

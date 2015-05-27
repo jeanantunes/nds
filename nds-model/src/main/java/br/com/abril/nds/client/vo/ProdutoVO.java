@@ -1,15 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
-import javax.persistence.Column;
-
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 

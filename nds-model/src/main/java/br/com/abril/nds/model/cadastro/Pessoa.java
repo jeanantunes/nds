@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -15,6 +16,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * @author francisco.garcia
@@ -26,6 +29,7 @@ import javax.persistence.Table;
 @SequenceGenerator(name="PESSOA_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Pessoa implements Serializable {
 
 	/**
@@ -41,10 +45,10 @@ public abstract class Pessoa implements Serializable {
 	@Column(name = "EMAIL")
 	private String email;
 	
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany(mappedBy = "pessoa", cascade=CascadeType.MERGE)
 	public List<Endereco> enderecos = new ArrayList<Endereco>();
 	
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany(mappedBy = "pessoa", cascade=CascadeType.MERGE)
 	public List<Telefone> telefones = new ArrayList<Telefone>();
 	
 	public Long getId() {

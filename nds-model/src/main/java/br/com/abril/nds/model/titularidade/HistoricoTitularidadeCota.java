@@ -96,8 +96,14 @@ public class HistoricoTitularidadeCota implements Serializable {
     /**
      * Flag indicando se a cota emite NFE
      */
-    @Column(name = "EMITE_NFE")
-    private boolean emiteNfe;
+    @Column(name = "EXIGE_NF_E")
+    private boolean exigeNfe;
+    
+    /**
+     * Flag indicando se a cota emite NFE
+     */
+    @Column(name = "CONTRIBUINTE_ICMS")
+    private boolean contribuinteICMS;
     
     /**
      * Email de utilização da NFE
@@ -330,20 +336,28 @@ public class HistoricoTitularidadeCota implements Serializable {
     }
     
     /**
-     * @return the emiteNfe
+     * @return the exigeNfe
      */
-    public boolean isEmiteNfe() {
-        return emiteNfe;
+    public boolean isExigeNfe() {
+        return exigeNfe;
     }
 
     /**
-     * @param emiteNfe the emiteNfe to set
+     * @param exigeNfe the exigeNfe to set
      */
-    public void setEmiteNfe(boolean emiteNfe) {
-        this.emiteNfe = emiteNfe;
+    public void setExigeNfe(boolean exigeNfe) {
+        this.exigeNfe = exigeNfe;
     }
+    
+    public boolean isContribuinteICMS() {
+		return contribuinteICMS;
+	}
 
-    /**
+	public void setContribuinteICMS(boolean contribuinteICMS) {
+		this.contribuinteICMS = contribuinteICMS;
+	}
+
+	/**
      * @return the emailNfe
      */
     public String getEmailNfe() {
@@ -852,4 +866,28 @@ public class HistoricoTitularidadeCota implements Serializable {
         return outros;
     }
 
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HistoricoTitularidadeCota other = (HistoricoTitularidadeCota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 }

@@ -311,7 +311,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 				<textField isStretchWithOverflow="true">
 					<reportElement uuid="036ce9dd-7468-42f9-aa71-344d1daddbd1" style="dados" x="46" y="8" width="421" height="14"/>
 					<textElement verticalAlignment="Bottom">
-						<font fontName="SansSerif" size="8" isBold="false"/>
+						<font fontName="SansSerif" size="8" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioNome}]]></textFieldExpression>
 				</textField>

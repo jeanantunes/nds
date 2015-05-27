@@ -171,7 +171,7 @@ fieldset {
 
 					<div class="ldForm">
 						<fieldset style="width: 655px !important; margin-bottom: 5px;">
-							<legend>Identifica&ccedil;&atilde;o</legend>
+							<legend>Identifica&ccedil;&atilde;o xxxx</legend>
 							<table width="648" border="0" cellspacing="1" cellpadding="1">
 								<thead />
 								<tbody>
@@ -258,7 +258,7 @@ fieldset {
 
 									<tr>
 										<td>Tipo de Distribui&ccedil;&atilde;o:</td>
-										<td colspan="3"><select
+										<td colspan="2"><select
 											name="produtoEdicaoDTO.tipoLancamento"
 											id="produtoEdicaoController-tipoLancamento"
 											style="width: 160px;">
@@ -267,7 +267,7 @@ fieldset {
 												<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
 										</select></td>
 										<td>N&ordm; Lancto:</td>
-										<td><input type="text"
+										<td colspan="2"><input type="text"
 											name="produtoEdicaoDTO.numeroLancamento"
 											id="produtoEdicaoController-numeroLancamento" readonly="true"
 											style="width: 50px; background-color: buttonface;"

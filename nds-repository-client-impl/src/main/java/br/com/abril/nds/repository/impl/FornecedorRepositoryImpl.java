@@ -44,6 +44,7 @@ public class FornecedorRepositoryImpl extends
 		super(Fornecedor.class);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterIdFornecedores() {
 		
@@ -53,7 +54,7 @@ public class FornecedorRepositoryImpl extends
 		
 		final Query query = getSession().createQuery(hql.toString());
 		
-		return query.list();
+		return ((List<Long>) query.list());
 	}
 	
 	@Override
@@ -326,6 +327,7 @@ public class FornecedorRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ItemDTO<Long, String>> obterFornecedoresIdNome(final SituacaoCadastro situacao, final Boolean inferface){
+		
 		final Criteria criteria = getSession().createCriteria(Fornecedor.class);
 		
 		criteria.createAlias("juridica","juridica");
@@ -623,7 +625,28 @@ public class FornecedorRepositoryImpl extends
 		
 		return query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacao) {
+
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.createAlias("juridica", "juridica");
+		criteria.add(Restrictions.isNull("fornecedorUnificador"));
+		
+		if(situacao != null) {
+			criteria.add(Restrictions.eq("situacaoCadastro", situacao));		
+		}
+		
+		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		
+		criteria.setCacheable(true);
+		
+		return  criteria.list();
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterFornecedoresUnificados() {
@@ -638,6 +661,7 @@ public class FornecedorRepositoryImpl extends
 		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
 
 		return query.list();
+
 	}
 	
 	@SuppressWarnings("unchecked")

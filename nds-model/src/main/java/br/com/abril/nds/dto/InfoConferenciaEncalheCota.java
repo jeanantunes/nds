@@ -44,6 +44,9 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	
 	private boolean distribuidorAceitaJuramentado;
 	
+	private boolean processoUtilizaNfe;
+	
+	private boolean nfeDigitada;
 	
 	public boolean isDistribuidorAceitaJuramentado() {
 		return distribuidorAceitaJuramentado;
@@ -90,8 +93,7 @@ public class InfoConferenciaEncalheCota implements Serializable {
 		return listaConferenciaEncalhe;
 	}
 
-	public void setListaConferenciaEncalhe(
-			Set<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
+	public void setListaConferenciaEncalhe(Set<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
 		this.listaConferenciaEncalhe = new HashSet<ConferenciaEncalheDTO>(listaConferenciaEncalhe);
 	}
 
@@ -137,6 +139,22 @@ public class InfoConferenciaEncalheCota implements Serializable {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
 	}
 
+	public boolean isProcessoUtilizaNfe() {
+		return processoUtilizaNfe;
+	}
+
+	public void setProcessoUtilizaNfe(boolean processoUtilizaNfe) {
+		this.processoUtilizaNfe = processoUtilizaNfe;
+	}
+
+	public boolean isNfeDigitada() {
+		return nfeDigitada;
+	}
+
+	public void setNfeDigitada(boolean nfeDigitada) {
+		this.nfeDigitada = nfeDigitada;
+	}
+
 	public boolean isIndCotaOperacaoDiferenciada() {
 		return indCotaOperacaoDiferenciada;
 	}
@@ -144,8 +162,5 @@ public class InfoConferenciaEncalheCota implements Serializable {
 	public void setIndCotaOperacaoDiferenciada(boolean indCotaOperacaoDiferenciada) {
 		this.indCotaOperacaoDiferenciada = indCotaOperacaoDiferenciada;
 	}
-	
-	
-	
 	
 }

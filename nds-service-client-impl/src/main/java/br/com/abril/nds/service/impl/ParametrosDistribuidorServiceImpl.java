@@ -10,7 +10,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -24,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
 import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
+import br.com.abril.nds.dto.RegimeTributarioDTO;
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -32,8 +37,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.cadastro.DistribuidorPercentualExcedente;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroEntregaBanca;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -43,6 +50,7 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -53,6 +61,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -61,20 +70,24 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.CouchDBRepository;
 import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
 import br.com.abril.nds.repository.DistribuidorGridDistribuicaoRepository;
 import br.com.abril.nds.repository.DistribuidorPercentualExcedenteRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.repository.RegimeTributarioRepository;
 import br.com.abril.nds.repository.TelefoneDistribuidorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.TributoAliquotaRepository;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -96,7 +109,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
 	
-	private static final String DB_NAME = "db_parametro_distribuidor";
+//	private static final String DB_NAME = "db_parametro_distribuidor";
 	
 	@Autowired
 	DistribuidorClassificacaoCotaRepository classificacaoCotaRepository;
@@ -109,9 +122,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
-
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private ParametroContratoCotaRepository parametroContratoCotaRepository;
@@ -129,6 +139,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private EnderecoDistribuidorRepository enderecoDistribuidorRepository;
 	
 	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
 	private PessoaRepository pessoaRepository;
 	
 	@Autowired
@@ -141,24 +154,37 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private MovimentoRepository movimentoRepository ;
 	
 	@Autowired
-	private CouchDbProperties couchDbProperties;
-	
-	private CouchDbClient couchDbClient;
-	
-	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
 	@Autowired
 	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
 	
 	@Autowired
+	private RegimeTributarioRepository regimeTributarioRepository;
+	
+	@Autowired
+	private TributoAliquotaRepository tributoAliquotaRepository;
+	
+	@Autowired
+	private CouchDBRepository couchDBRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
 	private GrupoPermissaoService grupoPermissaoService;
+	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+	
+	private CouchDbClient couchDbClient;
 	
 	@PostConstruct
 	public void initCouchDbClient() {
 		
+		/*
 		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
-			.setDbName(DB_NAME)
+			.setDbName(distribuidorService.obter().getCodigoDistribuidorDinap())
 			.setCreateDbIfNotExist(true)
 			.setProtocol(couchDbProperties.getProtocol())
 			.setHost(couchDbProperties.getHost())
@@ -167,9 +193,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			.setPassword(couchDbProperties.getPassword())
 			.setMaxConnections(100)
 			.setConnectionTimeout(500);
+			
 	
 		this.couchDbClient = new CouchDbClient(properties);
-
+		*/
+		
+		this.couchDbClient = couchDBRepository.getCouchDBClient(distribuidorService.obter().getCodigoDistribuidorDinap(), true);
 	}
 
 	/* (non-Javadoc)
@@ -198,14 +227,22 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setCodigoDistribuidorDinap(distribuidor.getCodigoDistribuidorDinap());
 		parametrosDistribuidor.setCodigoDistribuidorFC(distribuidor.getCodigoDistribuidorFC());
 		
-		parametrosDistribuidor.setEndereco(
-			this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
+		parametrosDistribuidor.setEndereco(this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
 		
 		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
-		parametrosDistribuidor.setRegimeTributario(distribuidor.getTipoAtividade());
-		parametrosDistribuidor.setObrigacaoFiscal(distribuidor.getObrigacaoFiscal());
-		parametrosDistribuidor.setRegimeEspecial(distribuidor.isRegimeEspecial());
+		List<TributoAliquota> ta = distribuidor.getRegimeTributario().getTributosAliquotas();
+		if(ta != null) distribuidor.getRegimeTributario().getTributosAliquotas().isEmpty();
+		
+		RegimeTributarioDTO regimeTributario = new RegimeTributarioDTO();
+		regimeTributario.setId(distribuidor.getRegimeTributario().getId());
+		regimeTributario.setCodigo(distribuidor.getRegimeTributario().getCodigo());
+		regimeTributario.setDescricao(distribuidor.getRegimeTributario().getDescricao());
+		regimeTributario.setAtivo(distribuidor.getRegimeTributario().isAtivo());
+		
+		parametrosDistribuidor.setRegimeTributario(regimeTributario);
+		parametrosDistribuidor.setTipoAtividade(distribuidor.getTipoAtividade());
+		parametrosDistribuidor.setPossuiRegimeEspecialDispensaInterna(distribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
 		// Parciais / Matriz de Lançamento
 		parametrosDistribuidor.setRelancamentoParciaisEmDias(distribuidor.getFatorRelancamentoParcial());
@@ -326,34 +363,24 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	        
 	        if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CHEQUE_CAUCAO) {
 	            parametrosDistribuidor.setUtilizaChequeCaucao(true);
-	            parametrosDistribuidor
-	            .setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
+	            parametrosDistribuidor.setValidadeChequeCaucao(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.FIADOR) {
 	            parametrosDistribuidor.setUtilizaFiador(true);
-	            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeFiador(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.IMOVEL) {
 	            parametrosDistribuidor.setUtilizaImovel(true);
-	            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeImovel(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.CAUCAO_LIQUIDA) {
 	            parametrosDistribuidor.setUtilizaCaucaoLiquida(true);
-	            parametrosDistribuidor
-	            .setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
+	            parametrosDistribuidor.setValidadeCaucaoLiquida(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.NOTA_PROMISSORIA) {
 	            parametrosDistribuidor.setUtilizaNotaPromissoria(true);
-	            parametrosDistribuidor
-	            .setValidadeNotaPromissoria(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeNotaPromissoria(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.ANTECEDENCIA_VALIDADE) {
-	           
-	            parametrosDistribuidor
-	            .setValidadeAntecedenciaValidade(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeAntecedenciaValidade(tipoGarantiaAceita.getValor());
 	        } else if (tipoGarantiaAceita.getTipoGarantia() == TipoGarantia.OUTROS) {
 	            parametrosDistribuidor.setUtilizaOutros(true);
-	            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita
-	                    .getValor());
+	            parametrosDistribuidor.setValidadeOutros(tipoGarantiaAceita.getValor());
 	        }
 	    }
 	    
@@ -418,7 +445,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
 			}
 		}
-
+		
+		parametrosDistribuidor.setCnae(distribuidor.getCnae());
+		parametrosDistribuidor.setNfInformacoesAdicionais(distribuidor.getNfInformacoesAdicionais());
+		parametrosDistribuidor.setNumeroDispositivoLegal(distribuidor.getNumeroDispositivoLegal());
+		parametrosDistribuidor.setDataLimiteVigenciaRegimeEspecial(distribuidor.getDataLimiteVigenciaRegimeEspecial());
+		
         // Aba Distribuição - Grid Distribuição
         DistribuidorGridDistribuicao gridDistribuicao = distribuidor.getGridDistribuicao();
         if (gridDistribuicao == null) {
@@ -435,9 +467,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
         parametrosDistribuidor.setComplementarAutomatico(gridDistribuicao.isComplementarAutomatico());
         parametrosDistribuidor.setPercentualMaximoFixacao(gridDistribuicao.getPercentualMaximoFixacao());
         
-
         // Aba Distribuição - Grid Classificação Cota
         List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO = new ArrayList<>();
+        /*
         List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
         
         if (listClassificacaoCota != null) {
@@ -450,7 +482,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
                         listClassificacaoCotaVO.add(classificacaoCotaVO);
                 }
         }
-
+        */
         parametrosDistribuidor.setListClassificacaoCota(listClassificacaoCotaVO);
 		
 		// Aba Distribuição - Grid Percentual de Excedente
@@ -572,7 +604,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		endereco.setCep(enderecoVO.getCep());
 		endereco.setTipoLogradouro(enderecoVO.getTipoLogradouro());
 		endereco.setLogradouro(enderecoVO.getLogradouro());
-		endereco.setNumero((enderecoVO.getNumero().trim().isEmpty()) ? null : enderecoVO.getNumero());
+		endereco.setNumero((enderecoVO.getNumero() == null || enderecoVO.getNumero().trim().isEmpty()) ? null : enderecoVO.getNumero());
 		endereco.setComplemento(enderecoVO.getComplemento());
 		endereco.setBairro(enderecoVO.getBairro());
 		endereco.setCidade(enderecoVO.getLocalidade());
@@ -619,8 +651,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		enderecoVO.setLocalidade(endereco.getCidade());
 		enderecoVO.setUf(endereco.getUf());
 		
-		enderecoVO.setCodigoCidadeIBGE(
-			(endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());
+		enderecoVO.setCodigoCidadeIBGE((endereco.getCodigoCidadeIBGE() == null) ? null : endereco.getCodigoCidadeIBGE().longValue());
 		
 		return enderecoVO;
 	}
@@ -649,9 +680,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setCodigoDistribuidorDinap(parametrosDistribuidor.getCodigoDistribuidorDinap());
 		distribuidor.setCodigoDistribuidorFC(parametrosDistribuidor.getCodigoDistribuidorFC());
 		
-		distribuidor.setTipoAtividade(parametrosDistribuidor.getRegimeTributario());
-		distribuidor.setObrigacaoFiscal(parametrosDistribuidor.getObrigacaoFiscal());
-		distribuidor.setRegimeEspecial(parametrosDistribuidor.getRegimeEspecial());
+		distribuidor.setTipoAtividade(parametrosDistribuidor.getTipoAtividade());
+		distribuidor.setPossuiRegimeEspecialDispensaInterna(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
 		// Parciais / Matriz de Lançamento
 		distribuidor.setFatorRelancamentoParcial(parametrosDistribuidor.getRelancamentoParciaisEmDias());
@@ -682,7 +712,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			
 			politicaChamadao.setValorConsignado(chamadaoConsignado);
 		}
-		
 		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
@@ -985,6 +1014,73 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
+		distribuidor.setNfInformacoesAdicionais(parametrosDistribuidor.getNfInformacoesAdicionais());
+		
+		if(parametrosDistribuidor.getRegimeTributario() != null) {
+			
+			RegimeTributario regimeTributario = regimeTributarioRepository.buscarPorId(parametrosDistribuidor.getRegimeTributario().getId());
+						
+			for(TributoAliquotaDTO taDTO : parametrosDistribuidor.getTributosAliquotas()) {
+				
+				TributoAliquota ta = tributoAliquotaRepository.buscarPorId(taDTO.getId());
+				ta.setValor(taDTO.getValor());
+				tributoAliquotaRepository.alterar(ta);
+				
+			}
+			
+			distribuidor.setRegimeTributario(regimeTributario);
+		}
+		
+		if(parametrosDistribuidor.getCnae() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING ,"O campo 'CNAE' não pode ser vazio!");
+		} else {
+			distribuidor.setCnae(parametrosDistribuidor.getCnae());
+		}
+		
+		if(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+
+			distribuidor.setPossuiRegimeEspecialDispensaInterna(true);
+			
+			if(parametrosDistribuidor.getNumeroDispositivoLegal() == null){
+				throw new ValidacaoException(TipoMensagem.WARNING ,"O campo número do dispositivo legal não pode ser vazio!");
+			} else {
+				distribuidor.setNumeroDispositivoLegal(parametrosDistribuidor.getNumeroDispositivoLegal());
+			}
+			
+			if(parametrosDistribuidor.getDataLimiteVigenciaRegimeEspecial() == null){
+				throw new ValidacaoException(TipoMensagem.WARNING ,"O campo data de término da vigência não pode ser vazio!");
+			} else {				
+				distribuidor.setDataLimiteVigenciaRegimeEspecial(parametrosDistribuidor.getDataLimiteVigenciaRegimeEspecial());
+			}
+			
+			Map<String, Long> tiposNotasFiscaisMap = new HashMap<String, Long>();
+			for(TiposNotasFiscaisParametrosVO tnfp : parametrosDistribuidor.getTiposNotasFiscais()) {
+				tiposNotasFiscaisMap.put(tnfp.getNome(), Long.parseLong(tnfp.getValor()));
+			}
+			
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				
+				NotaFiscalTipoEmissao notaFiscalTipoEmissao = new NotaFiscalTipoEmissao();
+				notaFiscalTipoEmissao.setId(tiposNotasFiscaisMap.get(dtnf.getNomeCampoTela()));
+				dtnf.setTipoEmissao(notaFiscalTipoEmissao);
+	
+			}
+			
+		} else {
+			
+			distribuidor.setPossuiRegimeEspecialDispensaInterna(false);
+			
+			distribuidor.setNumeroDispositivoLegal(null);
+			
+			distribuidor.setDataLimiteVigenciaRegimeEspecial(null);
+			
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+
+				dtnf.setTipoEmissao(null);
+	
+			}
+		}
+
 		// Aba Distribuição - Grid Distribuição
 		distribuidor.setGridDistribuicao(gravarGridDistribuicao(distribuidor, parametrosDistribuidor));
 		
@@ -1206,8 +1302,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueDevolucaoFornecedor() {
 		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 		
 		return gruposMovimentoEstoque;
 	}
@@ -1252,8 +1347,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			this.tipoMovimentoFinanceiroRepository.merge(tipoMovimentoFinanceiro);
 		}
 	}
-
-	
 	
 	private void salvarLogo(InputStream imgLogotipo, String imgContentType) {
 		
@@ -1273,8 +1366,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		try {
 		
-			jsonObject =
-				couchDbClient.find(JsonObject.class, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name());
+			jsonObject = couchDbClient.find(JsonObject.class, TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name());
 		
 		} catch (NoDocumentException e) {
 			
@@ -1291,9 +1383,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		try {
 			
-			inputStream = couchDbClient.find(
-					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
-					+ "/" + ATTACHMENT_LOGOTIPO);
+			inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
 		
 		} catch (NoDocumentException e) {
 			
@@ -1425,4 +1515,37 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return controleConferenciaEncalhe;
 		
 	}
+
+	@Override
+	@Transactional
+	public List<DistribuidorTipoNotaFiscal> obterTiposNotaFiscalDistribuidor() {
+		List<DistribuidorTipoNotaFiscal> tiposNotaFiscal = new ArrayList<>();
+		tiposNotaFiscal.addAll(distribuidorService.obter().getTiposNotaFiscalDistribuidor());
+		if(!tiposNotaFiscal.isEmpty()) {
+			for(DistribuidorTipoNotaFiscal dtnf : tiposNotaFiscal) {
+				for(NotaFiscalTipoEmissao nfte : dtnf.getTipoEmissaoDisponiveis()) {
+					nfte.getDescricao();
+				}
+			}
+		}
+		return tiposNotaFiscal;
+	}
+
+	@Override
+	@Transactional
+	public List<NotaFiscalTipoEmissao> obterTiposEmissoesNotaFiscalDistribuidor() {
+		
+		List<NotaFiscalTipoEmissao> tiposEmissaoNotaFiscal = new ArrayList<>();
+		tiposEmissaoNotaFiscal.addAll(distribuidorService.obter().getTiposEmissoesNotaFiscalDistribuidor());
+		
+		return tiposEmissaoNotaFiscal;
+	}
+
+	@Override
+	@Transactional
+	public List<String> obterEstadosAtendidosPeloDistribuidor() {
+		
+		return enderecoRepository.obterUFsCotas();
+	}
+
 }

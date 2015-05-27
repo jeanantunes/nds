@@ -260,8 +260,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setPacotePadrao(produto.getPacotePadrao());
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
 				produtoExistente.setIsGeracaoAutomatica(produto.getIsGeracaoAutomatica());
+				produtoExistente.setIsSemCeIntegracao(produto.getIsSemCeIntegracao());
 				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
-
+				
 				produtoExistente.setEditor(editor);
 				
 				this.alteraFornecedorProduto(produtoExistente, fornecedor);

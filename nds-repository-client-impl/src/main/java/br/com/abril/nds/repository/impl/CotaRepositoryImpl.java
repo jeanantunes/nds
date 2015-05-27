@@ -56,6 +56,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
@@ -3545,6 +3546,93 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         return (TipoDistribuicaoCota) query.uniqueResult();
     }
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterConjuntoCota(FiltroNFeDTO filtro) {
+	    final StringBuilder sql = new StringBuilder();
+	    
+	    sql.append("select cota FROM MovimentoEstoqueCota mec ")
+		.append(" JOIN mec.tipoMovimento tipoMovimento ")
+		.append(" JOIN mec.lancamento lancamento ")
+		.append(" JOIN mec.cota cota ")
+		.append(" JOIN cota.pessoa pessoa ")
+		.append(" LEFT JOIN cota.box box ")
+		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
+		.append(" LEFT JOIN roteirizacao.roteiros roteiro ")
+		.append(" LEFT JOIN roteiro.rotas rota ")
+		.append(" JOIN mec.produtoEdicao produtoEdicao")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" WHERE mec.data BETWEEN :dataDe AND :dataAte ")
+		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
+		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
+		.append(" AND mec.notaFiscalEmitida = false ");
+	    
+        if (filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
+            sql.append(" and ( fornecedor.id in (:idFornecedores) ) ");
+        }
+        
+        if (filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+            sql.append(" and cota.numeroCota between :numeroCotaDe and :numeroCotaAte ");
+        }
+        
+        if (filtro.getIntervaloBoxInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+            sql.append(" and box.CODIGO between :boxDe and :boxAte  ");
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            sql.append(" and roteiro.id=:idRoteiro  ");
+        }
+        
+        if (filtro.getIdRota() != null) {
+            sql.append(" and rota.id=:idRota  ");
+        }
+        
+        if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
+            sql.append(" and lancamento.dataLancamentoDistribuidor between :dataDe and :dataAte  ");
+            // sql.append(" and cota.id not in (select id from CotaAusentem ca where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
+        }
+        
+        sql.append(" GROUP BY cota ");
+        
+        Query query = this.getSession().createQuery(sql.toString());
+        
+        if (filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
+            query.setParameterList("idFornecedores", filtro.getListIdFornecedor());
+        }
+        
+        if (filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+            query.setParameter("numeroCotaDe", filtro.getIntervalorCotaInicial());
+            query.setParameter("numeroCotaAte", filtro.getIntervalorCotaFinal());
+        }
+        
+        if (filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null){
+            query.setParameter("boxDe", filtro.getIntervaloBoxInicial());
+            query.setParameter("boxAte", filtro.getIntervaloBoxFinal());
+        }
+        
+        if (filtro.getIdRoteiro() != null) {
+            
+            query.setParameter("idRoteiro", filtro.getIdRoteiro());
+        }
+        
+        if (filtro.getIdRota() != null) {
+            
+            query.setParameter("idRota", filtro.getIdRota());
+        }
+        
+        if (filtro.getDataInicial() != null && filtro.getDataFinal() != null){
+            query.setParameter("dataDe", filtro.getDataInicial());
+            query.setParameter("dataAte", filtro.getDataFinal());
+        }
+        
+        // query.setParameterList("statusNaoEmitiveis", new String[] {StatusLancamento.PLANEJADO.name(),
+        //        StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(),
+        //        StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name()});
+        
+        return query.list();
+	}
+	
     @Override
     public String obterEmailCota(Integer numeroCota) {
         

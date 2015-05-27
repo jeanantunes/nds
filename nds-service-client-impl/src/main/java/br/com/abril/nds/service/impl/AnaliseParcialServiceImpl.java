@@ -145,7 +145,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudoParcial(queryDTO.getEstudoId(), queryDTO.getNumeroParcial(), parcialPossuiRedistribuicao));
             
             for (AnaliseParcialDTO item : lista) {
-                item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
+                
+            	item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
                 int contadorParciais = 1;
                 
@@ -599,11 +600,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) > 0)) {
     		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é maior que estoque disponível!");
     	}
-    	
-    	if((reparteFisicoOuPrevisto != null)&&(estudoGerado.getQtdeReparte().compareTo(reparteFisicoOuPrevisto.toBigInteger()) < 0)) {
-    		validacao =  new ValidacaoException(TipoMensagem.WARNING,"O reparte distribuido é menor que estoque disponível!");
-    	}
-    	
     	
     	if(validacao == null) {
     		validacao = new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");

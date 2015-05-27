@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.MappedSuperclass;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -12,6 +15,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
 import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @MappedSuperclass
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ContribuicaoSocial implements Serializable {
 
 	/**
@@ -38,7 +42,8 @@ public abstract class ContribuicaoSocial implements Serializable {
 			@NFEWhen(condition=NFEConditions.PIS_OUTROS, 
 			 		 export=@NFEExport(secao=TipoSecao.Q05, posicao=0, tamanho=2))
 	})
-	protected Integer cst;
+	@XmlTransient
+	protected String cst;
 	
 	
 	@NFEWhens({
@@ -60,6 +65,7 @@ public abstract class ContribuicaoSocial implements Serializable {
 		 @NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB,
 				  export=@NFEExport(secao=TipoSecao.R02, posicao=0, tamanho=15))
 	})
+	@XmlTransient
 	protected BigDecimal valorBaseCalculo;
 	
 	@NFEWhens({
@@ -76,6 +82,7 @@ public abstract class ContribuicaoSocial implements Serializable {
 	    @NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB, 
 	    		 export=@NFEExport(secao=TipoSecao.R02, posicao=1, tamanho=5))
 	})
+	@XmlTransient
 	protected BigDecimal percentualAliquota;
 	
 	@NFEWhens({
@@ -114,6 +121,7 @@ public abstract class ContribuicaoSocial implements Serializable {
 		@NFEWhen(condition=NFEConditions.PIS_OUTROS_QTDE,
 				 export=@NFEExport(secao=TipoSecao.Q10, posicao=1, tamanho=15))
 	})
+	@XmlTransient
 	protected BigDecimal valorAliquota;
 	
 	@NFEWhens({
@@ -141,19 +149,20 @@ public abstract class ContribuicaoSocial implements Serializable {
 		@NFEWhen(condition=NFEConditions.PIS_SUBSTITUICAO_TRIB,
 				 export=@NFEExport(secao=TipoSecao.R, posicao=0, tamanho=15))
 	})
+	@XmlTransient
 	protected BigDecimal valor;
 
 	/**
 	 * @return the cst
 	 */
-	public Integer getCst() {
+	public String getCst() {
 		return cst;
 	}
 
 	/**
 	 * @param cst the cst to set
 	 */
-	public void setCst(Integer cst) {
+	public void setCst(String cst) {
 		this.cst = cst;
 	}
 

@@ -23,6 +23,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -35,10 +36,12 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -49,11 +52,11 @@ import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ParciaisService;
@@ -94,7 +97,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private CFOPRepository cFOPRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 	
 	@Autowired
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
@@ -284,6 +287,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setDataRecebimento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoRepository.obterNaturezaOperacao(distribuidorService.obter().getTipoAtividade(), TipoEmitente.FORNECEDOR, TipoDestinatario.DISTRIBUIDOR, TipoOperacao.ENTRADA, false, false, false);
+		
+		notaFiscal.setNaturezaOperacao(naturezaOperacao);
+		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setUsuario(usuarioLogado);
@@ -393,9 +400,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Override
 	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao, Distribuidor distribuidor) {
 		
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+		return naturezaOperacaoRepository.obterNaturezaOperacaoAtividadeDestinatarioEmitente(distribuidor.getTipoAtividade(), TipoDestinatario.DISTRIBUIDOR, TipoEmitente.FORNECEDOR, tipoOperacao);
 		
 	}
 	
@@ -410,8 +417,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	@Transactional
-	public List<TipoNotaFiscal> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
-		return tipoNotaFiscalRepository.obterTiposNotasFiscais();
+	public List<NaturezaOperacao> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
+		return naturezaOperacaoRepository.obterNaturezasOperacoes();
 	}
 	
 	        /**
@@ -553,7 +560,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			BigDecimal desconto = new BigDecimal(BigInteger.ZERO, new MathContext(18));
             desconto = desconto.setScale(4, RoundingMode.HALF_EVEN);
 			
-			if(produtoEdicao.getOrigem().equals(Origem.MANUAL)) {
+			if(produtoEdicao != null && produtoEdicao.getOrigem() != null && produtoEdicao.getOrigem().equals(Origem.MANUAL)) {
 				if(produtoEdicao != null && produtoEdicao.getDesconto() != null) {
 					desconto = produtoEdicao.getDesconto();
 				} else {				

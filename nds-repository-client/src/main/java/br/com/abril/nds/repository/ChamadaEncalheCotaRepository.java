@@ -6,8 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 
@@ -179,6 +181,8 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
 	
 	Long quantidadeChamadasEncalheParaCota(Long idCota, Date periodoInicial, Date periodoFinal);
+
+	List<ChamadaEncalheCotaDTO> buscarPorChamadaEncalhe(ChamadaEncalhe ce);
 
 	/**
 	 * Remove Chamadas de Encalhe de Cota por lista de ID da chamada de encalhe

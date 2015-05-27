@@ -457,6 +457,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS);
+        gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.TAXA_EXTRA);
         return gruposMovimentosFinanceiros;
     }
     
@@ -1593,7 +1594,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     		}
     		
 			valor = valor.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
-			movimentoFinanceiroCotaDTO.setValor(valor);
+			movimentoFinanceiroCotaDTO.setValor(CurrencyUtil.truncateDecimal(valor, 2));
 
     	} else {
     		

@@ -112,7 +112,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "BOLETIM_INFORMATIVO", nullable = true, length=2048)
 	protected String boletimInformativo;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade=CascadeType.ALL)
 	@JoinColumn(name = "PRODUTO_ID")
 	protected Produto produto;
 	
@@ -702,16 +702,22 @@ public class ProdutoEdicao implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoEdicao other = (ProdutoEdicao) obj;
-		if (numeroEdicao == null) {
-			if (other.numeroEdicao != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!numeroEdicao.equals(other.numeroEdicao))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
-		if (produto == null) {
-			if (other.produto != null)
+		if (this.getNumeroEdicao() == null) {
+			if (other.getNumeroEdicao() != null)
 				return false;
-		} else if (!produto.equals(other.produto))
+		} else if (!this.getNumeroEdicao().equals(other.getNumeroEdicao()))
 			return false;
+		if (this.getProduto() == null) {
+	        if (other.getProduto() != null)
+	        	return false;
+		} else if (!this.getProduto().equals(other.getProduto()))
+			return false;
+		
 		return true;
 	}
 

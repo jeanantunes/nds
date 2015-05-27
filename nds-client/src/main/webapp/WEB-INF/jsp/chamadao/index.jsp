@@ -141,7 +141,7 @@
 			    <td align="right">
 			   		<input type="checkbox" name="comChamadaEncalhe" id="comChamadaEncalhe" />
 			   	</td>
-			    <td>Com CE</td>
+			    <td>Programado</td>
 			    <td>Editor:</td>
 			    <td>
 			    	<select name="idEditor" id="idEditor" style="width:190px;">

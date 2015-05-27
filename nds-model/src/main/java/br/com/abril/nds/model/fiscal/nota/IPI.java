@@ -6,6 +6,8 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.xml.bind.annotation.XmlElement;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -53,12 +55,14 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 */
 	@Column(name="CODIGO_SELO_IPI", length=60, nullable=true)
 	@NFEExport(secao = TipoSecao.O, posicao = 2)
+	@XmlElement(name="cSelo")
 	private String codigoSelo;
 	/**
 	 * qSelo
 	 */	
 	@Column(name="QUANTIDADE_SELO_IPI", length=12, nullable=true)
 	@NFEExport(secao = TipoSecao.O, posicao = 3)
+	@XmlElement(name="qSelo")
 	private Long quantidadeSelo;
 	
 	/**
@@ -66,13 +70,23 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 */
 	@Column(name="CODIGO_ENQUADRAMENTO_IPI", length=3, nullable=true)
 	@NFEExport(secao = TipoSecao.O, posicao = 4, tamanho = 3)
+	@XmlElement(name="cEnq")
 	private String codigoEnquadramento;
+	
+	/**
+	 * IPITrib
+	 */
+	
+	@XmlElement(name="IPITrib")
+	@Embedded
+	private TribIPI IPITrib;
 	
 	/**
 	 * qUnid
 	 */
 	@Column(name="QUANTIDADE_UNIDADES", scale=4, precision=16, nullable=true)
 	@NFEWhen(condition = NFEConditions.IPI_TRIB_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 1))
+	@XmlElement(name="qUnid")
 	private Double quantidadeUnidades;
 	
 	/**
@@ -80,6 +94,7 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 */
 	@Column(name="VALOR_UNIDADE_TRIBUTAVEL_IPI", scale=4, precision=15, nullable=true)
 	@NFEWhen(condition = NFEConditions.IPI_TRIB_UNID, export = @NFEExport(secao = TipoSecao.O11, posicao = 0))
+	@XmlElement(name="vUnid")
 	private Double valorUnidade;
 
 	/**
@@ -178,5 +193,13 @@ public class IPI extends ImpostoProduto implements Serializable {
 	 */
 	public void setValorUnidade(Double valorUnidade) {
 		this.valorUnidade = valorUnidade;
+	}
+
+	public TribIPI getIPITrib() {
+		return IPITrib;
+	}
+
+	public void setIPITrib(TribIPI iPITrib) {
+		IPITrib = iPITrib;
 	}
 }

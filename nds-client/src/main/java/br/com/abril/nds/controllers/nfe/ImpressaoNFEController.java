@@ -2,11 +2,7 @@ package br.com.abril.nds.controllers.nfe;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.collect.Multiset.Entry;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
@@ -25,26 +19,22 @@ import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RotaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.RoteiroService;
-import br.com.abril.nds.service.TipoNotaFiscalService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -73,10 +63,7 @@ public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
 	private FornecedorService fornecedorService;
-
-	@Autowired
-	private TipoNotaFiscalService tipoNotaFiscalService;
-
+	
 	@Autowired
 	private NFeService nfeService; 
 
@@ -84,10 +71,10 @@ public class ImpressaoNFEController extends BaseController {
 	private ImpressaoNFEService impressaoNFEService;
 
 	@Autowired
-	private DistribuidorService distribuidorService;
-
-	@Autowired
 	private RoteiroService roteiroService;
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
 
 	@Autowired
 	private RotaService rotaService;
@@ -95,26 +82,112 @@ public class ImpressaoNFEController extends BaseController {
 	@Autowired
 	private Result result;
 
+	@Autowired 
+	private NotaFiscalService notaFiscalService;
+	
 	@Path("/")
 	public void index() {
 
-		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
-
-		GrupoNotaFiscal[] gnf = {GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, GrupoNotaFiscal.NF_VENDA};
-		this.result.include("tipoNotas", tipoNotaFiscalService.carregarComboTiposNotasFiscais(TipoOperacao.SAIDA, TipoUsuarioNotaFiscal.COTA, TipoUsuarioNotaFiscal.DISTRIBUIDOR, gnf));
-		this.result.include("fornecedores", fornecedores);
-		this.result.include("roteiros", roteiroService.obterRoteiros());
-		this.result.include("rotas", rotaService.obterRotas());
+		this.obterFornecedoresDestinatarios();
+		this.obterTodosFornecedoresAtivos();
+		this.iniciarComboRoteiro();
+		this.iniciarComboRota();
+		this.obterTiposDestinatarios();
+		this.iniciarComboBox();
+		
 		this.result.include("tipoEmissao", TipoEmissaoNfe.values());
-		this.result.include("dataAtual", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-
+		
+	}
+	
+	private void obterTiposDestinatarios() {
+		result.include("tiposDestinatarios", new TipoDestinatario[] {TipoDestinatario.COTA, TipoDestinatario.DISTRIBUIDOR, TipoDestinatario.FORNECEDOR});
+	}
+	
+	private void obterFornecedoresDestinatarios() {
+		result.include("fornecedoresDestinatarios", fornecedorService.obterFornecedoresDestinatarios(SituacaoCadastro.ATIVO));
 	}
 
+	private void obterTodosFornecedoresAtivos() {
+		result.include("fornecedores", fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+	}
+	
+	/**
+     * Inicia o combo Box
+     */
+    private void iniciarComboBox() {
+
+    	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    }
+
+	private void iniciarComboRoteiro() {
+		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
+		
+		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
+		
+		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Roteiro roteiro : roteiros){
+			
+			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+		}
+		
+		result.include("roteiros", listRoteiro);
+	}
+	
+	private void iniciarComboRota() {
+		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
+		
+		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Rota rota : rotas){
+			
+			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+		}
+		
+		result.include("rotas", listRota);
+	}
+		
 	@Post
 	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp){
+		// Paginação 
+		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		
+		filtro.setPaginacao(paginacao);
+		
+		verificarFiltro(filtro);
 
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = new ArrayList<NotasCotasImpressaoNfeDTO>();
+		
+		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
+		
+		listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
 
+		if(listaCotasImpressaoNFe == null || listaCotasImpressaoNFe.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		// tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
+
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+		result.use(FlexiGridJson.class).from(listaCotasImpressaoNFe).page(page).total(listaCotasImpressaoNFe.size()).serialize();
+
+	}
+	
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,
+			int page) {
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+	    paginacao.setPaginaAtual(page);
+	    paginacao.setQtdResultadosPorPagina(rp);
+	    paginacao.setSortOrder(sortorder);
+	    paginacao.setSortColumn(sortname);
+		return paginacao;
+	}
+	
+	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
 		if(!filtro.isFiltroValido()) {
 
 			List<String> listaMensagemValidacao = new ArrayList<String>(filtro.validarFiltro().values());
@@ -126,21 +199,6 @@ public class ImpressaoNFEController extends BaseController {
 
 			result.use(Results.nothing());
 		}
-
-		session.setAttribute("filtroPesquisaNFe", filtro);
-
-		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
-
-		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
-
-		tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
-
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-
 	}
 
 	@Post
@@ -181,15 +239,18 @@ public class ImpressaoNFEController extends BaseController {
 	 * @throws IOException Exceção de E/S
 	 */
 	@Post
-	public void exportar(FileType fileType) throws IOException {
-
-		FiltroImpressaoNFEDTO filtro = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
-
+	@SuppressWarnings("deprecation")
+	public void exportar(FiltroImpressaoNFEDTO filtro, FileType fileType) throws IOException {
+		
 		filtro.setPaginacao(null);
-
-		List<NotasCotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
-
-		FileExporter.to("cotas", fileType).inHTTPResponse(
+		
+		List<NotasCotasImpressaoNfeDTO> listaNFeDTO = impressaoNFEService.obterNotafiscalImpressao(filtro);
+		
+		if(listaNFeDTO == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado nenhum item");
+		}
+		
+		FileExporter.to("nota-fiscal-impressa", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
 				null, 
 				null, 
@@ -197,91 +258,31 @@ public class ImpressaoNFEController extends BaseController {
 				NotasCotasImpressaoNfeDTO.class, this.httpResponse);
 
 	}
-
+	
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
-
-
-		FiltroImpressaoNFEDTO filtroPesquisa = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
-
-		if(filtro.getNumerosNotas() != null) {
-			filtroPesquisa.setNumerosNotas(filtro.getNumerosNotas());
-		} else {
+		
+		if(filtro.getNumerosNotas() == null) {
+			
 			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
 			throw new ValidacaoException(validacaoVO);
-		}
-
-		filtroPesquisa.setPaginacao(null);
-		//List<NotasCotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
-
-		byte[] arquivo = null; 
-		String nomeArquivo = "";
+		} 
 		
-		TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE =
-				this.distribuidorService.tipoImpressaoNENECADANFE();
-
-		if(this.distribuidorService.obrigacaoFiscal() != null) {
-
-			List<NotaFiscal> nfs = impressaoNFEService.buscarNotasParaImpressaoNFe(filtroPesquisa);
-
-			switch(tipoImpressaoNENECADANFE) {
-
-				case DANFE:
-					arquivo = nfeService.obterDanfesPDF(nfs, false);
-					nomeArquivo = "danfes";
-					break;
-				default:
-					throw new ValidacaoException(TipoMensagem.ERROR, "O tipo de impressão configurado no Distribuidor não está disponível.");
-					
-			}
-
-			// Atualiza a flag que informa se a nota ja foi impressa
-			for(NotaFiscal nf : nfs) {
-				NotaFiscal nfOrig = nfeService.obterNotaFiscalPorId(nf);
-				nfOrig.setNotaImpressa(true);
-				nfeService.mergeNotaFiscal(nfOrig);
-			}
-
-		} else {
-
-			List<NotaEnvio> nes = impressaoNFEService.buscarNotasEnvioParaImpressaoNFe(filtroPesquisa);
-
-			Intervalo<Date> intervalo = new Intervalo<Date>(filtro.getDataMovimentoInicial(), filtro.getDataMovimentoFinal());
-			
-			switch(tipoImpressaoNENECADANFE) {
-
-				case MODELO_1:
-					arquivo = nfeService.obterNEsPDF(nes, false, intervalo);
-					nomeArquivo = "NEs";
-					break;
-				case MODELO_2:
-					arquivo = nfeService.obterNEsPDF(nes, true, intervalo);
-					nomeArquivo = "NECAs";
-					break;
-
-			}
-
-			// Atualiza a flag que informa se a nota ja foi impressa
-			for(NotaEnvio ne : nes) {
-				NotaEnvio neOrig = nfeService.obterNotaEnvioPorId(ne);
-				neOrig.setNotaImpressa(true);
-				nfeService.mergeNotaEnvio(neOrig);
-			}
-
-		}
-
+		byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
+		
 		try {
-
-			escreverArquivoParaResponse(arquivo, nomeArquivo);
-
-		} catch(IOException e) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do arquivo.");
-
-		}
-
+			this.escreverArquivoParaResponse(report, "danfe");
+		} catch (ValidacaoException e) {
+            
+            result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+        } catch (Exception e) {
+            
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()), Constantes.PARAM_MSGS).recursive().serialize();
+        }
+		
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo gerado com sucesso."), Constantes.PARAM_MSGS).recursive().serialize();
 	}
-
+	
 	/**
 	 * Metodos auxiliares
 	 *
@@ -291,7 +292,7 @@ public class ImpressaoNFEController extends BaseController {
 	 */
 	@Post
 	public void carregarRotasImpressaoNFE(Long idRoteiro, String sortname, Ordenacao ordenacao) {
-
+		
 		List<ItemDTO<Long, String>> listaItensRotas = new ArrayList<ItemDTO<Long,String>>();
 
 		for (Rota rota : (idRoteiro != null && idRoteiro > -1) ? rotaService.buscarRotaPorRoteiro(idRoteiro) : rotaService.obterRotas()) {
@@ -308,26 +309,35 @@ public class ImpressaoNFEController extends BaseController {
 
 		result.use(Results.json()).withoutRoot().from(listaItensRotas).recursive().serialize();
 	}
-
+	
 	/**
-	 * Metodos utilitarios
-	 * 
+	 * Metodo utilitario para escrever arquivo em pdf
 	 */
-
-	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
-
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) {
+		
 		this.httpResponse.setContentType("application/pdf");
 
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+ nomeArquivo +".pdf");
 
-		OutputStream output = this.httpResponse.getOutputStream();
+		OutputStream output;
+		try {
+			
+			output = this.httpResponse.getOutputStream();
+			
+			output.write(arquivo);
 
-		output.write(arquivo);
-
-		httpResponse.getOutputStream().close();
-
-		result.use(Results.nothing());
-
+			this.httpResponse.getOutputStream().flush();
+			
+			this.httpResponse.getOutputStream().close();
+			
+			result.use(Results.nothing());
+			
+			if(!this.httpResponse.isCommitted()) {
+				System.out.println("olá");
+			}
+			
+		} catch (IOException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar relatorio");
+		}
 	}
-
 }

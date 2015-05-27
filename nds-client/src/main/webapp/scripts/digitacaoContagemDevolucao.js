@@ -6,6 +6,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			/**
 			 * Renderiza componente de Data(período) da tela
 			 */
+
 			$('input[id^="digitacao-contagem-dataDe"]', digitacaoContagemDevolucaoController.workspace).datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -49,7 +50,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 			$(".areaBts", digitacaoContagemDevolucaoController.workspace).hide();
 			
-			$("#digitacao-contagem-dataDe", digitacaoContagemDevolucaoController.workspace).focus();
+			$("#digitacaoContagemDevolucao-dataDe", digitacaoContagemDevolucaoController.workspace).focus();
 			
 			this.montaGridEdicoesFechadas();
 			
@@ -73,7 +74,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		/**
 			Monta as colunas do grid em função do perfil de usuário logado no sistema 
 		**/
-		montarColunas: function (){
+		montarColunas : function (){
 			
 			if(digitacaoContagemDevolucaoController.isRoleOperador()){
 				return digitacaoContagemDevolucaoController.montarColunasPerfilOperador();
@@ -293,7 +294,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			Se itens  selecionados, limpa todos os valores de exemplar de nota.
 			Se itens não selecionados, replica todos os valores para os campos exemplares de nota. 
 		**/
-		checkAllReplicarValor: function (todos, checkgroupName) {
+		checkAllReplicarValor : function (todos, checkgroupName) {
 			
 			$(".chBoxReplicar").attr("checked", todos.checked);
 			
@@ -481,10 +482,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 												  qtdNota:qtdNota,
 												  valorTotalComDesconto:totalComDesconto};
 				
-					if (diferenca) {
-						
-						digitacaoContagemDevolucao.diferenca =diferenca;
-					}
+				if (!isNaN(diferenca)) {
+					
+					digitacaoContagemDevolucao.diferenca = diferenca;
+				}
 
 				listaDigitacaoContagemDevolucao.push(digitacaoContagemDevolucao);
 			});

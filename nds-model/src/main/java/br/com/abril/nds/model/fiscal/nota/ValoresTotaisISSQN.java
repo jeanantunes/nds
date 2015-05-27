@@ -167,4 +167,36 @@ public class ValoresTotaisISSQN implements Serializable {
 	public void setValorCOFINS(BigDecimal valorCOFINS) {
 		this.valorCOFINS = valorCOFINS;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result
+				+ ((this.getNotaFiscal() == null) ? 0 : this.getNotaFiscal().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ValoresTotaisISSQN other = (ValoresTotaisISSQN) obj;
+		if (this.getId() == null) {
+			if (other.id != null)
+				return false;
+		} else if (!this.getId().equals(other.id))
+			return false;
+		if (this.getNotaFiscal() == null) {
+			if (other.notaFiscal != null)
+				return false;
+		} else if (!this.getNotaFiscal().equals(other.notaFiscal))
+			return false;
+		return true;
+	}
 }

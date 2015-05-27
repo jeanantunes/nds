@@ -47,8 +47,7 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 
 	recarregarDiasDistribuidorFornecedorGrid: function() {
-		$.postJSON(
-				parametrosDistribuidorController.path + "recarregarDiasDistribuidorFornecedorGrid", 
+		$.postJSON(parametrosDistribuidorController.path + "recarregarDiasDistribuidorFornecedorGrid", 
 			null,
 			function (resultado) {
 				if (resultado.mensagens) {
@@ -86,24 +85,19 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.codigoDistribuidorFC', value: $('#codigoDistribuidorFC', this.workspace).val()},
 			
 			{name:'parametrosDistribuidor.endereco.tipoEndereco', value: $('#tipoEndereco', this.workspace).val()},
-			{name:'parametrosDistribuidor.endereco.cep', value: $('#cep', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.cep', value: $('#DISTRIBUIDORcep', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.tipoLogradouro', value: $('#tipoLogradouro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.logradouro', value: $('#logradouro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.numero', value: $('#numero', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.complemento', value: $('#complemento', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.bairro', value: $('#bairro', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
-			//{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()}, 
-			{name:'parametrosDistribuidor.endereco.uf', value: "SP"}, 
-			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val() != undefined ? $('#codigoCidadeIBGE', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.endereco.uf', value: $('#DISTRIBUIDORuf', this.workspace).val()}, 
+			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#DISTRIBUIDORcodigoCidadeIBGE', this.workspace).val() != undefined ? $('#DISTRIBUIDORcodigoCidadeIBGE', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val() != undefined ? $('#codigoBairro', this.workspace).val() : ''},
 			
 			{name:'parametrosDistribuidor.numeroTelefone', value: $('#numeroTelefone', this.workspace).val()},
 			{name:'parametrosDistribuidor.numeroDDD', value: $('#numeroDDD', this.workspace).val()},
-			
-			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
-			{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal', this.workspace).val()},
-			{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial', this.workspace).is(':checked')},
 			
 			{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias', this.workspace).val()},
 			{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada', this.workspace).is(':checked')},
@@ -205,6 +199,15 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
+			
+			{name:'parametrosDistribuidor.cnae', value: $('#fiscal-cnae', this.workspace).val()},
+			{name:'parametrosDistribuidor.tipoAtividade', value: $('#tipoAtividade', this.workspace).val()},
+			{name:'parametrosDistribuidor.regimeTributario.id', value: $('#regimeTributario', this.workspace).val()},
+			{name:'parametrosDistribuidor.nfInformacoesAdicionais', value: $('#informacoesAdicionais', this.workspace).val()},
+			{name:'parametrosDistribuidor.possuiRegimeEspecialDispensaInterna', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.numeroDispositivoLegal', value: $('#numeroDispositivoLegal', this.workspace).val()},
+			{name:'parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial', value: $('#dataLimiteVigenciaRegimeEspecial', this.workspace).val()},
+
 			//Grid Distribuicao
 			{name:'parametrosDistribuidor.geracaoAutomaticaEstudo', value: $('#geracaoAutomaticaEstudo', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.vendaMediaMais', value: $('#vendaMediaMais', this.workspace).val()},
@@ -256,6 +259,26 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 		];
 		
+		itensTiposNotasFiscais = [];
+		
+		$.each($('#tabFiscal :input[type=radio]', this.workspace), function(index, value) {
+			itensTiposNotasFiscais[index] = value.name;
+		});
+		
+		itensTiposNotasFiscais = jQuery.unique(itensTiposNotasFiscais);
+		
+		$.each(itensTiposNotasFiscais, function(index, value) {
+			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].nome', value: itensTiposNotasFiscais[index]});
+			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].valor', value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val() != undefined ? $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val() : -1});
+		});
+		
+		
+		$.each($('#regimeTributarioTributos input[type=text]'), function(key, value) {
+			data.push({name:'parametrosDistribuidor.tributosAliquotas[].id', value: $('#id' + value.name).val()});
+			data.push({name:'parametrosDistribuidor.tributosAliquotas[].tributoId', value: $('#tributoId' + value.name).val()});
+			data.push({name:'parametrosDistribuidor.tributosAliquotas[].valor', value: $('#valor' + value.name).val()});
+		});
+		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",
 				   data,
 				   function (resultado) {
@@ -263,6 +286,15 @@ var parametrosDistribuidorController = $.extend(true, {
 					   				  resultado.listaMensagens);
 					   parametrosDistribuidorController.recarregarDiasDistribuidorFornecedorGrid();
 				   });
+	},
+	
+	changeFlagRegimeEspecial : function() {
+		if($('#possuiRegimeEspecialDispensaInterna').is(':checked')) {
+			$('.camposEspecificosRegimeEspecial').show();
+		} else {
+			$('.camposEspecificosRegimeEspecial').hide();
+		}
+		
 	},
 
 	atualizarLogo: function() {
@@ -323,25 +355,11 @@ var parametrosDistribuidorController = $.extend(true, {
 	    }
 	    
 	    if(arrayMensagemWarning.length > 0) {
-		exibirMensagem('WARNING', arrayMensagemWarning);
+	    	exibirMensagem('WARNING', arrayMensagemWarning);
 	    } else {
 		
-		$("#dialog-confirm", this.workspace).dialog({
-			resizable: false,
-			height:160,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					parametrosDistribuidorController.gravar();
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					$(this).dialog("close");
-				}
-			}, 
-			form: $("#dialog-confirm", this.workspace).parents("form")
-		});
+	    	$("#confirmarParametrosDistribuidor").dialog("open");
+			
 	    }
 	},
 	
@@ -456,6 +474,32 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 	
 	init: function() {
+		
+		$("#confirmarParametrosDistribuidor").dialog({
+			autoOpen: false,
+			resizable: false,
+			height:160,
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$("#confirmarParametrosDistribuidor").dialog("close");
+					parametrosDistribuidorController.gravar();						
+				},
+				"Cancelar": function() {
+					$("#confirmarParametrosDistribuidor").dialog("close");
+				}
+			}, 
+			//form: $("#dialog-confirm", this.workspace).parents("form")
+		});
+		
+		$("#dataLimiteVigenciaRegimeEspecial", this.workspac ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$("#dataLimiteVigenciaRegimeEspecial", this.workspace).mask("99/99/9999");
 		
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg();
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
@@ -590,9 +634,6 @@ var parametrosDistribuidorController = $.extend(true, {
 		});
 		
 		$("#tipoEndereco", this.workspace).val($("#tipoEnderecoHidden").val());
-		$("#regimeTributario", this.workspace).val($("#regimeTributarioHidden").val());
-		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
-		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
 		$("#pararAcumuloDividas", this.workspace).val($("#pararAcumuloDividasHidden").val());
 		
 		var hasLogotipo = $("#hasLogotipoHidden").val();
@@ -746,6 +787,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listPercentualExcedente2\\.pdv', this.workspace)
 		.numeric();
 		
+		parametrosDistribuidorController.obterTributosPeloRegimeTributario();
 		// fim F2
 		
 		parametrosDistribuidorController.exibe_form_suspencao_distribuidor($('#sugereSuspensaoDistribuidor', this.workspace).is(':checked'));
@@ -753,9 +795,15 @@ var parametrosDistribuidorController = $.extend(true, {
 	
 	desabilitarItens : function() {
 
-		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [7] );
+
+		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [8] );
+		$("#chamadaoDiasSuspensao", this.workspace).disable();
+		$("#chamadaoValorConsignado", this.workspace).disable();
+
+//		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [7] );
 //		$("#chamadaoDiasSuspensao", this.workspace).disable();
 //		$("#chamadaoValorConsignado", this.workspace).disable();
+
 		
 		//$("#utilizaDesconto", this.workspace).disable();
 		//$("#tab-negociacao-percentualDesconto", this.workspace).disable();
@@ -827,6 +875,91 @@ var parametrosDistribuidorController = $.extend(true, {
 		 }
 	 },
 	 
+	 obterTributosPeloRegimeTributario : function() {
+		 
+		 var params = [];
+		 
+		 $('#regimeTributarioTributos').html('');
+		 
+		 params.push({name: 'regimeTributarioId', value: $('#regimeTributario', this.workspace).val()});
+		 $.postJSON(this.path + "obterTributosPeloRegimeTributario", params,
+		 function (result) {
+	 
+			 var impTR = $('<tr>');
+			 $.each(result, function(key, value) {
+
+				 var tributo = '';
+				 var input = '';
+				 
+				 $.each(value, function(k, v) {
+
+					 var impTD = $('<td>');
+					 if(k == 'tributo') {
+						 tributo = value[k];
+					 }
+					 
+					 switch(k) {
+					 
+					 	case 'valor':
+					 		input = $('<input>').attr({
+							    type: 'text',
+							    id: k + tributo,
+							    name: tributo,
+							    style: 'width: 30px',
+							    value: floatToPrice(value[k])
+					 		});
+					 		break;
+					 	
+					 	case 'id':
+					 	case 'tributoId':
+					 		input = $('<input>').attr({
+							    type: 'hidden',
+							    id: k + value['tributo'],
+							    name: k + value['tributo'],
+							    value: value[k]
+					 		});
+					 		break;
+					 		
+					 	case 'tributoDescricao':
+					 		input = value[k] +':';
+					 		break;
+					 		
+					 	case 'tipoAliquota':
+					 		tipoAliquota = (value[k] == "Percentual") ? '%' : '$';
+					 		input = '';
+					 		break;
+					 	
+					 	default:
+					 		input = '';
+					 }
+					 
+					 if(input != '') {
+						 impTD.append(input);
+						 impTR.append(impTD);
+					 }
+					 
+				 });
+				 
+				 impTD = $('<td>');
+				 impTD.append(tipoAliquota);
+				 impTR.append(impTD);
+				 
+			 });
+			 $('#regimeTributarioTributos').append(impTR);
+			 
+		 });
+		 
+		 setTimeout(function() {
+			 $.each($('#regimeTributarioTributos input[type=text]'), function(key, value) {
+				 $("#valor"+ value.name, this.workspace).maskMoney({
+					 thousands:'.', 
+					 decimal:',' 
+				 }); 
+			 });
+		 }, 100);
+		 
+	 },
+
 	 exibe_form_suspencao_distribuidor : function(exibir) {
 			
 		if(exibir){
