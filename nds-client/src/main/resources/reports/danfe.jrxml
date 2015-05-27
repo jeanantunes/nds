@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.9965000000000035"/>
-	<property name="ireport.x" value="672"/>
-	<property name="ireport.y" value="896"/>
+	<property name="ireport.x" value="870"/>
+	<property name="ireport.y" value="420"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -286,6 +286,9 @@
 	<field name="destinatarioPais" class="java.lang.String"/>
 	<field name="logo" class="java.io.InputStream">
 		<fieldDescription><![CDATA[logo]]></fieldDescription>
+	</field>
+	<field name="roteirizacao" class="java.lang.String">
+		<fieldDescription><![CDATA[roteirizacao]]></fieldDescription>
 	</field>
 	<group name="nomeDestinatario" isStartNewPage="true" isResetPageNumber="true">
 		<groupExpression><![CDATA[$F{destinatarioNome}]]></groupExpression>
@@ -895,7 +898,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[HORA ENTRADA / SAÍDA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="28" width="201" height="6" uuid="6b79ff69-c99b-4b31-a04c-67247fefd43e"/>
+					<reportElement style="campoPequeno" x="55" y="28" width="201" height="6" uuid="6b79ff69-c99b-4b31-a04c-67247fefd43e"/>
 					<text><![CDATA[ENDEREÇO]]></text>
 				</staticText>
 				<staticText>
@@ -907,7 +910,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[CEP]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="52" width="152" height="6" uuid="eb8d4997-6de0-4b4c-ac1a-ca9e69b01d01"/>
+					<reportElement style="campoPequeno" x="55" y="52" width="152" height="6" uuid="eb8d4997-6de0-4b4c-ac1a-ca9e69b01d01"/>
 					<text><![CDATA[MUNICÍPIO]]></text>
 				</staticText>
 				<staticText>
@@ -952,7 +955,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[BAIRRO / DISTRITO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="77" width="50" height="6" uuid="6508a2e4-9de0-40e0-b0f7-9974ac577fbc"/>
+					<reportElement style="campoPequeno" x="55" y="77" width="50" height="6" uuid="6508a2e4-9de0-40e0-b0f7-9974ac577fbc"/>
 					<text><![CDATA[BASE DE CALCULO DO ICMS]]></text>
 				</staticText>
 				<staticText>
@@ -999,7 +1002,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[CNPJ / CPF]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="128" width="167" height="6" uuid="19bdb818-9c02-4896-9f79-922019740166"/>
+					<reportElement style="campoPequeno" x="55" y="128" width="167" height="6" uuid="19bdb818-9c02-4896-9f79-922019740166"/>
 					<text><![CDATA[NOME / RAZÃO SOCIAL]]></text>
 				</staticText>
 				<staticText>
@@ -1015,7 +1018,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[CÓDIGO ANTT]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="53" y="101" width="65" height="6" uuid="2671ebec-26ef-4f38-ac3e-c0fa78c5ee8d"/>
+					<reportElement style="campoPequeno" x="55" y="101" width="65" height="6" uuid="2671ebec-26ef-4f38-ac3e-c0fa78c5ee8d"/>
 					<text><![CDATA[VALOR DO FRETE]]></text>
 				</staticText>
 				<staticText>
@@ -1067,7 +1070,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{destinatarioBairro}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="53" y="58" width="206" height="16" uuid="47f1b8bb-b23a-46c9-b5fd-df4c195f3875"/>
+					<reportElement style="dados" x="55" y="58" width="206" height="16" uuid="47f1b8bb-b23a-46c9-b5fd-df4c195f3875"/>
 					<textFieldExpression><![CDATA[$F{destinatarioMunicipio}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
@@ -1094,7 +1097,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{dataEmissao}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="dados" x="53" y="33" width="322" height="16" uuid="58685264-efbd-474b-a350-b9ed52f9e39a"/>
+					<reportElement style="dados" x="55" y="33" width="322" height="16" uuid="58685264-efbd-474b-a350-b9ed52f9e39a"/>
 					<textFieldExpression><![CDATA[$F{destinatarioLogradouro}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -1128,7 +1131,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<textFieldExpression><![CDATA[$F{valorICMS} == null ? "0,00" : $F{valorICMS}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="675" y="84" width="135" height="16" uuid="5c55655f-987b-4a65-8ea1-3c436f7fa0a7"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorProdutos}]]></textFieldExpression>
@@ -1143,7 +1146,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorOutro} == null ? "0,00" : $F{valorOutro}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
-				<textField pattern="###0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="dados" x="677" y="107" width="132" height="16" uuid="cf5c6e6a-e105-43d5-8a68-a0c12cedf49c"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{valorNF}]]></textFieldExpression>
@@ -1169,7 +1172,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{valorDesconto} == null ? "0,00" : $F{valorDesconto}.round(new MathContext(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="dados" x="53" y="134" width="217" height="16" uuid="cc09af28-ea47-47e3-8b2a-f7bd6f1a17ff"/>
+					<reportElement style="dados" x="55" y="134" width="217" height="16" uuid="cc09af28-ea47-47e3-8b2a-f7bd6f1a17ff"/>
 					<textFieldExpression><![CDATA[$F{transportadoraNome}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
@@ -1538,7 +1541,7 @@ VOLUMES]]></text>
 					<textFieldExpression><![CDATA[$F{emissorInscricaoMunicipal}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="55" y="42" width="545" height="60" uuid="606b6f95-68c2-4b77-8f26-13caf8d81aad"/>
+					<reportElement style="dados" x="55" y="42" width="545" height="47" uuid="606b6f95-68c2-4b77-8f26-13caf8d81aad"/>
 					<textElement verticalAlignment="Top">
 						<font size="6" isItalic="false"/>
 					</textElement>
@@ -1591,6 +1594,11 @@ VOLUMES]]></text>
 						<font size="4" isBold="true" isItalic="false" isUnderline="false" pdfFontName="Verdana"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{versao} != null ? "SISTEMA EMISSOR DA NFE: " + $F{versao} : ""]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="dados" x="57" y="89" width="334" height="14" uuid="5c17c35d-efae-427b-97c7-b76195f52252"/>
+					<textElement textAlignment="Left"/>
+					<textFieldExpression><![CDATA[$F{roteirizacao}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

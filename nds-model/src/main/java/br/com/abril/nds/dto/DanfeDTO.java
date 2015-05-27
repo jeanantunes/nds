@@ -157,6 +157,16 @@ public class DanfeDTO implements Serializable{
 
 	private java.io.InputStream logo;
 	
+	private String roteirizacao;
+	
+	public String getRoteirizacao() {
+		return roteirizacao;
+	}
+
+	public void setRoteirizacao(String roteirizacao) {
+		this.roteirizacao = roteirizacao;
+	}
+
 	public String getNaturezaOperacao() {
 		return naturezaOperacao;
 	}

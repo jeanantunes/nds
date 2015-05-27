@@ -28,6 +28,8 @@ import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -233,6 +235,10 @@ public class DanfeBuilder  implements Serializable {
 		NotaFiscalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
+		Cota cota= identificacaoDestinatario.getCota();
+		
+		Box box = cota.getBox();
+		
 		String destinatarioNome 				=  "";
 		String destinatarioCNPJ 				= "";
 		
@@ -294,7 +300,11 @@ public class DanfeBuilder  implements Serializable {
 		danfe.setDestinatarioUF(destinatarioUF);
 		danfe.setDestinatarioCEP(destinatarioCEP);
 		danfe.setDestinatarioTelefone(destinatarioTelefone);
-
+		
+		if(box != null ) {
+			
+			danfe.setRoteirizacao("Box: "+ box.getCodigo() + " / " + "Roteiro: " + box.getRoteirizacao());
+		}
 	}
 
 	/**

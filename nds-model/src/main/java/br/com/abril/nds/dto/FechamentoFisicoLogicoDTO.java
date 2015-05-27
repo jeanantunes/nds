@@ -30,7 +30,7 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	private String tipo;
 	
-	private String recolhimento;
+	
 	
 	private boolean matrizRecolhimento;
 	
@@ -50,10 +50,12 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	private BigDecimal total;
 	
-	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 11, fontSize=9)
+
+	
+	@Export(label = "Físico", alignment = Alignment.RIGHT, exhibitionOrder = 12, fontSize=9)
 	private BigInteger fisico;
 	
-	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 12, fontSize=9)
+	@Export(label = "Diferença", alignment = Alignment.RIGHT, exhibitionOrder = 13, fontSize=9)
 	private BigInteger diferenca = BigInteger.ZERO;
 	
 	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize=9)
@@ -65,10 +67,15 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	@Export(label = "Devolução", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
 	private String exemplaresDevolucaoFormatado;
 	
-	@Export(label = "Exe. Juramentado", alignment = Alignment.CENTER, exhibitionOrder = 9, fontSize=9)
+
+	@Export(label = "Recolhimento", alignment = Alignment.LEFT, exhibitionOrder = 9, fontSize=9)
+	private String recolhimento;
+	
+	
+	@Export(label = "Exe. Juramentado", alignment = Alignment.CENTER, exhibitionOrder = 10, fontSize=9)
     private String exemplaresJuramentadoFormatado;
 	
-	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 10, fontSize=9)
+	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 11, fontSize=9)
     private String exemplaresVendaEncalheFormatado;
 	
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9)
@@ -78,7 +85,7 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	
 	private Boolean fechado;
 	
-	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 13, fontSize=9)
+	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 14, fontSize=9)
 	private String estoque;
 	
 	@Export(label = "Sequência", exhibitionOrder = 1, fontSize=10)

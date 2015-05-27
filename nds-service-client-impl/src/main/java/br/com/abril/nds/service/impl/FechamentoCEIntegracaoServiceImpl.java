@@ -1053,9 +1053,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Override
 	@Transactional
 	public void fecharSemCE(List<ItemFechamentoCEIntegracaoDTO> itens) {
-		System.out.println("okkk ");
-		
-		final Usuario usuario = this.usuarioService.getUsuarioLogado();
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
