@@ -12,7 +12,7 @@
 	<detail>
 		<band height="600" splitType="Stretch">
 			<subreport>
-				<reportElement uuid="f44f7049-e37c-4daf-82b1-496497b1ab9e" x="0" y="0" width="842" height="600"/>
+				<reportElement x="0" y="0" width="842" height="600" uuid="f44f7049-e37c-4daf-82b1-496497b1ab9e"/>
 				<subreportParameter name="IND_EMISSAO_DEPEC">
 					<subreportParameterExpression><![CDATA[$P{IND_EMISSAO_DEPEC}]]></subreportParameterExpression>
 				</subreportParameter>
