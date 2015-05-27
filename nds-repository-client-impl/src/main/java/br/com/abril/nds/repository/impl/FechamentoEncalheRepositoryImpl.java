@@ -1513,4 +1513,48 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         return !chamadaEncalhe || fechamentoEncalhe;
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public Integer obterDiaRecolhimento(Long produtoEdicao,Date dataRecolhimento) {
+       
+       // obter  chamada de encalhe deste produto/edicao, de acordo com a data de recolhimento
+    	// primeira chamada igual ou menor que a data de recolhimento
+    	
+        String queryString = "SELECT id as chamadaEncalheId  FROM  CHAMADA_ENCALHE CHEN WHERE "+
+                             " CHEN.PRODUTO_EDICAO_ID = :produtoEdicao  "+
+                             "AND CHEN.DATA_RECOLHIMENTO <= :dataRecolhimento "+
+                             "AND CHEN.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheMatrizRecolhimento "+
+                             
+                            " ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1";
+        final Query query = getSession().createSQLQuery(queryString);
+        
+        query.setParameter("produtoEdicao", produtoEdicao);
+        
+        query.setParameter("dataRecolhimento", dataRecolhimento);
+        
+        query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
+     
+            
+        ((SQLQuery) query).addScalar("chamadaEncalheId", StandardBasicTypes.LONG);
+        
+        Long chamadaEncalheId =(Long) query.uniqueResult();
+        
+        final StringBuilder hql = new StringBuilder();
+        
+        // obter maior dia de recolhimento de encalhe desta chamada
+		hql.append("select max(conf.diaRecolhimento) from ConferenciaEncalhe conf");
+		hql.append(	"  where  conf.chamadaEncalheCota.chamadaEncalhe.id = :chamadaEncalheId " );
+
+        
+        final Query querym = getSession().createQuery(hql.toString());
+        
+        querym.setParameter("chamadaEncalheId", chamadaEncalheId);
+          
+        
+        final Integer dia = (Integer) querym.uniqueResult();
+        
+        return dia != null ? dia : 1; // se nao tem devolucao ainda, inicar como primeiro dia
+        
+    }
 }

@@ -41,6 +41,9 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorPrecoDesconto;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorProduto;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorSequencia;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorDia;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEncalhe;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresJuramentado;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
@@ -143,10 +146,12 @@ import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
+
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoEncalheServiceImpl.class);
+    private static final String SUFIXO_DIA = "º Dia";
     
     @Autowired
     private FechamentoEncalheRepository fechamentoEncalheRepository;
@@ -283,6 +288,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     @Autowired
     private UsuarioService usuarioService;
     
+    
+    
     @Override
     @Transactional
     public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(final FiltroFechamentoEncalheDTO filtro,
@@ -312,6 +319,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         for (final FechamentoFisicoLogicoDTO encalhe : listaEncalhe) {
         	encalhe.setDataRecolhimento(filtro.getDataEncalhe());
+        	
+        	//obter ultimo dia em que foi recolhido
+        	
+        	Integer dia = fechamentoEncalheRepository.obterDiaRecolhimento(encalhe.getProdutoEdicao(),encalhe.getDataRecolhimento());
+        	String recolhimento = dia.toString() + SUFIXO_DIA;
+        	
+        	encalhe.setRecolhimento(recolhimento);
             listaDeIdsProdutoEdicao.add(encalhe.getProdutoEdicao());
         }
         
@@ -501,8 +515,23 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
                     sortorder);
             Collections.sort(listaConferencia, ordenacao);
             return listaConferencia;
-        }
-        return null;
+        } else if (sort.equals("recolhimento")) {
+            final FechamentoFisicoLogicoDtoOrdenaPorDia ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorDia(
+                    sortorder);
+            Collections.sort(listaConferencia, ordenacao);
+            return listaConferencia;
+        } else if (sort.equals("exemplaresJuramentadoFormatado")) {
+            final FechamentoFisicoLogicoDtoOrdenaPorexemplaresJuramentado ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorexemplaresJuramentado(
+                    sortorder);
+            Collections.sort(listaConferencia, ordenacao);
+            return listaConferencia;
+        } else if (sort.equals("exemplaresVendaEncalheFormatado")) {
+            final FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEncalhe ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEncalhe(
+                    sortorder);
+            Collections.sort(listaConferencia, ordenacao);
+            return listaConferencia;
+        } 
+        return listaConferencia;
     }
     
     @Override
