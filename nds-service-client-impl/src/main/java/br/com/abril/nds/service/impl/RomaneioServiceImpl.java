@@ -90,9 +90,8 @@ public class RomaneioServiceImpl implements RomaneioService {
 		return this.produtoEdicaoRepository.buscarProdutosLancadosData(data);
 	}
 	
-	
-	@Transactional
 	@Override
+	@Transactional
 	public byte[] gerarRelatorio(FiltroRomaneioDTO filtro, String limitar, FileType fileType) throws URISyntaxException, JRException {
 		
 		if (filtro != null) {

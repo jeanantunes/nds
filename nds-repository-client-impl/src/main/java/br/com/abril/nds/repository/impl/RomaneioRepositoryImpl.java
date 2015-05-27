@@ -210,32 +210,14 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		} else if("numeroNotaEnvio".equals(filtro.getPaginacao().getSortColumn())) {
 			hql = addSeparadorOrderBy(hql);
 			hql.append(" notaenvio_.numero ");
-		}else{
-			hql.append(" roteiro_.ordem asc, rotas_.ordem ");
+		} else {
+			hql.append(" box_.codigo asc, roteiro_.ordem asc, rotas_.ordem ");
 		}
-		
 		
 		if (hql.length() > 0 && filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append(filtro.getPaginacao().getOrdenacao().toString());
 		}
 
-		/* Quando for impressão, deve ordenar por [box / roteiro / rota]. */
-		if (isImpressao) {
-			
-			// Já contém parâmetros de ordenação/paginação:
-			if (hql.length() > 0) {
-				hql.insert(0, ", ");
-			}
-			
-			if(filtro.getIdBox() == null) {
-				hql.insert(0, " roteiro_.ordem asc, rotas_.ordem ");
-			} else {
-				hql.insert(0, " box_.codigo asc, rota_.ordem, rotas_.ordem ");
-			}
-			
-			
-		}
-		
 		if (hql.length() > 0) {
 			hql.insert(0, " order by ");
 		}
