@@ -447,6 +447,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-selectRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-selectRota").val()});
+		
 		// FIXME: Verificar o motivo do vRaptor nao instanciar
 		// Por limitacao do vRaptor, nao instancia dentro do filtro
 		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
@@ -455,6 +456,10 @@ var geracaoNFeController = $.extend({
 				
 				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
 			}
+		} else {
+			
+			params.push({name:"filtro.emissaoPorEditor" , value: $("#geracaoNfe-filtro-emissaoPorEditor").is(':checked')});
+			params.push({name:"filtro.emissaoPorDestinacaoEncalhe" , value: $("#geracaoNfe-filtro-emissaoPorDestinacaoEncalhe").is(':checked')});
 		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
@@ -480,10 +485,9 @@ var geracaoNFeController = $.extend({
 		
 		var grid;
 		
-		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR'){
+		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR') {
 			grid = $("#geracaoNfe-flexigrid-fornecedor-pesquisa");
-		}else{
-			
+		} else {
 			grid = $("#geracaoNfe-flexigrid-pesquisa");
 		}
 		
@@ -747,10 +751,13 @@ var geracaoNFeController = $.extend({
 			
 			if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 				geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
+				$(".emissaoEditorDestinacaoEncalhe").hide();
 			} else {
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
 				$(".emissaoRegimeEspecial").hide();
+				$(".emissaoEditorDestinacaoEncalhe :input[type='checkbox']").attr('checked', true);
+				$(".emissaoEditorDestinacaoEncalhe").show();
 			}
 			
 		});

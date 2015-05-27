@@ -1048,6 +1048,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN me.estoqueProduto estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao ")
 		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.editor editor ")
 		.append(" LEFT JOIN produtoEdicao.descontoLogistica descontoLogisticaPE ")
 		.append(" LEFT JOIN produto.descontoLogistica descontoLogistica ")
 		.append(" JOIN produto.fornecedores fornecedor")
@@ -1074,8 +1075,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 
-		if(!isGroup){
+		if(!isGroup) {
 			hql.append(" GROUP BY fornecedor.id ");
+			if(filtro.isEmissaoPorEditor() != null) {
+				hql.append(", editor.id ");
+			}
 		} else {
 			hql.append(" GROUP BY me ");
 		}
