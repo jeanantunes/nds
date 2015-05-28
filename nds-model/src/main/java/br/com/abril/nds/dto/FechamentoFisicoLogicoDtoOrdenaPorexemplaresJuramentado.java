@@ -16,11 +16,11 @@ public class FechamentoFisicoLogicoDtoOrdenaPorexemplaresJuramentado implements 
 		
 		if(sortorder.equals("desc"))
 		{
-			return (o1.getExemplaresJuramentado().compareTo(o2.getExemplaresJuramentado()) *(-1) );
+			return (o1.getExemplaresDevolucaoJuramentado().compareTo(o2.getExemplaresDevolucaoJuramentado()) *(-1) );
 		}
 		else
 		{
-			return o1.getExemplaresJuramentado().compareTo(o2.getExemplaresJuramentado());
+			return o1.getExemplaresDevolucaoJuramentado().compareTo(o2.getExemplaresDevolucaoJuramentado());
 		}
 	}
 
