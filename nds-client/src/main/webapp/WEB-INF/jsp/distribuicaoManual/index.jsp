@@ -104,27 +104,27 @@
 								<table width="376" border="0" cellspacing="2" cellpadding="2">
 									<tr>
 										<td width="106"><strong>Estudo:</strong></td>
-										<td width="256" id="distrinuicao-manual-estudo">${produto.idEstudo}</td>
+										<td width="256" id="distribuicao-manual-estudo">${produto.idEstudo}</td>
 									</tr>
 									<tr>
 										<td><strong>Código:</strong></td>
-										<td id="distrinuicao-manual-codigoProduto">${produto.codigoProduto}</td>
+										<td id="distribuicao-manual-codigoProduto">${produto.codigoProduto}</td>
 									</tr>
 									<tr>
 										<td><strong>Produto:</strong></td>
-										<td id="distrinuicao-manual-nomeProduto">${produto.nomeProduto}</td>
+										<td id="distribuicao-manual-nomeProduto">${produto.nomeProduto}</td>
 									</tr>
 									<tr>
 										<td><strong>Edição:</strong></td>
-										<td id="distrinuicao-manual-numeroEdicao">${produto.numeroEdicao}</td>
+										<td id="distribuicao-manual-numeroEdicao">${produto.numeroEdicao}</td>
 									</tr>
 									<tr>
 										<td><strong>Classificação:</strong></td>
-										<td id="distrinuicao-manual-classificacao">${produto.classificacao}</td>
+										<td id="distribuicao-manual-classificacao">${produto.classificacao}</td>
 									</tr>
 									<tr>
 										<td><strong>Data Distribuição:</strong></td>
-										<td id="distrinuicao-manual-dataLancamento">${produto.dataLancto}</td>
+										<td id="distribuicao-manual-dataLancamento">${produto.dataLancto}</td>
 									</tr>
 								</table>
 							</fieldset>
@@ -140,15 +140,15 @@
 								<table width="394" border="0" cellspacing="2" cellpadding="2">
 									<tr>
 										<td width="109"><strong>Total Distribuido:</strong></td>
-										<td width="285"><span id="distrinuicao-manual-totalDistribuido"></span></td>
+										<td width="285"><span id="distribuicao-manual-totalDistribuido"></span></td>
 									</tr>
 									<tr>
 										<td><strong>Total A Distribuir:</strong></td>
-										<td id="distrinuicao-manual-repDistribuir">${produto.reparte}</td>
+										<td id="distribuicao-manual-repDistribuir">${produto.reparte}</td>
 									</tr>
 									<tr>
 										<td><strong>Total Geral:</strong></td>
-										<td id="distrinuicao-manual-repGeral"></td>
+										<td id="distribuicao-manual-repGeral"></td>
 									</tr>
 								</table>
 							</fieldset>
