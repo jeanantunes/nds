@@ -1060,6 +1060,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" WHERE 1=1 ")
 		.append(" AND me.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND me.notaFiscalEmitida = :notaFiscalEmitida ");
+		
+		if(filtro.isEmissaoPorDestinacaoEncalhe() != null && filtro.isEmissaoPorDestinacaoEncalhe()) {
+			hql.append(" AND me.produtoEdicao NOT IN(")
+				.append(" select produtoEdicao ")
+				.append(" from DestinoEncalhe de ")
+				.append(" JOIN de.produtoEdicao produtoEdicao ")
+				.append(") ");
+		}
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
