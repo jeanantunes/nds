@@ -321,7 +321,7 @@ var geracaoNFeController = $.extend({
 			
 			for(var index in data.rows) {
 				
-				if(data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
+				if(data.rows[index] && data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
 					if(data.rows[index].cell["notaFiscalConsolidada"]) {
 						data.rows[index].cell["numeroCota"] = '<span style="color: red;">'+ data.rows[index].cell["numeroCota"] +' *</span>';
@@ -398,7 +398,19 @@ var geracaoNFeController = $.extend({
 	}, {
 		display : 'Nome',
 		name : 'nomeFornecedor',
-		width : 385,
+		width : 215,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Editor',
+		name : 'codigoEditor',
+		width : 80,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Nome Editor',
+		name : 'nomeEditor',
+		width : 150,
 		sortable : true,
 		align : 'left',
 	}, {
@@ -460,6 +472,7 @@ var geracaoNFeController = $.extend({
 			
 			params.push({name:"filtro.emissaoPorEditor" , value: $("#geracaoNfe-filtro-emissaoPorEditor").is(':checked')});
 			params.push({name:"filtro.emissaoPorDestinacaoEncalhe" , value: $("#geracaoNfe-filtro-emissaoPorDestinacaoEncalhe").is(':checked')});
+			
 		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
@@ -496,7 +509,10 @@ var geracaoNFeController = $.extend({
 		grid.flexOptions({
 			"url" : this.path + uri,
 			params : params,
-			newp : 1
+			newp : 1,
+			onSuccess: function() {
+				exibirColuna('#geracaoNfe-flexigrid-fornecedor-pesquisa', ['codigoEditor', 'nomeEditor'], $("#geracaoNfe-filtro-emissaoPorEditor").is(':checked'));
+			},
 		});
 		
 		grid.flexReload();

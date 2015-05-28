@@ -195,12 +195,6 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Recolhimento',
-				name : 'recolhimento',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
 				display : 'Exe. Juramentado',
 				name : 'exemplaresJuramentadoFormatado',
 				hide: toggleColunaJuramentado,
@@ -225,7 +219,13 @@ var fechamentoEncalheController = $.extend(true, {
 				width : 50,
 				sortable : false,
 				align : 'right'
-			},{
+			}, {
+				display : 'Recolhimento',
+				name : 'recolhimento',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Estoque',
 				name : 'estoque',
 				width : 60,
@@ -1237,7 +1237,7 @@ var fechamentoEncalheController = $.extend(true, {
 		$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
 			var codigo = $(this).children('td[abbr="codigo"]').children('div').html().toString();
 			var produtoEdicao = $(this).children('td').children('div').children('input[name=fisico]').attr("id");//Envia o id que eh setado com produtoEdicaoId
-			var fisico = $(this).children('td').children('div').children('input[name=fisico]').val().toString();
+			var fisico = $(this).children('td').children('div').children('input[name=fisico]').val();
 			var checkbox = $(this).children('td').children('div').children('input[name=checkgroupFechamento]:checked').val() == "on" ? true : false;
 			var envioController = {
 				"codigo"  		: 	codigo,
