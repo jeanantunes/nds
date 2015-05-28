@@ -1208,11 +1208,15 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val(); 
 		
+		var comboCEIntegracao = $("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
+		
 		var parametros = fechamentoCEIntegracaoController.getItensAlteradosCE();
 		
 		parametros.push({name:'semana' , value:semana});
 		
 		parametros.push({name:'idFornecedor' , value:idFornecedor});
+		
+		parametros.push({name:'comboCEIntegracao' , value:comboCEIntegracao});
 		
 		$(".perdaGanhoGrid", fechamentoCEIntegracaoController.workspace).flexOptions({
 			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisarPerdaGanho',
