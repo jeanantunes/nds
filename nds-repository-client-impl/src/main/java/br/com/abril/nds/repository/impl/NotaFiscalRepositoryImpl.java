@@ -526,7 +526,13 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		if(!isGroup){
 			hql.append(" GROUP BY mec.cota.numeroCota, mec.cotaContribuinteExigeNF ");
-			hql.append(" HAVING SUM(case when tipoMovimento.operacaoEstoque = 'ENTRADA' then mec.qtde else -mec.qtde end) > 0 ");
+			
+			hql.append(" HAVING SUM(case when tipoMovimento.operacaoEstoque = (SELECT tm.operacaoEstoque ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
+			hql.append(" then mec.qtde else -mec.qtde end) > 0 "); 
+			
 		} else {
 			hql.append(" GROUP BY mec ");
 		}
