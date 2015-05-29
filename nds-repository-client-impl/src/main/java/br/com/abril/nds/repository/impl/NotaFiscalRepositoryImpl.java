@@ -92,12 +92,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		Query query = createFiltroQuery(queryConsultaPainelMonitor(filtro, hql, false, false, false),filtro);
 
-		if(filtro.getPaginacao()!=null) {
-			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
@@ -1034,6 +1034,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
 		
+		if(filtro.getPaginacaoVO() != null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+		}		
+		
 		return query.list();
 		
 	}
@@ -1130,7 +1140,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		// forncedor id		
-		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
+		if(filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 		

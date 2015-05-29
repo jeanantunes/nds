@@ -105,8 +105,10 @@ $(function(){
 					</div>
 					<div style="display:none;" class="emissaoEditorDestinacaoEncalhe">
 					Editor: <input type="checkbox" id="geracaoNfe-filtro-emissaoPorEditor" />
+					<!--
 					&nbsp;&nbsp;&nbsp;
 					Destinação de Encalhe: <input type="checkbox" id="geracaoNfe-filtro-emissaoPorDestinacaoEncalhe" disabled="disabled" />
+					-->
 					</div>
 				</td>
 			</tr>
