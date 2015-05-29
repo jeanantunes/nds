@@ -387,8 +387,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		}
 		
 		hql.append(getSqlFromEWhereRomaneio(filtro));
-		hql.append(getOrderBy(filtro, true));
-		
+		hql.append("order by nomeBox asc, roteiro_.ordem asc, rota_.ordem asc,rotas_.ordem  "); // para romaneio, classificacao fixa
 		SQLQuery query =  getSession().createSQLQuery(hql.toString())
 				.addScalar("idPDV",StandardBasicTypes.LONG)
 				.addScalar("numeroCota",StandardBasicTypes.INTEGER)

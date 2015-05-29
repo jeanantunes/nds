@@ -637,7 +637,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	Usuario usuario = usuarioService.getUsuarioLogado();
     	
 		for(ItemChamadaEncalheFornecedor item : cef.getItens()){
-			
+			if ( RegimeRecolhimento.PARCIAL.name().equals(item.getRegimeRecolhimento())) // para regime parcial nao estornar
+				continue;
 			this.gerarMovimentoEstoqueEstornoDevolucaoFornecedor(item.getProdutoEdicao().getId(), 
 					                                             BigInteger.valueOf(item.getQtdeDevolucaoInformada()), 
 					                                             dataOperacao,
