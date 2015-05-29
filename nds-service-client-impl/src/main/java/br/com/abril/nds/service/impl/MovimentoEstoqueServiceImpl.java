@@ -1121,14 +1121,30 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
             case DEVOLUCAO_FORNECEDOR:
                 
-                final BigInteger qtdeDevolucaoFornecedor = Util.nvl(estoqueProduto.getQtdeDevolucaoFornecedor(),BigInteger.ZERO);
+            	final BigInteger qtdeSuplementarDevFor = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
                 
-                novaQuantidade = isOperacaoEntrada 
-                		? qtdeDevolucaoFornecedor.add(qntMovimento)
-                				:qtdeDevolucaoFornecedor.subtract(qntMovimento);
+            	final BigInteger qtdeDevolucaoFornecedor = Util.nvl(estoqueProduto.getQtdeDevolucaoFornecedor(),BigInteger.ZERO);
                 
-                estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade.negate());
+            	BigInteger qtdeEstoqueEncalheDev = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+            	
+            	if(movimentoEstoque.getOrigem() != null || qtdeSuplementarDevFor.longValue() > 0) {
+            		
+            		if(qtdeSuplementarDevFor.longValue() > 0) {
+            			
+            			transferirEstoqueProdutoChamadaoParaRecolhimento(estoqueProduto.getProdutoEdicao().getId(), movimentoEstoque.getUsuario());
+            			
+            			qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+            			
+            		} else {
+            			
+            			qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(movimentoEstoque, estoqueProduto, qntMovimento);		
+            		}
+            	}
+            	
+                novaQuantidade = qtdeEstoqueEncalheDev.subtract(qntMovimento);
                 
+                estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+                                
                 break;
                 
             case SUPLEMENTAR:
