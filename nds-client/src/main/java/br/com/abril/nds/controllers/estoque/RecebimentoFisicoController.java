@@ -302,7 +302,7 @@ public class RecebimentoFisicoController extends BaseController {
         
         final Map<String, String> infoNota = new HashMap<String, String>();
         infoNota.put("numero", notaFiscal.getNumero().toString());
-        infoNota.put("serie", notaFiscal.getSerie());
+        infoNota.put("serie", notaFiscal.getSerie().toString());
         infoNota.put("chaveAcesso", notaFiscal.getChaveAcesso());
         infoNota.put("cnpj", cnpjFornecedor);
         
@@ -1019,7 +1019,8 @@ public class RecebimentoFisicoController extends BaseController {
         private ValidacaoVO validacao;
         private boolean indNotaInterface;
         private boolean indRecebimentoFisicoConfirmado;
-        private String cnpj, serieNotaFiscal, chaveAcesso;
+        private Long serieNotaFiscal;
+        private String cnpj, chaveAcesso;
         private Long numeroNotaFiscal;
         private Long id;
         
@@ -1036,7 +1037,7 @@ public class RecebimentoFisicoController extends BaseController {
                 final boolean indNotaInterface,
                 final boolean indRecebimentoFisicoConfirmado,
                 final String cnpj, final Long numeroNotaFiscal,
-                final String serieNotaFiscal,
+                final Long serieNotaFiscal,
                 final String chaveAcesso,
                 final Long id) {
             this(validacao, indNotaInterface, indRecebimentoFisicoConfirmado);
@@ -1077,11 +1078,11 @@ public class RecebimentoFisicoController extends BaseController {
             this.cnpj = cnpj;
         }
         
-        public String getSerieNotaFiscal() {
+        public Long getSerieNotaFiscal() {
             return serieNotaFiscal;
         }
         
-        public void setSerieNotaFiscal(final String serieNotaFiscal) {
+        public void setSerieNotaFiscal(final Long serieNotaFiscal) {
             this.serieNotaFiscal = serieNotaFiscal;
         }
         

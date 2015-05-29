@@ -20,7 +20,7 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 	
 	private Long notaFiscal;
 	
-	private String serieNotaFiscal;
+	private Long serieNotaFiscal;
 	
 	private String chaveAcessoNF;
 	
@@ -60,11 +60,11 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 	}
 	
 	@Field(offset = 24, length = 3)
-	public String getSerieNotaFiscal() {
+	public Long getSerieNotaFiscal() {
 		return serieNotaFiscal;
 	}
 
-	public void setSerieNotaFiscal(String serieNotaFiscal) {
+	public void setSerieNotaFiscal(Long serieNotaFiscal) {
 		this.serieNotaFiscal = serieNotaFiscal;
 	}
 
