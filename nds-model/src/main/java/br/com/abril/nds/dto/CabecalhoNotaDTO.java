@@ -8,7 +8,7 @@ public class CabecalhoNotaDTO {
 	private String cnpj;
 	private Long numero;
 	private Long numeroNotaEnvio;
-	private String serie;
+	private Long serie;
 	private String chaveAcesso;
 	private Date dataEmissao;
 	private Date dataEntrada;
@@ -68,14 +68,14 @@ public class CabecalhoNotaDTO {
 	/**
 	 * @return the serie
 	 */
-	public String getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 
 	/**
 	 * @param serie the serie to set
 	 */
-	public void setSerie(String serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 

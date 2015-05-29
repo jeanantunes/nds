@@ -148,7 +148,7 @@ public abstract class NotaFiscal implements Serializable {
 	protected Long numero;
 	
 	@Column(name = "SERIE", nullable  = false)
-	protected String serie;
+	protected Long serie;
 	
 	@Column(name = "CHAVE_ACESSO")
 	protected String chaveAcesso;
@@ -229,11 +229,11 @@ public abstract class NotaFiscal implements Serializable {
 		this.numero = numero;
 	}
 	
-	public String getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 	
-	public void setSerie(String serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 	
