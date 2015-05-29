@@ -60,9 +60,7 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucao.setDataInicio(new Date());
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(route.getUserName());
-        logExecucao.setStatus(StatusExecucaoEnum.ERRO);// Inicia o processo como
-                                                       // Não processado - No
-                                                       // final atualiza status
+        logExecucao.setStatus(StatusExecucaoEnum.ERRO);// Inicia o processo como Não processado - No final atualiza status
 		
 		try {
 			TransactionTemplate template = new TransactionTemplate(transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));

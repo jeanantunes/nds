@@ -92,12 +92,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		Query query = createFiltroQuery(queryConsultaPainelMonitor(filtro, hql, false, false, false),filtro);
 
-		if(filtro.getPaginacao()!=null) {
-			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getPosicaoInicial() != null) {
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
@@ -1023,6 +1023,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" fornecedor.id as idFornecedor, ");
 		hql.append(" fornecedor.id as numeroFornecedor, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeFornecedor,");
+		hql.append(" editor.id as idEditor, ");
+		hql.append(" editor.codigo as codigoEditor, ");
+		hql.append(" coalesce(pessoaEditor.nomeFantasia, pessoaEditor.razaoSocial, '') as nomeEditor,");
 		hql.append(" SUM(me.qtde) as exemplares, ");
 		hql.append(" SUM(coalesce(produtoEdicao.precoVenda, 0) * me.qtde) as total, "); 
 		hql.append(" SUM((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0)  / 100))) * me.qtde) as totalDesconto "); 
@@ -1030,6 +1033,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
+		
+		if(filtro.getPaginacaoVO() != null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+		}		
 		
 		return query.list();
 		
@@ -1054,6 +1067,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN me.estoqueProduto estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao ")
 		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.editor editor ")
+		.append(" JOIN editor.pessoaJuridica pessoaEditor ")
 		.append(" LEFT JOIN produtoEdicao.descontoLogistica descontoLogisticaPE ")
 		.append(" LEFT JOIN produto.descontoLogistica descontoLogistica ")
 		.append(" JOIN produto.fornecedores fornecedor")
@@ -1061,6 +1076,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" WHERE 1=1 ")
 		.append(" AND me.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND me.notaFiscalEmitida = :notaFiscalEmitida ");
+		
+		if(filtro.isEmissaoPorDestinacaoEncalhe() != null && filtro.isEmissaoPorDestinacaoEncalhe()) {
+			hql.append(" AND me.produtoEdicao NOT IN(")
+				.append(" select produtoEdicao ")
+				.append(" from DestinoEncalhe de ")
+				.append(" JOIN de.produtoEdicao produtoEdicao ")
+				.append(") ");
+		}
 
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
@@ -1080,8 +1103,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 
-		if(!isGroup){
+		if(!isGroup) {
 			hql.append(" GROUP BY fornecedor.id ");
+			if(filtro.isEmissaoPorEditor() != null && filtro.isEmissaoPorEditor()) {
+				hql.append(", editor.id ");
+			}
 		} else {
 			hql.append(" GROUP BY me ");
 		}
@@ -1114,7 +1140,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		// forncedor id		
-		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
+		if(filtro.getListIdFornecedor() != null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 		

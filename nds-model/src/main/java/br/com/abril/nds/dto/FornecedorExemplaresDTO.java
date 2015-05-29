@@ -17,11 +17,28 @@ public class FornecedorExemplaresDTO implements Serializable {
 		
 	}
 	
-	public FornecedorExemplaresDTO(Long idFornecedor, Long numeroFornecedor, String nomeFornecedor, BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto, boolean inativo) {
+	public FornecedorExemplaresDTO(Long idFornecedor, Long numeroFornecedor, String nomeFornecedor, BigInteger exemplares
+			, BigDecimal total, BigDecimal totalDesconto, boolean inativo) {
 		super();
 		this.idFornecedor = idFornecedor;
 		this.numeroFornecedor = numeroFornecedor;
 		this.nomeFornecedor = nomeFornecedor;
+		this.exemplares = exemplares;
+		this.total = total;
+		this.totalDesconto = totalDesconto;
+		this.inativo = inativo;
+	}
+	
+	public FornecedorExemplaresDTO(Long idFornecedor, Long numeroFornecedor, String nomeFornecedor, BigInteger exemplares
+			, Long idEditor, String nomeEditor, Long codigoEditor
+			, BigDecimal total, BigDecimal totalDesconto, boolean inativo) {
+		super();
+		this.idFornecedor = idFornecedor;
+		this.numeroFornecedor = numeroFornecedor;
+		this.nomeFornecedor = nomeFornecedor;
+		this.idEditor = idEditor;
+		this.codigoEditor = codigoEditor;
+		this.nomeEditor = nomeEditor;
 		this.exemplares = exemplares;
 		this.total = total;
 		this.totalDesconto = totalDesconto;
@@ -35,6 +52,14 @@ public class FornecedorExemplaresDTO implements Serializable {
 	
 	@Export(label="Nome", alignment=Alignment.LEFT)
 	private String nomeFornecedor;
+	
+	private Long idEditor;
+	
+	@Export(label="Editor", alignment=Alignment.LEFT)
+	private Long codigoEditor;
+	
+	@Export(label="Nome Editor", alignment=Alignment.LEFT)
+	private String nomeEditor;
 	
 	@Export(label="Total Exemplares", alignment=Alignment.CENTER)
 	private BigInteger exemplares;
@@ -73,6 +98,30 @@ public class FornecedorExemplaresDTO implements Serializable {
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	public Long getIdEditor() {
+		return idEditor;
+	}
+
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
+	}
+
+	public Long getCodigoEditor() {
+		return codigoEditor;
+	}
+
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
+	}
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
 	}
 
 	/**

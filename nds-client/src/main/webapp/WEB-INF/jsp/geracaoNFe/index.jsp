@@ -89,7 +89,10 @@ $(function(){
 							<option value="${fornecedor.key }">${fornecedor.value }</option>
 						</c:forEach>
 				</select></td>
-				<td width="80"><span style="display:none;" class="emissaoRegimeEspecial">Emitir: </span></td>
+				<td width="80">
+					<span style="display:none;" class="emissaoRegimeEspecial">Emitir: </span>
+					<span style="display:none;" class="emissaoEditorDestinacaoEncalhe">Segmentação: </span>
+				</td>
 				<td width="210">
 					<div style="display:none;" class="emissaoRegimeEspecial">
 					<select
@@ -99,7 +102,14 @@ $(function(){
 							<option value="${tipoEmissaoRegimeEspecial}">${tipoEmissaoRegimeEspecial.descricao }</option>
 						</c:forEach>
 					</select>
-				</div>
+					</div>
+					<div style="display:none;" class="emissaoEditorDestinacaoEncalhe">
+					Editor: <input type="checkbox" id="geracaoNfe-filtro-emissaoPorEditor" />
+					<!--
+					&nbsp;&nbsp;&nbsp;
+					Destinação de Encalhe: <input type="checkbox" id="geracaoNfe-filtro-emissaoPorDestinacaoEncalhe" disabled="disabled" />
+					-->
+					</div>
 				</td>
 			</tr>
 			<tr>
