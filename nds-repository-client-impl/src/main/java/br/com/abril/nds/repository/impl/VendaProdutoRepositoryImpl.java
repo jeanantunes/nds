@@ -33,55 +33,104 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 	@Override
 	public List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder();
-		        
-        hql.append(" SELECT ");
-        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
-        hql.append(" 	  			THEN movimentoEstoque.QTDE ");
-        hql.append("         	ELSE 0 ");
-        hql.append("     		END ");
-        hql.append(" 	 ) as reparte, ");
-		    
-        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
-        hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
-        hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
-        hql.append(" 			END ");
-        hql.append(" 	 ) AS venda, ");
-		    
-        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
-        hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
-        hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
-        hql.append(" 			END ");
-        hql.append(" 	 ) * 100 / ");
-        hql.append(" 	 SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
-        hql.append(" 	  			THEN movimentoEstoque.QTDE ");
-        hql.append("         	ELSE 0 ");
-        hql.append("     		END ");
-        hql.append(" 	 ) AS percentualVenda, ");
-		    
-        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
-        hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
-        hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
-        hql.append(" 			END ");
-        hql.append(" 	 ) * produtoEdicao.PRECO_VENDA AS total, ");
-		    
-        hql.append(" 	 produtoEdicao.NUMERO_EDICAO AS numEdicao, ");
-        hql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
-        hql.append("     lancamento.DATA_REC_DISTRIB AS dataRecolhimento, ");
-        hql.append("     lancamento.status AS statusLancamento, ");
-        hql.append(" 	 produtoEdicao.id AS idProdutoEdicao, ");
-        hql.append("     produtoEdicao.PRECO_VENDA AS precoCapa, ");
-        hql.append("     produtoEdicao.CHAMADA_CAPA AS chamadaCapa, ");
-        hql.append("     produtoEdicao.PARCIAL AS parcial, ");
-        hql.append("     produto.CODIGO AS codigoProduto ");
-        
-		hql.append(this.getSqlFromEWhereVendaPorProduto(filtro));
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" 	 GROUP BY produtoEdicao.ID ");		
+		sql.append(" select  ");
+		sql.append("             T.numEdicao as numEdicao, ");
+		sql.append("             T.dataLancamento as dataLancamento, ");
+		sql.append("             T.dataRecolhimento as dataRecolhimento, ");
+		sql.append("             T.statusLancamento as statusLancamento, ");
+		sql.append("             T.idProdutoEdicao AS idProdutoEdicao, ");
+		sql.append("             T.precoCapa AS precoCapa, ");
+		sql.append("             T.chamadaCapa AS chamadaCapa, ");
+		sql.append("             T.parcial AS parcial, ");
+		sql.append("             T.codigoProduto AS codigoProduto, ");
+		sql.append("             T.repartePrevisto as reparte, ");
+		sql.append("             T.qtdeVendas as venda, ");
+		sql.append("             ((T.qtdeVendas*100)/T.repartePrevisto) as percentualVenda, ");
+		sql.append("             (T.qtdeVendas*T.precoCapa) as total ");
+
+		sql.append(" FROM  (SELECT                                                                                                                     ");
+		sql.append("             pe.NUMERO_EDICAO as numEdicao, ");
+		sql.append("             lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
+		sql.append("             lancamento.DATA_REC_DISTRIB as dataRecolhimento, ");
+		sql.append("             lancamento.STATUS as statusLancamento, ");
+		sql.append("             pe.id AS idProdutoEdicao, ");
+		sql.append("             pe.PRECO_VENDA AS precoCapa, ");
+		sql.append("             pe.CHAMADA_CAPA AS chamadaCapa, ");
+		sql.append("             pe.PARCIAL AS parcial, ");
+		sql.append("             produto.CODIGO AS codigoProduto, ");
+		sql.append("             ");
+		sql.append("            round(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end), 0) AS repartePrevisto,    ");
+		sql.append(" 			      ");
+		sql.append("            coalesce(round(case                                                                                                                   ");
+		sql.append(" 			         when lancamento.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')                                              ");
+		sql.append(" 			           then sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end) - (       ");
+		sql.append(" 			                     select sum(mecEncalhe.qtde)                                                                            ");
+		sql.append(" 			                     from                                                                                                   ");
+		sql.append(" 			                         lancamento lanc                                                                                    ");
+		sql.append(" 			                     LEFT JOIN                                                                                              ");
+		sql.append(" 			                         chamada_encalhe_lancamento cel                                                                     ");
+		sql.append(" 			                             on cel.LANCAMENTO_ID = lanc.ID                                                                 ");
+		sql.append(" 			                     LEFT JOIN                                                                                              ");
+		sql.append(" 			                         chamada_encalhe ce                                                                                 ");
+		sql.append(" 			                             on ce.id = cel.CHAMADA_ENCALHE_ID                                                              ");
+		sql.append(" 			                     LEFT JOIN                                                                                              ");
+		sql.append(" 			                         chamada_encalhe_cota cec                                                                           ");
+		sql.append(" 			                             on cec.CHAMADA_ENCALHE_ID = ce.ID                                                              ");
+		sql.append(" 			                     LEFT JOIN                                                                                              ");
+		sql.append(" 			                         conferencia_encalhe confEnc                                                                        ");
+		sql.append(" 			                             on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID                                                    ");
+		sql.append(" 			                     LEFT JOIN                                                                                              ");
+		sql.append(" 			                         movimento_estoque_cota mecEncalhe                                                                  ");
+		sql.append(" 			                             on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID                                           ");
+		sql.append(" 			                     WHERE                                                                                                  ");
+		sql.append(" 			                         lanc.id = lancamento.id)                                                                           ");
+		sql.append(" 			         else null                                                                                                          ");
+		sql.append(" 			     end, 0), 0) as qtdeVendas                                                                                                      ");
+		sql.append(" 	                                                                                                                                    ");
+		sql.append(" 		     FROM lancamento lancamento                                                                                                 ");
+
+		sql.append(" 		     JOIN                                                                                                                       ");
+		sql.append(" 		         produto_edicao pe                                                                                           ");
+		sql.append(" 		           ON pe.id = lancamento.produto_edicao_id                                                                   ");
+		sql.append(" 		     LEFT JOIN                                                                                                                  ");
+		sql.append(" 		         periodo_lancamento_parcial plp                                                                                         ");
+		sql.append(" 		           ON plp.id = lancamento.periodo_lancamento_parcial_id                                                                 ");
+		sql.append(" 		     JOIN                                                                                                                       ");
+		sql.append(" 		         produto produto                                                                                                        ");
+		sql.append(" 		           ON produto.id = pe.produto_id                                                                             ");
+		sql.append(" 		     JOIN produto_fornecedor pf      ");
+		sql.append(" 		         ON pf.PRODUTO_ID = produto.ID     ");
+		sql.append(" 		     JOIN fornecedor  forn");
+		sql.append(" 		         ON pf.fornecedores_ID = forn.ID   ");
+		sql.append(" 		     LEFT JOIN                                                                                                                  ");
+		sql.append(" 		         tipo_classificacao_produto tipoClassificacaoProduto                                                                    ");
+		sql.append(" 		           ON tipoClassificacaoProduto.id = pe.tipo_classificacao_produto_id                                         ");
+		sql.append(" 		     JOIN                                                                                                                  ");
+		sql.append(" 		         movimento_estoque_cota mecReparte                                                                                      ");
+		sql.append(" 		           on mecReparte.LANCAMENTO_ID = lancamento.id                                                                          ");
+		sql.append(" 		     LEFT JOIN                                                                                                                  ");
+		sql.append(" 		         tipo_movimento tipo                                                                                                    ");
+		sql.append(" 		           ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID       ");
+
+		sql.append("                where tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
 		
-		hql.append(this.getOrderByVenda(filtro));
+		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
+			sql.append(" AND produto.CODIGO = :codigo ");
+		}
+		if(filtro.getEdicao() !=null){
+			sql.append(" AND pe.NUMERO_EDICAO = :edicao ");
+		}
+		if(filtro.getIdFornecedor() !=null && filtro.getIdFornecedor() != -1){
+			sql.append(" AND forn.ID = :idFornecedor ");
+		}
 		
-		SQLQuery query = getSession().createSQLQuery(hql.toString());
+		sql.append("    GROUP BY pe.numero_Edicao, produto.codigo) T ");
+		
+		sql.append(this.getOrderByVenda(filtro));
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("numEdicao", StandardBasicTypes.LONG);
 		query.addScalar("dataLancamento");
@@ -99,10 +148,10 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		HashMap<String, Object> param = this.buscarParametrosVendaProduto(filtro);
 		
-		HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto();
+		//HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto();
 		
 		setParameters(query, param);
-		setParameters(query, paramList);
+		//setParameters(query, paramList);
 		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(VendaProdutoDTO.class));
@@ -144,6 +193,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		}
 	}
 	
+	/*
 	private String getSqlFromEWhereVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -189,6 +239,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		return hql.toString();
 	}
+	*/
 	
 	private String getSqlFromEWhereDetalheVendaPorProduto() {
 		
@@ -273,14 +324,14 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()){ 
 			param.put("codigo", filtro.getCodigo());
 		}
+		
 		if(filtro.getEdicao() != null){ 
 			param.put("edicao", filtro.getEdicao());
 		}
+		
 		if(filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1){ 
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
-		
-		param.put("operacaoEstoqueSaida", OperacaoEstoque.SAIDA.name());
 		
 		return param;
 	}

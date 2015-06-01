@@ -1974,14 +1974,37 @@ if ( dto.getRepartePrevisto() != null) {
     @Transactional
     public List<ProdutoEdicaoDTO> obterEdicoesProduto(final FiltroHistoricoVendaDTO filtro) {
     	
-    	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
+    	if(filtro.getNumeroEdicao() != null){
+    		
+    		ProdutoEdicao pe = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getProdutoDto().getCodigoProduto(), filtro.getNumeroEdicao());
+    		
+    		boolean isParcial = produtoEdicaoRepository.isEdicaoParcial(pe.getId());
+    		
+    		if(isParcial){
+    			filtro.setBuscarPeriodosParciais(true);
+    		}
+    	}
     	
+    	List<ProdutoEdicaoDTO> listEdicoesProdutoDto = produtoEdicaoRepository.obterEdicoesProduto(filtro);
+
     	for (ProdutoEdicaoDTO peDTO : listEdicoesProdutoDto) {
-			if((peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO")) 
-					&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
-				peDTO.setQtdeVendas(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).toBigInteger());
-			}
-		}
+    		if((peDTO.getDescricaoSituacaoLancamento().equalsIgnoreCase("FECHADO")) 
+    				&& (peDTO.getQtdeVendas() == null || peDTO.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+    			peDTO.setQtdeVendas(estoqueProdutoService.obterVendaBaseadoNoEstoque(peDTO.getId()).toBigInteger());
+    		}
+    		
+    		if((filtro.getNumeroEdicao() == null) && (peDTO.getPeriodo() != null)){
+    			
+    			String statusLancamentoAtualizado = produtoEdicaoRepository.obterStatusLancamentoPeriodoParcial(peDTO.getId(), peDTO.getPeriodo(), peDTO.getNumeroEdicao());
+    			
+    			if(!statusLancamentoAtualizado.isEmpty()){
+    				peDTO.setDescricaoSituacaoLancamento(statusLancamentoAtualizado);
+    			}
+    			
+    			peDTO.setParcialConsolidado(true);
+    			
+    		}
+    	}
     	
     	return listEdicoesProdutoDto; 
     }

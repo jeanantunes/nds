@@ -134,6 +134,14 @@ var historicoVendaController = $.extend(true, {
 				row = grids.EdicaoSelecionadaGrid.tableModel.rows[i];
 				params.push({name : "listProdutoEdicaoDto["+i+"].numeroEdicao", value :  row.cell.numeroEdicao});
 				params.push({name : "listProdutoEdicaoDto["+i+"].codigoProduto", value :  row.cell.codigoProduto});
+				params.push({name : "listProdutoEdicaoDto["+i+"].id", value :  row.cell.id});
+				params.push({name : "listProdutoEdicaoDto["+i+"].parcialConsolidado", value :  row.cell.parcialConsolidado});
+								
+				if(row.cell.periodo != undefined){
+					params.push({name : "listProdutoEdicaoDto["+i+"].periodo", value :  row.cell.periodo});
+					params.push({name : "listProdutoEdicaoDto["+i+"].parcial", value :  true});
+				}
+				
 			}
 			
 			$.post(url, params, function(data){
@@ -622,7 +630,8 @@ var historicoVendaController = $.extend(true, {
 		if (grids.EdicaoSelecionadaGrid.tableModel.rows) {
 			for ( var index in grids.EdicaoSelecionadaGrid.tableModel.rows) {
 				if((grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.numeroEdicao == row.cell.numeroEdicao)
-						&& (grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.codigoProduto == row.cell.codigoProduto)){
+						&& (grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.codigoProduto == row.cell.codigoProduto)
+						&&(grids.EdicaoSelecionadaGrid.tableModel.rows[index].cell.periodo == row.cell.periodo)){
 					containsElement.contain = true;
 					containsElement.rowId = grids.EdicaoSelecionadaGrid.tableModel.rows[index].id;
 					break;
