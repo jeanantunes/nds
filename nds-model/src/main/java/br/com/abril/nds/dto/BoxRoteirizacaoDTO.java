@@ -15,9 +15,8 @@ public class BoxRoteirizacaoDTO implements Serializable {
 	
 	private String nome;
 	
-	public static final BoxRoteirizacaoDTO ESPECIAL = new BoxRoteirizacaoDTO(Box.ESPECIAL.getId(), Box.ESPECIAL.getNome());
-	
 	public BoxRoteirizacaoDTO() {
+		
 	}
 	
 	public BoxRoteirizacaoDTO(Long id, String nome) {

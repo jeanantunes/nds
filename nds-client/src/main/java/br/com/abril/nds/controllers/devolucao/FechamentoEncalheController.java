@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -129,7 +130,7 @@ public class FechamentoEncalheController extends BaseController {
 	public void index() {
 		
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
-		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.ENCALHE);
+		List<Box> listaBoxes = boxService.buscarPorTipo(Arrays.asList(TipoBox.ENCALHE));
 		
 		result.include("dataOperacao", DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
 		result.include("aceitaJuramentado", this.distribuidorService.aceitaJuramentado());

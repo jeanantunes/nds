@@ -36,7 +36,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * 
 	 * @return List - Box
 	 */
-	List<Box> obterListaBox(String nomeBox, TipoBox tipoBox);
+	List<Box> obterListaBox(String nomeBox, List<TipoBox> tipoBox);
 	
 	/**
      * Obtém lista de Box de acordo com tipoBox.
@@ -45,7 +45,7 @@ public interface BoxRepository extends Repository<Box,Long> {
      * 
      * @return List - Box
      */
-    List<Box> obterListaBox(TipoBox tipoBox);
+    List<Box> obterListaBox(List<TipoBox> tipoBox);
 
 	
 	/**
@@ -175,4 +175,6 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return List<Box>
 	 */
 	List<Box> obterBoxPorCodigo(Integer codigoBox);
+	
+	Long obterIdBoxEspecial();
 }

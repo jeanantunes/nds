@@ -71,14 +71,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("    notaenvio_.NOME_DESTINATARIO as nome, ");
 		hql.append("    cota_.ID as idCota, ");
 		hql.append("    notaenvio_.numero as numeroNotaEnvio, ");
-		hql.append("    case  ");
-		hql.append("         when roteiro_.TIPO_ROTEIRO<>'ESPECIAL' then box_.ID  ");
-		hql.append("       else -1  ");
-		hql.append("    end as idBox, ");
-		hql.append("    case ");
-		hql.append("         when roteiro_.TIPO_ROTEIRO<>'ESPECIAL' then box_.NOME ");
-		hql.append("         else 'ESPECIAL' ");
-		hql.append("    end as nomeBox,");
+		hql.append("    box_.ID as idBox, ");
+		hql.append("    box_.NOME as nomeBox,");
 		hql.append("    roteiro_.ID as idRoteiro,");
 		hql.append("    roteiro_.DESCRICAO_ROTEIRO as nomeRoteiro,");
 		hql.append("    rota_.ID as idRota,");
@@ -135,20 +129,22 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
 		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
-		hql.append(" and estudo_cota_.TIPO_ESTUDO != :juramentado ");
+		hql.append(" and estudo_cota_.TIPO_ESTUDO <> :juramentado ");
 		
 		if(filtro.getIdBox() == null) {
+			
 			hql.append(" and box_.ID is not null ");
 			hql.append(" and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
-			
 		} else {
+			/*
+			hql.append(" and ( ");
+			hql.append(" case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then box_.ID = :idBox and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' "); 
+			hql.append(" else roteiro_.TIPO_ROTEIRO = 'ESPECIAL' end ");
+			hql.append(" ) ");*/
 			
-			if(filtro.getIdBox() <= 0){
-				hql.append(" and roteiro_.TIPO_ROTEIRO  = 'ESPECIAL' ");
-			}else{
-				hql.append(" and box_.ID = :idBox ");
-				hql.append(" and roteiro_.TIPO_ROTEIRO  <> 'ESPECIAL' ");
-			}
+			hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then box_.ID = :idBox and roteiro_.TIPO_ROTEIRO <> 'ESPECIAL' ");
+			hql.append(" else roteiro_.TIPO_ROTEIRO = 'ESPECIAL' end ) ");
+			
 		}
 			
 		if(filtro.getIdRoteiro() != null){
@@ -336,14 +332,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("    notaenvio_.NOME_DESTINATARIO as nome, ");
 		hql.append("    cota_.ID as idCota, ");
 		hql.append("    notaenvio_.numero as numeroNotaEnvio, ");
-		hql.append("    case  ");
-		hql.append("         when roteiro_.TIPO_ROTEIRO<>'ESPECIAL' then box_.ID  ");
-		hql.append("       else -1  ");
-		hql.append("    end as idBox, ");
-		hql.append("    case ");
-		hql.append("         when roteiro_.TIPO_ROTEIRO<>'ESPECIAL' then box_.NOME ");
-		hql.append("         else 'ESPECIAL' ");
-		hql.append("    end as nomeBox,");
+		hql.append("    box_.ID as idBox, ");
+		hql.append("    box_.CODIGO as codigoBox, ");
+		hql.append("    box_.NOME as nomeBox,");
 		hql.append("    roteiro_.ID as idRoteiro,");
 		hql.append("    roteiro_.DESCRICAO_ROTEIRO as nomeRoteiro,");
 		hql.append("    rota_.ID as idRota,");
@@ -395,6 +386,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				.addScalar("idCota",StandardBasicTypes.LONG)
 				.addScalar("numeroNotaEnvio",StandardBasicTypes.LONG)
 				.addScalar("idBox",StandardBasicTypes.LONG)
+				.addScalar("codigoBox",StandardBasicTypes.LONG)
 				.addScalar("nomeBox",StandardBasicTypes.STRING)
 				.addScalar("idRoteiro",StandardBasicTypes.LONG)
 				.addScalar("nomeRoteiro",StandardBasicTypes.STRING)

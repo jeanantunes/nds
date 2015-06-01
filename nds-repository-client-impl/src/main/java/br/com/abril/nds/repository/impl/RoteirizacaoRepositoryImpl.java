@@ -306,18 +306,17 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" Join rotaPdv.pdv pdv ")
 			.append(" Join pdv.cota cota ")
 			.append(" join cota.pessoa pessoa ")
-			.append(" where cota.situacaoCadastro != :sitCadastro ");
+			.append(" where 1 = 1 ")
+			.append(" and cota.situacaoCadastro != :sitCadastro ");
 			
 		if(filtro.getIdBox() != null) {
 			
-			hql.append(" and ");
-			
-			if (filtro.getIdBox() < 1){
+			if (filtro.getIdBox() < 1) {
 				
-				hql.append(" roteirizacao.box IS NULL ");
+				hql.append(" and roteirizacao.box IS NULL ");
 			} else {
 				
-				hql.append(" box.id = :idBox ");
+				hql.append(" and box.id = :idBox ");
 			}
 		}
 		

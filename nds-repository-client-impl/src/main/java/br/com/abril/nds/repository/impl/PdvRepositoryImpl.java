@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
@@ -353,16 +355,19 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PDV> obterCotasPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, Long boxID) {
+	public List<PDV> obterCotasPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, Long boxID, Long idBoxPrincipal) {
 
-		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv");
+		if(idBoxPrincipal == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter o identificador do Box Especial!");
+		}
+		
+		Criteria criteria  = getSession().createCriteria(PDV.class, "pdv");
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		criteria.createAlias("cota", "cota");
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
 				
-		if(boxID != -1) {
+		if(boxID != idBoxPrincipal) {
 			DetachedCriteria subquery = 
 					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
 									.createAlias("rota", "rota")
@@ -491,4 +496,3 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	    return (Long) query.uniqueResult();
 	}
 }
-

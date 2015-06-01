@@ -106,6 +106,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 				Long idRota = null;
 				Long idRoteiro = null;
 				Long idBox = null;
+				Long codigoBox = null;
 				
 				RomaneioModelo01DTO dto = null;
 				for (RomaneioDTO romaneio : lstRomaneioDTO) {
@@ -122,13 +123,14 @@ public class RomaneioServiceImpl implements RomaneioService {
 						idRota = romaneio.getIdRota();
 						idRoteiro = romaneio.getIdRoteiro();
 						idBox = romaneio.getIdBox();
+						codigoBox = romaneio.getCodigoBox();
 
 						dto = new RomaneioModelo01DTO();
 						dto.setDataGeracao(filtro.getData());
 						dto.setEntregaBox(romaneio.getNomeBox());
 						dto.setRota(romaneio.getNomeRota());
 						dto.setRoteiro(romaneio.getNomeRoteiro());
-						dto.setEntregaBox(idBox + " - " + romaneio.getNomeBox());
+						dto.setEntregaBox(codigoBox + " - " + romaneio.getNomeBox());
 						
 						dto.setItens(new ArrayList<RomaneioDTO>());
 						dto.getItens().add(romaneio);
