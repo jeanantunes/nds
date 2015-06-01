@@ -121,9 +121,9 @@ public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<Movi
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 			
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
+			//if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			//	query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			//}
 		}
 		
 		query.setResultTransformer(Transformers.aliasToBean(ExtratoEdicaoDTO.class));

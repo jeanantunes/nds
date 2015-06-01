@@ -158,7 +158,7 @@
     <td>
     	<select name="selectTamanhoPDV" id="selectTamanhoPDV" style="width:200px;">
 	      	     	
-     	 <option selected="selected" value="-1">Selecione...</option>
+     	 <option selected="selected" value="">Selecione...</option>
             
           <c:forEach items="${listaTamanhoPDV}" var="item">
           	<option value="${item.key}">${item.value}</option>	          
