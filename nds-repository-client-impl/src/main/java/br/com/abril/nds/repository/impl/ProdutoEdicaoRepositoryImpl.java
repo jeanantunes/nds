@@ -1418,8 +1418,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			sql.append("     produto.CODIGO AS codigoProduto,                                                                                      ");
 			sql.append("     pe.id as id, ");
 			sql.append("     produto.NOME AS nomeProduto,                                                                                          ");
-			sql.append("     pe.NUMERO_EDICAO AS numeroEdicao,                                                                          ");
-			sql.append("     plp.NUMERO_PERIODO as periodo,                                                                                        ");
+			sql.append("     pe.NUMERO_EDICAO AS numeroEdicao, ");
+			
+			if(filtro.getNumeroEdicao() != null){
+				sql.append("     plp.NUMERO_PERIODO as periodo, ");
+			}else{
+				sql.append("     MAX(plp.NUMERO_PERIODO) as periodo, ");
+			}
+			
 			sql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento,                                                                  ");
 			sql.append("     lancamento.STATUS AS descricaoSituacaoLancamento,                                                                              ");
 			sql.append("     pe.CHAMADA_CAPA AS chamadaCapa,                                                                            ");
@@ -1507,7 +1513,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 
-		sql.append(" GROUP BY pe.numero_Edicao, produto.codigo ");
+		if(filtro.isBuscarPeriodosParciais()){
+			sql.append(" GROUP BY pe.numero_Edicao, produto.codigo, plp.NUMERO_PERIODO ");
+		}else{
+			sql.append(" GROUP BY pe.numero_Edicao, produto.codigo ");	
+		}
 
 		if(filtro.getOrdemColuna() != null){
 			sql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
@@ -1684,7 +1694,107 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		return (ProdutoEdicaoDTO) query.uniqueResult();
 	}
+	
+	@Override
+	public ProdutoEdicaoDTO obterHistoricoProdutoEdicaoParcial(Long idProdutoEdicao, Integer numeroPeriodo, Integer numeroCota, Long numeroEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		
+		sql.append("       pe.id as id, ");
+		sql.append("       l.STATUS as statusLancamento,        ");
 
+		sql.append("       cast(sum( case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.QTDE else -mec.QTDE end ) as unsigned int) AS reparte, ");
+
+		sql.append("       (case when l.status IN (:statusLancFechadoRecolhido) ");
+		sql.append("            then   ");
+		sql.append("             cast(sum(   ");
+		sql.append("               CASE   ");
+		sql.append("                   WHEN tm.OPERACAO_ESTOQUE = 'ENTRADA'   ");
+		sql.append("                   THEN   ");
+		sql.append("                     mec.QTDE   ");
+		sql.append("                   ELSE   ");
+		sql.append("                     -mec.QTDE   ");
+		sql.append("               END)   ");
+		sql.append("               - (select sum(mecEncalhe.qtde)   ");
+		sql.append("                   from lancamento lanc   ");
+		sql.append("                   LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID   ");
+		sql.append("                   LEFT JOIN chamada_encalhe ce on ce.id = cel.CHAMADA_ENCALHE_ID   ");
+		sql.append("                   LEFT JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID   ");
+		sql.append("                   LEFT JOIN cota cota on cota.id = cec.COTA_ID   ");
+		sql.append("                   LEFT JOIN conferencia_encalhe confEnc on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID   ");
+		sql.append("                   LEFT JOIN movimento_estoque_cota mecEncalhe on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID   ");
+		sql.append(" 	              WHERE lanc.id = l.id and cota.id = c.id) AS UNSIGNED INT)   ");
+		sql.append(" 	        else   ");
+		sql.append("             null   ");
+		sql.append("             end) as qtdeVendas ");
+
+		sql.append("   FROM movimento_estoque_cota mec ");
+		sql.append("        JOIN tipo_movimento tm ");
+		sql.append("           ON tm.id = mec.tipo_movimento_id ");
+		sql.append("        JOIN lancamento l ");
+		sql.append("           ON l.id = mec.lancamento_id ");
+		sql.append("        JOIN produto_edicao pe  ");
+		sql.append("           ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("        JOIN produto p  ");
+		sql.append("           ON pe.PRODUTO_ID = p.ID ");
+		sql.append("        JOIN periodo_lancamento_parcial plp ");
+		sql.append("           ON plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append("              AND plp.numero_periodo = :numPeriodo  ");
+		sql.append("        JOIN cota c ON c.id = mec.cota_id  ");
+
+		sql.append("        where mec.produto_edicao_id = :idProdutoEdicao ");
+		sql.append("             and pe.NUMERO_EDICAO = :numEdicao ");
+		sql.append("             and c.NUMERO_COTA = :numCota ");
+		sql.append("             and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+		sql.append("        group by mec.cota_id  ");
+		sql.append("        order by mec.cota_id ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("numPeriodo", numeroPeriodo);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("numEdicao", numeroEdicao);
+		query.setParameter("numCota", numeroCota);
+		
+        query.setParameterList("statusLancFechadoRecolhido", 
+                Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
+		
+        query.addScalar("id", StandardBasicTypes.LONG);
+        query.addScalar("statusLancamento", StandardBasicTypes.STRING);
+        query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+        query.addScalar("qtdeVendas", StandardBasicTypes.BIG_INTEGER);
+        
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+
+		return (ProdutoEdicaoDTO) query.uniqueResult();
+		
+	}
+	
+	@Override
+	public String obterStatusLancamentoPeriodoParcial(Long idProdutoEdicao, Integer numeroPeriodo, Long numeroEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select l.STATUS from lancamento l ");
+		sql.append(" join produto_edicao pe  ");
+		sql.append("   ON l.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" join periodo_lancamento_parcial plp  ");
+		sql.append("   ON plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" where l.PRODUTO_EDICAO_ID = :idProdEdicao  ");
+		sql.append("   and pe.NUMERO_EDICAO = :numEdicao ");
+		sql.append("   and plp.NUMERO_PERIODO = :numPeriodo ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idProdEdicao", idProdutoEdicao);
+		query.setParameter("numEdicao", numeroEdicao);
+		query.setParameter("numPeriodo", numeroPeriodo);
+		
+		return (String) query.uniqueResult();
+	}
+	
 	@Override
 	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(final Long idLancamento) {
 
