@@ -99,7 +99,13 @@
 	    <td>
 	      	<input type="checkbox" name="fornecedorDTO.integraGFS" id="fornecedorController-integraGFS"/>
 	    </td>
-	</tr>   
+	</tr>
+	<tr>
+    	<td>Destinação de Encalhe:</td>
+	    <td>
+	      	<input type="checkbox" name="fornecedorDTO.destinacaoEncalhe" id="fornecedorController-destinacaoEncalhe" />
+	    </td>
+	</tr>
     </table>
     <br/>
 </div>

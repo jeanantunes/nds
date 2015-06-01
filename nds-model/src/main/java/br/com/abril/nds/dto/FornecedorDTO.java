@@ -53,6 +53,8 @@ public class FornecedorDTO implements Serializable {
 	
 	private boolean integraGFS;
 	
+	private boolean destinacaoEncalhe;
+	
 	/**
 	 * @return the idFornecedor
 	 */
@@ -300,4 +302,13 @@ public class FornecedorDTO implements Serializable {
 	public void setIntegraGFS(boolean integraGFS) {
 		this.integraGFS = integraGFS;
 	}
+
+	public boolean isDestinacaoEncalhe() {
+		return destinacaoEncalhe;
+	}
+
+	public void setDestinacaoEncalhe(boolean destinacaoEncalhe) {
+		this.destinacaoEncalhe = destinacaoEncalhe;
+	}
+	
 }

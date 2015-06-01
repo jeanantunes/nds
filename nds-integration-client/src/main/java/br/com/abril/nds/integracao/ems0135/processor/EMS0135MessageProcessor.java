@@ -198,8 +198,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setNumero(input.getNotaFiscal() != null ? input.getNotaFiscal().longValue() : null);
         
-        notafiscalEntrada.setSerie(input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty()
-                && !"0".equals(input.getSerieNotaFiscal()) ? input.getSerieNotaFiscal() : null);
+        notafiscalEntrada.setSerie(input.getSerieNotaFiscal() != null && !"0".equals(input.getSerieNotaFiscal()) ? input.getSerieNotaFiscal() : null);
         
         notafiscalEntrada.setDataExpedicao(input.getDataEmissao());
         
@@ -545,12 +544,11 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
     }
     
-    private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie, String cnpjEmissor,
+    private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, Long serie, String cnpjEmissor,
             String numeroNotaEnvio) {
         StringBuilder hql = new StringBuilder();
         
-        boolean existeNotaFiscal = (numero != null && !numero.equals(0L) && serie != null && !serie.isEmpty() && !serie
-                .equals("0"));
+        boolean existeNotaFiscal = (numero != null && !numero.equals(0L) && serie != null && !serie.equals("0"));
         
         PessoaJuridica emitente = this.obterPessoaJuridica(cnpjEmissor);
         
@@ -572,7 +570,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 query.setParameter("numero", numero);
             }
             
-            if (serie != null && !serie.isEmpty() && !serie.equals("0")) {
+            if (serie != null && !serie.equals("0")) {
                 query.setParameter("serie", serie);
             }
         } else {
