@@ -472,8 +472,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	@Transactional
 	@Override
-	public List<Box> obterListaBoxLancamento(String nomeBox){
-		return boxRepository.obterListaBox(nomeBox, TipoBox.LANCAMENTO);
+	public List<Box> obterListaBoxLancamento(String nomeBox) {
+		return boxRepository.obterListaBox(nomeBox, Arrays.asList(TipoBox.LANCAMENTO));
 	}
 	
 	/**
@@ -524,19 +524,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      */
 	@Override
 	@Transactional
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, boolean pesquisaPorCota, Long boxID) {
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
-		List<PDV> listaPdv = this.pdvRepository.obterCotasPDVsDisponiveisPor(
-				numCota, municipio, uf, bairro, cep, boxID);
+		List<PDV> listaPdv = this.pdvRepository.obterCotasPDVsDisponiveisPor(numCota, municipio, uf, bairro, cep, boxID, boxRepository.obterIdBoxEspecial());
 		
 		PdvRoteirizacaoDTO pdvDTO;
 		
 		Integer ordem=0;
 		
-		for(PDV itemPdv : listaPdv){
+		for(PDV itemPdv : listaPdv) {
 			
 			Endereco endereco = null;
 			ordem++;
@@ -707,7 +705,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         
 		Roteirizacao roteirizacao = roteirizacaoRepository.obterRoteirizacaoPorBox(idBox);
         
-		List<Box> boxDisponiveis = obterListaBoxLancamento(null);
+		List<Box> boxDisponiveis = boxService.buscarPorTipo(Arrays.asList(TipoBox.ESPECIAL, TipoBox.LANCAMENTO));
         
 		if (roteirizacao != null) {
             
@@ -951,21 +949,20 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
      */
 	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Box box) {
 		
-		if (box != null){
+		if (box != null) {
+			
 			 PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
 			 
 			 Cota cota  = pdv.getCota();
 			 
-			 if(pdv.getCaracteristicas()!= null && pdv.getCaracteristicas().isPontoPrincipal() ){
-				 
+			 if(pdv.getCaracteristicas() != null && pdv.getCaracteristicas().isPontoPrincipal() && !TipoBox.ESPECIAL.equals(box.getTipoBox())) {
 				 cota.setBox(box);
 				 cotaRepository.merge(cota);
 			 }
 		}
 	}
 
-	
-	    /**
+	/**
      * Atualiza as informações de uma roteirização existente
      * 
      * @param roteirizacaoDTO dto com as informações da roteirização existente
@@ -1076,7 +1073,6 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
                 	
                 	if (rotaPDVExistente == null) {
                         novoPDVRota(rota, pdvDTO, box);
-                       
                     } else {
                         rota.alterarOrdemPdv(pdvDTO.getId(), pdvDTO.getOrdem());
                     }
@@ -1102,7 +1098,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 
 			Cota cota = this.pdvRepository.buscarPorId(idPDV).getCota();
 			 
-			if(cota==null || cota.getId()==null){
+			if(cota == null || cota.getId() == null) {
 			 cota = this.cotaRepository.obterPorPDV(idPDV);
 			}
 			 
@@ -1400,13 +1396,13 @@ new ValidacaoVO(TipoMensagem.WARNING,
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public List<ItemDTO<Long, String>> getComboTodosRoteiros(){
+	public List<ItemDTO<Long, String>> getComboTodosRoteiros() {
 		
         List<Roteiro> roteiros = this.buscarRoteiro(null, null);
 		
 		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
 		
-		for (Roteiro roteiro : roteiros){
+		for (Roteiro roteiro : roteiros) {
 			
 			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
 		}
@@ -1420,13 +1416,13 @@ new ValidacaoVO(TipoMensagem.WARNING,
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public List<ItemDTO<Long, String>> getComboTodosRotas(){
+	public List<ItemDTO<Long, String>> getComboTodosRotas() {
 		
         List<Rota> rotas = this.buscarRota(null, null);
 		
 		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
 		
-		for (Rota rota : rotas){
+		for (Rota rota : rotas) {
 			
 			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 		}
@@ -1440,13 +1436,11 @@ new ValidacaoVO(TipoMensagem.WARNING,
      */
 	@Override
 	@Transactional(readOnly=true)
-	public List<ItemDTO<Long, String>> getComboTodosBoxes(){
+	public List<ItemDTO<Long, String>> getComboTodosBoxes() {
 		
-        List<Box> boxs = this.boxService.buscarPorTipo(TipoBox.LANCAMENTO);
+        List<Box> boxs = this.boxService.buscarPorTipo(Arrays.asList(TipoBox.ESPECIAL, TipoBox.LANCAMENTO));
 		
 		List<ItemDTO<Long, String>> listaBox = new ArrayList<ItemDTO<Long,String>>();
-		
-		listaBox.add(new ItemDTO<Long, String>(0L, "Especial"));
 		
 		for (Box box : boxs) {
 			
@@ -1466,18 +1460,15 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		if (idRota != null && idRota > 0){
+		if (idRota != null && idRota > 0) {
 		
 			List<Box> boxes = this.boxService.buscarBoxPorRota(idRota);
 	
-	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
-	
-			for (Box box : boxes){
+			for (Box box : boxes) {
 	    		
 	    		lista.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
 	    	}
-		}
-		else{
+		} else {
 		    
 			lista = this.getComboTodosBoxes();
 		}
@@ -1495,18 +1486,15 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		if (idRoteiro != null && idRoteiro > 0){
+		if (idRoteiro != null && idRoteiro > 0) {
 			
 			List<Box> boxes = this.boxService.buscarBoxPorRoteiro(idRoteiro);
 	
-	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
-	        	
-	    	for (Box box : boxes){
+	    	for (Box box : boxes) {
 	    		
 	    		lista.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
 	    	}
-		}
-		else{
+		} else {
 			
 			lista = this.getComboTodosBoxes();
 		}
@@ -1529,17 +1517,16 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
 			
-			for (Box box : boxes){
+			for (Box box : boxes) {
 			
 		        List<Rota> rotas = this.buscarRotaDeBox(box.getId());
 				
-				for (Rota rota : rotas){
+				for (Rota rota : rotas) {
 					
 					lista.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 				}
 			}
-		}
-		else{
+		} else {
 			
 			lista = this.getComboTodosRotas();
 		}
@@ -1557,16 +1544,15 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		if(idRoteiro != null && idRoteiro > 0){
+		if(idRoteiro != null && idRoteiro > 0) {
 		
 			List<Rota> rotas = this.rotaService.buscarRotaPorRoteiro(idRoteiro);
 
-			for (Rota rota : rotas){
+			for (Rota rota : rotas) {
 				
 				lista.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
 			}
-		}
-		else{
+		} else {
 			
 			lista = this.getComboTodosRotas();
 		}
@@ -1583,15 +1569,14 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		if (idRota != null && idRota > 0){
+		if (idRota != null && idRota > 0) {
 		
 			Rota rota = this.buscarRotaPorId(idRota);
 		
 			Roteiro roteiro = rota.getRoteiro();
 			
 			lista.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
-		}
-		else{
+		} else {
 			
 			lista = this.getComboTodosRoteiros();
 		}
@@ -1614,17 +1599,16 @@ new ValidacaoVO(TipoMensagem.WARNING,
 		
 			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
 				
-			for (Box box : boxes){
+			for (Box box : boxes) {
 			
 				List<Roteiro> roteiros = this.buscarRoteiroDeBox(box.getId());
 				
-				for (Roteiro roteiro : roteiros){
+				for (Roteiro roteiro : roteiros) {
 				
 					lista.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
 				}
 			}
-		}
-		else{
+		} else {
 			
 			lista = this.getComboTodosRoteiros();
 		}

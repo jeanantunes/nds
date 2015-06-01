@@ -76,10 +76,10 @@ public interface BoxService {
 	
 	/**
 	 * Busca lista de Box por tipo;
-	 * @param tipo
+	 * @param list
 	 * @return List<Box> 
 	 */
-	public List<Box> buscarPorTipo(TipoBox tipo);
+	public List<Box> buscarPorTipo(List<TipoBox> list);
 	
 	/**
 	 * Retorna todos os boxes, se tipo for informado retorna todos do tipo.
