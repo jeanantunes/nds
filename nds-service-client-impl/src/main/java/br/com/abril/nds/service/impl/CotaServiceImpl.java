@@ -2839,13 +2839,21 @@ public class CotaServiceImpl implements CotaService {
             for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
                 final ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
                 
-                final ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(
-                        produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
+                ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+                
+                if(produtoEdicaoDTO.isParcial() && produtoEdicaoDTO.isParcialConsolidado() == false){
+                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicaoParcial(produtoEdicaoDTO.getId(), produtoEdicaoDTO.getPeriodo(), 
+                													analiseHistoricoDTO.getNumeroCota(), produtoEdicaoDTO.getNumeroEdicao());
+                }else{
+                	dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), 
+            														analiseHistoricoDTO.getNumeroCota());
+                }
                 
                 if (dto != null && dto.getId() != null) {
 
                 	if(dto.getStatusLancamento() != null && dto.getStatusLancamento().equalsIgnoreCase("FECHADO") && 
-                			(dto.getQtdeVendas() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0)){
+                			(dto.getQtdeVendas() == null || dto.getQtdeVendas().compareTo(BigInteger.ZERO) <= 0) && 
+                			 produtoEdicaoDTO.isParcial() == false){
                 		
                 		BigDecimal venda = estoqueProdutoService.obterVendaCotaBaseadoNoEstoque(dto.getId(), analiseHistoricoDTO.getNumeroCota()); 
                 		

@@ -373,4 +373,12 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
     public List<ItemDTO<String, String>> obterProdutosBalanceados(Date dataLancamento);
     
     BigDecimal obterPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao);
+
+
+	public abstract ProdutoEdicaoDTO obterHistoricoProdutoEdicaoParcial(Long idProdutoEdicao,
+			Integer numeroPeriodo, Integer numeroCota, Long numeroEdicao);
+
+
+	public abstract String obterStatusLancamentoPeriodoParcial(Long idProdutoEdicao,
+			Integer numeroPeriodo, Long numeroEdicao);
 }

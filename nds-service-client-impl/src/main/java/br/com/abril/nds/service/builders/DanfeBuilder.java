@@ -22,14 +22,13 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.DanfeDTO;
 import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.ItemDanfe;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -228,16 +227,14 @@ public class DanfeBuilder  implements Serializable {
 	 */
 	public static void carregarDanfeDadosDestinatario(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
+		LOGGER.info("Carrregando Dados do destinatario");
+		
 		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 		
 		String documento 			= identificacaoDestinatario.getDocumento().getDocumento();
 		
 		NotaFiscalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
-		
-		Cota cota= identificacaoDestinatario.getCota();
-		
-		Box box = cota.getBox();
 		
 		String destinatarioNome 				=  "";
 		String destinatarioCNPJ 				= "";
@@ -301,10 +298,6 @@ public class DanfeBuilder  implements Serializable {
 		danfe.setDestinatarioCEP(destinatarioCEP);
 		danfe.setDestinatarioTelefone(destinatarioTelefone);
 		
-		if(box != null ) {
-			
-			danfe.setRoteirizacao("Box: "+ box.getCodigo() + " / " + "Roteiro: " + box.getRoteirizacao());
-		}
 	}
 
 	/**
@@ -544,6 +537,19 @@ public class DanfeBuilder  implements Serializable {
 		}
 				
 		return cep;
+	}
+
+	public static void  carregarDanfeRoteirizacao(DanfeDTO danfe, ConsultaRoteirizacaoDTO roteirizacao) {
+		
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Box: ").append(roteirizacao.getNomeBox());
+		buffer.append(" / ");
+		buffer.append("Roteiro: ").append(roteirizacao.getDescricaoRoteiro());
+		buffer.append(" / ");
+		buffer.append("Rota : ").append(roteirizacao.getDescricaoRota());
+		danfe.setRoteirizacao(buffer.toString());
+		
 	}
 	
 	public static byte[] gerarDocumentoIreport(List<DanfeWrapper> list, boolean indEmissaoDepec, URL diretorioReports, InputStream logoTipoDistribuidor) {
