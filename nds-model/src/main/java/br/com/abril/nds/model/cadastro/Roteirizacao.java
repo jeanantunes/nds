@@ -149,8 +149,6 @@ public class Roteirizacao implements Serializable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result + ((this.getBox() == null) ? 0 : this.getBox().hashCode());
-		result = prime * result + ((this.getRoteiros() == null) ? 0 : this.getRoteiros().hashCode());
 		return result;
 	}
 
@@ -167,16 +165,6 @@ public class Roteirizacao implements Serializable{
 			if (other.getId() != null)
 				return false;
 		} else if (!this.getId().equals(other.getId()))
-			return false;
-		if (this.getBox() == null) {
-			if (other.getBox() != null)
-				return false;
-		} else if (!this.getBox().equals(other.getBox()))
-			return false;
-		if (this.getRoteiros() == null) {
-			if (other.getRoteiros() != null)
-				return false;
-		} else if (!this.getRoteiros().equals(other.getRoteiros()))
 			return false;
 		return true;
 	}

@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.DanfeDTO;
 import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -42,6 +44,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.builders.DanfeBuilder;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -85,6 +88,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 
 	@Autowired
     private RoteirizacaoRepository roteirizacaoRepository;
+
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
 	
 	@Transactional
 	public List<ProdutoDTO> obterProdutosExpedicaoConfirmada(FiltroImpressaoNFEDTO filtro) {
@@ -265,6 +271,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 					case DISTRIBUIDOR:
 					                 
 						notas = ordenarNotasFiscaisPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
+						
 						break;
 	                
 					case FORNECEDOR:            
@@ -347,7 +354,41 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		
 		DanfeBuilder.carregarDadosDuplicatas(danfe, notaFiscal);
 		
+		ConsultaRoteirizacaoDTO roteirizacao = this.roteirizacao(notaFiscal); 
+		
+		if(roteirizacao != null) {			
+			DanfeBuilder.carregarDanfeRoteirizacao(danfe, roteirizacao);
+		}	
+		
 		return danfe;
+	}
+
+	private ConsultaRoteirizacaoDTO roteirizacao(NotaFiscal notaFiscal) {
+		
+        ConsultaRoteirizacaoDTO roteirizacaoDTO = null;
+        
+        if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario() != null ) {
+        	
+        	if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota() != null) {
+        		
+        		FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO();
+        		
+        		filtro.setNumeroCota(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getNumeroCota());
+        		
+        		List<ConsultaRoteirizacaoDTO> listaRoteirizacaoDTO = this.roteirizacaoRepository.buscarRoteirizacao(filtro); 
+        		
+        		for (ConsultaRoteirizacaoDTO item : listaRoteirizacaoDTO){
+        			
+        			if (!item.getNomeBox().equals("Especial")){
+        				
+        				roteirizacaoDTO = item;
+        				
+        				return roteirizacaoDTO;
+        			}
+        		}
+        	}    
+        }
+	    return null;		
 	}
 	
 	protected URL obterDiretorioReports() {
