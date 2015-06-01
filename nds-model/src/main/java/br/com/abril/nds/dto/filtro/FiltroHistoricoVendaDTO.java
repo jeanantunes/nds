@@ -30,6 +30,8 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = new ArrayList<>();
 	private String elemento;
 	
+	private boolean buscarPeriodosParciais;
+	
 	
 	private OrdemColuna ordemColuna;
 	
@@ -280,6 +282,13 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	public void setOrdemColuna(OrdemColuna ordemColuna) {
 		this.ordemColuna = ordemColuna;
 	}
-	
-	
+
+	public boolean isBuscarPeriodosParciais() {
+		return buscarPeriodosParciais;
+	}
+
+	public void setBuscarPeriodosParciais(boolean buscarPeriodosParciais) {
+		this.buscarPeriodosParciais = buscarPeriodosParciais;
+	}
+
 }
