@@ -133,19 +133,19 @@ public class Rota implements Serializable {
      * @return {@link RotaPDV} que representa a associação
      */
     public RotaPDV addPDV(PDV pdv, Integer ordem, Box box) {
+    	
         if (ordem <= 0) {
-            throw new IllegalArgumentException("Ordem [" + ordem
-                    + "] para o PDV não é válida!");
+            throw new IllegalArgumentException(String.format("Ordem [%s] para o PDV não é válida!", ordem));
         }
 
         if (rotaPDVs == null) {
             rotaPDVs = new ArrayList<RotaPDV>();
         }
+        
         RotaPDV rotaPDV = new RotaPDV(this, pdv, ordem);
         rotaPDVs.add(rotaPDV);
         
-        if (pdv.getCaracteristicas().isPontoPrincipal() && box != null) {
-        	
+        if (pdv.getCaracteristicas().isPontoPrincipal() && box != null && !TipoBox.ESPECIAL.equals(box.getTipoBox())) {
         	pdv.getCota().setBox(box);
         }
         

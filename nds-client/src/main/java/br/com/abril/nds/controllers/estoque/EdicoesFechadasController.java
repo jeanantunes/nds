@@ -87,18 +87,15 @@ public class EdicoesFechadasController extends BaseController {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
 		if (dataDe == null || dataDe.isEmpty()) {
-			listaMensagemValidacao
-					.add("O preenchimento do campo Período De é obrigatório!");
+			listaMensagemValidacao.add("O preenchimento do campo Período De é obrigatório!");
 		}
 
 		if (dataAte == null || dataAte.isEmpty()) {
-			listaMensagemValidacao
-					.add("O preenchimento do campo Período Até é obrigatório!");
+			listaMensagemValidacao.add("O preenchimento do campo Período Até é obrigatório!");
 		}
 
 		if (!listaMensagemValidacao.isEmpty()) {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR,
-					listaMensagemValidacao);
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
 
@@ -136,8 +133,7 @@ public class EdicoesFechadasController extends BaseController {
 			if (e instanceof ValidacaoException) {
 				throw e;
 			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro ao pesquisar registros: " + e.getMessage());
+				throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao pesquisar registros: " + e.getMessage());
 			}
 		}
 

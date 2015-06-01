@@ -60,6 +60,7 @@ $(function(){
 	              <td>Tipo de Box:</td>
 	              <td><select name="box.tipoBox" id="boxTipoBox" style="width:227px;">
 	                  	<option selected="selected"> </option>
+	                    <option value="ESPECIAL">Especial</option>
 	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
 	             	 </select>

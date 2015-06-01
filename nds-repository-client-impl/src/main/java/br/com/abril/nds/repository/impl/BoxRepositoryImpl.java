@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaRotaRoteiroDTO;
@@ -43,9 +45,9 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Box> obterListaBox(String nomeBox, TipoBox tipoBox) {
+	public List<Box> obterListaBox(String nomeBox, List<TipoBox> tipoBox) {
 		
-		Criteria criteria = addRestrictions(null,tipoBox);
+		Criteria criteria = addRestrictions(null, tipoBox);
 		if (!StringUtil.isEmpty(nomeBox)) {
 		    criteria.add(Restrictions.ilike("nome", nomeBox, MatchMode.START));
 		}
@@ -60,7 +62,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
      * {@inheritDoc} 
      */
 	@Override
-    public List<Box> obterListaBox(TipoBox tipo) {
+    public List<Box> obterListaBox(List<TipoBox> tipo) {
         return obterListaBox(null, tipo);
     }
 	
@@ -123,11 +125,11 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Box> busca(Integer codigoBox,TipoBox tipoBox, String  orderBy , Ordenacao ordenacao, Integer initialResult, Integer maxResults){
+	public List<Box> busca(Integer codigoBox, TipoBox tipoBox, String  orderBy , Ordenacao ordenacao, Integer initialResult, Integer maxResults) {
 		
-		Criteria criteria = addRestrictions(codigoBox, tipoBox);
+		Criteria criteria = addRestrictions(codigoBox, (tipoBox != null ? Arrays.asList(tipoBox) : null));
 		
-		if(Ordenacao.ASC ==  ordenacao){
+		if(Ordenacao.ASC ==  ordenacao) {
 			criteria.addOrder(Order.asc(orderBy));
 		}else if(Ordenacao.DESC ==  ordenacao){
 			criteria.addOrder(Order.desc(orderBy));
@@ -145,17 +147,15 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 			
 		}
 		
-		
 		return criteria.list();
-		
 	}
 	
 	
 	@Override
-	public Long quantidade(Integer codigoBox,TipoBox tipoBox ){
-		Criteria criteria = addRestrictions(codigoBox, tipoBox);
-		criteria.setProjection(Projections.rowCount());
+	public Long quantidade(Integer codigoBox, TipoBox tipoBox ) {
 		
+		Criteria criteria = addRestrictions(codigoBox, (tipoBox != null ? Arrays.asList(tipoBox) : null));
+		criteria.setProjection(Projections.rowCount());
 		
 		return (Long)criteria.list().get(0);
 	}
@@ -166,15 +166,16 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * @param tipoBox Tipo do Box {@link TipoBox}
 	 * @return
 	 */
-	private Criteria addRestrictions(Integer codigoBox, TipoBox tipoBox ) {
+	private Criteria addRestrictions(Integer codigoBox, List<TipoBox> tipoBox ) {
+		
 		Criteria criteria =  getSession().createCriteria(Box.class);	
 		
-		if( codigoBox != null ){
+		if(codigoBox != null ) {
 			criteria.add(Restrictions.eq("codigo", codigoBox));
 		}
 		
-		if(tipoBox != null){
-			criteria.add(Restrictions.eq("tipoBox", tipoBox));
+		if(tipoBox != null && !tipoBox.isEmpty()) {
+			criteria.add(Restrictions.in("tipoBox", tipoBox));
 		}
 		
 		return criteria;
@@ -546,6 +547,23 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		query.setParameter("codigosBox", codigoBox);
 		
 		return query.list();
+	}
+
+	@Override
+	public Long obterIdBoxEspecial() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT id FROM Box box ");
+		
+		sql.append(" WHERE box.tipo_box = :tipoBox ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("tipoBox", TipoBox.ESPECIAL.name());
+		query.addScalar("id", StandardBasicTypes.LONG);
+		
+		return (Long) query.uniqueResult();
 	}
 	
 }

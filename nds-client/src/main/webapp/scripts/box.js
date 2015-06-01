@@ -2,6 +2,7 @@ var boxController = $.extend(true, {
 	tipoBoxEnun : {
 		ENCALHE : 'Encalhe',
 		LANCAMENTO : 'Lan&ccedil;amento',
+		ESPECIAL : 'Especial'
 	},
 	box : {},
 	path : contextPath + '/cadastro/box/',

@@ -33,23 +33,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Box implements Serializable {
-    
-    /**
-     * Box "Especial" utilizado na funcionalidade de roteirização
-     * para identificar configuração de roteirização sem informação
-     * de Box 
-     */
-    public static final Box ESPECIAL;
-    
-    public static final Long ID_BOX_ESPECIAL = Long.valueOf(-1);
-    
-    static {
-        ESPECIAL = new Box();
-        ESPECIAL.setId(Long.valueOf(-1));
-        ESPECIAL.setCodigo(Integer.valueOf(-1));
-        ESPECIAL.setNome("Especial");
-        ESPECIAL.setTipoBox(TipoBox.LANCAMENTO);
-    }
 
 	/**
 	 * Serial Version UID

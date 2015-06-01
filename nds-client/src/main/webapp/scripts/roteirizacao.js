@@ -1290,7 +1290,7 @@ var roteirizacao = $.extend(true, {
             return;
         }
         
-        if ($("input[name=boxRadio]:checked", roteirizacao.workspace).val() == -1){
+        if ($('#radioBoxESPECIAL', roteirizacao.workspace).is(':checked')) {
         	
         	$("#tipoPesquisa", roteirizacao.workspace).val("pdv");
         } else {
@@ -1307,7 +1307,7 @@ var roteirizacao = $.extend(true, {
         $("#selTodos", roteirizacao.workspace).uncheck();
 
         var params = {};
-        if($('#radioBoxEspecial').attr('checked') == 'checked')
+        if($('#radioBoxESPECIAL').attr('checked') == 'checked')
         	params = [{name:'boxEspecial', value: true}];
         
         $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas', params,
@@ -1332,7 +1332,6 @@ var roteirizacao = $.extend(true, {
                             } else {
                                 exibirMensagem('WARNING', ['Selecione pelo menos um PDV!']);
                             }
-
 
                         },
                         "Cancelar": function() {

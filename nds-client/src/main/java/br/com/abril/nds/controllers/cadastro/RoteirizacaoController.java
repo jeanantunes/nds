@@ -107,13 +107,13 @@ public class RoteirizacaoController extends BaseController {
 	 * Carrega o combo de pesquisa por Box
 	 */
 	private void carregarComboBox() {
-		List<Box> boxs = boxService.buscarPorTipo(TipoBox.LANCAMENTO);
+		
+		List<Box> boxs = boxService.buscarPorTipo(Arrays.asList(TipoBox.ESPECIAL, TipoBox.LANCAMENTO));
 		
 		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
 		
-		lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
-		
 		for (Box box : boxs) {
+			
 			lista.add(new ItemDTO<Long, String>(box.getId(), box.getNome()));
 		}
 		
@@ -174,7 +174,7 @@ public class RoteirizacaoController extends BaseController {
 	@Post("/carregarBoxTransferenciaRoteiro")
 	public void carregarBoxTransferenciaRoteiro(Long idBox){
 		
-		List<Box> boxs = this.boxService.buscarPorTipo(TipoBox.LANCAMENTO);
+		List<Box> boxs = this.boxService.buscarPorTipo(Arrays.asList(TipoBox.ESPECIAL, TipoBox.LANCAMENTO));
 		
 		List<ItemDTO<Long, String>> lista =
 			new ArrayList<ItemDTO<Long,String>>();
@@ -544,15 +544,13 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/pesquisarRoteirizacao")
 	public void pesquisarRoteirizacao(Long boxId, Long roteiroId, Long rotaId,Integer numeroCota, String sortname,String sortorder, int rp, int page) {
 		
-		FiltroConsultaRoteirizacaoDTO filtro = 
-			this.prepararFiltroConsulta(boxId,roteiroId, rotaId, numeroCota, sortname, sortorder, rp, page);
+		FiltroConsultaRoteirizacaoDTO filtro = this.prepararFiltroConsulta(boxId, roteiroId, rotaId, numeroCota, sortname, sortorder, rp, page);
 		
 		boolean isPesquisaSumarizadaPorCota = this.isPesquisaSumarizadaPorCota(filtro);
 		
-		List<ConsultaRoteirizacaoDTO> lista =
-			this.realizarPesquisaRoteirizacao(filtro, isPesquisaSumarizadaPorCota);
+		List<ConsultaRoteirizacaoDTO> lista = this.realizarPesquisaRoteirizacao(filtro, isPesquisaSumarizadaPorCota);
 		
-		if(lista == null || lista.isEmpty()){
+		if(lista == null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
@@ -674,8 +672,7 @@ public class RoteirizacaoController extends BaseController {
 		
 		boolean isPesquisaSumarizadaPorCota = this.isPesquisaSumarizadaPorCota(filtroSessao);
 		
-		List<ConsultaRoteirizacaoDTO> lista =
-			this.realizarPesquisaRoteirizacao(filtroSessao, isPesquisaSumarizadaPorCota);
+		List<ConsultaRoteirizacaoDTO> lista = this.realizarPesquisaRoteirizacao(filtroSessao, isPesquisaSumarizadaPorCota);
 		
 		if (!isPesquisaSumarizadaPorCota) {
 			
@@ -957,10 +954,9 @@ public class RoteirizacaoController extends BaseController {
 	@Post
 	@Path("/obterPdvsDisponiveis")
 	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, boolean pesquisaPorCota, Long idRoteiro, Long idRota, Long boxID, String sortname, String sortorder){
+			String cep, boolean pesquisaPorCota, Long idRoteiro, Long idRota, Long boxID, String sortname, String sortorder) {
         
-		List<PdvRoteirizacaoDTO> lista = 
-			this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
+		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		verificarExistenciaPDVsRotaAtual(idRoteiro, idRota, lista);
 		
@@ -1124,6 +1120,7 @@ public class RoteirizacaoController extends BaseController {
 	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO_ALTERACAO)
 	public void novaRoteirizacao() {
 	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
+	    disponiveis.addAll(boxService.buscarPorTipo(Arrays.asList(TipoBox.ESPECIAL)));
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);
 	    RoteirizacaoDTO dto = RoteirizacaoDTO.novaRoteirizacao(dtos);
 	    setRoteirizacaoDTOSessao(dto);

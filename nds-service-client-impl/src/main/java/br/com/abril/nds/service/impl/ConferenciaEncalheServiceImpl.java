@@ -502,7 +502,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public List<Box> obterListaBoxEncalhe(final Long idUsuario) {
 	
-		final List<Box> listaBoxEncalhe = boxRepository.obterListaBox(TipoBox.ENCALHE);
+		final List<Box> listaBoxEncalhe = boxRepository.obterListaBox(Arrays.asList(TipoBox.ENCALHE));
 		
 		if (idUsuario == null){
 			

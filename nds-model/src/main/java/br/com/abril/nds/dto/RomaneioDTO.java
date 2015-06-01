@@ -34,6 +34,7 @@ public class RomaneioDTO implements Serializable {
 	private Long idCota;
 	
 	private Long idBox;
+	private Long codigoBox;
 	private String nomeBox;
 	
 	private Long idRoteiro;
@@ -216,6 +217,14 @@ public class RomaneioDTO implements Serializable {
 
 	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
+	public Long getCodigoBox() {
+		return codigoBox;
+	}
+
+	public void setCodigoBox(Long codigoBox) {
+		this.codigoBox = codigoBox;
 	}
 
 	public String getNomeBox() {
