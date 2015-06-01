@@ -57,7 +57,6 @@ public class EmissaoBandeiraController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		this.result.include("semanas", this.estoqueProdutoService.obterSemanasProdutosFechados());
 		this.result.include("fornecedores", this.fornecedorService.obterFornecedoresDesc());
 	}
 	

@@ -3,7 +3,7 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	init : function() {
 		this.iniciarGrid();
-		$("#semanaPesquisa", this.workspace).numeric();
+		$("#emissaoBandeiras-numeroSemana", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
 		
 		$("#dataEnvio", this.workspac ).datepicker({
@@ -29,29 +29,41 @@ var emissaoBandeiraController = $.extend(true, {
 			dataType : 'json',
 			preProcess: emissaoBandeiraController.executarPreProcessamento,
 			colModel : [ {
-				display : 'C&oacute;digo',
-				name : 'codProduto',
+				display : 'Número NF',
+				name : 'numeroNotaFiscal',
 				width : 60,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 590,
+				display : 'Série',
+				name : 'serieNotaFiscal',
+				width : 60,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}, {
-				display : 'Edi&ccedil;&atilde;o',
-				name : 'edProduto',
+				display : 'Código',
+				name : 'codigoEditor',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Nome',
+				name : 'nomeEditor',
+				width : 240,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Data de Saída',
+				name : 'dataSAida',
 				width : 100,
 				sortable : true,
-				align : 'left'
+				align : 'center'
 			}, {
-				display : 'Pacote Padr&atilde;o',
-				name : 'pctPadrao',
-				width : 140,
+				display : 'Volumes',
+				name : 'volumes',
+				width : 100,
 				sortable : true,
-				align : 'right'
+				align : 'center'
 			}],
 			sortname : "codProduto",
 			sortorder : "asc",
@@ -67,7 +79,7 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	pesquisar : function() {
 		
-		emissaoBandeiraController.anoSemanaPesquisa = $("#semanaPesquisa", this.workspace).val();
+		emissaoBandeiraController.anoSemanaPesquisa = $("#emissaoBandeiras-numeroSemana", this.workspace).val();
 		emissaoBandeiraController.fornecedor = $("#fornecedor", this.workspace).val();
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
@@ -82,12 +94,14 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
+		
 		var tipoMensagem = null; 
 		var listaMensagens = null;
-		if (resultado.mensagens){
+		if (resultado.mensagens) {
 			tipoMensagem = resultado.mensagens.tipoMensagem;
         	listaMensagens = resultado.mensagens.listaMensagens;
-		}	
+		}
+		
         if (tipoMensagem && listaMensagens) {
               exibirMensagem(tipoMensagem, listaMensagens);
               $(".grids", emissaoBandeiraController.workspace).hide();

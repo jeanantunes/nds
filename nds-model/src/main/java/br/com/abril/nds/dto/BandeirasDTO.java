@@ -8,9 +8,21 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class BandeirasDTO  implements Serializable{
+public class BandeirasDTO implements Serializable{
 
 	private static final long serialVersionUID = -7847418746083619011L;
+	
+	private String numeroNotaFiscal;
+	
+	private String serieNotaFiscal;
+	
+	private String codigoEditor;
+	
+	private String nomeEditor;
+	
+	private Date dataSaida;
+	
+	private Long volume;
 	
 	@Export(label="Cód. Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=2)
 	private String codProduto;
@@ -45,6 +57,54 @@ public class BandeirasDTO  implements Serializable{
 		this.nomeProduto = nomeProduto;
 		this.edProduto = edProduto;
 		this.pctPadrao = pctPadrao;
+	}
+
+	public String getNumeroNotaFiscal() {
+		return numeroNotaFiscal;
+	}
+
+	public void setNumeroNotaFiscal(String numeroNotaFiscal) {
+		this.numeroNotaFiscal = numeroNotaFiscal;
+	}
+
+	public String getSerieNotaFiscal() {
+		return serieNotaFiscal;
+	}
+
+	public void setSerieNotaFiscal(String serieNotaFiscal) {
+		this.serieNotaFiscal = serieNotaFiscal;
+	}
+
+	public String getCodigoEditor() {
+		return codigoEditor;
+	}
+
+	public void setCodigoEditor(String codigoEditor) {
+		this.codigoEditor = codigoEditor;
+	}
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	public Date getDataSaida() {
+		return dataSaida;
+	}
+
+	public void setDataSaida(Date dataSaida) {
+		this.dataSaida = dataSaida;
+	}
+
+	public Long getVolume() {
+		return volume;
+	}
+
+	public void setVolume(Long volume) {
+		this.volume = volume;
 	}
 
 	public String getCodProduto() {

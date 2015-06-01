@@ -618,22 +618,15 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {
-			
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.id in (SELECT no.id ");
-			hql.append(" FROM NaturezaOperacao no")
-			.append(" JOIN no.tipoMovimento tm")
-			.append(" WHERE no.id in(:naturezaOperacao))"); 
-			
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.id in (SELECT no.id ")
+			.append(" FROM NaturezaOperacao no ")
+			.append(" JOIN no.tipoMovimento tm ")
+			.append(" WHERE no.id in(:naturezaOperacao)) "); 
 		}
 		
-		// Data Emissão:	...		
-		// if(filtro.getDataEmissao() != null) {
-			// hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao =:dataEmissao ");
-		// }
-		
-		// Intervalo data de Movimento...
-		if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal");
+		// Data Emissão:		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal ");
 		}
 		
 		// Intervalo de Cota:
@@ -664,7 +657,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" group by notaFiscal.id ");
 			if(filtro.getIdBoxInicial() != null || filtro.getIdBoxInicial() != null) {
 				
-				hql.append(", box.id");
+				hql.append(", box.id ");
 			}
 			
 		}

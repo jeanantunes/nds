@@ -764,7 +764,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterBandeirasNoIntervalo(periodoRecolhimento, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, fornecedor, paginacaoVO);
+		return chamadaEncalheRepository.obterBandeirasSemana(periodoRecolhimento, fornecedor, paginacaoVO);
 	}
 	
 	@Override
