@@ -430,7 +430,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Post
 	@Path("/pesquisarPerdaGanho")
 	public void pesquisarPerdaGanho(String semana, 
-									Long idFornecedor, 
+									Long idFornecedor,
+									String comboCEIntegracao,
 									String sortorder, 
 									String sortname, 
 									int page, 
@@ -442,6 +443,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		FiltroFechamentoCEIntegracaoDTO filtroCE = new FiltroFechamentoCEIntegracaoDTO();
 		filtroCE.setSemana(semana);
 		filtroCE.setIdFornecedor(idFornecedor);
+		filtroCE.setComboCeIntegracao(comboCEIntegracao);
 		
 		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		

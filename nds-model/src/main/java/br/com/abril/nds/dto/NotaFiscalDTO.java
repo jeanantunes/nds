@@ -73,11 +73,11 @@ public class NotaFiscalDTO implements Serializable {
 	public String getSerie() {
 		return serie;
 	}
-
-	public void setSerie(String serie) {
-		this.serie = serie;
+	
+	public void setSerie(Number serie) {
+		this.serie = serie != null ? serie.toString() : "";
 	}
-
+	
 	public String getChaveAcesso() {
 		return chaveAcesso;
 	}

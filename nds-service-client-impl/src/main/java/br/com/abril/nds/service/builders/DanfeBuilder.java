@@ -228,6 +228,8 @@ public class DanfeBuilder  implements Serializable {
 	 */
 	public static void carregarDanfeDadosDestinatario(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
+		LOGGER.info("Carrregando Dados do destinatario");
+		
 		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 		
 		String documento 			= identificacaoDestinatario.getDocumento().getDocumento();
@@ -236,8 +238,16 @@ public class DanfeBuilder  implements Serializable {
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
 		Cota cota= identificacaoDestinatario.getCota();
+
+		Box box = null;
 		
-		Box box = cota.getBox();
+		if(cota != null) {			
+			if(cota.getBox() != null) {
+				
+				box = cota.getBox();
+				
+			}
+		}
 		
 		String destinatarioNome 				=  "";
 		String destinatarioCNPJ 				= "";

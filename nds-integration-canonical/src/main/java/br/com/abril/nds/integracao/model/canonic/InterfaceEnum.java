@@ -17,6 +17,7 @@ public enum InterfaceEnum {
 	EMS0136(136L, null, EMS0136Input.class),
 	EMS0127(127L, null, EMS0127InputItem.class, EMS0127Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0138(128L, null, null, TipoInterfaceEnum.DB),
+	EMS0139(136L, null, EMS0139Input.class),
 	EMS0140(140L, null, EMS0140InputItem.class, EMS0140Input.class, TipoInterfaceEnum.DETALHE_INLINE),
 	EMS0185(185L, null, null),
 	EMS2021(2021L, null, EMS2021Input.class, TipoInterfaceEnum.DB),

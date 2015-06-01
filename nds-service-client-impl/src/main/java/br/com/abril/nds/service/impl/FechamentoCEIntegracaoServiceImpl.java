@@ -391,11 +391,11 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 */
 	private void validarEncalheOuVendaInformado(ItemChamadaEncalheFornecedor itemFo) {
 		
-		if(!RegimeRecolhimento.PARCIAL.equals(itemFo.getRegimeRecolhimento())){
+		if(!RegimeRecolhimento.PARCIAL.equals(itemFo.getRegimeRecolhimento())) {
 			
 			Long qnrDevolucaoInformada = Util.nvl(itemFo.getQtdeDevolucaoInformada(),0L);
 			
-			if(qnrDevolucaoInformada > itemFo.getQtdeEnviada()){
+			if(qnrDevolucaoInformada > itemFo.getQtdeEnviada()) {
 				
 				StringBuilder msgValidacao = new StringBuilder();
 				
@@ -414,11 +414,11 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 * Verifica se existe estoque produto, caso não exista o mesmo é criado
 	 * @param produtoEdicao
 	 */
-	private void processarEstoqueProduto(ProdutoEdicao produtoEdicao,EstoqueProduto estoqueProduto) {
+	private void processarEstoqueProduto(ProdutoEdicao produtoEdicao, EstoqueProduto estoqueProduto) {
 		
-		if(estoqueProduto == null){
+		if(estoqueProduto == null) {
 			
-			if(produtoEdicao.getId() == null){
+			if(produtoEdicao.getId() == null) {
 				produtoEdicao = 
 						produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 								produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao());
@@ -637,7 +637,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	Usuario usuario = usuarioService.getUsuarioLogado();
     	
 		for(ItemChamadaEncalheFornecedor item : cef.getItens()){
-			
+			if ( RegimeRecolhimento.PARCIAL.name().equals(item.getRegimeRecolhimento())) // para regime parcial nao estornar
+				continue;
 			this.gerarMovimentoEstoqueEstornoDevolucaoFornecedor(item.getProdutoEdicao().getId(), 
 					                                             BigInteger.valueOf(item.getQtdeDevolucaoInformada()), 
 					                                             dataOperacao,
