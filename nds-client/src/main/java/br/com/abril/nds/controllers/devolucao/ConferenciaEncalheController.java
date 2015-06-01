@@ -2187,7 +2187,7 @@ public class ConferenciaEncalheController extends BaseController {
         if(dadosNotaFiscal!=null) {
             notaFiscal = new NotaFiscalEntradaCota();
             notaFiscal.setNumero((Long) dadosNotaFiscal.get("numero"));
-            notaFiscal.setSerie((String) dadosNotaFiscal.get("serie"));
+            notaFiscal.setSerie(Long.valueOf((String) dadosNotaFiscal.get("serie")));
             notaFiscal.setDataEmissao( DateUtil.parseDataPTBR((String) dadosNotaFiscal.get("dataEmissao")));
             notaFiscal.setChaveAcesso((String) dadosNotaFiscal.get("chaveAcesso"));
             notaFiscal.setValorProdutos(CurrencyUtil.arredondarValorParaDuasCasas((BigDecimal) dadosNotaFiscal.get("valorProdutos")));
@@ -2426,7 +2426,7 @@ public class ConferenciaEncalheController extends BaseController {
             mensagens.add("Número da nota fiscal deve ser preenchido.");
 		}
 		
-		if(notaFiscalEntradaCota.getSerie() == null || notaFiscalEntradaCota.getSerie().isEmpty()) {
+		if(notaFiscalEntradaCota.getSerie() == null || notaFiscalEntradaCota.getSerie() <= 0) {
             mensagens.add("Série da nota fiscal deve ser preenchida.");
 		}
 		

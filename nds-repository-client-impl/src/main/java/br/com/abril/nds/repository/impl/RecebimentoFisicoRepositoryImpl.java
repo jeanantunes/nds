@@ -112,7 +112,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 
 
 	@Override
-	public boolean existeNotaFiscal(Long numero, String serie, String cnpj, Long numeroNotaEnvio) {
+	public boolean existeNotaFiscal(Long numero, Long serie, String cnpj, Long numeroNotaEnvio) {
 		
 		StringBuilder hql = new StringBuilder();
 		

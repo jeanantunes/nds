@@ -133,6 +133,9 @@ public class Fornecedor implements Serializable {
 	@Column(name="INTEGRA_GFS")
 	private boolean integraGFS;
 	
+	@Column(name="DESTINACAO_ENCALHE")
+	private boolean destinacaoEncalhe;
+	
 	public Fornecedor(){}
 	
 	public Fornecedor(Long id) {
@@ -342,6 +345,14 @@ public class Fornecedor implements Serializable {
 		this.integraGFS = integraGFS;
 	}
 	
+	public boolean isDestinacaoEncalhe() {
+		return destinacaoEncalhe;
+	}
+
+	public void setDestinacaoEncalhe(boolean destinacaoEncalhe) {
+		this.destinacaoEncalhe = destinacaoEncalhe;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

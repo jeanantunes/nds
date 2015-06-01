@@ -41,13 +41,17 @@ public class FiltroNFeDTO implements Serializable {
 	
 	private Long idCota;
 	
+	private Long idFornecedor;
+
+	private Boolean emissaoPorEditor;
+	
+	private Boolean emissaoPorDestinacaoEncalhe;
+	
 	private Set<Long> idsCota;
 	
-	private Long idFornecedor;
+	private List<Long> listIdFornecedor; 
 	
 	private NotaFiscalTipoEmissaoRegimeEspecial notaFiscalTipoEmissaoRegimeEspecial;
-	
-	private List<Long> listIdFornecedor; 
 	
 	private SituacaoCadastro situacaoCadastro;
 
@@ -164,6 +168,22 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
+	}
+
+	public Boolean isEmissaoPorEditor() {
+		return emissaoPorEditor;
+	}
+
+	public void setEmissaoPorEditor(Boolean emissaoPorEditor) {
+		this.emissaoPorEditor = emissaoPorEditor;
+	}
+
+	public Boolean isEmissaoPorDestinacaoEncalhe() {
+		return emissaoPorDestinacaoEncalhe;
+	}
+
+	public void setEmissaoPorDestinacaoEncalhe(Boolean emissaoPorDestinacaoEncalhe) {
+		this.emissaoPorDestinacaoEncalhe = emissaoPorDestinacaoEncalhe;
 	}
 
 	public NotaFiscalTipoEmissaoRegimeEspecial getNotaFiscalTipoEmissao() {

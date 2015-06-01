@@ -100,8 +100,6 @@ public class FornecedorController extends BaseController {
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
-	
-	
 	@Path("/")
 	public void index() {
 
@@ -125,16 +123,14 @@ public class FornecedorController extends BaseController {
 		filtroConsultaFornecedor.setNomeFantasia(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getNomeFantasia()));
 		filtroConsultaFornecedor.setRazaoSocial(PessoaUtil.removerSufixoDeTipo(filtroConsultaFornecedor.getRazaoSocial()));
 		
-		Long quantidadeRegistros =
-				this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);		
+		Long quantidadeRegistros = this.fornecedorService.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);		
 		
-		if (quantidadeRegistros <=0) {
+		if (quantidadeRegistros <= 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 
-		List<FornecedorDTO> listaFornecedores = 
-				this.fornecedorService.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
+		List<FornecedorDTO> listaFornecedores = this.fornecedorService.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
 		
 		TableModel<CellModelKeyValue<FornecedorDTO>> tableModel = obterTableModelFornecedores(listaFornecedores);
 		
@@ -424,8 +420,7 @@ public class FornecedorController extends BaseController {
 
 		obterEndereco(idFornecedor);
 
-		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = 
-				this.fornecedorService.obterTelefonesFornecedor(idFornecedor);
+		List<TelefoneAssociacaoDTO> listaTelefoneAssociacao = this.fornecedorService.obterTelefonesFornecedor(idFornecedor);
 
 		Map<Integer, TelefoneAssociacaoDTO> map = new LinkedHashMap<Integer, TelefoneAssociacaoDTO>();
 
@@ -770,6 +765,8 @@ public class FornecedorController extends BaseController {
 		fornecedorDTO.setCanalDistribuicao(fornecedor.getCanalDistribuicao());
 		
 		fornecedorDTO.setIntegraGFS(fornecedor.isIntegraGFS());
+		
+		fornecedorDTO.setDestinacaoEncalhe(fornecedor.isDestinacaoEncalhe());
 		
 		return fornecedorDTO;
 	}

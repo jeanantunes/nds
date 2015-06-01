@@ -1,6 +1,6 @@
 var fornecedorController = $.extend(true,{
 		fecharModalCadastroFornecedor : false,
-		init:function(){
+		init:function() {
 			$('#fornecedorController-filtroConsultaFornecedorRazaoSocial,#fornecedorController-filtroConsultaFornecedorCnpj,#fornecedorController-filtroConsultaFornecedorNomeFantasia', fornecedorController.workspace).bind('keypress', function(e) {
 				if(e.keyCode == 13) {
 					fornecedorController.pesquisarFornecedores();
@@ -133,7 +133,8 @@ var fornecedorController = $.extend(true,{
 			$("#fornecedorController-emailNfe", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-possuiContrato", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-integraGFS", 		    fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
-			$( '#fornecedorController-validade', 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-destinacaoEncalhe",    fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$('#fornecedorController-validade', 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			
 		},
 		
@@ -420,8 +421,13 @@ var fornecedorController = $.extend(true,{
 						if (result.integraGFS) {
 							$("#fornecedorController-integraGFS", fornecedorController.workspace).check();
 						} else {
-							
 							$("#fornecedorController-integraGFS", fornecedorController.workspace).uncheck();
+						}
+						
+						if (result.destinacaoEncalhe) {
+							$("#fornecedorController-destinacaoEncalhe", fornecedorController.workspace).check();
+						} else {
+							$("#fornecedorController-destinacaoEncalhe", fornecedorController.workspace).uncheck();
 						}
 						
 						if (result.possuiContrato) {

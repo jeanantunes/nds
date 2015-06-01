@@ -321,7 +321,7 @@ var geracaoNFeController = $.extend({
 			
 			for(var index in data.rows) {
 				
-				if(data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
+				if(data.rows[index] && data.rows[index].cell["situacaoCadastro"] && data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
 					if(data.rows[index].cell["notaFiscalConsolidada"]) {
 						data.rows[index].cell["numeroCota"] = '<span style="color: red;">'+ data.rows[index].cell["numeroCota"] +' *</span>';
@@ -398,7 +398,19 @@ var geracaoNFeController = $.extend({
 	}, {
 		display : 'Nome',
 		name : 'nomeFornecedor',
-		width : 385,
+		width : 215,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Editor',
+		name : 'codigoEditor',
+		width : 80,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Nome Editor',
+		name : 'nomeEditor',
+		width : 150,
 		sortable : true,
 		align : 'left',
 	}, {
@@ -447,6 +459,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-selectRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-selectRota").val()});
+		
 		// FIXME: Verificar o motivo do vRaptor nao instanciar
 		// Por limitacao do vRaptor, nao instancia dentro do filtro
 		if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
@@ -455,6 +468,11 @@ var geracaoNFeController = $.extend({
 				
 				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
 			}
+		} else {
+			
+			params.push({name:"filtro.emissaoPorEditor" , value: $("#geracaoNfe-filtro-emissaoPorEditor").is(':checked')});
+			params.push({name:"filtro.emissaoPorDestinacaoEncalhe" , value: $("#geracaoNfe-filtro-emissaoPorDestinacaoEncalhe").is(':checked')});
+			
 		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
@@ -480,10 +498,9 @@ var geracaoNFeController = $.extend({
 		
 		var grid;
 		
-		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR'){
+		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR') {
 			grid = $("#geracaoNfe-flexigrid-fornecedor-pesquisa");
-		}else{
-			
+		} else {
 			grid = $("#geracaoNfe-flexigrid-pesquisa");
 		}
 		
@@ -492,7 +509,10 @@ var geracaoNFeController = $.extend({
 		grid.flexOptions({
 			"url" : this.path + uri,
 			params : params,
-			newp : 1
+			newp : 1,
+			onSuccess: function() {
+				exibirColuna('#geracaoNfe-flexigrid-fornecedor-pesquisa', ['codigoEditor', 'nomeEditor'], $("#geracaoNfe-filtro-emissaoPorEditor").is(':checked'));
+			},
 		});
 		
 		grid.flexReload();
@@ -747,10 +767,13 @@ var geracaoNFeController = $.extend({
 			
 			if($('input[name^="tipoDestinatario"]:checked').val() != 'FORNECEDOR') {
 				geracaoNFeController.verificarRegimeEspecialNaturezaOperacao($('#geracaoNfe-filtro-naturezaOperacao'));
+				$(".emissaoEditorDestinacaoEncalhe").hide();
 			} else {
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("disable");
 				$("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").multiselect("hide");
 				$(".emissaoRegimeEspecial").hide();
+				$(".emissaoEditorDestinacaoEncalhe :input[type='checkbox']").attr('checked', true);
+				$(".emissaoEditorDestinacaoEncalhe").show();
 			}
 			
 		});
