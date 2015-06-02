@@ -81,9 +81,9 @@ public class RoteirizacaoDTO implements Serializable{
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
         this.boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
-        if (TipoEdicaoRoteirizacao.NOVO == tipoEdicao || boxDisponiveis.isEmpty() || addBoxEspecial) {
-            this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
-        }
+//        if (TipoEdicaoRoteirizacao.NOVO == tipoEdicao || boxDisponiveis.isEmpty() || addBoxEspecial) {
+//            this.boxDisponiveis.add(BoxRoteirizacaoDTO.ESPECIAL);
+//        }
         this.boxDisponiveis.addAll(boxDisponiveis);
         this.todosBox = new ArrayList<BoxRoteirizacaoDTO>(this.boxDisponiveis);
     }
@@ -302,17 +302,13 @@ public class RoteirizacaoDTO implements Serializable{
         
         if (box != null) {
             boxDTO = new BoxRoteirizacaoDTO(box.getId(), box.getNome());
-        } else {
-            boxDTO = BoxRoteirizacaoDTO.ESPECIAL;
         }
         
         dto.setBox(boxDTO);
         
-        for(Roteiro roteiro : roteirizacao.getRoteiros()){
+        for(Roteiro roteiro : roteirizacao.getRoteiros()) {
             
-        	RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(
-                    roteiro.getId(), roteiro.getOrdem(),
-                    roteiro.getDescricaoRoteiro());
+        	RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(roteiro.getId(), roteiro.getOrdem(), roteiro.getDescricaoRoteiro());
             
         	dto.addRoteiro(roteiroDTO);
 
@@ -335,7 +331,7 @@ public class RoteirizacaoDTO implements Serializable{
 
                     Endereco endereco = null;
                     
-                    if(!boxDTO.equals(BoxRoteirizacaoDTO.ESPECIAL)) {
+                    if(!boxDTO.getNome().equals("ESPECIAL")) {
 	                    Set<EnderecoCota> enderecosCota = cota.getEnderecos();
 	                    for (EnderecoCota ec : enderecosCota) {
 	                    	if(ec.getTipoEndereco().equals(TipoEndereco.LOCAL_ENTREGA)) {
@@ -397,7 +393,7 @@ public class RoteirizacaoDTO implements Serializable{
      *         contrário
      */
 	public boolean isBoxEspecial() {
-	    return BoxRoteirizacaoDTO.ESPECIAL.equals(box);
+	    return "ESPECIAL".equals(box != null ? box.getNome() : null);
 	}
 	
     /**

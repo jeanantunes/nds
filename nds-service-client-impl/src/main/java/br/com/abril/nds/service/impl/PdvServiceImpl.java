@@ -1289,7 +1289,7 @@ public class PdvServiceImpl implements PdvService {
 
             for (EnderecoPDV end : pdv.getEnderecos()) {
 
-                if (end.getEndereco().getId().equals(idEndereco)
+                if (end.getId().equals(idEndereco)
                         && end.isPrincipal()) {
                     throw new ValidacaoException(TipoMensagem.WARNING,
                             "Pelo menos um endereço associado ao PDV deve ser principal!");

@@ -1526,11 +1526,6 @@ public class CotaServiceImpl implements CotaService {
         
         cota.setUtilizaIPV(cotaDto.isUtilizaIPV());
         
-        // correcao de problema de flag_pendente_ativacao.id_alterado=null
-        if(cotaDto.getIdCota()== null){
-			cotaDto.setIdCota(cota.getId());
-		}
-        cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
         
         cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
         
@@ -1542,6 +1537,14 @@ public class CotaServiceImpl implements CotaService {
         
         cota  = cotaRepository.merge(cota);
         
+     // correcao de problema de flag_pendente_ativacao.id_alterado=null
+        if(cotaDto.getIdCota()== null){
+			cotaDto.setIdCota(cota.getId());
+		}
+        cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
+        cota  = cotaRepository.merge(cota);
+        
+      //
         if(newCota) {
             
             final HistoricoSituacaoCota hsc = new HistoricoSituacaoCota();
