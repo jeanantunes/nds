@@ -194,12 +194,17 @@ public class VendaProdutoDTO implements Serializable {
 
 	public void setPeriodo(PeriodicidadeProduto periodo) {
 		this.periodo = periodo;
-		this.periodoFormatado = periodo.getOrdem();
+//		this.periodoFormatado = periodo.getOrdem();
 	}
 
 	public Integer getPeriodoFormatado() {
 		return periodoFormatado;
 	}
+	
+	public void setPeriodoFormatado(Integer periodoFormatado) {
+		this.periodoFormatado = periodoFormatado;
+	}
+
 	/**
 	 * @return the parcial
 	 */

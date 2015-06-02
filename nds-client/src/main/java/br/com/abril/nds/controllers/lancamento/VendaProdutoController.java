@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;

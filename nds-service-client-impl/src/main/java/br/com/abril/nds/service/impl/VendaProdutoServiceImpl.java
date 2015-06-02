@@ -1,6 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.VendaProdutoService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class VendaProdutoServiceImpl implements VendaProdutoService {
@@ -46,6 +49,10 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 					&& (vendaProdutoDTO.getVenda() == null || vendaProdutoDTO.getVenda().compareTo(BigInteger.ZERO) <= 0)){
 				vendaProdutoDTO.setVenda(estoqueProdutoService.obterVendaBaseadoNoEstoque(vendaProdutoDTO.getIdProdutoEdicao().longValue()).toBigInteger());
 			}
+			
+			if(vendaProdutoDTO.getPeriodoFormatado() == null){
+				vendaProdutoDTO.setPeriodoFormatado(0);
+			}
 		}
 		
 		return listVendaProduto;
@@ -55,11 +62,38 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 	@Override
 	@Transactional
 	public List<LancamentoPorEdicaoDTO> buscaLancamentoPorEdicao(FiltroDetalheVendaProdutoDTO filtro) {
-		if(filtro == null) 
+		
+		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = new ArrayList<>();
+		
+		if(filtro == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+		}
+		
+		FiltroVendaProdutoDTO ftro = new FiltroVendaProdutoDTO();
+		
+		ftro.setCodigo(filtro.getCodigo());
+		ftro.setEdicao(filtro.getEdicao());
+		
+		List<VendaProdutoDTO> listVendaProduto = vendaProdutoRepository.buscarVendaPorProduto(ftro);
 		 
-		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao =
-			this.vendaProdutoRepository.buscarLancamentoPorEdicao(filtro);
+		for (VendaProdutoDTO vendas : listVendaProduto) {
+			
+			LancamentoPorEdicaoDTO lancamento = new LancamentoPorEdicaoDTO();
+			
+			lancamento.setDataLancamento(DateUtil.parseDataPTBR(vendas.getDataLancamento()));
+			lancamento.setDataRecolhimento(DateUtil.parseDataPTBR(vendas.getDataRecolhimento()));
+			lancamento.setReparte(vendas.getReparte());
+			lancamento.setVenda(vendas.getVenda());
+			lancamento.setEncalhe(vendas.getReparte().subtract(vendas.getVenda()));
+			
+			BigInteger percentual = new BigInteger("100");
+
+			BigInteger percentualVendas = (vendas.getVenda().multiply(percentual).divide(vendas.getReparte())); 
+			
+			lancamento.setPercentualVenda(new BigDecimal(percentualVendas));
+			
+			listaLancamentoPorEdicao.add(lancamento);
+		}
 		
 		int numPeriodo = 1;
 		
