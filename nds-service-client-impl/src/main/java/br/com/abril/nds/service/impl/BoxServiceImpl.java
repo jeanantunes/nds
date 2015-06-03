@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -87,11 +88,8 @@ public class BoxServiceImpl implements BoxService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Box> busca(Integer codigoBox, TipoBox tipoBox,
-			String orderBy, Ordenacao ordenacao, Integer initialResult,
-			Integer maxResults) {
-		return boxRepository.busca(codigoBox, tipoBox, orderBy, ordenacao,
-				initialResult, maxResults);
+	public List<Box> busca(Integer codigoBox, TipoBox tipoBox, String orderBy, Ordenacao ordenacao, Integer initialResult, Integer maxResults) {
+		return boxRepository.busca(codigoBox, tipoBox, orderBy, ordenacao, initialResult, maxResults);
 	}
 
 	@Override
@@ -108,7 +106,7 @@ public class BoxServiceImpl implements BoxService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Box> buscarPorTipo(TipoBox tipo) {
+	public List<Box> buscarPorTipo(List<TipoBox> tipo) {
 		return boxRepository.obterListaBox(tipo);
 	}
 
@@ -120,7 +118,7 @@ public class BoxServiceImpl implements BoxService {
 			return boxRepository.buscarTodos();
 		}
 
-		return boxRepository.obterListaBox(tipoBox);
+		return boxRepository.obterListaBox(Arrays.asList(tipoBox));
 	}
 	
 	@Transactional(readOnly=true)

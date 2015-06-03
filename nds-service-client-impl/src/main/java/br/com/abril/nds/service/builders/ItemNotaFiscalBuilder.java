@@ -26,6 +26,7 @@ import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoFechamentoFiscalCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoFechamentoFiscalFornecedor;
@@ -213,7 +214,15 @@ public class ItemNotaFiscalBuilder  {
 			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
 			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota((MovimentoEstoqueCota) movimentoEstoque);
 			origemItens.add(oinf);
+			
+		} else if(movimentoEstoque instanceof MovimentoEstoque) {
+			
+			OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
+			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
+			origemItens.add(oinfME);
+			
 		}
+		
 		produtoServico.setOrigemItemNotaFiscal(origemItens);
 		
 		if(detalheNotaFiscal.getProdutoServicoPK() == null) {

@@ -1414,70 +1414,91 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		final StringBuilder sql = new StringBuilder();
 
-			sql.append(" SELECT                                                                                                                    ");
-			sql.append("     produto.CODIGO AS codigoProduto,                                                                                      ");
-			sql.append("     pe.id as id, ");
-			sql.append("     produto.NOME AS nomeProduto,                                                                                          ");
-			sql.append("     pe.NUMERO_EDICAO AS numeroEdicao, ");
-			
-			if(filtro.getNumeroEdicao() != null){
-				sql.append("     plp.NUMERO_PERIODO as periodo, ");
-			}else{
-				sql.append("     MAX(plp.NUMERO_PERIODO) as periodo, ");
-			}
-			
-			sql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento,                                                                  ");
-			sql.append("     lancamento.STATUS AS descricaoSituacaoLancamento,                                                                              ");
-			sql.append("     pe.CHAMADA_CAPA AS chamadaCapa,                                                                            ");
-			sql.append("     tipoClassificacaoProduto.descricao as descricaoClassificacao,                                              ");
-			sql.append("     round(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end), 0) AS repartePrevisto,   ");
-			sql.append("     coalesce(round(case                                                                                                                  ");
-			sql.append("         when lancamento.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')                                             ");
-			sql.append("           then sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end) - (      ");
-			sql.append("                     select sum(mecEncalhe.qtde)                                                                           ");
-			sql.append("                     from                                                                                                  ");
-			sql.append("                         lancamento lanc                                                                                   ");
-			sql.append("                     LEFT JOIN                                                                                             ");
-			sql.append("                         chamada_encalhe_lancamento cel                                                                    ");
-			sql.append("                             on cel.LANCAMENTO_ID = lanc.ID                                                                ");
-			sql.append("                     LEFT JOIN                                                                                             ");
-			sql.append("                         chamada_encalhe ce                                                                                ");
-			sql.append("                             on ce.id = cel.CHAMADA_ENCALHE_ID                                                             ");
-			sql.append("                     LEFT JOIN                                                                                             ");
-			sql.append("                         chamada_encalhe_cota cec                                                                          ");
-			sql.append("                             on cec.CHAMADA_ENCALHE_ID = ce.ID                                                             ");
-			sql.append("                     LEFT JOIN                                                                                             ");
-			sql.append("                         conferencia_encalhe confEnc                                                                       ");
-			sql.append("                             on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID                                                   ");
-			sql.append("                     LEFT JOIN                                                                                             ");
-			sql.append("                         movimento_estoque_cota mecEncalhe                                                                 ");
-			sql.append("                             on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID                                          ");
-			sql.append("                     WHERE                                                                                                 ");
-			sql.append("                         lanc.id = lancamento.id)                                                                          ");
-			sql.append("         else null                                                                                                         ");
-			sql.append("     end, 0), 0) as qtdeVendas                                                                                                     ");
-	        sql.append("                                                                                                                           ");
-		    sql.append(" FROM lancamento lancamento                                                                                                ");
-		    sql.append("                                                                                                                           ");
-		    sql.append(" JOIN                                                                                                                      ");
-		    sql.append("     produto_edicao pe                                                                                          ");
-		    sql.append("       ON pe.id = lancamento.produto_edicao_id                                                                  ");
-		    sql.append(" LEFT JOIN                                                                                                                 ");
-		    sql.append("     periodo_lancamento_parcial plp                                                                                        ");
-		    sql.append("       ON plp.id = lancamento.periodo_lancamento_parcial_id                                                                ");
-		    sql.append(" JOIN                                                                                                                      ");
-		    sql.append("     produto produto                                                                                                       ");
-		    sql.append("       ON produto.id = pe.produto_id                                                                            ");
-		    sql.append(" LEFT JOIN                                                                                                                 ");
-		    sql.append("     tipo_classificacao_produto tipoClassificacaoProduto                                                                   ");
-		    sql.append("       ON tipoClassificacaoProduto.id = pe.tipo_classificacao_produto_id                                        ");
-		    sql.append(" JOIN                                                                                                                 ");
-		    sql.append("     movimento_estoque_cota mecReparte                                                                                     ");
-		    sql.append("       on mecReparte.LANCAMENTO_ID = lancamento.id                                                                         ");
-		    sql.append(" LEFT JOIN                                                                                                                 ");
-		    sql.append("     tipo_movimento tipo                                                                                                   ");
-		    sql.append("       ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID                                                                           ");
+		sql.append(" SELECT   ");
+		sql.append("         T.codigoProduto AS codigoProduto,  ");
+		sql.append("         T.id as id,  ");
+		sql.append("         T.nomeProduto AS nomeProduto,  ");
+		sql.append("         T.numeroEdicao AS numeroEdicao,  ");
 		
+		if(filtro.getNumeroEdicao() != null){
+			sql.append("     T.periodo as periodo, ");
+			sql.append("     T.dataLancamento AS dataLancamento,  ");
+		}else{
+			sql.append("     MAX(T.periodo) as periodo, ");
+			sql.append("     MAX(T.dataLancamento) AS dataLancamento,  ");
+		}
+		
+		sql.append("         T.descricaoSituacaoLancamento AS descricaoSituacaoLancamento,  ");
+		sql.append("         T.chamadaCapa AS chamadaCapa,  ");
+		sql.append("         T.descricaoClassificacao as descricaoClassificacao,  ");
+		sql.append("         sum(T.repartePrevisto) as repartePrevisto,  ");
+		sql.append("         sum(T.qtdeVendas) as qtdeVendas  ");
+		
+		sql.append("   FROM  ");
+		sql.append("     (SELECT  ");
+		sql.append("         produto.CODIGO AS codigoProduto,  ");
+		sql.append("         pe.id as id,  ");
+		sql.append("         produto.NOME AS nomeProduto,  ");
+		sql.append("         pe.NUMERO_EDICAO AS numeroEdicao,  ");
+		sql.append("     	 plp.NUMERO_PERIODO as periodo, ");
+		sql.append("         lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento,  ");
+		sql.append("         lancamento.STATUS AS descricaoSituacaoLancamento,  ");
+		sql.append("         pe.CHAMADA_CAPA AS chamadaCapa,  ");
+		sql.append("         tipoClassificacaoProduto.descricao as descricaoClassificacao,  ");
+		sql.append("           ");
+		sql.append("         round(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then   ");
+		sql.append("                         mecReparte.QTDE   ");
+		sql.append("                   else -mecReparte.QTDE   ");
+		sql.append("                   end),0) AS repartePrevisto,  ");
+		sql.append("           ");
+		sql.append("         coalesce(round(case  ");
+		sql.append("             when lancamento.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') then   ");
+		sql.append("                 sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then   ");
+		sql.append("                       mecReparte.QTDE   ");
+		sql.append("                 else -mecReparte.QTDE   ");
+		sql.append("             end)   ");
+		sql.append("             - (select sum(mecEncalhe.qtde)  ");
+		sql.append("                   from  ");
+		sql.append("                       lancamento lanc  ");
+		sql.append("                   LEFT JOIN  ");
+		sql.append("                   chamada_encalhe_lancamento cel  ");
+		sql.append("                           on cel.LANCAMENTO_ID = lanc.ID  ");
+		sql.append("                   LEFT JOIN  ");
+		sql.append("                       chamada_encalhe ce  ");
+		sql.append("                           on ce.id = cel.CHAMADA_ENCALHE_ID  ");
+		sql.append("                   LEFT JOIN  ");
+		sql.append("                       chamada_encalhe_cota cec  ");
+		sql.append("                           on cec.CHAMADA_ENCALHE_ID = ce.ID  ");
+		sql.append("                   LEFT JOIN  ");
+		sql.append("                       conferencia_encalhe confEnc  ");
+		sql.append("                           on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID  ");
+		sql.append("                   LEFT JOIN  ");
+		sql.append("                       movimento_estoque_cota mecEncalhe  ");
+		sql.append("                           on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID  ");
+		sql.append("                   WHERE  ");
+		sql.append("                       lanc.id = lancamento.id)  ");
+		sql.append("                   else null end,0),0) as qtdeVendas  ");
+		sql.append("     FROM  ");
+		sql.append("         lancamento lancamento  ");
+		sql.append("     JOIN  ");
+		sql.append("         produto_edicao pe  ");
+		sql.append("             ON pe.id = lancamento.produto_edicao_id  ");
+		sql.append("     LEFT JOIN  ");
+		sql.append("         periodo_lancamento_parcial plp  ");
+		sql.append("             ON plp.id = lancamento.periodo_lancamento_parcial_id  ");
+		sql.append("     JOIN  ");
+		sql.append("         produto produto  ");
+		sql.append("             ON produto.id = pe.produto_id  ");
+		sql.append("     LEFT JOIN  ");
+		sql.append("         tipo_classificacao_produto tipoClassificacaoProduto  ");
+		sql.append("             ON tipoClassificacaoProduto.id = pe.tipo_classificacao_produto_id  ");
+		sql.append("     JOIN  ");
+		sql.append("         movimento_estoque_cota mecReparte  ");
+		sql.append("             on mecReparte.LANCAMENTO_ID = lancamento.id  ");
+		sql.append("     LEFT JOIN  ");
+		sql.append("         tipo_movimento tipo  ");
+		sql.append("             ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID  ");
+			
 		sql.append(" WHERE ");
 
 		if(filtro.getProdutoDto().getCodigoProduto().length() > 6){
@@ -1513,18 +1534,20 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 
-		if(filtro.isBuscarPeriodosParciais()){
-			sql.append(" GROUP BY pe.numero_Edicao, produto.codigo, plp.NUMERO_PERIODO ");
-		}else{
-			sql.append(" GROUP BY pe.numero_Edicao, produto.codigo ");	
-		}
+		sql.append(" GROUP BY pe.numero_Edicao, produto.codigo, plp.NUMERO_PERIODO ");
 
+		if(filtro.getNumeroEdicao() != null){
+			sql.append(" ) T group by T.periodo ");
+		}else{
+			sql.append(" ) T group by T.numeroEdicao ");
+		}
+		
 		if(filtro.getOrdemColuna() != null){
 			sql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
 		}else{
 			sql.append(" ORDER BY lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");			
 		}
-
+		
 		final SQLQuery query = super.getSession().createSQLQuery(sql.toString());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));

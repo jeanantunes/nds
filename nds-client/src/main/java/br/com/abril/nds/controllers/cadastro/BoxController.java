@@ -81,8 +81,7 @@ public class BoxController extends BaseController {
         
         final TipoBox tipoBox = box.getTipoBox();
         
-        final List<Box> boxs = boxService.busca(codigoBox, tipoBox, sortname, Ordenacao
-                .valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
+        final List<Box> boxs = boxService.busca(codigoBox, tipoBox, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
         
         final Long quantidade = boxService.quantidade(codigoBox, tipoBox);
         

@@ -142,7 +142,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Rota> obterRotasPorCota(Integer numeroCota){
+	public List<Rota> obterRotasPorCota(Integer numeroCota) {
 		
 		Criteria criteria =  getSession().createCriteria(Rota.class, "rota");
 		criteria.createAlias("rota.rotaPDVs","rotaPdv");
@@ -155,7 +155,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 	}
 	
 	@Override
-	public Long obterQtdRotasPorCota(Integer numeroCota){
+	public Long obterQtdRotasPorCota(Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder("select distinct ");
 		hql.append(" count(rota.id) ")

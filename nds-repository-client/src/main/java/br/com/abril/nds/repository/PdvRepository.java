@@ -51,12 +51,13 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 * @param uf
 	 * @param bairro
 	 * @param cep
-	 * @param pesquisaPorCota
 	 * @param boxID 
+	 * @param idBoxPrincipal TODO
+	 * @param pesquisaPorCota
 	 * @return
 	 */
 	public List<PDV> obterCotasPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, Long boxID);
+			String cep, Long boxID, Long idBoxPrincipal);
 	
     /**
      * Recupera os PDV's do histórico de titularidade da cota
