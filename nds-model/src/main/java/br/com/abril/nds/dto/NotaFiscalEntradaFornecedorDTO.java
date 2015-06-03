@@ -55,12 +55,12 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.razaoSocial = StringUtils.defaultString(razaoSocial);
 	}
 	
-	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
+	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, Long serie, Long numeroNotaEnvio,
 			Date dataEmissao, Date dataExpedicao, String descricao,
 			BigDecimal valorTotalNota, StatusNotaFiscalEntrada statusNotaFiscal, Date dataRecebimento, String razaoSocial,String chaveAcesso) {
 		this.id = id;
 		this.numero = (numero == null) ? "" : numero.toString();
-		this.serie = StringUtils.defaultString(serie);
+		this.serie = (serie == null) ? "" : serie.toString();
 		this.numeroNotaEnvio = numeroNotaEnvio;
 		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
@@ -74,14 +74,14 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
+	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, Long serie, Long numeroNotaEnvio,
 			Date dataEmissao, Date dataExpedicao, String descricao,
 			BigDecimal valorTotalNota, BigDecimal valorTotalNotaComDesconto, 
 			StatusNotaFiscalEntrada statusNotaFiscal, 
 			Date dataRecebimento, String razaoSocial,String chaveAcesso) {
 		this.id = id;
 		this.numero = (numero == null) ? "" : numero.toString();
-		this.serie = StringUtils.defaultString(serie);
+		this.serie = (serie == null) ? "" : serie.toString();
 		this.numeroNotaEnvio = numeroNotaEnvio;
 		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
