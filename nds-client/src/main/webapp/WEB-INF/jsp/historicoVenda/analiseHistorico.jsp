@@ -1,7 +1,8 @@
 <div>
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
 <script type="text/javascript" src="scripts/analiseHistoricoVenda.js"></script>
-<script language="javascript" type="text/javascript">
+
+<script type="text/javascript">
 
 $(function() {
 	analiseHistoricoVendaController.init();

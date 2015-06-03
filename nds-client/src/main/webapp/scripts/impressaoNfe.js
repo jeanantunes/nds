@@ -59,6 +59,8 @@ var impressaoNfeController = $.extend(true, {
 		impressaoNfeController.initFlexiGrids();
 		impressaoNfeController.initFiltroDatas();
 		impressaoNfeController.initDialog();
+	
+		$("#impressaoNfe-filtro-tipoEmissao").attr('disabled', 'disabled');
 		
 		$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog({
 			autoOpen: false,
@@ -77,9 +79,14 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	desabilitarFiltro : function() {
-		
+		// roteiro 
 		$("#impressaoNfe-filtro-idRoteiro").attr('disabled', 'disabled');
+		$("#impressaoNfe-filtro-idRoteiro", impressaoNfeController.workspace).val("-1");
+		
+		// rota
+		$("#impressaoNfe-filtro-idRota", impressaoNfeController.workspace).val("-1");
 		$("#impressaoNfe-filtro-idRota").attr('disabled', 'disabled');
+		
 		$("#impressaoNfe-filtro-idCotaInicial").attr('disabled', 'disabled');
 		$("#impressaoNfe-filtro-idCotaFinal").attr('disabled', 'disabled');
 		$("#impressaoNfe-filtro-idCotaInicial").val("");

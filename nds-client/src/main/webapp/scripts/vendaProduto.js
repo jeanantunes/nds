@@ -308,6 +308,15 @@ var vendaProdutoController = $.extend(true, {
 			row.cell.percentualVenda = row.cell.percentualVendaFormatado;
 			row.cell.precoCapa = row.cell.valorPrecoCapaFormatado;
 			row.cell.total = row.cell.valorTotalFormatado;
+			
+			if(row.cell.periodoFormatado == 0){
+				row.cell.periodoFormatado = '-';
+			}
+			
+			if(row.cell.numeroEstudo == undefined){
+				row.cell.numeroEstudo = '';
+			}
+			
 		});
 		
 		$(".grids", vendaProdutoController.workspace).show();
@@ -330,6 +339,7 @@ var vendaProdutoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 			
 			row.cell.percentualVenda = row.cell.percentualVendaFormatado;
+			
 		});
 		
 		return resultado;

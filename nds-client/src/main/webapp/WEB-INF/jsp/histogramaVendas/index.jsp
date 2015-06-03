@@ -1,5 +1,4 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script  type="text/javascript" src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/autoCompleteController.js"></script>

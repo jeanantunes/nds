@@ -122,7 +122,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" INNER JOIN ROTA rota_ on rotas_.ROTA_ID=rota_.ID                                              ");
 		hql.append(" INNER join ROTEIRO roteiro_ on rota_.ROTEIRO_ID=roteiro_.ID                                   ");
 		hql.append(" INNER JOIN NOTA_ENVIO notaenvio_ on notaenvio_.NUMERO_COTA=cota_.NUMERO_COTA                  ");
-		hql.append(" INNER JOIN NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID   ");
+		hql.append(" INNER JOIN NOTA_ENVIO_ITEM itemNotaEnvio_ on notaenvio_.numero=itemNotaEnvio_.NOTA_ENVIO_ID   and itemNotaEnvio_.ESTUDO_COTA_ID = estudo_cota_.id ");
 		hql.append(" where ");
 		hql.append(" cota_.NUMERO_COTA=notaenvio_.NUMERO_COTA ");
 		hql.append(" and epdv.PRINCIPAL = :pontoPrincipal and pdvs_.ponto_principal = :pontoPrincipal ");
@@ -363,6 +363,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 					hql.append(" on estudoCota.estudo_id = e.ID                                           ");
 					hql.append(" where e.PRODUTO_EDICAO_ID =:idProdutoEdicao").append(index);
 					hql.append(" and estudoCota.COTA_ID = cota_.ID ");
+					hql.append("  and e.lancamento_id = lancamento_.id ");
 					// hql.append(" and estudoPDV.COTA_ID  = cota_.ID ");
 					// hql.append(" and estudoPDV.PDV_ID = rotas_.PDV_ID ");
 					hql.append("),0) as qtdProduto").append(index);

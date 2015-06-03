@@ -94,20 +94,30 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
+		
 		hql.append("select nf ")
 		.append(" from NotaFiscal nf ")
 		.append(" JOIN nf.notaFiscalInformacoes as nfi ")
 		.append(" JOIN nfi.informacaoEletronica as infElet ")
 		.append(" JOIN infElet.retornoComunicacaoEletronica retComElet ")
-		.append(" JOIN nfi.identificacao as ident ")
-		.append(" where")
+		.append(" JOIN nfi.identificacao as ident ");
+		
+		
+		hql.append(" where")
 		.append(" infElet.chaveAcesso is not null ")
 		.append(" AND retComElet.protocolo is not null ")
 		.append(" AND retComElet.statusRetornado = :statusNFe ")
 		.append(" AND nf.id in (:idNotas) ");
-
+		
+		if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() != null){
+			
+			hql.append(" AND box.id between :idBoxInicial and :idBoxFinal ");
+		}
+		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setParameterList("idNotas", filtro.getNumerosNotas());
+		
 		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
 		
 		return query.list();
@@ -656,7 +666,24 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		if(isGroup) {
+
 			hql.append(" group by notaFiscal.id ");
+
+			if(filtro != null && filtro.getNaturezaOperacao() != null && filtro.getNaturezaOperacao().getTipoDestinatario() != null) {
+				
+				switch(filtro.getNaturezaOperacao().getTipoDestinatario()) {
+				
+					case COTA:
+					case DISTRIBUIDOR:
+						hql.append(", cota.id ");
+						break;
+					case FORNECEDOR:
+						break;
+					default:
+						break;
+				}
+			}
+				
 			if(filtro.getIdBoxInicial() != null || filtro.getIdBoxInicial() != null) {
 				
 				hql.append(", box.id ");
@@ -682,7 +709,13 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 				hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
-					.append(" JOIN cota.box as box ")
+					.append(" join cota.pdvs pdv ")
+					.append(" join pdv.rotas rotaPdv ")
+					.append(" join rotaPdv.rota rota ")
+					.append(" join rota.roteiro roteiro ")
+					.append(" join roteiro.roteirizacao roteirizacao ")
+					.append(" join roteirizacao.box box ")
+					
 					.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ")
 					.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
 			break;
