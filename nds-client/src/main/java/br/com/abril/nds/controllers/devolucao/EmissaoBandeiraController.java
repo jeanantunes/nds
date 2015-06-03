@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -14,8 +16,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.ChamadaEncalheService;
-import br.com.abril.nds.service.EmissaoBandeiraService;
+import br.com.abril.nds.service.EmissaoBandeirasService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.export.FileExporter;
@@ -24,6 +25,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
@@ -43,16 +45,13 @@ public class EmissaoBandeiraController extends BaseController {
 	private HttpServletResponse response;
 	
 	@Autowired
-	private EmissaoBandeiraService emissaoBandeiraService;
-	
-	@Autowired
-	private ChamadaEncalheService chamadaEncalheService;
-	
-	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private EmissaoBandeirasService emissaoBandeirasService;
 
 	@Path("/")
 	public void index() {
@@ -65,13 +64,17 @@ public class EmissaoBandeiraController extends BaseController {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
-		int total = chamadaEncalheService.countObterBandeirasDaSemana(anoSemana, fornecedor).intValue();
+		if(anoSemana == null || anoSemana < 2000) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Favor preencher o Ano/Semana.");
+		}
+		
+		int total = emissaoBandeirasService.countObterBandeirasDaSemana(anoSemana, fornecedor).intValue();
 		
 		if (total <= 0 ) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-		    List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(anoSemana, fornecedor, paginacaoVO); 
+		    List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(anoSemana, fornecedor, paginacaoVO); 
 			this.result.use(FlexiGridJson.class)
 				.from(listaBandeiraDTO)
 				.total(total)
@@ -83,7 +86,7 @@ public class EmissaoBandeiraController extends BaseController {
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Integer anoSemana, Long fornecedor, String sortname, String sortorder, int rp, int page, FileType fileType) {
 	
-		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(anoSemana, fornecedor, null);
+		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(anoSemana, fornecedor, null);
 		
 		if (listaBandeiraDTO != null && !listaBandeiraDTO.isEmpty()) {
 			try {
@@ -99,14 +102,14 @@ public class EmissaoBandeiraController extends BaseController {
 		this.result.use(Results.nothing());
 	}
 	
-
-	@Get("/imprimirBandeira")
-	public Download imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets,
-			Date dataEnvio) throws Exception{
+	@Post
+	public void imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets[], Date dataEnvio[]) throws Exception {
 		
-		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(anoSemana, numeroPallets, dataEnvio, fornecedor);
+		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(anoSemana, fornecedor, dataEnvio, numeroPallets);
 		
-		return new ByteArrayDownload(comprovate,"application/pdf", "bandeira_" + anoSemana + ".pdf", true);
+//		return new ByteArrayDownload(comprovate,"application/pdf", "bandeira_" + anoSemana + ".pdf", true);
+		
+		this.escreverArquivoParaResponse(comprovate, "bandeira_" + anoSemana);
 	}
 	
 	@Path("/bandeiraManual")
@@ -118,9 +121,7 @@ public class EmissaoBandeiraController extends BaseController {
 	public Download imprimirBandeiraManual(String anoSemana, Integer numeroPallets, String fornecedor, 
 			String praca, String canal, String dataEnvio, String titulo) throws Exception{
 		
-		byte[] comprovate = 
-			emissaoBandeiraService.imprimirBandeiraManual(
-				anoSemana, numeroPallets, fornecedor, praca, canal, dataEnvio, titulo);
+		byte[] comprovate = emissaoBandeirasService.imprimirBandeiraManual(anoSemana, numeroPallets, fornecedor, praca, canal, dataEnvio, titulo);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeiraManual.pdf", true);
 	}
@@ -129,4 +130,36 @@ public class EmissaoBandeiraController extends BaseController {
 		
 		return new InputStreamDownload(super.getLogoDistribuidor(), null, null);
 	}
+	
+	/**
+	 * Metodo utilitario para escrever arquivo em pdf
+	 */
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) {
+		
+		this.response.setContentType("application/pdf");
+
+		this.response.setHeader("Content-Disposition", "attachment; filename="+ nomeArquivo +".pdf");
+
+		OutputStream output;
+		try {
+			
+			output = this.response.getOutputStream();
+			
+			output.write(arquivo);
+
+			this.response.getOutputStream().flush();
+			
+			this.response.getOutputStream().close();
+			
+			result.use(Results.nothing());
+			
+			if(!this.response.isCommitted()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar relatorio");
+			}
+			
+		} catch (IOException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao gerar relatorio");
+		}
+	}
+	
 }

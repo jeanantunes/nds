@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -40,18 +41,24 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.TipoEmitente;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.GrupoRepository;
+import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -102,6 +109,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Autowired
     protected ParametrosDistribuidorService parametrosDistribuidorService;
 	
+	@Autowired
+	private ImpressaoNFeRepository impressaoNFeRepository;
+	
+	@Autowired
+	private NaturezaOperacaoService naturezaOperacaoService;
 
 	@Override
 	@Transactional
@@ -764,7 +776,18 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
 		
-		return chamadaEncalheRepository.obterBandeirasSemana(periodoRecolhimento, fornecedor, paginacaoVO);
+		FiltroImpressaoNFEDTO filtro = new FiltroImpressaoNFEDTO();
+		filtro.setDataEmissaoInicial(periodoRecolhimento.getDe());
+		filtro.setDataEmissaoFinal(periodoRecolhimento.getAte());
+		
+		TipoAtividade tipoAtividade = distribuidorService.obter().getTipoAtividade();
+		TipoEmitente tipoEmitente = TipoEmitente.DISTRIBUIDOR;
+		TipoDestinatario tipoDestinatario = TipoDestinatario.FORNECEDOR;
+		TipoOperacao tipoOperacao = TipoOperacao.SAIDA;  
+		naturezaOperacaoService.obterNaturezaOperacao(tipoAtividade, tipoEmitente, tipoDestinatario, tipoOperacao);
+		impressaoNFeRepository.obterNotafiscalImpressaoBandeira(filtro);
+//		return chamadaEncalheRepository.obterBandeirasSemana(periodoRecolhimento, fornecedor, paginacaoVO);
+		return null;
 	}
 	
 	@Override

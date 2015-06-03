@@ -19,6 +19,7 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.SerieRepository;
@@ -218,6 +219,12 @@ public class NaturezaOperacaoServiceImpl implements NaturezaOperacaoService {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public NaturezaOperacao obterNaturezaOperacaoPor(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario
+			, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao, TipoMovimento tipoMovimento) {
+		return naturezaOperacaoRepository.obterNaturezaOperacaoPor(tipoAtividade, tipoDestinatario, tipoEmitente, tipoOperacao, tipoMovimento);
 	}
 
 }

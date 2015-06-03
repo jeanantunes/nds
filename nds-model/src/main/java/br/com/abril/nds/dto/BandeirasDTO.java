@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
@@ -12,11 +13,11 @@ public class BandeirasDTO implements Serializable{
 
 	private static final long serialVersionUID = -7847418746083619011L;
 	
-	private String numeroNotaFiscal;
+	private Long numeroNotaFiscal;
 	
-	private String serieNotaFiscal;
+	private Long serieNotaFiscal;
 	
-	private String codigoEditor;
+	private Long codigoEditor;
 	
 	private String nomeEditor;
 	
@@ -50,8 +51,19 @@ public class BandeirasDTO implements Serializable{
 		
 	}
 	
-	public BandeirasDTO(String codProduto, String nomeProduto,
-			Long edProduto, Integer pctPadrao) {
+	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor) {
+		super();
+		this.numeroNotaFiscal = numeroNotaFiscal;
+		this.serieNotaFiscal = serieNotaFiscal;
+		this.codigoEditor = codigoEditor;
+		this.nomeEditor = nomeEditor;
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		this.dataSaida = c.getTime();
+	}
+	
+	public BandeirasDTO(String codProduto, String nomeProduto, Long edProduto, Integer pctPadrao) {
 		super();
 		this.codProduto = codProduto;
 		this.nomeProduto = nomeProduto;
@@ -59,27 +71,27 @@ public class BandeirasDTO implements Serializable{
 		this.pctPadrao = pctPadrao;
 	}
 
-	public String getNumeroNotaFiscal() {
+	public Long getNumeroNotaFiscal() {
 		return numeroNotaFiscal;
 	}
 
-	public void setNumeroNotaFiscal(String numeroNotaFiscal) {
+	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
 		this.numeroNotaFiscal = numeroNotaFiscal;
 	}
 
-	public String getSerieNotaFiscal() {
+	public Long getSerieNotaFiscal() {
 		return serieNotaFiscal;
 	}
 
-	public void setSerieNotaFiscal(String serieNotaFiscal) {
+	public void setSerieNotaFiscal(Long serieNotaFiscal) {
 		this.serieNotaFiscal = serieNotaFiscal;
 	}
 
-	public String getCodigoEditor() {
+	public Long getCodigoEditor() {
 		return codigoEditor;
 	}
 
-	public void setCodigoEditor(String codigoEditor) {
+	public void setCodigoEditor(Long codigoEditor) {
 		this.codigoEditor = codigoEditor;
 	}
 

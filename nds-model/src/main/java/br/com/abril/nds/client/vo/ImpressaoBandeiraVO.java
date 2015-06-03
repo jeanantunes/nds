@@ -31,7 +31,7 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.forncedor = fornecedor.getRazaoSocial();
 		this.semana = "SEMANA " + (semana.toString().length() > 4 ? semana.toString().substring(4) : semana.toString());
 		this.praca = fornecedor.getPraca();
-		this.canal = fornecedor.getCanalDistribuicao().getDescricao();
+		this.canal = fornecedor.getCanalDistribuicao() != null ? fornecedor.getCanalDistribuicao().getDescricao() : null;
 		this.volumes = volumes;
 		this.dataEnvio = DateUtil.formatarDataPTBR(dataEnvio);
 	}

@@ -9,6 +9,8 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.BandeirasDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -625,7 +627,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		// Data Emissão:		
-		if(filtro.getDataEmissao() != null) {
+		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
 			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal ");
 		}
 		
@@ -635,12 +637,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		// Roteiro:
-		if(filtro.getIdRoteiro() > 0) {
+		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > 0) {
 			hql.append(" AND roteiro.id = :roteiroId ");
 		}
 		
 		// Rota:		
-		if(filtro.getIdRota() > 0) {
+		if(filtro.getIdRota() != null && filtro.getIdRota() > 0) {
 			hql.append(" AND rota.id = :rotaId ");
 		}
 		
@@ -653,7 +655,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 		
-		if(isGroup){
+		if(isGroup) {
 			hql.append(" group by notaFiscal.id ");
 			if(filtro.getIdBoxInicial() != null || filtro.getIdBoxInicial() != null) {
 				
@@ -662,8 +664,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 		}
 		
-		if(isCount && isPagination){
-			if(filtro.getPaginacao()!=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
+		if(isCount && isPagination) {
+			if(filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
 			}
 		}
@@ -705,10 +707,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
 		
-		// Data Movimento:	...  Até   ...
-		if (filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
-			query.setParameter("dataInicial", filtro.getDataMovimentoInicial());
-			query.setParameter("dataFinal", filtro.getDataMovimentoFinal());
+		// Data Emissão:	...  Até   ...
+		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
+			query.setParameter("dataInicial", filtro.getDataEmissaoInicial());
+			query.setParameter("dataFinal", filtro.getDataEmissaoFinal());
 		}
 		
 		// tipo da nota fiscal		
@@ -721,23 +723,18 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
 		
-		// Data Emissão:	...		
-		// if(filtro.getDataEmissao() != null) {
-			// query.setParameter("dataEmissao", filtro.getDataEmissao());
-		// }
-		
 		if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
 			query.setParameter("numeroCotaInicial", filtro.getIdCotaInicial().intValue());
 			query.setParameter("numeroCotaFinal", filtro.getIdCotaFinal().intValue());
 		}
 		
 		// Roteiro:
-		if(filtro.getIdRoteiro() > 0) {
+		if(filtro.getIdRoteiro() != null && filtro.getIdRoteiro() > 0) {
 			query.setParameter("roteiroId", filtro.getIdRoteiro());
 		}
 		
 		// Rota:		
-		if(filtro.getIdRota() > 0) {
+		if(filtro.getIdRota() != null && filtro.getIdRota() > 0) {
 			query.setParameter("rotaId", filtro.getIdRota());
 		}
 		
@@ -752,5 +749,76 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		return query;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<BandeirasDTO> obterNotafiscalImpressaoBandeira(FiltroImpressaoNFEDTO filtro) {
+		
+		/**
+		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
+		 */
+		StringBuilder hql = new StringBuilder();
+				
+		hql.append("SELECT new br.com.abril.nds.dto.BandeirasDTO( ")
+		.append("notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
+		.append(", notaFiscal.notaFiscalInformacoes.identificacao.serie ")
+		.append(", editor.codigo ")
+		.append(", pessoaJuridica.razaoSocial) ")
+		.append(" FROM NotaFiscal as notaFiscal ")
+		.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
+		.append(" JOIN item.produtoServico produtoServico ")
+		.append(" JOIN produtoServico.produtoEdicao produtoEdicao ")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.editor editor ")
+		.append(" JOIN editor.pessoaJuridica pessoaJuridica ")
+		.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
+		.append(" WHERE notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");	
+		// Tipo de Nota:		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.id in (SELECT no.id ")
+			.append(" FROM NaturezaOperacao no ")
+			.append(" JOIN no.tipoMovimento tm ")
+			.append(" WHERE no.id in(:naturezaOperacao)) "); 
+		}
+		
+		// Data Emissão:		
+		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal ");
+		}
+		
+		if(filtro.getIdsFornecedores() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		Query query = this.getSession().createQuery(hql.toString());		
+		
+//		query.setParameter("dataSaida", new Date() );
+		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
+		
+		// Data Emissão:	...  Até   ...
+		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
+			query.setParameter("dataInicial", filtro.getDataEmissaoInicial());
+			query.setParameter("dataFinal", filtro.getDataEmissaoFinal());
+		}
+		
+		// tipo da nota fiscal		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
+			 query.setParameter("naturezaOperacao", filtro.getIdNaturezaOperacao()); 
+		}
+		
+		// forncedor id		
+		if(filtro.getIdsFornecedores() !=null && !filtro.getIdsFornecedores().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
+		}
+				
+		return query.list();
+		
+	}
+
+	@Override
+	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana, Long forncedorId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
