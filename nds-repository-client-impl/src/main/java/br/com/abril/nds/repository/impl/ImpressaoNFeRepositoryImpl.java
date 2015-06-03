@@ -671,7 +671,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		if(isGroup){
-			hql.append(" group by notaFiscal.id ");
+			hql.append(" group by notaFiscal.id, cota.id ");
 			if(filtro.getIdBoxInicial() != null || filtro.getIdBoxInicial() != null) {
 				
 				hql.append(", box.id");
