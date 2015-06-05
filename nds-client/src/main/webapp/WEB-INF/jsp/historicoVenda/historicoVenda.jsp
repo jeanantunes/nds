@@ -1,12 +1,12 @@
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
-<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="scripts/utils.js" ></script>
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
+<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/historicoVenda.js" ></script>
 <script type="text/javascript" src="scripts/autoCompleteCampos.js" ></script>
-<script type="text/javascript" src="scripts/utils.js" ></script>
-<script language="javascript" type="text/javascript">
+
+<script type="text/javascript">
 
 $(function() {
   historicoVendaController.init();

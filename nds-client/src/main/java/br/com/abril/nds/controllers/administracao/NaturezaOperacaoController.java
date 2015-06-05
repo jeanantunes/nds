@@ -203,7 +203,7 @@ public class NaturezaOperacaoController extends BaseController {
 	    if(TipoEmitente.COTA.equals(tipoEmitente) && TipoDestinatario.DISTRIBUIDOR.equals(tipoDestinatario)) {
 	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, true, true);
 	    } else {
-	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, false);
+	        naturezasOperacoes = naturezaOperacaoService.obterNaturezasOperacoesPorEmitenteDestinatario(tipoEmitente, tipoDestinatario, false, true);
 	    }
 	
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
