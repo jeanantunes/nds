@@ -1808,7 +1808,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append(" where l.PRODUTO_EDICAO_ID = :idProdEdicao  ");
 		sql.append("   and pe.NUMERO_EDICAO = :numEdicao ");
 		sql.append("   and plp.NUMERO_PERIODO = :numPeriodo ");
-		
+		sql.append("   order by l.id desc limit 1 ");
+				
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("idProdEdicao", idProdutoEdicao);
