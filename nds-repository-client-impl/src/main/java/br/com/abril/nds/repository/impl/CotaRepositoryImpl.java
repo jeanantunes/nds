@@ -299,7 +299,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
            .append(" (select SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) from ")
            .append(" ESTUDO_COTA ec_ ")
            .append(" join ESTUDO e_ on ec_.ESTUDO_ID = e_.ID ")
-           .append(" join LANCAMENTO lancamento_ on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.ID = lancamento_.ESTUDO_ID AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
+           .append(" join LANCAMENTO lancamento_ force index (ndx_status) on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.ID = lancamento_.ESTUDO_ID AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
            .append(" join PRODUTO_EDICAO pe_ on e_.PRODUTO_EDICAO_ID = pe_.ID ")
            .append(" WHERE ec_.cota_ID=geral.IDCOTA ")
            .append(" AND (lancamento_.STATUS is null OR lancamento_.STATUS not in (:statusNaoEmitiveis)) ")
@@ -756,7 +756,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         hql.append(" FROM ").append(" Cota cota  ").append(" JOIN cota.pessoa pessoa ").append(" JOIN cota.box box ")
         .append(" JOIN cota.estoqueProdutoCotas estoqueProdutoCota ")
         .append(" JOIN estoqueProdutoCota.produtoEdicao produtoEdicao  ").append(" JOIN produtoEdicao.produto produto ")
-                        .append(" JOIN produtoEdicao.lancamentos lancamento ").append(" JOIN cota.pdvs pdv ").append(
+                        .append(" JOIN produtoEdicao.lancamentos lancamento force index (ndx_status) ").append(" JOIN cota.pdvs pdv ").append(
                                 " LEFT JOIN pdv.rotas rotaPdv  ").append(" LEFT JOIN rotaPdv.rota rota  ").append(
                                         " LEFT JOIN rota.roteiro roteiro ").append(" LEFT JOIN roteiro.roteirizacao roteirizacao ");
         
@@ -1780,7 +1780,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
                 + "	            on cota_.BOX_ID=box1_.ID  " + "	    inner join " + "	        MOVIMENTO_ESTOQUE_COTA mec  "
                 + "	            on cota_.ID=mec.COTA_ID  " + "	    inner join " + "	        TIPO_MOVIMENTO tm  "
                 + "	            on mec.TIPO_MOVIMENTO_ID=tm.ID  " + "	    inner join "
-                + "	        LANCAMENTO lancamento_  " + "	            on mec.LANCAMENTO_ID=lancamento_.ID  "
+                + "	        LANCAMENTO lancamento_  force index (ndx_status) " + "	            on mec.LANCAMENTO_ID=lancamento_.ID  "
                 + "	    inner join " + "	        PRODUTO_EDICAO pe_  " + "	            on mec.PRODUTO_EDICAO_ID=pe_.ID  "
                 + " 			and lancamento_.PRODUTO_EDICAO_ID=pe_.ID " + "	    inner join " + "	        PRODUTO p_  "
                 + "	            on pe_.PRODUTO_ID=p_.ID  " + "	    inner join " + "	        PRODUTO_FORNECEDOR pf_  "
@@ -1876,7 +1876,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" LEFT  JOIN BOX box1_  ON cota_.BOX_ID=box1_.ID ");
         sql.append(" INNER JOIN ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
         sql.append(" INNER JOIN ESTUDO e_  ON ec_.ESTUDO_ID=e_.ID ");
-        sql.append(" INNER JOIN LANCAMENTO lancamento_  ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");        									
+        sql.append(" INNER JOIN LANCAMENTO lancamento_  force index (ndx_status) ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");        									
         sql.append(" INNER JOIN PRODUTO_EDICAO pe_  ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
         sql.append(" INNER JOIN PRODUTO p_  ON pe_.PRODUTO_ID=p_.ID ");
         sql.append(" INNER JOIN PRODUTO_FORNECEDOR pf_  ON p_.ID=pf_.PRODUTO_ID ");
@@ -1963,7 +1963,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" LEFT  JOIN  BOX box1_ ON cota_.BOX_ID=box1_.ID ");
         sql.append(" INNER JOIN  ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
         sql.append(" INNER JOIN  ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
-        sql.append(" INNER JOIN  LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
+        sql.append(" INNER JOIN  LANCAMENTO lancamento_ force index (ndx_status) ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
         sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
         sql.append(" LEFT  JOIN  TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
         sql.append(" INNER JOIN  PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
@@ -2049,7 +2049,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	sql.append(" LEFT  JOIN BOX box1_  ON cota_.BOX_ID=box1_.ID ");
     	sql.append(" INNER JOIN ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
     	sql.append(" INNER JOIN ESTUDO e_  ON ec_.ESTUDO_ID=e_.ID ");
-    	sql.append(" INNER JOIN LANCAMENTO lancamento_  ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
+    	sql.append(" INNER JOIN LANCAMENTO lancamento_ force index (ndx_status) ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
     	sql.append(" INNER JOIN PRODUTO_EDICAO pe_  ON e_.PRODUTO_EDICAO_ID=pe_.ID ");
     	sql.append(" INNER JOIN PRODUTO p_  ON pe_.PRODUTO_ID=p_.ID ");
     	sql.append(" INNER JOIN PRODUTO_FORNECEDOR pf_  ON p_.ID=pf_.PRODUTO_ID ");
@@ -3774,7 +3774,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append(" LEFT  JOIN  BOX box1_ ON cota_.BOX_ID=box1_.ID ");
         sql.append(" INNER JOIN  ESTUDO_COTA ec_ ON cota_.ID=ec_.COTA_ID ");
         sql.append(" INNER JOIN  ESTUDO e_ ON ec_.ESTUDO_ID=e_.ID ");
-        sql.append(" INNER JOIN  LANCAMENTO lancamento_ ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
+        sql.append(" INNER JOIN  LANCAMENTO lancamento_ force index (ndx_status) ON e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID AND e_.ID=lancamento_.ESTUDO_ID ");
         sql.append(" LEFT  JOIN  MOVIMENTO_ESTOQUE_COTA mec ON mec.LANCAMENTO_ID=lancamento_.id AND mec.COTA_ID=cota_.ID ");
         sql.append(" LEFT  JOIN  TIPO_MOVIMENTO tipo_mov ON tipo_mov.ID=mec.TIPO_MOVIMENTO_ID ");
         sql.append(" INNER JOIN  PRODUTO_EDICAO pe_ ON e_.PRODUTO_EDICAO_ID=pe_.ID ");

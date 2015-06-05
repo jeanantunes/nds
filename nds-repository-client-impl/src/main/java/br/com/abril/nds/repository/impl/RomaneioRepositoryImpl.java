@@ -277,6 +277,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		if (qtdProdutos > 1) {
 			for (int index = 0; index < qtdProdutos; index++) {
 				query.setParameter("idProdutoEdicao" + index, filtro.getProdutos().get(index));
+				query.setParameter("idProdutoEdicao_lc" + index, filtro.getProdutos().get(index));
+				query.setParameter("data_distribuicao_lc" + index, filtro.getData());
 			}
 		}
 	}
@@ -357,13 +359,13 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				for (int index = 0; index < qtdProdutos; index++) {
 					
 					hql.append(",COALESCE((SELECT SUM(COALESCE(estudoPDV.REPARTE, estudoCota.REPARTE)) FROM estudo e  ");
-					hql.append(" LEFT JOIN estudo_pdv estudoPDV                                           ");
-					hql.append(" on estudoPDV.ESTUDO_ID = e.ID                                            ");
-					hql.append(" LEFT join estudo_cota estudoCota                                         ");
-					hql.append(" on estudoCota.estudo_id = e.ID                                           ");
+					hql.append(" inner join estudo_cota estudoCota on estudoCota.estudo_id = e.ID         ");
+		            hql.append(" LEFT join estudo_pdv estudoPDV  on estudoPDV.ESTUDO_ID = e.ID and estudoPDV.cota_id = estudoCota.cota_id ");
+					hql.append(" left join lancamento lc on     lc.PRODUTO_EDICAO_ID = :idProdutoEdicao_lc").append(index);
+					hql.append(" and lc.DATA_LCTO_DISTRIBUIDOR = :data_distribuicao_lc").append(index);
 					hql.append(" where e.PRODUTO_EDICAO_ID =:idProdutoEdicao").append(index);
 					hql.append(" and estudoCota.COTA_ID = cota_.ID ");
-					hql.append("  and e.lancamento_id = lancamento_.id ");
+					hql.append("  and e.lancamento_id = lc.id ");
 					// hql.append(" and estudoPDV.COTA_ID  = cota_.ID ");
 					// hql.append(" and estudoPDV.PDV_ID = rotas_.PDV_ID ");
 					hql.append("),0) as qtdProduto").append(index);
