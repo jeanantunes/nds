@@ -1286,3 +1286,5 @@ insert into natureza_operacao_tipo_movimento(NATUREZA_OPERACAO_ID,TIPO_MOVIMENTO
 
 update natureza_operacao set TIPO_OPERACAO='SAIDA' where ID='36';
 update natureza_operacao set GERAR_NOTAS_REFERENCIADAS='1' where ID='36';
+
+alter table cota change EXIGE_NF_E EXIGE_NF_E tinyint(1) default '0' NOT NULL, change CONTRIBUINTE_ICMS CONTRIBUINTE_ICMS tinyint(1) default '0' NOT NULL;
