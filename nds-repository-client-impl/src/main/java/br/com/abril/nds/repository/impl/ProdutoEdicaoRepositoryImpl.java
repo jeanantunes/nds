@@ -1545,7 +1545,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if(filtro.getOrdemColuna() != null){
 			sql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
 		}else{
-			sql.append(" ORDER BY lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");			
+			sql.append(" ORDER BY T.dataLancamento DESC ");			
 		}
 		
 		final SQLQuery query = super.getSession().createSQLQuery(sql.toString());
@@ -1591,7 +1591,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 
 		    case PERIODO:
-		    	hql.append(" ORDER BY periodicidade ");
+		    	hql.append(" ORDER BY periodo ");
 		    	break;
 
 		    case DT_LANCAMENTO:
@@ -1612,7 +1612,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 		    default:
-			hql.append(" ORDER BY lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
+			hql.append(" ORDER BY T.dataLancamento  DESC ");
 		    }
 
 		    if (filtro.getPaginacao().getOrdenacao() != null) {
