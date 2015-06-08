@@ -72,6 +72,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamento;
 import br.com.abril.nds.model.fiscal.nota.StatusRetornado;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -3287,28 +3288,32 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     }
     
     @Override
-    public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(final Long idCota, final Long idProdutoEdicao) {
+    public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(final Long idCota, final Long idProdutoEdicao, Lancamento lancamento) {
 
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select sum(case when tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :entrada then movimentoEstoqueCota.qtde ");
-        
         hql.append(" else (movimentoEstoqueCota.qtde * -1) end) ");
-        
         hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
-        
         hql.append(" join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
-        
-        hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
+        hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao ");
         
         if(idCota != null) {
-            hql.append("  movimentoEstoqueCota.cota.id = :idCota ");
+            hql.append(" and movimentoEstoqueCota.cota.id = :idCota ");
+        }
+        
+        if(lancamento != null) {
+            hql.append(" and movimentoEstoqueCota.lancamento = :lancamento ");
         }
         
         final Query query = getSession().createQuery(hql.toString());
         
         if(idCota != null) {
             query.setParameter("idCota", idCota);
+        }
+        
+        if(lancamento != null) {
+        	query.setParameter("lancamento", lancamento);
         }
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);

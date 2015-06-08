@@ -33,6 +33,7 @@ import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.util.Intervalo;
 
 
@@ -340,9 +341,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém quantidade de produto transferido pela/para cota de acordo com o tipo de movimento
 	 * @param idCota - Id da cota
 	 * @param idProdutoEdicao - Id do ProdutoEdicao
+	 * @param lancamento TODO
 	 * @return 
 	 */
-	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao);
+	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Lancamento lancamento);
 
 	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor,
 			Long idCota, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores);
