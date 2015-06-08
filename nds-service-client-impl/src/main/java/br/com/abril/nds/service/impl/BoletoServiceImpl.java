@@ -29,6 +29,7 @@ import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
+import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -36,6 +37,7 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -97,6 +99,7 @@ import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
 import br.com.abril.nds.service.BoletoService;
@@ -222,7 +225,10 @@ public class BoletoServiceImpl implements BoletoService {
     @Autowired
     private GrupoRepository grupoRepository;
     
-	                                        /**
+    @Autowired
+    private RoteirizacaoRepository roteirizacaoRepository;
+    
+    /**
      * Método responsável por obter boletos por numero da cota
      * 
      * @param filtro
@@ -1708,7 +1714,6 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setTituloAcrecimo(valorAcrescimo);
         corpoBoleto.setTituloValorCobrado(valorParaPagamentosVencidos);
         
-        
         // INFORMAÇOES DO BOLETO
         //PARAMETROS ?
         corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
@@ -1720,7 +1725,19 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setBoletoInstrucao5("");
         corpoBoleto.setBoletoInstrucao6("");
         corpoBoleto.setBoletoInstrucao7("");
-        corpoBoleto.setBoletoInstrucao8("");
+        
+        if(numeroCota != null && numeroCota >0) {
+        	ConsultaRoteirizacaoDTO roteirizacao = this.roteirizacao(numeroCota);
+        	
+        	if(roteirizacao != null) {
+        		corpoBoleto.setBoletoInstrucao8(montarRoteirizacao(roteirizacao));
+        	} else {
+        		corpoBoleto.setBoletoInstrucao8("");
+        	}
+        	
+        } else {
+        	corpoBoleto.setBoletoInstrucao8("");
+        }
         
         //BOLETO EM BRANCO
         corpoBoleto.setBoletoSemValor(tipoCobranca.equals(TipoCobranca.BOLETO_EM_BRANCO));
@@ -2718,5 +2735,38 @@ public class BoletoServiceImpl implements BoletoService {
     public BoletoAntecipado obterBoletoEmBrancoPorId(final Long idBoletoAntecipado) {
         
         return boletoAntecipadoRepository.buscarPorId(idBoletoAntecipado);
-    }  
+    }
+    
+    private ConsultaRoteirizacaoDTO roteirizacao(Integer numeroCota) {
+		
+        ConsultaRoteirizacaoDTO roteirizacaoDTO = null;
+        		
+		FiltroConsultaRoteirizacaoDTO filtro = new FiltroConsultaRoteirizacaoDTO();
+		
+		filtro.setNumeroCota(Integer.valueOf(numeroCota));
+		
+		List<ConsultaRoteirizacaoDTO> listaRoteirizacaoDTO = this.roteirizacaoRepository.buscarRoteirizacao(filtro); 
+		
+		for (ConsultaRoteirizacaoDTO item : listaRoteirizacaoDTO){
+			
+			if (!item.getNomeBox().equals("Especial")){
+				
+				roteirizacaoDTO = item;
+				
+				return roteirizacaoDTO;
+			}
+		}
+	    return null;		
+	}
+    
+    private String montarRoteirizacao(ConsultaRoteirizacaoDTO roteirizacao) {
+    	StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Box: ").append(roteirizacao.getNomeBox());
+		buffer.append(" / ");
+		buffer.append("Roteiro: ").append(roteirizacao.getDescricaoRoteiro());
+		buffer.append(" / ");
+		buffer.append("Rota : ").append(roteirizacao.getDescricaoRota());
+		return buffer.toString();
+    }
 }
