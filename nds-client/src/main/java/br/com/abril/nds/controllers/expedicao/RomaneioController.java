@@ -133,7 +133,8 @@ public class RomaneioController extends BaseController {
 		TableModel<CellModelKeyValue<RomaneioDTO>> tableModel = new TableModel<CellModelKeyValue<RomaneioDTO>>();
 		
 		Integer totalRegistros = this.romaneioService.buscarTotalDeRomaneios(filtro);
-		if(totalRegistros == 0){
+		
+		if(totalRegistros == 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 

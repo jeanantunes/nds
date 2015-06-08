@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Projetos\\Abril\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="QTD_COLUNAS_PRODUTO" class="java.lang.Integer"/>
 	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
@@ -54,7 +54,7 @@
 	<pageHeader>
 		<band height="67">
 			<subreport runToBottom="false">
-				<reportElement x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true" uuid="1cc7d197-bdeb-43d8-9b9c-a1a7bac126f0"/>
+				<reportElement uuid="1cc7d197-bdeb-43d8-9b9c-a1a7bac126f0" x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -73,11 +73,11 @@
 				<subreportParameter name="NOME_ROTEIRO">
 					<subreportParameterExpression><![CDATA[$F{roteiro}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="NOME_ROTA">
-					<subreportParameterExpression><![CDATA[$F{rota}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="DATA_GERACAO">
 					<subreportParameterExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataGeracao})]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_ROTA">
+					<subreportParameterExpression><![CDATA[$F{rota}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "romaneio_page_header.jasper"]]></subreportExpression>
@@ -87,7 +87,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement x="0" y="0" width="802" height="440" uuid="e753229a-f6fe-47cd-bd8a-8787bf24c773"/>
+				<reportElement uuid="e753229a-f6fe-47cd-bd8a-8787bf24c773" x="0" y="0" width="802" height="440"/>
 				<subreportParameter name="NOME_PRODUTO_4">
 					<subreportParameterExpression><![CDATA[$F{nomeProduto4}]]></subreportParameterExpression>
 				</subreportParameter>
