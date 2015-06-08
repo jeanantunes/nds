@@ -17,6 +17,8 @@ public class BandeirasDTO implements Serializable{
 	
 	private Long serieNotaFiscal;
 	
+	private String chaveNFe;
+		
 	private Long codigoEditor;
 	
 	private String nomeEditor;
@@ -48,10 +50,10 @@ public class BandeirasDTO implements Serializable{
 	private Date data;
 	
 	public BandeirasDTO() {
-		
+		super();
 	}
 	
-	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor) {
+	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor, String chaveNFe) {
 		super();
 		this.numeroNotaFiscal = numeroNotaFiscal;
 		this.serieNotaFiscal = serieNotaFiscal;
@@ -61,16 +63,9 @@ public class BandeirasDTO implements Serializable{
 		c.setTime(new Date());
 		c.add(Calendar.DAY_OF_MONTH, 1);
 		this.dataSaida = c.getTime();
+		this.chaveNFe = chaveNFe;
 	}
 	
-	public BandeirasDTO(String codProduto, String nomeProduto, Long edProduto, Integer pctPadrao) {
-		super();
-		this.codProduto = codProduto;
-		this.nomeProduto = nomeProduto;
-		this.edProduto = edProduto;
-		this.pctPadrao = pctPadrao;
-	}
-
 	public Long getNumeroNotaFiscal() {
 		return numeroNotaFiscal;
 	}
@@ -85,6 +80,14 @@ public class BandeirasDTO implements Serializable{
 
 	public void setSerieNotaFiscal(Long serieNotaFiscal) {
 		this.serieNotaFiscal = serieNotaFiscal;
+	}
+
+	public String getChaveNFe() {
+		return chaveNFe;
+	}
+
+	public void setChaveNFe(String chaveNFe) {
+		this.chaveNFe = chaveNFe;
 	}
 
 	public Long getCodigoEditor() {

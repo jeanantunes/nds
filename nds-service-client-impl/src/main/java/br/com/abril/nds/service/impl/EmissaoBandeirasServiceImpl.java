@@ -130,15 +130,22 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número(s) de Pallets e Datas inválido(s).");
 		}
 		
+		List<BandeirasDTO> bandeiras = this.obterBandeirasDaSemana(semana, fornecedorId, null);
+		
 		Fornecedor f = fornecedorRepository.buscarPorId(fornecedorId);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
 		FornecedorDTO fornecedor = new FornecedorDTO();
 		fornecedor.setIdFornecedor(f.getId());
 		fornecedor.setNomeFantasia(f.getJuridica().getNomeFantasia());
+		fornecedor.setCanalDistribuicao(f.getCanalDistribuicao());
+		fornecedor.setPraca(distribuidorService.obter().getEnderecoDistribuidor().getEndereco().getCidade());
 		
-		for (int i = 0; i < datasEnvio.length; i++) {
-			for (int j = 1; j <= numeroPallets[i]; j++) {
-				listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, j +" / "+ numeroPallets[i], semana, datasEnvio[i]));
+		for(BandeirasDTO bandeira : bandeiras) {
+			for (int i = 0; i < datasEnvio.length; i++) {
+				for (int j = 1; j <= numeroPallets[i]; j++) {
+					String editor = bandeira.getCodigoEditor() +" - "+ bandeira.getNomeEditor();
+					listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, j +" / "+ numeroPallets[i], semana, datasEnvio[i], editor, bandeira.getChaveNFe()));
+				}
 			}
 		}
 	    
@@ -153,9 +160,8 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 		
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
 		
-		for (int i=1; i<=numeroPallets;i++ ){
-			listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, semana, praca, canal,
-					i+" / "+numeroPallets, dataEnvio, titulo));
+		for (int i = 1; i <= numeroPallets; i++) {
+			listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, semana, praca, canal, i +" / "+ numeroPallets, dataEnvio, titulo));
 		}
 				
 		return this.gerarRelatorio(listaRelatorio);

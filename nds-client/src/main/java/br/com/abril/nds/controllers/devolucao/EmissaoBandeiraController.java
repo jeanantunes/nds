@@ -107,8 +107,6 @@ public class EmissaoBandeiraController extends BaseController {
 		
 		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(anoSemana, fornecedor, dataEnvio, numeroPallets);
 		
-//		return new ByteArrayDownload(comprovate,"application/pdf", "bandeira_" + anoSemana + ".pdf", true);
-		
 		this.escreverArquivoParaResponse(comprovate, "bandeira_" + anoSemana);
 	}
 	
