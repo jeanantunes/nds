@@ -64,15 +64,15 @@
 						
 					</select>
 				</td>
-				<td width="97">Data Movimento:</td>
+				<td width="97">Data Emissão:</td>
 				<td width="238">
-					<input name="impressaoNfe-dataMovimentoInicial" type="text" id="impressaoNfe-dataMovimentoInicial" style="width: 76px;" maxlength="10" class="input-date"/>
+					<input name="impressaoNfe-dataEmissaoInicial" type="text" id="impressaoNfe-dataEmissaoInicial" style="width: 76px;" maxlength="10" class="input-date"/>
 					&nbsp;&nbsp;At&eacute;&nbsp; 
-					<input name="impressaoNfe-dataMovimentoFinal" type="text" id="impressaoNfe-dataMovimentoFinal" style="width: 76px;" maxlength="10" class="input-date"/>
+					<input name="impressaoNfe-dataEmissaoFinal" type="text" id="impressaoNfe-dataEmissaoFinal" style="width: 76px;" maxlength="10" class="input-date"/>
 				</td>
-				<td width="83">Data Emiss&atilde;o:</td>
+				<td width="83"></td>
 				<td width="210">
-					<input name="impressaoNfe-filtro-dataEmissao" type="text" id="impressaoNfe-filtro-dataEmissao" style="width: 80px;" value="${dataAtual}" maxlength="10" class="input-date"/>
+					
 				</td>
 			</tr>
 			<tr>

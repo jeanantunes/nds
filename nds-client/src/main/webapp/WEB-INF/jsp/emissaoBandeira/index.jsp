@@ -2,6 +2,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/emissaoBandeira.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 
 
 <style type="text/css">
@@ -79,9 +80,6 @@
 </fieldset>
 </div>
 <div class="container">
-
-   
-    
     
      <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
@@ -94,11 +92,7 @@
   <tr>
     <td width="52">Semana:</td>
     <td width="178">
-    	<select id="semanaPesquisa" style="width:100px;">
-    		<c:forEach items="${semanas}" var="semana">
-    			<option value="${semana.key}">${semana.value}</option>
-    		</c:forEach>
-    	</select>
+    	<input type="text" maxlength="6" name="emissaoBandeiras-numeroSemana" id="emissaoBandeiras-numeroSemana" />
     </td>
     <td width="52">Fornecedor:</td>
     <td width="200">
@@ -123,10 +117,6 @@
        </fieldset>
       </div>
       <div class="linha_separa_fields">&nbsp;</div>
-
-        
-
-    
    
 </div>
 </body>
