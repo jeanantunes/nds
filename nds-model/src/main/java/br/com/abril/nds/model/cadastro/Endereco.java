@@ -227,6 +227,26 @@ public class Endereco implements Serializable, Cloneable {
 	}
 
 	/**
+	 * @return the codigoUf
+	 */
+	public Integer getCodigoUf() {
+		return codigoUf;
+	}
+
+	/**
+	 * @param codigoUf the codigoUf to set
+	 */
+	public void setCodigoUf(Integer codigoUf) {
+		this.codigoUf = codigoUf;
+	}
+	
+	@Override
+	public Endereco clone() throws CloneNotSupportedException {
+		return (Endereco) super.clone();
+	}
+
+
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -257,23 +277,5 @@ public class Endereco implements Serializable, Cloneable {
 		return true;
 	}
 
-	/**
-	 * @return the codigoUf
-	 */
-	public Integer getCodigoUf() {
-		return codigoUf;
-	}
-
-	/**
-	 * @param codigoUf the codigoUf to set
-	 */
-	public void setCodigoUf(Integer codigoUf) {
-		this.codigoUf = codigoUf;
-	}
 	
-	@Override
-	public Endereco clone() throws CloneNotSupportedException {
-		return (Endereco) super.clone();
-	}
-
 }
