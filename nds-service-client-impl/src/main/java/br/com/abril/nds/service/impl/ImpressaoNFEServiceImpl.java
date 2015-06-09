@@ -177,7 +177,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
 		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
-		// InputStream logoTipoDistribuidor = distribuidor.getLogotipoDistribuidor();  
+		  
 		if(TipoAtividade.MERCANTIL.equals(distribuidor.getTipoAtividade())) {
 			
 			if(distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
@@ -186,6 +186,27 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 					
 					if(dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA)) {
 						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
+								
+								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
+
+								List<NotaFiscal> notas = null;;
+								
+								notas = notasPorCotaFornecedor(filtro, naturezaOperacao, notas);
+								
+								for (NotaFiscal notaFiscal : notas) {
+									
+									DanfeDTO danfe = montarDanfe(notaFiscal);
+									if(danfe != null) {										
+										listaDanfeWrapper.add(new DanfeWrapper(danfe));
+									}
+								}
+								
+							}
+						} 
+					} else if (dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_VENDA)) {
+						if(dtnf.getNaturezaOperacao().contains(naturezaOperacao)){
+							
 							if(!dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO)) {
 								
 								LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
@@ -203,10 +224,13 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								}
 								
 							}
-						} else {
-							throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
 						}
+					} else {
+						
+						throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
+						
 					}
+				
 				}
 				
 			} else {
@@ -288,7 +312,13 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 			case COTA:
 			case DISTRIBUIDOR:
 			                 
-				notas = ordenarNotasFiscaisPorRoteirizacao(this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro));
+				notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+				
+				List<NotaFiscal> notasRoterizadas = ordenarNotasFiscaisPorRoteirizacao(notas);
+				
+				if(notasRoterizadas != null &&  !notasRoterizadas.isEmpty()) {					
+					notas = notasRoterizadas;
+				}
 				
 				break;
 		    
@@ -335,7 +365,8 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 			if (mapaNotasFiscaisPorCota.containsKey(numeroCota)) {
 	
 				notasFiscaisOrdenadas.addAll(mapaNotasFiscaisPorCota.get(numeroCota));
-			}
+				
+			} 
 		}
 	
 		return notasFiscaisOrdenadas;
