@@ -465,6 +465,16 @@ public class CotaServiceImpl implements CotaService {
         endereco.setBairro(enderecoDTO.getBairro());
         endereco.setCep(enderecoDTO.getCep());
         endereco.setCodigoCidadeIBGE(enderecoDTO.getCodigoCidadeIBGE());
+        
+        if(enderecoDTO.getCodigoUf() != null) {        	
+        	endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+        } else {
+        	
+        	String codigoUF = enderecoDTO.getCodigoCidadeIBGE().toString();
+        	
+        	enderecoDTO.setCodigoUf(Integer.valueOf(codigoUF.substring(0, 2)));
+        }
+        
         endereco.setCidade(enderecoDTO.getCidade());
         endereco.setComplemento(enderecoDTO.getComplemento());
         endereco.setTipoLogradouro(enderecoDTO.getTipoLogradouro());
@@ -472,6 +482,8 @@ public class CotaServiceImpl implements CotaService {
         endereco.setNumero(enderecoDTO.getNumero());
         endereco.setUf(enderecoDTO.getUf());
         endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+        endereco.setCodigoUf(enderecoDTO.getCodigoUf());
+        
         endereco.setPessoa(pessoa);
         
         return endereco;
