@@ -225,10 +225,6 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 								
 							}
 						}
-					} else {
-						
-						throw new ValidacaoException(TipoMensagem.ERROR, "O regime especial dispensa emissao para essa natureza de operação");
-						
 					}
 				
 				}
