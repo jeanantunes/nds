@@ -27,12 +27,14 @@ import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
@@ -56,6 +58,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -155,14 +160,13 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 	@Override
 	@Transactional
-	public Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao,
-			Integer numeroCota) {		
+	public Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao, Integer numeroCota) {		
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-		
 		Long idCota = cota == null ? null : cota.getId();
+		Lancamento lancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, distribuidorRepository.obterDataOperacaoDistribuidor());
 		
-		return movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(idCota, idProdutoEdicao);
+		return movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(idCota, idProdutoEdicao, lancamento);
 	}
 
 	/**

@@ -222,12 +222,10 @@ public class RomaneioServiceImpl implements RomaneioService {
 			
 			if (FileType.PDF == fileType) {
 			
-				return JasperRunManager.runReportToPdf(path.toString(),
-						parameters, jrDataSource);
+				return JasperRunManager.runReportToPdf(path.toString(), parameters, jrDataSource);
 			} else if (FileType.XLS == fileType) {
 				
-				JasperPrint jasperPrint = JasperFillManager.fillReport(
-						path.toString(), parameters, jrDataSource);
+				JasperPrint jasperPrint = JasperFillManager.fillReport(path.toString(), parameters, jrDataSource);
 
 				JRXlsExporter exporter = new JRXlsExporter();
 
