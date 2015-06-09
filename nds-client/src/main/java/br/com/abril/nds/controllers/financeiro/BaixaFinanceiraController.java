@@ -300,14 +300,11 @@ public class BaixaFinanceiraController extends BaseController {
 	public void mostrarGridBoletosPrevisao(Date data, String sortorder,
 										   String sortname, int page, int rp) {
 		
-		FiltroDetalheBaixaBoletoDTO filtro =
-			this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
+		FiltroDetalheBaixaBoletoDTO filtro = this.carregarFiltroDetalheBoleto(data, sortorder, sortname, page, rp);
 		
-		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto =
-			this.boletoService.obterBoletosPrevistos(filtro);
+		List<DetalheBaixaBoletoDTO> listaDetalheBaixaBoleto = this.boletoService.obterBoletosPrevistos(filtro);
 		
-		int qtdeTotalRegistros =
-			this.boletoService.obterQuantidadeBoletosPrevistos(filtro).intValue();
+		int qtdeTotalRegistros = this.boletoService.obterQuantidadeBoletosPrevistos(filtro).intValue();
 
 		List<BaixaBoletoBaseVO> listaBaixaBoletoVO =
 			(List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(listaDetalheBaixaBoleto, TipoBaixaBoleto.PREVISTOS);
