@@ -16,6 +16,7 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 
@@ -405,9 +406,33 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		query.setParameter("tipoAtividade", tipoAtividade);
 		query.setParameter("tipoEmitente", tipoEmitente);
-		query.setParameter("tipoDestinatario", tipoDestinatario);;
+		query.setParameter("tipoDestinatario", tipoDestinatario);
 		query.setParameter("tipoOperacao", tipoOperacao);
 		
 		return query.list();
+	}
+	
+	@Override
+	public NaturezaOperacao obterNaturezaOperacaoPor(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario
+			, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao, TipoMovimento tipoMovimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select nat from NaturezaOperacao nat ")
+			.append(" join nat.tipoMovimento tipoMovimento ")
+		   	.append(" where nat.tipoAtividade = :tipoAtividade ")
+			.append(" and nat.tipoEmitente = :tipoEmitente ")
+			.append(" and nat.tipoDestinatario = :tipoDestinatario ")
+			.append(" and nat.tipoOperacao = :tipoOperacao ")
+			.append(" and tipoMovimento = :tipoMovimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoAtividade", tipoAtividade);
+		query.setParameter("tipoEmitente", tipoEmitente);
+		query.setParameter("tipoDestinatario", tipoDestinatario);
+		query.setParameter("tipoOperacao", tipoOperacao);
+		query.setParameter("tipoMovimento", tipoMovimento);
+		
+		return (NaturezaOperacao) query.uniqueResult();
 	}
 }	

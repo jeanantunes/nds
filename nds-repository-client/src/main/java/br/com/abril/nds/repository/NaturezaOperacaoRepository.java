@@ -11,6 +11,7 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao, Long> {
 
@@ -53,5 +54,7 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorEmitenteDestinatario(TipoEmitente tipoEmitente, TipoDestinatario tipoDestinatario, boolean vendaConsignado, Boolean gerarCotaNaoExigeNFe);
 	
 	List<NaturezaOperacao> obterNaturezaOperacaoAtividadeDestinatarioEmitente(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao);
+
+	NaturezaOperacao obterNaturezaOperacaoPor(TipoAtividade tipoAtividade, TipoDestinatario tipoDestinatario, TipoEmitente tipoEmitente, TipoOperacao tipoOperacao, TipoMovimento tipoMovimento);
 
 }

@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.BandeirasDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -66,5 +68,9 @@ public interface ImpressaoNFeRepository extends Repository<NotaFiscal, Long>  {
 	public List<Produto> buscarProdutosParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
 
 	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro);
+
+	List<BandeirasDTO> obterNotafiscalImpressaoBandeira(FiltroImpressaoNFEDTO filtro);
+
+	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana, Long forncedorId);
 	
 }

@@ -2,15 +2,30 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class BandeirasDTO  implements Serializable{
+public class BandeirasDTO implements Serializable{
 
 	private static final long serialVersionUID = -7847418746083619011L;
+	
+	private Long numeroNotaFiscal;
+	
+	private Long serieNotaFiscal;
+	
+	private String chaveNFe;
+		
+	private Long codigoEditor;
+	
+	private String nomeEditor;
+	
+	private Date dataSaida;
+	
+	private Long volume;
 	
 	@Export(label="Cód. Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=2)
 	private String codProduto;
@@ -35,16 +50,76 @@ public class BandeirasDTO  implements Serializable{
 	private Date data;
 	
 	public BandeirasDTO() {
-		
+		super();
 	}
 	
-	public BandeirasDTO(String codProduto, String nomeProduto,
-			Long edProduto, Integer pctPadrao) {
+	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor, String chaveNFe) {
 		super();
-		this.codProduto = codProduto;
-		this.nomeProduto = nomeProduto;
-		this.edProduto = edProduto;
-		this.pctPadrao = pctPadrao;
+		this.numeroNotaFiscal = numeroNotaFiscal;
+		this.serieNotaFiscal = serieNotaFiscal;
+		this.codigoEditor = codigoEditor;
+		this.nomeEditor = nomeEditor;
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		this.dataSaida = c.getTime();
+		this.chaveNFe = chaveNFe;
+	}
+	
+	public Long getNumeroNotaFiscal() {
+		return numeroNotaFiscal;
+	}
+
+	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+		this.numeroNotaFiscal = numeroNotaFiscal;
+	}
+
+	public Long getSerieNotaFiscal() {
+		return serieNotaFiscal;
+	}
+
+	public void setSerieNotaFiscal(Long serieNotaFiscal) {
+		this.serieNotaFiscal = serieNotaFiscal;
+	}
+
+	public String getChaveNFe() {
+		return chaveNFe;
+	}
+
+	public void setChaveNFe(String chaveNFe) {
+		this.chaveNFe = chaveNFe;
+	}
+
+	public Long getCodigoEditor() {
+		return codigoEditor;
+	}
+
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
+	}
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
+
+	public Date getDataSaida() {
+		return dataSaida;
+	}
+
+	public void setDataSaida(Date dataSaida) {
+		this.dataSaida = dataSaida;
+	}
+
+	public Long getVolume() {
+		return volume;
+	}
+
+	public void setVolume(Long volume) {
+		this.volume = volume;
 	}
 
 	public String getCodProduto() {

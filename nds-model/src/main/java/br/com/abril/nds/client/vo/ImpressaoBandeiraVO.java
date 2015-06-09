@@ -10,7 +10,9 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	
 	private static final long serialVersionUID = -8669011482729203456L;
 	
-	private String forncedor;
+	private String fornecedor;
+	
+	private String editor;
 	
 	private String semana;
 	
@@ -24,22 +26,25 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	
 	private String dataEnvio;
 	
-	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana,
-			Date dataEnvio) {
+	private String chaveNFe;
+	
+	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana, Date dataEnvio, String editor, String chaveNFe) {
 		
 		this.titulo = "DEVOLUÇÃO AO FORNECEDOR";
-		this.forncedor = fornecedor.getRazaoSocial();
+		this.fornecedor = fornecedor.getNomeFantasia() != null ? fornecedor.getNomeFantasia() : fornecedor.getRazaoSocial();
 		this.semana = "SEMANA " + (semana.toString().length() > 4 ? semana.toString().substring(4) : semana.toString());
 		this.praca = fornecedor.getPraca();
-		this.canal = fornecedor.getCanalDistribuicao().getDescricao();
+		this.canal = fornecedor.getCanalDistribuicao() != null ? fornecedor.getCanalDistribuicao().getDescricao() : null;
 		this.volumes = volumes;
 		this.dataEnvio = DateUtil.formatarDataPTBR(dataEnvio);
+		this.editor = editor;
+		this.chaveNFe = chaveNFe;
 	}
 
-	public ImpressaoBandeiraVO(String forncedor, String semana,
+	public ImpressaoBandeiraVO(String fornecedor, String semana,
 			String praca, String canal, String volumes, String dataEnvio, String titulo) {
 		
-		this.forncedor = forncedor == null? "" : forncedor;
+		this.fornecedor = fornecedor == null? "" : fornecedor;
 		this.semana = semana == null? "" : semana;
 		this.praca = praca == null? "" : praca;
 		this.canal = canal == null? "" : canal;
@@ -51,13 +56,21 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	public ImpressaoBandeiraVO(){}
 	
 	public String getFornecedor() {
-		return forncedor;
+		return fornecedor;
 	}
 	
-	public void setFornecedor(String forncedor) {
-		this.forncedor = forncedor;
+	public void setFornecedor(String fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 	
+	public String getEditor() {
+		return editor;
+	}
+
+	public void setEditor(String editor) {
+		this.editor = editor;
+	}
+
 	public String getSemana() {
 		return semana;
 	}
@@ -105,4 +118,21 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	public void setDataEnvio(String dataEnvio) {
 		this.dataEnvio = dataEnvio;
 	}
+
+	public String getForncedor() {
+		return fornecedor;
+	}
+
+	public void setForncedor(String forncedor) {
+		this.fornecedor = forncedor;
+	}
+
+	public String getChaveNFe() {
+		return chaveNFe;
+	}
+
+	public void setChaveNFe(String chaveNFe) {
+		this.chaveNFe = chaveNFe;
+	}
+	
 }

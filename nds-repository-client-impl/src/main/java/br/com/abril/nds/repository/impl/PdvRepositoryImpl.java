@@ -100,7 +100,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		.append(" LEFT JOIN telefonePdv.telefone telefone ")
 		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
 		.append(" WHERE cota.id = :idCota ")
-		.append(" AND enderecoPdv.principal = true ")
+		.append(" AND (enderecoPdv.principal = true ")
+		.append(" OR enderecoPdv = (select max(epdv) from EnderecoPDV epdv where epdv = enderecoPdv)) ")
 		
 		.append(" group by pdv.id");
 		

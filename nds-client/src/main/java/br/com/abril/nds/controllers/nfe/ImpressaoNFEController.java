@@ -120,7 +120,6 @@ public class ImpressaoNFEController extends BaseController {
     }
 
 	private void iniciarComboRoteiro() {
-		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
 		
 		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
 		
@@ -148,7 +147,8 @@ public class ImpressaoNFEController extends BaseController {
 	}
 		
 	@Post
-	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp) {
+		
 		// Paginação 
 		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
 		
@@ -162,7 +162,7 @@ public class ImpressaoNFEController extends BaseController {
 		
 		listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
 
-		if(listaCotasImpressaoNFe == null || listaCotasImpressaoNFe.isEmpty()){
+		if(listaCotasImpressaoNFe == null || listaCotasImpressaoNFe.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
@@ -176,8 +176,7 @@ public class ImpressaoNFEController extends BaseController {
 
 	}
 	
-	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,
-			int page) {
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		paginacao.setOrdenacao(Ordenacao.ASC);
 	    paginacao.setPaginaAtual(page);
@@ -188,6 +187,7 @@ public class ImpressaoNFEController extends BaseController {
 	}
 	
 	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
+		
 		if(!filtro.isFiltroValido()) {
 
 			List<String> listaMensagemValidacao = new ArrayList<String>(filtro.validarFiltro().values());

@@ -81,4 +81,6 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	
 	
 	ChamadaEncalhe obterPorEdicaoTipoChamadaEncalhe(ProdutoEdicao produtoEdicao, TipoChamadaEncalhe tipoChamadaEncalhe);
+
+	List<BandeirasDTO> obterBandeirasSemana(Intervalo<Date> intervalo, Long fornecedor, PaginacaoVO paginacaoVO);
 }

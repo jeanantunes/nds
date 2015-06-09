@@ -43,11 +43,9 @@ public class RoteiroRepositoryImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Roteiro> buscarRoteiroPorDescricao(String descricao,
-			MatchMode matchMode) {
+	public List<Roteiro> buscarRoteiroPorDescricao(String descricao, MatchMode matchMode) {
 		Criteria criteria = getSession().createCriteria(Roteiro.class);
-		criteria.add(Restrictions.ilike("descricaoRoteiro", descricao,
-				matchMode));
+		criteria.add(Restrictions.ilike("descricaoRoteiro", descricao, matchMode));
 		return criteria.list();
 	}
 
