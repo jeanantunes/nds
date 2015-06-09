@@ -706,15 +706,16 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			case COTA:
 			case DISTRIBUIDOR:
 				
-				hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
+				hql.append(" FROM NotaFiscal as notaFiscal ")
+					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.cota as cota ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
 					.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
 					.append(" join cota.pdvs pdv ")
-					.append(" join pdv.rotas rotaPdv ")
-					.append(" join rotaPdv.rota rota ")
-					.append(" join rota.roteiro roteiro ")
-					.append(" join roteiro.roteirizacao roteirizacao ")
-					.append(" join roteirizacao.box box ")
+					.append(" left outer join pdv.rotas rotaPdv ")
+					.append(" left outer join rotaPdv.rota rota ")
+					.append(" left outer join rota.roteiro roteiro ")
+					.append(" left outer join roteiro.roteirizacao roteirizacao ")
+					.append(" left outer join roteirizacao.box box ")
 					
 					.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ")
 					.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");
