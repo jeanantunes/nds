@@ -42,7 +42,7 @@ $(document).ready(function() {
 	        valFocus = jQuery(focus).val();      
 	    }
 	
-	    if (focus.attr('maxLength') == valFocus.length) {
+	    if (valFocus && focus.attr('maxLength') == valFocus.length) {
 	        var next = false;
 	        jQuery(":input[maxlength]").each(function(element) {  
 	            if (next) {

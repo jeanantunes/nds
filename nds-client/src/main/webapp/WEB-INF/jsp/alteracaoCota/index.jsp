@@ -521,12 +521,12 @@
         	<tr>
             	<td>Cota:</td>
 				<td width="120">
-					<input name="filtroAlteracaoCotaDTO.numeroCota"  class="campoDePesquisa"
+					<input name="filtroAlteracaoCotaDTO.numeroCota" class="campoDePesquisa"
 						   type="text"
 						   id="alteracao-cota-numeroCota"
 						   maxlength="255"
 						   style="width: 80px; margin-right: 5px; float: left;"
-						   onchange="pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota('#alteracao-cota-numeroCota', '#alteracao-cota-�', false, alteracaoCotaController.callBackSuccess,alteracaoCotaController.callBackErro);" />
+						   onchange="pesquisaCotaAlteracaoCota.pesquisarPorNumeroCota('#alteracao-cota-numeroCota', '#alteracao-cota-nomeCota', false, alteracaoCotaController.callBackSuccess, alteracaoCotaController.callBackErro);" />
 
 				</td>
               	<td>Nome:</td>
