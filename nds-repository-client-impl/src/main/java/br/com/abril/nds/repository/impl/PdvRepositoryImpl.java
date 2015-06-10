@@ -86,7 +86,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		hql.append("SELECT pdv.id as id, pdv.nome as nomePDV, " )
 				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
 				.append("  pdv.contato as contato,")
-				.append("  endereco.tipoLogradouro || ' ' || endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
+				.append("  endereco.tipoLogradouro || ' ' || endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as endereco, ")
 				.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
 				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
 				.append("  pdv.status as statusPDV ,")
@@ -101,7 +101,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
 		.append(" WHERE cota.id = :idCota ")
 		.append(" AND (enderecoPdv.principal = true ")
-		.append(" OR enderecoPdv = (select max(epdv) from EnderecoPDV epdv where epdv = enderecoPdv)) ")
+		.append(" OR enderecoPdv.principal = false and enderecoPdv = (select max(epdv) from EnderecoPDV epdv where epdv.pdv = pdv)) ")
 		
 		.append(" group by pdv.id");
 		
