@@ -262,13 +262,15 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	 * @param query
 	 * @param qtdProdutos
 	 */
-	private void setarParametrosRomaneioParaExportacao(FiltroRomaneioDTO filtro,
-			Query query, int qtdProdutos) {
+	private void setarParametrosRomaneioParaExportacao(FiltroRomaneioDTO filtro, Query query, int qtdProdutos) {
 		
 		this.setarParametrosRomaneio(filtro, query);
 		
 		// Cenário em que o usuário selecionou dois ou mais produtos:
-		if (qtdProdutos > 1) {
+		if (filtro != null && filtro.getProdutos() != null && filtro.getProdutos().size() == 1) {
+			query.setParameter("idProdutoEdicao_lc", filtro.getProdutos().get(0));
+			query.setParameter("data_distribuicao_lc", filtro.getData());
+		} else if (qtdProdutos > 1) {
 			for (int index = 0; index < qtdProdutos; index++) {
 				query.setParameter("idProdutoEdicao" + index, filtro.getProdutos().get(index));
 				query.setParameter("idProdutoEdicao_lc" + index, filtro.getProdutos().get(index));
@@ -344,7 +346,19 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				// 
 				hql.append(",round(estudo_cota_.REPARTE / pe_.PACOTE_PADRAO) as pacote ");
 				hql.append(",mod(estudo_cota_.REPARTE, pe_.PACOTE_PADRAO) as quebra ");
-				hql.append(",COALESCE(estpdv_.REPARTE, estudo_cota_.REPARTE) as reparteTotal ");
+				hql.append(",COALESCE((SELECT SUM(COALESCE(estudoPDV.REPARTE, estudoCota.REPARTE)) FROM estudo e  ");
+				hql.append(" inner join estudo_cota estudoCota on estudoCota.estudo_id = e.ID         ");
+	            hql.append(" LEFT join estudo_pdv estudoPDV on estudoPDV.ESTUDO_ID = e.ID and estudoPDV.cota_id = estudoCota.cota_id ");
+				hql.append(" left join lancamento lc on lc.PRODUTO_EDICAO_ID = :idProdutoEdicao_lc");
+				hql.append(" and lc.DATA_LCTO_DISTRIBUIDOR = :data_distribuicao_lc");
+				hql.append(" where e.PRODUTO_EDICAO_ID = :idProdutoEdicao_lc");
+				hql.append(" and estudoCota.COTA_ID = cota_.ID ");
+				hql.append(" and e.lancamento_id = lc.id ");
+				if(filtro.getIdBox() != null) {
+					hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then 1 = 1 ");
+					hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID end ) ");
+				}
+				hql.append("),0) as reparteTotal");
 				
 			} else {
 				
@@ -364,16 +378,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 						hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then 1 = 1 ");
 						hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID end ) ");
 					}
-					// hql.append(" and estudoPDV.COTA_ID = cota_.ID ");
-					// hql.append(" and estudoPDV.PDV_ID = rotas_.PDV_ID ");
 					hql.append("),0) as qtdProduto").append(index);
-					/*
-					hql.append(",coalesce((select estudoPDVSub.REPARTE ");
-					hql.append(" from estudo_pdv estudoPDVSub join estudo_gerado est on est.ID = estudoPDVSub.ESTUDO_ID ");
-					hql.append(" where est.PRODUTO_EDICAO_ID =:idProdutoEdicao").append(index);
-					hql.append(" and estudoPDVSub.COTA_ID = cota_.ID ");
-					hql.append(" and estudoPDVSub.PDV_ID = rotas_.PDV_ID ");
-					hql.append("),0) as qtdProduto").append(index);*/
 				}
 			}
 		}

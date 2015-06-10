@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
 	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
@@ -72,7 +72,7 @@
 	<pageHeader>
 		<band height="87">
 			<subreport>
-				<reportElement x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true" uuid="7b1d9687-770a-42e1-aab7-065d896d6137"/>
+				<reportElement uuid="7b1d9687-770a-42e1-aab7-065d896d6137" x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -101,7 +101,7 @@
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "romaneio_page_header.jasper"]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement x="0" y="67" width="155" height="20" uuid="cf506883-7ab0-4e93-8db2-6d699a45a4fd"/>
+				<reportElement uuid="cf506883-7ab0-4e93-8db2-6d699a45a4fd" x="0" y="67" width="155" height="20"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -113,7 +113,7 @@
 				<textFieldExpression><![CDATA["<b>Código:</b> " + $F{codigoProduto}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="155" y="67" width="335" height="20" uuid="038aef85-48d1-4106-bf84-983e747ad3e1"/>
+				<reportElement uuid="038aef85-48d1-4106-bf84-983e747ad3e1" x="155" y="67" width="335" height="20"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -122,7 +122,7 @@
 				<textFieldExpression><![CDATA["<b>Produto:</b> " + $F{nomeProduto}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="490" y="67" width="100" height="20" uuid="2648af2f-74d8-4fe1-8a34-6ad7e3e2b591"/>
+				<reportElement uuid="2648af2f-74d8-4fe1-8a34-6ad7e3e2b591" x="490" y="67" width="100" height="20"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -131,7 +131,7 @@
 				<textFieldExpression><![CDATA["<b>Edição:</b> " + $F{edicao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="590" y="67" width="212" height="20" uuid="f901bdc9-4bd2-4942-961b-22fe9bcb98ae"/>
+				<reportElement uuid="f901bdc9-4bd2-4942-961b-22fe9bcb98ae" x="590" y="67" width="212" height="20"/>
 				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -145,7 +145,7 @@
 	<detail>
 		<band height="415" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement x="0" y="0" width="802" height="415" uuid="e22c977b-84ab-4f9c-aa3e-0b9ff7c94b5a"/>
+				<reportElement uuid="e22c977b-84ab-4f9c-aa3e-0b9ff7c94b5a" x="0" y="0" width="802" height="415"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
