@@ -650,6 +650,7 @@ public class NFeServiceImpl implements NFeService {
 							this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuintesExigemNFe);
 							notasGeradas = true;
 							break;
+							
 						}
 					} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_A_JORNALEIROS_DIVERSOS)
 							&& filtro.getNotaFiscalTipoEmissao() != null
@@ -657,23 +658,24 @@ public class NFeServiceImpl implements NFeService {
 						
 						this.gerarNotaFiscalUnificada(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuintesNaoExigemNFe);
 						notasGeradas = true;
-						if(filtro.getNotaFiscalTipoEmissao() != null
-								&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+						
+						if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
 							break;
 						}
 					} else if(dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.CONSOLIDA_EMISSAO_POR_DESTINATARIO)
 							&& filtro.getNotaFiscalTipoEmissao() != null
-								&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
+							&& !filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.COTA_CONTRIBUINTE_EXIGE_NFE)) {
 						
 						this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasNaoContribuintesNaoExigemNFe);
 						notasGeradas = true;
-						if(filtro.getNotaFiscalTipoEmissao() != null
-								&& filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
+						
+						if(filtro.getNotaFiscalTipoEmissao() != null && filtro.getNotaFiscalTipoEmissao().equals(NotaFiscalTipoEmissaoRegimeEspecial.CONSOLIDADO)) {
 							break;
 						}
 					}
 					
 					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao, parametrosSistema, cotasContribuintesExigemNFe);
+					
 					if(notas != null && !notas.isEmpty() ) {
 						notasGeradas = true;
 					}
@@ -684,6 +686,7 @@ public class NFeServiceImpl implements NFeService {
 			
 			LOGGER.error("Erro ao Gerar NF-e", e);
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao Gerar NF-e");
+			
 		}
 		
 		if(!notasGeradas) {
