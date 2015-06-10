@@ -27,6 +27,12 @@ $(function(){
 			    title="Confirmar"><a id="btnGerar"  isEdicao="true" href="javascript:;" rel="tipsy"><img
 					border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
 			</span>
+			
+		  	 <span class="bt_novos"
+			    title="Unificar arquivos FC/DINAP"><a id="btnUnificar"  isEdicao="true" href="javascript:;" rel="tipsy">
+			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_change.png"></a>
+			</span>
+		
 		</div>
 	</div>
     <br/>
@@ -67,5 +73,14 @@ $(function(){
 	style="display: none">
 	<legend>Arquivos Gerados</legend>
 	<h2>Quantidade de Arquivos Gerados:&nbsp;<spam id="qtdArquivosGerados">0</spam></h2>
+
+</fieldset>
+
+
+<fieldset id="resultado_unificacao" class="grids classFieldset"
+	style="display: none">
+	<legend>Resultado da Unificação</legend>
+	
+	<h2>&nbsp;<spam id="qtdArquivosUnificados">Unificado com Sucesso</spam></h2>
 
 </fieldset>

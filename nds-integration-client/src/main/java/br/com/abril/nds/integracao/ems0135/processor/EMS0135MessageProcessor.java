@@ -210,9 +210,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
         
-        if ( input.getNumeroNotaEnvio() != null && !"".equals(input.getNumeroNotaEnvio().trim()))
-        	notafiscalEntrada.setNumeroNotaEnvio(Long.parseLong(input.getNumeroNotaEnvio()));
-      
+        notafiscalEntrada.setNumeroNotaEnvio(Long.parseLong(input.getNumeroNotaEnvio()));
         
         notafiscalEntrada.setValorBruto(BigDecimal.ZERO);
         
@@ -576,10 +574,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 query.setParameter("serie", serie);
             }
         } else {
-        	if ( numeroNotaEnvio != null && !"".equals(numeroNotaEnvio.trim()))
-              query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
-        	else
-        		 query.setParameter("numeroNotaEnvio", Long.parseLong("-1"));
+            query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
         }
         
         return (NotaFiscalEntradaFornecedor) query.uniqueResult();
@@ -599,10 +594,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         hql.append("from NotaFiscalEntradaFornecedor nf ").append("where nf.numeroNotaEnvio = :numeroNotaEnvio ");
         
         Query query = super.getSession().createQuery(hql.toString());
-        if ( numeroNotaEnvio != null && !"".equals(numeroNotaEnvio.trim()))
-        	query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
-        else
-        	query.setParameter("numeroNotaEnvio", Long.parseLong("-1"));
+        query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
         return (NotaFiscalEntradaFornecedor) query.uniqueResult();
         
     }

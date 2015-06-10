@@ -19,6 +19,10 @@ GeracaoArquivos.prototype.init = function() {
 	$("#btnGerar", this.workspace).click(function() {
 		_this.btnGerarOnClick();
 	});
+	
+	$("#btnUnificar", this.workspace).click(function() {
+		_this.btnUnificarOnClick();
+	});
 
 	$("#tipoArquivo", this.workspace).change(function() {
 		_this.tipoArquivoGerarOnChange();
@@ -67,6 +71,28 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 			}
 		});
 	}
+	
+};
+
+
+GeracaoArquivos.prototype.btnUnificarOnClick = function() {
+
+	
+	
+	var params = {};
+		
+		$.postJSON(this.path + 'unificar',
+				params, 
+				function(data) {
+					$("#resultado_unificacao", this.workspace).show();
+					$("#qtdArquivosUnificados", this.workspace).html(data);
+				},
+				function(result) {
+					$("#resultado_unificacao", this.workspace).show();
+					$("#qtdArquivosUnificados", this.workspace).html(0);
+				}
+		);
+	
 	
 };
 
