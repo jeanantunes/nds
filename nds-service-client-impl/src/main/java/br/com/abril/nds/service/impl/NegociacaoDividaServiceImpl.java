@@ -242,8 +242,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         }
         
         // valida dados de entrada
-        this.validarDadosEntrada(msgs, parcelas, valorDividaParaComissao, usuarioResponsavel, comissaoParaSaldoDivida,
-                formaCobranca);
+        this.validarDadosEntrada(msgs, parcelas, valorDividaParaComissao, usuarioResponsavel, comissaoParaSaldoDivida, formaCobranca);
         
         // Cota e Cobrança originária não são validados no método acima
         // para evitar que se faça duas vezes a mesma consulta
@@ -263,8 +262,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         final List<Cobranca> cobrancasOriginarias = new ArrayList<Cobranca>();
         
-        final TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository
-                .buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+        final TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
         
         // Cobrança da onde se originou a negociação
         for (final Long idCobranca : idsCobrancasOriginarias) {
@@ -440,8 +438,24 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         cobranca.setValor(valorTotalParcela);
                         cobranca.setOriundaNegociacaoAvulsa(true);
                         dividaRepository.adicionar(divida);
-                        cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataOperacao, banco.getNumeroBanco(),
-                                null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
+                        
+                        String nossoNumero =
+                				Util.gerarNossoNumero(
+                					cota.getNumeroCota(), 
+                					cobranca.getDataEmissao(), 
+                					banco != null ? banco.getNumeroBanco() : "0",
+                					null,
+                					divida.getId(),
+                					banco != null ? banco.getAgencia() : 0,
+                					banco != null ? banco.getConta() : 0,
+                					banco != null && banco.getCarteira() != null ? banco.getCarteira() : null);
+                			
+            			cobranca.setNossoNumero(nossoNumero);
+            			
+            			String digitoVerificador = Util.calcularDigitoVerificador(nossoNumero, banco != null ? banco.getCodigoCedente() : "0", cobranca.getDataVencimento());
+            			cobranca.setDigitoNossoNumero(digitoVerificador);
+            			cobranca.setNossoNumeroCompleto(nossoNumero + ((digitoVerificador != null) ? digitoVerificador : ""));
+                        
                         cobrancaRepository.adicionar(cobranca);
                     }
                 }

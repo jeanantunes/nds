@@ -12,7 +12,7 @@ import org.w3c.dom.Document;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nfe.integracao.NfeStatusServico2Stub;
+import br.com.abril.nfe.integracao.NfeRecepcao2Stub;
 
 public class StatusServicoUF {
 
@@ -26,7 +26,10 @@ public class StatusServicoUF {
 		
 	
 	@Test
-	public String status(String xml) {
+	public String status() {
+		
+		String xml = "";
+		
 		try {
 			Document doc = UtilServer.getXml(xml);
 			String uf = UtilServer.getValorTag(doc.getDocumentElement(), "cUF", false);
@@ -35,18 +38,18 @@ public class StatusServicoUF {
 			String versao = doc.getDocumentElement().getAttribute("versao");
 
 			OMElement ome = AXIOMUtil.stringToOM(xml);
-			NfeStatusServico2Stub.NfeDadosMsg dadosMsg = new NfeStatusServico2Stub.NfeDadosMsg();
+			NfeRecepcao2Stub.NfeDadosMsg dadosMsg = new NfeRecepcao2Stub.NfeDadosMsg();
 			dadosMsg.setExtraElement(ome);
 
-			NfeStatusServico2Stub.NfeCabecMsg nfeCabecMsg = new NfeStatusServico2Stub.NfeCabecMsg();
+			NfeRecepcao2Stub.NfeCabecMsg nfeCabecMsg = new NfeRecepcao2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
 			nfeCabecMsg.setVersaoDados(versao);
 
-			NfeStatusServico2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeStatusServico2Stub.NfeCabecMsgE();
+			NfeRecepcao2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeRecepcao2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
 
-			NfeStatusServico2Stub stub = new NfeStatusServico2Stub(url);
-			NfeStatusServico2Stub.NfeStatusServicoNF2Result result = stub.nfeStatusServicoNF2(dadosMsg, nfeCabecMsgE);
+			NfeRecepcao2Stub stub = new NfeRecepcao2Stub(url);
+			NfeRecepcao2Stub.NfeRecepcaoLote2Result result = stub.nfeRecepcaoLote2(dadosMsg, nfeCabecMsgE);
 
 			return result.getExtraElement().toString();
 		} catch (Exception e) {
