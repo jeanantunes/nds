@@ -91,7 +91,7 @@ public class AlteracaoCotaRepositoryImpl extends
 				.append("LEFT OUTER JOIN ENDERECO_COTA enderecoCota on cota.ID=enderecoCota.COTA_ID ")
 				.append("LEFT OUTER JOIN ENDERECO endereco on enderecoCota.ENDERECO_ID=endereco.ID ")
 				.append("LEFT OUTER JOIN BOX box on cota.BOX_ID=box.ID ")
-				.append("LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA parametroCobranca on cota.ID=parametroCobranca.COTA_ID  ");
+				.append("LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA parametroCobranca on cota.PARAMETRO_COBRANCA_ID=parametroCobranca.ID  ");
 		
 				if (filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor() != null 
 						&& OpcoesFiltro.SIM.equals(filtroAlteracaoCotaDTO.getUtilizaParametroCobrancaDistribuidor())) {

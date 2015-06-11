@@ -130,8 +130,7 @@ public class AlteracaoCotaServiceImpl implements AlteracaoCotaService {
 	 * @param filtroAlteracaoCotaDTO
 	 * @param cota
 	 */
-	private void atribuirValoresFinanceiro(
-			FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
+	private void atribuirValoresFinanceiro(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
 
 		// Sugere Suspensao
 		cota.setSugereSuspensao(filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().getIsSugereSuspensao());
