@@ -60,6 +60,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
@@ -2749,7 +2750,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		for (ConsultaRoteirizacaoDTO item : listaRoteirizacaoDTO){
 			
-			if (!item.getNomeBox().equals("Especial")){
+			if (!item.getTipobox().equals(TipoBox.ESPECIAL)) {
 				
 				roteirizacaoDTO = item;
 				
