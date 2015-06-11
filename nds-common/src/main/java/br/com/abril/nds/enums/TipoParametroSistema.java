@@ -44,6 +44,11 @@ public enum TipoParametroSistema {
 	 * tipo SOBRA EM.
 	 */
 	NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM,
+	
+	/**
+	 * Número de dias permitido para lançamento de uma Alteracao de Reparte
+	 */
+	NUMERO_DIAS_PERMITIDO_ALTERACAO_REPARTE_LANCAMENTO,
 
 	/**
 	 * SMTP de autenticação da conta de e-mail do sistema

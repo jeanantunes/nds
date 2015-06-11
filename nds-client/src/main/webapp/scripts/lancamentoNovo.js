@@ -1654,16 +1654,18 @@ var lancamentoNovoController = $.extend(true, {
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/buscarReparteCotaProduto",
 			[
+			 	{name: "tipoDiferenca", value: $("#tipoDiferenca", lancamentoNovoController.workspace).val()},
 			 	{name: "codigoProduto", value: $("#codigoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
 			 	{name: "numeroEdicao", value: $("#edicaoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
 			 	{name: "numeroCota", value: $("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val()}
 			],
 			function(result) {
-				
 				$("#alteracaoReparteProduto", lancamentoNovoController.workspace).text(result);
 				$("#diferencaProdutoInput", lancamentoNovoController.workspace).focus();
 			},
-			null,
+			function(result) {
+				$("#alteracaoReparteProduto", lancamentoNovoController.workspace).text('');
+			},
 			true,
 			''
 		);
