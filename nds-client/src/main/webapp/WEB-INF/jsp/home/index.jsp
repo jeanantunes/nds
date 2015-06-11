@@ -186,6 +186,8 @@
 										|| (url.indexOf("/distribuicao/analiseEstudo") >= 0)) {
 										
 										$span = $($span).addClass("analise_estudo");
+									}else if (url.indexOf("/devolucao/semaforo") >= 0) {
+										$span = $($span).addClass("status_processamento_encalhe");
 									}
 									
 									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
@@ -290,8 +292,17 @@
 	})(jQuery);
 
 	$(function() {
-
-		$('#workspace').tabs();
+		
+		$('#workspace').tabs({
+			select: function(event, ui) {
+				$('#workspace').tabs();
+				if($('.ui-tabs-selected a').parent().find('.status_processamento_encalhe').index() > -1) {
+					semaforoController.obterStatusProcessosEncalhe();
+				}
+			}
+		});
+		
+		//$('#workspace').tabs();
 		
 		// Dinamicaly add tabs from menu
 		$("#menu_principal ul li ul li").click(function() {
@@ -398,40 +409,37 @@
 			.dialog( "option" ,  "title", "Changelog" )
 			.dialog( "open" );
 		});
-		
 	
-	
-	
-	var suppressKeyPress = false;	
-	$(document).keydown(function(event){		
-		var keyCode = $.ui.keyCode;
-		switch( event.keyCode ) {		
-		case keyCode.ENTER:
-		case keyCode.NUMPAD_ENTER:
-			if(suppressKeyPress){
-				event.stopPropagation();				
-				return false;
-			}else{
-				suppressKeyPress = true;
+		var suppressKeyPress = false;	
+		$(document).keydown(function(event){		
+			var keyCode = $.ui.keyCode;
+			switch( event.keyCode ) {		
+			case keyCode.ENTER:
+			case keyCode.NUMPAD_ENTER:
+				if(suppressKeyPress){
+					event.stopPropagation();				
+					return false;
+				}else{
+					suppressKeyPress = true;
+				}
+				break;
 			}
-			break;
-		}
-		return true;
-	});
+			return true;
+		});
 	
-	$(document).keyup(function(event){
-		var keyCode = $.ui.keyCode;
-		switch( event.keyCode ) {		
-		case keyCode.ENTER:
-		case keyCode.NUMPAD_ENTER:
-			suppressKeyPress = false;
-			break;
-		}
-		return true;
-	});
+		$(document).keyup(function(event){
+			var keyCode = $.ui.keyCode;
+			switch( event.keyCode ) {		
+			case keyCode.ENTER:
+			case keyCode.NUMPAD_ENTER:
+				suppressKeyPress = false;
+				break;
+			}
+			return true;
+		});
+		
 	});
 	//@ sourceURL=abas.js
-	
 	
 </script>
 
