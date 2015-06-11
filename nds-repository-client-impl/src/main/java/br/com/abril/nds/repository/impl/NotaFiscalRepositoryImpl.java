@@ -743,11 +743,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" AND mffc.notaFiscalLiberadaEmissao = :true ")
 		.append(" AND mffc.qtde > 0 ");
 		
-		if(filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado()) {
+		if(filtro.isNotaFiscalVendaConsignado() != null && filtro.isNotaFiscalVendaConsignado()) {
 			hql.append(" AND mffc.notaFiscalVendaEmitida = :false ");
 		}
 		
-		if(filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica()) {
+		if(filtro.isNotaFiscalDevolucaoSimbolica() != null && filtro.isNotaFiscalDevolucaoSimbolica()) {
 			hql.append(" AND mffc.notaFiscalDevolucaoSimbolicaEmitida = :false ");
 		}
 
@@ -817,8 +817,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		query.setParameter("true", true);
 		
-		if((filtro.getNotaFiscalVendaConsignado() != null && filtro.getNotaFiscalVendaConsignado())
-				|| (filtro.getNotaFiscalDevolucaoSimbolica() != null && filtro.getNotaFiscalDevolucaoSimbolica())) {
+		if((filtro.isNotaFiscalVendaConsignado() != null && filtro.isNotaFiscalVendaConsignado())
+				|| (filtro.isNotaFiscalDevolucaoSimbolica() != null && filtro.isNotaFiscalDevolucaoSimbolica())) {
 			
 			query.setParameter("false", false);
 		}

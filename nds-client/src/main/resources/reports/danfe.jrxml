@@ -728,7 +728,7 @@ WWW.NFE.FAZENDA.GOV.BR/PORTAL OU NO SITE DA SEFAZ AUTORIZADORA]]></text>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement style="dados" x="662" y="128" width="145" height="16" uuid="9704098f-d59b-4956-a8b7-2479c7827ed2"/>
 				<textElement textAlignment="Right">
-					<font isStrikeThrough="true"/>
+					<font isStrikeThrough="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{emissorCNPJ}.length() == 14 ? $F{emissorCNPJ}.substring(0,2) + "." +
 $F{emissorCNPJ}.substring(2,5) + "." + $F{emissorCNPJ}.substring(5,8) + "/" +

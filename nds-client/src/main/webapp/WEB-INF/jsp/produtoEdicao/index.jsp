@@ -171,7 +171,7 @@ fieldset {
 
 					<div class="ldForm">
 						<fieldset style="width: 655px !important; margin-bottom: 5px;">
-							<legend>Identifica&ccedil;&atilde;o xxxx</legend>
+							<legend>Identifica&ccedil;&atilde;o</legend>
 							<table width="648" border="0" cellspacing="1" cellpadding="1">
 								<thead />
 								<tbody>
