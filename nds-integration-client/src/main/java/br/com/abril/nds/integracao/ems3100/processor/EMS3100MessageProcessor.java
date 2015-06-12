@@ -117,7 +117,7 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 		.append(" 		from fechamento_diario fd ")
 		.append(" 		where fd.data_fechamento < (select data_operacao from distribuidor)) ")
 		.append(" and l.status = :statusFechado ")
-		.append(" group by p.codigo, pe.NUMERO_EDICAO, l.id ")
+		.append(" group by c.id, p.codigo, pe.NUMERO_EDICAO")
 		.append(" order by c.NUMERO_COTA, p.codigo, pe.NUMERO_EDICAO ");
 		
 		Query query = this.getSession().createSQLQuery(hql.toString());
