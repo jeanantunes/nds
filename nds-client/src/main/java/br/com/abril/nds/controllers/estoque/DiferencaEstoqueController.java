@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.OrdenacaoColunaLancamento;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -55,6 +58,8 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -63,10 +68,12 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ItemNotaEnvioService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -136,6 +143,12 @@ public class DiferencaEstoqueController extends BaseController {
     
     @Autowired
     private ItemNotaEnvioService itemNotaEnvioService;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
+    
+    @Autowired
+    private ParametroSistemaService parametroSistemaService;
     
     private static final String FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE = "filtroPesquisaLancamento";
     
@@ -2345,14 +2358,12 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         }
     }
     
-    private void validarNovaDiferenca(final DiferencaVO diferenca,
-            final TipoDiferenca tipoDiferenca){
+    private void validarNovaDiferenca(final DiferencaVO diferenca, final TipoDiferenca tipoDiferenca) {
         
         final List<String> listaMensagensErro = new ArrayList<String>();
         
         final ProdutoEdicao produtoEdicao =
-                produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-                        diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
+                produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(diferenca.getCodigoProduto(), diferenca.getNumeroEdicao());
         
         if (produtoEdicao == null) {
             
@@ -2364,10 +2375,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         
         if (!TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())) {
             
-            mensagemErro =
-                    validarEstoqueDiferenca(
-                            diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade() ,
-                            tipoDiferenca, false);
+            mensagemErro = validarEstoqueDiferenca(diferenca.getQtdeEstoqueAtual(),diferenca.getQuantidade(), tipoDiferenca, false);
         }
         
         if (mensagemErro != null) {
@@ -2396,8 +2404,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                     + tipoDiferenca.getDescricao() + "' não pode ser igual a zero!";
         }
         
-        if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
-                || TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
+        if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca) || TipoDiferenca.FALTA_EM.equals(tipoDiferenca)) {
             
             if(TipoDiferenca.FALTA_DE.equals(tipoDiferenca)){
                 
@@ -2413,7 +2420,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                             + "' não pode ser maior que a quantidade do campo [Reparte] da Cota!";
                 }
                 
-            }else{
+            } else {
                 
                 if (qtdeEstoqueAtual == null
                         || quantidade.compareTo(qtdeEstoqueAtual) > 0) {
@@ -2500,8 +2507,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     @SuppressWarnings("unchecked")
     private DiferencaVO obterDiferencaPorId(final Long idDiferenca) {
         
-        final List<DiferencaVO> listaDiferencas =
-                (List<DiferencaVO>) httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
+        final List<DiferencaVO> listaDiferencas = (List<DiferencaVO>) httpSession.getAttribute(LISTA_DIFERENCAS_PESQUISADAS_SESSION_ATTRIBUTE);
         
         if (listaDiferencas == null || listaDiferencas.isEmpty()) {
             
@@ -2563,8 +2569,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 mapa.put("rateios",rateiosDiferenca);
                 
                 result.use(CustomJson.class).from(mapa).serialize();
-            }
-            else{
+            } else {
                 
                 final Map<String, Object> mapa = new TreeMap<String, Object>();
                 mapa.put("diferenca", diferencaVO);
@@ -2584,7 +2589,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     }
     
     @SuppressWarnings({ "unchecked"})
-    private List<RateioCotaVO> obterRateiosEdicaoDiferenca(final Long idDiferenca){
+    private List<RateioCotaVO> obterRateiosEdicaoDiferenca(final Long idDiferenca) {
         
         final Map<Long, List<RateioCotaVO>> mapaRateioCotas =
                 (Map<Long, List<RateioCotaVO>>) httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
@@ -2657,7 +2662,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
     
     @Post
     @Path("/lancamento/buscarReparteCotaProduto")
-    public void buscarReparteCotaProduto(final String codigoProduto, final String numeroEdicao, final Integer numeroCota) {
+    public void buscarReparteCotaProduto(final TipoDiferenca tipoDiferenca, final String codigoProduto, final String numeroEdicao, final Integer numeroCota) {
         
         if(numeroCota == null) {
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota deve ser informada."));
@@ -2667,18 +2672,46 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto deve ser informado."));
         }
         
-        final ProdutoEdicao produtoEdicao =
-                produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-                        codigoProduto, numeroEdicao);
-        
+        final ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
         if (produtoEdicao == null) {
             
             result.nothing();
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("Produto %s / %s não encontrado.", codigoProduto, numeroEdicao)));
             
         } else {
+        	
+        	if(TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.equals(tipoDiferenca)) {
+        		
+        		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+        		if(cota != null) {
+        			
+        			Lancamento lancamento = 
+        					lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+        			if(lancamento == null) {
+        				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Erro ao obter o Lançamento."));
+        			}
+        			DateTime dataLancamento = new DateTime(lancamento.getDataLancamentoDistribuidor());
+        			DateTime dataOperacao = new DateTime(distribuidorService.obterDataOperacaoDistribuidor());
+        			
+        			ParametroSistema parametroSistema = 
+        				parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.NUMERO_DIAS_PERMITIDO_ALTERACAO_REPARTE_LANCAMENTO);
+        			if(parametroSistema == null) {
+        				throw new ValidacaoException(TipoMensagem.WARNING, "Parâmetro de Limite de Dias permitidos para Alteração de Reparte não configurado.");
+        			}
+        			
+        			Long diasPermitidos = Long.parseLong(parametroSistema.getValor());
+        			if(Days.daysBetween(dataLancamento, dataOperacao).getDays() > diasPermitidos) {
+        				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+        						String.format("Alteração não permitida. Excede %s dias.", diasPermitidos)));
+        			}
+        			
+        		} else {
+        			
+        			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número de Cota inválido."));
+        		}
+        	}
             
-            final Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(
-                    produtoEdicao.getId(), numeroCota);
+            final Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(produtoEdicao.getId(), numeroCota);
             
             result.use(Results.json()).withoutRoot().from(qtde).serialize();
         }
