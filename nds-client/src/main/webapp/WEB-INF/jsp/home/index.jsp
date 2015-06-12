@@ -295,7 +295,7 @@
 		
 		$('#workspace').tabs({
 			select: function(event, ui) {
-				$('#workspace').tabs();
+				// $('#workspace').tabs();
 				if($('.ui-tabs-selected a').parent().find('.status_processamento_encalhe').index() > -1) {
 					semaforoController.obterStatusProcessosEncalhe();
 				}
