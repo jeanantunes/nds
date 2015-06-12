@@ -254,6 +254,6 @@ public class EstudoDAO {
 	    estudo.setPracaVeraneio(rs.getBoolean("PRACA_VERANEIO"));
 	    estudo.setVendaMediaMais(rs.getBigDecimal("VENDA_MEDIA_MAIS").toBigInteger());
 
-	}
+		}
     }
 }
