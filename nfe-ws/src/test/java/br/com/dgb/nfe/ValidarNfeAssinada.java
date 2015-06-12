@@ -13,6 +13,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -23,8 +26,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 public class ValidarNfeAssinada {
 
 	private static final String NFE = "NFe";
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(StatusServicoUF.class); 
+	
+	@Test
+	public void validarAssinatura() {
 
-	public static void main(String[] args) {
+		LOGGER.debug("metodo de validação do arquivo de nfe assinado");
 		
 		XMLSignatureFactory factory = XMLSignatureFactory.getInstance("DOM", new org.jcp.xml.dsig.internal.dom.XMLDSigRI());
 
@@ -45,28 +53,26 @@ public class ValidarNfeAssinada {
 			if (nl.getLength() == 0) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "Cannot find Signature element");
 			}
-
-			// Create a DOMValidateContext and specify a KeySelector
-			// and document context.
+			
 			DOMValidateContext valContext = new DOMValidateContext(new KeyValueKeySelector(), nl.item(0));
 
 			XMLSignature signature = null;
 			
 			signature = factory.unmarshalXMLSignature(valContext);
 			
-			System.out.println(signature.validate(valContext));
 			
-			System.out.println(signature.getSignatureValue().validate(valContext));
-	
+			LOGGER.debug("Validar: " + signature.validate(valContext));
+			
+			LOGGER.debug("Pegar Contexto: " + signature.getSignatureValue().validate(valContext));
 			
 		    // Valida a XMLSignature.
 		    boolean coreValidity = signature.validate(valContext);
 
 		    // Checa o status da validação
 		    if (coreValidity == false) {
-		        System.err.println("Falha na Assinatura!");
+		    	LOGGER.debug("Falha na Assinatura!");
 		    } else {
-		        System.out.println("Assinatura Correta!");
+		    	LOGGER.debug("Assinatura Correta!");
 		    }
 		    boolean sv = signature.getSignatureValue().validate(valContext);
 		    System.out.println("signature validation status: " + sv);

@@ -2,6 +2,10 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -37,6 +41,8 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
 	private Long idCota;
 	
 	private Long idRoteirizacao;
+	
+	private TipoBox tipobox;
 	
 	public ConsultaRoteirizacaoDTO() {}
 
@@ -223,6 +229,13 @@ public class ConsultaRoteirizacaoDTO  implements Serializable{
     public void setIdRoteirizacao(Long idRoteirizacao) {
         this.idRoteirizacao = idRoteirizacao;
     }
-	
+
+	public TipoBox getTipobox() {
+		return tipobox;
+	}
+
+	public void setTipobox(TipoBox tipobox) {
+		this.tipobox = tipobox;
+	}
 	
 }

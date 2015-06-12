@@ -354,20 +354,18 @@ public class NegociacaoDividaController extends BaseController {
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
-		if (idNegociacao != null){
+		if(idNegociacao != null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação já efetuada.");
 		}
 		
-		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) 
-				this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
+		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
 		
 		FormaCobranca formaCobranca = null;
 		
-		TipoNegociacao tipoNegociacao = negociacaoAvulsa ? 
-				TipoNegociacao.PAGAMENTO_AVULSO : TipoNegociacao.PAGAMENTO;
+		TipoNegociacao tipoNegociacao = negociacaoAvulsa ? TipoNegociacao.PAGAMENTO_AVULSO : TipoNegociacao.PAGAMENTO;
 
-		if (porComissao){
+		if(porComissao) {
 			
 			parcelas = null;
 			
@@ -381,8 +379,8 @@ public class NegociacaoDividaController extends BaseController {
 			formaCobranca.setRecebeCobrancaEmail(recebeCobrancaPorEmail);
 			
 			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
-			if (diasSemana != null){
-				for (DiaSemana codigoDia : diasSemana){
+			if(diasSemana != null) {
+				for (DiaSemana codigoDia : diasSemana) {
 					
 					ConcentracaoCobrancaCota concentracao = new ConcentracaoCobrancaCota();
 					concentracao.setDiaSemana(codigoDia);
@@ -395,7 +393,7 @@ public class NegociacaoDividaController extends BaseController {
 			formaCobranca.setConcentracaoCobrancaCota(concentracaoCobrancaCota);
 			comissaoUtilizar = null;
 			
-			if (diaInicio != null){
+			if(diaInicio != null) {
 			
 				List<Integer> diasMes = new ArrayList<Integer>();
 				diasMes.add(diaInicio);

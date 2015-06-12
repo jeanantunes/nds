@@ -1,7 +1,6 @@
 package br.com.abril.nds.integracao.ems3100.processor;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -20,6 +19,7 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.ExtratificacaoItem;
 import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -49,9 +49,8 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 		String codigoDistribuidor = (String) message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
 		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		dataOperacao = new Date(dataOperacao.getTime());
-		
-		List<ExtratificacaoItem> itens = this.obterMovimentoEstoqueCota(codigoDistribuidor, dataOperacao);
+						
+		List<ExtratificacaoItem> itens = this.obterMovimentoEstoqueCota(codigoDistribuidor);
 		
 		if(itens == null || itens.isEmpty()) {
 			return;
@@ -90,11 +89,8 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ExtratificacaoItem> obterMovimentoEstoqueCota(String codigoDistribuidor, Date dataOperacao) {
+	private List<ExtratificacaoItem> obterMovimentoEstoqueCota(String codigoDistribuidor) {
 
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select c.id as idCota ")
@@ -108,6 +104,7 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 		.append(", (sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else 0 end)  ")
 		.append("	- sum(case when (tm.OPERACAO_ESTOQUE = 'SAIDA' AND tm.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE') then mec.qtde else 0 end) ") 
 		.append("		- sum(case when (tm.OPERACAO_ESTOQUE = 'SAIDA' AND tm.GRUPO_MOVIMENTO_ESTOQUE = 'ENVIO_ENCALHE') then mec.qtde else 0 end)) as qtdVenda ")
+		.append(", (select count(0) from pdv pdv where pdv.cota_id = mec.cota_id) as qtdPDV ")
 		.append(" from movimento_estoque_cota mec ")
 		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
 		.append(" inner join lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ")
@@ -115,16 +112,17 @@ public class EMS3100MessageProcessor extends AbstractRepository implements Messa
 		.append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID ")
 		.append(" inner join produto p on p.id = pe.PRODUTO_ID ")
 		.append(" where 1 = 1 ")
-		.append("and (select cod_distribuidor_dinap from distribuidor) = :codigoDistribuidor ")
-		.append("and l.DATA_REC_DISTRIB between '2014-12-01' and '2015-01-22' ")
-		// .append("and l.DATA_REC_DISTRIB = :dataOperacao ")
-		.append(" and l.status = 'FECHADO'")
+		.append(" and (select cod_distribuidor_dinap from distribuidor) = :codigoDistribuidor ")
+		.append(" and l.DATA_REC_DISTRIB = (select max(data_fechamento) data_fechamento ")
+		.append(" 		from fechamento_diario fd ")
+		.append(" 		where fd.data_fechamento < (select data_operacao from distribuidor)) ")
+		.append(" and l.status = :statusFechado ")
 		.append(" group by p.codigo, pe.NUMERO_EDICAO, l.id ")
 		.append(" order by c.NUMERO_COTA, p.codigo, pe.NUMERO_EDICAO ");
 		
 		Query query = this.getSession().createSQLQuery(hql.toString());
-		// query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("codigoDistribuidor", codigoDistribuidor);
+		query.setParameter("statusFechado", StatusLancamento.FECHADO.name());
 		query.setResultTransformer(new AliasToBeanResultTransformer(ExtratificacaoItem.class));
 		
 		return query.list();

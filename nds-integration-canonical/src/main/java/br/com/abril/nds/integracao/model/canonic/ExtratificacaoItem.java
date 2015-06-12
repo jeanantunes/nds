@@ -27,7 +27,7 @@ public class ExtratificacaoItem extends Extratificacao implements Serializable {
 	
 	private BigDecimal qtdVenda;
 	
-	private BigDecimal qtdJornaleiros;
+	private BigDecimal qtdPDV;
 	
 	public BigInteger getIdCota() {
 		return idCota;
@@ -93,12 +93,12 @@ public class ExtratificacaoItem extends Extratificacao implements Serializable {
 		this.qtdVenda = qtdVenda;
 	}
 
-	public BigDecimal getQtdJornaleiros() {
-		return qtdJornaleiros;
+	public BigDecimal getQtdPDV() {
+		return qtdPDV;
 	}
 
-	public void setQtdJornaleiros(BigDecimal qtdJornaleiros) {
-		this.qtdJornaleiros = qtdJornaleiros;
+	public void setQtdPDV(BigDecimal qtdPDV) {
+		this.qtdPDV = qtdPDV;
 	}
 
 }
