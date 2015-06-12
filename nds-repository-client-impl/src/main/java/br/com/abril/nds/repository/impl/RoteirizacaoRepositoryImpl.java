@@ -147,7 +147,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		subquery.createAlias("rotas.rotaPDVs", "rotaPDVs");
 		subquery.createAlias("rotaPDVs.pdv", "pdv");
 		subquery.setProjection(Projections.projectionList().add(Projections.property("pdv.id")));
-		if ( roteiro.getTipoRoteiro().compareTo(TipoRoteiro.NORMAL) == 0 ){
+		if(roteiro.getTipoRoteiro().compareTo(TipoRoteiro.NORMAL) == 0 ) {
 			subquery.add(Restrictions.eq("tipoRoteiro", TipoRoteiro.NORMAL));
 			exibirPontoPrincipal =  Boolean.TRUE;
 		} else {
@@ -180,9 +180,9 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 				.add(Projections.property("cota.numeroCota"), "numeroCota")
 				.add(Projections.property("pessoa.nome"), "nome")));
 		
-	    if(Ordenacao.ASC ==  ordenacao){
+	    if(Ordenacao.ASC ==  ordenacao) {
 			criteria.addOrder(Order.asc(orderBy));
-		}else if(Ordenacao.DESC ==  ordenacao){
+		} else if(Ordenacao.DESC ==  ordenacao) {
 			criteria.addOrder(Order.desc(orderBy));
 		}
 		
@@ -194,7 +194,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro){
+	public List<ConsultaRoteirizacaoDTO> buscarRoteirizacao(FiltroConsultaRoteirizacaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -220,10 +220,10 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaRoteirizacaoDTO.class));
 		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
+		if(filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+		if(filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();  

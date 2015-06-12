@@ -530,15 +530,15 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	public List<FormaCobrancaFornecedorDTO> obterFormasCobrancaDistribuidorFornecedor() {
 		
 		StringBuilder sql = new StringBuilder().append("")                                       
-		.append("select null as numeroCota, pcc.cota_id as idCota, f.id as idFornecedor                              ")
+		.append("select null as numeroCota, c.id as idCota, f.id as idFornecedor                              ")
 		.append("from forma_cobranca fc                                                          ")
 		.append("left join parametro_cobranca_cota pcc on pcc.id = fc.PARAMETRO_COBRANCA_COTA_ID ")
 		.append("left join politica_cobranca pc on fc.id=pc.FORMA_COBRANCA_ID                    ")
 		.append("inner join forma_cobranca_fornecedor fcf on fcf.FORMA_COBRANCA_ID = fc.id       ")
 		.append("inner join fornecedor f on f.id = fcf.FORNECEDOR_ID                             ")
+		.append("left outer join cota c on c.parametro_cobranca_id = pcc.ID                      ")
 		.append("where 1=1                                                                       ")
-		.append("and fc.ativa = :ativa                                                           ")
-		.append("and pcc.cota_id is null                                                         ");
+		.append("and fc.ativa = :ativa                                                           ");
         
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
 		query.setParameter("ativa", true);
@@ -557,16 +557,15 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	public List<FormaCobrancaFornecedorDTO> obterFormasCobrancaCotaFornecedor() {
 		
 		StringBuilder sql = new StringBuilder().append("")                                       
-		.append("select c.numero_cota as numeroCota, pcc.cota_id as idCota, f.id as idFornecedor                              ")
+		.append("select c.numero_cota as numeroCota, c.id as idCota, f.id as idFornecedor                              ")
 		.append("from forma_cobranca fc                                                          ")
 		.append("left join parametro_cobranca_cota pcc on pcc.id = fc.PARAMETRO_COBRANCA_COTA_ID ")
 		.append("left join politica_cobranca pc on fc.id=pc.FORMA_COBRANCA_ID                    ")
-		.append("left join cota c on c.id = pcc.cota_id                                          ")
+		.append("left join cota c on c.parametro_cobranca_id = pcc.id                                          ")
 		.append("inner join forma_cobranca_fornecedor fcf on fcf.FORMA_COBRANCA_ID = fc.id       ")
 		.append("inner join fornecedor f on f.id = fcf.FORNECEDOR_ID                             ")
 		.append("where 1=1                                                                       ")
-		.append("and fc.ativa = :ativa                                                           ")
-		.append("and pcc.cota_id is not null                                                     ");
+		.append("and fc.ativa = :ativa                                                           ");
         
 		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
 
