@@ -1750,7 +1750,7 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
             return;
         
         for(RateioCotaVO rateio : rateioCotas) {
-            Cota cota = cotaRepository.obterPorNumerDaCota(rateio.getNumeroCota(), SituacaoCadastro.INATIVO);
+            Cota cota = cotaRepository.obterPorNumerDaCota(rateio.getNumeroCota(), Arrays.asList(SituacaoCadastro.INATIVO));
             if(cota != null)
                 throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + cota.getNumeroCota() + " está inativa.");
         }

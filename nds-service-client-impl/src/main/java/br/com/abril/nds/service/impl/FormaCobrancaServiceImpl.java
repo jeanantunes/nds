@@ -629,6 +629,9 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota) {
 		
 		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		if(cota == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, String.format("Cota %s não encontrada.", numeroCota));
+		}
 		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(cota.getParametroCobranca());
 
 		return formaCobranca;
