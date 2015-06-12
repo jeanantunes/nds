@@ -163,7 +163,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		sql.append("              (SELECT SUM(EPE.QTDE_RECEBIDA) "); 
 		
-		sql.append("               FROM estoque_produto_cota EPE "); 
+		sql.append("               FROM estoque_produto_cota EPE  force index NDX_COTA_PRODUTO"); 
 		
 		sql.append("               WHERE EPE.COTA_ID = C.ID ");
 		
@@ -174,7 +174,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 			
 	    sql.append("              (SELECT AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) "); 
 			
-		sql.append("               FROM estoque_produto_cota EPE "); 
+		sql.append("               FROM estoque_produto_cota EPE force index NDX_COTA_PRODUTO"); 
 			
 		sql.append("               WHERE EPE.COTA_ID = C.ID ");
 			
