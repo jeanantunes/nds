@@ -202,6 +202,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" rota.descricaoRota as descricaoRota , ")
 			.append(" roteiro.descricaoRoteiro as descricaoRoteiro , ")
 			.append(" box.id as idBox, 			")
+			.append(" box.tipoBox as tipobox,   ")
 			.append(" rota.id as idRota, 		")
 			.append(" roteiro.id as idRoteiro, 	")
 			.append(" cota.id as idCota,		")			

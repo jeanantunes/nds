@@ -34,24 +34,24 @@ public class NFeRecepcao {
              * para cada WebService existe um endereco Diferente.
              */
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx");
-            URL url = new URL("https://homologacao.nfe.fazenda.sp.gov.br/ws/nfeautorizacao.asmx");
+            URL url = new URL("https://nfe.fazenda.sp.gov.br/ws/nfestatusservico2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nferetrecepcao/NfeRetRecepcao2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfecancelamento/NfeCancelamento2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfeinutilizacao/NfeInutilizacao2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfeconsulta/NfeConsulta2.asmx");
             //URL url = new URL("https://homologacao.nfe.sefazvirtual.rs.gov.br/ws/nfestatusservico/NfeStatusServico2.asmx");
-            File file = new File("C:/Users/wrpaiva/certificadoAR/CertificadosHomologacaoNFe2013.pfx");
+            File file = new File("C:/Users/wrpaiva/Desktop/receita/certificado/certificado.jks");
             X509Certificate certificate = null;
 
             if (file.exists()) {
                 try {
                     KeyStore keyStore = KeyStore.getInstance("PKCS12");
                     InputStream is = new FileInputStream(file);
-                    String senha = "changeit";
+                    String senha = "arsp15";
                     keyStore.load(is, senha.toCharArray());
                     is.close();
 
-                    String alias = "{3ed46e23-51f5-462f-ab68-b5bea536993d}";
+                    String alias = "ar distribuidora de publi:8147127";
 
                     PrivateKey privateKey = null;
                     Enumeration e = keyStore.aliases();

@@ -427,15 +427,19 @@ public class NFeServiceImpl implements NFeService {
 					if(naturezaOperacao.isNotaFiscalDevolucaoSimbolica()) {
 						
 						filtro.setNotaFiscalDevolucaoSimbolica(true);
+						
 					} else if(naturezaOperacao.isNotaFiscalVendaConsignado()) {
 						
 						filtro.setNotaFiscalVendaConsignado(true);
+						
 					}
 					
 					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMFF(filtro);
+					
 				} else {
 				
 					cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscalMEC(filtro);
+					
 				}
 				
 				if (cotas == null || cotas.isEmpty()) {
@@ -1154,6 +1158,7 @@ public class NFeServiceImpl implements NFeService {
 		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()) {
 			
 			return notaFiscalService.consultaCotaExemplaresSumarizados(filtro, naturezaOperacao);
+			
 		} else {
 			
 			return this.listaRegimeEspecial(filtro, naturezaOperacao, distribuidor);	

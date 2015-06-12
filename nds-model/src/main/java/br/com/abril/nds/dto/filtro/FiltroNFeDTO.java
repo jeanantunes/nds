@@ -89,7 +89,7 @@ public class FiltroNFeDTO implements Serializable {
 		this.intervalorCotaFinal = intervalorCotaFinal;
 	}
 
-	public Boolean getNotaFiscalDevolucaoSimbolica() {
+	public Boolean isNotaFiscalDevolucaoSimbolica() {
 		return notaFiscalDevolucaoSimbolica;
 	}
 
@@ -97,7 +97,7 @@ public class FiltroNFeDTO implements Serializable {
 		this.notaFiscalDevolucaoSimbolica = notaFiscalDevolucaoSimbolica;
 	}
 
-	public Boolean getNotaFiscalVendaConsignado() {
+	public Boolean isNotaFiscalVendaConsignado() {
 		return notaFiscalVendaConsignado;
 	}
 
