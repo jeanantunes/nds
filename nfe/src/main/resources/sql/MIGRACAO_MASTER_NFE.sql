@@ -1288,3 +1288,6 @@ update natureza_operacao set TIPO_OPERACAO='SAIDA' where ID='36';
 update natureza_operacao set GERAR_NOTAS_REFERENCIADAS='1' where ID='36';
 
 alter table cota change EXIGE_NF_E EXIGE_NF_E tinyint(1) default '0' NOT NULL, change CONTRIBUINTE_ICMS CONTRIBUINTE_ICMS tinyint(1) default '0' NOT NULL;
+
+insert into natureza_operacao_tributo(NATUREZA_OPERACAO_ID,TRIBUTO_ID)values('3','1');
+insert into natureza_operacao_tributo(NATUREZA_OPERACAO_ID,TRIBUTO_ID)values('3','2');

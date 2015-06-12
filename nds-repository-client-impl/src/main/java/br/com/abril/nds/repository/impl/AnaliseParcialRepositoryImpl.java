@@ -807,7 +807,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 sql.append("' ");
             }
             if (queryDTO.elementoIsCotasAVista()) {
-                sql.append(" join parametro_cobranca_cota pcc on pcc.cota_id = cota.id ");
+            	
+                sql.append(" join parametro_cobranca_cota pcc on pcc.id = cota.parametro_cobranca_id ");
                 sql.append(" and pcc.tipo_cota = upper('");
                 sql.append(queryDTO.getValorElemento().replaceAll("-","_"));
                 sql.append("') ");
