@@ -56,8 +56,7 @@ import br.com.abril.nds.vo.EnderecoVO;
  *
  */
 @Repository
-public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Long> implements
-		EnderecoRepository {
+public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Long> implements EnderecoRepository {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoRepositoryImpl.class);
 	

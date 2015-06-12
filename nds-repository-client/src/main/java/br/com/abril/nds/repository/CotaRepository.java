@@ -429,7 +429,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
     
     TipoDistribuicaoCota obterTipoDistribuicao(Long idCota);
 
-    Cota obterPorNumerDaCota(Integer numeroCota, SituacaoCadastro situacao);
+    Cota obterPorNumerDaCota(Integer numeroCota, List<SituacaoCadastro> situacao);
     
     List<Cota> obterConjuntoCota(FiltroNFeDTO filtro);
 

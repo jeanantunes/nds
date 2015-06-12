@@ -18,6 +18,8 @@ import javax.annotation.PostConstruct;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -103,6 +105,8 @@ import com.google.gson.JsonObject;
 @Service
 public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidorService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParametrosDistribuidorServiceImpl.class);
+	
 	private final static String CHECKED = "checked";
 
 	private final static String UNDEFINED = "undefined";
@@ -182,23 +186,19 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@PostConstruct
 	public void initCouchDbClient() {
 		
-		/*
-		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
-			.setDbName(distribuidorService.obter().getCodigoDistribuidorDinap())
-			.setCreateDbIfNotExist(true)
-			.setProtocol(couchDbProperties.getProtocol())
-			.setHost(couchDbProperties.getHost())
-			.setPort(couchDbProperties.getPort())
-			.setUsername(couchDbProperties.getUsername())
-			.setPassword(couchDbProperties.getPassword())
-			.setMaxConnections(100)
-			.setConnectionTimeout(500);
+		String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
+		try {
+			Long codigoDistribuidorNumerico = Long.parseLong(codigoDistribuidor);
+			if(codigoDistribuidorNumerico < 1) {
+				codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
+			}
+		} catch (NumberFormatException nfe) {
 			
-	
-		this.couchDbClient = new CouchDbClient(properties);
-		*/
+			LOGGER.error("O código do Distribuidor deve ser numérico.", nfe);
+			codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
+		}
 		
-		this.couchDbClient = couchDBRepository.getCouchDBClient(distribuidorService.obter().getCodigoDistribuidorDinap(), true);
+		this.couchDbClient = couchDBRepository.getCouchDBClient(codigoDistribuidor, true);
 	}
 
 	/* (non-Javadoc)
