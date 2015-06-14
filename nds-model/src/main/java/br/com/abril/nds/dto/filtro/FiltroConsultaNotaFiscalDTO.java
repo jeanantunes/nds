@@ -38,7 +38,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long numeroNota;
 	
-	private String serie;
+	private Long serie;
 	
 	private String chave;
 	
@@ -299,11 +299,11 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		this.numeroNota = numeroNota;
 	}
 
-	public String getSerie() {
+	public Long getSerie() {
 		return serie;
 	}
 
-	public void setSerie(String serie) {
+	public void setSerie(Long serie) {
 		this.serie = serie;
 	}
 
