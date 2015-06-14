@@ -408,7 +408,7 @@ public class RecebimentoFisicoController extends BaseController {
                 
             }
             
-            if(filtro.getSerie() == null || filtro.getSerie().isEmpty()) {
+            if(filtro.getSerie() == null ) {
                 msgs.add("O campo Série é obrigatório");
             }
             
@@ -893,7 +893,7 @@ public class RecebimentoFisicoController extends BaseController {
     public void verificarNotaFiscalExistente(
             String cnpj,
             final Long numeroNotaFiscal,
-            final String serie,
+            final Long serie,
             final String indNFe,
             final String fornecedor,
             final String chaveAcesso) {
@@ -930,7 +930,7 @@ public class RecebimentoFisicoController extends BaseController {
             
             if (filtro.getNumeroNota() != null &&
                     (filtro.getIdFornecedor() == null || filtro.getIdFornecedor() == -1) &&
-                    (filtro.getSerie() == null || filtro.getSerie().isEmpty())){
+                    (filtro.getSerie() == null )){
                 
                 throw new ValidacaoException(
                         TipoMensagem.WARNING,
