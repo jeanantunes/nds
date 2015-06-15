@@ -60,6 +60,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -2302,7 +2303,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             
             hql.append(" and box.ID = :box ");
             param.put("box", filtro.getBox());
-        }
+          
+        } else {
+        	
+			hql.append(" and  box.tipo_box <> 'ESPECIAL' ");
+			hql.append(" and roteiro.TIPO_ROTEIRO <> 'ESPECIAL' ");
+			
+		}
         
         if(filtro.getRota() != null) {
             
@@ -4259,11 +4266,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             param.put("data", filtro.getDataDate());
         }
         
+       
         if(filtro.getBox() != null) {
             
             hql.append(" and box.ID = :box ");
             param.put("box", filtro.getBox());
-        }
+        }  else {
+			
+			hql.append(" and  box.tipo_box <> 'ESPECIAL' ");
+			hql.append(" and roteiro.TIPO_ROTEIRO <> 'ESPECIAL' ");
+			
+		}
         
         if(filtro.getRota() != null) {
             
