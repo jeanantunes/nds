@@ -45,14 +45,14 @@ public class Roteiro implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "ROTEIRIZACAO_ID")
-	@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private Roteirizacao roteirizacao;
 	
 	@OneToMany(orphanRemoval = true)
 	@JoinColumn( name="ROTEIRO_ID")
 	@Cascade(value = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.SAVE_UPDATE, CascadeType.DELETE})
 	@OrderBy("ordem ASC")
-	@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	private List<Rota> rotas = new ArrayList<Rota>();
 	
 	@Column(name="ORDEM", nullable = false)
