@@ -51,7 +51,7 @@ public abstract class Movimento extends Aprovacao {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO", nullable = false)
-	private Date dataCriacao;
+	private Date dataCriacao = new Date();
 
 	@ManyToOne(optional = false)
 	@Fetch(FetchMode.JOIN)
