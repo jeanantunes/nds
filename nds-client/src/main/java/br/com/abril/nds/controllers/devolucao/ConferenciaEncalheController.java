@@ -795,15 +795,16 @@ public class ConferenciaEncalheController extends BaseController {
 			if (info.getListaConferenciaEncalhe() != null && !info.getListaConferenciaEncalhe().isEmpty()){
 			
 				for (final ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
-					if(conferenciaEncalheDTO.isProcessoUtilizaNfe()){
+					if(conferenciaEncalheDTO.isProcessoUtilizaNfe()) {
 					    if (conferenciaEncalheDTO.getQtdInformada() != null){
 					        qtdInformada = qtdInformada.add(conferenciaEncalheDTO.getQtdInformada());
 					    }
 					    
-					    if (conferenciaEncalheDTO.getQtdExemplar() != null){
-					        qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdExemplar());
-					    }
 					}
+					
+				    if (conferenciaEncalheDTO.getQtdExemplar() != null){
+				        qtdRecebida = qtdRecebida.add(conferenciaEncalheDTO.getQtdExemplar());
+				    }
 				}
 			}
 		}
