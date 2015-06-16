@@ -19,6 +19,8 @@ import v1.pessoadetalhe.ebo.abril.types.PessoaDto;
 import br.com.abril.axis2.PessoaCRPService_2Stub;
 import br.com.abril.canonico.v1.comum.cabecalhoabril.CabecalhoAbril;
 import br.com.abril.canonico.v1.comum.cabecalhoabril.CabecalhoAbrilDocument;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.PessoaCRPWSService;
 
 @Service
@@ -49,8 +51,11 @@ public class PessoaCRPWSServiceImpl implements PessoaCRPWSService {
 		try {
 			
 			obterDadosFiscais = pessoaCRPService2Stub.obterDadosFiscais(odfEl, this.createSecurityDocElement(), this.createCabecalhoAbrilDocument());
+			
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel acessar o cadastro corporativo.");
+			
 		}
 		
 		ObterDadosFiscaisResponse obterDadosFiscaisResponseElement = obterDadosFiscais.getObterDadosFiscaisResponseElement();

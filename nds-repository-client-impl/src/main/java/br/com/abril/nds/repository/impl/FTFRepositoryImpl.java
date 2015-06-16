@@ -92,7 +92,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		String output = myFormatter.format(value);
 
 		String codigoDistribuidor = distribuidor.getCodigoDistribuidorDinap();
-		if(StringUtil.isEmpty(codigoDistribuidor)) {
+		if(StringUtil.isEmpty(codigoDistribuidor) || codigoDistribuidor.equals("0")) {
 			codigoDistribuidor = distribuidor.getCodigoDistribuidorFC();
 		}
 
@@ -112,7 +112,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		sqlBuilder.append(" select DISTINCT ");
 		sqlBuilder.append(" '1' as tipoRegistro, ");
 
-		sqlBuilder.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR as codigoEstabelecimentoEmissor, ");
+		sqlBuilder.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ");
 		sqlBuilder.append(" paramFtf.CODIGO_CENTRO_EMISSOR as codigoCentroEmissor, ");
 		sqlBuilder.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora, ");
 		sqlBuilder.append(" paramFtf.ESTABELECIMENTO as codLocal, ");
@@ -253,7 +253,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		sqlBuilder.append(" select ")
 		.append(" '2' as tipoRegistro, ")
-		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR as codigoEstabelecimentoEmissor, ")
+		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
 		
@@ -310,7 +310,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		sb.append(" select DISTINCT ")
 		.append(" '9' as tipoRegistro, ")
-		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR as codigoEstabelecimentoEmissor, ")
+		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ")
 		.append(" '99' as tipoPedido, ")
@@ -337,7 +337,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		
 		sb.append(" select DISTINCT ")
 		.append(" '0' as tipoRegistro, ")
-		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR as codigoEstabelecimentoEmissor, ")
+		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ")
 		.append(" '  ' as tipoPedido,  ")
@@ -465,7 +465,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 		sb.append(" select DISTINCT ")
 		.append(" '8' as tipoRegistro, ")
-		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR as codigoEstabelecimentoEmissor, ")
+		.append(" paramFtf.CODIGO_ESTABELECIMENTO_EMISSOR_GFF as codigoEstabelecimentoEmissor, ")
 		.append(" paramFtf.CNPJ_EMISSOR as cnpjEmpresaEmissora,  ")
 		.append(" paramFtf.ESTABELECIMENTO as codLocal,  ");
 		concatenarTipoPedidoBy(idNotaFiscal, sb);
