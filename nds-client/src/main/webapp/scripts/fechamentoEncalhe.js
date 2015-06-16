@@ -220,12 +220,6 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : false,
 				align : 'right'
 			}, {
-				display : 'Recolhimento',
-				name : 'recolhimento',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
 				display : 'Estoque',
 				name : 'estoque',
 				width : 60,
@@ -237,7 +231,13 @@ var fechamentoEncalheController = $.extend(true, {
 				width : 80,
 				sortable : false,
 				align : 'center'
-			}],
+			}, {
+				display : 'Recolhimento',
+				name : 'diaRecolhimento',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			},],
 			sortname : "sequencia",
 			sortorder : "asc",
 			usepager : true,
