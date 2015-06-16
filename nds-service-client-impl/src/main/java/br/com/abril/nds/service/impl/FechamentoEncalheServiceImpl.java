@@ -325,7 +325,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         	Integer dia = fechamentoEncalheRepository.obterDiaRecolhimento(encalhe.getProdutoEdicao(),encalhe.getDataRecolhimento());
         	String recolhimento = dia.toString() + SUFIXO_DIA;
         	
-        	encalhe.setRecolhimento(recolhimento);
+        	encalhe.setDiaRecolhimento(recolhimento);
             listaDeIdsProdutoEdicao.add(encalhe.getProdutoEdicao());
         }
         

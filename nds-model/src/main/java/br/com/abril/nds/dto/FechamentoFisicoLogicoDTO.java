@@ -71,11 +71,13 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 	@Export(label = "Recolhimento", alignment = Alignment.LEFT, exhibitionOrder = 9, fontSize=9)
 	private String recolhimento;
 	
+	@Export(label = "Dia Recolhimento", alignment = Alignment.LEFT, exhibitionOrder = 10, fontSize=9)
+	private String diaRecolhimento;
 	
-	@Export(label = "Exe. Juramentado", alignment = Alignment.CENTER, exhibitionOrder = 10, fontSize=9)
+	@Export(label = "Exe. Juramentado", alignment = Alignment.CENTER, exhibitionOrder = 11, fontSize=9)
     private String exemplaresJuramentadoFormatado;
 	
-	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 11, fontSize=9)
+	@Export(label = "Venda de Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 12, fontSize=9)
     private String exemplaresVendaEncalheFormatado;
 	
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, fontSize=9)
@@ -229,6 +231,15 @@ public class FechamentoFisicoLogicoDTO implements Serializable {
 
 	public void setRecolhimento(String recolhimento) {
 		this.recolhimento = recolhimento;
+	}
+	
+	
+	public String getDiaRecolhimento() {
+		return diaRecolhimento;
+	}
+
+	public void setDiaRecolhimento(String diaRecolhimento) {
+		this.diaRecolhimento = diaRecolhimento;
 	}
 
 	public void setEstoque(String estoque) {
