@@ -167,7 +167,7 @@ public class ParametrosDistribuidorVO {
     private String assuntoEmailCobranca;
     private String mensagemEmailCobranca;
     private String descricaoTaxaExtra;
-    private BigDecimal percentualTaxaExtra;
+    private String percentualTaxaExtra;
     
     // Aba Aprovação
     // Frame Aprovação
@@ -1098,11 +1098,11 @@ public class ParametrosDistribuidorVO {
 		this.descricaoTaxaExtra = descricaoTaxaExtra;
 	}
 
-	public BigDecimal getPercentualTaxaExtra() {
+	public String getPercentualTaxaExtra() {
 		return percentualTaxaExtra;
 	}
 
-	public void setPercentualTaxaExtra(BigDecimal percentualTaxaExtra) {
+	public void setPercentualTaxaExtra(String percentualTaxaExtra) {
 		this.percentualTaxaExtra = percentualTaxaExtra;
 	}
 

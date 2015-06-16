@@ -338,7 +338,7 @@ public class Distribuidor {
 	@Column(name = "DESCRICAO_TAXA_EXTRA")
 	private String descricaoTaxaExtra;
 	
-	@Column(name = "PERCENTUAL_TAXA_EXTRA")
+	@Column(name = "PERCENTUAL_TAXA_EXTRA",precision=18, scale=2)
 	private BigDecimal percentualTaxaExtra;
 	
 	@Column(name = "PRACA_VERANEIO")

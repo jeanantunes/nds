@@ -420,7 +420,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setMensagemEmailCobranca(distribuidor.getMensagemEmailCobranca());
 		
 		parametrosDistribuidor.setDescricaoTaxaExtra(distribuidor.getDescricaoTaxaExtra());
-		parametrosDistribuidor.setPercentualTaxaExtra(distribuidor.getPercentualTaxaExtra());
+		parametrosDistribuidor.setPercentualTaxaExtra(distribuidor.getPercentualTaxaExtra()!=null ?distribuidor.getPercentualTaxaExtra().toString():null);
 		
 		// Aprovação
 		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
@@ -900,7 +900,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setAssuntoEmailCobranca(parametrosDistribuidor.getAssuntoEmailCobranca());
 		distribuidor.setMensagemEmailCobranca(parametrosDistribuidor.getMensagemEmailCobranca());
 		distribuidor.setDescricaoTaxaExtra(parametrosDistribuidor.getDescricaoTaxaExtra());
-		distribuidor.setPercentualTaxaExtra(parametrosDistribuidor.getPercentualTaxaExtra());
+		distribuidor.setPercentualTaxaExtra(new BigDecimal(parametrosDistribuidor.getPercentualTaxaExtra()));
 		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
