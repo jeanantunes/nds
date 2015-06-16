@@ -1008,7 +1008,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					
 					Set <Long> setPdvsID = new HashSet<Long>();
 					
-					for(int i=0;i<listaPdvs.size();i++){
+					for(int i=0; i<listaPdvs.size(); i++) {
 						setPdvsID.add(((RotaPDV)listaPdvs.get(i)).getPdv().getId());
 					}
 				    
@@ -1233,14 +1233,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             throw new IllegalArgumentException("Associação de Box permitida apenas para uma nova roteirização!");
         }
         
-    	if (!roteirizacaoDTO.isBoxEspecial()) {
+		Box box = boxRepository.buscarPorId(roteirizacaoDTO.getBox().getId());
         
-    		Box box = boxRepository.buscarPorId(roteirizacaoDTO.getBox().getId());
-            
-    		validarAssociacaoBoxRoteirizacao(box);
-            
-    		novaRoteirizacao.setBox(box);
-        }
+		validarAssociacaoBoxRoteirizacao(box);
+        
+		novaRoteirizacao.setBox(box);
+        
     }
 
 	    /**
