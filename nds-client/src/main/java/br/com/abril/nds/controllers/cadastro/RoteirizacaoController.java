@@ -110,7 +110,7 @@ public class RoteirizacaoController extends BaseController {
 		
 		List<Box> boxs = boxService.buscarPorTipo(Arrays.asList(TipoBox.ESPECIAL, TipoBox.LANCAMENTO));
 		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long, String>>();
 		
 		for (Box box : boxs) {
 			
@@ -325,13 +325,13 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/incluirRoteiro")
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
-		if(idBox == null){
+		if(idBox == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um Box para adicionar um roteiro.");
 		}
 		
 		this.validarDadosInclusao(ordem, nome);
 		
-		this.adicionarRoteiro(ordem, nome);
+		this.adicionarRoteiro(idBox, ordem, nome);
 		
 		OrdenacaoUtil.sortList(this.getRoteirizacaoDTOSessao().getRoteiros());
 		
@@ -1196,7 +1196,7 @@ public class RoteirizacaoController extends BaseController {
 			mensagens.add("O campo Nome é obrigatório.");
 		}
 			
-		if (!mensagens.isEmpty()){
+		if (!mensagens.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
@@ -1329,13 +1329,13 @@ public class RoteirizacaoController extends BaseController {
 		result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
 	
-	private void adicionarRoteiro(Integer ordem, String nome){
+	private void adicionarRoteiro(Long idBox, Integer ordem, String nome) {
 		
-		Long novoId = -1L;
+		Long novoId = idBox;
 						
-		for (RoteiroRoteirizacaoDTO dto : this.getRoteirizacaoDTOSessao().getRoteiros()){
+		for (RoteiroRoteirizacaoDTO dto : this.getRoteirizacaoDTOSessao().getRoteiros()) {
 			
-			if (dto.getId() <= novoId){
+			if (dto.getId() <= novoId) {
 				
 				novoId = dto.getId() - 1;
 			}

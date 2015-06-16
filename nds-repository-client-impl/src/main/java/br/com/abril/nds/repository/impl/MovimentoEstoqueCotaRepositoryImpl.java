@@ -817,7 +817,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    sql.append("	INNER JOIN PRODUTO PRODUTO ON ( PRODUTO.ID = PRODUTO_EDICAO.PRODUTO_ID )                                  ");
 	    
 	    sql.append("	INNER JOIN MOVIMENTO_ESTOQUE_COTA MEC ON ( MEC.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID 	");
-	    sql.append("		AND MEC.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) 						");
+	    sql.append("		AND MEC.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) 					");
 	    
 	    sql.append("	INNER JOIN TIPO_MOVIMENTO TM ON ( MEC.TIPO_MOVIMENTO_ID = TM.ID )                       ");
 	    sql.append("	INNER JOIN CHAMADA_ENCALHE_LANCAMENTO cel on cel.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE.ID AND cel.LANCAMENTO_ID = MEC.LANCAMENTO_ID ");
@@ -826,15 +826,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    sql.append("        AND CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID       ");
 	    sql.append("    )                                                                                       ");
 	    sql.append("    INNER JOIN COTA ON COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID                               ");
-	    sql.append(" WHERE ");
-	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento    			");
-	    sql.append("    AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe   	");
-	    sql.append("	AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL      ");
-	    sql.append("	AND MEC.LANCAMENTO_ID IS NOT NULL                   ");
-	    sql.append("	AND CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_COTA_POSTERGADA_ID IS NULL                   ");
+	    sql.append(" WHERE                                                                                      ");
+	    sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento    			                    ");
+	    sql.append("    AND TM.GRUPO_MOVIMENTO_ESTOQUE <> :grupoMovimentoEstoqueEncalhe   	                    ");
+	    sql.append("	AND MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL                                          ");
+	    sql.append("	AND MEC.FORMA_COMERCIALIZACAO = :consignado                                             ");
+	    sql.append("	AND MEC.LANCAMENTO_ID IS NOT NULL                                                       ");
+	    sql.append("	AND CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_COTA_POSTERGADA_ID IS NULL                     ");
 	    
 	    if(tipoCota != null) {
-    		sql.append("	AND COTA.TIPO_COTA = :tipoCota                     ");
+    		sql.append("	AND COTA.TIPO_COTA = :tipoCota                  ");
 	    }
 	    
 	    sql.append(" GROUP BY ");
@@ -846,6 +847,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    
 	    query.setParameter("dataRecolhimento", dataRecolhimento);
 	    query.setParameter("grupoMovimentoEstoqueEncalhe", GrupoMovimentoEstoque.ENVIO_ENCALHE.name());
+	    query.setParameter("consignado", FormaComercializacao.CONSIGNADO.name());
 	    
 	    if(tipoCota != null) {
     		query.setParameter("tipoCota", tipoCota.name());

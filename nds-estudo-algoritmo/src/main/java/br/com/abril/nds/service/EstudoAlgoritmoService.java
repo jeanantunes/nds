@@ -222,23 +222,14 @@ public class EstudoAlgoritmoService {
         final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
         
-        GregorianCalendar c1 = new GregorianCalendar();
-        DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_28; 
+        DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_15; 
         if(new DateTime(dataLancamento).getMonthOfYear() == 01) {
-
-        	if(c1.isLeapYear((new DateTime(dataLancamento).getYear() - Years.ONE.getYears()))) {
-        		dataReferenciaFevereiro = DataReferencia.FEVEREIRO_29;
-        	}
 
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_15));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, dataReferenciaFevereiro));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_15));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, dataReferenciaFevereiro));
         } else {
-        	
-        	if(c1.isLeapYear((new DateTime(dataLancamento).getYear()))) {
-        		dataReferenciaFevereiro = DataReferencia.FEVEREIRO_29;
-        	}
         	
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_15));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, dataReferenciaFevereiro));
@@ -259,23 +250,15 @@ public class EstudoAlgoritmoService {
         final Date dataLancamento = edicao.getDataLancamento();
         
         GregorianCalendar c1 = new GregorianCalendar();
-        DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_28; 
+        DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_15; 
         if(new DateTime(dataLancamento).getMonthOfYear() == 01) {
 
-        	if(c1.isLeapYear((new DateTime(dataLancamento).getYear() - Years.TWO.getYears()))) {
-        		dataReferenciaFevereiro = DataReferencia.FEVEREIRO_29;
-        	}
-        	
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.THREE, DataReferencia.DEZEMBRO_15));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, dataReferenciaFevereiro));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.THREE, DataReferencia.DEZEMBRO_15));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, dataReferenciaFevereiro));
 
         } else {
-        	
-        	if(c1.isLeapYear((new DateTime(dataLancamento).getYear() - Years.ONE.getYears()))) {
-        		dataReferenciaFevereiro = DataReferencia.FEVEREIRO_29;
-        	}
         	
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_15));
         	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, dataReferenciaFevereiro));
@@ -295,19 +278,12 @@ public class EstudoAlgoritmoService {
         final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
         
-        GregorianCalendar c1 = new GregorianCalendar();
-        DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_28; 
+        DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_15; 
         
-        if(c1.isLeapYear((new DateTime(dataLancamento).getYear()))) {
-    		dataReferenciaFevereiro = DataReferencia.FEVEREIRO_29;
-    	}
         periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_15));
         periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, dataReferenciaFevereiro));
         
-        dataReferenciaFevereiro = DataReferencia.FEVEREIRO_28;
-        if(c1.isLeapYear((new DateTime(dataLancamento).getYear() - Years.ONE.getYears()))) {
-    		dataReferenciaFevereiro = DataReferencia.FEVEREIRO_29;
-    	}
+        dataReferenciaFevereiro = DataReferencia.FEVEREIRO_15;
         periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_15));
         periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, dataReferenciaFevereiro));
         
@@ -322,9 +298,9 @@ public class EstudoAlgoritmoService {
     	
     	final List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.MARCO_01));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_16));
         periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.DEZEMBRO_14));
-        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.MARCO_01));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
         periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_14));
         return periodoSaidaVeraneio;
     }
@@ -698,7 +674,7 @@ public List<ProdutoEdicaoEstudo> obterEdicoesPenultimoVeraneio(EstudoTransient e
 
 	public boolean validaPeriodoVeraneio(Date dataLancamento) {
 		MonthDay inicioVeraneio = MonthDay.parse(DataReferencia.DEZEMBRO_15.getData());
-		MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_28.getData());
+		MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_15.getData());
 		MonthDay dtLancamento = new MonthDay(dataLancamento);
 
 		return dtLancamento.isAfter(inicioVeraneio) || dtLancamento.isBefore(fimVeraneio);

@@ -829,12 +829,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
           movimentoEstoque.setData(dataOperacao);
           
           if (tipoMovimentoEstoque != null) {
-              if (tipoMovimentoEstoque.getGrupoMovimentoEstoque() != null
-                      && tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.RECEBIMENTO_FISICO)) {
-                  movimentoEstoque.setDataCriacao(new Date());
-              } else {
-                  movimentoEstoque.setDataCriacao(dataOperacao);
-              }
+              movimentoEstoque.setDataCriacao(new Date());
               movimentoEstoque.setAprovadoAutomaticamente(tipoMovimentoEstoque.isAprovacaoAutomatica());
 
               movimentoEstoque.setUsuario(new Usuario(idUsuario));
@@ -1470,7 +1465,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
         movimentoEstoqueCota.setFormaComercializacao(formaComercializacao);
-        movimentoEstoqueCota.setDataCriacao(dataOperacao);
+        movimentoEstoqueCota.setDataCriacao(new Date());
         movimentoEstoqueCota.setProdutoEdicao(new ProdutoEdicao(produtoEdicao.getId()));
         movimentoEstoqueCota.setQtde(quantidade);
         movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));

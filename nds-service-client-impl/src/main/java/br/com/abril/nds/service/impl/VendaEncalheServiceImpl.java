@@ -653,7 +653,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
 				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
-										   		   usuario.getId(), vendaProduto.getQntProduto(), TipoVendaEncalhe.SUPLEMENTAR,
+										   		   usuario.getId(), vendaProduto.getQntProduto(), TipoVendaEncalhe.ENCALHE,
 										   		   dataOperacao, FormaComercializacao.CONTA_FIRME, cota.getParametrosCotaNotaFiscalEletronica().isContribuinteICMS(), cota.getParametrosCotaNotaFiscalEletronica().isExigeNotaFiscalEletronica());
 		
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
