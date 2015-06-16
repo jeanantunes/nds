@@ -295,10 +295,11 @@ public class NecaBuilder  implements Serializable {
             item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
             item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
             item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
+            item.setPercentualDesconto(itemNotaEnvio.getDesconto());
             
             listaItemImpressaoNfe.add(item);
             
-            if(itemNotaEnvio.getFuroProduto()!= null){
+            if(itemNotaEnvio.getFuroProduto() != null) {
             	temLancamentoComFuroDeProduto = true;
             }
 
