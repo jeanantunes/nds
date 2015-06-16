@@ -469,7 +469,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
         
         // Aba Distribuição - Grid Classificação Cota
         List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO = new ArrayList<>();
-        /*
+        
         List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
         
         if (listClassificacaoCota != null) {
@@ -482,7 +482,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
                         listClassificacaoCotaVO.add(classificacaoCotaVO);
                 }
         }
-        */
+        
         parametrosDistribuidor.setListClassificacaoCota(listClassificacaoCotaVO);
 		
 		// Aba Distribuição - Grid Percentual de Excedente
