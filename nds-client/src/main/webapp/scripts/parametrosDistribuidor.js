@@ -170,7 +170,10 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val() != undefined ? $('#mensagemEmailCobranca', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.descricaoTaxaExtra', value: $('#descricaoTaxaExtra', this.workspace).val() != undefined ? $('#descricaoTaxaExtra', this.workspace).val() : ''},
-			{name:'parametrosDistribuidor.percentualTaxaExtra', value: $('#percentualTaxaExtra', this.workspace).val() != undefined ? $('#percentualTaxaExtra', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.percentualTaxaExtra', value: $('#percentualTaxaExtra', this.workspace).val() != undefined ? 
+					parseFloat($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')).toFixed(2):''},
+					// ($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')): ''},
+					//0.03:0.04},
 			
 			
 			{name:'parametrosDistribuidor.pararAcumuloDividas', value: $('#pararAcumuloDividas', this.workspace).val() != undefined ? $('#pararAcumuloDividas', this.workspace).val() : ''},
@@ -278,7 +281,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			data.push({name:'parametrosDistribuidor.tributosAliquotas[].tributoId', value: $('#tributoId' + value.name).val()});
 			data.push({name:'parametrosDistribuidor.tributosAliquotas[].valor', value: $('#valor' + value.name).val()});
 		});
-		
+	
 		$.postJSON(parametrosDistribuidorController.path + "gravar",
 				   data,
 				   function (resultado) {
@@ -341,6 +344,10 @@ var parametrosDistribuidorController = $.extend(true, {
 	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
 		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
 	    }
+	    
+	    if(percentualTaxaExtra > 100 || percentualTaxaExtra < 0) {
+			arrayMensagemWarning.push("- \'% Percentual de Taxa Extra \' deve ser de 0% a 100%!");
+		    }
 	    
 	    if(eficiencia0 != 100) {
 		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
@@ -628,7 +635,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		});
 		
 		$("#percentualTaxaExtra", this.workspace).maskMoney({
-			 thousands:'.', 
+			thousands:'', 
 			 decimal:',', 
 			 precision:2
 		});
