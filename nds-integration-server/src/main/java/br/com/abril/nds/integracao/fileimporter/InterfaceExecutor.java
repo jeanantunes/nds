@@ -3,10 +3,12 @@ package br.com.abril.nds.integracao.fileimporter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -315,7 +317,7 @@ public class InterfaceExecutor {
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
 			} else {
-				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, HA_ARQUIVOS);
+				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.SUCESSO, HA_ARQUIVOS);
 			}
 			
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
@@ -568,9 +570,9 @@ public class InterfaceExecutor {
 			String nomeUsuario,
 			InterfaceExecucao interfaceExecucao) throws Exception {
 
-//		FileReader in = new FileReader(arquivo);
-//		Scanner scanner = new Scanner(in);
-//		Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? StandardCharsets.ISO_8859_1.toString() : StandardCharsets.UTF_8.toString());
+		//FileReader in = new FileReader(arquivo);
+		//Scanner scanner = new Scanner(in);
+		//Scanner scanner = new Scanner(arquivo, Files.probeContentType(arquivo.toPath()).equals("text/plain") ? StandardCharsets.ISO_8859_1.toString() : StandardCharsets.UTF_8.toString());
 		
 		if(interfaceEnum == null) {
 			
