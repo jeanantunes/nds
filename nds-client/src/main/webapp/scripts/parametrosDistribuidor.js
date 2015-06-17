@@ -170,8 +170,8 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val() != undefined ? $('#mensagemEmailCobranca', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.descricaoTaxaExtra', value: $('#descricaoTaxaExtra', this.workspace).val() != undefined ? $('#descricaoTaxaExtra', this.workspace).val() : ''},
-			{name:'parametrosDistribuidor.percentualTaxaExtra', value: $('#percentualTaxaExtra', this.workspace).val() != undefined ? 
-					parseFloat($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')).toFixed(2):''},
+			{name:'parametrosDistribuidor.percentualTaxaExtra', value: $('#percentualTaxaExtra', this.workspace).val() != "" ? 
+					parseFloat($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')).toFixed(2) : 0 },
 					// ($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')): ''},
 					//0.03:0.04},
 			

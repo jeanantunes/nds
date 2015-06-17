@@ -900,7 +900,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setAssuntoEmailCobranca(parametrosDistribuidor.getAssuntoEmailCobranca());
 		distribuidor.setMensagemEmailCobranca(parametrosDistribuidor.getMensagemEmailCobranca());
 		distribuidor.setDescricaoTaxaExtra(parametrosDistribuidor.getDescricaoTaxaExtra());
-		distribuidor.setPercentualTaxaExtra(new BigDecimal(parametrosDistribuidor.getPercentualTaxaExtra()));
+		
+		if(!parametrosDistribuidor.getPercentualTaxaExtra().equals("0")) {
+			distribuidor.setPercentualTaxaExtra(new BigDecimal(parametrosDistribuidor.getPercentualTaxaExtra()));			
+		}
+		
 		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
