@@ -60,7 +60,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -3302,7 +3301,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final StringBuilder hql = new StringBuilder();
         
         hql.append(" select sum(case when tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :entrada then movimentoEstoqueCota.qtde ");
-        hql.append(" else (movimentoEstoqueCota.qtde * -1) end) ");
+        hql.append(" else (-movimentoEstoqueCota.qtde) end) ");
         hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
         hql.append(" join movimentoEstoqueCota.tipoMovimento tipoMovimento ");
         hql.append(" where movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao ");
@@ -3312,7 +3311,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
         
         if(lancamento != null) {
-            hql.append(" and movimentoEstoqueCota.lancamento = :lancamento ");
+            hql.append(" and movimentoEstoqueCota.lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
         }
         
         final Query query = getSession().createQuery(hql.toString());
@@ -3322,7 +3321,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
         
         if(lancamento != null) {
-        	query.setParameter("lancamento", lancamento);
+        	query.setParameter("dataRecolhimentoDistribuidor", lancamento.getDataRecolhimentoDistribuidor());
         }
         
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
