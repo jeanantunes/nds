@@ -458,7 +458,7 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
 				<reportElement uuid="60f80bdb-e939-4a13-bca0-bca61138a68c" style="linha" mode="Opaque" x="258" y="16" width="53" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
