@@ -11,6 +11,7 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Processo que tem por objetivo fazer um reparte proporcional entre as cotas, se houver alguma edição aberta nas bases
@@ -63,7 +64,8 @@ public class ReparteProporcional extends ProcessoAbstrato {
     				// RepCalculadoCota = ARRED(RepEdicaoAbertaCota * IndiceRepAberta; 0)
     			
     				BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
-    				cota.setReparteCalculado(repCalculado.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+    				
+    				cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, repCalculado), estudo);
     				cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
     				
     				estudo.getCotasSoComEdicaoAberta().add(cota);
