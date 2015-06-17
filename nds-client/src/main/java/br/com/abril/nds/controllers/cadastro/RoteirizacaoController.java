@@ -1331,7 +1331,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	private void adicionarRoteiro(Long idBox, Integer ordem, String nome) {
 		
-		Long novoId = idBox;
+		Long novoId = -1L;
 						
 		for (RoteiroRoteirizacaoDTO dto : this.getRoteirizacaoDTOSessao().getRoteiros()) {
 			
