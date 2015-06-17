@@ -1096,8 +1096,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		distribuidorService.alterar(distribuidor);
 		
-		distribuidor.setEnderecoDistribuidor(
-			this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
+		distribuidor.setEnderecoDistribuidor(this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
+		
+		//Recarrega os codigos do Distribuidor para acessar o CouchDB
+		this.initCouchDbClient();
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
 		
