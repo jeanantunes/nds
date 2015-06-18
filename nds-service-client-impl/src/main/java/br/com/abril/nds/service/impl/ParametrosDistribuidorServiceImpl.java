@@ -903,7 +903,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		if(!parametrosDistribuidor.getPercentualTaxaExtra().equals("0")) {
 			distribuidor.setPercentualTaxaExtra(new BigDecimal(parametrosDistribuidor.getPercentualTaxaExtra()));			
-		}
+		} else
+		   {
+			distribuidor.setPercentualTaxaExtra(null);
+		   }
 		
 		
 		// Aprovação

@@ -172,8 +172,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.descricaoTaxaExtra', value: $('#descricaoTaxaExtra', this.workspace).val() != undefined ? $('#descricaoTaxaExtra', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.percentualTaxaExtra', value: $('#percentualTaxaExtra', this.workspace).val() != "" ? 
 					parseFloat($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')).toFixed(2) : 0 },
-					// ($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')): ''},
-					//0.03:0.04},
+					
 			
 			
 			{name:'parametrosDistribuidor.pararAcumuloDividas', value: $('#pararAcumuloDividas', this.workspace).val() != undefined ? $('#pararAcumuloDividas', this.workspace).val() : ''},
@@ -332,7 +331,9 @@ var parametrosDistribuidorController = $.extend(true, {
 	    
 	    var vendaMediaMais = $('#vendaMediaMais', this.workspace).val();
 	    var percentualMaximoFixacao = $('#percentualMaximoFixacao', this.workspace).val();
-	    
+	    var percentualTaxaExtra =  $('#percentualTaxaExtra', this.workspace).val() != "" ? 
+				parseFloat($('#percentualTaxaExtra', this.workspace).val().replace(',', '.')).toFixed(2) : 0 ;
+	    var descricaoTaxaExtra = $('#descricaoTaxaExtra', this.workspace).val() != undefined ? $('#descricaoTaxaExtra', this.workspace).val() : '';
 	    var eficiencia0 = parseInt($('#listPercentualExcedente0\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente0\\.pdv', this.workspace).val());
 	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
 	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
@@ -345,9 +346,14 @@ var parametrosDistribuidorController = $.extend(true, {
 		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
 	    }
 	    
-	    if(percentualTaxaExtra > 100 || percentualTaxaExtra < 0) {
-			arrayMensagemWarning.push("- \'% Percentual de Taxa Extra \' deve ser de 0% a 100%!");
-		    }
+	   
+	   
+	    if(percentualTaxaExtra > 0 &&  descricaoTaxaExtra.length == 0 ) {
+			arrayMensagemWarning.push("- \'Descrição de Taxa Extra obrigatorio!");
+		    } 
+	    if(percentualTaxaExtra == 0 && ( descricaoTaxaExtra.length > 0) ) {
+			arrayMensagemWarning.push("- \'Obrigatorio informar valor da Taxa Extra quando informado a Descricao!");
+		    } 
 	    
 	    if(eficiencia0 != 100) {
 		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
