@@ -3641,10 +3641,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public Cota validarCotaParaInicioConferenciaEncalhe(final Integer numeroCota) {
 	
 		final Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
-		
 		if (cota == null) {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
 		}
+		
+		Semaforo semaforo = semaforoRepository.selectForUpdate(numeroCota);
+		
+		if(semaforo != null && StatusProcessoEncalhe.INICIADO.equals(semaforo.getStatusProcessoEncalhe())) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + numeroCota + " ainda esta sendo processada!");
+		}
+		
 	
 		try {
 			
