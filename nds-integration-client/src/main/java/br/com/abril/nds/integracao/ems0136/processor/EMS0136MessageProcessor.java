@@ -13,7 +13,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +48,8 @@ import com.google.common.collect.ImmutableList;
 @Component
 public class EMS0136MessageProcessor extends AbstractRepository implements MessageProcessor {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0136MessageProcessor.class);
+	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
@@ -62,6 +68,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
 
+	@Autowired
+	private SessionFactory sessionFactoryIcd;
+	
 	private static final int PEB_MINIMA = 10;
 
 	private static final ImmutableList<StatusLancamento> LANCAMENTO_EXPEDIDO = 
@@ -78,6 +87,24 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				StatusLancamento.CONFIRMADO
 			);
 
+	
+	protected Session getSessionIcd() {
+
+		Session session = null;
+		try {
+			session = sessionFactoryIcd.getCurrentSession();
+		} catch(Exception e) {
+            LOGGER.error("Erro ao obter sessão do Hibernate.", e);
+		}
+
+		if(session == null) {
+			session = sessionFactoryIcd.openSession();
+		}
+
+		return session;
+
+	}
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {}
 
@@ -167,7 +194,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSessionIcd().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
@@ -476,27 +503,27 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 			Lancamento lancamento, 
 			ProdutoEdicao produtoEdicao) {
 		
-		produtoEdicao = (ProdutoEdicao) this.getSession().merge(produtoEdicao);
+		produtoEdicao = (ProdutoEdicao) this.getSessionIcd().merge(produtoEdicao);
 		
-		lancamentoParcial = (LancamentoParcial) this.getSession().merge(lancamentoParcial);
+		lancamentoParcial = (LancamentoParcial) this.getSessionIcd().merge(lancamentoParcial);
 		
 		periodo.setLancamentoParcial(lancamentoParcial);
 		
-		periodo = (PeriodoLancamentoParcial) this.getSession().merge(periodo);
+		periodo = (PeriodoLancamentoParcial) this.getSessionIcd().merge(periodo);
 		
 		lancamento.setPeriodoLancamentoParcial(periodo);
 		
 		lancamento.setProdutoEdicao(produtoEdicao);
 		
-		this.getSession().merge(lancamento);		
+		this.getSessionIcd().merge(lancamento);		
 	}
 	
 	private void remove(Set<Lancamento> lancamentos) {
 		
 		for (Lancamento lancamento : lancamentos) {
-			this.getSession().delete(lancamento);
+			this.getSessionIcd().delete(lancamento);
 			if (lancamento.getPeriodoLancamentoParcial() != null) {
-				this.getSession().delete(lancamento.getPeriodoLancamentoParcial());
+				this.getSessionIcd().delete(lancamento.getPeriodoLancamentoParcial());
 			}
 		}
 	}
@@ -539,7 +566,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 				.append(" ) rs1 on rs1.numPeriodoFinal = plp.numero_periodo and rs1.PRODUTO_EDICAO_ID = pe.id          ")
 				.append(" set plp.tipo = :final                                                                        ");
 			
-			SQLQuery q = getSession().createSQLQuery(sql.toString());
+			SQLQuery q = getSessionIcd().createSQLQuery(sql.toString());
 			q.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.FECHADO.name()));
 			q.setParameter("parcial", "PARCIAL");
 			q.setParameter("final", "FINAL");
