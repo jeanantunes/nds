@@ -1,0 +1,64 @@
+package br.com.abril.nds.dto;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
+public class CertificadoNFEDTO implements Serializable {
+
+	private static final long serialVersionUID = -6593247184450400133L;
+
+	private String nomeDistribuidor;	
+	
+	@Export(label="alias")
+	private String alias;
+	
+	private String senha;
+
+	private Date dataInicio;
+	
+	private Date dataFim;
+
+	public String getNomeDistribuidor() {
+		return nomeDistribuidor;
+	}
+
+	public void setNomeDistribuidor(String nomeDistribuidor) {
+		this.nomeDistribuidor = nomeDistribuidor;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public Date getDataInicio() {
+		return dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
+	public Date getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+}

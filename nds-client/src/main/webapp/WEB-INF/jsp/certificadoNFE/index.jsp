@@ -51,8 +51,7 @@ fieldset label {
 </style>
 
 <script language="javascript" type="text/javascript">
-
-	$(function(){
+	$(function() {
 		certificadoNFEController.init();
 	});
 </script>
@@ -67,13 +66,11 @@ fieldset label {
 
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos"> <a isEdicao="true"
-				id="certificadoNFEConfirmar"
-				onclick="certificadoNFEController.confirmar();" rel="tipsy"
-				title="Confirmar Upload do Arquivo"> <img border="0" hspace="5"
-					src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
+			<span class="bt_novos">
+				<a isEdicao="true" id="certificadoNFEConfirmar" onclick="certificadoNFEController.btnConfirmar();" rel="tipsy" title="Confirmar Upload do Arquivo">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				</a>
 			</span>
-
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>
@@ -86,29 +83,24 @@ fieldset label {
 			<div id="uploadedFileCertificadoDiv">
 			<tbody>
 				<tr>
-					<td width="50">Certificado:</td>
-					<td width="200" colspan="3"><input type="file"
-						name="certificado-upload" /></td>
+					<td width="70">Certificado:</td>
+					<td width="200" colspan="3"><input type="file" name="certificado-upload" /></td>
 				</tr>
+				
 				<tr>
 					<td width="50">Data Inicio:</td>
-					<td width="200"><input type="text"
-						id="certificado-data-inicio" name="certificado-data-inicio"
-						class="" /></td>
+					<td width="200"><input type="text" id="certificado-data-inicio" name="certificado-data-inicio" class="input-date"/></td>
 
 					<td width="50">Data Fim:</td>
-					<td width="200"><input type="text" id="certificado-data-fim"
-						name="certificado-datafim" /></td>
+					<td width="200"><input type="text" id="certificado-data-fim" name="certificado-data-fim" class="input-date"/></td>
 				</tr>
-
+				
 				<tr>
-					<td width="50">Senha:</td>
-					<td width="200"><input type="text" id="certificado-senha"
-						name="certificado-senha" /></td>
+					<td width="70">Senha:</td>
+					<td width="250"><input type="password" id="certificado-senha" name="certificado-senha" /></td>
 
-					<td width="50">Alias:</td>
-					<td width="200"><input type="text" id="certificado-alias"
-						name="certificado-alias" /></td>
+					<td width="70">Alias:</td>
+					<td width="250"><input type="text" id="certificado-alias" name="certificado-alias" /></td>
 				</tr>
 
 			</tbody>
@@ -118,6 +110,7 @@ fieldset label {
 	</fieldset>
 
 	<div class="linha_separa_fields">&nbsp;</div>
-
+	
+	
 
 </body>
