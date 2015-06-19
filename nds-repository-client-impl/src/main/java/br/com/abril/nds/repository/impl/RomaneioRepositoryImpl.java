@@ -356,7 +356,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.append(" and e.lancamento_id = lc.id ");
 				if(filtro.getIdBox() != null) {
 					hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then 1 = 1 ");
-					hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID end ) ");
+					hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID or estudoPDV.PDV_ID is null end ) ");
 				}
 				hql.append("),0) as reparteTotal");
 				
@@ -376,7 +376,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 					hql.append(" and e.lancamento_id = lc.id ");
 					if(filtro.getIdBox() != null) {
 						hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then 1 = 1 ");
-						hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID end ) ");
+						hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID or estudoPDV.PDV_ID is null end ) ");
 					}
 					hql.append("),0) as qtdProduto").append(index);
 				}
