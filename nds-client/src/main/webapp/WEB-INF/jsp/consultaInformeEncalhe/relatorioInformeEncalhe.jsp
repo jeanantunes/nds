@@ -3,7 +3,7 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
 		<style type="text/css">
 			body{
-				font-size:8px!important; 	
+				font-size:12px!important; 	
 			}
 			
 			h1{
@@ -15,7 +15,7 @@
 			}
 			
 			p{
-				margin:0px; padding:0px; font-size:8px;
+				margin:0px; padding:0px; font-size:12px;
 			}
 			
 			.capas tr{
@@ -29,7 +29,7 @@
 			
 			.relatorio td{
 				border-bottom:1px solid #000; border-right:1px solid #000;
-				white-space:nowrap; overflow: hidden; line-height: 13px;
+				white-space:nowrap; overflow: hidden; line-height: 13px; letter-spacing: 1.5px;
 			}
 			
 			.pulaFolha{
@@ -74,10 +74,10 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="98" align="center" style=" line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000; font-size:8px!important;">
+							<td width="98" align="center" style=" line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000; font-size:12px!important;">
 								<strong>${diaMesInicioRecolhimento}º DIA</strong>
 							</td>
-							<td  width="71" rowspan="2" align="center" style="line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:8px!important;">
+							<td  width="71" rowspan="2" align="center" style="line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:12px!important;">
 								<strong>${dataInicioRecolhimento}</strong>
 							</td>
 						</tr>
@@ -85,20 +85,20 @@
 							<td style="line-height: 15px;" width="794" align="center" valign="middle" rowspan="3">
 								<h2>${nomeDistribuidor}</h2>
 							</td>
-							<td align="center" style="line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:8px!important;">${diaSemanaInicioRecolhimento}</td>
+							<td align="center" style="line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:12px!important;">${diaSemanaInicioRecolhimento}</td>
 						</tr>
 						
 						<tr>
-							<td  align="center" style="line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:8px!important;">
+							<td  align="center" style="line-height: 15px; border-left: 1px solid #000; border-bottom: 1px solid #000;font-size:12px!important;">
 								<strong>${diaMesFimRecolhimento}º DIA</strong>
 							</td>
-							<td rowspan="2" align="center" style="line-height: 15px; border-left: 1px solid #000;font-size:8px!important;">
+							<td rowspan="2" align="center" style="line-height: 15px; border-left: 1px solid #000;font-size:12px!important;">
 								<strong>${dataFimRecolhimento}</strong>
 							</td>
 						</tr>
 		
 						<tr>
-							<td align="center" style="line-height: 15px; border-left: 1px solid #000;font-size:8px!important;">${diaSemanaFimRecolhimento}</td>
+							<td align="center" style="line-height: 15px; border-left: 1px solid #000;font-size:12px!important;">${diaSemanaFimRecolhimento}</td>
 						</tr>
 					</table>
 		
@@ -129,7 +129,7 @@
 				           		<c:if test="${dado != null && tableFechada}">
 				           			
 				           			<table name="tab5"  class="relatorio pulaFolha" align="center" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
-						style="border:1px solid #000; margin-top:5px; line-height: 13px;">
+						style="border:1px solid #000; margin-top:5px; line-height: 12px;">
 									<tr>
 										<c:forEach items="${colunas}" var="coluna_">
 											<td width="${coluna_.largura}%" align="center" class="relatorioHeader">
@@ -186,8 +186,8 @@
 											
 											<c:if test="${contains}">
 												<td>
-													<div style="white-space:nowrap; overflow: hidden; font-size:8px!important;">
-														<strong>${dado.nomeProduto}</strong>
+													<div style="white-space:nowrap; overflow: hidden; font-size:12px!important;">
+														${dado.nomeProduto}
 													</div>
 												</td>
 											</c:if>											
@@ -200,8 +200,8 @@
 											</c:forEach>
 											
 											<c:if test="${contains}">
-												<td align="center" style="font-size:8px!important;">
-													<strong>${dado.numeroEdicao}</strong>
+												<td align="center" style="font-size:12px!important;">
+													${dado.numeroEdicao}
 												</td>
 											</c:if>
 											
@@ -214,8 +214,8 @@
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<div style="white-space:nowrap; overflow: hidden; font-size:8px!important">
-														<strong>${dado.chamadaCapa}</strong>
+													<div style="white-space:nowrap; overflow: hidden; font-size:12px!important">
+														${dado.chamadaCapa}
 													</div>
 												</td>
 											</c:if>											
@@ -325,7 +325,7 @@
 											
 											<c:if test="${contains}">
 												<td align="center">
-													<div style="white-space:nowrap; overflow: hidden; font-size:8px!important;">
+													<div style="white-space:nowrap; overflow: hidden; font-size:12px!important;">
 														<strong>${dado.pacotePadrao}</strong>
 													</div>
 												</td>

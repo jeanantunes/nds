@@ -242,7 +242,7 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (tipoImpressao.getColunas().contains("sequenciaMatriz")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Sequência", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "sequenciaMatriz"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Seq.", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "sequenciaMatriz"));
             }
             
             if (tipoImpressao.getColunas().contains("codigoProduto")){
@@ -302,7 +302,7 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (tipoImpressao.getColunas().contains("pacotePadrao")){
                 
-                colunas.add(new ColunaRelatorioInformeEncalhe("Pacote Padrao", this.calcularTamanhoColunaRelatorio(qtdColunas, 2), "pacotePadrao"));
+                colunas.add(new ColunaRelatorioInformeEncalhe("Pct Padrão", this.calcularTamanhoColunaRelatorio(qtdColunas, 4), "pacotePadrao"));
             }
         }
         
@@ -314,11 +314,12 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         int qtdReg = 0;
         
-        int quebra = 0;
+        int quebra = 72;
 
-        int qtdImg = 0;
+        int qtdImg = 72;
         		
-        
+       /*
+        *  
         if(tipoImpressao.getCapas().equals(TipoImpressaoInformeEncalheDTO.Capas.FIM)){
         	quebra = TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas()) ? 72 : 72;
         	qtdImg = 72;
@@ -327,6 +328,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         	quebra = TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas()) ? 35 : 41;
         	qtdImg = 35;
         }
+        */
         
         int indexImg = 0;
         
@@ -334,7 +336,7 @@ public class ConsultaInformeEncalheController extends BaseController {
         
         final List<InformeEncalheDTO> listaResult = new ArrayList<InformeEncalheDTO>();
         
-        boolean primeiraPagina = true;
+//        boolean primeiraPagina = true;
         
         for (final InformeEncalheDTO info : dados){
             
@@ -343,12 +345,14 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             if (qtdReg == quebra){
                 
-                //pra aproveitar melhor o tamanho da pagina
+                /*
+            	//pra aproveitar melhor o tamanho da pagina
                 if (primeiraPagina && !TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas())){
                     
                     quebra += 5;
-                    primeiraPagina = false;
+            		primeiraPagina = false;
                 }
+                */
                 
                 qtdReg = 0;
                 
