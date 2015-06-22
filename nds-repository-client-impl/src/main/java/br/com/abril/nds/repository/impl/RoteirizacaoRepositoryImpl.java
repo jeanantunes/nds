@@ -613,6 +613,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" join rota.rotaPDVs rotaPdv ");
 		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" join pdv.cota cota ");
+		hql.append(" where b.tipoBox = 'LANCAMENTO' ");
 		hql.append(" order by b.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem, cota.numeroCota ");
 		
 		Query query  = getSession().createQuery(hql.toString());
