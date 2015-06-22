@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
@@ -17,7 +18,9 @@ public class ChamadaEncalheCotaServiceImpl implements ChamadaEncalheCotaService 
 	@Autowired
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository; 
 
+
 	@Override
+	@Transactional
 	public ChamadaEncalheCota obterChamadaEncalheCota(long cotaId,
 			long produtoEdicaoId, Date dataRecolhimentoDistribuidor) {
 		
