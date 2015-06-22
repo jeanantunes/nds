@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import br.com.abril.nds.client.annotation.Public;
 import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -24,6 +25,8 @@ import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.view.Results;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.io.*;
 
 import com.google.gson.Gson;
 
@@ -39,12 +42,16 @@ public class ValidacaoInterceptor implements Interceptor {
 	
 	private Validator validator;
 	
+	
 	public ValidacaoInterceptor(Result result, HttpServletRequest request, Validator validator) {
 		
 		this.result = result;
 		this.request = request;
 		this.validator = validator;
 	}
+	
+	
+	
 	
 	@Override
 	public void intercept(InterceptorStack stack, 
@@ -55,17 +62,21 @@ public class ValidacaoInterceptor implements Interceptor {
 			stack.next(method, resourceInstance);
 			
 		} catch (Exception throwable ) {
-			
-            LOGGER.error(throwable.getMessage(), throwable);
-			
+		
             Throwable cause = ExceptionUtil.getRootCause(throwable);
 			
 			if (cause instanceof ValidacaoException) {
-
+              if ( ((ValidacaoException ) cause).getValidacao().getTipoMensagem() == TipoMensagem.ERROR ){
+				 LOGGER.error(throwable.getMessage(), throwable);
+              }
+              else
+              if ( ((ValidacaoException ) cause).getValidacao().getTipoMensagem() == TipoMensagem.WARNING) {
+            	LOGGER.warn(throwable.getMessage(), throwable); 
+              }
 				this.tratarExcecaoValidacao((ValidacaoException) cause);
 			
 			} else {
-				
+				LOGGER.error(throwable.getMessage(), throwable);
 				validator.onErrorRedirectTo(ErrorController.class).showError(cause);
 				
 				this.tratarExecoesGenericas(cause);
