@@ -2929,8 +2929,9 @@ public class ConferenciaEncalheController extends BaseController {
 			List<Lancamento> lancamentos = null;
 			if(chamadaEncalheCota != null && chamadaEncalheCota.getChamadaEncalhe() != null) {
 			    conferenciaEncalheDTO.setProcessoUtilizaNfe(chamadaEncalheCota.isProcessoUtilizaNfe());
-			    
-			    lancamentos = new ArrayList<>(chamadaEncalheCota.getChamadaEncalhe().getLancamentos());
+			  
+			    lancamentos = new ArrayList<>(chamadaEncalheCotaService.obterLancamentos(chamadaEncalheCota.getChamadaEncalhe()));
+			  //  lancamentos = new ArrayList<>(chamadaEncalheCota.getChamadaEncalhe().getLancamentos());
 			}
 			
 			if(lancamentos != null && !lancamentos.isEmpty()) {
