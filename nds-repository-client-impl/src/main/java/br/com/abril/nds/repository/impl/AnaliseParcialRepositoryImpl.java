@@ -467,6 +467,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("   left join movimento_estoque_cota mecReparte on mecReparte.lancamento_id = l.id and mecReparte.COTA_ID = c.ID");
         sql.append("   LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID");
         sql.append(" where eg.id = :estudoId ");
+        sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
         sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
         sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
         sql.append(" order by l.data_lcto_distribuidor desc, ");
@@ -611,49 +612,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         query.setParameterList("lancamentosPosExpedicao", LancamentoHelper.getStatusLancamentosPosExpedicaoString());
         query.setParameterList("statusLancFechadoRecolhido", Arrays.asList(StatusLancamento.FECHADO.name(), StatusLancamento.RECOLHIDO.name(), StatusLancamento.EM_RECOLHIMENTO.name()));
         
-        query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
-
-        return query.list();
-    }
-
-    @SuppressWarnings("unchecked")
-	@Override
-    public List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select pe.id produtoEdicaoId, ");
-        sql.append("       p.codigo codigoProduto, ");
-        sql.append("       p.nome nomeProduto, ");
-        sql.append("       pe.numero_edicao edicao, ");
-        sql.append("       plp.numero_periodo periodo, ");
-        sql.append("       sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) reparte, ");
-        sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
-        sql.append("           sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) - ");
-        sql.append("           sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end) ");
-        sql.append("       else 0 end) venda ");
-        sql.append("  from lancamento l ");
-        sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id and pe.numero_edicao = :numeroEdicao ");
-        sql.append("  join produto p on p.id = pe.produto_id and p.codigo = :codigoProduto ");
-        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id ");
-        sql.append("  join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
-        sql.append("  join cota c on c.id = mec.cota_id and c.numero_cota = :numeroCota ");
-        sql.append(" where l.tipo_lancamento = 'PARCIAL' ");
-        sql.append("   and plp.numero_periodo = :numeroPeriodo ");
-        sql.append(" group by pe.id, p.codigo, p.nome, pe.numero_edicao, plp.numero_periodo ");
-        sql.append(" order by plp.numero_periodo desc ");
-
-        Query query = getSession().createSQLQuery(sql.toString())
-                .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
-                .addScalar("codigoProduto", StandardBasicTypes.STRING)
-                .addScalar("nomeProduto", StandardBasicTypes.STRING)
-                .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
-                .addScalar("periodo", StandardBasicTypes.STRING)
-                .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
-                .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
-
-        query.setParameter("numeroCota", numeroCota);
-        query.setParameter("numeroEdicao", numeroEdicao);
-        query.setParameter("codigoProduto", codigoProduto);
-        query.setParameter("numeroPeriodo", periodo);
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
         return query.list();
