@@ -20,7 +20,6 @@ public class ChamadaEncalheCotaServiceImpl implements ChamadaEncalheCotaService 
 
 
 	@Override
-	@Transactional
 	public ChamadaEncalheCota obterChamadaEncalheCota(long cotaId,
 			long produtoEdicaoId, Date dataRecolhimentoDistribuidor) {
 		
