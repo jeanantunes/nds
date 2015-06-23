@@ -26,13 +26,14 @@ public class ChamadaEncalheCotaServiceImpl implements ChamadaEncalheCotaService 
 	 private ChamadaEncalheRepository chamadaEncalheRepository;
 
 	@Override
+	@Transactional
 	public ChamadaEncalheCota obterChamadaEncalheCota(long cotaId,
 			long produtoEdicaoId, Date dataRecolhimentoDistribuidor) {
 		
 		return chamadaEncalheCotaRepository.obterChamadaEncalheCota(cotaId, produtoEdicaoId, dataRecolhimentoDistribuidor);
 	}
 	
-	@Override
+	 @Override
 	 @Transactional
 	 public Set<Lancamento> obterLancamentos(ChamadaEncalhe chamadaEncalhe) {
 	  
