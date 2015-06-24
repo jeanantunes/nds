@@ -985,7 +985,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 			while(iterator.hasNext()){
 				FechamentoFisicoLogicoDTO linha = iterator.next();
-				if(linha != null && linha.getCodigo() != null && linha.getCodigo().equals(codigo)){
+				if(linha != null && linha.getCodigo() != null && linha.getCodigo().equals(codigo) && linha.getProdutoEdicao().equals(Long.parseLong(produtoEdicao)) ){
 					linha.setCodigo(codigo);
 					linha.setProdutoEdicao(Long.parseLong(produtoEdicao));
 					if(fisico != null){
@@ -994,6 +994,7 @@ public class FechamentoEncalheController extends BaseController {
 					linha.setReplicar(String.valueOf(checkbox));
 					
 					insercao = false;
+					
 				}
 			}
 
