@@ -884,7 +884,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param qntProduto
 	 */
 	private void gerarMovimentoEstornoCompraConsignadoCota(ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
-			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao) {
+			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao, FormaComercializacao formaComercializacao) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstorno = null;
 		
@@ -910,7 +910,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
     		dataLancamento = l.getDataLancamentoDistribuidor();
     	}
 		
-		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, produtoEdicao, idCota, idUsuario, qntProduto, tipoMovimentoEstoqueCota, dataOperacao, null, FormaComercializacao.CONSIGNADO, false, false);
+		movimentoEstoqueService.gerarMovimentoCota(dataLancamento, produtoEdicao, idCota, idUsuario, qntProduto, tipoMovimentoEstoqueCota, dataOperacao, null, formaComercializacao, false, false);
 	}
 
 	/**
@@ -1077,10 +1077,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 																	vendaProduto.getTipoVenda());
 			
 		// Atualiza estoque da cota
-		gerarMovimentoEstornoCompraConsignadoCota(vendaProduto.getProdutoEdicao(), vendaProduto.getCota().getId(),
-											   	  vendaProduto.getUsuario().getId(),vendaProduto.getQntProduto(),
+		this.gerarMovimentoEstornoCompraConsignadoCota(vendaProduto.getProdutoEdicao(), 
+												  vendaProduto.getCota().getId(),
+											   	  vendaProduto.getUsuario().getId(), 
+											   	  vendaProduto.getQntProduto(),
 											      vendaProduto.getTipoVenda(),
-											      this.distribuidorService.obterDataOperacaoDistribuidor());
+											      this.distribuidorService.obterDataOperacaoDistribuidor(), 
+											      vendaProduto.getTipoComercializacaoVenda());
 
 		// Atualiza a chamada de encalhe do produto edição referente a cota
 		processaAtualizacaoChamadaEncalheCotaVendaCancelada(vendaProduto);

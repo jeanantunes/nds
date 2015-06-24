@@ -96,25 +96,25 @@ public class ChamadaEncalheFornecedor implements Serializable {
     @Column(name = "CODIGO_PREENCHIMENTO", nullable = false)
     private String codigoPreenchimento;
 
-    @Column(name = "TOTAL_VENDA_APURADA", nullable = false)
+    @Column(name = "TOTAL_VENDA_APURADA")
     private BigDecimal totalVendaApurada;
 
-    @Column(name = "TOTAL_CREDITO_APURADO", nullable = false)
+    @Column(name = "TOTAL_CREDITO_APURADO")
     private BigDecimal totalCreditoApurado;
 
-    @Column(name = "TOTAL_VENDA_INFORMADA", nullable = false)
+    @Column(name = "TOTAL_VENDA_INFORMADA")
     private BigDecimal totalVendaInformada;
 
-    @Column(name = "TOTAL_CREDITO_INFORMADO", nullable = false)
+    @Column(name = "TOTAL_CREDITO_INFORMADO")
     private BigDecimal totalCreditoInformado;
 
-    @Column(name = "TOTAL_MARGEM_INFORMADO", nullable = false)
+    @Column(name = "TOTAL_MARGEM_INFORMADO")
     private BigDecimal totalMargemInformado;
 
-    @Column(name = "TOTAL_MARGEM_APURADO", nullable = false)
+    @Column(name = "TOTAL_MARGEM_APURADO")
     private BigDecimal totalMargemApurado;
 
-    @Column(name = "NOTA_VALORES_DIVERSOS", nullable = false)
+    @Column(name = "NOTA_VALORES_DIVERSOS")
     private BigDecimal notaValoresDiversos;
 
     @OneToMany(mappedBy = "chamadaEncalheFornecedor")

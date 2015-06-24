@@ -67,7 +67,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Enumerated(EnumType.STRING)
     private RegimeRecolhimento regimeRecolhimento;
 
-    @Column(name = "PRECO_UNITARIO", nullable = false)
+    @Column(name = "PRECO_UNITARIO")
     private BigDecimal precoUnitario;
 
     @Temporal(TemporalType.DATE)
@@ -110,7 +110,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "VALOR_MARGEM_INFORMADO")
     private BigDecimal valorMargemInformado;
 
-    @Column(name = "VALOR_MARGEM_APURADO", nullable = false)
+    @Column(name = "VALOR_MARGEM_APURADO")
     private BigDecimal valorMargemApurado;
     
     @OneToOne
