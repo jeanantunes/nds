@@ -294,7 +294,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         }
         
         if(edicoesProdutoPorCota.size() != bases.size()){
-//        	System.out.println("diferente: " + edicoesProdutoPorCota.get(0).getNumeroCota());
         	
         	edicoesTemp.addAll(edicoesProdutoPorCota);
         	edicoesProdutoPorCota.clear();
