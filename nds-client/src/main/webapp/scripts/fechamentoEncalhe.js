@@ -252,8 +252,8 @@ var fechamentoEncalheController = $.extend(true, {
 		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(7,false);
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(9,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(11,false);
-			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(13,false);
 			$('.bt_sellAll', fechamentoEncalheController.workspace).hide();
 		}
 		

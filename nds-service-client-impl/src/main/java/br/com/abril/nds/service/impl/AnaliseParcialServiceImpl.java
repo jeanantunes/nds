@@ -20,11 +20,11 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
 import br.com.abril.nds.dto.RepartePDVDTO;
-import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -150,7 +150,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
                 int contadorParciais = 1;
                 
-                List<EdicoesProdutosDTO> edicoesProdutoPorCota = this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota());
+                List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
+                
+                List<EdicoesProdutosDTO> edicoesProdutoPorCota = this.getEdicoesProdutoPorCota(queryDTO.getEdicoesBase(), item.getCota(), baseUtilizadas);
                 
                 for (EdicoesProdutosDTO edicoesProdutosDTO : edicoesProdutoPorCota) {
                     if (edicoesProdutosDTO.isParcial()) {
@@ -178,11 +180,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
         } else {
             if (queryDTO.getEdicoesBase() == null) {
-            	List<EdicoesProdutosDTO> edicoesBaseList = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId(), queryDTO.getDataLancamentoEdicao());
+            	List<EdicoesProdutosDTO> edicoesBaseList = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
             	List<EdicoesProdutosDTO> edicaoDoEstudoOrigem = null;
             	
             	if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
-            		edicaoDoEstudoOrigem = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoOrigem(),null);
+            		edicaoDoEstudoOrigem = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoOrigem());
 //            		if(edicaoDoEstudoOrigem.size()==6){
 //            			edicaoDoEstudoOrigem.remove(edicaoDoEstudoOrigem.size()-1);
 //            		}
@@ -277,10 +279,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return edicoesProdutosAcumulado;
     }
 
-    @Transactional
-    public List<EdicoesProdutosDTO> getEdicoesProdutoPorCota(List<EdicoesProdutosDTO> edicoesProdutosDTO, Integer numeroCota) {
+    private List<EdicoesProdutosDTO> getEdicoesProdutoPorCota(List<EdicoesProdutosDTO> edicoesProdutosDTO, Integer numeroCota, List<EdicoesProdutosDTO> bases) {
         
         List<EdicoesProdutosDTO> edicoesProdutoPorCota = new ArrayList<>();
+        
+        List<EdicoesProdutosDTO> edicoesTemp = new ArrayList<>();
         
         for (EdicoesProdutosDTO edicaoProdutoDTO : edicoesProdutosDTO) {
             
@@ -288,6 +291,42 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 
                 edicoesProdutoPorCota.add(edicaoProdutoDTO);
             }
+        }
+        
+        if(edicoesProdutoPorCota.size() != bases.size()){
+        	
+        	edicoesTemp.addAll(edicoesProdutoPorCota);
+        	edicoesProdutoPorCota.clear();
+        	
+        	for (int i = 0; i < bases.size(); i++) {
+				
+        		boolean contem = false;
+				EdicoesProdutosDTO fake = new EdicoesProdutosDTO();
+				
+        		for (EdicoesProdutosDTO edicaoCota : edicoesTemp) {
+        			
+					if(bases.get(i).getPeriodo().equalsIgnoreCase(edicaoCota.getPeriodo())){
+						edicoesProdutoPorCota.add(edicaoCota);
+						contem = true;
+					}else{
+						fake.setCodigoProduto(edicaoCota.getCodigoProduto());
+	        			fake.setEdicao(edicaoCota.getEdicao());
+	        			fake.setNumeroCota(edicaoCota.getNumeroCota());
+	        			fake.setParcial(edicaoCota.isParcial());
+	        			fake.setProdutoEdicaoId(edicaoCota.getProdutoEdicaoId());
+					}
+					
+				}
+        		
+        		if(!contem){
+        			
+        			fake.setReparte(BigDecimal.ZERO);
+        			fake.setVenda(BigDecimal.ZERO);
+        			fake.setPeriodo(bases.get(i).getPeriodo());
+        			
+        			edicoesProdutoPorCota.add(fake);
+        		}
+			}
         }
         
         return edicoesProdutoPorCota;

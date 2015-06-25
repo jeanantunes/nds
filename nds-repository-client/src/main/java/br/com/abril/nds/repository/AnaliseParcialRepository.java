@@ -22,7 +22,7 @@ public interface AnaliseParcialRepository {
 	void liberar(Long id);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId);
-	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date);
+	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
