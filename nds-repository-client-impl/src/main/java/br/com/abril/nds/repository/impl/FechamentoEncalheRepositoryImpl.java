@@ -147,6 +147,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
         query.setParameter("origemInterface", Origem.INTERFACE.name());
         query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
+        query.setParameter("tipoChamadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA.name());
         query.setParameter("tipoChamadaEncalheMatrizRecolhimento", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
         
         if (filtro.getFornecedorId() != null) {
@@ -187,6 +188,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         ((SQLQuery) query).addScalar("recolhimento", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("matrizRecolhimento", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("antecipada", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN);
         ((SQLQuery) query).addScalar("chamadaEncalheId", StandardBasicTypes.LONG);
         
@@ -227,6 +229,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
     		sql.append(" WHERE CHEN.PRODUTO_EDICAO_ID = ENCALHE_INFO_EDICAO.PRODUTOEDICAO ");
     		sql.append(" AND CHEN.DATA_RECOLHIMENTO <= :dataRecolhimento                  ");
     		sql.append(" ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheChamadao) THEN TRUE ELSE FALSE END AS chamadao,    ");
+    		sql.append(" CASE WHEN (				");
+    		sql.append(" (SELECT CHEN.TIPO_CHAMADA_ENCALHE	");
+    		sql.append(" FROM CHAMADA_ENCALHE CHEN          ");
+    		sql.append(" WHERE CHEN.PRODUTO_EDICAO_ID = ENCALHE_INFO_EDICAO.PRODUTOEDICAO ");
+    		sql.append(" AND CHEN.DATA_RECOLHIMENTO <= :dataRecolhimento                  ");
+    		sql.append(" ORDER BY CHEN.DATA_RECOLHIMENTO DESC LIMIT 1) = :tipoChamadaEncalheAntecipada) THEN TRUE ELSE FALSE END AS antecipada,    ");
     		sql.append(" CASE WHEN (						");
     		sql.append(" (SELECT CHEN.TIPO_CHAMADA_ENCALHE	");
     		sql.append(" FROM CHAMADA_ENCALHE CHEN          ");
@@ -264,7 +272,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append(" FROM CHAMADA_ENCALHE_COTA CEC                                      ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)  ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO CEL ON (CEL.CHAMADA_ENCALHE_ID = CE.ID) ");
-		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID AND L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO) ");
+		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID     AND (L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO or CE.TIPO_CHAMADA_ENCALHE = 'CHAMADAO' )) ");
 		sql.append(" LEFT OUTER JOIN PERIODO_LANCAMENTO_PARCIAL PLP ON PLP.ID = L.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append(" LEFT OUTER JOIN LANCAMENTO_PARCIAL LP ON PLP.LANCAMENTO_PARCIAL_ID = LP.ID ");
 		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CE.PRODUTO_EDICAO_ID)     ");
@@ -309,7 +317,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append(" INNER JOIN CHAMADA_ENCALHE_COTA CEC ON (CEC.ID = CONFENC.CHAMADA_ENCALHE_COTA_ID)                    ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (CE.ID = CEC.CHAMADA_ENCALHE_ID)   ");
 		sql.append(" INNER JOIN CHAMADA_ENCALHE_LANCAMENTO CEL ON (CEL.CHAMADA_ENCALHE_ID = CE.ID) ");
-		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID AND L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO) ");
+		sql.append(" INNER JOIN LANCAMENTO L ON (CEL.LANCAMENTO_ID = L.ID AND  (L.DATA_REC_DISTRIB = CE.DATA_RECOLHIMENTO or CE.TIPO_CHAMADA_ENCALHE = 'CHAMADAO' )) ");
 		sql.append(" LEFT OUTER JOIN PERIODO_LANCAMENTO_PARCIAL PLP ON PLP.ID = L.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append(" LEFT OUTER JOIN LANCAMENTO_PARCIAL LP ON PLP.LANCAMENTO_PARCIAL_ID = LP.ID ");
 		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = CONFENC.PRODUTO_EDICAO_ID) ");
