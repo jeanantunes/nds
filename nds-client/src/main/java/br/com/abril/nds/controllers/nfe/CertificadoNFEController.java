@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.nfe;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -12,6 +14,7 @@ import br.com.abril.nds.dto.CertificadoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CerfiticadoService;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -59,7 +62,6 @@ public class CertificadoNFEController extends BaseController {
 	}
 	
 	@Post("/confirmar")
-	@Transactional
 	public void confirmar(CertificadoNFEDTO filtro) {
 		
 		this.cerfiticadoService.confirmar(filtro, getUsuarioLogado().getId());
@@ -67,12 +69,9 @@ public class CertificadoNFEController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Upload do certificado efetuado com sucesso."), "result").recursive().serialize();
 	}
 	
-	@Post("/obterListaCertificado")
-	@Transactional
+	@Post
+	@Path("/obterCertificado")
 	public void obterCertificado() {
-		
-		this.cerfiticadoService.obterCertificado();
-		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Upload do certificado efetuado com sucesso."), "result").recursive().serialize();
+		result.include("listaCertificados", this.cerfiticadoService.obterCertificado());
 	}
 }

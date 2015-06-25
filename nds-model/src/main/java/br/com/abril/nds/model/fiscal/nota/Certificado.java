@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,7 +17,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
-@Table(name = "certificado")
+@Table(name = "CERTIFICADO")
 public class Certificado {
 	
 	@Id
@@ -31,6 +30,9 @@ public class Certificado {
 
 	@Column(name = "ALIAS")
 	private String alias;
+
+	@Column(name = "NOME_ARQUIVO")
+	private String nomeArquivo;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO")
@@ -84,6 +86,14 @@ public class Certificado {
 		this.dataFim = dataFim;
 	}
 	
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
 	public String getAlias() {
 		return alias;
 	}
@@ -120,7 +130,7 @@ public class Certificado {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
 		return result;
 	}
 
@@ -133,18 +143,20 @@ public class Certificado {
 		if (getClass() != obj.getClass())
 			return false;
 		Certificado other = (Certificado) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Certificado [id=" + id + ", senha=" + senha + ", dataInicio="
-				+ dataInicio + ", dataFim=" + dataFim + ", distribuidor="
-				+ distribuidor + "]";
+		return "Certificado [id=" + id + ", senha=" + senha + ", alias="
+				+ alias + ", nomeArquivo=" + nomeArquivo + ", dataCriacao="
+				+ dataCriacao + ", dataInicio=" + dataInicio + ", dataFim="
+				+ dataFim + ", distribuidor=" + distribuidor + ", usuario="
+				+ usuario + "]";
 	}	
 }

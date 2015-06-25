@@ -124,9 +124,9 @@ var certificadoNFEController  = $.extend(true, {
 	},
 	
 	initFlexiGrids : function() {
-		$(".certificadosGrid", impressaoNfeController.workspace).flexigrid({
-			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
-			url : contextPath + "/obterCertificado",
+		$(".certificadosGrid", certificadoNFEController.workspace).flexigrid({
+			preProcess : certificadoNFEController.preProcessGridPesquisa,
+			// url : contextPath + "/nfe/certificadoNFE/obterCertificado",
 			dataType : 'json',
 			colModel : [ {
 				display : 'Nome Arquivo',
@@ -162,6 +162,28 @@ var certificadoNFEController  = $.extend(true, {
 			width : 500,
 			height : 130
 		});
+	},
+	
+	/**
+	 * Metodo de pre-processamento dos dados inseridos na grid Pesquisa
+	 * 
+	 * @param data - dados inseridos na grid
+	 * @returns dados normalizados para a grid
+	 */
+	preProcessGridPesquisa : function(data) {
+		
+		if (typeof data.mensagens == "object") {
+		
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			$("#certificadosGrid", certificadoNFEController.workspace).empty();
+		
+		} else {
+			
+			for(var index in data.rows) {
+						
+			}
+			return data;
+		}
 	},
 	
 }, BaseController);
