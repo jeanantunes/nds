@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,9 +17,9 @@ import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
+import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
-import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.helper.LancamentoHelper;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -365,7 +364,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @SuppressWarnings("unchecked")
 	@Override
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date) {
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
 
         StringBuilder sql = new StringBuilder();
         sql.append("select distinct ");
@@ -385,7 +384,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append(" where epe.estudo_id = :estudoId ");
 //        sql.append(" and l.DATA_LCTO_PREVISTA= :dataLancamento ");
-        sql.append("  group by pe.id ");
+        sql.append("  group by epe.periodo_parcial, pe.NUMERO_EDICAO ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
         sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
 
