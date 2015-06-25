@@ -153,7 +153,9 @@ public class FileExporter {
 		JPEG(".jpeg", "image/jpeg"),
 		PNG(".png", "image/png"),
 		GIF(".gif", "image/gif"),
-		BMP(".bmp", "image/vnd.wap.wbmp");
+		BMP(".bmp", "image/vnd.wap.wbmp"),
+		JKS(".jks", "application/octet-stream"),
+		PFX(".pfx", "application/x-pkcs12");
 
 		private String extension;
 		

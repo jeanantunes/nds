@@ -8,6 +8,22 @@ var certificadoNFEController  = $.extend(true, {
 		this.initDatas();
 		this.initFlexiGrids();
 		
+		$('#certificado-upload').fileupload(
+			{
+				url : this.path + "uploadCertificado",
+				sequentialUploads: false,
+				dataType : 'json',
+				paramName : 'uploadedFile',
+				replaceFileInput: false,
+				submit : function(e, data) {
+					data = $("#pesquisarForm", this.workspace).serialize();
+	
+				},
+				success : function(e, data) {$("#nomeArquivoCertificado").html(e.result);
+			}
+					 
+		});
+		
 	},
 
 	initDatas : function() {
@@ -31,11 +47,6 @@ var certificadoNFEController  = $.extend(true, {
 		$("#certificadoNFEConfirmar", this.workspace).click(function() {
 			_this.btnConfirmar();
 		});
-	},	
-	
-	initFlexiGrids : function() {
-		
-		
 	},
 	
 	upload : function() {
@@ -47,7 +58,7 @@ var certificadoNFEController  = $.extend(true, {
 		this.isEmptyOrNull();
 		
 		var parametros = this.param();
-		
+
 		$.postJSON(this.path + 'confirmar', parametros, function(data) {
 			
 			var tipoMensagem = data.tipoMensagem;
@@ -58,8 +69,7 @@ var certificadoNFEController  = $.extend(true, {
 			}
 			exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
 			
-		});
-		
+		});		
 		
 	},
 	
@@ -104,13 +114,54 @@ var certificadoNFEController  = $.extend(true, {
 	},
 	
 	
-	exibirMensagemSucesso: function (result){
+	exibirMensagemSucesso : function (result){
 		
 		var tipoMensagem = result.tipoMensagem;
 		var listaMensagens = result.listaMensagens;
 		if (tipoMensagem && listaMensagens) {
 			exibirMensagem(tipoMensagem, listaMensagens);
 		}
+	},
+	
+	initFlexiGrids : function() {
+		$(".certificadosGrid", impressaoNfeController.workspace).flexigrid({
+			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
+			url : contextPath + "/obterCertificado",
+			dataType : 'json',
+			colModel : [ {
+				display : 'Nome Arquivo',
+				name : 'nomeArquivo',
+				width : 80,
+				sortable : true,
+				align : 'left',
+			},{
+				display : 'Data Inicio',
+				name : 'dataInicio',
+				width : 340,
+				sortable : true,
+				align : 'left',
+			},{
+				display : 'Data Fim',
+				name : 'dataFim',
+				width : 340,
+				sortable : true,
+				align : 'left',	
+			},{
+				display : '',
+				name : 'sel',
+				width : 20,
+				sortable : false,
+				align : 'center',
+			}],
+			showToggleBtn : false,
+			sortname : "nomeArquivo",
+			sortorder : "asc",
+			usepager : false,
+			useRp : true,
+			rp : 15,
+			width : 500,
+			height : 130
+		});
 	},
 	
 }, BaseController);
