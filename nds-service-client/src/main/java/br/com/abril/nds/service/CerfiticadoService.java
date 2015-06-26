@@ -9,10 +9,12 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 public interface CerfiticadoService {
     
-	public void upload(final UploadedFile uploadedFile, final TipoParametroSistema parametroPath) throws IOException;
+	public String upload(final UploadedFile uploadedFile, final TipoParametroSistema parametroPath) throws IOException;
 
 	public void confirmar(CertificadoNFEDTO filtro, Long idUsuario);
 
-	List<CertificadoNFEDTO> obterCertificado();
+	List<CertificadoNFEDTO> obterCertificado(CertificadoNFEDTO filtro);
+
+	Long quantidade(CertificadoNFEDTO filtro);
 	
 }

@@ -52,7 +52,7 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CertificadoServiceImpl.class);
 
 	@Override
-	public void upload(UploadedFile uploadedFile, TipoParametroSistema parametroPath) throws IOException{
+	public String upload(UploadedFile uploadedFile, TipoParametroSistema parametroPath) throws IOException{
 		
 		LOGGER.debug("Upload do certificado digital.");
 		
@@ -75,6 +75,7 @@ public class CertificadoServiceImpl implements CerfiticadoService {
             
         }
 		
+        return fileName;
 	}
 
 	@Override
@@ -90,6 +91,7 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 		certificado.setDataInicio(filtro.getDataFim());
 		certificado.setDataFim(filtro.getDataFim());
 		certificado.setDataCriacao(new Date());
+		certificado.setNomeArquivo(filtro.getNomeArquivo());
 		certificado.setSenha(filtro.getSenha());
 		certificado.setAlias(filtro.getAlias());
 		certificado.setDistribuidor(distribuidor);
@@ -100,8 +102,14 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 	}
 
 	@Override
-	public List<CertificadoNFEDTO> obterCertificado() {
-		return this.certificadoRepository.obterCertificado();
+	@Transactional
+	public List<CertificadoNFEDTO> obterCertificado(CertificadoNFEDTO filtro) {
+		return this.certificadoRepository.obterCertificado(filtro);
 	}
-	
+
+	@Override
+	@Transactional
+	public Long quantidade(CertificadoNFEDTO filtro) {
+		return this.certificadoRepository.quantidade(filtro);
+	}	
 }

@@ -44,10 +44,9 @@ public class MovimentoFechamentoFiscalRepositoryImpl extends AbstractRepositoryM
 	public MovimentoFechamentoFiscalFornecedor buscarPorProdutoEdicaoTipoMovimentoEstoque(ProdutoEdicao produtoEdicao, TipoMovimentoEstoque tipoMovimentoEstoque) {
 		
 		Criteria criteria = getSession().createCriteria(MovimentoFechamentoFiscalFornecedor.class);
-		criteria.createAlias("origemMovimentoFechamentoFiscal", "origemMovimentoFechamentoFiscal");
 		criteria.createAlias("origemMovimentoFechamentoFiscal.movimento", "movimento");
-		criteria.add(Restrictions.eq("movimento.tipoMovimento", tipoMovimentoEstoque));
-		criteria.add(Restrictions.eq("movimento.produtoEdicao", produtoEdicao));
+		criteria.add(Restrictions.eq("tipoMovimento", tipoMovimentoEstoque));
+		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		criteria.add(Restrictions.eq("notaFiscalDevolucaoSimbolicaEmitida", false));
 		criteria.add(Restrictions.eq("notaFiscalLiberadaEmissao", true));
 		

@@ -7,6 +7,8 @@ import br.com.abril.nds.model.fiscal.nota.Certificado;
 
 public interface CertificadoRepository extends Repository<Certificado, Long> {
 
-	List<CertificadoNFEDTO> obterCertificado();
+	List<CertificadoNFEDTO> obterCertificado(CertificadoNFEDTO filtro);
+
+	Long quantidade(CertificadoNFEDTO filtro);
 	
 }

@@ -13,6 +13,8 @@ public class CertificadoNFEDTO implements Serializable {
 
 	private String nomeDistribuidor;	
 	
+	private String nomeArquivo;
+	
 	@Export(label="alias")
 	private String alias;
 	
@@ -28,6 +30,14 @@ public class CertificadoNFEDTO implements Serializable {
 
 	public void setNomeDistribuidor(String nomeDistribuidor) {
 		this.nomeDistribuidor = nomeDistribuidor;
+	}
+	
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
 	}
 
 	public String getAlias() {
