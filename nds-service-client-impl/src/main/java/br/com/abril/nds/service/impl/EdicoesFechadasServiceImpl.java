@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 		
 		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
 		
+		List<String> nameMovimentos = tratarNameMovimentos(movimentosExcluidos);
+		
 		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, 
 				                                                       dateAte, 
 				                                                       idFornecedor, 
@@ -44,7 +47,7 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 				                                                       null, 
 				                                                       null, 
 				                                                       null,
-				                                                       movimentosExcluidos,
+				                                                       nameMovimentos,
 				                                                       StatusAprovacao.APROVADO);
 		
 	}
@@ -60,10 +63,12 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 		
 		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
 		
+		List<String> nameMovimentos = tratarNameMovimentos(movimentosExcluidos);
+		
 		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, 
 				                                                            dateAte, 
 				                                                            idFornecedor,
-						                                                    movimentosExcluidos,
+				                                                            nameMovimentos,
 						                                                    StatusAprovacao.APROVADO);
 		
 	}
@@ -89,6 +94,8 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 		
 		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
 		
+		List<String> nameMovimentos = tratarNameMovimentos(movimentosExcluidos);
+		
 		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe,
 				                                                       dateAte, 
 				                                                       idFornecedor, 
@@ -96,8 +103,19 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 				                                                       sortname, 
 				                                                       firstResult,
 				                                                       maxResults,
-				                                                       movimentosExcluidos,
+				                                                       nameMovimentos,
 					                                                   StatusAprovacao.APROVADO);
+	}
+	
+	private List<String> tratarNameMovimentos (List<GrupoMovimentoEstoque> movimentos){
+		
+		List<String> nameMovimentos = new ArrayList<>();
+		
+		for (GrupoMovimentoEstoque movEstoque : movimentos) {
+			nameMovimentos.add(movEstoque.name());
+		}
+		
+		return nameMovimentos;
 	}
 
 	@Override
@@ -106,10 +124,12 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 		
 		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
 		
+		List<String> nameMovimentos = tratarNameMovimentos(movimentosExcluidos);
+		
 		return edicoesFechadasRepository.countResultadoEdicoesFechadas(dataDe,
 				                                                       dateAte, 
 				                                                       idFornecedor,
-				                                                       movimentosExcluidos,
+				                                                       nameMovimentos,
 					                                                   StatusAprovacao.APROVADO);
 	}
 	

@@ -6,7 +6,6 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 
 
@@ -36,7 +35,7 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 			                                                             String sortname, 
 			                                                             Integer firstResult, 
 			                                                             Integer maxResults,
-			    				                                         List<GrupoMovimentoEstoque> gruposExcluidos,
+			    				                                         List<String> gruposExcluidos,
 			    				                                         StatusAprovacao statusAprovacao);
 
 	
@@ -53,7 +52,7 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, 
 			                                             Date dateAte, 
 			                                             Long idFornecedor,
-				                                         List<GrupoMovimentoEstoque> gruposExcluidos,
+				                                         List<String> gruposExcluidos,
 				                                         StatusAprovacao statusAprovacao);
 
 
@@ -69,7 +68,7 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	public Long countResultadoEdicoesFechadas(Date parse, 
 			                                  Date parse2,
 			                                  Long idFornecedor,
-		                                      List<GrupoMovimentoEstoque> gruposExcluidos,
+		                                      List<String> gruposExcluidos,
 		                                      StatusAprovacao statusAprovacao);
 
 }
