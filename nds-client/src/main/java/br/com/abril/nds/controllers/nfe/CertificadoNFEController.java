@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
@@ -14,8 +13,8 @@ import br.com.abril.nds.dto.CertificadoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CerfiticadoService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -51,9 +50,13 @@ public class CertificadoNFEController extends BaseController {
 	
 	@Post
     public void uploadCertificado(final UploadedFile uploadedFile) {
-	
+		
 		try {
-			this.cerfiticadoService.upload(uploadedFile, TipoParametroSistema.NFE_PATH_CERTIFICADO);
+			
+			String nomeArquivo = this.cerfiticadoService.upload(uploadedFile, TipoParametroSistema.NFE_PATH_CERTIFICADO);
+			
+			session.setAttribute("nomeArquivo", nomeArquivo);
+			
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao realizar upload do certificado");
 		}
@@ -68,10 +71,25 @@ public class CertificadoNFEController extends BaseController {
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Upload do certificado efetuado com sucesso."), "result").recursive().serialize();
 	}
+
+    @Post("buscar")
+    public void busca(final CertificadoNFEDTO filtro) {
+        
+        final List<CertificadoNFEDTO> certificados = this.cerfiticadoService.obterCertificado(filtro);
+        
+        final Long quantidade = this.cerfiticadoService.quantidade(filtro);
+        
+        if(quantidade == 0) {
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado!");
+        }
+        
+        result.use(FlexiGridJson.class).from(certificados).total(quantidade.intValue()).page(1).serialize();
+        
+    }
 	
-	@Post
-	@Path("/obterCertificado")
+	@Post("/obterCertificado")
 	public void obterCertificado() {
-		result.include("listaCertificados", this.cerfiticadoService.obterCertificado());
+		
+		
 	}
 }

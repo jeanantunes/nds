@@ -5,8 +5,10 @@ var certificadoNFEController  = $.extend(true, {
 	path : contextPath +"/nfe/certificadoNFE/",
 	
 	init : function() {
+		
 		this.initDatas();
 		this.initFlexiGrids();
+		this.bindButtons();
 		
 		$('#certificado-upload').fileupload(
 			{
@@ -16,10 +18,10 @@ var certificadoNFEController  = $.extend(true, {
 				paramName : 'uploadedFile',
 				replaceFileInput: false,
 				submit : function(e, data) {
-					data = $("#pesquisarForm", this.workspace).serialize();
+					data = $("#pesquisar_certicado_form", this.workspace).serialize();
 	
 				},
-				success : function(e, data) {$("#nomeArquivoCertificado").html(e.result);
+				success : function(e, data) {$("#nomeCertificado").html(e.result);
 			}
 					 
 		});
@@ -124,67 +126,119 @@ var certificadoNFEController  = $.extend(true, {
 	},
 	
 	initFlexiGrids : function() {
-		$(".certificadosGrid", certificadoNFEController.workspace).flexigrid({
-			preProcess : certificadoNFEController.preProcessGridPesquisa,
-			// url : contextPath + "/nfe/certificadoNFE/obterCertificado",
+		$(".certificadoGrid", this.workspace).flexigrid({
+			preProcess : function(data) {
+				if(typeof data.mensagens == "object") {
+
+					exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+
+				} else {
+					$.each(data.rows, function(index, value) {
+						var idCerticado = value.cell.id;
+						var acao = '<a href="javascript:;" onclick="certificadoNFEController.editar(' + idCerticado + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
+						acao += '</a> <a href="javascript:;" onclick="certificadoNFEController.excluir(' + idCerticado + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+						
+					});
+					return data;
+				}
+
+			},
 			dataType : 'json',
-			colModel : [ {
+			colModel : [{
 				display : 'Nome Arquivo',
 				name : 'nomeArquivo',
-				width : 80,
+				width : 220,
 				sortable : true,
-				align : 'left',
-			},{
+				align : 'left'
+			}, {
 				display : 'Data Inicio',
 				name : 'dataInicio',
-				width : 340,
+				width : 380,
 				sortable : true,
-				align : 'left',
-			},{
+				align : 'left'
+			}, {
 				display : 'Data Fim',
 				name : 'dataFim',
-				width : 340,
+				width : 250,
 				sortable : true,
-				align : 'left',	
-			},{
-				display : '',
-				name : 'sel',
-				width : 20,
+				align : 'left'
+			}, {
+				display : 'A&ccedil;&atilde;o',
+				name : 'acao',
+				width : 60,
 				sortable : false,
-				align : 'center',
+				align : 'center'
 			}],
-			showToggleBtn : false,
-			sortname : "nomeArquivo",
+			sortname : "codigo",
 			sortorder : "asc",
-			usepager : false,
+			usepager : true,
 			useRp : true,
 			rp : 15,
-			width : 500,
-			height : 130
+			showTableToggleBtn : true,
+			width : 960,
+			height : 'auto'
+		});
+
+	},
+	
+	buscar : function() {
+		
+		certificadoNFEController.initFlexiGrids();
+		
+		var parametros = new Array();
+		
+		parametros.push({name:"filtro.nomeArquivo" , value: $("#nomeCertificado").val()});
+		
+		$(".certificadoGrid", certificadoNFEController.workspace).flexOptions({
+			preProcess: certificadoNFEController.executarPreProcessamento,
+			url: contextPath + "/nfe/certificadoNFE/buscar",
+			dataType : 'json',
+			params: parametros
+		});
+		
+		$(".certificadoGrid").flexReload();
+		$(".grids", certificadoNFEController.workspace).show();
+		
+	},
+	
+	executarPreProcessamento : function(resultado) {
+
+		$.each(resultado.rows, function(index, value) {
+			var idCerticado = value.cell.id;
+			var acao = '<a href="javascript:;" onclick="certificadoNFEController.editar(' + idCerticado + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
+			acao += '</a> <a href="javascript:;" onclick="certificadoNFEController.excluir(' + idCerticado + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+			
+			value.cell.acao = acao;
+		});
+
+		return resultado;
+	},
+	
+	
+	bindButtons : function() {
+		
+		var _this = this;
+
+		$("#certificadoNFEConfirmar", this.workspace).click(function() {
+			_this.buscar();
+		});
+		
+		$("#btnPesquisar", this.workspace).click(function() {
+			_this.buscar();
+			$(".grids").show();
+			// $("#fileExport").show();
+		});
+		
+		$("#btnNovo", this.workspace).click(function() {
+			_this.novo();
 		});
 	},
 	
-	/**
-	 * Metodo de pre-processamento dos dados inseridos na grid Pesquisa
-	 * 
-	 * @param data - dados inseridos na grid
-	 * @returns dados normalizados para a grid
-	 */
-	preProcessGridPesquisa : function(data) {
+	novo : function() {
 		
-		if (typeof data.mensagens == "object") {
 		
-			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			$("#certificadosGrid", certificadoNFEController.workspace).empty();
-		
-		} else {
-			
-			for(var index in data.rows) {
-						
-			}
-			return data;
-		}
 	},
+	
 	
 }, BaseController);
 //@ sourceURL=certificadoNFE.js
