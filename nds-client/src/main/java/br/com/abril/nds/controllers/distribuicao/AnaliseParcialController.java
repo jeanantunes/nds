@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
@@ -379,13 +380,18 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Get("/exportar")
-    public void exportar(FileType fileType, Long id) throws IOException {
+    public void exportar(FileType fileType, Long id, String tipoExibicao, Integer numeroParcial) throws IOException {
 
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
         queryDTO.setEstudoId(id);
+        queryDTO.setModoAnalise(tipoExibicao);
+        
+        if(tipoExibicao.equalsIgnoreCase("PARCIAL")){
+        	queryDTO.setNumeroParcial(numeroParcial); 
+        }
 
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
-
+ 
         if (lista.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
         }
