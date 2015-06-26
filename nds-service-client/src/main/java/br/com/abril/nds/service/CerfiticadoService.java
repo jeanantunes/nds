@@ -1,0 +1,18 @@
+package br.com.abril.nds.service;
+
+import java.io.IOException;
+import java.util.List;
+
+import br.com.abril.nds.dto.CertificadoNFEDTO;
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
+
+public interface CerfiticadoService {
+    
+	public void upload(final UploadedFile uploadedFile, final TipoParametroSistema parametroPath) throws IOException;
+
+	public void confirmar(CertificadoNFEDTO filtro, Long idUsuario);
+
+	List<CertificadoNFEDTO> obterCertificado();
+	
+}

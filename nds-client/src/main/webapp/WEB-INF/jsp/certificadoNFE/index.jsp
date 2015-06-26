@@ -59,6 +59,7 @@ fieldset label {
 </head>
 
 <body>
+<form id="pesquisarForm" method="post" enctype="multipart/form-data">
 	<div id="dialog-confirmar" title="Atualização do certificado NF-e?"
 		style="display: none;">
 		<p>Confirma a Atualiza&ccedil;&atilde;o do Certificado NF-e?</p>
@@ -82,11 +83,14 @@ fieldset label {
 			class="filtro">
 			<div id="uploadedFileCertificadoDiv">
 			<tbody>
-				<tr>
-					<td width="70">Certificado:</td>
-					<td width="200" colspan="3"><input type="file" name="certificado-upload" /></td>
-				</tr>
-				
+				<div id="uploadedFileCertificado">
+					<tr>
+						<td width="70">Certificado:</td>
+						<td width="200" colspan="3">
+							<input type="file" name="certificado-upload" id="certificado-upload" size="50"/>
+						</td>
+					</tr>
+				</div>
 				<tr>
 					<td width="50">Data Inicio:</td>
 					<td width="200"><input type="text" id="certificado-data-inicio" name="certificado-data-inicio" class="input-date"/></td>
@@ -109,8 +113,15 @@ fieldset label {
 
 	</fieldset>
 
-	<div class="linha_separa_fields">&nbsp;</div>
-	
-	
 
+	<fieldset class="classFieldset">
+		<legend>Certificado NF-e</legend>
+		<div class="grids" style="display: none;">		
+			<table class="certificadosGrid"></table>
+		</div>
+
+	</fieldset>
+
+	<div class="linha_separa_fields">&nbsp;</div>
+</form>
 </body>

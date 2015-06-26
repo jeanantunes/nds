@@ -32,6 +32,7 @@ import br.com.caelum.vraptor.interceptor.ExecuteMethodInterceptor;
 import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
+import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.view.Results;
 
 import com.google.gson.Gson;
@@ -53,6 +54,15 @@ public class URLSecurityInterceptor implements Interceptor {
 		this.result = result;
 		this.request = request;
 		this.validator = validator;
+		try {
+			if (validator.hasErrors()) {
+			java.util.List <Message> msgs=validator.getErrors();
+			for (Message msg :msgs )
+			 logger.error("ERRO DE VALIDACAO:"+msg.getCategory()+"->"+msg.getMessage());
+			}
+		} catch ( Exception ee ) {
+		}
+		
 
 	}
 

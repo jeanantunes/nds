@@ -324,8 +324,28 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         	
         	Integer dia = fechamentoEncalheRepository.obterDiaRecolhimento(encalhe.getProdutoEdicao(),encalhe.getDataRecolhimento());
         	String recolhimento = dia.toString() + SUFIXO_DIA;
-        	
         	encalhe.setDiaRecolhimento(recolhimento);
+        	
+        	
+        	if(encalhe.isChamadao() && !encalhe.isMatrizRecolhimento()) {
+        			encalhe.setDiaRecolhimento("Chamadão");
+        	}
+        	if(encalhe.isAntecipada()) {
+    			encalhe.setDiaRecolhimento("Antecipada");
+    	    }
+        	
+        	 if (encalhe.getExemplaresDevolucao() == null) {
+             	encalhe.setExemplaresDevolucao(BigInteger.valueOf(0));
+             }
+             
+             if (encalhe.getExemplaresDevolucaoJuramentado() == null) {
+                 encalhe.setExemplaresDevolucaoJuramentado(BigInteger.valueOf(0));
+             }
+             
+             if (encalhe.getExemplaresVendaEncalhe() == null) {
+                 encalhe.setExemplaresVendaEncalhe(BigInteger.valueOf(0));
+             }
+        		
             listaDeIdsProdutoEdicao.add(encalhe.getProdutoEdicao());
         }
         

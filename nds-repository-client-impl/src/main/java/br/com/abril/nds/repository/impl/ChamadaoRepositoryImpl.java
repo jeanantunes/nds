@@ -41,8 +41,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		StringBuilder hql = new StringBuilder("select SUM(consignadoCota.qtdExemplaresTotal) AS qtdExemplaresTotal, SUM(consignadoCota.valorTotal) AS valorTotal FROM ( ");
 		
 		hql.append("SELECT ")
-			.append(" estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA AS qtdExemplaresTotal, ")
-			.append(" (mec.PRECO_COM_DESCONTO) * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) AS valorTotal ");
+			.append(" if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde) AS qtdExemplaresTotal, ")
+			.append(" (mec.PRECO_COM_DESCONTO) * (if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) AS valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
@@ -347,9 +347,9 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append(" INNER JOIN FORNECEDOR fornecedor ON produtoFornecedor.fornecedores_ID = fornecedor.ID ");
 		hql.append(" INNER JOIN PESSOA pessoa ON fornecedor.JURIDICA_ID = pessoa.ID ");
 		
-		hql.append(" WHERE tipo.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovRecebimentoReparte ");
+	//  hql.append(" WHERE   tipo.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovRecebimentoReparte ");
 		
-		hql.append(" AND lancamento.STATUS IN (:statusLancamento) ");
+		hql.append(" WHERE lancamento.STATUS IN (:statusLancamento) ");
 		
 		if (filtro.getDataChamadao() != null) {
 			
@@ -451,7 +451,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 	 */
 	private void aplicarParametrosParaPesquisaConsignadosCota(FiltroChamadaoDTO filtro, Query query) {
 		
-		query.setParameter("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+	//  query.setParameter("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.name());
 		
