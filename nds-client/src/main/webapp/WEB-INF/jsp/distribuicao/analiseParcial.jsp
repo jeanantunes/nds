@@ -337,7 +337,7 @@ table.dadosTab { margin-left: 370px;}
 				    </a>
 				</span>
                 <span class="bt_novos" title="Gerar Arquivo">
-                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudo.id}">
+                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudo.id}&tipoExibicao=${tipoExibicao}&numeroParcial=${lancamento.periodoLancamentoParcial.numeroPeriodo}">
                         <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /> Arquivo
 				    </a>
 				</span>
