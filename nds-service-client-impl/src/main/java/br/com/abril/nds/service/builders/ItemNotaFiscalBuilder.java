@@ -662,8 +662,8 @@ public class ItemNotaFiscalBuilder  {
 				
 				for(OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 					
-					MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
-					if(mec.getProdutoEdicao().getId().equals(movimentoEstoque.getProdutoEdicao().getId())) {
+					MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) oinf).getMovimentoEstoque();
+					if(me.getProdutoEdicao().getId().equals(movimentoEstoque.getProdutoEdicao().getId())) {
 						
 						notFound = false;
 						
