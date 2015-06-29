@@ -332,7 +332,7 @@ table.dadosTab { margin-left: 370px;}
 					</table>
 				</c:if>
 				<span class="bt_novos" title="Imprimir">
-                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudo.id}">
+                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudo.id}&tipoExibicao=${tipoExibicao}&numeroParcial=${lancamento.periodoLancamentoParcial.numeroPeriodo}">
                         <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir
 				    </a>
 				</span>
