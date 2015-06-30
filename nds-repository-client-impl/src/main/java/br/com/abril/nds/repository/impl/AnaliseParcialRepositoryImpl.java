@@ -589,7 +589,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("             null   ");
     	sql.append("             end) as venda ");
     	
-    	sql.append(" from movimento_estoque_cota mec ");
+    	sql.append(" from movimento_estoque_cota mec force index (NDX_PRODUTO_EDICAO) ");
     	sql.append(" inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ");
     	sql.append(" inner join cota c on c.id = mec.COTA_ID ");
     	sql.append(" inner join lancamento l on mec.lancamento_id = l.id ");
