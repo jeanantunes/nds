@@ -1549,11 +1549,13 @@ public class CotaServiceImpl implements CotaService {
         
         cota  = cotaRepository.merge(cota);
         
-     // correcao de problema de flag_pendente_ativacao.id_alterado=null
+        // correcao de problema de flag_pendente_ativacao.id_alterado=null
         if(cotaDto.getIdCota()== null){
 			cotaDto.setIdCota(cota.getId());
 		}
+        
         cota.setParametrosCotaNotaFiscalEletronica(getParamNFE(cota, cotaDto));
+        
         cota  = cotaRepository.merge(cota);
         
       //
@@ -1759,9 +1761,11 @@ public class CotaServiceImpl implements CotaService {
 	    	
 	    	flagCotaExigeNFe = new FlagPendenteAtivacao(Flag.COTA_EXIGE_NF_E, Flag.COTA_EXIGE_NF_E.getDescricao()
 	    					, Dominio.COTA, cotaDto.isExigeNFE(), cotaDto.getIdCota());
+	    	paramNFE.setExigeNotaFiscalEletronica(false);
 	    } else {
 	    	
 	    	flagCotaExigeNFe.setValor(cotaDto.isExigeNFE());
+	    	paramNFE.setExigeNotaFiscalEletronica(cotaDto.isExigeNFE());
 	    }
 	    
 	    
@@ -1770,9 +1774,11 @@ public class CotaServiceImpl implements CotaService {
 	    	flagCotaContribuinteICMS = 
 	    			new FlagPendenteAtivacao(Flag.COTA_CONTRIBUINTE_ICMS, Flag.COTA_CONTRIBUINTE_ICMS.getDescricao()
 	    					, Dominio.COTA, cotaDto.isContribuinteICMS(), cotaDto.getIdCota());
+	    	paramNFE.setContribuinteICMS(false);
 	    } else {
 	    	
 	    	flagCotaContribuinteICMS.setValor(cotaDto.isContribuinteICMS());
+	    	paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
 	    }
 	    
 	    flagPendenteAtivacaoRepository.merge(flagCotaExigeNFe);
