@@ -134,13 +134,30 @@ public class AnaliseParcialController extends BaseController {
             if(modoAnalise.equalsIgnoreCase("PARCIAL")){
             	List<DataLancamentoPeriodoEdicoesBasesDTO> lcmtos = analiseParcialService.obterDataLacmtoPeridoEdicoesBaseParciais(id, lancamento.getProdutoEdicao().getId());
             	
-            	for (int i = 0; i < 3; i++) {
-            		if(i < lcmtos.size()){
-            			result.include("parcial"+i, "L - "+lcmtos.get(i).getDataLancamento());
-            		}else{
-            			result.include("parcial"+i, "L - ");
+            	if(lcmtos.size() == 0){
+            		List<EdicoesProdutosDTO> baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(id, false);
+            		
+            		if(baseUtilizadas.size() == 0){
+            			baseUtilizadas = analiseParcialService.carregarPeriodosAnterioresParcial(id, true);
             		}
-				}
+            		
+            		for (int i = 0; i < 3; i++) {
+            			if(i < baseUtilizadas.size()){
+            				result.include("parcial"+i, "L - "+baseUtilizadas.get(i).getDataLancamento());
+            			}else{
+            				result.include("parcial"+i, "L - ");
+            			}
+            		}
+            		
+            	}else{
+            		for (int i = 0; i < 3; i++) {
+            			if(i < lcmtos.size()){
+            				result.include("parcial"+i, "L - "+lcmtos.get(i).getDataLancamento());
+            			}else{
+            				result.include("parcial"+i, "L - ");
+            			}
+            		}
+            	}
             }
         }
         
