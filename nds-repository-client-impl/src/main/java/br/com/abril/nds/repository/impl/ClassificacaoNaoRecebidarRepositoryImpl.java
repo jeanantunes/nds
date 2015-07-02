@@ -137,6 +137,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ClassificacaoNaoRecebidaDTO> obterClassificacoesNaoRecebidasPelaCota(FiltroClassificacaoNaoRecebidaDTO filtro) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -172,21 +173,23 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		  
 		  if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("ACAO")){
         		hql.append(" order by tipoClassificacaoProduto.descricao");
-        	}else{
+		  }else{
 
-        		if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
-    	  			filtro.getPaginacao().setSortColumn("dataAlteracao");
-    	  		}
+			  if(filtro.getPaginacao().getSortColumn().equalsIgnoreCase("dataAlteracaoFormatada")){
+				  filtro.getPaginacao().setSortColumn("dataAlteracao");
+			  }
         		
         		hql.append(" ORDER BY ");
         		hql.append(" " + filtro.getPaginacao().getSortColumn());
-        	}
-        	hql.append(" " + filtro.getPaginacao().getSortOrder());
         }
-	
-		hql.append(" order by tipoClassificacaoProduto.descricao");
-		
-		Query query = getSession().createQuery(hql.toString());
+        	hql.append(" " + filtro.getPaginacao().getSortOrder());
+	  } else {
+        	
+		  	hql.append(" order by nomeClassificacao");
+        	
+	  }
+	  
+	  Query query = getSession().createQuery(hql.toString());
 		
 		setParameters(query, parameters);
 		
