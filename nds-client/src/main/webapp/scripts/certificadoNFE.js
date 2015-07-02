@@ -9,6 +9,7 @@ var certificadoNFEController  = $.extend(true, {
 		this.initDatas();
 		this.initFlexiGrids();
 		this.bindButtons();
+		this.createDialog();
 		
 		$('#certificado-upload').fileupload(
 			{
@@ -21,13 +22,46 @@ var certificadoNFEController  = $.extend(true, {
 					data = $("#pesquisar_certicado_form", this.workspace).serialize();
 	
 				},
-				success : function(e, data) {$("#nomeCertificado").html(e.result);
+				
+				success : function(e, data) {$("#nomeCertificadoUpload").html(e.result);
 			}
 					 
 		});
 		
 	},
 
+	createDialog : function() {
+		$("#dialog-novo", this.workspace).dialog({
+			resizable : false,
+			height : 250,
+			width : 650,
+			modal : true,
+			buttons : [{
+				id:"btnDialogNovoConfirmar",
+				text:"Confirmar",
+				click: function() {
+					certificadoNFEController.salvar(this);
+					
+				}},{
+					id:"btnDialogNovoCancelar",
+					text:"Cancelar",
+					click : function() {
+					$(this).dialog("close");
+				}
+			}],
+			beforeClose : clearMessageDialogTimeout,
+			form: $("#dialog-novo", this.workspace).parents("form")
+		});
+		$("#dialog-novo", this.workspace).dialog("close");
+	},
+	
+	showPopupEditar : function(title) {
+		$("#dialog-novo", this.workspace)
+			.dialog( "option" ,  "title", title )
+			.dialog( "open" );
+		
+	},
+	
 	initDatas : function() {
 		$(".input-date").datepicker({
 			showOn : "button",
@@ -57,7 +91,9 @@ var certificadoNFEController  = $.extend(true, {
 	
 	btnConfirmar : function() {
 		
-		this.isEmptyOrNull();
+		if(this.isEmptyOrNull()) {
+			return;
+		}
 		
 		var parametros = this.param();
 
@@ -101,12 +137,13 @@ var certificadoNFEController  = $.extend(true, {
 		
 		if(mensagens.length > 0) {
 			exibirMensagem('WARNING', mensagens);
-			return false;
+			return true;
 		}
 	},
 	
 	param : function () {
-    	
+		
+		params.push({name:"filtro.nomeArquivo" , value: $("#nomeCertificadoUpload").html()});
     	params.push({name:"filtro.senha" , value: $("#certificado-senha").val()});
     	params.push({name:"filtro.alias" , value: $("#certificado-alias").val()});
     	params.push({name:"filtro.dataInicio" , value: $("#certificado-data-inicio").val()});
@@ -114,7 +151,6 @@ var certificadoNFEController  = $.extend(true, {
     	
     	return params;
 	},
-	
 	
 	exibirMensagemSucesso : function (result){
 		
@@ -135,7 +171,7 @@ var certificadoNFEController  = $.extend(true, {
 				} else {
 					$.each(data.rows, function(index, value) {
 						var idCerticado = value.cell.id;
-						var acao = '<a href="javascript:;" onclick="certificadoNFEController.editar(' + idCerticado + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
+						
 						acao += '</a> <a href="javascript:;" onclick="certificadoNFEController.excluir(' + idCerticado + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
 						
 					});
@@ -194,6 +230,7 @@ var certificadoNFEController  = $.extend(true, {
 			url: contextPath + "/nfe/certificadoNFE/buscar",
 			dataType : 'json',
 			params: parametros
+		
 		});
 		
 		$(".certificadoGrid").flexReload();
@@ -202,18 +239,23 @@ var certificadoNFEController  = $.extend(true, {
 	},
 	
 	executarPreProcessamento : function(resultado) {
-
-		$.each(resultado.rows, function(index, value) {
-			var idCerticado = value.cell.id;
-			var acao = '<a href="javascript:;" onclick="certificadoNFEController.editar(' + idCerticado + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
-			acao += '</a> <a href="javascript:;" onclick="certificadoNFEController.excluir(' + idCerticado + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+		
+		if( typeof resultado.mensagens == "object") {
+			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+		} else {
 			
-			value.cell.acao = acao;
-		});
-
-		return resultado;
+			$.each(resultado.rows, function(index, value) {
+				var idCerticado = value.cell.id;
+				//var acao = '<a href="javascript:;" onclick="certificadoNFEController.editar(' + idCerticado + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
+				var acao = '</a> <a href="javascript:;" onclick="certificadoNFEController.excluir(' + idCerticado + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+				
+				value.cell.acao = acao;
+			});
+			
+			return resultado;
+		}
+		
 	},
-	
 	
 	bindButtons : function() {
 		
@@ -236,9 +278,114 @@ var certificadoNFEController  = $.extend(true, {
 	
 	novo : function() {
 		
+		if(!verificarPermissaoAcesso(this.workspace)) {			
+			return;
+		}
+		
+		var data = {
+			certificado : {}
+		};
+		
+		this.clearForm($("#novo_certificado_form", this.workspace));
+		
+		this.bindData(data, $("#novo_certificado_form", this.workspace));
+		
+		this.showPopupEditar('Incluir Novo Certificado');
 		
 	},
 	
+	showPopupEditar : function(title) {
+		$("#dialog-novo", this.workspace)
+			.dialog( "option" ,  "title", title )
+			.dialog( "open" );
+		
+	},
+	
+	salvar : function(dialog) {
+		
+		if(this.isEmptyOrNull()) {
+			return;
+		}
+		
+		var parametros = this.param();
+
+		$.postJSON(this.path + 'confirmar', parametros, function(data) {
+			
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+				return;
+			}
+			
+			exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
+			$("#dialog-novo", this.workspace).dialog("close");
+			$(dialog).dialog("close");
+			$("#effect").show("highlight", {}, 1000, callback);
+			$(".grids", this.workspace).show();
+			certificadoNFEController.buscar(this);
+			
+		});
+		
+	},
+	
+	editar : function(id) {
+		$.postJSON(this.path + 'obterCertificadoId', {
+			'id' : id
+		}, function(data) {
+			if( typeof data.mensagens == "object") {
+				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			} else {
+				$("#certificadoId").val(data.id);
+		    	$("#certificado-senha").val(data.senha);
+		    	$("#certificado-alias").val(data.alias);
+		    	$("#certificado-data-inicio").val(data.dataInicio);
+		    	$("#certificado-data-fim").val(data.dataFim);
+		    	
+		    	certificadoNFEController.showPopupEditar('Editar Certificado.');
+			}
+		});
+	},
+	
+	excluir : function(id) {
+		
+		if(!verificarPermissaoAcesso(this.workspace)){
+			return;
+		}
+		
+		$("#dialog-certificado-excluir", this.workspace).dialog({
+			resizable : false,
+			height : 170,
+			width : 380,
+			modal : true,
+			buttons : [{
+				id:"btnDialogExcluirConfirmar",
+				text:"Confirmar", click : function() {
+					$(this).dialog("close");
+					$("#effect").show("highlight", {}, 1000, callback);
+					certificadoNFEController.remove(id);
+				}},{
+					id:"btnDialogExcluirCancelar",
+					text:"Cancelar",click : function() {
+					$(this).dialog("close");
+				}
+			}],
+			form: $("#dialog-certificado-excluir", this.workspace).parents("form")
+		});
+	},
+	
+	remove : function(id) {
+		$.postJSON(this.path + 'remover', {
+			'id' : id
+		}, function(data) {
+			if( typeof data.mensagens == "object") {
+				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			}
+			$(".certificadoGrid", this.workspace).flexReload();
+			
+		});
+	},
 	
 }, BaseController);
 //@ sourceURL=certificadoNFE.js
