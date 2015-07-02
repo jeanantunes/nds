@@ -55,7 +55,7 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPos
 
 				String faixaHistorico = historico.getFaixaReparte();
 				
-				if (faixaHistorico.startsWith(inicioFaixa) && faixaHistorico.endsWith(fimFaixa)) {
+				if (inicioFaixa.contains(faixaHistorico.substring(0,2).trim()) && faixaHistorico.endsWith(fimFaixa)) {
 					
 					historico.setReparteToOrder(reparteToOrder);
 					
