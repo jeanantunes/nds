@@ -863,7 +863,14 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             if (vendaMediaDTO.bases.length != 0) {
                 T.preencherGridBases($.extend(true, [], vendaMediaDTO.bases));
                 $(document).one("ajaxStop", function() {
-                    $('.dadosBasesGrid select').each(function(k){$(this).val(vendaMediaDTO.bases[k].peso)});
+                   // $('.dadosBasesGrid select').each(function(k){$(this).val(vendaMediaDTO.bases[k].peso)});
+                    
+                    $('.dadosBasesGrid select').each(function (k) {
+                    	
+                    	if(vendaMediaDTO.bases[k] != undefined){
+                    		$(this).val(vendaMediaDTO.bases[k].peso);
+                    	}
+                	});
                 });
             }
 
