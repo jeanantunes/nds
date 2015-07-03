@@ -406,6 +406,56 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return query.list();
     }
     
+	@SuppressWarnings("unchecked")
+	@Override
+    public List<EdicoesProdutosDTO> carregarPeriodosAnterioresParcial(Long estudoId, Boolean isTrazerEdicoesAbertas) {
+
+        StringBuilder sql = new StringBuilder();
+        
+        sql.append(" SELECT  ");
+        sql.append("   pe.id produtoEdicaoId, ");
+        sql.append("   p.codigo codigoProduto, ");
+        sql.append("   p.nome nomeProduto, ");
+        sql.append("   pe.numero_edicao edicao, ");
+        sql.append("   plp.NUMERO_PERIODO periodo, ");
+        sql.append("   pe.TIPO_CLASSIFICACAO_PRODUTO_ID idTipoClassificacao, ");
+        sql.append("   l.data_lcto_distribuidor as dtLancamento    ");
+        sql.append("    ");
+        sql.append(" FROM estudo_gerado eg  ");
+        sql.append("   join produto_edicao pe  ");
+        sql.append("     ON eg.PRODUTO_EDICAO_ID = pe.ID ");
+        sql.append("   join produto p ");
+        sql.append("     ON pe.PRODUTO_ID = p.ID ");
+        sql.append("   join lancamento l ");
+        sql.append("     ON l.PRODUTO_EDICAO_ID = pe.ID ");
+        sql.append("   join periodo_lancamento_parcial plp ");
+        sql.append("     ON plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+        sql.append(" WHERE eg.id = :estudoId ");
+        sql.append("   and l.DATA_LCTO_DISTRIBUIDOR < eg.DATA_LANCAMENTO ");
+        
+        if(!isTrazerEdicoesAbertas){
+        	sql.append("   and l.status in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
+        }
+        
+        sql.append(" group by plp.NUMERO_PERIODO ");
+        sql.append(" order by plp.NUMERO_PERIODO desc ");
+        sql.append(" limit 3 ");
+        
+        Query query = getSession().createSQLQuery(sql.toString())
+                .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
+                .addScalar("codigoProduto", StandardBasicTypes.STRING)
+                .addScalar("nomeProduto", StandardBasicTypes.STRING)
+                .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("periodo", StandardBasicTypes.STRING)
+                .addScalar("idTipoClassificacao", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("dtLancamento", StandardBasicTypes.DATE);
+        
+        query.setParameter("estudoId", estudoId);
+        query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
+
+        return query.list();
+    }    
+    
     @SuppressWarnings("unchecked")
     @Override
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudoParcial(Long estudoId, Integer numeroPeriodoBase, boolean parcialComRedistribuicao) {
@@ -589,7 +639,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append("             null   ");
     	sql.append("             end) as venda ");
     	
-    	sql.append(" from movimento_estoque_cota mec ");
+    	sql.append(" from movimento_estoque_cota mec force index (NDX_PRODUTO_EDICAO) ");
     	sql.append(" inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ");
     	sql.append(" inner join cota c on c.id = mec.COTA_ID ");
     	sql.append(" inner join lancamento l on mec.lancamento_id = l.id ");
@@ -1005,6 +1055,26 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		query.setResultTransformer(new AliasToBeanResultTransformer(DataLancamentoPeriodoEdicoesBasesDTO.class));
 		
 		return query.list(); 
+	}
+	
+	@Override
+	public Integer qtdBasesNoEstudo (Long idEstudo, boolean isBaseParcial){
+		
+		StringBuilder sql = new StringBuilder();
+    	
+    	sql.append(" select  ");
+    	sql.append("   COUNT(peb.ID) qtdBasesParciais ");
+    	sql.append(" from estudo_gerado eg  ");
+    	sql.append("   join estudo_produto_edicao_base peb ");
+    	sql.append("     on peb.ESTUDO_ID = eg.ID ");
+    	sql.append(" where eg.ID = :estudoId and parcial = :isParcial ");
+    	
+    	Query query = getSession().createSQLQuery(sql.toString()).addScalar("qtdBasesParciais", StandardBasicTypes.INTEGER);;
+    	
+    	query.setParameter("estudoId", idEstudo);
+        query.setParameter("isParcial", isBaseParcial);
+    	
+    	return (Integer) query.uniqueResult();
 	}
 	
 }

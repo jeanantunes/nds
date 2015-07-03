@@ -223,7 +223,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT PRODUTO_EDICAO_ID FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
+		sql.append(" SELECT DISTINCT PRODUTO_EDICAO_ID FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
