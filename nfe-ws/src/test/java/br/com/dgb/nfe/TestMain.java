@@ -120,7 +120,6 @@ public class TestMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws CertificateParsingException, IOException, CertificateException {
-    	// new TestMain().testAlheio();
         new TestMain().test();
     }
 
@@ -138,7 +137,7 @@ public class TestMain {
             try {
                 KeyStore keyStore = KeyStore.getInstance("PKCS12");
                 InputStream is = new FileInputStream(file);
-                String senha = "arutil14";
+                String senha = "arsp15";
                 keyStore.load(is, senha.toCharArray());
                 is.close();
 

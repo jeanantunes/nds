@@ -16,5 +16,9 @@ public interface CerfiticadoService {
 	List<CertificadoNFEDTO> obterCertificado(CertificadoNFEDTO filtro);
 
 	Long quantidade(CertificadoNFEDTO filtro);
+
+	public CertificadoNFEDTO obterCertificadoId(long id);
+
+	public void remover(long id);
 	
 }

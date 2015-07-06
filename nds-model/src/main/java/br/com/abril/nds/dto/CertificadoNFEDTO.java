@@ -11,7 +11,9 @@ public class CertificadoNFEDTO implements Serializable {
 
 	private static final long serialVersionUID = -6593247184450400133L;
 
-	private String nomeDistribuidor;	
+	private Long id;
+	
+	private Long idDistribuidor;	
 	
 	private String nomeArquivo;
 	
@@ -23,15 +25,23 @@ public class CertificadoNFEDTO implements Serializable {
 	private Date dataInicio;
 	
 	private Date dataFim;
-
-	public String getNomeDistribuidor() {
-		return nomeDistribuidor;
+	
+	public Long getId() {
+		return id;
 	}
 
-	public void setNomeDistribuidor(String nomeDistribuidor) {
-		this.nomeDistribuidor = nomeDistribuidor;
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
+	public Long getIdDistribuidor() {
+		return idDistribuidor;
+	}
+
+	public void setIdDistribuidor(Long idDistribuidor) {
+		this.idDistribuidor = idDistribuidor;
+	}
+
 	public String getNomeArquivo() {
 		return nomeArquivo;
 	}

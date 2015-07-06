@@ -71,6 +71,62 @@ fieldset label {
 		</div>  		  		
 	</div>
   	<div class="linha_separa_fields">&nbsp;</div>
+
+	<form id="excluir_certificado_form">
+		<div id="dialog-certificado-excluir" title="Excluir Certificado">		
+			<p>Confirma a exclus&atilde;o deste Certificado?</p>
+		</div>
+	</form>
+
+	<form action="/nfe/certificado/" id="novo_certificado_form">
+		
+		<input type="hidden" name="certificado.id" id="certificadoId" style="width:80px;"/>
+		
+		<div id="dialog-novo" title="Incluir Novo Certificado">  
+		
+		<div class="linha_separa_fields">&nbsp;</div>
+
+		<jsp:include page="../messagesDialog.jsp" /> 
+				
+		<table width="600" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<div id="uploadedFileCertificadoDiv">
+			<tbody>
+				<div id="uploadedFileCertificado">
+					<tr>
+						<td width="80">Certificado:</td>
+						<td width="200" colspan="3">
+							<input type="file" name="certificado-upload" id="certificado-upload" size="50"/>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>&nbsp;</td>
+						<td olspan="2">
+							<span id="nomeCertificadoUpload"></span>
+						</td>
+					</tr>
+				</div>
+				<tr>
+					<td width="50">Data Inicio:</td>
+					<td width="200"><input type="text" id="certificado-data-inicio" name="certificado-data-inicio" class="input-date"/></td>
+
+					<td width="50">Data Fim:</td>
+					<td width="200"><input type="text" id="certificado-data-fim" name="certificado-data-fim" class="input-date"/></td>
+				</tr>
+				
+				<tr>
+					<td width="70">Senha:</td>
+					<td width="250"><input type="password" id="certificado-senha" name="certificado-senha" /></td>
+
+					<td width="70">Alias:</td>
+					<td width="250"><input type="text" id="certificado-alias" name="certificado-alias" /></td>
+				</tr>
+
+			</tbody>
+			</div>
+		</table>
+		</div>
+	</form>
 	
 	<fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
    		<legend>Pesquisar Certificado</legend>

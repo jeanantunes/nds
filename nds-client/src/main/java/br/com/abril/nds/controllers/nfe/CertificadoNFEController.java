@@ -14,7 +14,9 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CerfiticadoService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -51,20 +53,23 @@ public class CertificadoNFEController extends BaseController {
 	@Post
     public void uploadCertificado(final UploadedFile uploadedFile) {
 		
+		String nomeCertificadoUpload = null;
+		
 		try {
 			
-			String nomeArquivo = this.cerfiticadoService.upload(uploadedFile, TipoParametroSistema.NFE_PATH_CERTIFICADO);
+			nomeCertificadoUpload = this.cerfiticadoService.upload(uploadedFile, TipoParametroSistema.NFE_PATH_CERTIFICADO);
 			
-			session.setAttribute("nomeArquivo", nomeArquivo);
+			session.setAttribute("nomeCertificadoUpload", nomeCertificadoUpload);
 			
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao realizar upload do certificado");
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Upload do certificado efetuado com sucesso."), "result").recursive().serialize();
+		result.use(PlainJSONSerialization.class).from(nomeCertificadoUpload, "result").recursive().serialize();
 	}
 	
 	@Post("/confirmar")
+	@Rules(Permissao.ROLE_NFE_CERTICADO_NFE)
 	public void confirmar(CertificadoNFEDTO filtro) {
 		
 		this.cerfiticadoService.confirmar(filtro, getUsuarioLogado().getId());
@@ -73,6 +78,7 @@ public class CertificadoNFEController extends BaseController {
 	}
 
     @Post("buscar")
+    @Rules(Permissao.ROLE_NFE_CERTICADO_NFE)
     public void busca(final CertificadoNFEDTO filtro) {
         
         final List<CertificadoNFEDTO> certificados = this.cerfiticadoService.obterCertificado(filtro);
@@ -87,9 +93,21 @@ public class CertificadoNFEController extends BaseController {
         
     }
 	
-	@Post("/obterCertificado")
-	public void obterCertificado() {
+    @Post("/obterCertificadoId")
+    public void obterCertificadoId(final long id) {
+        
+        final CertificadoNFEDTO certificado = this.cerfiticadoService.obterCertificadoId(id);
+                
+        result.use(CustomJson.class).from(certificado).serialize();
+        
+    }
+    
+	@Post("/remover")
+	@Rules(Permissao.ROLE_NFE_CERTICADO_NFE)
+	public void obterCertificado(final long id) {
 		
-		
+		this.cerfiticadoService.remover(id);
+        
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Box removido com sucesso.")).serialize();
 	}
 }
