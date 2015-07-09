@@ -344,9 +344,16 @@ public class EstudoAlgoritmoService {
         estudo.setProdutoEdicaoEstudo(produto);
         estudo.setReparteDistribuir(reparte);
         estudo.setReparteDistribuirInicial(reparte);
-        estudo.setTipoGeracao(TipoGeracaoEstudo.VENDA_MEDIA.toString());
-        estudo.setReparteTotal(distribuicaoVendaMedia.getReparteTotal());
-        estudo.setUsarMix(distribuicaoVendaMedia.isUsarMix());
+        
+        if(distribuicaoVendaMedia != null){
+        	estudo.setTipoGeracao(TipoGeracaoEstudo.VENDA_MEDIA.toString());
+        	estudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.VENDA_MEDIA);
+        	estudo.setReparteTotal(distribuicaoVendaMedia.getReparteTotal());
+        	estudo.setUsarMix(distribuicaoVendaMedia.isUsarMix());
+        }else{
+        	estudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.GERACAO_AUTOMATICA);
+        	estudo.setTipoGeracao(TipoGeracaoEstudo.GERACAO_AUTOMATICA.toString());
+        }
         
         estudo.setDistribuicaoPorMultiplos(0); // valor default
         estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor

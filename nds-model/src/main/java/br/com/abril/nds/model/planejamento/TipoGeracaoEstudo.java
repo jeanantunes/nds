@@ -2,7 +2,8 @@ package br.com.abril.nds.model.planejamento;
 
 public enum TipoGeracaoEstudo {
 	
-    VENDA_MEDIA("Distribuição Venda Média"),
+	GERACAO_AUTOMATICA("Geração automática"),
+	VENDA_MEDIA("Distribuição Venda Média"),
     MANUAL("Distribuição Manual"),
     SOMA("Soma de Estudos"),
     DIVISAO("Divisão de Estudos"),
