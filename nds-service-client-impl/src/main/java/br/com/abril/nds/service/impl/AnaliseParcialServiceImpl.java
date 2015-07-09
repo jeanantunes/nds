@@ -36,8 +36,10 @@ import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaLiberacaoEstudo;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -433,6 +435,19 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     		}
     	}
     	estudoService.liberar(id);
+    	
+    	Lancamento lancamentoEstudo = lancamentoRepository.obterParaAtualizar(estudoGerado.getLancamentoID());
+    	
+    	//verificar update Lancamento - Paliativo
+    	if(lancamentoEstudo.getEstudo() == null){
+    		
+    		Estudo estudo = new Estudo();
+    		estudo.setId(id);
+    		
+    		lancamentoEstudo.setEstudo(estudo);
+    		
+    		lancamentoRepository.alterar(lancamentoEstudo);
+    	}
     }
 
     @Override

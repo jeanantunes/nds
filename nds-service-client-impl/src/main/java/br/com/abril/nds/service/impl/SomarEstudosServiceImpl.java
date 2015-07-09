@@ -14,6 +14,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
@@ -108,6 +109,8 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 			estudo.setQtdeReparte((estudo.getQtdeReparte()!=null ? estudo.getQtdeReparte() : BigInteger.ZERO).add(estudoBase.getQtdeReparte()!=null ? estudoBase.getQtdeReparte() : BigInteger.ZERO));
 			
 			estudo.setSobra((estudo.getSobra()!=null ? estudo.getSobra() : BigInteger.ZERO).add(estudoBase.getSobra()!=null ? estudoBase.getSobra() : BigInteger.ZERO));
+			
+			estudo.setTipoGeracaoEstudo(TipoGeracaoEstudo.SOMA);
 			
 			estudoGeradoRepository.alterar(estudo);
 			estudoGeradoRepository.remover(estudoBase);

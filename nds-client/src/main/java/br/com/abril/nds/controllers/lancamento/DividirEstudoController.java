@@ -134,18 +134,18 @@ public class DividirEstudoController extends BaseController {
 
 		    if (qtdeReparteDivisao != null && qtdeReparteDivisao > 0) {
 
-			if (repartePrimeiroEstudo.compareTo(new BigDecimal(qtdeReparteDivisao)) == 1
-				&& reparteSegundoEstudo.compareTo(new BigDecimal(qtdeReparteDivisao)) == 1) {
-
-			    divisaoEstudo.setRepartePrimeiroEstudo(repartePrimeiroEstudo.toBigInteger());
-			    divisaoEstudo.setReparteSegundoEstudo(reparteSegundoEstudo.toBigInteger());
-
-			} else {
-			    divisaoEstudo.setRepartePrimeiroEstudo(repartePrimeiroEstudo.add(reparteSegundoEstudo).toBigInteger());
-			}
+				if (repartePrimeiroEstudo.compareTo(new BigDecimal(qtdeReparteDivisao)) == 1
+					&& reparteSegundoEstudo.compareTo(new BigDecimal(qtdeReparteDivisao)) == 1) {
+	
+				    divisaoEstudo.setRepartePrimeiroEstudo(repartePrimeiroEstudo.toBigInteger());
+				    divisaoEstudo.setReparteSegundoEstudo(reparteSegundoEstudo.toBigInteger());
+	
+				} else {
+				    divisaoEstudo.setRepartePrimeiroEstudo(repartePrimeiroEstudo.add(reparteSegundoEstudo).toBigInteger());
+				}
 		    } else {
-			divisaoEstudo.setRepartePrimeiroEstudo(repartePrimeiroEstudo.toBigInteger());
-			divisaoEstudo.setReparteSegundoEstudo(reparteSegundoEstudo.toBigInteger());
+		    	divisaoEstudo.setRepartePrimeiroEstudo(repartePrimeiroEstudo.toBigInteger());
+		    	divisaoEstudo.setReparteSegundoEstudo(reparteSegundoEstudo.toBigInteger());
 		    }
 
 //		    divisaoEstudo.setDataLancamentoPrimeiroEstudo(DateUtil.formatarDataPTBR(estudoOriginal.getDataLancamento()));

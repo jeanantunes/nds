@@ -27,6 +27,7 @@ import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.TipoClassificacaoEstudoCota;
 import br.com.abril.nds.model.planejamento.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
@@ -168,6 +169,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		estudoCopia.setId(null);
 		estudoCopia.setDataAlteracao(new Date());
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>());
+		estudoCopia.setTipoGeracaoEstudo(TipoGeracaoEstudo.COPIA_PROPORCIONAL);
 		
 		Long id = estudoGeradoRepository.adicionar(estudoCopia);
 		estudoCopia = estudoGeradoRepository.buscarPorId(id);
