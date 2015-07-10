@@ -718,7 +718,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, 0) as precoComDesconto, ")
         
         .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
-        .append(" from movimento_estoque_cota mec                                                               ")
+        .append(" from movimento_estoque_cota mec  FORCE INDEX (NDX_PRODUTO_EDICAO)			                                                             ")
         .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                 ")
         .append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID                                 ")
         .append(" inner join produto p on p.id = pe.PRODUTO_ID                                                  ")
@@ -740,7 +740,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getDtRecolhimentoAte() != null) {
 			hql.append(" and ce.DATA_RECOLHIMENTO <=:dataAte ");
 		}
-		
+
 		hql.append(" ) as reparte,                                                                              ")
         .append(" coalesce(conferenci2_.QTDE, 0 ) as quantidadeDevolvida,                                       ")
         .append(" case when count(conferenci2_.id) > 0 then 1 else 0 end as confereciaRealizada,                  ")
@@ -830,7 +830,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    hql.append("    	        on chamadaenc0_.ID=conferenci2_.CHAMADA_ENCALHE_COTA_ID "); 
 	    hql.append("    	left outer join CONTROLE_CONFERENCIA_ENCALHE_COTA controleco3_  ");
 	    hql.append("    	        on conferenci2_.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=controleco3_.ID "); 
-	    hql.append("    	inner join MOVIMENTO_ESTOQUE_COTA movimentoe16_  ");
+	    hql.append("    	inner join MOVIMENTO_ESTOQUE_COTA movimentoe16_  FORCE INDEX (NDX_PRODUTO_EDICAO)			 ");
 	    hql.append("    	        on movimentoe16_.PRODUTO_EDICAO_ID = produtoedi5_.ID and movimentoe16_.COTA_ID = chamadaenc0_.COTA_ID ");
 	    hql.append("    	        and case when (conferenci2_.DATA is not null) then movimentoe16_.data = conferenci2_.DATA else lancamento10_.ID=movimentoe16_.LANCAMENTO_ID end ");
 	    hql.append("    	inner join TIPO_MOVIMENTO tipomovime17_                                 ");
@@ -1121,7 +1121,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" 	, mec.QTDE 																											")
 		.append(" 	, tm.OPERACAO_ESTOQUE 																								")
 		.append(" 	, tm.GRUPO_MOVIMENTO_ESTOQUE 																						")
-		.append(" from movimento_estoque_cota mec 																						")
+		.append(" from movimento_estoque_cota mec 		FORCE INDEX (NDX_PRODUTO_EDICAO)																							")
 		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID 														")
 		.append(" inner join cota c on c.id = mec.cota_id 																				")
 		.append(" inner join lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and l.id = mec.LANCAMENTO_ID 					")
@@ -1135,13 +1135,14 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" 	from lancamento l 																									")
 		.append(" 	inner join chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = l.id 												")
 		.append(" 	inner join chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID and cel.CHAMADA_ENCALHE_ID = ce.id 		")
-		.append(" 	inner join movimento_estoque_cota mec on mec.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID and mec.LANCAMENTO_ID = l.id 	")
+		.append(" 	inner join movimento_estoque_cota mec FORCE INDEX (NDX_PRODUTO_EDICAO)			 on mec.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID and mec.LANCAMENTO_ID = l.id 	")
 		.append(" 	inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID 														")
 		.append(" 	inner join cota c on c.id = mec.cota_id ")
 		.append(" 	where 1=1 ")
 		.append("	and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte ")
 		.append(" 	and tm.GRUPO_MOVIMENTO_ESTOQUE in (:alteracaoReparteCota,:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")
 		.append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
+		.append("   and l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO') ")
 		.append(" 	group by c.id, ce.DATA_RECOLHIMENTO, mec.PRODUTO_EDICAO_ID ")
 		.append(" 	having count(0) > 1 ")
 		.append(" ) rs1 on rs1.pedId = mec.PRODUTO_EDICAO_ID and c.id = rs1.cId ")
@@ -1165,7 +1166,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" 	, mec.QTDE ")
 		.append("   , tm.OPERACAO_ESTOQUE ")
 		.append("   , tm.GRUPO_MOVIMENTO_ESTOQUE")
-	    .append(" from movimento_estoque_cota mec ")
+	    .append(" from movimento_estoque_cota mec FORCE INDEX (NDX_PRODUTO_EDICAO)			 ")
 		.append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ")
 		.append(" inner join cota c on c.id = mec.cota_id ")
 		.append(" inner join lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and l.id = mec.LANCAMENTO_ID ")
@@ -1185,7 +1186,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    .append("                 on ce.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID                      ")
 	    .append("                 and cel.CHAMADA_ENCALHE_ID = ce.id                                 ")
 	    .append("         inner join                                                                 ")
-	    .append("             movimento_estoque_cota mec                                             ")
+	    .append("             movimento_estoque_cota mec   FORCE INDEX (NDX_PRODUTO_EDICAO)			                                          ")
 	    .append("                 on mec.PRODUTO_EDICAO_ID = l.PRODUTO_EDICAO_ID                     ")
 	    .append("                 and mec.LANCAMENTO_ID = l.id                                       ")
 	    .append("         inner join                                                                 ")
