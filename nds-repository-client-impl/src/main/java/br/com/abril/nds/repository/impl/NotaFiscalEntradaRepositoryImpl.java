@@ -57,7 +57,8 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		.append(" f.juridica.razaoSocial as value ")
 		
 		.append(" from NotaFiscalEntradaFornecedor notaFiscal ")
-		.append(" join notaFiscal.tipoNotaFiscal 	")
+		//.append(" join notaFiscal.tipoNotaFiscal 	")
+		.append(" join notaFiscal.naturezaOperacao naturezaOperacao	")
 		.append(" join notaFiscal.itens i 			")
 		.append(" join i.produtoEdicao pe			")
 		.append(" join pe.produto p					")
