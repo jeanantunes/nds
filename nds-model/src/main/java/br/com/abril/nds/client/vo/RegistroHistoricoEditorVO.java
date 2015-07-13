@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -31,7 +31,7 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	@Export(label = "Produto", exhibitionOrder = 2)
 	private String nomeProduto;
 
-	@Export(label = "EdicaoProduto", exhibitionOrder = 3, columnType = ColumType.NUMBER)
+	@Export(label = "EdicaoProduto", exhibitionOrder = 3, columnType = ColumnType.NUMBER)
 	private Long edicaoProduto;
 
 	private BigInteger reparte;
@@ -52,26 +52,26 @@ public class RegistroHistoricoEditorVO implements Serializable {
 	
 	private String faturamentoFormatado;
 
-	@Export(label = "Reparte", exhibitionOrder = 4, columnType = ColumType.NUMBER)
+	@Export(label = "Reparte", exhibitionOrder = 4, columnType = ColumnType.NUMBER)
 	private String reparteFormatado;
 	
-	@Export(label = "Venda Exs.", exhibitionOrder = 5, columnType = ColumType.NUMBER)
+	@Export(label = "Venda Exs.", exhibitionOrder = 5, columnType = ColumnType.NUMBER)
 	private String vendaExemplaresFormatado;
 	
-	@Export(label = "% Venda", exhibitionOrder = 6,alignment=Alignment.RIGHT, columnType = ColumType.DECIMAL)
+	@Export(label = "% Venda", exhibitionOrder = 6,alignment=Alignment.RIGHT, columnType = ColumnType.DECIMAL)
 	private String porcentagemVendaFormatado;
 	
-	@Export(label = "Faturamento R$", exhibitionOrder = 8,alignment=Alignment.RIGHT, columnType = ColumType.DECIMAL)
+	@Export(label = "Faturamento R$", exhibitionOrder = 8,alignment=Alignment.RIGHT, columnType = ColumnType.DECIMAL)
 	public String getFaturamentoFormatado(){
 		return this.faturamentoFormatado;
 	}
 	
-	@Export(label = "Margem Cota R$", exhibitionOrder = 7,alignment=Alignment.RIGHT, columnType = ColumType.DECIMAL)
+	@Export(label = "Margem Cota R$", exhibitionOrder = 7,alignment=Alignment.RIGHT, columnType = ColumnType.DECIMAL)
 	public String getMargemCotaFormatado(){
 		return this.margemCotaFormatado;
 	}
 	
-	@Export(label = "Margem Distrib R$", exhibitionOrder = 9, alignment=Alignment.RIGHT, columnType = ColumType.DECIMAL)
+	@Export(label = "Margem Distrib R$", exhibitionOrder = 9, alignment=Alignment.RIGHT, columnType = ColumnType.DECIMAL)
 	public String getMargemDistribuidorFormatado(){
 		return this.margemDistribuidorFormatado;
 	}

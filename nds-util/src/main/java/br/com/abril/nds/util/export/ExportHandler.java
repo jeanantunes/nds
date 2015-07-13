@@ -378,7 +378,7 @@ public class ExportHandler {
 												   String label, 
 												   Alignment alignment, 
 												   String alignWithHeader,
-												   ColumType columnType,
+												   ColumnType columnType,
 												   float fontSize,
 												   boolean verticalPrinting) {
 
@@ -464,7 +464,7 @@ public class ExportHandler {
 	
 	private static ExportColumn createExportColumn(Footer footerAnnotation, String footerName,
 			String value, Export.Alignment alignment, 
-			String label, Integer exhibitionOrder, ColumType columnType,
+			String label, Integer exhibitionOrder, ColumnType columnType,
 			Float fontSize) {
 
 		if (footerAnnotation == null) {
@@ -487,11 +487,11 @@ public class ExportHandler {
 		return exportFooterColumn;
 	}
 
-	public static String getExportValue(Object value, ColumType columnType) {
+	public static String getExportValue(Object value, ColumnType columnType) {
 		
 		String exportValue = "";
 		
-		columnType = columnType == null ? ColumType.STRING : columnType;
+		columnType = columnType == null ? ColumnType.STRING : columnType;
 		
 		if (value != null) {
 			
@@ -520,30 +520,30 @@ public class ExportHandler {
 		return exportValue;
 	}
 	
-	private static ColumType getExportValueType(Object value, ColumType columnType) {
+	private static ColumnType getExportValueType(Object value, ColumnType columnType) {
 		
-		ColumType returnColumnType = ColumType.STRING;
+		ColumnType returnColumnType = ColumnType.STRING;
 		
 		if (value == null) {
 			
 			return returnColumnType;
 		}
 		
-		if (columnType.equals(ColumType.INTEGER)) {
+		if (columnType.equals(ColumnType.INTEGER)) {
 			
-			returnColumnType = ColumType.INTEGER;
+			returnColumnType = ColumnType.INTEGER;
 			
-		} else if (columnType.equals(ColumType.DECIMAL)) {
+		} else if (columnType.equals(ColumnType.DECIMAL)) {
 			
-			returnColumnType = ColumType.DECIMAL;
+			returnColumnType = ColumnType.DECIMAL;
 			
-		} else if (columnType.equals(ColumType.MOEDA)) {
+		} else if (columnType.equals(ColumnType.MOEDA)) {
 			
-			returnColumnType = ColumType.MOEDA;
+			returnColumnType = ColumnType.MOEDA;
 		
-		} else if (columnType.equals(ColumType.NUMBER) || value instanceof Number) {
+		} else if (columnType.equals(ColumnType.NUMBER) || value instanceof Number) {
 			
-			returnColumnType = ColumType.NUMBER;
+			returnColumnType = ColumnType.NUMBER;
 		}
 		
 		return returnColumnType;

@@ -3,7 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigInteger;
 
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -37,13 +37,13 @@ public class ResumoExpedicaoVO implements Serializable {
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 3)
 	private String edicaoProduto;
 	
-	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 4, columnType=ColumType.DECIMAL)
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 4, columnType=ColumnType.DECIMAL)
 	private String precoCapa;
 	
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private BigInteger reparte;
 	
-	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, columnType=ColumType.DECIMAL)
+	@Export(label = "Valor Faturado R$", alignment = Alignment.RIGHT, exhibitionOrder = 7, columnType=ColumnType.DECIMAL)
 	private String valorFaturado;
 	
 	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder = 6)

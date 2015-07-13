@@ -8,9 +8,9 @@ final class CellStyleKey {
     private boolean even;
     private boolean lastCell;
     private Alignment alignment;
-    private ColumType columType;
+    private ColumnType columType;
     
-    public CellStyleKey(final boolean even, final boolean lastCell, final Alignment alignment, final ColumType columType) {
+    public CellStyleKey(final boolean even, final boolean lastCell, final Alignment alignment, final ColumnType columType) {
         super();
         this.even = even;
         this.lastCell = lastCell;
@@ -111,14 +111,14 @@ final class CellStyleKey {
     /**
      * @return the columType
      */
-    public ColumType getColumType() {
+    public ColumnType getColumType() {
         return columType;
     }
     
     /**
      * @param columType the columType to set
      */
-    public void setColumType(final ColumType columType) {
+    public void setColumType(final ColumnType columType) {
         this.columType = columType;
     }
 

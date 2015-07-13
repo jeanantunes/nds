@@ -21,7 +21,7 @@ public class ExportFooterColumn extends ExportColumn {
 	public ExportFooterColumn() { }
 	
 	public ExportFooterColumn(String value, Export.Alignment alignment, 
-							  Integer exhibitionOrder, ColumType columnType, Float fontSize) {
+							  Integer exhibitionOrder, ColumnType columnType, Float fontSize) {
 		super(value, alignment, exhibitionOrder, columnType, fontSize);
 	}
 	

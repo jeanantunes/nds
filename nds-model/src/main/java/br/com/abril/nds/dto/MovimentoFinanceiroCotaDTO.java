@@ -15,6 +15,7 @@ import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -30,7 +31,7 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	
 	private Usuario usuario;
 	
-	@Export(label="Valor", exhibitionOrder=6)
+	@Export(label="Valor", exhibitionOrder=6,columnType=ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal valor;
 	
 	private Date dataOperacao;
@@ -310,7 +311,7 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 		return "";
 	}
 	
-	@Export(label="Tipo de Lancamento", exhibitionOrder=5)
+	@Export(label="Tipo de Lancamento", exhibitionOrder=5 )
 	public String getDescricaoTipoLancamento() {
 		
 		if (this.tipoMovimentoFinanceiro != null) {

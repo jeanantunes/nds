@@ -6,7 +6,7 @@ import java.math.BigInteger;
 
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -37,38 +37,38 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 
 	private BigDecimal faturamentoCapa;
 
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 7, columnType = ColumType.NUMBER)
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 7, columnType = ColumnType.NUMBER)
 	private String vendaExemplaresFormatado;
 	
-	@Export(label = "Faturamento da Capa", exhibitionOrder = 8, columnType = ColumType.DECIMAL)
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 8, columnType = ColumnType.DECIMAL)
 	private String faturamentoCapaFormatado;
 	
-	@Export(label = "RK.Produto", exhibitionOrder = 1, widthPercent = 5, columnType = ColumType.NUMBER)
+	@Export(label = "RK.Produto", exhibitionOrder = 1, widthPercent = 5, columnType = ColumnType.NUMBER)
 	private Long rkProduto;
 	
-	@Export(label = "RK. Cota", exhibitionOrder = 2, widthPercent = 5,  columnType = ColumType.NUMBER)
+	@Export(label = "RK. Cota", exhibitionOrder = 2, widthPercent = 5,  columnType = ColumnType.NUMBER)
 	private Long rkCota;
 	
 	private Long idProduto;
 	
 	private Long idCota;
 	
-	@Export(label = "Número", exhibitionOrder = 3, columnType = ColumType.NUMBER)
+	@Export(label = "Número", exhibitionOrder = 3, columnType = ColumnType.NUMBER)
 	public String getNumeroCotaString() {
 		return this.getNumeroCota().toString();
 	}
 
-	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 6, columnType = ColumType.NUMBER)
+	@Export(label = "Quantidade de Pdvs", exhibitionOrder = 6, columnType = ColumnType.NUMBER)
 	public String getQuantidadePdvsString() {
 		return this.getQuantidadePdvs().toString();
 	}
 
-	@Export(label = "% Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação", exhibitionOrder = 9, columnType = ColumnType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "% Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação Acumulada", exhibitionOrder = 10, columnType = ColumnType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}

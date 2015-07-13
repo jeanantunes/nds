@@ -1,6 +1,6 @@
 package br.com.abril.nds.util.export.vo;
 
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -26,16 +26,16 @@ public class ExportTestVO {
 	@Export(label = "Column6", alignment = Alignment.CENTER)
 	private String Column6;
 
-    @Export(label = "Column7", alignment = Alignment.LEFT, columnType = ColumType.INTEGER)
+    @Export(label = "Column7", alignment = Alignment.LEFT, columnType = ColumnType.INTEGER)
 	private String Column7;
 
-    @Export(label = "Column8", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+    @Export(label = "Column8", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private String Column8;
 
-    @Export(label = "Column9", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+    @Export(label = "Column9", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private String Column9;
 
-    @Export(label = "Column10", alignment = Alignment.CENTER, columnType = ColumType.DECIMAL)
+    @Export(label = "Column10", alignment = Alignment.CENTER, columnType = ColumnType.DECIMAL)
 	private String Column10;
 
 	private String dynamicProperty;

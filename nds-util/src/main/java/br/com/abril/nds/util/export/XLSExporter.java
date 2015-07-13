@@ -314,11 +314,11 @@ public class XLSExporter implements Exporter {
         return startRowNum;
     }
 
-	private void carregarValorDaCelulaEFormatacao(final Sheet sheet, final Cell cell, final ColumType columType,
+	private void carregarValorDaCelulaEFormatacao(final Sheet sheet, final Cell cell, final ColumnType columType,
             String columnString, final CellStyle cellStyle) {
 
-        if (ColumType.NUMBER.equals(columType) || ColumType.INTEGER.equals(columType)
-            || ColumType.DECIMAL.equals(columType) || ColumType.MOEDA.equals(columType)) {
+        if (ColumnType.NUMBER.equals(columType) || ColumnType.INTEGER.equals(columType)
+            || ColumnType.DECIMAL.equals(columType) || ColumnType.MOEDA.equals(columType)) {
 
             cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 
@@ -724,13 +724,13 @@ public class XLSExporter implements Exporter {
 
         style.setFont(this.getFont(sheet, "Calibri", (short) 11, false, false));
 
-        if (ColumType.MOEDA.equals(styleKey.getColumType())) {
+        if (ColumnType.MOEDA.equals(styleKey.getColumType())) {
             if (brazilianCurrencyDF == null) {
                 brazilianCurrencyDF = sheet.getWorkbook().createDataFormat();
             }
             style.setDataFormat(brazilianCurrencyDF.getFormat(brazilianCurrencyMask));
 
-        } else if (ColumType.DECIMAL.equals(styleKey.getColumType())) {
+        } else if (ColumnType.DECIMAL.equals(styleKey.getColumType())) {
 
             if (decimalValueDF == null) {
                 decimalValueDF = sheet.getWorkbook().createDataFormat();
