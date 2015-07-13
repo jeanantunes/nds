@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -17,24 +17,24 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 
 	private static final long serialVersionUID = -6080837731839488665L;
 	
-	@Export(label = "Cota" , alignment= Alignment.LEFT, exhibitionOrder = 1, columnType = ColumType.INTEGER, widthPercent = 9f)
+	@Export(label = "Cota" , alignment= Alignment.LEFT, exhibitionOrder = 1, columnType = ColumnType.INTEGER, widthPercent = 9f)
 	private Integer numeroCota;
 	
-	@Export(label = "Nome" , alignment= Alignment.LEFT, exhibitionOrder = 2, widthPercent = 41f,columnType = ColumType.STRING)
+	@Export(label = "Nome" , alignment= Alignment.LEFT, exhibitionOrder = 2, widthPercent = 41f,columnType = ColumnType.STRING)
 	private String nomeCota;
 	
-	@Export(label = "Consignado Total" , alignment= Alignment.CENTER, exhibitionOrder = 3, columnType = ColumType.INTEGER, widthPercent = 12.5f)
+	@Export(label = "Consignado Total" , alignment= Alignment.CENTER, exhibitionOrder = 3, columnType = ColumnType.INTEGER, widthPercent = 12.5f)
 	private BigInteger consignado;
 	
-	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 4, widthPercent = 12.5f, columnType = ColumType.MOEDA)
-	@Footer(label = "Total", type = FooterType.SUM,columnType = ColumType.MOEDA)
+	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 4, widthPercent = 12.5f, columnType = ColumnType.MOEDA)
+	@Footer(label = "Total", type = FooterType.SUM,columnType = ColumnType.MOEDA)
 	private BigDecimal total;
 	
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 5, widthPercent = 12.5f, columnType = ColumType.MOEDA_QUATRO_CASAS)
-	@Footer(type = FooterType.SUM,columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 5, widthPercent = 12.5f, columnType = ColumnType.MOEDA_QUATRO_CASAS)
+	@Footer(type = FooterType.SUM,columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal totalDesconto;
 	
-	@Export(label = "Fornecedor" , alignment= Alignment.CENTER, exhibitionOrder = 6, widthPercent = 12.5f, columnType = ColumType.STRING)
+	@Export(label = "Fornecedor" , alignment= Alignment.CENTER, exhibitionOrder = 6, widthPercent = 12.5f, columnType = ColumnType.STRING)
 	private String nomeFornecedor;
 	private Long idFornecedor;
 	
