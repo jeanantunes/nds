@@ -477,7 +477,7 @@ var chamadaoController = $.extend(true, {
 	},
 	
 	calcularParcial : function(input, rowId) {
-return;
+
 		var checado = input.checked;
 		
 //		clickLineFlexigrid(input, checado);
@@ -490,8 +490,7 @@ return;
 			reparte = removeMascaraPriceFormat(reparte);
 			chamadaoController.parciais.qtdExemplaresParcial += intValue(reparte);
 			
-			var valor = $("#chamadao-valorTotal" + rowId).html();
-			
+			var valor = $("#valorTotal" + rowId).html();
 			valor = priceToFloat(valor);
 			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) + parseFloat(valor);
 		
@@ -499,11 +498,12 @@ return;
 			
 			chamadaoController.parciais.qtdProdutosParcial -= 1;
 			
-			var reparte = $("#reparte" + input.value).html();
+			var reparte = $("#reparte" + rowId).html();
 			reparte = removeMascaraPriceFormat(reparte);
+
 			chamadaoController.parciais.qtdExemplaresParcial -= intValue(reparte);
 			
-			var valor = $("#chamadao-valorTotal" + input.value).html();
+			var valor = $("#valorTotal" + rowId).html();
 			
 			valor = priceToFloat(valor);
 			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) - parseFloat(valor);
@@ -513,7 +513,7 @@ return;
 		
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(parseFloat(chamadaoController.parciais.valorParcial).toFixed(2));
+		$("#valorParcial", chamadaoController.workspace).val(chamadaoController.parciais.valorParcial);
 	},
 	
 	verifyCheckAll : function() {

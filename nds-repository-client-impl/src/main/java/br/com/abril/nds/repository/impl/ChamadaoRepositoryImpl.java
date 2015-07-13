@@ -41,12 +41,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		StringBuilder hql = new StringBuilder("select SUM(consignadoCota.qtdExemplaresTotal) AS qtdExemplaresTotal, SUM(consignadoCota.valorTotal) AS valorTotal FROM ( ");
 		
 		hql.append("SELECT ")
-			.append(" if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde) AS qtdExemplaresTotal, ")
-			.append(" (mec.PRECO_COM_DESCONTO) * (if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) AS valorTotal ");
+			.append(" sum(if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde)) AS qtdExemplaresTotal, ")
+			.append(" sum((mec.PRECO_COM_DESCONTO) * (if(tipo.operacao_estoque = 'ENTRADA', mec.qtde, -mec.qtde))) AS valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
-		hql.append(" ) AS consignadoCota");
+		hql.append(") AS consignadoCota");
 		
 		Query query = this.getSession().createSQLQuery(hql.toString())
 			.addScalar("qtdExemplaresTotal", StandardBasicTypes.BIG_INTEGER)
@@ -67,7 +67,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		hql.append("SELECT ")
 			.append(" sum(chamadaEncalheCota.qtdePrevista) as qtdExemplaresTotal, ")
-			.append(" sum(mec.valoresAplicados.precoComDesconto * mec.qtde) as valorTotal ");
+		 	.append(" sum(mec.valoresAplicados.precoComDesconto * mec.qtde) as valorTotal ");
 		
 		hql.append(this.gerarQueryChamadasEncalhe(filtro));
 		
@@ -176,11 +176,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		if (filtro != null && filtro.getPaginacao() != null) {
 			
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			//	query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 			
 			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			//	query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
 		
@@ -205,12 +205,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("chamadaEncalheCota.qtdePrevista as reparte, ")
 			.append("juridica.razaoSocial as nomeFornecedor, ")
 			.append("chamadaEncalhe.dataRecolhimento as dataRecolhimento, ")
-			.append("mec.valoresAplicados.precoVenda * mec.qtde as valorTotal, ")
-			.append("(mec.valoresAplicados.precoComDesconto) * mec.qtde as valorTotalDesconto, ")
+			.append(" (mec.valoresAplicados.precoVenda * chamadaEncalheCota.qtdePrevista) as valorTotal, ")
+			.append(" (mec.valoresAplicados.precoComDesconto *chamadaEncalheCota.qtdePrevista) as valorTotalDesconto, ")
 			.append("produtoEdicao.possuiBrinde as possuiBrinde ");
 		
 		hql.append(this.gerarQueryChamadasEncalhe(filtro));
-		
+	    hql.append(" group by produtoEdicao.id ");
 		if (filtro != null && filtro.getOrdenacaoColuna() != null) {
 			
 			switch (filtro.getOrdenacaoColuna()) {
@@ -276,11 +276,11 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		if (filtro != null && filtro.getPaginacao() != null) {
 			
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			//	query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			}
 			
 			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			//	query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
 		
@@ -414,6 +414,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			
 			.append(" WHERE chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
 			.append(" AND mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimento ")
+			.append(" AND mec.statusEstoqueFinanceiro = 'FINANCEIRO_NAO_PROCESSADO' ")
 			.append(" AND mec.lancamento.id in ( select lan.id from ChamadaEncalhe cham join cham.lancamentos lan where cham.id = chamadaEncalhe.id ) ")
 			.append(" AND mec.movimentoEstoqueCotaFuro is null ");
 		
@@ -497,7 +498,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO);
 		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		
+//		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		if (filtro == null) {
 			
 			return;
