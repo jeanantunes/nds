@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import antlr.Utils;
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.CotaReparteDTO;
@@ -46,6 +48,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -101,9 +104,11 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(this.chamadaoRepository.obterConsignadosParaChamadao(filtro));
 		
-		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(filtro));
+		//consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(filtro));
+		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO()));
 		
-		Long quantidadeTotalConsignados = this.obterTotalConsignados(filtro);
+		//Long quantidadeTotalConsignados = this.obterTotalConsignados(filtro);
+		Long quantidadeTotalConsignados = new Long(consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().size());
 
 		consultaChamadaoDTO.setQuantidadeTotalConsignados(quantidadeTotalConsignados);
 		
@@ -123,9 +128,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		consultaChamadaoDTO.setListaConsignadoCotaChamadaoDTO(this.chamadaoRepository.obterConsignadosComChamadao(filtro));
 		
-		consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoChamadaEncalhe(filtro));
+		//consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoChamadaEncalhe(filtro));
+		  consultaChamadaoDTO.setResumoConsignadoCotaChamadao(this.obterResumoConsignados(consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO()));
 		
-		Long quantidadeTotalChamadaEncalhe = this.obterTotalChamadaEncalhe(filtro);
+		Long quantidadeTotalChamadaEncalhe = new Long(consultaChamadaoDTO.getListaConsignadoCotaChamadaoDTO().size());
 
 		consultaChamadaoDTO.setQuantidadeTotalConsignados(quantidadeTotalChamadaEncalhe);
 		
@@ -147,11 +153,24 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		return this.chamadaoRepository.obterTotalConsignadosComChamadao(filtro);
 	}
+
 	
-	private ResumoConsignadoCotaChamadaoDTO obterResumoConsignados(FiltroChamadaoDTO filtro) {
+private ResumoConsignadoCotaChamadaoDTO obterResumoConsignados(List <ConsignadoCotaChamadaoDTO> consignadoList) {
 		
-		return this.chamadaoRepository.obterResumoConsignadosParaChamadao(filtro);
+	    ResumoConsignadoCotaChamadaoDTO resumo = new ResumoConsignadoCotaChamadaoDTO();
+	    BigInteger  reparte=BigInteger.ZERO;
+	    resumo.setQtdProdutosTotal(new Long(consignadoList.size()));
+	    BigDecimal totalDesconto=BigDecimal.ZERO;
+	    for( ConsignadoCotaChamadaoDTO consignado: consignadoList ) {
+	    	 reparte=reparte.add(consignado.getReparte());
+	    	 totalDesconto=totalDesconto.add(CurrencyUtil.truncateDecimal(consignado.getValorTotalDesconto(), 4));
+	    }
+	    resumo.setQtdExemplaresTotal(reparte);
+   	    resumo.setValorTotal(totalDesconto);
+		
+		return resumo;
 	}
+
 	
 	private ResumoConsignadoCotaChamadaoDTO obterResumoChamadaEncalhe(FiltroChamadaoDTO filtro) {
 		
