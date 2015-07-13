@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -31,10 +31,10 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 	@Export(label = "Edição")
 	private Long numeroEdicao;
 
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal precoCapa;
 
-	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal precoComDesconto;
 
 	@Export(label = "Exemplares", alignment = Alignment.CENTER)
@@ -43,7 +43,7 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
 
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal total;
 	
 	private BigDecimal desconto;

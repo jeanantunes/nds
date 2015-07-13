@@ -3,7 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -31,10 +31,10 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Ed.", widthPercent=4f)
 	private Long numeroEdicao;
 	
-	@Export(label="Capa R$", columnType=ColumType.MOEDA)
+	@Export(label="Capa R$", columnType=ColumnType.MOEDA)
 	private BigDecimal precoVenda;
 	
-	@Export(label="Desc R$", columnType=ColumType.MOEDA)
+	@Export(label="Desc R$", columnType=ColumnType.MOEDA)
 	private BigDecimal precoDesconto;
 	
 	private Long idFornecedor;
@@ -82,7 +82,7 @@ public class ProdutoRecolhimentoVO {
 		this.peb = peb;
 	}
 
-	@Export(label="Total R$", columnType=ColumType.MOEDA)
+	@Export(label="Total R$", columnType=ColumnType.MOEDA)
 	private BigDecimal valorTotal;
 	
 	@Export(label="Nova Data")

@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Date;
 
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -48,37 +48,37 @@ public class ContaCorrenteCotaVO implements Serializable {
 	@Export(label = "Data")
 	private Date dataConsolidado;
 		
-	@Export(label = "Consignado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Consignado", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal consignado;
 	
-	@Export(label = "Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Encalhe", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal encalhe;
 	
-	@Export(label = "Valor Venda Dia", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Valor Venda Dia", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal valorVendaDia;
 	
-	@Export(label = "Vlr. Postergado R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Vlr. Postergado R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal valorPostergado;
 	
-	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal vendaEncalhe;
 	
-	@Export(label = "Déb/Cred.", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Déb/Cred.", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal debitoCredito;
 	
-	@Export(label = "Encargos", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Encargos", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal encargos;
 	
-	@Export(label = "Pendente", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Pendente", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS)
 	private BigDecimal pendente;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal total;
 	
-	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal valorPago;
 	
-	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumnType.MOEDA)
 	private BigDecimal saldo;
 	
 	private boolean detalharDebitoCredito;

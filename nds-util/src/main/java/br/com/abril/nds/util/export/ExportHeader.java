@@ -10,7 +10,7 @@ public class ExportHeader implements Comparable<ExportHeader> {
 	
 	private Float widthPercent;
 	
-	private ColumType columType;
+	private ColumnType columType;
 	
 	private Boolean xlsAutoSize;
 	
@@ -122,11 +122,11 @@ public class ExportHeader implements Comparable<ExportHeader> {
 		return this.exhibitionOrder.compareTo(exportHeader.exhibitionOrder);
 	}
 
-	public ColumType getColumType() {
+	public ColumnType getColumType() {
 		return columType;
 	}
 
-	public void setColumType(ColumType columType) {
+	public void setColumType(ColumnType columType) {
 		this.columType = columType;
 	}
 

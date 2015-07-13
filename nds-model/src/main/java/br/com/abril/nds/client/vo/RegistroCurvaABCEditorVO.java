@@ -8,7 +8,7 @@ import java.util.Date;
 
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -23,31 +23,31 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	
 	private static final BigDecimal CEM = new BigDecimal(100);
 	
-	@Export(label="Ranking", exhibitionOrder = 1, widthPercent = 6, columnType = ColumType.NUMBER)
+	@Export(label="Ranking", exhibitionOrder = 1, widthPercent = 6, columnType = ColumnType.NUMBER)
 	private Long rkEditor;
 	
-	@Export(label = "Número", exhibitionOrder = 2, widthPercent = 6, columnType = ColumType.NUMBER)
+	@Export(label = "Número", exhibitionOrder = 2, widthPercent = 6, columnType = ColumnType.NUMBER)
 	private Long codigoEditor;
 
 	@Export(label = "Cota", exhibitionOrder = 3, widthPercent = 20)
 	private String nomeEditor;
 
-	@Export(label = "Reparte", exhibitionOrder = 4, columnType = ColumType.NUMBER )
+	@Export(label = "Reparte", exhibitionOrder = 4, columnType = ColumnType.NUMBER )
 	private String reparteFormatado;
 	
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 5, columnType = ColumType.NUMBER)
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 5, columnType = ColumnType.NUMBER)
 	private String vendaExemplaresFormatado;
 	
-	@Export(label = "% Venda de Exemplares", exhibitionOrder = 6, columnType = ColumType.DECIMAL)
+	@Export(label = "% Venda de Exemplares", exhibitionOrder = 6, columnType = ColumnType.DECIMAL)
 	private String porcentagemVendaExemplaresFormatado;
 	
-	@Export(label = "Faturamento da Capa", exhibitionOrder = 7, columnType = ColumType.DECIMAL)
+	@Export(label = "Faturamento da Capa", exhibitionOrder = 7, columnType = ColumnType.DECIMAL)
 	private String faturamentoCapaFormatado;
 	
-	@Export(label = "Mg Distrib R$", exhibitionOrder = 10, columnType = ColumType.DECIMAL )
+	@Export(label = "Mg Distrib R$", exhibitionOrder = 10, columnType = ColumnType.DECIMAL )
 	private String valorMargemDistribuidorFormatado;
 	
-	@Export(label = "Mg Distrib %", exhibitionOrder = 11, columnType = ColumType.DECIMAL)
+	@Export(label = "Mg Distrib %", exhibitionOrder = 11, columnType = ColumnType.DECIMAL)
 	private String porcentagemMargemDistribuidorFormatado;
 
 	private BigInteger reparte;
@@ -125,12 +125,12 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 	}
 
-	@Export(label = "% Participação", exhibitionOrder = 8, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação", exhibitionOrder = 8, columnType = ColumnType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "% Participação Acumulada", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
+	@Export(label = "% Participação Acumulada", exhibitionOrder = 9, columnType = ColumnType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}

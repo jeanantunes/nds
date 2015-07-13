@@ -10,7 +10,7 @@ public class ExportFooter {
 	
 	private String headerToAlign;
 	
-	private ColumType columnType;
+	private ColumnType columnType;
 	
 	private Float fontSize;
 	
@@ -93,11 +93,11 @@ public class ExportFooter {
 		this.verticalPrinting = verticalPrinting;
 	}
 
-	public ColumType getColumnType() {
+	public ColumnType getColumnType() {
 		return columnType;
 	}
 
-	public void setColumnType(ColumType columnType) {
+	public void setColumnType(ColumnType columnType) {
 		this.columnType = columnType;
 	}
 

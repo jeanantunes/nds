@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -31,18 +31,18 @@ public class ContagemDevolucaoDTO implements Serializable {
 	@Export(label="Edição", fontSize=9)
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$", fontSize=9, columnType=ColumType.MOEDA)
+	@Export(label="Preço Capa R$", fontSize=9, columnType=ColumnType.MOEDA)
 	private BigDecimal precoVenda;
 	
 	@Export(label="Exemplar Devolução", fontSize=9)
 	private BigInteger qtdDevolucao;
 	
-	@Export(label="Desconto", fontSize=9, columnType=ColumType.MOEDA)
+	@Export(label="Desconto", fontSize=9, columnType=ColumnType.MOEDA)
 	private BigDecimal totalComDesconto;
 	
 	private BigDecimal desconto;
 	
-	@Export(label="Total R$", fontSize=9, columnType=ColumType.MOEDA)
+	@Export(label="Total R$", fontSize=9, columnType=ColumnType.MOEDA)
 	private BigDecimal valorTotal;
 	
 	@Export(label="Exemplar Nota", fontSize=9)

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 @Exportable
@@ -16,7 +16,7 @@ public class FooterTotalFornecedorVO implements Serializable {
 	private static final long serialVersionUID = -4248910091629744306L;
 	
 	
-	@Export(label = "Totais R$", printVertical = true, columnType = ColumType.MOEDA)
+	@Export(label = "Totais R$", printVertical = true, columnType = ColumnType.MOEDA)
 	private HashMap<String, BigDecimal> totais;
 	
 	public FooterTotalFornecedorVO() {

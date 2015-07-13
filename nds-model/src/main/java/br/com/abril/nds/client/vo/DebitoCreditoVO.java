@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -17,7 +18,7 @@ public class DebitoCreditoVO implements Serializable {
 	
 	private TableModel<CellModel> tableModel;
 	
-	@Export(label = "", alignWithHeader = "Total R$")
+	@Export(label = "", alignWithHeader = "Total R$",columnType=ColumnType.DECIMAL)
 	private String valorTotal;
 
 	/**

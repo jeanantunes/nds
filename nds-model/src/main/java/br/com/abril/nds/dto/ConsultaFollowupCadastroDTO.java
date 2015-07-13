@@ -6,7 +6,7 @@ import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -28,7 +28,7 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 	@Export(label = "Documento", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private String tipo;
 	
-	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5, columnType=ColumType.MOEDA)
+	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5, columnType=ColumnType.MOEDA)
 	private BigDecimal valor = BigDecimal.ZERO;
 	
 	@Export(label = "Dt. Vencto.", alignment=Alignment.CENTER, exhibitionOrder = 6)

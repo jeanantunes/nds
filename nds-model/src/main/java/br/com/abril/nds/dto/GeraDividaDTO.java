@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -47,7 +47,7 @@ public class GeraDividaDTO implements Serializable{
 	@Export(label = "Emissão", alignment = Alignment.CENTER)
 	private Date dataEmissao;
 	
-	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumType.MOEDA)
+	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumnType.MOEDA)
 	private BigDecimal valor;
 	
 	@Export(label = "Tipo")

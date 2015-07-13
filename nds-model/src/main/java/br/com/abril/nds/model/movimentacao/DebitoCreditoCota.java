@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -50,7 +50,7 @@ public class DebitoCreditoCota implements Serializable {
     private OperacaoFinaceira tipoLancamento;
     
     @Column(name="VALOR", precision=18, scale=4)
-    @Export(label = "Valor R$", exhibitionOrder = 2, columnType = ColumType.MOEDA)
+    @Export(label = "Valor R$", exhibitionOrder = 2, columnType = ColumnType.MOEDA)
     private BigDecimal valor;
     
     @Temporal(TemporalType.DATE)

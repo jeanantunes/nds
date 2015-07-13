@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -27,10 +27,10 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Edição", fontSize=9)
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
+	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT, columnType = ColumnType.MOEDA, fontSize=9)
 	private BigDecimal precoCapa;
 	
-	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS, fontSize=9)
+	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT, columnType = ColumnType.MOEDA_QUATRO_CASAS, fontSize=9)
 	private BigDecimal precoComDesconto;
 	
 	@Export(label="Reparte Sugerido", fontSize=9)
@@ -51,7 +51,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Fornecedor", fontSize=9, widthPercent=7)
 	private String nomeFornecedor;
 	
-	@Export(label="Total", columnType = ColumType.MOEDA_QUATRO_CASAS, fontSize=9)
+	@Export(label="Total", columnType = ColumnType.MOEDA_QUATRO_CASAS, fontSize=9)
 	private BigDecimal total;
 	
 	private BigDecimal desconto;

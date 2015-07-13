@@ -23,7 +23,7 @@ public @interface Export {
 	
 	float widthPercent() default 0f;
 	
-	ColumType columnType() default ColumType.STRING;
+	ColumnType columnType() default ColumnType.STRING;
 	
 	float fontSize() default 0;
 	

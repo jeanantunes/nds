@@ -7,7 +7,7 @@ import java.util.Date;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.ColumnType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -34,8 +34,8 @@ public class CotaSuspensaoDTO implements Serializable{
 	@Export(label = "Valor Reparte do Dia R$", alignment=Alignment.RIGHT)
 	private String vlrReparte;
 	
-	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT, columnType=ColumType.MOEDA)
-	@Footer(label = "Total R$", type=FooterType.SUM, columnType=ColumType.MOEDA)
+	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT, columnType=ColumnType.MOEDA)
+	@Footer(label = "Total R$", type=FooterType.SUM, columnType=ColumnType.MOEDA)
 	private BigDecimal dividaAcumulada;
 	
 	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER, widthPercent=5f)
