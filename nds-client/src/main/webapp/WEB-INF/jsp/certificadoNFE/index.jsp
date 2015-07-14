@@ -118,8 +118,7 @@ fieldset label {
 					<td width="70">Senha:</td>
 					<td width="250"><input type="password" id="certificado-senha" name="certificado-senha" /></td>
 
-					<td width="70">Alias:</td>
-					<td width="250"><input type="text" id="certificado-alias" name="certificado-alias" /></td>
+					<td width="70" colspan="2"></td>
 				</tr>
 
 			</tbody>

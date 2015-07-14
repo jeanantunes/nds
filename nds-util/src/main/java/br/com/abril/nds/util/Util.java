@@ -790,4 +790,18 @@ public abstract class Util {
         int resto = total % 11;  
         return (resto == 0 || resto == 1) ? true : false;  
     }
+    
+    public static String retornarNomeArquivo(String nomeArquivo) {
+    	
+	    int pos = nomeArquivo.lastIndexOf('.');
+	    if (pos > -1) {
+	       return nomeArquivo.substring(0, pos);
+	    }
+	    
+		return null;
+    }
+    
+    public static String retornarExtensao(String nomeArquivo) {
+		return nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1);
+    }
 }

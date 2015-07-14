@@ -272,8 +272,8 @@ public enum Permissao {
 	ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO("Painel Monitor NF-e",											Permissao.ROLE_NFE, true),
 	ROLE_NFE_PAINEL_MONITOR_NFE("Painel Monitor NF-e",													   	Permissao.ROLE_NFE, ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO, true, null),
 	
-	ROLE_NFE_CERTICADO_NFE_ALTERACAO("Retorno NF-e",															Permissao.ROLE_NFE, true),
-	ROLE_NFE_CERTICADO_NFE("Certicado NF-e",																   	Permissao.ROLE_NFE, ROLE_NFE_CERTICADO_NFE_ALTERACAO, true, null),
+	ROLE_NFE_CERTICADO_NFE_ALTERACAO("Retorno NF-e",														Permissao.ROLE_NFE, true),
+	ROLE_NFE_CERTICADO_NFE("Certificado NF-e",																Permissao.ROLE_NFE, ROLE_NFE_CERTICADO_NFE_ALTERACAO, true, null),
 	
 	ROLE_FINANCEIRO_ALTERACAO("Financeiro", 					   				                         	null, true),
 	ROLE_FINANCEIRO("Financeiro", 					   				                         	  	  	   	null, ROLE_FINANCEIRO_ALTERACAO, true, null),

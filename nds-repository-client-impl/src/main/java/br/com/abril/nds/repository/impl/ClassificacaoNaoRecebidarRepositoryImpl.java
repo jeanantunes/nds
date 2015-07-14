@@ -182,7 +182,9 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
         		hql.append(" ORDER BY ");
         		hql.append(" " + filtro.getPaginacao().getSortColumn());
         }
-        	hql.append(" " + filtro.getPaginacao().getSortOrder());
+		  
+		 hql.append(" " + filtro.getPaginacao().getSortOrder());
+		  
 	  } else {
         	
 		  	hql.append(" order by nomeClassificacao");
