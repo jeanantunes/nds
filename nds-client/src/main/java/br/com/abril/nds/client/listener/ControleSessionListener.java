@@ -5,12 +5,16 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.component.BloqueioConferenciaEncalheComponent;
+import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
 import br.com.abril.nds.controllers.devolucao.MatrizRecolhimentoController;
 import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
 import br.com.abril.nds.controllers.lancamento.MatrizLancamentoController;
@@ -18,26 +22,33 @@ import br.com.abril.nds.controllers.lancamento.MatrizLancamentoController;
 
 public class ControleSessionListener implements HttpSessionListener {
 
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(ControleSessionListener.class);
+	
+	public static final String USUARIO_LOGADO="usuario_logado";
+	
 	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
 		
-	}
+		
+	
+	 }
+	
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		
 		HttpSession session = sessionEvent.getSession();
 		
-		ServletContext context = session.getServletContext();
+		removerTravaConferenciaCotaUsuario(session);
 		
-		removerTravaConferenciaCotaUsuario(context, session);
+		removerTravaAnaliseEstudo(session);
 		
-		removerTravaAnaliseEstudo(context);
+		removerTravaMatrizRecolhimento(session);
 		
-		removerTravaMatrizRecolhimento(context);
+		removerTravaMatrizLancamento(session);
 		
-		removerTravaMatrizLancamento(context);
+			
+		
 	}
 
     private String getUsuario() {
@@ -45,6 +56,7 @@ public class ControleSessionListener implements HttpSessionListener {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
         if (authentication == null) {
+        	
             
             return null;
         }
@@ -59,8 +71,10 @@ public class ControleSessionListener implements HttpSessionListener {
 	 * @param context
 	 * @param session
 	 */
-	private void removerTravaConferenciaCotaUsuario(ServletContext context, HttpSession session) {
+	private void removerTravaConferenciaCotaUsuario(HttpSession session) {
 		
+	 try {
+			
 		  ApplicationContext ctx = 
 	                WebApplicationContextUtils.
 	                      getWebApplicationContext(session.getServletContext());
@@ -69,6 +83,13 @@ public class ControleSessionListener implements HttpSessionListener {
 		
 		bloqueioConferenciaEncalheComponent.removerTravaConferenciaCotaUsuario(session);
 		
+	 } catch (Exception e ) {
+		 
+		  e.printStackTrace();
+		  
+	 }
+	 
+		
 	}
 	
 	/**
@@ -76,16 +97,23 @@ public class ControleSessionListener implements HttpSessionListener {
 	 * 
 	 * @param context
 	 */
-	private void removerTravaAnaliseEstudo(ServletContext context) {
+	private void removerTravaAnaliseEstudo(HttpSession session) {
 		
 	    String usuario = this.getUsuario();
 	    
-	    if (usuario == null) {
-	        
-	        return;
-	    }
 	    
-		HistogramaPosEstudoController.desbloquearAnaliseEstudo(context, usuario);
+        if (usuario == null) {
+            
+       	 usuario = (String) session.getAttribute(USUARIO_LOGADO);
+       }
+       
+       if (usuario == null) {
+           
+    	   LOGGER.warn("AVISO: sessao encerrando e nao foi feito desbloqueios pois nao foi possivel obter o usuario corrente");
+      	  return;
+      }
+	    
+		HistogramaPosEstudoController.desbloquearAnaliseEstudo(session.getServletContext(),usuario);
 	}
 	
 	/**
@@ -93,16 +121,23 @@ public class ControleSessionListener implements HttpSessionListener {
      * 
      * @param context
      */
-    private void removerTravaMatrizRecolhimento(ServletContext context) {
+    private void removerTravaMatrizRecolhimento(HttpSession session) {
         
-        String usuario = this.getUsuario();
-        
+        String usuario= this.getUsuario();
+       
         if (usuario == null) {
             
-            return;
-        }
+       	 usuario = (String) session.getAttribute("usuario_login");
+       }
+       
+       if (usuario == null) {
+           
+    	   LOGGER.warn("AVISO: sessao encerrando e nao foi feito desbloqueios pois nao foi possivel obter o usuario corrente");
+      	  return;
+      }
 
-        MatrizRecolhimentoController.desbloquearMatrizRecolhimento(context, usuario);
+    
+        MatrizRecolhimentoController.desbloquearMatrizRecolhimento(session.getServletContext(),usuario);
     }
     
     /**
@@ -110,14 +145,23 @@ public class ControleSessionListener implements HttpSessionListener {
      * 
      * @param context
      */
-    private void removerTravaMatrizLancamento(ServletContext context) {
+    private void removerTravaMatrizLancamento(HttpSession session) {
         
+    	ServletContext context = session.getServletContext();
+    	
         String usuario = this.getUsuario();
         
         if (usuario == null) {
             
-            return;
+        	 usuario = (String) session.getAttribute("usuario_login");
         }
+        
+        if (usuario == null) {
+            
+        	LOGGER.warn("AVISO: sessao encerrando e nao foi feito desbloqueios pois nao foi possivel obter o usuario corrente");
+       	  return;
+       }
+
 
         MatrizLancamentoController.desbloquearMatrizLancamento(context, usuario);
     }

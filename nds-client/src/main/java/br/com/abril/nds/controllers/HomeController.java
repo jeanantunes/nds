@@ -8,12 +8,15 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpSession;
+
 import net.vidageek.mirror.dsl.Mirror;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -29,11 +32,14 @@ import br.com.caelum.vraptor.http.route.Route;
 import br.com.caelum.vraptor.http.route.Router;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 
+import br.com.abril.nds.client.listener.ControleSessionListener;
+
 @Resource
 @Path("/")
 public class HomeController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+  
     
     @Value("#{properties.version}")
     protected String version;
@@ -46,6 +52,10 @@ public class HomeController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    
+    @Autowired
+	private HttpSession session;
     
     /**
      * @param router
@@ -67,6 +77,19 @@ public class HomeController {
         
         final Map mapaMenus = geraMenus(getPermissoesUsuario());
         
+       
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication != null) {
+            	
+            	session.setAttribute(ControleSessionListener.USUARIO_LOGADO,authentication.getName());
+                
+            }
+            
+          
+       
+		
         result.include("menus", mapaMenus);
         
         result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
