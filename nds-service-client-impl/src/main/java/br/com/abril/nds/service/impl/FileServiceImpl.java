@@ -128,7 +128,6 @@ public class FileServiceImpl implements FileService {
 						
 			IOUtils.copyLarge(fis, fos);
 			
-
 			fis.close();
 			
 			fos.close();
@@ -180,9 +179,7 @@ public class FileServiceImpl implements FileService {
 		else
 			return arquivo.getName();
 	}
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.FileService#validarArquivo(int, java.util.List, br.com.caelum.vraptor.interceptor.multipart.UploadedFile)
-	 */
+
 	@Override
 	public void validarArquivo(int maxSize, UploadedFile file, FileType... extensoes) throws IOException {
 
@@ -204,8 +201,9 @@ public class FileServiceImpl implements FileService {
 			}
 		}
 		
-		if(!valido)
+		if(!valido) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Formato de arquivo inválido"));
+		}	
 	}
 	
 	@Override

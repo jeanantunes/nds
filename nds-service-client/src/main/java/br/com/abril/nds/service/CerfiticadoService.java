@@ -21,4 +21,6 @@ public interface CerfiticadoService {
 
 	public void remover(long id);
 	
+	void limparCertificadoTemp(final TipoParametroSistema parametroPath);
+	
 }

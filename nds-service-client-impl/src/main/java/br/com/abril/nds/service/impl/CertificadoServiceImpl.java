@@ -2,11 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
@@ -14,6 +12,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,9 @@ import br.com.abril.nds.service.CerfiticadoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 /**
@@ -57,6 +58,10 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    private static final String DIR_TEMP = "temp/";
+    
+    private static final String DIR_REAL = "real/";
     
     private static final FileType[] EXTENSOES_ACEITAS = {FileType.JKS, FileType.PFX};
 	
@@ -90,9 +95,18 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 	}
 
 	@Override
+	public void limparCertificadoTemp(TipoParametroSistema parametroPath) {
+		
+		final ParametroSistema path = parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);
+		
+		this.fileService.esvaziarTemp(path.getValor());
+        		
+	}
+	
+	@Override
 	@Transactional
 	public void confirmar(CertificadoNFEDTO filtro, Long idUsuario) {
-
+		
 		this.validarCertifcado(filtro);
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -105,6 +119,7 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 		certificado.setDataFim(filtro.getDataFim());
 		certificado.setDataCriacao(new Date());
 		certificado.setNomeArquivo(filtro.getNomeArquivo());
+		certificado.setExtensao(filtro.getExtensao());
 		certificado.setSenha(filtro.getSenha());
 		certificado.setAlias(filtro.getAlias());
 		certificado.setDistribuidor(distribuidor);
@@ -112,21 +127,102 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 		
 		this.certificadoRepository.adicionar(certificado);
 		
+		this.persistirTemporario(filtro, idUsuario);
 	}
 
+	private void persistirTemporario(CertificadoNFEDTO filtro, Long idUsuario) {
+		
+         final File file = filtro.getTempFile();
+             
+         if (file != null) {
+             
+             final ParametroSistema pathCertificado = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_PATH_CERTIFICADO);
+                              
+             final File path = new File(pathCertificado.getValor() + DIR_REAL);
+             
+             path.mkdirs();
+             
+             // fileService.limparDiretorio(path);
+             
+             final File novoArquivo = new File(path, file.getName());
+             
+             FileOutputStream fos = null;
+             
+             FileInputStream fis = null;
+             
+             try {
+                 
+                 fos = new FileOutputStream(novoArquivo);
+                 
+                 fis = new FileInputStream(file);
+                 
+                 IOUtils.copyLarge(fis, fos);
+                 
+             } catch (final IOException e) {
+                 
+                 LOGGER.error("Falha ao persistir contrato anexo", e);
+                 
+                 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir certificado anexo."));
+                 
+             } finally {
+                 
+                 if(fis != null) {
+                     try {
+                         fis.close();
+                     } catch (final IOException e) {
+                         LOGGER.error("Falha ao fechar o arquivo", e);
+                     }
+                 }
+                 
+                 if(fos != null) {
+                     try {
+                         fos.close();
+                     } catch (final IOException e) {
+                         LOGGER.error("Falha ao fechar o arquivo", e);
+                     }
+                 }
+             }
+         }
+	}
+	
+	@SuppressWarnings("rawtypes")
 	private void validarCertifcado(CertificadoNFEDTO filtro) {
-
+		
+		String nomeArquivo = filtro.getNomeArquivo();
+		String ext = filtro.getNomeArquivo();
+		
+		filtro.setExtensao(Util.retornarExtensao(ext));
+		filtro.setNomeArquivo(Util.retornarNomeArquivo(nomeArquivo));
+		
+		if (this.quantidade(filtro) > 0 ){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Já Existe um Certificado Cadastrado! ");
+			
+		}
+		
 		ParametroSistema parametroSistema = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_PATH_CERTIFICADO);
-       
-		File file = new File(parametroSistema.getValor()+ "temp/" + filtro.getNomeArquivo());
+		
+		File file = new File(parametroSistema.getValor() + DIR_TEMP + filtro.getNomeArquivo() + "." + filtro.getExtensao());
         
 		X509Certificate certificate = null;
 
         if (file.exists()) {
+        	
+        	KeyStore keyStore = null;
+        	
         	try {
-                KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        		if(filtro.getExtensao().equalsIgnoreCase("jks")) {
+        			
+        			keyStore = KeyStore.getInstance("JKS");
+        			
+        		} else {
+        			
+        			keyStore = KeyStore.getInstance("PKCS12");
+        			
+        		}
+        		
                 InputStream is = new FileInputStream(file);
-                String senha = "arsp15";
+                String senha = filtro.getSenha();
                 keyStore.load(is, senha.toCharArray());
                 is.close();
 
@@ -134,6 +230,7 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 
                 PrivateKey privateKey = null;
                 Enumeration e = keyStore.aliases();
+                
                 while (e.hasMoreElements()) {
                     alias = (String) e.nextElement();
                     certificate = (X509Certificate) keyStore.getCertificate(alias);
@@ -141,12 +238,16 @@ public class CertificadoServiceImpl implements CerfiticadoService {
                     filtro.setAlias(alias);
                     System.out.println(certificate + " " + privateKey.getAlgorithm());
                 }
+                
             } catch (Exception ex) {
                 throw new ValidacaoException(TipoMensagem.WARNING, "Senha não corresponde com o certificado!");
             }
+        	
         } else {
         	throw new ValidacaoException(TipoMensagem.WARNING, "Problema no diretorio do arquivo! ");
         }
+        
+        filtro.setTempFile(file);
 	}
 
 	@Override
@@ -192,13 +293,15 @@ public class CertificadoServiceImpl implements CerfiticadoService {
 		
 		ParametroSistema parametroSistema = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_PATH_CERTIFICADO);
 	    
+		Certificado certificado = this.certificadoRepository.buscarPorId(id);
+		
 		File f = null;
 		
 	    boolean bool = false;
 	    
 		try {
 			
-			f = new File(parametroSistema.getValor()+ "temp/" + "certificado" + ".jks");
+			f = new File(parametroSistema.getValor() + certificado.getNomeArquivo() + "." + certificado.getExtensao());
 			
 			bool = f.delete();
 			

@@ -46,6 +46,7 @@ var certificadoNFEController  = $.extend(true, {
 					id:"btnDialogNovoCancelar",
 					text:"Cancelar",
 					click : function() {
+				    certificadoNFEController.limparCertificadoTemp(this);	
 					$(this).dialog("close");
 				}
 			}],
@@ -121,10 +122,6 @@ var certificadoNFEController  = $.extend(true, {
 		
 		if($("#certificado-senha").val() == '') {
 			mensagens.push("A ['Senha'] não pode ser nula");
-		} 
-		
-		if($("#certificado-alias").val() == '') {
-			mensagens.push("O ['Alias do Certificado'] não pode ser nulo");
 		}
 		
 		if($("#certificado-dataIncio").val() == '') {
@@ -241,6 +238,7 @@ var certificadoNFEController  = $.extend(true, {
 	executarPreProcessamento : function(resultado) {
 		
 		if( typeof resultado.mensagens == "object") {
+			$(".grids", certificadoNFEController.workspace).hide();
 			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
 		} else {
 			
@@ -387,5 +385,8 @@ var certificadoNFEController  = $.extend(true, {
 		});
 	},
 	
+	limparCertificadoTemp : function(id) {
+		$.postJSON(this.path + 'limparCertificadoTemp');
+	},	
 }, BaseController);
 //@ sourceURL=certificadoNFE.js

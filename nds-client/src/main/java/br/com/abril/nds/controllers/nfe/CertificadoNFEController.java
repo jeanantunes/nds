@@ -26,7 +26,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
-
 @Resource
 @Path(value="/nfe/certificadoNFE")
 @Rules(Permissao.ROLE_NFE_CERTICADO_NFE)
@@ -66,6 +65,14 @@ public class CertificadoNFEController extends BaseController {
 		}
 		
 		result.use(PlainJSONSerialization.class).from(nomeCertificadoUpload, "result").recursive().serialize();
+	}
+	
+	@Post("/limparCertificadoTemp")
+	public void limparCertificadoTemp() {
+		
+		this.cerfiticadoService.limparCertificadoTemp(TipoParametroSistema.NFE_PATH_CERTIFICADO);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Removido certificado temporario."), "result").recursive().serialize();
 	}
 	
 	@Post("/confirmar")
@@ -108,6 +115,6 @@ public class CertificadoNFEController extends BaseController {
 		
 		this.cerfiticadoService.remover(id);
         
-        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Box removido com sucesso.")).serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Certificado Obtido com sucesso.")).serialize();
 	}
 }

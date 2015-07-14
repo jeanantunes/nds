@@ -34,6 +34,9 @@ public class Certificado {
 	@Column(name = "NOME_ARQUIVO")
 	private String nomeArquivo;
 	
+	@Column(name = "EXTENSAO")
+	private String extensao;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_CRIACAO")
 	private Date dataCriacao;
@@ -92,6 +95,14 @@ public class Certificado {
 
 	public void setNomeArquivo(String nomeArquivo) {
 		this.nomeArquivo = nomeArquivo;
+	}
+	
+	public String getExtensao() {
+		return extensao;
+	}
+
+	public void setExtensao(String extensao) {
+		this.extensao = extensao;
 	}
 
 	public String getAlias() {
@@ -154,9 +165,9 @@ public class Certificado {
 	@Override
 	public String toString() {
 		return "Certificado [id=" + id + ", senha=" + senha + ", alias="
-				+ alias + ", nomeArquivo=" + nomeArquivo + ", dataCriacao="
-				+ dataCriacao + ", dataInicio=" + dataInicio + ", dataFim="
-				+ dataFim + ", distribuidor=" + distribuidor + ", usuario="
-				+ usuario + "]";
-	}	
+				+ alias + ", nomeArquivo=" + nomeArquivo + ", extensao="
+				+ extensao + ", dataCriacao=" + dataCriacao + ", dataInicio="
+				+ dataInicio + ", dataFim=" + dataFim + ", distribuidor="
+				+ distribuidor + ", usuario=" + usuario + "]";
+	}
 }

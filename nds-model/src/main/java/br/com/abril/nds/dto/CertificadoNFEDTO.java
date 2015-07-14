@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,6 +18,8 @@ public class CertificadoNFEDTO implements Serializable {
 	
 	private String nomeArquivo;
 	
+	private String extensao;
+	
 	@Export(label="alias")
 	private String alias;
 	
@@ -25,6 +28,9 @@ public class CertificadoNFEDTO implements Serializable {
 	private Date dataInicio;
 	
 	private Date dataFim;
+	
+	
+	private File tempFile;
 	
 	public Long getId() {
 		return id;
@@ -48,6 +54,14 @@ public class CertificadoNFEDTO implements Serializable {
 
 	public void setNomeArquivo(String nomeArquivo) {
 		this.nomeArquivo = nomeArquivo;
+	}
+	
+	public String getExtensao() {
+		return extensao;
+	}
+
+	public void setExtensao(String extensao) {
+		this.extensao = extensao;
 	}
 
 	public String getAlias() {
@@ -81,4 +95,14 @@ public class CertificadoNFEDTO implements Serializable {
 	public void setDataFim(Date dataFim) {
 		this.dataFim = dataFim;
 	}
+	
+
+	public File getTempFile() {
+		return tempFile;
+	}
+
+	public void setTempFile(File tempFile) {
+		this.tempFile = tempFile;
+	}
+
 }

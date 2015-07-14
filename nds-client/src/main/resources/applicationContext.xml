@@ -62,7 +62,7 @@
 	<bean id="nFeFileReader" class="br.com.abril.nds.service.xml.nfe.signature.impl.DOMNFeFileReader" />
 	
 	<bean id="keyStore" class="org.springframework.ws.soap.security.support.KeyStoreFactoryBean">
-		<property name="location" value="file:${security.certificate.location}" />  
+		
 	</bean>
 	
 	<bean id="securityHandler" class="br.com.abril.nds.service.xml.nfe.signature.impl.SimpleSecurityHandlerBean">
