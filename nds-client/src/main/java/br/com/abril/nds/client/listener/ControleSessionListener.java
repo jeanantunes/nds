@@ -127,7 +127,7 @@ public class ControleSessionListener implements HttpSessionListener {
        
         if (usuario == null) {
             
-       	 usuario = (String) session.getAttribute("usuario_login");
+       	 usuario = (String) session.getAttribute(USUARIO_LOGADO);
        }
        
        if (usuario == null) {
@@ -153,7 +153,7 @@ public class ControleSessionListener implements HttpSessionListener {
         
         if (usuario == null) {
             
-        	 usuario = (String) session.getAttribute("usuario_login");
+        	 usuario = (String) session.getAttribute(USUARIO_LOGADO);
         }
         
         if (usuario == null) {
