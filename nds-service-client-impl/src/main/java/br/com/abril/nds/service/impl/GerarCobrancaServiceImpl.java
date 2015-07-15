@@ -435,7 +435,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
         // verifica se a forma de cobrança principal do distribuidor utiliza
         // dias uteis para geração da data de vencimento da cobrança
 		if(formaCobranca.isVencimentoDiaUtil()) {
-			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento, localidade);
+			Date dt = DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
+			return this.calendarioService.adicionarDiasUteis(dt, 0, localidade);
 		}
 		
 		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
@@ -1298,6 +1299,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, String.format("Cota %s sem Endereço Principal.", (cota != null) ? cota.getNumeroCota() : "[Não localizada]"));
 		}
 		
+	
 		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento, localidade);
 
 		if(!cobrarHoje){

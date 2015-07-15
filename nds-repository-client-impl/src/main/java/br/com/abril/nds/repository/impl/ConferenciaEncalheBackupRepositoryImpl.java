@@ -97,7 +97,7 @@ public class ConferenciaEncalheBackupRepositoryImpl extends AbstractRepositoryMo
 		sql.append(" ) AS valorTotal, ");
 		
 		sql.append(" CASE WHEN ");
-        sql.append(" (SELECT plp.TIPO ");
+        sql.append(" (SELECT DISTINCT plp.TIPO ");
         sql.append(" FROM LANCAMENTO lanc  ");
         sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
         sql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
