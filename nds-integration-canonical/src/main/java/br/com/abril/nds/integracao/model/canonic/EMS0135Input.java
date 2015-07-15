@@ -48,7 +48,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	}
 	
 	@Master
-	@Field(offset = 16, length = 6)
+	@Field(offset = 16, length = 10)
 	public Long getNotaFiscal() {
 		return notaFiscal;
 	}
@@ -56,7 +56,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 		this.notaFiscal = notaFiscal;
 	}
 	
-	@Field(offset = 22, length = 3)
+	@Field(offset = 26, length = 3)
 	public Long getSerieNotaFiscal() {
 		return serieNotaFiscal;
 	}
@@ -64,7 +64,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 		this.serieNotaFiscal = serieNotaFiscal;
 	}	
 	
-	@Field(offset = 121, length = 44)
+	@Field(offset = 124, length = 44)
 	public String getChaveAcessoNF() {
 		return chaveAcessoNF;
 	}
@@ -75,7 +75,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	/**
 	 * @return the cnpjEmissor
 	 */
-	@Field(offset = 165, length = 14)
+	@Field(offset = 169, length = 14)
 	public String getCnpjEmissor() {
 		return cnpjEmissor;
 	}
@@ -90,7 +90,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	/**
 	 * @return the numeroNotaEnvio
 	 */
-	@Field(offset = 179, length = 6)
+	@Field(offset = 183, length = 6)
 	public String getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}
@@ -98,22 +98,20 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	public void setNumeroNotaEnvio(String numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
+	
 	@Override
 	public void addItem(IntegracaoDocumentDetail docD) {
 		item.add((EMS0135InputItem) docD);		
 	}
+	
 	@Override
 	public List<EMS0135InputItem> getItems() {
 		return item;
 	}
+	
 	@Override
 	public boolean sameObject(IntegracaoDocumentMaster<?> docM) {		
 		return (null == docM || ((EMS0135Input)docM).getNotaFiscal() == null || ((EMS0135Input)docM).getNumeroNotaEnvio() == null
 				? false : ( ((EMS0135Input)docM).getNotaFiscal().equals(this.notaFiscal)) && ((EMS0135Input)docM).getNumeroNotaEnvio().equals(this.numeroNotaEnvio));
-	}
-	
-
-	
+	}	
 }
-
-

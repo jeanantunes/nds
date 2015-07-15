@@ -33,7 +33,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 	private Long codigoSiscorp;
 
 	
-	@Field(offset = 25, length = 8)
+	@Field(offset = 29, length = 8)
 	@FixedFormatPattern("yyyyMMdd")
 	public Date getDataLancamento() {
 		return dataLancamento;
@@ -42,7 +42,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.dataLancamento = dataLancamento;
 	}
 	
-	@Field(offset = 33, length = 5)
+	@Field(offset = 37, length = 5)
 	public Integer getPacotePadrao() {
 		return pacotePadrao;
 	}
@@ -50,7 +50,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.pacotePadrao = pacotePadrao;
 	}
 	
-	@Field(offset = 38, length = 8)
+	@Field(offset = 42, length = 8)
 	public Integer getQtdExemplar() {
 		return qtdExemplar;
 	}
@@ -58,14 +58,14 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.qtdExemplar = qtdExemplar;
 	}
 	
-	@Field(offset = 46, length = 8)
+	@Field(offset = 44, length = 8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
-	@Field(offset = 54, length = 16)
+	@Field(offset = 58, length = 16)
 	public String getNomeProduto() {
 		return nomeProduto;
 	}
@@ -73,7 +73,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.nomeProduto = nomeProduto;
 	}
 	
-	@Field(offset = 70, length = 4)
+	@Field(offset = 74, length = 4)
 	public Long getEdicao() {
 		return edicao;
 	}
@@ -81,7 +81,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.edicao = edicao;
 	}
 	
-	@Field(offset = 74, length = 14)
+	@Field(offset = 78, length = 14)
 	public Double getPreco() {
 		return preco;
 	}
@@ -89,14 +89,14 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.preco = preco;
 	}
 	
-	@Field(offset = 88, length = 7)
+	@Field(offset = 92, length = 7)
 	public Double getDesconto() {
 		return desconto;
 	}
 	public void setDesconto(Double desconto) {
 		this.desconto = desconto;
 	}
-	@Field(offset = 95, length = 18)
+	@Field(offset = 99, length = 18)
 	public String getCodigoBarras() {
 		return codigoBarras;
 	}
@@ -104,14 +104,11 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.codigoBarras = codigoBarras;
 	}
 	
-	@Field(offset = 113, length = 8)
+	@Field(offset = 117, length = 8)
 	public Long getCodigoSiscorp() {
 		return codigoSiscorp;
 	}
 	public void setCodigoSiscorp(Long codigoSiscorp) {
 		this.codigoSiscorp = codigoSiscorp;
-	}
-		
+	}		
 }
-
-
