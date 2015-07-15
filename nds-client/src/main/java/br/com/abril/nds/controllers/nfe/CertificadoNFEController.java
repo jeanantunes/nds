@@ -81,7 +81,7 @@ public class CertificadoNFEController extends BaseController {
 		
 		this.cerfiticadoService.confirmar(filtro, getUsuarioLogado().getId());
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Upload do certificado efetuado com sucesso."), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro do Certificado Efetuado Com Sucesso."), "result").recursive().serialize();
 	}
 
     @Post("buscar")
