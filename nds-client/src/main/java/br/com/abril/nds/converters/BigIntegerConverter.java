@@ -2,6 +2,7 @@ package br.com.abril.nds.converters;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -13,14 +14,14 @@ import br.com.caelum.vraptor.Converter;
 import br.com.caelum.vraptor.converter.ConversionError;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 
-@Convert(Integer.class)
+@Convert(BigInteger.class)
 @RequestScoped
-public class IntegerConverter implements Converter<Integer> {
+public class BigIntegerConverter implements Converter<BigInteger> {
 	
 	 private static final Logger LOGGER = LoggerFactory.getLogger(IntegerConverter.class);
 	 
 	@Override
-	public Integer convert(String value, Class<? extends Integer> type, ResourceBundle bundle) {
+	public BigInteger convert(String value, Class<? extends BigInteger> type, ResourceBundle bundle) {
 	try {
 		if (isNullOrEmpty(value)) {
 			return null;
@@ -34,7 +35,7 @@ public class IntegerConverter implements Converter<Integer> {
 		if ("undefined".equalsIgnoreCase(value)) {
 			return null;
 		}
-		return Integer.parseInt(value);
+		return new BigInteger(value);
 	 } catch (Exception e ) {
 	    	e.printStackTrace();
 	    	LOGGER.error("ERRO CONVERSAO INTEGER='"+value+"'");

@@ -1314,7 +1314,19 @@ var lancamentoNovoController = $.extend(true, {
 		$('#nomeInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
 		
 	},
-	
+limparCota : function() {
+		
+		
+		//$('#cotaInput1', lancamentoNovoController.workspace).val('');
+		//$('#nomeInput1', lancamentoNovoController.workspace).val('');
+		$('#diferencaInput1', lancamentoNovoController.workspace).val('');
+		$('#reparteText1', lancamentoNovoController.workspace).text('');
+		$('#reparteAtualText1', lancamentoNovoController.workspace).text('');
+		$('#cotaInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
+		$('#nomeInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
+		
+	},
+
 	limparProduto : function() {
 		$("#precoCapaProduto", lancamentoNovoController.workspace).text('');
 		$("#pacotePadrao", lancamentoNovoController.workspace).text('');

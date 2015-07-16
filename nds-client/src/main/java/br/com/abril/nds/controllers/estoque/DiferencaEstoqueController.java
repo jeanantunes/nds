@@ -2688,7 +2688,8 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         			Lancamento lancamento = 
         					lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
         			if(lancamento == null) {
-        				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Erro ao obter o Lançamento."));
+        				LOGGER.error("Nao foi possivel encontrar lancamento para cotaid ="+cota.getId() +" produto_edicao_id="+produtoEdicao.getId()+" data"+distribuidorService.obterDataOperacaoDistribuidor());
+        				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Lançamento não Encontrado"));
         			}
         			DateTime dataLancamento = new DateTime(lancamento.getDataLancamentoDistribuidor());
         			DateTime dataOperacao = new DateTime(distribuidorService.obterDataOperacaoDistribuidor());

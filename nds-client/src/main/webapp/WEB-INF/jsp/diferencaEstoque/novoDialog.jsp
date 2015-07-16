@@ -241,6 +241,7 @@
 						<tr id="trCota1">
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="10"
+								   onchange="lancamentoNovoController.limparCota();"
 									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, function(data) { lancamentoNovoController.buscarReparteAtualCota(data,1);},lancamentoNovoController.erroPesquisaCota,1);"/>
 								
 								<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
