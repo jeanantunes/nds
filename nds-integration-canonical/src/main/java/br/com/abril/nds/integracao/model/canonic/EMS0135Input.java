@@ -64,7 +64,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 		this.serieNotaFiscal = serieNotaFiscal;
 	}	
 	
-	@Field(offset = 124, length = 44)
+	@Field(offset = 125, length = 44)
 	public String getChaveAcessoNF() {
 		return chaveAcessoNF;
 	}

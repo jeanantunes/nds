@@ -58,7 +58,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 		this.qtdExemplar = qtdExemplar;
 	}
 	
-	@Field(offset = 44, length = 8)
+	@Field(offset = 50, length = 8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
