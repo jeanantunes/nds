@@ -189,7 +189,7 @@ var lancamentoController = $.extend(true, {
 			buttons: 
 			{
 				"Confirmar": function() {
-					
+				
 					lancamentoController.pesquisar(true);
 					
 				}, "Cancelar": function() {
