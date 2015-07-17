@@ -452,14 +452,18 @@ var lancamentoController = $.extend(true, {
 				function(resultado) {
 					var tipoMensagem = null; 
 					var listaMensagens = null;
+					
+				   
 					if (resultado.mensagens){
 						tipoMensagem = resultado.mensagens.tipoMensagem;
 			        	listaMensagens = resultado.mensagens.listaMensagens;
 					}	
+					
 			        if (tipoMensagem && listaMensagens) {
 			              exibirMensagem(tipoMensagem, listaMensagens);
 			         }  else {
-			        	 window.location = contextPath + "/estoque/diferenca/imprimirRelatorioFaltasSobras?dataMovimentoFormatada=" + $("#datePickerDataMovimento", lancamentoController.workspace).val();
+			        	 window.open(contextPath + "/estoque/diferenca/imprimirRelatorioFaltasSobras?dataMovimentoFormatada=" + $("#datePickerDataMovimento", lancamentoController.workspace).val(),'_blank');
+			        	// window.location= contextPath + "/estoque/diferenca/imprimirRelatorioFaltasSobras?dataMovimentoFormatada=" + $("#datePickerDataMovimento", lancamentoController.workspace).val();
 			         }
 				}
 			);

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Public;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DiferencaVO;
@@ -3085,19 +3086,24 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         return detalheDiferencaCota;
     }
     
+   
     @Post
     @Path("/validarDadosParaImpressao")
-    public void validarDadosParaImpressao(final String dataMovimentoFormatada) {
-        
+    public void validarDadosParaImpressao(final String dataMovimentoFormatada)  throws Exception{
+      
         diferencaEstoqueService.validarDadosParaImpressaoNaData(dataMovimentoFormatada);
-        
+        final Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
+        final byte[] relatorio = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+       
+       
         result.use(Results.json()).from("", "result").recursive().serialize();
     }
+    
     
     @Get
     @Path("/imprimirRelatorioFaltasSobras")
     public Download imprimirRelatorioFaltasSobras(final String dataMovimentoFormatada) throws Exception {
-        
+       
         final Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
         
         final byte[] relatorio = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
@@ -3105,7 +3111,9 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
         final String nomeArquivoRelatorio = "relatorioFaltasSobras" + FileType.PDF.getExtension();
         
         return new ByteArrayDownload(
-                relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
+                relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, false);
+       
+       
     }
     
     /**
