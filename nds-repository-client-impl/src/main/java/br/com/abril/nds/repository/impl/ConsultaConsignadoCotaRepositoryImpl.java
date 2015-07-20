@@ -508,6 +508,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 
+		parameters.put("formaComercializacao", FormaComercializacao.CONSIGNADO.name());
+		
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
 
