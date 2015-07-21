@@ -626,6 +626,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if (filtro.getIdCota() != null) {
             subSqlVendaProduto.append(" and vp.ID_COTA = :idCota ");
+            subSqlVendaProduto.append(" and vp.TIPO_COMERCIALIZACAO_VENDA <> 'CONTA_FIRME' ");
         }
         
         final StringBuilder qtdeInformadaEncalhe = new StringBuilder("coalesce(sum(COALESCE(CONFERENCIA_ENCALHE.QTDE, 0)), 0)");
@@ -1150,7 +1151,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		sqlTblReparte.append(" AND MEC.LANCAMENTO_ID is not null ");
-				
+		
+		sqlTblReparte.append(" AND MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
+		
 		sqlTblReparte.append(" GROUP BY MEC.PRODUTO_EDICAO_ID                                                                           ");
 		
 		
