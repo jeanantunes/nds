@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
@@ -377,11 +378,13 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 									.createAlias("pdv", "pdv")
 									.createAlias("pdv.cota", "c_cota")
 									.add(Restrictions.isNotNull("roteirizacao.box"))
+									.add(Restrictions.eq("roteiro.tipoRoteiro", TipoRoteiro.NORMAL))
 									.setProjection(Projections.property("c_cota.id"));
 			
 			criteria.add(Subqueries.propertyNotIn("cota.id", subquery));
 			criteria.add(Restrictions.isNull("cota.box"));
 			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
+			
 		}
 		
         if (numCota != null) {
@@ -409,7 +412,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		
 		criteria.addOrder(Order.asc("cota.numeroCota"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return  (List<PDV>)criteria.list();  
+		return  (List<PDV>) criteria.list();  
 	}
 
 	@Override
