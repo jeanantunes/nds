@@ -2434,8 +2434,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	            nome = " nomeProduto, numeroEdicao ";
 	            break;
 	        case PRODUTO_COTA:
-	            nome = " nomeProduto, numeroEdicao, codigoCota ";
-	            break;
+	        	if (filtro.getPaginacao() == null){
+	        		nome = " nomeProduto, numeroEdicao, codigoCota ";
+	        		break;
+	        		
+	        	} else {
+	        		nome = " nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota ";
+	        		break;
+	        		
+	        	}
+	        	
 	        default:
 	            nome = "";
 	            break;
