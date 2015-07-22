@@ -591,6 +591,7 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		hql.append(" join rotaPdv.pdv pdv ");
 		hql.append(" where r.box = b ");
 		hql.append(" and   pdv.id IN ( :idPdv ) ");
+		hql.append(" and roteiro.tipoRoteiro = 'NORMAL' ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 

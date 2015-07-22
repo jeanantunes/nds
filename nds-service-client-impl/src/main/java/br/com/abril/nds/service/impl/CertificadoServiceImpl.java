@@ -232,14 +232,16 @@ public class CertificadoServiceImpl implements CerfiticadoService {
                 Enumeration e = keyStore.aliases();
                 
                 while (e.hasMoreElements()) {
-                    alias = (String) e.nextElement();
+                    
+                	alias = (String) e.nextElement();
                     certificate = (X509Certificate) keyStore.getCertificate(alias);
                     privateKey = (PrivateKey) keyStore.getKey(alias, filtro.getSenha().toCharArray());
                     filtro.setAlias(alias);
-                    System.out.println(certificate + " " + privateKey.getAlgorithm());
+                    
                 }
                 
             } catch (Exception ex) {
+            	ex.getStackTrace();
                 throw new ValidacaoException(TipoMensagem.WARNING, "Senha não corresponde com o certificado!");
             }
         	
