@@ -502,7 +502,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private boolean isDataLancamentoPrevistoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento)  {
 
 		if( dto.getDataLancamentoPrevisto() != null && 
-			dto.getDataLancamentoPrevisto().compareTo(lancamento.getDataLancamentoPrevista()) == 0 ) {
+			dto.getDataLancamento().compareTo(lancamento.getDataLancamentoPrevista()) == 0 ) {
 			return false;
 		}
 		
@@ -668,10 +668,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         	}
     	}
     	
-    	if(dto.isParcial() && dto.getId() != null && (indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada)) {
-        	
-        	throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alteração de Lancamentos Parciais. Utilize a tela de Parciais.");
-        }
+    	if(dto.isParcial()){
+    		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
+    			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alteração de Lancamentos Parciais. Utilize a tela de Parciais.");
+    		}
+    	}
         
         final boolean indNovoProdutoEdicao = (dto.getId() == null);
         
