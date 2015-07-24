@@ -535,7 +535,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		 
 		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "COM") {
 			
-			estoque = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 			
 			valorDiferenca = eval(encalhe) - eval(estoque);
 			
