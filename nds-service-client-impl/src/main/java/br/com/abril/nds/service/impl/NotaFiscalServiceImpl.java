@@ -735,7 +735,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					Element elo = (Element) elementos.item(0);
 					elo.setIdAttribute("Id", true);
 					
-					signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");
+					// signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");
 					
 					os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
 					tf = TransformerFactory.newInstance();
