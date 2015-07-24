@@ -409,7 +409,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	tratarAlteracaoEncalhe : function(idItemCeIntegracao, campo) {
 		
-		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo,"Encalhe")){
+		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo, "Encalhe")){
 			return;
 		}
 		
@@ -451,7 +451,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
-		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda,diferenca,estoque);
+		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque);
 		
 		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
 	},
@@ -532,12 +532,18 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var estoque = 0;
 		
 		var valorDiferenca = 0;
-		 
+		
+		var venda = 0;
+		
 		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "COM") {
 			
 			estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			reparte =  $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			
 			
 			valorDiferenca = eval(encalhe) - eval(estoque);
+			
+			venda = eval(reparte) - eval(encalhe);
 			
 		} else {
 			
@@ -548,6 +554,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		}
 		
 		$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
+		$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(venda);
 	},
 	
 	tratarAlteracaoVenda : function(idItemCeIntegracao, campo) {
@@ -730,7 +737,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
 								row.cell.idItemCeIntegracao + ', this)"/>';
 							
-						} else {
+					} else {
 						
 						colunaReparte =
 							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
@@ -1135,12 +1142,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			fechamentoCEIntegracaoController.atualizarItensCEIntegracaoSemCE(id, encalhe, venda, diferenca, estoque, codigoProduto, nomeProduto, numeroEdicao, precoCapa);
 			
-			$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("0");
+			$("#diferenca" + id, fechamentoCEIntegracaoController.workspace).text("0");
 			
 			
 		} else {
 			
-			$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("");
+			$("#diferenca" + id, fechamentoCEIntegracaoController.workspace).text("");
 			
 			$("#sel", fechamentoCEIntegracaoController.workspace).attr("checked",false);
 			
@@ -1149,13 +1156,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			if (valorAux || valorAux == "0"){
 				$("#inputVenda" + id, fechamentoCEIntegracaoController.workspace).val(valorAux);
 				
-				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text(
+				$("#diferenca" + id, fechamentoCEIntegracaoController.workspace).text(
 					parseInt($("#qtdeDevolucao" + id, fechamentoCEIntegracaoController.workspace).text()) - valorAux
 				);
 				
 			} else {
 				$("#inputVenda" + id, fechamentoCEIntegracaoController.workspace).val("");
-				$("#difernca" + id, fechamentoCEIntegracaoController.workspace).text("");
+				$("#diferenca" + id, fechamentoCEIntegracaoController.workspace).text("");
 			}
 		}
 		
