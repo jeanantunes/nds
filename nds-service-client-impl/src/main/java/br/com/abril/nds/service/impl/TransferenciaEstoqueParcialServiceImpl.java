@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -22,6 +23,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.TransferenciaEstoqueParcialService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigIntegerUtil;
 
 @Service
@@ -45,6 +47,9 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public BigInteger buscarQuantidadeParaTransferencia(String codigoProduto, Long numeroEdicao) {
@@ -66,9 +71,14 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição inválido.");
 		}
 		
-		if(produtoEdicao.isParcial()) {
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		if(!distribuidor.isLiberarTranferenciaParcial()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não é possível transferir estoque de um produto Parcial.");
+			if(produtoEdicao.isParcial()) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Não é possível transferir estoque de um produto Parcial.");
+			}
 		}
 		
 		BigInteger qtdeEstoqueParaTransferencia = this.estoqueProdutoRespository.buscarQtdeEstoqueParaTransferenciaParcial(produtoEdicao.getId());

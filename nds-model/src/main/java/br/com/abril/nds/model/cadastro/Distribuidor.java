@@ -398,6 +398,10 @@ public class Distribuidor {
 	@Column(name = "SUGERE_SUSPENSAO", nullable = false)
 	private boolean sugereSuspensao = true;
 	
+	@Column(name = "LIBERAR_TRANSFERENCIA_PARCIAL")
+	private boolean liberarTranferenciaParcial;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -1377,6 +1381,14 @@ public class Distribuidor {
 	public void setAceitaRecolhimentoParcialAtraso(
 			boolean aceitaRecolhimentoParcialAtraso) {
 		this.aceitaRecolhimentoParcialAtraso = aceitaRecolhimentoParcialAtraso;
+	}
+	
+	public boolean isLiberarTranferenciaParcial() {
+		return liberarTranferenciaParcial;
+	}
+
+	public void setLiberarTranferenciaParcial(boolean liberarTranferenciaParcial) {
+		this.liberarTranferenciaParcial = liberarTranferenciaParcial;
 	}
 
 	@Override
