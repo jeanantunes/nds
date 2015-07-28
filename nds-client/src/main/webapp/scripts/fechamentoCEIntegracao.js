@@ -788,10 +788,25 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.estoque +
 						'</span>';
 					
-					var colunaDiferenca =
-							'<span id="diferenca' + row.cell.idItemCeIntegracao + '">' +
-							valorDiferenca +
+					var colunaDiferenca = '';
+						
+				
+					if (isFinal) {
+						
+						var valorDiferencaAux = row.cell.encalhe - row.cell.estoque;
+						
+						colunaDiferenca =
+							'<span id="diferenca' + row.cell.idItemCeIntegracao + '">' 
+							+ valorDiferencaAux +
 							'</span>';
+						
+					} else {
+						
+						colunaDiferenca =
+						'<span id="diferenca' + row.cell.idItemCeIntegracao + '">' +
+						valorDiferenca +
+						'</span>';
+					}
 					
 					var colunaPrecoCapa =
 						'<span id="precoCapa' + row.cell.idItemCeIntegracao + '">' +
