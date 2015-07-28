@@ -1178,7 +1178,7 @@ var lancamentoNovoController = $.extend(true, {
 					'<td>'+
 					     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:300px;" '+
 					         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
-					         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', function(data) { lancamentoNovoController.buscarReparteAtualCota(data,'+ (linhaAtual +1)+') } ,lancamentoNovoController.erroPesquisaCota,'+(linhaAtual + 1)+');" ' +
+					         ' nomeInput'+ (linhaAtual + 1) +', function(data) { lancamentoNovoController.buscarReparteAtualCota(data,'+ (linhaAtual +1)+') } ,lancamentoNovoController.erroPesquisaCota,'+(linhaAtual + 1)+');" ' +
 					     '/>'+
 					'</td>' +
 					'<td align="center" id="reparteText'+ (linhaAtual + 1) +'"></td>' +
