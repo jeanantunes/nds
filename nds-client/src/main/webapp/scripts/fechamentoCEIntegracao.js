@@ -523,8 +523,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 		}
 		
-		
-		
 	},
 	
 	atualizarDiferenca : function(encalhe,idItemCeIntegracao) {
@@ -538,26 +536,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "COM") {
 			
 			estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
-			reparte =  $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
-			
 			
 			valorDiferenca = eval(encalhe) - eval(estoque);
 			
-			venda = eval(reparte) - eval(encalhe);
+			$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
 			
 		} else {
 			
 			estoque = $("#qtdeDevolucao" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 			
-			valorDiferenca = eval(estoque) - eval(encalhe);
+			valorDiferenca = eval(encalhe) - eval(estoque);
 			
+			$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
+			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(venda);
 		}
 		
-		$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
-		$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(venda);
 	},
 	
-	tratarAlteracaoVenda : function(idItemCeIntegracao, campo) {
+	tratarAlteracaoVenda : function(idItemCeIntegracao, isFinal, campo) {
 		
 		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo, "Venda")){
 			return;
@@ -566,7 +562,18 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var venda = campo.value;
 	
 		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
-		var encalhe = $("#encalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		var encalhe = 0; 
+		
+		if(isFinal) {
+			
+			encalhe = $("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		} else {
+			
+			encalhe = $("#encalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			
+		}
+		
 		var diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
@@ -595,8 +602,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			return;
 		}
 		
-		$("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(reparte - venda);
-		
+		if(!isFinal){
+			
+			$("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(reparte - venda);
+		}
+				
 		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque);
 		
 		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
@@ -709,8 +719,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
-							row.cell.idItemCeIntegracao + ', this)"/>';
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +', this)"/>';
 						
 					} else if (isFinal) {
 							
@@ -734,8 +743,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
-								row.cell.idItemCeIntegracao + ', this)"/>';
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 							
 					} else {
 						
@@ -764,6 +772,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 
 						if(row.cell.diferenca == undefined){
+							
 							valorDiferenca = row.cell.encalhe - row.cell.estoque ;
 						}
 
@@ -790,21 +799,19 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						'</span>';
 					
 					row.cell.estoque = colunaEstoque;
-					row.cell.diferenca = colunaDiferenca;
 					row.cell.reparte = colunaReparte;
-					row.cell.encalhe = colunaEncalhe;					
+					row.cell.encalhe = colunaEncalhe;
+					row.cell.diferenca = colunaDiferenca;
 					row.cell.venda = colunaVenda;
 					row.cell.precoCapaFormatado = colunaPrecoCapa;
 					row.cell.valorVendaFormatado = colunaValorVenda;
 
 				});
 				
-			}
-			else{
+			} else {
 				
 				$.each(resultado.listaFechamento.rows, function(index, row) {
-					
-					if(row.cell.diferenca == undefined){
+					if(row.cell.diferenca == undefined) {
 						row.cell.diferenca = 0;
 					}
 				});
@@ -886,8 +893,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
 							' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
-							row.cell.idItemCeIntegracao + ', this)"/>';
+							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 						
 					} else if (isFinal) {
 												
@@ -911,8 +917,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
-								row.cell.idItemCeIntegracao + ', this)"/>';
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 							
 						} else {
 						
@@ -951,7 +956,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.encalhe + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalheSemCE(' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 								row.cell.idItemCeIntegracao + ', this)"/>';
 
 						if(row.cell.diferenca == undefined){
