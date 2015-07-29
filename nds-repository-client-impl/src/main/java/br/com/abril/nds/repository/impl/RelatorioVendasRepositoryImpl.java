@@ -377,7 +377,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			.append(" join pessoa pes on pes.ID=c.PESSOA_ID ")
 			.append(" join movimento_estoque_cota mec on mec.COTA_ID=c.ID and mec.PRODUTO_EDICAO_ID=pe.ID ")
 			.append(" join tipo_movimento tm on tm.ID=mec.TIPO_MOVIMENTO_ID ")
-			.append(" where rs.TIPO_SEGMENTO_PRODUTO_ID=:tipoSegmentoID ");
+			.append(" where rs.TIPO_SEGMENTO_PRODUTO_ID=:tipoSegmentoID ")
+			.append(" AND tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
 		
 		if (filtro.getDe() != null && filtro.getAte() != null) {
 			from.append(" and mec.DATA between :dataDe and :dataAte ");
@@ -522,7 +523,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("	WHERE	");
 		
 		sql.append("	lancamento.status IN (:statusLancamento) 	   ");
-		
+		sql.append("	and tipomovimento.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'	   ");
+				
 		sql.append(this.getFiltroCurvaABC(filtro, null));
 		
 		switch(agrupamento) {
@@ -591,7 +593,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			
 			if (query == null){
 				
-				sql.append(" AND produtoEdicao.NUMERO_EDICAO in (:edicaoProduto) ");
+				sql.append(" AND produto_edicao.NUMERO_EDICAO in (:edicaoProduto) ");
 			} else {
 				
 				query.setParameterList("edicaoProduto", filtro.getEdicaoProduto());

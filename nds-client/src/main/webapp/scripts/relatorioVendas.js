@@ -467,6 +467,7 @@ var relatorioVendasController = $.extend(true, {
 		var retorno = true;
 		
 		if($("#edicaoProduto").val().trim().length < 1){
+			retorno = false;
 			return retorno;
 		}
 		
@@ -591,7 +592,7 @@ var relatorioVendasController = $.extend(true, {
 		
 		if (!relatorioVendasController.validarPesquisaEdicaoAvancada()){
 			
-			exibirMensagem("ERROR", 
+			exibirMensagem("WARNING", 
 						  ['Formato do campo Edição inválido! O campo Edição aceita números separados por ";". Exemplo: 99;00;11']);
 			return;
 		}
