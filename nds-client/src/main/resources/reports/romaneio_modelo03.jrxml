@@ -52,9 +52,9 @@
 		</groupHeader>
 	</group>
 	<pageHeader>
-		<band height="67">
+		<band height="65">
 			<subreport runToBottom="false">
-				<reportElement uuid="1cc7d197-bdeb-43d8-9b9c-a1a7bac126f0" x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="65" isPrintWhenDetailOverflows="true" uuid="1cc7d197-bdeb-43d8-9b9c-a1a7bac126f0"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -87,7 +87,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement uuid="e753229a-f6fe-47cd-bd8a-8787bf24c773" x="0" y="0" width="802" height="440"/>
+				<reportElement x="0" y="0" width="802" height="440" uuid="e753229a-f6fe-47cd-bd8a-8787bf24c773"/>
 				<subreportParameter name="NOME_PRODUTO_4">
 					<subreportParameterExpression><![CDATA[$F{nomeProduto4}]]></subreportParameterExpression>
 				</subreportParameter>
