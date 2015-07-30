@@ -337,7 +337,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append("    roteiro_.DESCRICAO_ROTEIRO as nomeRoteiro,");
 		hql.append("    rota_.ID as idRota,");
 		hql.append("    rota_.DESCRICAO_ROTA as nomeRota,");
-		hql.append("    concat(endereco_.TIPO_LOGRADOURO,' ',endereco_.LOGRADOURO,', ',endereco_.NUMERO,', ',endereco_.BAIRRO,', ',endereco_.CIDADE,', ',endereco_.UF,' - ',endereco_.CEP) as endereco"); 
+		hql.append("    concat(endereco_.TIPO_LOGRADOURO,' ',endereco_.LOGRADOURO,', ',endereco_.NUMERO,', ',endereco_.BAIRRO,', ',endereco_.CIDADE,', ',endereco_.UF) as endereco"); 
 		
 		int qtdProdutos = 0;
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {

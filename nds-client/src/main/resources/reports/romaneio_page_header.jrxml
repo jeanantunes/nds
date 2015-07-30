@@ -24,9 +24,9 @@
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
 	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
 	<pageHeader>
-		<band height="67">
+		<band height="65">
 			<frame>
-				<reportElement x="0" y="0" width="802" height="67" uuid="67f31832-a8ce-489f-8b3b-6071b4f512d0"/>
+				<reportElement x="0" y="0" width="802" height="65" uuid="67f31832-a8ce-489f-8b3b-6071b4f512d0"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -51,7 +51,7 @@
 						<textFieldExpression><![CDATA[$P{NOME_ROTA}]]></textFieldExpression>
 					</textField>
 					<image>
-						<reportElement x="3" y="1" width="104" height="66" uuid="1f888bb5-9ba1-4232-86cb-47163aa415cd"/>
+						<reportElement x="3" y="1" width="102" height="62" uuid="1f888bb5-9ba1-4232-86cb-47163aa415cd"/>
 						<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 					</image>
 					<staticText>
