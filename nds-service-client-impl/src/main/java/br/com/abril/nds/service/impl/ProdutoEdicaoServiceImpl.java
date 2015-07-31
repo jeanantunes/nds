@@ -502,7 +502,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private boolean isDataLancamentoPrevistoAlterada(ProdutoEdicaoDTO dto, Lancamento lancamento)  {
 
 		if( dto.getDataLancamentoPrevisto() != null && 
-			dto.getDataLancamento().compareTo(lancamento.getDataLancamentoPrevista()) == 0 ) {
+			dto.getDataLancamentoPrevisto().compareTo(lancamento.getDataLancamentoPrevista()) == 0 ) {
 			return false;
 		}
 		
@@ -670,7 +670,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     	
     	if(dto.isParcial()){
     		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
-    			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível alteração de Lancamentos Parciais. Utilize a tela de Parciais.");
+    			throw new ValidacaoException(TipoMensagem.WARNING, "Data do Lançamento Alterada não é possível alteração de Lancamentos de Parciais. Utilize a tela de Parciais.");
     		}
     	}
         
