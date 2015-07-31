@@ -1934,6 +1934,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			} 
 		});
 		
+		// Solucionar problema add edicoes base - Venda Média
+		$("#dialogEdicoesBase").dialog('destroy').remove();
+		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', pathTela + '/distribuicaoVendaMedia/index');
