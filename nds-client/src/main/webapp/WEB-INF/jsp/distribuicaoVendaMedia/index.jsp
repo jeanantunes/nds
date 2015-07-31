@@ -26,36 +26,6 @@ $(function() {
 		distribuicaoVendaMedia.verificarICD();
 	});
 
-function popup_novo() {
-	$("#edicaoProdCadastradosGrid-1").flexAddData({
-			rows : [],
-			page : 1,
-			total : 1
-		});
-	
-	$("#codigoPesquisaBases").val("");
-	$("#produtoPesquisaBases").val("");
-	$("#edicaoPesquisaBases").val("");
-	
-	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
-	
-	$("#dialog-edicoes-base").dialog({
-	    escondeHeader: false,
-		resizable: false,
-		height:450,
-		width:700,
-		modal: true,
-		buttons: {
-			"Confirmar": function() {
-				distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
-				$( this ).dialog( "close" );
-			},
-			"Cancelar": function() {
-				$( this ).dialog( "close" );
-			}
-		},
-	});
-};
 function popup_cancelar() {
 
 	$( "#dialog-cancelar" ).dialog({
@@ -325,27 +295,25 @@ function limparLstExcecao1(){
     </fieldset>
 </div>
 
-<div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px; width: 650px ">  
+<div id="dialogEdicoesBase" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px; width: 650px ">  
 <fieldset style="width:560px!important;">
     <legend>Pesquisar Produto</legend>
         
-      <table width="545" border="0" cellpadding="2" cellspacing="1" class="filtro">
+      <table width="545" border="0" cellpadding="2" cellspacing="1">
           <tr>
             <td width="43">Código:</td>
             <td width="78">
-            	<input type="text" name="textfield1" id="codigoPesquisaBases" style="width:60px;"
-            	 	onchange="autoComplete.pesquisarPorCodigo('/produto/pesquisarPorCodigoProduto','#codigoPesquisaBases', '#produtoPesquisaBases');"/>
+            	<input type="text" name="codigoPesquisaBases" id="codigoPesquisaBases" style="width:60px;"/>
             </td>
             
             <td width="48">Produto:</td>
             <td width="184">
-            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
-                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);" /> 
+            	<input type="text" name="nomeProdutoEdicaoBase" id="nomeProdutoEdicaoBase" style="width:160px;" /> 
             </td>
             
             <td width="42">Edição:</td>
             <td width="62">
-            	<input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
+            	<input type="text" name="edicaoPesquisaBases" id="edicaoPesquisaBases" style="width:60px;" /></td>
           </tr>
             
           	<tr>
@@ -359,26 +327,18 @@ function limparLstExcecao1(){
 		        </select>
 		        </td>
 	          	<td>
-					<span class="bt_novos">
-						<a href="javascript:distribuicaoVendaMedia.pesquisarBases();" rel="tipsy" title="Pesquisar">
-							<img src="images/ico_pesquisar.png" hspace="5" border="0" />
+					<span class="bt_pesquisar">
+						<a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases();" rel="tipsy" title="Pesquisar">
 						</a>
 					</span>
-	          	<!-- 
-	          		<span class="bt_pesquisar">
-	          			<a onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}');">&nbsp;</a>
-	          		</span>
-	          	 -->
 	          	</td>
           	</tr>
         </table>
-
-    </fieldset>
-    <br clear="all" />
-
+ </fieldset>
+    
     <fieldset style="width:655px!important; margin-top:10px;">
     	<legend>Edições do Produto</legend>
-        <table class="edicaoProdCadastradosGrid-1" id="edicaoProdCadastradosGrid-1"></table>
+        <table class="edicoesBaseGrid" id="edicoesBaseGrid"></table>
      </fieldset>
 </div>
 
@@ -514,7 +474,7 @@ function limparLstExcecao1(){
                    	      <td width="40">${ produtoEdicao.numeroEdicao }</td>
                    	      <td width="35">Período:</td>
                    	      <td width="30">${ lancamento.periodoLancamentoParcial.numeroPeriodo }</td>
-                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();" style="margin-right: 1px;"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
+                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.popup_novo();" style="margin-right: 1px;"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
                	        </tr>
                	    </table>
                    	</fieldset>
@@ -815,7 +775,7 @@ $(".listaRegiaoGrid").flexigrid({
 	width : 400,
 	height : 200
 });
-$(".edicaoProdCadastradosGrid-1").flexigrid({	
+$(".edicoesBaseGrid").flexigrid({	
 	dataType : 'json',
 	colModel : [ {
 		display : 'Código',
@@ -882,9 +842,8 @@ $(".edicaoProdCadastradosGrid-1").flexigrid({
 	height : 200,
 	sortname : "dataLancamentoFormatada",
 	sortorder : "desc",
-	usepager : true,
-    useRp : true,
-    rp : 15
+	usepager : false,
+    useRp : false,
 });
 $(".elemento1Grid").flexigrid({
 	//url : '../xml/elemento1-xml.xml',

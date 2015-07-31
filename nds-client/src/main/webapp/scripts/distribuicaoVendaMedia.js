@@ -29,6 +29,22 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	    $('#botaoPesquisarAddNovaBase').click(function(){
 	    	T.pesquisarBases();
 	    });
+	    
+	    
+	    $('#codigoPesquisaBases').change(function(){
+	    	pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#nomeProdutoEdicaoBase', '#edicaoPesquisaBases', true);
+	    	$("#edicaoPesquisaBases").focus();
+	    	
+	    });
+	    
+	    $('#nomeProdutoEdicaoBase').bind({
+	    	keyup: function(){
+	    		pesquisaProduto.autoCompletarPorNomeProduto('#nomeProdutoEdicaoBase', true);
+			},
+			change: function(){
+				pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#nomeProdutoEdicaoBase', '#edicaoPesquisaBases', true);
+			}
+		});
 	};
 	
 	this.verificarICD = function(){
@@ -251,7 +267,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 
 		var data = [];
 		var codigo = $("#codigoPesquisaBases").val();
-		var produto = $("#produtoPesquisaBases").val();
+		var produto = $("#nomeProdutoEdicaoBase").val();
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#distribuicao-venda-media-selectClassificacao").val();
 		var idLancamento = $("#idLancamento").val();
@@ -268,7 +284,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 		var urlPesquisa = contextPath+"/distribuicaoVendaMedia/pesquisarProdutosEdicao";
 		
-		$("#edicaoProdCadastradosGrid-1").flexOptions({
+		$("#edicoesBaseGrid").flexOptions({
 			url: urlPesquisa,
 			params: data,
 			preProcess: function(result){
@@ -770,9 +786,46 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	this.cancelar = function(){
 
+		$("#dialogEdicoesBase").dialog('destroy').remove();
+		
 		$(".ui-tabs-selected").find("span[class*='ui-icon-close']").click();
 		T.produtoEdicaoBases = [];
 		selectTabTitle('Matriz Distribuição');
+	};
+	
+	this.popup_novo = function(){
+	
+	$("#codigoPesquisaBases").val("");
+	$("#nomeProdutoEdicaoBase").val("");
+	$("#edicaoPesquisaBases").val("");
+	
+	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
+	
+		$("#dialogEdicoesBase").dialog({
+			resizable: false,
+			height:500,
+			width:700,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			},
+			beforeClose: function() {
+				clearData = {
+				        total: 0,
+				        page:1,
+				        rows: []
+				};
+				$("#edicoesBaseGrid").flexAddData(clearData);
+				
+				$(this).dialog('destroy');
+			},
+		});
 	};
 	
 	this.redirectToTelaAnalise = function(){
