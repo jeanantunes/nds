@@ -651,11 +651,24 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             final InputStream imgInputStream, final boolean istrac29, final ModoTela modoTela) {
     
         ProdutoEdicao produtoEdicao = null;
+                
+        final boolean indNovoProdutoEdicao = (dto.getId() == null);
+        
+        boolean semRestricao = false;
+        
+        if (indNovoProdutoEdicao) {
+            produtoEdicao = new ProdutoEdicao();
+            produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigoProdin(codigoProduto));
+            produtoEdicao.setOrigem(Origem.MANUAL);
+        } else {
+            produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
+            semRestricao = validarAtualizacaoCampoSemRestricao(dto, produtoEdicao);
+        }
         
         boolean indDataLancamentoAlterada = true;
         boolean indDataLancamentoPrevistoAlterada = true;
         boolean indDataRecolhimentoAlterada = true;
-    	
+        
     	if(dto.getId() != null) {
     		
     		Lancamento lancamento = lService.obterPrimeiroLancamentoDaEdicao(dto.getId());
@@ -667,23 +680,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         		indDataLancamentoPrevistoAlterada = isDataLancamentoPrevistoAlterada(dto, lancamento);
         	}
     	}
-    	
-    	if(dto.isParcial()){
-    		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
-    			throw new ValidacaoException(TipoMensagem.WARNING, "Data do Lançamento Alterada não é possível alteração de Lancamentos de Parciais. Utilize a tela de Parciais.");
-    		}
-    	}
         
-        final boolean indNovoProdutoEdicao = (dto.getId() == null);
-        
-        if (indNovoProdutoEdicao) {
-            produtoEdicao = new ProdutoEdicao();
-            produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigoProdin(codigoProduto));
-            produtoEdicao.setOrigem(Origem.MANUAL);
-        } else {
-            produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
+    	if(dto.isParcial()) {
+        	if(!semRestricao) {
+        		if(indDataLancamentoAlterada || indDataRecolhimentoAlterada || indDataLancamentoPrevistoAlterada) {
+        			throw new ValidacaoException(TipoMensagem.WARNING, "Data do Lançamento Alterada não é possível alteração de Lancamentos de Parciais. Utilize a tela de Parciais.");
+        		}
+        	}
         }
         
+        
+    	
         if (!ModoTela.EDICAO.equals(modoTela) && produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
                 dto.getNumeroEdicao(), produtoEdicao.getId())) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
@@ -741,9 +748,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         if(dto.isParcial()) {
         	
         	if(lancamento == null) {
-        		
         		lancamento = this.obterLancamento(dto, produtoEdicao, true);
         	}
+        	
         	this.salvarLancamentoParcial(dto, produtoEdicao, usuario, indNovoProdutoEdicao, lancamento);
         }
     	
@@ -762,6 +769,23 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
         
     }
+
+	private boolean validarAtualizacaoCampoSemRestricao(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
+		
+		if(produtoEdicao.getPacotePadrao() != dto.getPacotePadrao()){
+			return true;
+		}
+		
+		if(produtoEdicao.getPeb() != dto.getPeb()){
+			return true;
+		}
+		
+		if(!produtoEdicao.getCodigoDeBarras().equals(dto.getCodigoDeBarras())) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
     	
