@@ -122,6 +122,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		String strNossoNumero = null;
         BigDecimal somaPagamentos = BigDecimal.ZERO;
 		BigDecimal valorPagamento = BigDecimal.ZERO;
+		BigDecimal taxaBancaria = BigDecimal.ZERO;
 		
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = new ArquivoPagamentoBancoDTO();
 		arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
@@ -181,6 +182,11 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 					pagamento.setValorPagamento(valorPagamento);
 				}
 				
+				if(bancoCNAB.containsValorTaxaBancaria(line)) {
+					taxaBancaria 		= this.parseBigDecimal(bancoCNAB.obterTarifaCobranca(line));
+					pagamento.setValorPagamento(taxaBancaria);
+				}
+				
 			}
 			
 		}
@@ -189,7 +195,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		for(PagamentoDTO p : listaPagamento) {
 			validarLeituraLinha(p);
-			somaPagamentos = somaPagamentos.add(p.getValorPagamento());
+			somaPagamentos = somaPagamentos.add(p.getValorPagamento()).add(taxaBancaria);
 		}
 		
 		arquivoPagamentoBanco.setListaPagemento(listaPagamento);
