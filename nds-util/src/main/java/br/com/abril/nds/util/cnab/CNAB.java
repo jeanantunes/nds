@@ -29,6 +29,9 @@ public class CNAB {
 	public int indiceNumeroContaInicio;
 	public int indiceNumeroContaFim;
 	
+	public int indiceTarifaCobrancaInicio;
+	public int indiceTarifaCobrancaFim;
+
 	public String segmentoDataPagamento;
 	public String segmentoNossoNumero;
 	public String segmentoValorPagamento;
@@ -61,6 +64,10 @@ public class CNAB {
 		return linha.substring(indiceNumeroContaInicio, indiceNumeroContaFim); 
 	}
 
+	public String obterTarifaCobranca(String linha) {
+		return linha.substring(indiceTarifaCobrancaInicio, indiceTarifaCobrancaFim); 
+	}
+	
 	public static CNAB obterCNAB(PadraoCNAB padraoCNAB, String codigoBanco){
 		
 		if(PadraoCNAB.CNAB240.equals(padraoCNAB)) {
@@ -304,6 +311,9 @@ public class CNAB {
 		cnab.indiceNumeroContaInicio = 58;
 		cnab.indiceNumeroContaFim = 70;
 		
+		cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
+		
 		return cnab;
 	}
     
@@ -341,6 +351,9 @@ public class CNAB {
 		cnab.indiceNumeroContaInicio = 24;
 		cnab.indiceNumeroContaFim = 33;
 		
+		cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
+		
 		return cnab;
 	}
     
@@ -371,6 +384,9 @@ public class CNAB {
 		cnab.indiceNumeroContaInicio = 34;
 		cnab.indiceNumeroContaFim = 44;
 		
+		cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
+		
 		return cnab;
 	}
 	
@@ -399,6 +415,9 @@ public class CNAB {
 		
     	cnab.indiceNumeroContaInicio = 31;
     	cnab.indiceNumeroContaFim = 37;
+    	
+    	cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
     	
     	return cnab;
 	}
@@ -429,6 +448,9 @@ public class CNAB {
 		cnab.indiceNumeroContaInicio = 32;
 		cnab.indiceNumeroContaFim = 38;
 		
+		cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
+		
 		return cnab;
 	}
     
@@ -457,6 +479,9 @@ public class CNAB {
 		
 		cnab.indiceNumeroContaInicio = 33;
 		cnab.indiceNumeroContaFim = 44;
+		
+		cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
 		
 		return cnab;
 	}
@@ -487,6 +512,9 @@ public class CNAB {
 		
 		cnab.indiceNumeroContaInicio = 30;
 		cnab.indiceNumeroContaFim = 38;
+		
+		cnab.indiceTarifaCobrancaInicio = 175;
+		cnab.indiceTarifaCobrancaFim = 187;
 		
 		return cnab;
    	}
@@ -535,6 +563,15 @@ public class CNAB {
      * @return boolean
      */
 	public boolean containsValorPagamento(String line) {
+		if(PadraoCNAB.CNAB400.equals(this.padraoCNAB)) {
+			return true;
+		} else {
+			String tipoSegmento = br.com.abril.nds.util.cnab.UtilitarioCNAB.PadraoCNAB.CNAB240.obterTipoSegmento(line);
+			return this.segmentoDataPagamento.equals(tipoSegmento);
+		}
+	}
+	
+	public boolean containsValorTaxaBancaria(String line) {
 		if(PadraoCNAB.CNAB400.equals(this.padraoCNAB)) {
 			return true;
 		} else {
