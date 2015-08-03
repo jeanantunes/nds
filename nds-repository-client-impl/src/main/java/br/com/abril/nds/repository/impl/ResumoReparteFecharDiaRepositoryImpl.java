@@ -376,7 +376,16 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
     	sql.append(" FROM DIFERENCA diferencaProduto ");
     	sql.append(" INNER JOIN LANCAMENTO_DIFERENCA lancamentoDiferenca ON diferencaProduto.LANCAMENTO_DIFERENCA_ID=lancamentoDiferenca.ID ");
     	sql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON diferencaProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID  ");
-    	sql.append(" WHERE diferencaProduto.DATA_MOVIMENTACAO=:dataFechamento  ");
+    	//sql.append(" WHERE diferencaProduto.DATA_MOVIMENTACAO=:dataFechamento  ");
+    	
+    	sql.append(" WHERE diferencaProduto.DATA_MOVIMENTACAO in (");
+    	sql.append(" SELECT DISTINCT  date(DATA_EXPEDICAO) ");
+    	sql.append(" FROM EXPEDICAO expedicaoProduto ");    
+    	sql.append(" INNER JOIN LANCAMENTO lancamentoExpedicao ON expedicaoProduto.ID=lancamentoExpedicao.EXPEDICAO_ID ");
+    	sql.append(" INNER JOIN PRODUTO_EDICAO produtoEdicaoExpedicao ON lancamentoExpedicao.PRODUTO_EDICAO_ID=produtoEdicaoExpedicao.ID "); 
+    	sql.append(" WHERE lancamentoExpedicao.STATUS <> :statusFuro ");
+    	sql.append(" AND lancamentoExpedicao.DATA_LCTO_DISTRIBUIDOR=:dataFechamento ");
+    	sql.append(" GROUP BY DATA_EXPEDICAO ) ");
     	sql.append(" AND diferencaProduto.TIPO_DIFERENCA IN (:tipoSobraDirecionadaCota,:tipoFaltaDirecionadaCota) ");
     	sql.append(" AND diferencaProduto.PRODUTO_EDICAO_ID IN ( ");
     	sql.append("	SELECT DISTINCT produtoExpedicao.ID ");

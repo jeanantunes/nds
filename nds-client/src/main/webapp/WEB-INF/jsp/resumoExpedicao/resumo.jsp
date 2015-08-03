@@ -40,9 +40,11 @@
 			    <td width="91">Tipo Consulta:</td>
 			    <td width="180">
 			        <select name="tipoPesquisa" id="tipoPesquisa" style="width: 200px;" onchange="resumoExpedicaoController.mudarLegendaFielsSet('idFiledResumo','pesquisar')">
-						<option selected="selected">Selecione...</option>
+						
 						<c:forEach var="tipoResumo" items="${listaTipoResumo}">
-							<option value="${tipoResumo.key}">${tipoResumo.value}</option>
+							<option value="${tipoResumo.key}" 
+								<c:if test="${'PRODUTO' ==  tipoResumo.key}">selected="selected"</c:if>>${tipoResumo.value}
+							</option>
 						</c:forEach>
 					</select>
 			     </td>

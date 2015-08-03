@@ -6,15 +6,12 @@ var resumoExpedicaoController = $.extend(true, {
 	inicializar : function() {
 		
 		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).datepicker({
-			showOn : "button",
+			showOn: "button",
 			buttonImage: contextPath + "/images/calendar.gif",
-			buttonImageOnly : true,
-			dateFormat: 'dd/mm/yy',
-			defaultDate: new Date()
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
 		});
-		
-		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).mask("99/99/9999");
-		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).focus();
+        $("#dataLancamentoResumo", resumoExpedicaoController.workspace).mask("99/99/9999");
 		
 		this.inicializarGridResumoExpedicaoBox();
 		this.inicializarGridResumoExpedicaoProduto();
