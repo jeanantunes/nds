@@ -364,7 +364,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		     .append("     where d.produto_edicao_id = produtoEdicaoId 			 ")
 		     .append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 	 ")
 		     .append("     and d.TIPO_DIRECIONAMENTO IN ('COTA', 'NOTA') ")
-		     .append("     and d.DATA_MOVIMENTACAO = innerQuery.dataLancamento ")
 		     .append("     group by d.PRODUTO_EDICAO_ID ")
 		     .append(" ) ");
 		

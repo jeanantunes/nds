@@ -680,7 +680,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("			else cobranca.cota.pessoa.razaoSocial end) as nomeCota, ");
 		hql.append("  cobranca.banco.apelido as nomeBanco, ");
 		hql.append("  concat(cobranca.banco.conta, case when cobranca.banco.dvConta is not null then concat('-', cobranca.banco.dvConta) else '' end) as numeroConta, ");
-		hql.append("  cobranca.nossoNumero as nossoNumero, ");
+		hql.append("  cobranca.nossoNumeroCompleto as nossoNumero, ");
 		hql.append("  cobranca.valor as valorBoleto, ");
 		hql.append("  cobranca.dataVencimento as dataVencimento");
 		hql.append(this.obterFromWhereBoletosInadimplentes());
