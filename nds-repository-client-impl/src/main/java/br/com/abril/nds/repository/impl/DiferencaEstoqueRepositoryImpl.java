@@ -978,7 +978,19 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		sql.append(" inner join LANCAMENTO_DIFERENCA lancamento_  on diferenca_.LANCAMENTO_DIFERENCA_ID=lancamento_.ID ");
 		sql.append(" inner join PRODUTO_EDICAO produtoEdicao_ on diferenca_.PRODUTO_EDICAO_ID=produtoEdicao_.ID "); 
 	    
-		sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao ");
+		// sql.append(" where diferenca_.DATA_MOVIMENTACAO=:dataMovimentacao ");
+		
+		sql.append(" where diferenca_.DATA_MOVIMENTACAO in (");
+		sql.append("		select distinct date(DATA_EXPEDICAO) "); 
+		sql.append("		from EXPEDICAO expedicaoProduto ");
+		sql.append("		inner join LANCAMENTO lancamentoProduto  on expedicaoProduto.ID=lancamentoProduto.EXPEDICAO_ID  ");
+		sql.append("		inner join PRODUTO_EDICAO produtoEdicao on lancamentoProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+		sql.append("		inner join PRODUTO produto  on produtoEdicao.PRODUTO_ID=produto.ID "); 
+		sql.append("		where lancamentoProduto.STATUS<>:statusFuro ");
+		sql.append("		and   lancamentoProduto.DATA_LCTO_DISTRIBUIDOR =:dataMovimentacao ");
+		sql.append("		and   produto.FORMA_COMERCIALIZACAO=:formaComercializacao ");
+		sql.append(" 		GROUP BY DATA_EXPEDICAO) ");
+		
 		sql.append(" and diferenca_.TIPO_DIFERENCA in (:tiposDiferenca) ");
 		sql.append(" and diferenca_.PRODUTO_EDICAO_ID in ( ");
 		sql.append("		select distinct produtoEdicao.ID "); 
