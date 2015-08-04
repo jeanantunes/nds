@@ -516,6 +516,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("   LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID");
         sql.append(" where eg.id = :estudoId ");
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
         sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
         sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
         sql.append(" order by l.data_lcto_distribuidor desc, ");
@@ -648,6 +649,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)");
     	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)");
     	sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+    	sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
     	sql.append(" group by mec.PRODUTO_EDICAO_ID");
     	
         Query query = getSession().createSQLQuery(sql.toString())
@@ -996,6 +998,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("                   'RECOLHIDO', ");
 		sql.append("                   'FECHADO') ");
 		sql.append("        AND tipo.GRUPO_MOVIMENTO_ESTOQUE <> 'ENVIO_ENCALHE' ");
+		sql.append("        AND mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		sql.append("        AND pe.NUMERO_EDICAO = :edicao");
 		sql.append("        AND tcp.ID = :tipClassif ");
 		

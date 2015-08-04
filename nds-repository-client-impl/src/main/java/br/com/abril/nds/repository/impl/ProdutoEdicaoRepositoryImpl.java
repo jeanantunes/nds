@@ -1115,6 +1115,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		whereList.add("l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','EM_RECOLHIMENTO','RECOLHIDO','FECHADO')");
 		whereList.add(" tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+		whereList.add(" mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		queryStringProdutoEdicao += " where "+StringUtils.join(whereList," and ");
 
@@ -1510,6 +1511,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 		
 		sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+		sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 
 		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
 			sql.append(" and pe.numero_Edicao in (");
@@ -1680,6 +1682,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         sql.append(" where l.status in (:statusLancamento) ");
         
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        
+        sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
         sql.append("   and p.codigo = :codigo_produto ");
         
@@ -1771,6 +1775,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("             and pe.NUMERO_EDICAO = :numEdicao ");
 		sql.append("             and c.NUMERO_COTA = :numCota ");
 		sql.append("             and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+		sql.append("             mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		sql.append("        group by mec.cota_id  ");
 		sql.append("        order by mec.cota_id ");
 		

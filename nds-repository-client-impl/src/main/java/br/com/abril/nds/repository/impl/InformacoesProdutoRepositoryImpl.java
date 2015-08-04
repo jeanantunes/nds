@@ -122,6 +122,9 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		addWhereClauseList(filtro, sql);
 		
+		sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+		
 		sql.append(" group BY eg.id ");
 		
 		sql.append(this.ordenarConsultaBuscarProdutos(filtro));
