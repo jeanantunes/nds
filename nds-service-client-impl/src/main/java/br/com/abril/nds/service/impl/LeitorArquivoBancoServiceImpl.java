@@ -184,18 +184,19 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				
 				if(bancoCNAB.containsValorTaxaBancaria(line)) {
 					taxaBancaria 		= this.parseBigDecimal(bancoCNAB.obterTarifaCobranca(line));
-					pagamento.setTaxaBancaria(taxaBancaria);
+					pagamento.setValorPagamento(pagamento.getValorPagamento().add(taxaBancaria));
 				}
 				
 			}
 			
 		}
 		
+		
 		List<PagamentoDTO> listaPagamento = new ArrayList<PagamentoDTO>(mapaPagamento.values());
 		
 		for(PagamentoDTO p : listaPagamento) {
 			validarLeituraLinha(p);
-			somaPagamentos = somaPagamentos.add(p.getValorPagamento()).add(p.getTaxaBancaria());
+			somaPagamentos = somaPagamentos.add(p.getValorPagamento());
 		}
 		
 		arquivoPagamentoBanco.setListaPagemento(listaPagamento);
