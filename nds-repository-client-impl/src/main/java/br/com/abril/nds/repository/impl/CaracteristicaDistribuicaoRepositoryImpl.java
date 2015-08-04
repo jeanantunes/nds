@@ -112,7 +112,8 @@ CaracteristicaDistribuicaoRepository {
         
         .append(" where lan.DATA_LCTO_DISTRIBUIDOR <> '3000-01-01' ")
         .append(" and lan.STATUS not in ('CONFIRMADO', 'PLANEJADO', 'FURO', 'BALANCEADO', 'EM_BALANCEAMENTO') ")
-        .append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+        .append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ")
+        .append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
         
         if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != "") {
             sql.append(" and pro.codigo_icd = :codigoProduto ");

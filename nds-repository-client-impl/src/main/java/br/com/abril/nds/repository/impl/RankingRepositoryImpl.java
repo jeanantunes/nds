@@ -81,7 +81,6 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public StringBuilder obterSQLRanking(FiltroCurvaABCDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -187,6 +186,9 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append("	WHERE	");
 		
 		sql.append("	lancamento.status IN ( 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO' ) 	   ");
+		
+		sql.append(" 	and tipomovimento.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        sql.append(" 	and movimento_estoque_cota.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		sql.append(this.getFiltroRanking(filtro, null));
 		

@@ -128,6 +128,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		sql.append(" 		           ON lancamento.ESTUDO_ID = est.ID  ");
 
 		sql.append("                where tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
+		sql.append(" 				and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
 			sql.append(" AND produto.CODIGO = :codigo ");
