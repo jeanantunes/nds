@@ -19,6 +19,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
@@ -354,8 +355,11 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" FROM MovimentoEstoque as me ");
 		hql.append(" JOIN me.tipoMovimento as tm ");       
 		hql.append(" JOIN me.produtoEdicao as pe ");
+		hql.append(" JOIN me.lancamentoDiferenca as ld ");
+		hql.append(" JOIN ld.diferenca as d ");
 		hql.append(" WHERE me.data = :dataOperacao ");
 		hql.append(" AND me.origem = :origemInventario ");
+		hql.append(" AND d.tipoEstoque = :tipoEstoque ");
 		hql.append(" GROUP BY me.data");
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -363,7 +367,8 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	
 		query.setParameter("origemInventario", Origem.INVENTARIO);  
         query.setParameter("entrada", OperacaoEstoque.ENTRADA);  
-	
+        query.setParameter("tipoEstoque", TipoEstoque.SUPLEMENTAR);
+        
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
 		return total != null ? total : BigDecimal.ZERO;
