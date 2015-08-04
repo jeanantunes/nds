@@ -99,7 +99,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		Set<Integer> boxes = new LinkedHashSet<Integer>();
 		
-		Map<String,ProdutoMapaDTO> produtoMapa = new LinkedHashMap<String, ProdutoMapaDTO>();
+		Map<String, ProdutoMapaDTO> produtoMapa = new LinkedHashMap<String, ProdutoMapaDTO>();
 		
 		List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 		
@@ -109,14 +109,14 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		for(ProdutoAbastecimentoDTO produtoPorBox : produtosPorBox) {
 			
-			String keyProduto = produtoPorBox.getCodigoProduto();
-
-			if(!produtoMapa.containsKey(keyProduto)){
+			String keyProduto = produtoPorBox.getCodigoProduto() + " - " + produtoPorBox.getNumeroEdicao();
+			
+			if(!produtoMapa.containsKey(keyProduto)){ 
 				
 				produtoMapa.put(keyProduto, new ProdutoMapaDTO(
 				produtoPorBox.getCodigoProduto(),
 				produtoPorBox.getNomeProduto(),
-				produtoPorBox.getNumeroEdicao(),
+				produtoPorBox.getNumeroEdicao(),				
 				produtoPorBox.getCodigoBarra(),
 				produtoPorBox.getPrecoCapa(),
 				0,
