@@ -712,6 +712,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         
         BigDecimal saldoDaDiferencaSaidaConsignado = Util.nvl(
                 diferencaRepository.obterSaldoDaDiferencaDeSaidaDoConsignadoDoDistribuidorNoDia(dataFechamento, false), BigDecimal.ZERO);
+        
         valorExpedido = valorExpedido.add(saldoDaDiferencaSaidaConsignado);
         
         BigDecimal valorSaidaExpedicaoAVistaDevolveEncalhe = Util.nvl(
