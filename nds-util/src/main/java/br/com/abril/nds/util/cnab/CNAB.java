@@ -312,7 +312,7 @@ public class CNAB {
 		cnab.indiceNumeroContaFim = 70;
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
 		
 		return cnab;
 	}
@@ -352,7 +352,7 @@ public class CNAB {
 		cnab.indiceNumeroContaFim = 33;
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
 		
 		return cnab;
 	}
@@ -385,7 +385,7 @@ public class CNAB {
 		cnab.indiceNumeroContaFim = 44;
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
 		
 		return cnab;
 	}
@@ -417,7 +417,7 @@ public class CNAB {
     	cnab.indiceNumeroContaFim = 37;
     	
     	cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
     	
     	return cnab;
 	}
@@ -449,7 +449,7 @@ public class CNAB {
 		cnab.indiceNumeroContaFim = 38;
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
 		
 		return cnab;
 	}
@@ -481,7 +481,7 @@ public class CNAB {
 		cnab.indiceNumeroContaFim = 44;
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
 		
 		return cnab;
 	}
@@ -514,7 +514,7 @@ public class CNAB {
 		cnab.indiceNumeroContaFim = 38;
 		
 		cnab.indiceTarifaCobrancaInicio = 175;
-		cnab.indiceTarifaCobrancaFim = 187;
+		cnab.indiceTarifaCobrancaFim = 188;
 		
 		return cnab;
    	}
