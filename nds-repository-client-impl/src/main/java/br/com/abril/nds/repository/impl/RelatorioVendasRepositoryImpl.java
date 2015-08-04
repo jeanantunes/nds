@@ -524,6 +524,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append("	lancamento.status IN (:statusLancamento) 	   ");
 		sql.append("	and tipomovimento.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'	   ");
+		sql.append(" 	and movimento_estoque_cota.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 				
 		sql.append(this.getFiltroCurvaABC(filtro, null));
 		
