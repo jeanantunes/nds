@@ -11,6 +11,8 @@ public class PagamentoDTO {
 	
 	private BigDecimal valorPagamento;
 	
+	private BigDecimal taxaBancaria;
+	
 	private BigDecimal valorMulta;
 	
 	private BigDecimal valorJuros;
@@ -116,5 +118,12 @@ public class PagamentoDTO {
 	public void setNumeroRegistro(Long numeroRegistro) {
 		this.numeroRegistro = numeroRegistro;
 	}
-	
+
+	public BigDecimal getTaxaBancaria() {
+		return taxaBancaria;
+	}
+
+	public void setTaxaBancaria(BigDecimal taxaBancaria) {
+		this.taxaBancaria = taxaBancaria;
+	}
 }
