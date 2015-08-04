@@ -770,6 +770,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		//Consignado
 		FechamentoDiarioResumoConsignado resumoConsignadoDia = fechamentoDiarioResumoConsignadoRepository.obterResumoConsignado(dataFechamento);
 		
+		if(resumoConsignadoDia == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe fechamento diario para a data informada!");
+		}
+		
 		if(resumoConsignadoDia != null){
 			
 			resumoConsignado.setSaldoAnterior(resumoConsignadoDia.getSaldoAnterior());
