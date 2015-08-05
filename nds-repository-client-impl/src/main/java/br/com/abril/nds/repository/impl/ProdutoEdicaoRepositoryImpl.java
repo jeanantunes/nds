@@ -953,12 +953,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			"    tsp.DESCRICAO AS descricaoTipoSegmento,                                       "+
 			"    l.STATUS AS status,                                                           "+
             "                                                                                  "+
-			"    sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE     "+
-			"			  else -mecReparte.QTDE end) AS reparte,          "+
+			"    sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)      "+
+			"			  else if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) end) AS reparte,          "+
 			"    case                                                                          "+
 			"        when l.STATUS IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')              "+
 			"          then sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA'              "+
-			"							then mecReparte.QTDE else -mecReparte.QTDE end ) - (   "+
+			"							then if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) else if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) end ) - (   "+
 			"                    select sum(mecEncalhe.qtde)                                   "+
 			"                    from                                                          "+
 			"                        lancamento lanc                                           "+
@@ -1115,7 +1115,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		whereList.add("l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO','BALANCEADO_RECOLHIMENTO','EM_RECOLHIMENTO','RECOLHIDO','FECHADO')");
 		whereList.add(" tipo.GRUPO_MOVIMENTO_ESTOQUE not in ('ENVIO_ENCALHE') ");
-		whereList.add(" mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		queryStringProdutoEdicao += " where "+StringUtils.join(whereList," and ");
 

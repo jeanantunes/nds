@@ -66,11 +66,11 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("     tcp.id idClassificacao, ");
         sql.append("     coalesce(tcp.descricao, '') classificacao, ");
     
-        sql.append(" cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) as unsigned int) AS reparte, ");
+        sql.append(" cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) else if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) end ) as unsigned int) AS reparte, ");
         
         sql.append("     case when l.STATUS IN (:statusLancFechadoRecolhido) then ");
         
-        sql.append("     cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE else -mecReparte.QTDE end ) - ( ");
+        sql.append("     cast(sum( case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) else if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) end ) - ( ");
         sql.append("        select sum(mecEncalhe.qtde) ");
         sql.append("        from lancamento lanc ");
         sql.append("        LEFT JOIN chamada_encalhe_lancamento cel on cel.LANCAMENTO_ID = lanc.ID ");
@@ -104,7 +104,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 //        sql.append(" and l.TIPO_LANCAMENTO = :tipoLancamento "); PSAN-139
         
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
-        sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
