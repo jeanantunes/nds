@@ -91,16 +91,18 @@ public class URLSecurityInterceptor implements Interceptor {
 
 		} catch (Exception exception ) {
 
-			logger.error(exception.getMessage(), exception);
+			
 
             Throwable cause = ExceptionUtil.getRootCause(exception);
 
 			if (cause instanceof ValidacaoException) {
-
+				logger.warn(exception.getMessage(), exception);
 				this.tratarExcessaoValidacao((ValidacaoException) cause);
 
 			} else {
 
+				logger.error(exception.getMessage(), exception);
+				
 				validator.onErrorRedirectTo(ErrorController.class).showError(cause);
 
 				this.tratarExcessoesGenericas(cause);
