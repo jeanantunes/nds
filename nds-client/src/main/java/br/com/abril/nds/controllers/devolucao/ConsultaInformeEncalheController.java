@@ -199,15 +199,22 @@ public class ConsultaInformeEncalheController extends BaseController {
             
             List<Integer> diasRec = this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, OperacaoDistribuidor.RECOLHIMENTO);
             
-            Date dataFim = calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), 1);
+            Date dataFim = calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), 0);
             Calendar c = Calendar.getInstance();
             c.setTime(dataFim);
-            
-            if (diasRec != null && !diasRec.isEmpty()){
-                while (!diasRec.contains(c.get(Calendar.DAY_OF_WEEK))){
-                    dataFim = calendarioService.adicionarDiasUteis(c.getTime(), 1);
-                    c.setTime(dataFim);
-                }
+            int nd = maxDiaSemanaRecolhimento;
+            if (diasRec != null && !diasRec.isEmpty()){	
+            	 while ( nd > 1 ) {
+            	   dataFim = calendarioService.adicionarDiasUteis(c.getTime(), 1);
+                   c.setTime(dataFim);
+                   if(!this.calendarioService.isDiaUtil(dataFim))
+                	    continue; // pular dias inuteis 
+                   if (diasRec.contains(c.get(Calendar.DAY_OF_WEEK)) ){   // se eh dia de recolhimento, contar
+                      nd--;
+                  
+                 }
+            	}
+            	
             }
             
             dataFimRecolhimento.setTime(dataFim);
