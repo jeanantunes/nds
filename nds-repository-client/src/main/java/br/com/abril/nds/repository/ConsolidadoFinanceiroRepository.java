@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
+import br.com.abril.nds.client.vo.ContaCorrenteVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -13,6 +14,7 @@ import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.movimentacao.DebitoCreditoCota;
 
@@ -45,6 +47,8 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado, 
 			List<Long> tiposMovimentoPendete, List<Long> tiposMovimentoNegociacaoComissao);
 
+	List<ContaCorrenteVO> obterContaCorrenteExtracao(FiltroViewContaCorrenteDTO filtro);
+			
 	BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro);
 	
 	Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota);

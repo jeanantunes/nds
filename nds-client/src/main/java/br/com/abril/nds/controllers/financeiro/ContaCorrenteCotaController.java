@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
+import br.com.abril.nds.client.vo.ContaCorrenteVO;
 import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
@@ -38,6 +39,7 @@ import br.com.abril.nds.dto.ResultadosContaCorrenteEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -119,9 +121,10 @@ public class ContaCorrenteCotaController extends BaseController {
     	c.setTime(distribuidorService.obterDataOperacaoDistribuidor());
     	c.add(Calendar.DAY_OF_MONTH, -10);
     	result.include("dataDe", sdf.format(c.getTime()));
-    	
     	c.setTime(distribuidorService.obterDataOperacaoDistribuidor());
     	c.add(Calendar.DAY_OF_MONTH, 3);
+    	result.include("dataExtracaoDe", sdf.format(c.getTime()));
+    	result.include("dataExtracaoAte", sdf.format(c.getTime()));
     	result.include("dataAte", sdf.format(c.getTime()));
     }
     
@@ -386,15 +389,15 @@ public class ContaCorrenteCotaController extends BaseController {
     	
     	for (ContaCorrenteCotaVO item : listaItensContaCorrenteCota){
     		
-    		item.setEncalhe(item.getEncalhe().negate());
+    		item.setEncalhe(item.getEncalhe()!= null ?item.getEncalhe().negate():BigDecimal.ZERO);
     		
-    		item.setValorPostergado(item.getValorPostergado().negate());
+    		item.setValorPostergado(item.getValorPostergado()!= null ?item.getValorPostergado().negate():BigDecimal.ZERO);
     		
-    		item.setDebitoCredito(item.getDebitoCredito().negate());
+    		item.setDebitoCredito(item.getDebitoCredito() != null ?item.getDebitoCredito().negate(): BigDecimal.ZERO);
     		
-    		item.setTotal(item.getTotal().negate());
+    		item.setTotal(item.getTotal() != null ?item.getTotal().negate():BigDecimal.ZERO);
     		
-    		item.setSaldo(item.getSaldo().negate());
+    		item.setSaldo(item.getSaldo()!= null ? item.getSaldo().negate():BigDecimal.ZERO);
     		
     		if ((item.getStatusDivida()==null || !(item.getStatusDivida().equals(StatusDivida.NEGOCIADA) || item.getStatusDivida().equals(StatusDivida.POSTERGADA)))&&
     		   (!item.isInadimplente())&&
@@ -614,6 +617,25 @@ public class ContaCorrenteCotaController extends BaseController {
         }
     }
     
+    
+    public void extracaoCC( Date dataExtracaoDe, Date dataExtracaoAte)
+            throws IOException {
+       
+    
+    	FiltroViewContaCorrenteDTO filtro = new FiltroViewContaCorrenteDTO();
+        filtro.setInicioPeriodo(dataExtracaoDe);
+        filtro.setFimPeriodo(dataExtracaoAte);
+        
+        
+        
+        List<ContaCorrenteVO> listacc =  this.consolidadoFinanceiroService.obterContaCorrenteExtracao(filtro);
+       
+        FileExporter.to("contacorrente", FileType.XLS).inHTTPResponse(this.getNDSFileHeader(),
+                filtro, listacc, ContaCorrenteVO.class, this.httpServletResponse);
+        
+        result.use(Results.nothing());
+    }
+    
     public void pesquisarEmailCota(Integer numeroCota) {
         
         String email = cotaService.obterPorNumeroDaCota(numeroCota).getPessoa().getEmail();
@@ -639,7 +661,7 @@ public class ContaCorrenteCotaController extends BaseController {
     public void exportarAnexo(FileType fileType, OutputStream output) throws IOException {
         
         FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
-        
+       
         List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = this.consolidadoFinanceiroService
                 .obterContaCorrente(filtro);
         

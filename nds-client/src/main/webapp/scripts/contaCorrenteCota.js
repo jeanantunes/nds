@@ -20,6 +20,17 @@ var contaCorrenteCotaController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
+		$( "#cc-periodoExtracaoDe", contaCorrenteCotaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#cc-periodoExtracaoAte", contaCorrenteCotaController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
 		contaCorrenteCotaController.carregarItemContaCorrenteCotaGrid();
 		contaCorrenteCotaController.montarColunaConsignado();
 		contaCorrenteCotaController.montarColunaEncalheCota();
@@ -305,6 +316,34 @@ var contaCorrenteCotaController = $.extend(true, {
 				}
 			
 		);
+		
+	},
+	
+	
+	extracaoCC : function(de,ate){
+		var params = [
+		          		   
+		          		   {name:'dataExtracaoDe', value:de},
+		          		   {name:'dataExtracaoAte', value:ate}
+		          		];
+		var params = "dataExtracaoDe=" + de + 
+					"&dataExtracaoAte=" + ate ;
+		
+	
+	window.open(contextPath + "/financeiro/contaCorrenteCota/extracaoCC?"+ params);
+		/*
+		$.getJSON(contextPath + '/financeiro/contaCorrenteCota/extracaoCC',
+				params,
+				function(result) {
+			     
+					
+				},
+				function() {
+					
+				}
+			
+		);
+		*/
 		
 	},
 	
@@ -724,6 +763,30 @@ var contaCorrenteCotaController = $.extend(true, {
 		$("#copiaParaCotaEmail").val("");
 		$("#mensagemCotaEmail").val("");
 		$("#emailCotaEmail").attr("readonly", true);
+	},
+	
+popup_extracao : function() {
+		
+		
+		$("#dialog-extracao", contaCorrenteCotaController.workspace ).dialog({
+			resizable: false,
+			height:200,
+			width:390,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					contaCorrenteCotaController.extracaoCC($("#cc-periodoExtracaoDe").val(),$("#cc-periodoExtracaoAte").val());
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-extracao", this.workspace).parents("form")
+		});	
+		
+		
+		
 	},
 	
 	montarGridDebitoCredio : function(){
