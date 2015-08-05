@@ -123,8 +123,8 @@ public class ContaCorrenteCotaController extends BaseController {
     	result.include("dataDe", sdf.format(c.getTime()));
     	c.setTime(distribuidorService.obterDataOperacaoDistribuidor());
     	c.add(Calendar.DAY_OF_MONTH, 3);
-    	result.include("dataExtracaoDe", sdf.format(c.getTime()));
-    	result.include("dataExtracaoAte", sdf.format(c.getTime()));
+    	result.include("dataExtracaoDe", sdf.format(new Date()));
+    	result.include("dataExtracaoAte", sdf.format(new Date()));
     	result.include("dataAte", sdf.format(c.getTime()));
     }
     
