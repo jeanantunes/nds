@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
+import br.com.abril.nds.client.vo.ContaCorrenteVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -17,6 +18,7 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
@@ -90,6 +92,12 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		return consolidadoFinanceiroRepository.buscarDiaUltimaDividaGerada();
 	}
 	
+	@Override
+	@Transactional(readOnly=true)
+	public List<ContaCorrenteVO> obterContaCorrenteExtracao(FiltroViewContaCorrenteDTO filtro){
+		return this.consolidadoFinanceiroRepository.obterContaCorrenteExtracao(filtro);
+	}
+		
 	@Override
 	@Transactional(readOnly=true)
 	public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){

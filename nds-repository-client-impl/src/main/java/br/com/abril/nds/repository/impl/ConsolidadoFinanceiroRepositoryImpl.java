@@ -17,6 +17,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
+import br.com.abril.nds.client.vo.ContaCorrenteVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -25,6 +26,7 @@ import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -1303,6 +1305,40 @@ ConsolidadoFinanceiroRepository {
         
         return query.list();
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ContaCorrenteVO> obterContaCorrenteExtracao(final FiltroViewContaCorrenteDTO filtro) {
+    	 final StringBuilder sql = new StringBuilder("select ");      
+		 sql.append(" DT_CONSOLIDADO as dataConsolidado,");
+		 sql.append(" 	numero_cota as numeroCota, ");
+		 sql.append(" 		sum(consignado) as consignado,");
+		 sql.append(" sum(encalhe) as encalhe, ");
+		 sql.append(" 	sum((consignado - encalhe)) as valorVendaDia,");
+		 sql.append(" 	sum(valor_postergado *-1) as valorPostergado, ");
+		sql.append(" 	sum(venda_encalhe) as vendaEncalhe,");
+		sql.append(" 	sum(debito_credito*-1) as debitoCredito,");
+		sql.append(" 	sum(encargos) as encargos,");
+		sql.append(" 	sum(pendente) as pendente, ");
+		sql.append(" 	sum(total *-1) total");
+		sql.append(" 	from consolidado_financeiro_cota a, cota b ");
+		sql.append(" 	where DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo");
+		sql.append(" 	and cota_id = b.id ");
+		sql.append(" 	group by 1,2");
+	    sql.append(" 	order by 1,2");
+         
+        
+         
+         final Query query = this.getSession().createSQLQuery(sql.toString());
+
+             
+          query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+          query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+      
+          query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteVO.class));
+         return  query.list();
+    }
+  
     
     @SuppressWarnings("unchecked")
     @Override

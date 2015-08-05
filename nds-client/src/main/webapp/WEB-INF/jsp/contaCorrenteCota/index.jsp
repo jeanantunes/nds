@@ -24,7 +24,7 @@
 <style type="text/css">
   fieldset { width:auto!important; }
   
-  #dialog-venda-encalhe, #dialog-consignado, #dialog-email, #bt_email{
+  #dialog-venda-encalhe, #dialog-consignado, #dialog-email, #bt_email , #dialog-extracao {
   	display: none;
   }
   </style>
@@ -152,6 +152,33 @@
 </form>
 
 
+<form id="form-extracao">
+<div id="dialog-extracao" title="Extracao Conta Corrente">
+	<fieldset>
+    	<legend>Dados para Extracao</legend>
+        
+        <table width="300" border="0" cellspacing="2" cellpadding="2">
+	       
+	           <td width="10"></td>
+			  
+              <td width="53">Período:</td>
+              
+              <td width="199">
+              		<input type="text" name="cc-periodoExtracaoDe" id="cc-periodoExtracaoDe" style="width:80px;" value="${dataExtracaoDe}" />
+              </td>
+              
+              <td width="22">Até:</td>
+              
+              <td width="199">
+              		<input type="text" name="cc-periodoExtracaoAte" id="cc-periodoExtracaoAte" style="width:80px;" value="${dataExtracaoAte}" />
+              </td>
+	          
+        </table>
+
+  </fieldset>
+</div>
+</form>
+
 <form id="form-venda-encalhe">
 <div id="dialog-venda-encalhe" title="Venda de Encalhe">
 	<fieldset>
@@ -235,6 +262,12 @@
 				<span class="bt_arq">
 					<a href="${pageContext.request.contextPath}/financeiro/contaCorrenteCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				
+				<span class="bt_arq" id="bt_extracao">
+					<a isEdicao="true" href="javascript:;"  onclick="contaCorrenteCotaController.popup_extracao();" rel="tipsy" title="Extracao Conta Corrente">
+						<img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" hspace="5" border="0" />
 					</a>
 				</span>
 				
