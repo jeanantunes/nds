@@ -478,9 +478,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("                       CASE ");
 		sql.append("                           WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
 		sql.append("                           THEN ");
-		sql.append("                             mecReparte.QTDE ");
+		sql.append("                             if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)  ");
 		sql.append("                           ELSE ");
-		sql.append("                             -mecReparte.QTDE ");
+		sql.append("                             if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
 		sql.append("                       END) ");
         
         sql.append("                    - (select sum(mecEncalhe.qtde) ");
@@ -498,8 +498,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append(" cast(sum(                                                                   ");
         sql.append("         CASE                                                                ");
-        sql.append("             WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN mecReparte.QTDE     ");
-        sql.append("             ELSE -mecReparte.QTDE                                           ");
+        sql.append("             WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)    ");
+        sql.append("             ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
         sql.append("         END) AS UNSIGNED INT)  as reparte,                                  ");
         
         sql.append("        (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta, ");
@@ -516,7 +516,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("   LEFT JOIN tipo_movimento tipo ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID");
         sql.append(" where eg.id = :estudoId ");
         sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
-        sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
         sql.append( (parcialComRedistribuicao) ? " and plp.NUMERO_PERIODO <= :numeroPeriodoBase " : " and plp.NUMERO_PERIODO < :numeroPeriodoBase ");
         sql.append(" group by plp.NUMERO_PERIODO, ecg.cota_id ");
         sql.append(" order by l.data_lcto_distribuidor desc, ");
