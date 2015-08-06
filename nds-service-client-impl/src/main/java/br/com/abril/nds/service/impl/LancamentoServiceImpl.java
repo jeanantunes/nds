@@ -486,7 +486,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         }
         
         if (lancamento.getNumeroLancamento() != null && lancamento.getNumeroLancamento() == 1) {
-            throw new ValidacaoException(TipoMensagem.WARNING, "Não é perdido excluir o lançamento número 1.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido excluir o lançamento número 1.");
         }
         
         if (lancamento.getPeriodoLancamentoParcial() != null
@@ -747,4 +747,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public boolean isRedistribuicao(String codigoProduto, Long numeroEdicao){
 		return lancamentoRepository.isRedistribuicao(codigoProduto, numeroEdicao);
 	}
+	
+	
+	@Transactional
+	     public void alterarStatus(Lancamento lancamento,StatusLancamento status){
+	        lancamento.setStatus(status);
+	        this.lancamentoRepository.merge(lancamento);
+	     }
+	
+
 }

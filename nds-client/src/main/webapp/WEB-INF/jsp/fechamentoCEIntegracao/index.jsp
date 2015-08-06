@@ -132,8 +132,8 @@
 				  	</td>
 			  		<td style="width:100px;">
 						<select id="combo-fechamentoCe-integracao" style="width:130px;">
-							<option value="-1" selected="selected">Selecione</option>
-							<option value="COM">Com CE</option>
+							<option value="-1" >Selecione</option>
+							<option value="COM" selected="selected" >Com CE</option>
 							<option value="SEM">Sem CE</option>
 						</select>
 					</td>

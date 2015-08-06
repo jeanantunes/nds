@@ -1840,7 +1840,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		this.processarLancamentosVencidos(dataOperacao, usuario);
 		
-		this.processarLancamentosFechados(dataOperacao, usuario);
+		//  linha abaixo comentado - Jira37
+		// 	Após recolhimento do 3º dia, os produtos estão passando do status de Em Recolhimento para Fechado. O mesmo só pode alterar seu status para fechado após devolução ao Fornecedor.	
+		//  Odemir	Em Andamento	24/07/2015	10/08/2015	11	Baixa	Melhoria	
+		// ps. incluso alteracoa de status em /FechamentoCEIntegracaoServiceImpl.java
+		
+		// this.processarLancamentosFechados(dataOperacao, usuario);
 		
 	}
 

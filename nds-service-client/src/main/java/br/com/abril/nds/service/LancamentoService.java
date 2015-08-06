@@ -200,5 +200,8 @@ public interface LancamentoService {
 	
 	List<Lancamento> obterLancamentosDaEdicao(Long idProdutoEdicao);
 	
+	void alterarStatus(Lancamento lancamento ,StatusLancamento status);
+
+	
 }
  
