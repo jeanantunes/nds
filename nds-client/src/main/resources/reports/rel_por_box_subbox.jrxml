@@ -70,40 +70,40 @@
 		<band height="40" splitType="Stretch">
 			<elementGroup>
 				<rectangle>
-					<reportElement uuid="2f0322a2-c357-47b9-83e2-4ebe49c4614e" positionType="Float" stretchType="RelativeToBandHeight" x="51" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="51" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="2f0322a2-c357-47b9-83e2-4ebe49c4614e"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="0f470abb-517e-4878-9f6b-f3f42bc67463" positionType="Float" stretchType="RelativeToBandHeight" x="204" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="204" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="0f470abb-517e-4878-9f6b-f3f42bc67463"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="35e00938-78a7-4ef2-b6f9-50f34e60618f" positionType="Float" stretchType="RelativeToBandHeight" x="51" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="51" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="35e00938-78a7-4ef2-b6f9-50f34e60618f"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="22d6c750-8017-4c77-84a9-d2ec80eb25e1" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="22d6c750-8017-4c77-84a9-d2ec80eb25e1"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="cc2ed317-6faf-4790-81cb-da630394251c" positionType="Float" stretchType="RelativeToBandHeight" x="102" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="102" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="cc2ed317-6faf-4790-81cb-da630394251c"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="2b7ea112-30b1-478f-bf75-88891aea5eff" positionType="Float" stretchType="RelativeToBandHeight" x="153" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="153" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="2b7ea112-30b1-478f-bf75-88891aea5eff"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="05a050ac-8ad9-47b5-aafb-26dfca56013f" positionType="Float" stretchType="RelativeToBandHeight" x="153" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="153" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="05a050ac-8ad9-47b5-aafb-26dfca56013f"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="bba96ec2-1253-4ca1-a803-b64bae9d7b99" positionType="Float" stretchType="RelativeToBandHeight" x="204" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="204" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="bba96ec2-1253-4ca1-a803-b64bae9d7b99"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="c16934fa-afcb-4807-8eca-fc35e49d7b08" positionType="Float" stretchType="RelativeToBandHeight" x="255" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="255" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="c16934fa-afcb-4807-8eca-fc35e49d7b08"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="d6895a09-44e8-4300-856f-36948e142668" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="20" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="d6895a09-44e8-4300-856f-36948e142668"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="c24a91c4-a31b-476e-9068-dab2fb14073f" positionType="Float" stretchType="RelativeToBandHeight" x="255" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="255" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="c24a91c4-a31b-476e-9068-dab2fb14073f"/>
 				</rectangle>
 				<rectangle>
-					<reportElement uuid="bb390407-7f46-4ac0-b5a5-f950b153c7ca" positionType="Float" stretchType="RelativeToBandHeight" x="102" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="102" y="0" width="51" height="20" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="bb390407-7f46-4ac0-b5a5-f950b153c7ca"/>
 				</rectangle>
 			</elementGroup>
 		</band>
@@ -112,7 +112,7 @@
 		<band height="40" splitType="Stretch">
 			<elementGroup>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d" style="rel_ftext" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="20" width="51" height="20" backcolor="#F5F5F5"/>
+					<reportElement style="rel_ftext" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="20" width="51" height="20" backcolor="#F5F5F5" uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -125,7 +125,7 @@
 					<textFieldExpression><![CDATA[($F{value}.intValue()<20000)?$F{value}:" "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c" style="rel_stext_centralizado" mode="Opaque" x="0" y="0" width="51" height="20" backcolor="#CCCCCC"/>
+					<reportElement style="rel_stext_centralizado" mode="Opaque" x="0" y="0" width="51" height="20" backcolor="#FFFFFF" uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
