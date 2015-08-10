@@ -125,8 +125,7 @@ public class ResumoExpedicaoController extends BaseController {
 		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		ExpedicaoDTO expedicaoDTO =
-			this.expedicaoService.obterTotaisResumoExpedicaoProdutosDoBox(filtro);
+		ExpedicaoDTO expedicaoDTO = this.expedicaoService.obterTotaisResumoExpedicaoProdutosDoBox(filtro);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		mapa.put("resultado", tableModel);
@@ -486,11 +485,9 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setReparte(expd.getQntReparte() == null ? BigInteger.ZERO: expd.getQntReparte());
 			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
 			
-			BigDecimal valorDiferenca = 
-				expd.getPrecoCapa().multiply(new BigDecimal(expd.getQntDiferenca()));
+			BigDecimal valorDiferenca = expd.getPrecoCapa().multiply(new BigDecimal(expd.getQntDiferenca()));
 			
-			resumoExpedicaoVO.setValorFaturado(
-				CurrencyUtil.formatarValor( (expd.getValorFaturado() == null)? valorDiferenca : expd.getValorFaturado().add(valorDiferenca)));
+			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor((expd.getValorFaturado() == null) ? valorDiferenca : expd.getValorFaturado().add(valorDiferenca)));
 			
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}
