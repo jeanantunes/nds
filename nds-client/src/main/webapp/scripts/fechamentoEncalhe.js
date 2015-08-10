@@ -238,13 +238,13 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},],
-			sortname : "sequencia",
+			sortname : "diaRecolhimentoSequencia",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : false,
-			width : 1020,
+			width : 1230,
 			height : 'auto',
 			singleSelect : true
 		});
@@ -264,6 +264,7 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	pesquisar : function(aplicaRegraMudancaTipo) {
+
 		
 		dataHolder.clearAction('fechamentoEncalhe');
 		
@@ -279,6 +280,8 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
+			"sortname" : "diaRecolhimentoSequencia",
+			"sortorder" : "asc",
 			params : [{
 				name : "dataEncalhe",
 				value : $('#fechamentoEncalhe-datepickerDe', fechamentoEncalheController.workspace).val()
