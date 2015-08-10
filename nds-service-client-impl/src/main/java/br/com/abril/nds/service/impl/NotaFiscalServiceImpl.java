@@ -743,7 +743,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					trans = tf.newTransformer();
 					trans.transform(new DOMSource(doc), new StreamResult(os));
-
 					
 				} catch (ParserConfigurationException e) {
 					LOGGER.error("Erro ao gerar XML", e);
