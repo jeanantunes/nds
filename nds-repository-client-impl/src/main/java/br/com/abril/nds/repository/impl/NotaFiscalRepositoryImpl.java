@@ -1103,7 +1103,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(!isGroup) {
-			hql.append(" GROUP BY fornecedor.id ");
+			hql.append(" GROUP BY fornecedor.id, produtoEdicao.id ");
 			if(filtro.isEmissaoPorEditor() != null && filtro.isEmissaoPorEditor()) {
 				hql.append(", editor.id ");
 			}
