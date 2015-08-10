@@ -97,24 +97,18 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" FROM (");
 
 		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
-															.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
-															.append(this.getQntCotaAusente(false)).append(" as qntReparte, ");
+		.append(this.getQntDiferencaResumoLancamento()).append(", 0) ").append(" as qntReparte, ");
 		
-		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
-															.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
-															.append(this.getQntCotaAusente(false)).append(" ) AS totalValorFaturado ");
+		sql.append("    innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
+		.append(this.getQntDiferencaResumoLancamento()).append(", 0) ").append(" ) AS totalValorFaturado ");
+		
 		sql.append("     FROM ");
-			
 		sql.append("     ( ");
-	
 		sql.append(        this.getInnerQueryResumoLancamento(isDetalhesResumo));
-			
 		sql.append("     ) as innerQuery ");
-
 		sql.append(this.getAgrupamentoResumoLancamento(isAgrupamentoPorBox, isDetalhesResumo, filtro));
-
         sql.append(" ) as resumoExpedicaoPorProduto ");
-
+        
 		Query query = getSession().createSQLQuery(sql.toString())
 			.addScalar("qntReparte", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("valorFaturado");
@@ -351,19 +345,20 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		StringBuilder query = new StringBuilder();
 		
 		query.append(" ( 											 ")
-		     .append("     select 												 ")
-		     .append("     sum(CASE WHEN d.TIPO_DIFERENCA='FALTA_DE' THEN -rd.QTDE ")
-		     .append(" 		       WHEN d.TIPO_DIFERENCA='FALTA_EM' THEN -rd.QTDE ")
-		     .append(" 		       WHEN d.TIPO_DIFERENCA='FALTA_EM_DIRECIONADA_COTA' THEN -rd.QTDE ")
-		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_DE' THEN rd.QTDE  ")
-		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_EM' THEN rd.QTDE  ")
-		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_EM_DIRECIONADA_COTA' THEN rd.QTDE  ")
-		     .append(" 		       ELSE 0 END) 	 						 		 ")
+		     .append("     select 												 ")	     
+		     .append("  sum(case when (tm.operacao_Estoque = 'ENTRADA') then (mec.qtde) else (-mec.qtde) end) ")
 		     .append("     from diferenca d 										 ")
-		     .append("     inner join rateio_diferenca rd on (rd.DIFERENCA_ID = d.id) ")
+		     .append("     inner join lancamento_diferenca ld on ld.id = d.lancamento_diferenca_id ")
+		     .append("     inner join LANCAMENTO_DIFERENCA_MOVIMENTO_ESTOQUE_COTA ldmec on ld.ID = ldmec.LANCAMENTO_DIFERENCA_ID ")
+		     .append("     inner join movimento_estoque_cota mec on ldmec.MOVIMENTO_ESTOQUE_COTA_ID = mec.id ")
+		     .append("     inner join lancamento l on mec.lancamento_id = l.id ")
+		     .append("     inner join tipo_movimento tm on mec.tipo_movimento_id = tm.id ")
+		     .append("     inner join rateio_diferenca rd on (rd.DIFERENCA_ID = d.id) and (rd.cota_id = mec.cota_id)")
 		     .append("     where d.produto_edicao_id = produtoEdicaoId 			 ")
 		     .append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 	 ")
 		     .append("     and d.TIPO_DIRECIONAMENTO IN ('COTA', 'NOTA') ")
+		     .append("     and l.DATA_LCTO_DISTRIBUIDOR = innerQuery.dataLancamento ")
+		     // .append("     and tm.id not in (199, 200, 201, 202, 203) ")
 		     .append("     group by d.PRODUTO_EDICAO_ID ")
 		     .append(" ) ");
 		
@@ -578,8 +573,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE in ( ")
 				.append(" 'SUPLEMENTAR_COTA_AUSENTE', 'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', 'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO' ")
 				.append(" , 'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', 'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')) then (mec_st.QTDE *-1) else (mec_st.QTDE) end) * precoCapa,0)");
-		}
-		else{
+		} else{
 			sql.append(" COALESCE(sum(case when (tp_movimento.GRUPO_MOVIMENTO_ESTOQUE in ( ")
 				.append(" 'SUPLEMENTAR_COTA_AUSENTE', 'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', 'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO' ")
 				.append(" , 'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', 'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')) then (mec_st.QTDE *-1) else (mec_st.QTDE) end),0)");
