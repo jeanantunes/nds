@@ -314,8 +314,7 @@ public class VisaoEstoqueController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         }
         
-        FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(getNDSFileHeader(), null, null,
-                listaExport, VisaoEstoqueConferenciaCegaVO.class, httpServletResponse);
+        FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(getNDSFileHeader(), null,listaExport, VisaoEstoqueConferenciaCegaVO.class, httpServletResponse);
         
         result.use(Results.nothing());
     }

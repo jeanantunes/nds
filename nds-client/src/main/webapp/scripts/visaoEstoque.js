@@ -97,7 +97,9 @@ var visaoEstoqueController = $.extend(true, {
 			this.path + 'gerarDadosConferenciaCega?' + serializedForm,
 			params,
 			function() {
-				window.location = visaoEstoqueController.path + 'exportarConferenciaCega?fileType=PDF';
+				
+				//window.open(contextPath + "/devolucao/fechamentoEncalhe/imprimirBoletosCotasAusentes",
+				window.open(visaoEstoqueController.path + 'exportarConferenciaCega?fileType=PDF');
 			}
 		);
 	},
