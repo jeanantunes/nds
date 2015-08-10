@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -52,6 +53,8 @@ import br.com.abril.nds.model.fiscal.MovimentoFechamentoFiscalFornecedor;
 import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemMovFechamentoFiscalFechamentoCEI;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
@@ -71,6 +74,7 @@ import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.LancamentoParcialService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.TipoMovimentoService;
@@ -144,6 +148,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Autowired
 	private LancamentoParcialService lancamentoParcialService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
+
 	
 	@Transactional(readOnly=true)
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -338,6 +346,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				if(!RegimeRecolhimento.PARCIAL.equals(itemFo.getRegimeRecolhimento())) {
 					
 					this.efetuarTransferenciaEstoqueProduto(itemFo.getProdutoEdicao(), usuario);
+				
+				
+                 // 19/05/2015 Fechar os Produtos que são diferentes de PARCIAL JIRA37
+                  alterarStatusProdutoEdicao(itemFo.getProdutoEdicao().getLancamentos(),StatusLancamento.FECHADO);
+				 // 
+				
 				}
 				
 				Diferenca diferenca = this.processarDiferenca(itemFo, usuario, tipoMovimentoPerda, tipoMovimentoSobraEmReparte);
@@ -381,6 +395,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			cef.setDataFechamentoNDS(dataOperacao);
 			
 			chamadaEncalheFornecedorRepository.alterar(cef);
+		
+
 		}
 	}
 	
@@ -849,6 +865,19 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			cef.setStatusCeNDS(StatusCeNDS.ABERTO);
 			
 			chamadaEncalheFornecedorRepository.alterar(cef);
+			
+	           
+            // 19/05/2015 JIRA37 - ODEMIR
+			// Após recolhimento do 3º dia, os produtos estão passando do status de Em Recolhimento para Fechado. 
+			// O mesmo só pode alterar seu status para fechado após devolução ao Fornecedor.
+         List  <ItemChamadaEncalheFornecedor>  lista=   cef.getItens();
+        
+          for(ItemChamadaEncalheFornecedor item :lista){
+                 
+            alterarStatusProdutoEdicao(item.getProdutoEdicao().getLancamentos(), StatusLancamento.RECOLHIDO);
+            
+          }
+        //
 		}
 		
 		return montarMensagemFornecedorSemReabertura(fornecedorSemReabertura);
@@ -1093,4 +1122,32 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     }
     
 	
+        // 19/05/2015 Fechar os Produtos que são diferentes de PARCIAL - JIRA37 - incluso metodo abaixo
+        private void alterarStatusProdutoEdicao(Set<Lancamento> lancamentos,StatusLancamento status){
+                
+                
+                for(Lancamento lancamento : lancamentos){
+                        
+                        // Se "Fechar" somente para os RECOLHIDOS
+                        if(status.equals(StatusLancamento.FECHADO)){
+                                
+                                if(lancamento.getStatus().equals(StatusLancamento.RECOLHIDO)
+                                || lancamento.getStatus().equals(StatusLancamento.EM_RECOLHIMENTO)){
+                                 lancamentoService.alterarStatus(lancamento, status);
+                                }
+                                 
+                        // REABERTURA Onde não for PARCIAL
+                        }else if(status.equals(StatusLancamento.RECOLHIDO)){
+                                
+                               if(lancamento.getPeriodoLancamentoParcial()==null ) {
+                                          lancamentoService.alterarStatus(lancamento, status);
+                                }
+                        }
+                        
+                        
+                }
+                
+        }
+        
+
 }

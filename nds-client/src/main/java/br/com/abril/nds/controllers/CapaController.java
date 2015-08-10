@@ -62,7 +62,7 @@ public class CapaController {
             return new InputStreamDownload(inputStream, null, null);
             
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.warn("Capa nao encontrado para produto_edicao='"+idProdutoEdicao+"' " + e.getMessage(), e);
             result.nothing();
             return null;
         }
