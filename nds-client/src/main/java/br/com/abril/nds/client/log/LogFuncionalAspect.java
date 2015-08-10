@@ -7,12 +7,21 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import br.com.abril.nds.client.log.LogFuncionalUtil.StatusLog;
 
 @Component
 @Aspect
 public class LogFuncionalAspect {
+
+	
+	
+    
+	 
+
+	
 	
 	@SuppressWarnings("rawtypes")
 	@Around(value = "@annotation(logFuncional)", argNames = "joinPoint, logFuncional")
@@ -24,9 +33,12 @@ public class LogFuncionalAspect {
 		}
 		
 		Object retVal = null;
+	
+		
 		
 		String nomeUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
-		
+		String remoteAddress = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest().getRemoteAddr();
+		nomeUsuario+="/"+remoteAddress;
 		Class clazz = joinPoint.getTarget().getClass();
 		
 		LogFuncionalUtil.logar(this.extrairFuncionalidade(logFuncional, clazz),this.extrairMetodo(joinPoint),StatusLog.INCIADO,nomeUsuario, clazz);

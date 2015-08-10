@@ -1,4 +1,5 @@
 // JavaScript Document
+
 var timeout = null;
 $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status == 601) {
@@ -794,7 +795,13 @@ function bindAjaxLoading() {
 	
 	$("#ajaxLoading").bind("ajaxStop", function() {
 		$("a").click(function () {
-	        window.onbeforeunload = null;
+			
+	    // nao desabilitar onunload ( que executa o controlesessionlistener.ondestroy - limpando as travas
+		// quando usuario clicar nos icon de close de mensagem .. se nao, ao fazer logout, nao limpa
+		// as travas, como as da fechamendo de encalhe 
+			if ( this.className != 'ui-icon ui-icon-close')
+	          window.onbeforeunload = null;
+			
 	    });
 		$(document).unbind('keydown');
 		document.onkeydown = fkey;
