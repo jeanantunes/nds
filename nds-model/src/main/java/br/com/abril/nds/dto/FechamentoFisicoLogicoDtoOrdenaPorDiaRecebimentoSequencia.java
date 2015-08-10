@@ -2,11 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.util.Comparator;
 
-public class FechamentoFisicoLogicoDtoOrdenaPorSequencia implements Comparator<FechamentoFisicoLogicoDTO> {
+public class FechamentoFisicoLogicoDtoOrdenaPorDiaRecebimentoSequencia implements Comparator<FechamentoFisicoLogicoDTO> {
 
 	private String sortorder;
 	
-	public FechamentoFisicoLogicoDtoOrdenaPorSequencia(String sortorder) {
+	public FechamentoFisicoLogicoDtoOrdenaPorDiaRecebimentoSequencia(String sortorder) {
 		this.sortorder = sortorder;
 	}
 
@@ -19,6 +19,14 @@ public class FechamentoFisicoLogicoDtoOrdenaPorSequencia implements Comparator<F
 			return 0;
 		}
 		
+		
+		int dia = o1.getDiaRecolhimento().compareTo(o2.getDiaRecolhimento());
+		
+			if (dia != 0 ) 
+				if(sortorder.equals("desc"))
+				return dia *-1 ;
+				else
+				return dia ;
 		
 		
 		if(sortorder.equals("desc")) {

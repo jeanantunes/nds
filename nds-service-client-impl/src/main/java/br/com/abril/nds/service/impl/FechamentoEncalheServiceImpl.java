@@ -35,15 +35,17 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorCodigo;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorDia;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorDiaRecebimentoSequencia;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorDiaRecolhimento;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorEdicao;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorPrecoCapa;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorPrecoDesconto;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorProduto;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorSequencia;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao;
-import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorDia;
-import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEncalhe;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresJuramentado;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorexemplaresVendaEncalhe;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
@@ -356,7 +358,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         carregarQtdFisicoNaListaEncalheFisicoLogico(filtro, fechado, listaEncalhe);
         
         if (sort == null) {
-        	listaEncalhe = this.retornarListaOrdenada(listaEncalhe, "sequencia", sortorder);
+        	listaEncalhe = this.retornarListaOrdenada(listaEncalhe, "diaRecolhimentoSequencia", "asc");
         } else {
         	listaEncalhe = this.retornarListaOrdenada(listaEncalhe, sort, sortorder);
         }
@@ -495,7 +497,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
     private List<FechamentoFisicoLogicoDTO> retornarListaOrdenada(
             final List<FechamentoFisicoLogicoDTO> listaConferencia, final String sort, final String sortorder) {
         
-        if (sortorder == null) {
+        if (sort.equals("diaRecolhimentoSequencia")) {
+        	 final FechamentoFisicoLogicoDtoOrdenaPorDiaRecebimentoSequencia ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorDiaRecebimentoSequencia(
+                     "asc");
+             Collections.sort(listaConferencia, ordenacao);
+             return listaConferencia;
+        }
+        
+        if (sort.equals("diaRecolhimento")) {
+            final FechamentoFisicoLogicoDtoOrdenaPorDiaRecolhimento ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorDiaRecolhimento(
+                    sortorder);
+            Collections.sort(listaConferencia, ordenacao);
             return listaConferencia;
         }
         

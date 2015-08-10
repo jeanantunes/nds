@@ -23,7 +23,10 @@ import javax.xml.bind.ValidationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.mchange.v2.beans.BeansUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.DataHolder;
@@ -33,6 +36,7 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDTOCego;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -614,10 +618,30 @@ public class FechamentoEncalheController extends BaseController {
 		if (listaEncalhe != null && !listaEncalhe.isEmpty()) {
 		
 			try {
+				boolean confCega = !usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA);
 				
+				boolean permissaoVisualiza = usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE);
+			
+				if (permissaoVisualiza && confCega) {
 				FileExporter.to("fechamentos-encalhe", fileType).inHTTPResponse(
 					this.getNDSFileHeader(), null, null, listaEncalhe, 
 					FechamentoFisicoLogicoDTO.class, this.response);
+				} else {
+					List<FechamentoFisicoLogicoDTOCego> listaEncalhecego = new ArrayList();
+					
+					for (FechamentoFisicoLogicoDTO ffl:listaEncalhe) {
+						FechamentoFisicoLogicoDTOCego fflcego = new FechamentoFisicoLogicoDTOCego();
+						BeanUtils.copyProperties(ffl, fflcego);
+						listaEncalhecego.add(fflcego);
+					}
+					
+					
+					
+					FileExporter.to("fechamentos-encalhecego", fileType).inHTTPResponse(
+							this.getNDSFileHeader(), null, null, listaEncalhecego, 
+							FechamentoFisicoLogicoDTOCego.class, this.response);
+				}
+				
 				
 			} catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
