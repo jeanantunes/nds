@@ -63,9 +63,9 @@ public class FechamentoFisicoLogicoDTOCego implements Serializable {
 	@Export(label = "Preço Capa Desc R$", alignment = Alignment.RIGHT, exhibitionOrder = 6, fontSize=9)
 	private String precoCapaDescFormatado;
 	
-	@Export(label = "Devolução", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
-	private String exemplaresDevolucaoFormatado;
 	
+	@Export(label = "Fisico", alignment = Alignment.CENTER, exhibitionOrder = 8, fontSize=9)
+	private String fisico;
 
 	
 		
@@ -111,9 +111,6 @@ public class FechamentoFisicoLogicoDTOCego implements Serializable {
 		return this.precoCapaFormatado;
 	}
 	
-	public String getExemplaresDevolucaoFormatado() {
-		return this.exemplaresDevolucaoFormatado;
-	}
 	
 	
 	
@@ -152,15 +149,7 @@ public class FechamentoFisicoLogicoDTOCego implements Serializable {
 	public BigInteger getExemplaresDevolucao() {
 		return exemplaresDevolucao;
 	}
-	public void setExemplaresDevolucao(BigInteger exemplaresDevolucao) {
-		if (exemplaresDevolucao == null || exemplaresDevolucao.compareTo(BigInteger.ZERO) == -1) {
-			this.exemplaresDevolucao = BigInteger.ZERO;
-		}else{
-			this.exemplaresDevolucao = exemplaresDevolucao;
-		}
-		this.exemplaresDevolucaoFormatado = String.valueOf(this.exemplaresDevolucao.intValue());
-		
-	}
+	
     public BigInteger getExemplaresDevolucaoJuramentado() {
         return exemplaresDevolucaoJuramentado;
     }
