@@ -39,16 +39,24 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("         pd.codigo_icd as codigoICD, ");
 		sql.append("         pe.numero_edicao as numeroEdicao, ");
 		sql.append("         pe.id as idProdutoEdicao, ");
+		
 		sql.append("         coalesce(cast(sum(case ");
-		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ");
-		sql.append("             else -mecReparte.QTDE end) as unsigned int), 0) AS qtdeReparteEstudo, ");
+		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA'  ");
+		sql.append("                  THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
+		sql.append("                  ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
+		sql.append("             	 end) as unsigned int), 0) AS qtdeReparteEstudo, ");
+		
 		sql.append("         pd.NOME as nomeProduto, ");
 		sql.append("         plp.NUMERO_PERIODO as periodo, ");
 		sql.append("         pe.PRECO_VENDA as preco, ");
 		sql.append("         lanc.STATUS as status, ");
+		
 		sql.append("         cast(sum(case ");
-		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' then mecReparte.QTDE ");
-		sql.append("             else -mecReparte.QTDE end) as unsigned int) AS reparteDistribuido, ");
+		sql.append("             when tipo.OPERACAO_ESTOQUE = 'ENTRADA' ");
+		sql.append("                     THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
+		sql.append("                	 ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
+		sql.append("             	  end) as unsigned int) AS reparteDistribuido, ");
+		
 		sql.append("         eg.abrangencia as percentualAbrangencia, ");
 		sql.append("         tcp.DESCRICAO as tipoClassificacaoProdutoDescricao, ");
 		sql.append("         lanc.DATA_LCTO_PREVISTA as datalanc, ");
@@ -63,11 +71,12 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("         coalesce(eg.REPARTE_MINIMO,0) as reparteMinimo, ");
 		sql.append("         eg.TIPO_GERACAO_ESTUDO as algoritmo, ");
 		sql.append("         usu.NOME as nomeUsuario, ");
+		
 		sql.append("         case ");
 		sql.append("             when lanc.STATUS IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO') ");
 		sql.append("                 then cast(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA'  ");
-		sql.append("                               then mecReparte.QTDE ");
-		sql.append("                 else -mecReparte.QTDE ");
+		sql.append("                               THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
+		sql.append("                			   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, - mecReparte.QTDE, 0) ");
 		sql.append("             end) - ");
 		sql.append("             (select sum(mecEncalhe.qtde) ");
 		sql.append("                 from ");
@@ -123,7 +132,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		addWhereClauseList(filtro, sql);
 		
 		sql.append(" and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
-        sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		sql.append(" group BY eg.id ");
 		

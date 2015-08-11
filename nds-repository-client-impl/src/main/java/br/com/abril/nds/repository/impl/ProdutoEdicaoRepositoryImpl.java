@@ -1774,7 +1774,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("             and pe.NUMERO_EDICAO = :numEdicao ");
 		sql.append("             and c.NUMERO_COTA = :numCota ");
 		sql.append("             and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
-		sql.append("             mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+		sql.append("             and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		sql.append("        group by mec.cota_id  ");
 		sql.append("        order by mec.cota_id ");
 		
