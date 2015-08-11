@@ -290,8 +290,6 @@ public class ConsultaBoletosController extends BaseController {
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(b);
 
-		//CONTROLE DE VIAS IMPRESSAS
-		boletoService.incrementarVia(nossoNumero);
 		
 		httpResponse.flushBuffer();
 	}
