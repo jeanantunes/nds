@@ -1219,6 +1219,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :alteracaoReparteCota,:movimentoCompraSuplementar) ")  
 		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
+		.append("       and  l.status <> 'FECHADO' ")
 		.append(" ) rs1 ")
 		.append(" group by numeroCota, id, idProdutoEdicao, DATA, numeroNotaEnvio")
 		.append(" having reparte > 0 ")
