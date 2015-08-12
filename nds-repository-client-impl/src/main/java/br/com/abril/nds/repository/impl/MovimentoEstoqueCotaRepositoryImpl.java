@@ -2692,7 +2692,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		rota.DESCRICAO_ROTA as codigoRota, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
-        hql.append(" 		produto.NOME as nomeProduto, ");
+        hql.append(" 		produtoEdicao.NOME_COMERCIAL as nomeProduto, ");
         hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
