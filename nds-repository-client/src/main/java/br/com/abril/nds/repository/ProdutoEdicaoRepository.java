@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -381,4 +382,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	public abstract String obterStatusLancamentoPeriodoParcial(Long idProdutoEdicao,
 			Integer numeroPeriodo, Long numeroEdicao);
+
+
+	public abstract List<ProdutoEdicao> obterProdutosEdicaoComVendaEntreDatas(FiltroCurvaABCDistribuidorDTO filtro);
 }
