@@ -98,7 +98,7 @@ ConsolidadoFinanceiroRepository {
         
         final StringBuilder hql = new StringBuilder("select ");
         
-        hql.append("        produto8_.CODIGO as codigoProduto, ")
+        hql.append("     produto8_.CODIGO as codigoProduto, ")
         .append("        produto8_.NOME as nomeProduto, ")
         .append("        pessoajuri11_.RAZAO_SOCIAL as nomeFornecedor, ")
         .append("        produtoedi7_.NUMERO_EDICAO as numeroEdicao, ")
@@ -155,7 +155,8 @@ ConsolidadoFinanceiroRepository {
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
         .append("    and movimentos4_.QTDE != 0 ")
-        .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
+        .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
+        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = :dataConsolidado ");
         
         if (filtro.getIdConsolidado()!=null){
         	
@@ -238,7 +239,7 @@ ConsolidadoFinanceiroRepository {
         .append("                )  ")
         .append("    and movimentos2_.QTDE != 0 ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-
+        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = :dataConsolidado ")
         .append("group by ")
         .append("        produto6_.CODIGO , ")
         .append("        produto6_.NOME , ")
@@ -960,8 +961,8 @@ ConsolidadoFinanceiroRepository {
         .append("        produtoedi8_.PRECO_VENDA as precoCapa, ")
         .append("        movimentos4_.VALOR_DESCONTO as desconto, ")
         .append("        coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as precoComDesconto, ")
-        .append("        sum(coalesce(estudocota7_.QTDE_PREVISTA,0)) as reparteSugerido, ")
-        .append("        sum(coalesce(chamadaEncalheCota.QTDE_PREVISTA,0)) as reparteFinal, ")
+        .append("        sum(coalesce(estudocota7_.QTDE_PREVISTA, 0)) as reparteSugerido, ")
+        .append("        sum(coalesce(movimentos4_.QTDE, 0)) as reparteFinal, ")
         .append("        coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
         .append("        case when diferenca10_.TIPO_DIFERENCA is null then '' else diferenca10_.TIPO_DIFERENCA end as motivoTexto, ")
         .append("        movimentos4_.QTDE as qtde, ")
@@ -1026,15 +1027,11 @@ ConsolidadoFinanceiroRepository {
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
         
         if (filtro.getIdConsolidado()!=null){
-        	
        	    hql.append(" and consolidad0_.id = :idConsolidado ");
         }
 
-        hql.append(" group by ")
-        .append("        idMovimentoEstoqueCota ")
-        
+        hql.append(" group by ").append("        idProdutoEdicao ")
         .append("union all ")
-        
         .append("select ")
         .append("        produtoedi6_.ID as idProdutoEdicao, ")
         .append("        movimentos2_.ID as idMovimentoEstoqueCota, ")
@@ -1118,12 +1115,10 @@ ConsolidadoFinanceiroRepository {
         .append("                )  ")        
         .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = :dataConsolidado ")
         .append("group by ")
-        .append("        idMovimentoEstoqueCota ");
+        .append("        idProdutoEdicao ");
         
         hql.append(" ) as consignados ");
         hql.append(" group by idProdutoEdicao ");
-        
-        
         
         hql.append(this.getOrdenacaoConsignado(filtro));
         

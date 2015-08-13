@@ -27,13 +27,12 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	 */
 	private static final long serialVersionUID = 1395654431152408327L;
 
-	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany(mappedBy="movimentoFinanceiroCota", cascade=CascadeType.DETACH)
+	@OneToMany(mappedBy="movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	private List<MovimentoEstoqueCota> movimentos;
 	
 	@Column(name = "OBSERVACAO")
