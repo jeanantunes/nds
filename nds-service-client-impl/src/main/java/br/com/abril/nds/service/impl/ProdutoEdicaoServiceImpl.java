@@ -780,6 +780,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			return true;
 		}
 		
+		if(produtoEdicao.getCodigoDeBarras() == null ) {
+			if ( dto.getCodigoDeBarras() == null )
+			   return false;
+			else
+			   return true;
+		}
+		
 		if(!produtoEdicao.getCodigoDeBarras().equals(dto.getCodigoDeBarras())) {
 			return true;
 		}
