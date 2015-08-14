@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -197,8 +198,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			LOGGER.error("O código do Distribuidor deve ser numérico.", nfe);
 			codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
 		}
-		
-		this.couchDbClient = couchDBRepository.getCouchDBClient(codigoDistribuidor, true);
+		LOGGER.error("iniciando couchdDbClient com timeout de 60000 ms en parametrosdistribuidorserviceimpl");
+		this.couchDbClient = couchDBRepository.getCouchDBClient(codigoDistribuidor, true,60000); // timeout de 60 segundos
 	}
 
 	/* (non-Javadoc)
@@ -1391,21 +1392,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		InputStream inputStream = null;
 		
 		try {
-			
+			LOGGER.error("obtendo logo do distribuidor");
 			inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
-		
-		} catch (NoDocumentException e) {
-			
-			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
-			
-			File noImage = new File(url.getPath());
-			
+			LOGGER.error("obtido logo do distribuidor");
+		} catch (Exception e) {
 			try {
+			LOGGER.error("Erro obtendo logo do distribuidor.Usando no_image.jpeg",e);
+			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
+			LOGGER.error("Erro obtendo logo do distribuidor.Usando no_image.jpeg no diretorio "+url.getPath());
+			File noImage = Paths.get(url.toURI()).toFile();
+
+			inputStream = new FileInputStream(noImage);
 			
-				inputStream = new FileInputStream(noImage);
-			
-			} catch (FileNotFoundException e1) {
-				
+			} catch (Exception e1) {
+				LOGGER.error("Erro obtendo no_image.jpeg como logo distribuidor.Voltando null",e1);
 				return null;
 			}
 			

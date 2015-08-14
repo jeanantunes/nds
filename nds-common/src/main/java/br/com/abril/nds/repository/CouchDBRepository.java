@@ -13,8 +13,10 @@ public interface CouchDBRepository {
 	 * @return client
 	 */
 	public abstract CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor);
+	public abstract CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor,int timeout);
 
 	//@PostConstruct
 	public abstract void initCouchDbClient() throws MalformedURLException;
+	
 
 }
