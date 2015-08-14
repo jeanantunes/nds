@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -29,19 +30,50 @@ public class CouchDBDAO implements CouchDBRepository {
 	public CouchDBDAO() {
 		
 	}
-
+	
 	@Override
-	public CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor) {
+	public CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor)  {
+	
 		
-		return new CouchDbClient(
-				isDBDistribuidor ? "db_" + StringUtils.leftPad(sufixoNomeDB, 8, "0") : sufixoNomeDB,
-				true,
-				couchDbProperties.getProtocol(),
-				couchDbProperties.getHost(),
-				couchDbProperties.getPort(),
-				couchDbProperties.getUsername(),
-				couchDbProperties.getPassword()
-		);
+			
+			return new CouchDbClient(
+					isDBDistribuidor ? "db_" + StringUtils.leftPad(sufixoNomeDB, 8, "0") : sufixoNomeDB,
+					true,
+					couchDbProperties.getProtocol(),
+					couchDbProperties.getHost(),
+					couchDbProperties.getPort(),
+					couchDbProperties.getUsername(),
+					couchDbProperties.getPassword()
+			);
+			
+		
+		
+	}
+	
+     // usar com parcimonia.. somente quando operacao nao exigir muito tempo de conexao
+	@Override
+	public CouchDbClient getCouchDBClient(String sufixoNomeDB, boolean isDBDistribuidor,int timeout)  { // timeout em milisengudos
+		
+			org.lightcouch.CouchDbProperties cdp = new org.lightcouch.CouchDbProperties();
+			cdp.setDbName(isDBDistribuidor ? "db_" + StringUtils.leftPad(sufixoNomeDB, 8, "0") : sufixoNomeDB);
+			cdp.setCreateDbIfNotExist(true);
+			cdp.setProtocol(couchDbProperties.getProtocol());
+			cdp.setHost(couchDbProperties.getHost());
+			cdp.setPort(couchDbProperties.getPort());
+			cdp.setUsername(couchDbProperties.getUsername());
+			cdp.setPassword(couchDbProperties.getPassword());
+			/*
+			if ( couchDbProperties.getConnectionTimeout() != null )
+				cdp.setConnectionTimeout(couchDbProperties.getConnectionTimeout());
+			if ( couchDbProperties.getSocketTimeout() != null ) 
+			   cdp.setSocketTimeout(couchDbProperties.getSocketTimeout());
+			*/
+			cdp.setConnectionTimeout(timeout); 
+			cdp.setSocketTimeout(timeout);
+			return new CouchDbClient(cdp);
+			
+		
+		
 	}
 	
 	@Override
@@ -57,7 +89,9 @@ public class CouchDBDAO implements CouchDBRepository {
                 .username(couchDbProperties.getUsername())
                 .password(couchDbProperties.getPassword())
                 .build();
+		
 		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
+	
 		this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
 				
 	}
