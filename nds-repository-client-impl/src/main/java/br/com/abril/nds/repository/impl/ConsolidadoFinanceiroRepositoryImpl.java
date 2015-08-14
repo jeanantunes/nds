@@ -153,7 +153,7 @@ ConsolidadoFinanceiroRepository {
         .append("where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
-        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = consolidad0_.DT_CONSOLIDADO ")
+        //.append("        and chamadaEncalhe.DATA_RECOLHIMENTO = consolidad0_.DT_CONSOLIDADO ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
         .append("    and movimentos4_.QTDE != 0 ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
