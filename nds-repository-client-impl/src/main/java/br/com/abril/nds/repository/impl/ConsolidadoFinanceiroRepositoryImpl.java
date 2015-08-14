@@ -153,10 +153,10 @@ ConsolidadoFinanceiroRepository {
         .append("where ")
         .append("        cota1_.NUMERO_COTA = :numeroCota ")
         .append("        and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
+        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = consolidad0_.DT_CONSOLIDADO ")
         .append("        and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
         .append("    and movimentos4_.QTDE != 0 ")
-        .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = :dataConsolidado ");
+        .append("        and chamadaEncalheCota.postergado = :naoPostergado ");
         
         if (filtro.getIdConsolidado()!=null){
         	
@@ -239,7 +239,7 @@ ConsolidadoFinanceiroRepository {
         .append("                )  ")
         .append("    and movimentos2_.QTDE != 0 ")
         .append("        and chamadaEncalheCota.postergado = :naoPostergado ")
-        .append("        and chamadaEncalhe.DATA_RECOLHIMENTO = :dataConsolidado ")
+
         .append("group by ")
         .append("        produto6_.CODIGO , ")
         .append("        produto6_.NOME , ")
