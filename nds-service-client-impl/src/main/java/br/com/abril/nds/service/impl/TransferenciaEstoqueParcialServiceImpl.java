@@ -105,6 +105,8 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		validarProdutosTransferencia(produtoEdicaoOrigem, produtoEdicaoDestino);
 		
+		validarLancamentoOrigem(produtoEdicaoOrigem);
+		
 		fecharLancamentoOrigem(produtoEdicaoOrigem);
 		
 		efetuarMovimentacaoTransferencia(
@@ -169,6 +171,28 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		}
 		
 		this.movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicaoOrigem, idUsuario, qtde, tipoMovimentoEstoque);
+	}
+	
+	
+	
+	private void validarLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosDaEdicao(produtoEdicaoOrigem.getId());
+		
+		if (lancamentos == null || lancamentos.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há lançamento para o produto/edição de origem.");
+		}
+		
+		for (Lancamento lancamentoOrigem : lancamentos) {
+		    if ( StatusLancamento.EXPEDIDO.equals(lancamentoOrigem.getStatus()) ||
+		    	 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(lancamentoOrigem.getStatus()) ||
+		    	 StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(lancamentoOrigem.getStatus()) )
+		    		
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Status do Lançamento inválido para Transferencia.");
+	        
+	      
+		}
 	}
 
 	private void fecharLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
