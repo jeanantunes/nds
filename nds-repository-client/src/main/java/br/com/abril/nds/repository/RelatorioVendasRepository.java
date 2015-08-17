@@ -50,5 +50,4 @@ public interface RelatorioVendasRepository {
 	
 	TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro);
 
-	public abstract List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtro);	
 }

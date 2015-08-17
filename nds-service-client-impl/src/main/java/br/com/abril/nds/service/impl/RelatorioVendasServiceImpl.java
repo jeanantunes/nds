@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -63,6 +64,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Override
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
+		
+		validarProdutoEdicao(filtroCurvaABCDistribuidorDTO);	
 		
 		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingCota);
 		
@@ -130,18 +133,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		
-		List<ProdutoEdicao> edicoesDoProduto = this.produtoEdicaoRepository.obterProdutosEdicaoComVendaEntreDatas(filtroCurvaABCDistribuidorDTO);
+		validarProdutoEdicao(filtroCurvaABCDistribuidorDTO);
 		
-		List<Long> numEdicoesProduto = new ArrayList<>();
-		
-		for (ProdutoEdicao produtoEdicao : edicoesDoProduto) {
-			numEdicoesProduto.add(produtoEdicao.getNumeroEdicao());
-		}
-		
-		filtroCurvaABCDistribuidorDTO.setEdicaoProduto(numEdicoesProduto);
-		
-		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCProduto(filtroCurvaABCDistribuidorDTO); 
-//				this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingProduto);
+		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingProduto);
 		
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
 		
@@ -179,6 +173,28 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		carregarParticipacaoCurvaABCDistribuidor(lista, participacaoTotal);
 		
 		return lista;
+	}
+
+
+	private void validarProdutoEdicao(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
+		if(filtroCurvaABCDistribuidorDTO.getEdicaoProduto() == null){
+			List<ProdutoEdicao> edicoesDoProduto = this.produtoEdicaoRepository.obterProdutosEdicaoComVendaEntreDatas(filtroCurvaABCDistribuidorDTO);
+			
+			List<Long> numEdicoesProduto = new ArrayList<>();
+			
+			for (ProdutoEdicao produtoEdicao : edicoesDoProduto) {
+				numEdicoesProduto.add(produtoEdicao.getNumeroEdicao());
+			}
+			
+			filtroCurvaABCDistribuidorDTO.setEdicaoProduto(numEdicoesProduto);
+		}
+		
+		if(filtroCurvaABCDistribuidorDTO.getTipoConsultaCurvaABC() == TipoConsultaCurvaABC.PRODUTO){
+			if (filtroCurvaABCDistribuidorDTO.getEdicaoProduto() == null || filtroCurvaABCDistribuidorDTO.getEdicaoProduto().isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma edição encontrada. Altere o período e tente novamente.");
+			}
+		}
+		
 	}
 	
 	@Override

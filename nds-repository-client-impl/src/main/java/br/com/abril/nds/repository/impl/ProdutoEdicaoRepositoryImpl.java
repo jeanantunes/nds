@@ -2393,7 +2393,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append("         and lcmt.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d')  ");
 		sql.append("         AND pdt.CODIGO = :codProduto  ");
 		
-//		Query query = getSession().createSQLQuery(sql.toString());
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("codProduto", filtro.getCodigoProduto());

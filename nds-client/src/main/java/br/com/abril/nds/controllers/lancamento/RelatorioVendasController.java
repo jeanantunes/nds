@@ -594,22 +594,15 @@ public class RelatorioVendasController extends BaseController {
 		
 		}
 		
-		if (resultadoCurvaABCDistribuidor == null
-				|| resultadoCurvaABCDistribuidor.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+		if (resultadoCurvaABCDistribuidor == null || resultadoCurvaABCDistribuidor.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
-			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCDistribuidor(filtro);
-			
-            List<RegistroCurvaABCDistribuidorVO> resultadoPaginado = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCDistribuidor, filtro.getPaginacao());
-			
-			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
-				new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
+			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCDistribuidor));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(qtdeTotalRegistros);
+			tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 			
 			ResultadoCurvaABCDistribuidor resultado =
 				this.obterTotaisCurvaABCDistribuidor(resultadoCurvaABCDistribuidor);
@@ -698,21 +691,15 @@ public class RelatorioVendasController extends BaseController {
 		
 		resultadoCurvaABCEditor = this.relatorioVendasService.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
 
-		if (resultadoCurvaABCEditor == null
-				|| resultadoCurvaABCEditor.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nenhum registro encontrado.");
+		if (resultadoCurvaABCEditor == null || resultadoCurvaABCEditor.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		} else {
 
-			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCEditor(filtroCurvaABCEditorDTO);
-			  
-            List<RegistroCurvaABCEditorVO> resultadoPaginado = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao());
-			
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(qtdeTotalRegistros);
+			tableModel.setTotal(filtroCurvaABCEditorDTO.getPaginacao().getQtdResultadosTotal());
 			
 			ResultadoCurvaABCEditor resultado =
 				this.obterTotaisCurvaABCEditor(resultadoCurvaABCEditor);
