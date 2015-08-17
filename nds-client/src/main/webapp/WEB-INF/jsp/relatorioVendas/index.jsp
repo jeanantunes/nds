@@ -79,9 +79,9 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 										
 					
 					<td width="45">Período:</td>
-					<td><input type="text" name="datepickerDe" id="datepickerDe" style="width: 60px;" /></td>
+					<td><input type="text" name="datepickerDe" id="datepickerDe" style="width: 70px;" /></td>
 					<td width="25">Até:</td>
-					<td><input type="text" name="datepickerAte" id="datepickerAte" style="width: 60px;" /></td>
+					<td><input type="text" name="datepickerAte" id="datepickerAte" style="width: 70px;" /></td>
 					<td width="95" rowspan="3" valign="top"><span class="bt_pesquisar"><a href="javascript:;" onclick="relatorioVendasController.pesquisar();">Pesquisar</a></span></td>
 					<td width="20" rowspan="3" align="center" valign="top"><a
 						href="javascript:;" onclick="relatorioVendasController.mostra_pesq_avancada();"><img src="${pageContext.request.contextPath}/images/ico_pesq_avancada.jpg" alt="Pesquisa Avançada" width="20" height="20" vspace="10" border="0" /></a></td>

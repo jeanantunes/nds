@@ -20,12 +20,15 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements RelatorioVendasRepository {
@@ -145,75 +148,90 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 	}
 	
-	@Override
+//	@Override
+//	@SuppressWarnings("unchecked")
+//	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro, TipoPesquisaRanking tipoPesquisa) {
+//		
+//		StringBuilder sql = new StringBuilder();
+//		
+//		sql.append(" select ");
+//		sql.append(" consolidado.COTA_ID AS idCota, ");
+//		
+//		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada,	");
+//		
+//		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
+//			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkCota, ");
+//		} else {
+//			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
+//		}
+//		
+//		sql.append(" consolidado.NUMERO_COTA AS numeroCota, 	");
+//		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
+//		sql.append(" consolidado.CIDADE_COTA AS municipio, 	");
+//		sql.append(" consolidado.valor as participacao,	");
+//		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+//		sql.append(" consolidado.faturamentoCapa as faturamentoCapa		");
+//		
+//		sql.append("   from ");
+//		
+//		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
+//		
+//		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc, numeroCota ");
+//
+//		
+//		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+//		
+//		query.addScalar("idCota", StandardBasicTypes.LONG);
+//		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+//		query.addScalar("nomeCota", StandardBasicTypes.STRING);
+//		query.addScalar("municipio", StandardBasicTypes.STRING);
+//		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+//		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+//		
+//		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
+//			query.addScalar("rkCota", StandardBasicTypes.LONG);
+//		} else {
+//			query.addScalar("rkProduto", StandardBasicTypes.LONG);
+//		}
+//		
+//		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+//		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+//		
+//
+//		this.getFiltroCurvaABC(filtro, query);
+//		
+//		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
+//		
+//		return query.list();
+//	}
+	
+	
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro, TipoPesquisaRanking tipoPesquisa) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select ");
-		sql.append(" consolidado.COTA_ID AS idCota, ");
-		
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada,	");
+		sql.append(" SELECT    ");
+		sql.append("       consolidado.idCota as idCota, ");
 		
 		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
 			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkCota, ");
 		} else {
 			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
 		}
-		
-		sql.append(" consolidado.NUMERO_COTA AS numeroCota, 	");
-		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
-		sql.append(" consolidado.CIDADE_COTA AS municipio, 	");
-		sql.append(" consolidado.valor as participacao,	");
-		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
-		sql.append(" consolidado.faturamentoCapa as faturamentoCapa		");
-		
-		sql.append("   from ");
-		
-		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
-		
-		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc, numeroCota ");
 
+		sql.append("       @valorAcumulado\\:=@valorAcumulado + consolidado.participacao as participacaoAcumulada, ");
+		sql.append("       consolidado.numeroCota as numeroCota, ");
+		sql.append("       consolidado.nomeCota AS nomeCota, ");
+		sql.append("       consolidado.municipio AS municipio, ");
+		sql.append("       consolidado.participacao as participacao, ");
+		sql.append("       consolidado.vendaExemplares as vendaExemplares, ");
+		sql.append("       consolidado.faturamentoCapa as faturamentoCapa  ");
+		sql.append("   FROM ");
 		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.addScalar("idCota", StandardBasicTypes.LONG);
-		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
-		query.addScalar("nomeCota", StandardBasicTypes.STRING);
-		query.addScalar("municipio", StandardBasicTypes.STRING);
-		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
-		
-		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
-			query.addScalar("rkCota", StandardBasicTypes.LONG);
-		} else {
-			query.addScalar("rkProduto", StandardBasicTypes.LONG);
-		}
-		
-		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
-		
-
-		this.getFiltroCurvaABC(filtro, query);
-		
-		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
-		
-		return query.list();
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtro) {
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("       SELECT ");
+		sql.append("       (SELECT ");
 		sql.append("         temp.cotaId as idCota, ");
-		sql.append("         @valorAcumulado\\:=@valorAcumulado + sum(temp.vendaSum * (temp.PRECO_VENDA -  ");
-		sql.append("             ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) as participacaoAcumulada, ");
-		sql.append("         @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
 		sql.append("         temp.numeroCota numeroCota, ");
 		sql.append("         COALESCE(temp.NOME_COTA, temp.RAZAO_SOCIAL_COTA) AS nomeCota, ");
 		sql.append("         temp.CIDADE_COTA AS municipio, ");
@@ -315,23 +333,39 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         inner join ");
 		sql.append("             endereco endereco  ");
 		sql.append("                 ON endCota.endereco_id = endereco.id ");
-		sql.append("                  ");
-		sql.append("         where ");
+		sql.append(" 		 JOIN ");
+		sql.append("             produto_fornecedor prodFornecedor ");
+		sql.append("                 ON prodFornecedor.PRODUTO_ID = p.ID ");
+		sql.append("         JOIN  ");
+		sql.append("             fornecedor  ");
+		sql.append("                 ON prodFornecedor.fornecedores_ID = fornecedor.ID ");
+		
+		sql.append("         WHERE ");
+		
 		sql.append("             l.status in (:statusLancamento) ");
 		sql.append("             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
-		sql.append("             and p.codigo = :codProduto ");
-		sql.append("             and pe.numero_edicao in (:edicoes)     ");
+//		sql.append("             and p.codigo = :codProduto ");
+		
+		sql.append(this.getWhereFiltroCurvaABC(filtro, null, filtro.getTipoConsultaCurvaABC()));
+		
 		sql.append("         group by ");
 		sql.append("             pe.numero_edicao, pe.id, ");
 		sql.append("             mecReparte.cota_id, plp.numero_periodo  ");
 		sql.append("         ORDER BY ");
 		sql.append("             l.ID desc )T  ");
-		sql.append("                         group by numeroCota ORDER BY vendaSum desc) temp,  ");
-		sql.append("                         (select ");
-		sql.append("                         @valorAcumulado\\:=0, ");
-		sql.append("                         @posicaoRanking\\:=0) as s ");
-		sql.append("                         group by numeroCota  ");
-		sql.append("                         ORDER BY rkProduto ");
+		sql.append("                         group by numeroCota ORDER BY vendaSum desc) temp  ");
+		sql.append(" 							group by numeroCota                           ");
+		sql.append(" 						        ORDER BY faturamentoCapa desc) consolidado,");
+		sql.append(" 						            (select");
+		sql.append(" 						                @valorAcumulado\\:=0,");
+		sql.append(" 						                @posicaoRanking\\:=0) as s  ");
+		
+		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
+			sql.append("                         ORDER BY rkCota ");
+		} else {
+			sql.append("                         ORDER BY rkProduto ");
+		}
+		
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -341,8 +375,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		                StatusLancamento.RECOLHIDO.name(), 
 		                StatusLancamento.FECHADO.name()));
 		
-		query.setParameter("codProduto", filtro.getCodigoProduto());
-		query.setParameterList("edicoes", filtro.getEdicaoProduto());
+		this.getWhereFiltroCurvaABC(filtro, query, filtro.getTipoConsultaCurvaABC());
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
@@ -350,12 +383,17 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("municipio", StandardBasicTypes.STRING);
 		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("rkProduto", StandardBasicTypes.LONG);
+		
+		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
+			query.addScalar("rkCota", StandardBasicTypes.LONG);
+		} else {
+			query.addScalar("rkProduto", StandardBasicTypes.LONG);
+		}
+
 		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
 		
-
-//		this.getFiltroCurvaABC(filtro, query);
+		this.configurarPaginacao(filtro, query);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
 		
@@ -367,26 +405,174 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
-		
 		sql.append(" SELECT ");
-		sql.append(" consolidado.EDITOR_ID AS codigoEditor, 			");
-		sql.append(" consolidado.RAZAO_SOCIAL_EDITOR AS nomeEditor, 	");
-		sql.append(" consolidado.faturamentoCapa AS faturamentoCapa,	");
-		sql.append(" consolidado.valor AS participacao,						");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada, ");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkEditor,	");
-		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
-		sql.append(" consolidado.reparte as reparte,					");
-		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
-		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
-
-		sql.append(" from ");
-		
-		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.EDITOR));
-		
-		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc, codigoEditor ");
+		sql.append("       consolidado.codigoEditor as codigoEditor, ");
+		sql.append("       consolidado.nomeEditor as nomeEditor, ");
+		sql.append("       consolidado.faturamentoCapa as faturamentoCapa, ");
+		sql.append("       consolidado.participacao AS participacao, ");
+		sql.append("         @valorAcumulado\\:=@valorAcumulado + consolidado.participacao as participacaoAcumulada, ");
+		sql.append("         @posicaoRanking\\:=@posicaoRanking + 1 as rkEditor, ");
+		sql.append("       consolidado.vendaExemplares as vendaExemplares, ");
+		sql.append("       consolidado.reparte as reparte, ");
+		sql.append("       consolidado.valorMargemDistribuidor as valorMargemDistribuidor, ");
+		sql.append("       consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor ");
+		sql.append("        ");
+		sql.append("       FROM  ");
+		sql.append("       ( ");
+		sql.append("         SELECT ");
+		sql.append("          ");
+		sql.append("         temp.codEditor as codigoEditor, ");
+		sql.append("         temp.nomeEditor as nomeEditor, ");
+		sql.append("         sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa, ");
+		sql.append("         sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) AS participacao, ");
+		sql.append("         sum(temp.vendaSum) as vendaExemplares, ");
+		sql.append("         sum(temp.reparteSum) as reparte, ");
+		sql.append("          ");
+		sql.append("         sum((temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) - ");
+		sql.append("              (temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.percentualDescLog, ");
+		sql.append("                 temp.percentualDescProd,0))/100)) ");
+		sql.append("               )) as valorMargemDistribuidor, ");
+		sql.append("          ");
+		sql.append("         sum((temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) - ");
+		sql.append("             (temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.percentualDescLog, ");
+		sql.append("             temp.percentualDescProd,0))/100)))) / sum(((temp.vendaSum * temp.PRECO_VENDA) * 100)) ");
+		sql.append("              as porcentagemMargemDistribuidor ");
+		sql.append("  ");
+		sql.append("     FROM ");
+		sql.append("         (           ");
+		sql.append("           Select ");
+		sql.append("              ");
+		sql.append("             T.codigoEditor as codEditor, ");
+		sql.append("             T.razaoSocialEditor as nomeEditor, ");
+		sql.append("             SUM(T.reparte) reparteSum, ");
+		sql.append("             SUM(T.venda) vendaSum, ");
+		sql.append("             T.PRECO_VENDA, ");
+		sql.append("             T.valorDesconto, ");
+		sql.append("             T.percentualDescLog as percentualDescLog, ");
+		sql.append("             T.percentualDescProd as percentualDescProd, ");
+		sql.append("             T.NUMERO_COTA as numeroCota ");
+		sql.append("           FROM ");
+		sql.append("             (SELECT ");
+		sql.append("                 editor.ID as codigoEditor, ");
+		sql.append("                 pessoaeditor.RAZAO_SOCIAL as razaoSocialEditor, ");
+		sql.append("                 mecReparte.VALOR_DESCONTO AS valorDesconto, ");
+		sql.append("                 c.NUMERO_COTA AS NUMERO_COTA, ");
+		sql.append("                 pe.PRECO_VENDA AS PRECO_VENDA, ");
+		sql.append("                 descontologistica.PERCENTUAL_DESCONTO as percentualDescLog, ");
+		sql.append("                 descontologisticaproduto.PERCENTUAL_DESCONTO as percentualDescProd, ");
+		sql.append("                 cast(sum(case when tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN  ");
+		sql.append("                             if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0)                   ");
+		sql.append("                             ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)               ");
+		sql.append("                          end ) as unsigned int) AS reparte, ");
+		sql.append("                 (case                    ");
+		sql.append("                     when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')then       ");
+		sql.append("                         cast(sum(CASE WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN  ");
+		sql.append("                           if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0)                       ");
+		sql.append("                           ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)                   ");
+		sql.append("                     END) - (select ");
+		sql.append("                         sum(mecEncalhe.qtde)                               ");
+		sql.append("                     from ");
+		sql.append("                         lancamento lanc                               ");
+		sql.append("                     LEFT JOIN ");
+		sql.append("                         chamada_encalhe_lancamento cel                            ");
+		sql.append("                             on cel.LANCAMENTO_ID = lanc.ID                               ");
+		sql.append("                     LEFT JOIN ");
+		sql.append("                         chamada_encalhe ce                            ");
+		sql.append("                             on ce.id = cel.CHAMADA_ENCALHE_ID                               ");
+		sql.append("                     LEFT JOIN ");
+		sql.append("                         chamada_encalhe_cota cec                            ");
+		sql.append("                             on cec.CHAMADA_ENCALHE_ID = ce.ID                               ");
+		sql.append("                     LEFT JOIN ");
+		sql.append("                         cota cota                            ");
+		sql.append("                             on cota.id = cec.COTA_ID                               ");
+		sql.append("                     LEFT JOIN ");
+		sql.append("                         conferencia_encalhe confEnc                            ");
+		sql.append("                             on confEnc.CHAMADA_ENCALHE_COTA_ID = cec.ID                               ");
+		sql.append("                     LEFT JOIN ");
+		sql.append("                         movimento_estoque_cota mecEncalhe                            ");
+		sql.append("                             on mecEncalhe.id = confEnc.MOVIMENTO_ESTOQUE_COTA_ID                   ");
+		sql.append("                     WHERE ");
+		sql.append("                         lanc.id = l.id                        ");
+		sql.append("                         and cota.id = c.id) AS UNSIGNED INT)                         ");
+		sql.append("                     else      null                     ");
+		sql.append("                 end) as venda                         ");
+		sql.append("             FROM ");
+		sql.append("                 lancamento l                 ");
+		sql.append("             JOIN ");
+		sql.append("                 produto_edicao pe                    ");
+		sql.append("                     ON pe.id = l.produto_edicao_id                 ");
+		sql.append("             LEFT JOIN ");
+		sql.append("                 periodo_lancamento_parcial plp                    ");
+		sql.append("                     ON plp.id = l.periodo_lancamento_parcial_id                 ");
+		sql.append("             JOIN ");
+		sql.append("                 produto p                    ");
+		sql.append("                     ON p.id = pe.produto_id                   ");
+		sql.append("             LEFT JOIN ");
+		sql.append("                 movimento_estoque_cota mecReparte                    ");
+		sql.append("                     on mecReparte.LANCAMENTO_ID = l.id                 ");
+		sql.append("             LEFT JOIN ");
+		sql.append("                 tipo_movimento tipo                    ");
+		sql.append("                     ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID                 ");
+		sql.append("             JOIN ");
+		sql.append("                 cota c                    ");
+		sql.append("                     ON mecReparte.COTA_ID = c.ID           ");
+		sql.append("             JOIN ");
+		sql.append("                 pessoa pess                   ");
+		sql.append("                     ON c.PESSOA_ID = pess.ID           ");
+		sql.append("             inner join ");
+		sql.append("                 endereco_cota endCota                    ");
+		sql.append("                     ON endCota.cota_id = c.id                    ");
+		sql.append("                     and endCota.principal = true                    ");
+		sql.append("             inner join ");
+		sql.append("                 endereco endereco                    ");
+		sql.append("                     ON endCota.endereco_id = endereco.id      ");
+		sql.append("             JOIN ");
+		sql.append("                 produto_fornecedor prodFornecedor                   ");
+		sql.append("                     ON prodFornecedor.PRODUTO_ID = p.ID           ");
+		sql.append("             JOIN ");
+		sql.append("                 fornecedor                    ");
+		sql.append("                     ON prodFornecedor.fornecedores_ID = fornecedor.ID           ");
+		sql.append("             JOIN ");
+		sql.append("                 editor  ");
+		sql.append("                     ON editor.id = p.editor_id ");
+		sql.append("             JOIN ");
+		sql.append("                 pessoa pessoaeditor  ");
+		sql.append("                     on editor.juridica_id = pessoaeditor.id ");
+		sql.append("             left join  ");
+		sql.append("                 desconto_logistica descontologistica  ");
+		sql.append("                     on descontologistica.id = pe.desconto_logistica_id    	 ");
+		sql.append(" 		        left join  ");
+		sql.append("                 desconto_logistica descontologisticaproduto  ");
+		sql.append("                     on descontologisticaproduto.id = p.desconto_logistica_id ");
+		sql.append("             WHERE ");
+		sql.append("                  l.status in ('EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')  ");
+		sql.append(" 		             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+		sql.append(              this.getWhereFiltroCurvaABC(filtro, null, TipoConsultaCurvaABC.DISTRIBUIDOR));
+		sql.append("             group by ");
+		sql.append("                 pe.numero_edicao, ");
+		sql.append("                 pe.id, ");
+		sql.append("                 mecReparte.cota_id, ");
+		sql.append("                 plp.numero_periodo            ");
+		sql.append("             ORDER BY ");
+		sql.append("                 l.ID desc )T                            ");
+		sql.append("             group by ");
+		sql.append("                 NUMERO_COTA, ");
+		sql.append("                 codigoEditor ");
+		sql.append("             ORDER BY ");
+		sql.append("                 vendaSum desc) temp                          ");
+		sql.append("         group by ");
+		sql.append("             codEditor ");
+		sql.append("         ORDER BY ");
+		sql.append("             faturamentoCapa desc) consolidado, ");
+		sql.append("             (select ");
+		sql.append("                 @valorAcumulado\\:=0, ");
+		sql.append("                 @posicaoRanking\\:=0) as s   ");
+		sql.append("                  ");
+		sql.append("                 ORDER BY rkEditor ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		this.getWhereFiltroCurvaABC(filtro, query, TipoConsultaCurvaABC.DISTRIBUIDOR);
 		
 		query.addScalar("codigoEditor", StandardBasicTypes.LONG);
 		query.addScalar("nomeEditor", StandardBasicTypes.STRING);
@@ -400,7 +586,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		
-		this.getFiltroCurvaABC(filtro, query);
+		this.configurarPaginacao(filtro, query);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCEditorVO.class));
 		
@@ -800,6 +986,112 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 		
 		return null;
+	}
+	
+	private String getWhereFiltroCurvaABC(FiltroCurvaABCDTO filtro, Query query, TipoConsultaCurvaABC tipoConsulta) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		if(tipoConsulta == TipoConsultaCurvaABC.DISTRIBUIDOR){
+			if (query == null){
+				sql = new StringBuilder();
+				sql.append(" and l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d') ");
+			} else {
+				query.setParameter("dataDe",  filtro.getDataDe());
+				query.setParameter("dataAte", filtro.getDataAte());
+			}
+		}
+		
+		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
+			
+			if (query == null){
+				
+				sql.append(" AND p.CODIGO = :codigoProduto ");
+			} else {
+				
+				query.setParameter("codigoProduto", filtro.getCodigoProduto());
+			}
+		}
+		
+		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
+			
+			if (query == null){
+				
+				sql.append("AND fornecedor.ID = :codigoFornecedor ");
+			} else {
+				
+				query.setParameter("codigoFornecedor", Long.parseLong(filtro.getCodigoFornecedor()));
+			}
+		}
+
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			
+			if (query == null){
+				
+				sql.append(" AND pe.numero_edicao in (:edicaoProduto) ");
+
+			} else {
+				
+				query.setParameterList("edicaoProduto", filtro.getEdicaoProduto());
+			}
+		}
+
+		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
+			
+			if (query == null){
+				
+				sql.append(" AND p.EDITOR_ID = :codigoEditor ");
+			} else {
+				
+				query.setParameter("codigoEditor", Long.parseLong(filtro.getCodigoEditor()));
+			}
+		}
+
+		if (filtro.getCodigoCota() != null) {
+			
+			if (query == null){
+				
+				sql.append(" AND c.NUMERO_COTA = :codigoCota ");
+			} else {
+				
+				query.setParameter("codigoCota", filtro.getCodigoCota());
+			}
+		}
+
+		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
+			
+			if (query == null){
+				
+				sql.append(" AND endereco.CIDADE = :municipio ");
+			} else {
+				
+				query.setParameter("municipio", filtro.getMunicipio());
+			}
+		}
+		
+		if (query == null){
+			
+			return sql.toString();
+		}
+		
+		return null;
+	}
+	
+	private void configurarPaginacao(FiltroDTO filtro, Query query) {
+
+		PaginacaoVO paginacao = filtro.getPaginacao();
+
+		if (paginacao.getQtdResultadosTotal().equals(0)) {
+			paginacao.setQtdResultadosTotal(query.list().size());
+		}
+
+		if(paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}
+
+		if (paginacao.getPosicaoInicial() != null) {
+			query.setFirstResult(paginacao.getPosicaoInicial());
+		}
 	}
 	
 	
