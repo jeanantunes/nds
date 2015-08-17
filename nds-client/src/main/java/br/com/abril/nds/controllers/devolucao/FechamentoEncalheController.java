@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.ValidationException;
 
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -253,6 +254,15 @@ public class FechamentoEncalheController extends BaseController {
         this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
+	public int getIndex(List <FechamentoFisicoLogicoDTO> fechamentosBanco, FechamentoFisicoLogicoDTO fechamento) {
+           for (FechamentoFisicoLogicoDTO fb : fechamentosBanco) {
+        	   if ( fb.getProdutoEdicao().equals(fechamento.getProdutoEdicao()))
+        			   return fechamentosBanco.indexOf(fb);
+        	   
+           }
+		return 0; // erro
+	}
+	
 	private List<FechamentoFisicoLogicoDTO> mergeItensFechamento(List<FechamentoFisicoLogicoDTO> fechamentosBanco, List<FechamentoFisicoLogicoDTO> fechamentoTela) {
 		
 		if (fechamentoTela == null) {
@@ -262,9 +272,23 @@ public class FechamentoEncalheController extends BaseController {
 		
 		for (FechamentoFisicoLogicoDTO fechamento : fechamentoTela) {
 			
-			int index = fechamentosBanco.indexOf(fechamento);
+		//	 int index1 = fechamentosBanco.indexOf(fechamento);
 			
+			int index = getIndex(fechamentosBanco,fechamento);
+			
+			if ( index < 0 ) {
+				
+				LOGGER.error("Erro ao salvar .. Fechamento produtoedicao="+fechamento.getProdutoEdicao() +" digitado na tela nao encontrado no banco");
+				throw new ValidacaoException(TipoMensagem.WARNING, "ERRO.Produto na tela ja nao existe na base de dados.Efetuar pesquisa novamente");
+				
+			}
+		LOGGER.error( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
+				fechamentosBanco.get(index).getCodigo()+"  qtd="+
+				fechamentosBanco.get(index).getFisico());
 			fechamentosBanco.get(index).setFisico(fechamento.getFisico());
+			LOGGER.error( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
+					fechamentosBanco.get(index).getCodigo()+"  qtd="+
+					fechamentosBanco.get(index).getFisico());
 		}
 		
 		return fechamentosBanco;

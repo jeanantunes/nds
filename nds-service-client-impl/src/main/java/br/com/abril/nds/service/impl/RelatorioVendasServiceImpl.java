@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +26,10 @@ import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
@@ -51,6 +54,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	
 	@Autowired
 	private PdvRepository pdvRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	private static final BigDecimal CEM = new BigDecimal(100);
 	
@@ -124,8 +130,18 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		
-		List<RegistroCurvaABCDistribuidorVO> lista =
-			this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingProduto);
+		List<ProdutoEdicao> edicoesDoProduto = this.produtoEdicaoRepository.obterProdutosEdicaoComVendaEntreDatas(filtroCurvaABCDistribuidorDTO);
+		
+		List<Long> numEdicoesProduto = new ArrayList<>();
+		
+		for (ProdutoEdicao produtoEdicao : edicoesDoProduto) {
+			numEdicoesProduto.add(produtoEdicao.getNumeroEdicao());
+		}
+		
+		filtroCurvaABCDistribuidorDTO.setEdicaoProduto(numEdicoesProduto);
+		
+		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCProduto(filtroCurvaABCDistribuidorDTO); 
+//				this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking.RankingProduto);
 		
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
 		

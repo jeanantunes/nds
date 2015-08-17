@@ -56,19 +56,19 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		if (codigoProduto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Código de Produto inválido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código de Produto inválido.");
 		}
 		
 		if (numeroEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Número de Edição inválido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número de Edição inválido.");
 		}
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
 		
 		if (produtoEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição inválido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto/Edição inválido.");
 		}
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -77,7 +77,7 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 			
 			if(produtoEdicao.isParcial()) {
 				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Não é possível transferir estoque de um produto Parcial.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível transferir estoque de um produto Parcial.");
 			}
 		}
 		
@@ -104,6 +104,8 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 				codigoProduto, numeroEdicaoDestino.toString());
 		
 		validarProdutosTransferencia(produtoEdicaoOrigem, produtoEdicaoDestino);
+		
+		validarLancamentoOrigem(produtoEdicaoOrigem);
 		
 		fecharLancamentoOrigem(produtoEdicaoOrigem);
 		
@@ -148,7 +150,7 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		if (qtdTransferencia == BigInteger.ZERO) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto Edição de origem sem estoque cadastrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição de origem sem estoque cadastrado.");
 		}
 	}
 	
@@ -165,10 +167,32 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 			
 		if(tipoMovimentoEstoque == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Movimento não encontrado.");
 		}
 		
 		this.movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicaoOrigem, idUsuario, qtde, tipoMovimentoEstoque);
+	}
+	
+	
+	
+	private void validarLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosDaEdicao(produtoEdicaoOrigem.getId());
+		
+		if (lancamentos == null || lancamentos.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há lançamento para o produto/edição de origem.");
+		}
+		
+		for (Lancamento lancamentoOrigem : lancamentos) {
+		    if ( StatusLancamento.EXPEDIDO.equals(lancamentoOrigem.getStatus()) ||
+		    	 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(lancamentoOrigem.getStatus()) ||
+		    	 StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(lancamentoOrigem.getStatus()) )
+		    		
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Status do Lançamento inválido para Transferencia.");
+	        
+	      
+		}
 	}
 
 	private void fecharLancamentoOrigem(ProdutoEdicao produtoEdicaoOrigem) {
@@ -193,17 +217,17 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		if (produtoEdicaoOrigem == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Origem não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto/Edição de Origem não encontrado.");
 		}
 		
 		if (produtoEdicaoDestino == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Destino não encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto/Edição de Destino não encontrado.");
 		}
 		
 		if (produtoEdicaoOrigem.getEstoqueProduto() == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto/Edição de Origem sem estoque cadastrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto/Edição de Origem sem estoque cadastrado.");
 		}
 		
 		//FIXME: removido para fins de homologacao
@@ -221,17 +245,17 @@ public class TransferenciaEstoqueParcialServiceImpl implements TransferenciaEsto
 		
 		if (codigoProduto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Código do Produto inválido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código do Produto inválido.");
 		}
 		
 		if (numeroEdicaoOrigem == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Número de Edição de Destino inválido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número de Edição de Destino inválido.");
 		}
 		
 		if (numeroEdicaoDestino == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Número de Edição de Destino inválido.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número de Edição de Destino inválido.");
 		}
 	}
 	

@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
@@ -2374,4 +2375,38 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
     	
     	return (BigDecimal) query.uniqueResult();
     }
+    
+    @SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> obterProdutosEdicaoComVendaEntreDatas(FiltroCurvaABCDistribuidorDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT  ");
+		sql.append(" pe.ID as id, pe.NUMERO_EDICAO as numeroEdicao ");
+		sql.append(" from produto_edicao pe  ");
+		sql.append(" join lancamento lcmt ");
+		sql.append("   on lcmt.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" join produto pdt ");
+		sql.append("   on pe.PRODUTO_ID = pdt.ID ");
+		sql.append("   where lcmt.status IN ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO') ");
+		sql.append("         and lcmt.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d')  ");
+		sql.append("         AND pdt.CODIGO = :codProduto  ");
+		
+//		Query query = getSession().createSQLQuery(sql.toString());
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("codProduto", filtro.getCodigoProduto());
+		query.setParameter("dataDe", filtro.getDataDe());
+		query.setParameter("dataAte", filtro.getDataAte());
+		
+		query.addScalar("id", StandardBasicTypes.LONG);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicao.class));
+		
+		
+		
+		return query.list();
+	}
 }

@@ -198,7 +198,7 @@ public class CapaController {
         } catch (final NumberFormatException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             file = new File(servletContext.getRealPath("") + NO_IMAGE_PATH);
         } finally {
             try {
