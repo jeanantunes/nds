@@ -167,8 +167,7 @@ public class FechamentoEncalheController extends BaseController {
 						TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens")
                     .recursive().serialize();
 		} else {
-			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
-					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
 
 			this.getSession().setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
 			

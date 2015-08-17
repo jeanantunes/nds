@@ -1140,7 +1140,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" 	inner join cota c on c.id = mec.cota_id ")
 		.append(" 	where 1=1 ")
 		.append("	and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte ")
-		.append(" 	and tm.GRUPO_MOVIMENTO_ESTOQUE in (:alteracaoReparteCota,:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")
+		.append(" 	and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")
 		.append("   and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
 		.append("   and l.status in ('EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO') ")
 		.append(" 	group by c.id, ce.DATA_RECOLHIMENTO, mec.PRODUTO_EDICAO_ID ")
@@ -1153,7 +1153,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			sql.append(" and c.numero_cota between :numeroCotaDe and :numeroCotaAte ");
 		}
 		
-		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:alteracaoReparteCota,:movimentoFaltaCota, :movimentoRecebimentoReparte, :movimentoCompraSuplementar) ");
+		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoFaltaCota, :movimentoRecebimentoReparte, :movimentoCompraSuplementar) ");
 		sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 		
 		sql.append(" union ")
@@ -1198,7 +1198,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	    .append("         where                                                                      ")
 	    .append("             1=1                                                                    ")
 	    .append("             and ce.DATA_RECOLHIMENTO between :recolhimentoDe and :recolhimentoAte  ")
-	    .append("             and tm.GRUPO_MOVIMENTO_ESTOQUE in (  :alteracaoReparteCota,                                  ")
+	    .append("             and tm.GRUPO_MOVIMENTO_ESTOQUE in (                                    ")
 	    .append("             		:movimentoRecebimentoReparte, :movimentoCompraSuplementar		 ")
 	    .append("             )                                                                      ")
 	    .append("             and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL                         ")
@@ -1217,7 +1217,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			sql.append(" and c.numero_cota between :numeroCotaDe and :numeroCotaAte ");
 		}
 
-		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :alteracaoReparteCota,:movimentoCompraSuplementar) ")  
+		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")  
 		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
 		.append("       and  l.status <> 'FECHADO' ")
 		.append(" ) rs1 ")
@@ -1236,7 +1236,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaProdutoEmissaoCEDTO.class));
 		
-		query.setParameter("alteracaoReparteCota", GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name());
 		query.setParameter("movimentoFaltaCota", GrupoMovimentoEstoque.FALTA_EM_COTA.name());
 		query.setParameter("movimentoRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		query.setParameterList("movimentoCompraSuplementar", Arrays.asList(
