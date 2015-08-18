@@ -672,10 +672,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario) {
 		
-		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
+		//if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
 			
-			return;
-		}
+			//return;
+		//}
 		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
