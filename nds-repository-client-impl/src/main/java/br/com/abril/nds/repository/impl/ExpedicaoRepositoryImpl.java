@@ -95,12 +95,14 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append(" SUM( resumoExpedicaoPorProduto.totalValorFaturado ) as valorFaturado ");
 		
 		sql.append(" FROM (");
-
-		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
-		.append(this.getQntDiferencaResumoLancamento()).append(", 0) ").append(" as qntReparte, ");
 		
-		sql.append("    innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
-		.append(this.getQntDiferencaResumoLancamento()).append(", 0) ").append(" ) AS totalValorFaturado ");
+		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( ")
+		.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
+		.append(this.getQntCotaAusente(false)).append(" as qntReparte, ");
+
+		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( ")
+		.append(this.getQntDiferencaResumoLancamento()).append(", 0) + ")
+		.append(this.getQntCotaAusente(false)).append(" ) AS totalValorFaturado ");
 		
 		sql.append("     FROM ");
 		sql.append("     ( ");
@@ -347,6 +349,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		query.append(" ( 											 ")
 		     .append("     select 												 ")	     
 		     .append("  sum(case when (tm.operacao_Estoque = 'ENTRADA') then (mec.qtde) else (-mec.qtde) end) ")
+		     
 		     .append("     from diferenca d 										 ")
 		     .append("     inner join lancamento_diferenca ld on ld.id = d.lancamento_diferenca_id ")
 		     .append("     inner join LANCAMENTO_DIFERENCA_MOVIMENTO_ESTOQUE_COTA ldmec on ld.ID = ldmec.LANCAMENTO_DIFERENCA_ID ")
@@ -586,12 +589,12 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append("	mec_st.DATA = innerQuery.dataLancamento");
 		sql.append("	AND mec_st.PRODUTO_EDICAO_ID =  produtoEdicaoId");
 		sql.append("	AND tp_movimento.GRUPO_MOVIMENTO_ESTOQUE IN('SUPLEMENTAR_COTA_AUSENTE', ")
-			.append("	'REPARTE_COTA_AUSENTE', ")
-			.append("	'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', ")
-			.append("	'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO', ")
-			.append("	'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', ")
-			.append("	'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')");
-		sql.append(")");
+			.append("	'REPARTE_COTA_AUSENTE' "); 
+			// .append("	'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', ")
+			// .append("	'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO', ")
+			// .append("	'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', ")
+			// .append("	'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')");
+		sql.append("))");
 		
 		return sql.toString();
 	}

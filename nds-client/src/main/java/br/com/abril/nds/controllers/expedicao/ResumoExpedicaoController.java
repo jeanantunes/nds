@@ -33,7 +33,6 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ExpedicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -241,8 +240,7 @@ public class ResumoExpedicaoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de consulta não encontrado!");
 		}
 		
-		FiltroResumoExpedicaoDTO filtroSessao = 
-			(FiltroResumoExpedicaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroResumoExpedicaoDTO filtroSessao = (FiltroResumoExpedicaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSessao != null) { 
 				
