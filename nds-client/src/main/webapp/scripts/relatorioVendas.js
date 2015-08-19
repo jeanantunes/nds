@@ -912,6 +912,15 @@ var relatorioVendasController = $.extend(true, {
 
 	executarPreProcessamentoSegmentacao: function(result) {
 		
+		if (result.mensagens) {
+			exibirMensagem(
+				result.mensagens.tipoMensagem, 
+				result.mensagens.listaMensagens
+			);
+			$(".grids", relatorioVendasController.workspace).hide();
+			return result;
+		}
+		
 		var tableModel = null;
 		var totalFaturamentoCapa = 0;
 		
