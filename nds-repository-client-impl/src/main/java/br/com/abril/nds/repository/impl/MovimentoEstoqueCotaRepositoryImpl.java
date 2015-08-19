@@ -442,29 +442,25 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append("INNER JOIN PRODUTO prod ON edicao.PRODUTO_ID = prod.id ");
         sql.append("INNER JOIN produto_fornecedor prodForn ON prod.id = prodForn.PRODUTO_ID ");
         sql.append("INNER JOIN fornecedor forn ON prodForn.fornecedores_ID = forn.id ");
+		sql.append("INNER JOIN chamada_encalhe ce on ce.PRODUTO_EDICAO_ID = edicao.id ");
+		sql.append("INNER JOIN chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.id and cec.cota_id = mec.cota_id ");
+		sql.append("INNER JOIN chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.id ");
+		sql.append("INNER JOIN lancamento l on l.id = cel.LANCAMENTO_ID and mec.LANCAMENTO_ID = l.id ");
         sql.append("WHERE ");
-        sql.append("mec.STATUS = :statusAprovacao AND	mec.produto_edicao_id IN (");
-        sql.append("SELECT DISTINCT pe.id AS produto_edicao_id ");
-        sql.append("FROM produto_edicao pe ");
-        sql.append("INNER JOIN produto p ON p.ID = pe.PRODUTO_ID ");
-        sql.append("LEFT JOIN chamada_encalhe ce ON ce.PRODUTO_EDICAO_ID = pe.id ");
-        sql.append("LEFT JOIN chamada_encalhe_cota cec ON (ce.ID = cec.CHAMADA_ENCALHE_ID AND cec.cota_id = :idCota) ");
-        sql.append("WHERE ");
-        sql.append("p.FORMA_COMERCIALIZACAO = :formaComercializacaoProduto OR (cec.COTA_ID = :idCota AND ce.DATA_RECOLHIMENTO IN (:datas) ) ");
-        sql.append(") AND ");
+        sql.append("mec.STATUS = :statusAprovacao AND "); 
         sql.append("mec.cota_id = :idCota AND ");
-        sql.append("(mec.STATUS_ESTOQUE_FINANCEIRO IS NULL OR ");
-        sql.append("mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro) AND ");
-        sql.append("mec.TIPO_MOVIMENTO_ID IN :idTiposMovimentoEstoque AND ");	 
-        sql.append("mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+        sql.append("(mec.STATUS_ESTOQUE_FINANCEIRO IS NULL OR mec.STATUS_ESTOQUE_FINANCEIRO = :statusFinanceiro) AND ");
+        sql.append("mec.TIPO_MOVIMENTO_ID IN :idTiposMovimentoEstoque AND ");
+        sql.append("mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL AND ");
+        sql.append("(prod.FORMA_COMERCIALIZACAO = :formaComercializacaoProduto OR cec.COTA_ID = :idCota) AND ");
+        sql.append("ce.DATA_RECOLHIMENTO IN (:datas) "); 
         sql.append("GROUP BY mec.ID");
         
         final Query query = getSession().createSQLQuery(sql.toString())
         		.addScalar("idMovimentoEstoqueCota",LongType.INSTANCE)
         		.addScalar("idCota",LongType.INSTANCE)
         		.addScalar("idProdutoEdicao",LongType.INSTANCE)
-        		.addScalar("idFornecedor",LongType.INSTANCE)
-        		
+        		.addScalar("idFornecedor",LongType.INSTANCE)		
         		.addScalar("qtde",BigIntegerType.INSTANCE)
         		.addScalar("precoComDesconto",BigDecimalType.INSTANCE)
         		.addScalar("precoVenda",BigDecimalType.INSTANCE)
@@ -478,8 +474,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.setParameterList("datas", datas);
         query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME.name());
         query.setResultTransformer(new AliasToBeanResultTransformer(MovimentosEstoqueEncalheDTO.class));
-        
-        
         
         return query.list();
     }
@@ -503,12 +497,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" movimento_estoque_cota mec ");
         sql.append(" inner join chamada_encalhe_cota cec on cec.cota_id = mec.cota_id ");
         sql.append(" inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = mec.produto_edicao_id ");
+        sql.append(" inner join chamada_encalhe_lancamento cel on cel.CHAMADA_ENCALHE_ID = ce.id ");
+        sql.append(" inner join lancamento l on l.id = mec.lancamento_id and l.id = cel.lancamento_id ");
         sql.append(" where mec.TIPO_MOVIMENTO_ID in (:idsTipoMovimentoEstorno) ");
         sql.append(" and mec.cota_id = :idCota ");
         
         if(datas != null && !datas.isEmpty()) {
         	
         	sql.append(" and ce.data_recolhimento IN (:datas) ");
+        	
         }
         
         sql.append(" group by mec.id ");

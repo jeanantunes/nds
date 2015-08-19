@@ -1197,8 +1197,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                  postergarDividas, 
 					                                  consolidadosCota, 
 					                                  vlMovFinanTotal);
-		}
-		else{
+		} else {
 
 			this.getConsolidadoHelperComCentralizacao(cota,
 					                                  cotaCentralizadora, 
@@ -1965,26 +1964,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					dataOperacao);
 	}
 	
-	private BigDecimal adicionarValor(BigDecimal valor, 
-									  MovimentoFinanceiroCota movimentoFinanceiroCota) {
+	private BigDecimal adicionarValor(BigDecimal valor, MovimentoFinanceiroCota movimentoFinanceiroCota) {
 		
 		if (movimentoFinanceiroCota.getValor() == null) {
 			
 			return BigDecimal.ZERO;
 		}
 		
-		GrupoMovimentoFinaceiro grupoMovimentoFinaceiro =
-			((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento())
-				.getGrupoMovimentoFinaceiro();
+		GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = ((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro();
 		
 		if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
 
-			return MathUtil.defaultRound(
-					valor.add(movimentoFinanceiroCota.getValor()));
+			return MathUtil.defaultRound(valor.add(movimentoFinanceiroCota.getValor()));
 		}
 
-		return MathUtil.defaultRound(
-			valor.add(movimentoFinanceiroCota.getValor().negate()));
+		return MathUtil.defaultRound(valor.add(movimentoFinanceiroCota.getValor().negate()));
 	}
 
 	/**

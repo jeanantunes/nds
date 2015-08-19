@@ -1655,21 +1655,21 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         // MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM
         // FINANCEIRO AGRUPADOS POR FORNECEDOR
         Map<Long, List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor;
-        final boolean isConferenciaRealizada = controleConferenciaEncalheCotaRepository
-                .isConferenciaEncalheCotaFinalizada(cota.getId(), dataOperacao);
+        final boolean isConferenciaRealizada = controleConferenciaEncalheCotaRepository.isConferenciaEncalheCotaFinalizada(cota.getId(), dataOperacao);
         
         if (isConferenciaRealizada) {
             
             movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteAVista(cota.getId(), dataOperacao);
+            
         } else {
             
             movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosConsignadosPrevistoDiaEAVistaCotaAVista(cota.getId(), dataOperacao);
+            
         }
         
         // MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR
         // FORNECEDOR
-        final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this
-                .obterMovimentosEstoqueEstorno(cota.getId(), Arrays.asList(dataOperacao));
+        final Map<Long, List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this.obterMovimentosEstoqueEstorno(cota.getId(), Arrays.asList(dataOperacao));
         
         // TODOS OS FORNECEDORES ENVOLVIDOS
         final Set<Long> fornecedoresId = new HashSet<Long>();
