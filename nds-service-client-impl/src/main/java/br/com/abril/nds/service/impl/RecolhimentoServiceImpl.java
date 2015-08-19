@@ -584,6 +584,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				for (CotaReparteDTO cotaReparte : cotasReparteLancamento) {
 
 					Cota cota = cotaReparte.getCota();
+					
 					BigInteger qtdPrevista = cotaReparte.getReparte();
 
 					this.removerChamadaEncalheCotaAntecipadaChamadao(cota, new ArrayList<>(chamadasEncalheProdutoEdicao));
@@ -672,10 +673,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario) {
 		
-		//if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
+		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
 			
-			//return;
-		//}
+			return;
+		}
 		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
