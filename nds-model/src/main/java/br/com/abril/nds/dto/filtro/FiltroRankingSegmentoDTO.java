@@ -8,7 +8,7 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroRankingSegmentoDTO {
+public class FiltroRankingSegmentoDTO extends FiltroDTO {
 	
 	@Export(label="De",widthPercent=10)
 	private Date de;
@@ -18,7 +18,6 @@ public class FiltroRankingSegmentoDTO {
 	@Export(label="Tipo Segmento",widthPercent=50)
 	private String descricaoTipoSegmento;
 	private BigDecimal totalFaturamento;
-	private PaginacaoVO paginacao;
 	
 	public FiltroRankingSegmentoDTO() { }
 	
@@ -52,12 +51,6 @@ public class FiltroRankingSegmentoDTO {
 	}
 	public void setDescricaoTipoSegmento(String descricaoTipoSegmento) {
 		this.descricaoTipoSegmento = descricaoTipoSegmento;
-	}
-	public PaginacaoVO getPaginacao() {
-		return paginacao;
-	}
-	public void setPaginacao(PaginacaoVO paginacao) {
-		this.paginacao = paginacao;
 	}
 	public BigDecimal getTotalFaturamento() {
 		return totalFaturamento;
