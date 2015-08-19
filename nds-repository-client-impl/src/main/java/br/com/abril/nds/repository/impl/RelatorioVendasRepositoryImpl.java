@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,12 +18,11 @@ import br.com.abril.nds.dto.TotalizadorRankingSegmentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroRankingSegmentoDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
@@ -35,72 +33,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	
 	public RelatorioVendasRepositoryImpl() {
 		super(Distribuidor.class);
-	}
-	
-	public Integer obterQtdRegistrosCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT count(*) FROM ( ");
-		
-		sql.append(" select consolidado.COTA_ID from ");
-
-		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
-		
-		sql.append(" GROUP BY consolidado.COTA_ID ) AS curvaDistribuidor");
-		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-
-		this.getFiltroCurvaABC(filtro, query);
-		
-		BigInteger qtde = (BigInteger) query.uniqueResult(); 
-		
-		return (qtde == null) ? 0 : qtde.intValue(); 
-		
-	}
-
-	public Integer obterQtdRegistrosCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT count(*) FROM ( ");
-		
-		sql.append(" SELECT consolidado.EDITOR_ID FROM ");
-		
-		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.EDITOR));
-		
-		sql.append(" GROUP BY consolidado.EDITOR_ID ) as curvaABCEditor ");
-		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-
-		this.getFiltroCurvaABC(filtro, query);
-		
-		BigInteger qtde = (BigInteger) query.uniqueResult(); 
-		
-		return (qtde == null) ? 0 : qtde.intValue(); 	
-	}
-
-	public Integer obterQtdRegistrosCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT count(*) FROM ( ");
-		
-		sql.append(" SELECT consolidado.PRODUTO_EDICAO_ID FROM ");
-		
-		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.PRODUTO_EDICAO));
-		
-		sql.append(" GROUP BY consolidado.PRODUTO_EDICAO_ID ");
-		
-		sql.append(" ) as curvaABCCota ");
-		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-
-		this.getFiltroCurvaABC(filtro, query);
-		
-		BigInteger qtde = (BigInteger) query.uniqueResult(); 
-		
-		return (qtde == null) ? 0 : qtde.intValue(); 	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -147,64 +79,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		return query.list();
 		
 	}
-	
-//	@Override
-//	@SuppressWarnings("unchecked")
-//	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro, TipoPesquisaRanking tipoPesquisa) {
-//		
-//		StringBuilder sql = new StringBuilder();
-//		
-//		sql.append(" select ");
-//		sql.append(" consolidado.COTA_ID AS idCota, ");
-//		
-//		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada,	");
-//		
-//		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
-//			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkCota, ");
-//		} else {
-//			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
-//		}
-//		
-//		sql.append(" consolidado.NUMERO_COTA AS numeroCota, 	");
-//		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
-//		sql.append(" consolidado.CIDADE_COTA AS municipio, 	");
-//		sql.append(" consolidado.valor as participacao,	");
-//		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
-//		sql.append(" consolidado.faturamentoCapa as faturamentoCapa		");
-//		
-//		sql.append("   from ");
-//		
-//		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
-//		
-//		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc, numeroCota ");
-//
-//		
-//		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-//		
-//		query.addScalar("idCota", StandardBasicTypes.LONG);
-//		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
-//		query.addScalar("nomeCota", StandardBasicTypes.STRING);
-//		query.addScalar("municipio", StandardBasicTypes.STRING);
-//		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
-//		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
-//		
-//		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
-//			query.addScalar("rkCota", StandardBasicTypes.LONG);
-//		} else {
-//			query.addScalar("rkProduto", StandardBasicTypes.LONG);
-//		}
-//		
-//		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
-//		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
-//		
-//
-//		this.getFiltroCurvaABC(filtro, query);
-//		
-//		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
-//		
-//		return query.list();
-//	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -344,7 +218,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append("             l.status in (:statusLancamento) ");
 		sql.append("             and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE'   ");
-//		sql.append("             and p.codigo = :codProduto ");
 		
 		sql.append(this.getWhereFiltroCurvaABC(filtro, null, filtro.getTipoConsultaCurvaABC()));
 		
@@ -784,8 +657,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
 		
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
-		
-//		this.getFiltroCurvaABC(filtro, query);
 		
 		this.configurarPaginacao(filtro, query);
 		
@@ -1372,6 +1243,5 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
-	
 	
 }

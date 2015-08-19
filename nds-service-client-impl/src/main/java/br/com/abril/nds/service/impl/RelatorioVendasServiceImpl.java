@@ -243,22 +243,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		return this.relatorioVendasRepository.obterQuantidadeRegistrosRankingSegmento(filtro);		
 	}
 	
-	@Transactional
-	public Integer obterQtdeRegistrosCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
-		return relatorioVendasRepository.obterQtdRegistrosCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
-	}
-
-	@Transactional
-	public Integer obterQtdeRegistrosCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
-		return relatorioVendasRepository.obterQtdRegistrosCurvaABCEditor(filtroCurvaABCEditorDTO);
-	}
-	
-	@Transactional
-	public Integer obterQtdeRegistrosCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return relatorioVendasRepository.obterQtdRegistrosCurvaABCCota(filtroCurvaABCCotaDTO);
-	}
-	
-	
 	/**
 	 * Obtéma a porcentagem de participação e participação acumulada no resultado da consulta.
 	 */
