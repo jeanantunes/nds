@@ -42,12 +42,6 @@ public interface RelatorioVendasRepository {
 	
 	List<RegistroRankingSegmentoDTO> obterRankingSegmento(FiltroRankingSegmentoDTO filtro);
 	
-	Integer obterQtdRegistrosCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro);
-		
-	Integer obterQtdRegistrosCurvaABCEditor(FiltroCurvaABCEditorDTO filtro);
-	
-	Integer obterQtdRegistrosCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
-	
 	TotalizadorRankingSegmentoDTO obterQuantidadeRegistrosRankingSegmento(FiltroRankingSegmentoDTO filtro);
 
 }
