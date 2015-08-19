@@ -3852,7 +3852,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" or (mec.statusEstoqueFinanceiro = :processado and cota.devolveEncalhe = true) ");
         
         sql.append(" or mec.statusEstoqueFinanceiro != :processado)" );
-        
+        // ajustando o group by
         sql.append(" group by mec.cota.id, produtoEdicao.id ");
         
         sql.append(" order by mec.cota.numeroCota ");

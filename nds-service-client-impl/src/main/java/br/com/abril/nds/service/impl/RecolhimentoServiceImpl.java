@@ -678,7 +678,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			return;
 		}
 		
-		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
 		if (!criarCahamadaEncalheCota) {
