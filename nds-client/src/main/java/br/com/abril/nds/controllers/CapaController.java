@@ -180,10 +180,10 @@ public class CapaController {
         
         InputStream att = null;
         OutputStream out = null;
-        File file = new File("temp" + FileType.JPG.getExtension());
+        File file = null;
         try {
             att = capaService.getCapaInputStream(codigoProduto, Long.parseLong(numeroEdicao));
-            
+            file = File.createTempFile("temp", FileType.JPG.getExtension());
             out = new FileOutputStream(file);
             
             int read = 0;
