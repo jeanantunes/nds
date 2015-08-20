@@ -1362,9 +1362,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         if (movimentosEstoqueCota != null) {
             
             for (final MovimentosEstoqueEncalheDTO item : movimentosEstoqueCota) {
-                
-                
-                
+            	
                 if (item.getPrecoComDesconto() != null) {
                     
                     precoVendaItem = item.getPrecoComDesconto();
