@@ -796,7 +796,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	private void validarAlteracaoDePrecoDeCapaDoProdutoEdicao(final ProdutoEdicao produtoEdicao, final ProdutoEdicaoDTO produtoEdicaoDTO){
     	
-    	if(produtoEdicao.getId() == null) {
+    	if(produtoEdicao == null || produtoEdicao.getId() == null) {
     		return;
     	}
     	
