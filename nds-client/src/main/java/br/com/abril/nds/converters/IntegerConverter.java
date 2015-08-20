@@ -28,7 +28,7 @@ public class IntegerConverter implements Converter<Integer> {
 		if ("null".equalsIgnoreCase(value)) {
 			return null;
 		}
-		if ("SELECIONE".equalsIgnoreCase(value)) {
+		if ( value.toLowerCase().startsWith("selecione")) {
 			return null;
 		}
 		if ("undefined".equalsIgnoreCase(value)) {

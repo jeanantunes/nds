@@ -29,13 +29,13 @@ public class BigIntegerConverter implements Converter<BigInteger> {
 		if ("null".equalsIgnoreCase(value)) {
 			return null;
 		}
-		if ("SELECIONE".equalsIgnoreCase(value)) {
+		if ( value.toLowerCase().startsWith("selecione")) {
 			return null;
 		}
 		if ("undefined".equalsIgnoreCase(value)) {
 			return null;
 		}
-		return new BigInteger(value);
+		return new BigInteger(value.replaceAll(",","."));
 	 } catch (Exception e ) {
 	    	e.printStackTrace();
 	    	LOGGER.error("ERRO CONVERSAO INTEGER='"+value+"'");
