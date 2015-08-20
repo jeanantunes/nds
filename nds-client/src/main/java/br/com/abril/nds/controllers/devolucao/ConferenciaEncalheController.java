@@ -1496,7 +1496,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (qtdExemplares == null) {
 		
-			qtdExemplares = this.session.getAttribute(QTD).toString();
+			qtdExemplares = (this.session != null && this.session.getAttribute(QTD) != null) ?this.session.getAttribute(QTD).toString():null;
 			this.session.setAttribute(QTD,"");
 		}
 		
