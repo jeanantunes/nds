@@ -47,7 +47,7 @@ public class BigDecimalConverter implements Converter<BigDecimal>{
 		
 		try {
 			//return (BigDecimal) getNumberFormat().parse(value);
-			return new BigDecimal(value.replaceAll(",","."));
+			return new BigDecimal(value.replaceAll(".","").replaceAll(",","."));
 		}   catch (Exception e ) {
 	    	e.printStackTrace();
 	    	LOGGER.error("ERRO CONVERSAO BIGDECIMAL='"+value+"'");
