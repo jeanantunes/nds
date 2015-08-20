@@ -1217,6 +1217,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     	final List<Long> idTiposMovimentoEstorno = tipoMovimentoEstoqueRepository.buscarIdTiposMovimentoEstoque(
     			Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
 	    					  GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR, 
+	    					  GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
 	    					  GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA,
 	    					  GrupoMovimentoEstoque.FALTA_EM_COTA));
     	
