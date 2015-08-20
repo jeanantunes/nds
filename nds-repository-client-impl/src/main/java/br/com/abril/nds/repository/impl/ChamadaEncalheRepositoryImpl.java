@@ -750,7 +750,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		gerarFromWhereProdutosCE(filtro, hql, param);
 		
 		hql.append(" group by chamadaenc1_.ID , cota4_.ID ");
-		
+		hql.append(" having reparte > 0 "); 
 		hql.append(" order by chamadaenc1_.DATA_RECOLHIMENTO, sequencia ");
 		
 		SQLQuery query =  getSession().createSQLQuery(hql.toString());
@@ -1217,7 +1217,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			sql.append(" and c.numero_cota between :numeroCotaDe and :numeroCotaAte ");
 		}
 
-		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")  
+		sql.append("    and tm.GRUPO_MOVIMENTO_ESTOQUE in (:movimentoFaltaCota, :alteracaoReparteCota, :movimentoRecebimentoReparte, :movimentoCompraSuplementar) ")  
 		.append("		and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
 		.append("       and  l.status <> 'FECHADO' ")
 		.append(" ) rs1 ")
@@ -1237,6 +1237,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaProdutoEmissaoCEDTO.class));
 		
 		query.setParameter("movimentoFaltaCota", GrupoMovimentoEstoque.FALTA_EM_COTA.name());
+		query.setParameter("alteracaoReparteCota", GrupoMovimentoEstoque.ALTERACAO_REPARTE_COTA.name());
 		query.setParameter("movimentoRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		query.setParameterList("movimentoCompraSuplementar", Arrays.asList(
 				GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR.name()
