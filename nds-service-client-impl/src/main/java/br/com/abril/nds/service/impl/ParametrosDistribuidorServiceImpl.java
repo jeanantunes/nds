@@ -198,8 +198,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			LOGGER.error("O código do Distribuidor deve ser numérico.", nfe);
 			codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
 		}
-		LOGGER.error("iniciando couchdDbClient com timeout de 60000 ms en parametrosdistribuidorserviceimpl");
-		this.couchDbClient = couchDBRepository.getCouchDBClient(codigoDistribuidor, true,60000); // timeout de 60 segundos
+		LOGGER.error("iniciando couchdDbClient com timeout de 30000 ms en parametrosdistribuidorserviceimpl");
+		this.couchDbClient = couchDBRepository.getCouchDBClient(codigoDistribuidor, true,30000); // timeout de 30 segundos
 	}
 
 	/* (non-Javadoc)
