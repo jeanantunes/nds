@@ -672,8 +672,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Override
 	@Transactional
-	public Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregador(
-			final FiltroMapaAbastecimentoDTO filtro) {
+	public Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregador(final FiltroMapaAbastecimentoDTO filtro) {
 	
 		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
 	
@@ -726,6 +725,70 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 			}
 	
+		}
+	
+		return quebraPorEnt;
+	}
+	
+	@Override
+	@Transactional
+	public Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
+	
+		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+	
+		if(produtosBoxRota.size() == 0){
+			return null;
+		}
+		
+		final Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> quebraPorEnt = new LinkedHashMap<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>>();
+		
+		MapaProdutoCotasDTO pcMapaDTO = null;
+	
+		Integer valorAux = 0;
+		
+		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
+		    
+		    final EntregadorDTO entDto = new EntregadorDTO();
+		    entDto.setCodigoBox(item.getCodigoBox());
+		    entDto.setDescricaoRota(item.getDescRota());
+		    entDto.setDescricaoRoteiro(item.getDescRoteiro());
+		    entDto.setIdEntregador(item.getIdEntregador());
+		    entDto.setNomeEntregador(item.getNomeEntregador());
+		    
+		    if (!quebraPorEnt.containsKey(entDto)){
+		        
+		        quebraPorEnt.put(entDto, new LinkedHashMap<Long, MapaProdutoCotasDTO>());
+		    }
+		    
+		    final Map<Long, MapaProdutoCotasDTO> mapas = quebraPorEnt.get(entDto);
+		    
+			if(!mapas.containsKey(item.getIdProdutoEdicao())) {
+	
+				pcMapaDTO = new MapaProdutoCotasDTO(
+						item.getCodigoProduto(),
+						item.getNomeProduto(),
+						item.getNumeroEdicao().longValue(),
+						item.getCodigoBarra(),
+						item.getPrecoCapa(),
+						new LinkedHashMap<Integer, Integer>(),
+						new LinkedHashMap<String, Integer>());
+	
+				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
+			}	
+	
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+			}
+	
+			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
+			
+			if (item.getReparte() != null){
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+				
+				valorAux = valorAux +  item.getReparte();
+				
+				pcMapaDTO.setQtdes(valorAux);
+			}
 		}
 	
 		return quebraPorEnt;

@@ -53,10 +53,10 @@
 		<band height="85" splitType="Immediate">
 			<elementGroup>
 				<rectangle>
-					<reportElement mode="Opaque" x="175" y="1" width="380" height="26" backcolor="#E0E0E0" uuid="b09d7e29-f67d-46eb-97f1-6fc25bc65835"/>
+					<reportElement mode="Opaque" x="0" y="1" width="175" height="26" backcolor="#E0E0E0" uuid="f3f15cb4-d877-4935-b63b-18f666907f77"/>
 				</rectangle>
 				<rectangle>
-					<reportElement mode="Opaque" x="0" y="1" width="175" height="26" backcolor="#E0E0E0" uuid="f3f15cb4-d877-4935-b63b-18f666907f77"/>
+					<reportElement mode="Opaque" x="175" y="1" width="380" height="26" backcolor="#E0E0E0" uuid="b09d7e29-f67d-46eb-97f1-6fc25bc65835"/>
 				</rectangle>
 				<subreport>
 					<reportElement stretchType="RelativeToTallestObject" x="0" y="27" width="555" height="58" isPrintWhenDetailOverflows="true" uuid="30d6a793-d7f5-4150-b401-f33f2559fb77"/>
@@ -71,7 +71,7 @@
 				<textField>
 					<reportElement style="rel_stext" x="180" y="3" width="375" height="20" uuid="8b4279a4-581f-40c4-ac49-0e71410f9be7"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 				</textField>

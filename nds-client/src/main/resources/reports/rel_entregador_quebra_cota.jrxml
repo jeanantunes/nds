@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="435"/>
+	<property name="ireport.y" value="0"/>
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+		<paragraph leftIndent="3"/>
+	</style>
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
+			<style mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="codigoProduto" class="java.lang.String"/>
+	<field name="boxQtdes" class="java.util.Map">
+		<fieldDescription><![CDATA[boxQtdes]]></fieldDescription>
+	</field>
+	<field name="class" class="java.lang.Class">
+		<fieldDescription><![CDATA[class]]></fieldDescription>
+	</field>
+	<field name="codigoDeBarras" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoDeBarras]]></fieldDescription>
+	</field>
+	<field name="cotasQtdes" class="java.util.Map">
+		<fieldDescription><![CDATA[cotasQtdes]]></fieldDescription>
+	</field>
+	<field name="nomeProduto" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProduto]]></fieldDescription>
+	</field>
+	<field name="numeroEdicao" class="java.lang.Long">
+		<fieldDescription><![CDATA[numeroEdicao]]></fieldDescription>
+	</field>
+	<field name="precoCapa" class="java.lang.String">
+		<fieldDescription><![CDATA[precoCapa]]></fieldDescription>
+	</field>
+	<field name="qtdes" class="java.lang.Integer"/>
+	<columnHeader>
+		<band height="20">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="20" backcolor="#D3D3D3" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
+			</rectangle>
+			<staticText>
+				<reportElement style="rel_stext" x="0" y="0" width="153" height="20" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+				<text><![CDATA[Produto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="rel_stext" x="152" y="0" width="76" height="20" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+				<text><![CDATA[Edição:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="rel_stext" x="227" y="0" width="155" height="20" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
+				<text><![CDATA[Código de Barras]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="rel_stext" x="381" y="0" width="87" height="20" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
+				<text><![CDATA[Preço R$]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="rel_stext" x="467" y="0" width="87" height="20" uuid="41ed712f-cd02-443f-bfa0-42e207e17843"/>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<elementGroup>
+				<textField>
+					<reportElement style="rel_ftext" x="0" y="0" width="153" height="20" uuid="66102603-6764-4518-9c7a-1be8c1ab3e48"/>
+					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="rel_ftext" x="152" y="0" width="76" height="20" uuid="0d0175ba-5bcb-4d5f-b47e-dbe5da07d052"/>
+					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="rel_ftext" x="227" y="0" width="155" height="20" uuid="511d1631-8dcd-4c59-b63d-7adf089b674e"/>
+					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="rel_ftext" x="381" y="0" width="87" height="20" uuid="4a798b18-5d79-473e-95fc-31d42617eab8"/>
+					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0">
+					<reportElement x="467" y="0" width="87" height="20" uuid="84d67095-1bff-49ec-86a3-f1fcc19f655f"/>
+					<textFieldExpression><![CDATA[$F{qtdes}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+		</band>
+	</detail>
+</jasperReport>
