@@ -975,7 +975,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
             	valorEncargoPorParcela = BigDecimal.ZERO;
             }
 
-            if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
+            if (!TipoCobranca.CHEQUE.equals(filtro.getTipoPagamento())
                     && (filtro.getIsentaEncargos() != null && !filtro.getIsentaEncargos())) {
                 
             	if (i == qtdParcelas - 1) {
@@ -1067,7 +1067,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         
         final BigDecimal valorTotal = filtro.getValorSelecionado();
         
-        if (valorTotal.compareTo(valorMinimoCobranca) < 0) {
+        if (valorTotal == null || valorTotal.compareTo(valorMinimoCobranca) < 0) {
             
             return 1;
         }
@@ -1093,7 +1093,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
         
         final Integer qntParcelas = filtro.getQntdParcelas();
-        
+        if ( filtro.getValorSelecionadoSemEncargo() == null ) return listParcelas;
+        if ( filtro.getValorEncargoSelecionado() == null ) return listParcelas;
         BigDecimal valorParcela = filtro.getValorSelecionadoSemEncargo().divide(BigDecimal.valueOf(qntParcelas),
                 DEFAULT_SCALE, RoundingMode.HALF_EVEN);
         BigDecimal somaParelas = BigDecimal.ZERO;
