@@ -612,11 +612,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
 					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
-					    
-					    chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
+						
+						chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 					
 					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), usuario);
+				
 				}
 			}
 		}
@@ -642,7 +643,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private boolean isDevolveEncalhe(final TipoCota tipoCota, 
 			                         Boolean devolveEncalhe){
 		
-		devolveEncalhe = (devolveEncalhe==null?true:devolveEncalhe);
+		devolveEncalhe = (devolveEncalhe == null ? true : devolveEncalhe);
 		
 		if (tipoCota.equals(TipoCota.A_VISTA)){
 			    
@@ -692,9 +693,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			chamadaEncalheCota = new ChamadaEncalheCota();
 		}
 		
-		BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+		if (chamadaEncalhe.getId() ==  52418) {
 			
-		qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
+			BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+		}
+		
+			
+		// qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
+		
+		if(chamadaEncalhe.getProdutoEdicao().getId() == 133571) {
+			System.out.println(qtdPrevista);
+		} 
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 		chamadaEncalheCota.setFechado(false);
@@ -711,6 +720,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		chamadaEncalhe.getChamadaEncalheCotas().add(chamadaEncalheCota);
+		
+		this.chamadaEncalheRepository.merge(chamadaEncalhe);
+		
 	}
 	
 	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe,
