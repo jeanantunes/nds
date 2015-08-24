@@ -1636,7 +1636,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
             for (ChamadaEncalhe ce : ces){
 			    
-				if(ce.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)){
+				if(ce.getTipoChamadaEncalhe().equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)
+				  && ce.getDataRecolhimento().equals(lancamento.getDataRecolhimentoDistribuidor())){
 				    
 					listaIdChamadaEncalheRemover.add(ce.getId());
 				}
