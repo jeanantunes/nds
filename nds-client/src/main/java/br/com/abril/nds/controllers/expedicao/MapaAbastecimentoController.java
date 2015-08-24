@@ -556,11 +556,23 @@ public class MapaAbastecimentoController extends BaseController {
 			break;	
 			case ENTREGADOR:
 				
-			    dados = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro).entrySet();
-			    
-			    nomeRelatorio = "Mapa de Abastecimento por Entregador";
-                
-                path += "rel_entregador_principal.jasper";
+                if (filtro.getQuebraPorCota()){
+                	
+                	dados = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(filtro).entrySet();
+                	
+                	nomeRelatorio = "Mapa de Abastecimento por Entregador Quebra Por Cota";
+                	
+                	path += "rel_entregador_por_quebra_cota_principal.jasper";
+                	
+                } else {
+                	
+                	dados = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregador(filtro).entrySet();
+                	
+                	nomeRelatorio = "Mapa de Abastecimento por Entregador";
+                	
+                	path += "rel_entregador_principal.jasper";
+                	
+                }
                 
 			break;
 			case BOX_X_COTA:

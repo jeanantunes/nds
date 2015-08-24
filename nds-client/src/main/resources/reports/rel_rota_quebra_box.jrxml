@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="8.0"/>
-	<property name="ireport.x" value="217"/>
-	<property name="ireport.y" value="113"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="182"/>
+	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
-		<paragraph leftIndent="3"/>
+		<paragraph leftIndent="1" tabStopWidth="30"/>
 	</style>
 	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false">
 		<paragraph leftIndent="3"/>
@@ -65,7 +65,7 @@
 					<reportElement x="0" y="0" width="550" height="20" isPrintWhenDetailOverflows="true" backcolor="#E2E2E2" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="rel_ftext" x="0" y="0" width="50" height="20" isPrintWhenDetailOverflows="true" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+					<reportElement style="rel_ftext" x="0" y="0" width="42" height="20" isPrintWhenDetailOverflows="true" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
 					<textElement>
 						<font fontName="Arial" isBold="false"/>
 						<paragraph leftIndent="2"/>
@@ -73,15 +73,15 @@
 					<text><![CDATA[Produto:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" x="46" y="0" width="114" height="20" isPrintWhenDetailOverflows="true" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
+					<reportElement style="rel_stext" x="41" y="0" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="c459a7e1-73b4-465b-a9e8-82292c56a977"/>
 					<textElement>
-						<font fontName="Arial Black" size="9" isBold="true"/>
+						<font fontName="Arial Black" size="8" isBold="true"/>
 						<paragraph leftIndent="2"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_ftext" x="160" y="0" width="25" height="20" isPrintWhenDetailOverflows="true" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+					<reportElement style="rel_ftext" x="203" y="0" width="20" height="20" isPrintWhenDetailOverflows="true" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
 					<textElement>
 						<font fontName="Arial"/>
 						<paragraph leftIndent="2"/>
@@ -89,7 +89,7 @@
 					<text><![CDATA[Ed.]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" mode="Transparent" x="177" y="0" width="35" height="20" isPrintWhenDetailOverflows="true" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
+					<reportElement style="rel_stext" mode="Transparent" x="222" y="0" width="25" height="20" isPrintWhenDetailOverflows="true" uuid="efb2c31b-d78c-4083-a052-6ba0333a2273"/>
 					<textElement>
 						<font fontName="Arial Black" size="9" isBold="true"/>
 						<paragraph leftIndent="2"/>
@@ -97,22 +97,22 @@
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_ftext" x="211" y="0" width="70" height="20" isPrintWhenDetailOverflows="true" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
-					<textElement>
+					<reportElement style="rel_ftext" x="246" y="0" width="54" height="20" isPrintWhenDetailOverflows="true" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
+					<textElement textAlignment="Left">
 						<font fontName="Arial"/>
-						<paragraph leftIndent="2"/>
+						<paragraph leftIndent="1"/>
 					</textElement>
 					<text><![CDATA[Cód. Barra]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" x="266" y="0" width="109" height="20" isPrintWhenDetailOverflows="true" uuid="56126155-a767-4406-a9bf-89bfdefb4a60"/>
-					<textElement>
+					<reportElement style="rel_stext" x="295" y="0" width="97" height="20" isPrintWhenDetailOverflows="true" uuid="56126155-a767-4406-a9bf-89bfdefb4a60"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial Black" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_ftext" x="374" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
+					<reportElement style="rel_ftext" x="391" y="0" width="58" height="20" isPrintWhenDetailOverflows="true" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
 					<textElement>
 						<font fontName="Arial"/>
 						<paragraph leftIndent="2"/>
@@ -120,14 +120,14 @@
 					<text><![CDATA[Preço Capa]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" x="438" y="0" width="35" height="20" isPrintWhenDetailOverflows="true" uuid="697e1b29-83c8-4862-948e-323e2eb91863"/>
+					<reportElement style="rel_stext" x="447" y="0" width="35" height="20" isPrintWhenDetailOverflows="true" uuid="697e1b29-83c8-4862-948e-323e2eb91863"/>
 					<textElement>
 						<font fontName="Arial Black" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_ftext" x="472" y="0" width="34" height="20" isPrintWhenDetailOverflows="true" uuid="b76b6452-f2bc-48e6-a44b-91804ed54163"/>
+					<reportElement style="rel_ftext" x="481" y="0" width="28" height="20" isPrintWhenDetailOverflows="true" uuid="b76b6452-f2bc-48e6-a44b-91804ed54163"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Arial" size="8" isBold="true"/>
 						<paragraph leftIndent="2"/>
@@ -135,7 +135,7 @@
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="rel_stext" x="506" y="1" width="44" height="20" isPrintWhenDetailOverflows="true" uuid="f276bf21-5846-4400-8118-ff14eb0df79d"/>
+					<reportElement style="rel_stext" x="508" y="0" width="42" height="20" isPrintWhenDetailOverflows="true" uuid="f276bf21-5846-4400-8118-ff14eb0df79d"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Black" size="9"/>
 					</textElement>

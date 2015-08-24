@@ -30,49 +30,49 @@
 	<field name="key" class="java.lang.String"/>
 	<field name="value" class="java.lang.Integer"/>
 	<background>
-		<band height="40">
+		<band height="50">
 			<rectangle>
-				<reportElement x="55" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="15a6bd05-0173-4166-8c89-3534cca94faf"/>
+				<reportElement x="55" y="0" width="55" height="25" backcolor="#FFFFFF" uuid="15a6bd05-0173-4166-8c89-3534cca94faf"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="220" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="d62e04bc-2dcc-4f3a-9e55-f69d21e3a8af"/>
+				<reportElement x="220" y="0" width="55" height="25" backcolor="#FFFFFF" uuid="d62e04bc-2dcc-4f3a-9e55-f69d21e3a8af"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="55" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="993984a9-1aca-41da-9b59-c88d11db8e2a"/>
+				<reportElement x="55" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="993984a9-1aca-41da-9b59-c88d11db8e2a"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="8d033d1a-ad09-427d-95fa-1e81e8804bbc"/>
+				<reportElement x="0" y="0" width="55" height="25" backcolor="#FFFFFF" uuid="8d033d1a-ad09-427d-95fa-1e81e8804bbc"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="110" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="d3ffaefd-9015-4f33-84d4-c4907cab684d"/>
+				<reportElement x="110" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="d3ffaefd-9015-4f33-84d4-c4907cab684d"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="165" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="6a45c64f-e348-4f3d-93ab-d5bdaadf7c97"/>
+				<reportElement x="165" y="0" width="55" height="25" backcolor="#FFFFFF" uuid="6a45c64f-e348-4f3d-93ab-d5bdaadf7c97"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="165" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="5570240f-3f3c-4388-9fa6-767105f4bde5"/>
+				<reportElement x="165" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="5570240f-3f3c-4388-9fa6-767105f4bde5"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="220" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="d5173f6a-9a26-4f5d-9eae-391c4ff8d01d"/>
+				<reportElement x="220" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="d5173f6a-9a26-4f5d-9eae-391c4ff8d01d"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="275" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="b34eba0b-a7a3-4b17-88c7-7e89967fab7c"/>
+				<reportElement x="275" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="b34eba0b-a7a3-4b17-88c7-7e89967fab7c"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="20b3d83c-a0ab-40a2-a5a4-a6f49ffa466f"/>
+				<reportElement x="0" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="20b3d83c-a0ab-40a2-a5a4-a6f49ffa466f"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="275" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="f5cd6d74-1a16-4a47-a5c2-388fe7e31261"/>
+				<reportElement x="275" y="0" width="55" height="25" backcolor="#FFFFFF" uuid="f5cd6d74-1a16-4a47-a5c2-388fe7e31261"/>
 			</rectangle>
 			<rectangle>
-				<reportElement x="110" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="751d6092-ba58-489c-a860-4d187131e44e"/>
+				<reportElement x="110" y="0" width="55" height="25" backcolor="#FFFFFF" uuid="751d6092-ba58-489c-a860-4d187131e44e"/>
 			</rectangle>
 		</band>
 	</background>
 	<detail>
-		<band height="40" splitType="Stretch">
+		<band height="50" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement style="Estilo Zebrado_centralizado" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c"/>
+				<reportElement style="Estilo Zebrado_centralizado" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="55" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -92,7 +92,7 @@
 ($F{key}.equalsIgnoreCase("|16") == false) ? $F{key}.replace("|", "") : " ")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="rel_ftext_centralizado" positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="20" width="55" height="20" backcolor="#FFFFFF" uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d"/>
+				<reportElement style="rel_ftext_centralizado" positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="25" width="55" height="25" backcolor="#FFFFFF" uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
