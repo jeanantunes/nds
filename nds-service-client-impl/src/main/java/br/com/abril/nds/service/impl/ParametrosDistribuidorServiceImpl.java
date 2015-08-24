@@ -198,7 +198,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			LOGGER.error("O código do Distribuidor deve ser numérico.", nfe);
 			codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
 		}
-		LOGGER.error("iniciando couchdDbClient com timeout de 30000 ms en parametrosdistribuidorserviceimpl");
+		LOGGER.warn("iniciando couchdDbClient com timeout de 30000 ms en parametrosdistribuidorserviceimpl");
 		this.couchDbClient = couchDBRepository.getCouchDBClient(codigoDistribuidor, true,30000); // timeout de 30 segundos
 	}
 
@@ -1392,9 +1392,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		InputStream inputStream = null;
 		
 		try {
-			LOGGER.error("obtendo logo do distribuidor");
+			LOGGER.warn("obtendo logo do distribuidor");
 			inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
-			LOGGER.error("obtido logo do distribuidor");
+			LOGGER.warn("obtido logo do distribuidor");
 		} catch (Exception e) {
 			try {
 			LOGGER.error("Erro obtendo logo do distribuidor.Usando no_image.jpeg",e);
