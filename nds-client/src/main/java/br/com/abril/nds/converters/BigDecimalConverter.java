@@ -28,6 +28,7 @@ public class BigDecimalConverter implements Converter<BigDecimal>{
 
 	 private static final Logger LOGGER = LoggerFactory.getLogger(BigDecimalConverter.class);
 	public BigDecimal convert(String value, Class<? extends BigDecimal> type, ResourceBundle bundle) {
+		LOGGER.error("BIGDECIMAL CONVERTER"+value);
 		if (isNullOrEmpty(value)) {
 			return null;
 		}
@@ -47,10 +48,11 @@ public class BigDecimalConverter implements Converter<BigDecimal>{
 		
 		try {
 			//return (BigDecimal) getNumberFormat().parse(value);
-			return new BigDecimal(value.replaceAll(".","").replaceAll(",","."));
+			LOGGER.error(value.replaceAll("\\.","").replaceAll(",","."));
+			return new BigDecimal(value.replaceAll("\\.","").replaceAll(",","."));
 		}   catch (Exception e ) {
 	    	e.printStackTrace();
-	    	LOGGER.error("ERRO CONVERSAO BIGDECIMAL='"+value+"'");
+	    	LOGGER.error("ERRO DE CONVERSAO BIGDECIMAL='"+value+"' "+value.replaceAll(".","").replaceAll(",","."));
 	    	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_number"), value));    
 	    }
 	}
