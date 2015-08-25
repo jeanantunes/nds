@@ -717,7 +717,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
         
         .append(" coalesce(movimentoe16_.PRECO_COM_DESCONTO, movimentoe16_.PRECO_VENDA, 0) as precoComDesconto, ")
         
-        .append(" (select sum(case when tm.OPERACAO_ESTOQUE = 'ENTRADA' then mec.qtde else -mec.qtde end)       ")
+        .append(" (select sum(cec.qtde_prevista) ")
         .append(" from movimento_estoque_cota mec  FORCE INDEX (NDX_PRODUTO_EDICAO)			                                                             ")
         .append(" inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID                                 ")
         .append(" inner join produto_edicao pe on pe.id = mec.PRODUTO_EDICAO_ID                                 ")
