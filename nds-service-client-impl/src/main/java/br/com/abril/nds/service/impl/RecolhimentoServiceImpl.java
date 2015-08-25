@@ -611,9 +611,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe.setLancamentos(lancamentos);
 					
+					chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
+					
 					if (!chamadasEncalheProdutoEdicao.contains(chamadaEncalhe)) {
 						
-						chamadasEncalheProdutoEdicao.add(chamadaEncalhe);
 					}
 					
 					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), usuario);
@@ -692,18 +693,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			chamadaEncalheCota = new ChamadaEncalheCota();
 		}
-		
-		if (chamadaEncalhe.getId() ==  52418) {
-			
-			BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
-		}
-		
 			
 		// qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
-		
-		if(chamadaEncalhe.getProdutoEdicao().getId() == 133571) {
-			System.out.println(qtdPrevista);
-		} 
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 		chamadaEncalheCota.setFechado(false);
