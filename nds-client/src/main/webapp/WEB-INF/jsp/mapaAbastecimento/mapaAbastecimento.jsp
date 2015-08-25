@@ -67,6 +67,7 @@
 				
 	      	</select>
 		</fieldset>
+		<a> Utilize o Control A (Ctrl+A) para selecionar todos os produtos</a>
 	</div>
 </form>
 
