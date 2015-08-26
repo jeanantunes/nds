@@ -945,4 +945,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		getSession().flush();
 		
 	}
+
+	@Override
+	public void removerChamadaEncalheCotaZerada(Date dataConfirmada) {
+		
+		String hql  = "delete from chamada_encalhe_cota where CHAMADA_ENCALHE_ID in (SELECT id from chamada_encalhe where DATA_RECOLHIMENTO = :dataConfirmada) and QTDE_PREVISTA <= 0";
+		
+		Query query = getSession().createSQLQuery(hql.toString());
+		
+		query.setParameter("dataConfirmada", dataConfirmada);	
+		
+		query.executeUpdate();
+		
+		getSession().flush();
+		
+	}
 }

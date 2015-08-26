@@ -3811,9 +3811,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         sql.append(" select cota as cota, ");
         sql.append(" mec.cotaContribuinteExigeNF as cotaContribuinteExigeNF, ");
         sql.append(" sum( ");
-        sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'ENTRADA') ");
-        sql.append(" 	then (mec.qtde) ");
-        sql.append(" 	else (-mec.qtde) end ");
+        sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'SAIDA') ");
+        sql.append(" 	then (-mec.qtde) ");
+        sql.append(" 	else (mec.qtde) end ");
         sql.append(" ) as reparte, ");
         sql.append(" lancamento.id as idLancamento ");
         
@@ -3850,7 +3850,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" or mec.statusEstoqueFinanceiro != :processado)" );
         // ajustando o group by
-        sql.append(" group by mec.cota.id, produtoEdicao.id ");
+        sql.append(" group by mec.cota.id, produtoEdicao.id, lancamento.id ");
         
         sql.append(" order by mec.cota.numeroCota ");
         

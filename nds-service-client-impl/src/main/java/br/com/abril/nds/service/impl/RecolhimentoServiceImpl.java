@@ -619,6 +619,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe, lancamento.getDataLancamentoDistribuidor(), cotaReparte.isCotaContribuinteExigeNF(), usuario);
 				
+					this.chamadaEncalheRepository.merge(chamadaEncalhe);
 				}
 			}
 		}
@@ -675,10 +676,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 										 boolean cotaContribuinteExigeNF,
 										 Usuario usuario) {
 		
-		if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
+		//if(BigInteger.ZERO.compareTo(qtdPrevista) >= 0) {
 			
-			return;
-		}
+			//return;
+		//}
 		
 		boolean criarCahamadaEncalheCota = this.isDevolveEncalhe(cota.getTipoCota(), cota.isDevolveEncalhe());
 		
@@ -693,8 +694,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			chamadaEncalheCota = new ChamadaEncalheCota();
 		}
-			
-		// qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
+		
+		BigInteger qtdPrevistaExistente = chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+		
+		qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 		chamadaEncalheCota.setFechado(false);
@@ -1791,4 +1794,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void removerChamadaEncalheCotaZerada(List<Date> dataConfirmadas) {
+		
+		for (Date dataConfirmada : dataConfirmadas) {
+			this.chamadaEncalheCotaRepository.removerChamadaEncalheCotaZerada(dataConfirmada);
+		}
+	}
+	
 }
