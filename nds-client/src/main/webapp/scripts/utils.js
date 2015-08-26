@@ -55,7 +55,7 @@ function createCookie(name, value, days) {
   
   
 
-    document.cookie = name + "=" + value + ";expires=-1; path=/nds-client/";
+    document.cookie = name + "=" + value + ";expires=-1;";
 }
 
 function readCookie(name) {
