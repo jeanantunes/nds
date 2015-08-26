@@ -194,7 +194,8 @@ public class PDV implements Serializable {
 	@Column(name = "TIPO_EXPOSITOR")
 	private String tipoExpositor;
 
-	@OneToOne(mappedBy = "pdv")	  	
+	@OneToOne(mappedBy = "pdv")
+	@Cascade(org.hibernate.annotations.CascadeType.REMOVE)
 	private GeradorFluxoPDV geradorFluxoPDV;
 	
 	@OneToMany(mappedBy = "pdv")
