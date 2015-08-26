@@ -190,5 +190,8 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param ids
 	 */
 	void removerChamadaEncalheCotaPorIdsChamadaEncalhe(List<Long> ids);
+
+
+	void removerChamadaEncalheCotaZerada(Date dataConfirmada);
 	
 }

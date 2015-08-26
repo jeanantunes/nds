@@ -111,5 +111,6 @@ public interface RecolhimentoService {
 	void salvarBalanceamentoRecolhimento(Usuario usuario,
 			BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO,
 			StatusLancamento statusLancamento,Date dataPesquisa);
-	
+
+	void removerChamadaEncalheCotaZerada(List<Date> dataConfirmadas);
 }

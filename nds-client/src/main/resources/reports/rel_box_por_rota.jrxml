@@ -63,73 +63,6 @@
 	<detail>
 		<band height="50" splitType="Immediate">
 			<elementGroup>
-				<textField isBlankWhenNull="true">
-					<reportElement style="Estilo Zebrado" mode="Opaque" x="0" y="0" width="104" height="25" backcolor="#FFFFFF" uuid="f721d52e-5dde-46f8-9389-493bc4863c4b"/>
-					<box>
-						<topPen lineWidth="1.0"/>
-						<leftPen lineWidth="1.0"/>
-						<bottomPen lineWidth="0.0"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $F{nomeProduto}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="25" width="104" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="6bc3785e-4ca4-40e5-89e4-284f8e4e135f"/>
-					<box>
-						<topPen lineWidth="0.0"/>
-						<leftPen lineWidth="1.0"/>
-						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="0.0"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $F{codigoDeBarras}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement style="Estilo Zebrado" mode="Opaque" x="104" y="0" width="70" height="25" backcolor="#FFFFFF" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
-					<box>
-						<topPen lineWidth="1.0"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.0"/>
-						<rightPen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-						<paragraph leftIndent="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" pattern="R$¤ #,##0.00">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="104" y="25" width="70" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="992d83cc-100a-4b06-96a0-841e6ad96a52"/>
-					<box>
-						<topPen lineWidth="0.0"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-						<paragraph leftIndent="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA["R$" + $F{precoCapa}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement style="Estilo Zebrado_centralizado" stretchType="RelativeToTallestObject" mode="Opaque" x="505" y="25" width="50" height="25" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="bcaeee05-7f6e-4775-a686-35572a75635b"/>
-					<box rightPadding="5">
-						<topPen lineWidth="1.0"/>
-						<leftPen lineWidth="1.0"/>
-						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-						<font size="9" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{totalReparte}]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement style="rel_stext_centralizado" x="505" y="0" width="50" height="25" uuid="acae5179-3946-442f-8d5a-ccd48764ff4d"/>
 					<box rightPadding="5">
@@ -148,6 +81,73 @@
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{rotasQtde}.entrySet())]]></dataSourceExpression>
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota_subbox.jasper"]]></subreportExpression>
 				</subreport>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="24" width="104" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="6bc3785e-4ca4-40e5-89e4-284f8e4e135f"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $F{codigoDeBarras}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Estilo Zebrado_centralizado" stretchType="RelativeToTallestObject" mode="Opaque" x="505" y="25" width="50" height="25" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="bcaeee05-7f6e-4775-a686-35572a75635b"/>
+					<box rightPadding="5">
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalReparte}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="R$¤ #,##0.00">
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="104" y="24" width="70" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="992d83cc-100a-4b06-96a0-841e6ad96a52"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["R$" + $F{precoCapa}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement style="Estilo Zebrado" mode="Opaque" x="104" y="0" width="70" height="25" backcolor="#FFFFFF" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="Estilo Zebrado" mode="Opaque" x="0" y="0" width="104" height="25" backcolor="#FFFFFF" uuid="f721d52e-5dde-46f8-9389-493bc4863c4b"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $F{nomeProduto}]]></textFieldExpression>
+				</textField>
 			</elementGroup>
 		</band>
 	</detail>
