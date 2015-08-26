@@ -422,7 +422,8 @@ public class ConferenciaEncalheController extends BaseController {
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
 	        throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 	    }
-		
+        bloqueioConferenciaEncalheComponent.atribuirTravaConferenciaCotaUsuario(cota.getNumeroCota(), this.session);
+    	
 		carregarMapaDatasEncalheConferiveis(numeroCota);
 		
 		if(this.conferenciaEncalheService.verificarCotaComConferenciaEncalheFinalizada(numeroCota)) {
@@ -1752,9 +1753,11 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	@LogFuncional(value="Conferência de Encalhe [Salvar conferência]")
-	public void salvarConferencia(final boolean indConferenciaContingencia){
+	@LogFuncional(value="Conferência de Encalhe [Salvar conferência -F8]")
+	//public synchronized void salvarConferencia(final boolean indConferenciaContingencia){
+		public  void salvarConferencia(final boolean indConferenciaContingencia){	
 		
+		LOGGER.error("F8 - salvando conferencia encalhe - inicio ");
 		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
 		bloqueioConferenciaEncalheComponent.validarUsuarioConferindoCota(session, numeroCota);
 		
@@ -1785,6 +1788,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
                 "result").recursive()
                 .serialize();
+		LOGGER.error("F8 - salvando conferencia encalhe - fim ");
 	}
 	
 	
@@ -2042,9 +2046,10 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	@LogFuncional(value="Conferência de Encalhe [Finalizar conferência]")
+	@LogFuncional(value="Conferência de Encalhe [Finalizar conferência - F9]")
 	public void finalizarConferencia(final boolean indConferenciaContingencia) throws Exception {
 		
+		LOGGER.error("F9 - finalizando conferencia encalhe - inicio ");
 		final Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
 		
 		final Integer numeroCota = (Integer) this.session.getAttribute(NUMERO_COTA);
@@ -2170,6 +2175,7 @@ public class ConferenciaEncalheController extends BaseController {
 		} else {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada."), "result").recursive().serialize();
 		}
+		LOGGER.error("F9 - finalizando conferencia encalhe - fim ");
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -1,6 +1,7 @@
 // JavaScript Document
 
 var timeout = null;
+var windowname='';
 $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status == 601) {
 		 exibirMensagem('ERROR',['Sua sessão expirou.\nVocê será redirecionado para a página de login.']);
@@ -856,7 +857,29 @@ function definirAcaoPesquisaTeclaEnter(workspace) {
 	}
 }
 
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
 function logout() {
+	
+	var windownames = readCookie("WINDOWNAMES");
+	if ( windownames.length > 0  && windownames > 1) {
+	
+		if(!confirm("Confirmar Navegação\n\nVocê possui outras janelas abertas ("+windownames+") .Encerrando esta janela encerrará todas as outras\n\n"+
+				"Tem certeza que deseja sair desta página ?"))
+			return;
+		
+		
+	}
+	
 	limparCache();
 	window.location.href= contextPath + "/j_spring_security_logout";
 }

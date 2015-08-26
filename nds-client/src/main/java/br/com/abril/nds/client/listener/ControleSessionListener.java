@@ -113,7 +113,7 @@ public class ControleSessionListener implements HttpSessionListener {
       	  return;
       }
 	    
-		HistogramaPosEstudoController.desbloquearAnaliseEstudo(session.getServletContext(),usuario);
+		HistogramaPosEstudoController.desbloquearAnaliseEstudo(session,usuario);
 	}
 	
 	/**

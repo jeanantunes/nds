@@ -1,5 +1,6 @@
 var disabledEnterModalConfirmar = [];
 
+
 //Sobrescrita da funcao toFixed para arredondamento no Chrome
 Number.prototype.round = function(digits) {
     digits = Math.floor(digits);
@@ -25,6 +26,86 @@ Number.prototype.toFixed = function(digits) {
     }
     return parts[0] + '.' + fraction;
 };
+
+
+
+//Events 
+//alert('utils');'
+$(window).ready(function() {disableaba();generateWindowID()});
+$(window).focus(function() {disableaba();setAppId()});
+$(window).mouseover(function() {disableaba();setAppId()});
+
+function disableaba () {
+	
+	var windownames = readCookie("WINDOWNAMES");
+	
+	if ( windownames.length > 0  && windownames > 1) {
+		pageRefresh.disable("Você possui outras janelas abertas ("+windownames+") .Encerrando esta janela encerrará todas as outras");
+	}
+}
+// Cookies
+function createCookie(name, value, days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        var expires = "; expires=" + date.toGMTString();
+    }
+    else var expires = "";
+
+  
+  
+
+    document.cookie = name + "=" + value + ";expires=-1; path=/nds-client/";
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name, "", 0);
+}
+
+function generateWindowID()
+{
+  console.log('generate1'+document.cookie);
+    //first see if the name is already set, if not, set it.
+    if (window.name.indexOf("SEAppId") == -1){
+            window.name = 'SEAppId_' + (new Date()).getTime();
+           
+            
+           
+    }
+    setAppId();
+   
+    
+    
+  console.log('generate2'+document.cookie);
+}
+
+function setAppId()
+{
+    //generate the cookie
+	console.log(window.name);
+	
+	createCookie('WINDOWNAME',window.name,1);
+	
+   //  var wn = window.name.split("_")[1];
+   //  if ( cok.indexOf(wn) < 0 )
+	//	   createCookie("JSESSIONID",cok+wn,1)
+	  
+	  
+   
+  
+ 
+}
 
 var messageTimeout;
 var messageDialogTimeout;
@@ -727,11 +808,26 @@ var pageRefresh = {
 		
 		var defaultMessage = "Um processo está sendo executado";
 		
+		var windownames = readCookie("WINDOWNAMES");
+	
+		if ( windownames.length > 0  && windownames > 1) {
+			console.log(windownames);
+			defaultMessage = "Voce possui outras abas abertas.Encerrando esta aba ira encerrar todas as outras";
+			window.onbeforeunload = function() {
+			return message || defaultMessage;
+		}
+			
+		} else {
+		
 		window.onbeforeunload = function() {
 			return message || defaultMessage;
 		};
+		 }
 		
 	},
+	
+
+	
 	
 	/**
 	 * ReAbilita o page refresh
