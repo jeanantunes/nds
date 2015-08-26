@@ -39,7 +39,7 @@ function disableaba () {
 	
 	var windownames = readCookie("WINDOWNAMES");
 	
-	if ( windownames.length > 0  && windownames > 1) {
+	if ( windownames != null  && windownames.length > 0  && windownames > 1) {
 		pageRefresh.disable("Você possui outras janelas abertas ("+windownames+") .Encerrando esta janela encerrará todas as outras");
 	}
 }

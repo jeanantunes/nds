@@ -31,7 +31,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
 
       try {
-        
+        String path=req.getContextPath()+"/";
         // Java 1.8 stream API used here
         Cookie [] cookies = req.getCookies();
         String windowname =null;
@@ -44,6 +44,7 @@ public class LoginFilter implements Filter {
         	 
         	 if (cookies[i].getName().equals("JSESSIONID")) {
         	  ks=i;
+        	 
         
         	 }
         	 if (cookies[i].getName().equals("WINDOWNAME")) {
@@ -91,7 +92,7 @@ public class LoginFilter implements Filter {
             Cookie cookie1 = new Cookie("WINDOWNAMES", ""+map.size());
             cookie1.setMaxAge(-1);
          
-            cookie1.setPath("/nds-client/");
+            cookie1.setPath(path);
             resp.addCookie(cookie1); 
         
             chain.doFilter(request, response);
