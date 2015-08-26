@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,9 @@ public class HistogramaPosEstudoController extends BaseController{
 
     @Autowired
     private LancamentoService lancamentoService;
+    
+	@Autowired
+	private HttpServletRequest request ;
 
     @Path("/index")
 	public void histogramaPosEstudo(Long idLancamento) {
@@ -234,6 +239,18 @@ public class HistogramaPosEstudoController extends BaseController{
 				new ValidacaoVO(TipoMensagem.WARNING, "Estudo inválido!"));
 		}
 		
+		// conferir se ja nao tem um estudo aberto em outra aba nesta sessao
+    	String windowname_estudo=(String) session.getAttribute("WINDOWNAME_ESTUDO");
+    	String windowname=(String) session.getAttribute("WINDOWNAME");
+    	
+      	 
+    	if ( windowname_estudo != null && windowname != null && !windowname_estudo.equals(windowname))
+    	{
+    		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Ja existe um Estudo sendo analisado em outra aba/janela"));
+    	}
+    	session.setAttribute("WINDOWNAME_ESTUDO",windowname);
+    	
+		
 		Map<Long, String> mapaAnaliseEstudo = 
 			(Map<Long, String>) session.getServletContext().getAttribute(
 				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
@@ -243,39 +260,41 @@ public class HistogramaPosEstudoController extends BaseController{
 			String loginUsuarioBloqueio = mapaAnaliseEstudo.get(idProdutoEdicao);
 			
 			if (loginUsuarioBloqueio != null
-					&& !loginUsuarioBloqueio.equals(loginUsuario)) {
+					&& !loginUsuarioBloqueio.equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
 				
 				throw new ValidacaoException(
 					new ValidacaoVO(TipoMensagem.WARNING, 
 						"Este estudo já está sendo analisado pelo usuário [" 
-							+ this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio) + "]."));
+							+ this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio.split(";")[0]) + "]."));
 			}
+			
 		} else {
 		
 			mapaAnaliseEstudo = new HashMap<Long, String>();
 		}
 		
-		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario);
+		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		session.getServletContext().setAttribute(
 			MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void desbloquearAnaliseEstudo(ServletContext servletContext, String loginUsuario) {
+	public static void desbloquearAnaliseEstudo(HttpSession session, String loginUsuario) {
 
+	
+		
 		Map<Long, String> mapaAnaliseEstudo = 
-			(Map<Long, String>) servletContext.getAttribute(
+			(Map<Long, String>) session.getServletContext().getAttribute(
 				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
 		
 		if (mapaAnaliseEstudo != null) {
 			
 			for (Map.Entry<Long, String> entry : mapaAnaliseEstudo.entrySet()) {
 				
-				if (entry.getValue().equals(loginUsuario)) {
-					
+				if (entry.getValue().equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
 					mapaAnaliseEstudo.remove(entry.getKey());
-					
+					session.removeAttribute("WINDOWNAME_ESTUDO");
 					break;
 				}
 			}

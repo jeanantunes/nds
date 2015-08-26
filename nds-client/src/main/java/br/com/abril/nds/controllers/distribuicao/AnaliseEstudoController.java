@@ -171,8 +171,7 @@ public class AnaliseEstudoController extends BaseController {
 	public void desbloquear() {
 		
 		HistogramaPosEstudoController.desbloquearAnaliseEstudo(
-			this.session.getServletContext(), super.getUsuarioLogado().getLogin());
-		
+			this.session, super.getUsuarioLogado().getLogin());
 		this.result.use(Results.json()).from("").serialize();
 	}
 	

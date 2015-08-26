@@ -83,8 +83,7 @@ public class MatrizLancamentoController extends BaseController {
     @Autowired
     private LancamentoService lancamentoService;
     
-    @Autowired
-    private HttpSession session;
+  
     
     @Autowired
     private HttpServletResponse httpResponse;
@@ -97,6 +96,10 @@ public class MatrizLancamentoController extends BaseController {
     
     @Autowired
     private CalendarioService calendarioService;
+    
+    
+    @Autowired
+    private HttpSession session;
     
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
     
@@ -1948,6 +1951,8 @@ public class MatrizLancamentoController extends BaseController {
                     "A matriz de lançamento está bloqueada pelo usuário [" 
                         + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]. Somente será possível realizar consultas na matriz."));
         }
+              
+    
     }
     
     @Post
@@ -1956,10 +1961,17 @@ public class MatrizLancamentoController extends BaseController {
         this.verificarBloqueioMatrizLancamento();
         
         String usuario = super.getUsuarioLogado().getLogin();
+     
+        String windowname = (String) session.getAttribute("WINDOWNAME");
+        String windowname_lancamento = (String) session.getAttribute("WINDOWNAME_LANCAMENTO");
+        if ( windowname_lancamento != null && !windowname_lancamento.equals(windowname)) 
+        	 throw new ValidacaoException( new ValidacaoVO(TipoMensagem.WARNING, 
+                     "A matriz de lançamento está bloqueada por voce em outra aba. Somente será possível realizar consultas na matriz."));
+   
         
-        this.session.getServletContext().setAttribute(
-                TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE, usuario);
-        
+        this.session.getServletContext().setAttribute(TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE, usuario);
+        this.session.setAttribute("WINDOWNAME_LANCAMENTO", this.session.getAttribute("WINDOWNAME"));
+
         this.result.use(Results.json()).from(Results.nothing()).serialize();
     }
     
@@ -1967,21 +1979,23 @@ public class MatrizLancamentoController extends BaseController {
     public void desbloquearMatrizLancamentoPost() {
         
         Usuario usuario = getUsuarioLogado();
+        String windowname = (String) session.getAttribute("WINDOWNAME");
+        String windowname_lancamento = (String) session.getAttribute("WINDOWNAME_LANCAMENTO");
+        if ( windowname_lancamento == null || windowname_lancamento.equals(windowname)) {
+          desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
         
-        desbloquearMatrizLancamento(this.session.getServletContext(), usuario.getLogin());
-        
+        session.removeAttribute("WINDOWNAME_LANCAMENTO");
+        }
         this.result.use(Results.json()).from(Results.nothing()).serialize();
     }
     
     public static void desbloquearMatrizLancamento(ServletContext servletContext, String usuario) {
 
         String loginUsuarioContext = 
-            (String) servletContext.getAttribute(
-                    TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
+            (String) servletContext.getAttribute(TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
         
         if (usuario.equals(loginUsuarioContext)) {
-            
-            servletContext.removeAttribute(TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
+              servletContext.removeAttribute(TRAVA_MATRIZ_LANCAMENTO_CONTEXT_ATTRIBUTE);
         }
     }
     

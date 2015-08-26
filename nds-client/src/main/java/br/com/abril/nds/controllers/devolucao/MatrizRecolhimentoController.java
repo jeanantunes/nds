@@ -122,6 +122,10 @@ public class MatrizRecolhimentoController extends BaseController {
     @Autowired
     private LancamentoService lancamentoService;
     
+    
+	@Autowired
+	private HttpSession session;
+    
     private static final String ATRIBUTO_SESSAO_FILTRO_PESQUISA_BALANCEAMENTO_RECOLHIMENTO = "filtroPesquisaBalanceamentoRecolhimento";
     
     private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO = "balanceamentoRecolhimento";
@@ -2288,6 +2292,8 @@ public class MatrizRecolhimentoController extends BaseController {
                     "A matriz de recolhimento está bloqueada pelo usuário [" 
                         + this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioContext) + "]. Somente será possível realizar consultas na matriz."));
         }
+        
+    
     }
     
     @Post
@@ -2297,6 +2303,17 @@ public class MatrizRecolhimentoController extends BaseController {
         
         String usuario = super.getUsuarioLogado().getLogin();
         
+        // conferir se ja nao tem uma matriz aberto em outra aba nesta sessao
+    	String windowname_mr=(String) session.getAttribute("WINDOWNAME_MATRIZ_RECOLHIMENTO");
+    	String windowname=(String) session.getAttribute("WINDOWNAME");
+    	
+      	 
+    	if ( windowname_mr != null && windowname != null && !windowname_mr.equals(windowname))
+    	{
+    		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Ja existe uma Matriz de Recolhimento sendo analisado em outra aba/janela"));
+    	}
+    	session.setAttribute("WINDOWNAME_MATRIZ_RECOLHIMENTO",windowname);
+    	
         this.httpSession.getServletContext().setAttribute(
             TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE, usuario);
         
@@ -2307,6 +2324,7 @@ public class MatrizRecolhimentoController extends BaseController {
     public void desbloquearMatrizRecolhimentoPost() {
         
         Usuario usuario = getUsuarioLogado();
+        session.removeAttribute("WINDOWNAME_MATRIZ_RECOLHIMENTO");
         
         desbloquearMatrizRecolhimento(this.httpSession.getServletContext(), usuario.getLogin());
         
@@ -2322,6 +2340,7 @@ public class MatrizRecolhimentoController extends BaseController {
         if (usuario.equals(loginUsuarioContext)) {
             
             servletContext.removeAttribute(TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE);
+           
         }
     }
     
