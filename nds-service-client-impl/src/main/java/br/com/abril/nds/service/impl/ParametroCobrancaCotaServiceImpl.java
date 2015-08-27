@@ -243,6 +243,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				}
 			}
 
+			  // ver se os parametros de cobranca estao ok
+			
+			if ( parametroCobranca == null ) {
+				LOGGER.error("ERRO AO CARREGAR PARAMETRO DE COBRANCA PARA COTA e nem para o DISTRIBUIDOR "+idCota);
+				throw new ValidacaoException(TipoMensagem.ERROR, "Parametros de Cobranca nao Cadastrado para Cota e nem para Distribuidor!!");
+			}
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			
