@@ -1796,7 +1796,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public void removerChamadaEncalheCotaZerada(List<Date> dataConfirmadas) {
 		
 		for (Date dataConfirmada : dataConfirmadas) {
