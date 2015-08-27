@@ -31,6 +31,9 @@ public class LongConverter implements Converter<Long> {
 		if ("null".equalsIgnoreCase(value)) {
 			return null;
 		}
+		if ("NaN".equalsIgnoreCase(value)) {
+			return null;
+		}
 		if ( value.toLowerCase().startsWith("selecione")) {
 			return null;
 		}

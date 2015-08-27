@@ -28,6 +28,9 @@ public class IntegerConverter implements Converter<Integer> {
 		if ("null".equalsIgnoreCase(value)) {
 			return null;
 		}
+		if ("NaN".equalsIgnoreCase(value)) {
+			return null;
+		}
 		if ( value.toLowerCase().startsWith("selecione")) {
 			return null;
 		}
