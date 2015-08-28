@@ -22,6 +22,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -327,7 +328,26 @@ public class EstudoGerado implements Serializable {
 	public void setReparteTotal(BigInteger reparteTotal) {
 		this.reparteTotal = reparteTotal;
 	}
-    
+	
+	@Transient
+	protected Long produtoEdicaoId;
+	
+	public Long getProdutoEdicaoId() {
+		return produtoEdicaoId;
+	}
+
+	public void setProdutoEdicaoId(Long id) {
+		this.produtoEdicaoId = id;
+	}
+	
+	public Boolean getMinMaxMix() {
+		return minMaxMix;
+	}
+
+	public void setMinMaxMix(Boolean minMaxMix) {
+		this.minMaxMix = minMaxMix;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -354,12 +374,5 @@ public class EstudoGerado implements Serializable {
 		return true;
 	}
 
-	public Boolean getMinMaxMix() {
-		return minMaxMix;
-	}
-
-	public void setMinMaxMix(Boolean minMaxMix) {
-		this.minMaxMix = minMaxMix;
-	}
 	
 }

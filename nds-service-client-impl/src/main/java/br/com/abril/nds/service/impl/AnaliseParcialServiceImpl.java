@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
+import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
@@ -227,7 +230,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
 
                 if(idsProdutoEdicao.size() > 0) {
-                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao);
+                	Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas = buscaHistoricoDeVendas(item.getCotaId(), idsProdutoEdicao);
                     edicoesComVenda.addAll(buscaHistoricoDeVendas);
 
                     for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
@@ -354,6 +357,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
 
+    	
         List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
 
         for (Long id : idsProdutoEdicao) {
@@ -382,16 +386,21 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public void atualizaReparte(Long estudoId, Integer numeroCota, Long reparte, Long reparteDigitado) {
     	
-    	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
     	
-    	if(estudoGerado.isLiberado()){
+    //	EstudoGerado estudoGerado = estudoService.obterEstudo(estudoId);
+    	
+    	
+    	EstudoGerado estudoGerado = estudoService.obterEstudoSql(estudoId);
+    	
+		
+		if(estudoGerado.isLiberado()){
     		throw new ValidacaoException(TipoMensagem.WARNING, "Estudo já liberado!");
     	}
     	
     	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos() == 1){
     		this.validarDistribuicaoPorMultiplo(estudoId, reparteDigitado, estudoGerado);
     	}
-    	
+		
     	if(reparteDigitado >= 0){
     		analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
     	}else{
@@ -427,7 +436,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public void liberar(Long id, List<CotaLiberacaoEstudo> cotas) {
     	
-    	EstudoGerado estudoGerado = estudoService.obterEstudo(id);
+    	EstudoGerado estudoGerado = estudoService.obterEstudoSql(id);
     	
     	if(estudoGerado.getDistribuicaoPorMultiplos() != null && estudoGerado.getDistribuicaoPorMultiplos()==1){
     		for (CotaLiberacaoEstudo cota : cotas) {

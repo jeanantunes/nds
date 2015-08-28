@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.TemporalType;
+
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
@@ -359,6 +361,70 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		Query q = getSession().createQuery(hql.toString());
         q.setParameter("idLancamento", idLancamento);
         return (List<EstudoGerado>) q.list();		
+	}
+	
+	
+	public EstudoGerado obterEstudoSql(Long id) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		
+		sql.append(" SELECT  ");
+		sql.append(" ID as id,");
+		sql.append(" data_alteracao as dataAlteracao,");
+		sql.append(" data_cadastro as dataCadastro,");
+		sql.append(" DATA_LANCAMENTO as dataLancamento,");
+		sql.append(" DISTRIBUICAO_POR_MULTIPLOS as distribuicaoPorMultiplos,");
+		sql.append(" ESTUDO_ORIGEM_COPIA as idEstudoOrigemCopia,");
+		sql.append(" LANCAMENTO_ID as lancamentoID,");
+		sql.append(" LIBERADO as liberado,");
+		sql.append(" PACOTE_PADRAO as pacotePadrao,");
+		sql.append(" QTDE_REPARTE as qtdeReparte,");
+		sql.append(" REPARTE_DISTRIBUIR as reparteDistribuir,");
+	    sql.append(" SOBRA as sobra,");
+	//	sql.append(" STATUS as status,");
+		sql.append(" PRODUTO_EDICAO_ID as produtoEdicaoId,");
+	//	sql.append(" USUARIO_ID as usuarioId,");
+		sql.append(" DADOS_VENDA_MEDIA as dadosVendaMedia,");
+		sql.append(" REPARTE_MINIMO as reparteMinimo,");
+	//	sql.append(" tipo_geracao_estudo as tipoGeracaoEstudo,");
+		sql.append(" ABRANGENCIA as abrangencia,");
+		sql.append(" REPARTE_TOTAL as reparteTotal ");
+	//	sql.append(" USED_MIN_MAX_MIX as usedMinMaxMix ");
+		sql.append(" From estudo_gerado eg ");
+		sql.append(" where eg.id = :estudoId ");
+		
+	
+		
+		
+		Query query = getSession().createSQLQuery(sql.toString())	
+		.addScalar("id", StandardBasicTypes.LONG)
+		.addScalar("dataAlteracao", StandardBasicTypes.TIMESTAMP)
+		.addScalar("dataCadastro", StandardBasicTypes.TIMESTAMP)
+		.addScalar("dataLancamento", StandardBasicTypes.TIMESTAMP)
+		.addScalar("distribuicaoPorMultiplos", StandardBasicTypes.INTEGER)
+		.addScalar("idEstudoOrigemCopia", StandardBasicTypes.LONG)
+		.addScalar("lancamentoID", StandardBasicTypes.LONG)
+		.addScalar("liberado", StandardBasicTypes.BOOLEAN)
+		.addScalar("pacotePadrao", StandardBasicTypes.BIG_INTEGER)
+		.addScalar("qtdeReparte", StandardBasicTypes.BIG_INTEGER)
+		.addScalar("reparteDistribuir", StandardBasicTypes.BIG_INTEGER)
+	    .addScalar("sobra", StandardBasicTypes.BIG_INTEGER)
+		//.addScalar("status", StandardBasicTypes.STRING)
+		.addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
+		//.addScalar("usuarioId", StandardBasicTypes.LONG)
+		.addScalar("dadosVendaMedia", StandardBasicTypes.STRING)
+		.addScalar("reparteMinimo", StandardBasicTypes.BIG_INTEGER)
+	//	.addScalar("tipoGeracaoEstudo", StandardBasicTypes.STRING)
+		.addScalar("abrangencia", StandardBasicTypes.BIG_DECIMAL)
+		.addScalar("reparteTotal", StandardBasicTypes.BIG_INTEGER);
+		//.addScalar("usedMinMaxMix", StandardBasicTypes.BOOLEAN);
+		
+       
+		 query.setParameter("estudoId", id);
+		query.setResultTransformer(new AliasToBeanResultTransformer(EstudoGerado.class));
+		EstudoGerado estudoGerado = (EstudoGerado) query.uniqueResult();
+		return estudoGerado;
 	}
 	
 }
