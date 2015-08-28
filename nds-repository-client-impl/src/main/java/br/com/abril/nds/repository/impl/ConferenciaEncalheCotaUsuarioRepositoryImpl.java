@@ -52,7 +52,7 @@ public class ConferenciaEncalheCotaUsuarioRepositoryImpl extends AbstractReposit
 
 	@Override
 	public int removerPorNumeroCota(Integer numeroCota) {
-		LOGGER.error("REMOVENDO TRAVA CONFERENCIA ENCALHE por  cota "+numeroCota);
+		LOGGER.warn("REMOVENDO TRAVA CONFERENCIA ENCALHE por  cota "+numeroCota);
 		if(numeroCota == null) throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não informado.");
 		
 		String hql = "delete ConferenciaEncalheCotaUsuario where numeroCota = :numeroCota";
@@ -64,7 +64,7 @@ public class ConferenciaEncalheCotaUsuarioRepositoryImpl extends AbstractReposit
 
 	@Override
 	public int removerPorLogin(String login) {
-		LOGGER.error("REMOVENDO TRAVA CONFERENCIA ENCALHE por login "+login);
+		LOGGER.warn("REMOVENDO TRAVA CONFERENCIA ENCALHE por login "+login);
 		if(login == null) throw new ValidacaoException(TipoMensagem.WARNING, "Login não informado.");
 		
 		String hql = "delete ConferenciaEncalheCotaUsuario where login = :login";
@@ -76,7 +76,7 @@ public class ConferenciaEncalheCotaUsuarioRepositoryImpl extends AbstractReposit
 
 	@Override
 	public int removerPorSessionId(String sessionId) {
-		LOGGER.error("REMOVENDO TRAVA CONFERENCIA ENCALHE por sessao "+sessionId);
+		LOGGER.warn("REMOVENDO TRAVA CONFERENCIA ENCALHE por sessao "+sessionId);
 		if(sessionId == null) throw new ValidacaoException(TipoMensagem.WARNING, "Sessão não informada.");
 		
 		String hql = "delete from ConferenciaEncalheCotaUsuario where sessionId = :sessionId";
@@ -88,7 +88,7 @@ public class ConferenciaEncalheCotaUsuarioRepositoryImpl extends AbstractReposit
 
 	@Override
 	public int removerTodos() {
-		LOGGER.error("REMOVENDO TRAVA CONFERENCIA ENCALHE todos ");
+		LOGGER.warn("REMOVENDO TRAVA CONFERENCIA ENCALHE todos ");
 		String hql = "delete from ConferenciaEncalheCotaUsuario";
 		Query query = getSession().createQuery(hql);
 		

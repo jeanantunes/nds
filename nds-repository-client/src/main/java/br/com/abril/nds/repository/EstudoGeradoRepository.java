@@ -44,4 +44,6 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 
 	List<EstudoGerado> obterPorLancamentoId(Long idLancamento);
 	
+   EstudoGerado obterEstudoSql(Long id);
+	
 }

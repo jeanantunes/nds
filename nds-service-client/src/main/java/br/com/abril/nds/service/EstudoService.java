@@ -58,4 +58,6 @@ public interface EstudoService {
 	void criarRepartePorPDV(Long id);
 
 	Long countEstudosPorLancamento(Long idlancamento, Date dataLancamento);
+	
+	 EstudoGerado obterEstudoSql(Long id);
 }

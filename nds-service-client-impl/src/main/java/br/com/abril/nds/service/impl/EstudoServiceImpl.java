@@ -107,6 +107,11 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Transactional(readOnly = true)
 	@Override
+	public EstudoGerado obterEstudoSql(Long id) {
+		return this.estudoGeradoRepository.obterEstudoSql(id);
+	}
+	@Transactional(readOnly = true)
+	@Override
 	public EstudoGeradoPreAnaliseDTO obterEstudoPreAnalise(Long id) {
 		return this.estudoGeradoRepository.obterEstudoPreAnalise(id);
 	}

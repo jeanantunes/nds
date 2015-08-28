@@ -53,7 +53,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("select distinct ");
         
         sql.append("	c.numero_cota cota, ");
-        
+        sql.append("	c.ID cotaId, ");
         sql.append("	case when pdv_qtd.quantidade > 1 then ( ");
         sql.append("	case when count(case when pdv_fx.ID is not null then 1 ");
         sql.append("	                when pdv_mx.ID is not null then 1 ");
@@ -341,6 +341,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
         
         ((SQLQuery) query).addScalar("cota", StandardBasicTypes.INTEGER);
+        ((SQLQuery) query).addScalar("cotaId", StandardBasicTypes.INTEGER);
         ((SQLQuery) query).addScalar("classificacao", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("nome", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("npdv", StandardBasicTypes.BIG_INTEGER);
@@ -640,12 +641,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     	
     	sql.append(" from movimento_estoque_cota mec force index (NDX_PRODUTO_EDICAO) ");
     	sql.append(" inner join tipo_movimento tm on tm.id = mec.tipo_movimento_id ");
-    	sql.append(" inner join cota c on c.id = mec.COTA_ID ");
+    	sql.append(" inner join cota c on c.id = :numeroCota ");
     	sql.append(" inner join lancamento l on mec.lancamento_id = l.id ");
     	sql.append(" left outer join periodo_lancamento_parcial plp on plp.id = l.PERIODO_LANCAMENTO_PARCIAL_ID ");
     	sql.append(" where 1 = 1");
-    	sql.append(" and c.NUMERO_COTA = :numeroCota");
-    	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId)");
+    	sql.append(" and c.id = :numeroCota");
+    	sql.append(" and mec.PRODUTO_EDICAO_ID in (:produtoEdicaoId) and mec.cota_id = c.id  and mec.cota_id = :numeroCota");
     	sql.append(" and l.STATUS IN (:lancamentosPosExpedicao)");
     	sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
     	sql.append(" and mec.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");

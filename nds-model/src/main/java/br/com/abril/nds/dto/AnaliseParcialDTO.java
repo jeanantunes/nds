@@ -69,6 +69,16 @@ public class AnaliseParcialDTO implements Serializable {
     public void setCota(int cota) {
 	this.cota = cota;
     }
+    
+    
+    private  int cotaId;
+    public int getCotaId() {
+    	return cotaId;
+        }
+
+        public void setCotaId(int cotaId) {
+    	this.cotaId = cotaId;
+        }
 
     public String getClassificacao() {
 	return classificacao;
