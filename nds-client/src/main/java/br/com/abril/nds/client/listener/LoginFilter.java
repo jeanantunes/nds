@@ -19,6 +19,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 public class LoginFilter implements Filter {
 
 
@@ -31,6 +34,12 @@ public class LoginFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
 
       try {
+    	  
+    	
+          
+       if (req.getSession().getAttribute(ControleSessionListener.USUARIO_LOGADO) != null) {
+        	  
+       
         String path=req.getContextPath()+"/";
         // Java 1.8 stream API used here
         Cookie [] cookies = req.getCookies();
@@ -54,7 +63,7 @@ public class LoginFilter implements Filter {
         	
          }
          
-  
+      
          
          try {
         	 if ( kn >= 0 ) {
@@ -66,20 +75,31 @@ public class LoginFilter implements Filter {
             	e.printStackTrace();
             	
             }
-        // if we don't have the user already in session, check our cookie MY_SESSION_COOKIE
-       
         }
-        /*
-      
-        	String sessionid = req.getSession().getId();
-        	try {
-        	//	sessionid = cookies[ks].getValue();
-        	} catch (Exception e ){
-        		
-        		
-        	}
-     // be careful overwriting: JSESSIONID may have been set with other flags
-        	*/
+        /* todo = controlar sessao por abas
+        
+         String uri = req.getRequestURI(); 
+         if (uri.indexOf("j_spring_security_logout") > 0) { // esta fechando a tela ou fazendo logout
+         	
+         	
+         	Map  map = ( Map ) req.getSession().getAttribute("WINDOWNAMES");
+         	
+         	int windownames = 0;
+         	if ( map != null )
+         		  windownames = map.size();
+          if (windownames > 1) { // ainda tem outras abas. so liberar lock e nao encerrar sessao
+         	    // remover tela do map
+        	     if ( map != null ) {
+        	    	  map.remove(windowname);
+        	     }
+        	      // liberar locks
+         	   // return;
+           } else {
+         	  System.err.println("tocar  em frente.. so tem uma janela");
+           }
+         }
+         */
+    
             Map  map = ( Map ) req.getSession().getAttribute("WINDOWNAMES");
             if (  map == null ) {
             	 map = new HashMap();
@@ -94,7 +114,7 @@ public class LoginFilter implements Filter {
          
             cookie1.setPath(path);
             resp.addCookie(cookie1); 
-        
+          }
             chain.doFilter(request, response);
       } catch (Exception ee) {
     	  ee.printStackTrace();
