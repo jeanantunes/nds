@@ -6,15 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.HomeController;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
@@ -48,6 +50,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO)
 public class HistogramaPosEstudoController extends BaseController{
 	
+    private static final Logger LOGGER = LoggerFactory.getLogger(HistogramaPosEstudoController.class);
 	private final String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999"}; 
 	
 	@Autowired
@@ -248,7 +251,7 @@ public class HistogramaPosEstudoController extends BaseController{
     	{
     		 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Ja existe um Estudo sendo analisado em outra aba/janela"));
     	}
-    	session.setAttribute("WINDOWNAME_ESTUDO",windowname);
+    	
     	
 		
 		Map<Long, String> mapaAnaliseEstudo = 
@@ -261,7 +264,7 @@ public class HistogramaPosEstudoController extends BaseController{
 			
 			if (loginUsuarioBloqueio != null
 					&& !loginUsuarioBloqueio.equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
-				
+				LOGGER.warn("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio));
 				throw new ValidacaoException(
 					new ValidacaoVO(TipoMensagem.WARNING, 
 						"Este estudo já está sendo analisado pelo usuário [" 
@@ -272,8 +275,9 @@ public class HistogramaPosEstudoController extends BaseController{
 		
 			mapaAnaliseEstudo = new HashMap<Long, String>();
 		}
-		
+		session.setAttribute("WINDOWNAME_ESTUDO",windowname);
 		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.warn("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		session.getServletContext().setAttribute(
 			MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
@@ -287,6 +291,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		Map<Long, String> mapaAnaliseEstudo = 
 			(Map<Long, String>) session.getServletContext().getAttribute(
 				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		LOGGER.warn("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		if (mapaAnaliseEstudo != null) {
 			

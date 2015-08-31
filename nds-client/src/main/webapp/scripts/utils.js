@@ -813,16 +813,29 @@ var pageRefresh = {
 		if ( windownames.length > 0  && windownames > 1) {
 			console.log(windownames);
 			defaultMessage = "Voce possui outras abas abertas.Encerrando esta aba ira encerrar todas as outras";
-			window.onbeforeunload = function() {
+			window.onbeforeunload = function(e) {
 			return message || defaultMessage;
 		}
 			
 		} else {
 		
-		window.onbeforeunload = function() {
+		window.onbeforeunload = function(e) {
 			return message || defaultMessage;
 		};
 		 }
+		
+	window.onunload = function(e) {
+			
+			if(!reloadPage) {
+
+				$.ajax({
+					type: 'POST',
+					async: false,
+					url: contextPath + "/j_spring_security_logout",
+					data: ''
+				});
+			}
+		};
 		
 	},
 	
