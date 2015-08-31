@@ -469,10 +469,12 @@ public class CotaServiceImpl implements CotaService {
         if(enderecoDTO.getCodigoUf() != null) {        	
         	endereco.setCodigoUf(enderecoDTO.getCodigoUf());
         } else {
-        	
+         if ( enderecoDTO.getCodigoCidadeIBGE() != null ) {
+        	 
         	String codigoUF = enderecoDTO.getCodigoCidadeIBGE().toString();
         	
         	enderecoDTO.setCodigoUf(Integer.valueOf(codigoUF.substring(0, 2)));
+           }
         }
         
         endereco.setCidade(enderecoDTO.getCidade());
