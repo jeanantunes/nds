@@ -590,8 +590,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional
-	public LinkedList<Lancamento> obterLancamentosRedistribuicoes() {
-		return this.lancamentoRepository.obterLancamentosRedistribuicoes();
+	public LinkedList<Lancamento> obterLancamentosRedistribuicoes(List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
+		return this.lancamentoRepository.obterLancamentosRedistribuicoes(listaProdutoLancamentoAlterar);
 	}
 	
 	@Override

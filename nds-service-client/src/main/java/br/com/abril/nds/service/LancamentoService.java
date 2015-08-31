@@ -184,7 +184,7 @@ public interface LancamentoService {
 	
 	void excluirLancamento(final ProdutoLancamentoVO produtoLancamento);
 	
-	LinkedList<Lancamento> obterLancamentosRedistribuicoes();
+	LinkedList<Lancamento> obterLancamentosRedistribuicoes(List<ProdutoLancamentoDTO> lista);
 
 	void atualizarRedistribuicoes(Lancamento lancamento, Date dataRecolhimento, boolean alterarStatusLancamento);
 	
