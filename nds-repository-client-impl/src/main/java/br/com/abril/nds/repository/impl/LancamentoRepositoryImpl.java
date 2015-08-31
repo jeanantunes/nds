@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.swing.text.html.HTMLDocument.Iterator;
+
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
@@ -59,6 +61,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -70,6 +73,10 @@ public class LancamentoRepositoryImpl extends
 
 	@Autowired
 	FuroProdutoRepository furoProdutoRepository;
+	
+	@Autowired
+	ProdutoEdicaoRepository produtoEdicaoRepository;
+
 
 	public LancamentoRepositoryImpl() {
 		super(Lancamento.class);
@@ -905,7 +912,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select lancamento ")
 				.append(" from Lancamento lancamento ")
 				.append(" where lancamento.id in (:idsLancamento) ")
-				.append(" order by lancamento.id ");
+				.append("");
 
 		Query query = getSession().createQuery(hql.toString());
 
@@ -2613,12 +2620,16 @@ public class LancamentoRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public LinkedList<Lancamento> obterLancamentosRedistribuicoes() {
+	public LinkedList<Lancamento> obterLancamentosRedistribuicoes( List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
 
 		StringBuilder hql = new StringBuilder();
-		List<Lancamento> lista =new ArrayList<Lancamento>();
+	//	List<Lancamento> lista =new ArrayList<Lancamento>();
 		LinkedList<Lancamento> listaAux =new LinkedList<Lancamento>();
-
+		
+		List <Long> peList = new ArrayList();
+		for (ProdutoLancamentoDTO pl:listaProdutoLancamentoAlterar)
+			 peList.add(pl.getIdProdutoEdicao());
+       /*
 		hql.append(" from Lancamento lancamento ");
 		hql.append(" where (lancamento.tipoLancamento = :tipoLancamento ");
 		hql.append(" or lancamento.periodoLancamentoParcial is not null )");
@@ -2631,17 +2642,36 @@ public class LancamentoRepositoryImpl extends
 
 		lista = query.list();
 		//listaAux.addAll(lista);
-		
-		//
-		for(Lancamento lancamento :lista){
-		
+		*/
+		 StringBuffer sql = new StringBuffer();
+		 sql.append(" select pe.produto_id as produto_id, pe.numero_edicao as edicao ,pe.id as produto_edicao_id from LANCAMENTO l ");
+		 sql.append(" inner join PRODUTO_EDICAO pe on l.produto_edicao_id = pe.id ");
+		 sql.append(" inner join PRODUTO p on pe.produto_id = p.id " );
+		 sql.append(" where l.TIPO_LANCAMENTO='REDISTRIBUICAO' or PERIODO_LANCAMENTO_PARCIAL_ID is not null");
+	
+		 Query query = getSession().createSQLQuery(sql.toString())
+				 .addScalar("produto_id", StandardBasicTypes.LONG)
+				 .addScalar("edicao", StandardBasicTypes.LONG)
+				 .addScalar("produto_edicao_id", StandardBasicTypes.LONG);
+		  List  lista = query.list();
+		//             
+		  java.util.Iterator it = lista.iterator();
+	//	for(Long produto_edicao_id :lista){
+		  while (it.hasNext()) {
+			Object [] lis = (Object[]) it.next();
+			Long produto_id = (Long) lis[0];
+			Long edicao = (Long) lis[1];
+			Long produto_edicao_id = ( Long) lis[2];
+			if (!peList.contains(produto_edicao_id))
+				 continue;
+			
 			hql = new StringBuilder();
 		
 			hql.append(" from Lancamento lancamento");
 			hql.append(" where ");
 //					+ "lancamento.produtoEdicao.id = :idProdutoEdicao ");
 //			hql.append(" and lancamento.produtoEdicao.produto.id = :idProduto ");
-			hql.append(" lancamento.produtoEdicao.produto.codigo = :codigo ");
+			hql.append(" lancamento.produtoEdicao.produto.id = :produto_id ");
 			hql.append(" and lancamento.produtoEdicao.numeroEdicao = :edicao ");
 			hql.append(" order by lancamento.produtoEdicao.produto.codigo , ");
 			hql.append("lancamento.produtoEdicao.numeroEdicao, ");
@@ -2651,11 +2681,12 @@ public class LancamentoRepositoryImpl extends
 
 			query = getSession().createQuery(hql.toString());
 
-			query.setParameter("codigo", lancamento.getProdutoEdicao().getProduto().getCodigo());
+			query.setParameter("produto_id", produto_id);
 			
-			query.setParameter("edicao", lancamento.getProdutoEdicao().getNumeroEdicao());
+			query.setParameter("edicao", edicao);
 		
 			listaAux.addAll(query.list());
+		   
 		}
 		
 		

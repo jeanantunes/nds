@@ -1104,7 +1104,7 @@ public class MatrizLancamentoController extends BaseController {
             final List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar, final Date novaData) {
         
     	
-    	LinkedList <Lancamento> lancamentosParciaisRebistribuicao = lancamentoService.obterLancamentosRedistribuicoes();
+    	LinkedList <Lancamento> lancamentosParciaisRebistribuicao = lancamentoService.obterLancamentosRedistribuicoes(listaProdutoLancamentoAlterar);
     	
     	
         // Remover do mapa
