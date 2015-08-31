@@ -777,7 +777,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			}	
 	
 			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
-				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0); 
+				
 			}
 	
 			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
@@ -785,9 +786,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			if (item.getReparte() != null){
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 				
-				valorAux = valorAux +  item.getReparte();
+				valorAux = valorAux +  qtdeAtual;
 				
-				pcMapaDTO.setQtdes(valorAux);
+				pcMapaDTO.setQtdes(item.getReparte());
 			}
 		}
 	

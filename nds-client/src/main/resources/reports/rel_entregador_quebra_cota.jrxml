@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="3.0"/>
-	<property name="ireport.x" value="435"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -50,29 +50,49 @@
 		<fieldDescription><![CDATA[precoCapa]]></fieldDescription>
 	</field>
 	<field name="qtdes" class="java.lang.Integer"/>
+	<variable name="somaReparte" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdes}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
 	<columnHeader>
 		<band height="20">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="20" backcolor="#D3D3D3" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
+				<reportElement x="0" y="0" width="555" height="20" backcolor="#DEDEDE" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
 			</rectangle>
 			<staticText>
 				<reportElement style="rel_stext" x="0" y="0" width="153" height="20" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<text><![CDATA[Produto:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="rel_stext" x="152" y="0" width="76" height="20" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
 				<text><![CDATA[Edição:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="rel_stext" x="227" y="0" width="155" height="20" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
 				<text><![CDATA[Código de Barras]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="rel_stext" x="381" y="0" width="87" height="20" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center"/>
 				<text><![CDATA[Preço R$]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="rel_stext" x="467" y="0" width="87" height="20" uuid="41ed712f-cd02-443f-bfa0-42e207e17843"/>
+				<textElement textAlignment="Center"/>
 				<text><![CDATA[Quantidade]]></text>
 			</staticText>
 		</band>
@@ -82,25 +102,77 @@
 			<elementGroup>
 				<textField>
 					<reportElement style="rel_ftext" x="0" y="0" width="153" height="20" uuid="66102603-6764-4518-9c7a-1be8c1ab3e48"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
 					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="rel_ftext" x="152" y="0" width="76" height="20" uuid="0d0175ba-5bcb-4d5f-b47e-dbe5da07d052"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="rel_ftext" x="227" y="0" width="155" height="20" uuid="511d1631-8dcd-4c59-b63d-7adf089b674e"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="rel_ftext" x="381" y="0" width="87" height="20" uuid="4a798b18-5d79-473e-95fc-31d42617eab8"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0">
-					<reportElement x="467" y="0" width="87" height="20" uuid="84d67095-1bff-49ec-86a3-f1fcc19f655f"/>
+					<reportElement x="467" y="0" width="88" height="20" uuid="84d67095-1bff-49ec-86a3-f1fcc19f655f"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{qtdes}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
 		</band>
 	</detail>
+	<lastPageFooter>
+		<band height="20">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="20" uuid="2eb435bc-cced-4c21-9d36-0c9bc024a1c0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="38" height="20" uuid="14b43fde-85af-411c-b856-d086e50b9fc0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="38" y="0" width="114" height="20" uuid="0fee85c9-ab2e-4409-9d82-658938eaa9ed"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["" + $V{REPORT_COUNT} + " Produto(s)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="468" y="0" width="86" height="20" uuid="e67774b9-9e4b-4077-9cc7-93fa5a13f26a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{somaReparte}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
 </jasperReport>
