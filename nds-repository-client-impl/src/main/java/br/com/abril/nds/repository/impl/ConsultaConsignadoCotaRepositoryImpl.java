@@ -362,6 +362,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
 		
+		sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
+		
 		if(filtro.getIdFornecedor()!=null) {
 		
 			sql.append(" AND forn.ID = :idFornecedor ");
@@ -628,6 +630,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" WHERE MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL  ");
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno) ");
 		sql.append(" AND LCTO.STATUS not in ('FECHADO', 'RECOLHIDO', 'EM_RECOLHIMENTO')");
+		
+		sql.append(" and MEC.FORMA_COMERCIALIZACAO <> 'CONTA_FIRME' ");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
