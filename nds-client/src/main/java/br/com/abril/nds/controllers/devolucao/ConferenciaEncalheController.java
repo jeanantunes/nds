@@ -2839,8 +2839,8 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorTotal",  valorTotal.setScale(2, RoundingMode.HALF_UP));
 			dados.put("valorTotalNota", valorTotalNota.setScale(2, RoundingMode.HALF_UP));
 			dados.put("valorPagarAtualizado",  CurrencyUtil.arredondarValorParaQuatroCasas(valorPagarAtualizado));
-			
-			dados.put("idconf", info.getIdControleConferenciaEncalheCota());
+			if ( info != null )
+			   dados.put("idconf",info.getIdControleConferenciaEncalheCota());
 		}
 		
 		dados.put("notaFiscal", session.getAttribute(NOTA_FISCAL_CONFERENCIA));
