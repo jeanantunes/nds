@@ -75,7 +75,7 @@ function eraseCookie(name) {
 
 function generateWindowID()
 {
-  console.log('generate1'+document.cookie);
+ 
     //first see if the name is already set, if not, set it.
     if (window.name.indexOf("SEAppId") == -1){
             window.name = 'SEAppId_' + (new Date()).getTime();
@@ -87,13 +87,13 @@ function generateWindowID()
    
     
     
-  console.log('generate2'+document.cookie);
+ 
 }
 
 function setAppId()
 {
     //generate the cookie
-	console.log(window.name);
+	
 	
 	createCookie('WINDOWNAME',window.name,1);
 	
@@ -811,7 +811,6 @@ var pageRefresh = {
 		var windownames = readCookie("WINDOWNAMES");
 	
 		if ( windownames.length > 0  && windownames > 1) {
-			console.log(windownames);
 			defaultMessage = "Voce possui outras abas abertas.Encerrando esta aba ira encerrar todas as outras";
 			window.onbeforeunload = function(e) {
 			return message || defaultMessage;
