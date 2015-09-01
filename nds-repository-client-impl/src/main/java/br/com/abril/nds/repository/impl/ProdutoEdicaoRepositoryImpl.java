@@ -1685,18 +1685,27 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         
         sql.append(" and mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
-        sql.append("   and p.codigo = :codigo_produto ");
+      //  sql.append("   and p.codigo = :codigo_produto ");
         
-	    sql.append("   and pe.numero_edicao = :numero_edicao ");
+	  //  sql.append("   and pe.numero_edicao = :numero_edicao ");
 	    
+        sql.append("   and pe.id = :produto_edicao_id ");
 	    sql.append("   and c.NUMERO_COTA = :numeroCota ");
 		
 		sql.append(" group by pe.numero_edicao, pe.id, mecReparte.cota_id, plp.numero_periodo ORDER BY l.ID desc) as T");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
-	    query.setParameter("numero_edicao", numeroEdicao);
-		query.setParameter("codigo_produto", codigoProduto);
+	  
+		SQLQuery query1 = getSession().createSQLQuery("select pe.id as produto_edicao_id from produto_edicao pe inner join produto p on pe.produto_id = p.id where "+
+		" p.codigo = :codigo_produto and pe.numero_edicao = :numero_edicao");
+		 query.addScalar("produto_edicao_id", StandardBasicTypes.LONG);
+		 query1.setParameter("numero_edicao", numeroEdicao);
+		 query1.setParameter("codigo_produto", codigoProduto);
+		
+		 Long produto_edicao_id = (Long) query1.uniqueResult();
+		
+		query.setParameter("produto_edicao_id", produto_edicao_id);
 		query.setParameter("numeroCota", numeroCota);
 		
 		List<String> statusLancamento = new ArrayList<>();
