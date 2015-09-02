@@ -91,7 +91,6 @@ public class HomeController {
        
 		
         result.include("menus", mapaMenus);
-        
         result.include("nomeUsuario", usuarioService.getNomeUsuarioLogado());
         result.include("versao", version);
     }
