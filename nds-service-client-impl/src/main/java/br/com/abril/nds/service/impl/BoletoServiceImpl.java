@@ -1717,7 +1717,7 @@ public class BoletoServiceImpl implements BoletoService {
         
         // INFORMAÇOES DO BOLETO
         //PARAMETROS ?
-        corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
+        corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Após vencimento, consulte as instruções abaixo.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
         corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes1());
         corpoBoleto.setBoletoInstrucao2(banco.getInstrucoes2());
