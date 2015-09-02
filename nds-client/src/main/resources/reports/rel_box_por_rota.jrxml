@@ -69,7 +69,7 @@
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota_subbox.jasper"]]></subreportExpression>
 				</subreport>
 				<textField isBlankWhenNull="true">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="92" height="25" backcolor="#FFFFFF" uuid="f721d52e-5dde-46f8-9389-493bc4863c4b"/>
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="98" height="25" backcolor="#FFFFFF" uuid="f721d52e-5dde-46f8-9389-493bc4863c4b"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -83,7 +83,7 @@
 					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="R$¤ #,##0.00">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="91" y="24" width="70" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="992d83cc-100a-4b06-96a0-841e6ad96a52"/>
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="81" y="24" width="80" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="992d83cc-100a-4b06-96a0-841e6ad96a52"/>
 					<box>
 						<topPen lineWidth="0.0"/>
 						<leftPen lineWidth="0.0"/>
@@ -97,7 +97,7 @@
 					<textFieldExpression><![CDATA["R$" + $F{precoCapa}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="91" y="0" width="70" height="25" backcolor="#FFFFFF" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="81" y="0" width="80" height="25" backcolor="#FFFFFF" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="0.0"/>
