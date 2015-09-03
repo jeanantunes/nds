@@ -1539,9 +1539,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		sql.append(" GROUP BY pe.numero_Edicao, produto.codigo, plp.NUMERO_PERIODO ");
 
 		if(filtro.getNumeroEdicao() != null){
-			sql.append(" ) T group by T.periodo ");
+			sql.append(" ) T group by T.codigoProduto, T.numeroEdicao, T.periodo ");
 		}else{
-			sql.append(" ) T group by T.numeroEdicao ");
+			sql.append(" ) T group by T.codigoProduto, T.numeroEdicao ");
 		}
 		
 		if(filtro.getOrdemColuna() != null){
