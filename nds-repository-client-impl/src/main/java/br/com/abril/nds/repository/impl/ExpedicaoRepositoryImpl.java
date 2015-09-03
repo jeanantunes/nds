@@ -360,7 +360,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		     .append("     where d.produto_edicao_id = produtoEdicaoId 			 ")
 		     .append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 	 ")
 		     .append("     and d.TIPO_DIRECIONAMENTO IN ('COTA', 'NOTA') ")
-		     .append("     and l.DATA_LCTO_DISTRIBUIDOR = innerQuery.dataLancamento ")
+		     // .append("     and l.DATA_LCTO_DISTRIBUIDOR = innerQuery.dataLancamento ")
+		     .append("     and rd.DATA_MOVIMENTO = innerQuery.dataLancamento ")
 		     // .append("     and tm.id not in (199, 200, 201, 202, 203) ")
 		     .append("     group by d.PRODUTO_EDICAO_ID ")
 		     .append(" ) ");
@@ -589,9 +590,9 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		sql.append("	mec_st.DATA = innerQuery.dataLancamento");
 		sql.append("	AND mec_st.PRODUTO_EDICAO_ID =  produtoEdicaoId");
 		sql.append("	AND tp_movimento.GRUPO_MOVIMENTO_ESTOQUE IN('SUPLEMENTAR_COTA_AUSENTE', ")
-			.append("	'REPARTE_COTA_AUSENTE' "); 
-			// .append("	'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', ")
-			// .append("	'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO', ")
+			.append("	'REPARTE_COTA_AUSENTE' ");
+			//.append("	'ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO', ")
+			//.append("	'ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO' ");
 			// .append("	'ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR', ")
 			// .append("	'ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS')");
 		sql.append("))");
