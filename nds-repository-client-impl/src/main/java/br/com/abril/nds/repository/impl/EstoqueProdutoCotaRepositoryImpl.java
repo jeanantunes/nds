@@ -71,7 +71,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum(estoque.qtdeRecebida - estoque.qtdeDevolvida) 	");
+		hql.append(" select coalesce(sum(estoque.qtdeRecebida - estoque.qtdeDevolvida),0) 	");
 		hql.append(" from EstoqueProdutoCota estoque  							");
 		hql.append(" where estoque.cota.id = :idCota and 						");
 		hql.append(" estoque.produtoEdicao.id = :idProdutoEdicao  				");
