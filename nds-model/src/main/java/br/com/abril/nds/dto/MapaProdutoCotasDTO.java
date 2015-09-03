@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MapaProdutoCotasDTO implements Serializable{
@@ -13,6 +14,8 @@ public class MapaProdutoCotasDTO implements Serializable{
 	private String codigoDeBarras;
 	private String precoCapa;
 	private Integer qtdes;
+	private Integer sequenciaMatriz;
+	private Integer pacotePadrao;
 	private Map<Integer, Integer> cotasQtdes;
 	private Map<String, Integer> boxQtdes;
 	
@@ -33,6 +36,25 @@ public class MapaProdutoCotasDTO implements Serializable{
 		this.boxQtdes = boxQtdes;
 	}
 	
+
+	public MapaProdutoCotasDTO(String codigoProduto, String nomeProduto,
+			Long numeroEdicao, String codigoDeBarras, String precoCapa,
+			Integer sequenciaMatriz,
+			Integer pacotePadrao,
+			LinkedHashMap<Integer, Integer> cotasQtdes,
+			LinkedHashMap<String, Integer> boxQtdes) {
+		super();
+		
+		this.codigoProduto = codigoProduto;
+		this.nomeProduto = nomeProduto;
+		this.numeroEdicao = numeroEdicao;
+		this.codigoDeBarras = codigoDeBarras;
+		this.precoCapa = precoCapa;
+		this.setCotasQtdes(cotasQtdes);
+		this.sequenciaMatriz = sequenciaMatriz;
+		this.pacotePadrao = pacotePadrao;
+		this.boxQtdes = boxQtdes;
+	}
 
 	/**
 	 * @return the codigoProduto
@@ -128,5 +150,21 @@ public class MapaProdutoCotasDTO implements Serializable{
 
 	public void setQtdes(Integer qtdes) {
 		this.qtdes = qtdes;
+	}
+
+	public Integer getSequenciaMatriz() {
+		return sequenciaMatriz;
+	}
+
+	public void setSequenciaMatriz(Integer sequenciaMatriz) {
+		this.sequenciaMatriz = sequenciaMatriz;
+	}
+
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
 	}
 }

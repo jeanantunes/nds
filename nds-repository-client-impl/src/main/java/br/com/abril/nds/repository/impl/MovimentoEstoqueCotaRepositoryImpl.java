@@ -3585,6 +3585,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");
+        hql.append(" 		produtoEdicao.PACOTE_PADRAO as pacotePadrao, ");
         hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
         hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
         hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
@@ -3592,6 +3593,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append("        coalesce(pessoaEnt.NOME, pessoaEnt.RAZAO_SOCIAL, '') as nomeEntregador, ");
         hql.append("        rotaEnt.DESCRICAO_ROTA as descRota, ");
         hql.append("        roteiroEnt.DESCRICAO_ROTEIRO as descRoteiro, ");
+        hql.append(" 		lancamento.SEQUENCIA_MATRIZ as sequenciaMatriz, ");
         hql.append("        boxEnt.CODIGO as codigoBox ");
         
         gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
@@ -3613,6 +3615,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
         query.addScalar("codigoBarra", StandardBasicTypes.STRING);
         query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+        query.addScalar("pacotePadrao", StandardBasicTypes.INTEGER);
         query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
         query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
         query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
@@ -3621,6 +3624,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         query.addScalar("descRota", StandardBasicTypes.STRING);
         query.addScalar("descRoteiro", StandardBasicTypes.STRING);
         query.addScalar("codigoBox", StandardBasicTypes.INTEGER);
+        query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
         
         query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
         
