@@ -40,7 +40,7 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.ProdutoEdicaoVO;
 
 @Service
-public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
+public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -734,7 +734,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Transactional
 	public Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
 	
-		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregador(filtro);
+		final List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(filtro);
 	
 		if(produtosBoxRota.size() == 0){
 			return null;
@@ -770,6 +770,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 						item.getNumeroEdicao().longValue(),
 						item.getCodigoBarra(),
 						item.getPrecoCapa(),
+						item.getSequenciaMatriz(),
+						item.getPacotePadrao(),
 						new LinkedHashMap<Integer, Integer>(),
 						new LinkedHashMap<String, Integer>());
 	
