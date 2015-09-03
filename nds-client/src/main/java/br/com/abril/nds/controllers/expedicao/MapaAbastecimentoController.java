@@ -558,7 +558,7 @@ public class MapaAbastecimentoController extends BaseController {
 				
                 if (filtro.getQuebraPorCota()){
                 	
-                	filtro.getPaginacao().setSortColumn("produtoCota");
+                	filtro.getPaginacao().setSortColumn("sequenciaMatriz");
                 	
                 	dados = mapaAbastecimentoService.obterMapaDeImpressaoPorEntregadorQuebrandoPorCota(filtro).entrySet();
                 	
