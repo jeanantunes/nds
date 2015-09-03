@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="850" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
-	<property name="ireport.zoom" value="5.0"/>
-	<property name="ireport.x" value="2417"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="268"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -59,8 +59,28 @@
 	<columnHeader>
 		<band height="15">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="15" backcolor="#DEDEDE" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
+				<reportElement x="0" y="0" width="555" height="15" backcolor="#E4E4E4" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
 			</rectangle>
+			<staticText>
+				<reportElement style="rel_stext" x="0" y="0" width="30" height="15" uuid="c3451668-e85a-46ae-81b1-7e6fcb09a4b2"/>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Seq]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="rel_stext" x="30" y="0" width="40" height="15" uuid="41ed712f-cd02-443f-bfa0-42e207e17843"/>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Qtde]]></text>
+			</staticText>
 			<staticText>
 				<reportElement style="rel_stext" x="70" y="0" width="130" height="15" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
 				<box>
@@ -90,26 +110,6 @@
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[Código de Barras]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" x="30" y="0" width="40" height="15" uuid="41ed712f-cd02-443f-bfa0-42e207e17843"/>
-				<box>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Qtde]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="rel_stext" x="0" y="0" width="30" height="15" uuid="c3451668-e85a-46ae-81b1-7e6fcb09a4b2"/>
-				<box>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Seq]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="rel_stext" x="365" y="0" width="48" height="15" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>

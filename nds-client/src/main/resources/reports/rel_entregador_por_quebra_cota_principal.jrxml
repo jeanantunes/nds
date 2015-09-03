@@ -66,8 +66,15 @@
 		<band height="55" splitType="Immediate">
 			<elementGroup>
 				<rectangle>
-					<reportElement x="0" y="0" width="555" height="15" backcolor="#E0E0E0" uuid="c780f357-5df9-45c4-9b10-7c954c294203"/>
+					<reportElement x="0" y="0" width="555" height="15" backcolor="#E4E4E4" uuid="c780f357-5df9-45c4-9b10-7c954c294203"/>
 				</rectangle>
+				<staticText>
+					<reportElement x="1" y="0" width="24" height="15" uuid="d5a30688-b094-4596-9df9-f057e4d54d72"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Box:]]></text>
+				</staticText>
 				<textField>
 					<reportElement x="24" y="0" width="25" height="15" uuid="fcc533b5-8f2b-44a6-98a1-93ea85faf1a2"/>
 					<textElement verticalAlignment="Middle">
@@ -75,6 +82,27 @@
 					</textElement>
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getCodigoBox()]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="51" y="0" width="48" height="15" uuid="77bfddaa-72df-4617-9e30-fc373398d037"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Roteiro:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="97" y="0" width="140" height="15" uuid="ae0addf5-5df5-47c0-8196-a8d66e84bcdf"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRoteiro()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="237" y="0" width="28" height="15" uuid="2ba246e9-8d4a-48c8-b260-ae83caa9d8c2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rota:]]></text>
+				</staticText>
 				<textField>
 					<reportElement x="265" y="0" width="173" height="15" uuid="049587f7-3810-4fd2-85b5-30e3f211e1a9"/>
 					<textElement verticalAlignment="Middle">
@@ -89,33 +117,12 @@
 					</textElement>
 					<text><![CDATA[Data:]]></text>
 				</staticText>
-				<staticText>
-					<reportElement x="1" y="0" width="24" height="15" uuid="d5a30688-b094-4596-9df9-f057e4d54d72"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Box:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="51" y="0" width="48" height="15" uuid="77bfddaa-72df-4617-9e30-fc373398d037"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Roteiro:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="237" y="0" width="28" height="15" uuid="2ba246e9-8d4a-48c8-b260-ae83caa9d8c2"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="8" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Rota:]]></text>
-				</staticText>
 				<textField>
-					<reportElement x="97" y="0" width="140" height="15" uuid="ae0addf5-5df5-47c0-8196-a8d66e84bcdf"/>
-					<textElement verticalAlignment="Middle">
+					<reportElement x="463" y="0" width="91" height="15" uuid="eb5a3c75-b79a-4d2e-901c-3c444125d342"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRoteiro()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{DATA}]]></textFieldExpression>
 				</textField>
 				<subreport>
 					<reportElement isPrintRepeatedValues="false" x="0" y="15" width="555" height="40" uuid="30d6a793-d7f5-4150-b401-f33f2559fb77"/>
@@ -128,13 +135,6 @@
 					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_entregador_quebra_cota.jasper"]]></subreportExpression>
 				</subreport>
 			</elementGroup>
-			<textField>
-				<reportElement x="463" y="0" width="91" height="15" uuid="eb5a3c75-b79a-4d2e-901c-3c444125d342"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{DATA}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 </jasperReport>
