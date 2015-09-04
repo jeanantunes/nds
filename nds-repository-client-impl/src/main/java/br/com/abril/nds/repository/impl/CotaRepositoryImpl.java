@@ -668,8 +668,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         .append(" cota.numeroCota, ")
         .append(" estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida,")
         .append(" lancamento.id ,")
-        .append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
-        .append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ")
+        .append(" case when (pessoa.class = 'F') then ( pessoa.nome )")
+        .append(" when (pessoa.class = 'J' ) then ( pessoa.razaoSocial )").append(" else null end ")
         .append(" ) ");
         
         hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
@@ -835,8 +835,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             hql.append(" order by box.codigo ");
             break;
         case NOME_COTA:
-            hql.append(" order by   ").append(" case when (pessoa.nome is not null) then ( pessoa.nome )").append(
-                    " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(" else null end ");
+            hql.append(" order by   ").append(" case when (pessoa.class = 'F') then ( pessoa.nome )").append(
+                    " when (pessoa.class = 'J') then ( pessoa.razaoSocial )").append(" else null end ");
             break;
         case NUMERO_COTA:
             hql.append(" order by cota.numeroCota ");
@@ -1057,11 +1057,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
             
             hql.append(
                     " SELECT cota.id as idCota, cota.numeroCota as numeroCota, cota.parametroDistribuicao.recebeComplementar as recebeComplementar, cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ")
-                    .append(" case when (pessoa.nome is not null) then ( pessoa.nome )").append(
-                            " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )").append(
+                    .append(" case when (pessoa.class = 'F') then ( pessoa.nome )").append(
+                            " when (pessoa.class = 'J') then ( pessoa.razaoSocial )").append(
                                     " else null end as nomePessoa, ").append(
-                                            " case when (pessoa.cpf is not null) then ( pessoa.cpf )").append(
-                                                    " when (pessoa.cnpj is not null) then ( pessoa.cnpj )").append(
+                                            " case when (pessoa.class = 'F') then ( pessoa.cpf )").append(
+                                                    " when (pessoa.class = 'J') then ( pessoa.cnpj )").append(
                                                             " else null end as numeroCpfCnpj, ")
                                                             
                                                             .append(getSubSqlPesquisaContatoPDV()).append(getSubSqlPesquisaTelefone())
@@ -1288,7 +1288,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public List<CotaResumoDTO> obterCotas(final SituacaoCadastro situacaoCadastro) {
         
         final StringBuilder hql = new StringBuilder(
-                "select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero  from Cota cota ");
+                "select "+
+                " case pessoa.class " +
+                " when 'F' then pessoa.nome " +
+                " when 'J' then pessoa.razaoSocial end as nome," +
+                " cota.numeroCota as numero  from Cota cota ");
         
         hql.append(" join cota.pessoa pessoa ");
         
@@ -1334,7 +1338,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(final Date dataInicioAtividade) {
         
         final StringBuilder hql = new StringBuilder(
-                "select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from Cota cota ");
+                "select " +
+        		" case pessoa.class " +
+                " when 'F' then pessoa.nome " +
+                " when 'J' then pessoa.razaoSocial end as nome," +
+                "cota.numeroCota as numero from Cota cota ");
         
         hql.append(" join cota.pessoa pessoa ");
         
@@ -1380,7 +1388,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(final Date dataExpedicaoReparte) {
         
         final StringBuilder hql = new StringBuilder(
-                " select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
+                " select "+
+        		" case pessoa.class " +
+                " when 'F' then pessoa.nome " +
+                " when 'J' then pessoa.razaoSocial end as nome," +
+                " cota.numeroCota as numero from CotaAusente cotaAusente ");
         
         hql.append(" join cotaAusente.cota cota ");
         
@@ -1428,7 +1440,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(final Date dataRecolhimentoEncalhe) {
         
         final StringBuilder hql = new StringBuilder(
-                " select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
+                " select " +
+                " case pessoa.class " +
+                " when 'F' then pessoa.nome " +
+                " when 'J' then pessoa.razaoSocial end as nome," +
+                " cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
         
         hql.append(" join chamadaEncalheCota.cota cota ");
         
@@ -3731,7 +3747,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		StringBuilder hql = new StringBuilder();
 			
 		hql.append(" SELECT cota.numeroCota as key, ")
-		   .append(" coalesce(pessoa.nome, pessoa.razaoSocial, '') as value ")
+		   .append(" case pessoa.class " )
+           .append(     " when 'F' then pessoa.nome " )
+           .append(    " when 'J' then pessoa.razaoSocial else '' end as value," )
 		   .append(" FROM ").append(" Cota cota  ").append(" JOIN cota.pessoa pessoa ").append(" LEFT JOIN cota.box box ")
 	       .append(" WHERE cota.id in (:ids) ")
 		   .append(" AND cota.box is null ");
