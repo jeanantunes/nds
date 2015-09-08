@@ -680,11 +680,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 			return null;
 		}
 		
-		final Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> quebraPorEnt = 
-		        new LinkedHashMap<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>>();
+		final Map<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>> quebraPorEnt = new LinkedHashMap<EntregadorDTO, Map<Long, MapaProdutoCotasDTO>>();
 		
 		MapaProdutoCotasDTO pcMapaDTO = null;
-	
+		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 		    
 		    final EntregadorDTO entDto = new EntregadorDTO();
@@ -722,6 +721,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
 			
 			if (item.getReparte() != null){
+				
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 			}
 	
@@ -746,6 +746,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 		Integer valorAux = 0;
 		
+		List<Integer> listaCotas = null;
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 		    
 		    final EntregadorDTO entDto = new EntregadorDTO();
@@ -756,8 +757,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 		    entDto.setNomeEntregador(item.getNomeEntregador());
 		    
 		    if (!quebraPorEnt.containsKey(entDto)){
-		        
+		    					
 		        quebraPorEnt.put(entDto, new LinkedHashMap<Long, MapaProdutoCotasDTO>());
+		        listaCotas = new ArrayList<>();
 		    }
 		    
 		    final Map<Long, MapaProdutoCotasDTO> mapas = quebraPorEnt.get(entDto);
@@ -777,23 +779,28 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 				mapas.put(item.getIdProdutoEdicao(), pcMapaDTO);
 			}	
-	
-			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
-				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0); 
-				
-			}
-	
-			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
 			
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+			}
+			
+			final Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
+						
 			if (item.getReparte() != null){
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 				
 				valorAux = valorAux +  qtdeAtual;
 				
+				if(!listaCotas.contains(item.getCodigoCota())) {
+					listaCotas.add(item.getCodigoCota());
+				}
+				
 				pcMapaDTO.setQtdes(item.getReparte());
 			}
+			
+			pcMapaDTO.setListCotas(listaCotas);
 		}
-	
+		
 		return quebraPorEnt;
 	}
 	

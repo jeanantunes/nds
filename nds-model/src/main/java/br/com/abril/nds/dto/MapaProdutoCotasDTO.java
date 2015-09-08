@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapaProdutoCotasDTO implements Serializable{
@@ -16,6 +17,7 @@ public class MapaProdutoCotasDTO implements Serializable{
 	private Integer qtdes;
 	private Integer sequenciaMatriz;
 	private Integer pacotePadrao;
+	private List<Integer> listCotas;
 	private Map<Integer, Integer> cotasQtdes;
 	private Map<String, Integer> boxQtdes;
 	
@@ -166,5 +168,13 @@ public class MapaProdutoCotasDTO implements Serializable{
 
 	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+
+	public List<Integer> getListCotas() {
+		return listCotas;
+	}
+
+	public void setListCotas(List<Integer> listCotas) {
+		this.listCotas = listCotas;
 	}
 }

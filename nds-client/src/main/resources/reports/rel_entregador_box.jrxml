@@ -53,52 +53,44 @@
 		<band height="69" splitType="Prevent">
 			<elementGroup>
 				<rectangle>
-					<reportElement uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5" x="0" y="0" width="555" height="20" backcolor="#D3D3D3"/>
+					<reportElement x="0" y="0" width="555" height="20" backcolor="#D3D3D3" uuid="72b2d1f4-200e-44d2-95f4-beb314dc91d5"/>
 				</rectangle>
 				<staticText>
-					<reportElement uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38" style="rel_stext" x="0" y="0" width="57" height="20"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="0" y="0" width="57" height="20" uuid="aa76ffa3-7fab-499c-9b9d-1eec9cb4cf38"/>
 					<text><![CDATA[Produto:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="66102603-6764-4518-9c7a-1be8c1ab3e48" style="rel_ftext" x="57" y="0" width="86" height="20"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="57" y="0" width="86" height="20" uuid="66102603-6764-4518-9c7a-1be8c1ab3e48"/>
 					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b" style="rel_stext" x="143" y="0" width="53" height="20"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="143" y="0" width="53" height="20" uuid="b9929995-bf80-478e-9f1c-9b92bd513d0b"/>
 					<text><![CDATA[Edição:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="0d0175ba-5bcb-4d5f-b47e-dbe5da07d052" style="rel_ftext" x="196" y="0" width="30" height="20"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="196" y="0" width="30" height="20" uuid="0d0175ba-5bcb-4d5f-b47e-dbe5da07d052"/>
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="27743b19-d786-4934-b862-aa25d6bb8a58" style="rel_stext" x="226" y="0" width="107" height="20"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="226" y="0" width="107" height="20" uuid="27743b19-d786-4934-b862-aa25d6bb8a58"/>
 					<text><![CDATA[Código de Barras:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="511d1631-8dcd-4c59-b63d-7adf089b674e" style="rel_ftext" x="333" y="0" width="90" height="20"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="333" y="0" width="90" height="20" uuid="511d1631-8dcd-4c59-b63d-7adf089b674e"/>
 					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0" style="rel_stext" x="423" y="0" width="92" height="20"/>
-					<textElement/>
+					<reportElement style="rel_stext" x="423" y="0" width="92" height="20" uuid="7f1e2fa8-dcd0-41b9-9324-def2ad33f7d0"/>
 					<text><![CDATA[Preço Capa R$:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="4a798b18-5d79-473e-95fc-31d42617eab8" style="rel_ftext" x="515" y="0" width="40" height="20"/>
-					<textElement/>
+					<reportElement style="rel_ftext" x="515" y="0" width="40" height="20" uuid="4a798b18-5d79-473e-95fc-31d42617eab8"/>
 					<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
 			<elementGroup>
 				<subreport>
-					<reportElement uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c" key="" isPrintRepeatedValues="false" x="0" y="24" width="555" height="40"/>
+					<reportElement key="" isPrintRepeatedValues="false" x="0" y="24" width="555" height="40" uuid="2880eb6e-6d13-4c92-8ed9-dc100a95f75c"/>
 					<subreportParameter name="SUBREPORT_DIR">
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 					</subreportParameter>
