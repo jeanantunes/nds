@@ -1699,11 +1699,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	  
 		SQLQuery query1 = getSession().createSQLQuery("select pe.id as produto_edicao_id from produto_edicao pe inner join produto p on pe.produto_id = p.id where "+
 		" p.codigo = :codigo_produto and pe.numero_edicao = :numero_edicao");
-		 query.addScalar("produto_edicao_id", StandardBasicTypes.LONG);
+		 query.addScalar("produto_edicao_id", StandardBasicTypes.BIG_INTEGER);
 		 query1.setParameter("numero_edicao", numeroEdicao);
 		 query1.setParameter("codigo_produto", codigoProduto);
 		
-		 Long produto_edicao_id = (Long) query1.uniqueResult();
+		  BigInteger produto_edicao_id = (BigInteger) query1.uniqueResult();
 		
 		query.setParameter("produto_edicao_id", produto_edicao_id);
 		query.setParameter("numeroCota", numeroCota);
