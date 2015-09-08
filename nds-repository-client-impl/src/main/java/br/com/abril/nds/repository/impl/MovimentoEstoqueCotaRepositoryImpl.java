@@ -2451,7 +2451,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        	}
 	        
 	        case SEQUENCIA_MATRIZ:
-	            nome = " sequenciaMatriz, nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota ";
+	            nome = " descRota, sequenciaMatriz, nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota ";
 	            break;  
 	            
 	        default:
@@ -3586,7 +3586,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append(" select cota.NUMERO_COTA as codigoCota, ");
         hql.append(" 		pessoa.NOME as nomeCota,");
         hql.append(" 		produto.CODIGO as codigoProduto, ");
-        hql.append(" 		produto.NOME as nomeProduto, ");
+        hql.append(" 		produtoEdicao.NOME_COMERCIAL as nomeProduto, ");
         hql.append(" 		produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
         hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
         hql.append(" 		produtoEdicao.ID as idProdutoEdicao, ");

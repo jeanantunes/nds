@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="343"/>
 	<property name="ireport.y" value="0"/>
 	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
@@ -111,14 +111,14 @@
 					<textFieldExpression><![CDATA[((br.com.abril.nds.dto.EntregadorDTO)$F{key}).getDescricaoRota()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="438" y="0" width="25" height="15" uuid="c7ba4828-5849-4dc6-9146-9bb5a6e7ad78"/>
+					<reportElement x="444" y="0" width="25" height="15" uuid="c7ba4828-5849-4dc6-9146-9bb5a6e7ad78"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Data:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="463" y="0" width="91" height="15" uuid="eb5a3c75-b79a-4d2e-901c-3c444125d342"/>
+					<reportElement x="469" y="0" width="85" height="15" uuid="eb5a3c75-b79a-4d2e-901c-3c444125d342"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
