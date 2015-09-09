@@ -30,7 +30,7 @@
 	<field name="key" class="java.lang.String"/>
 	<field name="value" class="java.lang.Integer"/>
 	<background>
-		<band height="40">
+		<band height="41">
 			<rectangle>
 				<reportElement mode="Transparent" x="55" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="15a6bd05-0173-4166-8c89-3534cca94faf"/>
 			</rectangle>
