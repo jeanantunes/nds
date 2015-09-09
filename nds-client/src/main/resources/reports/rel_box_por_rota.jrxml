@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c4bb2129-bc08-4ebc-b163-6c53889ff4e7">
 	<property name="ireport.zoom" value="1.500000000000005"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+	<style name="rel_stext" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
 	</style>
-	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+	<style name="rel_ftext" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Left" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
 		<paragraph leftIndent="3"/>
 	</style>
-	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
-	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="8">
+	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Estilo Zebrado" backcolor="#F5F5F5" fontName="Arial" fontSize="7">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
 			<style mode="Opaque" backcolor="#CCCCCC"/>
 		</conditionalStyle>
 	</style>
-	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="8">
+	<style name="Estilo Zebrado_centralizado" backcolor="#CCCCCC" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="7">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
 			<style mode="Opaque" backcolor="#CCCCCC"/>
@@ -26,10 +26,10 @@
 	<style name="QuadradoBranco" forecolor="#FFFFFF" backcolor="#000000">
 		<pen lineWidth="1.0" lineColor="#000000"/>
 	</style>
-	<style name="rel_stext_left" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Right" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
+	<style name="rel_stext_left" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Right" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold">
 		<paragraph leftIndent="3"/>
 	</style>
-	<style name="rel_ftext_left" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Right" vAlign="Middle" fontName="Arial" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
+	<style name="rel_ftext_left" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Right" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false">
 		<paragraph leftIndent="3"/>
 	</style>
 	<parameter name="IMAGEM" class="java.io.InputStream"/>
@@ -61,15 +61,10 @@
 		<fieldDescription><![CDATA[totalReparte]]></fieldDescription>
 	</field>
 	<detail>
-		<band height="50" splitType="Prevent">
+		<band height="40" splitType="Immediate">
 			<elementGroup>
-				<subreport>
-					<reportElement stretchType="RelativeToTallestObject" x="161" y="0" width="342" height="50" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="4d87a34c-d6db-43cd-a25a-6183b08a3c47"/>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{rotasQtde}.entrySet())]]></dataSourceExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota_subbox.jasper"]]></subreportExpression>
-				</subreport>
-				<textField isBlankWhenNull="false">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="120" height="25" backcolor="#FFFFFF" uuid="f721d52e-5dde-46f8-9389-493bc4863c4b"/>
+				<textField>
+					<reportElement style="Estilo Zebrado" mode="Opaque" x="0" y="1" width="105" height="20" backcolor="#F5F5F5" uuid="f721d52e-5dde-46f8-9389-493bc4863c4b"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -77,55 +72,53 @@
 						<rightPen lineWidth="0.0"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-						<paragraph leftIndent="1"/>
+						<font size="7" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[" " + $F{nomeProduto}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="81" y="24" width="80" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="992d83cc-100a-4b06-96a0-841e6ad96a52"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="20" width="105" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="6bc3785e-4ca4-40e5-89e4-284f8e4e135f"/>
 					<box>
 						<topPen lineWidth="0.0"/>
-						<leftPen lineWidth="0.0"/>
+						<leftPen lineWidth="1.0"/>
 						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="1.0"/>
+						<rightPen lineWidth="0.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-						<paragraph rightIndent="3"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7"/>
 					</textElement>
-					<textFieldExpression><![CDATA["R$" + $F{precoCapa}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[" " + $F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="false">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="81" y="0" width="80" height="25" backcolor="#FFFFFF" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
+				<textField>
+					<reportElement style="Estilo Zebrado" mode="Opaque" x="95" y="1" width="80" height="20" backcolor="#F5F5F5" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-						<paragraph rightIndent="3"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph leftIndent="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
-					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="24" width="98" height="25" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF" uuid="6bc3785e-4ca4-40e5-89e4-284f8e4e135f"/>
+				<textField isStretchWithOverflow="true" pattern="R$¤ #,##0.00">
+					<reportElement style="Estilo Zebrado" stretchType="RelativeToTallestObject" mode="Opaque" x="95" y="20" width="80" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="992d83cc-100a-4b06-96a0-841e6ad96a52"/>
 					<box>
 						<topPen lineWidth="0.0"/>
-						<leftPen lineWidth="1.0"/>
+						<leftPen lineWidth="0.0"/>
 						<bottomPen lineWidth="1.0"/>
-						<rightPen lineWidth="0.0"/>
+						<rightPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
-						<paragraph leftIndent="1"/>
+						<font size="7" isBold="true"/>
+						<paragraph leftIndent="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{codigoDeBarras}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["R$" + $F{precoCapa}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="Estilo Zebrado_centralizado" stretchType="RelativeToBandHeight" mode="Opaque" x="503" y="25" width="52" height="25" backcolor="#F5F5F5" uuid="bcaeee05-7f6e-4775-a686-35572a75635b"/>
+					<reportElement style="Estilo Zebrado_centralizado" stretchType="RelativeToTallestObject" mode="Opaque" x="505" y="20" width="50" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="bcaeee05-7f6e-4775-a686-35572a75635b"/>
 					<box rightPadding="5">
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -133,12 +126,12 @@
 						<rightPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-						<font size="9" isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{totalReparte}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_stext_centralizado" stretchType="RelativeToTallestObject" x="503" y="0" width="52" height="25" uuid="acae5179-3946-442f-8d5a-ccd48764ff4d"/>
+					<reportElement style="rel_stext_centralizado" x="505" y="0" width="50" height="20" uuid="acae5179-3946-442f-8d5a-ccd48764ff4d"/>
 					<box rightPadding="5">
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -146,10 +139,15 @@
 						<rightPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Reparte]]></text>
 				</staticText>
+				<subreport>
+					<reportElement stretchType="RelativeToTallestObject" x="175" y="0" width="330" height="40" isPrintWhenDetailOverflows="true" uuid="4d87a34c-d6db-43cd-a25a-6183b08a3c47"/>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{rotasQtde}.entrySet())]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"rel_box_por_rota_subbox.jasper"]]></subreportExpression>
+				</subreport>
 			</elementGroup>
 		</band>
 	</detail>
