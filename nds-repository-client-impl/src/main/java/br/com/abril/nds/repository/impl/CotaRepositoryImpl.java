@@ -3749,7 +3749,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" SELECT cota.numeroCota as key, ")
 		   .append(" case pessoa.class " )
            .append(     " when 'F' then pessoa.nome " )
-           .append(    " when 'J' then pessoa.razaoSocial else '' end as value," )
+           .append(    " when 'J' then pessoa.razaoSocial else '' end as value " )
 		   .append(" FROM ").append(" Cota cota  ").append(" JOIN cota.pessoa pessoa ").append(" LEFT JOIN cota.box box ")
 	       .append(" WHERE cota.id in (:ids) ")
 		   .append(" AND cota.box is null ");
