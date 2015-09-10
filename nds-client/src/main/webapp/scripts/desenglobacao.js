@@ -410,7 +410,7 @@ var desenglobacaoController = $.extend(true, {
             
             $("#effect").show("highlight", {}, 1000, callback);
             
-            $("#dialog-novo-desenglobacao").dialog("destroy");
+            $("#dialog-novo-desenglobacao").dialog("close");
             
             $(".grids").show();
         });
@@ -462,7 +462,9 @@ var desenglobacaoController = $.extend(true, {
                     desenglobacaoController.novaEnglobacao();
                 },
                 "Cancelar": function() {
-                    $(this, desenglobacaoController.workspace).dialog("destroy");
+                     
+                     $("#dialog-novo-desenglobacao").dialog("close");
+                     
                 }
             },
             form: $("#formInserirEnglobada", desenglobacaoController.workspace)

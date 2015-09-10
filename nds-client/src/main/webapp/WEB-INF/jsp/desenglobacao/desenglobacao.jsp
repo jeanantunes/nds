@@ -35,7 +35,7 @@
 <div class="areaBts">
 	<div class="area">
 		<span class="bt_novos">
-			<a href="javascript:;" onclick="desenglobacaoController.popup();" rel="tipsy" title="Novo">
+			<a href="javascript:;" onclick="desenglobacaoController.popup(false);" rel="tipsy" title="Novo">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 			</a>
 		</span>
@@ -92,8 +92,8 @@
 	</div>
 </div>
 
-<div id="dialog-novo-desenglobacao" class="dialog" title="Englobar">
 	<form id="formInserirEnglobada">
+<div id="dialog-novo-desenglobacao" class="dialog" title="Englobar">
 		<input type="hidden" name='alterando' />
 		<fieldset style="float: left; width: 600px !important; margin-bottom: 10px;">
 			<legend>Desenglobar de:</legend>
@@ -158,8 +158,8 @@
 			</div>
 		</fieldset>
 
-	</form>
 </div>
+	</form>
 
 <div id="dialog-excluir-desenglobacao" title="Excluir ajuste" style="display:none">
 	<p>Confirma a exclusão desta desengloba&ccedil;&atilde;o?</p>
