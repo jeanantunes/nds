@@ -484,7 +484,7 @@ public class MapaAbastecimentoController extends BaseController {
 			        
 			    } else {
 			        
-			    	filtro.getPaginacao().setSortColumn("nomeEdicao");
+			    	filtro.getPaginacao().setSortColumn("produtoCota");
 			        Map<String, Map<String, ProdutoMapaRotaDTO>> mapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
                     
 			        for (String key : mapa.keySet()) {
