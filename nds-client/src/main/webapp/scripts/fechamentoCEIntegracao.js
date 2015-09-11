@@ -967,7 +967,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalheSemCE(' +
 								row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
@@ -976,7 +976,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' value="' + row.cell.encalhe + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
 								' onkeydown="fechamentoCEIntegracaoController.nextInputExemplares('+index+', window.event);"' +
-								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalheSemCE(' +
 								row.cell.idItemCeIntegracao + ', this)"/>';
 
 						if(row.cell.diferenca == undefined){
