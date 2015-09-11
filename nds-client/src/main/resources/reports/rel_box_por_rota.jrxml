@@ -90,7 +90,7 @@
 					<textFieldExpression><![CDATA[" " + $F{codigoDeBarras}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="Estilo Zebrado" mode="Opaque" x="104" y="1" width="70" height="20" backcolor="#F5F5F5" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
+					<reportElement style="Estilo Zebrado" mode="Opaque" x="114" y="1" width="60" height="20" backcolor="#F5F5F5" uuid="bcb9e913-e193-4595-9683-1927b5d9578a"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="0.0"/>
