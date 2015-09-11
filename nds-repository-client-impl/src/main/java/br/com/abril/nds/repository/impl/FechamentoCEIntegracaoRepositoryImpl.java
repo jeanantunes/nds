@@ -289,7 +289,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SUM(COALESCE(PROD_EDICAO.DESCONTO, 0)) AS totalDesconto ");
 		
-		hql.append(this.obterHqlFromSemCE(filtro));
+		hql.append(this.obterHqlFromSemCE(filtro, true));
 		
 		Query  query = getSession().createSQLQuery(hql.toString())
 						.addScalar("totalBruto", StandardBasicTypes.BIG_DECIMAL)
@@ -325,14 +325,17 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		return hql.toString();
 	}
 
-	private String obterHqlFromSemCE(FiltroFechamentoCEIntegracaoDTO filtro) {
+	private String obterHqlFromSemCE(FiltroFechamentoCEIntegracaoDTO filtro, Boolean consolidado) {
 		
 		StringBuilder hql = montarSqlFromSemCE();
 		
 		hql.append(" WHERE ");
 		hql.append(" PROD.SEM_CE_INTEGRACAO = :semIntegracaoCE  ");
 		hql.append(" AND ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE > 0  ");
-		hql.append(" GROUP BY  PROD.ID ");
+		
+		if(!consolidado) {
+			hql.append(" GROUP BY  PROD.ID ");
+		}	
 		
 		return hql.toString();
 	}
@@ -650,7 +653,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" COUNT(DISTINCT PROD_EDICAO.PRODUTO_ID) ");
 		
-		hql.append(this.obterHqlFromSemCE(filtro));
+		hql.append(this.obterHqlFromSemCE(filtro, false));
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		
@@ -683,7 +686,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    PROD_EDICAO.PRECO_VENDA AS precoCapa,");
 		
-		hql.append("    COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS reparte, ");		
+		// hql.append("    COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) * COALESCE(PROD_EDICAO.PRECO_VENDA, 0) AS reparte, ");		
 				
 		hql.append("  (COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE, 0)  ");
 		hql.append("  + COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)) AS qtdDevolucao, ");
@@ -696,11 +699,11 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) AS estoque, ");
 
-		hql.append(" '0' AS encalhe, ");
+		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS encalhe, ");
 		
 		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS diferenca ");
 		
-		hql.append(this.obterHqlFromSemCE(filtro));
+		hql.append(this.obterHqlFromSemCE(filtro, false));
 		
 		hql.append(obterOrdenacao(filtro));
 		
