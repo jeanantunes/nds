@@ -2445,7 +2445,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	        		break;
 	        		
 	        	} else {
-	        		nome = " nomeProduto, codigoBox, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota ";
+	        		nome = " codigoBox, nomeProduto, roteiro.ordem, rota.ordem, rotaPDV.ORDEM, codigoCota ";
 	        		break;
 	        		
 	        	}
