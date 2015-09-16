@@ -16,7 +16,7 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 	private ControleNumeracaoSlipRepository controleNumeracaoSlipRepository;
 	
 	@Transactional
-	public Long obterProximoNumeroSlip(TipoSlip tipoSlip) {
+	public synchronized  Long obterProximoNumeroSlip(TipoSlip tipoSlip) {
 		
 		ControleNumeracaoSlip controleNumeracaoSlip = controleNumeracaoSlipRepository.obterControleNumeracaoSlip(tipoSlip);
 		
@@ -38,7 +38,7 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 		controleNumeracaoSlip.setProximoNumeroSlip((numeroSlip + 1L));
 		
 		controleNumeracaoSlipRepository.alterar(controleNumeracaoSlip);
-		
+		controleNumeracaoSlipRepository.flush();
 		return numeroSlip;
 		
 	}
