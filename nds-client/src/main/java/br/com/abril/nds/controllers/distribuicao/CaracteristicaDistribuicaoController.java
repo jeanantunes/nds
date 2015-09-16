@@ -124,7 +124,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		
 		if(StringUtils.isNotBlank(filtro.getCodigoProduto())) {
 			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
-			filtro.setCodigoProduto(produto.getCodigoICD());
+			filtro.setCodigoProduto(produto != null ? produto.getCodigoICD():null);
 		}
 		   
 		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaDetalhe(filtro);
