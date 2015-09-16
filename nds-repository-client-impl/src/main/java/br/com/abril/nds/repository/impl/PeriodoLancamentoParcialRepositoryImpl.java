@@ -43,7 +43,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 				
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT produtoedi3_.ID AS idProdutoEdicao, ");
+		hql.append(" SELECT STRAIGHT_JOIN produtoedi3_.ID AS idProdutoEdicao, ");
 		hql.append(" periodolan0_.NUMERO_PERIODO AS numeroPeriodo, ");
 		hql.append(" lancamento2_.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
 		hql.append(" lancamento2_.DATA_REC_DISTRIB AS dataRecolhimento, ");
