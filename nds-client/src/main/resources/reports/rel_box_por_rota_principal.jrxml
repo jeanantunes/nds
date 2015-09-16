@@ -59,7 +59,7 @@
 					<reportElement mode="Opaque" x="0" y="1" width="175" height="26" backcolor="#F5F5F5" uuid="f3f15cb4-d877-4935-b63b-18f666907f77"/>
 				</rectangle>
 				<subreport>
-					<reportElement stretchType="RelativeToTallestObject" x="0" y="27" width="555" height="58" isPrintWhenDetailOverflows="true" uuid="30d6a793-d7f5-4150-b401-f33f2559fb77"/>
+					<reportElement x="0" y="27" width="555" height="58" isPrintWhenDetailOverflows="true" uuid="30d6a793-d7f5-4150-b401-f33f2559fb77"/>
 					<subreportParameter name="SUBREPORT_DIR">
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -76,7 +76,7 @@
 					<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="rel_stext" x="7" y="14" width="115" height="13" backcolor="#CCCCCC" uuid="dd24b1d1-7e80-49f5-b8da-afa91ad39836"/>
+					<reportElement style="rel_stext" x="2" y="14" width="115" height="13" backcolor="#CCCCCC" uuid="dd24b1d1-7e80-49f5-b8da-afa91ad39836"/>
 					<textElement>
 						<font size="8" isBold="true"/>
 					</textElement>
@@ -90,7 +90,7 @@
 					<text><![CDATA[Preço Capa]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="rel_stext" x="7" y="1" width="80" height="13" uuid="410df182-c31b-41c3-b52f-2cbb642d877d"/>
+					<reportElement style="rel_stext" x="2" y="1" width="80" height="13" uuid="410df182-c31b-41c3-b52f-2cbb642d877d"/>
 					<textElement>
 						<font size="8" isBold="true"/>
 					</textElement>
