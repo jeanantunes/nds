@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ControleCotaDTO;
 import br.com.abril.nds.dto.CotaUnificacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.ControleCotaService;
 import br.com.abril.nds.service.CotaUnificacaoService;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -35,6 +37,9 @@ public class CotaUnificacaoController extends BaseController {
 	
 	@Autowired
 	private CotaUnificacaoService cotaUnificacaoService;
+	
+	@Autowired
+	private ControleCotaService controleCotaService;
 	
 	@Autowired
     private Result result;
@@ -81,6 +86,16 @@ public class CotaUnificacaoController extends BaseController {
 		result.use(Results.json()).from("").serialize();
 	}
 	
+	
+	@Post
+	public void cadastrarCotaUnificacaoMaster(Integer numeroCotaCentralizadora, 
+			                            List<Integer> numeroCotasCentralizadas){
+		
+		this.controleCotaService.salvarCotaUnificacao(numeroCotaCentralizadora, numeroCotasCentralizadas);
+
+		result.use(Results.json()).from("").serialize();
+	}
+	
 	/**
      * Método de exclusão de unificação de cotas
      * 
@@ -90,6 +105,20 @@ public class CotaUnificacaoController extends BaseController {
 	public void excluirCotaUnificacao(Integer cotaUnificadora){
 		
 		this.cotaUnificacaoService.removerCotaUnificacao(cotaUnificadora);
+		
+		this.result.use(Results.json()).from("").serialize();
+	}
+	
+	
+	/**
+     * Método de exclusão de unificação de cotas
+     * 
+     * @param cotaUnificacaoId
+     */
+	@Post
+	public void excluirCotaUnificacaoMaster(Long id){
+		
+		this.controleCotaService.excluirControleCota(id);
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
@@ -120,6 +149,20 @@ public class CotaUnificacaoController extends BaseController {
 		cotasUnificadas = this.cotaUnificacaoService.obterCotasUnificadas();
 		
 		result.use(FlexiGridJson.class).from(cotasUnificadas).page(1).total(cotasUnificadas.size()).serialize();
+	}
+	
+	@Post
+	public void consultarCotasUnificadasMaster(){
+		
+		List<ControleCotaDTO> cotasUnificadas = this.controleCotaService.buscarControleCota();
+		
+		if (cotasUnificadas != null){
+			
+			result.use(FlexiGridJson.class).from(cotasUnificadas).page(1).total(cotasUnificadas.size()).serialize();
+			return;
+		}
+		
+		return;
 	}
 	
 	@Post

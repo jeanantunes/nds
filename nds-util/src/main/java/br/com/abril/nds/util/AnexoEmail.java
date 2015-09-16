@@ -9,7 +9,8 @@ public class AnexoEmail {
 	
 	public enum TipoAnexo{
 		PDF(".pdf"),
-		XLS(".xls");
+		XLS(".xls"),
+		ENP(".ENP");
 		
 		private String tipo;
 		

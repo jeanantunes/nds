@@ -1,49 +1,70 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.Writer;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.ArrayList;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.text.html.HTMLDocument.Iterator;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.hibernate.Query;
-import org.hibernate.type.StandardBasicTypes;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.dto.ConsignadoCotaDTO;
+import br.com.abril.nds.dto.ControleCotaDTO;
+import br.com.abril.nds.dto.EncalheCotaDTO;
+import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.ems0197.route.EMS0197Route;
 import br.com.abril.nds.integracao.ems0198.route.EMS0198Route;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.cadastro.Depara;
-import br.com.abril.nds.dto.DeparaDTO;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
+import br.com.abril.nds.service.ConsolidadoFinanceiroService;
+import br.com.abril.nds.service.ControleCotaService;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DeparaService;
+import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
-import br.com.abril.nds.service.DeparaService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -60,6 +81,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO)
 public class GeracaoArquivosController extends BaseController {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(GeracaoArquivosController.class);
 	@Autowired
 	private ApplicationContext applicationContext;
 
@@ -93,67 +115,304 @@ public class GeracaoArquivosController extends BaseController {
 	@Autowired
 	private DeparaService deparaService;
 	
+	
+	@Autowired
+	private ControleCotaService controleCotaService;
+	
+	
+	@Autowired
+	private VendaEncalheService vendaEncalheService;
+	
+	@Autowired
+	private CotaService cotaService;
+	
+	
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
+	
+	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired 
+	private GerarCobrancaService cobrancaService;
+	
+	
+	
+	@Autowired
+	private SituacaoCotaService situacaoCotaService;
+	
+	@Autowired
+	private BoxService boxService;
+	
+	@Autowired
+	 private  CaracteristicaDistribuicaoService caracteristicaDistribuicaoService;
+	
+	
+	@Autowired
+	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
+	
+	
+	@Autowired
+	private EmailService emailService;
+	
+	
 	@Path("/")
 	public void index() {
 	}
 
 	
+	
+	
+	
+	// gerar arquivo com vendas reparte agregado ( caso caruso )
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
-	public void unificaror() {	
-		 String crlf = System.getProperty("line.separator");
-	      String dir_banca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
-	      String arquivo_depara = "c:/tmp/depara.txt";
-	      //String cmd ="cmd /c dir";
-	      
-	      // gerar depara
-	     
-	      List <DeparaDTO> rs= deparaService.buscarDepara();
-	      
-	      try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(arquivo_depara), "utf-8"))) {
-	    	    for (DeparaDTO dp:rs) {
+	public void gerarVenda(Date dataLctoPrevisto, String operacao) {
+		try {
+			 Date data = dataLctoPrevisto;
+		     if ( data == null )
+		        data = new Date(); // pegar data de hoje
+			 LOGGER.error("INICIANDO UNIFICACAO DE COTAS CARUSO para data="+data);
+			  String crlf = System.getProperty("line.separator");
+			  
+		      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+		      
+		      List <ControleCotaDTO> ccList= controleCotaService.buscarControleCota();
+		            
+		      Map <Integer,Set <Integer> > cotasMaster = new HashMap();
+		      
+		      // agrupar cotas por cotas master
+		      
+		      for ( ControleCotaDTO cc: ccList ) {
+		    	  
+		    	   Set <Integer> lista = cotasMaster.get( cc.getNumeroCotaMaster());
+		    	   
+		    	   if ( lista == null ) {
+		    		   
+		    		  lista = new  HashSet();
+		    		  lista.add(cc.getNumeroCotaMaster()); // insere cota master na lista, just in case nao esteja cadastrada
+		    		                                          // como cota agrupada a ela mesmo ..
+		    		  
+		    	       }
+		    	      lista.add(cc.getNumeroCota());
+		    	      
+		    	      cotasMaster.put(cc.getNumeroCotaMaster(),lista);
+		    	  
+		    	   }
+		    	   
+		      // para cota master, gerar vendas/reparte de todas as cotas subsidiaria
+		      // gerar arquivo (9010202092015.ENP) no formato abaixo
+		      /*
+01107573500090109901099010902092015000692892015000007897823436443GUIA ARTE COM MAOS CUP CAKE   00000002CASA DOIS COMUNICACAO LTDA         0000001999000000139930 MODELOS PASSO A PASSO      0209201500000002
+		    select '011',lpad(trim(b.cod_filial_prodin),7,0) as cod_filial,
 
-	    	    	
+		      lpad(a.cod_jornaleiro,7,0) as cod_jornaleiro,
 
- 
-	  	    	  writer.write((dp.getFc()==null|| dp.getFc().trim().length() == 0?"":"00000".substring(dp.getFc().length()) + dp.getFc())
-	  	    			  +"|"+
-	  	    			  (dp.getDinap()==null||dp.getDinap().trim().length() == 0 ?"":"00000".substring(dp.getDinap().length()) + dp.getDinap())+crlf);
-	  	      }
-	    	} catch (IOException exd) {
-	    		  result.use(Results.json()).from("Erro gerando arquivo depara no diretorio.."+arquivo_depara+" erro:"+exd.getMessage() , "result").serialize();
-	    		  return;
-	    	}  
+		      lpad(a.cod_jornaleiro,5,0) as cod_jornaleiro,
 
-	      String cmd="/home/ubuntu/ipv/concatipv.sh "+arquivo_depara+" "+ dir_banca+File.separator+"fc "+dir_banca+File.separator+"dinap "+dir_banca+File.separator+"out";
-	
-		 try {
-		      String line;
-		           Process p = Runtime.getRuntime().exec(cmd);
+		      lpad(a.cod_jornaleiro,5,0) as cod_jornaleiro,
+
+		      replace(a.dt_mov,'/','') as dat_mov,
+
+		      lpad(a.cod_publicacao,8,0) as cod_edicao,
+
+		      lpad(trim(a.edicao_capa),4,'0') as edicao_capa,
+
+		      lpad(a.cod_barra,18,0) as cod_barra,
+
+		      rpad(trim(a.desc_public),30,' ') as desc_public,
+
+		      lpad(a.reparte,8,0) as reparte,
+
+		      rpad(trim(d.nome_editor),35,' ') as nome_editor,
+
+		      replace(to_char(lpad(trunc(vr_venda,2),11,0)),'.','') as vr_venda,
+
+		      replace(to_char(lpad(trunc(vr_custo,2),11,0)),'.','') as vr_custo,
+
+		      rpad(trim(a.rep_capa),30,' ') as rep_capa,
+
+		      replace(a.dt_mov,'/','') as dat_mov,
+
+		      lpad(a.devol,8,0) as devol 
+		      */
+		      
 		     
-		      BufferedReader bri = new BufferedReader
-		        (new InputStreamReader(p.getInputStream()));
-		      BufferedReader bre = new BufferedReader
-		        (new InputStreamReader(p.getErrorStream()));
-		      StringBuffer ret=new StringBuffer();
-		      while ((line = bri.readLine()) != null) {
-		        ret.append(line.replaceAll("<", "").replaceAll(">", "")+"</br>"+crlf);
+		     
+		        		
+		      StringBuffer mensagem = new StringBuffer();
+		      
+		      String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
+		      if ( codigoDistribuidor == null || codigoDistribuidor.trim().length() == 0 || "0".equals(codigoDistribuidor))
+		    	  codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
+		     
+		      
+		      for ( Integer cotaMaster: cotasMaster.keySet()) {
+		    	  String path  = dirBanca+"/"+String.format("%05d",cotaMaster)+DateUtil.formatarData(data,"ddMMyyyy")+".ENP";
+		    	  LOGGER.error("GERANDO COTAS CARUSO EM ARQUIVO"+path);
+		    	  int cont=0;
+		    	  PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
+		    	  // pesquisar reparte do master
+		    	  //out.println("01107573500090109901099010902092015000692892015000007897823436443GUIA ARTE COM MAOS CUP CAKE   00000002CASA DOIS COMUNICACAO LTDA         0000001999000000139930 MODELOS PASSO A PASSO      0209201500000002");
+		    	   Cota cotam = cotaService.obterPorNumeroDaCota(cotaMaster);
+		    	   if ( cotam == null ) {
+		    		   LOGGER.error("Cota master "+cotaMaster+"  cadastrada em conttrole_cota nao e' valida");
+		    	   continue;
+		    	   }
+	                            
+		    	//    String email = cotam.getEnderecoPrincipal().getEndereco().getPessoa().getEmail();
+		    	 //   if ( email == null )
+		    	  // String 	email = cotam.getPDVPrincipal().getEmail();
+		    	 //   if ( email == null )
+		    	   String 	email = "odemir.olivatti@gmail.com";
+		    	  // pesquisar reparte das cotas
+		    	  for (Integer cota : cotasMaster.get(cotaMaster)) {
+		    		  
+		    		  Cota cotac = cotaService.obterPorNumeroDaCota(cota);
+			    	   if ( cotac == null ) {
+			    		   LOGGER.error("Cota  "+cota+"  cadastrada em conttrole_cota nao e' valida");
+			    	   continue;
+			    	   }
+		    		  FiltroConsolidadoEncalheCotaDTO filtro = new  FiltroConsolidadoEncalheCotaDTO();
+		    		  filtro.setDataConsolidado(data);
+		    		  filtro.setNumeroCota(cota.intValue());
+		    		        
+		    		  List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaEncalhe(filtro);
+		    		 
+		    		  Map <String,EncalheCotaDTO> mapEncalheCota = new HashMap();
+		    		  
+		    		  for(EncalheCotaDTO encalhe : listaEncalheCota)
+		    			  mapEncalheCota.put(encalhe.getCodigoProduto()+encalhe.getNumeroEdicao(), encalhe);
+		    		 
+		    		  FiltroConsolidadoConsignadoCotaDTO filtroc = new FiltroConsolidadoConsignadoCotaDTO();
+		    		  filtroc.setDataConsolidado(data);
+		    		  filtroc.setNumeroCota(cota.intValue());
+		    		 
+		    		  
+		    		  List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtroc);
+		    		    
+		    		  if ( listaConsignadoCota == null ) {
+		    		    LOGGER.error("COTA "+cota+" cadastrado em controle_cota nao existe na base de dados");
+		    		    mensagem.append("Cota numero "+cota.intValue()+" nao encontrada.Corrigir controle_cota</br>");
+		    		  } else
+		    		  for(ConsignadoCotaDTO consignado:listaConsignadoCota ) {
+			    		  StringBuffer sb = new StringBuffer();
+			    		  
+			    		  EncalheCotaDTO encalhe  = mapEncalheCota.get(consignado.getCodigoProduto()+consignado.getNumeroEdicao());
+			    		  
+			    		  sb.append("011"+String.format("%07d", Integer.parseInt(codigoDistribuidor)));
+			    		  
+			    		  Integer codigoJornaleiro=cota;
+			    		  sb.append(String.format("%07d",codigoJornaleiro));
+			    		  sb.append(String.format("%05d",codigoJornaleiro));
+			    		  sb.append(String.format("%05d",codigoJornaleiro));
+			    		  
+			    		  Date dtMov = data;
+			    		  sb.append(DateUtil.formatarData(dtMov, "ddMMyyyy"));
+			    		  
+			    		  String codPublicacao=consignado.getCodigoProduto();
+			    		  
+			    		  
+	                      sb.append(StringUtils.leftPad(codPublicacao,8,'0'));
+	                      
+					      String edicaoCapa=consignado.getNumeroEdicao().toString();
+	                      sb.append(StringUtils.leftPad(edicaoCapa,4,'0'));
+	                     
+	                    
+	                      
+	                      String codBarra=  consignado.getCodigoBarras();
+	                      
+					      sb.append(StringUtils.leftPad(codBarra,18,'0'));
+					    
+					      String descPublic=consignado.getNomeProduto();
+	                      sb.append(String.format("%-30s",descPublic).substring(0,30));
+					     
+					      Long reparte=consignado.getReparteFinal().longValue();
+					      sb.append(String.format("%08d",reparte));
+					      
+					      FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtrocp = new FiltroConsultaCaracteristicaDistribuicaoSimplesDTO();
+					      filtrocp.setCodigoProduto(consignado.getCodigoProduto());
+					      List<CaracteristicaDistribuicaoSimplesDTO> cp= caracteristicaDistribuicaoService.buscarComFiltroSimples(filtrocp);
+					      
+					                
+					      String nomeEditor=(cp != null ? cp.get(0).getNomeEditor(): consignado.getNomeEditor());//produto.getEditor().getPessoaJuridica().getNome();
+					     
+					      sb.append(String.format("%-35s",nomeEditor).substring(0,35));
+					   
+					      
+	                      BigDecimal vrVenda =  consignado.getPrecoCapa();
+	                      sb.append(String.format("%011.2f",vrVenda.floatValue()).replace(",", ""));
+	                      
+	                      BigDecimal vrCusto = consignado.getPrecoComDesconto();
+	                      sb.append(String.format("%011.2f",vrCusto.floatValue()).replace(",",""));
+	
+	                     
+	                      
+	                     
+					      String repCapa= consignado.getChamadaCapa();//produtoEdicao.getChamadaCapa()!= null ?produtoEdicao.getChamadaCapa():"" ;//"30 MODELOS PASSO A PASSO";
+					    	
+					      
+					      sb.append(StringUtils.rightPad(repCapa,30,' ').substring(0,30));
+					     
+					     
+				    	  sb.append(DateUtil.formatarData(dtMov, "ddMMyyyy"));
+					     
+	                      Long devol=encalhe != null ? encalhe.getEncalhe().longValue():0;
+	                      
+	                      sb.append(String.format("%08d",devol));
+	                      cont++;
+			    		  out.println(sb.toString());
+		    		  }
+		    	  }
+		    	  out.close();
+		    	  // enviar email
+		    	  
+		    	  LOGGER.error("ENVIANDO  ARQUIVO CARUSO"+path +" para email" + email);
+		    	  mensagem.append("GERADO ARQUIVO "+path+" com "+cont+" registros</br>");
+		    	  AnexoEmail anexoEmail = new AnexoEmail();
+		    	  anexoEmail.setNome(path);
+		    	 
+		    	  mensagem.append("Enviado email para  "+email+"</br>");
+		       
+		    		List<AnexoEmail> anexosEmail = new ArrayList<AnexoEmail>();
+		    		
+		    	
+		    	
+		             byte[] anexo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
+		                
+		                
+		    		
+		    	    anexosEmail.add(new AnexoEmail(cotaMaster.toString()+DateUtil.formatarData(data,"ddMMyyyy"),anexo,TipoAnexo.ENP));
+		         
+		    	  this.emailService.enviar("Arquivo Unificado", 
+							 "Segue arquivo em anexo.", 
+							 new String[]{email}, 
+							 anexosEmail);	
+		        
 		      }
-		      bri.close();
-		      while ((line = bre.readLine()) != null) {
-		    	  ret.append(line.replaceAll("<", "").replaceAll(">", "")+"</br>"+crlf);
-		      }
-		      bre.close();
-		      p.waitFor();
-		     System.out.println(ret.toString());
-		      result.use(Results.json()).from("Arquivos unificados.."+ret.toString() , "result").serialize();
+		      
+		      
+		     
+			     
+				
+			     result.use(Results.json()).from("PROCESSAMENTO OK</br>"+mensagem.toString() , "result").serialize();
+		      
+		     
 		    }
 		    catch (Exception err) {
 		      err.printStackTrace();
-		      result.use(Results.json()).from("Erro executando Unificacao</br>"+crlf+"Comando:"+cmd+"</br>"+crlf+"Erro:"+ err , "result").serialize();
+		      result.use(Results.json()).from("Erro gerando arquivo agrupado de vendas de cotas</br>.Erro:"+ err , "result").serialize();
 		    }
 	
 	}
+	
+	
+	
 
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
@@ -236,6 +495,7 @@ public class GeracaoArquivosController extends BaseController {
 			ret.append("Quantidade de arquivos fc unificados com dinap :"+files.size()+"</br>");
 			ret.append("Sem box dinap="+files_semdepara.size()+ " Conflitos="+conflitos+"</br>");
 	     
+			
 		     result.use(Results.json()).from(ret.toString() , "result").serialize();
 		    }
 		    catch (Exception err) {

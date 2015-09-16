@@ -7,6 +7,11 @@
   fieldset label {width: auto; margin-bottom: 0px!important;
 }
 #dialogCotasSuspensas fieldset{width:570px!important;}
+
+
+#dialog-excluir, #dialog-novo, #dialog_cota_unificacao, #dialog_nova_cota_unificacao{display:none;}
+
+
   </style>
 
 <script type="text/javascript">
@@ -17,7 +22,11 @@ $(function(){
 });
 
 </script>
+
+
 <form>
+
+
 	
 	 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 	
@@ -31,6 +40,15 @@ $(function(){
 		  	 <span class="bt_novos"
 			    title="Unificar arquivos FC/DINAP"><a id="btnUnificar"  isEdicao="true" href="javascript:;" rel="tipsy">
 			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_change.png"></a>
+			</span>
+			
+			
+			
+			
+			
+			 <span class="bt_novos"
+			    title="Gerar Arquivo Vendas/Reparte Unificado por cota"><a id="btnUnificarCotasCRUD"  isEdicao="true" href="javascript:;" rel="tipsy">
+			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif"></a>
 			</span>
 		
 		</div>
@@ -50,10 +68,12 @@ $(function(){
 					<option value="REPARTE">Reparte</option>
 					<option value="ENCALHE">Encalhe</option>
 					<option value="PICKING" selected="selected">Picking</option>
+					<option value="VENDA">Venda</option>
 			</select></td>
 			<td width="105">
 				<div id="dtLancto" style="display: none;">Data Lançamento:</div>
 				<div id="dtRecolhimento">Data Recolhimento:</div>
+				<div id="dtVenda" style="display: none;">Data:</div>
 			</td>
 			<td width="386"><div id="dtEscolha">
 					<input type="text" name="datepickerDe" id="datepickerDe"
@@ -67,6 +87,49 @@ $(function(){
 </fieldset>
 </form>
 
+
+<form id="cota_unificacao_form" name="cota_unificacao_form">
+	   <div id="dialog_cota_unificacao" title="Cotas Centralizadas">
+		  <table class="cotasCentralizadas"></table>
+	   </div>
+    </form>
+	
+    <form id="nova_cota_unificacao_form" name="nova_cota_unificacao_form">
+	   <div id="dialog_nova_cota_unificacao" title="Unifica&ccedil;&atilde;o de Cotas">
+		  <fieldset style="width: 98%;">
+		  	<legend>Cotas Master</legend>
+		  	<table style="width: 100%;">
+		  		<tr>
+		  			<td>Cota</td>
+		  			<td>Nome</td>
+		  		</tr>
+		  		<tr>
+		  			<td style="width: 10%;">
+		  				<input type="text" class="numCota" id="parametro-cobranca-numeroCota" style="width: 40px;"
+		  					onchange="GeracaoArquivos.prototype.buscarCotaPorNumero('')"/>
+		  			</td>
+		  			<td>
+		  				<input type="text" id="parametro-cobranca-nomeCota" style="width: 495px;" 
+		  					onkeyup="GeracaoArquivos.prototype.onkeyupCampoNome('');" 
+		  					onblur="GeracaoArquivos.prototype.onblurCampoNome('');"/>
+		  			</td>
+		  		</tr>
+		  	</table>
+		  </fieldset>
+		  
+		  <fieldset style="width: 98%;">
+			<legend>Cota</legend>
+				<div style="overflow: auto; height: 190px;">
+					<table id="cotasCentralizadas">
+				  		<tr>
+				  			<td>Cota</td>
+				  			<td>Nome</td>
+				  		</tr>
+				  	</table>
+				</div>
+			  </fieldset>
+		  </div>
+    </form>
 <div class="linha_separa_fields">&nbsp;</div>
 
 <fieldset id="resultado" class="grids classFieldset"
@@ -84,3 +147,5 @@ $(function(){
 	<h2>&nbsp;<spam id="qtdArquivosUnificados">Unificado com Sucesso</spam></h2>
 
 </fieldset>
+
+
