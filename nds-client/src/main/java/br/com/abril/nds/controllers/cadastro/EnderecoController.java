@@ -812,6 +812,7 @@ public class EnderecoController extends BaseController {
         
         final EnderecoDTO endereco = (enderecoAssociacaoAtual != null) ? enderecoAssociacaoAtual.getEndereco() : null;
         
+        if ( endereco != null )
         for (final EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecosExibir) {
             if(!enderecoAssociacao.getEndereco().getId().equals(endereco.getId())
                     || !enderecoAssociacao.getEndereco().getLogradouro().equals(endereco.getLogradouro())
