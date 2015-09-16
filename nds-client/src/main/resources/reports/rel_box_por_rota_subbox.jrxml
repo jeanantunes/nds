@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" columnCount="6" printOrder="Horizontal" pageWidth="330" pageHeight="60" orientation="Landscape" columnWidth="55" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rel_por_box_subbox" columnCount="6" printOrder="Horizontal" pageWidth="330" pageHeight="41" orientation="Landscape" columnWidth="55" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="cbea841f-93cd-4abd-a1db-6f08806c45de">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -10,8 +10,8 @@
 		<paragraph leftIndent="3"/>
 	</style>
 	<style name="rel_stext_centralizado" mode="Transparent" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" markup="styled" fontName="Arial Black" fontSize="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
-	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
-	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="7">
+	<style name="rel_ftext_centralizado" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Estilo Zebrado" backcolor="#CCCCCC" fontName="Arial" fontSize="6">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{REPORT_COUNT}.intValue()%2)==0)]]></conditionExpression>
 			<style mode="Opaque" backcolor="#F5F5F5"/>
@@ -30,7 +30,7 @@
 	<field name="key" class="java.lang.String"/>
 	<field name="value" class="java.lang.Integer"/>
 	<background>
-		<band height="41">
+		<band height="41" splitType="Stretch">
 			<rectangle>
 				<reportElement mode="Transparent" x="55" y="0" width="55" height="20" backcolor="#F5F5F5" uuid="15a6bd05-0173-4166-8c89-3534cca94faf"/>
 			</rectangle>
@@ -80,7 +80,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
-					<font size="7" isStrikeThrough="false"/>
+					<font size="6" isStrikeThrough="false"/>
 					<paragraph tabStopWidth="50"/>
 				</textElement>
 				<textFieldExpression><![CDATA[(($F{key}.equalsIgnoreCase("|1") == false)&&
@@ -109,7 +109,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{value}.equals(0) == false)?$F{value}:" "]]></textFieldExpression>
 			</textField>
