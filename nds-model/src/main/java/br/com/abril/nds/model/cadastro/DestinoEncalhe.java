@@ -77,6 +77,21 @@ public class DestinoEncalhe implements Serializable {
 	@Size(min=0, max=74)
 	@Column(name = "TIPO_ATENDIMENTO_DDE", nullable = true)
 	private String tipoAtendimentoDDE;
+	
+	
+	@Size(min=0, max=60)
+	@Column(name = "NOME_EDITOR", nullable = true)
+	private String nomeEditor;
+
+	
+
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
+	}
 
 	public Long getId() {
 		return id;

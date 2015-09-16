@@ -81,6 +81,7 @@ public class EMS0139MessageProcessor extends AbstractRepository implements Messa
 		DestinoEncalhe destinoEncalhe = new DestinoEncalhe();
 		BeanUtils.copyProperties(input, destinoEncalhe, "produtoEdicao");
 		destinoEncalhe.setProdutoEdicao(produtoEdicao);
+		destinoEncalhe.setNomeEditor(input.getNomeEditor());
         
         getSession().merge(destinoEncalhe);
 	}

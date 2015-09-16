@@ -806,7 +806,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append("notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
 		.append(", notaFiscal.notaFiscalInformacoes.identificacao.serie ")
 		.append(", editor.codigo ")
-		.append(", pessoaJuridica.razaoSocial ")
+		.append(", pessoaJuridica.razaoSocial ")  // obter de destino_encalhe
 		.append(", notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso) ")
 		.append(" FROM NotaFiscal as notaFiscal ")
 		.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
