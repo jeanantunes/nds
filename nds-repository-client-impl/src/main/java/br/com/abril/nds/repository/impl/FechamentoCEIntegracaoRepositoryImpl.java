@@ -699,7 +699,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) + COALESCE(ESTOQUE_PROD.QTDE_DANIFICADO, 0) AS estoque, ");
 
-		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS encalhe, ");
+		hql.append(" '0' AS encalhe, ");
 		
 		hql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR, 0) AS diferenca ");
 		
