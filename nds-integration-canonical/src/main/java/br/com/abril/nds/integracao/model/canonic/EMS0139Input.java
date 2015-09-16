@@ -35,6 +35,8 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 	private Long numeroPrioridadeAtendimentoDDE;
 
 	private String tipoAtendimentoDDE;
+	
+	private String nomeEditor;
 
 	@Field(offset=1, length=7)
 	public String getCodigoDistribuidor() {
@@ -115,6 +117,15 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 
 	public void setTipoAtendimentoDDE(String tipoAtendimentoDDE) {
 		this.tipoAtendimentoDDE = tipoAtendimentoDDE;
+	}
+	
+	@Field(offset=196, length=60)
+	public String getNomeEditor() {
+		return nomeEditor;
+	}
+
+	public void setNomeEditor(String nomeEditor) {
+		this.nomeEditor = nomeEditor;
 	}
 
 }
