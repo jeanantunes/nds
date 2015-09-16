@@ -1122,6 +1122,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
             	BigInteger qtdeEstoqueEncalheDev = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
             	
+            	final BigInteger qtdeEncalheDevFor = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+            	
             	if(movimentoEstoque.getOrigem() != null || qtdeSuplementarDevFor.longValue() > 0) {
             		
             		if(qtdeSuplementarDevFor.longValue() > 0) {
@@ -1129,6 +1131,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
             			transferirEstoqueProdutoChamadaoParaRecolhimento(estoqueProduto.getProdutoEdicao().getId(), movimentoEstoque.getUsuario());
             			
             			qtdeEstoqueProdutoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+            			
+            		} else if(movimentoEstoque.getOrigem() != null || qtdeEncalheDevFor.longValue() > 0) {
+            		
+            			estoqueProdutoService.processarTransferenciaEntreEstoques(idProdutoEdicao, TipoEstoque.LANCAMENTO, TipoEstoque.DEVOLUCAO_ENCALHE, movimentoEstoque.getUsuario().getId());
+            			
+            			qtdeEstoqueEncalheDev = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+            			
+            			qntMovimento = this.efetuarOperacaoDeTransferenciaEstoque(movimentoEstoque, estoqueProduto, qntMovimento);
             			
             		} else {
             			
