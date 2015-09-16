@@ -55,7 +55,14 @@ public class ConsignadoCotaDTO implements Serializable{
 	private BigDecimal total;
 	
 	private BigDecimal desconto;
+	
+	private String codigoBarras;
+	
+	private String nomeEditor;
+	
+	private String chamadaCapa;
 
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -164,8 +171,42 @@ public class ConsignadoCotaDTO implements Serializable{
 		return sequencia;
 	}
 
+
 	public void setSequencia(String sequencia) {
 		this.sequencia = sequencia != null ? sequencia : "Postergado";
 	}
 	
+	public String getCodigoBarras() {
+		return this.codigoBarras;
+	}
+	
+	public String setCodigoBarras(String codigoBarras) {
+		if ( codigoBarras == null)
+			return "";
+		return this.codigoBarras=codigoBarras;
+	}
+	
+	
+	public String getNomeEditor() {
+		if ( nomeEditor == null )
+			return this.getNomeFornecedor();
+		return this.nomeEditor;
+	}
+	
+	public String setNomeEditor(String nomeEditor) {
+		return this.nomeEditor=nomeEditor;
+	}
+	public String getChamadaCapa() {
+		if ( this.chamadaCapa == null )
+			 return "";
+		return this.chamadaCapa;
+	}
+
+	public void setChamadaCapa(String chamadaCapa) {
+		this.chamadaCapa = chamadaCapa;
+	}
+	
+
+
+
 }

@@ -23,14 +23,70 @@ GeracaoArquivos.prototype.init = function() {
 	$("#btnUnificar", this.workspace).click(function() {
 		_this.btnUnificarOnClick();
 	});
+	
+	
+	
+	$("#btnUnificarCotasCRUD", this.workspace).click(function() {
+		_this.btnUnificarCotasCRUDOnClick();
+	});
+	
+	
 
 	$("#tipoArquivo", this.workspace).change(function() {
 		_this.tipoArquivoGerarOnChange();
 	});
 
 	_this.tipoArquivoGerarOnChange();
+	
+	
+	
+	this.criarCotasCentralizadasGrid();
 };
 
+
+GeracaoArquivos.prototype.criarCotasCentralizadasGrid = function() {
+	$(".cotasCentralizadas", this.workspace).flexigrid({
+		preProcess: this.getDataCotasCentralizadas,
+		dataType : 'json',
+		colModel :[{
+			display : '',
+			name : 'id',
+			width : 1,
+			sortable : false,
+			align : 'center',
+			hide:true,
+			style:'display{none}',
+		}, {
+			display : 'Cota Master',
+			name : 'numeroCotaMaster',
+			width : 100,
+			sortable : false,
+			align : 'center'
+		}, {
+			display : 'Cotas',
+			name : 'numeroCota',
+			width : 100,
+			sortable : false,
+			align : 'center'
+		}, {
+			display : 'Situação',
+			name : 'situacao',
+			width : 50,
+			sortable : false,
+			align : 'center'
+		},
+		{
+			display : 'Ação',
+			name : 'acao',
+			width : 120,
+			sortable : false,
+			align : 'center'
+		}
+		],
+		width : 420,
+		height : 255
+	});
+},
 
 GeracaoArquivos.prototype.getParams = function() {
 	var params = {
@@ -43,6 +99,22 @@ GeracaoArquivos.prototype.getParams = function() {
 GeracaoArquivos.prototype.btnGerarOnClick = function() {
 
 	var params = this.getParams();
+	
+if($("#tipoArquivo", this.workspace).val() == "VENDA") {
+		
+		$.postJSON(this.path + 'gerarVenda',
+				params, 
+				function(data) {
+					$("#resultado_unificacao", this.workspace).show();
+					$("#qtdArquivosUnificados", this.workspace).html(data);
+				},
+				function(result) {
+					$("#resultado_unificacao", this.workspace).show();
+					$("#qtdArquivosUnificados", this.workspace).html(data);
+				}
+		);
+		
+	} else
 	
 	if($("#tipoArquivo", this.workspace).val() == "PICKING") {
 		
@@ -96,18 +168,36 @@ GeracaoArquivos.prototype.btnUnificarOnClick = function() {
 	
 };
 
+
+
+
+GeracaoArquivos.prototype.btnUnificarCotasCRUDOnClick = function() {
+ 
+	
+	$(".cotasCentralizadas", this.workspace).flexOptions({
+		url: contextPath+'/cadastro/cotaUnificacao/consultarCotasUnificadasMaster',
+		newp : 1
+	});
+	
+	$(".cotasCentralizadas", this.workspace).flexReload();
+	
+	
+	
+};
 GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
 
 	$("#resultado", this.workspace).hide();
 	
 	var reparte = $("#dtLancto");
 	var encalhe = $("#dtRecolhimento");
+	var venda = $("#dtVenda");
 	var tipoArquivo = $("#tipoArquivo").val();
 
     switch (tipoArquivo) {  
             case 'REPARTE':    
         		reparte.show();
                 encalhe.hide();
+                venda.hide();
                 this.alterarDataCalendario(tipoArquivo);
             break;  
             case 'ENCALHE':
@@ -116,10 +206,18 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
             case 'PICKING':
         		reparte.show();
                 encalhe.hide();
+                venda.hide();
+            break; 
+            case 'VENDA':
+        		venda.show();
+                encalhe.hide();
+                reparte.hide();
+                this.alterarDataCalendario('PICKING');
             break;  
             default:
                 reparte.hide();
             	encalhe.show();
+            	venda.hide();
             break;  
     }
 
@@ -131,5 +229,309 @@ GeracaoArquivos.prototype.alterarDataCalendario = function(tipoArquivoGeracao){
 			   function(result){
 				   $("#datepickerDe", this.workspace).val(result.data);
 			   });
+};
+
+GeracaoArquivos.prototype.mostrarUnificacaoCotas = function(){
+	
+	$(".cotasCentralizadas", this.workspace).flexOptions({
+		url: contextPath+'/cadastro/cotaUnificacao/consultarCotasUnificadasMaster',
+		newp : 1
+	});
+	
+	$(".cotasCentralizadas", this.workspace).flexReload();
+};
+
+GeracaoArquivos.prototype.getDataCotasCentralizadas = function(data){
+	
+	$.each(data.rows, function(index, row){
+		
+		row.cell.numeroCotaMaster = row.cell.numeroCotaMaster;
+		
+		
+		
+		row.cell.numeroCota = row.cell.numeroCota;
+		row.cell.id = row.cell.id;
+		
+		var linkAEditar = '<a isEdicao="true" href="javascript:;" onclick="GeracaoArquivos.prototype.editarUnificacao(' + 
+		row.cell.id+ ');"' +
+		'style="cursor:pointer; margin-right:10px;">' +
+		'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
+		'</a>';
+
+		var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="GeracaoArquivos.prototype.excluirUnificacao(' + 
+		row.cell.id + ');" style="cursor:pointer">' +
+		'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
+		'</a>';
+		
+		row.cell.acao =  linkExcluir;
+	});
+	var permissaoAlteracao = ($('#permissaoAlteracao',workspace).val()=="true");
+	
+	$("#dialog_cota_unificacao", this.workspace).dialog({
+		resizable: false,
+		height:390,
+		width:450,
+		modal: true,
+		buttons:[{
+			id:"bt_inc_nova",
+	        text:"Incluir Nova", 
+	        click: function() {
+	        	if(!permissaoAlteracao){
+					exibirAcessoNegado();
+					return;
+				}
+	        	$("#parametro-cobranca-numeroCota", this.workspace).val("");
+	        	$("#parametro-cobranca-nomeCota", this.workspace).val("");
+	        	GeracaoArquivos.prototype.exibirModalNovaUnificacao();
+	        	GeracaoArquivos.prototype.adicionarLinhaCota();
+	        }
+		}],
+		form: $("#dialog_cota_unificacao", this.workspace).parent("form")
+	});
+	
+	return data;
+};
+
+GeracaoArquivos.prototype.exibirModalNovaUnificacao = function(){
+	
+	$("#parametro-cobranca-numeroCota", this.workspace).removeAttr("readonly");
+	$("#parametro-cobranca-nomeCota", this.workspace).removeAttr("readonly");
+	this.limparCamposCentralizacaoCotas();
+	
+	$("#dialog_nova_cota_unificacao", this.workspace).dialog({
+		resizable: false,
+		height:390,
+		width:600,
+		modal: true,
+		buttons:[
+		{
+			id:"bt_confirmar",
+			text:"Confirmar",
+			click: function(){
+				
+				var data = [
+				            {name:'numeroCotaCentralizadora', value:$("#parametro-cobranca-numeroCota", this.workspace).val()}
+				            ];
+				
+				$.each($("#cotasCentralizadas [class=numCota]", this.workspace),
+					function(index, item){
+						
+						if (item.value && item.value != ""){
+							
+							data.push({name:'numeroCotasCentralizadas['+index+']', value:item.value});
+						}
+					}
+				);
+				
+				$.postJSON(
+					contextPath+"/cadastro/cotaUnificacao/cadastrarCotaUnificacaoMaster",
+					data,
+					function(result) {
+						if (result){
+							
+							if (result.tipoMensagem){
+								
+								exibirMensagem(result.tipoMensagem, result.listaMensagens);
+							}
+							
+							GeracaoArquivos.prototype.limparCamposCentralizacaoCotas();
+				        	$("#dialog_nova_cota_unificacao", this.workspace).dialog("close");
+				        	
+				        	GeracaoArquivos.prototype.mostrarUnificacaoCotas();
+						}
+					},
+					null,
+					true
+				);
+			}
+		}, {
+			id:"bt_cancelar",
+	        text:"Cancelar", 
+	        click: function() {
+	        	
+	        	GeracaoArquivos.prototype.limparCamposCentralizacaoCotas();
+	        	$("#dialog_nova_cota_unificacao", this.workspace).dialog("close");
+	        }
+		}],
+		form: $("#dialog_nova_cota_unificacao", this.workspace).parent("form")
+	});
+};
+
+GeracaoArquivos.prototype.buscarCotaPorNumero = function(index){
+	
+	var numeroCota = $("#parametro-cobranca-numeroCota" + index, this.workspace).val();
+
+	
+	var data = [
+        {name:'numeroCota', value: numeroCota},
+        
+	];
+	
+	$.postJSON(contextPath+"/cadastro/cotaUnificacao/buscarCota",
+	   data,
+	   function(result) {
+    	   if (result.tipoMensagem){
+			   
+    		   exibirMensagem(result.tipoMensagem, result.listaMensagens);
+    		   $("#parametro-cobranca-numeroCota" + index, this.workspace).val("");
+    		   $("#parametro-cobranca-nomeCota" + index, this.workspace).val("");
+    		   
+		       return;
+    	   } else {
+    		 
+    		   $("#parametro-cobranca-numeroCota" + index, this.workspace).val(result.numero);
+    		   $("#parametro-cobranca-nomeCota" + index, this.workspace).val(result.nome);
+    	   }
+       },
+       function(){
+    	   
+    	   $("#parametro-cobranca-numeroCota" + index, this.workspace).val("");
+    	   $("#parametro-cobranca-nomeCota" + index, this.workspace).val("");
+       },
+	   true
+	);
+};
+
+
+GeracaoArquivos.prototype.buscarCotaPorNumero_ = function(index){
+	
+	var numeroCota = $("#numeroCota_" + index, this.workspace).val();
+  
+	
+	var data = [
+        {name:'numeroCota', value: numeroCota},
+        
+	];
+	
+	$.postJSON(contextPath+"/cadastro/cotaUnificacao/buscarCota",
+	   data,
+	   function(result) {
+    	   if (result.tipoMensagem){
+			   
+    		   exibirMensagem(result.tipoMensagem, result.listaMensagens);
+    		   $("#numeroCota_" + index, this.workspace).val("");
+    		   $("#nomeCota_" + index, this.workspace).val("");
+    		   
+		       return;
+    	   } else {
+    		 
+    		   $("#numeroCota_" + index, this.workspace).val(result.numero);
+    		   $("#nomeCota_" + index, this.workspace).val(result.nome);
+    	   }
+       },
+       function(){
+    	   
+    	   $("#numeroCota_" + index, this.workspace).val("");
+    	   $("#nomeCota_" + index, this.workspace).val("");
+       },
+	   true
+	);
+};
+
+GeracaoArquivos.prototype.adicionarLinhaCota = function(indexAnterior){
+	
+	if ($("#parametro-cobranca-numeroCota"+indexAnterior, this.workspace).val() == "" ||
+			$("#parametro-cobranca-nomeCota"+indexAnterior, this.workspace).val() == ""){
+		
+		return;
+	}
+	
+	if (indexAnterior === ""){
+		indexAnterior = -1;
+	}
+	
+	if (!indexAnterior && indexAnterior != 0){
+		indexAnterior = 0;
+	} else {
+		indexAnterior += 1;
+	}
+	
+	if ($("#parametro-cobranca-numeroCota"+indexAnterior, this.workspace)[0]){
+		return;
+	}
+	
+	var template = '<tr class="addCota"><td style="width: 10%;">'+
+		'<input type="text" class="numCota" id="numeroCota_'+ indexAnterior +'" style="width: 40px;"'+
+		'onchange="GeracaoArquivos.prototype.buscarCotaPorNumero_('+ indexAnterior +')"/>'+
+		'</td><td>'+
+		'<input type="text" id="nomeCota_'+ indexAnterior +'" style="width: 475px;"'+
+		'onkeyup="GeracaoArquivos.prototype.onkeyupCampoNome('+ indexAnterior +')"' +
+		'onblur="GeracaoArquivos.prototype.onblurCampoNome('+ indexAnterior +')"'+
+		'/></td></tr>';
+	
+	$("#cotasCentralizadas", this.workspace).append(template);
+	
+	//$(".numCota", this.workspace).numeric();
+	
+	$("#parametro-cobranca-numeroCota"+ indexAnterior, this.workspace).focus();
+};
+
+GeracaoArquivos.prototype.onkeyupCampoNome = function(index){
+	
+	pesquisaCota.autoCompletarPorNome("#parametro-cobranca-nomeCota" + index);
+};
+
+GeracaoArquivos.prototype.onblurCampoNome = function(index){
+	
+//	this.adicionarLinhaCota(index);
+	
+//	if ($("#parametro-cobranca-numeroCota" + index, this.workspace).val() == ""){
+//		pesquisaCota.pesquisarPorNomeCota("#parametro-cobranca-numeroCota" + index, "#parametro-cobranca-nomeCota" + index);
+//	}
+};
+
+GeracaoArquivos.prototype.limparCamposCentralizacaoCotas = function(){
+	
+	$("#parametro-cobranca-numeroCota", this.workspace).val("");
+	$("#parametro-cobranca-nomeCota", this.workspace).val("");
+	
+	$("#cotasCentralizadas tr:[class=addCota]", this.workspace).remove();
+};
+
+GeracaoArquivos.prototype.excluirUnificacao = function(id){
+	$.postJSON(
+		contextPath+"/cadastro/cotaUnificacao/excluirCotaUnificacaoMaster",
+											
+		[{name:'id', value:id}],
+		function(result){
+			GeracaoArquivos.prototype.mostrarUnificacaoCotas();
+		},
+		null,
+		true
+	);
+};
+
+GeracaoArquivos.prototype.editarUnificacao = function(id){
+	alert(id);
+	$.postJSON(
+		contextPath+"/cadastro/cotaUnificacao/editarCotaUnificacao",
+		[{name:'id', value:id}],
+		function(result){
+			
+			this.exibirModalNovaUnificacao();
+			
+			$.each(result, function(index, row){
+				
+				if (!index){
+					
+					$("#parametro-cobranca-numeroCota", this.workspace).val(row.numero);
+					$("#parametro-cobranca-nomeCota", this.workspace).val(row.nome);
+					
+					$("#parametro-cobranca-numeroCota", this.workspace).attr("readonly", "readonly");
+					$("#parametro-cobranca-nomeCota", this.workspace).attr("readonly", "readonly");
+				} else {
+					
+					this.adicionarLinhaCota(index-1);
+					$("#parametro-cobranca-numeroCota" + index, this.workspace).val(row.numero);
+					$("#parametro-cobranca-nomeCota" + index, this.workspace).val(row.nome);
+				}
+			});
+			
+			
+		},
+		null,
+		true
+	);
+
 };
 //@ sourceURL=geracaoArquivo.js
