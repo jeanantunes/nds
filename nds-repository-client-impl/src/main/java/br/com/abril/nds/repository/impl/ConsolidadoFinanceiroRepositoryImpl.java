@@ -96,7 +96,7 @@ ConsolidadoFinanceiroRepository {
     public List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(
             final FiltroConsolidadoEncalheCotaDTO filtro) {
         
-        final StringBuilder hql = new StringBuilder("select ");
+        final StringBuilder hql = new StringBuilder("select STRAIGHT_JOIN");
         
         hql.append("     produto8_.CODIGO as codigoProduto, ")
         .append("        produto8_.NOME as nomeProduto, ")
@@ -172,7 +172,7 @@ ConsolidadoFinanceiroRepository {
         
         .append("union all ")
         
-        .append("select ")
+        .append("select STRAIGHT_JOIN ")
         .append("        produto6_.CODIGO as codigoProduto, ")
         .append("        produto6_.NOME as nomeProduto, ")
         .append("        pessoajuri9_.RAZAO_SOCIAL as nomeFornecedor, ")
@@ -348,7 +348,7 @@ ConsolidadoFinanceiroRepository {
     public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(
             final FiltroConsolidadoVendaCotaDTO filtro) {
         
-        final StringBuilder hql = new StringBuilder("select ");
+        final StringBuilder hql = new StringBuilder("select STRAIGHT_JOIN");
         hql.append("        produto9_.CODIGO as codigoProduto, ")
         .append("        produto9_.NOME as nomeProduto, ")
         .append("        pessoajuri12_.RAZAO_SOCIAL as nomeFornecedor, ")
@@ -418,7 +418,7 @@ ConsolidadoFinanceiroRepository {
         
         .append("union all ")
         
-        .append("select ")
+        .append("select STRAIGHT_JOIN ")
         .append("        produto7_.CODIGO as codigoProduto, ")
         .append("        produto7_.NOME as nomeProduto, ")
         .append("        pessoajuri10_.RAZAO_SOCIAL as nomeFornecedor, ")
@@ -682,7 +682,7 @@ ConsolidadoFinanceiroRepository {
     @Override
     public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(final FiltroConsolidadoConsignadoCotaDTO filtro){
         
-        final StringBuilder hql = new StringBuilder("select ");
+        final StringBuilder hql = new StringBuilder("select STRAIGHT_JOIN ");
         
         hql.append("        produto11_.CODIGO as codigoProduto, ")
         
@@ -739,7 +739,9 @@ ConsolidadoFinanceiroRepository {
         
                 .append("      else 'À Vista' end ")
         
-        .append("    ) as sequencia ")
+        .append("    ) as sequencia, ")
+        .append("       produtoedi8_.codigo_de_barras as codigoBarras, ")
+        .append("       produtoedi8_.chamada_capa as chamadaCapa ")
         
         
         .append("from CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
@@ -809,7 +811,7 @@ ConsolidadoFinanceiroRepository {
         .append(" UNION ALL ")
         
         
-        .append("select ")
+        .append("select STRAIGHT_JOIN ")
         
         .append("        produto9_.CODIGO as codigoProduto, ")
         
@@ -866,7 +868,11 @@ ConsolidadoFinanceiroRepository {
         
                 .append("      else 'À Vista' end ")
         
-        .append("    ) as sequencia ")
+        .append("    ) as sequencia, ")
+        
+        .append("       produtoedi6_.codigo_de_barras as codigoBarras, ")
+        .append("       produtoedi6_.chamada_capa as chamadaCapa ")
+      //  .append("       produto11_.chamada_capa as nomeEditor ")
         
         
         .append("from MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
@@ -949,7 +955,7 @@ ConsolidadoFinanceiroRepository {
     @Override
     public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(final FiltroConsolidadoConsignadoCotaDTO filtro){
         
-        final StringBuilder hql = new StringBuilder("select ");
+        final StringBuilder hql = new StringBuilder("select STRAIGHT_JOIN ");
         
         hql.append(" consignados.*, reparteFinal * preco as total from ( ")
         .append("        select ")
@@ -969,7 +975,10 @@ ConsolidadoFinanceiroRepository {
         .append("        case when diferenca10_.TIPO_DIFERENCA is null then '' else diferenca10_.TIPO_DIFERENCA end as motivoTexto, ")
         .append("        movimentos4_.QTDE as qtde, ")
         .append(" 		 coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as preco, ")
-        .append("        chamadaEncalhe.sequencia as sequencia ")
+        .append("        chamadaEncalhe.sequencia as sequencia, ")
+        .append("       produtoedi8_.codigo_de_barras as codigoBarras, ")
+        .append("       produtoedi8_.chamada_capa as chamadaCapa ")
+      //  .append("       produto11_.chamada_capa as nomeEditor ")
         .append(" from ")
         .append("        CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
         .append(" inner join ")
@@ -1034,7 +1043,7 @@ ConsolidadoFinanceiroRepository {
 
         hql.append(" group by ").append("        idProdutoEdicao ")
         .append("union all ")
-        .append("select ")
+        .append("select STRAIGHT_JOIN ")
         .append("        produtoedi6_.ID as idProdutoEdicao, ")
         .append("        movimentos2_.ID as idMovimentoEstoqueCota, ")
         .append("        produto9_.CODIGO as codigoProduto, ")
@@ -1050,7 +1059,10 @@ ConsolidadoFinanceiroRepository {
         .append("        diferenca8_.TIPO_DIFERENCA as motivoTexto, ")
         .append("        movimentos2_.QTDE as qtde, ")
         .append("   	 coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as preco, ")
-        .append("        chamadaEncalhe.sequencia as sequencia ")
+        .append("        chamadaEncalhe.sequencia as sequencia ,")
+        .append("        produtoedi6_.codigo_de_barras as codigoBarras, ")
+        .append("        produtoedi6_.chamada_capa as chamadaCapa ")
+      //  .append("       produto11_.chamada_capa as nomeEditor ")
         .append("from ")
         .append("        MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
         .append("inner join ")
