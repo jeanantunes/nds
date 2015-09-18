@@ -77,6 +77,8 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";		
 	
+	private BigInteger qtdeDevSemCE;
+	
 	private boolean isProdutoSemCe = false;
 	
 	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
@@ -301,5 +303,13 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 
 	public void setProdutoSemCe(boolean isProdutoSemCe) {
 		this.isProdutoSemCe = isProdutoSemCe;
+	}
+
+	public BigInteger getQtdeDevSemCE() {
+		return qtdeDevSemCE;
+	}
+
+	public void setQtdeDevSemCE(BigInteger qtdeDevSemCE) {
+		this.qtdeDevSemCE = qtdeDevSemCE;
 	}
 }

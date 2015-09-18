@@ -97,7 +97,7 @@ public interface MovimentoEstoqueService {
 	
 	void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, FuroProduto furoProduto, Long idUsuario);
 	
-	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem);
+	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem, boolean intregadoCE);
 	
 	public BigInteger obterReparteDistribuidoProduto(String codigoProduto);
 

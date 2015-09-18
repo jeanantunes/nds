@@ -57,6 +57,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao, ");
 		
+		hql.append(this.sqlQuantidadeDevForn());
+		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA AS reparte, ");
 		
 		hql.append("	ITEM_CH_ENC_FORNECEDOR.ID AS idItemCeIntegracao, ");
@@ -64,7 +66,6 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO AS tipoFormatado, ");
 		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO AS precoCapa,");
-		
 		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' then ");
 		hql.append("			 COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(" ) ");
 		hql.append("		 when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'FINAL' then ");
@@ -145,6 +146,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 						.addScalar("codigoProduto", StandardBasicTypes.STRING)
 						.addScalar("nomeProduto", StandardBasicTypes.STRING)
 						.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+						.addScalar("qtdeDevSemCE", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("tipoFormatado", StandardBasicTypes.STRING)
 						.addScalar("venda", StandardBasicTypes.BIG_INTEGER)
@@ -178,6 +180,20 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		return query.list();
 	}
 	
+	private String sqlQuantidadeDevForn() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" (select COALESCE(sum(movimento.QTDE),0) ");
+		sql.append(" from movimento_estoque movimento ");
+		sql.append(" where movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
+		sql.append(" and movimento.TIPO_MOVIMENTO_ID = '66' ");
+		sql.append(" and movimento.INTEGRADO_COM_CE = false ) as qtdeDevSemCE, ");
+		
+		return sql.toString();
+		
+	}
+
 	private String sqlVendaParcial(){
 		
 		StringBuilder sql = new StringBuilder();

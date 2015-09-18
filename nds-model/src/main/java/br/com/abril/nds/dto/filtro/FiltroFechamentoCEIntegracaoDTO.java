@@ -37,6 +37,7 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		CODIGO_PRODUTO("codigoProduto"),
 		NOME_PRODUTO("nomeProduto"),
 		NUMERO_EDICAO("numeroEdicao"),
+		DEVFORN("qtdeDevSemCE"),
 		REPARTE("reparte"),
 		VENDA("venda"),
 		PRECO_CAPA("precoCapa"),

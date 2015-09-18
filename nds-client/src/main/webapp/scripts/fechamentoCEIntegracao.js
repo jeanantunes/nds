@@ -144,6 +144,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					itens.push({name:"itens[" + index + "].numeroEdicao", value:itemCEIntegracao.numeroEdicao});
 					itens.push({name:"itens[" + index + "].precoCapa", value:itemCEIntegracao.precoCapa});
 					itens.push({name:"itens[" + index + "].isProdutoSemCe", value:true});
+				} else {
+					itens.push({name:"itens[" + index + "].qtdeDevSemCE", value:itemCEIntegracao.qtdeDevSemCE});
 				}
 				
 			}
@@ -274,19 +276,25 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				width : 50,
 				sortable : true,
 				align : 'center'
-			},  {
+			}, {
+				display : 'Qtde Dev Inf',
+				name : 'qtdeDevSemCE',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Reparte',
 				name : 'reparte',
 				width : 80,
 				sortable : true,
 				align : 'center'
-			},{
+			}, {
 				display : 'Estoque',
 				name : 'estoque',
 				width : 80,
 				sortable : false,
 				align : 'center'
-			},{
+			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
 				width : 80,
@@ -415,6 +423,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var encalhe = campo.value;
 		
+		var qtdeDevSemCE = $("#qtdeDevSemCE" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
 		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
@@ -451,7 +461,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
-		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque);
+		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(idItemCeIntegracao, encalhe, venda, diferenca, estoque, qtdeDevSemCE);
 		
 		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
 	},
@@ -617,12 +627,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe, venda);
 	},
 	
-	atualizarItensCEIntegracao : function(idItemCeIntegracao, encalhe, venda, diferenca, estoque) {
+	atualizarItensCEIntegracao : function(idItemCeIntegracao, encalhe, venda, diferenca, estoque, qtdeDevSemCE) {
 		
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
 			
 			if(itemCEIntegracao.id == idItemCeIntegracao) {
-				
+				itemCEIntegracao.qtdeDevSemCE = qtdeDevSemCE;
 				itemCEIntegracao.encalhe = encalhe;
 				itemCEIntegracao.venda = venda;
 				itemCEIntegracao.diferenca = diferenca;
@@ -698,6 +708,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					var isParcial = row.cell.tipoFormatado == 'PARCIAL';
 					var isFinal = row.cell.tipoFormatado == 'FINAL';
 					
+					var colunaQtdeDevForn;
+					
 					var colunaReparte;
 					
 					var colunaEncalhe;
@@ -707,6 +719,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					var valorDiferenca = 0;
 					
 					if (isParcial) {
+						
+						colunaQtdeDevForn =
+							'<span id="qtdeDevSemCE' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.qtdeDevSemCE) ? row.cell.qtdeDevSemCE : "") +
+							'</span>';
 						
 						colunaReparte =
 							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
@@ -727,7 +744,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +row.cell.idItemCeIntegracao + ', '+isFinal +', this)"/>';
 						
 					} else if (isFinal) {
-							
+						
+						colunaQtdeDevForn =
+							'<span id="qtdeDevSemCE' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.qtdeDevSemCE) ? row.cell.qtdeDevSemCE : "") +
+							'</span>';
+						
 						colunaReparte =
 							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
 								((row.cell.reparte) ? row.cell.reparte : "") +
@@ -751,6 +773,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								' onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' + row.cell.idItemCeIntegracao + ', '+isFinal +' , this)"/>';
 							
 					} else {
+						
+						colunaQtdeDevForn =
+							'<span id="qtdeDevSemCE' + row.cell.idItemCeIntegracao + '">' +
+								((row.cell.qtdeDevSemCE) ? row.cell.qtdeDevSemCE : "") +
+							'</span>';
 						
 						colunaReparte =
 							'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
@@ -820,12 +847,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					
 					row.cell.estoque = colunaEstoque;
 					row.cell.reparte = colunaReparte;
+					row.cell.qtdeDevSemCE = colunaQtdeDevForn;
 					row.cell.encalhe = colunaEncalhe;
 					row.cell.diferenca = colunaDiferenca;
 					row.cell.venda = colunaVenda;
 					row.cell.precoCapaFormatado = colunaPrecoCapa;
 					row.cell.valorVendaFormatado = colunaValorVenda;
-
+					
 				});
 				
 			} else {

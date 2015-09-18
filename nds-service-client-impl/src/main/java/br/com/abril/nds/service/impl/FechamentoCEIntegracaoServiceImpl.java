@@ -302,7 +302,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				                                           usuario.getId(), 
 				                                           quantidadeEncalhe,
 				                                           tipoMovimentoEstoque,
-				                                           Origem.TRANSFERENCIA_DEVOLUCAO_FORNECEDOR);
+				                                           Origem.TRANSFERENCIA_DEVOLUCAO_FORNECEDOR, true);
     }
     
     /**
@@ -504,7 +504,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 							usuario.getId(), 
 							diferenca.getQtde(), 
 							tipoMovimentoPerda,
-							Origem.TRANSFERENCIA_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR);
+							Origem.TRANSFERENCIA_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR, true);
 					
 					diferenca = diferencaEstoqueService.lancarDiferencaFechamentoCEIntegracao(diferenca,movimentoEstoque, StatusAprovacao.PERDA);
 					
@@ -542,6 +542,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			ItemChamadaEncalheFornecedor itemCE = this.itemChamadaEncalheFornecedorRepository.buscarPorId(item.getIdItemCeIntegracao());
 			
 			itemCE.setQtdeVendaInformada(Util.nvl(item.getVenda(), 0L).longValue());
+			
+			item.setEncalhe(item.getEncalhe().add(item.getQtdeDevSemCE())); 
+			
 			itemCE.setQtdeDevolucaoInformada(Util.nvl(item.getEncalhe(), 0L).longValue());
 			
 			if(itemCE != null) {
@@ -580,7 +583,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				                                           usuario.getId(), 
 				                                           quantidade,
 				                                           tipoMovimentoEstoqueEstorno,
-				                                           Origem.TRANSFERENCIA_ESTORNO_DEVOLUCAO_FORNECEDOR);
+				                                           Origem.TRANSFERENCIA_ESTORNO_DEVOLUCAO_FORNECEDOR, true);
     }
     
     /**
@@ -636,7 +639,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				                                           usuario.getId(), 
 				                                           movimentoEstoque.getQtde(),
 				                                           tipoMovimentoEstoque,
-				                                           origem);
+				                                           origem, true);
     }
     
     /**
@@ -1118,7 +1121,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				                                           usuario.getId(), 
 				                                           quantidadeEncalhe,
 				                                           tipoMovimentoEstoque,
-				                                           Origem.TRANSFERENCIA_DEVOLUCAO_FORNECEDOR);
+				                                           Origem.TRANSFERENCIA_DEVOLUCAO_FORNECEDOR, false);
     }
     
 	
