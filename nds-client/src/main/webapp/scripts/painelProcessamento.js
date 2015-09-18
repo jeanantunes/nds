@@ -424,6 +424,16 @@ var painelProcessamentoController = $.extend(true, {
 			   	}
 		);
 	},
+	processarInterfaceDevolucaoFornecedor : function() {
+		
+		$.postJSON(contextPath + "/administracao/painelProcessamento/processarInterfaceDevolucaoFornecedor",
+				null,
+				function (resultado) {
+				
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			   	}
+		);
+	},
 	
 	exportarCobranca : function() {
 		

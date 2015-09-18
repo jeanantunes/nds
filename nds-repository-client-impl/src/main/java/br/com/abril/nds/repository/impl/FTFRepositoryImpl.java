@@ -12,12 +12,14 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.StatelessSession;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -44,6 +46,8 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.vo.ItemEncalheBandeiraVO;
+import br.com.abril.nds.vo.NotaEncalheBandeiraVO;
 
 @Repository
 public class FTFRepositoryImpl extends AbstractRepository implements FTFRepository {
@@ -403,6 +407,9 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 
 
 	}
+	
+	
+	
 
 	public FTFEnvTipoRegistro06 obterRegistroTipo06(final NotaFiscalReferenciada nota) {
 
@@ -559,6 +566,121 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		
 		return (boolean) query.uniqueResult();
 	}
+	
+	Integer tipoNota = 1;
+	Integer numNota = 123;
+	Integer codVolume = 1;
+	Integer qtdSacosPaletes = 2;
+	String nomeDestinoEncalhe = "DEVOLUCAO AO EDITOR";
+	
+	
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<NotaEncalheBandeiraVO> obterNotasNaoEnviadas() {
+		StringBuilder sql = new StringBuilder();
+		
+		  sql.append(" select " )
+		   .append(" nota.id as notaId,")
+		   .append("  1  as  tipoNota,")
+		   .append(" numero_documento_fiscal as numNota, ")
+		   .append("   1 as codVolume,")
+		   .append("      1 as qtdSacosPaletes ,")
+		   .append("  nome_destinatario nomeDestinoEncalhe ")
+		   .append(" 	  from nota_fiscal_novo nota  where natureza_operacao_id in ")
+		   .append(" (select id from natureza_operacao  ")
+		   .append(" 		where TIPO_EMITENTE = 'DISTRIBUIDOR' ")
+		   .append(" 	and TIPO_DESTINATARIO = 'FORNECEDOR' ")
+			.append(" 	and TIPO_OPERACAO = 'SAIDA' )")
+			.append("	and interface_devolucao_fornecedor = false ");
+			              
+		
+		   	
+		  SQLQuery query = getSession().createSQLQuery(sql.toString());
+		   query.addScalar("notaId",StandardBasicTypes.INTEGER);
+		   query.addScalar("tipoNota",StandardBasicTypes.INTEGER);
+		   query.addScalar("numNota",StandardBasicTypes.INTEGER);
+		   query.addScalar("codVolume",StandardBasicTypes.INTEGER);
+		   query.addScalar("qtdSacosPaletes",StandardBasicTypes.INTEGER);
+		   query.addScalar("nomeDestinoEncalhe",StandardBasicTypes.STRING);
+		query.setResultTransformer(new AliasToBeanResultTransformer(NotaEncalheBandeiraVO.class));
+		return query.list();
+	}
+	
+	 @Override
+	    @Transactional(readOnly = true)
+	public List<ItemEncalheBandeiraVO> obterItensNotasNaoEnviadas(Integer notaId) {
+		StringBuilder sql = new StringBuilder();
+		
+	   
+		   sql.append("	select ")
+		     .append(" pe.id as produtoEdicaoId , ")
+		     .append(" p.codigo as  codPublicacao, ")
+			 .append(" pe.numero_edicao as numEdicao,")
+			 .append(" (select max(lan.data_rec_prevista) from lancamento lan where lan.produto_edicao_id = pe.id ) as dataRecolhimento , ")
+			 .append(" item.QUANTIDADE_COMERCIAL as qtdExemplares,")
+			 .append(" pe.pacote_padrao as pacotePadrao,")
+			 .append(" 1 as exemplaresPacote,")
+			 .append(" 0 as qtdExemplaresIrregular, ")
+			 .append(" 1 as indiceVolume ")
+			 .append(" from nota_fiscal_produto_servico item ")
+			 .append(" inner join produto_edicao pe on  item.produto_edicao_id = pe.id ")
+			 .append(" inner join produto p on pe.produto_id = p.id ")
+		    .append("  where item.nota_fiscal_id = :notaId");
+		   	
+		   SQLQuery query = getSession().createSQLQuery(sql.toString());
+		query.setParameter("notaId",notaId);
+		  query.addScalar("produtoEdicaoId",StandardBasicTypes.INTEGER);
+		   query.addScalar("codPublicacao",StandardBasicTypes.INTEGER);
+		   query.addScalar("numEdicao",StandardBasicTypes.INTEGER);
+		   query.addScalar("dataRecolhimento",StandardBasicTypes.DATE);
+		   query.addScalar("qtdExemplares",StandardBasicTypes.INTEGER);
+		   query.addScalar("pacotePadrao",StandardBasicTypes.INTEGER);
+		   query.addScalar("qtdExemplaresIrregular",StandardBasicTypes.INTEGER);
+		   query.addScalar("indiceVolume",StandardBasicTypes.INTEGER);
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemEncalheBandeiraVO.class));
+		return query.list();
+	}
+	 
+	 
+	 @Override
+	 @Transactional
+	 public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag) {
+			
+			StringBuilder sql  = new StringBuilder("");
+			sql.append("  UPDATE nota_fiscal_novo ") 
+			.append(" SET ") 
+			.append(" interface_devolucao_fornecedor = :flag ")
+			.append(" WHERE id = :notaId ");
+
+			SQLQuery query=getSession().createSQLQuery(sql.toString());
+			query.setParameter("notaId",notaId);
+			query.setParameter("flag",flag);
+			
+			query.executeUpdate();
+		
+	}
+	 
+	 @Override
+	 @Transactional
+		public void atualizarQtdVolumePallet(Integer numero,Integer serie, Integer qtd) {
+
+			StringBuilder sql  = new StringBuilder("");
+			sql.append("  UPDATE nota_fiscal_novo ") 
+			.append(" SET ") 
+			.append(" qtd_volume_pallet = :qtd ")
+			.append(" WHERE NUMERO_DOCUMENTO_FISCAL = :numero and SERIE = :serie ");
+			SQLQuery query=getSession().createSQLQuery(sql.toString());
+			query.setParameter("qtd",qtd);
+			query.setParameter("numero",numero);
+			query.setParameter("serie",serie);
+			query.executeUpdate();
+
+		
+
+
+		}
+
 
 }
 

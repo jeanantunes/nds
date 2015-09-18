@@ -13,6 +13,8 @@ import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro06;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro08;
 import br.com.abril.nds.model.ftf.envio.FTFEnvTipoRegistro09;
 import br.com.abril.nds.model.ftf.retorno.FTFRetTipoRegistro01;
+import br.com.abril.nds.vo.ItemEncalheBandeiraVO;
+import br.com.abril.nds.vo.NotaEncalheBandeiraVO;
 
 public interface FTFRepository {
 
@@ -37,5 +39,11 @@ public interface FTFRepository {
 	List<ParametroFTFGeracao> obterTodosParametrosGeracaoFTF();
 
 	boolean verificarRegistroVenda(long idNaturezaOperacao);
+	
+	public List<NotaEncalheBandeiraVO> obterNotasNaoEnviadas();
+	public List<ItemEncalheBandeiraVO> obterItensNotasNaoEnviadas(Integer notaId) ;
+	
+	public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag);
+	public void atualizarQtdVolumePallet(Integer numero,Integer serie, Integer qtd) ;
 	
 }

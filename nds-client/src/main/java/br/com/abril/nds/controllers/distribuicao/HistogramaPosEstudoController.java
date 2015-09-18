@@ -264,7 +264,10 @@ public class HistogramaPosEstudoController extends BaseController{
 			
 			if (loginUsuarioBloqueio != null
 					&& !loginUsuarioBloqueio.equals(loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"))) {
-				LOGGER.warn("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio));
+				LOGGER.error("ESTE ESTUDO ja ESTA SENDO ANALISADO PELO USUARIO "+this.usuarioService.obterNomeUsuarioPorLogin(loginUsuarioBloqueio)+
+						"  BLOQUEADO COM="+session.getAttribute("WINDOWNAME_ESTUDO"));
+				LOGGER.error("MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE=" +mapaAnaliseEstudo.toString());
+				
 				throw new ValidacaoException(
 					new ValidacaoVO(TipoMensagem.WARNING, 
 						"Este estudo já está sendo analisado pelo usuário [" 
@@ -277,7 +280,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 		session.setAttribute("WINDOWNAME_ESTUDO",windowname);
 		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
-		LOGGER.warn("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.error("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		session.getServletContext().setAttribute(
 			MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
@@ -291,7 +294,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		Map<Long, String> mapaAnaliseEstudo = 
 			(Map<Long, String>) session.getServletContext().getAttribute(
 				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
-		LOGGER.warn("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.error("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		if (mapaAnaliseEstudo != null) {
 			

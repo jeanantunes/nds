@@ -25,7 +25,9 @@ public class BandeirasDTO implements Serializable{
 	
 	private Date dataSaida;
 	
-	private Long volume;
+	private Long volumes;
+	
+	
 	
 	@Export(label="Cód. Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=2)
 	private String codProduto;
@@ -53,7 +55,7 @@ public class BandeirasDTO implements Serializable{
 		super();
 	}
 	
-	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor, String chaveNFe) {
+	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor, String chaveNFe,Long volumes) {
 		super();
 		this.numeroNotaFiscal = numeroNotaFiscal;
 		this.serieNotaFiscal = serieNotaFiscal;
@@ -64,6 +66,7 @@ public class BandeirasDTO implements Serializable{
 		c.add(Calendar.DAY_OF_MONTH, 1);
 		this.dataSaida = c.getTime();
 		this.chaveNFe = chaveNFe;
+		this.volumes = volumes;
 	}
 	
 	public Long getNumeroNotaFiscal() {
@@ -114,12 +117,13 @@ public class BandeirasDTO implements Serializable{
 		this.dataSaida = dataSaida;
 	}
 
-	public Long getVolume() {
-		return volume;
+	public Long getVolumes() {
+	
+		return volumes;
 	}
 
-	public void setVolume(Long volume) {
-		this.volume = volume;
+	public void setVolumes(Long volume) {
+		this.volumes = volume;
 	}
 
 	public String getCodProduto() {

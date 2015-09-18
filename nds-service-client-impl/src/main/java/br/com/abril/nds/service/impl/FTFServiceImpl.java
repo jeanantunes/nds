@@ -46,6 +46,8 @@ import br.com.abril.nds.service.PessoaCRPWSService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ItemEncalheBandeiraVO;
+import br.com.abril.nds.vo.NotaEncalheBandeiraVO;
 
 @Service
 public class FTFServiceImpl implements FTFService {
@@ -377,6 +379,24 @@ public class FTFServiceImpl implements FTFService {
 	public void atualizarRetornoFTF(final List<FTFRetTipoRegistro01> list){
 
 		this.ftfRepository.atualizarRetornoFTF(list);
+	}
+	
+	public List<NotaEncalheBandeiraVO> obterNotasNaoEnviadas() {
+		
+		return this.ftfRepository.obterNotasNaoEnviadas();
+		
+	}
+	
+	public List<ItemEncalheBandeiraVO> obterItensNotasNaoEnviadas(Integer notaId) {
+		
+		return this.ftfRepository.obterItensNotasNaoEnviadas(  notaId);
+		
+	}
+	
+public void atualizaFlagInterfaceNotasEnviadas(Integer notaId,boolean flag) {
+		
+		 this.ftfRepository.atualizaFlagInterfaceNotasEnviadas( notaId, flag);
+		
 	}
 
 }
