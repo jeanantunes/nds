@@ -809,11 +809,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
         
         movimentoEstoqueService.gerarMovimentoEstoque(
                 diferenca.getProdutoEdicao().getId(), idUsuario, diferenca.getQtde(),
-                tipoMovimentoEstoqueLancamento, origem);
+                tipoMovimentoEstoqueLancamento, origem, true);
         
         movimentoEstoqueService.gerarMovimentoEstoque(
                 diferenca.getProdutoEdicao().getId(), idUsuario, diferenca.getQtde(),
-                tipoMovimentoEstoqueAlvo, origem);
+                tipoMovimentoEstoqueAlvo, origem, true);
     }
     
     private void tratarTipoMovimentoEstoque(final TipoMovimentoEstoque tipoMovimento,final String mensagem){

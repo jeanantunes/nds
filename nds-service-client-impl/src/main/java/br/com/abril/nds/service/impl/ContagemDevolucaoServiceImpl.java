@@ -647,7 +647,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					contagem.getIdProdutoEdicao(),
 					usuario.getId(), 
 					calculoQdeDiferenca, 
-					tipoMovimentoPerda,Origem.TRANSFERENCIA_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR);
+					tipoMovimentoPerda, Origem.TRANSFERENCIA_PERDA_EM_DEVOLUCAO_ENCALHE_FORNECEDOR, true);
 			
 			ProdutoEdicao produtoEdicao  = produtoEdicaoRepository.buscarPorId(contagem.getIdProdutoEdicao());
 			

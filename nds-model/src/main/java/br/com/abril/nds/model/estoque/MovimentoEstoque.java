@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.estoque;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -44,6 +45,10 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "FURO_PRODUTO_ID")
 	private FuroProduto furoProduto;
+	
+	@Column(name = "INTEGRADO_COM_CE", nullable = true)
+	private boolean integracaoCE;
+	
 	
 	/**
 	 * @return the itemRecebimentoFisico
@@ -122,7 +127,12 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	public void setFuroProduto(FuroProduto furoProduto) {
 		this.furoProduto = furoProduto;
 	}
-	
-	
 
+	public boolean isIntegracaoCE() {
+		return integracaoCE;
+	}
+
+	public void setIntegracaoCE(boolean integracaoCE) {
+		this.integracaoCE = integracaoCE;
+	}
 }
