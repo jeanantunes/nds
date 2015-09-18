@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
@@ -137,6 +138,11 @@ public class NotaFiscalInformacoes implements Serializable {
 	@XmlElement(name="infAdic")
 	@Embedded
 	private	InfAdicWrapper infAdicWrapper;
+	
+	
+	@XmlTransient
+	@Column(name = "QTD_VOLUME_PALLET", nullable = false)
+	private Long qtdVolumePallet;
 	
 	/**
 	 * Construtor padrão.
@@ -343,5 +349,14 @@ public class NotaFiscalInformacoes implements Serializable {
 
 	public void setProcessos(Set<Processo> processos) {
 		this.processos = processos;
+	}
+	
+
+	public Long getqtdVolumePallet() {
+		return qtdVolumePallet;
+	}
+
+	public void setqtdVolumePallet(Long qtdVolumePallet) {
+		this.qtdVolumePallet = qtdVolumePallet;
 	}
 }

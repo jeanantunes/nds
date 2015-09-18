@@ -121,9 +121,11 @@ var emissaoBandeiraController = $.extend(true, {
         	 if(resultado && resultado.rows) {
         		 
         		 for(var index in resultado.rows) {
-        			 
+        			 resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" />';
+        			 resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" />';
         			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ resultado.rows[index].cell["dataSaida"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
-        			 resultado.rows[index].cell["volumes"] = '<input type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes" name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
+        			 resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'')+
+        			 '" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
         		 }
         		 
         	 }
@@ -171,6 +173,16 @@ var emissaoBandeiraController = $.extend(true, {
 				return false;
 			}
 			params.push({'name': 'numeroPallets[]', 'value': v.value});
+		})
+		
+		$.each($('input[name="emissaoBandeiras-numeroNotaFiscal"]'), function(k, v) {
+			
+			params.push({'name': 'nota[]', 'value': v.value});
+		})
+		
+		$.each($('input[name="emissaoBandeiras-serieNotaFiscal"]'), function(k, v) {
+			
+			params.push({'name': 'serie[]', 'value': v.value});
 		})
 		
 		if(liberaImpressaoBandeira) {

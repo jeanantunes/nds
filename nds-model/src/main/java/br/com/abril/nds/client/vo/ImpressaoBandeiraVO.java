@@ -28,7 +28,18 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	
 	private String chaveNFe;
 	
-	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana, Date dataEnvio, String editor, String chaveNFe) {
+	private String destino;
+	
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
+	}
+
+	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana, Date dataEnvio, String editor, String chaveNFe,
+			String destino) {
 		
 		this.titulo = "DEVOLUÇÃO AO FORNECEDOR";
 		this.fornecedor = fornecedor.getNomeFantasia() != null ? fornecedor.getNomeFantasia() : fornecedor.getRazaoSocial();
@@ -39,6 +50,7 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.dataEnvio = DateUtil.formatarDataPTBR(dataEnvio);
 		this.editor = editor;
 		this.chaveNFe = chaveNFe;
+		this.destino = destino;
 	}
 
 	public ImpressaoBandeiraVO(String fornecedor, String semana,

@@ -33,6 +33,7 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmitente;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.repository.FTFRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.service.EmissaoBandeirasService;
@@ -68,6 +69,10 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
+	
+	@Autowired
+	private FTFRepository ftfRepository;
+	
 	
 	@Override
 	@Transactional
@@ -116,7 +121,8 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	}
 	
 	@Override
-	public byte[] imprimirBandeira(Integer semana, Long fornecedorId, Date[] datasEnvio, Integer[] numeroPallets) throws Exception {
+	@Transactional
+	public byte[] imprimirBandeira(Integer semana, Long fornecedorId, Date[] datasEnvio, Integer[] numeroPallets,Integer[] notas,Integer[] series) throws Exception {
 		
 		if(datasEnvio == null || datasEnvio.length < 1) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data(s) de Envio inválida(s).");
@@ -139,12 +145,20 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 		fornecedor.setNomeFantasia(f.getJuridica().getNomeFantasia());
 		fornecedor.setCanalDistribuicao(f.getCanalDistribuicao());
 		fornecedor.setPraca(distribuidorService.obter().getEnderecoDistribuidor().getEndereco().getCidade());
+		// atualizar qtde volume
 		
+		for ( int i=0; i < notas.length; i++) {
+			Integer nota = notas[i];
+			Integer serie = series[i];
+			Integer qtd = numeroPallets[i];
+			ftfRepository.atualizarQtdVolumePallet( nota, serie,  qtd) ;
+		}
 		for(BandeirasDTO bandeira : bandeiras) {
 			for (int i = 0; i < datasEnvio.length; i++) {
 				for (int j = 1; j <= numeroPallets[i]; j++) {
 					String editor = bandeira.getCodigoEditor() +" - "+ bandeira.getNomeEditor();
-					listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, j +" / "+ numeroPallets[i], semana, datasEnvio[i], editor, bandeira.getChaveNFe()));
+					String destino=""; // TODO COLOCAR DESTINO
+					listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, j +" / "+ numeroPallets[i], semana, datasEnvio[i], editor, bandeira.getChaveNFe(),destino));
 				}
 			}
 		}
@@ -153,7 +167,6 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	}
 
 	@Override
-	@Transactional
 	public byte[] imprimirBandeiraManual(String semana, Integer numeroPallets,
 			String fornecedor, String praca,
 			String canal, String dataEnvio, String titulo) throws Exception {

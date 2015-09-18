@@ -20,7 +20,7 @@ public interface EmissaoBandeirasService {
 
 	List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, Long fornecedor, PaginacaoVO paginacaoVO);
 	
-	byte[] imprimirBandeira(Integer semana, Long forncedor, Date[] dataEnvio, Integer[] numeroPallets) throws Exception;
+	byte[] imprimirBandeira(Integer semana, Long forncedor, Date[] dataEnvio, Integer[] numeroPallets,Integer[] numero,Integer[] serie) throws Exception;
 	
 	byte[] imprimirBandeiraManual(String semana, Integer numeroPallets,String fornecedor,
 			String praca, String canal, String dataEnvio, String titulo) throws Exception;

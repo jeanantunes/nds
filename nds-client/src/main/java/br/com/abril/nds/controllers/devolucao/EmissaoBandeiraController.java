@@ -103,9 +103,10 @@ public class EmissaoBandeiraController extends BaseController {
 	}
 	
 	@Post
-	public void imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets[], Date dataEnvio[]) throws Exception {
-		
-		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(anoSemana, fornecedor, dataEnvio, numeroPallets);
+	public void imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets[], Date dataEnvio[],
+			 Integer nota[], Integer serie[]) throws Exception {
+
+		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(anoSemana, fornecedor, dataEnvio, numeroPallets,nota,serie);
 		
 		this.escreverArquivoParaResponse(comprovate, "bandeira_" + anoSemana);
 	}
