@@ -31,11 +31,14 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	private String destino;
 	
 	public String getDestino() {
+		if ( this.destino == null )
+			return "";
 		return destino;
 	}
 
 	public void setDestino(String destino) {
 		this.destino = destino;
+		
 	}
 
 	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana, Date dataEnvio, String editor, String chaveNFe,
@@ -63,6 +66,7 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.volumes = volumes == null? "" : volumes;
 		this.dataEnvio = dataEnvio;
 		this.titulo = titulo;
+		
 	}
 	
 	public ImpressaoBandeiraVO(){}

@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceClient;
+import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceTestCase;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
@@ -27,19 +29,26 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
+import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
 import br.com.abril.nds.service.RankingSegmentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.ItemEncalheBandeiraVO;
+import br.com.abril.nds.vo.NotaEncalheBandeiraVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -91,6 +100,12 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private CobrancaService cobrancaService;
+    
+    @Autowired
+    private ParametroSistemaService parametroSistemaService;
+    
+    @Autowired
+    private FTFService ftfService;
     
     private static final int INTERFACE = 1;
     private static final int PROCESSO  = 2;
@@ -577,6 +592,60 @@ public class PainelProcessamentoController extends BaseController {
     	result.use(Results.json()).from(
             new ValidacaoVO(TipoMensagem.SUCCESS,
                 "Cobranças processadas com sucesso!"+msg), "result").recursive().serialize();
+    }
+    
+    
+    // enviar notas de devolucao para fornecedor via web service quando nota ainda nao foi enviado
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
+    public void processarInterfaceDevolucaoFornecedor() {
+    	int nn=0;
+    	//Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+    	/*  
+        try {
+        DevolucaoEncalheBandeirasWSServiceTestCase.test2inserirNotasDevEncalheBandeiras();
+        }catch (Exception e )
+        {
+     	   e.printStackTrace();
+        }
+      */
+    	boolean homolog=true;
+    	ParametroSistema parametroSistema = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.NFE_INFORMACOES_AMBIENTE);
+    	if(parametroSistema == null || parametroSistema.getValor().equals(String.valueOf(TipoAmbiente.HOMOLOGACAO))) {			
+			homolog=true;
+		} else {
+			homolog=false;
+		}
+    	 
+        String msg=homolog ?"AMBIENTE HOMOLOGACAO":"AMBIENTE PRODUCAO";
+        int erros=0;
+         List<NotaEncalheBandeiraVO> notas = ftfService.obterNotasNaoEnviadas();
+         ftfService.atualizaFlagInterfaceNotasEnviadas(1,true);
+	      
+        for (NotaEncalheBandeiraVO nota: notas ) {
+    	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
+    	 try {
+    		
+    		 
+    	      DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog);
+    	      ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
+    	      
+    	       }catch (Exception e )
+    	       {
+    	    	   e.printStackTrace();
+    	    	   msg+="</br>"+ e.getLocalizedMessage();
+    	    	   erros++;
+    	       }
+    	 
+        }
+    	
+        msg = "</br>Interface de Devolucao ao Fornecedor processadas "+
+                "</br>Qtde Notas Processada:"+notas.size()+
+                "</br>Qtde Notas com Erros :"+erros+
+                "</br>Mensagens            :"+msg;
+         LOGGER.error(msg);
+    	result.use(Results.json()).from(
+            new ValidacaoVO(TipoMensagem.WARNING,
+                msg), "result").recursive().serialize();
     }
     
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
