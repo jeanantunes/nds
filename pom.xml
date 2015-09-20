@@ -525,7 +525,7 @@
 				<module>nds-homologador</module>
 <!-- 			<module>nds-test</module> -->
 				<module>nds-ws-pessoacrp</module>
-				<module>nds-ws-bandeira</module>
+			
 			</modules>
 		</profile>
 
