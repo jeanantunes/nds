@@ -107,6 +107,11 @@
            			<a onclick="painelProcessamentoController.processarCobrancaConsolidada();" href="javascript:;">
            			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_boletos.gif">&nbsp;Processar Cobran&ccedil;a Consolidada</a>
            	</span>
+           	
+           	<span class="bt_confirmar_novo" title="Processar Interface Devolu&ccedil;ao Fornecedor">
+           			<a onclick="painelProcessamentoController.processarInterfaceDevolucaoFornecedor();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">&nbsp;Processar Interface Devolu&ccedil;ao Fornecedor</a>
+           	</span>
 			
 		</div>
 		
