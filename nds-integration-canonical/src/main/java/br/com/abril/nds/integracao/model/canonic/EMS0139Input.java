@@ -110,7 +110,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.numeroPrioridadeAtendimentoDDE = numeroPrioridadeAtendimentoDDE;
 	}
 
-	@Field(offset=111, length=84)
+	@Field(offset=111, length=8)
 	public String getTipoAtendimentoDDE() {
 		return tipoAtendimentoDDE;
 	}
@@ -119,7 +119,7 @@ public class EMS0139Input extends IntegracaoDocument implements Serializable {
 		this.tipoAtendimentoDDE = tipoAtendimentoDDE;
 	}
 	
-	@Field(offset=196, length=60)
+	@Field(offset=120, length=60)
 	public String getNomeEditor() {
 		return nomeEditor;
 	}
