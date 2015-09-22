@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.lightcouch.Attachment;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ import com.google.gson.JsonObject;
 public class CapaServiceImpl implements CapaService {	
 	private static final String DB_NAME  =  "capas";
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CapaService.class);
+	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
@@ -44,9 +48,24 @@ public class CapaServiceImpl implements CapaService {
 	
 	@PostConstruct
 	public void initCouchDbClient() {
-		this.couchDbClient = new CouchDbClient(DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), couchDbProperties.getPort(), couchDbProperties.getUsername(), couchDbProperties.getPassword());
-	}
+		//this.couchDbClient = new CouchDbClient(DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), couchDbProperties.getPort(), couchDbProperties.getUsername(), couchDbProperties.getPassword());
+		LOGGER.error("INICIANDO COUCH PARA ACESSAR CAPA COM TIMEOUT DE 30000 ms");
+		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
+			.setDbName(DB_NAME)
+			.setCreateDbIfNotExist(true)
+			.setProtocol(couchDbProperties.getProtocol())
+			.setHost(couchDbProperties.getHost())
+			.setPort(couchDbProperties.getPort())
+			.setUsername(couchDbProperties.getUsername())
+			.setPassword(couchDbProperties.getPassword())
+			.setMaxConnections(30000)
+			.setConnectionTimeout(30000); // timeout de 30 segundos
+	
+		this.couchDbClient = new CouchDbClient(properties);
 
+	}
+	
+	
 
 	@Override
 	@Transactional(readOnly=true)

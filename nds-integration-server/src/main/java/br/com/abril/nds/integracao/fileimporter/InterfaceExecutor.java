@@ -67,7 +67,7 @@ import br.com.abril.nds.model.integracao.TipoDistribuidor;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
-import br.com.abril.nds.repository.ParametroSistemaRepository;
+import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.healthmarketscience.jackcess.Database;

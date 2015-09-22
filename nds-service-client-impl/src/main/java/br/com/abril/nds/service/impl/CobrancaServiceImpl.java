@@ -139,8 +139,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 			.setPort(couchDbProperties.getPort())
 			.setUsername(couchDbProperties.getUsername())
 			.setPassword(couchDbProperties.getPassword())
-			.setMaxConnections(100)
-			.setConnectionTimeout(500);
+			.setMaxConnections(30000)
+			.setConnectionTimeout(30000); // timeout de 30 segundos
 	
 		this.couchDbClient = new CouchDbClient(properties);
 
@@ -1390,14 +1390,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 		
 		if(jsonDoc == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas nesta  data="+dataFormatada);
 		}
 		
 		Gson gson = new Gson();
 
 		JsonArray jaCobrancas = jsonDoc.getAsJsonArray(dataFormatada);
 		
+		if(jaCobrancas == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas nesta data="+dataFormatada);
+		}
+		
 		List<ExportarCobrancaDTO> cobrancas = new ArrayList<>(); 
+		
 		
 		for (JsonElement jsonElement : jaCobrancas) {
 			ExportarCobrancaDTO cobranca = gson.fromJson(jsonElement, ExportarCobrancaDTO.class);
