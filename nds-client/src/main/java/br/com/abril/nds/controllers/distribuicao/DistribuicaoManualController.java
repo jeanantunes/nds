@@ -136,7 +136,7 @@ public class DistribuicaoManualController extends BaseController {
 		estudo.setReparteTotal(estudoDTO.getReparteTotal());
 		estudo.setDataLancamento(dataLanctoFormatada);
 		
-		
+		if (estudoCotasDTO != null  )
 		for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
 		    EstudoCotaGerado estudoCota = new EstudoCotaGerado();
 		    estudoCota.setCota(new Cota(cotaDTO.getIdCota()));
