@@ -16,7 +16,7 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	 */
 	private static final long serialVersionUID = -6653473316882827815L;
 
-	private Long codigoDistribuidor;
+	private String codigoDistribuidor;
 	private Date dataGeracaoArquivo;
 	//private Time horaGeracaoArquivo;
 	private String mnemonicoTabela;
@@ -42,10 +42,10 @@ public class EMS0111Input extends IntegracaoDocument implements Serializable {
 	
 		
 	@Field(offset = 1, length = 7)
-	public Long getCodigoDistribuidor() {
+	public String getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
-	public void setCodigoDistribuidor(Long codigoDistribuidor) {
+	public void setCodigoDistribuidor(String codigoDistribuidor) {
 		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
