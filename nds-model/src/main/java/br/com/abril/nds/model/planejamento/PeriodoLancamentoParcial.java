@@ -275,7 +275,7 @@ public class PeriodoLancamentoParcial implements Serializable {
 							primeiroLancamento.getDataLancamentoDistribuidor(), 
 							lancamento.getDataLancamentoDistribuidor())) {
 	
-				throw new ValidacaoException(TipoMensagem.WARNING, "A próxima data de lançamento interfere em uma redistribuição já cadastrada.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A próxima data de lançamento interfere em uma redistribuição já cadastrada."+ "Prod. " +lancamento.getProdutoEdicao().getNomeComercial() + "Ed."+ lancamento.getProdutoEdicao().getNumeroEdicao());
 			}
 		}
 	}
