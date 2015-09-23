@@ -35,7 +35,7 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
             if(jre.getLinkedCause()!=null)
                 jre.getLinkedCause().printStackTrace();
            System.err.println("JAX-RPC ServiceException caught: " + jre);
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+            throw new Exception("JAX-RPC ServiceException caught: " + jre);
             
         }
        
