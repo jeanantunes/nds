@@ -28,8 +28,10 @@ public class LancamentoHelper {
 		
 		return Arrays.asList(StatusLancamento.CONFIRMADO
 				, StatusLancamento.PLANEJADO
-				, StatusLancamento.EM_BALANCEAMENTO
-				, StatusLancamento.BALANCEADO);		
+			//  COMENTADO POR ODEMIR/DOUGLAS PARA NAO PERMITIR REABERTURA DE MATRIZ QUANDO EM_BALANCEAMENTO OU BALANCEADO
+			//	, StatusLancamento.EM_BALANCEAMENTO
+			//	, StatusLancamento.BALANCEADO
+				);		
 	}
 	
 	public static Collection<String> getStatusLancamentosPreExpedicaoString() {
