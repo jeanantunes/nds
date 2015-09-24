@@ -181,7 +181,10 @@
 			<groupId>br.com.caelum</groupId>
 			<artifactId>vraptor</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+		</dependency>
 	</dependencies>
 
 

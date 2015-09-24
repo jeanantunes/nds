@@ -58,4 +58,6 @@ public interface ParametroSistemaRepository extends Repository<ParametroSistema,
 	
 	public Map<String, ParametroSistema> buscarParametroSistemaGeralMap();
 	
+	String getParametroInterface(String string);
+	
 }

@@ -271,9 +271,9 @@ public class InterfaceExecutor {
 		
 		String parametroDir = "INBOUND_DIR";
 	
-		this.diretorio = parametroSistemaRepository.getParametro(parametroDir);
+		this.diretorio = parametroSistemaRepository.getParametroInterface(parametroDir);
 		
-		this.pastaInterna = parametroSistemaRepository.getParametro("INTERNAL_DIR");
+		this.pastaInterna = parametroSistemaRepository.getParametroInterface("INTERNAL_DIR");
 	}
 	
 	private void executarInterfaceDB(InterfaceEnum interfaceEnum,
@@ -305,13 +305,15 @@ public class InterfaceExecutor {
 		
 		this.carregarDiretorios(interfaceEnum);
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
-		
+		LOGGER.error("Interface de arquivos.. Numero de distribuidores="+distribuidores.size()+"  "+distribuidores.toString());
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
-		 
+			
+			LOGGER.error("Interface de arquivos.. Processando distribuidor="+distribuidor+" Procurando arquivos em "+this.diretorio+" "+this.pastaInterna);
 			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
 			if(arquivos == null || arquivos.isEmpty()) {
+				LOGGER.error("NAO HA ARQUIVOS PARA ESTE DISTRIBUIDOR");
 				this.logarArquivo(logExecucao, distribuidor, null, StatusExecucaoEnum.FALHA, NAO_HA_ARQUIVOS);
 				continue;
 			} else {
@@ -319,7 +321,7 @@ public class InterfaceExecutor {
 			}
 			
 			CouchDbClient couchDbClient = this.getCouchDbClientInstance("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
-			
+			LOGGER.error("Couchdb="+couchDbClient.toString());
 			interfaceEnum = this.tratarInterfaceEnumDistribuidorFilial(interfaceEnum,distribuidor);
 			
 			for (File arquivo: arquivos) {
@@ -349,7 +351,7 @@ public class InterfaceExecutor {
 	
 	private void executarInterfaceImagem() {
 		
-		String diretorio = parametroSistemaRepository.getParametro("IMAGE_DIR");
+		String diretorio = parametroSistemaRepository.getParametroInterface("IMAGE_DIR");
 		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
 				
 		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
@@ -414,7 +416,7 @@ public class InterfaceExecutor {
 	
 	private void executarInterfaceCorreios() {
 		
-		String diretorio = parametroSistemaRepository.getParametro("CORREIOS_DIR");
+		String diretorio = parametroSistemaRepository.getParametroInterface("CORREIOS_DIR");
 		CouchDbConnector couchDbClient = null;
 		try {
 			couchDbClient = initCouchDbClient("correios");
@@ -679,11 +681,13 @@ public class InterfaceExecutor {
 		boolean isDistribuidorFilial = ((parametroDistribuidor != null 
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
 		
+		LOGGER.error("ISDISTRIBUIDORFILAL"+isDistribuidorFilial);
 		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
 				&& isDistribuidorFilial){
+			LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE EMS110FILIAL");
 			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
 		}
-		
+		LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE "+interfaceEnum);
 		return interfaceEnum;
 	}
 	                    /**
@@ -702,7 +706,7 @@ public class InterfaceExecutor {
 						:interfaceExecucao.getMascaraArquivo();
 				
 		String dirPath = diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator;
-		
+		LOGGER.error("PROCURANDO ARQUIVOS EM "+dirPath+" com  padrao="+pattern);
 		File dir = new File(dirPath);
 		
 		FilenameFilter filter = (FilenameFilter) new RegexFileFilter(pattern, IOCase.INSENSITIVE);
@@ -724,7 +728,7 @@ public class InterfaceExecutor {
 	 * @return client
 	 */
 	private CouchDbClient getCouchDbClientInstance(String databaseName) {
-		
+		LOGGER.error("COUCHDB="+couchDbProperties.getHost()+":"+couchDbProperties.getPort()+"  database="+databaseName);
 		return new CouchDbClient(
 				databaseName,
 				true,

@@ -16,6 +16,8 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Repository
 public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<ParametroSistema, Long>
 implements ParametroSistemaRepository {
@@ -120,6 +122,22 @@ implements ParametroSistemaRepository {
 	}
 
 	public String getParametro(String tipoParametro) {
+
+		try {
+			
+			String sql = "SELECT a.valor FROM ParametroSistema a WHERE a.tipoParametroSistema = :tipoParametro";
+			Query query = getSession().createQuery(sql);
+			query.setParameter("tipoParametro", TipoParametroSistema.valueOf(tipoParametro));
+			return (String) query.uniqueResult();
+			
+		} catch (PersistenceException e) {
+			return null;
+		}
+	}
+	
+	@Override
+	@Transactional
+	public String getParametroInterface(String tipoParametro) {
 
 		try {
 			
