@@ -63,7 +63,7 @@
       <from>odemir.olivatti@uol.com.br</from>
       <to>odemir.olivatti@gmail.com</to>
       <username>odemir.olivatti@uol.com.br</username>
-    <password>laine17</password>
+    <password>sophie@08</password>
       <subject>ERRO NDS</subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
@@ -127,7 +127,7 @@
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE_ERRO" />
-		<!-- appender-ref ref="EMAIL" / -->
+		<appender-ref ref="EMAIL" />
 	</root>
 	
 	

@@ -10,9 +10,28 @@
 		</encoder>
 	</appender>
 
+ <!--  appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+      <smtpHost>smtp.uol.com.br</smtpHost>
+       <smtpPort>587</smtpPort>
+      <from>odemir.olivatti@uol.com.br</from>
+      <to>odemir.olivatti@gmail.com</to>
+      <username>odemir.olivatti@uol.com.br</username>
+    <password>sophie@08</password>
+      <subject>ERRO NDS</subject>
+      <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%date %-5level %logger - %message%n</pattern>
+    </layout> 
+
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+          <level>ERROR</level>
+      </filter>
+  </appender-->
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
+		<!--  appender-ref ref="EMAIL" /-->
 	</root>
+	
+	
 	
 	<logger name="br.com.abril.nds" level="DEBUG"/>
 </configuration>
