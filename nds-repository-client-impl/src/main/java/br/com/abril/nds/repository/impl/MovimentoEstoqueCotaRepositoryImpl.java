@@ -2885,7 +2885,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if (filtro.isProdutoEspecifico()){
             
-            hql.append(" box.ID, produtoEdicao.ID  ");
+            hql.append(" box.ID,rota.id, produtoEdicao.ID  ");
         } else {
             
             hql.append(" produto.CODIGO  ");
