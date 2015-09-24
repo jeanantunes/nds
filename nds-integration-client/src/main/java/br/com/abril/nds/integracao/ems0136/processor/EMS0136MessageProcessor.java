@@ -146,7 +146,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	
 	private boolean  validarCodigoDistribuidor(Message message, EMS0136Input input) {
 		
-		if(!this.distribuidorService.isDistribuidor(Integer.valueOf(input.getCodigoDistribuidor()))) {
+		if(!this.distribuidorService.isDistribuidor(new Integer(input.getCodigoDistribuidor()))) {
 			
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 

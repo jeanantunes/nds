@@ -80,10 +80,10 @@ public class EMS0111MessageProcessor extends AbstractRepository implements Messa
 		
 		final String codDistribuidorArquivo = input.getCodigoDistribuidor().toString();
 		
-		if (!codDistribuidorSistema.equals(codDistribuidorArquivo)) {
+		if (!new Integer(codDistribuidorSistema).equals(new Integer(codDistribuidorArquivo))) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor não encontrato. " 
+					"Distribuidor não encontrado. " 
 					+ codDistribuidorArquivo);
 			return;
 		}

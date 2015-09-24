@@ -114,7 +114,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor não encontrato. "+message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.toString()));
+					"Distribuidor não encontrado. "+message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.toString()));
 //			throw new RuntimeException("Distribuidor nao encontrado.");
 		}
 	}
@@ -483,7 +483,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		String codigoDistribuidorArquivo = input.getCodDistrib();
 
-		if (codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
+		if (new Integer(codigoDistribuidorSistema).equals(new Integer(codigoDistribuidorArquivo))) {
 
 			return true;
 		}

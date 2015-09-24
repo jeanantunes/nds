@@ -12,6 +12,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.xmlsoap.schemas.soap.encoding.Int;
 
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -72,7 +73,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Override
 	@Transactional(readOnly = true)
 	public boolean isDistribuidor(final Integer codigo) {
-		return this.codigoDistribuidorDinap().equals(codigo.toString()) || this.codigoDistribuidorFC().equals(codigo.toString());
+		return new Integer( this.codigoDistribuidorDinap()).equals(codigo) ||
+				new Integer(this.codigoDistribuidorFC()).equals(codigo);
+	
 	}
 
 	@Override
