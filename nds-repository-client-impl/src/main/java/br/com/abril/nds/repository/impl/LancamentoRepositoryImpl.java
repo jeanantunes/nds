@@ -2709,12 +2709,12 @@ public class LancamentoRepositoryImpl extends
             
             hql.append(" and periodoLancamentoParcial.numeroPeriodo = :numeroPeriodo ");
         }
-        
+        hql.append(" and lancamento.dataLctoDistribuidor != '3000-01-01' " );
         Query query = getSession().createQuery(hql.toString());
 
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
         query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
-        
+       
         if (numeroPeriodo != null) {
             
             query.setParameter("numeroPeriodo", numeroPeriodo);
