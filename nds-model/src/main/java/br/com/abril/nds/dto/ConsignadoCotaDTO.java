@@ -177,13 +177,13 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 	
 	public String getCodigoBarras() {
+		if ( codigoBarras == null)
+			return "0";
 		return this.codigoBarras;
 	}
 	
-	public String setCodigoBarras(String codigoBarras) {
-		if ( codigoBarras == null)
-			return "";
-		return this.codigoBarras=codigoBarras;
+	public void setCodigoBarras(String codigoBarras) {
+		 this.codigoBarras=codigoBarras;
 	}
 	
 	

@@ -627,6 +627,7 @@ ConsolidadoFinanceiroRepository {
         
         query.addScalar("codigoProduto", StandardBasicTypes.STRING);
         query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+        query.addScalar("codigoBarras", StandardBasicTypes.STRING);
         query.addScalar("nomeFornecedor", StandardBasicTypes.STRING);
         query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
         query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);

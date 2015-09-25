@@ -365,6 +365,8 @@ public class GeracaoArquivosController extends BaseController {
 	                      
 	                      String codBarra=  consignado.getCodigoBarras();
 	                      
+	                      if (codBarra == null )
+	                    	  codBarra="0";
 					      sb.append(StringUtils.leftPad(codBarra,18,'0'));
 					    
 					      String descPublic=consignado.getNomeProduto();
