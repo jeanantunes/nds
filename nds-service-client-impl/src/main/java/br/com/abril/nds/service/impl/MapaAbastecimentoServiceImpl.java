@@ -231,9 +231,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 	
 			Map<String, ProdutoMapaRotaDTO> box = boxes.get(keyBox);
 	
-			if(!box.containsKey(item.getCodigoProduto())){
+			
+			if(!box.containsKey(item.getCodigoProduto()+"-"+item.getNumeroEdicao())){
 				
-				box.put(item.getCodigoProduto(),
+				box.put(item.getCodigoProduto()+"-"+item.getNumeroEdicao(),
 						new ProdutoMapaRotaDTO(item.getCodigoProduto(),
 								item.getNomeProduto(),
 								item.getNumeroEdicao(),
@@ -243,7 +244,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService {
 								new LinkedHashMap<String, Integer>()));
 			}
 	
-			ProdutoMapaRotaDTO produto = box.get(item.getCodigoProduto());
+			ProdutoMapaRotaDTO produto = box.get(item.getCodigoProduto()+"-"+item.getNumeroEdicao());
 	
 	
 			if(!produto.getRotasQtde().containsKey(item.getCodigoRota())){
