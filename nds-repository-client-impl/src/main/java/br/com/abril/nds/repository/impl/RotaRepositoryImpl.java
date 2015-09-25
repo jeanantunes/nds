@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RotaRepository;
@@ -115,15 +116,23 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 			
 		hql.append(" SELECT rota FROM Rota rota ");
 		hql.append(" JOIN rota.roteiro roteiro  ");
-		hql.append(" LEFT JOIN roteiro.roteirizacao.box box ");
-		hql.append(" WHERE box.id ");
-		hql.append( ( idBox != null ) ? " = :idBox " : " IS NULL " );
+		hql.append(" JOIN roteiro.roteirizacao.box box ");
+		hql.append(" WHERE 1=1 ");
+		
+		if(idBox != null) {
+			hql.append( "and box.id = :idBox ");		
+		} else {
+			hql.append(" and box.tipoBox = :especial ");
+		}
+		
 		hql.append(" GROUP BY rota ");
 	
 		Query query = getSession().createQuery(hql.toString());
 		
 		if (idBox != null) {
 			query.setParameter("idBox", idBox);
+		} else {
+			query.setParameter("especial", TipoBox.ESPECIAL);
 		}
 		
 		return query.list();
