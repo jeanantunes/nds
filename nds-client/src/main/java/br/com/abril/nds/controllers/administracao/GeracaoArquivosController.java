@@ -30,14 +30,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.ContasAPagarConsultaPorProdutoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
+import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
+import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.ControleCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -65,6 +69,8 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -160,13 +166,45 @@ public class GeracaoArquivosController extends BaseController {
 	@Autowired
 	private EmailService emailService;
 	
+    
+    @Autowired
+    private HttpServletResponse httpResponse;
+    
 	
 	@Path("/")
 	public void index() {
 	}
 
 	
-	
+	@Path("/getFile")
+	public void getFile() throws IOException {
+		String path =  (String) session.getValue("PATH_VENDA");
+		if ( path == null ) { // se nao foi gerado, pegar o da data corrente, do caruso.. como default
+			//throw new ValidacaoException(TipoMensagem.WARNING, "Nao ha arquivo gerado");
+			 String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+			   
+			   path  = dirBanca+"/"+String.format("%05d",90100)+DateUtil.formatarData(new Date(),"ddMMyyyy")+".ENP";
+		}
+		 byte[] arquivo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
+		
+		 
+		
+		   httpResponse.setContentType("application/txt");
+	        
+	        httpResponse.setHeader("Content-Disposition", "attachment; filename="+String.format("%05d",90100)+DateUtil.formatarData(new Date(),"ddMMyyyy")+".ENP");
+	        
+	        final OutputStream output = httpResponse.getOutputStream();
+	        
+	        output.write(arquivo);
+	        
+	        httpResponse.getOutputStream().close();
+	        
+	        result.use(Results.nothing());
+		
+		
+		
+		
+	}
 	
 	
 	// gerar arquivo com vendas reparte agregado ( caso caruso )
@@ -384,7 +422,7 @@ public class GeracaoArquivosController extends BaseController {
 		    	
 		    	
 		             byte[] anexo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
-		                
+		             session.putValue("PATH_VENDA",path);
 		                
 		    		
 		    	    anexosEmail.add(new AnexoEmail(cotaMaster.toString()+DateUtil.formatarData(data,"ddMMyyyy"),anexo,TipoAnexo.ENP));
