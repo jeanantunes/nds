@@ -775,30 +775,32 @@ public class LancamentoRepositoryImpl extends
 
 	@Override
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
-
+		
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select max(lancamento) ")
-			.append(" from Lancamento lancamento ")
-			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
-		if(dataLimiteLancamento != null) {
-			hql.append(" and lancamento.dataLancamentoDistribuidor = ( ");
-			hql.append(" select max(lancamento.dataLancamentoDistribuidor) ")
-			.append(" from Lancamento lancamento ")
-			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
-			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento ) ");
-		}
+		hql.append(" select lancamento ")
+				.append(" from MovimentoEstoqueCota mec ")
+				.append(" join mec.produtoEdicao.lancamentos lancamento ")
+				.append(" where lancamento.dataLancamentoDistribuidor = ")
+				.append(" (")
+				.append("   select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+				.append("   from MovimentoEstoqueCota mecMaxDate ")
+				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
+				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
 		
+				hql.append(" ) ").append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
+				
+
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		if(dataLimiteLancamento != null) {
-			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
-		}
+		
+		query.setMaxResults(1);
 		
 		Lancamento l = (Lancamento) query.uniqueResult();
 		
 		if(l != null) return l;
+		
 		
 		hql = new StringBuilder();
 			hql.append(" select min(lancamento) ")
