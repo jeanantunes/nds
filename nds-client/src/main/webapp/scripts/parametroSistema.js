@@ -39,4 +39,26 @@ var parametroSistemaController = $.extend(true, {
 				
 	},
 	
+remover: function() {
+		
+		$("#autenticaEmailHidden", this.workspace).val($('#autenticaEmail', this.workspace).is(":checked"));
+		
+		var formData = $("#formParametroSistema", this.workspace).serializeArray();
+		
+		$.postJSON(this.path + "removerTravas", 
+			formData,
+			function(result) {
+				
+				
+				
+				
+		},
+		null,true);
+		
+		
+		
+		//setTimeout($("#menu_principal ul li ul li a[href^='"+ this.path.substring(0, this.path.length - 1) +"']").click(), 200);
+				
+	},
+	
 }, BaseController);

@@ -29,6 +29,7 @@ $(function(){
 					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 					</a>
 				</span>
+				
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
@@ -255,7 +256,11 @@ $(function(){
 			</table>
 			
 		</fieldset>
-		
+		<span class="bt_novos">
+					<a isEdicao="true" onclick="parametroSistemaController.remover();" href="javascript:;" rel="tipsy" title="Liberar Estudos">
+					.
+					</a>
+				</span>
 		<c:if test="${utilizaFTF}">
 		<fieldset class="fieldFiltro">
 			<legend>FTF</legend>
@@ -294,7 +299,8 @@ $(function(){
 		</fieldset>
 		</c:if>
 		
+		
 		<div class="linha_separa_fields">&nbsp;</div>
-
+ 					
 </form>
 </body>

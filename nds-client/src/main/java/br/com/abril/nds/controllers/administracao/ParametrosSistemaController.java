@@ -3,10 +3,16 @@ package br.com.abril.nds.controllers.administracao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.listener.ControleSessionListener;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -29,6 +35,8 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA)
 public class ParametrosSistemaController extends BaseController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParametrosSistemaController.class);
+    
 	@Autowired
 	private Result result;
 	
@@ -38,6 +46,9 @@ public class ParametrosSistemaController extends BaseController {
 	@Autowired
 	private ParametrosDistribuidorService pdService;
 	
+	
+	@Autowired
+	private HttpSession session;
 	
 	/**
 	 * Busca os parâmetros gerais do sistema.
@@ -81,9 +92,22 @@ public class ParametrosSistemaController extends BaseController {
 	 * @param dto
 	 * @param imgLogoSistema
 	 */
+	
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO)
+	public void removerTravas(ParametroSistemaGeralDTO dto) {
+		 String  usuario = (String) session.getAttribute(ControleSessionListener.USUARIO_LOGADO);
+		 if ( "admin".equals(usuario)) {
+		  LOGGER.error("REMOVENDO TODOS OS BLOQUEIOS DE ESTUDO");
+		  session.getServletContext().removeAttribute(HistogramaPosEstudoController.MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		  result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Removidos Travas de todos estudos."), "result").recursive().serialize();
+		 }
+		 }
+	
+	
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO)
 	public void salvar(ParametroSistemaGeralDTO dto) {
 			
+		
 		// Salvar:
 		psService.salvar(dto, null, null);
 		
