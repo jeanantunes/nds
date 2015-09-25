@@ -20,6 +20,10 @@ GeracaoArquivos.prototype.init = function() {
 		_this.btnGerarOnClick();
 	});
 	
+	$("#btnOpenCRUD", this.workspace).click(function() {
+		_this.btnOpenOnClick();
+	});
+	
 	$("#btnUnificar", this.workspace).click(function() {
 		_this.btnUnificarOnClick();
 	});
@@ -96,6 +100,11 @@ GeracaoArquivos.prototype.getParams = function() {
 	return params;
 };
 
+
+GeracaoArquivos.prototype.btnOpenOnClick = function() {
+	window.open(this.path + "getFile", "_blank");
+}
+
 GeracaoArquivos.prototype.btnGerarOnClick = function() {
 
 	var params = this.getParams();
@@ -111,6 +120,7 @@ if($("#tipoArquivo", this.workspace).val() == "VENDA") {
 				function(result) {
 					$("#resultado_unificacao", this.workspace).show();
 					$("#qtdArquivosUnificados", this.workspace).html(data);
+					
 				}
 		);
 		

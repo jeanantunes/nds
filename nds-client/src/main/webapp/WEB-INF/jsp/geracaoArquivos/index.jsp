@@ -50,6 +50,11 @@ $(function(){
 			    title="Gerar Arquivo Vendas/Reparte Unificado por cota"><a id="btnUnificarCotasCRUD"  isEdicao="true" href="javascript:;" rel="tipsy">
 			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif"></a>
 			</span>
+			
+			<span class="bt_novos"
+			    title="Abrir Arquivo Vendas/Reparte Unificado por cota"><a id="btnOpenCRUD"  isEdicao="true" href="javascript:;" rel="tipsy">
+			    <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_excel.png"></a>
+			</span>
 		
 		</div>
 	</div>
