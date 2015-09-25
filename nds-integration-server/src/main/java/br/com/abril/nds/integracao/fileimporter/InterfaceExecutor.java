@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.model.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
+import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
@@ -683,11 +684,21 @@ public class InterfaceExecutor {
 				&& TipoDistribuidor.FILIAL.equals(parametroDistribuidor.getTipoDistribuidor())));
 		
 		LOGGER.error("ISDISTRIBUIDORFILAL"+isDistribuidorFilial);
-		if(InterfaceEnum.EMS0110.equals(interfaceEnum)
-				&& isDistribuidorFilial){
-			LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE EMS110FILIAL");
-			return InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
+		
+		
+		
+		if(InterfaceEnum.EMS0110.equals(interfaceEnum)){
+			LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE EMS110");
+			
+			if(isDistribuidorFilial){
+			  interfaceEnum = InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110FilialInput.class);
+			  LOGGER.error("FILIAL");
+			}else{
+			  interfaceEnum = InterfaceEnum.EMS0110.getInterfaceEnum(EMS0110Input.class);
+			  LOGGER.error("DISTRIBUIDOR");
+			}
 		}
+		
 		LOGGER.error("PROCESSANDO ARQUIVO COM INTERFACE "+interfaceEnum);
 		return interfaceEnum;
 	}
