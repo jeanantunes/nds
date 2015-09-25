@@ -669,7 +669,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" COUNT(DISTINCT PROD_EDICAO.PRODUTO_ID) ");
 		
-		hql.append(this.obterHqlFromSemCE(filtro, false));
+		hql.append(this.obterHqlFromSemCE(filtro, true));
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		
@@ -692,7 +692,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    MOV_EST.ID AS sequencial, ");
 		
-		hql.append("	FORNEC.ID AS idItemCeIntegracao, ");
+		hql.append("	ESTOQUE_PROD.ID AS idItemCeIntegracao, ");
 		
 		hql.append("    PROD.CODIGO AS codigoProduto, ");
 		
