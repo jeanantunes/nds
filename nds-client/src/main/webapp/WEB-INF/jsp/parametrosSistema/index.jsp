@@ -256,10 +256,11 @@ $(function(){
 			</table>
 			
 		</fieldset>
-		<span class="bt_novos">
-					<a isEdicao="true" onclick="parametroSistemaController.remover();" href="javascript:;" rel="tipsy" title="Liberar Estudos">
+		<span class="bt_novos"  style="display:${displayTrava};">
+					<a isEdicao="true" onclick="parametroSistemaController.remover();" href="javascript:;" rel="tipsy" title="Liberar Trava de todos Estudos e Matriz de Recolhimento">
 					.
 					</a>
+					
 				</span>
 		<c:if test="${utilizaFTF}">
 		<fieldset class="fieldFiltro">
