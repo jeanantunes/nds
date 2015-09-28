@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.mapping.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.listener.ControleSessionListener;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.devolucao.MatrizRecolhimentoController;
 import br.com.abril.nds.controllers.distribuicao.HistogramaPosEstudoController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
@@ -22,6 +24,7 @@ import br.com.abril.nds.model.fiscal.nota.Identificacao.ProcessoEmissao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -49,6 +52,10 @@ public class ParametrosSistemaController extends BaseController {
 	
 	@Autowired
 	private HttpSession session;
+	
+    
+    @Autowired
+    private UsuarioService usuarioService;
 	
 	/**
 	 * Busca os parâmetros gerais do sistema.
@@ -78,6 +85,7 @@ public class ParametrosSistemaController extends BaseController {
 		result.include("tiposAmbientes", tiposAmbientes);
 		result.include("processosEmissaoNFe", processosEmissao);
 		result.include("formatosImpressao", formatosImpressao);
+		result.include("displayTrava", "admin".equals(usuarioService.getUsuarioLogado().getLogin())?"":"none");
 		
 		boolean utilizaFTF = pdService.getParametrosDistribuidor().getTipoAtividade().equals(TipoAtividade.PRESTADOR_FILIAL)
 				&& dto.getNfeInformacoesTipoEmissor().equals(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_CONTRIBUINTE.name());
@@ -97,10 +105,18 @@ public class ParametrosSistemaController extends BaseController {
 	public void removerTravas(ParametroSistemaGeralDTO dto) {
 		 String  usuario = (String) session.getAttribute(ControleSessionListener.USUARIO_LOGADO);
 		 if ( "admin".equals(usuario)) {
-		  LOGGER.error("REMOVENDO TODOS OS BLOQUEIOS DE ESTUDO");
+		  LOGGER.error("REMOVENDO TODOS OS BLOQUEIOS DE ESTUDO e MATRIZ DE RECOLHIMENTO");
+		  java.util.Map map = (java.util.Map)session.getServletContext().getAttribute(HistogramaPosEstudoController.MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		  LOGGER.error("MAPAS DE ESTUDO BLOQUEANDO:"+map );
+				  
 		  session.getServletContext().removeAttribute(HistogramaPosEstudoController.MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
+		  LOGGER.error("MATRIZ DE LANCAMENTO BLOQUEANDO:"+session.getServletContext().getAttribute(MatrizRecolhimentoController.TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE));
+		  session.getServletContext().removeAttribute(MatrizRecolhimentoController.TRAVA_MATRIZ_RECOLHIMENTO_CONTEXT_ATTRIBUTE);
+		
 		  result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Removidos Travas de todos estudos."), "result").recursive().serialize();
 		 }
+		 else
+		  result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, ""), "result").recursive().serialize();
 		 }
 	
 	
