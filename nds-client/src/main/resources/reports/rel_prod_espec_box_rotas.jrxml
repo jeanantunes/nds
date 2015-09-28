@@ -13,47 +13,47 @@
 	<background>
 		<band height="40">
 			<rectangle>
-				<reportElement uuid="11152003-30fe-4988-a495-d31726e782b5" x="60" y="0" width="60" height="20"/>
+				<reportElement x="60" y="0" width="60" height="20" uuid="11152003-30fe-4988-a495-d31726e782b5"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="ced20b7a-3bf8-498a-8a45-9a159227f29b" x="240" y="0" width="60" height="20"/>
+				<reportElement x="240" y="0" width="60" height="20" uuid="ced20b7a-3bf8-498a-8a45-9a159227f29b"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="36c559ff-2ad4-4ada-9a8e-f431614150d4" x="60" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="60" y="20" width="60" height="20" backcolor="#F5F5F5" uuid="36c559ff-2ad4-4ada-9a8e-f431614150d4"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="5958872c-05f4-4b50-bcd3-1470b45b728e" x="0" y="0" width="60" height="20"/>
+				<reportElement x="0" y="0" width="60" height="20" uuid="5958872c-05f4-4b50-bcd3-1470b45b728e"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="c688feb6-57e9-4cfd-bca3-966eee3a5b1b" x="120" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="120" y="20" width="60" height="20" backcolor="#F5F5F5" uuid="c688feb6-57e9-4cfd-bca3-966eee3a5b1b"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="327c8036-7f1e-4dab-88a4-75aab93e2637" x="180" y="0" width="60" height="20"/>
+				<reportElement x="180" y="0" width="60" height="20" uuid="327c8036-7f1e-4dab-88a4-75aab93e2637"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="de7f168b-f5f1-494e-a7ab-b57d0ca42650" x="180" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="180" y="20" width="60" height="20" backcolor="#F5F5F5" uuid="de7f168b-f5f1-494e-a7ab-b57d0ca42650"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="64ae1dd1-2bec-4288-92dd-759b82849b28" x="240" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="240" y="20" width="60" height="20" backcolor="#F5F5F5" uuid="64ae1dd1-2bec-4288-92dd-759b82849b28"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="98a3eb1a-b205-4d9d-82c0-fe841224afea" x="300" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="300" y="20" width="60" height="20" backcolor="#F5F5F5" uuid="98a3eb1a-b205-4d9d-82c0-fe841224afea"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="3faa8bf8-8855-4f97-851b-fdd374bfe39d" x="0" y="20" width="60" height="20" backcolor="#F5F5F5"/>
+				<reportElement x="0" y="20" width="60" height="20" backcolor="#F5F5F5" uuid="3faa8bf8-8855-4f97-851b-fdd374bfe39d"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="657a69b8-db02-402e-9234-f5d50718851f" x="300" y="0" width="60" height="20"/>
+				<reportElement x="300" y="0" width="60" height="20" uuid="657a69b8-db02-402e-9234-f5d50718851f"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="bf95b360-5846-43da-9e1d-76b2730dd673" x="120" y="0" width="60" height="20"/>
+				<reportElement x="120" y="0" width="60" height="20" uuid="bf95b360-5846-43da-9e1d-76b2730dd673"/>
 			</rectangle>
 		</band>
 	</background>
 	<detail>
 		<band height="40" splitType="Stretch">
 			<textField>
-				<reportElement uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d" style="rel_ftext" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5">
+				<reportElement style="rel_ftext" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="20" width="60" height="20" isPrintWhenDetailOverflows="true" backcolor="#F5F5F5" uuid="c3f4b6ab-7b8e-4c29-824f-93aebc04d66d">
 					<printWhenExpression><![CDATA[$F{value}.equals(0) ? Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -68,8 +68,107 @@
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c" style="rel_stext" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$F{key}.equalsIgnoreCase("|1") ? Boolean.FALSE : Boolean.TRUE]]></printWhenExpression>
+				<reportElement style="rel_stext" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true" uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c">
+					<printWhenExpression><![CDATA[(($F{key}.equalsIgnoreCase("|1") == false)&&
+($F{key}.equalsIgnoreCase("|2") == false)&&
+($F{key}.equalsIgnoreCase("|3") == false)&&
+($F{key}.equalsIgnoreCase("|4") == false)&&
+($F{key}.equalsIgnoreCase("|5") == false)&&
+($F{key}.equalsIgnoreCase("|6") == false)&&
+($F{key}.equalsIgnoreCase("|7") == false)&&
+($F{key}.equalsIgnoreCase("|8") == false)&&
+($F{key}.equalsIgnoreCase("|9") == false)&&
+($F{key}.equalsIgnoreCase("|10") == false)&&
+($F{key}.equalsIgnoreCase("|11") == false)&&
+($F{key}.equalsIgnoreCase("|12") == false)&&
+($F{key}.equalsIgnoreCase("|13") == false)&&
+($F{key}.equalsIgnoreCase("|14") == false)&&
+($F{key}.equalsIgnoreCase("|15") == false)&&
+($F{key}.equalsIgnoreCase("|16") == false) &&
+($F{key}.equalsIgnoreCase("|17") == false) &&
+($F{key}.equalsIgnoreCase("|18") == false) &&
+($F{key}.equalsIgnoreCase("|19") == false) &&
+($F{key}.equalsIgnoreCase("|20") == false) &&
+($F{key}.equalsIgnoreCase("|21") == false) &&
+($F{key}.equalsIgnoreCase("|22") == false) &&
+($F{key}.equalsIgnoreCase("|23") == false) &&
+($F{key}.equalsIgnoreCase("|24") == false) &&
+($F{key}.equalsIgnoreCase("|25") == false) &&
+($F{key}.equalsIgnoreCase("|26") == false) &&
+($F{key}.equalsIgnoreCase("|27") == false) &&
+($F{key}.equalsIgnoreCase("|28") == false) &&
+($F{key}.equalsIgnoreCase("|29") == false) &&
+($F{key}.equalsIgnoreCase("|30") == false) &&
+($F{key}.equalsIgnoreCase("|31") == false) &&
+($F{key}.equalsIgnoreCase("|32") == false) &&
+($F{key}.equalsIgnoreCase("|33") == false) &&
+($F{key}.equalsIgnoreCase("|34") == false) &&
+($F{key}.equalsIgnoreCase("|35") == false) &&
+($F{key}.equalsIgnoreCase("|36") == false) &&
+($F{key}.equalsIgnoreCase("|37") == false) &&
+($F{key}.equalsIgnoreCase("|38") == false) &&
+($F{key}.equalsIgnoreCase("|39") == false) &&
+($F{key}.equalsIgnoreCase("|40") == false) &&
+($F{key}.equalsIgnoreCase("|41") == false) &&
+($F{key}.equalsIgnoreCase("|42") == false) &&
+($F{key}.equalsIgnoreCase("|43") == false) &&
+($F{key}.equalsIgnoreCase("|44") == false) &&
+($F{key}.equalsIgnoreCase("|45") == false) &&
+($F{key}.equalsIgnoreCase("|46") == false) &&
+($F{key}.equalsIgnoreCase("|47") == false) &&
+($F{key}.equalsIgnoreCase("|48") == false) &&
+($F{key}.equalsIgnoreCase("|49") == false) &&
+($F{key}.equalsIgnoreCase("|50") == false) &&
+($F{key}.equalsIgnoreCase("|51") == false) &&
+($F{key}.equalsIgnoreCase("|52") == false) &&
+($F{key}.equalsIgnoreCase("|54") == false) &&
+($F{key}.equalsIgnoreCase("|54") == false) &&
+($F{key}.equalsIgnoreCase("|55") == false) &&
+($F{key}.equalsIgnoreCase("|56") == false) &&
+($F{key}.equalsIgnoreCase("|57") == false) &&
+($F{key}.equalsIgnoreCase("|58") == false) &&
+($F{key}.equalsIgnoreCase("|59") == false) &&
+($F{key}.equalsIgnoreCase("|60") == false) &&
+($F{key}.equalsIgnoreCase("|61") == false) &&
+($F{key}.equalsIgnoreCase("|62") == false) &&
+($F{key}.equalsIgnoreCase("|63") == false) &&
+($F{key}.equalsIgnoreCase("|64") == false) &&
+($F{key}.equalsIgnoreCase("|65") == false) &&
+($F{key}.equalsIgnoreCase("|66") == false) &&
+($F{key}.equalsIgnoreCase("|67") == false) &&
+($F{key}.equalsIgnoreCase("|68") == false) &&
+($F{key}.equalsIgnoreCase("|69") == false) &&
+($F{key}.equalsIgnoreCase("|70") == false) &&
+($F{key}.equalsIgnoreCase("|71") == false) &&
+($F{key}.equalsIgnoreCase("|72") == false) &&
+($F{key}.equalsIgnoreCase("|73") == false) &&
+($F{key}.equalsIgnoreCase("|74") == false) &&
+($F{key}.equalsIgnoreCase("|75") == false) &&
+($F{key}.equalsIgnoreCase("|76") == false) &&
+($F{key}.equalsIgnoreCase("|77") == false) &&
+($F{key}.equalsIgnoreCase("|78") == false) &&
+($F{key}.equalsIgnoreCase("|79") == false) &&
+($F{key}.equalsIgnoreCase("|80") == false) &&
+($F{key}.equalsIgnoreCase("|81") == false) &&
+($F{key}.equalsIgnoreCase("|82") == false) &&
+($F{key}.equalsIgnoreCase("|83") == false) &&
+($F{key}.equalsIgnoreCase("|84") == false) &&
+($F{key}.equalsIgnoreCase("|85") == false) &&
+($F{key}.equalsIgnoreCase("|86") == false) &&
+($F{key}.equalsIgnoreCase("|87") == false) &&
+($F{key}.equalsIgnoreCase("|88") == false) &&
+($F{key}.equalsIgnoreCase("|89") == false) &&
+($F{key}.equalsIgnoreCase("|90") == false) &&
+($F{key}.equalsIgnoreCase("|91") == false) &&
+($F{key}.equalsIgnoreCase("|92") == false) &&
+($F{key}.equalsIgnoreCase("|93") == false) &&
+($F{key}.equalsIgnoreCase("|94") == false) &&
+($F{key}.equalsIgnoreCase("|95") == false) &&
+($F{key}.equalsIgnoreCase("|96") == false) &&
+($F{key}.equalsIgnoreCase("|97") == false) &&
+($F{key}.equalsIgnoreCase("|98") == false) &&
+($F{key}.equalsIgnoreCase("|99") == false) &&
+($F{key}.equalsIgnoreCase("|100") == false) ? true : false)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0"/>
@@ -78,9 +177,10 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isStrikeThrough="false"/>
+					<font size="6" isStrikeThrough="false"/>
+					<paragraph tabStopWidth="35"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{key}.replace("|", "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
