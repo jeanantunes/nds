@@ -20,6 +20,7 @@ public class ExportarCobrancaDTO implements Serializable{
 	private BigDecimal vlr_pagto_diverg;
 	private BigDecimal vlr_postergado;
 	private BigDecimal vlr_total;
+	private BigDecimal vlr_taxa_extra;
 	private String cod_rota = "null";
 	private String rota = "null";
 	private String cod_roteiro = "null";
@@ -108,6 +109,12 @@ public class ExportarCobrancaDTO implements Serializable{
 	}
 	public void setVlr_total(BigDecimal vlr_total) {
 		this.vlr_total = vlr_total;
+	}
+	public BigDecimal getVlr_taxa_extra() {
+		return vlr_taxa_extra;
+	}
+	public void setVlr_taxa_extra(BigDecimal vlr_taxa_extra) {
+		this.vlr_taxa_extra = vlr_taxa_extra;
 	}
 	public String getRota() {
 		return rota;
