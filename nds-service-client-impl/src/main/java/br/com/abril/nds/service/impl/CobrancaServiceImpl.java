@@ -1313,32 +1313,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		List<ExportarCobrancaDTO> cobrancas = this.cobrancaRepository.obterCobrancasNaDataDeOperacaoDoDistribuidor(dataOperacaoDistribuidor);
 		
-		// popular cobrancas fake para teste
-		/*
-		for (int i = 1; i <= 10; i++) {
-			ExportarCobrancaDTO cobrancafk_ = new ExportarCobrancaDTO();
-			
-			Date data = DateUtil.parseData("01/04/2015", Constantes.DATE_PATTERN_PT_BR);
-			
-			cobrancafk_.setCod_jornaleiro(i);
-			//cobrancafk_.setData_operacao(data);
-			cobrancafk_.setVlr_cobranca(new BigDecimal(10*i));
-			cobrancafk_.setVlr_credito(new BigDecimal(10*i));
-			cobrancafk_.setVlr_encalhe(new BigDecimal(10*i));
-			cobrancafk_.setVlr_juros(new BigDecimal(10*i));
-			cobrancafk_.setVlr_multa(new BigDecimal(10*i));
-			cobrancafk_.setVlr_nro_atr(new BigDecimal(10*i));
-			cobrancafk_.setVlr_outros(new BigDecimal(10*i));
-			cobrancafk_.setVlr_pagto_diverg(new BigDecimal(10*i));
-			cobrancafk_.setVlr_pendencia(new BigDecimal(10*i));
-			cobrancafk_.setVlr_postergado(new BigDecimal(10*i));
-			cobrancafk_.setVlr_total(new BigDecimal(10*i));
-			
-			cobrancas.add(cobrancafk_);
-		}
-		*/
-		
-		
 		if(cobrancas == null || cobrancas.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças na data de operação corrente.");
 		}
