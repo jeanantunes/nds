@@ -350,7 +350,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" AND ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE > 0  ");
 		
 		if(!consolidado) {
-			hql.append(" GROUP BY  PROD.ID ");
+			hql.append(" GROUP BY PROD_EDICAO.ID, PROD.ID ");
 		}	
 		
 		return hql.toString();
@@ -667,7 +667,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT ");
 		
-		hql.append(" COUNT(DISTINCT PROD_EDICAO.PRODUTO_ID) ");
+		hql.append(" COUNT(DISTINCT PROD_EDICAO.ID) ");
 		
 		hql.append(this.obterHqlFromSemCE(filtro, true));
 		
