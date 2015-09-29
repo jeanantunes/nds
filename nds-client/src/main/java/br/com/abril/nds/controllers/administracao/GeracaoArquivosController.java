@@ -458,29 +458,29 @@ public class GeracaoArquivosController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
 	public void unificar() {	
 		  String crlf = System.getProperty("line.separator");
-	      String dir_banca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
 	  
-	      String dir_fc = dir_banca+"/fc";
-	      String dir_dinap = dir_banca+"/dinap";
-	      String dir_out = dir_banca+"/dinap_fc";
-	      String dir_conflito = dir_banca+"/dinap_fc_conflito";
+	      String dirFc = dirBanca+"/fc";
+	      String dirDinap = dirBanca+"/dinap";
+	      String dirOut = dirBanca+"/dinap_fc";
+	      String dirConflito = dirBanca+"/dinap_fc_conflito";
 	      int conflitos=0;
 	   try {   
 	      // copiar dinap para saida
-	      File source = new File(dir_dinap);
-	      File dest = new File(dir_out);
+	      File source = new File(dirDinap);
+	      File dest = new File(dirOut);
 	      try {
 	          FileUtils.copyDirectory(source, dest);
 	      } catch (IOException e) {
 	          e.printStackTrace();
-	          result.use(Results.json()).from("</br>Erro copiando arquivos de .."+dir_dinap+"  Para "+dir_out+" erro:"+e.getMessage() , "result").serialize();
+	          result.use(Results.json()).from("</br>Erro copiando arquivos de .."+dirDinap+"  Para "+dirOut+" erro:"+e.getMessage() , "result").serialize();
     		  return;
 	      }
 
 	     // processar
 	      
 	      StringBuffer ret=new StringBuffer();
-	      File dir = new File(dir_fc);
+	      File dir = new File(dirFc);
 		  String[] extensions = new String[] { "LCT", "RCL" };
 			
 			List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
@@ -498,17 +498,17 @@ public class GeracaoArquivosController extends BaseController {
 				  // e trocar filial fc para filial dinap
 				  String filialFc = "0757350";
 				  String filialDinap ="5318019";
-				   String path_out = dir_out +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
-				   File arq_out = new File(path_out);
+				   String pathOut = dirOut +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
+				   File arqOut = new File(pathOut);
 				  
-				   if  (arq_out.exists()) { // concatenar
+				   if  (arqOut.exists()) { // concatenar
 					   String filestr_fc = FileUtils.readFileToString(file);
-					   String filestr_dinap = FileUtils.readFileToString(arq_out);
+					   String filestr_dinap = FileUtils.readFileToString(arqOut);
 					   
-					   FileUtils.write(arq_out, filestr_dinap+filestr_fc); 
+					   FileUtils.write(arqOut, filestr_dinap+filestr_fc); 
 				   }
 				   else {
-					 FileUtils.copyFile(file, arq_out);
+					 FileUtils.copyFile(file, arqOut);
 				     
 				   }
 			   }
@@ -522,15 +522,15 @@ public class GeracaoArquivosController extends BaseController {
 				ret.append("Atencao:Box fc="+boxfc+" nao tem box dinap correspondente na tabela depara</br>");
 				  
 				
-				   String path_out = dir_out +"/"+fc;
-				   File arq_out = new File(path_out);
+				   String pathOut = dirOut +"/"+fc;
+				   File arqOut = new File(pathOut);
 				  
-				   if  (!arq_out.exists()) { // nao existe,cpiar para unificado
-					   FileUtils.copyFile(file, arq_out);
+				   if  (!arqOut.exists()) { // nao existe,cpiar para unificado
+					   FileUtils.copyFile(file, arqOut);
 				   } else {  //copiar para conflito
 					   conflitos++;
-					   ret.append("Conflito:Arquivo fc "+file.getAbsolutePath()+"  existe no dinap mas nao tem o box correspondente.Copiado para "+dir_conflito+"/"+fc +"</br>" );
-					 FileUtils.copyFile(file, new File(dir_conflito+"/"+fc));
+					   ret.append("Conflito:Arquivo fc "+file.getAbsolutePath()+"  existe no dinap mas nao tem o box correspondente.Copiado para "+dirConflito+"/"+fc +"</br>" );
+					 FileUtils.copyFile(file, new File(dirConflito+"/"+fc));
 				   } 
 				  
 			   }
@@ -544,14 +544,14 @@ public class GeracaoArquivosController extends BaseController {
 		    catch (Exception err) {
 		      err.printStackTrace();
 		      String erro="";
-		      if ( !new File( dir_banca+"/fc").exists())
-		    	  erro+=dir_banca+"/fc  Nao existe";
-		      if ( !new File( dir_banca+"/dinap").exists())
-		    	  erro+=dir_banca+"/dinap Nao existe";
-		     if ( !new File( dir_banca+"/dinap_fc").exists())
-		    	erro+=dir_banca+"/dinap_fc  Nao existe";
-			 if ( !new File( dir_banca+"/dinap_fc_conflito").exists())
-		    	erro+=dir_banca+"/dinap_fc_conflito Nao existe";
+		      if ( !new File( dirBanca+"/fc").exists())
+		    	  erro+=dirBanca+"/fc  Nao existe";
+		      if ( !new File( dirBanca+"/dinap").exists())
+		    	  erro+=dirBanca+"/dinap Nao existe";
+		     if ( !new File( dirBanca+"/dinap_fc").exists())
+		    	erro+=dirBanca+"/dinap_fc  Nao existe";
+			 if ( !new File( dirBanca+"/dinap_fc_conflito").exists())
+		    	erro+=dirBanca+"/dinap_fc_conflito Nao existe";
 
 		      result.use(Results.json()).from("Erro executando Unificacao</br>"+err.getMessage() +"</br>"+erro, "result").serialize();
 		    }
