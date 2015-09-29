@@ -650,6 +650,24 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("       join tipo_movimento tm_s  ");
     	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
     	sql.append("     where d_s.DATA = :dtOperacao ");
+    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
+    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :taxa_extra),0) as vlr_taxa_extra, ");
+    	
+    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
+    	sql.append("     from movimento_financeiro_cota mfc_s ");
+    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
+    	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
+    	sql.append("       join consolidado_financeiro_cota cfc_s  ");
+    	sql.append("         ON cf_s.CONSOLIDADO_FINANCEIRO_ID = cfc_s.ID ");
+    	sql.append("       join divida_consolidado dc_s ");
+    	sql.append("         ON dc_s.CONSOLIDADO_ID = cfc_s.ID ");
+    	sql.append("       join divida d_s ");
+    	sql.append("         ON d_s.ID = dc_s.DIVIDA_ID ");
+    	sql.append("       join cobranca cb_s ");
+    	sql.append("         ON cb_s.DIVIDA_ID = d_s.ID ");
+    	sql.append("       join tipo_movimento tm_s  ");
+    	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
+    	sql.append("     where d_s.DATA = :dtOperacao ");
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID),0) as vlr_pagto_diverg, ");
 
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
@@ -720,6 +738,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.setParameter("postergado_debito", GrupoMovimentoFinaceiro.POSTERGADO_DEBITO.name());
     	query.setParameter("postergado_credito", GrupoMovimentoFinaceiro.POSTERGADO_CREDITO.name());
     	query.setParameter("recebimento_reparte", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name());
+    	query.setParameter("taxa_extra", GrupoMovimentoFinaceiro.TAXA_EXTRA.name());
     	
     	query.addScalar("cod_jornaleiro", StandardBasicTypes.INTEGER);
     	query.addScalar("data_operacao", StandardBasicTypes.STRING);
@@ -730,7 +749,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.addScalar("vlr_juros", StandardBasicTypes.BIG_DECIMAL);        
     	query.addScalar("vlr_multa", StandardBasicTypes.BIG_DECIMAL);        
     	query.addScalar("vlr_outros", StandardBasicTypes.BIG_DECIMAL);       
-    	query.addScalar("vlr_pendencia", StandardBasicTypes.BIG_DECIMAL);    
+    	query.addScalar("vlr_pendencia", StandardBasicTypes.BIG_DECIMAL);
+    	query.addScalar("vlr_taxa_extra", StandardBasicTypes.BIG_DECIMAL);
     	query.addScalar("vlr_pagto_diverg", StandardBasicTypes.BIG_DECIMAL);  
     	query.addScalar("vlr_postergado", StandardBasicTypes.BIG_DECIMAL);   
     	query.addScalar("vlr_total", StandardBasicTypes.BIG_DECIMAL);        
