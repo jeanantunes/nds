@@ -495,7 +495,10 @@ public class GeracaoArquivosController extends BaseController {
 				   continue;
 				 } 
 				 // trocar box no arquivo fc para dinap
-				   String path_out = dir_out +"/"+fc.replace(boxfc,boxdinap);
+				  // e trocar filial fc para filial dinap
+				  String filialFc = "0757350";
+				  String filialDinap ="5318019";
+				   String path_out = dir_out +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
 				   File arq_out = new File(path_out);
 				  
 				   if  (arq_out.exists()) { // concatenar
@@ -583,7 +586,8 @@ public class GeracaoArquivosController extends BaseController {
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
 				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
-				File file = new File(ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
+					
+					File file = new File(ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
 				try {
 					InputStream isFile = new FileInputStream(file);    
 					
@@ -597,8 +601,8 @@ public class GeracaoArquivosController extends BaseController {
 			        httpServletResponse.flushBuffer();
 					
 				} catch (IOException e) {
-					
-					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo REPARTE.");
+					LOGGER.error("Erro ao gerar arquivo de reparte",e);
+ 					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo REPARTE.Tente outra ");
 				}    
 			}
 			
@@ -609,8 +613,10 @@ public class GeracaoArquivosController extends BaseController {
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
 				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
+				
 				File file = new File(ps.getValor() + File.separator +"encalhe"+ File.separator +"zip"+ File.separator +"encalhe-"+ sdf.format(dataLctoPrevisto) +".zip");
 				try {
+					
 					InputStream isFile = new FileInputStream(file);    
 					
 					byte[] arquivo = IOUtils.toByteArray(isFile);
@@ -623,8 +629,8 @@ public class GeracaoArquivosController extends BaseController {
 			        httpServletResponse.flushBuffer();
 					
 				} catch (IOException e) {
-					
-					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo ENCALHE.");
+					LOGGER.error("Erro ao gerar arquivo de encalhe",e);
+					throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar o arquivo ENCALHE."+e);
 				}    
 			}
 		}
