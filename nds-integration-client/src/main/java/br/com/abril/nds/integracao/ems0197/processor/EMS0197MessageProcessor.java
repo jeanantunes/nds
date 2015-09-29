@@ -517,7 +517,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("       		and ecg.REPARTE is not null ");
 		sql.append("       		and ecg.REPARTE > 0 ");
 		sql.append(" 	 		and c.id = :idCota");
-		sql.append(" 	 		and c.UTILIZA_IPV = :true");
+		sql.append(" 	 		and c.UTILIZA_IPV = :true and  pdvs.ponto_principal = true");
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
