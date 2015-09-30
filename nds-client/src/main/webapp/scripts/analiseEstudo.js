@@ -177,7 +177,7 @@ var analiseEstudoController = $.extend(true, {
 
                 histogramaPosEstudoController.dadosResumo = dadosResumo;
                 histogramaPosEstudoController.matrizSelecionado = matriz;
-                histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
+                histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
                 histogramaPosEstudoController.modoAnalise = $(event.target).val().toUpperCase();
             });
         }

@@ -1687,7 +1687,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 						});
 					}
 					
-					histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params,T);
+					histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params,T, false);
 					
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});
