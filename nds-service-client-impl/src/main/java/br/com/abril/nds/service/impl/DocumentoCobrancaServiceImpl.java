@@ -54,6 +54,7 @@ import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -270,6 +271,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 if (proximoIndex < boletos.size()){
                     
                     if (boletos.get(index).getCota().getNumeroCota().equals(boletos.get(proximoIndex).getCota().getNumeroCota())){
+                    	if ( !boletos.get(index).getCota().getBox().getTipoBox().equals(TipoBox.ESPECIAL))
                         adicionarSlip = false;
                     }
                 }
@@ -294,7 +296,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			}
             
         } catch (Exception e) {
-            
+            LOGGER.error("Erro gerando arquivo",e);
             throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage() + " ao gerar arquivo de cobrança + Slip");
         }
         
@@ -915,8 +917,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         
         for (ConsultaRoteirizacaoDTO item : listaRoteirizacaoDTO){
         	
-        	if (!item.getNomeBox().equals("Especial")){
-        		
+        //	if (!item.getNomeBox().equals("Especial")){
+        	if (!item.getTipobox().equals(TipoBox.ESPECIAL)) {
         		roteirizacaoDTO = item;
         		
         		return roteirizacaoDTO;
