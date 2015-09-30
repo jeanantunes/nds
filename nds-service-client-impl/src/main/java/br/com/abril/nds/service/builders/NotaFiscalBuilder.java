@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FinalidadeEmissaoNFe;
@@ -197,7 +200,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 	}
 
-	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Map<String, ParametroSistema> parametrosSistema) {
+	public static void montarHeaderNotaFiscal(NotaFiscal notaFiscal, Map<String, ParametroSistema> parametrosSistema, NaturezaOperacao naturezaOperacao) {
 		
 		//FIXME: Obter forma de pagamento da cota
 		FormaPagamento formaPagamento = FormaPagamento.OUTROS;
@@ -219,8 +222,13 @@ public class NotaFiscalBuilder implements Serializable {
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.NORMAL);
 		
-		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+		TipoMovimentoEstoque tipoMovimentoEstoque =  (TipoMovimentoEstoque) naturezaOperacao.getTipoMovimento().get(0);
+		
+		if(!tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE)) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.NORMAL);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe.DEVOLUCAO_RETORNO);
+		}
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setOperacaoConsumidorFinal(OperacaoConsumidorFinal.NAO);
@@ -231,8 +239,12 @@ public class NotaFiscalBuilder implements Serializable {
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setVersaoSistemaEmissao(parametrosSistema.get("NFE_INFORMACOES_VERSAO_EMISSOR").getValor());
 		
-		//FIXME: Ajustar para variavel parametrizada
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf().equals("SP")) {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
+		} else {
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERESTADUAL);
+		}
 		
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.valueOf(parametrosSistema.get("NFE_INFORMACOES_FORMATO_IMPRESSAO").getValor()));
