@@ -68,9 +68,11 @@ var histogramaPosEstudoController = $.extend(true, {
 		    		histogramaPosEstudoController.change.refreshGrid=false;
 
 		    		try{
-                      histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+		    			/*
+		    			histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
                           params : [{ name : 'estudoId' , value : histogramaPosEstudoController.change.estudoId}]
-                      });
+		    			});
+                      	*/
                       histogramaPosEstudoController.popularFieldsetResumoEstudo();
                   }catch(e){
                       exibirMensagem('WARNING', [e.message]);
@@ -164,6 +166,9 @@ var histogramaPosEstudoController = $.extend(true, {
 					url : contextPath + "/distribuicao/histogramaPosEstudo/carregarGridAnalise",
 					onSuccess : histogramaPosEstudoController.popularFieldsetResumoEstudo,
 					preProcess : function(response){
+						
+						$("#gridHistograma").show();
+						
 						var rowConsolidada = $(response.rows).last()[0];
 						
 						histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel = response;
@@ -264,7 +269,7 @@ var histogramaPosEstudoController = $.extend(true, {
 						useRp : true,
 						rp : 15,
 						showTableToggleBtn : true,
-						width : 960,
+						width : 948,
 						height : 230
 					}
 				}),
@@ -505,7 +510,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		$('#workspace').tabs('addTab', 'Análise de Estudos', url);
 	},
 
-	popularFieldsetHistogramaPreAnalise : function (selecionado, matrizDistribuicaoController){
+	popularFieldsetHistogramaPreAnalise : function (selecionado, matrizDistribuicaoController, isCarregarGrid){
 
 		histogramaPosEstudoController.matrizDistribuicaoController = matrizDistribuicaoController;
 
@@ -518,11 +523,7 @@ var histogramaPosEstudoController = $.extend(true, {
 				 if (jsonData) {
 					 histogramaPosEstudoController.matrizSelecionado = jsonData;
 					 histogramaPosEstudoController.fieldSetValues = jsonData;
-
-					 histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-						params : [{ name : 'estudoId' , value : jsonData.estudo}]
-					 });
-
+					 
 					 $('#codigoProdutoFs').html(jsonData.codigoProduto);
 					 $('#nomeProdutoFs').html(jsonData.nomeProduto);
 					 $('#edicaoProdutoFs').html(jsonData.edicao);
@@ -536,11 +537,22 @@ var histogramaPosEstudoController = $.extend(true, {
 					 $('#periodoFs').html(jsonData.periodicidadeProduto);
 					 $('#parcial').val(jsonData.parcial);
 
-					 if(jsonData.estudoLiberado)
+					 if(jsonData.estudoLiberado){
 						 $('#estudoLiberadoFs').show();
-					 else
+						 
+					 }else{
 						 $('#estudoLiberadoFs').hide();
-
+					 }
+					 
+					 if(isCarregarGrid == undefined || isCarregarGrid == true){
+						 histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+							 params : [{ name : 'estudoId' , value : jsonData.estudo}]
+						 });
+						 $("#botaoGridHistograma").hide();
+					 }else{
+						 histogramaPosEstudoController.popularFieldsetResumoEstudo();
+						 $("#botaoGridHistograma").show();
+					 }
 				 }
 			 }, function(jsonData) {
 				 
@@ -549,6 +561,16 @@ var histogramaPosEstudoController = $.extend(true, {
 				 $('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
 			 }
 		);
+	},
+	
+	exibirGridHistograma : function (){
+		$("#botaoGridHistograma").hide();
+		
+		var estudoId = $('#codigoEstudoFs').text();
+		
+		histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+			 params : [{ name : 'estudoId' , value : estudoId}]
+		 });
 	},
 
 	popularFieldsetResumoEstudo : function (){
