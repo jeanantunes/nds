@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.TipoMovimentoDTO.Operacao;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -1120,6 +1121,70 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return hql;
 	}
 	
+	private StringBuilder queryConsultaEditorMENfe(FiltroNFeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+
+		hql.append(" FROM MovimentoEstoque me ")
+		.append(" JOIN me.tipoMovimento tipoMovimento ")
+		.append(" JOIN me.estoqueProduto estoqueProduto ")
+		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao ")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.editor editor ")
+		.append(" JOIN editor.pessoaJuridica pessoaEditor ")
+		.append(" LEFT JOIN produtoEdicao.descontoLogistica descontoLogisticaPE ")
+		.append(" LEFT JOIN produto.descontoLogistica descontoLogistica ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" JOIN fornecedor.juridica pessoa ")
+		.append(" WHERE 1=1 ")
+		.append(" AND me.data BETWEEN :dataInicial AND :dataFinal ")
+		.append(" AND me.notaFiscalEmitida = :notaFiscalEmitida ");
+		
+		if(filtro.isEmissaoPorDestinacaoEncalhe() != null && filtro.isEmissaoPorDestinacaoEncalhe()) {
+			hql.append(" AND me.produtoEdicao NOT IN(")
+				.append(" select produtoEdicao ")
+				.append(" from DestinoEncalhe de ")
+				.append(" JOIN de.produtoEdicao produtoEdicao ")
+				.append(") ");
+		}
+
+		// Tipo de Nota:		
+		if(filtro.getIdNaturezaOperacao() != null) {
+			hql.append(" AND me.tipoMovimento.id in (SELECT tm.id ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
+			
+		}
+
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
+		}
+
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+		
+		if(filtro.getIdEditor() != null && filtro.getIdEditor() > 0) {
+			hql.append(" AND editor.id = :idEditor) ");
+		}
+		
+		if(!isGroup) {
+			if(filtro.isEmissaoPorEditor() != null && filtro.isEmissaoPorEditor()) {
+				hql.append(" GROUP BY editor.id, fornecedor.id ");
+			}
+		} else {
+			hql.append(" GROUP BY me ");
+		}
+
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
+			}
+		}
+
+		return hql;
+	}
+	
 	private Query queryConsultaMENfeParameters(StringBuilder hql, FiltroNFeDTO filtro) {
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
@@ -1143,6 +1208,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
 		
+		// forncedor id		
+		if(filtro.getIdEditor() != null && filtro.getIdEditor() > 0) {
+			query.setParameter("idEditor", filtro.getIdEditor());
+		}
+		
 		return query;	
 	}
 
@@ -1160,6 +1230,18 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 	@Override
 	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoque> obterMovimentosEstoqueEditor(FiltroNFeDTO filtro) {
+		
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT me ");
+		Query query = queryConsultaMENfeParameters(queryConsultaEditorMENfe(filtro, hql, false, false, false), filtro);
+
+		return query.list();
+		
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
 	public List<Fornecedor> obterConjuntoFornecedoresNotafiscal(FiltroNFeDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder("SELECT ");
@@ -1170,6 +1252,18 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Editor> obterConjuntoEditoresNotafiscal(FiltroNFeDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" distinct editor ");
+		Query query = queryConsultaMENfeParameters(queryConsultaEditorMENfe(filtro, hql, false, false, false), filtro);
+
+		return query.list();
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota, String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults) {

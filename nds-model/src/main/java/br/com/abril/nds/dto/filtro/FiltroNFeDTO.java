@@ -57,6 +57,8 @@ public class FiltroNFeDTO implements Serializable {
 
 	private PaginacaoVO paginacaoVO;
 	
+	private Long idEditor;
+	
 	public Integer getIntervaloBoxInicial() {
 		return intervaloBoxInicial;
 	}
@@ -232,5 +234,13 @@ public class FiltroNFeDTO implements Serializable {
 
 	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
 		this.paginacaoVO = paginacaoVO;
+	}
+
+	public Long getIdEditor() {
+		return idEditor;
+	}
+
+	public void setIdEditor(Long idEditor) {
+		this.idEditor = idEditor;
 	}
 }

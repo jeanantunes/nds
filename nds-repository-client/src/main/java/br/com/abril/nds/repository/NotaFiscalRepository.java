@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -83,7 +84,11 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	List<MovimentoEstoque> obterMovimentosEstoqueFornecedor(FiltroNFeDTO filtro);
 
+	List<MovimentoEstoque> obterMovimentosEstoqueEditor(FiltroNFeDTO filtro);
+	
 	List<Fornecedor> obterConjuntoFornecedoresNotafiscal(FiltroNFeDTO filtro);
+	
+	List<Editor> obterConjuntoEditoresNotafiscal(FiltroNFeDTO filtro);
 	
 	List<ItemNotaFiscalPendenteDTO> buscarItensPorNota(Long idConferenciaCota,String  orderBy,Ordenacao ordenacao, Integer firstResult, Integer maxResults);
 	
