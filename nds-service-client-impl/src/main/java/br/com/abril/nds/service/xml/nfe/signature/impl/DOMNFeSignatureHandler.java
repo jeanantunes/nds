@@ -47,8 +47,7 @@ public class DOMNFeSignatureHandler implements SignatureHandler {
 					}
 				});
 			}
-		}
-		else {
+		} else {
 			logger.warn("Não foi encontrada a tag {} para assinar.", tagNameToSign);
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrada a tag {} para assinar.");
 			
