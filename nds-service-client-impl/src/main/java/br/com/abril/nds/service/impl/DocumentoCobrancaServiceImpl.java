@@ -271,7 +271,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
                 if (proximoIndex < boletos.size()){
                     
                     if (boletos.get(index).getCota().getNumeroCota().equals(boletos.get(proximoIndex).getCota().getNumeroCota())){
-                    	if ( !boletos.get(index).getCota().getBox().getTipoBox().equals(TipoBox.ESPECIAL))
                         adicionarSlip = false;
                     }
                 }
