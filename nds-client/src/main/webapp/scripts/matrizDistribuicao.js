@@ -983,7 +983,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					
 	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
 	            	histogramaPosEstudoController.matrizSelecionado = matriz;
-	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
+	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz, undefined, false);
 
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});

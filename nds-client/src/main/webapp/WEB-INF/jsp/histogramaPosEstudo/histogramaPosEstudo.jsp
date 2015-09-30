@@ -10,6 +10,9 @@ $(function(){
   
 });
 </script>
+<style type="text/css">
+.classFieldHistograma{ width:950px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+</style>
 
 <div id="dialog-divergencia" title="Base de Estudos" style="display:none;">
   <fieldset style="width:300px; float:left;">
@@ -87,7 +90,7 @@ $(function(){
 
   <div class="container">
 
-    <fieldset class="classFieldset">
+    <fieldset class="classFieldHistograma">
       <legend>Histograma Pr&eacute;-An&aacute;lise</legend>
       <input type="hidden" id="modoAnalise" value="${modoAnalise}" />
       <table width="950" border="0" cellpadding="2" cellspacing="1">
@@ -151,14 +154,16 @@ $(function(){
             </fieldset>
             <div class="linha_separa_fields">&nbsp;</div>
             <div class="grids" style="display:block;">
-              <fieldset class="classFieldset">
-                <legend>Base de Estudo / Análise</legend>
-
-                <table class="estudosAnaliseGrid"></table>
-
-              </fieldset>
+              <div id="gridHistograma" style="display:none;">
+	              <fieldset class="classFieldHistograma">
+	                <legend>Base de Estudo / Análise</legend>
+	
+	                <table class="estudosAnaliseGrid"></table>
+	
+	              </fieldset>
+              </div>
               <div class="linha_separa_fields">&nbsp;</div>
-              <fieldset class="classFieldset">
+              <fieldset class="classFieldHistograma">
                 <legend>Resumo do Estudo</legend>
                 <table width="550" border="0" cellspacing="2" cellpadding="2">
                   <tr>
@@ -208,5 +213,12 @@ $(function(){
                 </table>
               </fieldset>
             </div>
+            <div id="botaoGridHistograma">
+            	<span class="bt_confirmar_novo" title="Exibir histograma detalhado">
+           			<a onclick="histogramaPosEstudoController.exibirGridHistograma();" href="javascript:;">
+           			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">&nbsp;Exibir histograma detalhado</a>
+           		</span>
+            </div>
+            
           </div>
         </div>
