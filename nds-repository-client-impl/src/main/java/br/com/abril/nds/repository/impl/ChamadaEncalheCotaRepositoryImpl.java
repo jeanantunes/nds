@@ -56,13 +56,13 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" AND cec.COTA_ID = c.ID ");
 		sql.append(" AND ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		sql.append(" AND NUMERO_COTA = :numeroCota ");
-		sql.append(" AND cec.FECHADO = :fechado " );
+		sql.append(" AND cec.FECHADO != :naoFechado " );
 
 		Query query = getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("dataRecolhimento", dataRecolhimento);
 		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("fechado", true);
+		query.setParameter("naoFechado", false);
 
 		return (BigInteger) query.uniqueResult();
 	}
@@ -80,11 +80,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("numeroCota", numeroCota);
 		
 		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
+			query.setParameter("naoConferido", !conferido);
 		}
 		
 		if(postergado!=null) {
-			query.setParameter("postergado", postergado);
+			query.setParameter("naoPostergado", !postergado);
 		}
 		
 		query.setParameterList("grupoMovimentoEnvioReparte", Arrays.asList(
@@ -110,11 +110,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("numeroCota", numeroCota);
 		
 		if(conferido != null) {
-			query.setParameter("conferido", conferido);
+			query.setParameter("naoConferido", !conferido);
 		}
 		
 		if(postergado != null) {
-			query.setParameter("postergado", postergado);
+			query.setParameter("naoPostergado", !postergado);
 		}
 		
 		query.setParameterList("grupoMovimentoEnvioReparte", Arrays.asList(
@@ -139,11 +139,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("numeroCota", numeroCota);
 		
 		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
+			query.setParameter("naoConferido", !conferido);
 		}
 		
 		if(postergado!=null) {
-			query.setParameter("postergado", postergado);
+			query.setParameter("naoPostergado",! postergado);
 		}
 		
 		query.setParameterList("grupoMovimentoEnvioReparte", Arrays.asList(
@@ -232,8 +232,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" 						WHERE ");
 		sql.append(" 							CHAMADA_ENCALHE_COTA.COTA_ID = (SELECT ID FROM COTA WHERE NUMERO_COTA = :numeroCota) AND ");
 		sql.append(" 							CHAMADA_ENCALHE.DATA_RECOLHIMENTO IN (:datas) AND   ");
-		sql.append(" 							CHAMADA_ENCALHE_COTA.FECHADO = :conferido AND 		");
-		sql.append(" 							CHAMADA_ENCALHE_COTA.POSTERGADO = :postergado 		");
+		sql.append(" 							CHAMADA_ENCALHE_COTA.FECHADO != :naoConferido AND 		");
+		sql.append(" 							CHAMADA_ENCALHE_COTA.POSTERGADO != :naoPostergado 		");
 		sql.append(" 						GROUP BY                                                                                     ");
 		sql.append(" 							MEC.PRODUTO_EDICAO_ID                                                                    ");
 		sql.append(" 					) AS MOVCOTA                                                                                     ");
@@ -254,11 +254,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO IN (:datas)	");
 		
 		if(conferido!=null) {
-			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
+			sql.append(" AND	CH_ENCALHE_COTA.FECHADO != :naoConferido		");
 		}
 		
 		if(postergado!=null) {
-			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
+			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO != :naoPostergado		");
 		}
 
 		return sql.toString();
@@ -299,9 +299,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 
-		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
+		hql.append(" and chamadaEncalheCota.fechado != :naoConferido ");
 
-		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
+		hql.append(" and chamadaEncalheCota.postergado != :naoPostergado ");
 
 		if (indPesquisaCEFutura) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
@@ -317,11 +317,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		query.setParameter("numeroCota", numeroCota);
 
-		query.setParameter("conferido", conferido);
+		query.setParameter("naoConferido", !conferido);
 
 		query.setParameter("dataOperacao", dataOperacao);
 
-		query.setParameter("postergado", postergado);
+		query.setParameter("naoPostergado", !postergado);
 
 		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -354,7 +354,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" CE.DATA_RECOLHIMENTO = :dataRecolhimento AND ");
 		sql.append(" CEC.COTA_ID = :idCota AND ");
 		sql.append(" CE.PRODUTO_EDICAO_ID = :idProdutoEdicao AND ");
-		sql.append(" CEC.POSTERGADO = false ");
+		sql.append(" CEC.POSTERGADO != true ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
@@ -386,7 +386,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sqlCEAnteriorDataOperacao.append(" WHERE ");
 		sqlCEAnteriorDataOperacao.append(" PE.ID = :idProdutoEdicao AND		");
 		sqlCEAnteriorDataOperacao.append(" CEC.COTA_ID = :idCota AND		");
-		sqlCEAnteriorDataOperacao.append(" CEC.POSTERGADO = :postergado AND			");
+		sqlCEAnteriorDataOperacao.append(" CEC.POSTERGADO != :naoPostergado AND			");
 		sqlCEAnteriorDataOperacao.append(" CE.DATA_RECOLHIMENTO <= :dataOperacao 	");
 		sqlCEAnteriorDataOperacao.append(" ORDER BY CE.DATA_RECOLHIMENTO DESC )		");
 		
@@ -401,7 +401,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sqlCEPosteriorDataOperacao.append(" WHERE ");
 		sqlCEPosteriorDataOperacao.append(" PE.ID = :idProdutoEdicao AND	");
 		sqlCEPosteriorDataOperacao.append(" CEC.COTA_ID = :idCota AND		");
-		sqlCEPosteriorDataOperacao.append(" CEC.POSTERGADO = :postergado AND		");
+		sqlCEPosteriorDataOperacao.append(" CEC.POSTERGADO != :naoPostergado AND		");
 		sqlCEPosteriorDataOperacao.append(" CE.DATA_RECOLHIMENTO > :dataOperacao	");
 		sqlCEPosteriorDataOperacao.append(" ORDER BY CE.DATA_RECOLHIMENTO DESC ) 	");
 		
@@ -420,7 +420,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		((SQLQuery) query).addScalar("dataEncalhe",StandardBasicTypes.DATE);
 		
 		query.setParameter("idCota", cota.getId());
-		query.setParameter("postergado", postergado);
+		query.setParameter("naoPostergado", !postergado);
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 
@@ -441,7 +441,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		hql.append(" chamadaEncalheCota.cota.id = :idCota ");
 
-		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
+		hql.append(" and chamadaEncalheCota.postergado != :naoPostergado ");
 		
 		if(dataOperacao!= null){
 			
@@ -460,7 +460,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		query.setParameter("idCota", cota.getId());
 
-		query.setParameter("postergado", postergado);
+		query.setParameter("naoPostergado", !postergado);
 
 		if(dataOperacao!= null){
 			query.setParameter("dataOperacao", dataOperacao);
@@ -712,8 +712,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			.append(" chamadaEncalhe.tipoChamadaEncalhe=:tipoChamadaEncalhe")
 			.append(" AND produto.codigo =:codigoProduto ")
 			.append(" AND produtoEdicao.numeroEdicao =:numeroEdicao ")
-			.append(" AND chamadaEncalheCota.fechado = false ")
-			.append(" AND chamadaEncalheCota.postergado = false ")
+			.append(" AND chamadaEncalheCota.fechado != true ")
+			.append(" AND chamadaEncalheCota.postergado != true ")
 			.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
 			.append(" AND chamadaEncalhe.dataRecolhimento > :dataOperacao ");
 		
@@ -798,7 +798,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		hql.append(" and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 		
 		if (fechado != null) {
-			hql.append(" and cec.fechado = :fechado ");
+			hql.append(" and cec.fechado != :naoFechado ");
 		}
 		
 		if (dataRecolhimento != null) {
@@ -812,7 +812,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		if (fechado != null) {
-			query.setParameter("fechado", fechado);
+			query.setParameter("naoFechado", !fechado);
 		}
 		
 		if (dataRecolhimento != null) {
