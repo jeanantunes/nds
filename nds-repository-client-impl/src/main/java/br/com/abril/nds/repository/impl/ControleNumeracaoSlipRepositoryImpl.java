@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+import java.util.Map.Entry;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +34,26 @@ public class ControleNumeracaoSlipRepositoryImpl extends
 		query.setParameter("tipoSlip", tipoSlip);
 
 		return (ControleNumeracaoSlip) query.uniqueResult();
+	}
+	
+	@Override
+  public void alterarPorId(Long id, Long proximo) {
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append("UPDATE ");
+		hql.append(" ControleNumeracaoSlip ");
+		hql.append(" SET proximoNumeroSlip = :proximo ");
+		
+		
+		hql.append(" WHERE id = :id");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("id", id);	
+		query.setParameter("proximo", proximo);		
+		query.executeUpdate();
+		getSession().flush();
 	}
 	
 

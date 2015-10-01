@@ -16,7 +16,7 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 	private ControleNumeracaoSlipRepository controleNumeracaoSlipRepository;
 	
 	@Transactional
-	public synchronized  Long obterProximoNumeroSlip(TipoSlip tipoSlip) {
+	public   Long obterProximoNumeroSlip(TipoSlip tipoSlip) {
 		
 		ControleNumeracaoSlip controleNumeracaoSlip = controleNumeracaoSlipRepository.obterControleNumeracaoSlip(tipoSlip);
 		
@@ -27,6 +27,7 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 			controleNumeracaoSlip.setProximoNumeroSlip(1L);
 			
 			controleNumeracaoSlipRepository.adicionar(controleNumeracaoSlip);
+			return 1L;
 		}
 		
 		Long numeroSlip = controleNumeracaoSlip.getProximoNumeroSlip();
@@ -35,9 +36,9 @@ public class ControleNumeracaoSlipServiceImpl implements ControleNumeracaoSlipSe
 			throw new IllegalStateException("Controle de Numeração de Slip não encontrado");
 		}
 		
-		controleNumeracaoSlip.setProximoNumeroSlip((numeroSlip + 1L));
+		//controleNumeracaoSlip.setProximoNumeroSlip((numeroSlip + 1L));
 		
-		controleNumeracaoSlipRepository.alterar(controleNumeracaoSlip);
+		controleNumeracaoSlipRepository.alterarPorId(controleNumeracaoSlip.getId(),numeroSlip+ 1L);
 		controleNumeracaoSlipRepository.flush();
 		return numeroSlip;
 		
