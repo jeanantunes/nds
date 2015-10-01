@@ -3683,7 +3683,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(chamadaEncalheCota.getChamadaEncalhe().getLancamentos().size() > 1){
 				
-				LOGGER.error("Carregou mais de um lançamento...");
+				LOGGER.warn("Carregou mais de um lançamento...");
 				
 			} else {
 				
