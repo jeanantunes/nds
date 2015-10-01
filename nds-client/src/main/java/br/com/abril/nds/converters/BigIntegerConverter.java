@@ -29,6 +29,11 @@ public class BigIntegerConverter implements Converter<BigInteger> {
 		if ("null".equalsIgnoreCase(value)) {
 			return null;
 		}
+		
+		if ("NaN".equalsIgnoreCase(value)) {
+			return null;
+		}
+		
 		if ( value.toLowerCase().startsWith("selecione")) {
 			return null;
 		}
@@ -38,7 +43,7 @@ public class BigIntegerConverter implements Converter<BigInteger> {
 		return new BigInteger(value.replaceAll(",","."));
 	 } catch (Exception e ) {
 	    	e.printStackTrace();
-	    	LOGGER.error("ERRO CONVERSAO INTEGER='"+value+"'");
+	    	LOGGER.error("ERRO CONVERSAO BIGINTEGER='"+value+"'");
 	    	throw new ConversionError(MessageFormat.format(bundle.getString("is_not_a_valid_integer"), value));    
 	    }	
 	}
