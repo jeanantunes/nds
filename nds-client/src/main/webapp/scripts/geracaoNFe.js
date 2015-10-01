@@ -276,7 +276,7 @@ var geracaoNFeController = $.extend({
 			preProcess : _this.preProcessGridPesquisa,
 			colModel : _this.colunasGridForncedorPesquisa,
 			dataType : 'json',
-			sortname : "idFornecedor",
+			sortname : "codigoEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -641,6 +641,11 @@ var geracaoNFeController = $.extend({
 			if($(".emissaoRegimeEspecial").is(":visible")) {
 				params.push({name:"notaFiscalTipoEmissaoRegimeEspecial", value: $("#geracaoNfe-filtro-selectRegimeEspecialConsolidado").val()});
 			}
+		} else {
+			
+			params.push({name:"filtro.emissaoPorEditor" , value: $("#geracaoNfe-filtro-emissaoPorEditor").is(':checked')});
+			params.push({name:"filtro.emissaoPorDestinacaoEncalhe" , value: $("#geracaoNfe-filtro-emissaoPorDestinacaoEncalhe").is(':checked')});
+			
 		}
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
