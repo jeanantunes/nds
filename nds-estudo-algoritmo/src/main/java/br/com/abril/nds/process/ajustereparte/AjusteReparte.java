@@ -75,6 +75,10 @@ public class AjusteReparte extends ProcessoAbstrato {
 			    	cota.setClassificacao(ClassificacaoCota.Ajuste);
 			    	cotasComReparteJaCalculado.add(cota);
 			    }
+    		}else{
+    			if(cota.getVendaMediaMaisN() != null && cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0){
+    				cota.setVendaMedia(cota.getVendaMedia().add(new BigDecimal(cota.getVendaMediaMaisN())));
+    			}
     		}
     		
 	}

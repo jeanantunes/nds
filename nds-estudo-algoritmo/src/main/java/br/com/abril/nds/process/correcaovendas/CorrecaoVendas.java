@@ -47,23 +47,24 @@ public class CorrecaoVendas {
      */
     public void executar(CotaEstudo cota, EstudoTransient estudo) throws Exception {
 
-	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
-
-	    BigDecimal totalReparte = BigDecimal.ZERO;
-	    BigDecimal totalVenda = BigDecimal.ZERO;
-
-	    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
-		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-		    correcaoIndividual.executar(produtoEdicao);
-
-		    totalReparte = totalReparte.add(produtoEdicao.getReparte());
-		    totalVenda = totalVenda.add(produtoEdicao.getVenda());
+		if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
+	
+		    BigDecimal totalReparte = BigDecimal.ZERO;
+		    BigDecimal totalVenda = BigDecimal.ZERO;
+	
+		    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
+				if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+				    correcaoIndividual.executar(produtoEdicao);
+				    totalReparte = totalReparte.add(produtoEdicao.getReparte());
+				    totalVenda = totalVenda.add(produtoEdicao.getVenda());
+				}
+		    }
+		    
+		    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
+		    	correcaoTendencia.executar(cota, totalReparte, totalVenda);
+		    }
 		}
-	    }
-	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
-		correcaoTendencia.executar(cota, totalReparte, totalVenda);
-	    }
-	}
-	vendaCrescente.executar(cota);
+		
+		vendaCrescente.executar(cota);
     }
 }
