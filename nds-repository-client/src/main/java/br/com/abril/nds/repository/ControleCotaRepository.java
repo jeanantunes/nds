@@ -12,5 +12,5 @@ public interface ControleCotaRepository extends Repository<ControleCota, Long> {
 	List<ControleCotaDTO> buscarControleCota();
 	
 	
-	
+	Integer buscarCotaMaster(Integer cota);
 }

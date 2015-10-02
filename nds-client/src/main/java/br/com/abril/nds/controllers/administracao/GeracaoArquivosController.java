@@ -72,6 +72,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import java.util.zip.*;
 
 /**
  * @author InfoA2
@@ -171,6 +172,7 @@ public class GeracaoArquivosController extends BaseController {
 	}
 
 	
+
 	@Path("/getFile")
 	public void getFile() throws IOException {
 		String path =  (String) session.getValue("PATH_VENDA");
@@ -182,7 +184,7 @@ public class GeracaoArquivosController extends BaseController {
 				 Calendar cal = Calendar.getInstance();
 			     cal.add(Calendar.DATE, -i);   
 			     Date d = cal.getTime();
-			   path  = dirBanca+"/"+String.format("%05d",90100)+DateUtil.formatarData(d,"ddMMyyyy")+".ENP";
+			   path  = dirBanca+"/caruso/"+String.format("%05d",90100)+DateUtil.formatarData(d,"ddMMyyyy")+".ENP";
 			   File file = new File(path);
 				  if ( file.exists()) {
 					 break;
@@ -223,7 +225,7 @@ public class GeracaoArquivosController extends BaseController {
 			 Date data = dataLctoPrevisto;
 		     if ( data == null )
 		        data = new Date(); // pegar data de hoje
-			 LOGGER.error("INICIANDO UNIFICACAO DE COTAS CARUSO para data="+data);
+			 LOGGER.warn("INICIANDO GERACAO DE VENDAS  para data="+data);
 			  String crlf = System.getProperty("line.separator");
 			  
 		      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
@@ -299,8 +301,8 @@ public class GeracaoArquivosController extends BaseController {
 		     
 		      
 		      for ( Integer cotaMaster: cotasMaster.keySet()) {
-		    	  String path  = dirBanca+"/"+String.format("%05d",cotaMaster)+DateUtil.formatarData(data,"ddMMyyyy")+".ENP";
-		    	  LOGGER.error("GERANDO COTAS CARUSO EM ARQUIVO"+path);
+		    	  String path  = dirBanca+"/caruso/"+String.format("%05d",cotaMaster)+DateUtil.formatarData(data,"ddMMyyyy")+".ENP";
+		    	  LOGGER.warn("GERANDO COTAS CARUSO EM ARQUIVO"+path);
 		    	  int cont=0;
 		    	  PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
 		    	  // pesquisar reparte do master
@@ -420,7 +422,7 @@ public class GeracaoArquivosController extends BaseController {
 		    	  out.close();
 		    	  // enviar email
 		    	  
-		    	  LOGGER.error("ENVIANDO  ARQUIVO CARUSO"+path +" para email" + email);
+		    	  LOGGER.warn("ENVIANDO  ARQUIVO CARUSO"+path +" para email" + email);
 		    	  mensagem.append("GERADO ARQUIVO "+path+" com "+cont+" registros</br>");
 		    	  AnexoEmail anexoEmail = new AnexoEmail();
 		    	  anexoEmail.setNome(path);
@@ -468,12 +470,15 @@ public class GeracaoArquivosController extends BaseController {
 		  String crlf = System.getProperty("line.separator");
 	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
 	  
-	      String dirFc = dirBanca+"/fc";
+	      String dirFc = dirBanca+"/caruso";
+	      String dirCaruso = dirBanca+"/fc";
 	      String dirDinap = dirBanca+"/dinap";
 	      String dirOut = dirBanca+"/dinap_fc";
 	      String dirConflito = dirBanca+"/dinap_fc_conflito";
 	      int conflitos=0;
 	   try {   
+		   
+		 
 	      // copiar dinap para saida
 	      File source = new File(dirDinap);
 	      File dest = new File(dirOut);

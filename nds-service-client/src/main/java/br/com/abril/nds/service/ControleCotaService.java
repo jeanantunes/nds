@@ -20,6 +20,6 @@ public interface ControleCotaService {
             List<Integer> numeroCotasCentralizadas);
 	
 	
-	
+	Integer buscarCotaMaster(Integer cota);
 	
 }
