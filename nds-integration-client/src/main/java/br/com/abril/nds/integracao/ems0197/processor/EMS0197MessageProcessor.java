@@ -160,7 +160,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
                         if ( !fileMaster.exists())
                         	this.quantidadeArquivosGerados++;
 				    	cat(file, fileMaster);
-				    	
+				    	file.delete();
 				       }
 				   
 					
