@@ -1391,6 +1391,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 				this.cobrancaRepository.updateNossoNumero(dataOperacaoDistribuidor, cobranca.getCod_jornaleiro(), cobranca.getNossoNumero());
 			}
 		}
+		if ( atu > 0 && atu == proc) // se foi tudo processado, remover banco
+			couchDbClient.remove(jsonDoc);
 		
 		return " Processados:"+proc+" Atualizados:"+atu;
 		
