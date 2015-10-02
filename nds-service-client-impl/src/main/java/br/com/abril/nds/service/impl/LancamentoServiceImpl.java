@@ -394,7 +394,7 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
 		}
 		
-		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, null);
+		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataLimiteLancamento);
 	}
 	
 	@Override
