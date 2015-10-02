@@ -365,7 +365,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("                 c.numero_cota AS numeroCota, ");
 		sql.append("                 pdv.NOME AS nomePDV, ");
 		sql.append("                 eg.DATA_LANCAMENTO AS dataLctoDistrib, ");
-		sql.append("                 (SELECT d.COD_DISTRIBUIDOR_DINAP FROM distribuidor d LIMIT 1) AS codDistribuidor ");
+		sql.append("                 (SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS codDistribuidor ");
 		sql.append("   FROM cota c ");
 		sql.append("        JOIN pdv pdv ");
 		sql.append("           ON pdv.cota_id = c.id ");
@@ -467,7 +467,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		sql.append("   SELECT ");
 		sql.append("       '01' as versao, ");
 		sql.append("       'L' as tipoArquivo, ");
-		sql.append("       CAST((SELECT d.COD_DISTRIBUIDOR_DINAP FROM distribuidor d LIMIT 1) AS CHAR) AS codDistribuidor, ");
+		sql.append("       CAST((SELECT if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) FROM distribuidor d LIMIT 1) AS CHAR) AS codDistribuidor, ");
 		sql.append("       CAST(c.PESSOA_ID AS CHAR) AS codJornaleiro, ");
 		sql.append("       CAST(c.NUMERO_COTA AS CHAR) AS codCota, ");
 		sql.append("       CAST(pdvs.ID AS CHAR) AS codPDV, ");

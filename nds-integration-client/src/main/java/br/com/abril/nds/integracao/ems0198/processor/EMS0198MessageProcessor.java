@@ -221,7 +221,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		sql.append("  select  ");
 
-		sql.append("       CAST((select d.COD_DISTRIBUIDOR_DINAP from distribuidor d limit 1) as CHAR) codDistribuidor ");
+		sql.append("       CAST((select if (d.COD_DISTRIBUIDOR_DINAP != 0,d.COD_DISTRIBUIDOR_DINAP,d.COD_DISTRIBUIDOR_FC) from distribuidor d limit 1) as CHAR) codDistribuidor ");
 		sql.append("      , CAST(c.PESSOA_ID as CHAR) as codJornaleiro ");
 		sql.append("      , CAST(c.NUMERO_COTA as CHAR) as codCota ");
 		sql.append("      , CAST(pdv.ID as CHAR) as codPDV ");
@@ -306,7 +306,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		sql.append("     CAST(cec.COTA_ID as CHAR) as cotaId, ");
 		sql.append("     CAST(cota.NUMERO_COTA as CHAR) as numCota, ");
 		sql.append("     DATE_FORMAT((ce.DATA_RECOLHIMENTO),'%Y%m%d') dataRecolhimento, ");
-		sql.append("     CAST(dtb.COD_DISTRIBUIDOR_DINAP as CHAR) as codDistribuidor ");
+		sql.append("     CAST((if (dtb.COD_DISTRIBUIDOR_DINAP != 0,dtb.COD_DISTRIBUIDOR_DINAP,dtb.COD_DISTRIBUIDOR_FC)) as CHAR) as codDistribuidor ");
 		sql.append("  from distribuidor dtb, chamada_encalhe ce ");
 		sql.append("   join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID ");
 		sql.append("   join cota ON cec.COTA_ID = cota.ID ");
