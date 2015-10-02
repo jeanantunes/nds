@@ -279,22 +279,43 @@ public class ItemNotaFiscalBuilder  {
 		Tributacao ipiProduto = tributacaoProduto.get("IPI");	
 		
 		if(ipiProduto != null) {
-			produtoServico.setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
 			
-			IPI ipi = new IPI();
+			if(!tributacaoProduto.get("IPI").isIsentoOuNaoTributado()) {
+				produtoServico.setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
 			
-			ipi.setCst(ipiProduto.getCst().toString());
-			ipi.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
-			ipi.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
-			ipi.setCodigoEnquadramento(ipiProduto.getCst());
-			ipi.setIPITrib(new TribIPI());
-			ipi.getIPITrib().setCst(ipiProduto.getCst());
-			ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
-			ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				IPI ipi = new IPI();
+				
+				ipi.setCst(ipiProduto.getCst().toString());
+				ipi.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+				ipi.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				ipi.setCodigoEnquadramento(ipiProduto.getCst());
+				ipi.setIPITrib(new TribIPI());
+				ipi.getIPITrib().setCst(ipiProduto.getCst());
+				ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+				ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				
+				// FIX ME ajustar a classe de valor do ipi
+				ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				detalheNotaFiscal.getImpostos().setIpi(ipi);
+			} else {
+				produtoServico.setValorAliquotaIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+				
+				IPI ipi = new IPI();
+				
+				ipi.setCst(ipiProduto.getCst().toString());
+				ipi.setAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+				ipi.setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				ipi.setCodigoEnquadramento("999");
+				ipi.setIPITrib(new TribIPI());
+				ipi.getIPITrib().setCst(ipiProduto.getCst());
+				ipi.getIPITrib().setValorAliquota(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getValorAliquota()));
+				ipi.getIPITrib().setValorBaseCalculo(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				
+				// FIX ME ajustar a classe de valor do ipi
+				ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
+				detalheNotaFiscal.getImpostos().setIpi(ipi);
+			}
 			
-			// FIX ME ajustar a classe de valor do ipi
-			ipi.getIPITrib().setValorIPI(CurrencyUtil.arredondarValorParaDuasCasas(ipiProduto.getBaseCalculo()));
-			detalheNotaFiscal.getImpostos().setIpi(ipi);
 		} else {
 			StringBuilder sb = new StringBuilder().append("IPI não encontrado para o Produto: ").append(produtoServico.getCodigoProduto()).append(" / ").append(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			
