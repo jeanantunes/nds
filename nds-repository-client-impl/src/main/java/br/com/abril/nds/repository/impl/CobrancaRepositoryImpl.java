@@ -526,23 +526,25 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
     	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :envio_encalhe),0) as vlr_encalhe, ");
 
-    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
-    	sql.append("     from movimento_financeiro_cota mfc_s ");
-    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
-    	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
-    	sql.append("       join consolidado_financeiro_cota cfc_s  ");
-    	sql.append("         ON cf_s.CONSOLIDADO_FINANCEIRO_ID = cfc_s.ID ");
-    	sql.append("       join divida_consolidado dc_s ");
-    	sql.append("         ON dc_s.CONSOLIDADO_ID = cfc_s.ID ");
-    	sql.append("       join divida d_s ");
-    	sql.append("         ON d_s.ID = dc_s.DIVIDA_ID ");
-    	sql.append("       join cobranca cb_s ");
-    	sql.append("         ON cb_s.DIVIDA_ID = d_s.ID ");
-    	sql.append("       join tipo_movimento tm_s  ");
-    	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
-    	sql.append("     where d_s.DATA = :dtOperacao ");
-    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
-    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :debito),0) as vlr_nro_atr, ");
+    	sql.append("   0 as vlr_nro_atr, ");
+    	
+//    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
+//    	sql.append("     from movimento_financeiro_cota mfc_s ");
+//    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
+//    	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
+//    	sql.append("       join consolidado_financeiro_cota cfc_s  ");
+//    	sql.append("         ON cf_s.CONSOLIDADO_FINANCEIRO_ID = cfc_s.ID ");
+//    	sql.append("       join divida_consolidado dc_s ");
+//    	sql.append("         ON dc_s.CONSOLIDADO_ID = cfc_s.ID ");
+//    	sql.append("       join divida d_s ");
+//    	sql.append("         ON d_s.ID = dc_s.DIVIDA_ID ");
+//    	sql.append("       join cobranca cb_s ");
+//    	sql.append("         ON cb_s.DIVIDA_ID = d_s.ID ");
+//    	sql.append("       join tipo_movimento tm_s  ");
+//    	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
+//    	sql.append("     where d_s.DATA = :dtOperacao ");
+//    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
+//    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :debito),0) as vlr_nro_atr, ");
 
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
     	sql.append("     from movimento_financeiro_cota mfc_s ");
@@ -614,7 +616,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
     	sql.append("     where d_s.DATA = :dtOperacao ");
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
-    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO in (:debito_cota_tx_transportador, :debito_cota_tx_entregador, :postergado_debito, ");
+    	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO in (:debito_cota_tx_transportador, :debito_cota_tx_entregador, ");
     	sql.append("        									   :debito, :debito_sobre_faturamento, :compra_encalhe_suplementar)),0) as vlr_outros, ");
 
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
@@ -653,22 +655,24 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
     	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :taxa_extra),0) as vlr_taxa_extra, ");
     	
-    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
-    	sql.append("     from movimento_financeiro_cota mfc_s ");
-    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
-    	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
-    	sql.append("       join consolidado_financeiro_cota cfc_s  ");
-    	sql.append("         ON cf_s.CONSOLIDADO_FINANCEIRO_ID = cfc_s.ID ");
-    	sql.append("       join divida_consolidado dc_s ");
-    	sql.append("         ON dc_s.CONSOLIDADO_ID = cfc_s.ID ");
-    	sql.append("       join divida d_s ");
-    	sql.append("         ON d_s.ID = dc_s.DIVIDA_ID ");
-    	sql.append("       join cobranca cb_s ");
-    	sql.append("         ON cb_s.DIVIDA_ID = d_s.ID ");
-    	sql.append("       join tipo_movimento tm_s  ");
-    	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
-    	sql.append("     where d_s.DATA = :dtOperacao ");
-    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID),0) as vlr_pagto_diverg, ");
+    	sql.append("   0 as vlr_pagto_diverg, ");
+    	
+//    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
+//    	sql.append("     from movimento_financeiro_cota mfc_s ");
+//    	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
+//    	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
+//    	sql.append("       join consolidado_financeiro_cota cfc_s  ");
+//    	sql.append("         ON cf_s.CONSOLIDADO_FINANCEIRO_ID = cfc_s.ID ");
+//    	sql.append("       join divida_consolidado dc_s ");
+//    	sql.append("         ON dc_s.CONSOLIDADO_ID = cfc_s.ID ");
+//    	sql.append("       join divida d_s ");
+//    	sql.append("         ON d_s.ID = dc_s.DIVIDA_ID ");
+//    	sql.append("       join cobranca cb_s ");
+//    	sql.append("         ON cb_s.DIVIDA_ID = d_s.ID ");
+//    	sql.append("       join tipo_movimento tm_s  ");
+//    	sql.append("         ON mfc_s.TIPO_MOVIMENTO_ID = tm_s.ID ");
+//    	sql.append("     where d_s.DATA = :dtOperacao ");
+//    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID),0) as vlr_pagto_diverg, ");
 
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
     	sql.append("     from movimento_financeiro_cota mfc_s ");
