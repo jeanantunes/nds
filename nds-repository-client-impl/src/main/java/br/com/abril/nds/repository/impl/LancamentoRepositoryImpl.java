@@ -788,13 +788,18 @@ public class LancamentoRepositoryImpl extends
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
 		
+		if(dataLimiteLancamento != null) {
+			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
+		}
 				hql.append(" ) ").append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
-				
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
+		if(dataLimiteLancamento != null) {			
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
 		query.setMaxResults(1);
 		
 		Lancamento l = (Lancamento) query.uniqueResult();
@@ -806,14 +811,25 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" select min(lancamento) ")
 			.append(" from Lancamento lancamento ")
 			.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
-		if(dataLimiteLancamento != null) {
-			hql.append(" and lancamento.dataLancamentoDistribuidor > :dataLimiteLancamento ");
-		}
-			hql.append(" ) ");
 		
+			if(dataLimiteLancamento != null) {
+				hql.append(" and lancamento.dataLancamentoDistribuidor >  ");
+				
+				hql.append(" (");
+				
+				hql.append(" select min(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+					.append("   from MovimentoEstoqueCota mecMaxDate ")
+					.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
+					.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+					hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
+				hql.append(" )");	
+					
+			}
+			
 		query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
 		if(dataLimiteLancamento != null) {
 			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
 		}
