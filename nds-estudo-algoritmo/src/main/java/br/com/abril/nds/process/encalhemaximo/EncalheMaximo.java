@@ -44,6 +44,18 @@ public class EncalheMaximo extends ProcessoAbstrato {
 	    			
 	    		}
 	    		
+	    		/*
+	    		 * Verificar se há bancas com Índice de Encalhe Máximo na tela de Ajuste de Cota
+
+					Se houver e %EncalheMáximo Cota < ( Σ VendaMédiaFinal  / RepDistribuir ) * 100
+						RepFinal Cota = VendaMédiaFinal Cota / ((100 - %EncalheMáximo Cota ) / 100)
+						RepFinal Cota = VendaMédiaFinal Cota / (percentual)
+						Marcar cota como ´FX´
+					16,2
+					Endif
+
+	    		 */
+	    		
 	    		if (percentualVenda != null) {
 					if ((cota.getPercentualEncalheMaximo().compareTo(BigDecimal.ZERO) > 0) && (cota.getPercentualEncalheMaximo().compareTo(percentualVenda) < 0)) {
 					    
@@ -68,10 +80,13 @@ public class EncalheMaximo extends ProcessoAbstrato {
 									reparte = estudo.getPacotePadrao();
 								}
 						    	
-					    	cota.setReparteCalculado(reparte, estudo);
-					    	cota.setClassificacao(ClassificacaoCota.Ajuste);
-					    	cotasComRepJaCalculado.add(cota);
+		    			}else{
+		    				reparte = repartePreCalculado.toBigInteger();
 		    			}
+						
+						cota.setReparteCalculado(reparte, estudo);
+						cota.setClassificacao(ClassificacaoCota.Ajuste);
+						cotasComRepJaCalculado.add(cota);
 					}
 			    }
     		}
