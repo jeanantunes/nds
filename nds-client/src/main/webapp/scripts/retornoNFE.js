@@ -61,6 +61,7 @@ var retornoNFEController  = $.extend(true, {
 	pesquisar : function() {
 		
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
+		var tipoRetorno = $("#tipoRetorno", this.workspace).val();
 		var params = [];
 		
 		if(!dataReferencia) {
@@ -69,6 +70,8 @@ var retornoNFEController  = $.extend(true, {
 		} else {
 
 			params.push({name : "dataReferencia", value : dataReferencia});
+			params.push({name : "tipoRetorno", value : tipoRetorno});
+			
 			
 			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
 				dataType : 'json',

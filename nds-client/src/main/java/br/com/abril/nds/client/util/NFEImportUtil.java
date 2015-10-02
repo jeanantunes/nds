@@ -2,6 +2,7 @@ package br.com.abril.nds.client.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Date;
 
 import javax.xml.XMLConstants;
@@ -69,13 +70,19 @@ public abstract class NFEImportUtil {
      * @throws ProcessamentoNFEException
      * @throws SAXException
      */
-    public static RetornoNFEDTO processarArquivoRetorno(final File arquivo, final String schemaPath) throws ProcessamentoNFEException {
+    public static RetornoNFEDTO processarArquivoRetorno(final File arquivo, final String schemaPath, String tipoRetorno) throws ProcessamentoNFEException {
         
-        RetornoNFEDTO retornoNFEDTO = null;
+        if(tipoRetorno.equals("A")) {
+        	return processarProcNfe(arquivo, schemaPath);
+        } else if(tipoRetorno.equals("canc")) {
+        	return processarCancNfe(arquivo, schemaPath);
+        } else if(tipoRetorno.equals("rej")) {
+        	return processarRejeitadoNfe(arquivo, schemaPath);
+        }
         
-        // validar o tipo de schema pertecente
-        JAXBContext context;
-        Unmarshaller unmarshaller;
+        return null;
+        /*
+         
         
         try {
         	
@@ -83,7 +90,8 @@ public abstract class NFEImportUtil {
 	        	
 				context = JAXBContext.newInstance(TNfeProc.class);  
 				unmarshaller = context.createUnmarshaller();  
-				TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(arquivo), TNfeProc.class).getValue();  
+				// TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(arquivo), TNfeProc.class).getValue();  
+				TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(new StringReader(arquivo.getPath())), TNfeProc.class).getValue();
 				retornoNFEDTO = NFEImportUtil.retornoNFeProcNFe(nfeProc);
 	            
 				return retornoNFEDTO;
@@ -114,6 +122,8 @@ public abstract class NFEImportUtil {
             LOGGER.error(e.getMessage(), e);
             throw new ValidacaoException(TipoMensagem.ERROR, "Erro com a geração do arquivo ");
         }
+        * 
+         */
     }
     
     /**
@@ -321,5 +331,62 @@ public abstract class NFEImportUtil {
 		}
 		
 		return retorno;
+	}
+	
+	private static RetornoNFEDTO processarProcNfe(final File arquivo, final String schemaPath) {
+		
+        JAXBContext context;
+        Unmarshaller unmarshaller;
+		
+		try {
+			
+			context = JAXBContext.newInstance(TNfeProc.class);  
+			unmarshaller = context.createUnmarshaller();  
+			TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(arquivo), TNfeProc.class).getValue();  
+			//TNfeProc nfeProc = unmarshaller.unmarshal(new StreamSource(new StringReader(arquivo.getPath())), TNfeProc.class).getValue();
+			return NFEImportUtil.retornoNFeProcNFe(nfeProc);
+			
+		} catch (Exception e){
+			LOGGER.debug("Erro ao realizar o parser do arquivo de retorno: " + arquivo.getName());
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar o parser do arquivo de retorno:");
+		}
+	}
+	
+	private static RetornoNFEDTO processarCancNfe(final File arquivo, final String schemaPath) {
+		
+        JAXBContext context;
+        Unmarshaller unmarshaller;
+		
+		try {
+			
+			context = JAXBContext.newInstance(TProcEvento.class);
+            unmarshaller = context.createUnmarshaller();
+            TProcEvento retornoCancelamentoNFe = unmarshaller.unmarshal(new StreamSource(arquivo), TProcEvento.class).getValue();
+            return NFEImportUtil.retornoNFeEnvEvento(retornoCancelamentoNFe);
+            
+		} catch (Exception e){
+			LOGGER.debug("Erro ao realizar o parser do arquivo de cancelamento: " +arquivo.getName());
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar o parser do arquivo de cancelamento:");
+			
+		}
+	}
+	
+	private static RetornoNFEDTO processarRejeitadoNfe(final File arquivo, final String schemaPath) {
+		
+        JAXBContext context;
+        Unmarshaller unmarshaller;
+		
+		try {
+			
+			context = JAXBContext.newInstance(TNFe.class);
+            unmarshaller = context.createUnmarshaller();
+            final TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
+            return NFEImportUtil.retornoNFeAssinada(nfe);
+            
+		} catch (Exception e){
+			LOGGER.debug("Erro ao realizar o parser do arquivo de cancelamento: " +arquivo.getName());
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar o parser do arquivo de cancelamento:");
+			
+		}
 	}
 }

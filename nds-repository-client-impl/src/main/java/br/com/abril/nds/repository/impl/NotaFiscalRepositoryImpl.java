@@ -943,10 +943,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append("JOIN no.tipoMovimento tm ");
 			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
 			
-			hql.append(" AND mec.formaComercializacao in (SELECT no.formaComercializacao ");
-			hql.append("FROM NaturezaOperacao no ");
-			hql.append("JOIN no.tipoMovimento tm ");
-			hql.append("WHERE no.id in(:idNaturezaOperacao)) ");
 		}
 
 		// Data Emissão:	...		

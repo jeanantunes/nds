@@ -276,7 +276,7 @@ var geracaoNFeController = $.extend({
 			preProcess : _this.preProcessGridPesquisa,
 			colModel : _this.colunasGridForncedorPesquisa,
 			dataType : 'json',
-			sortname : "codigoEditor",
+			sortname : "idFornecedor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
