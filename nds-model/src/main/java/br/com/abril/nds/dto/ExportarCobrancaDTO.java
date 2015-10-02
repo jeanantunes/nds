@@ -28,7 +28,7 @@ public class ExportarCobrancaDTO implements Serializable{
 	private String ftvenc = "null";
 	private String box_dp = "null";
 	
-	private Integer nossoNumero = 0;
+	private String nossoNumero = "0";
 	private Boolean cotaProcessada = false;
 	
 	
@@ -152,10 +152,10 @@ public class ExportarCobrancaDTO implements Serializable{
 	public void setBox_dp(String box_dp) {
 		this.box_dp = box_dp;
 	}
-	public Integer getNossoNumero() {
+	public String getNossoNumero() {
 		return nossoNumero;
 	}
-	public void setNossoNumero(Integer nossoNumero) {
+	public void setNossoNumero(String nossoNumero) {
 		this.nossoNumero = nossoNumero;
 	}
 	public Boolean getCotaProcessada() {

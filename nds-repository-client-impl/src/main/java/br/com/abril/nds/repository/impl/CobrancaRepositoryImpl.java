@@ -762,7 +762,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     }
 	
 	@Override
-	public void updateNossoNumero (Date dataOperacao, Integer numeroCota, Integer nossoNumero){
+	public void updateNossoNumero (Date dataOperacao, Integer numeroCota, String nossoNumero){
 		
 		StringBuilder sql = new StringBuilder();
 			

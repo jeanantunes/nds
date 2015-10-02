@@ -116,7 +116,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	public abstract List<ExportarCobrancaDTO> obterCobrancasNaDataDeOperacaoDoDistribuidor(Date dataOperacao);
 
 	public abstract void updateNossoNumero(Date dataOperacao, Integer numeroCota,
-			Integer nossoNumero);
+			String nossoNumero);
 
 	public abstract Cobranca obterCobrancaPorNossoNumeroConsolidado(String nossoNumero);
 
