@@ -835,6 +835,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 		// Realizar a consulta e converter ao objeto cota exemplares.
+		hql.append(" GROUP BY editor.codigo, notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal, notaFiscal.notaFiscalInformacoes.identificacao.serie ");
+		
 		Query query = this.getSession().createQuery(hql.toString());		
 		
 //		query.setParameter("dataSaida", new Date() );
@@ -856,6 +858,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
 				
+		
 		return query.list();
 		
 	}

@@ -67,7 +67,7 @@ public class RetornoNFEController extends BaseController {
 	}
 
 	@Post("/pesquisarArquivos.json")
-	public void pesquisarArquivosDeRetorno(final Date dataReferencia) {
+	public void pesquisarArquivosDeRetorno(final Date dataReferencia, final String tipoRetorno) {
 		
 		ParametroSistema pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
 		
@@ -85,7 +85,7 @@ public class RetornoNFEController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhum retorno de nota");
 		}
 			
-		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas));
+		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas, tipoRetorno));
 		
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
@@ -177,7 +177,7 @@ public class RetornoNFEController extends BaseController {
 	 * @param listaNotas path das notas dentro do diretório
 	 * @return lista de notas
 	 */
-	private List<RetornoNFEDTO> gerarParseListaNotasRetorno(final List<File> arquivosNotas) {
+	private List<RetornoNFEDTO> gerarParseListaNotasRetorno(final List<File> arquivosNotas, String tipoRetorno) {
 		
 		final HashMap<String, RetornoNFEDTO> hashNotasRetorno = new HashMap<String, RetornoNFEDTO>();
 		final List<RetornoNFEDTO> listaNotas = new ArrayList<RetornoNFEDTO>();
@@ -187,7 +187,7 @@ public class RetornoNFEController extends BaseController {
 			try {
 				String schemaPath = this.getClass().getClassLoader().getResource("").getPath();
 				
-				RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota, schemaPath);
+				RetornoNFEDTO arquivoRetorno = NFEImportUtil.processarArquivoRetorno(nota, schemaPath, tipoRetorno);
 			
 				if (arquivoAux == null) {
 			

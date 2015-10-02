@@ -44,17 +44,27 @@
     
     <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	    <tbody>
+	    	
 		    <tr>
-		    	<td width="70">Data de Refer&ecirc;ncia:</td>
-		        <td width="170">
+		    	<td width="60">Data de Refer&ecirc;ncia:</td>
+		        <td width="70" colspan="3">
 		        	<input type="text" name="retornoNFEDataReferencia" id="retornoNFEDataReferencia" maxlength="10" class="input-date" />
 				</td>
-				<td width="200">
+			</tr>
+	    	<tr>
+	    	
+			<tr>
+                <td width="60"><input type="radio" name="tipoRetorno" id="tipoRetorno" value="A" checked="checked"/>Autorizado</td>
+                <td width="60"><input type="radio" name="tipoRetorno" id="tipoRetorno" value="C"/>Cancelamento</td>
+                <td width="60"><input type="radio" name="tipoRetorno" id="tipoRetorno" value="R"/>Rejeitado</td>
+                <td width="300">
 		        	<span class="bt_pesquisar">
 		        		<a  id="retornoNFEPesquisar" href="javascript:;" onclick="retornoNFEController.pesquisar();"></a>
 		        	</span>
 		        </td>
 			</tr>
+			
+			
 	    </tbody>
     </table>
 

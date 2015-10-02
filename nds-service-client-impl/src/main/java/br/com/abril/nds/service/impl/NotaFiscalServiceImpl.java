@@ -461,7 +461,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
 		Cota cota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota();
 		
-		gerarNotaEnvioAtravesNotaFiscal(notaFiscal.getId(), cota, notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao());
+		if(cota != null ){			
+			if(cota.getParametrosCotaNotaFiscalEletronica() != null) {			
+				gerarNotaEnvioAtravesNotaFiscal(notaFiscal.getId(), cota, notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao());
+			}
+		}
 
 		return notaFiscal;
 	}
@@ -712,9 +716,22 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					ParametroSistema diretorioSaida = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 					String numeroNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getCodigoNF();
 					String serieNF = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getSerie().toString();
-
-
-					OutputStream os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					
+					Integer numeroCota = null;
+					
+					if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota()!= null) {
+						
+						numeroCota = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getCota().getNumeroCota();
+					}
+					
+					OutputStream os = null;
+					
+					if(numeroCota != null ) {
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + serieNF + "-" + numeroNF + ".xml");						
+					} else {
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					}
+					
 					TransformerFactory tf = TransformerFactory.newInstance();
 					Transformer trans = null;
 
@@ -724,23 +741,40 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					os.flush();
 					os.close();
-					ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
+					
+					if(numeroCota != null ) {
+						ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml"));
+					} else {
+						ajustaXml(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml"));
+					}
 					
 					// Instantiate the document to be signed.   
 					DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();   
 					dbf.setNamespaceAware(true);   
-					Document doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml")));   
-
+					
+					Document doc = null;
+					
+					if(numeroCota != null ) {						
+						doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml")));   
+					} else {
+						doc = dbf.newDocumentBuilder().parse(new FileInputStream(new File(diretorioSaida.getValor() +"/"+ "NF-e-" + serieNF + "-" + numeroNF + ".xml")));
+					}
+					
 					NodeList elementos = doc.getElementsByTagName("infNFe");
 					Element elo = (Element) elementos.item(0);
 					elo.setIdAttribute("Id", true);
 					
 					signatureHandler.sign(new DOMStructure(doc.getDocumentElement()), "infNFe");
 					
-					os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					if(numeroCota != null ) {						
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");
+					} else {
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
+					}
+					
 					tf = TransformerFactory.newInstance();
 					trans = null;
-
+					
 					trans = tf.newTransformer();
 					trans.transform(new DOMSource(doc), new StreamResult(os));
 					
