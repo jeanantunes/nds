@@ -180,7 +180,7 @@ public class GeracaoArquivosController extends BaseController {
 		if ( path == null ) { // se nao foi gerado agora pegar o o mais novo, caso senha
 			
 			 String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
-			for ( int i=0; i < 30;i++ ){
+			for ( int i=-14; i < 30;i++ ){
 				 Calendar cal = Calendar.getInstance();
 			     cal.add(Calendar.DATE, -i);   
 			     Date d = cal.getTime();
