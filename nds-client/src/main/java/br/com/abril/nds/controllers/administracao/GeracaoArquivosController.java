@@ -470,8 +470,8 @@ public class GeracaoArquivosController extends BaseController {
 		  String crlf = System.getProperty("line.separator");
 	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
 	  
-	      String dirFc = dirBanca+"/caruso";
-	      String dirCaruso = dirBanca+"/fc";
+	      String dirFc = dirBanca+"/fc";
+	     
 	      String dirDinap = dirBanca+"/dinap";
 	      String dirOut = dirBanca+"/dinap_fc";
 	      String dirConflito = dirBanca+"/dinap_fc_conflito";
