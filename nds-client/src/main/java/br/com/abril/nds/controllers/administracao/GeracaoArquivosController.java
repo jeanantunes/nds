@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,18 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.ContasAPagarConsultaPorProdutoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
-import br.com.abril.nds.dto.ContasAPagarGridPrincipalProdutoDTO;
-import br.com.abril.nds.dto.ContasApagarConsultaPorProdutoDTO;
 import br.com.abril.nds.dto.ControleCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
-import br.com.abril.nds.dto.filtro.FiltroContasAPagarDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -69,14 +66,13 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
-import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import java.util.zip.*;
 
 /**
  * @author InfoA2
@@ -176,22 +172,35 @@ public class GeracaoArquivosController extends BaseController {
 	}
 
 	
+
 	@Path("/getFile")
 	public void getFile() throws IOException {
 		String path =  (String) session.getValue("PATH_VENDA");
-		if ( path == null ) { // se nao foi gerado, pegar o da data corrente, do caruso.. como default
-			//throw new ValidacaoException(TipoMensagem.WARNING, "Nao ha arquivo gerado");
-			 String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
-			   
-			   path  = dirBanca+"/"+String.format("%05d",90100)+DateUtil.formatarData(new Date(),"ddMMyyyy")+".ENP";
-		}
-		 byte[] arquivo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
 		
+		if ( path == null ) { // se nao foi gerado agora pegar o o mais novo, caso senha
+			
+			 String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+			for ( int i=-14; i < 30;i++ ){
+				 Calendar cal = Calendar.getInstance();
+			     cal.add(Calendar.DATE, -i);   
+			     Date d = cal.getTime();
+			   path  = dirBanca+"/caruso/"+String.format("%05d",90100)+DateUtil.formatarData(d,"ddMMyyyy")+".ENP";
+			   File file = new File(path);
+				  if ( file.exists()) {
+					 break;
+				  }
+			}
+		}
+		  byte[] arquivo=("Nao encontrado "+path).getBytes();
+		  File file = new File(path);
+		  if ( file.exists()) {
+			  arquivo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
+		  }
 		 
 		
 		   httpResponse.setContentType("application/txt");
 	        
-	        httpResponse.setHeader("Content-Disposition", "attachment; filename="+String.format("%05d",90100)+DateUtil.formatarData(new Date(),"ddMMyyyy")+".ENP");
+	        httpResponse.setHeader("Content-Disposition", "attachment; filename="+file.getName());
 	        
 	        final OutputStream output = httpResponse.getOutputStream();
 	        
@@ -200,6 +209,7 @@ public class GeracaoArquivosController extends BaseController {
 	        httpResponse.getOutputStream().close();
 	        
 	        result.use(Results.nothing());
+		  
 		
 		
 		
@@ -215,7 +225,7 @@ public class GeracaoArquivosController extends BaseController {
 			 Date data = dataLctoPrevisto;
 		     if ( data == null )
 		        data = new Date(); // pegar data de hoje
-			 LOGGER.error("INICIANDO UNIFICACAO DE COTAS CARUSO para data="+data);
+			 LOGGER.warn("INICIANDO GERACAO DE VENDAS  para data="+data);
 			  String crlf = System.getProperty("line.separator");
 			  
 		      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
@@ -291,8 +301,8 @@ public class GeracaoArquivosController extends BaseController {
 		     
 		      
 		      for ( Integer cotaMaster: cotasMaster.keySet()) {
-		    	  String path  = dirBanca+"/"+String.format("%05d",cotaMaster)+DateUtil.formatarData(data,"ddMMyyyy")+".ENP";
-		    	  LOGGER.error("GERANDO COTAS CARUSO EM ARQUIVO"+path);
+		    	  String path  = dirBanca+"/caruso/"+String.format("%05d",cotaMaster)+DateUtil.formatarData(data,"ddMMyyyy")+".ENP";
+		    	  LOGGER.warn("GERANDO COTAS CARUSO EM ARQUIVO"+path);
 		    	  int cont=0;
 		    	  PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));
 		    	  // pesquisar reparte do master
@@ -412,7 +422,7 @@ public class GeracaoArquivosController extends BaseController {
 		    	  out.close();
 		    	  // enviar email
 		    	  
-		    	  LOGGER.error("ENVIANDO  ARQUIVO CARUSO"+path +" para email" + email);
+		    	  LOGGER.warn("ENVIANDO  ARQUIVO CARUSO"+path +" para email" + email);
 		    	  mensagem.append("GERADO ARQUIVO "+path+" com "+cont+" registros</br>");
 		    	  AnexoEmail anexoEmail = new AnexoEmail();
 		    	  anexoEmail.setNome(path);
@@ -461,11 +471,14 @@ public class GeracaoArquivosController extends BaseController {
 	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
 	  
 	      String dirFc = dirBanca+"/fc";
+	     
 	      String dirDinap = dirBanca+"/dinap";
 	      String dirOut = dirBanca+"/dinap_fc";
 	      String dirConflito = dirBanca+"/dinap_fc_conflito";
 	      int conflitos=0;
 	   try {   
+		   
+		 
 	      // copiar dinap para saida
 	      File source = new File(dirDinap);
 	      File dest = new File(dirOut);

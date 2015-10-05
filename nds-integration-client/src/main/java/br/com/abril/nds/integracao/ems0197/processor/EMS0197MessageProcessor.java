@@ -1,24 +1,29 @@
 package br.com.abril.nds.integracao.ems0197.processor;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -44,6 +49,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.ControleCotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.MathUtil;
@@ -75,6 +81,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private DescontoService descontoService; 	
+	
+	@Autowired
+	private ControleCotaService controleCotaService;	
 	
 	private Date dataLctoDistrib;
 
@@ -120,6 +129,8 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 
 				print.flush();
 				print.close();
+				
+				
 
 				this.quantidadeArquivosGerados++;
 				
@@ -127,7 +138,39 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				
 				LOGGER.error("Falha ao gerar arquivo.", e);
 			}
+			
 		}
+			try {
+				
+				Iterator it= FileUtils.iterateFiles(new File(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+						+ File.separator + REPARTE_FOLDER) , new String[] {"LCT"},false);
+				
+				
+				while (it.hasNext()) {
+					File file = (File) it.next();
+					String name = file.getName(); // nome neste formato 0757350.00023.20151005.RCL
+					Integer cota = Integer.parseInt(name.split("\\.")[1]);
+				    Integer cotaMaster = controleCotaService.buscarCotaMaster(cota);
+				    if ( cotaMaster != null && !cotaMaster.equals(cota) ) { // tem cota master, appendar no arquivo
+				    	String nomeArquivoMaster = ""+ name.split("\\.")[0] +"."+StringUtils.leftPad(cotaMaster.toString(), 5, '0') +"."+ (name.split("\\.")[2]);
+
+				    	File fileMaster = new File(
+								message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name())
+								+ File.separator + REPARTE_FOLDER +File.separator + nomeArquivoMaster + REPARTE_EXT);
+                        if ( !fileMaster.exists())
+                        	this.quantidadeArquivosGerados++;
+				    	cat(file, fileMaster);
+				    	file.delete();
+				       }
+				   
+					
+				}
+			}
+				catch(Exception ee) {
+				
+				LOGGER.error("Falha ao gerar arquivo caruso.", ee);
+			}
+		
 
 		compactarArquivos(message);
 		
@@ -171,6 +214,28 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		//		}
 	}
 
+	public void cat (File origem, File destino) throws IOException {
+		
+		FileInputStream fis = new FileInputStream(origem);
+		BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+		               
+ 
+		FileWriter fstream = new FileWriter(destino, true);
+		BufferedWriter out = new BufferedWriter(fstream);
+ 
+		String aLine = null;
+		while ((aLine = in.readLine()) != null) {
+			//Process each line and add output to Dest.txt file
+			out.write(aLine);
+			out.newLine();
+		}
+ 
+	
+		in.close();
+
+		out.close();
+	}
+	
 	private void compactarArquivos(Message message) {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
