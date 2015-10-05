@@ -148,6 +148,15 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 		fornecedor.setCanalDistribuicao(f.getCanalDistribuicao());
 		fornecedor.setPraca(distribuidorService.obter().getEnderecoDistribuidor().getEndereco().getCidade());
 		// atualizar qtde volume
+		Integer codigoDistribuidor = Integer.parseInt(parametrosDistribuidorService.getParametrosDistribuidor().getCodigoDistribuidorFC());
+		if ( new Integer(757350).equals(codigoDistribuidor) || new Integer(757374).equals(codigoDistribuidor) ){
+			fornecedor.setNomeFantasia("AR");
+			
+		}
+		
+		if ( "BELFORD ROXO".equalsIgnoreCase(fornecedor.getPraca())) {
+			 fornecedor.setPraca("RIO DE JANEIRO");
+		}
 		
 		for ( int i=0; i < notas.length; i++) {
 			Integer nota = notas[i];
@@ -199,6 +208,10 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 		
 		InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
 		
+		
+			
+			
+			
 		if(inputStream == null) {
 			inputStream = new ByteArrayInputStream(new byte[0]);
 		}
