@@ -190,7 +190,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     	sql.append(" SUM(T.REPARTE) as reparte,                                           ");
     	sql.append(" SUM(T.venda) as venda                                                ");
 		
-    	sql.append(" FROM (SELECT ");
+    	sql.append(" FROM (SELECT straight_join  ");
 		sql.append("     pe.id, ");
 		sql.append("     l.id lancId, ");
 		sql.append("     pe.numero_edicao numeroEdicao, ");

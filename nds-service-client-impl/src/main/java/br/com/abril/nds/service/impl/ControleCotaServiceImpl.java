@@ -92,9 +92,14 @@ public class ControleCotaServiceImpl implements ControleCotaService  {
 			
 			
 		}
-		
-		
 	}
+	
+		
+	public	Integer buscarCotaMaster(Integer cota) {
+		return controleCotaRepository.buscarCotaMaster(cota);
+	}
+		
+	
 
 	
 	

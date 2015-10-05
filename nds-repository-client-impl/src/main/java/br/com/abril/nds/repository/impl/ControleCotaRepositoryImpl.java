@@ -29,7 +29,7 @@ public class ControleCotaRepositoryImpl extends AbstractRepositoryModel<Controle
 		hql.append(" cc.numeroCotaMaster as numeroCotaMaster, ");
 		hql.append(" cc.numeroCota  as numeroCota ,");
 		hql.append(" cc.situacao  as situacao ");
-		hql.append(" FROM ControleCota as cc ");
+		hql.append(" FROM ControleCota as cc where situacao = 'A' ");
 		hql.append(" order by cc.id");
 		
 		Query query =  getSession().createQuery(hql.toString());
@@ -40,7 +40,21 @@ public class ControleCotaRepositoryImpl extends AbstractRepositoryModel<Controle
 		return query.list();
 	}
 
+	public Integer buscarCotaMaster(Integer cota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT");
+		hql.append(" cc.numeroCotaMaster as numeroCotaMaster ");
+		hql.append(" FROM ControleCota as cc ");
+		hql.append(" where numeroCota = :cota and situacao  = 'A' ");
+		Query query =  getSession().createQuery(hql.toString());
+		query.setParameter("cota", cota);
+		
+		return (Integer) query.uniqueResult();
+	}
 	
+
 	
 	
 	
