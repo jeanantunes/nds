@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.BandeirasDTO;
+import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
@@ -797,50 +799,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@SuppressWarnings("unchecked")
 	public List<BandeirasDTO> obterNotafiscalImpressaoBandeira(FiltroImpressaoNFEDTO filtro) {
 		
-		/**
-		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
-		 */
-		StringBuilder hql = new StringBuilder();
-				
-		hql.append("SELECT new br.com.abril.nds.dto.BandeirasDTO( ")
-		.append("notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
-		.append(", notaFiscal.notaFiscalInformacoes.identificacao.serie ")
-		.append(", editor.codigo ")
-		.append(", pessoaJuridica.razaoSocial ")  // obter de destino_encalhe
-		.append(", notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso ")
-		.append(", notaFiscal.notaFiscalInformacoes.qtdVolumePallet) ")
-		.append(" FROM NotaFiscal as notaFiscal ")
-		.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
-		.append(" JOIN item.produtoServico produtoServico ")
-		.append(" JOIN produtoServico.produtoEdicao produtoEdicao ")
-		.append(" JOIN produtoEdicao.produto produto ")
-		.append(" JOIN produto.editor editor ")
-		.append(" JOIN editor.pessoaJuridica pessoaJuridica ")
-		.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
-		.append(" WHERE notaFiscal.notaFiscalInformacoes.informacaoEletronica.retornoComunicacaoEletronica.statusRetornado = :statusNFe ");	
-		// Tipo de Nota:		
-		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.id in (SELECT no.id ")
-			.append(" FROM NaturezaOperacao no ")
-			.append(" JOIN no.tipoMovimento tm ")
-			.append(" WHERE no.id in(:naturezaOperacao)) "); 
-		}
+		StringBuilder hql = this.montarQueryBandeira(filtro);
 		
-		// Data Emissão:		
-		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal ");
-		}
+		Query query = this.getSession().createSQLQuery(hql.toString());		
 		
-		if(filtro.getIdsFornecedores() != null) {
-			hql.append(" AND fornecedor.id in (:fornecedor) ");
-		}
-		// Realizar a consulta e converter ao objeto cota exemplares.
-		hql.append(" GROUP BY editor.codigo, notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal, notaFiscal.notaFiscalInformacoes.identificacao.serie ");
-		
-		Query query = this.getSession().createQuery(hql.toString());		
-		
-//		query.setParameter("dataSaida", new Date() );
-		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO );
+		query.setParameter("statusNFe", StatusRetornado.AUTORIZADO.name());
 		
 		// Data Emissão:	...  Até   ...
 		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
@@ -857,9 +820,53 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		if(filtro.getIdsFornecedores() !=null && !filtro.getIdsFornecedores().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
-				
+		
+		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
 		
 		return query.list();
+	}
+
+	private StringBuilder montarQueryBandeira(FiltroImpressaoNFEDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT                                                                                    ")
+		.append(" nf.NUMERO_DOCUMENTO_FISCAL as numeroNotaFiscal,                                              ")
+		.append(" nf.serie as serieNotaFiscal,                                                                           ")
+		.append(" nf.chave_acesso as chaveNFe,                                                                 ")
+		.append(" de.nome_destino_dde as destino,                                                              ")
+		.append(" e.codigo as  codigoEditor,                                                                   ")
+		.append(" pessoa.razao_social as nomeEditor,                                                           ")
+		.append(" nf.qtd_volume_pallet as volumes,                                                             ")
+		.append(" DATE_ADD(NOW(), INTERVAL 1 DAY) as dataSaida                                                                 ")
+		.append(" FROM NOTA_FISCAL_NOVO nf                                                                     ")
+		.append(" INNER JOIN NOTA_FISCAL_PRODUTO_SERVICO item on item.NOTA_FISCAL_ID = nf.ID                   ")
+		.append(" INNER JOIN PRODUTO_EDICAO pe on item.produto_edicao_id = pe.id                               ")
+		.append(" INNER JOIN PRODUTO p on pe.PRODUTO_ID = p.ID                                                 ")
+		.append(" INNER JOIN DESTINO_ENCALHE de on de.produto_edicao_id = pe.id                                ")
+		.append(" INNER JOIN EDITOR e on p.EDITOR_ID = e.ID                                                    ")
+		.append(" INNER JOIN PESSOA pessoa on e.juridica_id = pessoa.id                                        ")
+		.append(" where 1=1 and nf.status_retornado = :statusNFe                                               ");
+		
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {			
+			hql.append(" AND nf.natureza_operacao_id in (select nat.id from NATUREZA_OPERACAO_TIPO_MOVIMENTO notp  ")
+			.append(" INNER JOIN natureza_operacao nat on notp.natureza_operacao_id = nat.id                       ")
+			.append(" where nat.ID in (:naturezaOperacao) GROUP by  nat.id)                                        ");
+		}
+		
+		// Data Emissão:		
+		if(filtro.getDataEmissaoInicial() != null && filtro.getDataEmissaoFinal() != null) {
+			hql.append("AND nf.data_emissao BETWEEN :dataInicial and :dataFinal  ");
+		}
+		
+		if(filtro.getIdsFornecedores() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		hql.append(" GROUP BY e.codigo, nf.numero_Documento_Fiscal, nf.serie ");
+		
+		
+		return hql;
 		
 	}
 

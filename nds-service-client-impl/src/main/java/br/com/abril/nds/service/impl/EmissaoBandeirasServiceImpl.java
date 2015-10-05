@@ -157,7 +157,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			for (int i = 0; i < datasEnvio.length; i++) {
 				for (int j = 1; j <= numeroPallets[i]; j++) {
 					String editor = bandeira.getCodigoEditor() +" - "+ bandeira.getNomeEditor();
-					String destino=""; // TODO COLOCAR DESTINO
+					String destino=bandeira.getDestino(); 
 					listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, j +" / "+ numeroPallets[i], semana, datasEnvio[i], editor, bandeira.getChaveNFe(),destino));
 				}
 			}
