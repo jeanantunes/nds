@@ -233,9 +233,7 @@ public class BaixaFinanceiraController extends BaseController {
 				pagamento.setDataPagamento(baixaBancaria.getDataPagamento());
 				pagamento.setNossoNumero(cobranca.getNossoNumero());
 				pagamento.setNumeroRegistro(null);
-				
-				//TODO REMOVER DIVISÃO POR 100 - OPERAÇÃO INSERIDA A FIM DE TESTES...
-				pagamento.setValorPagamento(baixaBancaria.getValorPago().divide(new BigDecimal(100)));
+				pagamento.setValorPagamento(baixaBancaria.getValorPago());
 				pagamento.setValorJuros(BigDecimal.ZERO);
 				pagamento.setValorMulta(BigDecimal.ZERO);
 				pagamento.setValorDesconto(BigDecimal.ZERO);

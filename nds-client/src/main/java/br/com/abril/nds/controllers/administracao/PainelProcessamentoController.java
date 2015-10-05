@@ -43,6 +43,7 @@ import br.com.abril.nds.service.RankingSegmentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -577,15 +578,14 @@ public class PainelProcessamentoController extends BaseController {
     	String msg=this.cobrancaService.processarExportacaoCobranca(dataDistribuicaoDistribuidor);
     	
     	result.use(Results.json()).from(
-            new ValidacaoVO(TipoMensagem.SUCCESS,
-                "Cobranças exportadas com sucesso! "+msg), "result").recursive().serialize();
+            new ValidacaoVO(TipoMensagem.SUCCESS,msg), "result").recursive().serialize();
     }
     
     
     @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
-    public void processarCobrancaConsolidada() {
+    public void processarCobrancaConsolidada(String data) {
     	
-    	Date dataDistribuicaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+    	Date dataDistribuicaoDistribuidor = DateUtil.parseDataPTBR(data);
         
     	String msg=this.cobrancaService.processarCobrancaConsolidada(dataDistribuicaoDistribuidor);
     	

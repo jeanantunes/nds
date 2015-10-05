@@ -137,6 +137,32 @@
         </div>
         
       </fieldset>
+      
+      <div id="dialog-processarCobranca" title="Processar cobran&ccedil;a consolidada" style="display:none;">
+			<fieldset style="width: 400px !important;">
+				<legend>Data para processar as cobran&ccedil;as</legend>
+				<table width="270" border="0" cellspacing="2" cellpadding="2">
+					<tr>
+						<td width="25"><b>Data:</b></td>
+		   	        	<td width="212">
+		   	        		<input type="text" name="datepickerDataCobanca" id="datepickerDataCobanca" style="width:70px;"/>&nbsp;
+	   	        		</td>
+						
+					</tr>
+				</table>
+			</fieldset>
+		</div>
+		
+		<div id="dialog-infoExportarCobranca" title="Exportar cobran&ccedil;a" style="display:none;">
+			<fieldset style="width: 400px !important;">
+				<legend>Cobran&ccedil;as exportadas com sucesso!</legend>
+					<tr>
+						<td width="200" align="center">
+							<span id="labelExportarCobranca"></span>
+						</td>
+					</tr>
+			</fieldset>
+		</div>
 
 </body>
 </html>
