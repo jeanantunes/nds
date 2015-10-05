@@ -543,7 +543,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 			itemCE.setQtdeVendaInformada(Util.nvl(item.getVenda(), 0L).longValue());
 			
-			item.setEncalhe(item.getEncalhe().add(item.getQtdeDevSemCE())); 
+			item.setEncalhe(Util.nvl(item.getEncalhe(), BigInteger.ZERO).add(Util.nvl(item.getQtdeDevSemCE(), BigInteger.ZERO))); 
 			
 			itemCE.setQtdeDevolucaoInformada(Util.nvl(item.getEncalhe(), 0L).longValue());
 			
