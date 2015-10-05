@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,7 @@ import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -153,16 +155,23 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			Integer qtd = numeroPallets[i];
 			ftfRepository.atualizarQtdVolumePallet( nota, serie,  qtd) ;
 		}
+		
 		for(BandeirasDTO bandeira : bandeiras) {
-			for (int i = 0; i < datasEnvio.length; i++) {
-				for (int j = 1; j <= numeroPallets[i]; j++) {
-					String editor = bandeira.getCodigoEditor() +" - "+ bandeira.getNomeEditor();
-					String destino=""; // TODO COLOCAR DESTINO
-					listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, j +" / "+ numeroPallets[i], semana, datasEnvio[i], editor, bandeira.getChaveNFe(),destino));
-				}
+
+			for (int j = 1; j <= bandeira.getVolumes().intValue(); j++) {
+				String editor = bandeira.getCodigoEditor() +" - "+ bandeira.getNomeEditor();
+				String destino=bandeira.getDestino(); 
+				listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, 
+						j+ " / "+ 
+				bandeira.getVolumes().intValue(), 
+				semana, datasEnvio[j], 
+				editor,  
+				bandeira.getChaveNFe(), 
+				destino,
+				StringUtils.leftPad(bandeira.getNumeroNotaFiscal().toString(), 8, '0')));
 			}
 		}
-	    
+		
 		return this.gerarRelatorio(listaRelatorio);
 	}
 

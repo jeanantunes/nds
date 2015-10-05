@@ -13,19 +13,19 @@ public class BandeirasDTO implements Serializable{
 
 	private static final long serialVersionUID = -7847418746083619011L;
 	
-	private Long numeroNotaFiscal;
+	private BigInteger numeroNotaFiscal;
 	
-	private Long serieNotaFiscal;
+	private Integer serieNotaFiscal;
 	
 	private String chaveNFe;
 		
-	private Long codigoEditor;
+	private BigInteger codigoEditor;
 	
 	private String nomeEditor;
 	
 	private Date dataSaida;
 	
-	private Long volumes;
+	private BigInteger volumes;
 	
 	
 	
@@ -55,7 +55,7 @@ public class BandeirasDTO implements Serializable{
 		super();
 	}
 	
-	public BandeirasDTO(Long numeroNotaFiscal, Long serieNotaFiscal, Long codigoEditor, String nomeEditor, String chaveNFe,Long volumes) {
+	public BandeirasDTO(BigInteger numeroNotaFiscal, Integer serieNotaFiscal, BigInteger codigoEditor, String nomeEditor, String chaveNFe, BigInteger volumes, String destino) {
 		super();
 		this.numeroNotaFiscal = numeroNotaFiscal;
 		this.serieNotaFiscal = serieNotaFiscal;
@@ -67,21 +67,22 @@ public class BandeirasDTO implements Serializable{
 		this.dataSaida = c.getTime();
 		this.chaveNFe = chaveNFe;
 		this.volumes = volumes;
+		this.destino = destino;
 	}
 	
-	public Long getNumeroNotaFiscal() {
+	public BigInteger getNumeroNotaFiscal() {
 		return numeroNotaFiscal;
 	}
 
-	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+	public void setNumeroNotaFiscal(BigInteger numeroNotaFiscal) {
 		this.numeroNotaFiscal = numeroNotaFiscal;
 	}
 
-	public Long getSerieNotaFiscal() {
+	public Integer getSerieNotaFiscal() {
 		return serieNotaFiscal;
 	}
 
-	public void setSerieNotaFiscal(Long serieNotaFiscal) {
+	public void setSerieNotaFiscal(Integer serieNotaFiscal) {
 		this.serieNotaFiscal = serieNotaFiscal;
 	}
 
@@ -93,11 +94,11 @@ public class BandeirasDTO implements Serializable{
 		this.chaveNFe = chaveNFe;
 	}
 
-	public Long getCodigoEditor() {
+	public BigInteger getCodigoEditor() {
 		return codigoEditor;
 	}
 
-	public void setCodigoEditor(Long codigoEditor) {
+	public void setCodigoEditor(BigInteger codigoEditor) {
 		this.codigoEditor = codigoEditor;
 	}
 
@@ -117,12 +118,11 @@ public class BandeirasDTO implements Serializable{
 		this.dataSaida = dataSaida;
 	}
 
-	public Long getVolumes() {
-	
+	public BigInteger getVolumes() {
 		return volumes;
 	}
 
-	public void setVolumes(Long volume) {
+	public void setVolumes(BigInteger volume) {
 		this.volumes = volume;
 	}
 
