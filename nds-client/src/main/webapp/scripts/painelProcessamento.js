@@ -361,6 +361,7 @@ var painelProcessamentoController = $.extend(true, {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=2";
 		});
 	},
+	
 	reprocessarInterface : function(idInterface) {
 		
 		$( "#dialog-excutarInterface" ).dialog({
@@ -440,19 +441,62 @@ var painelProcessamentoController = $.extend(true, {
 		$.postJSON(contextPath + "/administracao/painelProcessamento/exportarCobranca",
 				null,
 				function (resultado) {
-					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+					
+					if(resultado.tipoMensagem == "SUCCESS"){
+					
+						$("#dialog-infoExportarCobranca").dialog({
+							resizable : false,
+							height : 150,
+							width : 450,
+							modal : true,
+							open:function(){
+								$("#labelExportarCobranca").html(resultado.listaMensagens[0]);
+							},
+						});
+						
+					}else{
+						exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+					}
 			   	}
 		);
 	},
 	
 	processarCobrancaConsolidada : function() {
 		
-		$.postJSON(contextPath + "/administracao/painelProcessamento/processarCobrancaConsolidada",
-				null,
-				function (resultado) {
-					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
-			   	}
-		);
+		$("#dialog-processarCobranca").dialog({
+			resizable : false,
+			height : 250,
+			width : 450,
+			modal : true,
+			open:function(){
+				$("#datepickerDataCobanca").datepicker({
+					showOn: "button",
+					dateFormat: 'dd/mm/yy',
+					buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+					buttonImageOnly: true
+				});
+				$("#datepickerDataCobanca").val("");
+			},
+			buttons : {
+				"Processar" : function() {
+					
+					var dataProcessamento = $("#datepickerDataCobanca").val();
+					var data = [{name:'data', value:dataProcessamento}];
+					
+					
+					$.postJSON(contextPath + "/administracao/painelProcessamento/processarCobrancaConsolidada",
+								data,
+								function (resultado) {
+									exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+							   	});
+					$(this).dialog("close");
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		
 	},
 	
 	reprocessarInterfacesEmOrdem : function() {
