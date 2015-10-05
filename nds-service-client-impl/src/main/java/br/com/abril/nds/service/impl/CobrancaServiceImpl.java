@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,6 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import br.com.abril.nds.client.vo.CobrancaDividaVO;
 import br.com.abril.nds.client.vo.CobrancaVO;
@@ -72,12 +79,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
@@ -1319,12 +1320,18 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		Gson gson = new Gson();
 		JsonArray jA = new JsonArray();
+		BigDecimal sumValorTotal = BigDecimal.ZERO;
+		
 		
 		for (ExportarCobrancaDTO cobranca : cobrancas) {
+			
+			sumValorTotal = sumValorTotal.add(cobranca.getVlr_total());
 			
 			JsonElement jElement = new JsonParser().parse(gson.toJson(cobranca)); 
 			jA.add(jElement);
 		}
+		
+		sumValorTotal = sumValorTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
 		JsonObject json = new JsonObject();
 		
@@ -1345,7 +1352,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		json.add(dataFormatada, jA);
 		
 		this.couchDbClient.save(json); 
-		return "Exportado "+cobrancas.size();
+		return "Cobranças exportadas: "+cobrancas.size()+", Total financeiro: R$"+sumValorTotal;
 		
 	}
 	
@@ -1364,7 +1371,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 		
 		if(jsonDoc == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas nesta  data="+dataFormatada);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas nesta  data: "+dataFormatada);
 		}
 		
 		Gson gson = new Gson();
@@ -1372,27 +1379,52 @@ public class CobrancaServiceImpl implements CobrancaService {
 		JsonArray jaCobrancas = jsonDoc.getAsJsonArray(dataFormatada);
 		
 		if(jaCobrancas == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas nesta data="+dataFormatada);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há cobranças consolidadas para serem processadas nesta data: "+dataFormatada);
 		}
 		
-		List<ExportarCobrancaDTO> cobrancas = new ArrayList<>(); 
+		List<ExportarCobrancaDTO> cobrancas = new ArrayList<>();
+		List<ExportarCobrancaDTO> cobrancasProcessadas = new ArrayList<>(); 
 		
 		
 		for (JsonElement jsonElement : jaCobrancas) {
 			ExportarCobrancaDTO cobranca = gson.fromJson(jsonElement, ExportarCobrancaDTO.class);
 			cobrancas.add(cobranca);
 		}
+		
 		int atu=0;
 		int proc=0;
+		
 		for (ExportarCobrancaDTO cobranca : cobrancas) {
 			proc++;
 			if(cobranca.getCotaProcessada() == true && cobranca.getNossoNumero() != null){
 				atu++;
 				this.cobrancaRepository.updateNossoNumero(dataOperacaoDistribuidor, cobranca.getCod_jornaleiro(), cobranca.getNossoNumero());
+				cobrancasProcessadas.add(cobranca);
 			}
 		}
-		if ( atu > 0 && atu == proc) // se foi tudo processado, remover banco
+		
+		if (atu > 0 && atu == proc){ // se foi tudo processado, remover do banco
 			couchDbClient.remove(jsonDoc);
+		}else{
+			
+			cobrancas.removeAll(cobrancasProcessadas);
+			
+			JsonObject jsonDocUpdate = new JsonObject();
+			
+			JsonArray jA = new JsonArray();
+			
+			for (ExportarCobrancaDTO cobranca : cobrancas) {
+				JsonElement jElement = new JsonParser().parse(gson.toJson(cobranca)); 
+				jA.add(jElement);
+			}
+			
+			jsonDocUpdate.addProperty("_id", docName);
+			jsonDocUpdate.add(dataFormatada, jA);
+			
+			this.couchDbClient.remove(jsonDoc);
+			this.couchDbClient.save(jsonDocUpdate);
+			
+			}
 		
 		return " Processados:"+proc+" Atualizados:"+atu;
 		
