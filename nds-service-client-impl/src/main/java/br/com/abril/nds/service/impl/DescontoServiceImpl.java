@@ -31,6 +31,7 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoEditorDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -1306,7 +1307,16 @@ public class DescontoServiceImpl implements DescontoService {
         	
             //Produto possivelmente com mais de um fornecedor, seguindo
             // a instrução passada, utilizar o desconto do produto
-            return produtoEdicao.getProduto().getDesconto();
+        	if(produtoEdicao.getProduto().getOrigem().equals(Origem.INTERFACE)) {
+        		
+        		return produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto();
+        		
+        	} else {
+        		
+        		return produtoEdicao.getProduto().getDesconto();
+        		
+        	}
+        	
             
         }
         
