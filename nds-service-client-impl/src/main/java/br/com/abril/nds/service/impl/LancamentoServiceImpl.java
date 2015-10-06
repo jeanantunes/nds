@@ -342,8 +342,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional(readOnly=true)
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao, Date dataLimiteLancamento) {
 		
+		Lancamento ultimoLancamento = null;
+		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao, dataLimiteLancamento);
+		
+		if(ultimoLancamento == null ) {
+			return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao, null);
 		}
 		
 		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao, dataLimiteLancamento);
