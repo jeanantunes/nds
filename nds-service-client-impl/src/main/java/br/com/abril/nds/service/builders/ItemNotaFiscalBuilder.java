@@ -172,9 +172,16 @@ public class ItemNotaFiscalBuilder  {
 			
 			BigInteger quantidade = produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()).abs();
 			
-			LOGGER.debug("quantidade: "+quantidade);
+			LOGGER.info("quantidade: "+quantidade);
 			
-			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(quantidade));
+			if(produtoServico.getQuantidade().intValue() > 0) {
+				
+				produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(quantidade));
+				
+			} else {
+				
+				produtoServico.setQuantidade(quantidade);
+			}
 		}
 		
 		produtoServico.setValorUnitario(valorUnitario);
