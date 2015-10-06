@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceClient;
-import br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceTestCase;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
@@ -31,12 +30,14 @@ import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FTFService;
 import br.com.abril.nds.service.InterfaceExecucaoService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.service.RankingFaturamentoService;
 import br.com.abril.nds.service.RankingSegmentoService;
@@ -100,6 +101,9 @@ public class PainelProcessamentoController extends BaseController {
     
     @Autowired
     private CobrancaService cobrancaService;
+    
+    @Autowired
+    private NotaFiscalService notaFiscalService;
     
     @Autowired
     private ParametroSistemaService parametroSistemaService;
@@ -616,6 +620,7 @@ public class PainelProcessamentoController extends BaseController {
 			homolog=false;
 		}
     	 
+    	homolog=true;
         String msg=homolog ?"AMBIENTE HOMOLOGACAO":"AMBIENTE PRODUCAO";
         int erros=0;
          List<NotaEncalheBandeiraVO> notas = ftfService.obterNotasNaoEnviadas();
@@ -624,16 +629,39 @@ public class PainelProcessamentoController extends BaseController {
         for (NotaEncalheBandeiraVO nota: notas ) {
     	List<ItemEncalheBandeiraVO> itens= ftfService.obterItensNotasNaoEnviadas(nota.getNotaId()) ;
     	 try {
-    		
     		 
+    		  ItemEncalheBandeiraVO item0 = itens.get(0);
+     		 DestinoEncalhe destinoEncalhe = notaFiscalService.obterDestinoEncalhe(item0.getCodPublicacao().toString(),new Long(item0.getNumEdicao()));
+    		  if ( destinoEncalhe != null )
+     		 nota.setNomeDestinoEncalhe(destinoEncalhe.getNomeDestinoDDE());
+    		  else
+    			  LOGGER.error("NAO ENCONTRADO DESTINO ENCALHE PARA PRODUTO/EDICAO "+item0.getCodPublicacao() +"/"
+    					  															+item0.getNumEdicao());
     	      DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog);
-    	      ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
+    	   
     	      
     	       }catch (Exception e )
     	       {
+    	    	  if ( e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
+    	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe();
+    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true); 
+    	    	  }
+    	    	  else
+    	    	  if ( !e.getLocalizedMessage().contains("BANDEIRA GRAVADA COM SUCESSO")) {
     	    	   e.printStackTrace();
-    	    	   msg+="</br>"+ e.getLocalizedMessage();
+    	    	   String it="";
+    	    	   for ( ItemEncalheBandeiraVO item:  itens)
+    	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
+    	    	   msg+="</br>"+ e.getLocalizedMessage() + "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
     	    	   erros++;
+    	    	  }
+    	    	  else {
+    	    		  String it="";
+       	    	   for ( ItemEncalheBandeiraVO item:  itens)
+       	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
+    	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+    	    		   ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
+    	    	  }
     	       }
     	 
         }

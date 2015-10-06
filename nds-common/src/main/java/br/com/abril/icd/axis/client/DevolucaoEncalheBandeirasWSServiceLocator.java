@@ -14,6 +14,7 @@ public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.c
     }
     
     public DevolucaoEncalheBandeirasWSServiceLocator(boolean ambiente) {
+    	System.out.println("DEVOLUCAOBANDEIRA:"+ambiente);
     	homolog=ambiente;
     }
 
@@ -27,14 +28,19 @@ public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.c
     }
 
     // Use to get a proxy class for DevolucaoEncalheBandeirasWS
-    private java.lang.String DevolucaoEncalheBandeirasWS_address = "http://homolog.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
-    private java.lang.String DevolucaoEncalheBandeirasWS_address_prod = "http://www.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
+    private java.lang.String DevolucaoEncalheBandeirasWS_address_prod = "http://homolog.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
+    private java.lang.String DevolucaoEncalheBandeirasWS_address = "http://www.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
                                  
     public java.lang.String getDevolucaoEncalheBandeirasWSAddress() {
-    	if ( homolog)
+    	if ( homolog) {
+    		System.err.println("AMBIENTE HOMOLOGACAO "+DevolucaoEncalheBandeirasWS_address);
         return DevolucaoEncalheBandeirasWS_address;
+    	}
     	else
+    	{
+        System.err.println("AMBIENTE PRODUCAO "+DevolucaoEncalheBandeirasWS_address_prod);
     	return DevolucaoEncalheBandeirasWS_address_prod;
+    	}
     }
 
     // The WSDD service name defaults to the port name.

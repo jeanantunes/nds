@@ -54,10 +54,12 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
 		//Item 1
 		ItemNotaEncalheBandeiraVO[] itensNotaEncalheBandeira = new ItemNotaEncalheBandeiraVO[itens.size()];
 		int i=0;
+		
 		for ( ItemEncalheBandeiraVO item:itens) {
 		 
 		ItemNotaEncalheBandeiraVO itemNotaEncalheBandeiraVO = new ItemNotaEncalheBandeiraVO();
 		String anoSemana = SemanaUtil.obterAnoNumeroSemana(item.getDataRecolhimento(),Calendar.WEDNESDAY);
+		System.err.println("anosemana:"+anoSemana);
 		itemNotaEncalheBandeiraVO.setAnoSemanaRecolhimento(anoSemana);
 		itemNotaEncalheBandeiraVO.setCodPublicacaoProdin(item.getCodPublicacao());
 		itemNotaEncalheBandeiraVO.setExemplaresPacote(item.getExemplaresPacote());

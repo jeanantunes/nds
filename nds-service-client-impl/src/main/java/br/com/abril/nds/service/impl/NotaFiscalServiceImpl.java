@@ -60,6 +60,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
+import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -1874,5 +1875,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public Integer qtdeNota(Long idConferenciaCota) {		
 		return this.notaFiscalRepository.qtdeNota(idConferenciaCota);
-	}	
+	}
+	
+	@Override
+	@Transactional
+	public DestinoEncalhe obterDestinoEncalhe(String codigoProduto,Long numeroEdicao) {
+	return this.notaFiscalRepository.obterDestinoEncalhe(codigoProduto,numeroEdicao);
+	}
 }

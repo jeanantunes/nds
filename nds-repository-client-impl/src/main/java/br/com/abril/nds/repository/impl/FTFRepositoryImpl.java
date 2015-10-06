@@ -620,17 +620,19 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 			 .append(" (select max(lan.data_rec_prevista) from lancamento lan where lan.produto_edicao_id = pe.id ) as dataRecolhimento , ")
 			 .append(" item.QUANTIDADE_COMERCIAL as qtdExemplares,")
 			 .append(" pe.pacote_padrao as pacotePadrao,")
-			 .append(" 1 as exemplaresPacote,")
-			 .append(" 0 as qtdExemplaresIrregular, ")
+			// .append(" 1 as exemplaresPacote,")
+			// .append(" 0 as qtdExemplaresIrregular, ")
+			.append(" item.QUANTIDADE_COMERCIAL div pe.pacote_padrao  as exemplaresPacote, ")
+            .append(" item.QUANTIDADE_COMERCIAL mod pe.pacote_padrao as qtdExemplaresIrregular, ")
 			 .append(" 1 as indiceVolume ")
 			 .append(" from nota_fiscal_produto_servico item ")
 			 .append(" inner join produto_edicao pe on  item.produto_edicao_id = pe.id ")
 			 .append(" inner join produto p on pe.produto_id = p.id ")
-		    .append("  where item.nota_fiscal_id = :notaId");
+		    .append("  where item.nota_fiscal_id = :notaId and  item.QUANTIDADE_COMERCIAL > 0 ");
 		   	
 		   SQLQuery query = getSession().createSQLQuery(sql.toString());
-		query.setParameter("notaId",notaId);
-		  query.addScalar("produtoEdicaoId",StandardBasicTypes.INTEGER);
+		   query.setParameter("notaId",notaId);
+		   query.addScalar("produtoEdicaoId",StandardBasicTypes.INTEGER);
 		   query.addScalar("codPublicacao",StandardBasicTypes.INTEGER);
 		   query.addScalar("numEdicao",StandardBasicTypes.INTEGER);
 		   query.addScalar("dataRecolhimento",StandardBasicTypes.DATE);
