@@ -138,7 +138,6 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número(s) de Pallets e Datas inválido(s).");
 		}
 		
-		List<BandeirasDTO> bandeiras = this.obterBandeirasDaSemana(semana, fornecedorId, null);
 		
 		Fornecedor f = fornecedorRepository.buscarPorId(fornecedorId);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
@@ -164,6 +163,8 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			Integer qtd = numeroPallets[i];
 			ftfRepository.atualizarQtdVolumePallet( nota, serie,  qtd) ;
 		}
+		
+		List<BandeirasDTO> bandeiras = this.obterBandeirasDaSemana(semana, fornecedorId, null);
 		
 		for(BandeirasDTO bandeira : bandeiras) {
 

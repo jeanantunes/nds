@@ -348,9 +348,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 					this.efetuarTransferenciaEstoqueProduto(itemFo.getProdutoEdicao(), usuario);
 				
 				
-                 // 19/05/2015 Fechar os Produtos que são diferentes de PARCIAL JIRA37
-                  alterarStatusProdutoEdicao(itemFo.getProdutoEdicao().getLancamentos(),StatusLancamento.FECHADO);
-				 // 
+					// 19/05/2015 Fechar os Produtos que são diferentes de PARCIAL JIRA37
+					alterarStatusProdutoEdicao(itemFo.getProdutoEdicao().getLancamentos(),StatusLancamento.FECHADO);
+					// 
 				
 				}
 				

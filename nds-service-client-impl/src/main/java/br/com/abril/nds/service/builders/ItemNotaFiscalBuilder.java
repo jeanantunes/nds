@@ -169,7 +169,12 @@ public class ItemNotaFiscalBuilder  {
 		if(((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
 			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs());
 		} else {
-			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()).abs());
+			
+			BigInteger quantidade = produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()).abs();
+			
+			LOGGER.debug("quantidade: "+quantidade);
+			
+			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(quantidade));
 		}
 		
 		produtoServico.setValorUnitario(valorUnitario);
