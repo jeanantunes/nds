@@ -1517,6 +1517,10 @@ public class NFeServiceImpl implements NFeService {
 					NotaFiscalReferenciadaNFE notaFiscalReferenciadaNFE = new NotaFiscalReferenciadaNFE();
 					notaReferenciada.setNotaFiscalReferenciadaNFE(notaFiscalReferenciadaNFE);
 					
+					if(notaFiscalDTO.getChaveAcesso() == null || notaFiscalDTO.getChaveAcesso().isEmpty()) {
+						throw new ValidacaoException(TipoMensagem.ERROR, String.format("Não é possível gerar NF-e não contem chave de acesso para nota: %s e serie: %s", notaFiscalDTO.getNumero(), notaFiscalDTO.getSerie()));
+					}
+					
 					notaReferenciada.setChaveAcessoCTe(notaFiscalDTO.getChaveAcesso());
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setCodigoUF(notaFiscalDTO.getCodigoUF());
 					notaReferenciada.getNotaFiscalReferenciadaNFE().setCnpj(notaFiscalDTO.getCnpj());
