@@ -317,7 +317,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	public void removeEstudo(Long idEstudo) {
         if (idEstudo > 0) {
             EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
-            if (!estudo.isLiberado()) {
+            if (estudo != null && !estudo.isLiberado()) {
                 estudoGeradoRepository.remover(estudo);
             } else {
                 throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,

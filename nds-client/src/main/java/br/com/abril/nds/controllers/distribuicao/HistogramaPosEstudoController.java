@@ -280,7 +280,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 		session.setAttribute("WINDOWNAME_ESTUDO",windowname);
 		mapaAnaliseEstudo.put(idProdutoEdicao, loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
-		LOGGER.error("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.warn("TRAVANDO ESTUDO COM  "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		session.getServletContext().setAttribute(
 			MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE, mapaAnaliseEstudo);
@@ -294,7 +294,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		Map<Long, String> mapaAnaliseEstudo = 
 			(Map<Long, String>) session.getServletContext().getAttribute(
 				MAPA_ANALISE_ESTUDO_CONTEXT_ATTRIBUTE);
-		LOGGER.error("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
+		LOGGER.warn("DESBLOQUEANDO ESTUDO com "+loginUsuario+";"+session.getAttribute("WINDOWNAME_ESTUDO"));
 		
 		if (mapaAnaliseEstudo != null) {
 			

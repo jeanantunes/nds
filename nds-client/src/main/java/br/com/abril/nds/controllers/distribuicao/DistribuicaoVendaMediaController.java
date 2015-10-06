@@ -449,9 +449,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void removerProdutoEdicaoDaBase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 	List<ProdutoEdicaoVendaMediaDTO> toRemove = new ArrayList<>();
-	for (Integer index : indexes) {
-	    toRemove.add(selecionados.get(index));
-	}
+	if ( indexes != null )
+		for (Integer index : indexes) {
+		    toRemove.add(selecionados.get(index));
+		}
 	selecionados.removeAll(toRemove);
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 	result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
