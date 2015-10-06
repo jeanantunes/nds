@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.TipoMovimentoDTO.Operacao;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -1446,6 +1447,28 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		query.setParameter("chaveAcesso", dadosRetornoNFE.getChaveAcesso());
 
 		return (NotaFiscal) query.uniqueResult();
+		
+	}
+	
+	
+	@Override
+	public DestinoEncalhe obterDestinoEncalhe(String codigoProduto,Long numeroEdicao) {
+
+		StringBuffer sql = new StringBuffer("SELECT destinoEncalhe ");
+		
+		sql.append(" FROM DestinoEncalhe as destinoEncalhe");
+		
+		sql.append(" WHERE");
+		
+		sql.append(" codigoProduto  = :codigoProduto ");
+		
+		sql.append(" AND numeroEdicao = :numeroEdicao ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+
+		return (DestinoEncalhe) query.uniqueResult();
 		
 	}
 }

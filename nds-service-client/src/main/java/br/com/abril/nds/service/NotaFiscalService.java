@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroNFeDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DestinoEncalhe;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -158,5 +159,8 @@ public interface NotaFiscalService {
 	Integer qtdeNota(Long idConferenciaCota);
 
 	void gerarNotaEnvioAtravesNotaFiscal(Long notaFiscalId, Cota cota, NaturezaOperacao naturezaOperacao);
+	
+	
+	DestinoEncalhe obterDestinoEncalhe(String codigoProduto,Long numeroEdicao);
 
 }

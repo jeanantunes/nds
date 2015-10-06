@@ -183,7 +183,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	private String sqlQuantidadeDevForn() {
 		
 		StringBuilder sql = new StringBuilder();
-		
+		//TODO - alterar para nao pegar '55'
 		sql.append(" (select COALESCE(sum(movimento.QTDE),0) ");
 		sql.append(" from movimento_estoque movimento ");
 		sql.append(" where movimento.ESTOQUE_PRODUTO_ID = ESTOQUE_PROD.ID ");
