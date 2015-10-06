@@ -119,14 +119,13 @@ var emissaoBandeiraController = $.extend(true, {
          } else { 
         	 
         	 if(resultado && resultado.rows) {
-        		 
-        		 for(var index in resultado.rows) {
-        			 resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" />';
-        			 resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" />';
-        			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ resultado.rows[index].cell["dataSaida"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
-        			 resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'')+
-        			 '" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
-        		 }
+ 
+ for(var index in resultado.rows) {
+ resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" />';
+ resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" />';
+ resultado.rows[index].cell["dataSaida"] = '<input value="'+ resultado.rows[index].cell["dataSaida"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
+ resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'') +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
+ }
         		 
         	 }
         	 
@@ -157,6 +156,7 @@ var emissaoBandeiraController = $.extend(true, {
 		var params = [];
 		params.push({'name': 'anoSemana', 'value': emissaoBandeiraController.anoSemanaPesquisa});
 		params.push({'name': 'fornecedor', 'value': emissaoBandeiraController.fornecedor});
+		
 		$.each($('input[name="emissaoBandeiras-dataSaida"]'), function(k, v) {
 			if(typeof(v.value) == 'undefined' || '' == v.value || new Date(v.value.split('/').reverse().join('/')).getTime() < new Date().getTime()) {
 				exibirMensagem('WARNING', ['Valor incorreto para a impressão da data.']);
@@ -164,7 +164,7 @@ var emissaoBandeiraController = $.extend(true, {
 				return false;
 			}
 			params.push({'name': 'dataEnvio[]', 'value': v.value});
-		})
+		});
 		
 		$.each($('input[name="emissaoBandeiras-volumes"]'), function(k, v) {
 			if(typeof(v.value) == 'undefined' || '' == v.value || v.value < 1) {
@@ -173,17 +173,25 @@ var emissaoBandeiraController = $.extend(true, {
 				return false;
 			}
 			params.push({'name': 'numeroPallets[]', 'value': v.value});
-		})
+		});
 		
 		$.each($('input[name="emissaoBandeiras-numeroNotaFiscal"]'), function(k, v) {
-			
+			if(typeof(v.value) == 'undefined' || '' == v.value || v.value < 1) {
+				liberaImpressaoBandeira = false;
+				return false;
+			}
 			params.push({'name': 'nota[]', 'value': v.value});
-		})
+		});
 		
 		$.each($('input[name="emissaoBandeiras-serieNotaFiscal"]'), function(k, v) {
-			
+			if(typeof(v.value) == 'undefined' || '' == v.value || v.value < 1) {
+				liberaImpressaoBandeira = false;
+				return false;
+
+			}
 			params.push({'name': 'serie[]', 'value': v.value});
-		})
+		});
+		
 		
 		if(liberaImpressaoBandeira) {
 			
