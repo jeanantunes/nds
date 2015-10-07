@@ -15,6 +15,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.metamodel.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -65,6 +68,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.LeitorArquivoBaixaFinanConsolidadaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
+import br.com.abril.nds.service.impl.GerarCobrancaServiceImpl;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -90,6 +94,9 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/financeiro/baixa")
 @Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA)
 public class BaixaFinanceiraController extends BaseController {
+	
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BaixaFinanceiraController.class);
 
 	@Autowired
 	private Result result;
@@ -214,7 +221,7 @@ public class BaixaFinanceiraController extends BaseController {
 		Long qtdBaixasExecutadas = 0L;
 		
 		Cobranca cobranca;
-		
+		 StringBuffer msg = new StringBuffer();
 		try {
 		
 			//Grava o arquivo em disco e retorna o File do arquivo
@@ -223,11 +230,29 @@ public class BaixaFinanceiraController extends BaseController {
 			baixas = this.leitorArquivoBaixaFinanConsolidada.obterPagamentosParaBaixa(fileArquivoBanco, uploadedFile.getFileName());
 			
 			qtdBaixasArquivo = baixas.size();
-
+           
+            msg.append("Numero de Boletos no arquivo:"+baixas.size());
 			for (BaixaBancariaConsolidadaDTO baixaBancaria : baixas) {
 				
 				cobranca = cobrancaService.obterCobrancaPorNossoNumeroConsolidado(baixaBancaria.getNossoNumeroConsolidado());
-				
+				if ( cobranca == null ) {
+					if (  baixaBancaria.getValorDoBoleto().doubleValue() > 0.0 ) {
+						LOGGER.warn("COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. nosso numero:"+
+					             baixaBancaria.getNossoNumeroConsolidado());
+						 msg.append("</br>"+"COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. NOSSO_NUMERO:"+
+					             baixaBancaria.getNossoNumeroConsolidado()+"  valor:"+ baixaBancaria.getValorDoBoleto()+" cota:"+baixaBancaria.getCodJornaleiro());
+						 continue;
+					   }
+					   else 
+					   {
+						   LOGGER.warn("COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. MAS VALOR DO BOLETO IGUAL OU MENOR QUE ZERO.Pulando boleto nosso numero:"+
+					             baixaBancaria.getNossoNumeroConsolidado());
+						   msg.append("</br>"+"COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. MAS VALOR DO BOLETO IGUAL OU MENOR QUE ZERO.Desconsiderando Boleto. NOSSO NUMERO:"+
+					             baixaBancaria.getNossoNumeroConsolidado()+"  valor:" + baixaBancaria.getValorDoBoleto());
+					       continue;
+					   }
+					}
+					  
 				PagamentoDTO pagamento = new PagamentoDTO();
 				
 				pagamento.setDataPagamento(baixaBancaria.getDataPagamento());
@@ -237,9 +262,16 @@ public class BaixaFinanceiraController extends BaseController {
 				pagamento.setValorJuros(BigDecimal.ZERO);
 				pagamento.setValorMulta(BigDecimal.ZERO);
 				pagamento.setValorDesconto(BigDecimal.ZERO);
-				
+			   try {	
 				boletoService.baixarBoleto(TipoBaixaCobranca.CONSOLIDADA, pagamento, getUsuarioLogado(), null, baixaBancaria.getDataPagamento(), null, null, baixaBancaria.getDataPagamento());
-				
+			   } catch (ValidacaoException ve ) {
+				        
+				   msg.append("</br>"+ve.getMessage()+"  "+
+						   baixaBancaria.getNossoNumeroConsolidado()+"  valor:"+ baixaBancaria.getValorDoBoleto()+" cota:"+baixaBancaria.getCodJornaleiro());
+						   
+				   
+			   }
+			   
 				if(!bancos.contains(cobranca.getBanco())){
 					bancos.add(cobranca.getBanco());
 				}
@@ -265,8 +297,9 @@ public class BaixaFinanceiraController extends BaseController {
 				controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO, this.distribuidorService.obterDataOperacaoDistribuidor(), data, getUsuarioLogado(), bank);
 			}
 		}
+		msg.append("</br>Arquivo Processado..</br>Total de Baixas:"+qtdBaixasExecutadas);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo processado corretamente.\n\r Total de baixas: " +qtdBaixasExecutadas),"result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msg.toString()),"result").recursive().serialize();
 	}
 
 	@Post
