@@ -620,7 +620,7 @@ public class PainelProcessamentoController extends BaseController {
 			homolog=false;
 		}
     	 
-    	homolog=true;
+    	
         String msg=homolog ?"AMBIENTE HOMOLOGACAO":"AMBIENTE PRODUCAO";
         int erros=0;
          List<NotaEncalheBandeiraVO> notas = ftfService.obterNotasNaoEnviadas();
@@ -635,24 +635,27 @@ public class PainelProcessamentoController extends BaseController {
     		  if ( destinoEncalhe != null )
      		 nota.setNomeDestinoEncalhe(destinoEncalhe.getNomeDestinoDDE());
     		  else
-    			  LOGGER.error("NAO ENCONTRADO DESTINO ENCALHE PARA PRODUTO/EDICAO "+item0.getCodPublicacao() +"/"
+    			  LOGGER.warn("NAO ENCONTRADO DESTINO ENCALHE PARA PRODUTO/EDICAO "+item0.getCodPublicacao() +"/"
     					  															+item0.getNumEdicao());
-    	      DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog);
+    	          DevolucaoEncalheBandeirasWSServiceClient.enviarNotasDevEncalheBandeiras(nota,itens,homolog);
     	   
     	      
     	       }catch (Exception e )
     	       {
     	    	  if ( e.getLocalizedMessage().contains("0020 - NOTA JA ENVIADA")) {
     	    		  msg+="</br>NOTA JA ENVIADA  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe();
+    	    		
     	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true); 
     	    	  }
     	    	  else
     	    	  if ( !e.getLocalizedMessage().contains("BANDEIRA GRAVADA COM SUCESSO")) {
-    	    	   e.printStackTrace();
+    	    		 
+    	    	   LOGGER.error("ERRO AO GRAVAR BANDEIRA ",e);
     	    	   String it="";
     	    	   for ( ItemEncalheBandeiraVO item:  itens)
     	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
-    	    	   msg+="</br>"+ e.getLocalizedMessage() + "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+    	    	   msg+="</br>ERRRO AO ENVIAR NOTA ->"+ e.getLocalizedMessage() +" " +e.getMessage()+ "  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
+    	    	  
     	    	   erros++;
     	    	  }
     	    	  else {
@@ -660,7 +663,8 @@ public class PainelProcessamentoController extends BaseController {
        	    	   for ( ItemEncalheBandeiraVO item:  itens)
        	    		   it +="<"+item.getCodPublicacao()+"/"+item.getNumEdicao()+">";
     	    		  msg+="</br>BANDEIRA GRAVADA COM SUCESSO  Nota:"+nota.getNumNota()+" Destino:"+nota.getNomeDestinoEncalhe()+" Itens:"+it;
-    	    		   ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
+    	    		 
+    	    		  ftfService.atualizaFlagInterfaceNotasEnviadas(nota.getNotaId(),true);
     	    	  }
     	       }
     	 

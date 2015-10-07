@@ -10,7 +10,7 @@ package br.com.abril.icd.axis.client;
 public interface DevolucaoEncalheBandeirasWSService extends javax.xml.rpc.Service {
     public java.lang.String getDevolucaoEncalheBandeirasWSAddress();
 
-    public br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWS_PortType getDevolucaoEncalheBandeirasWS() throws javax.xml.rpc.ServiceException;
+    public br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWS_PortType getDevolucaoEncalheBandeirasWS(boolean homolog) throws javax.xml.rpc.ServiceException;
 
     public br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWS_PortType getDevolucaoEncalheBandeirasWS(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }

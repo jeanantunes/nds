@@ -7,16 +7,17 @@
 
 package br.com.abril.icd.axis.client;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.client.Service implements br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSService {
 
-	boolean homolog=true;
+	private static final Logger LOGGER = LoggerFactory.getLogger(DevolucaoEncalheBandeirasWSServiceLocator.class);
+	
     public DevolucaoEncalheBandeirasWSServiceLocator() {
     }
     
-    public DevolucaoEncalheBandeirasWSServiceLocator(boolean ambiente) {
-    	System.out.println("DEVOLUCAOBANDEIRA:"+ambiente);
-    	homolog=ambiente;
-    }
+ 
 
 
     public DevolucaoEncalheBandeirasWSServiceLocator(org.apache.axis.EngineConfiguration config) {
@@ -28,19 +29,13 @@ public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.c
     }
 
     // Use to get a proxy class for DevolucaoEncalheBandeirasWS
-    private java.lang.String DevolucaoEncalheBandeirasWS_address_prod = "http://homolog.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
-    private java.lang.String DevolucaoEncalheBandeirasWS_address = "http://www.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
+    private java.lang.String DevolucaoEncalheBandeirasWS_address = "http://homolog.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
+    private java.lang.String DevolucaoEncalheBandeirasWS_address_prod = "http://www.icd.dinap.com.br/icd/services/DevolucaoEncalheBandeirasWS";
                                  
     public java.lang.String getDevolucaoEncalheBandeirasWSAddress() {
-    	if ( homolog) {
-    		System.err.println("AMBIENTE HOMOLOGACAO "+DevolucaoEncalheBandeirasWS_address);
-        return DevolucaoEncalheBandeirasWS_address;
-    	}
-    	else
-    	{
-        System.err.println("AMBIENTE PRODUCAO "+DevolucaoEncalheBandeirasWS_address_prod);
-    	return DevolucaoEncalheBandeirasWS_address_prod;
-    	}
+    	
+    	return DevolucaoEncalheBandeirasWS_address;
+    	
     }
 
     // The WSDD service name defaults to the port name.
@@ -54,10 +49,20 @@ public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.c
         DevolucaoEncalheBandeirasWSWSDDServiceName = name;
     }
 
-    public br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWS_PortType getDevolucaoEncalheBandeirasWS() throws javax.xml.rpc.ServiceException {
+    public br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWS_PortType getDevolucaoEncalheBandeirasWS(boolean homolog) throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
+        	if ( homolog) {
+        		LOGGER.error("AMBIENTE HOMOLOGACAO "+DevolucaoEncalheBandeirasWS_address);
+           
             endpoint = new java.net.URL(DevolucaoEncalheBandeirasWS_address);
+        	}
+        	else
+        	{
+            LOGGER.error("AMBIENTE PRODUCAO "+DevolucaoEncalheBandeirasWS_address_prod);
+            endpoint = new java.net.URL(DevolucaoEncalheBandeirasWS_address_prod);
+        	}
+           
         }
         catch (java.net.MalformedURLException e) {
             throw new javax.xml.rpc.ServiceException(e);
@@ -110,7 +115,7 @@ public class DevolucaoEncalheBandeirasWSServiceLocator extends org.apache.axis.c
         }
         java.lang.String inputPortName = portName.getLocalPart();
         if ("DevolucaoEncalheBandeirasWS".equals(inputPortName)) {
-            return getDevolucaoEncalheBandeirasWS();
+            return getDevolucaoEncalheBandeirasWS(false);
         }
         else  {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);

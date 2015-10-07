@@ -592,7 +592,7 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 		   .append(" 		where TIPO_EMITENTE = 'DISTRIBUIDOR' ")
 		   .append(" 	and TIPO_DESTINATARIO = 'FORNECEDOR' ")
 			.append(" 	and TIPO_OPERACAO = 'SAIDA' )")
-			.append("	and interface_devolucao_fornecedor = false ");
+			.append("	and (interface_devolucao_fornecedor is null or interface_devolucao_fornecedor = false )  ");
 			              
 		
 		   	
@@ -619,11 +619,11 @@ public class FTFRepositoryImpl extends AbstractRepository implements FTFReposito
 			 .append(" pe.numero_edicao as numEdicao,")
 			 .append(" (select max(lan.data_rec_prevista) from lancamento lan where lan.produto_edicao_id = pe.id ) as dataRecolhimento , ")
 			 .append(" item.QUANTIDADE_COMERCIAL as qtdExemplares,")
-			 .append(" pe.pacote_padrao as pacotePadrao,")
+			 .append(" case when pe.pacote_padrao > 0 then pe.pacote_padrao else 1 end  as pacotePadrao,")
 			// .append(" 1 as exemplaresPacote,")
 			// .append(" 0 as qtdExemplaresIrregular, ")
-			.append(" item.QUANTIDADE_COMERCIAL div pe.pacote_padrao  as exemplaresPacote, ")
-            .append(" item.QUANTIDADE_COMERCIAL mod pe.pacote_padrao as qtdExemplaresIrregular, ")
+			.append(" case when pe.pacote_padrao > 0 then item.QUANTIDADE_COMERCIAL div pe.pacote_padrao else item.QUANTIDADE_COMERCIAL end  as exemplaresPacote , ")
+            .append(" case when  pe.pacote_padrao > 0 then  item.QUANTIDADE_COMERCIAL mod pe.pacote_padrao else  0 end  as qtdExemplaresIrregular, ")
 			 .append(" 1 as indiceVolume ")
 			 .append(" from nota_fiscal_produto_servico item ")
 			 .append(" inner join produto_edicao pe on  item.produto_edicao_id = pe.id ")

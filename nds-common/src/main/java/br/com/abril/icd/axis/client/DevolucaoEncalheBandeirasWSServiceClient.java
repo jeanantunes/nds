@@ -29,7 +29,7 @@ public class DevolucaoEncalheBandeirasWSServiceClient {
         br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSSoapBindingStub devolucaoEncalheBandeirasWS;
         try {
         	devolucaoEncalheBandeirasWS = (br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSSoapBindingStub)
-                          new br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceLocator(homolog).getDevolucaoEncalheBandeirasWS();
+                          new br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceLocator().getDevolucaoEncalheBandeirasWS(homolog);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
