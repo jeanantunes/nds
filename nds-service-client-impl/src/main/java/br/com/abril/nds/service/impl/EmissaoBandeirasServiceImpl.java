@@ -194,7 +194,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 				listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, 
 						j+ " / "+ 
 				bandeira.getVolumes().intValue(), 
-				Integer.valueOf(bandeira.getSemanaRecolhimento()), datasEnvio[j], 
+				Integer.valueOf(bandeira.getSemanaRecolhimento()), datasEnvio[0], 
 				editor,  
 				bandeira.getChaveNFe(), 
 				destino,
