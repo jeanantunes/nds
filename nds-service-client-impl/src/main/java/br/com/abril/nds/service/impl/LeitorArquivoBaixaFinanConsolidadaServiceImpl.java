@@ -64,8 +64,8 @@ public class LeitorArquivoBaixaFinanConsolidadaServiceImpl implements LeitorArqu
 				baixa.setCodJornaleiro(Integer.parseInt(baixaConsolidada.obterCodJornaleiro(linha)));
 				baixa.setDataVencimento(DateUtil.parseDataPTBR(baixaConsolidada.obterDataVencimentoBoleto(linha)));
 				baixa.setDataPagamento(DateUtil.parseDataPTBR(baixaConsolidada.obterDataPagamentoBoleto(linha)));
-				baixa.setValorDoBoleto(BigDecimal.valueOf(Double.parseDouble(baixaConsolidada.obterValorBoleto(linha))));
-				baixa.setValorPago(BigDecimal.valueOf(Double.parseDouble(baixaConsolidada.obterValorPago(linha))));
+				baixa.setValorDoBoleto(BigDecimal.valueOf(Double.parseDouble(baixaConsolidada.obterValorBoleto(linha))/100.0));
+				baixa.setValorPago(BigDecimal.valueOf(Double.parseDouble(baixaConsolidada.obterValorPago(linha))/100.0));
 				baixa.setNossoNumeroConsolidado(baixaConsolidada.obterNossoNumeroConsolidado(linha));
 
 				baixas.add(baixa);
