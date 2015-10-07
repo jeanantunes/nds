@@ -1462,11 +1462,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		sql.append(" codigoProduto  = :codigoProduto ");
 		
-		sql.append(" AND numeroEdicao = :numeroEdicao ");
+		sql.append(" AND numeroEdicao = :numeroEdicao  order by id desc");
 		
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setMaxResults(1);
 
 		return (DestinoEncalhe) query.uniqueResult();
 		

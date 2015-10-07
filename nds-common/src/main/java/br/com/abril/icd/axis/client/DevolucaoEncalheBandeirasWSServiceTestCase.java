@@ -21,7 +21,7 @@ public class DevolucaoEncalheBandeirasWSServiceTestCase  {
         br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSSoapBindingStub binding;
         try {
             binding = (br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSSoapBindingStub)
-                          new br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceLocator().getDevolucaoEncalheBandeirasWS();
+                          new br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceLocator().getDevolucaoEncalheBandeirasWS(true);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -46,7 +46,7 @@ public class DevolucaoEncalheBandeirasWSServiceTestCase  {
         br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSSoapBindingStub devolucaoEncalheBandeirasWS;
         try {
         	devolucaoEncalheBandeirasWS = (br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSSoapBindingStub)
-                          new br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceLocator().getDevolucaoEncalheBandeirasWS();
+                          new br.com.abril.icd.axis.client.DevolucaoEncalheBandeirasWSServiceLocator().getDevolucaoEncalheBandeirasWS(true);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
