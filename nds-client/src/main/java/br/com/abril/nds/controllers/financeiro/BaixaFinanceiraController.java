@@ -237,17 +237,17 @@ public class BaixaFinanceiraController extends BaseController {
 				cobranca = cobrancaService.obterCobrancaPorNossoNumeroConsolidado(baixaBancaria.getNossoNumeroConsolidado());
 				if ( cobranca == null ) {
 					if (  baixaBancaria.getValorDoBoleto().doubleValue() > 0.0 ) {
-						LOGGER.warn("COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. nosso numero:"+
+						LOGGER.warn("Cobranca nao encontrada pelo nosso numero consolidado. nosso numero:"+
 					             baixaBancaria.getNossoNumeroConsolidado());
-						 msg.append("</br>"+"COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. NOSSO_NUMERO:"+
+						 msg.append("</br>"+"Cobranca nao encontrada pelo nosso numero consolidado. NOSSO_NUMERO:"+
 					             baixaBancaria.getNossoNumeroConsolidado()+"  valor:"+ baixaBancaria.getValorDoBoleto()+" cota:"+baixaBancaria.getCodJornaleiro());
 						 continue;
 					   }
 					   else 
 					   {
-						   LOGGER.warn("COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. MAS VALOR DO BOLETO IGUAL OU MENOR QUE ZERO.Pulando boleto nosso numero:"+
+						   LOGGER.warn("Cobranca nao encontrada pelo nosso numero consolidado.Valor zero. NOSSO NUMERO:"+
 					             baixaBancaria.getNossoNumeroConsolidado());
-						   msg.append("</br>"+"COBRANA NAO ENCONTRANDA PARA NOSSO NUMERO CONSOLIDADO. MAS VALOR DO BOLETO IGUAL OU MENOR QUE ZERO.Desconsiderando Boleto. NOSSO NUMERO:"+
+						   msg.append("</br>"+"Cobranca nao encontrada mas valor menor ou igual a zero.Desconsiderando Boleto. NOSSO NUMERO:"+
 					             baixaBancaria.getNossoNumeroConsolidado()+"  valor:" + baixaBancaria.getValorDoBoleto());
 					       continue;
 					   }
