@@ -417,8 +417,24 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
 		}
 		
-		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataLimiteLancamento);
+		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, null);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Lancamento obterLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		if (idCota == null || Long.valueOf(0).equals(idCota)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
+		}
+		
+		return lancamentoRepository.obterLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataLimiteLancamento);
+	}
+	
 	
 	@Override
 	@Transactional(readOnly=true)

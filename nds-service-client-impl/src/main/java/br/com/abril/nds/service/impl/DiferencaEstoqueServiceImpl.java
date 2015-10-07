@@ -1722,7 +1722,7 @@ TipoMensagem.WARNING, "Não há dados para impressão nesta data");
         
         Lancamento lancamento = null;
         
-        lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+        lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), null);
         
         if(lancamento != null && !TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
                 && Arrays.asList(
