@@ -164,7 +164,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		Long idCota = cota == null ? null : cota.getId();
-		Lancamento lancamento = lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, distribuidorRepository.obterDataOperacaoDistribuidor());
+		Lancamento lancamento = lancamentoService.obterUltimoReparteLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		return movimentoEstoqueCotaRepository.obterQuantidadeProdutoEdicaoMovimentadoPorCota(idCota, idProdutoEdicao, lancamento);
 	}
