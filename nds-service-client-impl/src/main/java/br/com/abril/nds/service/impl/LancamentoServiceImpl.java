@@ -407,6 +407,21 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public Lancamento obterUltimoReparteLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		if (idCota == null || Long.valueOf(0).equals(idCota)) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
+		}
+		
+		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota, dataLimiteLancamento);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento) {

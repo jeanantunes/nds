@@ -152,6 +152,8 @@ public interface LancamentoService {
 
 	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota, Date dataLimiteLancamento);
 	
+	Lancamento obterUltimoReparteLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota, Date dataLimiteLancamento);
+	
 	Date getMaiorDataLancamento(Long idProdutoEdicao);
 	
 	Lancamento obterLancamentoNaMesmaSessao(Long id);
