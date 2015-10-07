@@ -898,6 +898,47 @@ public class LancamentoRepositoryImpl extends
 		return (lancamento != null) ? (Lancamento) lancamento : null;
 	}
 
+	@Override
+	public Lancamento obterLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota, Date dataLimiteLancamento) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+				.append(" from MovimentoEstoqueCota mec ")
+				.append(" join mec.produtoEdicao.lancamentos lancamento ")
+				.append(" join mec.cota cota ")
+				.append(" where lancamento.dataLancamentoDistribuidor = ")
+				.append(" (")
+				.append("   select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+				.append("   from MovimentoEstoqueCota mecMaxDate ")
+				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
+				.append("   join mecMaxDate.cota cotaMaxDate ")
+				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+		
+		if(dataLimiteLancamento != null) {
+				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
+		}
+		
+		hql.append(" ) ")
+		.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ")
+		.append(" and cota.id = :idCota ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(dataLimiteLancamento != null) {
+			query.setParameter("dataLimiteLancamento", dataLimiteLancamento);
+		}
+
+		query.setParameter("idCota", idCota);
+		
+		query.setMaxResults(1);
+
+		Object lancamento = query.uniqueResult();
+
+		return (lancamento != null) ? (Lancamento) lancamento : null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {

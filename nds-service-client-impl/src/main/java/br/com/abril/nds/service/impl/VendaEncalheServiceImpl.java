@@ -1482,7 +1482,15 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 						throw new ValidacaoException(TipoMensagem.WARNING, "Esse produto encontra-se com o status {"+ l.getStatus() +"}. A venda não pode ser efetivada.");
 					} else if(produtoEdicao.isParcial()) {
 						
-						Lancamento lancAtual = lancamentoService.obterUltimoLancamentoDaEdicao(produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+						Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+						
+						Lancamento lancAtual = lancamentoService.obterLancamentoDaEdicaoParaCota(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor());
+						
+						if(lancAtual == null ){
+							
+							throw new ValidacaoException(TipoMensagem.WARNING, "A cota não recebeu reparte no lançamento. A venda não pode ser efetivada.");
+						}
+						
 						if(l.getDataLancamentoDistribuidor().compareTo(lancAtual.getDataLancamentoDistribuidor()) <= 0) {
 							
 							if(!TipoLancamento.REDISTRIBUICAO.equals(l.getTipoLancamento()) && !statusLancamentos.contains(l.getStatus())) {
