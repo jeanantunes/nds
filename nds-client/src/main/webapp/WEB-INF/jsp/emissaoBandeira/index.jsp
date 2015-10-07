@@ -89,22 +89,32 @@
       <fieldset class="classFieldset fieldFiltroItensNaoBloqueados">
    	    <legend> Consulta Bandeira</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-  <tr>
-    <td width="52">Semana:</td>
-    <td width="178">
-    	<input type="text" maxlength="6" name="emissaoBandeiras-numeroSemana" id="emissaoBandeiras-numeroSemana" />
-    </td>
-    <td width="52">Fornecedor:</td>
-    <td width="200">
-    	<select id="fornecedor" style="width:100px;">
-    		<c:forEach items="${fornecedores}" var="fornecedor">
-    			<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
-    		</c:forEach>
-    	</select>
-    </td>
-    <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="emissaoBandeiraController.pesquisar();">Pesquisar</a></span></td>
-    </tr>
-  </table>
+		  <tr>
+		    <td width="60">Data Emiss&atilde;o:</td>
+		    <td width="178">
+		    	<input type="text" maxlength="6" name="emissaoBandeiras-dataEmissao" id="emissaoBandeiras-dataEmissao" />
+		    </td>
+		    <td width="52">Fornecedor:</td>
+		    <td width="200" colspan="2">
+		    	<select id="fornecedor" style="width:100px;">
+		    		<c:forEach items="${fornecedores}" var="fornecedor">
+		    			<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+		    		</c:forEach>
+		    	</select>
+		    </td>
+		    
+		  </tr>
+		  <tr>
+		    <td width="60">Numero da Nota De:</td>
+		    <td width="178" colspan="2">
+		    	<input type="text" maxlength="6" name="emissaoBandeiras-numero-nota-de" id="emissaoBandeiras-numero-nota-de" />
+		    	 At&eacute;
+		    	<input type="text" maxlength="6" name="emissaoBandeiras-numero-nota-ate" id="emissaoBandeiras-numero-nota-ate" />
+		    </td>
+		    
+		    <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="emissaoBandeiraController.pesquisar();">Pesquisar</a></span></td>
+		  </tr>
+  		</table>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>

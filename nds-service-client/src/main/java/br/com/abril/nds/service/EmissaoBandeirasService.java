@@ -6,8 +6,6 @@ import java.util.List;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-
-
 /**
  * Interface de serviços referentes a serviços de chamadade encalhe. 
  *   
@@ -16,11 +14,13 @@ import br.com.abril.nds.vo.PaginacaoVO;
  */
 public interface EmissaoBandeirasService {
 
-	Long countObterBandeirasDaSemana(Integer semana, Long fornecedor);
+	Long countObterBandeirasDaSemana(Date dataEmissao, Long fornecedor);
 
-	List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, Long fornecedor, PaginacaoVO paginacaoVO);
+	List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO);
 	
-	byte[] imprimirBandeira(Integer semana, Long forncedor, Date[] dataEnvio, Integer[] numeroPallets,Integer[] numero,Integer[] serie) throws Exception;
+	List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO, boolean bandeiraGerada);
+	
+	byte[] imprimirBandeira(Date dataEmissao, Long forncedor, Date[] dataEnvio, Integer[] numeroPallets,Integer[] numero,Integer[] serie, String numeroNotaDe, String numeroNotaAte) throws Exception;
 	
 	byte[] imprimirBandeiraManual(String semana, Integer numeroPallets,String fornecedor,
 			String praca, String canal, String dataEnvio, String titulo) throws Exception;

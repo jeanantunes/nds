@@ -2,7 +2,11 @@ var anoSemanaPesquisa;
 var emissaoBandeiraController = $.extend(true, {
 	
 	init : function() {
+		
 		this.iniciarGrid();
+		
+		this.initFiltroDatas();
+		
 		$("#emissaoBandeiras-numeroSemana", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
 		
@@ -13,6 +17,13 @@ var emissaoBandeiraController = $.extend(true, {
 		});
 		$("#dataEnvio", this.workspace).mask("99/99/9999");
 		
+		$("#emissaoBandeiras-dataEmissao", this.workspac ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$("#emissaoBandeiras-dataEmissao", this.workspace).mask("99/99/9999");
+		
 		$(".bt_arq",this.workspace).hide();
 				
 	},
@@ -21,6 +32,16 @@ var emissaoBandeiraController = $.extend(true, {
 		$("#dataEnvioManual", emissaoBandeiraController.workspace).mask("99/99/9999");
 	},
 	
+	initFiltroDatas : function(){
+		
+	    $.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor',
+				null, 
+				function(result) {
+					
+					$("#emissaoBandeiras-dataEmissao", this.workspace).val(result);
+		        }
+		); 
+	},
 	
 	iniciarGrid : function() {
 		
@@ -88,13 +109,17 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	pesquisar : function() {
 		
-		emissaoBandeiraController.anoSemanaPesquisa = $("#emissaoBandeiras-numeroSemana", this.workspace).val();
+		emissaoBandeiraController.dataEmissao = $("#emissaoBandeiras-dataEmissao", this.workspace).val();
 		emissaoBandeiraController.fornecedor = $("#fornecedor", this.workspace).val();
+		emissaoBandeiraController.numeroNotaDe = $("#emissaoBandeiras-numero-nota-de", this.workspace).val();
+		emissaoBandeiraController.numeroNotaAte = $("#emissaoBandeiras-numero-nota-ate", this.workspace).val();
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: [{name:'anoSemana', value:emissaoBandeiraController.anoSemanaPesquisa},
-			         {name:'fornecedor', value:emissaoBandeiraController.fornecedor}] 
+			params: [{name:'dataEmissao', value:emissaoBandeiraController.dataEmissao},
+			         {name:'fornecedor', value:emissaoBandeiraController.fornecedor},
+					 {name:'numeroNotaDe', value:emissaoBandeiraController.numeroNotaDe},
+					 {name:'numeroNotaAte', value:emissaoBandeiraController.numeroNotaAte}] 
 		   ,
 			newp: 1
 		});
@@ -120,12 +145,12 @@ var emissaoBandeiraController = $.extend(true, {
         	 
         	 if(resultado && resultado.rows) {
  
- for(var index in resultado.rows) {
- resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" />';
- resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" />';
- resultado.rows[index].cell["dataSaida"] = '<input value="'+ resultado.rows[index].cell["dataSaida"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
- resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'') +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
- }
+        		 for(var index in resultado.rows) {
+        			 resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" />';
+        			 resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" />';
+        			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ resultado.rows[index].cell["dataSaida"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
+        			 resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'') +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
+        		 }
         		 
         	 }
         	 
@@ -154,7 +179,8 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		var liberaImpressaoBandeira = true;
 		var params = [];
-		params.push({'name': 'anoSemana', 'value': emissaoBandeiraController.anoSemanaPesquisa});
+		
+		params.push({'name': 'dataEmissao', 'value': emissaoBandeiraController.dataEmissao});
 		params.push({'name': 'fornecedor', 'value': emissaoBandeiraController.fornecedor});
 		
 		$.each($('input[name="emissaoBandeiras-dataSaida"]'), function(k, v) {
@@ -167,11 +193,7 @@ var emissaoBandeiraController = $.extend(true, {
 		});
 		
 		$.each($('input[name="emissaoBandeiras-volumes"]'), function(k, v) {
-			if(typeof(v.value) == 'undefined' || '' == v.value || v.value < 1) {
-				exibirMensagem('WARNING', ['Valor incorreto para a impressão dos volumes.']);
-				liberaImpressaoBandeira = false;
-				return false;
-			}
+			
 			params.push({'name': 'numeroPallets[]', 'value': v.value});
 		});
 		
@@ -192,6 +214,8 @@ var emissaoBandeiraController = $.extend(true, {
 			params.push({'name': 'serie[]', 'value': v.value});
 		});
 		
+		params.push({'name': 'numeroNotaDe', 'value': emissaoBandeiraController.numeroNotaDe});
+		params.push({'name': 'numeroNotaAte', 'value': emissaoBandeiraController.numeroNotaAte});
 		
 		if(liberaImpressaoBandeira) {
 			
@@ -200,40 +224,6 @@ var emissaoBandeiraController = $.extend(true, {
 				data : params
 			});
 		}
-		/*
-		var _this = this;
-		
-		$("#dialog-pallets", _this.workspace).dialog({
-			resizable: false,
-			height:'auto',
-			width:'auto',
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					
-					var	nrPallets = $.trim($("#numeroPallets", _this.workspace).val()),
-						dtEnvio = $("#dataEnvio", _this.workspace).val();
-					
-					if (!nrPallets || !dtEnvio){
-						
-						exibirMensagem('WARNING', ['Número de Pallets e Data de Envio são obrigatórios.']);
-						return;
-					}
-					
-					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?anoSemana=" + 
-					emissaoBandeiraController.anoSemanaPesquisa+ 
-					"&fornecedor=" + emissaoBandeiraController.fornecedor+
-					"&numeroPallets=" + nrPallets +
-					"&dataEnvio=" + dtEnvio;
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			form: $("#dialog-pallets", _this.workspace).parents("form")
-		});
-		*/
 		
 		return false;
 	},

@@ -51,6 +51,8 @@ public class BandeirasDTO implements Serializable{
 	@Export(label="Data", alignment=Export.Alignment.LEFT, exhibitionOrder=1)
 	private Date data;
 	
+	private String semanaRecolhimento;
+	
 	public BandeirasDTO() {
 		super();
 	}
@@ -184,5 +186,13 @@ public class BandeirasDTO implements Serializable{
 
 	public void setData(Date data) {
 		this.data = data;
-	}	
+	}
+
+	public String getSemanaRecolhimento() {
+		return semanaRecolhimento;
+	}
+
+	public void setSemanaRecolhimento(String semanaRecolhimento) {
+		this.semanaRecolhimento = semanaRecolhimento;
+	}
 }
