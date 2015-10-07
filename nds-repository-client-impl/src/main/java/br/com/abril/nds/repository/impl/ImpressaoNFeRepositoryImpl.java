@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.BandeirasDTO;
-import br.com.abril.nds.dto.FormaCobrancaFornecedorDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroNFe;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -821,6 +821,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
 		
+		// Data numeroNotaDe:	...  Até   ...
+		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
+			query.setParameter("numeroNotaDe", filtro.getNumeroNotaDe());
+			query.setParameter("numeroNotaAte", filtro.getNumeroNotaAte());
+		}
+		
 		query.setResultTransformer(Transformers.aliasToBean(BandeirasDTO.class));
 		
 		return query.list();
@@ -835,10 +841,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append(" nf.serie as serieNotaFiscal,                                                                 ")
 		.append(" nf.chave_acesso as chaveNFe,                                                                 ")
 		.append(" de.nome_destino_dde as destino,                                                              ")
-		.append(" e.codigo as  codigoEditor,                                                                   ")
+		.append(" e.codigo as codigoEditor,                                                                    ")
 		.append(" de.NOME_EDITOR as nomeEditor,                                                                ")
 		.append(" nf.qtd_volume_pallet as volumes,                                                             ")
-		.append(" DATE_ADD(NOW(), INTERVAL 1 DAY) as dataSaida                                                 ")
+		.append(" DATE_ADD(NOW(), INTERVAL 1 DAY) as dataSaida,                                                ")
+		.append(" de.semana_recolhimento as semanaRecolhimento                                                 ")
 		.append(" FROM NOTA_FISCAL_NOVO nf                                                                     ")
 		.append(" INNER JOIN NOTA_FISCAL_PRODUTO_SERVICO item on item.NOTA_FISCAL_ID = nf.ID                   ")
 		.append(" INNER JOIN PRODUTO_EDICAO pe on item.produto_edicao_id = pe.id                               ")
@@ -847,6 +854,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append(" INNER JOIN EDITOR e on p.EDITOR_ID = e.ID                                                    ")
 		.append(" INNER JOIN PESSOA pessoa on e.juridica_id = pessoa.id                                        ")
 		.append(" where 1=1 and nf.status_retornado = :statusNFe                                               ");
+		
+		if(filtro.isBandGerado()) {			
+			hql.append(" AND nf.qtd_volume_pallet > 0                                                          ");
+		}
+		
 		
 		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao() > 0) {			
 			hql.append(" AND nf.natureza_operacao_id in (select nat.id from NATUREZA_OPERACAO_TIPO_MOVIMENTO notp  ")
@@ -862,6 +874,14 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		if(filtro.getIdsFornecedores() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
+		
+		// Data Emissão:		
+		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
+			hql.append("AND nf.NUMERO_DOCUMENTO_FISCAL BETWEEN :numeroNotaDe and :numeroNotaAte  ");
+		}
+		
+		// hql.append(" AND nf.bandeira_gerado = :isBandGerado ");
+		
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		hql.append(" GROUP BY e.codigo, nf.numero_Documento_Fiscal, nf.serie ");
 		

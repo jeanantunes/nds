@@ -43,9 +43,7 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -78,15 +76,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	
 	@Override
 	@Transactional
-	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, Long fornecedor, PaginacaoVO paginacaoVO) {
-		
-		Intervalo<Date> periodoRecolhimento = null;
-		
-		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana);
-		} catch (IllegalArgumentException e) {
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
-		}
+	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE;
 		TipoMovimento tipoMovimento = tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
@@ -94,37 +84,64 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 		TipoDestinatario tipoDestinatario = TipoDestinatario.FORNECEDOR;
 		TipoEmitente tipoEmitente = TipoEmitente.DISTRIBUIDOR;
 		TipoOperacao tipoOperacao = TipoOperacao.SAIDA;
+		
 		NaturezaOperacao naturezaOperacao = naturezaOperacaoService.obterNaturezaOperacaoPor(tipoAtividade, tipoDestinatario, tipoEmitente, tipoOperacao, tipoMovimento);
+		
 		if(naturezaOperacao == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter a Natureza de Operação.");
 		}
+		
 		FiltroImpressaoNFEDTO filtroNFE = new FiltroImpressaoNFEDTO();
-		filtroNFE.setDataEmissaoInicial(periodoRecolhimento.getDe());
-		filtroNFE.setDataEmissaoFinal(periodoRecolhimento.getAte());
+		filtroNFE.setDataEmissaoInicial(dataEmissao);
+		filtroNFE.setDataEmissaoFinal(dataEmissao);
 		filtroNFE.setIdNaturezaOperacao(naturezaOperacao.getId());
 		filtroNFE.setNaturezaOperacao(naturezaOperacao);
-				
+		filtroNFE.setNumeroNotaDe(numeroNotaDe);
+		filtroNFE.setNumeroNotaAte(numeroNotaAte);
+		
 		return impressaoNFeRepository.obterNotafiscalImpressaoBandeira(filtroNFE);
 	}
 	
 	@Override
 	@Transactional
-	public Long countObterBandeirasDaSemana(Integer semana, Long fornecedor) {
+	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO, boolean bandeiraGerada) {
 		
-		Intervalo<Date> periodoRecolhimento = null;
+		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE;
+		TipoMovimento tipoMovimento = tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+		TipoAtividade tipoAtividade = distribuidorService.obter().getTipoAtividade();
+		TipoDestinatario tipoDestinatario = TipoDestinatario.FORNECEDOR;
+		TipoEmitente tipoEmitente = TipoEmitente.DISTRIBUIDOR;
+		TipoOperacao tipoOperacao = TipoOperacao.SAIDA;
 		
-		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana);
-		} catch (IllegalArgumentException e) {
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		NaturezaOperacao naturezaOperacao = naturezaOperacaoService.obterNaturezaOperacaoPor(tipoAtividade, tipoDestinatario, tipoEmitente, tipoOperacao, tipoMovimento);
+		
+		if(naturezaOperacao == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter a Natureza de Operação.");
 		}
-
+		
+		FiltroImpressaoNFEDTO filtroNFE = new FiltroImpressaoNFEDTO();
+		filtroNFE.setDataEmissaoInicial(dataEmissao);
+		filtroNFE.setDataEmissaoFinal(dataEmissao);
+		filtroNFE.setIdNaturezaOperacao(naturezaOperacao.getId());
+		filtroNFE.setNaturezaOperacao(naturezaOperacao);
+		filtroNFE.setNumeroNotaDe(numeroNotaDe);
+		filtroNFE.setNumeroNotaAte(numeroNotaAte);
+		filtroNFE.setBandGerado(bandeiraGerada);
+		
+		return impressaoNFeRepository.obterNotafiscalImpressaoBandeira(filtroNFE);
+	}
+	
+	@Override
+	@Transactional
+	public Long countObterBandeirasDaSemana(Date dataEmissao, Long fornecedor) {
+		
+		
 		return 1l;
 	}
 	
 	@Override
 	@Transactional
-	public byte[] imprimirBandeira(Integer semana, Long fornecedorId, Date[] datasEnvio, Integer[] numeroPallets,Integer[] notas,Integer[] series) throws Exception {
+	public byte[] imprimirBandeira(Date dataEmissao, Long fornecedorId, Date[] datasEnvio, Integer[] numeroPallets,Integer[] notas,Integer[] series, String numeroNotaDe, String numeroNotaAte) throws Exception {
 		
 		if(datasEnvio == null || datasEnvio.length < 1) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data(s) de Envio inválida(s).");
@@ -137,7 +154,6 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 		if(numeroPallets.length != datasEnvio.length) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número(s) de Pallets e Datas inválido(s).");
 		}
-		
 		
 		Fornecedor f = fornecedorRepository.buscarPorId(fornecedorId);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
@@ -161,10 +177,14 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			Integer nota = notas[i];
 			Integer serie = series[i];
 			Integer qtd = numeroPallets[i];
-			ftfRepository.atualizarQtdVolumePallet( nota, serie,  qtd) ;
+			
+			if(qtd != null && qtd > 0) {				
+				ftfRepository.atualizarQtdVolumePallet( nota, serie,  qtd) ;
+			}
+			
 		}
 		
-		List<BandeirasDTO> bandeiras = this.obterBandeirasDaSemana(semana, fornecedorId, null);
+		List<BandeirasDTO> bandeiras = this.obterBandeirasDaSemana(dataEmissao, fornecedorId, numeroNotaDe, numeroNotaAte, null, true);
 		
 		for(BandeirasDTO bandeira : bandeiras) {
 
@@ -174,7 +194,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 				listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, 
 						j+ " / "+ 
 				bandeira.getVolumes().intValue(), 
-				semana, datasEnvio[j], 
+				Integer.valueOf(bandeira.getSemanaRecolhimento()), datasEnvio[j], 
 				editor,  
 				bandeira.getChaveNFe(), 
 				destino,

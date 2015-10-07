@@ -63,6 +63,12 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private NaturezaOperacao naturezaOperacao;
 	
+	private boolean bandGerado;
+	
+	private String numeroNotaDe;
+	
+	private String numeroNotaAte;
+	
 	public enum ColunaOrdenacaoImpressaoNFE {
 
 		COTA("cota");
@@ -387,4 +393,29 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
 		this.naturezaOperacao = naturezaOperacao;
 	}
+
+	public boolean isBandGerado() {
+		return bandGerado;
+	}
+
+	public void setBandGerado(boolean bandGerado) {
+		this.bandGerado = bandGerado;
+	}
+
+	public String getNumeroNotaDe() {
+		return numeroNotaDe;
+	}
+
+	public void setNumeroNotaDe(String numeroNotaDe) {
+		this.numeroNotaDe = numeroNotaDe;
+	}
+
+	public String getNumeroNotaAte() {
+		return numeroNotaAte;
+	}
+
+	public void setNumeroNotaAte(String numeroNotaAte) {
+		this.numeroNotaAte = numeroNotaAte;
+	}
+	
 }

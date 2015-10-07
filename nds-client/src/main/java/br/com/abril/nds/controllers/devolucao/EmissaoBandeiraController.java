@@ -60,21 +60,21 @@ public class EmissaoBandeiraController extends BaseController {
 	}
 	
 	@Path("/pesquisar")
-	public void pesquisar(Integer anoSemana, Long fornecedor, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, String sortname, String sortorder, int rp, int page) {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
-		if(anoSemana == null || anoSemana < 2000) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Favor preencher o Ano/Semana.");
+		if(dataEmissao == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Favor preencher o Data de Emissao.");
 		}
 		
-		int total = emissaoBandeirasService.countObterBandeirasDaSemana(anoSemana, fornecedor).intValue();
+		int total = emissaoBandeirasService.countObterBandeirasDaSemana(dataEmissao, fornecedor).intValue();
 		
 		if (total <= 0 ) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-		    List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(anoSemana, fornecedor, paginacaoVO); 
+		    List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(dataEmissao, fornecedor, numeroNotaDe, numeroNotaAte, paginacaoVO); 
 			this.result.use(FlexiGridJson.class)
 				.from(listaBandeiraDTO)
 				.total(total)
@@ -84,9 +84,9 @@ public class EmissaoBandeiraController extends BaseController {
 
 	@Get
 	@Path("/imprimirArquivo")
-	public void imprimirArquivo(Integer anoSemana, Long fornecedor, String sortname, String sortorder, int rp, int page, FileType fileType) {
+	public void imprimirArquivo(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, String sortname, String sortorder, int rp, int page, FileType fileType) {
 	
-		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(anoSemana, fornecedor, null);
+		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(dataEmissao, fornecedor, numeroNotaDe, numeroNotaAte, null);
 		
 		if (listaBandeiraDTO != null && !listaBandeiraDTO.isEmpty()) {
 			try {
@@ -103,12 +103,12 @@ public class EmissaoBandeiraController extends BaseController {
 	}
 	
 	@Post
-	public void imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets[], Date dataEnvio[],
-			 Integer nota[], Integer serie[]) throws Exception {
+	public void imprimirBandeira(Date dataEmissao, Long fornecedor, Integer numeroPallets[], Date dataEnvio[],
+			 Integer nota[], Integer serie[], String numeroNotaDe, String numeroNotaAte) throws Exception {
 
-		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(anoSemana, fornecedor, dataEnvio, numeroPallets,nota,serie);
+		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(dataEmissao, fornecedor, dataEnvio, numeroPallets,nota,serie, numeroNotaDe, numeroNotaAte);
 		
-		this.escreverArquivoParaResponse(comprovate, "bandeira_" + anoSemana);
+		this.escreverArquivoParaResponse(comprovate, "bandeira_" + dataEmissao);
 	}
 	
 	@Path("/bandeiraManual")
