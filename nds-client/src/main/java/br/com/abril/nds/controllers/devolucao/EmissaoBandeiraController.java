@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.sun.xml.wss.util.DateUtils;
+
+import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BandeirasDTO;
@@ -108,7 +111,8 @@ public class EmissaoBandeiraController extends BaseController {
 
 		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(dataEmissao, fornecedor, dataEnvio, numeroPallets,nota,serie, numeroNotaDe, numeroNotaAte);
 		
-		this.escreverArquivoParaResponse(comprovate, "bandeira_" + dataEmissao);
+		this.escreverArquivoParaResponse(comprovate, "bandeira_" + DateUtil.formatarData(dataEmissao, "ddMMyyyyHHmm"));
+		
 	}
 	
 	@Path("/bandeiraManual")
