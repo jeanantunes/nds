@@ -178,7 +178,7 @@
 				<text><![CDATA[Chave NF-e:]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement uuid="677a7264-76e9-4d7c-b306-9f3b308a597d" x="84" y="740" width="426" height="70"/>
+				<reportElement uuid="677a7264-76e9-4d7c-b306-9f3b308a597d" x="114" y="740" width="426" height="70"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128C" drawText="false" checksumRequired="false" barHeight="80">
 					<jr:codeExpression><![CDATA[$F{chaveNFe}]]></jr:codeExpression>
 				</jr:barbecue>
