@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.ftf.envio;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.ftfutil.FTFBaseDTO;
 import br.com.abril.nds.ftfutil.FTFfield;
 import br.com.abril.nds.model.ftf.FTFCommons;
@@ -43,6 +45,7 @@ public class FTFEnvTipoRegistro09 extends FTFBaseDTO implements FTFCommons{
 	}
 
 	public void setQtdePedidos(String qtdePedidos) {
+		qtdePedidos = qtdePedidos != null ? StringUtils.leftPad(qtdePedidos, 14, '0') : StringUtils.leftPad(qtdePedidos, 14, '0');
 		this.qtdePedidos = qtdePedidos;
 	}
 
@@ -51,6 +54,7 @@ public class FTFEnvTipoRegistro09 extends FTFBaseDTO implements FTFCommons{
 	}
 
 	public void setQtdeRegistros(String qtdeRegistros) {
+		qtdeRegistros = qtdeRegistros != null ? StringUtils.leftPad(qtdeRegistros, 14, '0') : StringUtils.leftPad(qtdeRegistros, 14, '0');
 		this.qtdeRegistros = qtdeRegistros;
 	}
 

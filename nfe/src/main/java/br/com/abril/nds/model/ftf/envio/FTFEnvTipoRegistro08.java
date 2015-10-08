@@ -179,6 +179,7 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setNomePais(String nomePais) {
+		nomePais = nomePais != null ? StringUtils.leftPad(nomePais, 30, "") : StringUtils.leftPad("", 30, "");
 		this.nomePais = nomePais;
 	}
 
@@ -233,7 +234,8 @@ public class FTFEnvTipoRegistro08 extends FTFBaseDTO implements FTFCommons {
 	
 	@Override
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 11, '0') : StringUtils.leftPad("", 11, '0');
+		this.codLocal = codLocal;
+		//this.codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 11, "") : StringUtils.leftPad("", 11, '0');
 	}
 
 	@Override

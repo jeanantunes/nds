@@ -359,6 +359,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCpfCnpjDestinatario(String cpfCnpjDestinatario) {
+		cpfCnpjDestinatario = cpfCnpjDestinatario != null ? StringUtils.leftPad(cpfCnpjDestinatario, 14, "") : StringUtils.leftPad("", 14, "");
 		this.cpfCnpjDestinatario = cpfCnpjDestinatario;
 	}
 
@@ -552,7 +553,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setQuantidadeVolumes(String quantidadeVolumes) {
-		this.quantidadeVolumes = quantidadeVolumes;
+		this.quantidadeVolumes = StringUtils.leftPad(quantidadeVolumes, 4, "0");
 	}
 
 	public String getPesoLiquido() {
@@ -560,7 +561,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setPesoLiquido(String pesoLiquido) {
-		this.pesoLiquido = (pesoLiquido != null && !"0".equals(pesoLiquido)) ? pesoLiquido : "" ;
+		this.pesoLiquido = pesoLiquido != null ? StringUtils.leftPad(pesoLiquido, 10, "0") : StringUtils.leftPad(pesoLiquido, 10, "0");
 	}
 
 	public String getPesoBruto() {
@@ -568,7 +569,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setPesoBruto(String pesoBruto) {
-		this.pesoBruto = pesoBruto;
+		this.pesoBruto = pesoBruto != null ? StringUtils.leftPad(pesoBruto, 10, "0") : StringUtils.leftPad(pesoBruto, 10, "0");
 	}
 
 	public String getDataSaida() {
@@ -805,7 +806,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setPercentualDescontoFidelidade(String percentualDescontoFidelidade) {
-		this.percentualDescontoFidelidade = percentualDescontoFidelidade;
+		this.percentualDescontoFidelidade = percentualDescontoFidelidade != null ? StringUtils.leftPad(percentualDescontoFidelidade, 5, "") : StringUtils.leftPad(percentualDescontoFidelidade, 5, "");
 	}
 
 	public String getPracaEntrega() {
@@ -821,7 +822,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodAssinanteCdms(String codAssinanteCdms) {
-		this.codAssinanteCdms = codAssinanteCdms;
+		this.codAssinanteCdms = codAssinanteCdms != null ? StringUtils.leftPad(codAssinanteCdms, 9, "") : StringUtils.leftPad(codAssinanteCdms, 9, "");
 	}
 
 	public String getCodProjetoSize3() {
@@ -829,7 +830,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodProjetoSize3(String codProjetoSize3) {
-		this.codProjetoSize3 = codProjetoSize3;
+		this.codProjetoSize3 = codProjetoSize3 != null ? StringUtils.leftPad(codProjetoSize3, 3, "") : StringUtils.leftPad(codProjetoSize3, 3, "");
 	}
 
 	public String getNumAssinatura() {
@@ -837,7 +838,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setNumAssinatura(String numAssinatura) {
-		this.numAssinatura = numAssinatura;
+		this.numAssinatura = numAssinatura != null ? StringUtils.leftPad(numAssinatura, 3, "") : StringUtils.leftPad(numAssinatura, 3, "");
 	}
 
 	public String getCpfCnpjEstabelecimentoColeta() {
@@ -957,7 +958,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodViagem(String codViagem) {
-		this.codViagem = codViagem;
+		this.codViagem = codViagem != null ? StringUtils.leftPad(codViagem, 9, "") : StringUtils.leftPad(codViagem, 9, "");
 	}
 
 	public String getCodFaturaAssociada() {
@@ -965,7 +966,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodFaturaAssociada(String codFaturaAssociada) {
-		this.codFaturaAssociada = codFaturaAssociada;
+		this.codFaturaAssociada = codFaturaAssociada != null ? StringUtils.leftPad(codFaturaAssociada, 12, "") : StringUtils.leftPad(codFaturaAssociada, 12, "");
 	}
 	
 	public String getCodigoCentroEmissor() {
@@ -990,7 +991,8 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 11, '0') : StringUtils.leftPad("", 11, '0');
+		this.codLocal = codLocal;
+		// this.codLocal = codLocal != null ? StringUtils.leftPad(codLocal, 11, '0') : StringUtils.leftPad("", 11, '0');
 	}
 
 	public String getTipoPedido() {
@@ -1031,7 +1033,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoCGLServicoPrestado(String codigoCGLServicoPrestado) {
-		this.codigoCGLServicoPrestado = codigoCGLServicoPrestado;
+		this.codigoCGLServicoPrestado = codigoCGLServicoPrestado != null ? StringUtils.leftPad(codigoCGLServicoPrestado, 10, "") : StringUtils.leftPad(codigoCGLServicoPrestado, 10, "");
 	}
 
 	public String getDataInicioPrestacaoServicoIntangivel() {
@@ -1057,7 +1059,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setModoPrestacaoServico(String modoPrestacaoServico) {
-		this.modoPrestacaoServico = modoPrestacaoServico;
+		this.modoPrestacaoServico = modoPrestacaoServico != null ? StringUtils.leftPad(modoPrestacaoServico, 1, "") : StringUtils.leftPad(modoPrestacaoServico, 1, "");
 	}
 
 	public String getIdentificaoVendaConsumidorFinal() {
