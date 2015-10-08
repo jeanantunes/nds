@@ -127,6 +127,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" where ");
 		hql.append(" cota_.NUMERO_COTA=notaenvio_.NUMERO_COTA ");
 		hql.append(" and epdv.PRINCIPAL = :pontoPrincipal ");
+	//	hql.append(" and ( (estpdv_.PDV_ID is not null and  estpdv_.reparte > 0 ) or  pdvs_.ponto_principal = true) ");
+		hql.append(" and (( estpdv_.PDV_ID is not null and estpdv_.reparte > 0 )  or ( estpdv_.PDV_ID is  null and pdvs_.ponto_principal = true)) ");
 		hql.append(" and lancamento_.PRODUTO_EDICAO_ID=itemNotaEnvio_.PRODUTO_EDICAO_ID "); 
 		hql.append(" and cota_.SITUACAO_CADASTRO <> :situacaoInativo ");
 		hql.append(" and lancamento_.STATUS not in (:statusLancamento) ");
@@ -353,6 +355,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.append(" and lc.DATA_LCTO_DISTRIBUIDOR = :data_distribuicao_lc");
 				hql.append(" where e.PRODUTO_EDICAO_ID = :idProdutoEdicao_lc");
 				hql.append(" and estudoCota.COTA_ID = cota_.ID ");
+				hql.append(" and (( estudoPDV.PDV_ID is not null and estudoPDV.reparte > 0 )  or ( estudoPDV.PDV_ID is  null  and pdvs_.ponto_principal = true)) ");
 				hql.append(" and e.lancamento_id = lc.id ");
 				if(filtro.getIdBox() != null) {
 					hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then 1 = 1 ");
@@ -373,10 +376,12 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 					hql.append(" and lc.DATA_LCTO_DISTRIBUIDOR = :data_distribuicao_lc").append(index);
 					hql.append(" where e.PRODUTO_EDICAO_ID =:idProdutoEdicao").append(index);
 					hql.append(" and estudoCota.COTA_ID = cota_.ID ");
+					hql.append(" and (( estudoPDV.PDV_ID is not null and estudoPDV.reparte > 0 )  or ( estudoPDV.PDV_ID is  null and pdvs_.ponto_principal = true )) ");
+					
 					hql.append(" and e.lancamento_id = lc.id ");
 					if(filtro.getIdBox() != null) {
 						hql.append(" and ( case when (:idBox in (select id from box where tipo_box <> 'ESPECIAL')) then 1 = 1 ");
-						hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID or estudoPDV.PDV_ID is null end ) ");
+						hql.append(" else estudoPDV.PDV_ID = rotas_.PDV_ID or (estudoPDV.PDV_ID is null and  pdvs_.ponto_principal = true ) end ) ");
 					}
 					hql.append("),0) as qtdProduto").append(index);
 				}
