@@ -128,7 +128,8 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodLocal(String codLocal) {
-		this.codLocal = codLocal != null ? StringUtils.rightPad(codLocal, 11, ' ') : StringUtils.leftPad("", 11, ' ');
+		this.codLocal = codLocal;
+		//this.codLocal = codLocal != null ? StringUtils.rightPad(codLocal, 11, ' ') : StringUtils.leftPad("", 11, ' ');
 	}
 
 	public String getTipoPedido() {
@@ -233,6 +234,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodTipoNaturezaOperacao(String codTipoNaturezaOperacao) {
+		codTipoNaturezaOperacao = codTipoNaturezaOperacao != null ? StringUtils.leftPad(codTipoNaturezaOperacao, 4, '0') : StringUtils.leftPad(codTipoNaturezaOperacao, 4, '0');
 		this.codTipoNaturezaOperacao = codTipoNaturezaOperacao;
 	}
 
@@ -249,7 +251,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setNumEdicaoRevista(String numEdicaoRevista) {
-		this.numEdicaoRevista = numEdicaoRevista;
+		this.numEdicaoRevista = numEdicaoRevista != null ? StringUtils.leftPad(numEdicaoRevista, 6, "0") : StringUtils.leftPad("", 6, '0');
 	}
 
 	public String getDataCompetencia() {
@@ -265,6 +267,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodBarrasProduto(String codBarrasProduto) {
+		codBarrasProduto = codBarrasProduto != null ? StringUtils.leftPad(codBarrasProduto, 18, "0") : StringUtils.leftPad("", 18, '0');
 		this.codBarrasProduto = codBarrasProduto;
 	}
 
@@ -289,7 +292,7 @@ public class FTFEnvTipoRegistro02 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setNovoCodigoTipoNaturezaOperacao(String novoCodigoTipoNaturezaOperacao) {
-		this.novoCodigoTipoNaturezaOperacao = novoCodigoTipoNaturezaOperacao;
+		this.novoCodigoTipoNaturezaOperacao = novoCodigoTipoNaturezaOperacao != null ? StringUtils.leftPad(novoCodigoTipoNaturezaOperacao, 4, "0") : StringUtils.leftPad("", 4, '0');
 	}
 
 	public String getDescricaoProduto() {
