@@ -178,7 +178,7 @@
 				<text><![CDATA[Chave NF-e:]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement uuid="677a7264-76e9-4d7c-b306-9f3b308a597d" x="114" y="740" width="426" height="70"/>
+				<reportElement uuid="677a7264-76e9-4d7c-b306-9f3b308a597d" x="143" y="740" width="426" height="70"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128C" drawText="false" checksumRequired="false" barHeight="80">
 					<jr:codeExpression><![CDATA[$F{chaveNFe}]]></jr:codeExpression>
 				</jr:barbecue>
@@ -230,20 +230,22 @@ String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
 String.format("%02d",Integer.parseInt($F{volumes}.split("/")[1].trim()))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="b4245464-c506-4898-913a-e5840284cbe1" x="86" y="799" width="421" height="20"/>
+				<reportElement uuid="b4245464-c506-4898-913a-e5840284cbe1" x="143" y="800" width="421" height="20"/>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{chaveNFe}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="3c7ad19c-24bd-4f44-8ed4-d24970f0be82" x="12" y="792" width="54" height="16"/>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
+				<reportElement uuid="3c7ad19c-24bd-4f44-8ed4-d24970f0be82" x="9" y="768" width="67" height="20"/>
+				<textElement textAlignment="Left">
+					<font size="13" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nota]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="9263922a-0ef0-4835-9968-3580773f13ff" x="2" y="809" width="85" height="17"/>
-				<textElement textAlignment="Center"/>
+				<reportElement uuid="9263922a-0ef0-4835-9968-3580773f13ff" x="8" y="788" width="109" height="29"/>
+				<textElement textAlignment="Left">
+					<font size="18" isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroNota}]]></textFieldExpression>
 			</textField>
 		</band>
