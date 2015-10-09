@@ -49,7 +49,7 @@ public class CapaServiceImpl implements CapaService {
 	@PostConstruct
 	public void initCouchDbClient() {
 		//this.couchDbClient = new CouchDbClient(DB_NAME,true, couchDbProperties.getProtocol(), couchDbProperties.getHost(), couchDbProperties.getPort(), couchDbProperties.getUsername(), couchDbProperties.getPassword());
-		LOGGER.error("INICIANDO COUCH PARA ACESSAR CAPA COM TIMEOUT DE 30000 ms");
+		LOGGER.warn("INICIANDO COUCH PARA ACESSAR CAPA COM TIMEOUT DE 30000 ms");
 		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
 			.setDbName(DB_NAME)
 			.setCreateDbIfNotExist(true)

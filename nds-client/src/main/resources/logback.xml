@@ -64,7 +64,7 @@
       <to>odemir.olivatti@gmail.com</to>
       <username>odemir.olivatti@uol.com.br</username>
     <password>sophie@08</password>
-      <subject>ERRO NDS</subject>
+      <subject>ERRO NDS SERVIDOR=%property{HOSTNAME}</subject>
       <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%date %-5level %logger - %message%n</pattern>
     </layout> 

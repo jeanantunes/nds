@@ -19,6 +19,7 @@ import net.sf.jasperreports.engine.JRException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
@@ -170,7 +171,7 @@ public class RomaneioController extends BaseController {
 		
 		List<RomaneioDTO> listaRomaneios = this.romaneioService.buscarRomaneio(filtro, true);
 		
-		FileExporter.to("romaneio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaRomaneios, RomaneioDTO.class, this.httpResponse);
+		FileExporter.to("romaneio"+DateUtil.formatarData(new Date(),"ddMMyyyyHHmm"), fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaRomaneios, RomaneioDTO.class, this.httpResponse);
 		
 		result.nothing();
 		
@@ -185,7 +186,7 @@ public class RomaneioController extends BaseController {
 		
 		this.httpResponse.setContentType("application/pdf");
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio" + fileType.getExtension());
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=romaneio"+DateUtil.formatarData(new Date(),"ddMMyyHHmm") + fileType.getExtension());
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		
