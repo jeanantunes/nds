@@ -47,6 +47,7 @@ import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.DateUtil;
 
 import com.google.common.base.Objects;
@@ -70,7 +71,10 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private LancamentoService lancamentoService;
-
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
+	
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
 	
@@ -131,7 +135,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	    
 	    Date dataLancamento = lancamentoService.obterDataLancamentoValido(dataGeracaoArq, idFornecedor);
 	    
-	    Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, edicao.getPeb());
+	    Date dataRecolhimento = recolhimentoService.obterDataRecolhimentoValido(DateUtil.adicionarDias(dataLancamento, edicao.getPeb()), idFornecedor);
 	    
         lancamento.setDataCriacao(dataGeracaoArq);
         lancamento.setNumeroLancamento(1);
@@ -886,7 +890,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
                     "Alteração de Segmentação"
-                    +" de " + produto.getTipoSegmentoProduto().getDescricao()
+                    +" de " + ( produto.getTipoSegmentoProduto() != null ? produto.getTipoSegmentoProduto().getDescricao():"INDEFINIDO")
                     +" para " + getTipoSegmento(new Long (input.getSegmento()))
                     +" Produto "+ input.getCodProd()
 					+" Edição "+ input.getEdicaoProd());

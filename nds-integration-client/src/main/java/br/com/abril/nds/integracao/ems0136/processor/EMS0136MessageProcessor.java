@@ -40,6 +40,7 @@ import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -64,6 +65,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
 	
 	@Autowired
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
@@ -330,7 +334,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements Messa
 		Date dataOriginal = input.getDataLancamento();
 		Date dataSugerida = lancamentoService.obterDataLancamentoValido(dataOriginal, produtoEdicao.getProduto().getFornecedor().getId());
 		
-		Date dataRecolhimento = this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO);
+		Date dataRecolhimento = recolhimentoService.obterDataRecolhimentoValido(this.getProximaDataUtil(input.getDataRecolhimento(), produtoEdicao.getProduto().getFornecedor().getId(), OperacaoDistribuidor.RECOLHIMENTO),produtoEdicao.getProduto().getFornecedor().getId());
+
 		
 		if(dataOriginal.compareTo(dataSugerida) != 0) {
 			

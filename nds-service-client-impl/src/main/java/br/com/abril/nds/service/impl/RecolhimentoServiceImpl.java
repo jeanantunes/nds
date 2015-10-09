@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +38,8 @@ import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -58,6 +61,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
@@ -118,6 +122,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	LinkedList<Date> dinap = new LinkedList<Date>();
+	LinkedList<Date> fc = new LinkedList<Date>();
+	LinkedList<Date> dinapFC = new LinkedList<Date>();
 	
 	
 	private TreeMap<Date, List<ProdutoRecolhimentoDTO>>  copiarMatriz(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizOriginal){
@@ -1803,6 +1814,98 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		for (Date dataConfirmada : dataConfirmadas) {
 			this.chamadaEncalheCotaRepository.removerChamadaEncalheCotaZerada(dataConfirmada);
 		}
+	}
+	
+	@Transactional
+	public Date obterDataRecolhimentoValido(Date dataLancamento, Long idFornecedor) {
+		
+		List<Long> lista = new ArrayList<Long>();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Long idDinap = fornecedorService.obterFornecedorPorCodigoInterface(new Integer(distribuidor.getCodigoDistribuidorDinap())).getId();
+		Long idFc;
+		
+		if(distribuidor.getCodigoDistribuidorFC() != null && !distribuidor.getCodigoDistribuidorFC().trim().equals("")) {
+			
+			Fornecedor f = fornecedorService.obterFornecedorPorCodigoInterface(Integer.valueOf(distribuidor.getCodigoDistribuidorFC()));
+			if(f != null) {
+				
+				idFc = f.getId();
+			} else {
+				
+				idFc = new Long("0");
+			}
+		} else {
+			
+			idFc = new Long("0");
+		}
+		
+		if(idFornecedor == idDinap.intValue()) {	
+		 
+			 lista.add(new Long(1));
+			 
+			 if(dinap.isEmpty()) {
+				 dinap.addAll(lancamentoRepository.obterDatasRecolhimentoValidasAux());
+			 }
+			 
+			 dataLancamento = this.obterDataRecolhimentoValida(dataLancamento, dinap);
+		 
+		} else if(idFornecedor == idFc.intValue()) {
+		
+			 lista.add(new Long(2));
+			 
+			 if(fc.isEmpty()) {
+				 fc.addAll(lancamentoRepository.obterDatasRecolhimentoValidasAux());
+			 }
+			 
+			 dataLancamento = this.obterDataRecolhimentoValida(dataLancamento, fc);
+		 
+		} else {
+			
+			 lista.add(new Long(1));
+			 lista.add(new Long(2));
+				 
+			 if(dinapFC.isEmpty()) {
+				dinapFC.addAll(lancamentoRepository.obterDatasRecolhimentoValidasAux());
+			 }
+				 
+			 dataLancamento = this.obterDataRecolhimentoValida(dataLancamento, dinapFC);
+		}
+		
+		return dataLancamento;
+	}
+	
+	private Date obterDataRecolhimentoValida(Date dataLancamento, LinkedList<Date> listaDatas){
+
+		Date operacao;
+
+		if(listaDatas==null || listaDatas.isEmpty()) {
+
+			operacao = distribuidorService.obterDataOperacaoDistribuidor();
+
+			if(dataLancamento.before(operacao)) {
+				return operacao;
+			} else {
+				return dataLancamento;
+			}
+		} else if(listaDatas.contains(dataLancamento)) {
+			return dataLancamento;
+		} else if(dataLancamento.before(listaDatas.getFirst())) {
+			return listaDatas.getFirst();
+		} else {
+
+			for(int i = 0; i < listaDatas.size(); i++) {
+				if(i > 0 && i < listaDatas.size() && dataLancamento.before(listaDatas.get(i))) {
+
+					return listaDatas.get(i);
+				}
+			}
+
+			dataLancamento =  listaDatas.getFirst();
+
+			return dataLancamento;
+		}
+		
 	}
 	
 }

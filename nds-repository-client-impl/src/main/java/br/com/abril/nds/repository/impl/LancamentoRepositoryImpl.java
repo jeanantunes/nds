@@ -2830,6 +2830,74 @@ public class LancamentoRepositoryImpl extends
         return query.list();
     }
 
+    public List<Date> obterDatasRecolhimentoValidasAux() {
+
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select dt from ( ");
+    	hql.append(" select ADDDATE((select data_operacao from distribuidor),n-1) dt, DATE_FORMAT(ADDDATE((select data_operacao from distribuidor),n-1),'%w')+1 sm from ( ");
+    	hql.append(" SELECT a.N + b.N * 10 + c.N * 100 + 1 n ");
+    	hql.append(" FROM  ");
+    	hql.append(" (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a ");
+    	hql.append(" ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b ");
+    	hql.append(" ,(SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c ");
+    	hql.append(" ORDER BY n) a ) b ");
+    	hql.append(" where 1 = 1 ");
+    	hql.append(" and concat(month(b.dt), day(b.dt)) not in (select distinct concat(month(data), day(data)) from feriado where ind_opera = 0 and ind_repete_anualmente = 1) ");
+    	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'FEDERAL' and ind_opera = 0) ");
+    	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
+    	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
+    	hql.append(" and b.dt not in (select dtd from ( ");
+    	hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+    	hql.append(" 	from ( ");
+    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		from lancamento l ");
+    	hql.append(" 		where status in(:lancamentosPreExpedicao) ");
+    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+    	hql.append(" 		union ");
+    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		from lancamento l ");
+    	hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
+    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+    	hql.append(" 		group by data_lcto_distribuidor ");
+    	hql.append(" 	) rs ) a ");
+    	hql.append(" 	where st = 0) ");
+    	hql.append(" and b.sm    in (select distinct dia_semana ");
+    	hql.append(" 	from distribuicao_fornecedor ");
+    	hql.append(" 	where operacao_distribuidor = 'RECOLHIMENTO' ");
+    	hql.append(" ) ");
+    	hql.append(" and (dt in (select dtd from ( ");
+		hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+		hql.append(" 	from ( ");
+		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		from lancamento l ");
+		hql.append(" 		where status in(:lancamentosPreExpedicao) ");
+		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+		hql.append(" 		union ");
+		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		from lancamento l ");
+		hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
+		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
+		hql.append(" 		group by data_lcto_distribuidor ");
+		hql.append(" 	) rs ");
+		hql.append(" 	) a ");
+		hql.append(" 	where st = 1 ");
+		hql.append(" ) or (select count(0) from lancamento l where l.DATA_LCTO_DISTRIBUIDOR = dt) = 0) ");
+    	hql.append(" order by dt ");
+    	
+        Query query = getSession().createSQLQuery(hql.toString());
+        
+        
+        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreBalanceamentoString());
+        
+        List<String> statusLancamentoPosBalanceamento = new ArrayList<>();
+        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
+        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        query.setParameterList("lancamentosPosBalanceamentoLancamento", statusLancamentoPosBalanceamento);
+    	
+    	return query.list();
+    }
+    
     public List<Date> obterDatasLancamentoValidas() {
 
     	StringBuilder hql = new StringBuilder();

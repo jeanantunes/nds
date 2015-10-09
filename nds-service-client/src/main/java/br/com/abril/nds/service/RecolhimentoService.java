@@ -1,14 +1,19 @@
 package br.com.abril.nds.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -113,4 +118,9 @@ public interface RecolhimentoService {
 			StatusLancamento statusLancamento,Date dataPesquisa);
 
 	void removerChamadaEncalheCotaZerada(List<Date> dataConfirmadas);
+	
+	
+	
+	 Date obterDataRecolhimentoValido(Date dataRecolhimento, Long idFornecedor);
+
 }

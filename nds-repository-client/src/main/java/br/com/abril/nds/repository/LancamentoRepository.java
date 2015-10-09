@@ -444,4 +444,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	boolean existemLancamentosConfirmados(Date dataRecolhimento);
 
 	boolean isRedistribuicao(String codigoProduto, Long numeroEdicao);
+	
+	List<Date> obterDatasRecolhimentoValidasAux();
+	
 }

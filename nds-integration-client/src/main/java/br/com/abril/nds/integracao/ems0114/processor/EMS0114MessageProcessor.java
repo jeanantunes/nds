@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.jaxen.function.IdFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -116,12 +117,13 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		
 		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataRecolhimentoDistribuidor());
 		
-		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(input.getDataRecolhimento());
+		final Date dtRecolhimentoArquivo = lancamentoService.obterDataLancamentoValido(this.normalizarDataSemHora(input.getDataRecolhimento()),produtoEdicao.getProduto().getFornecedor().getId());
 		
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
 			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(
 					lancamento.getDataRecolhimentoPrevista());
+			
 			if (!dtRecolhimentoPrevista.equals(dtRecolhimentoArquivo)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
