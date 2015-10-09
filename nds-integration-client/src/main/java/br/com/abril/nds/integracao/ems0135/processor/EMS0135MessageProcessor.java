@@ -50,6 +50,7 @@ import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -74,7 +75,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
     
     @Autowired
 	private LancamentoService lancamentoService;
-
+    
+    @Autowired
+	private RecolhimentoService recolhimentoService;
+    
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
         tempVar.set(new ArrayList<NotaFiscalEntradaFornecedor>());
@@ -363,7 +367,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 } catch (Exception e) {
     			}
                 
-                Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
+                
+                Date dataRecolhimento = recolhimentoService.obterDataRecolhimentoValido(DateUtil.adicionarDias(dataLancamento, produtoEdicao.getPeb()), produtoEdicao.getProduto().getFornecedor().getId());
                 Lancamento lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setNumeroLancamento(numeroLancamentoNovo);
