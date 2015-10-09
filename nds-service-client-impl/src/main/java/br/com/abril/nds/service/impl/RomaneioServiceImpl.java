@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.RomaneioModelo01DTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
@@ -233,7 +234,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 
 				exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 				exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
-				exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "romaneio");
+				exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "romaneio"+DateUtil.formatarData(new Date(),"ddMMyyyyHHmm"));
 
 				exporter.exportReport();
 
