@@ -971,7 +971,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select lancamento ")
 				.append(" from Lancamento lancamento ")
 				.append(" where lancamento.id in (:idsLancamento) ")
-				.append("");
+				.append(" order by lancamento.id ");
 
 		Query query = getSession().createQuery(hql.toString());
 
