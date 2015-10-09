@@ -674,7 +674,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 //    	sql.append("     where d_s.DATA = :dtOperacao ");
 //    	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID),0) as vlr_pagto_diverg, ");
 
-    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
+    	sql.append("   coalesce((select sum( case when tm_s.GRUPO_MOVIMENTO_FINANCEIRO = 'POSTERGADO_DEBITO' then 1*(mfc_s.VALOR) else -1*(mfc_s.VALOR) end) ");
     	sql.append("     from movimento_financeiro_cota mfc_s ");
     	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
     	sql.append("         ON cf_s.MVTO_FINANCEIRO_COTA_ID = mfc_s.ID ");
