@@ -103,6 +103,12 @@ $(function(){
 										<input disabled="disabled" type="text" name="dto.pathMdcImportacao" id="pathMdcImportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathMdcImportacao}" />
 									</td>
 								</tr>
+								<tr>
+									<td>Transfer&ecirc;ncia de arquivos:</td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.pathTransfArquivos" id="pathTransfArquivos" style="width:220px;" value="${parametroSistemaGeralDTO.pathTransfArquivos}" />
+									</td>
+								</tr>
 							</table>
 						</td>
 							
