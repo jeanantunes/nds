@@ -1525,7 +1525,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 			BigDecimal percentualTaxaExtra) {
 		
 		String motivo = dataOperacao +" - "+ distribuidorService.obter().getDescricaoTaxaExtra();
-		BigDecimal valor = BigDecimal.ZERO; 
+		BigDecimal valor = valorTotalEncalheOperacaoConferenciaEncalhe; 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroTaxaExtra = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.TAXA_EXTRA);
 		if(tipoMovimentoFinanceiroTaxaExtra == null) {
 			
