@@ -508,6 +508,14 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		return this.getParametroSistemaString(TipoParametroSistema.FTF_CODIGO_CENTRO_EMISSOR);
 	}
 	
+	public String getPathTransfArquivos() {
+		return this.getParametroSistemaString(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
+	}
+	
+	public void setPathTransfArquivos(String PathTransfArquivos) {
+		this.params.put(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO, PathTransfArquivos);
+	}
+	
 	/**
 	 * @return the dtOperacaoCorrente
 	 */
