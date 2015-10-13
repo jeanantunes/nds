@@ -68,7 +68,7 @@
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c" style="rel_stext" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true">
+				<reportElement uuid="7a3755b9-7da6-43b8-b6cf-d23158138b2c" style="rel_ftext_centralizado" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="20" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[(($F{key}.equalsIgnoreCase("|1") == false)&&
 ($F{key}.equalsIgnoreCase("|2") == false)&&
 ($F{key}.equalsIgnoreCase("|3") == false)&&
