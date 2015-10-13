@@ -1256,6 +1256,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				        ]		         
 			});
 			$($(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
+			$($(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).show();
 			$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();
 		} else {
 			
@@ -1269,6 +1270,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				        ]		         
 			});
 			$($(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
+			$($(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).show();
 			$(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();
 			
 		}
