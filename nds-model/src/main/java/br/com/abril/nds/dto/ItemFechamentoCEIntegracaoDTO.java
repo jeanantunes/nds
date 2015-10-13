@@ -65,6 +65,7 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private String desconto;
 	
+	
 	private BigInteger qtdDevolucao;
 	
 	private String qtdNota;
@@ -77,6 +78,7 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";		
 	
+	@Export(label = "Qtd Devolvida", alignment = Alignment.CENTER, exhibitionOrder = 13 )
 	private BigInteger qtdeDevSemCE;
 	
 	private boolean isProdutoSemCe = false;

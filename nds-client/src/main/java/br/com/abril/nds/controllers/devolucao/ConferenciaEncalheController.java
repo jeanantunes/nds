@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -87,6 +88,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.converter.ConversionError;
 import br.com.caelum.vraptor.view.Results;
 
 import com.itextpdf.text.pdf.codec.Base64;
@@ -2549,8 +2551,18 @@ public class ConferenciaEncalheController extends BaseController {
      */
 	@Post
 	@LogFuncional(value="Conferência de Encalhe [Verificar total CE]")
-	public void verificarValorTotalCE(final BigDecimal valorCEInformado, final BigInteger qtdCEInformado) {
-
+	public void verificarValorTotalCE(final String valorCEInformadoStr, final BigInteger qtdCEInformado) {
+       LOGGER.error("conferencia encalhe "+valorCEInformadoStr);
+		BigDecimal valorCEInformado=null;
+		try {
+			//return (BigDecimal) getNumberFormat().parse(value);
+		//	LOGGER.error(value.replaceAll("\\.","").replaceAll(",","."));
+			valorCEInformado= new BigDecimal(valorCEInformadoStr.replaceAll("\\.","").replaceAll(",","."));
+		}   catch (Exception e ) {
+	    	
+	    	LOGGER.warn("ERRO DE CONVERSAO BIGDECIMAL VALORCEINFORMADO='"+valorCEInformadoStr);
+	    	   
+	    }
 		final Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
 		final TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
