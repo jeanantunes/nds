@@ -89,6 +89,12 @@ var usuariosPermissaoController = $.extend(true, {
 				);
 			
 			this.popup_usuario();
+			
+			//Correcao da Kaina... Permissoes nao aparecem no novo
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
+			}).flexReload();
+			// Fim
 		},
 		popup_editar_usuario : function(idGrupo) {
 			
@@ -138,6 +144,31 @@ var usuariosPermissaoController = $.extend(true, {
 				);
 			
 			this.popup_usuario();
+			
+			//Correcao da Kaina... Permissoes nao aparecem no novo
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
+				onSuccess: function() {
+					$.getJSON(
+						contextPath + "/administracao/gruposAcesso/editarGrupoPermissao",
+						{codigoGrupo:idGrupo}, 
+						function(result) {
+							if (result) {
+								
+								$("#grupoPermissaonome", gruposPermissaoController.workspace).val(result.nome);
+								$("#grupoPermissaoId", gruposPermissaoController.workspace).val(result.id);
+								
+								$.each(result.permissoes, function(index, role) {
+									$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
+								});							
+								
+								gruposPermissaoController.popup_grupo();
+							}
+						}
+					);
+				}
+			}).flexReload();
+			//Fim
 		},
 		popup_usuario : function() {
 			$( "#dialog-novo-usuario" , usuariosPermissaoController.workspace).dialog({
