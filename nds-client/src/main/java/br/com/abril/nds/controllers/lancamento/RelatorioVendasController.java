@@ -869,9 +869,11 @@ public class RelatorioVendasController extends BaseController {
 
 		for (RegistroCurvaABCCotaDTO registroCurvaABCDistribuidor : listaCurvaABCCota) {
 
+		if ( registroCurvaABCDistribuidor.getVendaExemplares() != null )
 			totalVendaExemplares =
 				totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
 			
+		if ( registroCurvaABCDistribuidor.getFaturamento() != null )
 			totalFaturamento =
 				totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamento());
 		}
