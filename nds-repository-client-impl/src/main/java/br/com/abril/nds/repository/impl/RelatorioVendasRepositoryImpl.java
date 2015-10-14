@@ -521,7 +521,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                                   if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0) ");
 		sql.append("                                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)                                          ");
 		sql.append("                              end ) as unsigned int) AS reparte, ");
-		sql.append("                     (case when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')then                                 ");
+		sql.append("                    coalesce( (case when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')then                                 ");
 		sql.append("                           cast(sum(CASE WHEN tipo.OPERACAO_ESTOQUE = 'ENTRADA' THEN                              ");
 		sql.append("                                       if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,mecReparte.QTDE,0)  ");
 		sql.append("                                       ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null,-mecReparte.QTDE,0)                                         ");
@@ -550,7 +550,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("                             lanc.id = l.id                                                  ");
 		sql.append("                             and cota.id = c.id) AS UNSIGNED INT)                                               ");
 		sql.append("                         else      null                                       ");
-		sql.append("                     end) as venda                                       ");
+		sql.append("                     end),0) as venda                                       ");
 		sql.append("                 FROM ");
 		sql.append("                     lancamento l                               ");
 		sql.append("                 JOIN ");
