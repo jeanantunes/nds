@@ -281,11 +281,11 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "ERRO.Produto na tela ja nao existe na base de dados.Efetuar pesquisa novamente");
 				
 			}
-		LOGGER.error( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
+		LOGGER.warn( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
 				fechamentosBanco.get(index).getCodigo()+"  qtd="+
 				fechamentosBanco.get(index).getFisico());
 			fechamentosBanco.get(index).setFisico(fechamento.getFisico());
-			LOGGER.error( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
+			LOGGER.warn( "index="+fechamentosBanco.get(index).getSequencia()+" "+index +" produtoid="+fechamentosBanco.get(index).getProdutoEdicao() +" codigo="+
 					fechamentosBanco.get(index).getCodigo()+"  qtd="+
 					fechamentosBanco.get(index).getFisico());
 		}
@@ -484,11 +484,11 @@ public class FechamentoEncalheController extends BaseController {
 			}
 
 		} catch (ValidacaoException e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 			return;
 		} catch (GerarCobrancaValidacaoException e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
 			this.result.use(Results.json()).from(
 				new ValidacaoException(TipoMensagem.WARNING, e.getValidacaoVO().getListaMensagens()).getValidacao(), "result").recursive().serialize();
 			return;
@@ -516,11 +516,11 @@ public class FechamentoEncalheController extends BaseController {
 
 			}	
 		} catch (GerarCobrancaValidacaoException e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
 			ex = e;
 
 		} catch (Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
 			this.setStatusCobrancaCotas(STATUS_FINALIZADO);
 
 			throw e;
