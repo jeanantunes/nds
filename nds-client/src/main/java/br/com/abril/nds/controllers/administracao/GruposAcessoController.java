@@ -180,6 +180,8 @@ public class GruposAcessoController extends BaseController {
         
         final GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
         
+        if ( grupoPermissao == null )
+        	throw new ValidacaoException(TipoMensagem.ERROR, "Grupo de Permissões não encontrado.");
         final GrupoPermissaoDTO dto = new GrupoPermissaoDTO(grupoPermissao.getId(), grupoPermissao.getNome(),
                 new ArrayList<Permissao>(grupoPermissao.getPermissoes()));
         
