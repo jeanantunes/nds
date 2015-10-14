@@ -1,10 +1,14 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -161,16 +165,103 @@ public class TransferenciaArquivosController extends BaseController {
 	@Path("/excluirArquivo")
 	public void excluirArquivo(String pathFile, String nomeArquivo){
 		
-		File diretorioFile = new File(pathFile, nomeArquivo);
+		File arquivoGravado = new File(pathFile, nomeArquivo);
 		
-		if(diretorioFile.getName() != null){
-			diretorioFile.setWritable(true);
-			diretorioFile.delete();
+		if(arquivoGravado.getName() != null){
+			arquivoGravado.setWritable(true);
+			arquivoGravado.delete();
 		}else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao excluir o arquivo.");
 		}
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Arquivo excluído com sucesso!"),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/excluirTodosArquivo")
+	public void excluirTodosArquivo(Long idDiretorio){
+		
+		if(idDiretorio == null || idDiretorio.compareTo(0L) <= 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Diretório inválido, selecione outro diretório.");
+		}
+			
+		DiretorioTransferenciaArquivo diretorio = transferenciaArquivoService.buscarPorId(idDiretorio);
+		
+		File diretorioFile = new File(diretorio.getEnderecoDiretorio());
+		
+		if(diretorioFile.listFiles() == null || diretorioFile.listFiles().length == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há arquivos no diretório.");
+		}
+		
+		int countArquivos = 0;
+		
+		for (File file : diretorioFile.listFiles()) {
+			file.delete();
+			countArquivos++;
+	 	}
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Exclusão com sucesso! Total: "+countArquivos+" arquivos"),"result").recursive().serialize();
+	}
+	
+	@Get
+	@Path("/downloadTodosArquivos")
+	public Download downloadTodosArquivos(Long idDiretorio){
+		
+		if(idDiretorio == null || idDiretorio.compareTo(0L) <= 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Diretório inválido, selecione outro diretório.");
+		}
+			
+		DiretorioTransferenciaArquivo diretorio = transferenciaArquivoService.buscarPorId(idDiretorio);
+		
+		File diretorioFile = new File(diretorio.getEnderecoDiretorio());
+		
+		if(diretorioFile.listFiles() == null || diretorioFile.listFiles().length == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há arquivos no diretório.");
+		}
+		
+		FileInputStream fis = null;
+		FileOutputStream fout = null;
+		ZipOutputStream zout = null;
+		
+		try {
+			
+			fout = new FileOutputStream(diretorioFile.getPath()+"/"+diretorioFile.getName()+".zip");
+			zout = new ZipOutputStream(fout);
+
+			for (File file : diretorioFile.listFiles()) {
+				if(file.getName().equals(diretorioFile.getName()+".zip")){
+					continue;
+				}
+				
+				fis = new FileInputStream(file);
+				
+				ZipEntry ze = new ZipEntry(file.getName());
+				zout.putNextEntry(ze);
+				
+				byte[] tmp = new byte[4 * 1024];
+				
+				int size = 0;
+				
+				while((size = fis.read(tmp)) != -1) {
+					
+					zout.write(tmp, 0, size);
+				}
+				zout.flush();
+				fis.close();
+				
+			}
+				zout.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		File zipFile = new File(diretorioFile.getPath(), diretorioFile.getName()+".zip");
+		
+		String contentType = "application/x-zip";  
+		String filename = diretorioFile.getName() + ".zip";
+		
+		return new FileDownload(zipFile, contentType, filename);
+		
 	}
 	
 	@Get

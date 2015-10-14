@@ -158,6 +158,7 @@ var transferenciaArquivosController = $.extend(true, {
 		});
 		
 		$("#gridDiretorios", transferenciaArquivosController.workspace).show();
+//		$("#gridDiretorios").flexReload();
 		
 		return resultado;
 	},
@@ -207,14 +208,34 @@ var transferenciaArquivosController = $.extend(true, {
 			modal : true,
 			open:function(){
 
-				$("#gridDiretorios").flexOptions({
-					url: contextPath + "/administracao/transferenciaArquivos/carregarDiretorios",
-					dataType : 'json',
-				});
+				$("#tabDiv").hide();
+				$("#botaoDiretorios").show();
 				
-				$("#gridDiretorios").flexReload();
+//				$("#gridDiretorios").flexOptions({
+//					url: contextPath + "/administracao/transferenciaArquivos/carregarDiretorios",
+//					dataType : 'json',
+//				});
+//				
+//				$("#gridDiretorios").flexReload();
 			},
+			beforeClose:function(){
+				$(this).dialog('destroy');
+			}
 		});
+	},
+	
+	exibirDiretorios : function(){
+		
+		$("#botaoDiretorios").hide();
+		$("#tabDiv").show();
+		
+		
+		$("#gridDiretorios").flexOptions({
+			url: contextPath + "/administracao/transferenciaArquivos/carregarDiretorios",
+			dataType : 'json',
+		});
+		
+		$("#gridDiretorios").flexReload();
 	},
 	
 	exibirDownload : function() {
@@ -372,6 +393,42 @@ var transferenciaArquivosController = $.extend(true, {
 		});
 	},
 	
+	excluirTodosArquivos : function(){
+		
+		var idPathArquivo = $("#comboDiretorios option:selected").val();
+		
+		$("#dialog-excluir").dialog({
+			
+			resizable : false,
+			height : 170,
+			width : 380,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					
+					$("#dialog-excluir").dialog("close");
+					var data = [{name : 'idDiretorio', value:idPathArquivo}];
+					
+					$.postJSON(contextPath + "/administracao/transferenciaArquivos/excluirTodosArquivo", 
+							data,
+							function(result) {
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+									$("#gridDownload").flexReload();
+							   },null,true
+							 );
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			},
+		});
+	},
+	
 	downloadArquivo : function(pathArquivo){
 		
 		var data = [{name : 'pathFile', value:$(pathArquivo).attr('pathArquivo')},
@@ -390,6 +447,24 @@ var transferenciaArquivosController = $.extend(true, {
 		
 		return false;
 		
+	},
+	
+	downloadTodosArquivos : function(){
+		
+		var idPathArquivo = $("#comboDiretorios option:selected").val();
+		
+		var data = [{name : 'idDiretorio', value:idPathArquivo}];
+
+		exibirMensagem("SUCCESS", ["Aguarde enquanto seu download é preparado."]);
+		
+		$.fileDownload(contextPath + "/administracao/transferenciaArquivos/downloadTodosArquivos", {
+            httpMethod : "GET",
+            data : data,
+            failCallback : function(arg) {
+                exibirMensagem("WARNING", ["Erro ao efetuar o download!"]);
+            },
+		});
+		return false;
 	},
 	
 	sendFileToServer : function(formData,status){

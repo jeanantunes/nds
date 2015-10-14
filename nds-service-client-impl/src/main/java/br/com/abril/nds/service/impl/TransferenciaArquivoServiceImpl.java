@@ -65,7 +65,7 @@ public class TransferenciaArquivoServiceImpl implements TransferenciaArquivoServ
             File file = new File(dirBase);
             file.mkdirs();
             
-            fileName = converte(uploadedFile.getFileName());
+            fileName = converteFileName(uploadedFile.getFileName());
             
             File destino = new File(file, fileName);
 
@@ -80,7 +80,7 @@ public class TransferenciaArquivoServiceImpl implements TransferenciaArquivoServ
         return fileName;
 	}
 	
-	public String converte(String text) {   
+	public String converteFileName(String text) {   
         
         return text.replaceAll("[ãâàáä]", "a")     
                     .replaceAll("[êèéë]", "e")     
@@ -98,8 +98,5 @@ public class TransferenciaArquivoServiceImpl implements TransferenciaArquivoServ
                     .replace('Ñ', 'N')  
                     .replaceAll("!", "")
                     .replaceAll("[\\+\\'\\ª\\º\\*\\¨\\´\\`\\?!\\@\\~\\^\\/]"," ");
-//                    .replaceAll ("\\[\\´\\`\\?!\\@\\#\\$\\%\\¨\\*"," ")  
-//                    .replaceAll("\\(\\)\\=\\{\\}\\[\\]\\~\\^\\]"," ")  
-//                    .replaceAll("[\\;\\-\\_\\+\\'\\ª\\º\\:\\;\\/]"," ");  
     }
 }

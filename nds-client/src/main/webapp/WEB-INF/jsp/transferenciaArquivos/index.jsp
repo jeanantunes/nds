@@ -159,31 +159,32 @@ $(function(){
 
 <div id="dialog-diretorios" title="Diret&oacute;rios cadastrados" style="display:none;">
   
-  <fieldset style="width:600px; margin-top:8px;">
-    <legend>Diret&oacute;rios</legend>
-    <table id="gridDiretorios"></table>
-  </fieldset>
+  <div id="tabDiv" style="display:none;">
+	  <fieldset style="width:600px; margin-top:8px;">
+	    <legend>Diret&oacute;rios</legend>
+	    <table id="gridDiretorios"></table>
+	  </fieldset>
+  </div>
   
-  <!--  
+  
   <div id="botaoDiretorios">
   	<td width="150">
 		<span class="bt_confirmar_novo" title="Exibir diret&oacute;rios">
 			<a onclick="transferenciaArquivosController.exibirDiretorios();" href="javascript:;">
 				<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">
-					&nbsp;Exibir diret&oacute;rios
+					&nbsp;Exibir diret&oacute;rios cadastrados
 			</a>
 		</span>
 	</td>
   </div>
-  -->
   
   <fieldset style="width:600px; margin-top:8px;">
   <legend>Novo diret&oacute;rio</legend>
   	<div>
 		<label><b>Nome</b></label>
-		<input type="text" id="nomeDiretorio" size="30" style="float: left; margin-right: 25px;"/>
+		<input type="text" id="nomeDiretorio" size="25" style="float: left; margin-right: 25px; margin-top: 7px;"/>
 		<label><b>Pasta</b></label>
-		<input type="text" id="nomePasta" size="30" style="float: left; margin-right: 25px;"/>
+		<input type="text" id="nomePasta" placeholder="Ex: nomeNovaPasta/subPasta" size="35" style="float:left; margin-right: 25px; margin-top: 7px;"/>
 		<span class="bt_novos">
 			<a onclick="transferenciaArquivosController.salvarNovoDiretorio();" href="javascript:;">
 				<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">
@@ -192,25 +193,43 @@ $(function(){
 		</span>
   	</div>
   </fieldset>
-</div>
-
-<div id="dialog-upload" title="Diretorio para upload" style="display:none;">
-  <fieldset style="width:600px; margin-top:8px;">
-    <legend>Diret&oacute;rio</legend>
-    
-    <!-- 
-    <div id="dragandrophandler">Drag & Drop Files Here</div>
-    <input id="fileupload" type="file" name="files[]" data-url="" multiple>
-    <table id="gridDiretorios"></table>
-     -->
-  </fieldset>
+  
+  <!-- 
+  <div>
+  	<span class="bt_novos">
+			<a onclick="transferenciaArquivosController.exibirDiretorios();" href="javascript:;">
+				<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">
+					&nbsp;Exibir 
+			</a>
+		</span>
+  </div>
+   -->
+  
 </div>
 
 <div id="dialog-download" title="Diretorio para download" style="display:none;">
   <fieldset style="width:650px; margin-top:8px;">
-    <legend>Diret&oacute;rio</legend>
+    <legend>Diret&oacute;rio para donwload</legend>
     
     <table id="gridDownload"></table>
+     	<div id="botoesDownload">
+		  	<td width="400">
+		  		<tr>
+					<span class="bt_confirmar_novo" title="Exibir diret&oacute;rios" style="float: left;">
+						<a onclick="transferenciaArquivosController.downloadTodosArquivos();" href="javascript:;">
+							<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
+								&nbsp;Baixar todos arquivos
+						</a>
+					</span>
+					<span class="bt_confirmar_novo" title="Exibir diret&oacute;rios" style="float: right;">
+						<a onclick="transferenciaArquivosController.excluirTodosArquivos();" href="javascript:;">
+							<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">
+								&nbsp;Excluir todos arquivos
+						</a>
+					</span>
+		  		</tr>
+			</td>
+  		</div>
 
   </fieldset>
 </div>
