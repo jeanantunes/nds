@@ -42,7 +42,7 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 
 	private BigInteger encalhe;
 	
-	@Export(label = "Qtd Devolvida", alignment = Alignment.CENTER, exhibitionOrder = 6 )
+	@Export(label = "Qtde Dev Inf", alignment = Alignment.CENTER, exhibitionOrder = 6 )
 	private BigInteger qtdeDevSemCE;
 	
 	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 8)
