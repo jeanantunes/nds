@@ -1258,6 +1258,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     }
     
     
+
+    
+    
     /**
      * Retorna o somatório dos valores dos Movimentos de Estoque
      * 
@@ -1441,6 +1444,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         final TipoCota tipoCota = cota != null ? cota.getTipoCota() : null;
         
         BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe;
+        BigDecimal valorTotalEncalheOperacaoEnvioReparte;
         
         TipoMovimentoFinanceiro tipoMovimentoFinanceiro;
         
@@ -1461,6 +1465,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             
             valorTotalEncalheOperacaoConferenciaEncalhe = this
                     .obterValorMovimentosEstoqueEncalhe(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
+            valorTotalEncalheOperacaoEnvioReparte = this
+                    .obterValorMovimentosEstoqueEncalhe(movimentosEstoqueCotaOperacaoEnvioReparte);
             
             if (movimentosEstoqueCotaOperacaoConferenciaEncalhe != null) {
                 
@@ -1480,7 +1486,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
                 	
                 	gerarMovimentoFincaneiroCotaTaxaExtra(cota, fornecedor,
 							dataOperacao, usuario,
-							valorTotalEncalheOperacaoConferenciaEncalhe,
+							valorTotalEncalheOperacaoEnvioReparte.subtract(valorTotalEncalheOperacaoConferenciaEncalhe),
 							percentualTaxaExtra);
                 }
             }
