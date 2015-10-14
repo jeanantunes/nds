@@ -351,9 +351,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				if(registro.getParticipacao() != null) {
 			    	participacaoRegistro =
 						registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
-				   registro.setParticipacao(participacaoRegistro);
+				  
 				}
-				
+				 registro.setParticipacao(participacaoRegistro);
 				if(registro.getParticipacaoAcumulada()!=null) {
 					BigDecimal participacaoAcumulada = registro.getParticipacaoAcumulada();
 					registro.setParticipacaoAcumulada(participacaoAcumulada.multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN));

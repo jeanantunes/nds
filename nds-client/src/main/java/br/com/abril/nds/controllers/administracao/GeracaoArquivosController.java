@@ -396,10 +396,10 @@ public class GeracaoArquivosController extends BaseController {
 					   
 					      
 	                      BigDecimal vrVenda =  consignado.getPrecoCapa();
-	                      sb.append(String.format("%011.2f",vrVenda.floatValue()).replace(",", ""));
+	                      sb.append(String.format("%011.2f",vrVenda.floatValue()).replace(",", "").replace("\\.", ""));
 	                      
 	                      BigDecimal vrCusto = consignado.getPrecoComDesconto();
-	                      sb.append(String.format("%011.2f",vrCusto.floatValue()).replace(",",""));
+	                      sb.append(String.format("%011.2f",vrCusto.floatValue()).replace(",","").replace("\\.", ""));
 	
 	                     
 	                      
