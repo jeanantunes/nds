@@ -125,6 +125,9 @@ public class HistogramaPosEstudoController extends BaseController{
 		
     	EstudoGeradoPreAnaliseDTO estudo = this.estudoService.obterEstudoPreAnalise(Long.parseLong(selecionado.getEstudo()));
 				
+    	if ( estudo == null )
+    		   throw new ValidacaoException(TipoMensagem.WARNING, "É necessário cadastrar um segmento para o produto.");
+    	
 		String loginUsuario = super.getUsuarioLogado().getLogin();
 		
 		this.bloquearAnaliseEstudo(estudo.getIdProdutoEdicao(), this.session, loginUsuario);
