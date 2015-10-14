@@ -151,7 +151,7 @@ var usuariosPermissaoController = $.extend(true, {
 				onSuccess: function() {
 					$.getJSON(
 						contextPath + "/administracao/gruposAcesso/editarGrupoPermissao",
-						{codigoGrupo:idGrupo}, 
+						{codigoGrupo:1}, 
 						function(result) {
 							if (result) {
 								
