@@ -30,25 +30,28 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private BigInteger reparte;
 
-	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 10 )
+	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 11 )
 	private BigInteger venda;
 
 	private BigDecimal precoCapa;
 	
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder =11 )
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder =12 )
 	private String precoCapaFormatado;
 
 	private BigDecimal valorVenda;
 
 	private BigInteger encalhe;
 	
-	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 7)
+	@Export(label = "Qtde Dev Inf", alignment = Alignment.CENTER, exhibitionOrder = 6 )
+	private BigInteger qtdeDevSemCE;
+	
+	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 8)
 	private BigInteger estoque;
 	
-	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder =9 )
+	@Export(label = "Diferença", alignment = Alignment.CENTER, exhibitionOrder =10 )
 	private BigInteger diferenca;
 	
-	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 12)
+	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 13)
 	private String valorVendaFormatado;
 		
 	private String tipoFormatado;
@@ -78,12 +81,11 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private final String REGIME_RECOLHIMENTO_PARCIAL = "PARCIAL";		
 	
-	@Export(label = "Qtd Devolvida", alignment = Alignment.CENTER, exhibitionOrder = 13 )
-	private BigInteger qtdeDevSemCE;
+	
 	
 	private boolean isProdutoSemCe = false;
 	
-	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 7)
 	public String getReparteFormatado(){
 		
 		if(REGIME_RECOLHIMENTO_PARCIAL.equals(this.tipoFormatado)){
@@ -96,7 +98,7 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 		return Util.nvl(this.reparte,0).toString();
 	}
 	
-	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 8 )
+	@Export(label = "Encalhe", alignment = Alignment.CENTER, exhibitionOrder = 9 )
 	public String getEncalheFormatado(){
 		
 		if(REGIME_RECOLHIMENTO_PARCIAL.equals(this.tipoFormatado)){
