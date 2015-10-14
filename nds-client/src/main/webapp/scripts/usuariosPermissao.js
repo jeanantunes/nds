@@ -96,7 +96,7 @@ var usuariosPermissaoController = $.extend(true, {
 			}).flexReload();
 			// Fim
 		},
-		popup_editar_usuario : function(idGrupo) {
+		popup_editar_usuario : function(idUsuario) {
 			
 			$("#trInsercaoSenhas", usuariosPermissaoController.workspace).hide();
 			$("#trLembreteSenha", usuariosPermissaoController.workspace).hide();
@@ -108,7 +108,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$.getJSON(
 					this.path + "/editarUsuario",
-					{codigoUsuario:idGrupo}, 
+					{codigoUsuario:idUsuario}, 
 					function(result) {
 						if (result) {
 							
@@ -146,12 +146,20 @@ var usuariosPermissaoController = $.extend(true, {
 			this.popup_usuario();
 			
 			//Correcao da Kaina... Permissoes nao aparecem no novo
+	
+			/*
 			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
 				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
 				onSuccess: function() {
+					console.log('gurpo');
+					
+					$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).each(function() {
+					
+					console.log($(this).val());
 					$.getJSON(
+						
 						contextPath + "/administracao/gruposAcesso/editarGrupoPermissao",
-						{codigoGrupo:1}, 
+						{codigoGrupo:$(this).val()}, 
 						function(result) {
 							if (result) {
 								
@@ -162,12 +170,19 @@ var usuariosPermissaoController = $.extend(true, {
 									$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
 								});							
 								
-								gruposPermissaoController.popup_grupo();
+								 gruposPermissaoController.popup_grupo();
 							}
 						}
 					);
+						});
 				}
+			}
+			).flexReload();
+			*/
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
 			}).flexReload();
+			
 			//Fim
 		},
 		popup_usuario : function() {
