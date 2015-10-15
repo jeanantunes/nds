@@ -8,6 +8,10 @@ var gruposPermissaoController = $.extend(true, {
 			
 			this.initGruposGrid();
 			this.mostrarGrupo();
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
+			}).flexReload();
+			
 		},
 		popup_novo_grupo : function() {
 			

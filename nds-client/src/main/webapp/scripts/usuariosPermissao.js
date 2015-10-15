@@ -1,9 +1,12 @@
 var usuariosPermissaoController = $.extend(true, {
 		path : "",
 		init : function(contextPath) {
+			
 			this.path = contextPath + "/administracao/gruposAcesso";
 			this.initUsuariosGrid();
 			this.mostrarUsuario();
+			
+			
 		},
 		limpar_selecoes : function() {
 			$("#gruposUsuario option", usuariosPermissaoController.workspace).remove();
@@ -90,11 +93,7 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			this.popup_usuario();
 			
-			//Correcao da Kaina... Permissoes nao aparecem no novo
-			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
-				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
-			}).flexReload();
-			// Fim
+			
 		},
 		popup_editar_usuario : function(idUsuario) {
 			
@@ -145,47 +144,11 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			this.popup_usuario();
 			
-			//Correcao da Kaina... Permissoes nao aparecem no novo
-	
-			/*
-			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
-				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
-				onSuccess: function() {
-					console.log('gurpo');
-					
-					$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).each(function() {
-					
-					console.log($(this).val());
-					$.getJSON(
-						
-						contextPath + "/administracao/gruposAcesso/editarGrupoPermissao",
-						{codigoGrupo:$(this).val()}, 
-						function(result) {
-							if (result) {
-								
-								$("#grupoPermissaonome", gruposPermissaoController.workspace).val(result.nome);
-								$("#grupoPermissaoId", gruposPermissaoController.workspace).val(result.id);
-								
-								$.each(result.permissoes, function(index, role) {
-									$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
-								});							
-								
-								 gruposPermissaoController.popup_grupo();
-							}
-						}
-					);
-						});
-				}
-			}
-			).flexReload();
-			*/
-			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
-				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
-			}).flexReload();
 			
-			//Fim
+			
 		},
 		popup_usuario : function() {
+			
 			$( "#dialog-novo-usuario" , usuariosPermissaoController.workspace).dialog({
 				resizable: false,
 				height:620,
@@ -246,6 +209,10 @@ var usuariosPermissaoController = $.extend(true, {
 				},
 				form: $("#dialog-novo-usuario", usuariosPermissaoController.workspace).parents("form")
 			});
+			
+			
+		
+			$(".novo_grupo_form", usuariosPermissaoController.workspace).hide();
 		},
 		popup_excluir_usuario : function(codigoUsuario) {
 			$( "#dialog-excluir-usuario", usuariosPermissaoController.workspace ).dialog({
