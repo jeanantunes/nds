@@ -2855,18 +2855,13 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'ESTATUAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.uf) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select distinct data from feriado where tipo_feriado = 'MUNICIPAL' and ind_opera = 0 and LOCALIDADE = (SELECT UPPER(e.cidade) FROM endereco_distribuidor ed, endereco e where ed.endereco_id = e.id)) ");
     	hql.append(" and b.dt not in (select dtd from ( ");
-    	hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+    	hql.append(" 	select dtd, (case when status in ('EXPEDIDO') then 1 else 0 end) st ");
     	hql.append(" 	from ( ");
-    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+    	hql.append(" 		select data_rec_distrib dtd, l.status ");
     	hql.append(" 		from lancamento l ");
-    	hql.append(" 		where status in(:lancamentosPreExpedicao) ");
-    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
-    	hql.append(" 		union ");
-    	hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
-    	hql.append(" 		from lancamento l ");
-    	hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
-    	hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
-    	hql.append(" 		group by data_lcto_distribuidor ");
+    	hql.append(" 		where status in('EXPEDIDO') ");
+    	hql.append(" 		and l.data_rec_distrib > (select data_operacao from distribuidor) ");
+    	hql.append(" 		group by data_rec_distrib ");
     	hql.append(" 	) rs ) a ");
     	hql.append(" 	where st = 0) ");
     	hql.append(" and b.sm    in (select distinct dia_semana ");
@@ -2874,33 +2869,28 @@ public class LancamentoRepositoryImpl extends
     	hql.append(" 	where operacao_distribuidor = 'RECOLHIMENTO' ");
     	hql.append(" ) ");
     	hql.append(" and (dt in (select dtd from ( ");
-		hql.append(" 	select dtd, (case when status in (:lancamentosPreExpedicao) then 1 else 0 end) st ");
+		hql.append(" 	select dtd, (case when status in ('EXPEDIDO') then 1 else 0 end) st ");
 		hql.append(" 	from ( ");
-		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
+		hql.append(" 		select data_rec_distrib dtd, l.status ");
 		hql.append(" 		from lancamento l ");
-		hql.append(" 		where status in(:lancamentosPreExpedicao) ");
-		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
-		hql.append(" 		union ");
-		hql.append(" 		select data_lcto_distribuidor dtd, l.status ");
-		hql.append(" 		from lancamento l ");
-		hql.append(" 		where status in(:lancamentosPosBalanceamentoLancamento) ");
-		hql.append(" 		and l.DATA_LCTO_DISTRIBUIDOR > (select data_operacao from distribuidor) ");
-		hql.append(" 		group by data_lcto_distribuidor ");
+		hql.append(" 		where status in('EXPEDIDO') ");
+		hql.append(" 		and l.data_rec_distrib > (select data_operacao from distribuidor) ");
+		hql.append(" 		group by data_rec_distrib ");
 		hql.append(" 	) rs ");
 		hql.append(" 	) a ");
 		hql.append(" 	where st = 1 ");
-		hql.append(" ) or (select count(0) from lancamento l where l.DATA_LCTO_DISTRIBUIDOR = dt) = 0) ");
+		hql.append(" ) or (select count(0) from lancamento l where l.data_rec_distrib = dt) = 0) ");
     	hql.append(" order by dt ");
     	
         Query query = getSession().createSQLQuery(hql.toString());
         
         
-        query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreBalanceamentoString());
+        //query.setParameterList("lancamentosPreExpedicao", LancamentoHelper.getStatusLancamentosPreBalanceamentoString());
         
-        List<String> statusLancamentoPosBalanceamento = new ArrayList<>();
-        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
-        statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosExpedicaoString());
-        query.setParameterList("lancamentosPosBalanceamentoLancamento", statusLancamentoPosBalanceamento);
+        //List<String> statusLancamentoPosBalanceamento = new ArrayList<>();
+        //statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosBalanceamentoLancamentoString());
+        //statusLancamentoPosBalanceamento.addAll(LancamentoHelper.getStatusLancamentosPosExpedicaoString());
+        //query.setParameterList("lancamentosPosBalanceamentoLancamento", statusLancamentoPosBalanceamento);
     	
     	return query.list();
     }
