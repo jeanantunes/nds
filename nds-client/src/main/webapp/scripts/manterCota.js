@@ -1304,7 +1304,7 @@ var COTA_CNPJ = $.extend(true, {
 
                 TAB_COTA.possuiDadosObrigatorios = true;
 
-                COTA_CNPJ.carregarDadosCadastraisCnpj(result);
+                //COTA_CNPJ.carregarDadosCadastraisCnpj(result);
 
                 exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
 
@@ -1537,7 +1537,7 @@ var COTA_CPF = $.extend(true, {
 
                 TAB_COTA.possuiDadosObrigatorios = true;
 
-                COTA_CPF.carregarDadosCpf(result);
+                //COTA_CPF.carregarDadosCpf(result);
 
                 exibirMensagemDialog("SUCCESS",["Operação realizada com sucesso."],"dialog-cota");
 
