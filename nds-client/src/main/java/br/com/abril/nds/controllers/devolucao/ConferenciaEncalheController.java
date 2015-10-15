@@ -2552,7 +2552,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	@LogFuncional(value="Conferência de Encalhe [Verificar total CE]")
 	public void verificarValorTotalCE(final String valorCEInformadoStr, final BigInteger qtdCEInformado) {
-       LOGGER.error("conferencia encalhe "+valorCEInformadoStr);
+       LOGGER.debug("conferencia encalhe "+valorCEInformadoStr);
 		BigDecimal valorCEInformado=null;
 		try {
 			//return (BigDecimal) getNumberFormat().parse(value);
