@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="emissao_bandeira" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="585" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5" uuid="6a9f96f8-9dd9-4299-9e23-35d95ba7f941">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="384"/>
+	<property name="ireport.y" value="0"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -80,6 +80,7 @@
 				<reportElement uuid="0d030355-c392-49aa-a5d6-7eee1bb1d4c8" mode="Opaque" x="2" y="0" width="583" height="90" forecolor="#FFFFFF" backcolor="#999999"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial Black" size="30" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[ENCALHE
 DEVOLUCAO TREELOG]]></text>
@@ -160,7 +161,7 @@ DEVOLUCAO TREELOG]]></text>
 				<textFieldExpression><![CDATA[$F{dataEnvio}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="b7add338-2514-4107-baf2-1f48b5274656" x="3" y="175" width="34" height="65"/>
+				<reportElement uuid="b7add338-2514-4107-baf2-1f48b5274656" x="3" y="169" width="34" height="75"/>
 				<box leftPadding="5"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="Left">
 					<font size="16" isBold="true"/>
@@ -195,9 +196,11 @@ DEVOLUCAO TREELOG]]></text>
 			<componentElement>
 				<reportElement uuid="677a7264-76e9-4d7c-b306-9f3b308a597d" x="313" y="542" width="247" height="75"/>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="80">
-					<jr:codeExpression><![CDATA["RJ001M"+$F{numeroNota} +"109"+
+					<jr:codeExpression><![CDATA["RJ001M"+
+String.format("%06d",Integer.parseInt($F{numeroNota})) +
+"109"+
 String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
-String.format("%1d",Integer.parseInt($F{volumes}.split("/")[1].trim()))]]></jr:codeExpression>
+"1"]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
 			<line>
@@ -213,11 +216,13 @@ String.format("%1d",Integer.parseInt($F{volumes}.split("/")[1].trim()))]]></jr:c
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement uuid="c1879eb9-5ae3-4683-af98-585f889bd7ac" x="317" y="587" width="241" height="20"/>
+				<reportElement uuid="c1879eb9-5ae3-4683-af98-585f889bd7ac" x="317" y="593" width="241" height="20"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["RJ001M"+$F{numeroNota} +"109"+
+				<textFieldExpression><![CDATA["RJ001M"+
+String.format("%06d",Integer.parseInt($F{numeroNota})) +
+"109"+
 String.format("%02d",Integer.parseInt($F{volumes}.split("/")[0].trim()))+
-String.format("%1d",Integer.parseInt($F{volumes}.split("/")[1].trim()))]]></textFieldExpression>
+"1"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="b4245464-c506-4898-913a-e5840284cbe1" x="143" y="797" width="421" height="20"/>
@@ -225,7 +230,7 @@ String.format("%1d",Integer.parseInt($F{volumes}.split("/")[1].trim()))]]></text
 				<textFieldExpression><![CDATA[$F{chaveNFe}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="3c7ad19c-24bd-4f44-8ed4-d24970f0be82" x="5" y="534" width="50" height="22"/>
+				<reportElement uuid="3c7ad19c-24bd-4f44-8ed4-d24970f0be82" x="5" y="534" width="84" height="22"/>
 				<textElement textAlignment="Left">
 					<font size="16" isBold="true"/>
 				</textElement>
@@ -236,7 +241,7 @@ String.format("%1d",Integer.parseInt($F{volumes}.split("/")[1].trim()))]]></text
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="48" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{numeroNota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[String.format("%06d",Integer.parseInt($F{numeroNota}))]]></textFieldExpression>
 			</textField>
 			<elementGroup>
 				<staticText>
