@@ -67,8 +67,6 @@ public class TransferenciaArquivosController extends BaseController {
 	@Path("/adicionarDiretorio")
     @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void adicionarDiretorio (String nomeDiretorio, String pastaDiretorio){
-
-		DiretorioTransferenciaArquivo diretorio = new DiretorioTransferenciaArquivo();
 		
 		ParametroSistema path = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_TRANSFERENCIA_ARQUIVO);
 		
@@ -83,6 +81,12 @@ public class TransferenciaArquivosController extends BaseController {
 		}else{
 			pathFile = pathFile+pastaDiretorio.substring(1);
 		}
+		
+		if(transferenciaArquivoService.isDiretorioExistente(pathFile)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Diretório já existente.");
+		}
+
+		DiretorioTransferenciaArquivo diretorio = new DiretorioTransferenciaArquivo();
 		
 		diretorio.setNomeDiretorio(nomeDiretorio);
 		diretorio.setEnderecoDiretorio(pathFile);

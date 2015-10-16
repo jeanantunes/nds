@@ -1,6 +1,9 @@
 var transferenciaArquivosController = $.extend(true, {
 	init : function() {
 		
+		this.keysDiretorios = new Array();
+	    this.dataDiretorios = new Object();
+		
 		$('#configuracaoDiretorios').click(function(){
 			transferenciaArquivosController.exibirConfiguracaoDiretorios();
 		});
@@ -52,6 +55,18 @@ var transferenciaArquivosController = $.extend(true, {
 				});
 		 
 		});
+		
+		usuarioController.supervisor.validarUsuarioSupervisorSemConfirmacaoDeSenha({
+        	callbacks: {
+				usuarioSupervisorCallback: function() {
+					$("#configuracaoDiretorios").show();
+				},
+				usuarioNaoSupervisorCallback: function(){
+					$("#configuracaoDiretorios").hide();
+        		}
+			}
+        });
+		
 		
 		$("#gridDiretorios").flexigrid({
 			preProcess : transferenciaArquivosController.preProssGridDiretorios,
@@ -155,10 +170,11 @@ var transferenciaArquivosController = $.extend(true, {
 //			row.cell.acao = editar + excluir;
 			row.cell.acao = excluir;
 			
+			transferenciaArquivosController.putMaps(row.cell.idDiretorio, row.cell.nomeDiretorio);
+			
 		});
 		
 		$("#gridDiretorios", transferenciaArquivosController.workspace).show();
-//		$("#gridDiretorios").flexReload();
 		
 		return resultado;
 	},
@@ -219,6 +235,7 @@ var transferenciaArquivosController = $.extend(true, {
 //				$("#gridDiretorios").flexReload();
 			},
 			beforeClose:function(){
+				transferenciaArquivosController.upDateComboDiretorios();
 				$(this).dialog('destroy');
 			}
 		});
@@ -345,15 +362,10 @@ var transferenciaArquivosController = $.extend(true, {
 							exibirMensagem(tipoMensagem, listaMensagens);
 						}
 						
-//						$('#comboDiretorios').append($('<option>', {
-//						    value: 10,
-//						    text: 'My option'
-//						}));
-						
 						$("#nomeDiretorio").val("");
 						$("#nomePasta").val("");
 						
-						$("#gridDiretorios").flexReload();
+						transferenciaArquivosController.exibirDiretorios();
 				   },null,true
 				 );
 	},
@@ -467,6 +479,41 @@ var transferenciaArquivosController = $.extend(true, {
 		return false;
 	},
 	
+	putMaps : function(key, value) {
+        if (this.dataDiretorios[key] == null) {
+        	this.keysDiretorios.push(key);
+        }
+        this.dataDiretorios[key] = value;
+    },
+    
+    getMaps : function(key) {
+        return this.dataDiretorios[key];
+    },
+    
+    upDateComboDiretorios : function(){
+    	
+    	if(this.keysDiretorios.length <= 0){
+    		return;
+    	}
+    	
+    	var tamanhoLista = this.keysDiretorios.length;
+    	
+         for (var i = 0; i < tamanhoLista; i++) {
+             
+             var idCombo = this.keysDiretorios[i];
+             
+             if($('#comboDiretorios>option[value="'+idCombo+'"]').val() == undefined){
+            	 $('#comboDiretorios', transferenciaArquivosController.workspace).append($('<option>', {
+     			    value: idCombo,
+     			    label: this.dataDiretorios[idCombo]
+     			}));
+             }
+             
+         }
+    },
+    
+	// ### Functions DragDrop ### 
+	
 	sendFileToServer : function(formData,status){
     	
 		var idDiret =  $("#comboDiretorios option:selected").val();
@@ -501,7 +548,7 @@ var transferenciaArquivosController = $.extend(true, {
 	        success: function(data){
 	            status.setProgress(100);
 	 
-	            $("#status1").append(data.result.listaMensagens[0]+"<br>");         
+	            $("#status1").append("<br>"+data.result.listaMensagens[0]+"<br>");         
 	        }
 	    }); 
 	 

@@ -80,6 +80,12 @@ public class TransferenciaArquivoServiceImpl implements TransferenciaArquivoServ
         return fileName;
 	}
 	
+	@Override
+	@Transactional
+	public Boolean isDiretorioExistente(String pathDiretorio){
+		return this.transferenciaArquivosRepository.isDiretorioExistente(pathDiretorio);
+	}
+	
 	public String converteFileName(String text) {   
         
         return text.replaceAll("[ãâàáä]", "a")     

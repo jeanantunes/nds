@@ -7,6 +7,7 @@
 <script type="text/javascript" src="scripts/jquery-upload/js/vendor/jquery.ui.widget.js"></script>
 <script type="text/javascript" src="scripts/transferenciaArquivos.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/usuario/usuario.js"></script>
 
 <script language="javascript" type="text/javascript">
 
@@ -182,9 +183,9 @@ $(function(){
   <legend>Novo diret&oacute;rio</legend>
   	<div>
 		<label><b>Nome</b></label>
-		<input type="text" id="nomeDiretorio" size="25" style="float: left; margin-right: 25px; margin-top: 7px;"/>
+		<input type="text" id="nomeDiretorio" size="17em" style="float: left; margin-right: 25px; margin-top: 7px;"/>
 		<label><b>Pasta</b></label>
-		<input type="text" id="nomePasta" placeholder="Ex: nomeNovaPasta/subPasta" size="35" style="float:left; margin-right: 25px; margin-top: 7px;"/>
+		<input type="text" id="nomePasta" placeholder="Ex: nomeNovaPasta/subPasta" size="27em" style="float:left; margin-right: 25px; margin-top: 7px;"/>
 		<span class="bt_novos">
 			<a onclick="transferenciaArquivosController.salvarNovoDiretorio();" href="javascript:;">
 				<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">
