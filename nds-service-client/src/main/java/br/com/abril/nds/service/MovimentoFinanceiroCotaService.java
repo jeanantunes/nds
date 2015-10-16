@@ -192,4 +192,5 @@ public interface MovimentoFinanceiroCotaService {
     
     void processarDebitosParaCotasNoProcessoDeExpedicaoDeProdutoContaFirme(final ExpedicaoDTO expedicaoDTO, 
 			  															   final List<MovimentoEstoqueCotaDTO>movimentosEstoqueCota);
+
 }

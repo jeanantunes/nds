@@ -417,6 +417,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     	
     	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_ENTREGADOR);
     	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO_COTA_TAXA_DE_ENTREGA_TRANSPORTADOR);
+    	// incluso para nova opcao no dropdown na tela de debito credito cota -- tipo de lancamento
+    	gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
     	
         filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(gruposMovimentoFinanceiro); 
         
@@ -458,8 +460,15 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS);
         gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.TAXA_EXTRA);
+       
+            
+       
         return gruposMovimentosFinanceiros;
     }
+    
+    
+    
+  
     
     /**
      * @see br.com.abril.nds.service.MovimentoFinanceiroCotaService#obterContagemMovimentosFinanceiroCota(br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO)

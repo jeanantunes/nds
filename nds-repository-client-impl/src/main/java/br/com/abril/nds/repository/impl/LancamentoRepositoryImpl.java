@@ -15,8 +15,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
-
 import org.hibernate.Criteria;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
@@ -1126,7 +1124,7 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" desc ");
 		}
 
-		Query query = getSession().createSQLQuery(hql.toString());
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
 
 		if (idFornecedor != null) {
 			query.setParameter("idFornecedor", idFornecedor);
@@ -1134,9 +1132,34 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
-		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
-		query.setParameter("origemInterface", Origem.INTERFACE);
-		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO.name(), StatusLancamento.EM_RECOLHIMENTO.name(), StatusLancamento.RECOLHIDO.name()));
+		query.setParameter("origemInterface", Origem.INTERFACE.name());
+		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO.name());
+		
+		
+		query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
+		query.addScalar("idLancamento", StandardBasicTypes.LONG);
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("tipoLancamentoParcial", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("chamadaCapa", StandardBasicTypes.STRING);
+		query.addScalar("codigoDeBarras", StandardBasicTypes.STRING);
+		query.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL);
+		
+		query.addScalar("pacotePadrao", StandardBasicTypes.INTEGER);
+		query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("precoDesconto", StandardBasicTypes.BIG_DECIMAL);
+		
+		
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("dataRecolhimento", StandardBasicTypes.DATE);
+		query.addScalar("dataRecolhimentoFinal", StandardBasicTypes.DATE);
+		query.addScalar("nomeEditor", StandardBasicTypes.STRING);
+		
+	
 		
 		if (maxResults != null) {
 			query.setMaxResults(maxResults);
@@ -1232,7 +1255,7 @@ public class LancamentoRepositoryImpl extends
 	      sql.append(" left outer join PERIODO_LANCAMENTO_PARCIAL periodo_lancamento_parcial on lancamento.PERIODO_LANCAMENTO_PARCIAL_ID=periodo_lancamento_parcial.ID ");
 	      sql.append (" left outer join LANCAMENTO_PARCIAL lancamento_parcial  on periodo_lancamento_parcial.LANCAMENTO_PARCIAL_ID=lancamento_parcial.ID ");
 	      sql.append(" inner join  CHAMADA_ENCALHE chamada_encalhe on chamada_encalhe.data_recolhimento =  lancamento.data_rec_distrib ");
-
+	      sql.append(" and chamada_encalhe.produto_edicao_id = lancamento.PRODUTO_EDICAO_ID ");
 			sql.append(" where ");
 
 			sql.append(" lancamento.DATA_REC_DISTRIB between :dataInicioRecolhimento and :dataFimRecolhimento ");
@@ -1263,12 +1286,12 @@ public class LancamentoRepositoryImpl extends
 
 		StringBuffer sql = new StringBuffer();
 
-		sql.append(" select count(lancamento.id) ");
+		sql.append(" select count(lancamento.id) as idLancamento");
 
 		sql.append(this.getSQLObtemLancamentoInformeRecolhimento(idFornecedor,
 				dataInicioRecolhimento, dataFimRecolhimento));
 
-		Query query = getSession().createSQLQuery(sql.toString());
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
 
 		if (idFornecedor != null) {
 			query.setParameter("idFornecedor", idFornecedor);
@@ -1279,13 +1302,13 @@ public class LancamentoRepositoryImpl extends
 
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 
-		query.setParameterList("statusLancamento",
-				Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, 
-				        StatusLancamento.EM_RECOLHIMENTO, 
-				        StatusLancamento.RECOLHIDO));
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO.name(), StatusLancamento.EM_RECOLHIMENTO.name(), StatusLancamento.RECOLHIDO.name()));
 		
-		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
-
+		
+		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO.name());
+		query.addScalar("idLancamento", StandardBasicTypes.LONG);
+		
+        
 		return Long.valueOf(query.list().size());
 
 	}
