@@ -198,7 +198,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 				editor,  
 				bandeira.getChaveNFe(), 
 				destino,
-				StringUtils.leftPad(bandeira.getNumeroNotaFiscal().toString(), 8, '0')));
+				StringUtils.leftPad(bandeira.getNumeroNotaFiscal().toString(), 6, '0')));
 			}
 		}
 		
