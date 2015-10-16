@@ -60,14 +60,14 @@ var usuarioController = $.extend(true, {
 				contextPath + '/administracao/usuario/validarUsuarioSupervisor',
 				usuarioController.data.toJSON(), function (result) {
 
-					if (callbacks.usuarioSupervisorCallback) {
-						callbacks.usuarioSupervisorCallback(result);
+					if (callbacks.callbacks.usuarioSupervisorCallback) {
+						callbacks.callbacks.usuarioSupervisorCallback();
 	            	}
 					usuarioController.data.reset();
 	            
 				}, function(result) {
-					if (callbacks.usuarioSupervisorCallback) {
-						callbacks.usuarioSupervisorCallback(result);
+					if (callbacks.callbacks.usuarioNaoSupervisorCallback) {
+						callbacks.callbacks.usuarioNaoSupervisorCallback();
 	            	}
 					usuarioController.data.reset();
 	            }
