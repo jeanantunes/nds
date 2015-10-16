@@ -988,6 +988,7 @@ public class LancamentoRepositoryImpl extends
 	 * java.util.Calendar, java.lang.String,
 	 * br.com.abril.nds.vo.PaginacaoVO.Ordenacao, int, int)
 	 */
+	/*
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
@@ -1000,7 +1001,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select ");
 
 		hql.append(" lancamento.id as idLancamento, ");
-		hql.append(" lancamento.produtoEdicao.id as idProdutoEdicao, 		  	");
+		hql.append(" lancamento.produto_edicao_id as idProdutoEdicao, 		  	");
 		hql.append(" chamadaEncalhe.sequencia as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
@@ -1065,6 +1066,86 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 
 	}
+	*/
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
+			Long idFornecedor, Calendar dataInicioRecolhimento,
+			Calendar dataFimRecolhimento, String orderBy, Ordenacao ordenacao,
+			Integer initialResult, Integer maxResults) {
+
+		StringBuffer hql = new StringBuffer();
+
+		hql.append(" select ");
+
+		hql.append(" lancamento.id as idLancamento, ");
+		hql.append(" lancamento.produto_edicao_id as idProdutoEdicao, 		  	");
+		hql.append(" chamada_encalhe.sequencia as sequenciaMatriz,			  	");
+		hql.append(" produto.codigo as codigoProduto, 	");
+		hql.append(" produto.nome as nomeProduto,		");
+		hql.append(" periodo_lancamento_parcial.tipo as tipoLancamentoParcial, ");
+		hql.append(" produto_edicao.numero_edicao as numeroEdicao,		");
+		hql.append(" produto_edicao.chamada_capa as chamadaCapa,		");
+		hql.append(" produto_edicao.codigo_de_barras as codigoDeBarras, ");
+		hql.append(" produto_edicao.preco_venda as precoVenda, 		");
+		hql.append(" produto_edicao.pacote_padrao as pacotePadrao, 		");
+		hql.append(" (CASE WHEN produto_edicao.origem = :origemInterface ");
+		hql.append(" THEN (coalesce(desconto_produto_edicao.percentual_desconto, desconto_produto.percentual_desconto, 0 ) /100 ) ");
+		hql.append(" ELSE (coalesce(produto_edicao.desconto, produto.desconto, 0) / 100) END ");
+		hql.append(" ) as desconto, ");
+
+		hql.append(" coalesce(produto_edicao.preco_venda, 0) - (coalesce(produto_edicao.preco_venda, 0) * ( ");
+		hql.append(" CASE WHEN produto_edicao.origem = :origemInterface ");
+		hql.append(" THEN (coalesce(desconto_produto_edicao.percentual_desconto, desconto_produto.percentual_desconto, 0 ) /100 ) ");
+		hql.append(" ELSE (coalesce(produto_edicao.desconto, produto.desconto, 0) / 100) END ");
+		hql.append(" )) as precoDesconto, ");
+
+		hql.append(" lancamento.data_lcto_distribuidor as dataLancamento, 		");
+
+		hql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimento, 	");
+
+		hql.append(" lancamento_parcial.recolhimento_final as dataRecolhimentoFinal, 	");
+
+		hql.append(" pessoa.razao_social as nomeEditor		");
+
+		hql.append(this.getSQLObtemLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento));
+
+		hql.append(" order by ");
+
+		hql.append(orderBy);
+
+		if (Ordenacao.ASC == ordenacao) {
+			hql.append(" asc ");
+		} else if (Ordenacao.DESC == ordenacao) {
+			hql.append(" desc ");
+		}
+
+		Query query = getSession().createSQLQuery(hql.toString());
+
+		if (idFornecedor != null) {
+			query.setParameter("idFornecedor", idFornecedor);
+		}
+
+		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
+		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO, StatusLancamento.RECOLHIDO));
+		query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
+		
+		if (maxResults != null) {
+			query.setMaxResults(maxResults);
+		}
+		if (initialResult != null) {
+			query.setFirstResult(initialResult);
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformeEncalheDTO.class));
+
+		return query.list();
+
+	}
+
 
 	/**
 	 * Obtém a clausula "from" que compõe do HQL para consulta de dados de
@@ -1123,7 +1204,43 @@ public class LancamentoRepositoryImpl extends
 		
 		query.setParameter("tipoLanc", TipoLancamento.LANCAMENTO);
 
+		System.err.println(hql.toString());
 		return hql.toString();
+	}
+	
+	private String getSQLObtemLancamentoInformeRecolhimento(Long idFornecedor, Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
+
+		StringBuffer sql = new StringBuffer();
+
+		
+		 sql.append(" from LANCAMENTO lancamento  ");
+	      sql.append(" inner join  PRODUTO_EDICAO produto_edicao  on lancamento.PRODUTO_EDICAO_ID=produto_edicao.ID ");
+	      sql.append(" inner join PRODUTO produto on produto_edicao.PRODUTO_ID=produto.ID ");
+	      sql.append(" inner join PRODUTO_FORNECEDOR produto_fornecedor on produto.ID=produto_fornecedor.PRODUTO_ID ");
+	      sql.append(" inner join FORNECEDOR fornecedor on produto_fornecedor.fornecedores_ID=fornecedor.ID ");
+	      sql.append(" left outer join EDITOR editor on produto.EDITOR_ID=editor.ID  ");
+	      sql.append(" left outer join PESSOA pessoa  on editor.JURIDICA_ID=pessoa.ID ");
+	      sql.append(" left outer join DESCONTO_LOGISTICA desconto_produto on produto.DESCONTO_LOGISTICA_ID=desconto_produto.ID ");
+	      sql.append(" left outer join DESCONTO_LOGISTICA desconto_produto_edicao on produto_edicao.DESCONTO_LOGISTICA_ID=desconto_produto_edicao.ID ");
+	      sql.append(" left outer join PERIODO_LANCAMENTO_PARCIAL periodo_lancamento_parcial on lancamento.PERIODO_LANCAMENTO_PARCIAL_ID=periodo_lancamento_parcial.ID ");
+	      sql.append (" left outer join LANCAMENTO_PARCIAL lancamento_parcial  on periodo_lancamento_parcial.LANCAMENTO_PARCIAL_ID=lancamento_parcial.ID ");
+	      sql.append(" inner join  CHAMADA_ENCALHE chamada_encalhe on chamada_encalhe.data_recolhimento =  lancamento.data_rec_distrib ");
+
+			sql.append(" where ");
+
+			sql.append(" lancamento.DATA_REC_DISTRIB between :dataInicioRecolhimento and :dataFimRecolhimento ");
+
+			sql.append(" and lancamento.STATUS  in (:statusLancamento) ");
+			
+			sql.append(" and lancamento.TIPO_LANCAMENTO = :tipoLanc ");
+
+			if (idFornecedor != null) {
+				sql.append(" and fornecedor.ID = :idFornecedor ");
+			}
+			
+			sql.append(" group by lancamento.ID ");
+		
+		return sql.toString();
 	}
 
 	/*
@@ -1137,14 +1254,14 @@ public class LancamentoRepositoryImpl extends
 	public Long quantidadeLancamentoInformeRecolhimento(Long idFornecedor,
 			Calendar dataInicioRecolhimento, Calendar dataFimRecolhimento) {
 
-		StringBuffer hql = new StringBuffer();
+		StringBuffer sql = new StringBuffer();
 
-		hql.append(" select count(lancamento.id) ");
+		sql.append(" select count(lancamento.id) ");
 
-		hql.append(this.getHQLObtemLancamentoInformeRecolhimento(idFornecedor,
+		sql.append(this.getSQLObtemLancamentoInformeRecolhimento(idFornecedor,
 				dataInicioRecolhimento, dataFimRecolhimento));
 
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(sql.toString());
 
 		if (idFornecedor != null) {
 			query.setParameter("idFornecedor", idFornecedor);
