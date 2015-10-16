@@ -240,7 +240,7 @@ public class CotaDAO {
 		
 		if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
 		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-				if (cota.isNova()) {
+				if (cota.isNova() && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 				    cota.setClassificacao(ClassificacaoCota.CotaNova);
 				}
 		    }

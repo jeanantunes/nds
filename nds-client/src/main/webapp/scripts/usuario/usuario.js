@@ -51,6 +51,28 @@ var usuarioController = $.extend(true, {
 	            }
 			);    	
 	    },
+	    
+	    validarUsuarioSupervisorSemConfirmacaoDeSenha: function(callbacks) {
+
+	    	var _this = this;
+	    	
+	    	$.postJSON(
+				contextPath + '/administracao/usuario/validarUsuarioSupervisor',
+				usuarioController.data.toJSON(), function (result) {
+
+					if (callbacks.usuarioSupervisorCallback) {
+						callbacks.usuarioSupervisorCallback(result);
+	            	}
+					usuarioController.data.reset();
+	            
+				}, function(result) {
+					if (callbacks.usuarioSupervisorCallback) {
+						callbacks.usuarioSupervisorCallback(result);
+	            	}
+					usuarioController.data.reset();
+	            }
+			);    	
+	    },
 	
 	    popupConfirmaSenha : function(usuarioSupervisorCallback, usuarioNaoSupervisorCallback) {
 	    	var _this = this;

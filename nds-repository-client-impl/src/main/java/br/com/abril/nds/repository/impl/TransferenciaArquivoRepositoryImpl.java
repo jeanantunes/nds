@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.model.DiretorioTransferenciaArquivo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.TransferenciaArquivoRepository;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -48,6 +49,22 @@ public class TransferenciaArquivoRepositoryImpl extends AbstractRepositoryModel<
 		configurarPaginacao(filtro, query);
 		
 		return query.list();
+		
+	}
+	
+	@Override
+	public Boolean isDiretorioExistente(String pathDiretorio){
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(id) qtd from diretorio d where d.ENDERECO_DIRETORIO = :path ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString()).addScalar("qtd", StandardBasicTypes.LONG);
+		
+		query.setParameter("path", pathDiretorio);
+		
+		Long count = (Long) Util.nvl(query.uniqueResult(),0);
+        
+    	return (count > 0);
 		
 	}
 	
