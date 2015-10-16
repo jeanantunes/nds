@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
@@ -184,11 +184,24 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private CouchDbClient couchDbClient;
 	
+	
+	@PreDestroy
+	public void cleanUp() throws Exception {
+		if  ( this.couchDbClient != null ) {
+			LOGGER.error("shutdownd couchdbclient no cleanup");
+			this.couchDbClient.shutdown();
+		}
+	}
+	
 	@PostConstruct
 	public void initCouchDbClient() {
 		
 		String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
 		try {
+			if  ( this.couchDbClient != null ) {
+				LOGGER.error("shutdownd couchdbclient no initcouchdbclient");
+				this.couchDbClient.shutdown();
+			}
 			Long codigoDistribuidorNumerico = Long.parseLong(codigoDistribuidor);
 			if(codigoDistribuidorNumerico < 1) {
 				codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorFC();
@@ -1103,6 +1116,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setEnderecoDistribuidor(this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
 		
 		//Recarrega os codigos do Distribuidor para acessar o CouchDB
+		
 		this.initCouchDbClient();
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
