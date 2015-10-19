@@ -1,9 +1,13 @@
 package br.com.abril.nds.controllers.administracao;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,13 +15,18 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -64,15 +73,12 @@ import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
-import br.com.abril.nds.util.AnexoEmail;
-import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import java.util.zip.*;
 
 /**
  * @author InfoA2
@@ -169,16 +175,59 @@ public class GeracaoArquivosController extends BaseController {
 	
 	@Path("/")
 	public void index() {
+		preencherComboArquivos();
 	}
 
 	
+	
+	public void preencherComboArquivos()  {
+		 List <String> list = new ArrayList();
+       
+		try {
+		 String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+			
+		 String path  = dirBanca+"/dinap";
+		
+		
+		 FilenameFilter fileFilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					
+					if (name.endsWith(".zip") ) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			};
+			File[] files = new File(path).listFiles(fileFilter);
+			Arrays.sort(files, new Comparator<File>(){
+			    public int compare(File f1, File f2)
+			    {
+			        return -1*Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+			    } });
+			
+			for(File input : files) {				
+				list.add(input.getName());				
+			}
+		
+	
+		} catch (Exception e) {
+			LOGGER.error("Erro obtendo arquivos dinap",e);
+		}
+		
+		this.result.include("arquivosDinapList", list);
+		
+	}
 
 	@Path("/getFile")
 	public void getFile() throws IOException {
 		String path =  (String) session.getValue("PATH_VENDA");
-		
+		byte[] arquivo=("Nao encontrado "+path).getBytes();
 		if ( path == null ) { // se nao foi gerado agora pegar o o mais novo, caso senha
-			
+		   // LOGGER.warn("Arquivo nao gerado");
+			//result.use(Results.nothing());
+			//return;
+			/*
 			 String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
 			for ( int i=-14; i < 30;i++ ){
 				 Calendar cal = Calendar.getInstance();
@@ -190,20 +239,28 @@ public class GeracaoArquivosController extends BaseController {
 					 break;
 				  }
 			}
-		}
-		  byte[] arquivo=("Nao encontrado "+path).getBytes();
+			*/
+			 arquivo=("Nao ha arquivo gerado").getBytes();
+			 httpResponse.setContentType("application/txt");
+		        
+		        httpResponse.setHeader("Content-Disposition", "attachment; filename=nao encontrado");
+		        
+		      
+		} else {
+		
 		  File file = new File(path);
 		  if ( file.exists()) {
 			  arquivo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
 		  }
-		 
-		
-		   httpResponse.setContentType("application/txt");
+		  httpResponse.setContentType("application/txt");
 	        
 	        httpResponse.setHeader("Content-Disposition", "attachment; filename="+file.getName());
 	        
-	        final OutputStream output = httpResponse.getOutputStream();
-	        
+	      
+		 
+		}
+		  
+		  final OutputStream output = httpResponse.getOutputStream();
 	        output.write(arquivo);
 	        
 	        httpResponse.getOutputStream().close();
@@ -424,6 +481,7 @@ public class GeracaoArquivosController extends BaseController {
 		    	  
 		    	  LOGGER.warn("ENVIANDO  ARQUIVO CARUSO"+path +" para email" + email);
 		    	  mensagem.append("GERADO ARQUIVO "+path+" com "+cont+" registros</br>");
+		    	  /* comentando, enquanto email nao habilitado
 		    	  AnexoEmail anexoEmail = new AnexoEmail();
 		    	  anexoEmail.setNome(path);
 		    	 
@@ -443,7 +501,7 @@ public class GeracaoArquivosController extends BaseController {
 							 "Segue arquivo em anexo.", 
 							 new String[]{email}, 
 							 anexosEmail);	
-		        
+		        */
 		      }
 		      
 		      
@@ -466,7 +524,7 @@ public class GeracaoArquivosController extends BaseController {
 
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
-	public void unificar() {	
+	public void unificaror() {	
 		  String crlf = System.getProperty("line.separator");
 	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
 	  
@@ -571,11 +629,230 @@ public class GeracaoArquivosController extends BaseController {
 	
 	}
 
+	public void limparDir(String dir) {
+		Iterator it= FileUtils.iterateFiles(new File(dir) , new String[] {"LCT","RCL"},false);
+					while (it.hasNext()) {
+						File file = (File) it.next();
+						file.delete();
+		
+					}
+	}
 	
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
-	public void gerar(Date dataLctoPrevisto, String operacao) {
+	public void unificar(Date dataLctoPrevisto, String operacao,String nomeArquivo) {	
+		session.removeAttribute("PATH_VENDA");
+		 if ( nomeArquivo == null ) {
+			  throw new ValidacaoException(TipoMensagem.WARNING, "Escolher o arquivo Dinap.");
+		  }
+		  String crlf = System.getProperty("line.separator");
+	      String dirBanca = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO).getValor();
+	  
+	      String dirFc = dirBanca+"/fc";
+	     
+	      String dirDinap = dirBanca+"/dinap";
+	      String dirOut = dirBanca+"/dinap_fc";
+	      String dirConflito = dirBanca+"/dinap_fc_conflito";
+	      int conflitos=0;
+	   try {   
+		   // pegar arquivoz zip dinap
+		   StringBuffer ret=new StringBuffer();
+		   
+		   String dinapName = nomeArquivo;
+		   File zipDinap = new File(dirDinap+"/"+nomeArquivo);
+		 
+		   ret.append("Unificando arquivo dinap "+zipDinap.getPath()+"</br>");
+		  //deletar RCL E LCT de diretorios
+		   limparDir(dirDinap);
+		   limparDir(dirFc);
+		   limparDir(dirOut);
 		
+		 // descompactar dinap e fc
+		  
+		   descompactar(zipDinap.getPath(),dirDinap);
+		  
+		 
+		   // obter data encalhe  e descompactar zip encalhe RCL
+		   FilenameFilter fileFilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					
+					if (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") ) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			};
+			
+			String rcl=null;
+			String lct=null;
+			int reparte=0;
+			int encalhe=0;
+			for(File input : new File(dirDinap).listFiles(fileFilter)) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				if ( input.getName().endsWith(".RCL")) {
+					rcl = input.getName();
+					encalhe++;
+				}
+				if ( input.getName().endsWith(".LCT")) {
+					reparte++;
+					lct = input.getName();
+				}
+				
+			}
+		   
+		   if ( lct == null && rcl == null ) {
+				  throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo Dinap "+dinapName+" nao possui nem reparte nem encalhe");
+					
+		   }
+		   ret.append("Quantidade de arquivos  reparte LCT DINAP  "+reparte+"</br>");
+		   ret.append("Quantidade de arquivos  encalhe RCL DINAP  "+encalhe+"</br>");
+		   
+		   if ( lct == null ) {
+			   ret.append("ARQUIVO zip dinap nao possui Reparte LCT ");
+		   } else {
+			   String zipReparteFc=dirBanca+"/fc/reparte-"+lct.split("\\.")[2]+".zip";
+			   ret.append("Unificando arquivo reparte fc  "+zipReparteFc+"</br>");
+			   if (new File(zipReparteFc).exists()) {
+			   int cont=descompactar(zipReparteFc,dirFc);
+			   ret.append("Quantidade de arquivos  reparte fc  "+cont+"</br>");
+			   } else
+				   ret.append("ATENCAO.. Arquivo reparte fc  nao encontrado "+zipReparteFc+"</br>");
+		   }
+		   if ( rcl == null ) {
+			   ret.append("ARQUIVO zip dinap nao possui Encalhe RCL ");
+		   } else {
+		   String zipEncalheFc=dirBanca+"/fc/encalhe-"+rcl.split("\\.")[2]+".zip";
+		   ret.append("Unificando arquivo encalhe fc  "+zipEncalheFc+"</br>");
+		   if (new File(zipEncalheFc).exists()) {
+		   int cont=descompactar(zipEncalheFc,dirFc);
+		   ret.append("Quantidade de arquivos  encalhe fc  "+cont+"</br>");
+		   } else
+			   ret.append("ATENCAO.. Arquivo encalhe fc  nao encontrado "+zipEncalheFc+"</br>");
+		   }
+		   // obter data reparte e descompactar zip de reparte LCT
+		  
+		   
+	      // copiar dinap para saida
+	      File source = new File(dirDinap);
+	      File dest = new File(dirOut);
+	      try {
+	          FileUtils.copyDirectory(source, dest);
+	          
+	      } catch (IOException e) {
+	          e.printStackTrace();
+	          result.use(Results.json()).from("</br>Erro copiando arquivos de .."+dirDinap+"  Para "+dirOut+" erro:"+e.getMessage() , "result").serialize();
+    		  return;
+	      }
+
+	     // processar
+	      
+	     
+	      File dir = new File(dirFc);
+		  String[] extensions = new String[] { "LCT", "RCL" };
+			
+			List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, true);
+			List <File> files_semdepara = new <File> ArrayList();
+			for (File file : files) {
+				String fc=file.getName();
+				String boxfc = fc.split("[.]")[1];
+				String boxdinap = deparaService.obterBoxDinap(boxfc);	
+				 if ( boxdinap == null || boxdinap.trim().length() == 0 ) {
+				 //  ret.append( "Box fc="+boxfc+" nao tem box  dinap correspondente.Incluir box dinap para box fc="+boxfc +"na tabela depara</br>");
+				   files_semdepara.add(file);
+				   continue;
+				 } 
+				 // trocar box no arquivo fc para dinap
+				  // e trocar filial fc para filial dinap
+				  String filialFc = "0757350";
+				  String filialDinap ="5318019";
+				   String pathOut = dirOut +"/"+fc.replace(boxfc,boxdinap).replace(filialFc,filialDinap);
+				   File arqOut = new File(pathOut);
+				  
+				   if  (arqOut.exists()) { // concatenar
+					   String filestr_fc = FileUtils.readFileToString(file);
+					   String filestr_dinap = FileUtils.readFileToString(arqOut);
+					   
+					   FileUtils.write(arqOut, filestr_dinap+filestr_fc); 
+				   }
+				   else {
+					 FileUtils.copyFile(file, arqOut);
+				     
+				   }
+			   }
+			
+			// processar arquivos fcs sem box dinap
+			
+			for (File file : files_semdepara) {
+				String fc=file.getName();
+				String boxfc = fc.split("[.]")[1];
+				
+				ret.append("Atencao:Box fc="+boxfc+" nao tem box dinap correspondente na tabela depara</br>");
+				  
+				
+				   String pathOut = dirOut +"/"+fc;
+				   File arqOut = new File(pathOut);
+				  
+				   if  (!arqOut.exists()) { // nao existe,cpiar para unificado
+					   FileUtils.copyFile(file, arqOut);
+				   } else {  //copiar para conflito
+					   conflitos++;
+					   ret.append("Conflito:Arquivo fc "+file.getAbsolutePath()+"  existe no dinap mas nao tem o box correspondente.Copiado para "+dirConflito+"/"+fc +"</br>" );
+					 FileUtils.copyFile(file, new File(dirConflito+"/"+fc));
+				   } 
+				  
+			   }
+			
+			ret.append("Quantidade de arquivos fc unificados com dinap :"+files.size()+"</br>");
+			ret.append("Sem box dinap="+files_semdepara.size()+ " Conflitos="+conflitos+"</br>");
+			String arqDinapFc="unificado_"+dinapName;
+			compactarArquivos(dirOut,arqDinapFc);
+			 //llimpar RCL E LCT de diretorios
+			   limparDir(dirDinap);
+			   limparDir(dirFc);
+			   limparDir(dirOut);
+			   
+			ret.append("Compactado resultado para "+arqDinapFc+"</br>");
+			 session.putValue("PATH_VENDA",dirOut+"/"+arqDinapFc);
+		     result.use(Results.json()).from(ret.toString() , "result").serialize();
+		     /*
+		     InputStream isFile = new FileInputStream(new File(dirOut+"/"+arqDinapFc));  
+				
+				
+				byte[] arquivo = IOUtils.toByteArray(isFile);
+				httpServletResponse.setContentType("application/zip");
+				httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + arqDinapFc);
+		        
+		        final OutputStream output = httpServletResponse.getOutputStream();
+		        output.write(arquivo);
+		        
+		        httpServletResponse.flushBuffer();
+		        */
+		    }
+		    catch (Exception err) {
+		      err.printStackTrace();
+		      String erro="";
+		      if ( !new File( dirBanca+"/fc").exists())
+		    	  erro+=dirBanca+"/fc  Nao existe";
+		      if ( !new File( dirBanca+"/dinap").exists())
+		    	  erro+=dirBanca+"/dinap Nao existe";
+		     if ( !new File( dirBanca+"/dinap_fc").exists())
+		    	erro+=dirBanca+"/dinap_fc  Nao existe";
+			 if ( !new File( dirBanca+"/dinap_fc_conflito").exists())
+		    	erro+=dirBanca+"/dinap_fc_conflito Nao existe";
+
+		      result.use(Results.json()).from("Erro executando Unificacao</br>"+err.getMessage() +"</br>"+erro, "result").serialize();
+		    }
+	
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO_ALTERACAO)
+	public void gerar(Date dataLctoPrevisto, String operacao,String nomeArquivo) {
+		session.removeAttribute("PATH_VENDA");
 		validarDataDeGeracao(dataLctoPrevisto);
 
 		int qtdArquivosGerados = 0;
@@ -597,12 +874,16 @@ public class GeracaoArquivosController extends BaseController {
 			qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 			if(qtdArquivosGerados > 0) {
 				
-				SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
 					
 					File file = new File(ps.getValor() + File.separator +"reparte"+ File.separator +"zip"+ File.separator +"reparte-"+ sdf.format(dataLctoPrevisto) +".zip");
 				try {
-					InputStream isFile = new FileInputStream(file);    
+					String dirFc = ps.getValor()+ File.separator +"fc";
+					FileUtils.copyFileToDirectory(file, new File(dirFc));
+					
+					InputStream isFile = new FileInputStream(file);  
+					
 					
 					byte[] arquivo = IOUtils.toByteArray(isFile);
 					httpServletResponse.setContentType("application/zip");
@@ -624,12 +905,13 @@ public class GeracaoArquivosController extends BaseController {
 			qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 			if(qtdArquivosGerados > 0) {
 				
-				SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				ParametroSistema ps = parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO);
 				
 				File file = new File(ps.getValor() + File.separator +"encalhe"+ File.separator +"zip"+ File.separator +"encalhe-"+ sdf.format(dataLctoPrevisto) +".zip");
 				try {
-					
+					String dirFc = ps.getValor()+ File.separator +"fc";
+					FileUtils.copyFileToDirectory(file, new File(dirFc));
 					InputStream isFile = new FileInputStream(file);    
 					
 					byte[] arquivo = IOUtils.toByteArray(isFile);
@@ -673,5 +955,138 @@ public class GeracaoArquivosController extends BaseController {
 			
 		result.use(Results.json()).from(data, "data").recursive().serialize();
 	}
+	
+	
+	
+	private void compactarArquivos(String dir,String arquivo) {
+		
+		
+		File diretorio = new File(dir); 
+		FileOutputStream fos = null;
+		ZipOutputStream zipOut = null;
+		FileInputStream fis = null;
+		try {
+			
+			fos = new FileOutputStream(dir
+						+ File.separator +arquivo);
+			zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+			FilenameFilter fileFilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					
+					if (name.toUpperCase().endsWith(".RCL") || name.toUpperCase().endsWith(".LCT") ) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			};
+
+			for(File input : diretorio.listFiles(fileFilter)) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				fis = new FileInputStream(input);
+				ZipEntry ze = new ZipEntry(input.getName());
+			
+				zipOut.putNextEntry(ze);
+				byte[] tmp = new byte[4 * 1024];
+				int size = 0;
+				while((size = fis.read(tmp)) != -1) {
+					
+					zipOut.write(tmp, 0, size);
+				}
+				zipOut.flush();
+				fis.close();
+			}
+			
+			zipOut.close();
+			
+			for(File input : diretorio.listFiles(fileFilter)) {
+				
+				if(input.isDirectory()) {
+					continue;
+				}
+				
+				input.delete();
+			}
+			
+		} catch (FileNotFoundException e) {
+			
+			LOGGER.error("Falha ao obter arquivo.", e);
+		} catch (IOException e) {
+			
+			LOGGER.error("IOException", e);
+		} finally {
+			try {
+				
+				if(fos != null) { 
+					fos.close();
+				}
+			} catch(Exception ex) {
+
+				LOGGER.error("Falha ao fechar arquivo.", ex);
+			}
+		}
+	}
+	
+public int 	descompactar(String zipFile,String outputFolder) {
+
+	     byte[] buffer = new byte[1024];
+	     int cont=0;
+	     try{
+	    		
+	    	//create output directory is not exists
+	    	File folder = new File(outputFolder);
+	    	if(!folder.exists()){
+	    		folder.mkdir();
+	    	}
+	    		
+	    	//get the zip file content
+	    	ZipInputStream zis = 
+	    		new ZipInputStream(new FileInputStream(zipFile));
+	    	//get the zipped file list entry
+	    	ZipEntry ze = zis.getNextEntry();
+	    		
+	    	while(ze!=null){
+	    	   cont++;
+	    	   String fileName = ze.getName();
+	           File newFile = new File(outputFolder + File.separator + fileName);
+	                
+	          
+	                
+	            //create all non exists folders
+	            //else you will hit FileNotFoundException for compressed folder
+	            new File(newFile.getParent()).mkdirs();
+	              
+	            FileOutputStream fos = new FileOutputStream(newFile);             
+
+	            int len;
+	            while ((len = zis.read(buffer)) > 0) {
+	       		fos.write(buffer, 0, len);
+	            }
+	        		
+	            fos.close();   
+	            ze = zis.getNextEntry();
+	    	}
+	    	
+	        zis.closeEntry();
+	    	zis.close();
+	    		
+	    	
+	    		
+	    }catch(IOException ex){
+	     
+	       LOGGER.error("ERRO UNZIP ARQUIVO",ex);
+	    }
+	     
+	     return cont;
+	   }    
+
+   public int descompactar (  String diretorio) {
+	   return 0;
+   }
+   
 
 }

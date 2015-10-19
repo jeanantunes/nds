@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -193,7 +194,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	private void compactarArquivos(Message message) {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("Y-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dir = message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER +File.separator;
 		File diretorio = new File(dir); 
 		FileOutputStream fos = null;
@@ -212,7 +213,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 				
 				fis = new FileInputStream(input);
 				ZipEntry ze = new ZipEntry(input.getName());
-				System.out.println("Zipping the file: "+input.getName());
+			
 				zipOut.putNextEntry(ze);
 				byte[] tmp = new byte[4 * 1024];
 				int size = 0;
@@ -389,8 +390,8 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 			 
 			String nomeArquivo = ""+codDistrb+"."+StringUtils.leftPad(numCota, 5, '0')+"."+dataRec;
 
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
-					TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER + File.separator + nomeArquivo + ENCALHE_EXT));
+			PrintWriter print = new PrintWriter(new FileWriter(Paths.get(message.getHeader().get(
+					TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER + File.separator + nomeArquivo + ENCALHE_EXT).toString()));
 			
 			return print;
 			
