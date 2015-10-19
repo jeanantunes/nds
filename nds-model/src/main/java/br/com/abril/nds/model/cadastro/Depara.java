@@ -58,10 +58,10 @@ public class Depara implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "fc", nullable = true)
+	@Column(name = "fc", nullable = false)
 	private String fc;
 	
-	@Column(name = "dinap", nullable = true)
+	@Column(name = "dinap", nullable = false)
 	private String dinap;
 	
 	public Long getId() {

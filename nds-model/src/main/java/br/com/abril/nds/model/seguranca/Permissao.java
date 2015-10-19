@@ -52,6 +52,10 @@ public enum Permissao {
 	ROLE_CADASTRO_BOX_ALTERACAO("Box", 												 		   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_BOX("Box", 												 						  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_BOX_ALTERACAO, true, null),
 	
+	ROLE_CADASTRO_DEPARA_ALTERACAO("Depara", 												 		   		Permissao.ROLE_CADASTRO, true),
+	ROLE_CADASTRO_DEPARA("Depara", 												 						  	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_DEPARA_ALTERACAO, true, null),
+	
+	
 	ROLE_CADASTRO_BANCO_ALTERACAO("Banco", 											 		   				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_BANCO("Banco", 											 						  	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_BANCO_ALTERACAO, true, null),
 	
