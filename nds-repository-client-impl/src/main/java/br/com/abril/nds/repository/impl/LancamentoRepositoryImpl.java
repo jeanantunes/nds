@@ -789,7 +789,7 @@ public class LancamentoRepositoryImpl extends
 				.append("   select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
 				.append("   from MovimentoEstoqueCota mecMaxDate ")
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
-				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id   ");
 		
 		if(dataLimiteLancamento != null) {
 			hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
