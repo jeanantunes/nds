@@ -27,6 +27,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.util.DateUtil;
 
 @Component
@@ -46,6 +47,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private RecolhimentoService recolhimentoService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -116,9 +120,8 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		}
 		
 		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataRecolhimentoDistribuidor());
-		
-		final Date dtRecolhimentoArquivo = lancamentoService.obterDataLancamentoValido(this.normalizarDataSemHora(input.getDataRecolhimento()),produtoEdicao.getProduto().getFornecedor().getId());
-		
+		final Date dtRecolhimentoArquivo = recolhimentoService.obterDataRecolhimentoValido(this.normalizarDataSemHora(input.getDataRecolhimento()),produtoEdicao.getProduto().getFornecedor().getId());
+
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
 			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(
