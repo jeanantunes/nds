@@ -359,7 +359,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCpfCnpjDestinatario(String cpfCnpjDestinatario) {
-		cpfCnpjDestinatario = cpfCnpjDestinatario != null ? StringUtils.leftPad(cpfCnpjDestinatario, 14, "") : StringUtils.leftPad("", 14, "");
+		cpfCnpjDestinatario = cpfCnpjDestinatario != null ? StringUtils.leftPad(cpfCnpjDestinatario, 14, " ") : StringUtils.leftPad("", 14, " ");
 		this.cpfCnpjDestinatario = cpfCnpjDestinatario;
 	}
 
@@ -1016,6 +1016,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 	}
 
 	public void setCodigoPessoaEmissor(String codigoPessoaEmissor) {
+		codigoPessoaEmissor = codigoPessoaEmissor != null ? StringUtils.leftPad(codigoPessoaEmissor, 10, ' ') : StringUtils.leftPad("", 10, ' ');
 		this.codigoPessoaEmissor = codigoPessoaEmissor;
 	}
 
@@ -1025,6 +1026,7 @@ public class FTFEnvTipoRegistro01 extends FTFBaseDTO implements FTFCommons {
 
 	public void setCodigoPessoaDetalheDestinatario(
 			String codigoPessoaDetalheDestinatario) {
+		codigoPessoaDetalheDestinatario = codigoPessoaDetalheDestinatario != null ? StringUtils.leftPad(codigoPessoaDetalheDestinatario, 10, ' ') : StringUtils.leftPad("", 10, ' ');
 		this.codigoPessoaDetalheDestinatario = codigoPessoaDetalheDestinatario;
 	}
 
