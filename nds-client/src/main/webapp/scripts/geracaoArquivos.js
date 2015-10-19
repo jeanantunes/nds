@@ -95,7 +95,8 @@ GeracaoArquivos.prototype.criarCotasCentralizadasGrid = function() {
 GeracaoArquivos.prototype.getParams = function() {
 	var params = {
 		"dataLctoPrevisto" : $("#datepickerDe", this.workspace).val(),
-		"operacao" : $("#tipoArquivo", this.workspace).val()
+		"operacao" : $("#tipoArquivo", this.workspace).val(),
+		"nomeArquivo" : $("#nomeArquivo", this.workspace).val()
 	};
 	return params;
 };
@@ -116,6 +117,8 @@ if($("#tipoArquivo", this.workspace).val() == "VENDA") {
 				function(data) {
 					$("#resultado_unificacao", this.workspace).show();
 					$("#qtdArquivosUnificados", this.workspace).html(data);
+					
+					window.open(contextPath+ "/administracao/geracaoArquivos/getFile", "_blank");
 				},
 				function(result) {
 					$("#resultado_unificacao", this.workspace).show();
@@ -139,7 +142,29 @@ if($("#tipoArquivo", this.workspace).val() == "VENDA") {
 					$("#qtdArquivosGerados", this.workspace).html(0);
 				}
 		);
-	} else {
+	} else 
+		if($("#tipoArquivo", this.workspace).val() == "UNIFICAR") {
+			
+			$.postJSON(this.path + 'unificar',
+					params, 
+					function(data) {
+				      
+						$("#resultado_unificacao", this.workspace).show();
+						$("#qtdArquivosUnificados", this.workspace).html(data);
+						
+						window.open(contextPath+ "/administracao/geracaoArquivos/getFile", "_blank");
+					},
+					function(result) {
+						
+						$("#resultado_unificacao", this.workspace).show();
+						$("#qtdArquivosUnificados", this.workspace).html(0);
+						
+					}
+					
+			);
+		}
+		else
+	{
 		
 		$.fileDownload(this.path + 'gerar', {
 			httpMethod : "POST",
@@ -161,9 +186,9 @@ GeracaoArquivos.prototype.btnUnificarOnClick = function() {
 
 	
 	
-	var params = {};
+	var params = this.getParams();
 		
-		$.postJSON(this.path + 'unificar',
+		$.postJSON(this.path + 'unificaror',
 				params, 
 				function(data) {
 					$("#resultado_unificacao", this.workspace).show();
@@ -201,33 +226,62 @@ GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
 	var reparte = $("#dtLancto");
 	var encalhe = $("#dtRecolhimento");
 	var venda = $("#dtVenda");
+	var arqDinap = $("#arqDinap");
 	var tipoArquivo = $("#tipoArquivo").val();
+	var arquivo = $("#arquivo");
+	var dtEscolha = $("#dtEscolha");
 
     switch (tipoArquivo) {  
             case 'REPARTE':    
         		reparte.show();
                 encalhe.hide();
                 venda.hide();
+                arqDinap.hide();
                 this.alterarDataCalendario(tipoArquivo);
+                arquivo.hide();
+                dtEscolha.show();
             break;  
             case 'ENCALHE':
             	this.alterarDataCalendario(tipoArquivo);
+            	encalhe.show();
+                reparte.hide();
+                venda.hide();
+                arqDinap.hide();
+                arquivo.hide();
+                dtEscolha.show();
             break;
             case 'PICKING':
         		reparte.show();
                 encalhe.hide();
                 venda.hide();
+                arqDinap.hide();
+                arquivo.hide();
+                dtEscolha.show();
             break; 
             case 'VENDA':
-        		venda.show();
+            	reparte.hide();
+                encalhe.hide();
+                venda.show();
+                arqDinap.hide();
+                arquivo.hide();
+                dtEscolha.show();
+            	break;
+            case 'UNIFICAR':
+        		venda.hide();
                 encalhe.hide();
                 reparte.hide();
+                arqDinap.show();
                 this.alterarDataCalendario('PICKING');
+                arquivo.show();
+                dtEscolha.hide();
+              
             break;  
             default:
                 reparte.hide();
             	encalhe.show();
             	venda.hide();
+            	 arqDinap.hide();
+            	 arquivo.hide();
             break;  
     }
 
@@ -512,7 +566,7 @@ GeracaoArquivos.prototype.excluirUnificacao = function(id){
 };
 
 GeracaoArquivos.prototype.editarUnificacao = function(id){
-	alert(id);
+	
 	$.postJSON(
 		contextPath+"/cadastro/cotaUnificacao/editarCotaUnificacao",
 		[{name:'id', value:id}],
