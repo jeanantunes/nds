@@ -492,7 +492,7 @@ public class GeracaoArquivosController extends BaseController {
 		    	
 		    	
 		             byte[] anexo =  java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
-		             session.putValue("PATH_VENDA",path);
+		           
 		                
 		    		
 		    	    anexosEmail.add(new AnexoEmail(cotaMaster.toString()+DateUtil.formatarData(data,"ddMMyyyy"),anexo,TipoAnexo.ENP));
@@ -502,6 +502,8 @@ public class GeracaoArquivosController extends BaseController {
 							 new String[]{email}, 
 							 anexosEmail);	
 		        */
+		    	  
+		    	   session.putValue("PATH_VENDA",path);
 		      }
 		      
 		      
