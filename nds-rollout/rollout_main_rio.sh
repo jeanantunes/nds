@@ -50,7 +50,7 @@ read sn
 if [ $sn = "s" ] ; then
 echo
 rm $DIRBKP/comum/carga_estrutura.sql
-mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'nds_lab1' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'nds_lab3' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
 fi
 echo
 echo '3) EXCLUI A BASE '$BASE `date +%T`
