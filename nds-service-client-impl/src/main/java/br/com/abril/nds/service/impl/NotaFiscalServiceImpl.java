@@ -728,7 +728,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					OutputStream os = null;
 					
 					if(numeroCota != null ) {
-						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + serieNF + "-" + numeroNF + ".xml");						
+						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + numeroCota + "-" + serieNF + "-" + numeroNF + ".xml");						
 					} else {
 						os = new FileOutputStream(diretorioSaida.getValor() + "/" + "NF-e-" + serieNF + "-" + numeroNF + ".xml");
 					}
