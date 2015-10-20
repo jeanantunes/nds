@@ -27,9 +27,9 @@ var deparaController = $.extend(true, {
 			},
 			dataType : 'json',
 			colModel : [{
-				display : 'Id',
+				display : 'Depara',
 				name : 'id',
-				width : 220,
+				width : 120,
 				
 				sortable : true,
 				align : 'left'
@@ -46,6 +46,12 @@ var deparaController = $.extend(true, {
 				width : 220,
 				sortable : true,
 				align : 'left'
+			} ,{
+				display : 'A&ccedil;&atilde;o',
+				name : 'acao',
+				width : 60,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "fc",
 			sortorder : "asc",
@@ -142,6 +148,7 @@ var deparaController = $.extend(true, {
 		
 	},
 	editar : function(id) {
+		alert(id);
 		$.postJSON(this.path + 'buscaPorId.json', {
 			'id' : id
 		}, function(data) {

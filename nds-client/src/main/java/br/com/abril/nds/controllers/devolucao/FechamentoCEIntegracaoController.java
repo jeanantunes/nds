@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO.ColunaOrdenac
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
@@ -136,9 +138,10 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("/pesquisaPrincipal")
-	public void pesquisaPrincipal(String semana, Long idFornecedor, String comboCEIntegracao, String sortorder, String sortname, int page, int rp){
+	public void pesquisaPrincipal(String semana, Long idFornecedor, String comboCEIntegracao,String idChamadaEncalhe, String sortorder, String sortname, int page, int rp){
 		
 		validarAnoSemana(semana);
+		
 		
 		FiltroFechamentoCEIntegracaoDTO filtroCE = new FiltroFechamentoCEIntegracaoDTO();
 		filtroCE.setSemana(semana);
@@ -148,6 +151,9 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		filtroCE.setOrdenacaoColuna(Util.getEnumByStringValue(ColunaOrdenacaoFechamentoCEIntegracao.values(),sortname));
+		
+		if ( idChamadaEncalhe != null && !"-1".equals(idChamadaEncalhe))
+		filtroCE.setIdChamadaEncalhe(Long.parseLong(idChamadaEncalhe));
 		
 		this.tratarFiltro(filtroCE);
 		
@@ -354,6 +360,28 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
+	
+	
+	  @Get
+	    @Path("/obterCESemana")
+	    public void obterCESemana(final String semana) {
+		  if ( semana == null ) return;
+		  FiltroFechamentoCEIntegracaoDTO filtro = new FiltroFechamentoCEIntegracaoDTO();
+		  filtro.setSemana(semana);
+		
+	
+		  List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = 
+				  fechamentoCEIntegracaoService.obterChamadasEncalheFornecedorCE(filtro);
+		    if (listaChamadaEncalheFornecedor != null && listaChamadaEncalheFornecedor.size() > 0 ) {
+		    	List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
+		    resultList.add(new ItemDTO(-1,"Selecione"));
+		    for(ChamadaEncalheFornecedor cef:listaChamadaEncalheFornecedor )
+		    	resultList.add(new ItemDTO(cef.getNumeroChamadaEncalhe(),cef.getNumeroChamadaEncalhe().toString()));
+		    result.use(Results.json()).from(resultList, "result").recursive().serialize();
+		    }
+		    else
+		    	throw new ValidacaoException(TipoMensagem.WARNING, "Nao encontrado chamada encalhe para esta semana.");
+	    }
 	
 	@Post
 	@Path("/salvarCE")

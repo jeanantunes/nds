@@ -166,6 +166,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("envioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
 		query.setParameter("recebimentoEncalhe", GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
 		
+		
 		if(filtro.getPaginacao()!=null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -337,7 +338,11 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			hql.append(" AND ITEM_CH_ENC_FORNECEDOR.ID = :idItemChamadaEncalheFornecedor ");
 		}
 		
-		
+		if(filtro.getIdChamadaEncalhe() != null){
+			
+			hql.append(" AND chmFornecedor.num_chamada_encalhe = :idChamadaEncalhe ");
+		}
+
 		return hql.toString();
 	}
 
@@ -493,6 +498,12 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		if(filtro.getIdItemChamadaEncalheFornecedor() != null) {
 			query.setParameter("idItemChamadaEncalheFornecedor", filtro.getIdItemChamadaEncalheFornecedor());
+		}
+		
+		if(filtro.getIdChamadaEncalhe() != null && filtro.getIdChamadaEncalhe() != -1 ){
+			
+			query.setParameter("idChamadaEncalhe", filtro.getIdChamadaEncalhe());
+			
 		}
 	}
 	

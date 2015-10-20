@@ -15,6 +15,38 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 
 	},
 	
+	
+	buscarCESemana : function(){
+		
+		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
+		
+		if (  semana.length > 0 ) {
+			
+		var data = [
+	   				{
+	   					name: 'semana', value:semana
+	   				}
+	   			];
+				
+				$.getJSON(
+						contextPath + '/devolucao/fechamentoCEIntegracao/obterCESemana', 
+					data,
+					function(result) {	
+							
+						if (result) {	
+							
+							var op = "";
+							$.each(result, function(index,row){
+								op+="<option value="+row.key.$+">"+row.value.$+"</option>";
+							});
+							$("#comboCE-fechamentoCe-integracao").empty().append(op);
+							
+							
+						}
+					}
+				);
+		}
+	},
 	verificarDataFechamentoCE : function(fechada) {
 			
 			$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
@@ -220,6 +252,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						if (result) {	
 							
 							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
+							fechamentoCEIntegracaoController.buscarCESemana();
 						}
 					}
 				);
@@ -431,7 +464,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var diferenca = $("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var estoque = $("#estoque" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
-		var venda = reparte - encalhe;
+		var venda = eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE));
+		
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
@@ -553,7 +587,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			$("#diferenca" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorDiferenca);
 			
-			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(reparte - encalhe);
+			var qtdeDevSemCE = $("#qtdeDevSemCE" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+			
+			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE)));
 			
 		} else {
 			
@@ -1238,6 +1274,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
 		
+		var idChamadaEncalhe =  $("#comboCE-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val();
+		
 		if($("#combo-fechamentoCe-integracao", fechamentoCEIntegracaoController.workspace).val() == "-1") {
 			exibirMensagem('WARNING', ['Favor selecionar um item na combo!']);
 			return;
@@ -1252,7 +1290,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				params: [
 				         {name:'idFornecedor' , value:idFornecedor},
 				         {name:'semana' , value:semana},
-				         {name:'comboCEIntegracao' , value:comboCEIntegracao}
+				         {name:'comboCEIntegracao' , value:comboCEIntegracao},
+				         {name:'idChamadaEncalhe' , value:idChamadaEncalhe}
+				         
 				        ]		         
 			});
 			$($(".fechamentoSemCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();
@@ -1266,7 +1306,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				params: [
 				         {name:'idFornecedor' , value:idFornecedor},
 				         {name:'semana' , value:semana},
-				         {name:'comboCEIntegracao' , value:comboCEIntegracao}
+				         {name:'comboCEIntegracao' , value:comboCEIntegracao},
+				         {name:'idChamadaEncalhe' , value:idChamadaEncalhe}
 				        ]		         
 			});
 			$($(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).parent().parent()).hide();

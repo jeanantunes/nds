@@ -31,7 +31,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	if(filtro.getCodigoDistribuidorFornecdor()!= null) {
     		hql.append(" and cef.codigoDistribuidor = :codigoDistInterface ");
     	}
-    	
+    	hql.append(" order by cef.numeroChamadaEncalhe desc");
     	Query query = getSession().createQuery(hql.toString());
     	
     	query.setParameter("numeroSemana", filtro.getNumeroSemana());
