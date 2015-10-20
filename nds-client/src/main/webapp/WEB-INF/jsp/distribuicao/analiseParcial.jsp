@@ -450,7 +450,7 @@ table.dadosTab { margin-left: 370px;}
 				</tr>
 			</table>
 		</fieldset>
-		<fieldset style="width: 500px !important; margin-top: 10px;">
+		<fieldset style="width: 600px !important; margin-top: 10px;">
 			<legend>Cotas que não entraram no estudo</legend>
 			<table class="cotasEstudoGrid" id="cotasNaoSelec"></table>
 			<div style="float: right; margin-top: 5px; margin-right: 60px;">

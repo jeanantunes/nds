@@ -30,13 +30,11 @@ import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -65,9 +63,6 @@ public class HistoricoVendaController extends BaseController {
 	private static final ValidacaoVO VALIDACAO_VO_LISTA_VAZIA = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 	
 	@Autowired
-	private CapaService capaService;
-	
-	@Autowired
 	private RegiaoService regiaoService;
 	
 	@Autowired
@@ -87,9 +82,6 @@ public class HistoricoVendaController extends BaseController {
 	
 	@Autowired
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
-	
-	@Autowired
-	private ProdutoService produtoService;
 	
 	@Autowired
 	private Result result;

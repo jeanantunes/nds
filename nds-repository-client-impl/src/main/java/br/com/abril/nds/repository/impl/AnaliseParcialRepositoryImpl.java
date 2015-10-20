@@ -71,6 +71,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         
         sql.append("    ec.qtde_efetiva reparteEstudo, ");
         
+        sql.append("    ec.venda_media mediaVenda, ");
+        
         sql.append("    coalesce(ecg_origem.reparte,0) reparteEstudoOrigemCopia, ");
         
         sql.append("    coalesce(ec.reparte,0) reparteSugerido, ");
@@ -346,6 +348,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         ((SQLQuery) query).addScalar("nome", StandardBasicTypes.STRING);
         ((SQLQuery) query).addScalar("npdv", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("reparteEstudo", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("mediaVenda", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("reparteEstudoOrigemCopia", StandardBasicTypes.BIG_DECIMAL);
         ((SQLQuery) query).addScalar("reparteSugerido", StandardBasicTypes.BIG_INTEGER);
         ((SQLQuery) query).addScalar("leg", StandardBasicTypes.STRING);
@@ -767,6 +770,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("select cota.numero_cota numeroCota, ");
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
         sql.append("       ec.reparte quantidade, ");
+        sql.append("       ec.venda_media vendaMedia, ");
         sql.append("       cast(cota.situacao_cadastro as char) as situacaoCota, ");
         sql.append("       ec.classificacao motivo ");
         sql.append("  from estudo_cota_gerado ec ");
@@ -868,6 +872,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("numeroCota", StandardBasicTypes.INTEGER)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("vendaMedia", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("situacaoCota", StandardBasicTypes.STRING)
                 .addScalar("motivo", StandardBasicTypes.STRING);
 
