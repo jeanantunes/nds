@@ -322,6 +322,8 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	
 	atualizarGridModal:function(data){
 		
+		data.push({name:'filtro.brinde', value:$("#caracteristica-distribuicao-brinde").val()});
+		
 		$(".pesquisaDetalheGridModal").flexOptions({
 			url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarDetalhe",
 			dataType : 'json',
@@ -549,7 +551,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 		data.push({name:'filtro.classificacaoProduto', value: $("#caracteristica-distribuicao-classificacao option:selected", this.workspace).val()});
 		data.push({name:'filtro.segmento', value: $("#caracteristica-distribuicao-segmento option:selected", this.workspace).val()});
-		data.push({name:'filtro.brinde', value:$('#caracteristica-distribuicao-checkIsBrinde').is(":checked")});
+		data.push({name:'filtro.brinde', value:$("#caracteristica-distribuicao-brinde").val()});
 		data.push({name:'filtro.chamadaCapa', value:$('#caracteristica-distribuicao-chamadaCapa', this.workspace).val()});
 		data.push({name:'filtro.faixaPrecoDe', value: valDe.replace(",",".")});
 		data.push({name:'filtro.faixaPrecoAte', value: valAte.replace(",",".")});

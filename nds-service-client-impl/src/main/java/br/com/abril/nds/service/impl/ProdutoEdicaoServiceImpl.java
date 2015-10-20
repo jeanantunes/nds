@@ -78,7 +78,6 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CapaService;
-import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -88,7 +87,6 @@ import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -168,16 +166,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
     private MovimentoEstoqueService movimentoEstoqueService;
     
     @Autowired
-    private ConferenciaEncalheService conferenciaEncalheService;
-    
-    @Autowired
     private CotaService cotaService;
     
     @Autowired
     private CalendarioService calendarioService;
-    
-    @Autowired
-    private TipoSegmentoProdutoService tipoSegmentoProdutoService;
     
     @Autowired
     private ItemNotaFiscalEntradaRepository itemNotaFiscalEntradaRepository;
@@ -2009,6 +2001,10 @@ if ( dto.getRepartePrevisto() != null) {
     	if(filtro.getNumeroEdicao() != null){
     		
     		ProdutoEdicao pe = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getProdutoDto().getCodigoProduto(), filtro.getNumeroEdicao());
+    		
+    		if(pe==null){
+    			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada!"));
+    		}
     		
     		boolean isParcial = produtoEdicaoRepository.isEdicaoParcial(pe.getId());
     		

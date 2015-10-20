@@ -80,8 +80,12 @@ $(function(){
 			</select>
 		</td>
 		<td width="48">Brinde:</td>
-		<td width="70">
-		<input type="checkbox" name="caracteristica-distribuicao-checkBrinde" id="caracteristica-distribuicao-checkIsBrinde" style="margin-right:0px;"/>
+			<td width="150">
+				<select id="caracteristica-distribuicao-brinde" class="inputField" style="width:50px;">
+					<option value=""></option>
+					<option value="true">Sim</option>
+					<option value="false">N&atilde;o</option>
+			</select>
 		</td>
 </tr>
 <tr></tr>
