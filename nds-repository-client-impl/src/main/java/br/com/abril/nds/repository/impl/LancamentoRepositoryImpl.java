@@ -823,7 +823,7 @@ public class LancamentoRepositoryImpl extends
 				hql.append(" select min(lancamentoMaxDate.dataLancamentoDistribuidor) ")
 					.append("   from MovimentoEstoqueCota mecMaxDate ")
 					.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
-					.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+					.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ");
 					hql.append(" and lancamento.dataLancamentoDistribuidor <= :dataLimiteLancamento");
 				hql.append(" )");	
 					
@@ -874,7 +874,7 @@ public class LancamentoRepositoryImpl extends
 				.append("   from MovimentoEstoqueCota mecMaxDate ")
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
-				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ")
+				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id  ")
 				.append("   and cotaMaxDate.id = :idCota  ");
 		
 		if(dataLimiteLancamento != null) {
@@ -916,7 +916,7 @@ public class LancamentoRepositoryImpl extends
 				.append("   from MovimentoEstoqueCota mecMaxDate ")
 				.append("   join mecMaxDate.produtoEdicao.lancamentos lancamentoMaxDate ")
 				.append("   join mecMaxDate.cota cotaMaxDate ")
-				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ");
+				.append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao and mecMaxDate.lancamento.id =  lancamentoMaxDate.id   ");
 		
 		if(dataLimiteLancamento != null) {
 				hql.append("   and lancamentoMaxDate.dataLancamentoDistribuidor <= :dataLimiteLancamento ");
