@@ -9,7 +9,7 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	private String codigoProduto;
 	private String classificacaoProduto;
 	private String segmento;
-	private boolean brinde;
+	private Boolean brinde;
 	private String nomeProduto;
 	private String nomeEditor;
 	private String chamadaCapa;
@@ -69,8 +69,11 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	}
 	public void setSegmento(String segmento) {
 		this.segmento = segmento;
-	}	public boolean isBrinde() {		return brinde;
-	}	public void setBrinde(boolean brinde) {		this.brinde = brinde;
+	}	public Boolean getBrinde() {
+		return brinde;
+	}
+	public void setBrinde(Boolean brinde) {
+		this.brinde = brinde;
 	}
 	public String getNomeProduto() {
 		return nomeProduto;

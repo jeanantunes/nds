@@ -128,10 +128,12 @@ CaracteristicaDistribuicaoRepository {
             sql.append(" and upper(tiposeg.DESCRICAO) = upper(:segmento) ");
         }
         
-        if(filtro.isBrinde()) {
-            sql.append(" and ped.POSSUI_BRINDE is true ");
-        }else{
-        	sql.append(" and ped.POSSUI_BRINDE is false ");
+        if(filtro.getBrinde() != null) {
+        	if(filtro.getBrinde()){
+	        	sql.append(" and ped.POSSUI_BRINDE is true ");
+	        }else{
+	        	sql.append(" and ped.POSSUI_BRINDE is false ");
+	        }
         }
         
         if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!="") {
@@ -325,7 +327,8 @@ CaracteristicaDistribuicaoRepository {
         }
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<CaracteristicaDistribuicaoSimplesDTO> obterCaracteristicaDistribuicaoSimples(final FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro) {
         
         final StringBuilder sql = new StringBuilder("");
