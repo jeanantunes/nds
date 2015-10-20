@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -158,7 +159,17 @@ public class ItemNotaFiscalBuilder  {
 			
 			if(((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getOrigem().equals(Origem.MANUAL)) {
 				valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDesconto();
-			} 
+			} else if (((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getOrigem().equals(Origem.PRODUTO_SEM_CADASTRO)) {
+				valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDesconto();
+			} else {
+				
+				if(((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDescontoLogistica() == null) {
+					valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDesconto();
+				} else {
+					valorDesconto = ((MovimentoEstoque) movimentoEstoque).getProdutoEdicao().getDescontoLogistica().getPercentualDesconto();
+				}
+				
+			}
 			
 			precoComDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100))));			
 			valorUnitario = precoComDesconto;
@@ -693,7 +704,16 @@ public class ItemNotaFiscalBuilder  {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Item de nota fiscal nulo.");
 				}
 				
-				for(OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
+				List<OrigemItemNotaFiscal> dnf2 = new ArrayList<>();
+				
+				for (OrigemItemNotaFiscal ffl: dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
+					
+					OrigemItemNotaFiscalMovimentoEstoque origemItemNotaFiscal = new OrigemItemNotaFiscalMovimentoEstoque();
+					BeanUtils.copyProperties(ffl, origemItemNotaFiscal);
+					dnf2.add(origemItemNotaFiscal);
+				}
+				
+				for(OrigemItemNotaFiscal oinf : dnf2) {
 					
 					MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) oinf).getMovimentoEstoque();
 					if(me.getProdutoEdicao().getId().equals(movimentoEstoque.getProdutoEdicao().getId())) {
