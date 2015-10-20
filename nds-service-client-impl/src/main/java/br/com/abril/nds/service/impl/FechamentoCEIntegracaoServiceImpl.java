@@ -1151,6 +1151,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
                 }
                 
         }
+        	
+        @Override
+    	@Transactional
+       public List <ChamadaEncalheFornecedor> obterChamadasEncalheFornecedorCE(FiltroFechamentoCEIntegracaoDTO filtro){
+    	   return chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor( filtro);
+       }
         
 
 }

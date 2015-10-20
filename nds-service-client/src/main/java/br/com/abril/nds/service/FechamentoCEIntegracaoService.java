@@ -56,4 +56,7 @@ public interface FechamentoCEIntegracaoService {
 	FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCE(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	void fecharSemCE(List<ItemFechamentoCEIntegracaoDTO> itens);
+	
+
+	 public List <ChamadaEncalheFornecedor> obterChamadasEncalheFornecedorCE(FiltroFechamentoCEIntegracaoDTO filtro);
 }
