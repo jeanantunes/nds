@@ -364,7 +364,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 1160,
+			width : 960,
 			height : 180
 		});
 		
@@ -442,7 +442,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 1160,
+			width : 960,
 			height : 180
 		});
 		
