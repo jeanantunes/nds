@@ -124,7 +124,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota ainda não submetida ao SEFAZ");
 		} else if (!notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatusRetornado().equals(
-				StatusRetornado.AUTORIZADO)) {
+				StatusRetornado.AUTORIZADO) && !notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatusRetornado().equals(
+						StatusRetornado.CANCELAMENTO_HOMOLOGADO) ) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota não autorizada pelo SEFAZ");
 		}

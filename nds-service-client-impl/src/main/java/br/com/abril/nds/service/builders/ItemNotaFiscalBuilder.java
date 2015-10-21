@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -115,6 +114,9 @@ public class ItemNotaFiscalBuilder  {
 		
 		ProdutoServico produtoServico = null;
 		String codigoBarras = null;
+		
+		BigInteger quantidade = BigInteger.ZERO;
+		
 		if(detalheNotaFiscal.getProdutoServico() == null) {
 			
 			try {
@@ -177,24 +179,40 @@ public class ItemNotaFiscalBuilder  {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de movimento não suportado para geração da NF-e.");
 		}
 		
+		
+		/*
+		if(((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
+			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs());
+		} else {
+			produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()).abs());
+		}
+		 */
+		
+		
 		if(((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)) {
 			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs());
 		} else {
 			
-			BigInteger quantidade = produtoServico.getQuantidade().subtract(movimentoEstoque.getQtde()).abs();
+			quantidade = produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs();
 			
-			LOGGER.info("quantidade: "+quantidade);
+			LOGGER.error("Produto: "+produtoServico.getCodigoProduto());
+			
+			LOGGER.error("quantidade: "+quantidade);
 			
 			if(produtoServico.getQuantidade().intValue() > 0) {
 				
-				produtoServico.setQuantidade(produtoServico.getQuantidade().subtract(quantidade));
+				produtoServico.setQuantidade(quantidade);
 				
 			} else {
 				
-				produtoServico.setQuantidade(quantidade);
+				if(!produtoServico.getCodigoProduto().equals(movimentoEstoque.getProdutoEdicao().getProduto().getCodigo())) {
+					produtoServico.setQuantidade(movimentoEstoque.getQtde());
+				} else {
+					
+					produtoServico.setQuantidade(quantidade);
+				}
 			}
 		}
-		
 		produtoServico.setValorUnitario(valorUnitario);
 		produtoServico.setValorTotalBruto(CurrencyUtil.truncateDecimal(valorUnitario.multiply(new BigDecimal(produtoServico.getQuantidade())), 2));
 				
@@ -232,7 +250,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		List<OrigemItemNotaFiscal> origemItens = produtoServico.getOrigemItemNotaFiscal() != null ? produtoServico.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 		
-		if(movimentoEstoque instanceof MovimentoEstoqueCota) {
+		if(movimentoEstoque instanceof MovimentoEstoqueCota) {		
 			
 			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
 			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota((MovimentoEstoqueCota) movimentoEstoque);
@@ -240,9 +258,12 @@ public class ItemNotaFiscalBuilder  {
 			
 		} else if(movimentoEstoque instanceof MovimentoEstoque) {
 			
-			OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
-			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
-			origemItens.add(oinfME);
+			if(!movimentoEstoque.getProdutoEdicao().getId().equals(produtoServico.getProdutoEdicao().getId())) {
+				OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
+				((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
+				origemItens.add(oinfME);
+			}
+			
 			
 		}
 		
@@ -681,7 +702,7 @@ public class ItemNotaFiscalBuilder  {
 
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal, MovimentoEstoque movimentoEstoque, Map<String, TributoAliquota> tributoAliquota) {
 
-		final DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal();
+		DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal();
 		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
@@ -704,16 +725,7 @@ public class ItemNotaFiscalBuilder  {
 					throw new ValidacaoException(TipoMensagem.ERROR, "Item de nota fiscal nulo.");
 				}
 				
-				List<OrigemItemNotaFiscal> dnf2 = new ArrayList<>();
-				
-				for (OrigemItemNotaFiscal ffl: dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
-					
-					OrigemItemNotaFiscalMovimentoEstoque origemItemNotaFiscal = new OrigemItemNotaFiscalMovimentoEstoque();
-					BeanUtils.copyProperties(ffl, origemItemNotaFiscal);
-					dnf2.add(origemItemNotaFiscal);
-				}
-				
-				for(OrigemItemNotaFiscal oinf : dnf2) {
+				for(OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 					
 					MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) oinf).getMovimentoEstoque();
 					if(me.getProdutoEdicao().getId().equals(movimentoEstoque.getProdutoEdicao().getId())) {
@@ -721,7 +733,7 @@ public class ItemNotaFiscalBuilder  {
 						notFound = false;
 						
 						montarItem(movimentoEstoque, dnf, notaFiscal, tributoAliquota);
-						
+
 					}
 					
 				}
@@ -732,6 +744,7 @@ public class ItemNotaFiscalBuilder  {
 					
 				}
 			}
+			
 		}
 		
 		// popular os itens das notas fiscais
