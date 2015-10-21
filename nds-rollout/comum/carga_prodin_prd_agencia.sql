@@ -63,7 +63,7 @@ KEY codigoProdutoEdicao (codigoProduto,codigoEdicao))
 -- ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/opt/rollout/load_files/00000001.prd' INTO TABLE CARGA_PRODIN_PRD CHARACTER SET UTF8
+LOAD DATA INFILE '/home/douglas/load_files/00000001.prd' INTO TABLE CARGA_PRODIN_PRD CHARACTER SET UTF8
 (@linha) SET 
 codDistrib=SUBSTR(@linha,1,7),
 dataGeracaoArquivo=SUBSTR(@linha,8,8),
@@ -124,7 +124,7 @@ classificacao=SUBSTR(@linha,671,30),
 segmento=SUBSTR(@linha,581,2),
 fornecedorId=1;
 
-LOAD DATA INFILE '/opt/rollout/load_files/00000002.prd' INTO TABLE CARGA_PRODIN_PRD CHARACTER SET UTF8
+LOAD DATA INFILE '/home/douglas/load_files/00000002.prd' INTO TABLE CARGA_PRODIN_PRD CHARACTER SET UTF8
 (@linha) SET 
 codDistrib=SUBSTR(@linha,1,7),
 dataGeracaoArquivo=SUBSTR(@linha,8,8),

@@ -2735,10 +2735,20 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada."));
         }
         
-        final EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(pe.getId());
+        EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(pe.getId());
         
         if(estoque == null) {
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
+        	
+        	EstoqueProduto estoqueProduto = new EstoqueProduto();
+        	estoqueProduto.setProdutoEdicao(pe);
+        	
+        	try{
+        	 estoqueProdutoService.saveOrUpdate(estoqueProduto);
+        	 estoque = estoqueProdutoService.buscarEstoquePorProduto(pe.getId());
+        	}catch(Exception ex){
+        		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao inserir Estoque do Produto."));
+        	}
+        	 //throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
         }
         
         this.validarProdutoEmRecolhimento(direcionadoParaEstoque, null, null, pe);
