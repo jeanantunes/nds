@@ -9,15 +9,14 @@ NOME_ARQUIVO_DUMP=dump-`date +%y%m%d%H%M%S`.sql
 NOME_ARQUIVO=`date +%m%d%`
 NOME_DIRETORIO=`date +%y+%m%d%`
 DIRBKP=/opt/rollout
-BASE=db_00757350
-S1=00757350
+BASE=db_00757374
+S1=00757374
 DIR=`pwd` 
 
-
 # **** Layout ****
-LAMBIENTE=rds-mql-dev-prv-distb-01.c4gu9vovwusc.sa-east-1.rds.amazonaws.com
-LDBUSER=awsuser
-LDBPASS=dgbdistb01mgr
+LAMBIENTE=10.130.5.21
+LDBUSER=douglas
+LDBPASS=mandic@2015
 
 # **** Layout ****
 #LAMBIENTE=10.129.28.137
@@ -30,15 +29,15 @@ LDBPASS=dgbdistb01mgr
 #DBPASS=root
 
 # **** Carga ****
-AMBIENTE=10.129.28.137
-DBUSER=root
-DBPASS=abril@123
+AMBIENTE=10.130.2.25
+DBUSER=douglas
+DBPASS=mandic@2015
 
 
 # **** Producao ****
-#AMBIENTE=rds-mql-prd-prv-distb-01.c4gu9vovwusc.sa-east-1.rds.amazonaws.com
-#DBUSER=awsuser
-#DBPASS=dgbdistb01mgr
+#AMBIENTE=10.130.5.21
+#DBUSER=douglas
+#DBPASS=mandic@2015
 
 clear
 echo
@@ -50,7 +49,7 @@ read sn
 if [ $sn = "s" ] ; then
 echo
 rm $DIRBKP/comum/carga_estrutura.sql
-mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'db_06248116' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'db_00757350' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`localhost`\*\/ //g' | sed 's/DEFINER\=`root`@`localhost`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
 fi
 echo
 echo '3) EXCLUI A BASE '$BASE `date +%T`
@@ -89,8 +88,8 @@ if [ $sn = "s" ] ; then
 #ssh -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" douglas@$AMBIENTE "sudo rm $DIRBKP/load_files/*"
 #scp -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" $DIRBKP/load_files/* douglas@$AMBIENTE:$DIRBKP/load_files
 
-
-cd $DIRBKP/$S1/cargas/20150825
+rm $DIRBKP/load_files/*
+cd $DIRBKP/$S1/cargas/20151025
 cp DISTRIBUIDOR/* $DIRBKP/load_files
 cp PRODIN/DINAP/* $DIRBKP/load_files
 cp PRODIN/FC/* $DIRBKP/load_files
@@ -106,8 +105,8 @@ find $DIRBKP/load_files -type f ! \( -iname "*_r" \) -exec rm {} \;
 ls $DIRBKP/load_files | sed 's/_r//g' | awk '{print "mv '$DIRBKP'/load_files/"$S1"_r " "'$DIRBKP'/load_files/"$S1| "sh"}'
 find $DIRBKP/load_files -type f \( -iname "*~" \) -exec rm {} \;
 
-ssh -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" douglas@$AMBIENTE "sudo rm $DIRBKP/load_files/*"
-scp -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" $DIRBKP/load_files/* douglas@$AMBIENTE:$DIRBKP/load_files
+ssh -i /home/dguerra/.ssh/douglas_rsa -o "StrictHostKeyChecking no" douglas@$AMBIENTE "rm /opt/rollout/load_files/*"
+scp -i /home/dguerra/.ssh/douglas_rsa -o "StrictHostKeyChecking no" $DIRBKP/load_files/* douglas@$AMBIENTE:/opt/rollout/load_files
 
 
 
@@ -127,11 +126,11 @@ echo
 echo '10) CARREGA PRODIN MDC.' `date +%T` $DIR/comum/carga_prodin_sisfil.sql
 mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_prodin_sisfil.sql
 echo
-echo '11) CARREGA MOVIMENTAÇÕES.' `date +%T` $DIR/comum/carga_movimentos_parcial_rio_novo.sql
+echo '11) CARREGA MOVIMENTAÇÕES.' `date +%T` $DIR/comum/carga_movimentos_parcial_sp_ar_novo.sql
 echo "Executar Movimentações ? <s ou n>"
 read sn
 if [ $sn = "s" ] ; then
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_movimentos_parcial_rio_novo.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_movimentos_parcial_sp_ar_novo.sql
 echo ''
 fi	
 echo

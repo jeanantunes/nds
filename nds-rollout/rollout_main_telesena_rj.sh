@@ -9,20 +9,20 @@ NOME_ARQUIVO_DUMP=dump-`date +%y%m%d%H%M%S`.sql
 NOME_ARQUIVO=`date +%m%d%`
 NOME_DIRETORIO=`date +%y+%m%d%`
 DIRBKP=/opt/rollout
-BASE=db_00757350
-S1=00757350
+BASE=telesena_rj
+S1=telesena_rj
 DIR=`pwd` 
 
 
 # **** Layout ****
-#LAMBIENTE=rds-mql-dev-prv-distb-01.c4gu9vovwusc.sa-east-1.rds.amazonaws.com
-#LDBUSER=awsuser
-#LDBPASS=dgbdistb01mgr
+LAMBIENTE=rds-mql-dev-prv-distb-01.c4gu9vovwusc.sa-east-1.rds.amazonaws.com
+LDBUSER=awsuser
+LDBPASS=dgbdistb01mgr
 
 # **** Layout ****
-LAMBIENTE=10.129.28.137
-LDBUSER=root
-LDBPASS=abril@123
+#LAMBIENTE=10.129.28.137
+#LDBUSER=root
+#LDBPASS=abril@123
 
 # **** Local ****
 #AMBIENTE=localhost
@@ -50,7 +50,7 @@ read sn
 if [ $sn = "s" ] ; then
 echo
 rm $DIRBKP/comum/carga_estrutura.sql
-mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'nds_lab3' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
+mysqldump -h$LAMBIENTE -u$LDBUSER -p$LDBPASS --single-transaction --no-data 'db_06248116' --routines --triggers   | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`awsuser`@`%`\*\/ //g' | sed 's/DEFINER\=`awsuser`@`%`//g' | sed 's/ AUTO_INCREMENT=[0-9]*\b/ AUTO_INCREMENT=0 /' > $DIRBKP/comum/carga_estrutura.sql
 fi
 echo
 echo '3) EXCLUI A BASE '$BASE `date +%T`
@@ -75,11 +75,11 @@ if [ $sn = "s" ] ; then
 
 rm $DIRBKP/load_files/*
 
-cp $DIRBKP/$S1/cargas/$1/DISTRIBUIDOR/* $DIRBKP/load_files
-cp $DIRBKP/$S1/cargas/$1/PRODIN/DINAP/* $DIRBKP/load_files
-cp $DIRBKP/$S1/cargas/$1/PRODIN/FC/* $DIRBKP/load_files
-cp $DIRBKP/$S1/cargas/$1/MDC/* $DIRBKP/load_files
-cp $DIRBKP/$S1/cargas/$1/OUTROS/* $DIRBKP/load_files
+cp $DIRBKP/$S1/cargas/telesena_rj/DISTRIBUIDOR/* $DIRBKP/load_files
+cp $DIRBKP/$S1/cargas/telesena_rj/PRODIN/DINAP/* $DIRBKP/load_files
+cp $DIRBKP/$S1/cargas/telesena_rj/PRODIN/FC/* $DIRBKP/load_files
+cp $DIRBKP/$S1/cargas/telesena_rj/MDC/* $DIRBKP/load_files
+cp $DIRBKP/$S1/cargas/telesena_rj/OUTROS/* $DIRBKP/load_files
 
 ls $DIRBKP/load_files | awk '{print "iconv -f iso-8859-1 -t utf-8 '$DIRBKP'/load_files/"$S1" > '$DIRBKP'/load_files/"$S1"_r"| "sh"}'
 find $DIRBKP/load_files -type f ! \( -iname "*_r" \) -exec rm {} \;
@@ -102,14 +102,14 @@ echo 'CARREGA PRODIN PRACA' `date +%T` $DIR/comum/carga_prodin_prd_praca.sql
 mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_prodin_prd_praca.sql
 fi
 echo
-echo '10) CARREGA PRODIN MDC.' `date +%T` $DIR/comum/carga_prodin_mdc.sql
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_prodin_mdc.sql
+echo '10) CARREGA PRODIN MDC.' `date +%T` $DIR/comum/carga_prodin_mdc_agencia.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_prodin_mdc_agencia.sql
 echo
-echo '11) CARREGA MOVIMENTAÇÕES.' `date +%T` $DIR/comum/carga_movimentos.sql
+echo '11) CARREGA MOVIMENTAÇÕES.' `date +%T` $DIR/comum/carga_movimentos_parcial_sao_paulo_agencia.sql
 echo "Executar Movimentações ? <s ou n>"
 read sn
 if [ $sn = "s" ] ; then
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_movimentos_parcial.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_movimentos.sql
 echo ''
 fi	
 echo
@@ -117,14 +117,13 @@ echo '11) CARREGA PRODIN MDC.' `date +%T`
 #mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/$1/carga_ajustes.sql
 echo
 echo '12) EXPORTA DUMP.' `date +%T`
-#mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/$1/carga_ajustes.sql
-mysqldump -h$AMBIENTE -u$DBUSER -p$DBPASS --single-transaction --routines --triggers db_00757350 | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`%`\*\/ //g' | sed 's/DEFINER\=`root`@`%`//g' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`localhost`\*\/ //g' | sed 's/DEFINER\=`root`@`localhost`//g' > $DIRBKP/db_00757350.sql
+#mysqldump -h$AMBIENTE -u$DBUSER -p$DBPASS --single-transaction --routines --triggers telesena_rj | sed -e '/^\/\*\!50013 DEFINER/d' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`%`\*\/ //g' | sed 's/DEFINER\=`root`@`%`//g' | sed -e 's/\/\*\!50017 DEFINER\=`root`@`localhost`\*\/ //g' | sed 's/DEFINER\=`root`@`localhost`//g' > $DIRBKP/telesena_rj.sql
 echo
 echo '13) SCP PARA DEVWEB.' `date +%T`
-scp -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" $DIRBKP/db_00757350.sql douglas@10.129.28.111:/home/douglas
+#scp -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" $DIRBKP/telesen_rj.sql douglas@10.129.28.111:/home/douglas
 echo
-echo '14) Publica base TELESENA no RDS de Producao.' `date +%T`
-ssh -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" douglas@10.129.28.111 "sudo /home/douglas/publica_dump.sh db_00757350"
+echo '14) Publica base AGENCIA RIO no RDS de Producao.' `date +%T`
+#ssh -i /home/dguerra/.ssh/kp-hom-distb.pem -o "StrictHostKeyChecking no" douglas@10.129.28.111 "/home/douglas/publica_dump.sh telesena_rj"
 echo
 echo 'Fim.' `date`
 

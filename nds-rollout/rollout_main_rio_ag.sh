@@ -9,8 +9,8 @@ NOME_ARQUIVO_DUMP=dump-`date +%y%m%d%H%M%S`.sql
 NOME_ARQUIVO=`date +%m%d%`
 NOME_DIRETORIO=`date +%y+%m%d%`
 DIRBKP=/opt/rollout
-BASE=db_00757350
-S1=00757350
+BASE=db_05318019
+S1=05318019
 DIR=`pwd` 
 
 
@@ -109,7 +109,7 @@ echo '11) CARREGA MOVIMENTAÇÕES.' `date +%T` $DIR/comum/carga_movimentos.sql
 echo "Executar Movimentações ? <s ou n>"
 read sn
 if [ $sn = "s" ] ; then
-mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_movimentos_parcial.sql
+mysql -h$AMBIENTE -u$DBUSER -p$DBPASS $BASE < $DIR/comum/carga_movimentos_parcial_sp.sql
 echo ''
 fi	
 echo

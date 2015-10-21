@@ -35,11 +35,13 @@ UNLOCK TABLES;
 -- ENDERECO_DISTRIBUIDOR
 --
 
+
+
 LOCK TABLES `endereco` WRITE;
 /*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
 INSERT INTO `endereco` VALUES 
-('5', 'Vila João Jorge', '13041-302', 'Campinas', NULL, NULL, NULL,NULL,'Artur Ramos', '215', 'Rua', 'SP', 5),
-('6', 'Parque Empresarial', '07750-000', 'Cajamar', NULL, NULL, NULL, NULL,'Osasco', '782', 'Rua', 'SP', 6);
+('5', 'Vila João Jorge', '13041-302', 'Campinas', NULL, NULL, NULL,NULL,'Artur Ramos', '215', 'Rua', 'SP', 5,0),
+('6', 'Parque Empresarial', '07750-000', 'Cajamar', NULL, NULL, NULL, NULL,'Osasco', '782', 'Rua', 'SP', 6,1);
 /*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,19 +52,22 @@ UNLOCK TABLES;
 LOCK TABLES `distribuidor` WRITE;
 /*!40000 ALTER TABLE `distribuidor` DISABLE KEYS */;
 INSERT INTO `distribuidor` VALUES 
-(1,1,80000.0000,70000.0000,1,'6248116','7359227',49941,'2014-10-28',2.0000,1,0.0000,3,0,NULL,'SEGUNDA_FEIRA','QUARTA_FEIRA',10,0,'DEVOLUCAO_FORNECEDOR',NULL,NULL,NULL,NULL,0,0,0,0,0,0,0,0,1,0,0,1,1,0,1,15,0.0000,2,NULL,0,0,0,60,NULL,0,0,0,0,0,1,1,'MERCANTIL',NULL,'MODELO_1','MODELO_1','PICKING1.TXT','PICKING2.TXT','PICKING3.TXT','MODELO_1',1,0,0,1,9999999.0000,5,NULL,0,0,0,'Boleto - Treelog','<p>Caro jornaleiro,</p><p><br></p><p>segue sua cobrança para pagamento conforme data de vencimento estipulada.</p><p><br></p><p>Att.</p><p>Filial Campinas</p>',NULL,0,0,NULL,NULL,0,0,5);
+(1,1,150000.0000,150000.0000,1,'0','0757350',NULL,'2015-10-21',2.0000,1,0.0000,4,1,NULL,'SEGUNDA_FEIRA','QUARTA_FEIRA',10,0,NULL,NULL,NULL,NULL,0,0,0,0,0,0,1,0,1,0,0,1,1,0,1,15,0.0000,3,NULL,NULL,0,0,360,NULL,0,0,0,0,1,1,'4647802','MERCANTIL',NULL,'MODELO_2','MODELO_2','PICKING1.TXT','PICKING2.TXT','PICKING3.TXT','MODELO_2',0,0,0,1,9999999.0000,5,NULL,1,1,1,'Boleto','<p><br></p>',NULL,0,0,NULL,NULL,0,0,'2015','2020-12-31',1,1,1,'CPJ',0.30,'NAO INCIDENCIA DO ICMS CONF. ART. 47, INCISO I DO DECRETO 27.427/00 - RICMS/RJ',NULL,NULL,NULL,NULL,1);
+-- INSERT INTO `distribuidor` VALUES 
+-- (1,1,80000.0000,70000.0000,1,'6248116','7359227',49941,'2014-10-28',2.0000,1,0.0000,3,0,NULL,'SEGUNDA_FEIRA','QUARTA_FEIRA',10,0,'DEVOLUCAO_FORNECEDOR',NULL,NULL,NULL,NULL,0,0,0,0,0,0,0,0,1,0,0,1,1,0,1,15,0.0000,2,NULL,NULL,0,0,0,60,NULL,0,0,0,0,0,1,1,'4618403','MERCANTIL',NULL,'MODELO_1','MODELO_1','PICKING1.TXT','PICKING2.TXT','PICKING3.TXT','MODELO_1',1,0,0,1,9999999.0000,5,NULL,0,0,0,'Boleto - Treelog','<p>Caro jornaleiro,</p><p><br></p><p>segue sua cobrança para pagamento conforme data de vencimento estipulada.</p><p><br></p><p>Att.</p><p>Filial Campinas</p>',NULL,0,0,NULL,NULL,0,0,NULL,NULL,0,1,1,NULL,NULL,'NAO INCIDENCIA DO ICMS CONF. ART. 7, INCISO XIII DECRETO 45.490/00 - RICMS/SP',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `distribuidor` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `fornecedor` WRITE;
 /*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;  
 INSERT INTO `fornecedor` VALUES 
-(1,6248116,'dinap@dinap.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial Dinap','ATIVO',NULL,NULL,1,3,NULL,NULL,'BANCAS',null,1),
-(2,7359227,'fc@fc.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial FC','ATIVO',NULL,NULL,2,3,NULL,NULL,'BANCAS',null,1),
-(6,6,'roselene.oller@escala.com.br','2014-03-10',10.0000,'MANUAL',0,'Rose','ATIVO',NULL,NULL,6,3,NULL,NULL,'BANCAS',NULL,0),
-(16,16,'sac@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial Treelog','ATIVO',NULL,NULL,16,3,NULL,NULL,'BANCAS',NULL,0);
+(1,0,'dinap@dinap.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial Dinap','ATIVO',NULL,NULL,1,3,NULL,NULL,'BANCAS',16,1,1),
+(2,757374,'fc@fc.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial FC','ATIVO',NULL,NULL,2,3,NULL,NULL,'BANCAS',16,1,1),
+(6,6,'roselene.oller@escala.com.br','2014-03-10',10.0000,'MANUAL',0,'Rose','ATIVO',NULL,NULL,6,3,NULL,NULL,'BANCAS',16,0,1),
+(16,16,'sac@treelog.com.br','2014-03-10',10.0000,'INTERFACE',0,'Comercial Treelog','ATIVO',NULL,NULL,16,3,NULL,NULL,'BANCAS',NULL,0,1);
 /*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 LOCK TABLES `endereco_fornecedor` WRITE;
 /*!40000 ALTER TABLE `endereco_fornecedor` DISABLE KEYS */;
