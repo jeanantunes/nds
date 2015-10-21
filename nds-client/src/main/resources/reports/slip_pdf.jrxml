@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="a28e778e-1e14-484a-90d1-0799fff7d59c">
 	<property name="ireport.zoom" value="2.1961500000000087"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="152"/>
+	<property name="ireport.y" value="60"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
@@ -34,6 +34,9 @@
 	<parameter name="VALOR_TOTAL_DESCONTO" class="java.math.BigDecimal"/>
 	<parameter name="VALOR_LIQUIDO_DEVIDO" class="java.math.BigDecimal"/>
 	<parameter name="LISTA_RESUMO_COBRANCA" class="java.util.List"/>
+	<parameter name="CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["CD"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -244,7 +247,7 @@
 	<title>
 		<band height="33" splitType="Stretch">
 			<image hAlign="Left">
-				<reportElement stretchType="RelativeToTallestObject" x="50" y="0" width="50" height="32" uuid="d98d7c15-4f99-40cb-9355-07183e61f8f1"/>
+				<reportElement uuid="d98d7c15-4f99-40cb-9355-07183e61f8f1" stretchType="RelativeToTallestObject" x="50" y="0" width="50" height="32"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -253,7 +256,7 @@
 				<imageExpression><![CDATA[$P{LOGOTIPO}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="100" y="0" width="446" height="32" uuid="a988c00d-72cb-4e32-bc2a-4797e9406751"/>
+				<reportElement uuid="a988c00d-72cb-4e32-bc2a-4797e9406751" positionType="Float" mode="Transparent" x="100" y="0" width="446" height="32"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
@@ -269,7 +272,7 @@
 	<pageHeader>
 		<band height="53" splitType="Stretch">
 			<staticText>
-				<reportElement x="50" y="0" width="496" height="12" uuid="ce473fea-a876-43ae-9b80-a5ebd631fd66"/>
+				<reportElement uuid="ce473fea-a876-43ae-9b80-a5ebd631fd66" x="50" y="0" width="496" height="12"/>
 				<box>
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -283,98 +286,98 @@
 				<text><![CDATA[SLIP DE RECOLHIMENTO DE ENCALHE]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="84" y="12" width="463" height="11" uuid="045c8063-ada5-4486-9332-e94728a0ea6e"/>
+				<reportElement uuid="045c8063-ada5-4486-9332-e94728a0ea6e" x="84" y="12" width="463" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NUMERO_COTA} + " - " + $P{NOME_COTA}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="85" y="32" width="114" height="11" uuid="bb20dfa9-8cf3-4d99-9a15-178969f089e2"/>
+				<reportElement uuid="bb20dfa9-8cf3-4d99-9a15-178969f089e2" x="85" y="32" width="114" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($P{DATA_CONFERENCIA})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="84" y="22" width="114" height="11" uuid="9df7e434-0195-48bf-9406-5b0a8388c95c"/>
+				<reportElement uuid="9df7e434-0195-48bf-9406-5b0a8388c95c" x="84" y="22" width="114" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{CODIGO_BOX}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="113" y="42" width="434" height="11" uuid="6c7d2de8-680d-46d2-87b1-ed47f9c75c80"/>
+				<reportElement uuid="6c7d2de8-680d-46d2-87b1-ed47f9c75c80" x="113" y="42" width="434" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NUM_SLIP}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="246" y="32" width="301" height="11" uuid="93bfc060-55a7-44a8-8b88-525310623e5c"/>
+				<reportElement uuid="93bfc060-55a7-44a8-8b88-525310623e5c" x="246" y="32" width="301" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new SimpleDateFormat("HH:mm:ss").format($P{DATA_CONFERENCIA})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="53" y="12" width="31" height="11" uuid="9376b984-21c2-4f94-b391-587e98a9a5dd"/>
+				<reportElement uuid="9376b984-21c2-4f94-b391-587e98a9a5dd" positionType="Float" x="53" y="12" width="31" height="11"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cota:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="53" y="32" width="32" height="11" uuid="d7268860-76fb-4006-ae60-506e97ba5e30"/>
+				<reportElement uuid="d7268860-76fb-4006-ae60-506e97ba5e30" positionType="Float" x="53" y="32" width="32" height="11"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="198" y="32" width="60" height="11" uuid="e28904f9-562c-4e69-8467-3b2b2d77ee67"/>
+				<reportElement uuid="e28904f9-562c-4e69-8467-3b2b2d77ee67" positionType="Float" x="198" y="32" width="60" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Hora:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="53" y="22" width="31" height="11" uuid="53d55710-b102-41b7-b5b6-02dc58d6abfb"/>
+				<reportElement uuid="53d55710-b102-41b7-b5b6-02dc58d6abfb" positionType="Float" x="53" y="22" width="31" height="11"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Box:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="53" y="42" width="61" height="11" uuid="8708a70f-4049-4577-bc5e-9fd5331755fa"/>
+				<reportElement uuid="8708a70f-4049-4577-bc5e-9fd5331755fa" positionType="Float" x="53" y="42" width="61" height="11"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Núm. Slip]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="196" y="22" width="49" height="11" uuid="53d55710-b102-41b7-b5b6-02dc58d6abfb"/>
+				<reportElement uuid="53d55710-b102-41b7-b5b6-02dc58d6abfb" positionType="Float" x="196" y="22" width="49" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Roteiro:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="244" y="22" width="140" height="11" uuid="9df7e434-0195-48bf-9406-5b0a8388c95c"/>
+				<reportElement uuid="9df7e434-0195-48bf-9406-5b0a8388c95c" x="244" y="22" width="140" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{CODIGO_ROTEIRO}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="384" y="22" width="36" height="11" uuid="53d55710-b102-41b7-b5b6-02dc58d6abfb"/>
+				<reportElement uuid="53d55710-b102-41b7-b5b6-02dc58d6abfb" positionType="Float" x="384" y="22" width="36" height="11"/>
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Rota:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="420" y="22" width="127" height="11" uuid="9df7e434-0195-48bf-9406-5b0a8388c95c"/>
+				<reportElement uuid="9df7e434-0195-48bf-9406-5b0a8388c95c" x="420" y="22" width="127" height="11"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="false"/>
 				</textElement>
@@ -466,7 +469,7 @@
 				<textFieldExpression><![CDATA[$P{TOTAL_PRODUTOS}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="51" y="28" width="496" height="11" backcolor="#FFFFFF" uuid="d889ba7e-57e8-4ec0-89c2-f99d9bddbf03"/>
+				<reportElement uuid="d889ba7e-57e8-4ec0-89c2-f99d9bddbf03" mode="Opaque" x="51" y="28" width="496" height="11" backcolor="#FFFFFF"/>
 				<box leftPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -487,7 +490,7 @@
 				<text><![CDATA[Valor SLIP do dia:                               ( B - A )                     ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="51" y="57" width="496" height="11" backcolor="#FFFFFF" uuid="faf56e46-9f08-4660-83ab-37ecbeb67b14"/>
+				<reportElement uuid="faf56e46-9f08-4660-83ab-37ecbeb67b14" mode="Opaque" x="51" y="57" width="496" height="11" backcolor="#FFFFFF"/>
 				<box leftPadding="3">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0"/>
@@ -509,15 +512,18 @@
 			</textField>
 			<elementGroup>
 				<subreport>
-					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="51" y="78" width="496" height="28" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="ef404239-9c91-448a-903d-9b9e5a48cffa"/>
+					<reportElement uuid="ef404239-9c91-448a-903d-9b9e5a48cffa" stretchType="RelativeToBandHeight" mode="Opaque" x="51" y="78" width="496" height="28" isRemoveLineWhenBlank="true" backcolor="#FFFFFF"/>
+					<subreportParameter name="CD">
+						<subreportParameterExpression><![CDATA[$P{CD}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="LISTA_RESUMO_COBRANCA">
 						<subreportParameterExpression><![CDATA[$P{LISTA_RESUMO_COBRANCA}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="VALOR_TOTAL_PAGAR">
-						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="VALOR_TOTAL_DESCONTO">
 						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_DESCONTO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="VALOR_TOTAL_PAGAR">
+						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="VALOR_TOTAL_SEM_DESCONTO">
 						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_SEM_DESCONTO}.toString()]]></subreportParameterExpression>
