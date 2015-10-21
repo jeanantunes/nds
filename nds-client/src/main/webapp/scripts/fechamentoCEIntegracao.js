@@ -312,31 +312,31 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}, {
 				display : 'Qtde Dev Inf',
 				name : 'qtdeDevSemCE',
-				width : 80,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 80,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estoque',
 				name : 'estoque',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Diferenca',
 				name : 'diferenca',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			},  {
@@ -348,13 +348,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			},  {
 				display : 'Preço Capa R$',
 				name : 'precoCapaFormatado',
-				width : 80,
+				width : 100,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Valor Venda R$',
 				name : 'valorVendaFormatado',
-				width : 80,
+				width : 100,
 				sortable : false,
 				align : 'right'
 			}],
@@ -364,7 +364,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1160,
 			height : 180
 		});
 		
@@ -426,7 +426,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			}, {
 				display : 'Diferença',
 				name : 'diferenca',
-				width : 60,
+				width : 100,
 				sortable : false,
 				align : 'center'
 			},{
@@ -442,7 +442,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1160,
 			height : 180
 		});
 		
@@ -589,7 +589,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			var qtdeDevSemCE = $("#qtdeDevSemCE" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 			
-			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE)));
+			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe)));
 			
 		} else {
 			
@@ -772,7 +772,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaVenda =
-							' <input isEdicao="true" type="text" name="inputVenda"' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
@@ -792,7 +792,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputEncalhe" ' +
 							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
@@ -801,7 +801,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
-								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
@@ -821,7 +821,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputEncalhe" ' +
 							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
@@ -972,7 +972,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaVenda =
-							' <input isEdicao="true" type="text" name="inputVenda"' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 							' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							' value="' + row.cell.venda + '" size="5px"' +
 							' tabindex="' + (++index) +'"' +
@@ -987,7 +987,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaEncalhe =
-							' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+							' <input style="width:45px;" isEdicao="true" type="text" name="inputEncalhe" ' +
 							' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							' tabindex="' + (++index) +'"' +
@@ -996,7 +996,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
-								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.venda + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
@@ -1026,7 +1026,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								'</span>';
 						
 							colunaEncalhe =
-								' <input isEdicao="true" type="text" name="inputEncalhe" ' +
+								' <input style="width:45px;"  isEdicao="true" type="text" name="inputEncalhe" ' +
 								' id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 								' value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 								' tabindex="' + (++index) +'"' +
@@ -1035,7 +1035,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 								row.cell.idItemCeIntegracao + ', this)"/>';
 							
 							colunaVenda =
-								' <input isEdicao="true" type="text" name="inputVenda"' +
+								' <input style="width:45px;" isEdicao="true" type="text" name="inputVenda"' +
 								' id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 								' value="' + row.cell.encalhe + '" size="5px"' +
 								' tabindex="' + (++index) +'"' +
@@ -1503,25 +1503,25 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			},  {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Estoque',
 				name : 'estoque',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Diferenca',
 				name : 'diferenca',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}],
