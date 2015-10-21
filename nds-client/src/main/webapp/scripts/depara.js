@@ -11,6 +11,8 @@ var deparaController = $.extend(true, {
 
 				} else {
 					$.each(data.rows, function(index, value) {
+						if (value.cell.fc == null )
+							 value.cell.fc="";
 						var idDepara = value.cell.id;
 						var acao = '<a href="javascript:;" onclick="deparaController.editar(' + idDepara + ');"><img src="' + contextPath + '/images/ico_editar.gif" border="0" style="margin-right:10px;" />';
 						acao += '</a> <a href="javascript:;" onclick="deparaController.excluir(' + idDepara + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
@@ -26,14 +28,7 @@ var deparaController = $.extend(true, {
 
 			},
 			dataType : 'json',
-			colModel : [{
-				display : 'Depara',
-				name : 'id',
-				width : 120,
-				
-				sortable : true,
-				align : 'left'
-			},
+			colModel : [
 			 {
 				display : 'FC',
 				name : 'fc',
@@ -148,7 +143,7 @@ var deparaController = $.extend(true, {
 		
 	},
 	editar : function(id) {
-		alert(id);
+	 
 		$.postJSON(this.path + 'buscaPorId.json', {
 			'id' : id
 		}, function(data) {
@@ -156,17 +151,11 @@ var deparaController = $.extend(true, {
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			} else {
 				$("#deparaId").val(data.depara.id);
-				$("#deparaFc").val(data.depara.codigo);
-				$("#deparaDinap").val(data.depara.nome);
+				$("#deparaFc").val(data.depara.fc);
+				$("#deparaDinap").val(data.depara.dinap);
 				
-
-				if (data.emUso) {
-					$("#deparaFc").attr("readOnly", "readOnly");
-					$("#deparaDinap").attr('disabled', true);
-				} else {
-					$("#deparaFc").removeAttr("readOnly");
-					$("#deparaDinap").attr('disabled', false);
-				}
+				$("#deparaId").attr("readOnly", "readOnly");
+				
 				deparaController.showPopupEditar('Editar Depara');
 			}
 		});
@@ -180,7 +169,7 @@ var deparaController = $.extend(true, {
 
 		$("#deparaFc").attr('disabled', false);
 		var obj = $("#novo_depara_form", this.workspace).serialize();
-		$("#deparaFc").attr('disabled', true);
+		$("#deparaFc").attr('disabled', false);
 		
 		$.postJSON(this.path + 'salvar.json', obj, function(data) {
 			var tipoMensagem = data.tipoMensagem;

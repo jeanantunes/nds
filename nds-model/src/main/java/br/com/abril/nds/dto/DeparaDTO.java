@@ -30,14 +30,21 @@ public class DeparaDTO implements Serializable {
 	}
 	
 	public String getFc() {
+		if ( fc == null )
+			 return "";
 		return fc;
 	}
 
 	public void setFc(String fc) {
-		this.fc = fc;
+		if ( fc == null )
+			 this.fc ="";
+		else
+		  this.fc = fc;
 	}
 	
 	public String getDinap() {
+		if ( dinap == null)
+			return "";
 		return dinap;
 	}
 

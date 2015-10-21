@@ -83,7 +83,7 @@ public class DeparaController extends BaseController {
         
         final List<Depara> deparas = deparaService.busca(fc, dinap, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
         
-        final Long quantidade = deparas != null ? new Long(deparas.size()):0L;
+        final Long quantidade =  deparaService.quantidade(fc, dinap);
         
         final FiltroConsultaDepara filtro = new FiltroConsultaDepara();
         

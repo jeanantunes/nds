@@ -44,8 +44,8 @@ public class DeparaRepositoryImpl extends AbstractRepositoryModel<Depara, Long> 
 		
 		hql.append("SELECT");
 		hql.append(" depara.id as id,");
-		hql.append(" depara.fc as fc, ");
-		hql.append(" depara.dinap as dinap ");
+		hql.append(" ifnull(depara.fc,'') as fc, ");
+		hql.append(" ifnull(depara.dinap,'') as dinap ");
 	
 		hql.append(" FROM Depara as depara ");
 		hql.append(" order by depara.id");
@@ -93,6 +93,7 @@ public class DeparaRepositoryImpl extends AbstractRepositoryModel<Depara, Long> 
 			criteria.setMaxResults(maxResults);
 			
 		}
+	
 		
 		return criteria.list();
 	}

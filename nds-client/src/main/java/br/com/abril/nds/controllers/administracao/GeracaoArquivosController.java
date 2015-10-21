@@ -200,6 +200,7 @@ public class GeracaoArquivosController extends BaseController {
 				}
 			};
 			File[] files = new File(path).listFiles(fileFilter);
+		//	if ( files != null && files.length > 0  ) {
 			Arrays.sort(files, new Comparator<File>(){
 			    public int compare(File f1, File f2)
 			    {
@@ -209,6 +210,7 @@ public class GeracaoArquivosController extends BaseController {
 			for(File input : files) {				
 				list.add(input.getName());				
 			}
+		//	}
 		
 	
 		} catch (Exception e) {

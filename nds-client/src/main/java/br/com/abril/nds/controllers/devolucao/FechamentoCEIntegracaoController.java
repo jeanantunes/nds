@@ -368,19 +368,20 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		  if ( semana == null ) return;
 		  FiltroFechamentoCEIntegracaoDTO filtro = new FiltroFechamentoCEIntegracaoDTO();
 		  filtro.setSemana(semana);
-		
+		  	List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
+		    resultList.add(new ItemDTO(-1,"Selecione"));
 	
 		  List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = 
 				  fechamentoCEIntegracaoService.obterChamadasEncalheFornecedorCE(filtro);
 		    if (listaChamadaEncalheFornecedor != null && listaChamadaEncalheFornecedor.size() > 0 ) {
-		    	List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
-		    resultList.add(new ItemDTO(-1,"Selecione"));
+		  
 		    for(ChamadaEncalheFornecedor cef:listaChamadaEncalheFornecedor )
 		    	resultList.add(new ItemDTO(cef.getNumeroChamadaEncalhe(),cef.getNumeroChamadaEncalhe().toString()));
-		    result.use(Results.json()).from(resultList, "result").recursive().serialize();
+		  
 		    }
-		    else
-		    	throw new ValidacaoException(TipoMensagem.WARNING, "Nao encontrado chamada encalhe para esta semana.");
+		   // else
+		   // 	throw new ValidacaoException(TipoMensagem.WARNING, "Nao encontrado chamada encalhe para esta semana.");
+		    result.use(Results.json()).from(resultList, "result").recursive().serialize();
 	    }
 	
 	@Post

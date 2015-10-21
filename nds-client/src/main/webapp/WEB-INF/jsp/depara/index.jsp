@@ -30,10 +30,7 @@ $(function(){
 	<div id="dialog-novo" title="Incluir Novo Depara">  
 		<jsp:include page="../messagesDialog.jsp" />  
 	    <table width="356" border="0" cellpadding="2" cellspacing="1" class="filtro">
-	            <tr>
-	              <td width="112">Depara:</td>
-	              <td width="233"><input type="text" name="depara.id" id="deparaId" style="width:80px;"/></td>
-	            </tr>
+	            
 	            <tr>
 	              <td>FC:</td>
 	              <td><input type="text" name="depara.fc" id="deparaFc" style="width:220px;"/></td>
