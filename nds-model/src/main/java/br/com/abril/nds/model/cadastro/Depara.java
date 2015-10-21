@@ -77,6 +77,7 @@ public class Depara implements Serializable {
 	 * @return the fc
 	 */
 	public String getFc() {
+		
 		return this.fc;
 	}
 
@@ -91,6 +92,8 @@ public class Depara implements Serializable {
 	 * @return the fc
 	 */
 	public String getDinap() {
+		//if ( this.dinap == null )
+		//	return "";
 		return this.dinap;
 	}
 

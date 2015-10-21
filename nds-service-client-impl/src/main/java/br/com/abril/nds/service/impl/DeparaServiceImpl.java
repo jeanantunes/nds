@@ -100,15 +100,18 @@ public class DeparaServiceImpl implements DeparaService  {
 	@Override
 	@Transactional
 	public Depara merge(Depara entity) throws UniqueConstraintViolationException, RelationshipRestrictionException {
-		if (deparaRepository.hasFc(entity.getFc())) {
-			throw new UniqueConstraintViolationException("Código FC "
-					+ entity.getFc() + " do Depara em uso.");		}
 		
-		/*if (entity.getId() != null &&  hasAssociacao(entity.getId())) {
+		if (entity.getFc() == null || entity.getDinap() == null ) {
 			throw new RelationshipRestrictionException(
-						"Box está em uso e não pode ser editado.");
+						"Informar codigo FC e codigo DINAP.");
 			
-		}*/
+		}
+		
+		if (entity.getId() == null &&  deparaRepository.hasFc(entity.getFc())) {
+			throw new RelationshipRestrictionException(
+						"Ja existe este codigo FC cadastrado.");
+			
+		}
 		
 		
 		return deparaRepository.merge(entity);
