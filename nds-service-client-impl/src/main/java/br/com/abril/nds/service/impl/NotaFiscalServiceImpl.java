@@ -70,6 +70,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -78,6 +79,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.OrigemItem;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
@@ -342,11 +344,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) origemItem).getMovimentoEstoqueCota();
 						mec.setNotaFiscalEmitida(false);
 					}
+					
+					if(origemItem.getOrigem().equals(OrigemItem.MOVIMENTO_ESTOQUE)) {
+						
+						MovimentoEstoque me = ((OrigemItemNotaFiscalMovimentoEstoque) origemItem).getMovimentoEstoque();
+						me.setNotaFiscalEmitida(false);
+					}
 				}
 			}
 		}
 		
-//		this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
+		// this.gerarArquivoSolicitacaoCancelamento(notaFiscal);
 
 	}
 
