@@ -4,6 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="VALOR_TOTAL_PAGAR" class="java.lang.String"/>
+	<parameter name="CD" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -38,7 +39,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["VALOR TOTAL A PAGAR"]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00" isBlankWhenNull="true">
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement uuid="a92bd3e0-5dd8-4731-849a-a17836cd635b" positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="204" y="0" width="293" height="12" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
 				<box rightPadding="3">
 					<topPen lineWidth="1.0"/>
@@ -48,6 +49,13 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="10917e7c-2012-492b-a793-d767eb987746" x="269" y="0" width="14" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CD}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
