@@ -1025,7 +1025,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" coalesce(pessoaEditor.nomeFantasia, pessoaEditor.razaoSocial, '') as nomeEditor,");
 		hql.append(" SUM(me.qtde) as exemplares, ");
 		hql.append(" SUM(coalesce(produtoEdicao.precoVenda, 0) * me.qtde) as total, "); 
-		hql.append(" SUM((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0)  / 100))) * me.qtde) as totalDesconto "); 
+		hql.append(" SUM((produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (coalesce(descontoLogisticaPE.percentualDesconto, descontoLogistica.percentualDesconto, produtoEdicao.desconto, produto.desconto, 0)  / 100))) * me.qtde) as totalDesconto, "); 
+		hql.append(" produto.codigo as codigo, ");
+		hql.append(" produto.nomeComercial as nome, ");
+		hql.append(" produtoEdicao.numeroEdicao as edicao ");
 		
 		Query query = queryConsultaMENfeParameters(queryConsultaMENfe(filtro, hql, false, false, false), filtro);
 		
@@ -1103,7 +1106,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(!isGroup) {
 			hql.append(" GROUP BY fornecedor.id, produtoEdicao.id ");
 			if(filtro.isEmissaoPorEditor() != null && filtro.isEmissaoPorEditor()) {
-				hql.append(", editor.id ");
+				hql.append(", editor.codigo ");
 			}
 		} else {
 			hql.append(" GROUP BY me ");
