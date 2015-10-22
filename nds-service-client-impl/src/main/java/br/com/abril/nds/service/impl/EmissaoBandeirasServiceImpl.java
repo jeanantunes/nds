@@ -76,7 +76,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	
 	@Override
 	@Transactional
-	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO) {
+	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, Long numeroNotaDe, Long numeroNotaAte, PaginacaoVO paginacaoVO) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE;
 		TipoMovimento tipoMovimento = tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
@@ -104,7 +104,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	
 	@Override
 	@Transactional
-	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO, boolean bandeiraGerada) {
+	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, Long numeroNotaDe, Long numeroNotaAte, PaginacaoVO paginacaoVO, boolean bandeiraGerada) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE;
 		TipoMovimento tipoMovimento = tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
@@ -141,7 +141,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	
 	@Override
 	@Transactional
-	public byte[] imprimirBandeira(Date dataEmissao, Long fornecedorId, Date[] datasEnvio, Integer[] numeroPallets,Integer[] notas,Integer[] series, String numeroNotaDe, String numeroNotaAte) throws Exception {
+	public byte[] imprimirBandeira(Date dataEmissao, Long fornecedorId, Date[] datasEnvio, Integer[] numeroPallets,Integer[] notas,Integer[] series, Long numeroNotaDe, Long numeroNotaAte) throws Exception {
 		
 		if(datasEnvio == null || datasEnvio.length < 1) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data(s) de Envio inválida(s).");

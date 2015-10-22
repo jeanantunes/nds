@@ -63,7 +63,7 @@ public class EmissaoBandeiraController extends BaseController {
 	}
 	
 	@Path("/pesquisar")
-	public void pesquisar(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(Date dataEmissao, Long fornecedor, Long numeroNotaDe, Long numeroNotaAte, String sortname, String sortorder, int rp, int page) {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
@@ -87,7 +87,7 @@ public class EmissaoBandeiraController extends BaseController {
 
 	@Get
 	@Path("/imprimirArquivo")
-	public void imprimirArquivo(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, String sortname, String sortorder, int rp, int page, FileType fileType) {
+	public void imprimirArquivo(Date dataEmissao, Long fornecedor, Long numeroNotaDe, Long numeroNotaAte, String sortname, String sortorder, int rp, int page, FileType fileType) {
 	
 		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(dataEmissao, fornecedor, numeroNotaDe, numeroNotaAte, null);
 		
@@ -107,7 +107,7 @@ public class EmissaoBandeiraController extends BaseController {
 	
 	@Post
 	public void imprimirBandeira(Date dataEmissao, Long fornecedor, Integer numeroPallets[], Date dataEnvio[],
-			 Integer nota[], Integer serie[], String numeroNotaDe, String numeroNotaAte) throws Exception {
+			 Integer nota[], Integer serie[], Long numeroNotaDe, Long numeroNotaAte) throws Exception {
 
 		byte[] comprovate = emissaoBandeirasService.imprimirBandeira(dataEmissao, fornecedor, dataEnvio, numeroPallets,nota,serie, numeroNotaDe, numeroNotaAte);
 		
