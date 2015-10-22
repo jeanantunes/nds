@@ -104,9 +104,8 @@ var impressaoNfeController = $.extend(true, {
 		$("#impressaoNfe-filtro-idRota").removeAttr('disabled');
 		$("#impressaoNfe-filtro-idCotaInicial").removeAttr('disabled');
 		$("#impressaoNfe-filtro-idCotaFinal").removeAttr('disabled');
-		$("#impressaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');;
-		$("#impressaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');;
-		
+		$("#impressaoNfe-filtro-inputIntervaloBoxDe").removeAttr('disabled');
+		$("#impressaoNfe-filtro-inputIntervaloBoxAte").removeAttr('disabled');
 		
 	},
 	
