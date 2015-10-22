@@ -273,7 +273,7 @@ var geracaoNFeController = $.extend({
 		});
 		
 		$("#geracaoNfe-flexigrid-fornecedor-pesquisa").flexigrid({
-			preProcess : _this.preProcessGridPesquisa,
+			preProcess : _this.preProcessFornecedorGridPesquisa,
 			colModel : _this.colunasGridForncedorPesquisa,
 			dataType : 'json',
 			sortname : "codigoEditor",
@@ -335,10 +335,41 @@ var geracaoNFeController = $.extend({
 						data.rows[index].cell["numeroCota"] = '<span style="color: red;">'+ data.rows[index].cell["numeroCota"] +' *</span>';
 					}
 					
-					data.rows[index].cell["situacaoCadastro"] = "";
+					if(data.rows[index].cell["situacaoCadastro"] != 'undefined') {						
+						data.rows[index].cell["situacaoCadastro"] = "";
+					}
 				}
 				data.rows[index].cell["total"] = floatToPrice(data.rows[index].cell["total"]);
 				data.rows[index].cell["totalDesconto"] = floatToPrice(data.rows[index].cell["totalDesconto"]);
+				
+			}
+			return data;
+		}
+	},
+	
+	
+	/**
+	 * Metodo de pre-processamento dos dados inseridos na grid Pesquisa
+	 * 
+	 * @param data - dados inseridos na grid
+	 * @returns dados normalizados para a grid
+	 */
+	preProcessFornecedorGridPesquisa : function(data) {
+		
+		if (typeof data.mensagens == "object") {
+		
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			$("#geracaoNfe-pesquisa", geracaoNFeController.workspace).empty();
+		
+		} else {
+			var count = 0;
+			for(var index in data.rows) {
+				count ++;
+				
+				if(count <= data.rows.length) {					
+					data.rows[index].cell["total"] = floatToPrice(data.rows[index].cell["total"]);
+					data.rows[index].cell["totalDesconto"] = floatToPrice(data.rows[index].cell["totalDesconto"]);
+				}
 				
 			}
 			return data;
