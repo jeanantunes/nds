@@ -124,6 +124,7 @@ consultarEstudo:function (obj) {
 		success: function(json){
 				if (json.mensagens) {
 					exibirMensagem(json.mensagens.tipoMensagem, json.mensagens.listaMensagens);
+					estudoComplementarController.voltar();
 				}else{
 					$('#idEstudoComplementar').html(''); 
 					$('#idProduto').html(json.baseEstudoVO.codigoProduto); 

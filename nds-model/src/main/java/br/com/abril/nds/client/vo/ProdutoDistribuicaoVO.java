@@ -94,6 +94,8 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private Boolean geracaoAutomatica;
 	
+	private BigInteger idSegmento;
+	
 	public void addItemDuplicado(ProdutoDistribuicaoVO produtoDistribuicaoVO, Integer row) {
 		
 		produtoDistribuicoesDuplicados.add(produtoDistribuicaoVO);
@@ -426,6 +428,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	public void setGeracaoAutomatica(Boolean geracaoAutomatica) {
 		this.geracaoAutomatica = geracaoAutomatica;
 	}
-    
-    
+
+	public BigInteger getIdSegmento() {
+		return idSegmento;
+	}
+
+	public void setIdSegmento(BigInteger idSegmento) {
+		this.idSegmento = idSegmento;
+	}
 }

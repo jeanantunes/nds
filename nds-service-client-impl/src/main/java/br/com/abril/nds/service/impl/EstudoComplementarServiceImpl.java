@@ -32,9 +32,7 @@ import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
-import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.UsuarioService;
@@ -46,11 +44,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     private EstudoGeradoRepository estudoGeradoRepository;
 
     @Autowired
-    private ProdutoRepository produtoRepository;
-
-    @Autowired
     private ProdutoEdicaoRepository produtoEdicaoRepository;
-
 
     @Autowired
     private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
@@ -63,9 +57,6 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     
     @Autowired
     private LancamentoService lancamentoService;
-    
-    @Autowired
-    private EstudoService estudoService;
     
     @Autowired
     private UsuarioService usuarioService;
@@ -82,6 +73,10 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
 	if (estudo == null) {
 	    throw new ValidacaoException(TipoMensagem.WARNING, "Estudo " + idEstudoBase + " não encontrado.");
+	}
+	
+	if(estudo.getProdutoEdicao().getProduto().getTipoSegmentoProduto() == null){
+		throw new ValidacaoException(TipoMensagem.WARNING, "Estudo " + idEstudoBase + " está sem segmento.");
 	}
 
 	ProdutoEdicao  pe = produtoEdicaoRepository.buscarPorId(estudo.getProdutoEdicao().getId());
