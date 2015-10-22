@@ -276,7 +276,7 @@ var geracaoNFeController = $.extend({
 			preProcess : _this.preProcessGridPesquisa,
 			colModel : _this.colunasGridForncedorPesquisa,
 			dataType : 'json',
-			sortname : "idFornecedor",
+			sortname : "codigoEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -390,15 +390,21 @@ var geracaoNFeController = $.extend({
 	 * objeto utilizado para encapsular as colunas da grid de Pesquisas
 	 */
 	colunasGridForncedorPesquisa:[ {
-		display : 'Fornecedor',
-		name : 'numeroFornecedor',
-		width : 100,
+		display : 'Codigo',
+		name : 'codigo',
+		width : 60,
 		sortable : true,
 		align : 'left',
 	}, {
-		display : 'Nome',
-		name : 'nomeFornecedor',
+		display : 'Descrição',
+		name : 'nome',
 		width : 215,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Edição',
+		name : 'edicao',
+		width : 80,
 		sortable : true,
 		align : 'left',
 	}, {
@@ -410,19 +416,19 @@ var geracaoNFeController = $.extend({
 	}, {
 		display : 'Nome Editor',
 		name : 'nomeEditor',
-		width : 150,
+		width : 110,
 		sortable : true,
 		align : 'left',
 	}, {
 		display : 'Total Exemplares',
 		name : 'exemplares',
-		width : 110,
+		width : 90,
 		sortable : true,
 		align : 'center',
 	}, {
 		display : 'Total R$',
 		name : 'total',
-		width : 120,
+		width : 100,
 		sortable : true,
 		align : 'right',
 	},  {
