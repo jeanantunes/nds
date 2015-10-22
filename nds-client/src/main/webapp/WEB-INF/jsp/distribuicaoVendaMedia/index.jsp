@@ -24,6 +24,7 @@ $(function() {
 		});
 		distribuicaoVendaMedia.carregarEventos();
 		distribuicaoVendaMedia.verificarICD();
+		distribuicaoVendaMedia.verificarSegmento();
 	});
 
 function popup_cancelar() {

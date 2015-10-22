@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
@@ -30,9 +31,7 @@ import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.model.planejamento.TipoGeracaoEstudo;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
@@ -58,14 +57,8 @@ public class DistribuicaoManualController extends BaseController {
     private EstudoService estudoService;
     
     @Autowired
-    private ProdutoEdicaoService produtoEdicaoService;
-    
-    @Autowired
     private ProdutoService prodService;
 
-    @Autowired
-    private LancamentoService lancamentoService;
-    
     @Autowired
     private MatrizDistribuicaoService matrizDistribuicaoService;
     
@@ -209,6 +202,20 @@ public class DistribuicaoManualController extends BaseController {
     		result.nothing();
     	}else{
     		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o Código ICD inválido, ajuste-o no Cadastro de Produto.");
+    	}
+    	
+    }
+    
+    @Post
+    @Path("verificarSegmento")
+    public void verificarSegmento(String codProduto){
+    	
+    	Produto produto = prodService.obterProdutoPorCodigo(codProduto);
+    	
+    	if(produto.getTipoSegmentoProduto() != null){
+    		result.nothing();
+    	}else{
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto.");
     	}
     	
     }

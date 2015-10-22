@@ -47,7 +47,6 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -85,9 +84,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	@Autowired
 	private CotaRepository cotaRepository;
 
-	@Autowired
-	private EstudoService estudoService;
-	
 	@Autowired
     private UsuarioService usuarioService;
 	
