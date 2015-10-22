@@ -252,6 +252,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.lancamentos.push({
 					idRow : row.cell.idRow,
 					idLancamento : row.cell.idLancamento,
+					idSegmento : row.cell.idSegmento,
 					estudo : row.cell.idEstudo,
 					lancto : reparte,
 					promo : row.cell.promo,
@@ -476,7 +477,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 		
 		estudoParaDivisao=T.lancamentos[id];
-		console.log(estudoParaDivisao);
+		
+		if(estudoParaDivisao.idSegmento == undefined || estudoParaDivisao.idSegmento == null){
+			exibirMensagem("WARNING",["Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto."]);
+			return;
+		}
+		
 		showTab(contextPath +"/dividirEstudo/index", "Dividir Estudo");
 		T.mostrarOpcoes();
 	},
@@ -999,6 +1005,21 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		this.hideMenuOpcoesEstudos();
 		
+		if (!T.validarMarcacaoUnicoItem()) {
+			return;
+		}
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado) {
+				selecionado = lancamento;
+			}
+		});
+		
+		if(selecionado.idSegmento == undefined || selecionado.idSegmento == null){
+			exibirMensagem("WARNING",["Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto."]);
+			return;
+		}
+				
 		T.esconderOpcoes();
 		
 		$("#somarEstudo-estudoPesquisa", _workspace).bind("keydown", function(event) {
@@ -1013,16 +1034,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		    		  matrizDistribuicao.pesquisarProdutos(); 
 		    	  }
 		      } 
-		});
-		
-		if (!T.validarMarcacaoUnicoItem()) {
-			return;
-		}
-		
-		$.each(T.lancamentos, function(index, lancamento){
-			if(lancamento.selecionado) {
-				selecionado = lancamento;
-			}
 		});
 		
 		if (selecionado.estudo == null || selecionado.estudo == "") {
@@ -1045,10 +1056,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		this.hideMenuOpcoesEstudos();
 		
-		T.esconderOpcoes();
-		
-//		$(".areaBts", _workspace).hide();
-		
 		if (!T.validarMarcacaoUnicoItem()) {
 			return;
 		}
@@ -1058,6 +1065,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				selecionado = lancamento;
 			}
 		});
+		
+		if(selecionado.idSegmento == undefined || selecionado.idSegmento == null){
+			exibirMensagem("WARNING",["Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto."]);
+			return;
+		}
+		
+		T.esconderOpcoes();
+		
+//		$(".areaBts", _workspace).hide();
 		
 		if (selecionado.estudo != null && selecionado.estudo != "") {
 			exibirMensagem("WARNING",["Selecione um produto que não tenha um estudo gerado."]);
@@ -1612,7 +1628,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        return;
 	    }
 	    
+	    if(selecionado.idSegmento == undefined || selecionado.idSegmento == null){
+			exibirMensagem("WARNING",["Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto."]);
+			return;
+		}
+	    
 	    var postData = [];
+	    
 	    postData.push({name: "estudoId",        	value: selecionado.estudo});
 	    postData.push({name: "idProdutoEdicao", 	value: selecionado.idProdutoEdicao});
 	    postData.push({name: "idLancamento",    	value: selecionado.idLancamento});
@@ -1903,10 +1925,17 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				selecionado = lancamento;
 			}
 		});
+		
 		if (selecionado == null) {
 			exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
 			return;
 		}
+		
+		if(selecionado.idSegmento == undefined || selecionado.idSegmento == null){
+			exibirMensagem("WARNING",["Este produto está com o segmento inválido, ajuste-o no Cadastro de Produto."]);
+			return;
+		}
+		
 		var postData = [];
 		postData.push({name : "edicao", value : selecionado.edicao});
 		postData.push({name : "estudoId", value : selecionado.estudo});

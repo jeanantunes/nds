@@ -60,6 +60,19 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	    );
 	};
 	
+	this.verificarSegmento = function(){
+		
+		$.postJSON(
+	            pathTela + "/distribuicaoVendaMedia/verificarSegmento", 
+	            [{name : "codProduto" , value : $('#codigoProduto',this.workspace).text()}],
+	            function(result) {
+	            },
+	            function(result){
+	            	distribuicaoVendaMedia.cancelar();
+	            }
+	    );
+	};
+	
 	this.removerDuplicados = function eliminateDuplicates(arr) {
 		  var i,
 	      len=arr.length,

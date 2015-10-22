@@ -30,6 +30,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" lanc.id as idLancamento,")
 		.append(" prod.CODIGO as codigoProduto,") 
 		.append(" prod.NOME as nomeProduto,")
+		.append(" tsp.id as idSegmento,")
 		.append(" prodEdic.ID as idProdutoEdicao,")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
 		.append(" plp.NUMERO_PERIODO as periodo, ")
@@ -79,6 +80,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" left join estudo_gerado estudo on lanc.ID = estudo.LANCAMENTO_ID and estudo.produto_edicao_id = prodEdic.id ")
 			
 		.append(" left join tipo_classificacao_produto tpClassProd on prodEdic.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
+		.append(" left join tipo_segmento_produto tsp ON prod.TIPO_SEGMENTO_PRODUTO_ID = tsp.ID")
 		.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
 		.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")

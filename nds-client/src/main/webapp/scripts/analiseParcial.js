@@ -1169,7 +1169,7 @@ var analiseParcialController = $.extend(true, {
                         {display: 'Nome',         name: 'nomeCota',        width: 160, sortable: true, align: 'left'},
                         {display: 'Sigla Motivo', name: 'siglaMotivo',     width: 10,  sortable: true, hide: true},
                         {display: 'Motivo',       name: 'motivo', 		   width: 160, sortable: true, align: 'left'},
-                        {display: 'Venda Média',  name: 'vendaMedia', 	   width: 70, sortable: true, align: 'left'},
+                        {display: 'Venda Média',  name: 'vendaMedia', 	   width: 70, sortable: true, align: 'center'},
                         {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: false, align: 'center'}],
             width : 575,
             height : 200,
@@ -1292,6 +1292,8 @@ var analiseParcialController = $.extend(true, {
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.siglaMotivo + '" id="'+i+'" style="width: 50px;" value="'+
             value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' + 
             ' situacaoCota="'+ value.cell.situacaoCota +'" ' + ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
+            
+            value.cell.vendaMedia = Math.round(value.cell.vendaMedia);
         });
         
         if($("[id='dialog-cotas-estudos']", analiseParcialController.workspace).length > 1){

@@ -57,6 +57,7 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.focusRight("#numeroCotaGrid"+(distribuicaoManual.rowCount - 1));
 		
 		distribuicaoManual.verificarICD();
+		distribuicaoManual.verificarSegmento();
 	},
 	
 	verificarICD : function(){
@@ -67,6 +68,21 @@ var distribuicaoManual = $.extend(true, {
 	            },
 	            function(result){
 	            	//distribuicaoManual.voltar();
+	            	setTimeout(function() { 
+		            	$(".ui-tabs-selected").find("span").click();
+		    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+	    			}, 500);
+	            }
+	            );
+	},
+	
+	verificarSegmento : function(){
+		$.postJSON(
+	            pathTela + "/distribuicaoManual/verificarSegmento", 
+	            [{name : "codProduto" , value : $('#distribuicao-manual-codigoProduto').text()}],
+	            function(result) {
+	            },
+	            function(result){
 	            	setTimeout(function() { 
 		            	$(".ui-tabs-selected").find("span").click();
 		    			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
