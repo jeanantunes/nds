@@ -372,8 +372,8 @@ public class DanfeBuilder  implements Serializable {
 		String transportadoraMarca 		= ""; // TODO obter campo
 		String transportadoraNumeracao 	= ""; // TODO obter campo
 		
-		BigDecimal transportadoraPesoBruto = BigDecimal.ZERO; // TODO obter campo 
-		BigDecimal transportadoraPesoLiquido = BigDecimal.ZERO; // TODO obter campo 
+		BigDecimal transportadoraPesoBruto = notaFiscal.getNotaFiscalInformacoes().getPesoBrutoLiquido();
+		BigDecimal transportadoraPesoLiquido = notaFiscal.getNotaFiscalInformacoes().getPesoBrutoLiquido();
 		
 		String transportadoraANTT = "";
 		String transportadoraPlacaVeiculo = "";
