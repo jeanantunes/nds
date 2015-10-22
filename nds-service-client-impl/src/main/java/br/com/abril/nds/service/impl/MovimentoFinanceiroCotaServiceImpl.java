@@ -1540,7 +1540,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 			BigDecimal percentualTaxaExtra) {
 		
 		String motivo = dataOperacao +" - "+ distribuidorService.obter().getDescricaoTaxaExtra();
-		BigDecimal valor = valorTotalEncalheOperacaoConferenciaEncalhe; 
+		BigDecimal valor = BigDecimal.ZERO ; // valorTotalEncalheOperacaoConferenciaEncalhe; 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroTaxaExtra = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.TAXA_EXTRA);
 		if(tipoMovimentoFinanceiroTaxaExtra == null) {
 			
@@ -1553,7 +1553,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     		
     		for(MovimentoFinanceiroCota mfc : movimentosFinanceiros) {
     			
-    			if(mfc.getTipoMovimento().equals(tipoMovimentoFinanceiroTaxaExtra) && mfc.getFornecedor().equals(fornecedor)) {
+    			if(mfc.getTipoMovimento().equals(tipoMovimentoFinanceiroTaxaExtra) && mfc.getFornecedor().getId().equals(fornecedor.getId())) {
     				
     				movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
     				movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(mfc.getId());
@@ -1573,10 +1573,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     	    		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
     	    		movimentoFinanceiroCotaDTO.setMovimentos(null);
 
-    	    		break;
+    	    		//break; // break or not break ? odemir
     			} else {
     				GrupoMovimentoFinaceiro grupoMovimentoFinanceiro = ((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro();
-    				if(mfc.getFornecedor().equals(fornecedor)) {
+    				
+    			
+    				if(mfc.getFornecedor().getId().equals(fornecedor.getId())) {
     					
     					if(grupoMovimentoFinanceiro.equals(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE)) {
     						valor = valor.add(mfc.getValor());
@@ -1611,11 +1613,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 			movimentoFinanceiroCotaDTO.setValor(CurrencyUtil.truncateDecimal(valor, 2));
 
     	} else {
-    		
+    	
     		movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
     		movimentoFinanceiroCotaDTO.setCota(cota);
     		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiroTaxaExtra);
     		movimentoFinanceiroCotaDTO.setUsuario(usuario);
+ //   		valor = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
     		movimentoFinanceiroCotaDTO.setValor(valor);
     		movimentoFinanceiroCotaDTO.setMotivo(motivo);
     		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
@@ -1629,6 +1632,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
     		movimentoFinanceiroCotaDTO.setLancamentoManual(false);
     		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
     		movimentoFinanceiroCotaDTO.setMovimentos(null);
+    		
     	}
 		
     	if(movimentoFinanceiroCotaDTO != null && movimentoFinanceiroCotaDTO.getValor().compareTo(BigDecimal.ZERO) > 0) {
