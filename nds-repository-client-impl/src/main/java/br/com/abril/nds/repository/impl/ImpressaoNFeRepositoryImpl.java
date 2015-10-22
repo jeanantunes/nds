@@ -671,6 +671,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
 		}
 		
+		// Intervalo de Nota:
+		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal BETWEEN :numeroNotaDe AND :numeroNotaAte ");
+		}
+		
 		if(filtro.getIdsFornecedores() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
@@ -788,6 +793,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameter("codigoBoxFinal", filtro.getIdBoxFinal());
 		}
 		
+		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
+			query.setParameter("numeroNotaDe", filtro.getNumeroNotaDe());
+			query.setParameter("numeroNotaAte", filtro.getNumeroNotaAte());
+		}
+		
 		if(filtro.getIdsFornecedores() != null) {
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
@@ -821,7 +831,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
 		}
 		
-		// Data numeroNotaDe:	...  Até   ...
+		// Intervalo de numero de Nota De:	...  Até   ...
 		if(filtro.getNumeroNotaDe() != null && filtro.getNumeroNotaAte() != null) {
 			query.setParameter("numeroNotaDe", filtro.getNumeroNotaDe());
 			query.setParameter("numeroNotaAte", filtro.getNumeroNotaAte());
