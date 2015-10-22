@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="812" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="690"/>
+	<property name="ireport.x" value="942"/>
+	<property name="ireport.y" value="517"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -1219,12 +1219,12 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 				<textField pattern="###0.00;(-###0.00)" isBlankWhenNull="false">
 					<reportElement style="dados" x="497" y="182" width="170" height="18" uuid="0bbcf10b-6ad2-4020-8af9-7865c9a3860a"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{transportadoraPesoBruto} != null ? $F{transportadoraPesoBruto}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{transportadoraPesoBruto}]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00;(-###0.00)" isBlankWhenNull="false">
 					<reportElement style="dados" x="673" y="181" width="134" height="18" uuid="ef1daf18-a0ca-41ba-9e40-b25f1ac6ba12"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$F{transportadoraPesoLiquido} != null ? $F{transportadoraPesoLiquido}.round(new MathContext(2, RoundingMode.HALF_EVEN)) : ""]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{transportadoraPesoLiquido}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="dados" x="53" y="182" width="43" height="16" uuid="7c8802cb-3fa5-4d30-b48e-3bef2a833cbc"/>
