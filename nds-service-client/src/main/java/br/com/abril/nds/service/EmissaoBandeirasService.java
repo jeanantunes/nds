@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.BandeirasDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -16,7 +17,7 @@ public interface EmissaoBandeirasService {
 
 	Long countObterBandeirasDaSemana(Date dataEmissao, Long fornecedor);
 
-	List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO);
+	List<BandeirasDTO> obterBandeirasDaSemana(FiltroImpressaoNFEDTO filtroNFE);
 	
 	List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO, boolean bandeiraGerada);
 	

@@ -11,10 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,17 +36,16 @@ import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.service.EmissaoBandeirasService;
 import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
-import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
-	
-	@Autowired
-	private RecolhimentoService recolhimentoService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -76,7 +71,7 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 	
 	@Override
 	@Transactional
-	public List<BandeirasDTO> obterBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacaoVO) {
+	public List<BandeirasDTO> obterBandeirasDaSemana(FiltroImpressaoNFEDTO filtroNFE) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE;
 		TipoMovimento tipoMovimento = tipoMovimentoService.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
@@ -91,13 +86,8 @@ public class EmissaoBandeirasServiceImpl implements EmissaoBandeirasService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao obter a Natureza de Operação.");
 		}
 		
-		FiltroImpressaoNFEDTO filtroNFE = new FiltroImpressaoNFEDTO();
-		filtroNFE.setDataEmissaoInicial(dataEmissao);
-		filtroNFE.setDataEmissaoFinal(dataEmissao);
 		filtroNFE.setIdNaturezaOperacao(naturezaOperacao.getId());
 		filtroNFE.setNaturezaOperacao(naturezaOperacao);
-		filtroNFE.setNumeroNotaDe(numeroNotaDe);
-		filtroNFE.setNumeroNotaAte(numeroNotaAte);
 		
 		return impressaoNFeRepository.obterNotafiscalImpressaoBandeira(filtroNFE);
 	}

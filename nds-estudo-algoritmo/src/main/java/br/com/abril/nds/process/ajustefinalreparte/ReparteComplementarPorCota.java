@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
@@ -127,6 +128,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 				if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
 					break;
 				}
+				
+				if(cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.ALTERNATIVO){
+			    	continue;
+			    }
 
 				if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 					ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix,
@@ -162,6 +167,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		for (CotaEstudo cota : listaOrdenada) {
 		    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
 		    	break;
+		    }
+		    
+		    if(cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.ALTERNATIVO){
+		    	continue;
 		    }
 		    
 		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {

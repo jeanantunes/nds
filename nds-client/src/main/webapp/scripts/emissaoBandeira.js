@@ -86,12 +86,12 @@ var emissaoBandeiraController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "codProduto",
+			sortname : "codigoEditor",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 960,
 			height : 180,
 			onSuccess : function() {

@@ -195,6 +195,11 @@ public class CotaDAO {
 		
 	    cota.setId(rs.getLong("COTA_ID"));
 		cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
+		
+		if(cota.getNumeroCota() == 1555){
+			cota.getNumeroCota();
+		}
+		
 		cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
 		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));

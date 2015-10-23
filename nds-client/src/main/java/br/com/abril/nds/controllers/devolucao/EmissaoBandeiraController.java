@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,19 +10,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.sun.xml.wss.util.DateUtils;
-
 import br.com.abril.icd.axis.util.DateUtil;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BandeirasDTO;
+import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EmissaoBandeirasService;
-import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -46,9 +46,6 @@ public class EmissaoBandeiraController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse response;
-	
-	@Autowired
-	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -77,19 +74,65 @@ public class EmissaoBandeiraController extends BaseController {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
-		    List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(dataEmissao, fornecedor, numeroNotaDe, numeroNotaAte, paginacaoVO); 
-			this.result.use(FlexiGridJson.class)
-				.from(listaBandeiraDTO)
-				.total(total)
-				.page(page).serialize();
+		    
+			TableModel<CellModelKeyValue<BandeirasDTO>> tableModel = efetuarConsultaBandeirasDaSemana(dataEmissao, fornecedor, numeroNotaDe, numeroNotaAte, paginacaoVO);
+
+			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+			
 		}
+	}
+	
+	private TableModel<CellModelKeyValue<BandeirasDTO>> efetuarConsultaBandeirasDaSemana(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, PaginacaoVO paginacao) {
+
+		FiltroImpressaoNFEDTO filtroNFE = new FiltroImpressaoNFEDTO();
+		
+		filtroNFE.setDataEmissaoInicial(dataEmissao);
+		filtroNFE.setDataEmissaoFinal(dataEmissao);
+		filtroNFE.setNumeroNotaDe(numeroNotaDe);
+		filtroNFE.setNumeroNotaAte(numeroNotaAte);
+		filtroNFE.setPaginacao(paginacao);
+		
+		if(fornecedor != null){
+			List<Long> fornecedores = new ArrayList<>();
+			fornecedores.add(fornecedor);
+			filtroNFE.setIdsFornecedores(fornecedores);
+		}
+		
+		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(filtroNFE);
+		
+		if (filtroNFE.getPaginacao().getQtdResultadosTotal() <= 0 ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
+		TableModel<CellModelKeyValue<BandeirasDTO>> tableModel = new TableModel<CellModelKeyValue<BandeirasDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaBandeiraDTO));
+
+		tableModel.setPage(filtroNFE.getPaginacao().getPaginaAtual());
+
+		tableModel.setTotal(filtroNFE.getPaginacao().getQtdResultadosTotal());
+
+		return tableModel;
 	}
 
 	@Get
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Date dataEmissao, Long fornecedor, String numeroNotaDe, String numeroNotaAte, String sortname, String sortorder, int rp, int page, FileType fileType) {
 	
-		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(dataEmissao, fornecedor, numeroNotaDe, numeroNotaAte, null);
+		FiltroImpressaoNFEDTO filtroNFE = new FiltroImpressaoNFEDTO();
+		
+		filtroNFE.setDataEmissaoInicial(dataEmissao);
+		filtroNFE.setDataEmissaoFinal(dataEmissao);
+		filtroNFE.setNumeroNotaDe(numeroNotaDe);
+		filtroNFE.setNumeroNotaAte(numeroNotaAte);
+		
+		if(fornecedor != null){
+			List<Long> fornecedores = new ArrayList<>();
+			fornecedores.add(fornecedor);
+			filtroNFE.setIdsFornecedores(fornecedores);
+		}
+		
+		List<BandeirasDTO> listaBandeiraDTO = emissaoBandeirasService.obterBandeirasDaSemana(filtroNFE);
 		
 		if (listaBandeiraDTO != null && !listaBandeiraDTO.isEmpty()) {
 			try {
