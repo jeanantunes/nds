@@ -54,9 +54,9 @@
 	    	<tr>
 	    	
 			<tr>
-                <td width="60"><input type="radio" name="tipoRetorno" id="tipoRetorno" value="A" checked="checked"/>Autorizado</td>
-                <td width="60"><input type="radio" name="tipoRetorno" id="tipoRetorno" value="C"/>Cancelamento</td>
-                <td width="60"><input type="radio" name="tipoRetorno" id="tipoRetorno" value="R"/>Rejeitado</td>
+                <td width="60"><input type="radio" name="tipoRetorno" id="autorizado" value="A" checked="checked" />Autorizado</td>
+                <td width="60"><input type="radio" name="tipoRetorno" id="cancelado" value="C"/>Cancelamento</td>
+                <td width="60"><input type="radio" name="tipoRetorno" id="rejeitado" value="R"/>Rejeitado</td>
                 <td width="300">
 		        	<span class="bt_pesquisar">
 		        		<a  id="retornoNFEPesquisar" href="javascript:;" onclick="retornoNFEController.pesquisar();"></a>
