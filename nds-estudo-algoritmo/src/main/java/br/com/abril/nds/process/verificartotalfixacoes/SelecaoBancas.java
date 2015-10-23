@@ -82,10 +82,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
-
-	
-	
-	
 	
 	// excluindo cotas que nao recebem o segmento, ou nao recebem a classificacao ou sao alternativas e nao possuem mix
     // ou nao recebem do fornecedor

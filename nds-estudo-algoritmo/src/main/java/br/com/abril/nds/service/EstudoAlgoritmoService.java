@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -249,7 +248,6 @@ public class EstudoAlgoritmoService {
         final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
         final Date dataLancamento = edicao.getDataLancamento();
         
-        GregorianCalendar c1 = new GregorianCalendar();
         DataReferencia dataReferenciaFevereiro = DataReferencia.FEVEREIRO_15; 
         if(new DateTime(dataLancamento).getMonthOfYear() == 01) {
 
