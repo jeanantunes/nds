@@ -900,19 +900,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("                cec.data_operacao = :dataEncalhe            ");
         sql.append("        )                                                   ");
         sql.append("		and pdv.PONTO_PRINCIPAL = :principal                ");
-        sql.append("		and cota.ID not in (                                ");
-        sql.append("			select                                          ");
-        sql.append("				cota.ID                                     ");
-        sql.append("			from                                            ");
-        sql.append("		        Cota cota                                   ");
-        sql.append("			inner join                                      ");
-        sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
-        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID   ");
-        sql.append("			inner join                                                                     ");
-        sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
-        sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
-        sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
-        sql.append("		)                                                                                  ");
+                                                                                   
         
         if (numeroCota != null){
             
@@ -924,6 +912,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         sql.append("    cota.ID, indMFCNaoConsolidado ");
         
         sql.append(" having indMFCNaoConsolidado = true ");
+        sql.append("		and cota.ID not in (                                ");
+        sql.append("			select                                          ");
+        sql.append("				distinct(cota.ID )                                   ");
+        sql.append("			from                                            ");
+        sql.append("		        Cota cota                                   ");
+        sql.append("			inner join                                      ");
+        sql.append("		        CHAMADA_ENCALHE_COTA chamadaEncalheCota     ");
+        sql.append("		            on chamadaEncalheCota.COTA_ID=cota.ID   ");
+        sql.append("			inner join                                                                     ");
+        sql.append("			CHAMADA_ENCALHE chamadaEncalhe                                                 ");
+        sql.append("		            on ( chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID and     ");
+        sql.append("						 chamadaEncalhe.DATA_RECOLHIMENTO = :dataEncalhe )                 ");
+        sql.append("		)     ");
         
         return sql;
     }
