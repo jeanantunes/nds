@@ -191,7 +191,7 @@ public class ItemNotaFiscalBuilder  {
 			produtoServico.setQuantidade(produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs());
 		} else {
 			
-			quantidade = produtoServico.getQuantidade().add(movimentoEstoque.getQtde()).abs();
+			quantidade = produtoServico.getQuantidade().abs();
 			
 			LOGGER.error("Produto: "+produtoServico.getCodigoProduto());
 			
@@ -207,7 +207,7 @@ public class ItemNotaFiscalBuilder  {
 					produtoServico.setQuantidade(movimentoEstoque.getQtde());
 				} else {
 					
-					produtoServico.setQuantidade(quantidade);
+					produtoServico.setQuantidade(movimentoEstoque.getQtde());
 				}
 			}
 		}
