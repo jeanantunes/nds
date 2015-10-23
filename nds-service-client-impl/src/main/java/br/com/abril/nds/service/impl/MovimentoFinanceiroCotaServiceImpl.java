@@ -1498,7 +1498,20 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 							valorTotalEncalheOperacaoEnvioReparte.subtract(valorTotalEncalheOperacaoConferenciaEncalhe),
 							percentualTaxaExtra);
                 }
+            } else {  // gerar taxa extra para cotas ausentes 
+            	if ( valorTotalEncalheOperacaoEnvioReparte != null && valorTotalEncalheOperacaoEnvioReparte.floatValue() > 0 )
+	            	{
+	            	 BigDecimal percentualTaxaExtra = distribuidorService.obter().getPercentualTaxaExtra();
+	                 if(percentualTaxaExtra != null) {
+	                 	
+	                 	gerarMovimentoFincaneiroCotaTaxaExtra(cota, fornecedor,
+	 							dataOperacao, usuario,
+	 							valorTotalEncalheOperacaoEnvioReparte.subtract(valorTotalEncalheOperacaoEnvioReparte),
+	 							percentualTaxaExtra);
+	                 }
+	            	}
             }
+            
         } else if (tipoCota.equals(TipoCota.A_VISTA)) {
             
             // GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE
@@ -1507,7 +1520,21 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
             valorTotalEncalheOperacaoConferenciaEncalhe = this.obterValorMovimentosEstoqueEncalhe(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
             
             if ((valorTotalEncalheOperacaoConferenciaEncalhe == null) || (valorTotalEncalheOperacaoConferenciaEncalhe.floatValue() <= 0)) {
-                
+            	// gerar taxa extra para cotas ausentes 
+            	 valorTotalEncalheOperacaoEnvioReparte = this
+                         .obterValorMovimentosEstoqueEncalhe(movimentosEstoqueCotaOperacaoEnvioReparte);
+            
+            	if ( valorTotalEncalheOperacaoEnvioReparte != null && valorTotalEncalheOperacaoEnvioReparte.floatValue() > 0 )
+	            	{
+	            	 BigDecimal percentualTaxaExtra = distribuidorService.obter().getPercentualTaxaExtra();
+	                 if(percentualTaxaExtra != null) {
+	                 	
+	                 	gerarMovimentoFincaneiroCotaTaxaExtra(cota, fornecedor,
+	 							dataOperacao, usuario,
+	 							valorTotalEncalheOperacaoEnvioReparte.subtract(valorTotalEncalheOperacaoEnvioReparte),
+	 							percentualTaxaExtra);
+	                 }
+	            	}
                 return;
             }
             
@@ -1612,13 +1639,13 @@ public class MovimentoFinanceiroCotaServiceImpl implements MovimentoFinanceiroCo
 			valor = valor.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
 			movimentoFinanceiroCotaDTO.setValor(CurrencyUtil.truncateDecimal(valor, 2));
 
-    	} else {
+    	} else { // cota ausente
     	
     		movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
     		movimentoFinanceiroCotaDTO.setCota(cota);
     		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiroTaxaExtra);
     		movimentoFinanceiroCotaDTO.setUsuario(usuario);
- //   		valor = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
+    		valor = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(percentualTaxaExtra).divide(BigDecimal.valueOf(100));
     		movimentoFinanceiroCotaDTO.setValor(valor);
     		movimentoFinanceiroCotaDTO.setMotivo(motivo);
     		movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacao);
