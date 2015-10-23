@@ -5,6 +5,7 @@ var retornoNFEController  = $.extend(true, {
 	init : function() {
 		this.initFlexiGrids();
 		this.initFiltroDatas();
+		
 	},
 
 	initFlexiGrids : function() {
@@ -61,7 +62,8 @@ var retornoNFEController  = $.extend(true, {
 	pesquisar : function() {
 		
 		var dataReferencia = $("#retornoNFEDataReferencia", this.workspace).val();
-		var tipoRetorno = $("#tipoRetorno", this.workspace).val();
+		
+		var tipoRetorno = $('input[name^="tipoRetorno"]:checked').val();
 		var params = [];
 		
 		if(!dataReferencia) {
@@ -72,16 +74,18 @@ var retornoNFEController  = $.extend(true, {
 			params.push({name : "dataReferencia", value : dataReferencia});
 			params.push({name : "tipoRetorno", value : tipoRetorno});
 			
-			
-			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
-				dataType : 'json',
-				url: contextPath + "/nfe/retornoNFe/pesquisarArquivos.json",
-				params: params
+			$.postJSON(this.path + 'pesquisarArquivos.json', params, function(data) {
+				
+				var tipoMensagem = data.tipoMensagem;
+				var listaMensagens = data.listaMensagens;
+
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+				}
+				
+				$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexReload();
+				$(".grids").show();
 			});
-			
-			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexReload();
-			$(".grids").show();
-			
 		}
 	},
 	

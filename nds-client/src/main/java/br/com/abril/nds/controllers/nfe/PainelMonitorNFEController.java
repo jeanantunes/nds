@@ -181,7 +181,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		session.setAttribute(NFES_PARA_IMPRESSAO_DANFES, nfesParaImpressaoDanfes);
 		
-		result.use(Results.json()).from("").serialize();
+		result.use(Results.json()).from("OK").serialize();
 		
 	}
 	

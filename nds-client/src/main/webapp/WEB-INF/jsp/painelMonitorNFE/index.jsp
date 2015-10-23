@@ -80,7 +80,7 @@ $(function() {
 <fieldset class="fieldFiltro fieldFiltroItensNaoBloqueados">
 	
 	<legend> Painel Monitor NF-e</legend>
-	<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">
+	<table width="100%" border="1" cellpadding="2" cellspacing="1" class="filtro">
 		<tr>
 			<td width="100">
 				Destinat&aacute;rio:
@@ -176,13 +176,22 @@ $(function() {
 			<td>
 				<input type="text" id="box" style="width: 80px;" />
 			</td>
+			
+			<td>Intervalo Nota:</td>
+			<td colspan="2">
+				<input type="text" name="painelNfe-notaDe" id="painelNfe-notaDe" style="width: 60px;" /> &nbsp;Até&nbsp; 
+				<input type="text" name="painelNfe-notaAte" id="painelNfe-notaAte" style="width: 60px;" />
+			</td>
+			
 			<td width="85">
 				S&eacute;rie:
 			</td>
+			
 			<td>	
 				<input type="text" id="serieNfe" style="width: 100px;" />
 			</td>
-			<td colspan="3">
+			
+			<td>
 				<span class="bt_pesquisar">
 					<a href="javascript:;" onclick="PainelMonitorNFE.pesquisar();"><b> Pesquisar </b></a>
 				</span>
