@@ -129,7 +129,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 					break;
 				}
 				
-				if(cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.ALTERNATIVO){
+				if((cota.getTipoDistribuicaoCota() != null) && (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.ALTERNATIVO)){
 			    	continue;
 			    }
 
@@ -169,7 +169,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		    	break;
 		    }
 		    
-		    if(cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.ALTERNATIVO){
+		    if((cota.getTipoDistribuicaoCota() != null) && (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.ALTERNATIVO)){
 		    	continue;
 		    }
 		    
