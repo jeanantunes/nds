@@ -543,7 +543,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 			itemCE.setQtdeVendaInformada(Util.nvl(item.getVenda(), 0L).longValue());
 			
-			item.setEncalhe(Util.nvl(item.getEncalhe(), BigInteger.ZERO).add(Util.nvl(item.getQtdeDevSemCE(), BigInteger.ZERO))); 
+			item.setEncalhe(Util.nvl(item.getEncalhe(), BigInteger.ZERO)); 
 			
 			itemCE.setQtdeDevolucaoInformada(Util.nvl(item.getEncalhe(), 0L).longValue());
 			
@@ -683,7 +683,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			ItemFechamentoCEIntegracaoDTO itemCE = itensAlterados.get(item.getId());
 			
 			qntVenda = Util.nvl(itemCE.getVenda(), 0L).longValue();
-			qntEncalhe = Util.nvl(itemCE.getEncalhe(), 0L).longValue();
+		
+			qntEncalhe = Util.nvl(itemCE.getEncalhe(),  BigInteger.ZERO).add(Util.nvl(itemCE.getQtdeDevSemCE(),  BigInteger.ZERO)).longValue();
 		} else {
 			
 			if(qntEncalhe == null) {

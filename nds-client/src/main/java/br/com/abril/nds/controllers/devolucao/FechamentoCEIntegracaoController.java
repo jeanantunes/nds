@@ -26,6 +26,10 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO.ColunaOrdenacaoFechamentoCEIntegracao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao.NotaFiscalTipoEmissaoEnum;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -123,6 +127,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	public void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro){
 		
 		validarAnoSemana(filtro.getSemana());
+		
+		// ver se pode reabrir ce = paramentro NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR tem que estar desobriga emissao 
+		// marcado para poder reabrir ce 
+		Distribuidor distribuidor = distribuidorService.obterParaNFe();
+		boolean permiteReabertura=false;
+		if(distribuidor.getTiposNotaFiscalDistribuidor() != null && !distribuidor.getTiposNotaFiscalDistribuidor().isEmpty() ) {
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				if ( dtnf.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR)) {
+					if ( dtnf.getTipoEmissao() != null &&  dtnf.getTipoEmissao().getTipoEmissao() != null && dtnf.getTipoEmissao().getTipoEmissao().equals(NotaFiscalTipoEmissaoEnum.DESOBRIGA_EMISSAO))
+					permiteReabertura=true;
+				}
+			}
+		}
+		if ( !permiteReabertura ) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,"Reabertura não Permitida pois já foram emitidas notas fiscais."),"result").recursive().serialize();
+			return;
+		}
 		
 		String mensagemReaberturaNaoRealizada = fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro); 
 		
@@ -461,6 +482,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	public void pesquisarPerdaGanho(String semana, 
 									Long idFornecedor,
 									String comboCEIntegracao,
+									String idChamadaEncalhe,
 									String sortorder, 
 									String sortname, 
 									int page, 
@@ -473,6 +495,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		filtroCE.setSemana(semana);
 		filtroCE.setIdFornecedor(idFornecedor);
 		filtroCE.setComboCeIntegracao(comboCEIntegracao);
+		if ( idChamadaEncalhe != null && !"-1".equals(idChamadaEncalhe))
+			filtroCE.setIdChamadaEncalhe(Long.parseLong(idChamadaEncalhe));
 		
 		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
@@ -490,11 +514,13 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		List<ItemFechamentoCEIntegracaoDTO> itensCE = PaginacaoUtil.paginarEmMemoria(fechamentoCEIntegracao.getItensFechamentoCE(),filtroCE.getPaginacao());
 		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensCE));
-		
-		tableModel.setPage(filtroCE.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(fechamentoCEIntegracao.getQntItensCE());
+		if ( itensCE != null && itensCE.size() > 0 ) {
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensCE));
+			
+			tableModel.setPage(filtroCE.getPaginacao().getPaginaAtual());
+			
+			tableModel.setTotal(fechamentoCEIntegracao.getQntItensCE());
+		}
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		

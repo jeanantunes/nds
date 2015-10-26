@@ -91,7 +91,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
 		hql.append("		then");
-		hql.append("			COALESCE(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ").append(this.sqlVendaParcial()).append(") * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO,0)"); 
+		hql.append("			COALESCE(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA, ")
+		          .append(this.sqlVendaParcial()).append(") * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO,0)"); 
 		hql.append("		else ");     		
 		hql.append("			(COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA,0) ");
 		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
@@ -107,7 +108,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("    	then");
 		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, 0) ");
 		hql.append("		else ");
-		hql.append("			if(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
+		hql.append("			if(chmFornecedor.STATUS_CE_NDS = 'FECHADO' or (ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA is not null  ) ,COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,0), ");
 		hql.append("			COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0)"); 
 		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE, 0) ");
 		hql.append("			+ COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0) ");

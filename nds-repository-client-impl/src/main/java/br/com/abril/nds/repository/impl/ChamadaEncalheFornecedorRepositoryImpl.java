@@ -31,6 +31,10 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	if(filtro.getCodigoDistribuidorFornecdor()!= null) {
     		hql.append(" and cef.codigoDistribuidor = :codigoDistInterface ");
     	}
+    	
+    	if(filtro.getIdChamadaEncalhe() != null) {
+    		hql.append(" and cef.numeroChamadaEncalhe = :numeroChamadaEncalhe ");
+    	}
     	hql.append(" order by cef.numeroChamadaEncalhe desc");
     	Query query = getSession().createQuery(hql.toString());
     	
@@ -39,6 +43,9 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	
     	if(filtro.getCodigoDistribuidorFornecdor()!= null){
     		query.setParameter("codigoDistInterface", filtro.getCodigoDistribuidorFornecdor().longValue());
+    	}
+    	if(filtro.getIdChamadaEncalhe() != null) {
+    		query.setParameter("numeroChamadaEncalhe", filtro.getIdChamadaEncalhe());
     	}
     	
     	return query.list();
