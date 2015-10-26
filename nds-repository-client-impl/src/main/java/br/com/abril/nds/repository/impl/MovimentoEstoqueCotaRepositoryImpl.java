@@ -2126,7 +2126,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         hql.append(" where movimento.cota.id = :idCota ");
         
-        hql.append(" and movimento.data = :data ");
+     //   hql.append(" and movimento.data = :data ");
         
         hql.append(" and movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ");
         
