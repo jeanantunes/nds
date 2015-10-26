@@ -1350,10 +1350,13 @@ var fechamentoEncalheController = $.extend(true, {
 		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", contextPath + "/devolucao/fechamentoEncalhe/analitico");
 	},
 	
-	nextInputExemplares : function(curIndex,evt) {
+	nextInputExemplares : function(auxx,curIndex,evt) {
+		
+
 		
 		var num = (evt.keyCode != 0 ? evt.keyCode : evt.charCode);
-		if(num>=48 & num<=57) {
+
+		if((parseInt(num)>47 && parseInt(num)<58)|| parseInt(num)==13) {
 			if (evt.keyCode == 13) {
 				var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
 				nextElement.select();

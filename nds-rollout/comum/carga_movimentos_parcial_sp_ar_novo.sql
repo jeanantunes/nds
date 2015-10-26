@@ -7,6 +7,8 @@
 -- SET GLOBAL max_heap_table_size = 1844674407370954752
 -- SET GLOBAL tmp_table_size = 1844674407370954752
 
+
+
 -- SET max_heap_table_size = 7000000000;
 -- SET tmp_table_size = 7000000000;	
 
@@ -43,22 +45,32 @@ produto_edicao_id bigint,
 DATA_LANCAMENTO DATE,
 DATA_RECOLHIMENTO DATE,
 cota_id bigint
-) -- ENGINE=MEMORY
+) ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/home/douglas/load_files/HVND_CONSIGNADO_NORMAL.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/HVND_CONSIGNADO_NORMAL.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 
 update HVND set CONSIGNADO =1 ;
 
 
--- LOAD DATA INFILE '/home/douglas/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/home/douglas/load_files/turma_monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
-LOAD DATA INFILE '/home/douglas/load_files/natureza.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_1.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/turma_monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/natureza.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/monica.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/istoe.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/epoca.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/carros.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/carta_capital.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/casa_vogue.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/auto_esporte.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 update HVND set PARCIAL_NORMAL ='N';
-update HVND set CONSIGNADO =0 where status= 'F';
-update HVND set CONSIGNADO =1 where status= 'A';
+update HVND set CONSIGNADO =0;
+update HVND set status ='F';
+
+-- update HVND set CONSIGNADO =0 where status= 'F';
+-- update HVND set CONSIGNADO =1 where status= 'A';
 
 create table HVND_AUX2 (
 COD_COTA_HVCT INT,
@@ -95,14 +107,15 @@ and pe.numero_edicao = h.num_edicao;
 
 
 -- PARCIAIS
-LOAD DATA INFILE '/home/douglas/load_files/parcial.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
--- LOAD DATA INFILE '/home/douglas/load_files/HVND_PAR_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/parcial.txt' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/HVND_PAR_2.TXT' INTO TABLE HVND COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 update HVND set PARCIAL_NORMAL ='P' where PARCIAL_NORMAL is null;
+update HVND set CONSIGNADO =0;
+update HVND set status ='F';
 
-
-update HVND set CONSIGNADO =1 where status = 'A'; -- and PARCIAL_NORMAL ='P';
-update HVND set CONSIGNADO =0 where status = 'F'; -- and PARCIAL_NORMAL ='P';
+-- update HVND set CONSIGNADO =1 where status = 'A'; -- and PARCIAL_NORMAL ='P';
+-- update HVND set CONSIGNADO =0 where status = 'F'; -- and PARCIAL_NORMAL ='P';
 
 
 update HVND set DEVOLVE_ENCALHE =1;
@@ -164,7 +177,7 @@ ALTER TABLE `HVND` ADD INDEX `hvnd_cota_status` (`STATUS` ASC) ;
 
 ALTER TABLE `HVND` ADD INDEX `cota_id` (`cota_id` ASC);
 
-ALTER TABLE `HVND` ENGINE=MEMORY;
+-- ALTER TABLE `HVND` ENGINE=MEMORY;
 
 select '*** HVND Produtos nao encontrados: ';
 select GROUP_CONCAT(a.cod_produto SEPARATOR ',') from (
@@ -211,7 +224,7 @@ F3 FLOAT
 ) 
 ;
 
--- LOAD DATA INFILE '/home/douglas/load_files/CONSIGNADO.TXT' INTO TABLE CONSIGNADO COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/CONSIGNADO.TXT' INTO TABLE CONSIGNADO COLUMNS TERMINATED BY '|' LINES TERMINATED BY '|\r\n';
 
 
 create table CONSIGNADO_CONCAT (
@@ -313,7 +326,7 @@ produto_edicao_id int)
  ENGINE=MEMORY
 ;
 
--- LOAD DATA INFILE '/home/douglas/load_files/ESTQSISFIL.NEW' INTO TABLE ESTQSISFIL COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+-- LOAD DATA INFILE '/opt/rollout/load_files/ESTQSISFIL.NEW' INTO TABLE ESTQSISFIL COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
 
 
 update ESTQSISFIL stq,produto_edicao pe, produto p 
@@ -341,7 +354,7 @@ quantidade int)
  ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/home/douglas/load_files/ESTQBOX.NEW' INTO TABLE ESTQBOX COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA INFILE '/opt/rollout/load_files/ESTQBOX.NEW' INTO TABLE ESTQBOX COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
 ALTER TABLE ESTQBOX
 ADD COLUMN produto_edicao_id bigint AFTER quantidade;
@@ -384,7 +397,7 @@ FLAG_ESTORNO varchar(1)) ENGINE=MEMORY;
 ALTER TABLE ESTQMOV
 ADD COLUMN produto_edicao_id bigint AFTER FLAG_ESTORNO;
 
-LOAD DATA INFILE '/home/douglas/load_files/ESTQMOV.NEW' INTO TABLE estqmov COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA INFILE '/opt/rollout/load_files/ESTQMOV.NEW' INTO TABLE estqmov COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
 update estqmov set produto_edicao_id = (select pe.id from produto_edicao pe, produto p 
 where p.id = pe.produto_id 
@@ -413,8 +426,8 @@ tipo char(1)
 ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/home/douglas/load_files/ARQCD08.NEW' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' STARTING BY '|';
--- LOAD DATA INFILE '/home/douglas/load_files/MOV_DEB_CRED.TXT' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/ARQCD08.NEW' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' STARTING BY '|';
+-- LOAD DATA INFILE '/opt/rollout/load_files/MOV_DEB_CRED.TXT' INTO TABLE MOV_CRED COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
 
 delete from MOV_CRED where tipo = 'D';
 
@@ -465,8 +478,8 @@ tipo char(1)
 ENGINE=MEMORY
 ;   
 
-LOAD DATA INFILE '/home/douglas/load_files/ARQDB97.NEW' INTO TABLE MOV_DEB COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' STARTING BY '|';
--- LOAD DATA INFILE '/home/douglas/load_files/MOV_DEB_CRED.TXT' INTO TABLE MOV_DEB COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/opt/rollout/load_files/ARQDB97.NEW' INTO TABLE MOV_DEB COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n' STARTING BY '|';
+-- LOAD DATA INFILE '/opt/rollout/load_files/MOV_DEB_CRED.TXT' INTO TABLE MOV_DEB COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\r\n';
 
 delete from MOV_DEB where tipo = 'C';
 
@@ -525,7 +538,7 @@ TIPO_STATUS_RECOLTO_RCPR varchar(45) -- ,
  ENGINE=MEMORY
 ;
 
-LOAD DATA INFILE '/home/douglas/load_files/CARGA_LANCAMENTO_MDC.CAR' INTO TABLE CARGA_LANCAMENTO_MDC COLUMNS TERMINATED BY ';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 LINES;
+LOAD DATA INFILE '/opt/rollout/load_files/CARGA_LANCAMENTO_MDC.CAR' INTO TABLE CARGA_LANCAMENTO_MDC COLUMNS TERMINATED BY ';' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
 select 'CARGA_LANCAMENTO_MDC:',count(*) from CARGA_LANCAMENTO_MDC; -- Log
 
@@ -2079,6 +2092,10 @@ update lancamento
 set tipo_lancamento = 'REDISTRIBUICAO'
 where numero_lancamento > 1
 and tipo_lancamento = 'LANCAMENTO';
+
+update lancamento set status = 'FECHADO';
+
+ALTER TABLE `HVND` ENGINE=MEMORY;
 
 -- drop table hvnd;
 
