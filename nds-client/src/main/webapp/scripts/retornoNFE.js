@@ -74,18 +74,15 @@ var retornoNFEController  = $.extend(true, {
 			params.push({name : "dataReferencia", value : dataReferencia});
 			params.push({name : "tipoRetorno", value : tipoRetorno});
 			
-			$.postJSON(this.path + 'pesquisarArquivos.json', params, function(data) {
-				
-				var tipoMensagem = data.tipoMensagem;
-				var listaMensagens = data.listaMensagens;
-
-				if (tipoMensagem && listaMensagens) {
-					exibirMensagemDialog(tipoMensagem, listaMensagens, "");
-				}
-				
-				$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexReload();
-				$(".grids").show();
+			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexOptions({
+				dataType : 'json',
+				url: contextPath + "/nfe/retornoNFe/pesquisarArquivos.json",
+				params: params
 			});
+			
+			$("#retornoNfe-flexigrid-pesquisa", retornoNFEController.workspace).flexReload();
+			$(".grids").show();
+				
 		}
 	},
 	
