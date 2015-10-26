@@ -919,8 +919,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
-		if (paginacao.getQtdResultadosTotal().equals(0)) {
-			paginacao.setQtdResultadosTotal(query.list().size());
+		if ( paginacao == null)
+			return;
+		if ( paginacao.getQtdResultadosTotal() == null || paginacao.getQtdResultadosTotal().equals(0)) {
+			paginacao.setQtdResultadosTotal( query.list().size());
 		}
 
 		if(paginacao.getQtdResultadosPorPagina() != null) {

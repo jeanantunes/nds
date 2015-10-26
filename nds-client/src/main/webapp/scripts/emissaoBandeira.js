@@ -184,9 +184,10 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		params.push({'name': 'dataEmissao', 'value': emissaoBandeiraController.dataEmissao});
 		params.push({'name': 'fornecedor', 'value': emissaoBandeiraController.fornecedor});
-		
+		var today   = new Date();
+		today.setHours(0,0,0,0);
 		$.each($('input[name="emissaoBandeiras-dataSaida"]'), function(k, v) {
-			if(typeof(v.value) == 'undefined' || '' == v.value || new Date(v.value.split('/').reverse().join('/')).getTime() < new Date().getTime()) {
+			if(typeof(v.value) == 'undefined' || '' == v.value || new Date(v.value.split('/').reverse().join('/')).getTime() < today.getTime()) {
 				exibirMensagem('WARNING', ['Valor incorreto para a impressão da data.']);
 				liberaImpressaoBandeira = false;
 				return false;
