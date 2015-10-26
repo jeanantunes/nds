@@ -149,7 +149,7 @@ var emissaoBandeiraController = $.extend(true, {
         			 
         			 resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" disabled />';
         			 resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" disabled />';
-        			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ resultado.rows[index].cell["dataSaida"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
+        			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ (resultado.rows[index].cell["dataSaida"].length> 0 ? resultado.rows[index].cell["dataSaida"]:new Date() )+'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
         			 resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'') +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
         			
         		 }
@@ -184,10 +184,11 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		params.push({'name': 'dataEmissao', 'value': emissaoBandeiraController.dataEmissao});
 		params.push({'name': 'fornecedor', 'value': emissaoBandeiraController.fornecedor});
-		var today   = new Date();
-		today.setHours(0,0,0,0);
+		var prazo   = new Date();
+		prazo.setHours(0,0,0,0);
+		prazo.setDate(prazo.getDate()-15); // permitir imprimir ate 15 dias atras
 		$.each($('input[name="emissaoBandeiras-dataSaida"]'), function(k, v) {
-			if(typeof(v.value) == 'undefined' || '' == v.value || new Date(v.value.split('/').reverse().join('/')).getTime() < today.getTime()) {
+			if(typeof(v.value) == 'undefined' || '' == v.value || new Date(v.value.split('/').reverse().join('/')).getTime() < prazo.getTime()) {
 				exibirMensagem('WARNING', ['Valor incorreto para a impressão da data.']);
 				liberaImpressaoBandeira = false;
 				return false;
