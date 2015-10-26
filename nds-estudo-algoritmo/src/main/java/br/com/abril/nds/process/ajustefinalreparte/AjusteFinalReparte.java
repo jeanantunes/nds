@@ -44,7 +44,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 	// distribuicao para as cotas que possuem reparteCalculado < ultimaVenda
 	if (estudo.getReservaAjuste() != null) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
-			if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
+	    	if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
 			    break;
 			}
 			// Se Repcalculado < Venda (Última edição fechada, sem correção)
