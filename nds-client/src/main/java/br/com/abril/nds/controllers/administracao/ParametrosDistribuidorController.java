@@ -124,7 +124,7 @@ public class ParametrosDistribuidorController extends BaseController {
     @Path("/")
     public void index() {
         
-        this.buscarLogoArmazenarSessao();
+     //   this.buscarLogoArmazenarSessao();
         
         session.removeAttribute(COTAS_SELECIONADAS);
         session.removeAttribute(MUNICIPIOS_SELECIONADOS);
