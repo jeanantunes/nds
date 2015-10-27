@@ -465,7 +465,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         StringBuilder sql = new StringBuilder();
         
-        sql.append(" select pe.id produtoEdicaoId, ");
+        sql.append(" select    pe.id produtoEdicaoId, ");
         sql.append("        p.codigo codigoProduto, ");
         sql.append("        p.nome nomeProduto, ");
         sql.append("        pe.numero_edicao edicao, ");
