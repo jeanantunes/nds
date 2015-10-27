@@ -43,7 +43,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT ");
+		sql.append(" SELECT straight_join ");
         sql.append("     pe.id, ");
         sql.append("     pe.numero_edicao numeroEdicao, "); 
         sql.append("     p.id idProduto, ");
