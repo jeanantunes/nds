@@ -2180,7 +2180,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         hql.append(" where cota.numeroCota in (:numCotas) ");
         
-        hql.append(" and movimento.data = :data ");
+   //     hql.append(" and movimento.data = :data ");
         
         hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
         
