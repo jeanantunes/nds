@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -110,6 +111,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 			query.setParameter("data", filtro.getData());
 		}
 		
+		query.setParameter("tipoBox", TipoBox.ESPECIAL.name());
 		if(filtro.getNumCota() != null){
 			query.setParameter("numCota", filtro.getNumCota());
 		}
@@ -150,7 +152,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		queryNative.append(" JOIN PESSOA pessoa  ");
 		
-		queryNative.append(" WHERE cota.PESSOA_ID=pessoa.ID ");
+		queryNative.append(" WHERE cota.PESSOA_ID=pessoa.ID  and box.tipo_box != :tipoBox ");
+
 
 		if(filtro.getData() != null){	
 			queryNative.append("AND ca.DATA = :data  											");

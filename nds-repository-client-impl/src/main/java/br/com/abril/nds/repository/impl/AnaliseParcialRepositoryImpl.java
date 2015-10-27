@@ -935,7 +935,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT  ");
+		sql.append(" SELECT  straight_join ");
 		sql.append("	   p.CODIGO as codigoProduto, ");
 		sql.append("       p.NOME_COMERCIAL as nomeProduto, ");
 		sql.append("       pe.NUMERO_EDICAO as edicao, ");
