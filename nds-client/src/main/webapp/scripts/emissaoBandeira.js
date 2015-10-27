@@ -100,7 +100,8 @@ var emissaoBandeiraController = $.extend(true, {
 					buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 					buttonImageOnly : true
 				});
-				$(".emissaoBandeiras-dataSaida").mask("99/99/9999");
+			//	$(".emissaoBandeiras-dataSaida").mask("99/99/9999");
+				$(".emissaoBandeiras-dataSaida", this.workspace).mask("99/99/9999");
 				$(".emissaoBandeiras-volumes").numeric();
 			}
 		});
@@ -144,12 +145,13 @@ var emissaoBandeiraController = $.extend(true, {
          } else { 
         	 
         	 if(resultado && resultado.rows) {
- 
+                 var today = $.datepicker.formatDate('dd/mm/yy', new Date())
+               
         		 for(var index in resultado.rows) {
         			 
         			 resultado.rows[index].cell["numeroNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["numeroNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-numeroNotaFiscal" name="emissaoBandeiras-numeroNotaFiscal" id="emissaoBandeiras-numeroNotaFiscal'+ index +'" disabled />';
         			 resultado.rows[index].cell["serieNotaFiscal"] = '<input value="'+ resultado.rows[index].cell["serieNotaFiscal"] +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-serieNotaFiscal" name="emissaoBandeiras-serieNotaFiscal" id="emissaoBandeiras-serieNotaFiscal'+ index +'" disabled />';
-        			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ (resultado.rows[index].cell["dataSaida"].length> 0 ? resultado.rows[index].cell["dataSaida"]:new Date() )+'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
+        			 resultado.rows[index].cell["dataSaida"] = '<input value="'+ (resultado.rows[index].cell["dataSaida"].length> 0 ? resultado.rows[index].cell["dataSaida"]:today )+'" type="text" maxlength="10" size="12" class="emissaoBandeiras-dataSaida" name="emissaoBandeiras-dataSaida" id="emissaoBandeiras-dataSaida'+ index +'" />';
         			 resultado.rows[index].cell["volumes"] = '<input value="'+ (resultado.rows[index].cell["volumes"] != null ?resultado.rows[index].cell["volumes"]:'') +'" type="text" maxlength="10" size="12" class="emissaoBandeiras-volumes"  name="emissaoBandeiras-volumes" id="emissaoBandeiras-volumes'+ index +'" />';
         			
         		 }
