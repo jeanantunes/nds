@@ -104,15 +104,37 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		sql.append("                                     where _ul.produto_edicao_id = _ped.id and _ul.status in (:statusLancamento)) ");
 		sql.append("                                     order by l.data_lcto_distribuidor desc limit 1) ultimoReparte, ");*/
         
-        sql.append(" (select epc.QTDE_RECEBIDA ");
-        sql.append(" from estoque_produto_cota epc ");
-        sql.append(" where (epc.cota_id = c.id) "); 
-        sql.append(" 		AND epc.PRODUTO_EDICAO_ID = (select lct.PRODUTO_EDICAO_ID from lancamento lct ");
-        sql.append("                                   join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID ");
-        sql.append("                                   join produto pd ON pe.PRODUTO_ID = pd.ID ");
-        sql.append("                                where pd.codigo = p.codigo ");
-        sql.append("                                and lct.STATUS in (:statusLancamento)");
-        sql.append("                                order by lct.DATA_LCTO_DISTRIBUIDOR desc limit 1)) ultimoReparte,");
+        sql.append(" (SELECT  ");
+        sql.append("       cast(sum(case ");
+        sql.append("                   when tipo.OPERACAO_ESTOQUE = 'ENTRADA'                    ");
+        sql.append("                     THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0)                   ");
+        sql.append("                   ELSE if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, -mecReparte.QTDE, 0)               ");
+        sql.append("                 end) as unsigned int) AS reparte ");
+        sql.append("       FROM ");
+        sql.append("           lancamento l                 ");
+        sql.append("       JOIN ");
+        sql.append("           produto_edicao pe                    ");
+        sql.append("               ON pe.id = l.produto_edicao_id                 ");
+        sql.append("       LEFT JOIN ");
+        sql.append("           periodo_lancamento_parcial plp                    ");
+        sql.append("               ON plp.id = l.periodo_lancamento_parcial_id                 ");
+        sql.append("       straight_join ");
+        sql.append("           movimento_estoque_cota mecReparte                    ");
+        sql.append("               on l.id = mecReparte.LANCAMENTO_ID  ");
+        sql.append("       LEFT JOIN ");
+        sql.append("           tipo_movimento tipo ");
+        sql.append("               ON tipo.id = mecReparte.TIPO_MOVIMENTO_ID ");
+        sql.append("       WHERE ");
+        sql.append("           l.id = (select lct.id ");
+        sql.append("                         from lancamento lct  ");
+        sql.append("                             join produto_edicao pe ON lct.PRODUTO_EDICAO_ID = pe.ID  ");
+        sql.append("                             join produto pd ON pe.PRODUTO_ID = pd.ID  ");
+        sql.append("                           where pd.codigo = p.codigo  ");
+        sql.append("                           and lct.STATUS in (:statusLancamento) ");
+        sql.append("                           order by lct.DATA_LCTO_DISTRIBUIDOR desc  ");
+        sql.append("                           limit 1) ");
+        sql.append("           and tipo.GRUPO_MOVIMENTO_ESTOQUE  <> 'ENVIO_ENCALHE' ");
+        sql.append("           and mecReparte.cota_id = c.id) ultimoReparte,  ");
         
         sql.append("     (coalesce(ec.reparte_inicial,0) <> coalesce(ec.reparte,0)) ajustado, ");
         
