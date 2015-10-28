@@ -248,24 +248,19 @@ public class ItemNotaFiscalBuilder  {
 		
 		List<OrigemItemNotaFiscal> origemItens = produtoServico.getOrigemItemNotaFiscal() != null ? produtoServico.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 		
-		if(movimentoEstoque instanceof MovimentoEstoqueCota) {		
-			
+		if(movimentoEstoque instanceof MovimentoEstoqueCota) {
 			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
 			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota((MovimentoEstoqueCota) movimentoEstoque);
 			origemItens.add(oinf);
-			
 		} else if(movimentoEstoque instanceof MovimentoEstoque) {
-			
-			if(!movimentoEstoque.getProdutoEdicao().getId().equals(produtoServico.getProdutoEdicao().getId())) {
-				OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
-				((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
-				origemItens.add(oinfME);
-			}
-			
-			
+			OrigemItemNotaFiscal oinfME = new OrigemItemNotaFiscalMovimentoEstoque();
+			((OrigemItemNotaFiscalMovimentoEstoque) oinfME).setMovimentoEstoque((MovimentoEstoque) movimentoEstoque);
+			origemItens.add(oinfME);
 		}
 		
 		produtoServico.setOrigemItemNotaFiscal(origemItens);
+		
+		detalheNotaFiscal.setProdutoServico(produtoServico);
 		
 		if(detalheNotaFiscal.getProdutoServicoPK() == null) {
 			detalheNotaFiscal.setProdutoServicoPK(new ProdutoServicoPK());
