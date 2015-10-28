@@ -1138,14 +1138,15 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		StringBuilder sql = new StringBuilder();
 		
-		if(tipoConsulta == TipoConsultaCurvaABC.DISTRIBUIDOR){
+		if (filtro.getDataDe() != null && filtro.getDataAte() != null) {
+
 			if (query == null){
-				sql = new StringBuilder();
-				sql.append(" and l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d') ");
+				sql.append(" AND l.DATA_REC_DISTRIB BETWEEN DATE_FORMAT(:dataDe,'%Y-%m-%d') AND DATE_FORMAT(:dataAte,'%Y-%m-%d') ");
 			} else {
-				query.setParameter("dataDe",  filtro.getDataDe());
+				query.setParameter("dataDe", filtro.getDataDe());
 				query.setParameter("dataAte", filtro.getDataAte());
 			}
+			
 		}
 		
 		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
