@@ -508,6 +508,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
     	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :recebimento_reparte),0) as vlr_cobranca, ");
 
+    	/*
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
     	sql.append("     from movimento_financeiro_cota mfc_s ");
     	sql.append("       join consolidado_mvto_financeiro_cota cf_s ");
@@ -525,7 +526,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("     where d_s.DATA = :dtOperacao ");
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
     	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO = :envio_encalhe),0) as vlr_encalhe, ");
-
+    	*/
+    	sql.append("   0 as vlr_encalhe, ");
     	sql.append("   0 as vlr_nro_atr, ");
     	
 //    	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
@@ -617,7 +619,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	sql.append("     where d_s.DATA = :dtOperacao ");
     	sql.append("       and mfc_s.COTA_ID = mfc.COTA_ID ");
     	sql.append("       and tm_s.GRUPO_MOVIMENTO_FINANCEIRO in (:debito_cota_tx_transportador, :debito_cota_tx_entregador, ");
-    	sql.append("        									   :debito, :debito_sobre_faturamento, :compra_encalhe_suplementar)),0) as vlr_outros, ");
+    	sql.append("        									   :debito, :debito_sobre_faturamento, :compra_encalhe_suplementar, :postergado_negociacao)),0) as vlr_outros, ");
 
     	sql.append("   coalesce((select sum(mfc_s.VALOR) ");
     	sql.append("     from movimento_financeiro_cota mfc_s ");
@@ -735,12 +737,13 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
     	query.setParameter("compra_encalhe_suplementar", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR.name());
     	query.setParameter("credito", GrupoMovimentoFinaceiro.CREDITO.name());
     	query.setParameter("credito_sobre_faturamento", GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO.name());
-    	query.setParameter("envio_encalhe", GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
+    	//query.setParameter("envio_encalhe", GrupoMovimentoFinaceiro.ENVIO_ENCALHE.name());
     	query.setParameter("juros", GrupoMovimentoFinaceiro.JUROS.name());
     	query.setParameter("multa", GrupoMovimentoFinaceiro.MULTA.name());
     	query.setParameter("pendente", GrupoMovimentoFinaceiro.PENDENTE.name());
     	query.setParameter("postergado_debito", GrupoMovimentoFinaceiro.POSTERGADO_DEBITO.name());
     	query.setParameter("postergado_credito", GrupoMovimentoFinaceiro.POSTERGADO_CREDITO.name());
+    	query.setParameter("postergado_negociacao", GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO.name());
     	query.setParameter("recebimento_reparte", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.name());
     	query.setParameter("taxa_extra", GrupoMovimentoFinaceiro.TAXA_EXTRA.name());
     	

@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
 import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.DataLancamentoPeriodoEdicoesBasesDTO;
 import br.com.abril.nds.dto.DetalhesEdicoesBasesAnaliseEstudoDTO;
-import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ReparteFixacaoMixWrapper;
@@ -48,18 +45,12 @@ import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
-import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.EstudoService;
-import br.com.abril.nds.service.FixacaoReparteService;
-import br.com.abril.nds.service.InformacoesProdutoService;
-import br.com.abril.nds.service.MixCotaProdutoService;
-import br.com.abril.nds.service.PdvService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.BigIntegerUtil;
@@ -68,9 +59,6 @@ import br.com.abril.nds.util.BigIntegerUtil;
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     private static final int QTDE_PARCIAIS_BASE = 3;
-
-    @Autowired
-    private EstudoPDVRepository estudoPDVRepository;
 
     @Autowired
     private AnaliseParcialRepository analiseParcialRepository;
@@ -94,18 +82,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     private ProdutoEdicaoRepository produtoEdicaoRepository;
     
     @Autowired
-    private ProdutoService produtoServc;
-
-    @Autowired
-    private InformacoesProdutoService infoProdService;
-    
-    @Autowired
-    private FixacaoReparteService fixacaoReparteService;
-
-    @Autowired
-    private MixCotaProdutoService mixCotaService;
-    
-    @Autowired
 	private EstudoService estudoService;
     
     @Autowired
@@ -116,9 +92,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     
     @Autowired 
     private UsuarioService usuarioService;
-    
-    @Autowired
-    private PdvService pdvService;
     
     @Autowired
     private LancamentoRepository lancamentoRepository;
