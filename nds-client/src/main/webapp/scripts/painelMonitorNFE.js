@@ -143,12 +143,12 @@ var PainelMonitorNFE = $.extend(true, {
 		var documentoPessoa = $('input:radio[name=painelNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
 		var tipoNfe = $("#painelNfe-filtro-naturezaOperacao", PainelMonitorNFE.workspace).val();
-		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
-		var numeroFinal = $("#numeroFinal", PainelMonitorNFE.workspace).val();
 		var chaveAcesso = $("#chaveAcesso", PainelMonitorNFE.workspace).val();
 		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
-		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
+		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();
 		var nrDocumento	= $("#painelNfe-documento", PainelMonitorNFE.workspace).val();
+		var numeroNotaInicial	= $("#painelNfe-notaDe", PainelMonitorNFE.workspace).val();
+		var numeroNotaFinal	= $("#painelNfe-notaAte", PainelMonitorNFE.workspace).val();
 		
 		var params = [
 		        {name:'filtro.box', value: box },
@@ -157,8 +157,8 @@ var PainelMonitorNFE = $.extend(true, {
 		        {name:'filtro.documentoPessoa', value: documentoPessoa },
 		        {name:'filtro.documento', value: documento },
 		        {name:'filtro.tipoNfe', value: tipoNfe },
-		        {name:'filtro.numeroNotaInicial', value: numeroInicial },
-		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
+		        {name:'filtro.numeroNotaInicial', value: numeroNotaInicial},
+		        {name:'filtro.numeroNotaFinal', value: numeroNotaFinal},
 		        {name:'filtro.chaveAcesso', value: chaveAcesso },
 		        {name:'filtro.situacaoNfe', value: situacaoNfe },
 		        {name:'filtro.serie',    value: serieNfe},
