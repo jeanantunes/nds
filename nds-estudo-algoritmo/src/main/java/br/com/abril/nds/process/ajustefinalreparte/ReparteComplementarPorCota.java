@@ -36,8 +36,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     		estudo.setReparteDistribuir(BigInteger.ZERO);
     	}
     	
-    	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
-    		distribuirReparteComplementar(estudo, ordenarLista(estudo));
+    	if (estudo.getReparteComplementar() != null){
+    		while (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+    			distribuirReparteComplementar(estudo, ordenarLista(estudo));
+			}
     	}
     }
 
