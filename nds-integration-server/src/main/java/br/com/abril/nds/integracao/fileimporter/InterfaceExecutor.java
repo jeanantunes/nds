@@ -368,9 +368,10 @@ public class InterfaceExecutor {
 			 return;
 		} 
 		
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
+		
 		for (File imagem: imagens) {
 		  try {
+			  CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
 			IntegracaoDocument doc = null;
 			String id = imagem.getName().substring(0, imagem.getName().indexOf(".")); 
 			boolean inserir=false;
@@ -431,7 +432,7 @@ public class InterfaceExecutor {
 					}
 				}
 			}
-				
+			couchDbClient.shutdown();	
 			} catch (Exception e) {
                 this.logarArquivo(logExecucao,"0",e.getMessage(),StatusExecucaoEnum.ERRO, NAO_HA_IMAGENS);
 				LOGGER.error(e.getMessage(), e);
@@ -439,7 +440,7 @@ public class InterfaceExecutor {
 			
 		}
 		
-		couchDbClient.shutdown();
+		
 	}
 	
 	/**
