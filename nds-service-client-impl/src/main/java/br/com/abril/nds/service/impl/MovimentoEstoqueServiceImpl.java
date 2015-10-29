@@ -1767,8 +1767,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     @Transactional
     public void devolucaoRecolhimentoNotaCancelada(final NotaFiscal notaFiscalCancelada) {
         
-        final TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.
-                buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_DEVOLUCAO_ENCALHE);
+        final TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_DEVOLUCAO_ENCALHE_FORNECEDOR);
         
         gerarMovimentoCancelamentoNotaFiscal(notaFiscalCancelada, tipoMovimento);
     }
