@@ -222,6 +222,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
         
         notafiscalEntrada.setValorDesconto(BigDecimal.ZERO);
         
+        notafiscalEntrada.setFornecedor(obterFornecedor(message));
+        
         PessoaJuridica emitente = this.obterPessoaJuridica(input.getCnpjEmissor());
         
         if(emitente == null) {
