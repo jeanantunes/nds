@@ -110,8 +110,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("         COALESCE(temp.NOME_COTA, temp.RAZAO_SOCIAL_COTA) AS nomeCota, ");
 		sql.append("         temp.CIDADE_COTA AS municipio, ");
 		sql.append("         sum(temp.vendaSum * (temp.PRECO_VENDA - ((temp.PRECO_VENDA * coalesce(temp.valorDesconto,0)) / 100))) as participacao, ");
-		sql.append("         temp.vendaSum as vendaExemplares, ");
-		sql.append("         (temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
+		sql.append("         sum(temp.vendaSum) as vendaExemplares, ");
+		sql.append("         sum(temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
 		sql.append("  ");
 		sql.append("         FROM ");
 		sql.append("         ( ");
@@ -124,8 +124,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("           SUM(T.reparte) reparteSum, ");
 		sql.append("           SUM(T.venda) vendaSum, ");
 		sql.append("           T.PRECO_VENDA, ");
-		sql.append("           T.valorDesconto ");
-		sql.append("            ");
+		sql.append("           T.valorDesconto, ");
+		sql.append("           T.lancId as lancId  ");
 		sql.append("          ");
 		sql.append("         from ( ");
 		sql.append("          ");
@@ -137,6 +137,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             pess.RAZAO_SOCIAL AS RAZAO_SOCIAL_COTA, ");
 		sql.append("             endereco.CIDADE AS CIDADE_COTA, ");
 		sql.append("             pe.PRECO_VENDA AS PRECO_VENDA, ");
+		sql.append("             l.id as lancId, ");
 		sql.append("             cast(sum(case  ");
 		sql.append("                 when tipo.OPERACAO_ESTOQUE = 'ENTRADA'  ");
 		sql.append("                 THEN if(mecReparte.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null, mecReparte.QTDE, 0) ");
@@ -226,7 +227,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("             mecReparte.cota_id, plp.numero_periodo  ");
 		sql.append("         ORDER BY ");
 		sql.append("             l.ID desc )T  ");
-		sql.append("                         group by numeroCota ORDER BY vendaSum desc) temp  ");
+		sql.append("                         group by numeroCota, lancId ORDER BY vendaSum desc) temp  ");
 		sql.append(" 							group by numeroCota                           ");
 		sql.append(" 						        ORDER BY faturamentoCapa desc) consolidado,");
 		sql.append(" 						            (select");

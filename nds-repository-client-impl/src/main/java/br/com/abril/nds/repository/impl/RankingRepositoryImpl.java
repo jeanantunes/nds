@@ -201,15 +201,17 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append("             temp.cotaId as chave, ");
 		sql.append("             (temp.vendaSum * temp.PRECO_VENDA) as faturamentoCapa ");
 		sql.append("         FROM ");
-		sql.append("             (          Select ");
+		sql.append("             (Select ");
 		sql.append("                 T.COTA_ID as cotaId, ");
 		sql.append("                 SUM(T.venda) vendaSum, ");
-		sql.append("                 T.PRECO_VENDA ");
+		sql.append("                 T.PRECO_VENDA, ");
+		sql.append("                 T.lancID ");
 		sql.append("             FROM ");
 		sql.append("                 (   ");
 		sql.append("                 SELECT ");
 		sql.append("                     mecReparte.COTA_ID AS COTA_ID, ");
 		sql.append("                     pe.PRECO_VENDA AS PRECO_VENDA, ");
+		sql.append("                     l.ID lancID, ");
 		sql.append("                     (case                    ");
 		sql.append("                         when l.status IN ('FECHADO','RECOLHIDO','EM_RECOLHIMENTO')                        ");
 		sql.append("                             then      cast(sum(        CASE                                   ");
@@ -272,7 +274,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append("                     l.ID desc  ");
 		sql.append("                     )T                ");
 		sql.append("                 group by ");
-		sql.append("                     COTA_ID ) temp           ");
+		sql.append("                     COTA_ID, lancID) temp           ");
 		sql.append("             GROUP BY ");
 		sql.append("                 cotaId           ");
 		sql.append("             ORDER BY ");
