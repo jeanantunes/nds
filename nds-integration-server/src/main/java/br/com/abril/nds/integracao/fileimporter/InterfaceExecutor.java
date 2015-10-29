@@ -37,6 +37,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.model.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.EMS0110FilialInput;
@@ -69,6 +70,7 @@ import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+import com.google.gson.JsonObject;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
 
@@ -183,7 +185,7 @@ public class InterfaceExecutor {
 		try {
 			// Executa interface
 			if (interfaceEnum.equals(InterfaceEnum.EMS0134)) {
-				this.executarInterfaceImagem();
+				this.executarInterfaceImagem(logExecucao);
 			} else if (interfaceEnum.equals(InterfaceEnum.EMS0185)) {
 				this.executarInterfaceCorreios();
 			} else if (interfaceEnum.getTipoInterfaceEnum().equals(TipoInterfaceEnum.DB)) {
@@ -350,28 +352,52 @@ public class InterfaceExecutor {
 	 * Executa a interface de carga de imagens EMS0134.
 	 */
 	
-	private void executarInterfaceImagem() {
+	private void executarInterfaceImagem(LogExecucao logExecucao) {
 		
 		String diretorio = parametroSistemaRepository.getParametroInterface("IMAGE_DIR");
-		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
+		
 				
 		File[] imagens = new File(diretorio).listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
 		        return name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg");
 		    }
 		});
+		if(imagens == null || imagens.length == 0 ) {
+			LOGGER.error("NAO HA ARQUIVOS DE IMAGENS DE CAPA A SEREM PROCESSADOS NO DIRETORIO "+diretorio);
+			 this.logarArquivo(logExecucao,"0",diretorio,StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+			 return;
+		} 
 		
+		CouchDbClient couchDbClient = this.getCouchDbClientInstance("capas");
 		for (File imagem: imagens) {
-			
+		  try {
 			IntegracaoDocument doc = null;
 			String id = imagem.getName().substring(0, imagem.getName().indexOf(".")); 
-			
+			boolean inserir=false;
 			try {
 				
 				doc = couchDbClient.find(IntegracaoDocument.class, id);
-			
-			} catch (NoDocumentException e) {
+				LOGGER.error("ACHOU CAPA id="+ doc.get_id() );
+				// ver se tem imagem associada
 				
+				try {
+					couchDbClient.find(id+ "/" + id+".jpg");
+					LOGGER.error("IMAGEM CAPA JA EXISTE NO COUCH.NAO SERA INSERIDO e IMAGEM SERA DELETADA");
+					imagem.delete();
+					
+				} catch ( NoDocumentException e) {
+					LOGGER.error("IMAGEM CAPA NAO EXISTE NO COUCH.CAPA SERA RECRIADA E IMAGEM INSERIDA");
+				inserir=true;
+				couchDbClient.remove(doc);
+				}
+				
+				
+			} catch (NoDocumentException e) {
+				inserir=true;
+			}
+				
+			if ( inserir ) {
+				LOGGER.error("INSERINDO NO COUCH IMAGEM "+imagem);
 				doc = new IntegracaoDocument();
 				doc.set_id(id);
 				doc.setTipoDocumento("ImagemCapa");				
@@ -385,11 +411,17 @@ public class InterfaceExecutor {
 				try {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
-					
+					in.close();
+					in=null;
 					imagem.delete();
+				
 				} catch (FileNotFoundException e1) {
-                    this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-				} finally {
+                    this.logarArquivo(logExecucao,"0",diretorio,StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+				} catch ( Exception e2 ) {
+					LOGGER.error(e2.getMessage(), e2);
+				}
+				
+				finally {
 					if (null != in) {
 						try {
 							in.close();
@@ -398,10 +430,11 @@ public class InterfaceExecutor {
 						}
 					}
 				}
+			}
 				
 			} catch (Exception e) {
-                this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-				//LOGGER.error(e.getMessage(), e);
+                this.logarArquivo(logExecucao,"0",e.getMessage(),StatusExecucaoEnum.ERRO, NAO_HA_IMAGENS);
+				LOGGER.error(e.getMessage(), e);
 			}
 			
 		}
@@ -770,8 +803,10 @@ public class InterfaceExecutor {
 	}
 	
     private void logarArquivo(StatusExecucaoEnum status, String mensagem) {
-        this.logarArquivo(null, null, null, status, mensagem);
+        this.logarArquivo(null, "0", null, status, mensagem);
     }
+    
+   
 	/**
 	 * Loga o processamento de um arquivo
 	 */
@@ -786,7 +821,7 @@ public class InterfaceExecutor {
 		LogExecucaoArquivo logExecucaoArquivo = new LogExecucaoArquivo();
 		logExecucaoArquivo.setLogExecucao(logExecucao);
 		logExecucaoArquivo.setCaminhoArquivo(caminhoArquivo);
-		logExecucaoArquivo.setDistribuidor(Integer.valueOf(distribuidor));
+		logExecucaoArquivo.setDistribuidor(distribuidor != null ? Integer.valueOf(distribuidor):0);
 		logExecucaoArquivo.setStatus(status);
 		logExecucaoArquivo.setMensagem(StringUtils.abbreviate(mensagem, 500));
 		
