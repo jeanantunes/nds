@@ -1551,6 +1551,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         final StringBuilder hql = new StringBuilder();
         
         // obter maior dia de recolhimento de encalhe desta chamada
+        
+        
 		hql.append("select max(conf.diaRecolhimento) from ConferenciaEncalhe conf");
 		hql.append(	"  where  1=1  " );
 		hql.append(	"  and  conf.data = :dataRecolhimentodia" );
