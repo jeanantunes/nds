@@ -160,8 +160,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var itens = [];
 		
 		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
-			
-			if(itemCEIntegracao.alteracao) {
+			itemCEIntegracao.alteracao=true;
+			if(itemCEIntegracao.alteracao) 
+			{
 
 				itens.push({name:"itens[" + index + "].idItemCeIntegracao",value:itemCEIntegracao.id});
 				itens.push({name:"itens[" + index + "].encalhe",value:itemCEIntegracao.encalhe});
@@ -589,7 +590,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			var qtdeDevSemCE = $("#qtdeDevSemCE" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 			
-			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe)));
+			$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(eval(reparte) - ( eval(encalhe) + eval(qtdeDevSemCE)));
 			
 		} else {
 			
