@@ -498,6 +498,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 								tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.PERDA_EM_DEVOLUCAO);
 					}
 					
+					
+			
 					MovimentoEstoque movimentoEstoque = 
 							movimentoEstoqueService.gerarMovimentoEstoque(
 							item.getProdutoEdicao().getId(),
@@ -670,6 +672,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private ItemChamadaEncalheFornecedor atualizarItemCE(ItemChamadaEncalheFornecedor item,
 			Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados, EstoqueProduto estoqueProduto) {
 		
+	
+		
 		if(item == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Item de Fechamento inválido.");
@@ -677,6 +681,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		Long qntVenda = Util.nvl(item.getQtdeVendaInformada(), 0L);
 		Long qntEncalhe = item.getQtdeDevolucaoInformada();
+		
+		
 		
 		if(itensAlterados != null && itensAlterados.containsKey(item.getId())) {
 			
@@ -707,7 +713,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			item.setQtdeVendaApurada(qntVenda);
 		} else {
 			
-			item.setQtdeVendaApurada(item.getQtdeEnviada() - qntEncalhe);
+			item.setQtdeVendaApurada(qntVenda);
 		}
 		
 		item.setQtdeDevolucaoInformada(qntEncalhe);
@@ -855,7 +861,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
 			
-			if(cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
+			if(cef.getDataFechamentoNDS() == null || cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
 					|| StatusIntegracao.INTEGRADO.equals(cef.getStatusIntegracao())){
 				
 				fornecedorSemReabertura.append((cef.getFornecedor().getJuridica()!= null)
@@ -1061,7 +1067,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
         		   }
         	   }
         	   
-        	   return !(item.getDiferenca().compareTo(BigInteger.ZERO) == 0) ;
+        	   return !(BigInteger.ZERO.compareTo(item.getDiferenca()==null?BigInteger.ZERO:item.getDiferenca()) == 0) ;
            }
 		};
        
