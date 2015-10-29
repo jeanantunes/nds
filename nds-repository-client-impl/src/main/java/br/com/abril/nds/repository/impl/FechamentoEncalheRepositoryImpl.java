@@ -1553,9 +1553,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
         // obter maior dia de recolhimento de encalhe desta chamada
 		hql.append("select max(conf.diaRecolhimento) from ConferenciaEncalhe conf");
-		hql.append(	"  where  conf.chamadaEncalheCota.chamadaEncalhe.id = :chamadaEncalheId " );
+		hql.append(	"  where  1=1 " );
 		hql.append(	"  and  conf.data = :dataRecolhimentodia" );
-        
+		hql.append(	"  and  conf.produtoEdicao = (select distinct cha.produtoEdicao from ChamadaEncalhe cha where cha.id = :chamadaEncalheId )" );
+   
+		
         final Query querym = getSession().createQuery(hql.toString());
         
         querym.setParameter("chamadaEncalheId", chamadaEncalheId);
