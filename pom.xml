@@ -395,15 +395,15 @@
 	<repositories>
 		<repository>
 			<id>nexus</id>
-			<url>http://10.129.28.111:8080/nexus-2.3.1-01/content/groups/public/</url>
+			<url>http://10.130.2.22:8080/nexus-2.11.4-01/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>nexus3rd</id>
-			<url>http://10.129.28.111:8080/nexus-2.3.1-01/content/repositories/thirdparty/</url>
+			<url>http://10.130.2.22:8080/nexus-2.11.4-01/content/repositories/thirdparty/</url>
 		</repository>
 		<repository>
 			<id>nexusweb</id>
-			<url>http://dev.distrib.dgb.com.br:8080/nexus-2.3.1-01/content/groups/public/</url>
+			<url>http://10.130.2.22:8080/nexus-2.11.4-01/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>repomaven</id>
